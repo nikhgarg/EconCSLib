@@ -1,0 +1,27 @@
+# Lean/Lake build outputs
+/.lake/
+/.build/
+/build/
+/lake-packages/
+
+# Lean compiler artifacts if generated outside .lake
+*.olean
+*.ilean
+*.c
+*.o
+*.so
+*.a
+
+# Local environment and logs
+.env
+.env.*
+!.env.example
+*.log
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/

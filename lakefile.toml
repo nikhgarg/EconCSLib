@@ -1,0 +1,37 @@
+name = "EconCSLean"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["EconCSLean"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.30.0-rc2"
+
+[[require]]
+name = "cslib"
+scope = "leanprover"
+rev = "v4.30.0-rc2"
+
+[[lean_lib]]
+name = "EconCSLean"
+
+[[lean_lib]]
+name = "DecisionFairness"
+
+[[lean_lib]]
+name = "DecisionCore"
+
+[[lean_lib]]
+
+[[lean_lib]]
+name = "UserItemFairness"
+
+[[lean_lib]]
+name = "AccuracyDiversity"
