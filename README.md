@@ -38,14 +38,13 @@ monoculture/Mallows branch through:
 
 ```lean
 MallowsComparison.CenterMallowsCertificate
-MallowsComparison.centerProbabilityCertificate_of_centerMallowsCertificate
-MallowsComparison.paperHypotheses_of_centerProbabilityCertificate
+MallowsComparison.CenterMallowsProductCrossWeightCertificate
+MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate
 ```
 
 The below-one center-probability obligations are now proved from Mallows support
 using the top-two-swapped ranking. The useful next work is to prove the remaining
-finite Mallows comparison and candidatewise nonnegativity inequalities, not to
-start a new continuous branch.
+finite Mallows product-sign inequalities, not to start a new continuous branch.
 
 ## Orientation
 
@@ -61,11 +60,17 @@ If you are new to the imported code, start with:
 
 ## Build
 
-This imported code is aligned to Lean/mathlib `v4.29.0`.
+This code is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
 
 ```bash
-lake build
+lake build EconCSLean
 ```
+
+## GitHub Automation
+
+The repository keeps CI and manual dependency-update workflows under
+`.github/workflows`. Release-tag/release-publishing automation has been removed;
+releases should be cut manually if needed.
 
 ## Repository Direction
 

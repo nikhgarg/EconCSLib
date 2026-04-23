@@ -15,5 +15,6 @@ import Monoculture.Kendall
 import Monoculture.Mallows
 import Monoculture.MallowsSupport
 import Monoculture.MallowsCenterCertificate
+import Monoculture.MallowsFiniteLemmas
 import Monoculture.Family
 import Monoculture.Examples

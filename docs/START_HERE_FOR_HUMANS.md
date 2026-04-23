@@ -59,9 +59,11 @@ The key theorem interfaces are:
 - `MallowsComparison.CenterProbabilityCertificate`
 - `MallowsComparison.CenterMallowsCertificate`
 - `MallowsComparison.CenterMallowsWeightCertificate`
+- `MallowsComparison.CenterMallowsProductCrossWeightCertificate`
 - `MallowsComparison.paperHypotheses_of_centerMallowsCertificate`
+- `MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate`
 
 The Mallows-specific certificate is the near-term continuation target because
 the generic below-one probability fields are already discharged by Mallows
 support lemmas. If proving finite inequalities directly, start from
-`MallowsComparison.centerMallowsCertificate_of_weightCertificate`.
+`MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate`.

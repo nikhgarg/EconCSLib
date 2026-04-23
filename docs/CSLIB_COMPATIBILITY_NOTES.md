@@ -51,9 +51,9 @@ Useful definitions and lemmas:
 - `RelatesInSteps.head`, `tail`, `succ`, `succ'`, `trans`, and `map`
 
 This is the most directly useful CSLib API for the fair-division Test-of-Time
-paper. The remaining finite graph seam is to extract a simple nodup envy cycle
-from a closed transitive-closure envy walk. A step-indexed path relation gives a
-natural minimal-counterexample proof:
+paper. It was used to extract a simple nodup envy cycle from a closed
+transitive-closure envy walk. A step-indexed path relation gives a natural
+minimal-counterexample proof:
 
 1. convert `Relation.TransGen envyEdge i i` to a positive `RelatesInSteps`
    witness;
@@ -63,8 +63,9 @@ natural minimal-counterexample proof:
 5. use the already-proved list-to-permutation and permutation-to-reduction
    lemmas.
 
-The remaining work is to choose a shortest positive `RelatesInSteps` closed
-walk and prove it yields a simple nodup `EnvyCycleList`.
+This seam is now closed in `EconCSLean.FairDivision.IndivisibleGoods` by
+`exists_simple_cycle_list_of_stepCycle` and
+`hasEnvyCycleListExtraction_of_finite`.
 
 ### Relation Rewriting
 
@@ -141,8 +142,8 @@ domain-specific reduction and protocol libraries first.
 
 ## Paper-Track Impact
 
-- Fair division 2025 Test-of-Time paper: high impact. `RelatesInSteps` is the
-  best external API found for closing the explicit simple-cycle extraction seam.
+- Fair division 2025 Test-of-Time paper: high impact. `RelatesInSteps` closed
+  the explicit simple-cycle extraction seam.
   finite probability and Mallows weight inequalities, not CS foundation gaps.
 - Digital-goods auction 2021 Test-of-Time paper: medium future impact. `TimeM`
   may help once executable auction algorithms and running-time claims matter.
@@ -158,6 +159,6 @@ domain-specific reduction and protocol libraries first.
 ## Recommendation
 
 Keep CSLib imports narrow. The next practical import should be driven by an
-active theorem seam, not by convenience. For the current roadmap, continue with
-`RelatesInSteps` for fair division; consider automata/languages only when the
-voting or complexity tracks begin in earnest.
+active theorem seam, not by convenience. With the fair-division
+`RelatesInSteps` seam closed, consider automata/languages only when the voting
+or complexity tracks begin in earnest.
