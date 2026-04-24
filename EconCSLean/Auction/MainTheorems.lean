@@ -222,6 +222,19 @@ theorem paper_sorted_gsp_three_bidder_two_slot_not_truthful :
   exact gsp3TwoSlot_not_truthful
 
 /--
+Local-envy-free position outcomes have no profitable assigned-slot deviation:
+no bidder would prefer another winner's slot at that winner's per-click price.
+-/
+theorem paper_position_slot_envy_free_no_profitable_assigned_slot_deviation
+    {Bidder Slot : Type*}
+    (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ)
+    (h : O.SlotEnvyFree E values) :
+    O.NoProfitableAssignedSlotDeviation E values := by
+  exact PositionOutcome.noProfitableAssignedSlotDeviation_of_slotEnvyFree
+    E O values h
+
+/--
 The reject-all direct combinatorial auction is dominant-strategy truthful.
 -/
 theorem paper_combinatorial_reject_all_truthful

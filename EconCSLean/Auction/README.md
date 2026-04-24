@@ -50,6 +50,7 @@ formalized.
 | Threshold auction no-positive-transfers | `paper_threshold_price_no_positive_transfers` | formalized | `EconCSLean/Auction/MainTheorems.lean` | nonnegative thresholds |
 | Position-auction interface | `PositionEnvironment`, `PositionOutcome` | formalized | `EconCSLean/Auction/Position.lean` | none |
 | Position-mechanism truthfulness/Nash predicates | `PositionMechanism.TruthfulDominantStrategy`, `PositionMechanism.IsNashEquilibrium` | formalized | `EconCSLean/Auction/Position.lean` | none |
+| Local-envy-free outcome deviation certificate | `paper_position_slot_envy_free_no_profitable_assigned_slot_deviation` | formalized | `EconCSLean/Auction/MainTheorems.lean` | only covers assigned-slot deviations at current per-click prices |
 | GSP is not truthful | `paper_gsp_truthful_bidding_not_dominant_example` | formalized as concrete two-slot witness | `EconCSLean/Auction/MainTheorems.lean` | full generic GSP mechanism and equilibrium theory not yet formalized |
 | GSP mechanism is not truthful | `paper_gsp_mechanism_not_truthful` | formalized as concrete two-slot mechanism witness | `EconCSLean/Auction/MainTheorems.lean` | full generic sorted-bid GSP not yet formalized |
 | Sorted three-bidder/two-slot GSP is not truthful | `paper_sorted_gsp_three_bidder_two_slot_not_truthful` | formalized for a concrete sorted GSP mechanism | `EconCSLean/Auction/MainTheorems.lean` | equilibrium and revenue/welfare comparison theorems not yet formalized |
@@ -70,9 +71,10 @@ formalized.
    instantiate `CrossSampleOfferApproximationCertificate` with a concrete ratio
    by lower-bounding the uniform partition-average revenue relative to `F^(2)`.
 2. GSP/position auctions: the concrete sorted three-bidder/two-slot GSP
-   non-truthfulness theorem is closed. Next define the generic sorted-bid GSP
-   mechanism for finite ordered slots and formalize envy-free/symmetric Nash
-   equilibrium revenue/welfare comparisons in certificate form.
+   non-truthfulness theorem and the local-envy-free assigned-slot deviation
+   certificate are closed. Next define the generic sorted-bid GSP mechanism for
+   finite ordered slots and formalize symmetric Nash equilibrium revenue/welfare
+   comparisons in certificate form.
 3. Combinatorial auctions: build on `CombinatorialAuction`,
    `IsFeasibleBundleAllocation`, and `SingleMindedBid.valuation`; next add the
    greedy allocation rule for single-minded bidders and its critical-value

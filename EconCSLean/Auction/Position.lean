@@ -78,6 +78,11 @@ def FeasibleAssignment (O : PositionOutcome Bidder Slot) : Prop :=
   ∀ ⦃i j : Bidder⦄ ⦃s : Slot⦄,
     O.slotOf i = some s → O.slotOf j = some s → i = j
 
+/-- Every bidder receives nonnegative utility in the outcome. -/
+def IndividuallyRational (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ) : Prop :=
+  ∀ i, 0 ≤ O.utility E values i
+
 theorem utility_eq_zero_of_unassigned
     (E : PositionEnvironment Slot) (O : PositionOutcome Bidder Slot)
     (values : Bidder → ℝ) {i : Bidder}
@@ -99,6 +104,22 @@ theorem revenue_nonneg [Fintype Bidder]
     | some s =>
         simpa [revenueContribution, hslot] using
           mul_nonneg (hctr s) (hpay i)
+
+theorem individuallyRational_of_payment_le_value
+    (E : PositionEnvironment Slot) (O : PositionOutcome Bidder Slot)
+    (values : Bidder → ℝ)
+    (hctr : ∀ s, 0 ≤ E.clickThroughRate s)
+    (hpay_le : ∀ i s, O.slotOf i = some s →
+      O.paymentPerClick i ≤ values i) :
+    O.IndividuallyRational E values := by
+  intro i
+  cases hslot : O.slotOf i with
+  | none =>
+      simp [utility, hslot]
+  | some s =>
+      have hdiff : 0 ≤ values i - O.paymentPerClick i := by
+        exact sub_nonneg.mpr (hpay_le i s hslot)
+      simpa [utility, hslot] using mul_nonneg (hctr s) hdiff
 
 end PositionOutcome
 
@@ -163,6 +184,31 @@ theorem slotEnvyFree_own_comparison
           O.utility E values i := by
   intro i s hslot
   exact h i i s hslot
+
+/--
+Outcome-level GSP equilibrium certificate: no bidder can improve by taking any
+currently assigned slot at that slot winner's per-click payment.
+-/
+def NoProfitableAssignedSlotDeviation (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ) : Prop :=
+  ∀ (i j : Bidder) (s : Slot),
+    O.slotOf j = some s →
+      E.clickThroughRate s * (values i - O.paymentPerClick j) ≤
+        O.utility E values i
+
+theorem slotEnvyFree_iff_noProfitableAssignedSlotDeviation
+    (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ) :
+    O.SlotEnvyFree E values ↔
+      O.NoProfitableAssignedSlotDeviation E values := by
+  rfl
+
+theorem noProfitableAssignedSlotDeviation_of_slotEnvyFree
+    (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ)
+    (h : O.SlotEnvyFree E values) :
+    O.NoProfitableAssignedSlotDeviation E values := by
+  exact h
 
 end PositionOutcome
 
