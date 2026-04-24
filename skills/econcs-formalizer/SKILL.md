@@ -311,7 +311,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   equality directly: prove an input-space equivalence and use uniform finite
   expectation invariance (`pmfExp_uniformPMF_eq_of_comp_equiv` /
   `uniformPermutationExpectation_eq_of_relabel`) to derive the expected
-  equality. For the harmonic cap, split the proof into the logarithmic
+  equality. For MSVV Theorem 9 specifically, prefer the observed-prefix
+  interface once available: factor allocation through `theorem9ObservedPrefix`
+  and use `theorem9ObservedPrefix_mul_swap_eq` to prove that swapping two
+  positions in the current suffix leaves the algorithm's information unchanged.
+  For the harmonic cap, split the proof into the logarithmic
   tail-spend bound, a finite layer-count comparison, and a separate
   exponential-grid estimate. In `EconCSLean`, these are now represented by
   `theorem9BidderSpendUpperBound_le_log_tail`,
@@ -324,9 +328,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   (`BMatchingTheorem9FamilyCertificate`, or when using realized allocations,
   `BMatchingTheorem9PointwiseFamilyCertificate` /
   `BMatchingTheorem9SymmetricPointwiseFamilyCertificate` /
-  `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate` in
-  `EconCSLean`) so future work instantiates only the online-information
-  relabel identity and deterministic allocation fields directly. Do not add a
+  `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate` /
+  `BMatchingTheorem9ObservedPrefixFamilyCertificate` in `EconCSLean`) so future
+  work instantiates only the deterministic allocation, capacity,
+  ineligible-zero, and capped-revenue fields directly. Do not add a
   separate
   harmonic-limit field to new Section 7 family certificates; use the built-in
   harmonic theorem instead.

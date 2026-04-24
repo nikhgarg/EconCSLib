@@ -140,6 +140,122 @@ def theorem9EligibleBidders (N : ℕ) (round : Fin N) : Finset (Fin N) :=
   simp [theorem9EligibleBidders]
 
 /--
+The actual bidders adjacent to the Section 7 round under a concrete
+permutation. Positions are the paper's random order; actual bidder labels are
+the values of the permutation.
+-/
+def theorem9ActualEligibleBidders
+    (N : ℕ) (permutation : Equiv.Perm (Fin N)) (round : Fin N) :
+    Finset (Fin N) :=
+  (theorem9EligibleBidders N round).image permutation
+
+@[simp] theorem mem_theorem9ActualEligibleBidders
+    (N : ℕ) (permutation : Equiv.Perm (Fin N)) (round bidder : Fin N) :
+    bidder ∈ theorem9ActualEligibleBidders N permutation round ↔
+      ∃ position : Fin N,
+        (round : ℕ) ≤ (position : ℕ) ∧ permutation position = bidder := by
+  simp [theorem9ActualEligibleBidders, mem_theorem9EligibleBidders]
+
+/--
+The prefix of the hard b-matching instance observed by an online algorithm at
+`currentRound`: future rounds are hidden, while past and current rounds expose
+their actual eligible bidder sets.
+-/
+def theorem9ObservedPrefix
+    (N : ℕ) (permutation : Equiv.Perm (Fin N)) (currentRound query : Fin N) :
+    Finset (Fin N) :=
+  if (query : ℕ) ≤ (currentRound : ℕ) then
+    theorem9ActualEligibleBidders N permutation query
+  else
+    ∅
+
+theorem theorem9EligibleBidders_swap_mem_iff
+    {N : ℕ} {query bidder bidder' position : Fin N}
+    (hbidder : (query : ℕ) ≤ (bidder : ℕ))
+    (hbidder' : (query : ℕ) ≤ (bidder' : ℕ)) :
+    Equiv.swap bidder bidder' position ∈ theorem9EligibleBidders N query ↔
+      position ∈ theorem9EligibleBidders N query := by
+  by_cases hpos : position = bidder
+  · subst position
+    simp [mem_theorem9EligibleBidders, hbidder, hbidder']
+  · by_cases hpos' : position = bidder'
+    · subst position
+      simp [mem_theorem9EligibleBidders, hbidder, hbidder']
+    · simp [Equiv.swap_apply_of_ne_of_ne hpos hpos',
+        mem_theorem9EligibleBidders]
+
+/--
+Swapping two positions that are both still eligible in a round does not change
+that round's actual eligible bidder set.
+-/
+theorem theorem9ActualEligibleBidders_mul_swap_eq
+    {N : ℕ} {query bidder bidder' : Fin N}
+    (hbidder : (query : ℕ) ≤ (bidder : ℕ))
+    (hbidder' : (query : ℕ) ≤ (bidder' : ℕ))
+    (permutation : Equiv.Perm (Fin N)) :
+    theorem9ActualEligibleBidders N
+        (permutation * Equiv.swap bidder bidder') query =
+      theorem9ActualEligibleBidders N permutation query := by
+  ext actualBidder
+  constructor
+  · intro hmem
+    rcases (mem_theorem9ActualEligibleBidders N
+      (permutation * Equiv.swap bidder bidder') query actualBidder).mp hmem
+      with ⟨position, hposition, hactual⟩
+    refine (mem_theorem9ActualEligibleBidders N permutation query actualBidder).mpr
+      ⟨Equiv.swap bidder bidder' position, ?_, ?_⟩
+    · exact
+        (mem_theorem9EligibleBidders N query
+          (Equiv.swap bidder bidder' position)).1
+          ((theorem9EligibleBidders_swap_mem_iff
+            (N := N) (query := query) (bidder := bidder)
+            (bidder' := bidder') (position := position)
+            hbidder hbidder').2
+            ((mem_theorem9EligibleBidders N query position).2 hposition))
+    · simpa [Equiv.Perm.mul_apply] using hactual
+  · intro hmem
+    rcases (mem_theorem9ActualEligibleBidders N permutation query actualBidder).mp
+      hmem with ⟨position, hposition, hactual⟩
+    refine (mem_theorem9ActualEligibleBidders N
+      (permutation * Equiv.swap bidder bidder') query actualBidder).mpr
+      ⟨Equiv.swap bidder bidder' position, ?_, ?_⟩
+    · exact
+        (mem_theorem9EligibleBidders N query
+          (Equiv.swap bidder bidder' position)).1
+          ((theorem9EligibleBidders_swap_mem_iff
+            (N := N) (query := query) (bidder := bidder)
+            (bidder' := bidder') (position := position)
+            hbidder hbidder').2
+            ((mem_theorem9EligibleBidders N query position).2 hposition))
+    · simpa [Equiv.Perm.mul_apply] using hactual
+
+/--
+Online-information invariance for the Section 7 hard instance: if two
+positions are both eligible in the current round, swapping them in the random
+permutation does not change any eligible set visible through that round.
+-/
+theorem theorem9ObservedPrefix_mul_swap_eq
+    {N : ℕ} {round bidder bidder' : Fin N}
+    (hbidder : (round : ℕ) ≤ (bidder : ℕ))
+    (hbidder' : (round : ℕ) ≤ (bidder' : ℕ))
+    (permutation : Equiv.Perm (Fin N)) :
+    theorem9ObservedPrefix N
+        (permutation * Equiv.swap bidder bidder') round =
+      theorem9ObservedPrefix N permutation round := by
+  funext query
+  unfold theorem9ObservedPrefix
+  by_cases hquery : (query : ℕ) ≤ (round : ℕ)
+  · have hquery_bidder : (query : ℕ) ≤ (bidder : ℕ) :=
+      hquery.trans hbidder
+    have hquery_bidder' : (query : ℕ) ≤ (bidder' : ℕ) :=
+      hquery.trans hbidder'
+    simp [hquery,
+      theorem9ActualEligibleBidders_mul_swap_eq
+        (N := N) (query := query) (bidder := bidder)
+        (bidder' := bidder') hquery_bidder hquery_bidder' permutation]
+  · simp [hquery]
+
+/--
 There are exactly `N - round` eligible bidders in zero-based round `round`.
 This is the denominator in the paper's `E[q_ij] <= 1 / (N - i + 1)` bound.
 -/
@@ -1204,6 +1320,43 @@ structure BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
     theorem9NormalizedRevenueUpperBound N ≤ ratio
 
 /--
+Observed-prefix form of the Section 7 online-information argument. The
+allocation to a position is represented as an allocation to the actual bidder
+label using only the eligible sets visible through the current round. The file
+proves that this prefix factorization supplies the relabeling symmetry field.
+-/
+structure BMatchingObservedPrefixAllocationRevenueCertificate
+    (N : ℕ) (Algorithm : Type*) (ratio : ℝ) where
+  normalizedRevenue : Algorithm → Equiv.Perm (Fin N) → ℝ
+  allocation : Algorithm → Equiv.Perm (Fin N) → Fin N → Fin N → ℝ
+  prefixAllocation :
+    Algorithm → (Fin N → Finset (Fin N)) → Fin N → Fin N → ℝ
+  allocation_eq_prefix :
+    ∀ algorithm permutation round bidder,
+      allocation algorithm permutation round bidder =
+        prefixAllocation algorithm
+          (theorem9ObservedPrefix N permutation round)
+          round (permutation bidder)
+  normalizedRevenue_le_cappedAllocationSpend :
+    ∀ algorithm permutation,
+      normalizedRevenue algorithm permutation ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              allocation algorithm permutation round bidder)) /
+          (N : ℝ)
+  allocation_zero_of_ineligible :
+    ∀ algorithm permutation (round bidder : Fin N),
+      ¬ (round : ℕ) ≤ (bidder : ℕ) →
+        allocation algorithm permutation round bidder = 0
+  round_allocation_sum_le_one :
+    ∀ algorithm permutation (round : Fin N),
+      (∑ bidder ∈ theorem9EligibleBidders N round,
+        allocation algorithm permutation round bidder) ≤ 1
+  revenueBound_le_ratio :
+    theorem9NormalizedRevenueUpperBound N ≤ ratio
+
+/--
 Family-level certificate for the asymptotic Section 7 lower bound. It packages
 the deterministic round-allocation calculation for every market size. The
 harmonic-cap comparison is proved in this file.
@@ -1342,6 +1495,44 @@ structure BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
             (relabelInput N round bidder bidder' permutation)
             round bidder =
           allocation N algorithm permutation round bidder'
+
+/--
+Family-level observed-prefix form of the Section 7 online-information
+argument. This packages deterministic allocation functions that depend on a
+permutation instance only through the hard instance prefix revealed so far.
+-/
+structure BMatchingTheorem9ObservedPrefixFamilyCertificate
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] where
+  normalizedRevenue :
+    (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ
+  allocation :
+    (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → Fin N → Fin N → ℝ
+  prefixAllocation :
+    (N : ℕ) → Algorithm N → (Fin N → Finset (Fin N)) →
+      Fin N → Fin N → ℝ
+  allocation_eq_prefix :
+    ∀ N algorithm permutation round bidder,
+      allocation N algorithm permutation round bidder =
+        prefixAllocation N algorithm
+          (theorem9ObservedPrefix N permutation round)
+          round (permutation bidder)
+  normalizedRevenue_le_cappedAllocationSpend :
+    ∀ N algorithm permutation,
+      normalizedRevenue N algorithm permutation ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              allocation N algorithm permutation round bidder)) /
+          (N : ℝ)
+  allocation_zero_of_ineligible :
+    ∀ N algorithm permutation (round bidder : Fin N),
+      ¬ (round : ℕ) ≤ (bidder : ℕ) →
+        allocation N algorithm permutation round bidder = 0
+  round_allocation_sum_le_one :
+    ∀ N algorithm permutation (round : Fin N),
+      (∑ bidder ∈ theorem9EligibleBidders N round,
+        allocation N algorithm permutation round bidder) ≤ 1
 
 /--
 Family-level round-allocation certificate with the harmonic side represented
@@ -1646,6 +1837,61 @@ noncomputable def toSymmetricPointwiseAllocationRevenueCertificate
 
 end BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
 
+namespace BMatchingObservedPrefixAllocationRevenueCertificate
+
+variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
+
+/--
+Observed-prefix dependence implies the pointwise relabeling certificate: a
+swap inside the current suffix leaves the observed prefix unchanged, and the
+position's actual bidder label is swapped accordingly.
+-/
+noncomputable def toRelabelSymmetricPointwiseAllocationRevenueCertificate
+    (C : BMatchingObservedPrefixAllocationRevenueCertificate
+      N Algorithm ratio) :
+    BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+      N Algorithm ratio where
+  normalizedRevenue := C.normalizedRevenue
+  allocation := C.allocation
+  normalizedRevenue_le_cappedAllocationSpend :=
+    C.normalizedRevenue_le_cappedAllocationSpend
+  allocation_zero_of_ineligible := C.allocation_zero_of_ineligible
+  round_allocation_sum_le_one := C.round_allocation_sum_le_one
+  relabelInput := fun _ bidder bidder' =>
+    Equiv.mulRight (Equiv.swap bidder bidder')
+  allocation_eq_of_relabel_eligible := by
+    intro algorithm round bidder bidder' hbidder hbidder' permutation
+    let swap : Equiv.Perm (Fin N) := Equiv.swap bidder bidder'
+    calc
+      C.allocation algorithm ((Equiv.mulRight swap) permutation) round bidder =
+          C.prefixAllocation algorithm
+            (theorem9ObservedPrefix N
+              ((Equiv.mulRight swap) permutation) round)
+            round (((Equiv.mulRight swap) permutation) bidder) := by
+            exact C.allocation_eq_prefix algorithm
+              ((Equiv.mulRight swap) permutation) round bidder
+      _ =
+          C.prefixAllocation algorithm
+            (theorem9ObservedPrefix N permutation round)
+            round (permutation bidder') := by
+            have hprefix' :
+                theorem9ObservedPrefix N
+                    (permutation * Equiv.swap bidder bidder') round =
+                  theorem9ObservedPrefix N permutation round :=
+              theorem9ObservedPrefix_mul_swap_eq
+                (N := N) (round := round) (bidder := bidder)
+                (bidder' := bidder') hbidder hbidder' permutation
+            simpa [swap, Equiv.coe_mulRight, Equiv.Perm.mul_apply] using
+              congrArg
+                (fun pref =>
+                  C.prefixAllocation algorithm pref round
+                    (permutation bidder')) hprefix'
+      _ = C.allocation algorithm permutation round bidder' := by
+            exact (C.allocation_eq_prefix algorithm permutation round bidder').symm
+  revenueBound_le_ratio := C.revenueBound_le_ratio
+
+end BMatchingObservedPrefixAllocationRevenueCertificate
+
 namespace BMatchingSymmetricPointwiseAllocationRevenueCertificate
 
 variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
@@ -1855,6 +2101,25 @@ theorem no_randomized_algorithm_beats_ratio
 
 end BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
 
+namespace BMatchingObservedPrefixAllocationRevenueCertificate
+
+variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
+
+theorem no_randomized_algorithm_beats_ratio
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    (C : BMatchingObservedPrefixAllocationRevenueCertificate
+      N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact
+    C.toRelabelSymmetricPointwiseAllocationRevenueCertificate
+      |>.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+end BMatchingObservedPrefixAllocationRevenueCertificate
+
 /--
 Asymptotic Section 7 wrapper. If the round-allocation calculation is available
 for every market size and the explicit harmonic cap is eventually within every
@@ -2051,6 +2316,71 @@ theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
   exact Csym.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
 
 end BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
+
+namespace BMatchingTheorem9ObservedPrefixFamilyCertificate
+
+variable {Algorithm : ℕ → Type*}
+variable [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+
+/--
+Family-level Theorem 9 endpoint from the observed-prefix online-information
+model.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    (C : BMatchingTheorem9ObservedPrefixFamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  let Crelabel :
+      BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
+        Algorithm := {
+    normalizedRevenue := C.normalizedRevenue
+    allocation := C.allocation
+    normalizedRevenue_le_cappedAllocationSpend :=
+      C.normalizedRevenue_le_cappedAllocationSpend
+    allocation_zero_of_ineligible := C.allocation_zero_of_ineligible
+    round_allocation_sum_le_one := C.round_allocation_sum_le_one
+    relabelInput := fun N _ bidder bidder' =>
+      Equiv.mulRight (Equiv.swap bidder bidder')
+    allocation_eq_of_relabel_eligible := by
+      intro N algorithm round bidder bidder' hbidder hbidder' permutation
+      let swap : Equiv.Perm (Fin N) := Equiv.swap bidder bidder'
+      calc
+        C.allocation N algorithm ((Equiv.mulRight swap) permutation)
+            round bidder =
+            C.prefixAllocation N algorithm
+              (theorem9ObservedPrefix N
+                ((Equiv.mulRight swap) permutation) round)
+              round (((Equiv.mulRight swap) permutation) bidder) := by
+              exact C.allocation_eq_prefix N algorithm
+                ((Equiv.mulRight swap) permutation) round bidder
+        _ =
+            C.prefixAllocation N algorithm
+              (theorem9ObservedPrefix N permutation round)
+              round (permutation bidder') := by
+              have hprefix' :
+                  theorem9ObservedPrefix N
+                      (permutation * Equiv.swap bidder bidder') round =
+                    theorem9ObservedPrefix N permutation round :=
+                theorem9ObservedPrefix_mul_swap_eq
+                  (N := N) (round := round) (bidder := bidder)
+                  (bidder' := bidder') hbidder hbidder' permutation
+              simpa [swap, Equiv.coe_mulRight, Equiv.Perm.mul_apply] using
+                congrArg
+                  (fun pref =>
+                    C.prefixAllocation N algorithm pref round
+                      (permutation bidder')) hprefix'
+        _ = C.allocation N algorithm permutation round bidder' := by
+              exact (C.allocation_eq_prefix N algorithm permutation
+                round bidder').symm
+  }
+  exact Crelabel.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+end BMatchingTheorem9ObservedPrefixFamilyCertificate
 
 namespace BMatchingTheorem9LayerCountFamilyCertificate
 

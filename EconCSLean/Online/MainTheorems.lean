@@ -821,6 +821,25 @@ theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_relabel_sy
   exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 /--
+Section 7 / Theorem 9 wrapper from the observed-prefix online-information
+model. The algorithm's position allocation factors through the eligible bidder
+sets visible up to the current round, so the relabeling symmetry is proved
+internally.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_observed_prefix_allocation_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    {ratio : ℝ}
+    (C : BMatchingObservedPrefixAllocationRevenueCertificate
+      N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+/--
 Section 7 / Theorem 9 harmonic-cap wrapper: the logarithmic tail-spend bound
 implies the finite layer-count estimate used in the asymptotic lower bound.
 -/
@@ -996,6 +1015,23 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
     [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
     (C : BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
       Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint from the observed-prefix
+online-information model.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_observed_prefix_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9ObservedPrefixFamilyCertificate Algorithm) :
     ∀ δ : ℝ, 0 < δ →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
         ∀ randomizedAlgorithm : PMF (Algorithm N),
