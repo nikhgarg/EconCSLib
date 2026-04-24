@@ -348,6 +348,37 @@ theorem priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
     priceOfFairness W = 1 - optimalUserFairnessAtLevel W 1 := by
   exact priceOfFairnessAt_eq_one_sub_optimalUserFairnessAtLevel W hNonneg hRow 1
 
+/--
+If the maximal-item-fairness constrained optimum weakly increases between two
+models, then the price of fairness weakly decreases.
+-/
+theorem priceOfFairness_le_of_optimalUserFairnessAtLevel_one_le
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W W' : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem)
+    (hNonneg' : W'.Nonnegative) (hRow' : W'.RowHasPositiveItem)
+    (hopt :
+      optimalUserFairnessAtLevel W 1 ≤ optimalUserFairnessAtLevel W' 1) :
+    priceOfFairness W' ≤ priceOfFairness W := by
+  rw [priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one W hNonneg hRow]
+  rw [priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one W' hNonneg' hRow']
+  linarith
+
+/--
+Strict version of the price-of-fairness monotonicity algebra.
+-/
+theorem priceOfFairness_lt_of_optimalUserFairnessAtLevel_one_lt
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W W' : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem)
+    (hNonneg' : W'.Nonnegative) (hRow' : W'.RowHasPositiveItem)
+    (hopt :
+      optimalUserFairnessAtLevel W 1 < optimalUserFairnessAtLevel W' 1) :
+    priceOfFairness W' < priceOfFairness W := by
+  rw [priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one W hNonneg hRow]
+  rw [priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one W' hNonneg' hRow']
+  linarith
+
 /-- Problem 1 from the paper, as a predicate on candidate solution policies. -/
 def SolvesProblemOne {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) (ρ : Policy m n) : Prop :=

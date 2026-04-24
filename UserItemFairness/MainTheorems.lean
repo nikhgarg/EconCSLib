@@ -434,6 +434,39 @@ theorem paper_priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
   exact W.priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
     hNonneg hRow
 
+/--
+Theorem 3 algebraic monotonicity bridge.
+
+If the maximal-item-fairness constrained optimum increases between two utility
+matrices, then the price of fairness decreases. The paper-specific work in
+Theorem 3 is therefore the finite LP proof that
+`U^*_min(1, α)` increases with preference diversity.
+-/
+theorem paper_theorem3_price_decreases_from_constrained_optimum_increase
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W W' : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem)
+    (hNonneg' : W'.Nonnegative) (hRow' : W'.RowHasPositiveItem)
+    (hopt :
+      W.optimalUserFairnessAtLevel 1 ≤ W'.optimalUserFairnessAtLevel 1) :
+    W'.priceOfFairness ≤ W.priceOfFairness := by
+  exact W.priceOfFairness_le_of_optimalUserFairnessAtLevel_one_le
+    W' hNonneg hRow hNonneg' hRow' hopt
+
+/--
+Strict form of the Theorem 3 algebraic monotonicity bridge.
+-/
+theorem paper_theorem3_price_strictly_decreases_from_constrained_optimum_increase
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W W' : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem)
+    (hNonneg' : W'.Nonnegative) (hRow' : W'.RowHasPositiveItem)
+    (hopt :
+      W.optimalUserFairnessAtLevel 1 < W'.optimalUserFairnessAtLevel 1) :
+    W'.priceOfFairness < W.priceOfFairness := by
+  exact W.priceOfFairness_lt_of_optimalUserFairnessAtLevel_one_lt
+    W' hNonneg hRow hNonneg' hRow' hopt
+
 end RecommendationModel
 
 namespace RecommendationModel.SymmetricData
