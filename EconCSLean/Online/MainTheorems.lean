@@ -137,6 +137,24 @@ theorem paper_adwords_dual_feasible_msvv_assignment
   exact AdWordsInstance.dualFeasible_msvvAssignment I A
 
 /--
+The normalized MSVV assignment-induced advertiser duals, paired with finite
+max-slack query duals, form a dual-feasible AdWords LP solution. This is the
+dual-fitting normalization whose initial advertiser dual value is zero.
+-/
+theorem paper_adwords_dual_feasible_msvv_normalized_assignment
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (A : AdWordsInstance.Assignment Advertiser Query) :
+    I.DualFeasible (I.msvvNormalizedAlphaFromAssignment A)
+      (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) := by
+  exact AdWordsInstance.dualFeasible_msvvNormalizedAssignment
+    I hbid hbudget A
+
+/--
 If some advertiser can still accept a query, a Balance/MSVV scaled-bid maximizer
 exists for that query.
 -/
@@ -300,6 +318,33 @@ theorem paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign
     I hbid hbudget rule hrule history S hS q chosen hchoice hall
 
 /--
+Normalized non-exhausted-query beta charge: using the normalized assignment
+dual, the scaled final max-slack query dual is bounded by the Balance score of
+the advertiser selected at that state.
+-/
+theorem paper_adwords_msvv_ratio_mul_normalized_max_slack_beta_le_balance_score_of_all_can_assign
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen)
+    (hall : ∀ a, I.CanAssign S.assignment q a) :
+    AdWordsInstance.msvvRatio *
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (I.runHistoryStateFrom rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q := by
+  exact AdWordsInstance.msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_balanceScore_of_all_canAssign
+    I hbid hbudget rule hrule history S hS q chosen hchoice hall
+
+/--
 Exhausted-advertiser alpha charge: if advertiser `a` cannot accept query `q`
 at an earlier online state, then under `ε`-small bids the final MSVV
 assignment-induced advertiser dual is at least `exp (-ε)`.
@@ -346,6 +391,61 @@ theorem paper_adwords_blocked_advertiser_final_slack_score_le_error
       I.bid a q * (1 - Real.exp (-ε)) := by
   exact AdWordsInstance.final_slackScore_le_bid_mul_one_sub_exp_neg_epsilon_of_not_canAssign
     I hbid rule hrule history S hS hsmall a q hbudget hnot
+
+/--
+Normalized exhausted-advertiser slack charge: with normalized MSVV advertiser
+duals, the scaled blocked-advertiser slack is at most the explicit
+`bid * (1 - exp (-ε))` small-bids error term.
+-/
+theorem paper_adwords_msvv_ratio_mul_blocked_advertiser_normalized_final_slack_score_le_error
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hsmall : I.SmallBids ε) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a)
+    (hnot : ¬ I.CanAssign S.assignment q a) :
+    AdWordsInstance.msvvRatio *
+        I.slackScore
+          (I.msvvNormalizedAlphaFromAssignment
+            (I.runHistoryStateFrom rule S history).assignment) a q ≤
+      I.bid a q * (1 - Real.exp (-ε)) := by
+  exact AdWordsInstance.msvvRatio_mul_final_normalized_slackScore_le_bid_error_of_not_canAssign
+    I hbid rule hrule history S hS hsmall a q hbudget hnot
+
+/--
+Normalized mixed beta charge: with normalized assignment-induced duals, the
+scaled final max-slack query dual is bounded by the chosen Balance score plus
+the explicit max-bid small-bids error term.
+-/
+theorem paper_adwords_msvv_ratio_mul_normalized_max_slack_beta_le_balance_score_add_max_bid_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen) :
+    AdWordsInstance.msvvRatio *
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (I.runHistoryStateFrom rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q +
+        I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+  exact AdWordsInstance.msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_balanceScore_add_maxBidError_of_choice
+    I hbid hbudget rule hrule history S hS hε hsmall q chosen hchoice
 
 /--
 Mixed beta charge: for a Balance/MSVV choice at state `S`, the final max-slack
@@ -477,6 +577,35 @@ theorem paper_adwords_balance_query_dual_sum_le_charge_add_error_of_history_cove
     I hbid hbudget history hnodup hcover hε hsmall
 
 /--
+Normalized query-dual sum charge for a history that enumerates all query
+identifiers: the scaled finite LP query-dual contribution is bounded by the
+recursive Balance charge plus the explicit max-bid small-bids error.
+-/
+theorem paper_adwords_msvv_ratio_mul_normalized_query_dual_sum_le_charge_add_error_of_history_cover
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    AdWordsInstance.msvvRatio *
+      (∑ q : Query,
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (I.runAssignment I.balanceChoiceRule history)) q) ≤
+      AdWordsInstance.historyBalanceChargeFrom I I.balanceChoiceRule
+        AdWordsInstance.initialHistoryState history +
+        AdWordsInstance.historyMaxBidErrorSum I ε history := by
+  exact AdWordsInstance.msvvRatio_mul_sum_maxSlackBeta_normalized_balanceRun_le_balanceCharge_add_maxBidError_of_cover
+    I hbid hbudget history hnodup hcover hε hsmall
+
+/--
 Small-bids boundary lemma: if advertiser `a` cannot accept query `q`, then
 under the `ε`-small-bids condition `a` has already spent more than a
 `1 - ε` fraction of her budget.
@@ -560,13 +689,15 @@ theorem paper_adwords_balance_msvv_competitive_of_objective_bound
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
     (I : AdWordsInstance Advertiser Query)
-    (hbudget : I.NonnegativeBudgets)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
     (history : List Query)
     (hcert : I.MsvvObjectiveBoundCertificate history) :
-    AdWordsInstance.msvvRatio * I.offlineOptimumValue hbudget ≤
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
       I.revenue (I.runAssignment I.balanceChoiceRule history) := by
   exact AdWordsInstance.balance_msvv_competitive_of_objectiveBound
-    I hbudget history hcert
+    I hbid hbudget history hcert
 
 end Online
 end EconCSLean

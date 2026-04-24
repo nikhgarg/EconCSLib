@@ -260,6 +260,14 @@ noncomputable def balanceDiscount (x : ℝ) : ℝ :=
 noncomputable def msvvDualAlpha (x : ℝ) : ℝ :=
   Real.exp (x - 1)
 
+/--
+The normalized MSVV advertiser dual used in the standard dual-fitting proof.
+It starts at zero when the spent fraction is zero and reaches one at a fully
+spent budget.
+-/
+noncomputable def msvvNormalizedDualAlpha (x : ℝ) : ℝ :=
+  (Real.exp x - 1) / (Real.exp 1 - 1)
+
 /-- The classical MSVV competitive ratio `1 - 1/e`. -/
 noncomputable def msvvRatio : ℝ :=
   1 - 1 / Real.exp 1
@@ -276,6 +284,13 @@ noncomputable def msvvAlphaFromAssignment
     (I : AdWordsInstance Advertiser Query)
     (A : Assignment Advertiser Query) (a : Advertiser) : ℝ :=
   msvvDualAlpha (I.spentFraction A a)
+
+/-- Normalized MSVV advertiser duals induced by an assignment's spent fractions. -/
+noncomputable def msvvNormalizedAlphaFromAssignment
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) : ℝ :=
+  msvvNormalizedDualAlpha (I.spentFraction A a)
 
 /-- Slack-score form of a dual covering constraint for one advertiser-query pair. -/
 noncomputable def slackScore
@@ -1130,6 +1145,26 @@ theorem msvvDualAlpha_mono {x y : ℝ} (hxy : x ≤ y) :
   unfold msvvDualAlpha
   exact Real.exp_le_exp.mpr (by linarith)
 
+theorem exp_one_sub_one_pos : 0 < Real.exp 1 - 1 := by
+  have hgt : 1 < Real.exp 1 :=
+    Real.one_lt_exp_iff.mpr zero_lt_one
+  linarith
+
+theorem msvvNormalizedDualAlpha_nonneg_of_nonneg {x : ℝ} (hx : 0 ≤ x) :
+    0 ≤ msvvNormalizedDualAlpha x := by
+  unfold msvvNormalizedDualAlpha
+  have hnum : 0 ≤ Real.exp x - 1 := by
+    rw [sub_nonneg]
+    simpa using (Real.exp_le_exp.mpr hx : Real.exp 0 ≤ Real.exp x)
+  exact div_nonneg hnum exp_one_sub_one_pos.le
+
+theorem msvvNormalizedDualAlpha_mono {x y : ℝ} (hxy : x ≤ y) :
+    msvvNormalizedDualAlpha x ≤ msvvNormalizedDualAlpha y := by
+  unfold msvvNormalizedDualAlpha
+  exact div_le_div_of_nonneg_right
+    (sub_le_sub_right (Real.exp_le_exp.mpr hxy) 1)
+    exp_one_sub_one_pos.le
+
 theorem one_sub_exp_neg_nonneg {ε : ℝ} (hε : 0 ≤ ε) :
     0 ≤ 1 - Real.exp (-ε) := by
   have hexp : Real.exp (-ε) ≤ 1 := by
@@ -1187,6 +1222,17 @@ theorem msvvAlphaFromAssignment_nonneg
   intro a
   exact msvvDualAlpha_nonneg (I.spentFraction A a)
 
+theorem msvvNormalizedAlphaFromAssignment_nonneg
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (A : Assignment Advertiser Query) :
+    ∀ a, 0 ≤ I.msvvNormalizedAlphaFromAssignment A a := by
+  intro a
+  exact msvvNormalizedDualAlpha_nonneg_of_nonneg
+    (spentFraction_nonneg I hbid A a (hbudget a))
+
 theorem balanceScore_eq_slackScore_msvvAlphaFromAssignment
     [Fintype Query] [DecidableEq Advertiser]
     (I : AdWordsInstance Advertiser Query)
@@ -1195,6 +1241,35 @@ theorem balanceScore_eq_slackScore_msvvAlphaFromAssignment
       I.slackScore (I.msvvAlphaFromAssignment A) a q := by
   simp [balanceScore, balanceDiscount, slackScore,
     msvvAlphaFromAssignment, msvvDualAlpha]
+
+theorem msvvRatio_mul_slackScore_msvvNormalizedAlphaFromAssignment_eq_balanceScore
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) (q : Query) :
+    msvvRatio *
+        I.slackScore (I.msvvNormalizedAlphaFromAssignment A) a q =
+      I.balanceScore A a q := by
+  unfold msvvRatio slackScore balanceScore balanceDiscount
+    msvvNormalizedAlphaFromAssignment msvvNormalizedDualAlpha
+  have hE : Real.exp 1 ≠ 0 := ne_of_gt (Real.exp_pos 1)
+  have hden : Real.exp 1 - 1 ≠ 0 := ne_of_gt exp_one_sub_one_pos
+  rw [show Real.exp (I.spentFraction A a - 1) =
+      Real.exp (I.spentFraction A a) / Real.exp 1 by
+    rw [sub_eq_add_neg, Real.exp_add, Real.exp_neg]
+    ring]
+  field_simp [hE, hden]
+  ring
+
+theorem msvvRatio_mul_one_sub_msvvNormalizedDualAlpha_one_sub (ε : ℝ) :
+    msvvRatio * (1 - msvvNormalizedDualAlpha (1 - ε)) =
+      1 - Real.exp (-ε) := by
+  unfold msvvRatio msvvNormalizedDualAlpha
+  have hE : Real.exp 1 ≠ 0 := ne_of_gt (Real.exp_pos 1)
+  have hden : Real.exp 1 - 1 ≠ 0 := ne_of_gt exp_one_sub_one_pos
+  rw [show Real.exp (1 - ε) = Real.exp 1 * Real.exp (-ε) by
+    rw [sub_eq_add_neg, Real.exp_add]]
+  field_simp [hE, hden]
+  ring
 
 theorem slackScore_anti_mono_alpha
     (I : AdWordsInstance Advertiser Query)
@@ -1290,6 +1365,29 @@ theorem maxSlackBeta_le_of_slackScore_le
     rcases Finset.mem_image.mp hx with ⟨a, _ha, rfl⟩
     exact hscore a
 
+theorem mul_maxSlackBeta_le_of_mul_slackScore_le
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (q : Query) {r B : ℝ}
+    (hr : 0 ≤ r)
+    (hB : 0 ≤ B)
+    (hscore : ∀ a, r * I.slackScore alpha a q ≤ B) :
+    r * I.maxSlackBeta alpha q ≤ B := by
+  classical
+  unfold maxSlackBeta
+  let scores : Finset ℝ :=
+    Finset.univ.image fun a : Advertiser => I.slackScore alpha a q
+  have hscores : scores.Nonempty := by
+    obtain ⟨a⟩ := (inferInstance : Nonempty Advertiser)
+    exact ⟨I.slackScore alpha a q, by simp [scores]⟩
+  by_cases hmax_nonneg : 0 ≤ scores.max' hscores
+  · rw [max_eq_right hmax_nonneg]
+    have hmem : scores.max' hscores ∈ scores := Finset.max'_mem scores hscores
+    rcases Finset.mem_image.mp hmem with ⟨a, _ha, ha⟩
+    simpa [ha] using hscore a
+  · rw [max_eq_left (le_of_not_ge hmax_nonneg)]
+    simpa using hB
+
 theorem dualFeasible_maxSlackBeta
     [Fintype Advertiser] [Nonempty Advertiser]
     (I : AdWordsInstance Advertiser Query)
@@ -1309,6 +1407,18 @@ theorem dualFeasible_msvvAssignment
       (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) := by
   exact dualFeasible_maxSlackBeta I (I.msvvAlphaFromAssignment A)
     (msvvAlphaFromAssignment_nonneg I A)
+
+theorem dualFeasible_msvvNormalizedAssignment
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (A : Assignment Advertiser Query) :
+    I.DualFeasible (I.msvvNormalizedAlphaFromAssignment A)
+      (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) := by
+  exact dualFeasible_maxSlackBeta I (I.msvvNormalizedAlphaFromAssignment A)
+    (msvvNormalizedAlphaFromAssignment_nonneg I hbid hbudget A)
 
 theorem mem_feasibleAdvertisers
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
@@ -1626,6 +1736,23 @@ theorem msvvAlphaFromAssignment_le_runHistoryStateFrom
     (spentFraction_le_runHistoryStateFrom_spentFraction
       I hbid rule hrule history S hS a hbudget)
 
+theorem msvvNormalizedAlphaFromAssignment_le_runHistoryStateFrom
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser)
+    (hbudget : 0 < I.budget a) :
+    I.msvvNormalizedAlphaFromAssignment S.assignment a ≤
+      I.msvvNormalizedAlphaFromAssignment
+        (runHistoryStateFrom I rule S history).assignment a := by
+  unfold msvvNormalizedAlphaFromAssignment
+  exact msvvNormalizedDualAlpha_mono
+    (spentFraction_le_runHistoryStateFrom_spentFraction
+      I hbid rule hrule history S hS a hbudget)
+
 theorem final_slackScore_le_initial_balanceScore
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
     (I : AdWordsInstance Advertiser Query)
@@ -1651,6 +1778,34 @@ theorem final_slackScore_le_initial_balanceScore
   simpa [balanceScore_eq_slackScore_msvvAlphaFromAssignment I S.assignment a q]
     using hslack
 
+theorem msvvRatio_mul_final_normalized_slackScore_le_initial_balanceScore
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a) :
+    msvvRatio *
+        I.slackScore
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) a q ≤
+      I.balanceScore S.assignment a q := by
+  have halpha :=
+    msvvNormalizedAlphaFromAssignment_le_runHistoryStateFrom
+      I hbid rule hrule history S hS a hbudget
+  have hslack :=
+    slackScore_anti_mono_alpha I hbid
+      (I.msvvNormalizedAlphaFromAssignment S.assignment)
+      (I.msvvNormalizedAlphaFromAssignment
+        (runHistoryStateFrom I rule S history).assignment)
+      a q halpha
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hslack msvvRatio_nonneg
+  simpa [msvvRatio_mul_slackScore_msvvNormalizedAlphaFromAssignment_eq_balanceScore
+    I S.assignment a q] using hscaled
+
 theorem maxSlackBeta_runHistoryStateFrom_le_balanceScore_of_all_canAssign
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
@@ -1672,6 +1827,32 @@ theorem maxSlackBeta_runHistoryStateFrom_le_balanceScore_of_all_canAssign
       (hbudget chosen) hS.1
   · intro a
     exact (final_slackScore_le_initial_balanceScore
+      I hbid rule hrule history S hS a q (hbudget a)).trans
+      (hchoice.2 a (hall a))
+
+theorem msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_balanceScore_of_all_canAssign
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen)
+    (hall : ∀ a, I.CanAssign S.assignment q a) :
+    msvvRatio *
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q := by
+  apply mul_maxSlackBeta_le_of_mul_slackScore_le
+  · exact msvvRatio_nonneg
+  · exact balanceScore_nonneg_of_feasible I hbid S.assignment chosen q
+      (hbudget chosen) hS.1
+  · intro a
+    exact (msvvRatio_mul_final_normalized_slackScore_le_initial_balanceScore
       I hbid rule hrule history S hS a q (hbudget a)).trans
       (hchoice.2 a (hall a))
 
@@ -1707,6 +1888,38 @@ theorem final_msvvAlphaFromAssignment_ge_exp_neg_epsilon_of_not_canAssign
   unfold msvvAlphaFromAssignment msvvDualAlpha
   exact Real.exp_le_exp.mpr (by linarith)
 
+theorem final_msvvNormalizedAlphaFromAssignment_ge_one_sub_epsilon_of_not_canAssign
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hsmall : I.SmallBids ε) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a)
+    (hnot : ¬ I.CanAssign S.assignment q a) :
+    msvvNormalizedDualAlpha (1 - ε) ≤
+      I.msvvNormalizedAlphaFromAssignment
+        (runHistoryStateFrom I rule S history).assignment a := by
+  have hblocked :
+      1 - ε < I.spentFraction S.assignment a :=
+    spentFraction_gt_one_sub_epsilon_of_not_canAssign
+      I S.assignment a q hbudget hsmall hnot
+  have hrun :
+      I.spentFraction S.assignment a ≤
+        I.spentFraction
+          (runHistoryStateFrom I rule S history).assignment a :=
+    spentFraction_le_runHistoryStateFrom_spentFraction
+      I hbid rule hrule history S hS a hbudget
+  have hfrac :
+      1 - ε ≤
+        I.spentFraction
+          (runHistoryStateFrom I rule S history).assignment a :=
+    (le_of_lt hblocked).trans hrun
+  unfold msvvNormalizedAlphaFromAssignment
+  exact msvvNormalizedDualAlpha_mono hfrac
+
 theorem final_slackScore_le_bid_mul_one_sub_exp_neg_epsilon_of_not_canAssign
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
     (I : AdWordsInstance Advertiser Query)
@@ -1733,6 +1946,190 @@ theorem final_slackScore_le_bid_mul_one_sub_exp_neg_epsilon_of_not_canAssign
         1 - Real.exp (-ε) := by
     linarith
   exact mul_le_mul_of_nonneg_left hfactor (hbid a q)
+
+theorem msvvRatio_mul_final_normalized_slackScore_le_bid_error_of_not_canAssign
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hsmall : I.SmallBids ε) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a)
+    (hnot : ¬ I.CanAssign S.assignment q a) :
+    msvvRatio *
+        I.slackScore
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) a q ≤
+      I.bid a q * (1 - Real.exp (-ε)) := by
+  have halpha :=
+    final_msvvNormalizedAlphaFromAssignment_ge_one_sub_epsilon_of_not_canAssign
+      I hbid rule hrule history S hS hsmall a q hbudget hnot
+  have hfactor :
+      1 -
+          I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment a ≤
+        1 - msvvNormalizedDualAlpha (1 - ε) := by
+    linarith
+  have hslack :
+      I.slackScore
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) a q ≤
+        I.bid a q * (1 - msvvNormalizedDualAlpha (1 - ε)) := by
+    unfold slackScore
+    exact mul_le_mul_of_nonneg_left hfactor (hbid a q)
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hslack msvvRatio_nonneg
+  calc
+    msvvRatio *
+        I.slackScore
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) a q ≤
+        msvvRatio * (I.bid a q * (1 - msvvNormalizedDualAlpha (1 - ε))) :=
+          hscaled
+    _ = I.bid a q * (1 - Real.exp (-ε)) := by
+      rw [show msvvRatio *
+            (I.bid a q * (1 - msvvNormalizedDualAlpha (1 - ε))) =
+          I.bid a q *
+            (msvvRatio * (1 - msvvNormalizedDualAlpha (1 - ε))) by ring]
+      rw [msvvRatio_mul_one_sub_msvvNormalizedDualAlpha_one_sub]
+
+theorem msvvRatio_mul_final_normalized_slackScore_le_max_balanceScore_maxBidError_of_choice
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query) (chosen a : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen) :
+    msvvRatio *
+        I.slackScore
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) a q ≤
+      max (I.balanceScore S.assignment chosen q)
+        (I.maxBidForQuery q * (1 - Real.exp (-ε))) := by
+  by_cases hcan : I.CanAssign S.assignment q a
+  · have hle :=
+      msvvRatio_mul_final_normalized_slackScore_le_initial_balanceScore
+        I hbid rule hrule history S hS a q (hbudget a)
+    exact (hle.trans (hchoice.2 a hcan)).trans (le_max_left _ _)
+  · have hle :=
+      msvvRatio_mul_final_normalized_slackScore_le_bid_error_of_not_canAssign
+        I hbid rule hrule history S hS hsmall a q (hbudget a) hcan
+    have hbidMax :
+        I.bid a q * (1 - Real.exp (-ε)) ≤
+          I.maxBidForQuery q * (1 - Real.exp (-ε)) :=
+      mul_le_mul_of_nonneg_right
+        (bid_le_maxBidForQuery I a q) (one_sub_exp_neg_nonneg hε)
+    exact (hle.trans hbidMax).trans (le_max_right _ _)
+
+theorem msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_max_balanceScore_maxBidError_of_choice
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen) :
+    msvvRatio *
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) q ≤
+      max (I.balanceScore S.assignment chosen q)
+        (I.maxBidForQuery q * (1 - Real.exp (-ε))) := by
+  apply mul_maxSlackBeta_le_of_mul_slackScore_le
+  · exact msvvRatio_nonneg
+  · have hbal :
+        0 ≤ I.balanceScore S.assignment chosen q :=
+      balanceScore_nonneg_of_feasible
+        I hbid S.assignment chosen q (hbudget chosen) hS.1
+    exact hbal.trans (le_max_left _ _)
+  · intro a
+    exact msvvRatio_mul_final_normalized_slackScore_le_max_balanceScore_maxBidError_of_choice
+      I hbid hbudget rule hrule history S hS hε hsmall q chosen a hchoice
+
+theorem msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_balanceScore_add_maxBidError_of_choice
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen) :
+    msvvRatio *
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q +
+        I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+  have hmax :=
+    msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_max_balanceScore_maxBidError_of_choice
+      I hbid hbudget rule hrule history S hS hε hsmall q chosen hchoice
+  have hbal :
+      0 ≤ I.balanceScore S.assignment chosen q :=
+    balanceScore_nonneg_of_feasible
+      I hbid S.assignment chosen q (hbudget chosen) hS.1
+  have herr :
+      0 ≤ I.maxBidForQuery q * (1 - Real.exp (-ε)) :=
+    mul_nonneg (maxBidForQuery_nonneg I q) (one_sub_exp_neg_nonneg hε)
+  have hsum :
+      max (I.balanceScore S.assignment chosen q)
+          (I.maxBidForQuery q * (1 - Real.exp (-ε))) ≤
+        I.balanceScore S.assignment chosen q +
+          I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+    apply max_le
+    · linarith
+    · linarith
+  exact hmax.trans hsum
+
+theorem msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_maxBidError_of_all_not_canAssign
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query)
+    (hallBlocked : ∀ a, ¬ I.CanAssign S.assignment q a) :
+    msvvRatio *
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I rule S history).assignment) q ≤
+      I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+  apply mul_maxSlackBeta_le_of_mul_slackScore_le
+  · exact msvvRatio_nonneg
+  · exact mul_nonneg (maxBidForQuery_nonneg I q) (one_sub_exp_neg_nonneg hε)
+  · intro a
+    have hle :=
+      msvvRatio_mul_final_normalized_slackScore_le_bid_error_of_not_canAssign
+        I hbid rule hrule history S hS hsmall a q (hbudget a)
+        (hallBlocked a)
+    have hbidMax :
+        I.bid a q * (1 - Real.exp (-ε)) ≤
+          I.maxBidForQuery q * (1 - Real.exp (-ε)) :=
+      mul_le_mul_of_nonneg_right
+        (bid_le_maxBidForQuery I a q) (one_sub_exp_neg_nonneg hε)
+    exact hle.trans hbidMax
 
 theorem final_slackScore_le_max_balanceScore_bidError_of_choice
     [Fintype Advertiser]
@@ -2050,6 +2447,133 @@ theorem historyMaxSlackBetaSum_balanceChoiceRun_le_balanceCharge_add_maxBidError
                 simp [historyBalanceChargeFrom, historyMaxBidErrorSum,
                   hqFresh, S', add_assoc, add_left_comm, add_comm]
 
+theorem msvvRatio_mul_historyMaxSlackBetaSum_normalized_balanceChoiceRun_le_balanceCharge_add_maxBidError
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S)
+    (hfresh : ∀ q, q ∈ historyFinset history → q ∉ S.seen)
+    (hnodup : history.Nodup) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    msvvRatio *
+        historyMaxSlackBetaSum I
+          (I.msvvNormalizedAlphaFromAssignment
+            (runHistoryStateFrom I I.balanceChoiceRule S history).assignment)
+          history ≤
+      historyBalanceChargeFrom I I.balanceChoiceRule S history +
+        historyMaxBidErrorSum I ε history := by
+  induction history generalizing S with
+  | nil =>
+      simp [historyMaxSlackBetaSum, historyBalanceChargeFrom,
+        historyMaxBidErrorSum]
+  | cons q qs ih =>
+      have hnodupParts := List.nodup_cons.mp hnodup
+      have hqNotMemQs : q ∉ qs := hnodupParts.1
+      have hnodupQs : qs.Nodup := hnodupParts.2
+      have hqFresh : q ∉ S.seen := by
+        exact hfresh q (by simp [historyFinset])
+      let S' := stepHistoryState I I.balanceChoiceRule S q
+      have hS' : I.StateInvariant S' :=
+        stepHistoryState_invariant I I.balanceChoiceRule
+          (balanceChoiceRule_feasible I) S q hS
+      have hqNotTail : q ∉ historyFinset qs := by
+        intro hmem
+        exact hqNotMemQs ((mem_historyFinset (history := qs) (q := q)).1 hmem)
+      have htailFresh :
+          ∀ r, r ∈ historyFinset qs → r ∉ S'.seen := by
+        intro r hr hseen
+        have hseen_eq :
+            S'.seen = insert q S.seen := by
+          simpa [S'] using
+            (stepHistoryState_seen I I.balanceChoiceRule S q)
+        rw [hseen_eq] at hseen
+        rcases Finset.mem_insert.mp hseen with hqr | hseenOld
+        · subst r
+          exact hqNotTail hr
+        · exact hfresh r (by simp [historyFinset, hr]) hseenOld
+      have htail :=
+        ih S' hS' htailFresh hnodupQs
+      have hhead :
+          msvvRatio *
+              I.maxSlackBeta
+                (I.msvvNormalizedAlphaFromAssignment
+                  (runHistoryStateFrom I I.balanceChoiceRule S (q :: qs)).assignment)
+                q ≤
+            (match I.balanceChoiceRule S.assignment q with
+              | none => 0
+              | some a => I.balanceScore S.assignment a q) +
+              I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+        cases hchoice : I.balanceChoiceRule S.assignment q with
+        | none =>
+            have hallBlocked :
+                ∀ a, ¬ I.CanAssign S.assignment q a :=
+              (balanceChoiceRule_eq_none_iff_forall_not_canAssign
+                I S.assignment q).1 hchoice
+            have hle :=
+              msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_maxBidError_of_all_not_canAssign
+                I hbid hbudget I.balanceChoiceRule
+                (balanceChoiceRule_feasible I) (q :: qs) S hS hε hsmall q
+                hallBlocked
+            simpa [hchoice] using hle
+        | some chosen =>
+            have hbalance :
+                I.IsBalanceChoice S.assignment q chosen :=
+              balanceChoiceRule_isBalanceChoice_of_eq_some
+                I S.assignment q chosen hchoice
+            have hle :=
+              msvvRatio_mul_maxSlackBeta_normalized_runHistoryStateFrom_le_balanceScore_add_maxBidError_of_choice
+                I hbid hbudget I.balanceChoiceRule
+                (balanceChoiceRule_feasible I) (q :: qs) S hS hε hsmall
+                q chosen hbalance
+            simpa [hchoice] using hle
+      have hhead' :
+          msvvRatio *
+              I.maxSlackBeta
+                (I.msvvNormalizedAlphaFromAssignment
+                  (runHistoryStateFrom I I.balanceChoiceRule S' qs).assignment)
+                q ≤
+            (match I.balanceChoiceRule S.assignment q with
+              | none => 0
+              | some a => I.balanceScore S.assignment a q) +
+              I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+        simpa [S', runHistoryStateFrom] using hhead
+      calc
+        msvvRatio *
+            historyMaxSlackBetaSum I
+              (I.msvvNormalizedAlphaFromAssignment
+                (runHistoryStateFrom I I.balanceChoiceRule S (q :: qs)).assignment)
+              (q :: qs)
+            =
+          msvvRatio *
+              I.maxSlackBeta
+                (I.msvvNormalizedAlphaFromAssignment
+                  (runHistoryStateFrom I I.balanceChoiceRule S' qs).assignment)
+                q +
+            msvvRatio *
+              historyMaxSlackBetaSum I
+                (I.msvvNormalizedAlphaFromAssignment
+                  (runHistoryStateFrom I I.balanceChoiceRule S' qs).assignment)
+                qs := by
+                  simp [historyMaxSlackBetaSum, runHistoryStateFrom, S',
+                    mul_add]
+        _ ≤
+          ((match I.balanceChoiceRule S.assignment q with
+            | none => 0
+            | some a => I.balanceScore S.assignment a q) +
+              I.maxBidForQuery q * (1 - Real.exp (-ε))) +
+            (historyBalanceChargeFrom I I.balanceChoiceRule S' qs +
+              historyMaxBidErrorSum I ε qs) :=
+                add_le_add hhead' htail
+        _ =
+          historyBalanceChargeFrom I I.balanceChoiceRule S (q :: qs) +
+            historyMaxBidErrorSum I ε (q :: qs) := by
+                simp [historyBalanceChargeFrom, historyMaxBidErrorSum,
+                  hqFresh, S', add_assoc, add_left_comm, add_comm]
+
 theorem sum_maxSlackBeta_balanceRun_le_balanceCharge_add_maxBidError_of_cover
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
@@ -2097,6 +2621,57 @@ theorem sum_maxSlackBeta_balanceRun_le_balanceCharge_add_maxBidError_of_cover
   rw [sum_univ_maxSlackBeta_eq_historyMaxSlackBetaSum_of_cover
     I (I.msvvAlphaFromAssignment (I.runAssignment I.balanceChoiceRule history))
     history hnodup hcover]
+  exact hhist'
+
+theorem msvvRatio_mul_sum_maxSlackBeta_normalized_balanceRun_le_balanceCharge_add_maxBidError_of_cover
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    msvvRatio *
+      (∑ q : Query,
+        I.maxSlackBeta
+          (I.msvvNormalizedAlphaFromAssignment
+            (I.runAssignment I.balanceChoiceRule history)) q) ≤
+      historyBalanceChargeFrom I I.balanceChoiceRule
+        initialHistoryState history +
+        historyMaxBidErrorSum I ε history := by
+  have hnonneg : I.NonnegativeBudgets := fun a => (hbudget a).le
+  have hS :
+      I.StateInvariant
+        (initialHistoryState : HistoryState Advertiser Query) :=
+    initialHistoryState_invariant I hnonneg
+  have hfresh :
+      ∀ q,
+        q ∈ historyFinset history →
+          q ∉
+            (initialHistoryState : HistoryState Advertiser Query).seen := by
+    simp [initialHistoryState]
+  have hhist :=
+    msvvRatio_mul_historyMaxSlackBetaSum_normalized_balanceChoiceRun_le_balanceCharge_add_maxBidError
+      I hbid hbudget history
+      (initialHistoryState : HistoryState Advertiser Query)
+      hS hfresh hnodup hε hsmall
+  have hhist' :
+      msvvRatio *
+        historyMaxSlackBetaSum I
+          (I.msvvNormalizedAlphaFromAssignment
+            (I.runAssignment I.balanceChoiceRule history))
+          history ≤
+        historyBalanceChargeFrom I I.balanceChoiceRule
+          initialHistoryState history +
+          historyMaxBidErrorSum I ε history := by
+    simpa [runAssignment, runHistoryState] using hhist
+  rw [sum_univ_maxSlackBeta_eq_historyMaxSlackBetaSum_of_cover
+    I (I.msvvNormalizedAlphaFromAssignment
+      (I.runAssignment I.balanceChoiceRule history)) history hnodup hcover]
   exact hhist'
 
 theorem runHistoryState_invariant
@@ -2267,8 +2842,8 @@ structure MsvvObjectiveBoundCertificate
   scaled_dual_bound :
     let A := I.runAssignment I.balanceChoiceRule history
     msvvRatio *
-      I.dualObjective (I.msvvAlphaFromAssignment A)
-        (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) ≤
+      I.dualObjective (I.msvvNormalizedAlphaFromAssignment A)
+        (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) ≤
       I.revenue A
 
 /--
@@ -2291,9 +2866,9 @@ structure MsvvHistoryAccountingCertificate
   scaled_accounting_bound :
     let A := I.runAssignment I.balanceChoiceRule history
     msvvRatio *
-      ((∑ a : Advertiser, I.budget a * I.msvvAlphaFromAssignment A a) +
+        (∑ a : Advertiser, I.budget a * I.msvvNormalizedAlphaFromAssignment A a) +
         I.historyBalanceChargeFrom I.balanceChoiceRule initialHistoryState history +
-        I.historyMaxBidErrorSum ε history) ≤
+        I.historyMaxBidErrorSum ε history ≤
       I.revenue A
 
 theorem msvvObjectiveBoundCertificate_of_historyAccounting
@@ -2306,57 +2881,52 @@ theorem msvvObjectiveBoundCertificate_of_historyAccounting
   refine ⟨?_⟩
   let A := I.runAssignment I.balanceChoiceRule history
   have hquery :
-      (∑ q : Query,
-        I.maxSlackBeta (I.msvvAlphaFromAssignment A) q) ≤
+      msvvRatio *
+        (∑ q : Query,
+          I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A) q) ≤
         I.historyBalanceChargeFrom I.balanceChoiceRule
           initialHistoryState history +
           I.historyMaxBidErrorSum ε history := by
     simpa [A] using
-      sum_maxSlackBeta_balanceRun_le_balanceCharge_add_maxBidError_of_cover
+      msvvRatio_mul_sum_maxSlackBeta_normalized_balanceRun_le_balanceCharge_add_maxBidError_of_cover
         I hcert.nonnegative_bids hcert.positive_budgets history
         hcert.history_nodup hcert.history_covers_queries
         hcert.epsilon_nonneg hcert.small_bids
   have hdual :
-      I.dualObjective (I.msvvAlphaFromAssignment A)
-          (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) ≤
-        (∑ a : Advertiser, I.budget a * I.msvvAlphaFromAssignment A a) +
+      msvvRatio *
+          I.dualObjective (I.msvvNormalizedAlphaFromAssignment A)
+            (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) ≤
+        msvvRatio *
+            (∑ a : Advertiser,
+              I.budget a * I.msvvNormalizedAlphaFromAssignment A a) +
           I.historyBalanceChargeFrom I.balanceChoiceRule
             initialHistoryState history +
           I.historyMaxBidErrorSum ε history := by
     unfold dualObjective
     linarith
-  have hscaled :
-      msvvRatio *
-          I.dualObjective (I.msvvAlphaFromAssignment A)
-            (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) ≤
-        msvvRatio *
-          ((∑ a : Advertiser, I.budget a * I.msvvAlphaFromAssignment A a) +
-            I.historyBalanceChargeFrom I.balanceChoiceRule
-              initialHistoryState history +
-            I.historyMaxBidErrorSum ε history) :=
-    mul_le_mul_of_nonneg_left hdual msvvRatio_nonneg
-  exact hscaled.trans (by simpa [A] using hcert.scaled_accounting_bound)
+  exact hdual.trans (by simpa [A] using hcert.scaled_accounting_bound)
 
 noncomputable def primalDualCompetitiveCertificate_of_msvvObjectiveBound
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
     (I : AdWordsInstance Advertiser Query)
-    (hbudget : I.NonnegativeBudgets)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
     (history : List Query)
     (hcert : I.MsvvObjectiveBoundCertificate history) :
     I.PrimalDualCompetitiveCertificate
       (I.runAssignment I.balanceChoiceRule history) msvvRatio where
-  feasible := balanceRunAssignment_feasible I hbudget history
+  feasible := balanceRunAssignment_feasible I (fun a => (hbudget a).le) history
   ratio_nonneg := msvvRatio_nonneg
   alpha :=
-    I.msvvAlphaFromAssignment
+    I.msvvNormalizedAlphaFromAssignment
       (I.runAssignment I.balanceChoiceRule history)
   beta :=
     I.maxSlackBeta
-      (I.msvvAlphaFromAssignment
+      (I.msvvNormalizedAlphaFromAssignment
         (I.runAssignment I.balanceChoiceRule history))
   dual_feasible :=
-    dualFeasible_msvvAssignment I
+    dualFeasible_msvvNormalizedAssignment I hbid hbudget
       (I.runAssignment I.balanceChoiceRule history)
   scaled_dual_bound := by
     simpa using hcert.scaled_dual_bound
@@ -2365,15 +2935,16 @@ theorem balance_msvv_competitive_of_objectiveBound
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
     (I : AdWordsInstance Advertiser Query)
-    (hbudget : I.NonnegativeBudgets)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
     (history : List Query)
     (hcert : I.MsvvObjectiveBoundCertificate history) :
-    msvvRatio * I.offlineOptimumValue hbudget ≤
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
       I.revenue (I.runAssignment I.balanceChoiceRule history) := by
-  exact competitive_of_primalDual I hbudget
+  exact competitive_of_primalDual I (fun a => (hbudget a).le)
     (I.runAssignment I.balanceChoiceRule history) msvvRatio
     (primalDualCompetitiveCertificate_of_msvvObjectiveBound
-      I hbudget history hcert)
+      I hbid hbudget history hcert)
 
 end AdWordsInstance
 

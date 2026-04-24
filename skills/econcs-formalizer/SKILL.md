@@ -194,23 +194,29 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `bid * (1 - alpha) ≤ beta` implies the LP dual constraint
   `bid ≤ bid * alpha + beta`; this is the bridge from Balance choices to
   `DualFeasible`. For finite advertiser sets, define max-slack query duals and
-  assignment-induced MSVV advertiser duals from spent fractions, then prove they
-  are dual-feasible before trying to prove the global scaled dual-objective
-  bound. Package that last finite charging argument as a named objective-bound
-  certificate so the paper-facing `1 - 1/e` theorem remains a thin wrapper.
+  normalized assignment-induced MSVV advertiser duals
+  `(exp spentFraction - 1) / (exp 1 - 1)`, then prove they are dual-feasible
+  before trying to prove the global scaled dual-objective bound. The key
+  normalization identity is
+  `(1 - 1/e) * bid * (1 - normalizedAlpha) =
+  bid * (1 - exp (spentFraction - 1))`, i.e. scaled normalized slack is the
+  Balance score. Package the last finite charging argument as a named
+  objective-bound certificate so the paper-facing `1 - 1/e` theorem remains a
+  thin wrapper.
   Before attacking the objective bound, prove run monotonicity: spend, spent
   fractions, and assignment-induced MSVV dual alphas only increase along a
   feasible online history. This yields the key comparison that final slack
   scores are bounded by earlier Balance scores. Use that comparison with the
   Balance maximizer to close the non-exhausted-query beta charge; handle
   exhausted advertisers separately with the small-bids boundary lemma by first
-  proving a final-alpha lower bound `exp (-ε)` and then a final-slack bound
+  proving a normalized final-alpha lower bound at spent fraction `1 - ε` and
+  then a scaled normalized final-slack bound
   `bid * (1 - exp (-ε))`. For finite max-slack query duals, package the mixed
-  query charge in a summation-friendly form: chosen Balance score plus an
-  explicit max-bid small-bids error term. Then introduce recursive history
-  charge sums mirroring the online fold, prove the list-summed beta bound for
-  fresh nodup histories, and reindex from list sums to finite query sums only
-  under an explicit coverage assumption such as
+  scaled normalized query charge in a summation-friendly form: chosen Balance
+  score plus an explicit max-bid small-bids error term. Then introduce
+  recursive history charge sums mirroring the online fold, prove the scaled
+  normalized list-summed beta bound for fresh nodup histories, and reindex from
+  list sums to finite query sums only under an explicit coverage assumption such as
   `historyFinset history = Finset.univ`. In parallel, define a recursive
   revenue-increment trace for the same fold, prove final run revenue equals the
   trace from the initial state, and prove the recursive Balance charge is
