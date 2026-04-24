@@ -715,6 +715,37 @@ theorem paper_problem6_normalizedItemUtility_eq_pairShare
   exact twoTypeReducedModel_normalizedItemUtility_eq_pairShare
     alpha v ρ j hden
 
+/--
+Problem 6 LP feasibility is exactly the item-fairness epigraph for the
+two-type opposing-preference reduced model.
+-/
+theorem paper_problem6_LPFeasible_iff_le_itemFairness
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (ell : ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6LPFeasible alpha v ρ ell ↔
+      ell ≤ TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6LPFeasible_iff_le_itemFairness
+    alpha v ρ ell halpha0 halpha1 hpos
+
+/--
+Problem 6 LP objective equivalence: maximizing the paper's `λ` in the
+opposing-preference LP has the same value as the reduced type-level
+item-fairness optimum.
+-/
+theorem paper_problem6_LPOptimalValue_eq_optimalItemFairness
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6LPOptimalValue alpha v =
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) := by
+  exact problem6LPOptimalValue_eq_optimalItemFairness
+    alpha v halpha0 halpha1 hpos
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel

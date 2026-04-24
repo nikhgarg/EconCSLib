@@ -435,5 +435,183 @@ theorem twoTypeReducedModel_normalizedItemUtility_eq_pairShare
   field_simp [hden.ne']
   ring
 
+/--
+Problem 6 LP feasibility in the paper's `x_j`, `y_j`, `q_j(α)`, `λ` notation.
+For a type policy `ρ`, `x_j` is `ρ 0 j` and `y_j` is `ρ 1 j`.
+-/
+def problem6LPFeasible {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (ell : ℝ) : Prop :=
+  ∀ j : Item n,
+    ell ≤ pairShare alpha v j * (ρ 0 j).toReal +
+      (1 - pairShare alpha v j) * (ρ 1 j).toReal
+
+/-- Feasible objective values for Problem 6's LP. -/
+def problem6LPValueSet {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) : Set ℝ :=
+  {ell | ∃ ρ : TypePolicy 2 n, problem6LPFeasible alpha v ρ ell}
+
+/-- The optimal value of Problem 6's LP. -/
+noncomputable def problem6LPOptimalValue {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) : ℝ :=
+  sSup (problem6LPValueSet alpha v)
+
+/-- Problem 6 LP feasibility is equivalent to the reduced item-fairness epigraph. -/
+theorem problem6LPFeasible_iff_le_itemFairness
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (ell : ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6LPFeasible alpha v ρ ell ↔
+      ell ≤ TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  constructor
+  · intro h
+    unfold TypeWeightedRecommendationModel.itemFairness DecisionCore.finiteMin
+    apply Finset.le_inf'
+    intro j _hj
+    have hden :=
+      typeOneShare_denom_pos halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+    rw [twoTypeReducedModel_normalizedItemUtility_eq_pairShare
+      alpha v ρ j hden]
+    exact h j
+  · intro h j
+    have hden :=
+      typeOneShare_denom_pos halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+    have hle :
+        TypeWeightedRecommendationModel.itemFairness
+            (twoTypeReducedModel alpha v) ρ ≤
+          TypeWeightedRecommendationModel.normalizedItemUtility
+            (twoTypeReducedModel alpha v) ρ j := by
+      exact DecisionCore.finiteMin_le
+        (TypeWeightedRecommendationModel.normalizedItemUtility
+          (twoTypeReducedModel alpha v) ρ) j
+    rw [twoTypeReducedModel_normalizedItemUtility_eq_pairShare
+      alpha v ρ j hden] at hle
+    exact h.trans hle
+
+/-- Problem 6's LP value set is nonempty. -/
+theorem problem6LPValueSet_nonempty
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (problem6LPValueSet alpha v).Nonempty := by
+  let ρ : TypePolicy 2 n := TypeWeightedRecommendationModel.uniformTypePolicy
+  refine ⟨TypeWeightedRecommendationModel.itemFairness
+    (twoTypeReducedModel alpha v) ρ, ?_⟩
+  exact ⟨ρ, (problem6LPFeasible_iff_le_itemFairness
+    alpha v ρ
+    (TypeWeightedRecommendationModel.itemFairness
+      (twoTypeReducedModel alpha v) ρ)
+    halpha0 halpha1 hpos).mpr le_rfl⟩
+
+/-- Problem 6 LP objective values are bounded above by one. -/
+theorem problem6LPValueSet_bddAbove
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    BddAbove (problem6LPValueSet alpha v) := by
+  refine ⟨1, ?_⟩
+  intro ell hell
+  obtain ⟨ρ, hρ⟩ := hell
+  have hle_item :
+      ell ≤ TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ :=
+    (problem6LPFeasible_iff_le_itemFairness
+      alpha v ρ ell halpha0 halpha1 hpos).mp hρ
+  let j0 : Item n := Classical.choice inferInstance
+  have hitem_le :
+      TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ ≤
+        TypeWeightedRecommendationModel.normalizedItemUtility
+          (twoTypeReducedModel alpha v) ρ j0 := by
+    exact DecisionCore.finiteMin_le
+      (TypeWeightedRecommendationModel.normalizedItemUtility
+        (twoTypeReducedModel alpha v) ρ) j0
+  have hWeightNonneg :
+      (twoTypeReducedModel alpha v).NonnegativeWeights :=
+    TypeWeightedRecommendationModel.nonnegativeWeights_of_positiveWeights
+      (twoTypeReducedModel alpha v)
+      (twoTypeReducedModel_positiveWeights alpha v halpha0 halpha1)
+  have hUtilNonneg :
+      (twoTypeReducedModel alpha v).NonnegativeUtilities :=
+    TypeWeightedRecommendationModel.nonnegativeUtilities_of_positiveUtilities
+      (twoTypeReducedModel alpha v)
+      (twoTypeReducedModel_positiveUtilities alpha v hpos)
+  exact hle_item.trans (hitem_le.trans
+    (TypeWeightedRecommendationModel.normalizedItemUtility_le_one_of_nonnegative
+      (twoTypeReducedModel alpha v) hWeightNonneg hUtilNonneg ρ j0))
+
+/--
+Problem 6 LP equivalence: maximizing the paper's LP objective `λ` has the same
+value as the reduced type-level item-fairness optimum.
+-/
+theorem problem6LPOptimalValue_eq_optimalItemFairness
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6LPOptimalValue alpha v =
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) := by
+  have hLPNonempty :=
+    problem6LPValueSet_nonempty alpha v halpha0 halpha1 hpos
+  have hLPBdd :=
+    problem6LPValueSet_bddAbove alpha v halpha0 halpha1 hpos
+  have hWeightNonneg :
+      (twoTypeReducedModel alpha v).NonnegativeWeights :=
+    TypeWeightedRecommendationModel.nonnegativeWeights_of_positiveWeights
+      (twoTypeReducedModel alpha v)
+      (twoTypeReducedModel_positiveWeights alpha v halpha0 halpha1)
+  have hUtilNonneg :
+      (twoTypeReducedModel alpha v).NonnegativeUtilities :=
+    TypeWeightedRecommendationModel.nonnegativeUtilities_of_positiveUtilities
+      (twoTypeReducedModel alpha v)
+      (twoTypeReducedModel_positiveUtilities alpha v hpos)
+  have hItemBdd :
+      BddAbove (TypeWeightedRecommendationModel.attainableItemFairnessSet
+        (twoTypeReducedModel alpha v)) :=
+    TypeWeightedRecommendationModel.attainableItemFairnessSet_bddAbove_of_nonnegative
+      (twoTypeReducedModel alpha v) hWeightNonneg hUtilNonneg
+  have hItemNonempty :
+      (TypeWeightedRecommendationModel.attainableItemFairnessSet
+        (twoTypeReducedModel alpha v)).Nonempty := by
+    refine ⟨TypeWeightedRecommendationModel.itemFairness
+      (twoTypeReducedModel alpha v)
+      (TypeWeightedRecommendationModel.uniformTypePolicy (K := 2) (n := n)), ?_⟩
+    exact ⟨TypeWeightedRecommendationModel.uniformTypePolicy (K := 2) (n := n), rfl⟩
+  apply le_antisymm
+  · unfold problem6LPOptimalValue
+    refine csSup_le hLPNonempty ?_
+    intro ell hell
+    obtain ⟨ρ, hρ⟩ := hell
+    have hle_item :
+        ell ≤ TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ :=
+      (problem6LPFeasible_iff_le_itemFairness
+        alpha v ρ ell halpha0 halpha1 hpos).mp hρ
+    have hitem_mem :
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ ∈
+            TypeWeightedRecommendationModel.attainableItemFairnessSet
+              (twoTypeReducedModel alpha v) := by
+      exact ⟨ρ, rfl⟩
+    exact hle_item.trans (le_csSup hItemBdd hitem_mem)
+  · unfold TypeWeightedRecommendationModel.optimalItemFairness
+    refine csSup_le hItemNonempty ?_
+    intro r hr
+    obtain ⟨ρ, hr⟩ := hr
+    rw [hr]
+    have hlp_mem :
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ ∈ problem6LPValueSet alpha v := by
+      exact ⟨ρ, (problem6LPFeasible_iff_le_itemFairness
+        alpha v ρ
+        (TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ)
+        halpha0 halpha1 hpos).mpr le_rfl⟩
+    exact le_csSup hLPBdd hlp_mem
+
 end OpposingTypes
 end UserItemFairness
