@@ -689,6 +689,12 @@ theorem paper_lemma16_val_eq_reverseItem_iff
     j.val = (reverseItem j).val ↔ 2 * j.val + 1 = n := by
   exact val_eq_reverseItem_iff j
 
+/-- Appendix E, Lemma 16, zero-based arithmetic for `j` at or before center. -/
+theorem paper_lemma16_val_le_reverseItem_iff
+    {n : ℕ} (j : Item n) :
+    j.val ≤ (reverseItem j).val ↔ 2 * j.val + 1 ≤ n := by
+  exact val_le_reverseItem_iff j
+
 /--
 Problem 6 setup: in the two-type opposing-preference model, item normalizers
 are the denominators of `q_j(α)`.
@@ -1085,6 +1091,18 @@ theorem paper_lemma6_closedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_h
       problem6ClosedTypeZeroRawUtility alpha v t := by
   exact problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
     halpha0 halpha1 halpha_half hpos hdec hpivot hmirror hpivot_gap
+
+/--
+Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
+every pre-pivot item to a post-pivot mirror.
+-/
+theorem paper_lemma6_reverseItem_after_pivot_of_before_pivot_of_pivot_le_reverse
+    {n : ℕ} {t j : Item n}
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hj : j.val < t.val) :
+    t.val < (reverseItem j).val := by
+  exact reverseItem_after_pivot_of_before_pivot_of_pivot_le_reverse
+    hcenter hj
 
 /--
 Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary

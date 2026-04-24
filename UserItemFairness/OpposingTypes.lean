@@ -495,6 +495,23 @@ theorem val_eq_reverseItem_iff {n : ℕ} (j : Item n) :
   simp [reverseItem]
   omega
 
+/-- Zero-based arithmetic form of being at or before the reverse item. -/
+theorem val_le_reverseItem_iff {n : ℕ} (j : Item n) :
+    j.val ≤ (reverseItem j).val ↔ 2 * j.val + 1 ≤ n := by
+  simp [reverseItem]
+  omega
+
+/--
+If the pivot is at or before its mirror, then every item before the pivot has
+its mirror after the pivot.
+-/
+theorem reverseItem_after_pivot_of_before_pivot_of_pivot_le_reverse
+    {n : ℕ} {t j : Item n}
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hj : j.val < t.val) :
+    t.val < (reverseItem j).val := by
+  exact lt_of_le_of_lt hcenter (reverseItem_val_lt_of_val_lt hj)
+
 /--
 The reduced two-type model for the opposing-preference setting in Theorem 3.
 Type `0` has values `v_j`; type `1` has reversed values `v_{n-j+1}`.
