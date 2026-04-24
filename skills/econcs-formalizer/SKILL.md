@@ -363,6 +363,13 @@ and wasted proof search.
   positivity once, and expose both normalized and cleared positivity
   equivalences. This keeps later sign certificates independent of probability
   division noise.
+- **Rank-weight monotonicity.** Use when a ranking model such as Mallows turns a
+  payoff into a finite rank-weighted average. First prove the PMF/fiber
+  decomposition, then convert to a pure rank-only weight formula, then prove a
+  generic cleared weighted-average lemma from pairwise cross-ratio or prefix
+  dominance. Do not keep unfolding PMFs once the theorem is reduced to rank
+  weights; the remaining proof should mention only rank sums, positive
+  denominators, and value monotonicity.
 - **Sign and inequality arguments.** Use certificate structures whose fields are
   exactly the nonnegativity, strict positivity, monotonicity, or comparison
   facts needed by the final theorem. Prefer sum-level certificates for
@@ -418,6 +425,7 @@ editing. Use this compact map to avoid broad proof search.
 | Definition/interface wrapper | paper-facing theorem with the paper statement in the docstring | wrapper imports and compiles, assumptions match prior declarations | counting a restated assumption as proved |
 | Finite expectation decomposition | pointwise identity, then `pmfExp`/`pmfPairExp` sum lemma | paper equivalence without unfolding PMF internals at the wrapper | expanding PMF probabilities too early |
 | Denominator-cleared finite sum | numerator definition plus denominator positivity lemma | normalized and cleared positivity equivalence | carrying division through every sign proof |
+| Rank-weight monotonicity | rank-only weight definition plus cleared average comparison | model theorem uses only the rank lemma and denominator positivity | re-entering PMF/fiber algebra after rank reduction |
 | Sign/inequality proof | certificate with exactly the needed nonnegative/positive fields | final strict inequality from certificate fields | strengthening assumptions to termwise positivity without documenting it |
 | Bijection/fiber enumeration | equivalence/bijection plus preservation lemmas | transported finite sum by `Finset.sum_bij` or an existing relabel lemma | mixing counting and economics in one theorem |
 | Game/payoff bridge | paper scalar functions and payoff certificate | strategy/welfare predicate follows by algebra | proving analytic existence before payoff semantics are settled |
