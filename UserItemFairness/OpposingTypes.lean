@@ -1417,6 +1417,120 @@ theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
   · intro j
     exact problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot (reverseItem j)
 
+/-- Closed-form policy type-0 raw utility equals the closed `x` raw utility. -/
+theorem problem6ClosedPolicy_rawTypeUtility_zero_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+      (twoTypeReducedModel alpha v)
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 =
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    DecisionCore.Policy.agentScore DecisionCore.pmfExp
+    problem6ClosedTypeZeroRawUtility
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  rw [problem6ClosedPolicy_zero_toReal halpha0 halpha1 hpos hpivot]
+  simp
+  ring
+
+/-- Closed-form policy type-1 raw utility equals the closed `y` raw utility. -/
+theorem problem6ClosedPolicy_rawTypeUtility_one_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+      (twoTypeReducedModel alpha v)
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 =
+      problem6ClosedTypeOneRawUtility alpha v t := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    DecisionCore.Policy.agentScore DecisionCore.pmfExp
+    problem6ClosedTypeOneRawUtility
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  rw [problem6ClosedPolicy_one_toReal halpha0 halpha1 hpos hpivot]
+  simp
+  ring
+
+/--
+Lemma 6 normalization bridge: once the raw closed-form utility of type `0`
+dominates type `1` and their best-item normalizers coincide, the normalized
+type utility comparison follows.
+-/
+theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_raw
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hbest :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 =
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 0)
+    (hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0)
+    (hraw :
+      problem6ClosedTypeOneRawUtility alpha v t ≤
+        problem6ClosedTypeZeroRawUtility alpha v t) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [problem6ClosedPolicy_rawTypeUtility_one_eq halpha0 halpha1 hpos hpivot,
+    problem6ClosedPolicy_rawTypeUtility_zero_eq halpha0 halpha1 hpos hpivot,
+    hbest]
+  exact div_le_div_of_nonneg_right hraw hbest_pos.le
+
+/--
+Lemma 6 normalized-utility comparison under the remaining paper-specific
+pivot-gap and center-position obligations.
+-/
+theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t))
+    (hbest :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 =
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 0)
+    (hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  have hraw :
+      problem6ClosedTypeOneRawUtility alpha v t ≤
+        problem6ClosedTypeZeroRawUtility alpha v t :=
+    problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
+      halpha0 halpha1 halpha_half hpos hdec hpivot
+      (fun j hj =>
+        reverseItem_after_pivot_of_before_pivot_of_pivot_le_reverse
+          hcenter hj)
+      hpivot_gap
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_raw
+    halpha0 halpha1 hpos hpivot hbest hbest_pos hraw
+
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}

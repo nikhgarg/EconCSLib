@@ -1092,6 +1092,96 @@ theorem paper_lemma6_closedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_h
   exact problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
     halpha0 halpha1 halpha_half hpos hdec hpivot hmirror hpivot_gap
 
+/-- Appendix D, Lemma 6: closed-policy type-0 raw utility expansion. -/
+theorem paper_lemma6_closedPolicy_rawTypeUtility_zero_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+      (twoTypeReducedModel alpha v)
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 =
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  exact problem6ClosedPolicy_rawTypeUtility_zero_eq
+    halpha0 halpha1 hpos hpivot
+
+/-- Appendix D, Lemma 6: closed-policy type-1 raw utility expansion. -/
+theorem paper_lemma6_closedPolicy_rawTypeUtility_one_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+      (twoTypeReducedModel alpha v)
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 =
+      problem6ClosedTypeOneRawUtility alpha v t := by
+  exact problem6ClosedPolicy_rawTypeUtility_one_eq
+    halpha0 halpha1 hpos hpivot
+
+/--
+Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
+normalized type-utility comparison when the two best-item denominators agree.
+-/
+theorem paper_lemma6_closedPolicy_normalizedType_one_le_zero_of_raw
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hbest :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 =
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 0)
+    (hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0)
+    (hraw :
+      problem6ClosedTypeOneRawUtility alpha v t ≤
+        problem6ClosedTypeZeroRawUtility alpha v t) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_raw
+    halpha0 halpha1 hpos hpivot hbest hbest_pos hraw
+
+/--
+Appendix D, Lemma 6 normalized-utility comparison under `α ≤ 1/2`, with the
+remaining pivot-gap and equal-best-denominator obligations explicit.
+-/
+theorem paper_lemma6_closedPolicy_normalizedType_one_le_zero_of_alpha_le_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t))
+    (hbest :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 =
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 0)
+    (hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
+    halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
+    hbest hbest_pos
+
 /--
 Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
 every pre-pivot item to a post-pivot mirror.
