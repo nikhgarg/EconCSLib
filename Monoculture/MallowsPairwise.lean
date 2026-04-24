@@ -133,6 +133,126 @@ theorem candidateRankBestAfterRemovalWeight_nonneg
         (pow_nonneg (le_of_lt hq_pos) ((k : ℕ) + (r : ℕ) - 1))
     · rw [if_neg hkr]
 
+theorem candidateRankRemovalPowerSum_eq_range
+    (n : ℕ) (q : ℝ) (k : Candidate n) :
+    candidateRankRemovalPowerSum n q k =
+      ∑ m ∈ Finset.range (n + 1), q ^ m := by
+  classical
+  unfold candidateRankRemovalPowerSum Candidate
+  change
+    (∑ x : Fin (n + 2),
+      if x.val < k.val then q ^ x.val
+      else if k.val < x.val then q ^ (x.val - 1)
+      else 0) =
+      ∑ m ∈ Finset.range (n + 1), q ^ m
+  rw [Fin.sum_univ_eq_sum_range
+    (fun x : ℕ =>
+      if x < k.val then q ^ x
+      else if k.val < x then q ^ (x - 1)
+      else 0)
+    (n + 2)]
+  let a : ℕ := k.val
+  have ha_le : a ≤ n + 1 := by
+    have ha_lt : a < n + 2 := by
+      simp [a]
+    omega
+  have hfilter_lt :
+      (Finset.range (n + 2)).filter (fun i : ℕ => i < a) =
+        Finset.range a := by
+    ext i
+    simp [a]
+    omega
+  have hfilter_gt :
+      (Finset.range (n + 2)).filter (fun i : ℕ => a < i) =
+        Finset.Ico (a + 1) (n + 2) := by
+    ext i
+    simp [Finset.mem_Ico]
+    omega
+  have hsplit :
+      (∑ i ∈ Finset.range (n + 2),
+        if i < a then q ^ i else if a < i then q ^ (i - 1) else 0) =
+        (∑ i ∈ (Finset.range (n + 2)).filter (fun i : ℕ => i < a),
+          q ^ i) +
+          (∑ i ∈ (Finset.range (n + 2)).filter (fun i : ℕ => a < i),
+            q ^ (i - 1)) := by
+    rw [Finset.sum_filter, Finset.sum_filter]
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl ?_
+    intro i _
+    by_cases hia : i < a
+    · have hai_not : ¬a < i := not_lt_of_gt hia
+      simp [hia, hai_not]
+    · by_cases hai : a < i
+      · simp [hia, hai]
+      · simp [hia, hai]
+  have hshift :
+      (∑ i ∈ Finset.Ico (a + 1) (n + 2), q ^ (i - 1)) =
+        ∑ i ∈ Finset.Ico a (n + 1), q ^ i := by
+    have h :=
+      (Finset.sum_Ico_add'
+        (fun x : ℕ => q ^ (x - 1)) a (n + 1) 1).symm
+    simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using h
+  calc
+    (∑ i ∈ Finset.range (n + 2),
+        if i < ↑k then q ^ i else if ↑k < i then q ^ (i - 1) else 0)
+        =
+        (∑ i ∈ Finset.range (n + 2),
+          if i < a then q ^ i else if a < i then q ^ (i - 1) else 0) := by
+          simp [a]
+    _ = (∑ i ∈ Finset.range a, q ^ i) +
+          (∑ i ∈ Finset.Ico (a + 1) (n + 2), q ^ (i - 1)) := by
+          rw [hsplit, hfilter_lt, hfilter_gt]
+    _ = (∑ i ∈ Finset.range a, q ^ i) +
+          (∑ i ∈ Finset.Ico a (n + 1), q ^ i) := by
+          rw [hshift]
+    _ = ∑ m ∈ Finset.range (n + 1), q ^ m := by
+          exact Finset.sum_range_add_sum_Ico (fun m : ℕ => q ^ m) ha_le
+
+theorem candidateRankRemovalPowerSum_mul_one_sub
+    (n : ℕ) (q : ℝ) (k : Candidate n) :
+    candidateRankRemovalPowerSum n q k * (1 - q) = 1 - q ^ (n + 1) := by
+  rw [candidateRankRemovalPowerSum_eq_range]
+  exact geom_sum_mul_neg q (n + 1)
+
+@[simp] theorem candidateRankBestAfterRemovalWeight_self
+    (n : ℕ) (q : ℝ) (k : Candidate n) :
+    candidateRankBestAfterRemovalWeight n q k k = 0 := by
+  unfold candidateRankBestAfterRemovalWeight
+  simp
+
+theorem candidateRankBestAfterRemovalWeight_of_lt
+    (n : ℕ) (q : ℝ) {k r : Candidate n} (hrk : r < k) :
+    candidateRankBestAfterRemovalWeight n q k r =
+      q ^ (r : ℕ) *
+        (candidateRankRemovalPowerSum n q k + q ^ (k : ℕ)) := by
+  unfold candidateRankBestAfterRemovalWeight
+  rw [if_pos hrk]
+  rw [pow_add]
+  ring
+
+theorem candidateRankBestAfterRemovalWeight_of_gt
+    (n : ℕ) (q : ℝ) {k r : Candidate n} (hkr : k < r) :
+    candidateRankBestAfterRemovalWeight n q k r =
+      q ^ ((r : ℕ) - 1) *
+        (q * candidateRankRemovalPowerSum n q k + q ^ (k : ℕ)) := by
+  unfold candidateRankBestAfterRemovalWeight
+  rw [if_neg (not_lt_of_gt hkr), if_pos hkr]
+  have hr_pos : 0 < (r : ℕ) :=
+    lt_of_le_of_lt (Nat.zero_le (k : ℕ)) hkr
+  have hpow_r : q ^ (r : ℕ) = q ^ ((r : ℕ) - 1) * q := by
+    calc
+      q ^ (r : ℕ) = q ^ (((r : ℕ) - 1) + 1) := by
+        congr 1
+        omega
+      _ = q ^ ((r : ℕ) - 1) * q := by rw [pow_add, pow_one]
+  have hpow_kr :
+      q ^ ((k : ℕ) + (r : ℕ) - 1) =
+        q ^ (((r : ℕ) - 1) + (k : ℕ)) := by
+    congr 1
+    omega
+  rw [hpow_r, hpow_kr, pow_add]
+  ring
+
 /--
 Rank-only conditional top-gap summand.
 
@@ -174,6 +294,246 @@ theorem candidateRankPowerSum_strict_mono
     exact pow_le_pow_left₀ hq₁_nonneg (le_of_lt hq_lt) (i : ℕ)
   · refine ⟨(1 : Candidate n), Finset.mem_univ _, ?_⟩
     simpa using hq_lt
+
+theorem natPower_mul_lt_mul_natPower
+    {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)
+    {i j : ℕ} (hij : i < j) :
+    q₁ ^ j * q₂ ^ i < q₁ ^ i * q₂ ^ j := by
+  have hq₂_pos : 0 < q₂ := lt_trans hq₁_pos hq_lt
+  obtain ⟨d, hd_pos, hd_eq⟩ :
+      ∃ d : ℕ, 0 < d ∧ j = i + d := by
+    refine ⟨j - i, Nat.sub_pos_of_lt hij, ?_⟩
+    exact (Nat.add_sub_of_le (le_of_lt hij)).symm
+  have hpow : q₁ ^ d < q₂ ^ d := by
+    exact pow_lt_pow_left₀ hq_lt (le_of_lt hq₁_pos) (Nat.ne_of_gt hd_pos)
+  have hscale : 0 < q₁ ^ i * q₂ ^ i :=
+    mul_pos (pow_pos hq₁_pos i) (pow_pos hq₂_pos i)
+  have hmul := mul_lt_mul_of_pos_left hpow hscale
+  rw [hd_eq, pow_add, pow_add]
+  nlinarith
+
+theorem candidateRankRemovalBoundaryFactor_cross_nonneg
+    (n : ℕ) {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁)
+    (hq_lt : q₁ < q₂) (hq₂_lt_one : q₂ < 1)
+    (k : Candidate n) :
+    0 ≤
+      (candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+          (q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)) -
+        (q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+          (candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)) := by
+  let S₁ : ℝ := candidateRankRemovalPowerSum n q₁ k
+  let S₂ : ℝ := candidateRankRemovalPowerSum n q₂ k
+  have hq₂_pos : 0 < q₂ := lt_trans hq₁_pos hq_lt
+  have hS₁_nonneg : 0 ≤ S₁ := by
+    exact candidateRankRemovalPowerSum_nonneg n hq₁_pos k
+  have hS₂_nonneg : 0 ≤ S₂ := by
+    exact candidateRankRemovalPowerSum_nonneg n hq₂_pos k
+  have hgeom₁ : S₁ * (1 - q₁) = 1 - q₁ ^ (n + 1) := by
+    simpa [S₁] using candidateRankRemovalPowerSum_mul_one_sub n q₁ k
+  have hgeom₂ : S₂ * (1 - q₂) = 1 - q₂ ^ (n + 1) := by
+    simpa [S₂] using candidateRankRemovalPowerSum_mul_one_sub n q₂ k
+  have hmain_rewrite :
+      (S₁ + q₁ ^ (k : ℕ)) * (q₂ * S₂ + q₂ ^ (k : ℕ)) -
+          (q₁ * S₁ + q₁ ^ (k : ℕ)) * (S₂ + q₂ ^ (k : ℕ)) =
+        (q₂ - q₁) * S₁ * S₂ +
+          (q₂ ^ (k : ℕ) * (1 - q₁ ^ (n + 1)) -
+            q₁ ^ (k : ℕ) * (1 - q₂ ^ (n + 1))) := by
+    rw [← hgeom₁, ← hgeom₂]
+    ring
+  have hprod_le :
+      q₁ ^ (k : ℕ) * (1 - q₂ ^ (n + 1)) ≤
+        q₂ ^ (k : ℕ) * (1 - q₁ ^ (n + 1)) := by
+    have hpow_k : q₁ ^ (k : ℕ) ≤ q₂ ^ (k : ℕ) :=
+      pow_le_pow_left₀ (le_of_lt hq₁_pos) (le_of_lt hq_lt) (k : ℕ)
+    have hpow_tail : q₁ ^ (n + 1) ≤ q₂ ^ (n + 1) :=
+      pow_le_pow_left₀ (le_of_lt hq₁_pos) (le_of_lt hq_lt) (n + 1)
+    have hgap :
+        1 - q₂ ^ (n + 1) ≤ 1 - q₁ ^ (n + 1) := by
+      linarith
+    have hgap_nonneg : 0 ≤ 1 - q₂ ^ (n + 1) := by
+      exact sub_nonneg.mpr
+        (pow_le_one₀ (le_of_lt hq₂_pos) (le_of_lt hq₂_lt_one))
+    exact mul_le_mul hpow_k hgap hgap_nonneg
+      (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
+  have hfactor_nonneg :
+      0 ≤ (q₂ - q₁) * S₁ * S₂ :=
+    mul_nonneg (mul_nonneg (sub_nonneg.mpr (le_of_lt hq_lt)) hS₁_nonneg)
+      hS₂_nonneg
+  have htail_nonneg :
+      0 ≤ q₂ ^ (k : ℕ) * (1 - q₁ ^ (n + 1)) -
+        q₁ ^ (k : ℕ) * (1 - q₂ ^ (n + 1)) :=
+    sub_nonneg.mpr hprod_le
+  change 0 ≤
+    (S₁ + q₁ ^ (k : ℕ)) * (q₂ * S₂ + q₂ ^ (k : ℕ)) -
+      (q₁ * S₁ + q₁ ^ (k : ℕ)) * (S₂ + q₂ ^ (k : ℕ))
+  rw [hmain_rewrite]
+  exact add_nonneg hfactor_nonneg htail_nonneg
+
+theorem candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
+    (n : ℕ) {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁)
+    (hq_lt : q₁ < q₂) (hq₂_lt_one : q₂ < 1) (k : Candidate n) :
+    ∀ i j : Candidate n, i < j →
+      0 ≤
+        candidateRankBestAfterRemovalWeight n q₁ k i *
+            candidateRankBestAfterRemovalWeight n q₂ k j -
+          candidateRankBestAfterRemovalWeight n q₁ k j *
+            candidateRankBestAfterRemovalWeight n q₂ k i := by
+  intro i j hij
+  have hq₂_pos : 0 < q₂ := lt_trans hq₁_pos hq_lt
+  by_cases hik : i < k
+  · by_cases hjk : j < k
+    · rw [candidateRankBestAfterRemovalWeight_of_lt n q₁ hik,
+        candidateRankBestAfterRemovalWeight_of_lt n q₂ hjk,
+        candidateRankBestAfterRemovalWeight_of_lt n q₁ hjk,
+        candidateRankBestAfterRemovalWeight_of_lt n q₂ hik]
+      have hpow :
+          0 ≤ q₁ ^ (i : ℕ) * q₂ ^ (j : ℕ) -
+              q₁ ^ (j : ℕ) * q₂ ^ (i : ℕ) := by
+        exact sub_nonneg.mpr (le_of_lt (by
+          have h := natPower_mul_lt_mul_natPower hq₁_pos hq_lt
+            (show (i : ℕ) < (j : ℕ) by exact hij)
+          simpa [mul_comm, mul_left_comm, mul_assoc] using h))
+      have hleft_nonneg :
+          0 ≤ candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ) := by
+        exact add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₁_pos k)
+          (pow_nonneg (le_of_lt hq₁_pos) (k : ℕ))
+      have hright_nonneg :
+          0 ≤ candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ) := by
+        exact add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₂_pos k)
+          (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
+      have heq :
+          q₁ ^ (i : ℕ) *
+                (candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+              (q₂ ^ (j : ℕ) *
+                (candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ))) -
+            q₁ ^ (j : ℕ) *
+                (candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+              (q₂ ^ (i : ℕ) *
+                (candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ))) =
+            (candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+              (candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)) *
+                (q₁ ^ (i : ℕ) * q₂ ^ (j : ℕ) -
+                  q₁ ^ (j : ℕ) * q₂ ^ (i : ℕ)) := by
+        ring
+      rw [heq]
+      exact mul_nonneg (mul_nonneg hleft_nonneg hright_nonneg) hpow
+    · by_cases hkj : k < j
+      · rw [candidateRankBestAfterRemovalWeight_of_lt n q₁ hik,
+          candidateRankBestAfterRemovalWeight_of_gt n q₂ hkj,
+          candidateRankBestAfterRemovalWeight_of_gt n q₁ hkj,
+          candidateRankBestAfterRemovalWeight_of_lt n q₂ hik]
+        let P₁ : ℝ := candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)
+        let P₂ : ℝ := candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)
+        let T₁ : ℝ := q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)
+        let T₂ : ℝ := q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)
+        have hcoeff :
+            q₁ ^ ((j : ℕ) - 1) * q₂ ^ (i : ℕ) ≤
+              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) := by
+          exact le_of_lt (by
+            have hik_nat : (i : ℕ) < (k : ℕ) := by exact hik
+            have hkj_nat : (k : ℕ) < (j : ℕ) := by exact hkj
+            have hij_pred : (i : ℕ) < (j : ℕ) - 1 := by omega
+            have h := natPower_mul_lt_mul_natPower hq₁_pos hq_lt hij_pred
+            simpa [mul_comm, mul_left_comm, mul_assoc] using h)
+        have hboundary : T₁ * P₂ ≤ P₁ * T₂ := by
+          have h := candidateRankRemovalBoundaryFactor_cross_nonneg
+            n hq₁_pos hq_lt hq₂_lt_one k
+          dsimp [P₁, P₂, T₁, T₂]
+          exact sub_nonneg.mp h
+        have hT₁_nonneg : 0 ≤ T₁ := by
+          dsimp [T₁]
+          exact add_nonneg
+            (mul_nonneg (le_of_lt hq₁_pos)
+              (candidateRankRemovalPowerSum_nonneg n hq₁_pos k))
+            (pow_nonneg (le_of_lt hq₁_pos) (k : ℕ))
+        have hP₂_nonneg : 0 ≤ P₂ := by
+          dsimp [P₂]
+          exact add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₂_pos k)
+            (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
+        have hcoeff_rhs_nonneg :
+            0 ≤ q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) :=
+          mul_nonneg (pow_nonneg (le_of_lt hq₁_pos) (i : ℕ))
+            (pow_nonneg (le_of_lt hq₂_pos) ((j : ℕ) - 1))
+        have hprod :
+            q₁ ^ ((j : ℕ) - 1) * q₂ ^ (i : ℕ) * (T₁ * P₂) ≤
+              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) * (P₁ * T₂) := by
+          exact mul_le_mul hcoeff hboundary
+            (mul_nonneg hT₁_nonneg hP₂_nonneg) hcoeff_rhs_nonneg
+        have heq :
+            q₁ ^ (i : ℕ) * P₁ * (q₂ ^ ((j : ℕ) - 1) * T₂) -
+                q₁ ^ ((j : ℕ) - 1) * T₁ * (q₂ ^ (i : ℕ) * P₂) =
+              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) * (P₁ * T₂) -
+                q₁ ^ ((j : ℕ) - 1) * q₂ ^ (i : ℕ) * (T₁ * P₂) := by
+          ring
+        rw [heq]
+        exact sub_nonneg.mpr hprod
+      · have hj_eq : j = k := by
+          apply le_antisymm
+          · exact le_of_not_gt hkj
+          · exact le_of_not_gt hjk
+        subst j
+        rw [candidateRankBestAfterRemovalWeight_of_lt n q₁ hik,
+          candidateRankBestAfterRemovalWeight_self,
+          candidateRankBestAfterRemovalWeight_self,
+          candidateRankBestAfterRemovalWeight_of_lt n q₂ hik]
+        ring_nf
+        exact le_rfl
+  · by_cases hki : k < i
+    · have hkj : k < j := lt_trans hki hij
+      rw [candidateRankBestAfterRemovalWeight_of_gt n q₁ hki,
+        candidateRankBestAfterRemovalWeight_of_gt n q₂ hkj,
+        candidateRankBestAfterRemovalWeight_of_gt n q₁ hkj,
+        candidateRankBestAfterRemovalWeight_of_gt n q₂ hki]
+      have hpow :
+          0 ≤ q₁ ^ ((i : ℕ) - 1) * q₂ ^ ((j : ℕ) - 1) -
+              q₁ ^ ((j : ℕ) - 1) * q₂ ^ ((i : ℕ) - 1) := by
+        exact sub_nonneg.mpr (le_of_lt (by
+          have hij_nat : (i : ℕ) < (j : ℕ) := by exact hij
+          have hi_pos : 0 < (i : ℕ) :=
+            lt_of_le_of_lt (Nat.zero_le (k : ℕ)) hki
+          have hij_pred : (i : ℕ) - 1 < (j : ℕ) - 1 := by omega
+          have h := natPower_mul_lt_mul_natPower hq₁_pos hq_lt hij_pred
+          simpa [mul_comm, mul_left_comm, mul_assoc] using h))
+      have hleft_nonneg :
+          0 ≤ q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ) := by
+        exact add_nonneg
+          (mul_nonneg (le_of_lt hq₁_pos)
+            (candidateRankRemovalPowerSum_nonneg n hq₁_pos k))
+          (pow_nonneg (le_of_lt hq₁_pos) (k : ℕ))
+      have hright_nonneg :
+          0 ≤ q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ) := by
+        exact add_nonneg
+          (mul_nonneg (le_of_lt hq₂_pos)
+            (candidateRankRemovalPowerSum_nonneg n hq₂_pos k))
+          (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
+      have heq :
+          q₁ ^ ((i : ℕ) - 1) *
+                (q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+              (q₂ ^ ((j : ℕ) - 1) *
+                (q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ))) -
+            q₁ ^ ((j : ℕ) - 1) *
+                (q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+              (q₂ ^ ((i : ℕ) - 1) *
+                (q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ))) =
+            (q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ)) *
+              (q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)) *
+                (q₁ ^ ((i : ℕ) - 1) * q₂ ^ ((j : ℕ) - 1) -
+                  q₁ ^ ((j : ℕ) - 1) * q₂ ^ ((i : ℕ) - 1)) := by
+        ring
+      rw [heq]
+      exact mul_nonneg (mul_nonneg hleft_nonneg hright_nonneg) hpow
+    · have hi_eq : i = k := by
+        apply le_antisymm
+        · exact le_of_not_gt hki
+        · exact le_of_not_gt hik
+      subst i
+      have hkj : k < j := hij
+      rw [candidateRankBestAfterRemovalWeight_self,
+        candidateRankBestAfterRemovalWeight_of_gt n q₂ hkj,
+        candidateRankBestAfterRemovalWeight_of_gt n q₁ hkj,
+        candidateRankBestAfterRemovalWeight_self]
+      ring_nf
+      exact le_rfl
 
 theorem rankPower_mul_lt_mul_rankPower
     {n : ℕ} {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)

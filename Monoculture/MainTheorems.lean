@@ -434,6 +434,47 @@ theorem paper_theorem3_finite_sum_certificate_from_candidate_sums
     C.CenterMallowsFiniteSumCertificate value := by
   exact C.centerMallowsFiniteSumCertificate_of_candidateSumCertificate hstrict cert
 
+/--
+Definition 1 / first-mover monotonicity for Mallows.
+
+Paper statement: when the algorithmic ranking law is more accurate than the
+human ranking law, the first mover's expected value is strictly higher under the
+algorithmic law.
+
+Lean uses the inverse Mallows parameter `q`, so greater accuracy is
+`C.algorithm.q < C.human.q`.
+-/
+theorem paper_definition1_firstMoverUtility_strict_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    expectedFirstMoverUtility C.human.law value <
+      expectedFirstMoverUtility C.algorithm.law value := by
+  exact C.firstMoverUtility_strict_of_rankFactorization
+    hstrict C.algorithm.rankFactorization C.human.rankFactorization hq_lt
+
+/--
+Definition 1 / singleton-removal monotonicity for Mallows.
+
+Paper statement: after any candidate `c` is removed, the expected value of the
+best remaining candidate is weakly higher under the more accurate algorithmic
+Mallows law than under the human law.
+
+Lean uses the inverse Mallows parameter `q`, so greater accuracy is
+`C.algorithm.q < C.human.q`.
+-/
+theorem paper_definition1_expectedBestAfterRemoval_le_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (c : Candidate n)
+    (hstrict : C.StrictlyCenterOrdered value)
+    (hq_lt : C.algorithm.q < C.human.q)
+    (hhuman_q_lt_one : C.human.q < 1) :
+    AccuracyFamily.expectedBestAfterRemoval C.human.law value c ≤
+      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c := by
+  exact C.expectedBestAfterRemoval_le_of_rankFactorization
+    c C.algorithm.rankFactorization C.human.rankFactorization
+    hstrict hq_lt hhuman_q_lt_one
+
 end MallowsComparison
 
 namespace MallowsAccuracyFamilySpec
@@ -442,11 +483,11 @@ namespace MallowsAccuracyFamilySpec
 Mallows family bridge to the paper-level Theorem 1 assumptions.
 
 The fixed-parameter Mallows finite-sum proof supplies Definition 2 for every
-positive parameter and Definition 3 for every `θA > θH > 0`.  The remaining
-fields of `MallowsAccuracyFamilySpec` are the Definition 1 analytic obligations
-used by the Theorem 1 crossing proof: atomwise continuity, asymptotic first
-dominance, and singleton-removal weak monotonicity. The strict no-removal
-first-mover monotonicity is proved from the Mallows rank-power MLR theorem.
+positive parameter and Definition 3 for every `θA > θH > 0`.  The first-mover
+and singleton-removal parts of Definition 1 monotonicity are proved from
+Mallows rank-power MLR theorems. The remaining analytic fields of
+`MallowsAccuracyFamilySpec` are atomwise continuity and the asymptotic
+first-dominance condition used by the Theorem 1 crossing proof.
 -/
 noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
@@ -455,10 +496,12 @@ noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
   MF.theorem1PaperAssumptions hn
 
 /--
-Paper Theorem 1 for a parameterized Mallows family, conditional only on the
-Definition 1 analytic fields recorded in `MallowsAccuracyFamilySpec`.
+Paper Theorem 1 for a parameterized Mallows family.
 
-Definitions 2 and 3 are discharged by the formalized Mallows Theorem 3 route.
+Definitions 2 and 3 are discharged by the formalized Mallows Theorem 3 route,
+and Definition 1 monotonicity is discharged by the Mallows MLR route. The
+remaining family-level analytic fields are atomwise continuity and asymptotic
+first dominance.
 -/
 theorem paper_theorem1_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)

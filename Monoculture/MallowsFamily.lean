@@ -503,6 +503,24 @@ theorem expectedBestAfterRemoval_le_of_rankBestAfterRemoval_pairwise
     hdenH_pos hdenA_pos (by linarith)
 
 /--
+The rank-only best-after-removal MLR inequality proves singleton-removal
+monotonicity for rank-factorized Mallows comparisons.
+-/
+theorem expectedBestAfterRemoval_le_of_rankFactorization
+    {value : Candidate n → ℝ} (c : Candidate n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hvalue : C.StrictlyCenterOrdered value)
+    (hq_lt : C.algorithm.q < C.human.q)
+    (hhuman_q_lt_one : C.human.q < 1) :
+    AccuracyFamily.expectedBestAfterRemoval C.human.law value c ≤
+      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c := by
+  exact C.expectedBestAfterRemoval_le_of_rankBestAfterRemoval_pairwise
+    c halg_rank hhuman_rank hvalue
+    (candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
+      n C.algorithm.q_pos hq_lt hhuman_q_lt_one (rankOf C.human.center c))
+
+/--
 The Mallows rank-power MLR inequality proves the strict `S = ∅` part of
 Definition 1 monotonicity: the more concentrated/lower-`q` law has higher
 expected first choice when values strictly decrease down the common center.
@@ -556,12 +574,11 @@ A one-parameter Mallows accuracy family with a common center ranking and a fixed
 value vector.
 
 The finite Mallows algebra in `MallowsPairwise` proves Definitions 2 and 3 from
-the common-center ordering and `qA < qH`.  The fields here that remain after
-that are the Definition 1 analytic/family facts used by Theorem 1: atomwise
-continuity, asymptotic first-dominance in the proof's payoff notation, and the
-singleton-removal weak monotonicity needed for the second mover.  The strict
-`S = ∅` first-mover monotonicity is proved below from the Mallows rank-power
-MLR inequality.
+the common-center ordering and `qA < qH`.  The fields here that remain are the
+Definition 1 analytic/family facts used by Theorem 1: atomwise continuity and
+asymptotic first-dominance in the proof's payoff notation.  The strict `S = ∅`
+first-mover monotonicity and singleton-removal weak monotonicity are proved
+below from Mallows rank-power MLR inequalities.
 -/
 structure MallowsAccuracyFamilySpec (n : ℕ) where
   value : Candidate n → ℝ
@@ -584,11 +601,6 @@ structure MallowsAccuracyFamilySpec (n : ℕ) where
           AccuracyFamily.theorem1_f
             ({ dist := fun θ => (spec θ).law, value := value } : AccuracyFamily n)
             hi θH
-  bestRemaining_weak :
-    ∀ θA θH, 0 < θH → θH < θA →
-      ∀ c : Candidate n,
-        AccuracyFamily.expectedBestAfterRemoval (spec θH).law value c ≤
-          AccuracyFamily.expectedBestAfterRemoval (spec θA).law value c
 
 namespace MallowsAccuracyFamilySpec
 
@@ -688,9 +700,8 @@ theorem firstMoverUtility_strict
   simpa [C, comparisonAt] using hmain
 
 /--
-The remaining singleton-removal weak monotonicity field, together with the
-proved Mallows first-mover strict monotonicity, gives the Theorem 1 removal
-monotonicity certificate.
+The proved Mallows first-mover and singleton-removal MLR inequalities give the
+Theorem 1 removal monotonicity certificate.
 -/
 theorem theorem1RemovalMonotonicityAt
     (hn : 0 < n) (θA θH : ℝ) (hθH : 0 < θH) (hθ : θH < θA) :
@@ -700,14 +711,25 @@ theorem theorem1RemovalMonotonicityAt
       MF.firstMoverUtility_strict hn θA θH hθH hθ
   bestRemaining_weak := by
     intro c
-    simpa [toAccuracyFamily] using
-      MF.bestRemaining_weak θA θH hθH hθ c
+    let C := MF.comparisonAt θA θH
+    have hstrict : C.StrictlyCenterOrdered MF.value := by
+      intro a b h
+      exact (MF.comparisonAt_strictlyCenterOrdered θA θH)
+        (by simpa [C] using h)
+    have hmain := C.expectedBestAfterRemoval_le_of_rankFactorization
+      c
+      C.algorithm.rankFactorization
+      C.human.rankFactorization
+      hstrict
+      (MF.q_strictAnti θA θH hθH hθ)
+      (MF.q_lt_one θH hθH)
+    simpa [C, comparisonAt, toAccuracyFamily] using hmain
 
 /--
 The parameterized Mallows fields instantiate the paper-level assumptions for
 Theorem 1. Definitions 2 and 3 are filled by the proved finite Mallows route;
-the remaining fields are exactly the Definition 1 analytic obligations recorded
-in `MallowsAccuracyFamilySpec`.
+the remaining fields are exactly the analytic obligations recorded in
+`MallowsAccuracyFamilySpec`.
 -/
 noncomputable def theorem1PaperAssumptions
     (hn : 0 < n) :
