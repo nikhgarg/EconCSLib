@@ -238,9 +238,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   whenever that algebraic error is at most `δ`; when `historyMaxBidSum` is
   positive, also expose the explicit threshold
   `min 1 (δ / ((Real.exp 1 + 1) * historyMaxBidSum))` for the `SmallBids`
-  assumption. The remaining paper seam is then a model-level limiting theorem
-  over a family of small-bid instances; do not force the discrete finite-bid
-  theorem to be exactly `1 - 1/e` before that limit has been stated.
+  assumption. A fixed-instance limit-style wrapper can remove the additive term
+  under an arbitrarily-small-threshold assumption by a half-gap contradiction.
+  The remaining faithful paper seam is then a model-level limiting theorem over
+  a nontrivial family of small-bid instances; do not force the discrete
+  finite-bid theorem to be exactly `1 - 1/e` before that limit has been stated.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

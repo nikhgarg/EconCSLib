@@ -3911,6 +3911,42 @@ theorem balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
     I hbid hbudget history hnodup hcover hε_nonneg hε_le_one hsmall
     herror_le_delta
 
+theorem balance_msvv_competitive_of_arbitrarily_smallBids_threshold
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : historyFinset history = Finset.univ)
+    (hmaxBidSum_pos : 0 < I.historyMaxBidSum history)
+    (hsmall :
+      ∀ δ : ℝ, 0 < δ →
+        I.SmallBids
+          (min 1
+            (δ / ((Real.exp 1 + 1) * I.historyMaxBidSum history)))) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) := by
+  let lhs := msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le)
+  let rhs := I.revenue (I.runAssignment I.balanceChoiceRule history)
+  by_contra hnot
+  have hlt : rhs < lhs := lt_of_not_ge hnot
+  let δ := (lhs - rhs) / 2
+  have hδ_pos : 0 < δ := by
+    dsimp [δ]
+    linarith
+  have happrox :
+      lhs ≤ rhs + δ := by
+    simpa [lhs, rhs] using
+      balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
+        I hbid hbudget history hnodup hcover hδ_pos.le hmaxBidSum_pos
+        (hsmall δ hδ_pos)
+  have hgap : rhs + δ < lhs := by
+    dsimp [δ]
+    linarith
+  exact (not_lt_of_ge happrox) hgap
+
 end AdWordsInstance
 
 end Online

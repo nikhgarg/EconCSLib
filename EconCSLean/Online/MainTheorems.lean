@@ -918,5 +918,33 @@ theorem paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_
     AdWordsInstance.balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
       I hbid hbudget history hnodup hcover hδ hmaxBidSum_pos hsmall
 
+/--
+Limit-style finite MSVV theorem. If the same finite instance satisfies the
+explicit small-bids threshold for every positive additive target `δ`, then the
+additive term can be removed.
+-/
+theorem paper_adwords_balance_msvv_competitive_of_arbitrarily_small_bids_threshold
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    (hmaxBidSum_pos : 0 < I.historyMaxBidSum history)
+    (hsmall :
+      ∀ δ : ℝ, 0 < δ →
+        I.SmallBids
+          (min 1
+            (δ / ((Real.exp 1 + 1) * I.historyMaxBidSum history)))) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) := by
+  exact
+    AdWordsInstance.balance_msvv_competitive_of_arbitrarily_smallBids_threshold
+      I hbid hbudget history hnodup hcover hmaxBidSum_pos hsmall
+
 end Online
 end EconCSLean
