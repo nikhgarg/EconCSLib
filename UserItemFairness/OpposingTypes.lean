@@ -5391,6 +5391,39 @@ theorem one_sub_pairShare_inv_mono_alpha
       hden_le
   simpa [one_div] using h
 
+/-- The reciprocal `q_j(α)⁻¹` is strictly decreasing in `α`. -/
+theorem pairShare_inv_strictAnti_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ l : Item n, 0 < v l) :
+    (pairShare alpha' v j)⁻¹ < (pairShare alpha v j)⁻¹ := by
+  have hq_lt :
+      pairShare alpha v j < pairShare alpha' v j :=
+    pairShare_strictMono_alpha j
+      halpha0 halpha1 halpha0' halpha1' halpha_lt hpos
+  exact inv_strictAnti₀ (pairShare_pos j halpha0 halpha1 hpos) hq_lt
+
+/-- The reciprocal tail factor `1/(1-q_j(α))` is strictly increasing in `α`. -/
+theorem one_sub_pairShare_inv_strictMono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ l : Item n, 0 < v l) :
+    (1 - pairShare alpha v j)⁻¹ <
+      (1 - pairShare alpha' v j)⁻¹ := by
+  have hq_lt :
+      pairShare alpha v j < pairShare alpha' v j :=
+    pairShare_strictMono_alpha j
+      halpha0 halpha1 halpha0' halpha1' halpha_lt hpos
+  have hden_lt :
+      1 - pairShare alpha' v j < 1 - pairShare alpha v j := by
+    linarith
+  exact inv_strictAnti₀
+    (one_sub_pairShare_pos j halpha0' halpha1' hpos) hden_lt
+
 /-- Fixed-pivot left inverse sum is weakly decreasing in `α`. -/
 theorem problem6LeftSum_antitone_alpha
     {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
@@ -5438,6 +5471,28 @@ theorem problem6PivotGap_antitone_alpha
     problem6RightSum_mono_alpha t
       halpha0 halpha1 halpha0' halpha1' halpha_le hpos
   unfold problem6PivotGap
+  linarith
+
+/-- The lower-crossing boundary gap is strictly decreasing in `α`. -/
+theorem problem6BoundaryGap_strictAnti_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6BoundaryGap alpha' v t <
+      problem6BoundaryGap alpha v t := by
+  have halpha_le : alpha ≤ alpha' := le_of_lt halpha_lt
+  have hL :=
+    problem6LeftSum_antitone_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  have hR :=
+    problem6RightSum_mono_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  have hinv :=
+    pairShare_inv_strictAnti_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_lt hpos
+  unfold problem6BoundaryGap problem6PivotGap
   linarith
 
 /-- The lower crossing threshold `-q_t(α)⁻¹` is weakly increasing in `α`. -/

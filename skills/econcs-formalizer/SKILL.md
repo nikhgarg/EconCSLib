@@ -259,7 +259,7 @@ Prefer first-pass formalizations with:
 - reusable primitives likely to help later papers,
 - theorem statements decomposable into local lemmas.
 
-Defer or isolate papers whose first main result depends on:
+Usually defer or isolate papers whose first main result depends on the following, unless expanding a completed core or instructed otherwise:
 
 - large complexity-theory reductions,
 - heavy measure theory or asymptotics,
@@ -933,3 +933,4 @@ have hd : d = rawSecond := by simpa [secondAbbrev] using h.2
   choice.
 - Keep imports narrow. Prefer specific Mathlib modules over `import Mathlib` in
   new or actively repaired files.
+ively repaired files.

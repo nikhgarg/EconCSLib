@@ -18,12 +18,41 @@ noncomputable def uniformTopOneValue (q : ℕ) : ℝ :=
 theorem uniformTopOneValue_succ_sub (q : ℕ) :
     uniformTopOneValue (q + 1) - uniformTopOneValue q =
       1 / ((q + 1 : ℝ) * (q + 2 : ℝ)) := by
-  sorry
+  unfold uniformTopOneValue
+  have h_cast : ((q + 1 : ℕ) : ℝ) = (q : ℝ) + 1 := by push_cast; rfl
+  rw [h_cast]
+  have h1 : (q : ℝ) + 1 + 1 = (q : ℝ) + 2 := by ring
+  rw [h1]
+  have hd1 : (q : ℝ) + 1 ≠ 0 := by positivity
+  have hd2 : (q : ℝ) + 2 ≠ 0 := by positivity
+  have h_diff : 1 - 1 / ((q : ℝ) + 2) - (1 - 1 / ((q : ℝ) + 1)) = 1 / ((q : ℝ) + 1) - 1 / ((q : ℝ) + 2) := by ring
+  rw [h_diff]
+  have h_frac : 1 / ((q : ℝ) + 1) - 1 / ((q : ℝ) + 2) = (1 * ((q : ℝ) + 2) - ((q : ℝ) + 1) * 1) / (((q : ℝ) + 1) * ((q : ℝ) + 2)) := by
+    exact div_sub_div 1 1 hd1 hd2
+  rw [h_frac]
+  have h_num : 1 * ((q : ℝ) + 2) - ((q : ℝ) + 1) * 1 = 1 := by ring
+  rw [h_num]
 
 theorem uniformTopOneValue_sub_pred {q : ℕ} (hq : 0 < q) :
     uniformTopOneValue q - uniformTopOneValue (q - 1) =
       1 / ((q : ℝ) * (q + 1 : ℝ)) := by
-  sorry
+  unfold uniformTopOneValue
+  have h_cast1 : ((q - 1 : ℕ) : ℝ) = (q : ℝ) - 1 := by
+    rw [Nat.cast_sub hq]
+    push_cast
+    rfl
+  rw [h_cast1]
+  have h1 : (q : ℝ) - 1 + 1 = (q : ℝ) := by ring
+  rw [h1]
+  have hd1 : (q : ℝ) ≠ 0 := by exact_mod_cast hq.ne'
+  have hd2 : (q : ℝ) + 1 ≠ 0 := by positivity
+  have h_diff : 1 - 1 / ((q : ℝ) + 1) - (1 - 1 / (q : ℝ)) = 1 / (q : ℝ) - 1 / ((q : ℝ) + 1) := by ring
+  rw [h_diff]
+  have h_frac : 1 / (q : ℝ) - 1 / ((q : ℝ) + 1) = (1 * ((q : ℝ) + 1) - (q : ℝ) * 1) / ((q : ℝ) * ((q : ℝ) + 1)) := by
+    exact div_sub_div 1 1 hd1 hd2
+  rw [h_frac]
+  have h_num : 1 * ((q : ℝ) + 1) - (q : ℝ) * 1 = 1 := by ring
+  rw [h_num]
 
 noncomputable def uniformTopOneConsumptionModel {T : ℕ}
     (likelihood : ItemType T → ℝ) : ConsumptionModel T where
