@@ -252,6 +252,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `Fin (n k)`: if the explicit finite error is eventually below every positive
   `δ`, or if the explicit small-bids threshold eventually holds for every
   positive `δ`, then the Balance/MSVV guarantee is eventually additive-`δ`.
+  Then use a reusable real-sequence lemma such as
+  `Sequence.le_of_seqTendsTo_eventually_le_add` to convert eventual additive
+  guarantees plus convergence of the scaled benchmark and online revenue into
+  the final limiting inequality.
   The remaining faithful paper seam is then a model-level limiting theorem over
   the paper's concrete small-bid instance family; do not force the discrete
   fixed-instance theorem to be exactly `1 - 1/e` before that family has been

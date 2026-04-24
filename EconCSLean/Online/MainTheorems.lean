@@ -1116,5 +1116,88 @@ theorem paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta_of_sma
     AdWordsInstance.balance_msvv_finRange_family_eventually_up_to_delta_of_smallBids_threshold
       n I hbid hbudget hmaxBidSum_pos hsmall_eventually
 
+/--
+Family-level limiting theorem from explicit error control. If the scaled
+offline benchmark and Balance/MSVV revenue converge, and the finite explicit
+error is eventually below every positive target, the limiting scaled benchmark
+is at most the limiting revenue.
+-/
+theorem paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (ε : ℕ → ℝ)
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hε : ∀ k, 0 ≤ ε k)
+    (hε_le_one : ∀ k, ε k ≤ 1)
+    (hsmall : ∀ k, (I k).SmallBids (ε k))
+    (herror_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          ε k * (Real.exp 1 + 1) *
+              (∑ q : Fin (n k), (I k).maxBidForQuery q) ≤ δ)
+    {scaledOptLimit revenueLimit : ℝ}
+    (hscaledOpt :
+      Sequence.SeqTendsTo
+        (fun k =>
+          AdWordsInstance.msvvRatio *
+            (I k).offlineOptimumValue (fun a => (hbudget k a).le))
+        scaledOptLimit)
+    (hrevenue :
+      Sequence.SeqTendsTo
+        (fun k =>
+          (I k).revenue
+            ((I k).runAssignment (I k).balanceChoiceRule
+              (List.finRange (n k))))
+        revenueLimit) :
+    scaledOptLimit ≤ revenueLimit := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_family_limit_competitive_of_error_eventually
+      n I ε hbid hbudget hε hε_le_one hsmall herror_eventually
+      hscaledOpt hrevenue
+
+/--
+Family-level limiting theorem from the explicit small-bids threshold. This is
+the closest current formal seam to the paper's small-bids limiting statement:
+instantiate the arrival/instance family, prove convergence of the two real
+sides, and prove the threshold condition eventually.
+-/
+theorem paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hmaxBidSum_pos :
+      ∀ k, 0 < ∑ q : Fin (n k), (I k).maxBidForQuery q)
+    (hsmall_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          (I k).SmallBids
+            (min 1
+              (δ / ((Real.exp 1 + 1) *
+                (∑ q : Fin (n k), (I k).maxBidForQuery q)))))
+    {scaledOptLimit revenueLimit : ℝ}
+    (hscaledOpt :
+      Sequence.SeqTendsTo
+        (fun k =>
+          AdWordsInstance.msvvRatio *
+            (I k).offlineOptimumValue (fun a => (hbudget k a).le))
+        scaledOptLimit)
+    (hrevenue :
+      Sequence.SeqTendsTo
+        (fun k =>
+          (I k).revenue
+            ((I k).runAssignment (I k).balanceChoiceRule
+              (List.finRange (n k))))
+        revenueLimit) :
+    scaledOptLimit ≤ revenueLimit := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold
+      n I hbid hbudget hmaxBidSum_pos hsmall_eventually hscaledOpt hrevenue
+
 end Online
 end EconCSLean
