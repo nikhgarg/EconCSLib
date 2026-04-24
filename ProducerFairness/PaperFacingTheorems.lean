@@ -5,71 +5,170 @@ import ProducerFairness.MainTheorems
 
 This file is the single-file Lean audit surface for the ICWSM 2025
 *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*
-formalization.
-Declarations are grouped in paper order (fixed binary-rating model
-definitions, Theorem 3.1, Theorem 3.2, and the boundary-correctness note).
+formalization. The declarations are ordered to match paper presentation:
 
-The core reusable model is in `EconCSLean.Statistics.BinaryRating`; this file
-only re-surfaces the canonical declarations used by the paper-facing wrappers.
+1. fixed binary-rating model definitions,
+2. Theorem 3.1 claims,
+3. Theorem 3.2 claims,
+4. boundary caveats.
+
+If this file typechecks and the commented statements match your paper notes, the
+folder has a consistent paper-facing proof surface.
 -/
 
 namespace ProducerFairness
 
--- 1) Fixed binary-rating model definitions
+/-! ## 1) Binary-rating model primitives - -/
 
--- True quality q_v and prior strength eta; posterior mean and derived terms.
-#check EconCSLean.Statistics.priorWeightedPosteriorMean
-#check EconCSLean.Statistics.priorWeightedBias
-#check EconCSLean.Statistics.priorWeightedVariance
-#check EconCSLean.Statistics.priorWeightedSquaredBias
+noncomputable abbrev priorWeightedPosteriorMean :=
+  EconCSLean.Statistics.priorWeightedPosteriorMean
+noncomputable abbrev priorWeightedBias :=
+  EconCSLean.Statistics.priorWeightedBias
+noncomputable abbrev priorWeightedVariance :=
+  EconCSLean.Statistics.priorWeightedVariance
+noncomputable abbrev priorWeightedSquaredBias :=
+  EconCSLean.Statistics.priorWeightedSquaredBias
 
--- Jensen/global-shape predicates used for paper Theorem 3.2.
-#check EconCSLean.Statistics.JensenConvex
-#check EconCSLean.Statistics.JensenConcave
-#check EconCSLean.Statistics.GlobalMinAt
-#check EconCSLean.Statistics.GlobalMaxAt
+abbrev JensenConvex := EconCSLean.Statistics.JensenConvex
+abbrev JensenConcave := EconCSLean.Statistics.JensenConcave
+abbrev GlobalMinAt := EconCSLean.Statistics.GlobalMinAt
+abbrev GlobalMaxAt := EconCSLean.Statistics.GlobalMaxAt
 
--- Core monotonic and algebraic lemmas used in the wrappers below.
-#check EconCSLean.Statistics.priorWeightedVariance_weak_decrease
-#check EconCSLean.Statistics.priorWeightedVariance_strict_decrease_of_interior_quality
-#check EconCSLean.Statistics.priorWeightedSquaredBias_mono
-#check EconCSLean.Statistics.priorWeightedSquaredBias_jensenConvex_quality
-#check EconCSLean.Statistics.priorWeightedSquaredBias_globalMin_priorMean
-#check EconCSLean.Statistics.priorWeightedVariance_jensenConcave_quality
-#check EconCSLean.Statistics.priorWeightedVariance_globalMax_half
-#check EconCSLean.Statistics.not_strictly_decreasing_priorWeightedVariance_quality_zero
-#check EconCSLean.Statistics.not_strictly_decreasing_priorWeightedVariance_quality_one
+/-! ## 2) Theorem 3.1 statements -/
 
--- 2) Theorem 3.1: posterior-mean variance and bias shape
+/--
+Theorem 3.1, variance weakly decreases in prior strength:
+for full quality interval `0 ≤ q_v ≤ 1`, if prior strength increases the
+posterior-mean variance is nonincreasing.
+-/
+theorem paper_facing_theorem3_1_variance_weak_decrease
+    {alpha beta t q etaLow etaHigh : ℝ}
+    (hshape : 0 < alpha + beta)
+    (ht : 0 < t)
+    (hq0 : 0 ≤ q)
+    (hq1 : q ≤ 1)
+    (hetaLow_nonneg : 0 ≤ etaLow)
+    (heta_le : etaLow ≤ etaHigh) :
+    EconCSLean.Statistics.priorWeightedVariance alpha beta etaHigh t q ≤
+      EconCSLean.Statistics.priorWeightedVariance alpha beta etaLow t q := by
+  exact paper_theorem3_1_variance_weak_decrease
+    hshape ht hq0 hq1 hetaLow_nonneg heta_le
 
--- Theorem 3.1 variance clause on the full binary-quality interval:
--- variance is weakly nonincreasing in prior strength.
-#check paper_theorem3_1_variance_weak_decrease
+/--
+Theorem 3.1, strict decrease on interior quality values.
+For `0 < q_v < 1`, positive prior-shape mass, positive number of prior samples,
+and stronger prior strength `η_high > η_low`, variance is strictly decreasing.
+-/
+theorem paper_facing_theorem3_1_variance_strict_decrease_interior
+    {alpha beta t q etaLow etaHigh : ℝ}
+    (hshape : 0 < alpha + beta)
+    (ht : 0 < t)
+    (hq0 : 0 < q)
+    (hq1 : q < 1)
+    (hetaLow_nonneg : 0 ≤ etaLow)
+    (heta_lt : etaLow < etaHigh) :
+    EconCSLean.Statistics.priorWeightedVariance alpha beta etaHigh t q <
+      EconCSLean.Statistics.priorWeightedVariance alpha beta etaLow t q := by
+  exact paper_theorem3_1_variance_strict_decrease_interior
+    hshape ht hq0 hq1 hetaLow_nonneg heta_lt
 
--- Corrected strict version for interior quality `0 < q_v < 1` (boundary cases
--- require a separate note).
-#check paper_theorem3_1_variance_strict_decrease_interior
+/--
+Theorem 3.1, squared posterior-mean bias is nondecreasing in prior strength.
+With stronger prior (`η_high ≥ η_low`) and basic nonnegativity assumptions,
+the squared bias term does not decrease.
+-/
+theorem paper_facing_theorem3_1_squared_bias_nondecreasing
+    {alpha beta t q etaLow etaHigh : ℝ}
+    (hshape : 0 < alpha + beta)
+    (ht : 0 < t)
+    (hetaLow_nonneg : 0 ≤ etaLow)
+    (heta_le : etaLow ≤ etaHigh) :
+    EconCSLean.Statistics.priorWeightedSquaredBias alpha beta etaLow t q ≤
+      EconCSLean.Statistics.priorWeightedSquaredBias alpha beta etaHigh t q := by
+  exact paper_theorem3_1_squared_bias_nondecreasing
+    hshape ht hetaLow_nonneg heta_le
 
--- Theorem 3.1 squared-bias monotonicity clause.
-#check paper_theorem3_1_squared_bias_nondecreasing
+/-! ## 3) Theorem 3.2 statements -/
 
--- 3) Theorem 3.2: shape of squared bias and variance in true quality
+/--
+Theorem 3.2, squared-bias Jensen convexity in true quality.
+The squared bias is Jensen-convex as a function of quality.
+-/
+theorem paper_facing_theorem3_2_squared_bias_convex_in_quality
+    {alpha beta eta t : ℝ}
+    (hden : eta * alpha + eta * beta + t ≠ 0) :
+    EconCSLean.Statistics.JensenConvex
+      (fun q => EconCSLean.Statistics.priorWeightedSquaredBias
+        alpha beta eta t q) := by
+  exact paper_theorem3_2_squared_bias_convex_in_quality hden
 
--- Theorem 3.2 first clause: squared bias is Jensen-convex in `q_v`.
-#check paper_theorem3_2_squared_bias_convex_in_quality
+/--
+Theorem 3.2, squared-bias global minimizer.
+On the full quality interval, squared bias is minimized at the prior mean
+`alpha / (alpha + beta)` under positive shape mass and positive sample weight.
+-/
+theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean
+    {alpha beta eta t : ℝ}
+    (hshape : 0 < alpha + beta)
+    (heta_nonneg : 0 ≤ eta)
+    (ht : 0 < t) :
+    EconCSLean.Statistics.GlobalMinAt
+      (fun q => EconCSLean.Statistics.priorWeightedSquaredBias
+        alpha beta eta t q)
+      (alpha / (alpha + beta)) := by
+  exact paper_theorem3_2_squared_bias_global_min_at_prior_mean
+    hshape heta_nonneg ht
 
--- Theorem 3.2 second clause: squared bias minimized at prior mean.
-#check paper_theorem3_2_squared_bias_global_min_at_prior_mean
+/--
+Theorem 3.2, posterior-mean variance Jensen concavity in true quality.
+This holds when the prior-weighted sample mass is nonnegative (`t ≥ 0`).
+-/
+theorem paper_facing_theorem3_2_variance_concave_in_quality
+    {alpha beta eta t : ℝ}
+    (ht : 0 ≤ t) :
+    EconCSLean.Statistics.JensenConcave
+      (fun q => EconCSLean.Statistics.priorWeightedVariance
+        alpha beta eta t q) := by
+  exact paper_theorem3_2_variance_concave_in_quality ht
 
--- Theorem 3.2 third clause: variance is Jensen-concave in `q_v`.
-#check paper_theorem3_2_variance_concave_in_quality
+/--
+Theorem 3.2, posterior-mean variance global maximum at `q = 1/2`.
+For nonnegative prior-weighted sample mass, variance is globally maximized at
+`q_v = 1/2`.
+-/
+theorem paper_facing_theorem3_2_variance_global_max_at_half
+    {alpha beta eta t : ℝ}
+    (ht : 0 ≤ t) :
+    EconCSLean.Statistics.GlobalMaxAt
+      (fun q => EconCSLean.Statistics.priorWeightedVariance
+        alpha beta eta t q)
+      (1 / 2) := by
+  exact paper_theorem3_2_variance_global_max_at_half ht
 
--- Theorem 3.2 final clause: variance maximized at `q_v = 1/2`.
-#check paper_theorem3_2_variance_global_max_at_half
+/-! ## 4) Boundary caveats -/
 
--- 4) Boundary-quality counterexamples to the unqualified strict form of
--- Theorem 3.1 (as noted in README and status notes).
-#check paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero
-#check paper_theorem3_1_variance_strict_decrease_counterexample_quality_one
+/--
+Boundary caution for Theorem 3.1 strict decrease:
+at `q_v = 0`, posterior-mean variance is identically zero for any prior strength,
+so strict decrease cannot hold unconditionally.
+-/
+theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero
+    (alpha beta t etaLow etaHigh : ℝ) :
+    ¬ EconCSLean.Statistics.priorWeightedVariance alpha beta etaHigh t 0 <
+      EconCSLean.Statistics.priorWeightedVariance alpha beta etaLow t 0 := by
+  exact paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero
+    alpha beta t etaLow etaHigh
+
+/--
+Boundary caution for Theorem 3.1 strict decrease:
+at `q_v = 1`, posterior-mean variance is identically zero for any prior strength,
+so strict decrease cannot hold unconditionally.
+-/
+theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one
+    (alpha beta t etaLow etaHigh : ℝ) :
+    ¬ EconCSLean.Statistics.priorWeightedVariance alpha beta etaHigh t 1 <
+      EconCSLean.Statistics.priorWeightedVariance alpha beta etaLow t 1 := by
+  exact paper_theorem3_1_variance_strict_decrease_counterexample_quality_one
+    alpha beta t etaLow etaHigh
 
 end ProducerFairness
