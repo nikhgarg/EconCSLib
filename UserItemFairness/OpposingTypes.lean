@@ -1,3 +1,4 @@
+import Mathlib.Topology.Order.IntermediateValue
 import UserItemFairness.Symmetrization
 
 namespace UserItemFairness
@@ -536,6 +537,53 @@ theorem one_sub_pairShare_pos
     (hpos : ∀ j : Item n, 0 < v j) :
     0 < 1 - pairShare alpha v j := by
   exact one_sub_typeOneShare_pos halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+
+/-- The scalar share `q_j(α)` is continuous on every compact subinterval of `(0,1)`. -/
+theorem typeOneShare_continuousOn_Icc
+    {alphaLeft alphaRight left right : ℝ}
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hleft : 0 < left) (hright : 0 < right) :
+    ContinuousOn (fun alpha => typeOneShare alpha left right)
+      (Set.Icc alphaLeft alphaRight) := by
+  have hnum :
+      ContinuousOn (fun alpha : ℝ => alpha * left)
+        (Set.Icc alphaLeft alphaRight) :=
+    continuousOn_id.mul continuousOn_const
+  have hden :
+      ContinuousOn
+        (fun alpha : ℝ => alpha * left + (1 - alpha) * right)
+        (Set.Icc alphaLeft alphaRight) :=
+    hnum.add ((continuousOn_const.sub continuousOn_id).mul continuousOn_const)
+  have hden_ne :
+      ∀ alpha ∈ Set.Icc alphaLeft alphaRight,
+        alpha * left + (1 - alpha) * right ≠ 0 := by
+    intro alpha halpha
+    exact ne_of_gt
+      (typeOneShare_denom_pos
+        (lt_of_lt_of_le halphaLeft0 halpha.1)
+        (lt_of_le_of_lt halpha.2 halphaRight1)
+        hleft hright)
+  simpa [typeOneShare, div_eq_mul_inv] using hnum.mul (hden.inv₀ hden_ne)
+
+/-- The indexed share `q_j(α)` is continuous on compact subintervals of `(0,1)`. -/
+theorem pairShare_continuousOn_Icc
+    {n : ℕ} {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ContinuousOn (fun alpha => pairShare alpha v j)
+      (Set.Icc alphaLeft alphaRight) := by
+  exact typeOneShare_continuousOn_Icc
+    halphaLeft0 halphaRight1 (hpos j) (hpos (reverseItem j))
+
+/-- The complementary indexed share `1-q_j(α)` is continuous on compact subintervals. -/
+theorem one_sub_pairShare_continuousOn_Icc
+    {n : ℕ} {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ContinuousOn (fun alpha => 1 - pairShare alpha v j)
+      (Set.Icc alphaLeft alphaRight) := by
+  exact continuousOn_const.sub
+    (pairShare_continuousOn_Icc j halphaLeft0 halphaRight1 hpos)
 
 /-- Reversing item indices flips strict order. -/
 theorem reverseItem_val_lt_of_val_lt {n : ℕ} {i j : Item n}
@@ -2750,6 +2798,145 @@ theorem problem6PivotGap_next_eq {n : ℕ}
   rw [problem6LeftSum_next_eq (alpha := alpha) (v := v) hnext,
     problem6RightSum_next_eq (alpha := alpha) (v := v) hnext]
   ring
+
+/-- The lower-crossing boundary gap `L_t - R_t + 1/q_t`. -/
+noncomputable def problem6BoundaryGap {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  problem6PivotGap alpha v t + (pairShare alpha v t)⁻¹
+
+/-- Vanishing boundary gap is the tight lower-crossing equation. -/
+theorem problem6BoundaryGap_eq_zero_iff {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    problem6BoundaryGap alpha v t = 0 ↔
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹ := by
+  unfold problem6BoundaryGap
+  constructor <;> intro h <;> linarith
+
+/-- Nonnegative boundary gap is exactly the lower crossing inequality. -/
+theorem problem6BoundaryGap_nonneg_iff_lower_crossing {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    0 ≤ problem6BoundaryGap alpha v t ↔
+      - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t := by
+  unfold problem6BoundaryGap
+  constructor <;> intro h <;> linarith
+
+/-- The boundary gap is continuous on every compact subinterval of `(0,1)`. -/
+theorem problem6BoundaryGap_continuousOn_Icc {n : ℕ}
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ContinuousOn (fun alpha => problem6BoundaryGap alpha v t)
+      (Set.Icc alphaLeft alphaRight) := by
+  have hleft :
+      ContinuousOn (fun alpha => problem6LeftSum alpha v t)
+        (Set.Icc alphaLeft alphaRight) := by
+    unfold problem6LeftSum
+    refine continuousOn_finset_sum Finset.univ ?_
+    intro j _hj
+    by_cases hjt : j.val < t.val
+    · have hq :=
+        pairShare_continuousOn_Icc j halphaLeft0 halphaRight1 hpos
+      have hq_ne :
+          ∀ alpha ∈ Set.Icc alphaLeft alphaRight,
+            pairShare alpha v j ≠ 0 := by
+        intro alpha halpha
+        exact ne_of_gt
+          (pairShare_pos j
+            (lt_of_lt_of_le halphaLeft0 halpha.1)
+            (lt_of_le_of_lt halpha.2 halphaRight1)
+            hpos)
+      simpa [hjt] using hq.inv₀ hq_ne
+    · simpa [hjt] using
+        (continuousOn_const :
+          ContinuousOn (fun _ : ℝ => (0 : ℝ))
+            (Set.Icc alphaLeft alphaRight))
+  have hright :
+      ContinuousOn (fun alpha => problem6RightSum alpha v t)
+        (Set.Icc alphaLeft alphaRight) := by
+    unfold problem6RightSum
+    refine continuousOn_finset_sum Finset.univ ?_
+    intro j _hj
+    by_cases htj : t.val < j.val
+    · have hq :=
+        one_sub_pairShare_continuousOn_Icc j
+          halphaLeft0 halphaRight1 hpos
+      have hq_ne :
+          ∀ alpha ∈ Set.Icc alphaLeft alphaRight,
+            1 - pairShare alpha v j ≠ 0 := by
+        intro alpha halpha
+        exact ne_of_gt
+          (one_sub_pairShare_pos j
+            (lt_of_lt_of_le halphaLeft0 halpha.1)
+            (lt_of_le_of_lt halpha.2 halphaRight1)
+            hpos)
+      simpa [htj] using hq.inv₀ hq_ne
+    · simpa [htj] using
+        (continuousOn_const :
+          ContinuousOn (fun _ : ℝ => (0 : ℝ))
+            (Set.Icc alphaLeft alphaRight))
+  have hpivot :
+      ContinuousOn (fun alpha => pairShare alpha v t)
+        (Set.Icc alphaLeft alphaRight) :=
+    pairShare_continuousOn_Icc t halphaLeft0 halphaRight1 hpos
+  have hpivot_ne :
+      ∀ alpha ∈ Set.Icc alphaLeft alphaRight,
+        pairShare alpha v t ≠ 0 := by
+    intro alpha halpha
+    exact ne_of_gt
+      (pairShare_pos t
+        (lt_of_lt_of_le halphaLeft0 halpha.1)
+        (lt_of_le_of_lt halpha.2 halphaRight1)
+        hpos)
+  unfold problem6BoundaryGap problem6PivotGap
+  exact (hleft.sub hright).add (hpivot.inv₀ hpivot_ne)
+
+/--
+If the lower crossing inequality for a pivot holds at the left endpoint and
+fails at the right endpoint, then the tight crossing equation holds somewhere
+between them.  This is the scalar IVT step used to construct Lemma 8 boundary
+points.
+-/
+theorem problem6BoundaryGap_exists_zero_of_lower_crossing_changes {n : ℕ}
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcross_left :
+      - (pairShare alphaLeft v t)⁻¹ ≤ problem6PivotGap alphaLeft v t)
+    (hnot_cross_right :
+      ¬ - (pairShare alphaRight v t)⁻¹ ≤
+        problem6PivotGap alphaRight v t) :
+    ∃ alphaBoundary : ℝ,
+      alphaLeft ≤ alphaBoundary ∧ alphaBoundary ≤ alphaRight ∧
+      0 < alphaBoundary ∧ alphaBoundary < 1 ∧
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹ := by
+  let F : ℝ → ℝ := fun alpha => problem6BoundaryGap alpha v t
+  have hcont :
+      ContinuousOn F (Set.Icc alphaLeft alphaRight) := by
+    dsimp [F]
+    exact problem6BoundaryGap_continuousOn_Icc
+      halphaLeft0 halphaRight1 hpos
+  have hleft_nonneg : 0 ≤ F alphaLeft := by
+    dsimp [F]
+    exact problem6BoundaryGap_nonneg_iff_lower_crossing.mpr hcross_left
+  have hright_neg : F alphaRight < 0 := by
+    have hnot_nonneg : ¬ 0 ≤ F alphaRight := by
+      intro hnonneg
+      exact hnot_cross_right
+        (by
+          dsimp [F] at hnonneg
+          exact problem6BoundaryGap_nonneg_iff_lower_crossing.mp hnonneg)
+    exact not_le.mp hnot_nonneg
+  have hzero_between : 0 ∈ Set.Icc (F alphaRight) (F alphaLeft) :=
+    ⟨le_of_lt hright_neg, hleft_nonneg⟩
+  rcases intermediate_value_Icc' hleft_le_right hcont hzero_between with
+    ⟨alphaBoundary, halphaBoundary, hzero⟩
+  refine ⟨alphaBoundary, halphaBoundary.1, halphaBoundary.2,
+    lt_of_lt_of_le halphaLeft0 halphaBoundary.1,
+    lt_of_le_of_lt halphaBoundary.2 halphaRight1, ?_⟩
+  dsimp [F] at hzero
+  exact problem6BoundaryGap_eq_zero_iff.mp hzero
 
 /--
 Appendix D, Lemma 10 even-center case: when the midpoint candidate is
@@ -5617,6 +5804,57 @@ theorem problem6FirstClosedPivotRegion_order {n : ℕ} [NeZero n]
     problem6FirstClosedPivot_mono_alpha
       halpha0 halpha1 hbeta0 hbeta1 hle hpos
   simpa [ht, hu] using hmono
+
+/--
+Appendix D, Lemma 8 boundary-point existence for adjacent canonical
+first-pivot intervals: if the canonical first closed pivot is `t` at the left
+endpoint and the adjacent item `u = t+1` at the right endpoint, then the tight
+lower-crossing boundary for `t` occurs between the two parameters.
+-/
+theorem problem6FirstClosedPivot_adjacentBoundary_exists
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1) :
+    ∃ alphaBoundary : ℝ,
+      alphaLeft ≤ alphaBoundary ∧ alphaBoundary ≤ alphaRight ∧
+      0 < alphaBoundary ∧ alphaBoundary < 1 ∧
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹ := by
+  have hcross_left :
+      - (pairShare alphaLeft v t)⁻¹ ≤
+        problem6PivotGap alphaLeft v t := by
+    have h :=
+      problem6FirstClosedPivot_lower_crossing
+        (alpha := alphaLeft) (v := v)
+        halphaLeft0 halphaLeft1 hpos
+    simpa [hleft_pivot] using h
+  have hnot_cross_right :
+      ¬ - (pairShare alphaRight v t)⁻¹ ≤
+        problem6PivotGap alphaRight v t := by
+    intro hcross_right
+    have ht_mem : t ∈ problem6PivotCrossingSet alphaRight v := by
+      simp [problem6PivotCrossingSet, hcross_right]
+    have hmin :=
+      problem6FirstClosedPivot_min
+        (alpha := alphaRight) (v := v)
+        halphaRight0 halphaRight1 hpos ht_mem
+    have hu_le_t : u.val ≤ t.val := by
+      simpa [hright_pivot] using hmin
+    omega
+  exact
+    problem6BoundaryGap_exists_zero_of_lower_crossing_changes
+      halphaLeft0 halphaRight1 hleft_le_right hpos
+      hcross_left hnot_cross_right
 
 /--
 At `α = 1/2`, the exact-center Lemma 10 candidate lies weakly after the

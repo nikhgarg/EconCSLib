@@ -3726,6 +3726,69 @@ theorem paper_lemma8_problem6FirstClosedPivotRegion_order
     t.val ≤ u.val := by
   exact problem6FirstClosedPivotRegion_order hpos halpha hbeta hle
 
+/-- Appendix D, Lemma 8 boundary-gap continuity on compact subintervals. -/
+theorem paper_lemma8_problem6BoundaryGap_continuousOn_Icc
+    {n : ℕ} {alphaLeft alphaRight : ℝ} {v : Item n → ℝ}
+    {t : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ContinuousOn (fun alpha => problem6BoundaryGap alpha v t)
+      (Set.Icc alphaLeft alphaRight) := by
+  exact problem6BoundaryGap_continuousOn_Icc
+    halphaLeft0 halphaRight1 hpos
+
+/--
+Appendix D, Lemma 8 IVT boundary step: a lower-crossing sign change produces
+a tight boundary point.
+-/
+theorem paper_lemma8_problem6BoundaryGap_exists_zero_of_lower_crossing_changes
+    {n : ℕ} {alphaLeft alphaRight : ℝ} {v : Item n → ℝ}
+    {t : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcross_left :
+      - (pairShare alphaLeft v t)⁻¹ ≤ problem6PivotGap alphaLeft v t)
+    (hnot_cross_right :
+      ¬ - (pairShare alphaRight v t)⁻¹ ≤
+        problem6PivotGap alphaRight v t) :
+    ∃ alphaBoundary : ℝ,
+      alphaLeft ≤ alphaBoundary ∧ alphaBoundary ≤ alphaRight ∧
+      0 < alphaBoundary ∧ alphaBoundary < 1 ∧
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹ := by
+  exact problem6BoundaryGap_exists_zero_of_lower_crossing_changes
+    halphaLeft0 halphaRight1 hleft_le_right hpos
+    hcross_left hnot_cross_right
+
+/--
+Appendix D, Lemma 8 adjacent canonical boundary existence: if the canonical
+first pivot changes from `t` to `t+1`, the tight boundary equation for `t`
+has a solution between the two parameters.
+-/
+theorem paper_lemma8_problem6FirstClosedPivot_adjacentBoundary_exists
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1) :
+    ∃ alphaBoundary : ℝ,
+      alphaLeft ≤ alphaBoundary ∧ alphaBoundary ≤ alphaRight ∧
+      0 < alphaBoundary ∧ alphaBoundary < 1 ∧
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹ := by
+  exact problem6FirstClosedPivot_adjacentBoundary_exists
+    halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+    hleft_le_right hpos hleft_pivot hright_pivot hnext
+
 /--
 Appendix D, Lemma 6, mirror-pair algebra for
 `1/q_j - 1/(1-q_{n-j+1})`.
