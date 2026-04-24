@@ -3647,6 +3647,30 @@ theorem paper_lemma8_selectedPivot_eq_of_between_equalizedBasicOptimal_endpoints
     hleft hright hpos hdec hpivot hLeft h hRight
 
 /--
+Appendix D, Lemma 8 interval step for the canonical first pivot: if the
+canonical `A(t)` selector agrees at two endpoints, it agrees throughout the
+intermediate interval.
+-/
+theorem paper_lemma8_firstClosedPivot_eq_of_between_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alpha alphaRight : ℝ} {v : Item n → ℝ}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft : alphaLeft ≤ alpha)
+    (hright : alpha ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot :
+      problem6FirstClosedPivot alphaLeft v halphaLeft0 halphaLeft1 hpos =
+        problem6FirstClosedPivot alphaRight v
+          halphaRight0 halphaRight1 hpos) :
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+      problem6FirstClosedPivot alphaLeft v halphaLeft0 halphaLeft1 hpos := by
+  exact lemma8_firstClosedPivot_eq_of_between_endpoints
+    halphaLeft0 halphaLeft1 halpha0 halpha1 halphaRight0 halphaRight1
+    hleft hright hpos hpivot
+
+/--
 Appendix D, Lemma 6, mirror-pair algebra for
 `1/q_j - 1/(1-q_{n-j+1})`.
 -/

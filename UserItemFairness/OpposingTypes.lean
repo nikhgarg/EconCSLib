@@ -5440,6 +5440,46 @@ theorem problem6FirstClosedPivot_mono_alpha {n : ℕ} [NeZero n]
     (alpha := alpha) (v := v) halpha0 halpha1 hpos ht'_mem
 
 /--
+Appendix D, Lemma 8 interval step for the canonical first pivot: if the
+canonical first closed pivot agrees at two endpoint parameters, then it agrees
+at every intermediate parameter.  This is the formal `A(t)`-is-an-interval
+statement following from Lemma 7-style monotonicity.
+-/
+theorem lemma8_firstClosedPivot_eq_of_between_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alpha alphaRight : ℝ} {v : Item n → ℝ}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft : alphaLeft ≤ alpha)
+    (hright : alpha ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot :
+      problem6FirstClosedPivot alphaLeft v halphaLeft0 halphaLeft1 hpos =
+        problem6FirstClosedPivot alphaRight v
+          halphaRight0 halphaRight1 hpos) :
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+      problem6FirstClosedPivot alphaLeft v halphaLeft0 halphaLeft1 hpos := by
+  have hleft_mono :
+      (problem6FirstClosedPivot alphaLeft v
+          halphaLeft0 halphaLeft1 hpos).val ≤
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val :=
+    problem6FirstClosedPivot_mono_alpha
+      halphaLeft0 halphaLeft1 halpha0 halpha1 hleft hpos
+  have hright_mono :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (problem6FirstClosedPivot alphaLeft v
+          halphaLeft0 halphaLeft1 hpos).val := by
+    have hraw :
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+          (problem6FirstClosedPivot alphaRight v
+            halphaRight0 halphaRight1 hpos).val :=
+      problem6FirstClosedPivot_mono_alpha
+        halpha0 halpha1 halphaRight0 halphaRight1 hright hpos
+    simpa [hpivot] using hraw
+  exact Fin.ext (le_antisymm hright_mono hleft_mono)
+
+/--
 At `α = 1/2`, the exact-center Lemma 10 candidate lies weakly after the
 canonical first closed pivot.
 -/
