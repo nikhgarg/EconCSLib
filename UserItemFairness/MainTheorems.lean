@@ -3603,6 +3603,175 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center
     hsucc hpivot_or_eq hopt hhalf hupper
 
 /--
+Theorem 3 reduced-optimum bridge with the Proposition-1-shaped
+canonicalization assumption: along a first-half finite chain, canonical
+equalized/shared representatives identify each selected policy with
+`U^*_min(1, α)`, so the reduced type-fairness optimum is monotone.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hcanonical :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+          ∃ ρbar : TypePolicy 2 n,
+            TypeWeightedRecommendationModel.feasibleAtLevel
+              (twoTypeReducedModel (alphaSeq i) v) 1 ρbar ∧
+            (∀ l : Item n,
+              pairShare (alphaSeq i) v l * (ρbar 0 l).toReal +
+                (1 - pairShare (alphaSeq i) v l) * (ρbar 1 l).toReal =
+              TypeWeightedRecommendationModel.itemFairness
+                (twoTypeReducedModel (alphaSeq i) v) ρbar) ∧
+            TypePolicy.SharedItemsBound ρbar ∧
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq i) v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_feasible_canonicalization
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hpivot_or_eq hcenter hopt hcanonical
+
+/--
+Theorem 3 reduced-optimum bridge, odd-center first-half chain, with
+Proposition-1-shaped canonicalization of reduced `γ = 1` feasible policies.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_chain_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf)
+    (hcanonical :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+          ∃ ρbar : TypePolicy 2 n,
+            TypeWeightedRecommendationModel.feasibleAtLevel
+              (twoTypeReducedModel (alphaSeq i) v) 1 ρbar ∧
+            (∀ l : Item n,
+              pairShare (alphaSeq i) v l * (ρbar 0 l).toReal +
+                (1 - pairShare (alphaSeq i) v l) * (ρbar 1 l).toReal =
+              TypeWeightedRecommendationModel.itemFairness
+                (twoTypeReducedModel (alphaSeq i) v) ρbar) ∧
+            TypePolicy.SharedItemsBound ρbar ∧
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq i) v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_chain_of_feasible_canonicalization
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hcenter_c hpivot_or_eq hopt hhalf hcanonical
+
+/--
+Theorem 3 reduced-optimum bridge, even-center first-half chain, with
+Proposition-1-shaped canonicalization of reduced `γ = 1` feasible policies.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_chain_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf)
+    (hcanonical :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+          ∃ ρbar : TypePolicy 2 n,
+            TypeWeightedRecommendationModel.feasibleAtLevel
+              (twoTypeReducedModel (alphaSeq i) v) 1 ρbar ∧
+            (∀ l : Item n,
+              pairShare (alphaSeq i) v l * (ρbar 0 l).toReal +
+                (1 - pairShare (alphaSeq i) v l) * (ρbar 1 l).toReal =
+              TypeWeightedRecommendationModel.itemFairness
+                (twoTypeReducedModel (alphaSeq i) v) ρbar) ∧
+            TypePolicy.SharedItemsBound ρbar ∧
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq i) v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_chain_of_feasible_canonicalization
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hsucc hpivot_or_eq hopt hhalf hcanonical
+
+/--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
 normalized type-utility comparison when the two best-item denominators agree.
 -/
