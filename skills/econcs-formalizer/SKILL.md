@@ -878,6 +878,10 @@ simpa using
   `fun θ => ((μ θ) a).toReal`, then lift through a finite expectation lemma
   such as `epsilonContinuousAt_pmfExp_of_atom`. Do not import broad topology
   just to prove a finite epsilon-delta continuity bridge.
+- When a compact-interval theorem needs mathlib `ContinuousOn`, convert a
+  pointwise epsilon-delta interface with a small bridge such as
+  `continuousOn_of_forall_epsilonContinuousAt`; keep the topology import in the
+  generic interval/analysis module, not in every paper file.
 - For uniform PMFs over finite spaces, derive relabeling invariance with
   `pmfExp_uniformPMF_comp_equiv` or
   `pmfExp_uniformPMF_eq_of_comp_equiv` instead of expanding the uniform mass by

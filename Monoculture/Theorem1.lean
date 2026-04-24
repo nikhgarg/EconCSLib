@@ -151,6 +151,55 @@ theorem theorem1_f_epsilonContinuousAt_of_atom_continuity {n : ℕ}
       (fun π => F.value (secondChoice π)))
 
 /--
+Atomwise continuity of the ranking family also makes the paper's mixed
+algorithm-human payoff expression `g` continuous in `θA`.
+-/
+theorem theorem1_g_epsilonContinuousAt_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θA => ((F.dist θA) π).toReal) θstar) :
+    EpsilonContinuousAt (fun θA => theorem1_g F θA θH) θstar := by
+  dsimp [theorem1_g, modelAt, Model.firstMoverEU, Model.secondMoverEU,
+    Model.rankingDist, expectedFirstMoverUtility, expectedSecondMoverIndependent]
+  exact epsilonContinuousAt_add
+    (epsilonContinuousAt_const
+      (pmfExp (F.dist θH) (fun π => F.value (firstChoice π))) θstar)
+    (epsilonContinuousAt_pmfPairExp_right_of_atom
+      (F.dist θH)
+      (ν := fun θA => F.dist θA)
+      (x := θstar)
+      hdist
+      (fun π σ => secondMoverUtility F.value π σ))
+
+/-- Atomwise continuity makes the crossing function `f - g` continuous at a point. -/
+theorem theorem1_f_sub_g_epsilonContinuousAt_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θA => ((F.dist θA) π).toReal) θstar) :
+    EpsilonContinuousAt
+      (fun θA => theorem1_f F θA θH - theorem1_g F θA θH) θstar :=
+  epsilonContinuousAt_sub
+    (theorem1_f_epsilonContinuousAt_of_atom_continuity F θH θstar hdist)
+    (theorem1_g_epsilonContinuousAt_of_atom_continuity F θH θstar hdist)
+
+/--
+Atomwise continuity throughout an interval gives the `ContinuousOn` field needed
+by the interval sign-change certificate for `f - g`.
+-/
+theorem theorem1_f_sub_g_continuousOn_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH lo hi : ℝ)
+    (hdist :
+      ∀ θA, θA ∈ Set.Icc lo hi →
+        ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θA) :
+    ContinuousOn
+      (fun θA => theorem1_f F θA θH - theorem1_g F θA θH)
+      (Set.Icc lo hi) :=
+  continuousOn_of_forall_epsilonContinuousAt
+    (fun θA hθA =>
+      theorem1_f_sub_g_epsilonContinuousAt_of_atom_continuity
+        F θH θA (hdist θA hθA))
+
+/--
 The paper's `f < h` persistence step follows from finite atomwise continuity of
 the ranking law. This isolates the continuity part of the final nudge from the
 separate one-sided crossing obligation `g < f`.

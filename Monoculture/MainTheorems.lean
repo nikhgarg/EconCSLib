@@ -482,6 +482,42 @@ theorem paper_theorem1_f_continuous_from_atom_continuity
     F θH θstar hdist
 
 /--
+Theorem 1 proof notation, finite continuity bridge for `g`.
+
+The mixed algorithm-human expression `g(θA)` is also continuous in `θA` when the
+finite ranking law is atomwise epsilon-delta continuous.
+-/
+theorem paper_theorem1_g_continuous_from_atom_continuity
+    {n : ℕ} (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, DecisionCore.EpsilonContinuousAt
+        (fun θA => ((F.dist θA) π).toReal) θstar) :
+    DecisionCore.EpsilonContinuousAt
+      (fun θA => AccuracyFamily.theorem1_g F θA θH) θstar :=
+  AccuracyFamily.theorem1_g_epsilonContinuousAt_of_atom_continuity
+    F θH θstar hdist
+
+/--
+Theorem 1 proof notation, interval continuity bridge for `f - g`.
+
+This supplies the `ContinuousOn` field used by the interval sign-change
+certificate from atomwise continuity of the finite ranking law on `[lo, hi]`.
+-/
+theorem paper_theorem1_f_sub_g_continuousOn_from_atom_continuity
+    {n : ℕ} (F : AccuracyFamily n) (θH lo hi : ℝ)
+    (hdist :
+      ∀ θA, θA ∈ Set.Icc lo hi →
+        ∀ π : Ranking n, DecisionCore.EpsilonContinuousAt
+          (fun θ => ((F.dist θ) π).toReal) θA) :
+    ContinuousOn
+      (fun θA =>
+        AccuracyFamily.theorem1_f F θA θH -
+          AccuracyFamily.theorem1_g F θA θH)
+      (Set.Icc lo hi) :=
+  AccuracyFamily.theorem1_f_sub_g_continuousOn_of_atom_continuity
+    F θH lo hi hdist
+
+/--
 Theorem 1 proof notation, continuity persistence step.
 
 Paper statement in the proof: after finding a point with `f(θ*) < h(θ*)`,

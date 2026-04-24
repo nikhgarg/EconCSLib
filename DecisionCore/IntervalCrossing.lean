@@ -1,10 +1,35 @@
 import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Topology.MetricSpace.Pseudo.Defs
 import Mathlib.Topology.Order.Compact
 import Mathlib.Tactic.Linarith
+import DecisionCore.EpsilonContinuity
 
 namespace DecisionCore
 
 open Set
+
+/-- Elementary epsilon-delta continuity gives mathlib's `ContinuousAt`. -/
+theorem continuousAt_of_epsilonContinuousAt {f : ℝ → ℝ} {x : ℝ}
+    (hf : EpsilonContinuousAt f x) :
+    ContinuousAt f x := by
+  rw [Metric.continuousAt_iff]
+  intro ε hε
+  rcases hf ε hε with ⟨δ, hδ_pos, hδ⟩
+  refine ⟨δ, hδ_pos, ?_⟩
+  intro y hy
+  simpa [Real.dist_eq] using hδ y (by simpa [Real.dist_eq] using hy)
+
+/-- Pointwise elementary epsilon-delta continuity on a set gives `ContinuousOn`. -/
+theorem continuousOn_of_forall_epsilonContinuousAt
+    {f : ℝ → ℝ} {s : Set ℝ}
+    (hf : ∀ x ∈ s, EpsilonContinuousAt f x) :
+    ContinuousOn f s := by
+  rw [Metric.continuousOn_iff]
+  intro x hx ε hε
+  rcases hf x hx ε hε with ⟨δ, hδ_pos, hδ⟩
+  refine ⟨δ, hδ_pos, ?_⟩
+  intro y hyS hy
+  simpa [Real.dist_eq] using hδ y (by simpa [Real.dist_eq] using hy)
 
 /--
 On a compact interval, if a continuous function is nonpositive at the left

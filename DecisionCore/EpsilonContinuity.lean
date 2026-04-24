@@ -61,6 +61,24 @@ theorem epsilonContinuousAt_mul_const {f : ℝ → ℝ} {x c : ℝ}
       _ < (ε / |c|) * |c| := mul_lt_mul_of_pos_right hfy hcabs_pos
       _ = ε := hcancel
 
+/-- Multiplying a continuous real function by a constant on the left preserves continuity. -/
+theorem epsilonContinuousAt_const_mul {f : ℝ → ℝ} {x c : ℝ}
+    (hf : EpsilonContinuousAt f x) :
+    EpsilonContinuousAt (fun y => c * f y) x := by
+  simpa [mul_comm] using epsilonContinuousAt_mul_const (c := c) hf
+
+/-- Negating an epsilon-delta continuous real function preserves continuity. -/
+theorem epsilonContinuousAt_neg {f : ℝ → ℝ} {x : ℝ}
+    (hf : EpsilonContinuousAt f x) :
+    EpsilonContinuousAt (fun y => - f y) x := by
+  simpa using epsilonContinuousAt_const_mul (c := -1) hf
+
+/-- Differences of epsilon-delta continuous real functions are continuous. -/
+theorem epsilonContinuousAt_sub {f g : ℝ → ℝ} {x : ℝ}
+    (hf : EpsilonContinuousAt f x) (hg : EpsilonContinuousAt g x) :
+    EpsilonContinuousAt (fun y => f y - g y) x := by
+  simpa [sub_eq_add_neg] using epsilonContinuousAt_add hf (epsilonContinuousAt_neg hg)
+
 /-- Finite sums of epsilon-delta continuous real functions are continuous. -/
 theorem epsilonContinuousAt_finset_sum {ι : Type*} [DecidableEq ι]
     (s : Finset ι) {f : ι → ℝ → ℝ} {x : ℝ}
@@ -91,6 +109,38 @@ theorem epsilonContinuousAt_pmfExp_of_atom
   unfold pmfExp
   exact epsilonContinuousAt_finset_sum (Finset.univ)
     (fun a _ => epsilonContinuousAt_mul_const (c := payoff a) (hμ a))
+
+/--
+If the right PMF in an independent pair expectation varies atomwise
+continuously, then the pair expectation is continuous.
+-/
+theorem epsilonContinuousAt_pmfPairExp_right_of_atom
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF α) {ν : ℝ → PMF β} {x : ℝ}
+    (hν : ∀ b : β, EpsilonContinuousAt (fun θ => ((ν θ) b).toReal) x)
+    (payoff : α → β → ℝ) :
+    EpsilonContinuousAt (fun θ => pmfPairExp μ (ν θ) payoff) x := by
+  unfold pmfPairExp pmfExp
+  exact epsilonContinuousAt_finset_sum (Finset.univ)
+    (fun a _ =>
+      epsilonContinuousAt_const_mul (c := (μ a).toReal)
+        (epsilonContinuousAt_pmfExp_of_atom
+          (μ := ν) (x := x) hν (fun b => payoff a b)))
+
+/--
+If the left PMF in an independent pair expectation varies atomwise
+continuously, then the pair expectation is continuous.
+-/
+theorem epsilonContinuousAt_pmfPairExp_left_of_atom
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    {μ : ℝ → PMF α} (ν : PMF β) {x : ℝ}
+    (hμ : ∀ a : α, EpsilonContinuousAt (fun θ => ((μ θ) a).toReal) x)
+    (payoff : α → β → ℝ) :
+    EpsilonContinuousAt (fun θ => pmfPairExp (μ θ) ν payoff) x := by
+  unfold pmfPairExp
+  exact epsilonContinuousAt_pmfExp_of_atom
+    (μ := μ) (x := x) hμ
+    (fun a => pmfExp ν (fun b => payoff a b))
 
 /--
 If `f x < g x` and both functions are epsilon-delta continuous at `x`, then
