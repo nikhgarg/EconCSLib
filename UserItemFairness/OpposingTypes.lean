@@ -223,6 +223,19 @@ theorem reverseItem_reverseItem {n : ℕ} (j : Item n) :
   simp [reverseItem]
   omega
 
+/-- Reversal as a finite equivalence on item indices. -/
+def reverseItemEquiv (n : ℕ) : Item n ≃ Item n where
+  toFun := reverseItem
+  invFun := reverseItem
+  left_inv := reverseItem_reverseItem
+  right_inv := reverseItem_reverseItem
+
+/-- Reindex a finite sum by item reversal. -/
+theorem sum_reverseItem {n : ℕ} (f : Item n → ℝ) :
+    (∑ j : Item n, f (reverseItem j)) = ∑ j : Item n, f j := by
+  simpa [reverseItemEquiv] using
+    (Equiv.sum_comp (reverseItemEquiv n) f)
+
 /-- The indexed `q_j(α)` used in the opposing-preference proofs. -/
 noncomputable def pairShare {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (j : Item n) : ℝ :=
@@ -1210,6 +1223,29 @@ theorem problem6ClosedPolicy_feasible_of_denominatorBounds {n : ℕ}
   exact problem6ClosedPolicy_feasible halpha0 halpha1 hpos
     (problem6ClosedNonnegativePivots_of_denominatorBounds
       halpha0 halpha1 hpos hbounds)
+
+/-- Raw type-0 utility of the closed-form Problem 6 policy. -/
+noncomputable def problem6ClosedTypeZeroRawUtility {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  ∑ j : Item n, v j * problem6ClosedX alpha v t j
+
+/-- Raw type-1 utility of the closed-form Problem 6 policy. -/
+noncomputable def problem6ClosedTypeOneRawUtility {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  ∑ j : Item n, v (reverseItem j) * problem6ClosedY alpha v t j
+
+/--
+Mirror-reindexing form of the closed type-1 raw utility, matching the summation
+used in Lemma 6.
+-/
+theorem problem6ClosedTypeOneRawUtility_eq_mirror_sum {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeOneRawUtility alpha v t =
+      ∑ j : Item n, v j * problem6ClosedY alpha v t (reverseItem j) := by
+  unfold problem6ClosedTypeOneRawUtility
+  simpa [reverseItem_reverseItem] using
+    (sum_reverseItem
+      (fun j : Item n => v j * problem6ClosedY alpha v t (reverseItem j)))
 
 /--
 Appendix D, Lemma 6 coordinate dominance: for `α ≤ 1/2`, a pre-pivot

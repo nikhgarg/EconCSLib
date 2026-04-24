@@ -1019,6 +1019,16 @@ theorem paper_lemma6_closedX_sub_closedY_reverse_nonneg
     halpha0 halpha1 halpha_half hpos hj hrev
 
 /--
+Appendix D, Lemma 6 summation setup: reindex the closed type-1 raw utility
+by mirror items.
+-/
+theorem paper_lemma6_closedTypeOneRawUtility_eq_mirror_sum
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeOneRawUtility alpha v t =
+      ∑ j : Item n, v j * problem6ClosedY alpha v t (reverseItem j) := by
+  exact problem6ClosedTypeOneRawUtility_eq_mirror_sum alpha v t
+
+/--
 Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
 shares.
 -/
