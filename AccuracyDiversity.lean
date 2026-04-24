@@ -5,5 +5,6 @@ import AccuracyDiversity.Bernoulli
 import AccuracyDiversity.Optimization
 import AccuracyDiversity.Exchange
 import AccuracyDiversity.BernoulliExchange
+import AccuracyDiversity.Uniform
 import AccuracyDiversity.Examples
 import AccuracyDiversity.MainTheorems

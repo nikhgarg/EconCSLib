@@ -202,7 +202,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - For GSP/position-auction work, first formalize `PositionOutcome` with
   per-click payments, utility, revenue, welfare, and feasibility. A concrete
   non-truthfulness witness is a good first theorem before building a generic
-  bid-sorting mechanism and equilibrium comparisons.
+  bid-sorting mechanism and equilibrium comparisons. Use local envy-freeness as
+  an outcome-level certificate for "no profitable assigned-slot deviation"
+  before trying to prove full Nash equilibrium of a sorted GSP mechanism.
 - For combinatorial auctions, reuse the fair-division bundle/allocation layer.
   Keep feasibility separate from direct mechanisms because approximation
   algorithms may leave goods unallocated. For single-minded bidders, define the
@@ -268,6 +270,12 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   asymptotic/order-statistic layer. For symmetric i.i.d. Bernoulli items, the
   finite balance proof should cancel the common positive likelihood-success
   coefficient and use strict antitonicity of `(1 - q)^k` when `0 < q < 1`.
+  For uniform `[0,1]`, `k = 1` recommendation values, use the closed form
+  `1 - 1 / (q + 1)` for the expected maximum of `q` samples. Its forward
+  marginal is `1 / ((q + 1) * (q + 2))`, and its positive-count backward
+  marginal is `1 / (q * (q + 1))`. Proposition-style square-root homogeneity
+  should be separated into: exact marginal algebra, a square-root target-profile
+  representation bridge, and then the real-relaxation/integer-rounding theorem.
 - For finite fair-division allocation theorems, first prove the theorem for an
   abstract marginal bound. Then add a paper-facing corollary instantiating the
   bound as the finite maximum one-good marginal value.

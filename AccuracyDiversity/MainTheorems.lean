@@ -1,4 +1,7 @@
 import AccuracyDiversity.Examples
+import AccuracyDiversity.Uniform
+
+open scoped BigOperators
 
 /-!
 # Paper-Facing Theorems: Reconciling the Accuracy-Diversity Trade-off
@@ -129,6 +132,51 @@ theorem paper_iid_bernoulli_optimum_uniform_homogeneity
   exact uniformProfile_approx_of_pairwise_balanced_counts a hopt.1 hNpos hbal
 
 end BernoulliSatisfactionModel
+
+/--
+Uniform `[0,1]`, `k = 1` finite first-order condition.
+
+This is the exact marginal inequality used in the proof of Proposition 2 for
+the special case where the user consumes one item: at a finite optimum, no
+valid one-item exchange can have larger weighted uniform-order-statistic gain
+than loss.
+-/
+theorem paper_uniform_top_one_optimum_first_order_condition
+    {T : ℕ} (likelihood : ItemType T → ℝ) (N : ℕ)
+    {a : CountAllocation T} {src dst : ItemType T}
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hne : src ≠ dst)
+    (hcan : DecisionCore.Allocation.CanMoveOne a src) :
+    likelihood dst *
+        (1 / ((a.count dst + 1 : ℝ) * (a.count dst + 2 : ℝ))) ≤
+      likelihood src *
+        (1 / ((a.count src : ℝ) * (a.count src + 1 : ℝ))) := by
+  exact UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum
+    likelihood N hopt hne hcan
+
+/--
+Proposition 2 square-root homogeneity bridge.
+
+If an integer allocation is within `C` items of the real square-root target
+counts, then its representation shares are within `C / N` of the paper's
+`1/2`-homogeneity target.
+-/
+theorem paper_uniform_sqrt_homogeneity_of_count_closeness
+    {T : ℕ} (likelihood : ItemType T → ℝ) (a : CountAllocation T)
+    {N : ℕ} {C : ℝ}
+    (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0)
+    (hN : DecisionCore.Allocation.total a = N) (hNpos : 0 < N)
+    (hclose :
+      ∀ t,
+        |(a.count t : ℝ) -
+          (N : ℝ) *
+            (Real.sqrt (likelihood t) /
+              ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤ C) :
+    (sqrtLikelihoodProfile likelihood).Approx a (C / (N : ℝ)) := by
+  refine sqrtLikelihoodProfile.approx_of_count_abs_error
+    likelihood a hN hNpos ?_
+  intro t
+  simpa [sqrtLikelihoodProfile.targetShare_eq likelihood t hnorm] using hclose t
 
 /--
 Two-type Bernoulli first-order condition from type `0` to type `1`.
