@@ -386,6 +386,28 @@ structure Theorem1IntervalAnalyticCertificate {n : ℕ}
     ∀ θA, θH < θA → Theorem1RemovalMonotonicityAt F θA θH
 
 /--
+Global paper-shaped analytic assumptions for Theorem 1 at a fixed `θH`.
+
+The final theorem below derives the interval certificate from these fields:
+Definition 2 at equal accuracy, atomwise continuity of the finite ranking law,
+asymptotic eventual `g < f`, Definition 3 above `θH`, and Definition 1
+finite-removal monotonicity.
+-/
+structure Theorem1GlobalAnalyticCertificate {n : ℕ}
+    (F : AccuracyFamily n) (θH : ℝ) : Type where
+  paper_hypotheses_at_equal : Model.PaperHypotheses (F.modelAt θH θH)
+  dist_atom_continuity :
+    ∀ θA, θH ≤ θA →
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θA
+  asymptotic_first_dominance :
+    ∀ lower, θH < lower →
+      ∃ hi, lower < hi ∧ theorem1_g F hi θH < theorem1_f F hi θH
+  paper_hypotheses_above :
+    ∀ θA, θH < θA → Model.PaperHypotheses (F.modelAt θA θH)
+  removal_monotonicity :
+    ∀ θA, θH < θA → Theorem1RemovalMonotonicityAt F θA θH
+
+/--
 The direct payoff certificate for Theorem 1's conclusion.
 -/
 structure Theorem1PayoffCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
@@ -696,6 +718,44 @@ theorem theorem1_exists_right_initial_f_lt_g_of_atom_continuity {n : ℕ}
   refine ⟨θH + δ / 2, ?_, ?_⟩
   · linarith
   · exact hpersist (θH + δ / 2) (by linarith) (by linarith)
+
+/--
+Paper Theorem 1 from the global analytic certificate.
+
+The proof constructs the left endpoint from Definition 2 and continuity, chooses
+a later right endpoint from asymptotic dominance, then applies the interval
+sign-change bridge.
+-/
+theorem theorem1Target_of_globalAnalyticCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1GlobalAnalyticCertificate F θH) :
+    Theorem1Target F θH := by
+  rcases theorem1_exists_right_initial_f_lt_g_of_atom_continuity
+      F θH cert.paper_hypotheses_at_equal
+      (cert.dist_atom_continuity θH le_rfl) with
+    ⟨lo, hθH_lo, hf_lt_g_lo⟩
+  rcases cert.asymptotic_first_dominance lo hθH_lo with
+    ⟨hi, hlo_hi, hg_lt_f_hi⟩
+  refine theorem1Target_of_intervalAnalyticCertificate ?_
+  refine
+    { lo := lo
+      hi := hi
+      thetaH_lt_lo := hθH_lo
+      lo_lt_hi := hlo_hi
+      diff_continuousOn := ?_
+      nonpos_at_lo := le_of_lt hf_lt_g_lo
+      positive_at_hi := hg_lt_f_hi
+      dist_atom_continuity := ?_
+      paper_hypotheses_on_interval := ?_
+      removal_monotonicity := cert.removal_monotonicity }
+  · exact theorem1_f_sub_g_continuousOn_of_atom_continuity F θH lo hi
+      (fun θA hθA =>
+        cert.dist_atom_continuity θA
+          (le_trans (le_of_lt hθH_lo) hθA.1))
+  · intro θA hlo_θA hθA_hi
+    exact cert.dist_atom_continuity θA (le_trans (le_of_lt hθH_lo) hlo_θA)
+  · intro θA hθA hθA_hi
+    exact cert.paper_hypotheses_above θA hθA
 
 end AccuracyFamily
 end Monoculture

@@ -708,6 +708,19 @@ theorem paper_theorem1_from_interval_analytic_certificate
   AccuracyFamily.theorem1Target_of_intervalAnalyticCertificate cert
 
 /--
+Paper Theorem 1 from the global analytic certificate.
+
+This is the strongest current Theorem 1 wrapper: it packages the paper's
+Definition 2, Definition 3, continuity, asymptotic dominance, and monotonicity
+inputs at fixed `θH`, then Lean constructs the witness `θA > θH`.
+-/
+theorem paper_theorem1_from_global_analytic_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1GlobalAnalyticCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_globalAnalyticCertificate cert
+
+/--
 Paper Theorem 1 from the direct payoff certificate.
 
 This is the same final conclusion stated directly in terms of the two strict
