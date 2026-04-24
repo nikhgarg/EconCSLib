@@ -187,7 +187,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   feasible online history. This yields the key comparison that final slack
   scores are bounded by earlier Balance scores. Use that comparison with the
   Balance maximizer to close the non-exhausted-query beta charge; handle
-  exhausted advertisers separately with the small-bids boundary lemma.
+  exhausted advertisers separately with the small-bids boundary lemma by first
+  proving a final-alpha lower bound `exp (-ε)` and then a final-slack bound
+  `bid * (1 - exp (-ε))`. For finite max-slack query duals, package the mixed
+  query charge in a summation-friendly form: chosen Balance score plus an
+  explicit max-bid small-bids error term.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

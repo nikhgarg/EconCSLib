@@ -263,6 +263,110 @@ theorem paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign
     I hbid hbudget rule hrule history S hS q chosen hchoice hall
 
 /--
+Exhausted-advertiser alpha charge: if advertiser `a` cannot accept query `q`
+at an earlier online state, then under `ε`-small bids the final MSVV
+assignment-induced advertiser dual is at least `exp (-ε)`.
+-/
+theorem paper_adwords_blocked_advertiser_final_alpha_ge_exp_neg_epsilon
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hsmall : I.SmallBids ε) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a)
+    (hnot : ¬ I.CanAssign S.assignment q a) :
+    Real.exp (-ε) ≤
+      I.msvvAlphaFromAssignment
+        (I.runHistoryStateFrom rule S history).assignment a := by
+  exact AdWordsInstance.final_msvvAlphaFromAssignment_ge_exp_neg_epsilon_of_not_canAssign
+    I hbid rule hrule history S hS hsmall a q hbudget hnot
+
+/--
+Exhausted-advertiser slack charge: a blocked advertiser contributes at most
+`bid * (1 - exp (-ε))` to the final assignment-induced slack score.
+-/
+theorem paper_adwords_blocked_advertiser_final_slack_score_le_error
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hsmall : I.SmallBids ε) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a)
+    (hnot : ¬ I.CanAssign S.assignment q a) :
+    I.slackScore
+        (I.msvvAlphaFromAssignment
+          (I.runHistoryStateFrom rule S history).assignment) a q ≤
+      I.bid a q * (1 - Real.exp (-ε)) := by
+  exact AdWordsInstance.final_slackScore_le_bid_mul_one_sub_exp_neg_epsilon_of_not_canAssign
+    I hbid rule hrule history S hS hsmall a q hbudget hnot
+
+/--
+Mixed beta charge: for a Balance/MSVV choice at state `S`, the final max-slack
+query dual is bounded by the larger of the chosen Balance score and the
+small-bids exhausted-advertiser error term for that query.
+-/
+theorem paper_adwords_max_slack_beta_le_balance_score_or_max_bid_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen) :
+    I.maxSlackBeta
+        (I.msvvAlphaFromAssignment
+          (I.runHistoryStateFrom rule S history).assignment) q ≤
+      max (I.balanceScore S.assignment chosen q)
+        (I.maxBidForQuery q * (1 - Real.exp (-ε))) := by
+  exact AdWordsInstance.maxSlackBeta_runHistoryStateFrom_le_max_balanceScore_maxBidError_of_choice
+    I hbid hbudget rule hrule history S hS hε hsmall q chosen hchoice
+
+/--
+Additive mixed beta charge: the same query dual can be charged to the chosen
+Balance score plus the small exhausted-advertiser error term. This is the
+summation-friendly form for the finite objective-bound proof.
+-/
+theorem paper_adwords_max_slack_beta_le_balance_score_add_max_bid_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen) :
+    I.maxSlackBeta
+        (I.msvvAlphaFromAssignment
+          (I.runHistoryStateFrom rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q +
+        I.maxBidForQuery q * (1 - Real.exp (-ε)) := by
+  exact AdWordsInstance.maxSlackBeta_runHistoryStateFrom_le_balanceScore_add_maxBidError_of_choice
+    I hbid hbudget rule hrule history S hS hε hsmall q chosen hchoice
+
+/--
 Small-bids boundary lemma: if advertiser `a` cannot accept query `q`, then
 under the `ε`-small-bids condition `a` has already spent more than a
 `1 - ε` fraction of her budget.
