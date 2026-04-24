@@ -627,6 +627,26 @@ noncomputable def problem6ClosedValue {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
   1 / problem6ClosedDenominator alpha v t
 
+/-- Lemma 5's closed-form `x_j` coordinates for a fixed pivot `t`. -/
+noncomputable def problem6ClosedX {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t j : Item n) : ℝ :=
+  if j.val < t.val then
+    problem6ClosedValue alpha v t / pairShare alpha v j
+  else if j = t then
+    1 - problem6ClosedValue alpha v t * problem6LeftSum alpha v t
+  else
+    0
+
+/-- Lemma 5's closed-form `y_j` coordinates for a fixed pivot `t`. -/
+noncomputable def problem6ClosedY {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t j : Item n) : ℝ :=
+  if j.val < t.val then
+    0
+  else if j = t then
+    1 - problem6ClosedValue alpha v t * problem6RightSum alpha v t
+  else
+    problem6ClosedValue alpha v t / (1 - pairShare alpha v j)
+
 /--
 The sparse, equalized solution shape produced by Lemma 4 and used in Lemma 5.
 The real variables `x` and `y` correspond to the two type policies.
@@ -688,6 +708,54 @@ theorem problem6ClosedValue_pos {n : ℕ}
   unfold problem6ClosedValue
   exact one_div_pos.mpr
     (problem6ClosedDenominator_pos t halpha0 halpha1 hpos)
+
+theorem problem6ClosedX_before {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) {t j : Item n}
+    (hj : j.val < t.val) :
+    problem6ClosedX alpha v t j =
+      problem6ClosedValue alpha v t / pairShare alpha v j := by
+  simp [problem6ClosedX, hj]
+
+theorem problem6ClosedX_at {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedX alpha v t t =
+      1 - problem6ClosedValue alpha v t * problem6LeftSum alpha v t := by
+  simp [problem6ClosedX]
+
+theorem problem6ClosedX_after {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) {t j : Item n}
+    (hj : t.val < j.val) :
+    problem6ClosedX alpha v t j = 0 := by
+  have hnlt : ¬ j.val < t.val := by omega
+  have hne : j ≠ t := by
+    intro h
+    subst h
+    omega
+  simp [problem6ClosedX, hnlt, hne]
+
+theorem problem6ClosedY_before {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) {t j : Item n}
+    (hj : j.val < t.val) :
+    problem6ClosedY alpha v t j = 0 := by
+  simp [problem6ClosedY, hj]
+
+theorem problem6ClosedY_at {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedY alpha v t t =
+      1 - problem6ClosedValue alpha v t * problem6RightSum alpha v t := by
+  simp [problem6ClosedY]
+
+theorem problem6ClosedY_after {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) {t j : Item n}
+    (hj : t.val < j.val) :
+    problem6ClosedY alpha v t j =
+      problem6ClosedValue alpha v t / (1 - pairShare alpha v j) := by
+  have hnlt : ¬ j.val < t.val := by omega
+  have hne : j ≠ t := by
+    intro h
+    subst h
+    omega
+  simp [problem6ClosedY, hnlt, hne]
 
 private theorem problem6_sum_eq_left_part_add_pivot_of_after_zero {n : ℕ}
     (x : Item n → ℝ) (t : Item n)
@@ -829,6 +897,118 @@ private theorem problem6SparseEqualized_right_part_sum_eq
   · simp [hj, problem6SparseEqualized_y_after_eq
       halpha0 halpha1 hpos h hj, div_eq_mul_inv]
   · simp [hj]
+
+private theorem problem6ClosedX_left_part_sum_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n,
+        if j.val < t.val then problem6ClosedX alpha v t j else 0) =
+      problem6ClosedValue alpha v t * problem6LeftSum alpha v t := by
+  unfold problem6LeftSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases hj : j.val < t.val
+  · simp [hj, problem6ClosedX_before alpha v hj, div_eq_mul_inv]
+  · simp [hj]
+
+private theorem problem6ClosedY_right_part_sum_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n,
+        if t.val < j.val then problem6ClosedY alpha v t j else 0) =
+      problem6ClosedValue alpha v t * problem6RightSum alpha v t := by
+  unfold problem6RightSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases hj : t.val < j.val
+  · simp [hj, problem6ClosedY_after alpha v hj, div_eq_mul_inv]
+  · simp [hj]
+
+/-- The closed-form `x_j` coordinates sum to one. -/
+theorem problem6ClosedX_sum_eq_one {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, problem6ClosedX alpha v t j) = 1 := by
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_of_after_zero
+      (problem6ClosedX alpha v t) t
+      (fun {j} hj => problem6ClosedX_after alpha v hj)
+  have hleft : (∑ j : Item n,
+        if j.val < t.val then problem6ClosedX alpha v t j else 0) =
+      problem6ClosedValue alpha v t * problem6LeftSum alpha v t :=
+    problem6ClosedX_left_part_sum_eq
+  rw [hsplit, hleft, problem6ClosedX_at]
+  ring
+
+/-- The closed-form `y_j` coordinates sum to one. -/
+theorem problem6ClosedY_sum_eq_one {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, problem6ClosedY alpha v t j) = 1 := by
+  have hsplit :=
+    problem6_sum_eq_pivot_add_right_part_of_before_zero
+      (problem6ClosedY alpha v t) t
+      (fun {j} hj => problem6ClosedY_before alpha v hj)
+  have hright : (∑ j : Item n,
+        if t.val < j.val then problem6ClosedY alpha v t j else 0) =
+      problem6ClosedValue alpha v t * problem6RightSum alpha v t :=
+    problem6ClosedY_right_part_sum_eq
+  rw [hsplit, hright, problem6ClosedY_at]
+  ring
+
+/-- The closed-form coordinates equalize every Problem 6 item constraint. -/
+theorem problem6Closed_item_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j * problem6ClosedX alpha v t j +
+        (1 - pairShare alpha v j) * problem6ClosedY alpha v t j =
+      problem6ClosedValue alpha v t := by
+  by_cases hlt : j.val < t.val
+  · rw [problem6ClosedX_before alpha v hlt,
+      problem6ClosedY_before alpha v hlt]
+    have hqne : pairShare alpha v j ≠ 0 :=
+      ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+    field_simp [hqne]
+    ring
+  · by_cases heq : j = t
+    · subst j
+      rw [problem6ClosedX_at, problem6ClosedY_at]
+      have hmul :
+          problem6ClosedValue alpha v t *
+              problem6ClosedDenominator alpha v t = 1 := by
+        unfold problem6ClosedValue
+        field_simp [ne_of_gt
+          (problem6ClosedDenominator_pos t halpha0 halpha1 hpos)]
+      unfold problem6ClosedDenominator at hmul
+      nlinarith
+    · have hgt : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact heq (Fin.ext hval)
+        omega
+      rw [problem6ClosedX_after alpha v hgt,
+        problem6ClosedY_after alpha v hgt]
+      have hqne : 1 - pairShare alpha v j ≠ 0 :=
+        ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
+      field_simp [hqne]
+      ring
+
+/--
+The Lemma 5 closed-form coordinates satisfy the sparse, equalized real LP
+shape for every pivot. Nonnegativity of the pivot coordinates is the remaining
+condition needed to turn this real certificate into a probability policy.
+-/
+theorem problem6Closed_sparseEqualized {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    Problem6SparseEqualized alpha v t
+      (problem6ClosedX alpha v t) (problem6ClosedY alpha v t)
+      (problem6ClosedValue alpha v t) where
+  item_eq := fun j => problem6Closed_item_eq t j halpha0 halpha1 hpos
+  sum_x := problem6ClosedX_sum_eq_one alpha v t
+  sum_y := problem6ClosedY_sum_eq_one alpha v t
+  x_after_pivot_zero := fun {j} hj => problem6ClosedX_after alpha v hj
+  y_before_pivot_zero := fun {j} hj => problem6ClosedY_before alpha v hj
 
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq

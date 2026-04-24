@@ -794,6 +794,44 @@ theorem paper_lemma5_problem6_closed_value_pos
     0 < problem6ClosedValue alpha v t := by
   exact problem6ClosedValue_pos t halpha0 halpha1 hpos
 
+/-- Appendix D, Lemma 5: the closed-form `x_j` coordinates sum to one. -/
+theorem paper_lemma5_problem6_closedX_sum_eq_one
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, problem6ClosedX alpha v t j) = 1 := by
+  exact problem6ClosedX_sum_eq_one alpha v t
+
+/-- Appendix D, Lemma 5: the closed-form `y_j` coordinates sum to one. -/
+theorem paper_lemma5_problem6_closedY_sum_eq_one
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, problem6ClosedY alpha v t j) = 1 := by
+  exact problem6ClosedY_sum_eq_one alpha v t
+
+/--
+Appendix D, Lemma 5: the closed-form coordinates equalize every Problem 6
+item constraint.
+-/
+theorem paper_lemma5_problem6_closed_item_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j * problem6ClosedX alpha v t j +
+        (1 - pairShare alpha v j) * problem6ClosedY alpha v t j =
+      problem6ClosedValue alpha v t := by
+  exact problem6Closed_item_eq t j halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 5: the closed-form coordinates satisfy the sparse,
+equalized real LP shape for any pivot.
+-/
+theorem paper_lemma5_problem6_closed_sparseEqualized
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    Problem6SparseEqualized alpha v t
+      (problem6ClosedX alpha v t) (problem6ClosedY alpha v t)
+      (problem6ClosedValue alpha v t) := by
+  exact problem6Closed_sparseEqualized t halpha0 halpha1 hpos
+
 /--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
