@@ -2987,6 +2987,98 @@ theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_a
     hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
 
 /--
+Appendix D, Lemma 5/6 bridge: the selected equality-form optimal BFS policy is
+the Lemma 5 closed-form policy at its active pivot.
+-/
+theorem paper_lemma6_equalizedBasicOptimal_policy_eq_closedPolicy_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    let t : Item n := TypePolicy.lastActiveTypeZero ρ
+    let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+      problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+        hn halpha0 halpha1 hpos hdec h
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    ρ = problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot := by
+  exact problem6EqualizedBasicOptimal_policy_eq_closedPolicy_of_two_lt
+    hn halpha0 halpha1 hpos hdec h
+
+/--
+Appendix D, Lemma 6 for the actual selected equality-form optimal BFS policy,
+conditional on the selected pivot being at or before its mirror.
+-/
+theorem paper_lemma6_equalizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  exact problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+    hn halpha0 halpha1 halpha_half hpos hdec h hcenter
+
+/--
+Appendix D, Lemma 6 stitched with Lemma 10 for the actual selected
+equality-form optimal BFS policy, odd-center case.
+-/
+theorem paper_lemma6_equalizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  exact problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_center
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter_c h hhalf
+
+/--
+Appendix D, Lemma 6 stitched with Lemma 10 for the actual selected
+equality-form optimal BFS policy, even-center case.
+-/
+theorem paper_lemma6_equalizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  exact problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_succ_center
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
+
+/--
 Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
 every pre-pivot item to a post-pivot mirror.
 -/
