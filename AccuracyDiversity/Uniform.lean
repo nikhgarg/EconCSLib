@@ -71,36 +71,85 @@ noncomputable def uniformSqrtScale {T : ℕ}
     (likelihood : ItemType T → ℝ) (N : ℕ) : ℝ :=
   (∑ i, Real.sqrt (likelihood i)) ^ 2 / (N + T : ℝ) ^ 2
 
-theorem likelihood_eq_scale_mul_shiftedTarget_sq {T : ℕ}
+theorem likelihood_eq_scale_mul_shiftedTarget_sq {T : ℕ} [NeZero T]
     (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T)
     (hlike_nonneg : ∀ i, 0 ≤ likelihood i)
     (hnorm : ∑ i, Real.sqrt (likelihood i) ≠ 0) :
     likelihood t =
       uniformSqrtScale likelihood N *
         (uniformSqrtShiftedTarget likelihood N t) ^ 2 := by
-  sorry
+  unfold uniformSqrtScale uniformSqrtShiftedTarget
+  have hT_pos : 0 < (T : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne T)
+  have hden : (N + T : ℝ) ≠ 0 := by positivity
+  have hden2 : (N + T : ℝ) ^ 2 ≠ 0 := by positivity
+  have hnorm2 : (∑ i, Real.sqrt (likelihood i)) ^ 2 ≠ 0 := by
+    have h : (∑ i, Real.sqrt (likelihood i)) ^ 2 = (∑ i, Real.sqrt (likelihood i)) * (∑ i, Real.sqrt (likelihood i)) := by ring
+    rw [h]
+    exact mul_ne_zero hnorm hnorm
+  have hsq1 : (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) ^ 2 =
+      (Real.sqrt (likelihood t)) ^ 2 / (∑ i, Real.sqrt (likelihood i)) ^ 2 := by ring
+  have hsq2 : ((N + T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))) ^ 2 =
+      (N + T : ℝ) ^ 2 * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) ^ 2 := by ring
+  rw [hsq2, hsq1]
+  have h_mul : ((∑ i, Real.sqrt (likelihood i)) ^ 2 / (N + T : ℝ) ^ 2) *
+        ((N + T : ℝ) ^ 2 * ((Real.sqrt (likelihood t)) ^ 2 / (∑ i, Real.sqrt (likelihood i)) ^ 2)) =
+      (Real.sqrt (likelihood t)) ^ 2 := by
+    calc
+      ((∑ i, Real.sqrt (likelihood i)) ^ 2 / (N + T : ℝ) ^ 2) *
+          ((N + T : ℝ) ^ 2 * ((Real.sqrt (likelihood t)) ^ 2 / (∑ i, Real.sqrt (likelihood i)) ^ 2))
+        = (((∑ i, Real.sqrt (likelihood i)) ^ 2) / (∑ i, Real.sqrt (likelihood i)) ^ 2) *
+            (((N + T : ℝ) ^ 2) / (N + T : ℝ) ^ 2) * (Real.sqrt (likelihood t)) ^ 2 := by ring
+      _ = 1 * 1 * (Real.sqrt (likelihood t)) ^ 2 := by
+          rw [div_self hnorm2, div_self hden2]
+      _ = (Real.sqrt (likelihood t)) ^ 2 := by ring
+  rw [h_mul]
+  exact (Real.sq_sqrt (hlike_nonneg t)).symm
 
-theorem uniformSqrtShiftedTarget_nonneg {T : ℕ}
+theorem uniformSqrtShiftedTarget_nonneg {T : ℕ} [NeZero T]
     (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) :
     0 ≤ uniformSqrtShiftedTarget likelihood N t := by
-  sorry
+  unfold uniformSqrtShiftedTarget
+  have hT_pos : 0 < (T : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne T)
+  have hsqrt_nonneg : 0 ≤ Real.sqrt (likelihood t) := Real.sqrt_nonneg _
+  have hsum_nonneg : 0 ≤ ∑ i, Real.sqrt (likelihood i) := Finset.sum_nonneg (fun i _ => Real.sqrt_nonneg _)
+  positivity
 
 theorem sum_uniformSqrtShiftedTarget {T : ℕ} [NeZero T]
     (likelihood : ItemType T → ℝ) (N : ℕ)
     (hnorm : ∑ i, Real.sqrt (likelihood i) ≠ 0) :
     ∑ t, uniformSqrtShiftedTarget likelihood N t = N + T := by
-  sorry
+  unfold uniformSqrtShiftedTarget
+  have hrewrite : ∀ t, (N + T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) =
+      ((N + T : ℝ) / ∑ i, Real.sqrt (likelihood i)) * Real.sqrt (likelihood t) := by
+    intro t
+    ring
+  have hsum_rewrite : (∑ t, (N + T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))) =
+      ∑ t, ((N + T : ℝ) / ∑ i, Real.sqrt (likelihood i)) * Real.sqrt (likelihood t) :=
+    Finset.sum_congr rfl (fun t _ => hrewrite t)
+  rw [hsum_rewrite, ← Finset.mul_sum]
+  have hden : (∑ i, Real.sqrt (likelihood i)) ≠ 0 := hnorm
+  exact div_mul_cancel₀ (N + T : ℝ) hden
 
-theorem sum_uniformSqrtShiftedTarget_nonneg {T : ℕ}
+theorem sum_uniformSqrtShiftedTarget_nonneg {T : ℕ} [NeZero T]
     (likelihood : ItemType T → ℝ) (N : ℕ) :
     0 ≤ ∑ t, uniformSqrtShiftedTarget likelihood N t :=
-  sorry
+  Finset.sum_nonneg (fun t _ => uniformSqrtShiftedTarget_nonneg _ _ _)
 
 theorem sqrtLikelihoodProfile_normalizer_ne_zero {T : ℕ}
     (likelihood : ItemType T → ℝ)
     (hsum : 0 < ∑ i, likelihood i) (hnonneg : ∀ i, 0 ≤ likelihood i) :
     ∑ i : ItemType T, Real.sqrt (likelihood i) ≠ 0 := by
-  sorry
+  intro h
+  have hwnonneg : ∀ i ∈ (Finset.univ : Finset (ItemType T)), 0 ≤ Real.sqrt (likelihood i) := fun i _ => Real.sqrt_nonneg _
+  have h0 : ∀ i, Real.sqrt (likelihood i) = 0 := by
+    intro i
+    exact (Finset.sum_eq_zero_iff_of_nonneg hwnonneg).mp h i (Finset.mem_univ i)
+  have hw0 : ∀ i, likelihood i = 0 := by
+    intro i
+    have hi := h0 i
+    rwa [Real.sqrt_eq_zero (hnonneg i)] at hi
+  have hsum0 : (∑ i, likelihood i) = 0 := Finset.sum_eq_zero (fun i _ => hw0 i)
+  linarith
 
 noncomputable def floorCountAnchor {T : ℕ}
     (target : ItemType T → ℝ) : CountAllocation T where
@@ -188,7 +237,8 @@ theorem targetShare_eq {T : ℕ}
     (sqrtLikelihoodProfile likelihood).targetShare t =
       Real.sqrt (likelihood t) /
         ∑ i : ItemType T, Real.sqrt (likelihood i) := by
-  sorry
+  exact GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero
+    (G := sqrtLikelihoodProfile likelihood) (t := t) (by simpa using hnorm)
 
 theorem approx_of_count_abs_error {T : ℕ}
     (likelihood : ItemType T → ℝ) (a : CountAllocation T) {N : ℕ} {C : ℝ}
@@ -198,7 +248,8 @@ theorem approx_of_count_abs_error {T : ℕ}
         |(a.count t : ℝ) -
           (N : ℝ) * (sqrtLikelihoodProfile likelihood).targetShare t| ≤ C) :
     (sqrtLikelihoodProfile likelihood).Approx a (C / (N : ℝ)) := by
-  sorry
+  exact GammaHomogeneityProfile.approx_of_count_abs_error
+    (sqrtLikelihoodProfile likelihood) a hN hNpos hclose
 
 end sqrtLikelihoodProfile
 
@@ -281,7 +332,6 @@ theorem count_close_of_no_rounding_crossing_between {T : ℕ}
       (fun t : ItemType T => lower.count t)
       (fun t : ItemType T => upper.count t)
       t ha hlower hNlt horder hno
-
 end UniformRounding
 
 end AccuracyDiversity

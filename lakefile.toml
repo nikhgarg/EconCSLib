@@ -17,6 +17,7 @@ weak.linter.unusedSectionVars = false
 weak.linter.unusedVariables = false
 weak.linter.flexible = false
 weak.linter.style.longLine = false
+weak.linter.style.whitespace = false
 
 [[require]]
 name = "mathlib"

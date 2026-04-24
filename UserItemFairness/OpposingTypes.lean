@@ -2820,6 +2820,40 @@ theorem problem6BoundaryGap_nonneg_iff_lower_crossing {n : ℕ}
   unfold problem6BoundaryGap
   constructor <;> intro h <;> linarith
 
+/-- Adjacent-pivot update for the lower-crossing boundary gap. -/
+theorem problem6BoundaryGap_next_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hnext : u.val = t.val + 1) :
+    problem6BoundaryGap alpha v u =
+      problem6BoundaryGap alpha v t +
+        (1 - pairShare alpha v u)⁻¹ + (pairShare alpha v u)⁻¹ := by
+  unfold problem6BoundaryGap
+  rw [problem6PivotGap_next_eq (alpha := alpha) (v := v) hnext]
+
+/--
+At a tight lower boundary for pivot `t`, the next pivot's lower-crossing
+boundary gap is strictly positive.
+-/
+theorem problem6BoundaryGap_next_pos_of_boundary {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹) :
+    0 < problem6BoundaryGap alpha v u := by
+  have hzero : problem6BoundaryGap alpha v t = 0 :=
+    problem6BoundaryGap_eq_zero_iff.mpr hboundary
+  have hcomp_pos :
+      0 < (1 - pairShare alpha v u)⁻¹ :=
+    inv_pos.mpr (one_sub_pairShare_pos u halpha0 halpha1 hpos)
+  have hq_pos :
+      0 < (pairShare alpha v u)⁻¹ :=
+    inv_pos.mpr (pairShare_pos u halpha0 halpha1 hpos)
+  rw [problem6BoundaryGap_next_eq (alpha := alpha) (v := v) hnext,
+    hzero]
+  linarith
+
 /-- The boundary gap is continuous on every compact subinterval of `(0,1)`. -/
 theorem problem6BoundaryGap_continuousOn_Icc {n : ℕ}
     {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t : Item n}
@@ -5910,6 +5944,249 @@ theorem problem6FirstClosedPivot_adjacentBoundary_exists
     problem6BoundaryGap_exists_zero_of_lower_crossing_changes
       halphaLeft0 halphaRight1 hleft_le_right hpos
       hcross_left hnot_cross_right
+
+/--
+If the first closed pivot is `t` at a left endpoint and the tight lower
+boundary for `t` occurs later, then the canonical first closed pivot at the
+boundary is still `t`.
+-/
+theorem problem6FirstClosedPivot_eq_of_left_pivot_and_boundary
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹) :
+    problem6FirstClosedPivot alphaBoundary v
+      halphaBoundary0 halphaBoundary1 hpos = t := by
+  have hmono :
+      t.val ≤
+        (problem6FirstClosedPivot alphaBoundary v
+          halphaBoundary0 halphaBoundary1 hpos).val := by
+    have h :=
+      problem6FirstClosedPivot_mono_alpha
+        halphaLeft0 halphaLeft1
+        halphaBoundary0 halphaBoundary1
+        hleft_le_boundary hpos
+    simpa [hleft_pivot] using h
+  have hcross_boundary :
+      - (pairShare alphaBoundary v t)⁻¹ ≤
+        problem6PivotGap alphaBoundary v t := by
+    rw [hboundary]
+  have ht_mem : t ∈ problem6PivotCrossingSet alphaBoundary v := by
+    simp [problem6PivotCrossingSet, hcross_boundary]
+  have hmin :
+      (problem6FirstClosedPivot alphaBoundary v
+        halphaBoundary0 halphaBoundary1 hpos).val ≤ t.val :=
+    problem6FirstClosedPivot_min
+      (alpha := alphaBoundary) (v := v)
+      halphaBoundary0 halphaBoundary1 hpos ht_mem
+  exact Fin.ext (le_antisymm hmin hmono)
+
+/--
+No-skip bridge for the canonical first closed pivot: if the canonical first
+pivot moves from `t` to a later pivot beyond `t+1`, then some intermediate
+parameter has canonical first pivot exactly `t+1`.
+-/
+theorem problem6FirstClosedPivot_successor_exists_of_pivot_jump
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hskip : t.val + 1 < u.val) :
+    ∃ (alphaMid : ℝ) (halphaMid0 : 0 < alphaMid)
+      (halphaMid1 : alphaMid < 1) (s : Item n),
+      alphaLeft ≤ alphaMid ∧ alphaMid ≤ alphaRight ∧
+      s.val = t.val + 1 ∧
+      problem6FirstClosedPivot alphaMid v
+        halphaMid0 halphaMid1 hpos = s := by
+  have hcross_left_t :
+      - (pairShare alphaLeft v t)⁻¹ ≤
+        problem6PivotGap alphaLeft v t := by
+    have h :=
+      problem6FirstClosedPivot_lower_crossing
+        (alpha := alphaLeft) (v := v)
+        halphaLeft0 halphaLeft1 hpos
+    simpa [hleft_pivot] using h
+  have hnot_cross_right_t :
+      ¬ - (pairShare alphaRight v t)⁻¹ ≤
+        problem6PivotGap alphaRight v t := by
+    intro hcross_right
+    have ht_mem : t ∈ problem6PivotCrossingSet alphaRight v := by
+      simp [problem6PivotCrossingSet, hcross_right]
+    have hmin :=
+      problem6FirstClosedPivot_min
+        (alpha := alphaRight) (v := v)
+        halphaRight0 halphaRight1 hpos ht_mem
+    have hu_le_t : u.val ≤ t.val := by
+      simpa [hright_pivot] using hmin
+    omega
+  rcases problem6BoundaryGap_exists_zero_of_lower_crossing_changes
+      halphaLeft0 halphaRight1 hleft_le_right hpos
+      hcross_left_t hnot_cross_right_t with
+    ⟨alphaBoundary, hleft_le_boundary, hboundary_le_right,
+      halphaBoundary0, halphaBoundary1, hboundary_t⟩
+  have hfirst_boundary_t :
+      problem6FirstClosedPivot alphaBoundary v
+        halphaBoundary0 halphaBoundary1 hpos = t :=
+    problem6FirstClosedPivot_eq_of_left_pivot_and_boundary
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      hleft_le_boundary hpos hleft_pivot hboundary_t
+  let s : Item n := ⟨t.val + 1, by omega⟩
+  have hs_val : s.val = t.val + 1 := rfl
+  have hnext_s : s.val = t.val + 1 := rfl
+  have hBs_boundary_pos :
+      0 < problem6BoundaryGap alphaBoundary v s :=
+    problem6BoundaryGap_next_pos_of_boundary
+      halphaBoundary0 halphaBoundary1 hpos hnext_s hboundary_t
+  have hcross_boundary_s :
+      - (pairShare alphaBoundary v s)⁻¹ ≤
+        problem6PivotGap alphaBoundary v s :=
+    problem6BoundaryGap_nonneg_iff_lower_crossing.mp
+      hBs_boundary_pos.le
+  have hnot_cross_right_s :
+      ¬ - (pairShare alphaRight v s)⁻¹ ≤
+        problem6PivotGap alphaRight v s := by
+    intro hcross_right
+    have hs_mem : s ∈ problem6PivotCrossingSet alphaRight v := by
+      simp [problem6PivotCrossingSet, hcross_right]
+    have hmin :=
+      problem6FirstClosedPivot_min
+        (alpha := alphaRight) (v := v)
+        halphaRight0 halphaRight1 hpos hs_mem
+    have hu_le_s : u.val ≤ s.val := by
+      simpa [hright_pivot] using hmin
+    dsimp [s] at hu_le_s
+    omega
+  rcases problem6BoundaryGap_exists_zero_of_lower_crossing_changes
+      halphaBoundary0 halphaRight1 hboundary_le_right hpos
+      hcross_boundary_s hnot_cross_right_s with
+    ⟨alphaStop, hboundary_le_stop, hstop_le_right,
+      halphaStop0, halphaStop1, hboundary_s⟩
+  have hBs_stop_zero : problem6BoundaryGap alphaStop v s = 0 :=
+    problem6BoundaryGap_eq_zero_iff.mpr hboundary_s
+  have hboundary_lt_stop : alphaBoundary < alphaStop := by
+    have hne : alphaBoundary ≠ alphaStop := by
+      intro hEq
+      have hzero_at_boundary :
+          problem6BoundaryGap alphaBoundary v s = 0 := by
+        simpa [hEq] using hBs_stop_zero
+      linarith
+    exact lt_of_le_of_ne hboundary_le_stop hne
+  let alphaMid : ℝ := (alphaBoundary + alphaStop) / 2
+  have hboundary_lt_mid : alphaBoundary < alphaMid := by
+    dsimp [alphaMid]
+    linarith
+  have hmid_lt_stop : alphaMid < alphaStop := by
+    dsimp [alphaMid]
+    linarith
+  have halphaMid0 : 0 < alphaMid :=
+    lt_trans halphaBoundary0 hboundary_lt_mid
+  have halphaMid1 : alphaMid < 1 :=
+    lt_trans hmid_lt_stop halphaStop1
+  have hleft_le_mid : alphaLeft ≤ alphaMid :=
+    hleft_le_boundary.trans hboundary_lt_mid.le
+  have hmid_le_right : alphaMid ≤ alphaRight :=
+    hmid_lt_stop.le.trans hstop_le_right
+  have hBs_mid_pos :
+      0 < problem6BoundaryGap alphaMid v s := by
+    have hstrict :=
+      problem6BoundaryGap_strictAnti_alpha s
+        halphaMid0 halphaMid1 halphaStop0 halphaStop1
+        hmid_lt_stop hpos
+    linarith
+  have hcross_mid_s :
+      - (pairShare alphaMid v s)⁻¹ ≤ problem6PivotGap alphaMid v s :=
+    problem6BoundaryGap_nonneg_iff_lower_crossing.mp hBs_mid_pos.le
+  let p : Item n :=
+    problem6FirstClosedPivot alphaMid v halphaMid0 halphaMid1 hpos
+  have hp_cross :
+      - (pairShare alphaMid v p)⁻¹ ≤ problem6PivotGap alphaMid v p := by
+    dsimp [p]
+    exact problem6FirstClosedPivot_lower_crossing
+      (alpha := alphaMid) (v := v)
+      halphaMid0 halphaMid1 hpos
+  have hs_mem_mid : s ∈ problem6PivotCrossingSet alphaMid v := by
+    simp [problem6PivotCrossingSet, hcross_mid_s]
+  have hp_le_s : p.val ≤ s.val := by
+    dsimp [p]
+    exact problem6FirstClosedPivot_min
+      (alpha := alphaMid) (v := v)
+      halphaMid0 halphaMid1 hpos hs_mem_mid
+  have hnot_p_lt_s : ¬ p.val < s.val := by
+    intro hp_lt_s
+    have hp_boundary_nonneg :
+        0 ≤ problem6BoundaryGap alphaMid v p :=
+      problem6BoundaryGap_nonneg_iff_lower_crossing.mpr hp_cross
+    have hp_le_t : p.val ≤ t.val := by
+      dsimp [s] at hp_lt_s
+      omega
+    by_cases hp_eq_t_val : p.val = t.val
+    · have hp_eq_t : p = t := Fin.ext hp_eq_t_val
+      have hBt_boundary_zero :
+          problem6BoundaryGap alphaBoundary v t = 0 :=
+        problem6BoundaryGap_eq_zero_iff.mpr hboundary_t
+      have hBt_mid_lt_boundary :
+          problem6BoundaryGap alphaMid v t <
+            problem6BoundaryGap alphaBoundary v t :=
+        problem6BoundaryGap_strictAnti_alpha t
+          halphaBoundary0 halphaBoundary1 halphaMid0 halphaMid1
+          hboundary_lt_mid hpos
+      have hBt_mid_nonneg :
+          0 ≤ problem6BoundaryGap alphaMid v t := by
+        simpa [hp_eq_t] using hp_boundary_nonneg
+      linarith
+    · have hp_lt_t : p.val < t.val := lt_of_le_of_ne hp_le_t hp_eq_t_val
+      have hp_not_boundary :
+          ¬ - (pairShare alphaBoundary v p)⁻¹ ≤
+            problem6PivotGap alphaBoundary v p := by
+        intro hp_cross_boundary
+        have hp_mem_boundary :
+            p ∈ problem6PivotCrossingSet alphaBoundary v := by
+          simp [problem6PivotCrossingSet, hp_cross_boundary]
+        have hmin_boundary :=
+          problem6FirstClosedPivot_min
+            (alpha := alphaBoundary) (v := v)
+            halphaBoundary0 halphaBoundary1 hpos hp_mem_boundary
+        have ht_le_p : t.val ≤ p.val := by
+          simpa [hfirst_boundary_t] using hmin_boundary
+        omega
+      have hp_boundary_neg :
+          problem6BoundaryGap alphaBoundary v p < 0 := by
+        have hnot_nonneg :
+            ¬ 0 ≤ problem6BoundaryGap alphaBoundary v p := by
+          intro hnonneg
+          exact hp_not_boundary
+            (problem6BoundaryGap_nonneg_iff_lower_crossing.mp hnonneg)
+        exact not_le.mp hnot_nonneg
+      have hp_mid_lt_boundary :
+          problem6BoundaryGap alphaMid v p <
+            problem6BoundaryGap alphaBoundary v p :=
+        problem6BoundaryGap_strictAnti_alpha p
+          halphaBoundary0 halphaBoundary1 halphaMid0 halphaMid1
+          hboundary_lt_mid hpos
+      linarith
+  have hs_le_p : s.val ≤ p.val := le_of_not_gt hnot_p_lt_s
+  have hp_eq_s : p = s := Fin.ext (le_antisymm hp_le_s hs_le_p)
+  refine ⟨alphaMid, halphaMid0, halphaMid1, s,
+    hleft_le_mid, hmid_le_right, hs_val, ?_⟩
+  simpa [p] using hp_eq_s
 
 /--
 At `α = 1/2`, the exact-center Lemma 10 candidate lies weakly after the

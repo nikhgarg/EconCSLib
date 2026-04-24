@@ -1,4 +1,7 @@
 import ProducerFairness.MainTheorems
+import ProducerFairness.ResponsiveMarket
+import EconCSLean.Decision.ThompsonSampling
+import EconCSLean.Online.Regret
 
 /-!
 # Paper-Facing Theorem Ledger: Bayesian Rating Fairness
@@ -170,5 +173,55 @@ theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_
       EconCSLean.Statistics.priorWeightedVariance alpha beta etaLow t 1 := by
   exact paper_theorem3_1_variance_strict_decrease_counterexample_quality_one
     alpha beta t etaLow etaHigh
+
+/-! ## 5) Section 4 & Appendix C: Responsive Market and Dynamic Model -/
+
+/-- Section 4: Individual Producer Unfairness.
+Defined as the standard deviation in Selection Rate (SR) among producers with
+the same true quality `q`.
+-/
+noncomputable def paper_facing_individual_producer_unfairness
+    {V : Type*} [Fintype V] [DecidableEq V] :=
+  @ProducerFairness.Responsive.producerUnfairness V _ _
+
+/-- Section 4: Thompson Sampling.
+A dynamic policy that selects an arm by drawing from a belief distribution
+and picking the argmax.
+-/
+def paper_facing_thompson_sampling_mechanism
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] :=
+  @EconCSLean.Decision.IsThompsonSampling V _ _ _
+
+/-- Section 4: Expected Regret (Efficiency).
+The total expected regret across a finite time horizon.
+-/
+noncomputable def paper_facing_expected_regret
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] :=
+  @EconCSLean.Online.expectedRegret V _ _ _
+
+/-- Appendix C: MSE Decomposition in the responsive setting.
+When the number of reviews $N$ is a random variable, the expected mean squared error
+conditional on true quality decomposes into the expected squared bias and the expected variance.
+-/
+theorem paper_facing_responsive_mse_decomposition
+    {α : Type*} [Fintype α] [DecidableEq α]
+    {alpha beta eta q_v : ℝ}
+    (state_dist : PMF α)
+    (N : α → ℝ)
+    (posterior_rating : α → ℝ)
+    (h_cond_mean : ∀ s,
+      posterior_rating s - q_v =
+      EconCSLean.Statistics.priorWeightedBias alpha beta eta (N s) q_v)
+    (h_cond_var : ∀ s,
+      (posterior_rating s - q_v) ^ 2 -
+      (EconCSLean.Statistics.priorWeightedBias alpha beta eta (N s) q_v) ^ 2 =
+      EconCSLean.Statistics.priorWeightedVariance alpha beta eta (N s) q_v) :
+    DecisionCore.pmfExp state_dist (fun s => (posterior_rating s - q_v) ^ 2) =
+      DecisionCore.pmfExp state_dist (fun s =>
+        EconCSLean.Statistics.priorWeightedSquaredBias alpha beta eta (N s) q_v) +
+      DecisionCore.pmfExp state_dist (fun s =>
+        EconCSLean.Statistics.priorWeightedVariance alpha beta eta (N s) q_v) := by
+  exact ProducerFairness.Responsive.paper_responsive_mse_decomposition
+    state_dist N posterior_rating h_cond_mean h_cond_var
 
 end ProducerFairness
