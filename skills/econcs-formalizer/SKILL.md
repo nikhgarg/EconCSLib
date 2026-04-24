@@ -149,7 +149,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   envy, EF/EF1-style predicates, envy graphs, and local preservation lemmas.
 - Auctions/mechanisms: separate reports, outcomes, allocations, payments,
   utility, truthfulness, individual rationality, revenue, and approximation or
-  benchmark predicates.
+  benchmark predicates. For auction Test-of-Time tracks, start with finite
+  certificate interfaces: fixed-price benchmarks for digital goods, explicit
+  position outcomes before sorted GSP mechanisms, and bundle-allocation
+  feasibility before greedy combinatorial-auction algorithms.
 - Matching: separate preferences, feasibility, matching, blocking pairs,
   stability, deferred acceptance, and strategic-report predicates.
 - Games/learning: separate finite games, mixed distributions, payoffs,
@@ -177,6 +180,20 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - For proofs whose hard part is a known paper lemma, package the lemma as a
   named predicate or certificate and prove the surrounding algebra/induction
   unconditionally.
+- For posted-price and prior-free digital-goods auctions, prove truthfulness at
+  the threshold-rule level: if the threshold offered to bidder `i` is
+  independent of `i`'s own report, accepting iff bid exceeds that threshold is
+  DSIC. Then instantiate random-sampling or market-price auctions by proving
+  the relevant own-bid-independence lemma.
+- For GSP/position-auction work, first formalize `PositionOutcome` with
+  per-click payments, utility, revenue, welfare, and feasibility. A concrete
+  non-truthfulness witness is a good first theorem before building a generic
+  bid-sorting mechanism and equilibrium comparisons.
+- For combinatorial auctions, reuse the fair-division bundle/allocation layer.
+  Keep feasibility separate from direct mechanisms because approximation
+  algorithms may leave goods unallocated. For single-minded bidders, define the
+  bundle-containment valuation before proving greedy allocation or
+  critical-value payment theorems.
 - For inequality-heavy proofs, use certificate structures with fields matching
   the exact nonnegativity, strict positivity, and comparison obligations needed
   by the final theorem.
