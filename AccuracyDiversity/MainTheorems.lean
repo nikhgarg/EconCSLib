@@ -202,6 +202,32 @@ theorem paper_rounding_count_close_of_no_crossing
     a anchor ha hanchor hBle hNlt hno
 
 /--
+Proposition 2 rounding step from a strict exchange certificate.
+
+For the uniform `[0,1]`, `k = 1` objective, if the real-relaxation floor anchor
+has the strict boundary marginal comparisons needed in Appendix D.5, then every
+finite optimum is count-close to that anchor. The remaining paper-specific work
+is to prove this certificate for the square-root real-relaxation optimizer.
+-/
+theorem paper_uniform_rounding_count_close_of_strict_exchange_certificate
+    {T : ℕ} (likelihood : ItemType T → ℝ)
+    (a anchor : CountAllocation T) {N B : ℕ}
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hanchor : DecisionCore.Allocation.total anchor = B)
+    (hlike_nonneg : ∀ t, 0 ≤ likelihood t)
+    (hBle : B ≤ N)
+    (hNlt : N < B + Fintype.card (ItemType T))
+    (hcert : UniformTopOne.StrictRoundingExchangeCertificate likelihood anchor) :
+    ∀ t : ItemType T,
+      anchor.count t < a.count t + Fintype.card (ItemType T) ∧
+        a.count t < anchor.count t + Fintype.card (ItemType T) := by
+  have hno :=
+    UniformTopOne.noRoundingCrossing_of_strictExchangeCertificate
+      likelihood N hopt hlike_nonneg hcert
+  exact paper_rounding_count_close_of_no_crossing
+    a anchor hopt.1 hanchor hBle hNlt hno
+
+/--
 Two-type Bernoulli first-order condition from type `0` to type `1`.
 -/
 theorem paper_two_type_forward_one_le_backward_zero

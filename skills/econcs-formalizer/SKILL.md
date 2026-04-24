@@ -282,7 +282,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   integer vector has no high/low crossing around integer anchors and the anchor
   total is within one type-cardinality of the target total, then every count is
   within one type-cardinality of its anchor. The paper-specific analytic work is
-  proving that optimality of the separable objective rules out the crossing.
+  proving that optimality of the separable objective rules out the crossing. A
+  useful intermediate certificate is a strict boundary exchange comparison:
+  the loss from removing a high-anchor item is strictly smaller than the gain
+  from adding a low-anchor item, uniformly over high/low pairs.
 - For finite fair-division allocation theorems, first prove the theorem for an
   abstract marginal bound. Then add a paper-facing corollary instantiating the
   bound as the finite maximum one-good marginal value.

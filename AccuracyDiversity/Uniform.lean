@@ -1,6 +1,7 @@
 import AccuracyDiversity.Exchange
 import EconCSLean.Math.FiniteRounding
 import Mathlib.Data.Real.Sqrt
+import Mathlib.Tactic.Linarith
 
 open scoped BigOperators
 
@@ -104,6 +105,43 @@ end sqrtLikelihoodProfile
 
 namespace UniformTopOne
 
+/--
+The reciprocal product `1 / (q * (q + 1))` is antitone in the positive natural
+count `q`.
+-/
+theorem one_div_nat_mul_succ_antitone {m n : ℕ}
+    (hm : 0 < m) (hmn : m ≤ n) :
+    1 / ((n : ℝ) * (n + 1 : ℝ)) ≤
+      1 / ((m : ℝ) * (m + 1 : ℝ)) := by
+  have hmpos : 0 < (m : ℝ) * (m + 1 : ℝ) := by positivity
+  have hmnR : (m : ℝ) ≤ (n : ℝ) := by exact_mod_cast hmn
+  have hden : (m : ℝ) * (m + 1 : ℝ) ≤ (n : ℝ) * (n + 1 : ℝ) := by
+    nlinarith [hmnR]
+  exact one_div_le_one_div_of_le hmpos hden
+
+noncomputable def anchorLoss {T : ℕ}
+    (anchor : CountAllocation T) (t : ItemType T) : ℝ :=
+  1 / ((anchor.count t + 1 : ℝ) * (anchor.count t + 2 : ℝ))
+
+noncomputable def anchorGain {T : ℕ}
+    (anchor : CountAllocation T) (t : ItemType T) : ℝ :=
+  1 / ((anchor.count t : ℝ) * (anchor.count t + 1 : ℝ))
+
+/--
+Strict marginal certificate used to rule out rounding crossings around an
+integer anchor.
+
+For every possible high type and positive-anchor low type, moving one item from
+the high side to the low side would strictly improve the objective at the
+anchor boundary.
+-/
+def StrictRoundingExchangeCertificate {T : ℕ}
+    (likelihood : ItemType T → ℝ) (anchor : CountAllocation T) : Prop :=
+  ∀ high low,
+    0 < anchor.count low →
+      likelihood high * anchorLoss anchor high <
+        likelihood low * anchorGain anchor low
+
 @[simp] theorem toConsumptionModel_likelihood {T : ℕ}
     (likelihood : ItemType T → ℝ) (t : ItemType T) :
     (uniformTopOneConsumptionModel likelihood).likelihood t = likelihood t := rfl
@@ -157,6 +195,73 @@ theorem forwardMarginal_le_backwardMarginal_of_optimum {T : ℕ}
   rw [weightedForwardMarginal_eq] at h
   rw [weightedBackwardMarginal_eq likelihood src hcan] at h
   exact h
+
+/--
+A strict anchor-boundary exchange certificate rules out high/low rounding
+crossings at any finite optimum of the uniform top-one objective.
+-/
+theorem noRoundingCrossing_of_strictExchangeCertificate {T : ℕ}
+    (likelihood : ItemType T → ℝ) (N : ℕ)
+    {a anchor : CountAllocation T}
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hlike_nonneg : ∀ t, 0 ≤ likelihood t)
+    (hcert : StrictRoundingExchangeCertificate likelihood anchor) :
+    EconCSLean.FiniteRounding.NoRoundingCrossing
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => anchor.count t) := by
+  intro high low hbad
+  by_cases hne : high = low
+  · subst high
+    have ha_le_anchor : a.count low ≤ anchor.count low :=
+      Nat.le_of_succ_le hbad.2
+    have hsucc_le_self : anchor.count low + 1 ≤ anchor.count low :=
+      le_trans hbad.1 ha_le_anchor
+    exact (Nat.not_succ_le_self (anchor.count low)) hsucc_le_self
+  · have hcan : DecisionCore.Allocation.CanMoveOne a high :=
+      lt_of_lt_of_le (Nat.succ_pos (anchor.count high)) hbad.1
+    have hfo :=
+      forwardMarginal_le_backwardMarginal_of_optimum
+        likelihood N hopt hne hcan
+    have hlow_pos : 0 < anchor.count low :=
+      lt_of_lt_of_le (Nat.succ_pos (a.count low)) hbad.2
+    have hloss_le_anchor :
+        1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ)) ≤
+          anchorLoss anchor high := by
+      have hraw := one_div_nat_mul_succ_antitone
+        (m := anchor.count high + 1) (n := a.count high)
+        (Nat.succ_pos _) hbad.1
+      unfold anchorLoss
+      norm_num [Nat.cast_add, Nat.cast_one] at hraw ⊢
+      ring_nf at hraw ⊢
+      exact hraw
+    have hanchor_gain_le :
+        anchorGain anchor low ≤
+          1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ)) := by
+      have hraw := one_div_nat_mul_succ_antitone
+        (m := a.count low + 1) (n := anchor.count low)
+        (Nat.succ_pos _) hbad.2
+      unfold anchorGain
+      norm_num [Nat.cast_add, Nat.cast_one] at hraw ⊢
+      ring_nf at hraw ⊢
+      exact hraw
+    have hactual_loss_le_anchor :
+        likelihood high *
+            (1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ))) ≤
+          likelihood high * anchorLoss anchor high :=
+      mul_le_mul_of_nonneg_left hloss_le_anchor (hlike_nonneg high)
+    have hanchor_gain_le_actual :
+        likelihood low * anchorGain anchor low ≤
+          likelihood low *
+            (1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ))) :=
+      mul_le_mul_of_nonneg_left hanchor_gain_le (hlike_nonneg low)
+    have hstrict :
+        likelihood high *
+            (1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ))) <
+          likelihood low *
+            (1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ))) :=
+      lt_of_le_of_lt hactual_loss_le_anchor
+        (lt_of_lt_of_le (hcert high low hlow_pos) hanchor_gain_le_actual)
+    exact (not_lt_of_ge hfo) hstrict
 
 end UniformTopOne
 
