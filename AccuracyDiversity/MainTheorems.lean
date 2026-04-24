@@ -228,6 +228,34 @@ theorem paper_uniform_rounding_count_close_of_strict_exchange_certificate
     a anchor hopt.1 hanchor hBle hNlt hno
 
 /--
+Appendix D.5 two-anchor rounding step from a strict exchange certificate.
+
+This version is closer to real-relaxation proofs where lower and upper integer
+anchors can be different, e.g. floor/ceiling bounds around a real optimum.
+-/
+theorem paper_uniform_rounding_count_close_of_two_anchor_certificate
+    {T : ℕ} (likelihood : ItemType T → ℝ)
+    (a lower upper : CountAllocation T) {N L U : ℕ}
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hlower : DecisionCore.Allocation.total lower = L)
+    (hupper : DecisionCore.Allocation.total upper = U)
+    (hlike_nonneg : ∀ t, 0 ≤ likelihood t)
+    (hNlt : N < L + Fintype.card (ItemType T))
+    (hUlt : U < N + Fintype.card (ItemType T))
+    (horder : ∀ t, lower.count t ≤ upper.count t)
+    (hcert :
+      UniformTopOne.StrictRoundingExchangeCertificateBetween
+        likelihood lower upper) :
+    ∀ t : ItemType T,
+      lower.count t < a.count t + Fintype.card (ItemType T) ∧
+        a.count t < upper.count t + Fintype.card (ItemType T) := by
+  have hno :=
+    UniformTopOne.noRoundingCrossingBetween_of_strictExchangeCertificate
+      likelihood N hopt hlike_nonneg horder hcert
+  exact UniformRounding.count_close_of_no_rounding_crossing_between
+    a lower upper hopt.1 hlower hupper hNlt hUlt horder hno
+
+/--
 Finite Proposition 2 bridge from square-root anchors to homogeneity.
 
 For the uniform `[0,1]`, `k = 1` objective, suppose the real-relaxation floor
@@ -295,6 +323,71 @@ theorem paper_uniform_top_one_sqrt_homogeneity_of_anchor_certificate
           |(anchor.count t : ℝ) - target| := abs_add_le _ _
     _ ≤ (Fintype.card (ItemType T) : ℝ) + 1 :=
           add_le_add hcount_anchor hanchor_target
+
+/--
+Finite Proposition 2 bridge from two square-root anchors to homogeneity.
+
+If lower and upper integer anchors bracket the real square-root target within
+one item and satisfy the strict two-anchor boundary exchange certificate, then
+every finite optimum is approximately `1/2`-homogeneous with error
+`(m + 1) / N`.
+-/
+theorem paper_uniform_top_one_sqrt_homogeneity_of_two_anchor_certificate
+    {T : ℕ} (likelihood : ItemType T → ℝ)
+    (a lower upper : CountAllocation T) {N L U : ℕ}
+    (hNpos : 0 < N)
+    (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0)
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hlower : DecisionCore.Allocation.total lower = L)
+    (hupper : DecisionCore.Allocation.total upper = U)
+    (hlike_nonneg : ∀ t, 0 ≤ likelihood t)
+    (hNlt : N < L + Fintype.card (ItemType T))
+    (hUlt : U < N + Fintype.card (ItemType T))
+    (horder : ∀ t, lower.count t ≤ upper.count t)
+    (hcert :
+      UniformTopOne.StrictRoundingExchangeCertificateBetween
+        likelihood lower upper)
+    (hlower_close :
+      ∀ t,
+        |(lower.count t : ℝ) -
+          (N : ℝ) *
+            (Real.sqrt (likelihood t) /
+              ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤ 1)
+    (hupper_close :
+      ∀ t,
+        |(upper.count t : ℝ) -
+          (N : ℝ) *
+            (Real.sqrt (likelihood t) /
+              ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤ 1) :
+    (sqrtLikelihoodProfile likelihood).Approx a
+      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
+  have hround :=
+    paper_uniform_rounding_count_close_of_two_anchor_certificate
+      likelihood a lower upper hopt hlower hupper hlike_nonneg
+      hNlt hUlt horder hcert
+  refine paper_uniform_sqrt_homogeneity_of_count_closeness
+    likelihood a hnorm hopt.1 hNpos ?_
+  intro t
+  let target : ℝ :=
+    (N : ℝ) *
+      (Real.sqrt (likelihood t) /
+        ∑ i : ItemType T, Real.sqrt (likelihood i))
+  have hlow_round : (lower.count t : ℝ) <
+      (a.count t : ℝ) + (Fintype.card (ItemType T) : ℝ) := by
+    exact_mod_cast (hround t).1
+  have hhigh_round : (a.count t : ℝ) <
+      (upper.count t : ℝ) + (Fintype.card (ItemType T) : ℝ) := by
+    exact_mod_cast (hround t).2
+  have hlower_abs : |(lower.count t : ℝ) - target| ≤ 1 := by
+    simpa [target] using hlower_close t
+  have hupper_abs : |(upper.count t : ℝ) - target| ≤ 1 := by
+    simpa [target] using hupper_close t
+  have hlower_left : -1 ≤ (lower.count t : ℝ) - target :=
+    (abs_le.mp hlower_abs).1
+  have hupper_right : (upper.count t : ℝ) - target ≤ 1 :=
+    (abs_le.mp hupper_abs).2
+  rw [abs_le]
+  constructor <;> linarith
 
 /--
 Two-type Bernoulli first-order condition from type `0` to type `1`.

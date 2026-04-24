@@ -142,6 +142,21 @@ def StrictRoundingExchangeCertificate {T : ℕ}
       likelihood high * anchorLoss anchor high <
         likelihood low * anchorGain anchor low
 
+/--
+Two-anchor strict marginal certificate for real-rounding arguments.
+
+`upper` is used for high coordinates and `lower` for low coordinates. This is
+the certificate shape corresponding to floor/ceiling anchors around a real
+relaxation.
+-/
+def StrictRoundingExchangeCertificateBetween {T : ℕ}
+    (likelihood : ItemType T → ℝ)
+    (lower upper : CountAllocation T) : Prop :=
+  ∀ high low,
+    0 < lower.count low →
+      likelihood high * anchorLoss upper high <
+        likelihood low * anchorGain lower low
+
 @[simp] theorem toConsumptionModel_likelihood {T : ℕ}
     (likelihood : ItemType T → ℝ) (t : ItemType T) :
     (uniformTopOneConsumptionModel likelihood).likelihood t = likelihood t := rfl
@@ -263,6 +278,78 @@ theorem noRoundingCrossing_of_strictExchangeCertificate {T : ℕ}
         (lt_of_lt_of_le (hcert high low hlow_pos) hanchor_gain_le_actual)
     exact (not_lt_of_ge hfo) hstrict
 
+/--
+A strict two-anchor boundary exchange certificate rules out high/low rounding
+crossings between lower and upper anchors at any finite optimum of the uniform
+top-one objective.
+-/
+theorem noRoundingCrossingBetween_of_strictExchangeCertificate {T : ℕ}
+    (likelihood : ItemType T → ℝ) (N : ℕ)
+    {a lower upper : CountAllocation T}
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hlike_nonneg : ∀ t, 0 ≤ likelihood t)
+    (horder : ∀ t, lower.count t ≤ upper.count t)
+    (hcert : StrictRoundingExchangeCertificateBetween likelihood lower upper) :
+    EconCSLean.FiniteRounding.NoRoundingCrossingBetween
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => lower.count t)
+      (fun t : ItemType T => upper.count t) := by
+  intro high low hbad
+  by_cases hne : high = low
+  · subst high
+    have ha_le_lower : a.count low ≤ lower.count low :=
+      Nat.le_of_succ_le hbad.2
+    have hupper_succ_le_lower : upper.count low + 1 ≤ lower.count low :=
+      le_trans hbad.1 ha_le_lower
+    have hupper_succ_le_self : upper.count low + 1 ≤ upper.count low :=
+      le_trans hupper_succ_le_lower (horder low)
+    exact (Nat.not_succ_le_self (upper.count low)) hupper_succ_le_self
+  · have hcan : DecisionCore.Allocation.CanMoveOne a high :=
+      lt_of_lt_of_le (Nat.succ_pos (upper.count high)) hbad.1
+    have hfo :=
+      forwardMarginal_le_backwardMarginal_of_optimum
+        likelihood N hopt hne hcan
+    have hlow_pos : 0 < lower.count low :=
+      lt_of_lt_of_le (Nat.succ_pos (a.count low)) hbad.2
+    have hloss_le_upper :
+        1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ)) ≤
+          anchorLoss upper high := by
+      have hraw := one_div_nat_mul_succ_antitone
+        (m := upper.count high + 1) (n := a.count high)
+        (Nat.succ_pos _) hbad.1
+      unfold anchorLoss
+      norm_num [Nat.cast_add, Nat.cast_one] at hraw ⊢
+      ring_nf at hraw ⊢
+      exact hraw
+    have hlower_gain_le :
+        anchorGain lower low ≤
+          1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ)) := by
+      have hraw := one_div_nat_mul_succ_antitone
+        (m := a.count low + 1) (n := lower.count low)
+        (Nat.succ_pos _) hbad.2
+      unfold anchorGain
+      norm_num [Nat.cast_add, Nat.cast_one] at hraw ⊢
+      ring_nf at hraw ⊢
+      exact hraw
+    have hactual_loss_le_upper :
+        likelihood high *
+            (1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ))) ≤
+          likelihood high * anchorLoss upper high :=
+      mul_le_mul_of_nonneg_left hloss_le_upper (hlike_nonneg high)
+    have hlower_gain_le_actual :
+        likelihood low * anchorGain lower low ≤
+          likelihood low *
+            (1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ))) :=
+      mul_le_mul_of_nonneg_left hlower_gain_le (hlike_nonneg low)
+    have hstrict :
+        likelihood high *
+            (1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ))) <
+          likelihood low *
+            (1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ))) :=
+      lt_of_le_of_lt hactual_loss_le_upper
+        (lt_of_lt_of_le (hcert high low hlow_pos) hlower_gain_le_actual)
+    exact (not_lt_of_ge hfo) hstrict
+
 end UniformTopOne
 
 namespace UniformRounding
@@ -298,6 +385,42 @@ theorem count_close_of_no_rounding_crossing {T : ℕ}
       (fun t : ItemType T => a.count t)
       (fun t : ItemType T => anchor.count t)
       t ha hanchor hNlt hno
+
+/--
+Two-anchor count-allocation wrapper for the combinatorial part of Appendix D.5.
+
+If lower/upper anchors bracket the real relaxation, there is no high/low
+crossing between those anchors, and both anchor totals are within one
+type-cardinality of `N`, then every integer optimum is close to the bracket.
+-/
+theorem count_close_of_no_rounding_crossing_between {T : ℕ}
+    (a lower upper : CountAllocation T) {N L U : ℕ}
+    (ha : DecisionCore.Allocation.total a = N)
+    (hlower : DecisionCore.Allocation.total lower = L)
+    (hupper : DecisionCore.Allocation.total upper = U)
+    (hNlt : N < L + Fintype.card (ItemType T))
+    (hUlt : U < N + Fintype.card (ItemType T))
+    (horder : ∀ t, lower.count t ≤ upper.count t)
+    (hno :
+      EconCSLean.FiniteRounding.NoRoundingCrossingBetween
+        (fun t : ItemType T => a.count t)
+        (fun t : ItemType T => lower.count t)
+        (fun t : ItemType T => upper.count t)) :
+    ∀ t : ItemType T,
+      lower.count t < a.count t + Fintype.card (ItemType T) ∧
+        a.count t < upper.count t + Fintype.card (ItemType T) := by
+  intro t
+  constructor
+  · exact EconCSLean.FiniteRounding.NoRoundingCrossingBetween.lower_lt_count_add_card
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => lower.count t)
+      (fun t : ItemType T => upper.count t)
+      t ha hupper hUlt horder hno
+  · exact EconCSLean.FiniteRounding.NoRoundingCrossingBetween.count_lt_upper_add_card
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => lower.count t)
+      (fun t : ItemType T => upper.count t)
+      t ha hlower hNlt horder hno
 
 end UniformRounding
 

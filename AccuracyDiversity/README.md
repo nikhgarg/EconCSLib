@@ -38,8 +38,8 @@ this folder.
 | Finite i.i.d. Bernoulli `0`-homogeneity | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_uniform_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | positive slate size, nonempty finite type space, identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Uniform `[0,1]`, `k = 1` marginal algebra | `UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum`, `paper_uniform_top_one_optimum_first_order_condition` | formalized | `AccuracyDiversity/Uniform.lean`, `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
 | Proposition 2 square-root representation bridge | `paper_uniform_sqrt_homogeneity_of_count_closeness` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires a count-closeness theorem for the square-root target |
-| Appendix D.5 rounding combinatorics and exchange certificate bridge | `paper_rounding_count_close_of_no_crossing`, `paper_uniform_rounding_count_close_of_strict_exchange_certificate` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires the real-relaxation proof that square-root floor anchors satisfy the strict boundary exchange certificate |
-| Finite Proposition 2 anchor-certificate theorem | `paper_uniform_top_one_sqrt_homogeneity_of_anchor_certificate` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires constructing the square-root floor anchor, proving one-item closeness to the square-root target, and proving its strict exchange certificate |
+| Appendix D.5 rounding combinatorics and exchange certificate bridge | `paper_rounding_count_close_of_no_crossing`, `paper_uniform_rounding_count_close_of_strict_exchange_certificate`, `paper_uniform_rounding_count_close_of_two_anchor_certificate` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires the real-relaxation proof that square-root lower/upper anchors satisfy the strict boundary exchange certificate |
+| Finite Proposition 2 anchor-certificate theorem | `paper_uniform_top_one_sqrt_homogeneity_of_anchor_certificate`, `paper_uniform_top_one_sqrt_homogeneity_of_two_anchor_certificate` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires constructing the square-root lower/upper anchors, proving one-item closeness to the square-root target, and proving their strict exchange certificate |
 | Two-type Bernoulli exchange inequalities | `paper_two_type_forward_one_le_backward_zero`, `paper_two_type_forward_zero_le_backward_one` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and positive source count |
 | Two-type symmetric Bernoulli balance and equal-representation homogeneity | `paper_symmetric_two_type_bernoulli_optimum_balanced`, `paper_symmetric_two_type_bernoulli_optimum_equal_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | symmetric likelihood/probability assumptions and positive slate size for homogeneity |
 | Asymptotic homogeneity of optima | `ConsumptionModel.AsymptoticHomogeneityTarget` | scaffold | `AccuracyDiversity/Optimization.lean` | connect finite exchange inequalities to asymptotic approximation bounds |
@@ -52,6 +52,9 @@ For Proposition 2, the uniform `k = 1` marginal formulas, square-root
 homogeneity representation bridge, and finite rounding-to-homogeneity assembly
 are formalized. The combinatorial half of Appendix D.5 is also formalized, and a
 strict boundary exchange certificate is proved sufficient to rule out high/low
-integer crossings. The remaining mathematical work is the real-relaxation
-optimizer and the proof that the square-root floor anchors have one-item
-closeness to the square-root target and satisfy that certificate.
+integer crossings. The generic rounding layer now includes both single-anchor
+and two-anchor versions; the two-anchor version matches floor/ceiling-style
+real-relaxation arguments. The remaining mathematical work is the
+real-relaxation optimizer and the proof that the square-root lower/upper
+anchors have one-item closeness to the square-root target and satisfy that
+certificate.
