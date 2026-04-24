@@ -1049,6 +1049,25 @@ theorem maxSlackBeta_nonneg
     Finset.univ.image fun a : Advertiser => I.slackScore alpha a q
   exact le_max_left 0 (scores.max' _)
 
+theorem maxSlackBeta_le_of_slackScore_le
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (q : Query) {B : ℝ}
+    (hB : 0 ≤ B)
+    (hscore : ∀ a, I.slackScore alpha a q ≤ B) :
+    I.maxSlackBeta alpha q ≤ B := by
+  classical
+  unfold maxSlackBeta
+  let scores : Finset ℝ :=
+    Finset.univ.image fun a : Advertiser => I.slackScore alpha a q
+  have hscores : scores.Nonempty := by
+    obtain ⟨a⟩ := (inferInstance : Nonempty Advertiser)
+    exact ⟨I.slackScore alpha a q, by simp [scores]⟩
+  apply max_le hB
+  exact Finset.max'_le scores hscores B fun x hx => by
+    rcases Finset.mem_image.mp hx with ⟨a, _ha, rfl⟩
+    exact hscore a
+
 theorem dualFeasible_maxSlackBeta
     [Fintype Advertiser] [Nonempty Advertiser]
     (I : AdWordsInstance Advertiser Query)
@@ -1308,6 +1327,30 @@ theorem final_slackScore_le_initial_balanceScore
       a q halpha
   simpa [balanceScore_eq_slackScore_msvvAlphaFromAssignment I S.assignment a q]
     using hslack
+
+theorem maxSlackBeta_runHistoryStateFrom_le_balanceScore_of_all_canAssign
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen)
+    (hall : ∀ a, I.CanAssign S.assignment q a) :
+    I.maxSlackBeta
+        (I.msvvAlphaFromAssignment
+          (runHistoryStateFrom I rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q := by
+  apply maxSlackBeta_le_of_slackScore_le
+  · exact balanceScore_nonneg_of_feasible I hbid S.assignment chosen q
+      (hbudget chosen) hS.1
+  · intro a
+    exact (final_slackScore_le_initial_balanceScore
+      I hbid rule hrule history S hS a q (hbudget a)).trans
+      (hchoice.2 a (hall a))
 
 theorem stepHistoryState_seen
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]

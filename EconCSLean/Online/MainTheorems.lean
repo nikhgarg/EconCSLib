@@ -237,6 +237,32 @@ theorem paper_adwords_final_slack_score_le_initial_balance_score
     I hbid rule hrule history S hS a q hbudget
 
 /--
+Non-exhausted-query beta charge: if every advertiser can still accept query
+`q`, then the final max-slack query dual is bounded by the Balance score of the
+advertiser selected at that state.
+-/
+theorem paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (q : Query) (chosen : Advertiser)
+    (hchoice : I.IsBalanceChoice S.assignment q chosen)
+    (hall : ∀ a, I.CanAssign S.assignment q a) :
+    I.maxSlackBeta
+        (I.msvvAlphaFromAssignment
+          (I.runHistoryStateFrom rule S history).assignment) q ≤
+      I.balanceScore S.assignment chosen q := by
+  exact AdWordsInstance.maxSlackBeta_runHistoryStateFrom_le_balanceScore_of_all_canAssign
+    I hbid hbudget rule hrule history S hS q chosen hchoice hall
+
+/--
 Small-bids boundary lemma: if advertiser `a` cannot accept query `q`, then
 under the `ε`-small-bids condition `a` has already spent more than a
 `1 - ε` fraction of her budget.

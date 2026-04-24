@@ -185,7 +185,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   Before attacking the objective bound, prove run monotonicity: spend, spent
   fractions, and assignment-induced MSVV dual alphas only increase along a
   feasible online history. This yields the key comparison that final slack
-  scores are bounded by earlier Balance scores.
+  scores are bounded by earlier Balance scores. Use that comparison with the
+  Balance maximizer to close the non-exhausted-query beta charge; handle
+  exhausted advertisers separately with the small-bids boundary lemma.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
@@ -413,6 +415,21 @@ have hd : d = rawSecond := by simpa [secondAbbrev] using h.2
   builds.
 - Existing warnings are not build failures unless the user asks for lint cleanup
   or the project enforces warning-free builds.
+- If build logs are dominated by repeated non-actionable linter warnings,
+  quiet only those specific style/noise linters in `lakefile.toml`; do not
+  disable proof checking or hide theorem errors.
+- To save context during iteration, redirect targeted builds to a temporary log
+  and print only the tail on failure or completion, e.g.:
+
+```bash
+lake build UserItemFairness.MainTheorems >/tmp/econcs-build.log 2>&1
+status=$?
+tail -80 /tmp/econcs-build.log
+exit $status
+```
+
+- Prefer `lake build <touched-root-module>` over full `lake build` until the
+  paper slice is ready for integration.
 
 ## Paper Triage
 
