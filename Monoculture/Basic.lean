@@ -136,4 +136,14 @@ theorem swapTopTwo_firstChoice_ne {n : ℕ} (π : Ranking n) :
     simpa [firstChoice] using h
   simp [bestRemainingAfter, firstChoice, h']
 
+/-- After candidate `c` is removed, the best remaining candidate is not `c`. -/
+theorem bestRemainingAfter_ne_removed {n : ℕ} (π : Ranking n) (c : Candidate n) :
+    bestRemainingAfter π c ≠ c := by
+  by_cases h : firstChoice π = c
+  · subst c
+    rw [bestRemainingAfter_of_eq]
+    exact (firstChoice_ne_secondChoice π).symm
+  · rw [bestRemainingAfter_of_ne π h]
+    exact h
+
 end Monoculture

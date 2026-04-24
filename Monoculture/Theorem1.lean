@@ -1,4 +1,5 @@
 import Monoculture.Family
+import Monoculture.FirstChoiceDecomposition
 import Monoculture.Payoff
 import DecisionCore.EpsilonContinuity
 import DecisionCore.IntervalCrossing
@@ -73,6 +74,35 @@ has already been removed.
 noncomputable def expectedBestAfterRemoval {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n) : ℝ :=
   pmfExp μ (fun π => value (bestRemainingAfter π c))
+
+/--
+Removing candidate `c` lowers the top-choice value exactly on the first-choice
+fiber of `c`, by the top-second value gap on that fiber.
+-/
+theorem expectedBestAfterRemoval_eq_firstMover_sub_firstChoiceGapMass {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n) :
+    expectedBestAfterRemoval μ value c =
+      expectedFirstMoverUtility μ value - firstChoiceGapMass μ value c := by
+  unfold expectedBestAfterRemoval expectedFirstMoverUtility firstChoiceGapMass
+  rw [← pmfExp_sub]
+  congr 1
+  funext π
+  by_cases h : firstChoice π = c
+  · subst c
+    simp only [if_true]
+    calc
+      value (bestRemainingAfter π (firstChoice π)) = value (secondChoice π) := by
+        simpa [firstChoice, secondChoice] using
+          congrArg value (bestRemainingAfter_of_eq π)
+      _ = value (firstChoice π) - valueGap value π := by
+        simp [valueGap, firstChoice, secondChoice]
+  · have hc : c ≠ firstChoice π := by
+      intro hc
+      exact h hc.symm
+    have hcraw : c ≠ π 0 := by
+      simpa [firstChoice] using hc
+    rw [bestRemainingAfter_of_ne π h]
+    simp [hcraw]
 
 /--
 Second-mover utility can be read as first averaging, over the first mover's draw,

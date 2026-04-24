@@ -1,6 +1,9 @@
 import Monoculture.MallowsPairwise
 import Monoculture.Theorem1
 
+open scoped BigOperators
+open DecisionCore
+
 /-!
 # Parameterized Mallows Families
 
@@ -37,6 +40,12 @@ theorem mallowsInverseAccuracyQ_strictAnti {θA θH : ℝ}
 namespace MallowsSpec
 
 variable {n : ℕ} (M : MallowsSpec n)
+
+/-- Unnormalised Mallows mass of rankings whose best candidate after removing
+`c` is `d`. -/
+noncomputable def bestAfterRemovalWeight (c d : Candidate n) : ℝ :=
+  ∑ π : Ranking n,
+    if d = bestRemainingAfter π c then mallowsWeight M.q M.center π else 0
 
 /--
 First-mover utility under a Mallows law is the rank-power weighted average of
@@ -98,11 +107,400 @@ theorem expectedFirstMoverUtility_eq_rankAverage
           candidateRankPowerSum n M.q := by
             field_simp [ne_of_gt fac.firstTail_pos]
 
+/--
+For a Mallows law, expected best-after-removal is the first-choice rank average
+minus the normalized first-choice gap fiber of the removed candidate.
+-/
+theorem expectedBestAfterRemoval_eq_rankAverage_sub_gapWeight
+    (fac : M.RankFactorization) (value : Candidate n → ℝ) (c : Candidate n) :
+    AccuracyFamily.expectedBestAfterRemoval M.law value c =
+      (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r)) /
+        candidateRankPowerSum n M.q -
+      M.firstChoiceGapWeight value c / M.partition := by
+  rw [AccuracyFamily.expectedBestAfterRemoval_eq_firstMover_sub_firstChoiceGapMass]
+  rw [M.expectedFirstMoverUtility_eq_rankAverage fac value]
+  rw [M.firstChoiceGapMass_eq_firstChoiceGapWeight_div_partition value c]
+
+/-- Expected best-after-removal as an unnormalised Mallows fiber sum. -/
+theorem expectedBestAfterRemoval_eq_sum_bestAfterRemovalWeight
+    (value : Candidate n → ℝ) (c : Candidate n) :
+    AccuracyFamily.expectedBestAfterRemoval M.law value c =
+      (∑ d : Candidate n, M.bestAfterRemovalWeight c d * value d) /
+        M.partition := by
+  classical
+  unfold AccuracyFamily.expectedBestAfterRemoval bestAfterRemovalWeight pmfExp
+  calc
+    ∑ π : Ranking n, (M.law π).toReal * value (bestRemainingAfter π c)
+        = ∑ π : Ranking n,
+            (mallowsWeight M.q M.center π / M.partition) *
+              value (bestRemainingAfter π c) := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          rw [M.law_apply_toReal]
+    _ = ∑ π : Ranking n,
+          (∑ d : Candidate n,
+            (if d = bestRemainingAfter π c then
+              mallowsWeight M.q M.center π * value d
+            else 0)) / M.partition := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          have hsum :
+              (∑ d : Candidate n,
+                if d = bestRemainingAfter π c then
+                  mallowsWeight M.q M.center π * value d
+                else 0) =
+                mallowsWeight M.q M.center π *
+                  value (bestRemainingAfter π c) := by
+            simpa using
+              (Finset.sum_ite_eq' Finset.univ (bestRemainingAfter π c)
+                (fun d : Candidate n => mallowsWeight M.q M.center π * value d))
+          rw [hsum]
+          ring
+    _ = (∑ π : Ranking n, ∑ d : Candidate n,
+          if d = bestRemainingAfter π c then
+            mallowsWeight M.q M.center π * value d
+          else 0) / M.partition := by
+          rw [Finset.sum_div]
+    _ = (∑ d : Candidate n, ∑ π : Ranking n,
+          if d = bestRemainingAfter π c then
+            mallowsWeight M.q M.center π * value d
+          else 0) / M.partition := by
+          rw [Finset.sum_comm]
+    _ = (∑ d : Candidate n,
+          M.bestAfterRemovalWeight c d * value d) / M.partition := by
+          congr 1
+          refine Finset.sum_congr rfl ?_
+          intro d _
+          unfold bestAfterRemovalWeight
+          rw [Finset.sum_mul]
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          by_cases h : d = bestRemainingAfter π c
+          · simp [h]
+          · simp [h]
+
+/--
+Best-after-removal fibers split into ordinary first-choice fibers plus the
+top-two fiber where the removed candidate was first.
+-/
+theorem bestAfterRemovalWeight_eq_firstWeight_add_firstSecondWeight
+    (c d : Candidate n) :
+    M.bestAfterRemovalWeight c d =
+      (if d = c then 0 else M.firstWeight d) + M.firstSecondWeight c d := by
+  classical
+  by_cases hdc : d = c
+  · subst d
+    have hbest : M.bestAfterRemovalWeight c c = 0 := by
+      unfold bestAfterRemovalWeight
+      apply Finset.sum_eq_zero
+      intro π _
+      have hne : c ≠ bestRemainingAfter π c :=
+        (bestRemainingAfter_ne_removed π c).symm
+      simp [hne]
+    rw [hbest, if_pos rfl, M.firstSecondWeight_self c]
+    ring
+  · rw [if_neg hdc]
+    unfold bestAfterRemovalWeight firstWeight firstSecondWeight
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl ?_
+    intro π _
+    by_cases hc : firstChoice π = c
+    · have hbest : bestRemainingAfter π c = secondChoice π := by
+        rw [← hc]
+        exact bestRemainingAfter_of_eq π
+      have hdfirst : d ≠ firstChoice π := by
+        intro h
+        exact hdc (h.trans hc)
+      have hcraw : c = π 0 := by
+        simpa [firstChoice] using hc.symm
+      have hdfirstRaw : d ≠ π 0 := by
+        simpa [firstChoice] using hdfirst
+      have hbestRaw : bestRemainingAfter π (π 0) = π 1 := by
+        simpa [firstChoice, secondChoice] using bestRemainingAfter_of_eq π
+      simp [firstChoice, secondChoice, hcraw, hdfirstRaw, hbestRaw]
+    · have hbest : bestRemainingAfter π c = firstChoice π :=
+        bestRemainingAfter_of_ne π hc
+      have hc' : ¬c = firstChoice π := by
+        intro h
+        exact hc h.symm
+      have hcraw : c ≠ π 0 := by
+        simpa [firstChoice] using hc'
+      simp [hbest, firstChoice, secondChoice, hcraw]
+
+/-- Rank-factorized closed form for best-after-removal fiber weights. -/
+theorem bestAfterRemovalWeight_eq_rankBestAfterRemovalWeight
+    (fac : M.RankFactorization) (c d : Candidate n) :
+    M.bestAfterRemovalWeight c d =
+      fac.firstSecondTail *
+        candidateRankBestAfterRemovalWeight n M.q
+          (rankOf M.center c) (rankOf M.center d) := by
+  classical
+  let k : Candidate n := rankOf M.center c
+  let r : Candidate n := rankOf M.center d
+  have htail := M.firstTail_eq_firstSecondTail_mul_removalPowerSum fac c
+  by_cases hrk : r < k
+  · have hdc : d ≠ c := by
+      intro hdc
+      have : r = k := by
+        simp [r, k, hdc]
+      exact (lt_irrefl r) (hrk.trans_eq this.symm)
+    have hlt : rankOf M.center d < rankOf M.center c := by
+      simpa [r, k] using hrk
+    rw [M.bestAfterRemovalWeight_eq_firstWeight_add_firstSecondWeight c d]
+    rw [if_neg hdc]
+    rw [fac.firstWeight_eq d]
+    rw [fac.firstSecondWeight_swap_eq_of_lt d c hlt]
+    rw [htail]
+    unfold candidateRankBestAfterRemovalWeight
+    have hrk' : rankOf M.center d < rankOf M.center c := hlt
+    rw [if_pos hrk']
+    have hpow :
+        M.q * (M.q ^ ((rankOf M.center d : ℕ) + (rankOf M.center c : ℕ) - 1) *
+            fac.firstSecondTail) =
+          M.q ^ (rankOf M.center d : ℕ) *
+              M.q ^ (rankOf M.center c : ℕ) * fac.firstSecondTail := by
+      have hsum :
+          ((rankOf M.center d : ℕ) + (rankOf M.center c : ℕ) - 1) + 1 =
+            (rankOf M.center d : ℕ) + (rankOf M.center c : ℕ) := by
+        have hlt_nat :
+            (rankOf M.center d : ℕ) < (rankOf M.center c : ℕ) := hlt
+        omega
+      rw [← mul_assoc M.q
+        (M.q ^ ((rankOf M.center d : ℕ) + (rankOf M.center c : ℕ) - 1))
+        fac.firstSecondTail]
+      rw [← pow_succ', hsum, pow_add]
+    rw [hpow]
+    ring
+  · by_cases hkr : k < r
+    · have hdc : d ≠ c := by
+        intro hdc
+        have : r = k := by
+          simp [r, k, hdc]
+        exact (lt_irrefl k) (hkr.trans_eq this)
+      have hlt : rankOf M.center c < rankOf M.center d := by
+        simpa [r, k] using hkr
+      rw [M.bestAfterRemovalWeight_eq_firstWeight_add_firstSecondWeight c d]
+      rw [if_neg hdc]
+      rw [fac.firstWeight_eq d]
+      rw [fac.firstSecondWeight_eq_of_lt c d hlt]
+      rw [htail]
+      unfold candidateRankBestAfterRemovalWeight
+      have hrk' : ¬rankOf M.center d < rankOf M.center c := by
+        simpa [r, k] using hrk
+      rw [if_neg hrk', if_pos hlt]
+      ring
+    · have hr_eq : r = k := le_antisymm (le_of_not_gt hkr) (le_of_not_gt hrk)
+      have hdc : d = c := by
+        have : rankOf M.center d = rankOf M.center c := by
+          simpa [r, k] using hr_eq
+        exact M.center.injective (by
+          simpa [rankOf] using congrArg M.center this)
+      subst d
+      rw [M.bestAfterRemovalWeight_eq_firstWeight_add_firstSecondWeight c c]
+      rw [if_pos rfl, M.firstSecondWeight_self c]
+      unfold candidateRankBestAfterRemovalWeight
+      simp
+
+/-- Expected best-after-removal as a pure rank-weighted average. -/
+theorem expectedBestAfterRemoval_eq_rankBestAfterRemovalAverage
+    (fac : M.RankFactorization) (value : Candidate n → ℝ) (c : Candidate n) :
+    AccuracyFamily.expectedBestAfterRemoval M.law value c =
+      (∑ r : Candidate n,
+          candidateRankBestAfterRemovalWeight n M.q
+            (rankOf M.center c) r * value (M.center r)) /
+        (candidateRankPowerSum n M.q *
+          candidateRankRemovalPowerSum n M.q (rankOf M.center c)) := by
+  classical
+  rw [M.expectedBestAfterRemoval_eq_sum_bestAfterRemovalWeight value c]
+  have hnum :
+      (∑ d : Candidate n, M.bestAfterRemovalWeight c d * value d) =
+        fac.firstSecondTail *
+          (∑ r : Candidate n,
+            candidateRankBestAfterRemovalWeight n M.q
+              (rankOf M.center c) r * value (M.center r)) := by
+    calc
+      (∑ d : Candidate n, M.bestAfterRemovalWeight c d * value d)
+          = ∑ r : Candidate n,
+              M.bestAfterRemovalWeight c (M.center r) *
+                value (M.center r) := by
+            simpa using
+              (Equiv.sum_comp M.center
+                (fun d : Candidate n => M.bestAfterRemovalWeight c d * value d)).symm
+      _ = ∑ r : Candidate n,
+            (fac.firstSecondTail *
+              candidateRankBestAfterRemovalWeight n M.q
+                (rankOf M.center c) r) * value (M.center r) := by
+            refine Finset.sum_congr rfl ?_
+            intro r _
+            rw [M.bestAfterRemovalWeight_eq_rankBestAfterRemovalWeight fac c (M.center r)]
+            simp [rankOf]
+      _ = fac.firstSecondTail *
+            (∑ r : Candidate n,
+              candidateRankBestAfterRemovalWeight n M.q
+                (rankOf M.center c) r * value (M.center r)) := by
+            rw [Finset.mul_sum]
+            refine Finset.sum_congr rfl ?_
+            intro r _
+            ring
+  have hpart :
+      M.partition =
+        candidateRankPowerSum n M.q *
+          (fac.firstSecondTail *
+            candidateRankRemovalPowerSum n M.q (rankOf M.center c)) := by
+    rw [fac.partition_eq]
+    rw [M.firstTail_eq_firstSecondTail_mul_removalPowerSum fac c]
+  rw [hnum, hpart]
+  field_simp [ne_of_gt fac.firstSecondTail_pos]
+
+/-- The rank-only best-after-removal weights have the expected denominator. -/
+theorem sum_rankBestAfterRemovalWeight_eq
+    (fac : M.RankFactorization) (c : Candidate n) :
+    (∑ r : Candidate n,
+      candidateRankBestAfterRemovalWeight n M.q (rankOf M.center c) r) =
+      candidateRankPowerSum n M.q *
+        candidateRankRemovalPowerSum n M.q (rankOf M.center c) := by
+  have h :=
+    M.expectedBestAfterRemoval_eq_rankBestAfterRemovalAverage
+      fac (fun _ : Candidate n => (1 : ℝ)) c
+  have hleft :
+      AccuracyFamily.expectedBestAfterRemoval M.law
+          (fun _ : Candidate n => (1 : ℝ)) c = 1 := by
+    simp [AccuracyFamily.expectedBestAfterRemoval]
+  rw [hleft] at h
+  simp only [mul_one] at h
+  have hden_pos :
+      0 <
+        candidateRankPowerSum n M.q *
+          candidateRankRemovalPowerSum n M.q (rankOf M.center c) :=
+    mul_pos (candidateRankPowerSum_pos n M.q_pos)
+      (candidateRankRemovalPowerSum_pos n M.q_pos (rankOf M.center c))
+  have hden_ne :
+      candidateRankPowerSum n M.q *
+          candidateRankRemovalPowerSum n M.q (rankOf M.center c) ≠ 0 :=
+    ne_of_gt hden_pos
+  have hfrac :
+      (∑ r : Candidate n,
+        candidateRankBestAfterRemovalWeight n M.q (rankOf M.center c) r) /
+        (candidateRankPowerSum n M.q *
+          candidateRankRemovalPowerSum n M.q (rankOf M.center c)) = 1 := h.symm
+  have hsum := (div_eq_iff hden_ne).mp hfrac
+  simpa using hsum
+
 end MallowsSpec
 
 namespace MallowsComparison
 
 variable {n : ℕ} (C : MallowsComparison n)
+
+/--
+If the rank-only best-after-removal weights satisfy pairwise cross-ratio
+dominance, then the actual Mallows best-after-removal expectation is weakly
+higher under the algorithm/lower-`q` law.
+-/
+theorem expectedBestAfterRemoval_le_of_rankBestAfterRemoval_pairwise
+    {value : Candidate n → ℝ} (c : Candidate n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hvalue : C.StrictlyCenterOrdered value)
+    (hpair :
+      ∀ i j : Candidate n, i < j →
+        0 ≤
+          candidateRankBestAfterRemovalWeight n C.algorithm.q
+              (rankOf C.human.center c) i *
+            candidateRankBestAfterRemovalWeight n C.human.q
+              (rankOf C.human.center c) j -
+          candidateRankBestAfterRemovalWeight n C.algorithm.q
+              (rankOf C.human.center c) j *
+            candidateRankBestAfterRemovalWeight n C.human.q
+              (rankOf C.human.center c) i) :
+    AccuracyFamily.expectedBestAfterRemoval C.human.law value c ≤
+      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c := by
+  classical
+  let k : Candidate n := rankOf C.human.center c
+  let wA : Candidate n → ℝ := fun r =>
+    candidateRankBestAfterRemovalWeight n C.algorithm.q k r
+  let wH : Candidate n → ℝ := fun r =>
+    candidateRankBestAfterRemovalWeight n C.human.q k r
+  let B : Candidate n → ℝ := fun r => value (C.human.center r)
+  have hB : ∀ i j : Candidate n, i < j → B j ≤ B i := by
+    intro i j hij
+    exact le_of_lt (hvalue (by simpa [B, rankOf, C.same_center] using hij))
+  have hcross :
+      0 ≤
+        (∑ j : Candidate n, wH j) *
+            (∑ i : Candidate n, wA i * B i) -
+          (∑ j : Candidate n, wA j) *
+            (∑ i : Candidate n, wH i * B i) := by
+    exact candidateWeightedAverage_cross_nonneg_of_pairwise n
+      (wA := wA) (wH := wH) (B := B)
+      (by
+        intro i j hij
+        simpa [wA, wH, k] using hpair i j hij)
+      hB
+  have hdenA_pos :
+      0 < ∑ r : Candidate n, wA r := by
+    change 0 <
+      ∑ r : Candidate n,
+        candidateRankBestAfterRemovalWeight n C.algorithm.q k r
+    have hsum := C.algorithm.sum_rankBestAfterRemovalWeight_eq
+      halg_rank (C.algorithm.center k)
+    simp [rankOf] at hsum
+    rw [hsum]
+    exact mul_pos (candidateRankPowerSum_pos n C.algorithm.q_pos)
+      (candidateRankRemovalPowerSum_pos n C.algorithm.q_pos k)
+  have hdenH_pos :
+      0 < ∑ r : Candidate n, wH r := by
+    change 0 <
+      ∑ r : Candidate n,
+        candidateRankBestAfterRemovalWeight n C.human.q k r
+    rw [C.human.sum_rankBestAfterRemovalWeight_eq hhuman_rank c]
+    exact mul_pos (candidateRankPowerSum_pos n C.human.q_pos)
+      (candidateRankRemovalPowerSum_pos n C.human.q_pos k)
+  rw [C.algorithm.expectedBestAfterRemoval_eq_rankBestAfterRemovalAverage
+    halg_rank value c]
+  rw [C.human.expectedBestAfterRemoval_eq_rankBestAfterRemovalAverage
+    hhuman_rank value c]
+  have halg_den :
+      candidateRankPowerSum n C.algorithm.q *
+          candidateRankRemovalPowerSum n C.algorithm.q
+            (rankOf C.algorithm.center c) =
+        ∑ r : Candidate n, wA r := by
+    have hk_alg : rankOf C.algorithm.center c = k := by
+      simp [k, rankOf, C.same_center]
+    rw [hk_alg]
+    change candidateRankPowerSum n C.algorithm.q *
+        candidateRankRemovalPowerSum n C.algorithm.q k =
+      ∑ r : Candidate n,
+        candidateRankBestAfterRemovalWeight n C.algorithm.q k r
+    have hsum := C.algorithm.sum_rankBestAfterRemovalWeight_eq
+      halg_rank (C.algorithm.center k)
+    simp [rankOf] at hsum
+    exact hsum.symm
+  have hhuman_den :
+      candidateRankPowerSum n C.human.q *
+          candidateRankRemovalPowerSum n C.human.q
+            (rankOf C.human.center c) =
+        ∑ r : Candidate n, wH r := by
+    rw [C.human.sum_rankBestAfterRemovalWeight_eq hhuman_rank c]
+  have halg_num :
+      (∑ r : Candidate n,
+        candidateRankBestAfterRemovalWeight n C.algorithm.q
+            (rankOf C.algorithm.center c) r *
+          value (C.algorithm.center r)) =
+        ∑ r : Candidate n, wA r * B r := by
+    refine Finset.sum_congr rfl ?_
+    intro r _
+    simp [wA, B, k, C.same_center]
+  have hhuman_num :
+      (∑ r : Candidate n,
+        candidateRankBestAfterRemovalWeight n C.human.q
+            (rankOf C.human.center c) r *
+          value (C.human.center r)) =
+        ∑ r : Candidate n, wH r * B r := by
+    rfl
+  rw [halg_den, hhuman_den, halg_num, hhuman_num]
+  exact EconCSLean.PositiveDenominator.div_le_div_of_cross_mul_le
+    hdenH_pos hdenA_pos (by linarith)
 
 /--
 The Mallows rank-power MLR inequality proves the strict `S = ∅` part of
