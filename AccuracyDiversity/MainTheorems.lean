@@ -56,6 +56,18 @@ end ConsumptionModel
 namespace BernoulliSatisfactionModel
 
 /--
+Bernoulli fixed-total optimizer existence.
+
+The finite optimizer-existence theorem applies directly to the Bernoulli
+satisfaction specialization of the consumption model.
+-/
+theorem paper_bernoulli_finite_optimum_exists
+    {T : ℕ} [Nonempty (ItemType T)]
+    (B : BernoulliSatisfactionModel T) (N : ℕ) :
+    ∃ a : CountAllocation T, B.toConsumptionModel.IsOptimalAtTotal N a := by
+  exact B.toConsumptionModel.exists_isOptimalAtTotal N
+
+/--
 Bernoulli specialization of the finite first-order condition.
 
 For one-consumption Bernoulli satisfaction, an optimal allocation cannot have a
