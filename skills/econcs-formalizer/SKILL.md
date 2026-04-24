@@ -232,9 +232,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `historyMaxBidAlphaErrorSum ε history + historyMaxBidErrorSum ε history`.
   Then combine the two error sums into `historyMsvvSmallBidsErrorSum` and prove
   the algebraic bound by `ε * (Real.exp 1 + 1) * historyMaxBidSum` for
-  `0 ≤ ε ≤ 1`. The remaining paper seam is then a model-level limiting theorem
-  over a family of small-bid instances; do not force the discrete finite-bid
-  theorem to be exactly `1 - 1/e` before that limit has been stated.
+  `0 ≤ ε ≤ 1`. Add a delta-form wrapper saying the algorithm is competitive up
+  to additive `δ` whenever that algebraic error is at most `δ`. The remaining
+  paper seam is then a model-level limiting theorem over a family of small-bid
+  instances; do not force the discrete finite-bid theorem to be exactly
+  `1 - 1/e` before that limit has been stated.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

@@ -3792,6 +3792,36 @@ theorem balance_msvv_approx_competitive_with_error_bound
         (I.revenue (I.runAssignment I.balanceChoiceRule history))
   exact hbase'.trans hbound
 
+theorem balance_msvv_approx_competitive_up_to_delta
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : historyFinset history = Finset.univ)
+    {ε δ : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε)
+    (herror_le_delta :
+      ε * (Real.exp 1 + 1) * I.historyMaxBidSum history ≤ δ) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) + δ := by
+  have hbase :=
+    balance_msvv_approx_competitive_with_error_bound
+      I hbid hbudget history hnodup hcover hε hε_le_one hsmall
+  have hbound :
+      I.revenue (I.runAssignment I.balanceChoiceRule history) +
+          ε * (Real.exp 1 + 1) * I.historyMaxBidSum history ≤
+        I.revenue (I.runAssignment I.balanceChoiceRule history) + δ :=
+    by
+      simpa [add_comm, add_left_comm, add_assoc] using
+        add_le_add_left herror_le_delta
+          (I.revenue (I.runAssignment I.balanceChoiceRule history))
+  exact hbase.trans hbound
+
 end AdWordsInstance
 
 end Online

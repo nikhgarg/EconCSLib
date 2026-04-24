@@ -836,5 +836,32 @@ theorem paper_adwords_balance_msvv_approx_competitive_with_error_bound
   exact AdWordsInstance.balance_msvv_approx_competitive_with_error_bound
     I hbid hbudget history hnodup hcover hε hε_le_one hsmall
 
+/--
+Delta-form finite small-bids MSVV theorem. Once the explicit algebraic error
+bound is at most `δ`, the Balance/MSVV run is competitive up to additive `δ`.
+-/
+theorem paper_adwords_balance_msvv_approx_competitive_up_to_delta
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε δ : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε)
+    (herror_le_delta :
+      ε * (Real.exp 1 + 1) * I.historyMaxBidSum history ≤ δ) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) + δ := by
+  exact AdWordsInstance.balance_msvv_approx_competitive_up_to_delta
+    I hbid hbudget history hnodup hcover hε hε_le_one hsmall
+    herror_le_delta
+
 end Online
 end EconCSLean
