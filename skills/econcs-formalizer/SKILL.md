@@ -167,7 +167,10 @@ search.
    (definitions/lemmas/propositions/theorems/corollaries) as a TikZ diagram
    with status-coded nodes, then keep it current through the campaign.
 
-2. Stabilize the build first.
+2. Context Efficiency vs. Edit Accuracy (File Reading Strategy).
+   Do not over-optimize context limits by reading tiny chunks of files (e.g., using `sed` to read 15-20 lines) if you are about to use the `replace` tool. Micro-reading frequently drops necessary surrounding whitespace or context, causing the `replace` tool to fail repeatedly with "0 occurrences found". The cost of spinning in a multi-turn failure loop is far higher than the cost of reading the entire file once. Use `read_file` to ingest small-to-medium files completely, or use `grep -C 20` to get substantial context, ensuring you capture exact, copy-pasteable blocks for your `old_string`.
+
+3. Stabilize the build first.
    Run targeted `lake build <module>` commands before making broad changes. Fix
    dependency, import, or cache problems before interpreting downstream proof
    errors.
