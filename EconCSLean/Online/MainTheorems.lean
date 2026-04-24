@@ -1199,5 +1199,81 @@ theorem paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bi
     AdWordsInstance.balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold
       n I hbid hbudget hmaxBidSum_pos hsmall_eventually hscaledOpt hrevenue
 
+/--
+Limit theorem from ordinary offline-optimum convergence and explicit error
+control. This states the conclusion in the paper-facing form
+`(1 - 1/e) * optLimit ≤ revenueLimit`.
+-/
+theorem paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually_of_offline_opt_convergence
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (ε : ℕ → ℝ)
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hε : ∀ k, 0 ≤ ε k)
+    (hε_le_one : ∀ k, ε k ≤ 1)
+    (hsmall : ∀ k, (I k).SmallBids (ε k))
+    (herror_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          ε k * (Real.exp 1 + 1) *
+              (∑ q : Fin (n k), (I k).maxBidForQuery q) ≤ δ)
+    {optLimit revenueLimit : ℝ}
+    (hopt :
+      Sequence.SeqTendsTo
+        (fun k => (I k).offlineOptimumValue (fun a => (hbudget k a).le))
+        optLimit)
+    (hrevenue :
+      Sequence.SeqTendsTo
+        (fun k =>
+          (I k).revenue
+            ((I k).runAssignment (I k).balanceChoiceRule
+              (List.finRange (n k))))
+        revenueLimit) :
+    AdWordsInstance.msvvRatio * optLimit ≤ revenueLimit := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_family_limit_competitive_of_error_eventually_of_offlineOpt_convergence
+      n I ε hbid hbudget hε hε_le_one hsmall herror_eventually hopt hrevenue
+
+/--
+Limit theorem from ordinary offline-optimum convergence and the explicit
+eventual small-bids threshold. This is the current closest formal statement to
+the paper's limiting AdWords guarantee.
+-/
+theorem paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold_of_offline_opt_convergence
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hmaxBidSum_pos :
+      ∀ k, 0 < ∑ q : Fin (n k), (I k).maxBidForQuery q)
+    (hsmall_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          (I k).SmallBids
+            (min 1
+              (δ / ((Real.exp 1 + 1) *
+                (∑ q : Fin (n k), (I k).maxBidForQuery q)))))
+    {optLimit revenueLimit : ℝ}
+    (hopt :
+      Sequence.SeqTendsTo
+        (fun k => (I k).offlineOptimumValue (fun a => (hbudget k a).le))
+        optLimit)
+    (hrevenue :
+      Sequence.SeqTendsTo
+        (fun k =>
+          (I k).revenue
+            ((I k).runAssignment (I k).balanceChoiceRule
+              (List.finRange (n k))))
+        revenueLimit) :
+    AdWordsInstance.msvvRatio * optLimit ≤ revenueLimit := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold_of_offlineOpt_convergence
+      n I hbid hbudget hmaxBidSum_pos hsmall_eventually hopt hrevenue
+
 end Online
 end EconCSLean

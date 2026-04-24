@@ -57,5 +57,41 @@ theorem le_of_seqTendsTo_eventually_le_add
     linarith
   exact (not_lt_of_ge hle) hlt_final
 
+/--
+Multiplication by a nonnegative constant preserves real sequence convergence.
+-/
+theorem SeqTendsTo.const_mul_of_nonneg
+    {x : ℕ → ℝ} {X c : ℝ}
+    (hx : SeqTendsTo x X) (hc : 0 ≤ c) :
+    SeqTendsTo (fun k => c * x k) (c * X) := by
+  intro δ hδ
+  have hscale_pos : 0 < c + 1 := by
+    linarith
+  have hη_pos : 0 < δ / (c + 1) :=
+    div_pos hδ hscale_pos
+  obtain ⟨N, hN⟩ := hx (δ / (c + 1)) hη_pos
+  refine ⟨N, ?_⟩
+  intro k hk
+  have hxk := hN k hk
+  have hright_nonneg : 0 ≤ δ / (c + 1) :=
+    le_of_lt hη_pos
+  have hscale_le : c ≤ c + 1 := by
+    linarith
+  have hmul_bound :
+      c * (δ / (c + 1)) ≤ (c + 1) * (δ / (c + 1)) :=
+    mul_le_mul_of_nonneg_right hscale_le hright_nonneg
+  calc
+    |c * x k - c * X| = |c * (x k - X)| := by
+        rw [mul_sub]
+    _ = |c| * |x k - X| := by
+        rw [abs_mul]
+    _ = c * |x k - X| := by
+        rw [abs_of_nonneg hc]
+    _ ≤ c * (δ / (c + 1)) :=
+        mul_le_mul_of_nonneg_left hxk hc
+    _ ≤ (c + 1) * (δ / (c + 1)) := hmul_bound
+    _ = δ := by
+        rw [mul_comm, div_mul_cancel₀ δ hscale_pos.ne']
+
 end Sequence
 end EconCSLean

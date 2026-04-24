@@ -66,11 +66,13 @@ the Lean statements against the paper.
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
   "technical details".
-- Update the paper folder `README.md` in the same work pass as the Lean change
-  whenever theorem status changes. Do not leave a paper for the next one while
-  its README still has stale `scaffold`, `conditional`, or remaining-assumption
-  text; either close the seam or record the exact blocker and the next theorem
-  to attack.
+- Batch paper-folder `README.md` and campaign-report updates for throughput.
+  Update them when a named lemma/proposition/theorem is closed, before a commit,
+  before stopping or moving papers, or after a long stretch without status
+  updates (about 30 minutes). Do not interrupt every helper lemma just to edit
+  docs, but do not leave a paper or checkpoint with stale `scaffold`,
+  `conditional`, or remaining-assumption text; either close the seam or record
+  the exact blocker and the next theorem to attack.
 - Commit at paper-scale checkpoints, not every small lemma. Prefer committing
   when a named theorem/proposition/lemma from the paper is proven or when
   moving on from a paper; otherwise keep related intermediate proof work
@@ -255,7 +257,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   Then use a reusable real-sequence lemma such as
   `Sequence.le_of_seqTendsTo_eventually_le_add` to convert eventual additive
   guarantees plus convergence of the scaled benchmark and online revenue into
-  the final limiting inequality.
+  the final limiting inequality. If the paper-facing assumptions give
+  convergence of the unscaled offline optimum, use a nonnegative scalar
+  convergence lemma such as `Sequence.SeqTendsTo.const_mul_of_nonneg` to state
+  the conclusion as `msvvRatio * optLimit ≤ revenueLimit`.
   The remaining faithful paper seam is then a model-level limiting theorem over
   the paper's concrete small-bid instance family; do not force the discrete
   fixed-instance theorem to be exactly `1 - 1/e` before that family has been
