@@ -485,6 +485,26 @@ def IsOptimalAtLevel {K n : ℕ} [NeZero K] [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (γ : ℝ) (ρ : TypePolicy K n) : Prop :=
   feasibleAtLevel T γ ρ ∧ typeFairness T ρ = optimalTypeFairnessAtLevel T γ
 
+/--
+An optimal reduced policy upper-bounds the type fairness of every feasible
+policy at the same item-fairness level.
+-/
+theorem typeFairness_le_of_isOptimalAtLevel
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem)
+    {γ : ℝ} {ρ ρ' : TypePolicy K n}
+    (hopt : IsOptimalAtLevel T γ ρ)
+    (hfeas' : feasibleAtLevel T γ ρ') :
+    typeFairness T ρ' ≤ typeFairness T ρ := by
+  have hbdd :
+      BddAbove (attainableTypeFairnessAtLevel T γ) :=
+    attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem T hRow γ
+  have hmem :
+      typeFairness T ρ' ∈ attainableTypeFairnessAtLevel T γ :=
+    ⟨ρ', hfeas', rfl⟩
+  rw [hopt.2]
+  exact le_csSup hbdd hmem
+
 end TypeWeightedRecommendationModel
 
 /--

@@ -2175,6 +2175,30 @@ theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_o
     hn halpha0 halpha1 hpos hdec h hdom
 
 /--
+Selected-policy optimality bridge from a single optimal-at-level equality-form
+BFS representative.
+-/
+theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equalizedBasicOptimal_isOptimalAtLevel
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρstar : TypePolicy 2 n} {ell ellstar : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hstar : Problem6EqualizedBasicOptimal alpha v ρstar ellstar)
+    (hstar_opt :
+      TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (twoTypeReducedModel alpha v) 1 ρstar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equalizedBasicOptimal_isOptimalAtLevel
+    hn halpha0 halpha1 hpos hdec h hstar hstar_opt
+
+/--
 Appendix D, Lemma 5: the closed-form value for any sparse equalized
 Problem 6 solution.
 -/

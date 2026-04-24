@@ -8369,6 +8369,39 @@ theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equal
         halpha0 halpha1 hpos hdom)
 
 /--
+Selected-policy optimality bridge from a single optimal-at-level equality-form
+BFS representative: if some equality-form optimal BFS policy solves the
+reduced `γ = 1` type-fairness problem, then the selected equality-form optimal
+BFS policy realizes the same `U^*_min(1, α)` value.
+-/
+theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equalizedBasicOptimal_isOptimalAtLevel
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρstar : TypePolicy 2 n} {ell ellstar : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hstar : Problem6EqualizedBasicOptimal alpha v ρstar ellstar)
+    (hstar_opt :
+      TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (twoTypeReducedModel alpha v) 1 ρstar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact
+    problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equalizedBasicOptimal_dominance
+      hn halpha0 halpha1 hpos hdec h
+      (fun ρ' hfeas' =>
+        ⟨ρstar, ellstar, hstar,
+          TypeWeightedRecommendationModel.typeFairness_le_of_isOptimalAtLevel
+            (twoTypeReducedModel alpha v)
+            (twoTypeReducedModel_rowHasPositiveItem alpha v hpos)
+            hstar_opt hfeas'⟩)
+
+/--
 Closed-form Problem 6 optimal-value theorem: after the paper-specific
 denominator and upper-bound certificate is supplied, the LP optimum is the
 Lemma 5 closed value.
