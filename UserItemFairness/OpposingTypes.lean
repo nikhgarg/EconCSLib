@@ -1602,6 +1602,96 @@ theorem problem6ClosedValue_le_of_succ_center_candidate_before {n : ℕ}
       (problem6ClosedPivotDenominatorBounds_half_succ_center
         (v := v) (t := c) hpos hsucc))
 
+/--
+Appendix D, Lemma 6 pivot-gap side condition for an exact midpoint candidate:
+the pivot and its mirror are the same coordinate, so the closed-form gap is zero.
+-/
+theorem problem6ClosedX_sub_closedY_reverse_half_center_eq_zero {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) = 0 := by
+  have hrev : reverseItem t = t := Fin.ext hcenter.symm
+  have hsum :=
+    problem6LeftSum_half_eq_rightSum_half_of_pivot_eq_reverse
+      (v := v) (t := t) hpos hcenter
+  rw [hrev, problem6ClosedX_at, problem6ClosedY_at]
+  rw [← hsum]
+  ring
+
+/--
+Appendix D, Lemma 6 pivot-gap side condition for an exact midpoint candidate,
+as a nonnegativity fact.
+-/
+theorem problem6ClosedX_sub_closedY_reverse_half_center_nonneg {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    0 ≤ problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) := by
+  rw [problem6ClosedX_sub_closedY_reverse_half_center_eq_zero hpos hcenter]
+
+/--
+Appendix D, Lemma 6 pivot-gap side condition for the even midpoint candidate:
+the pivot `x` mass equals the mirrored `y` mass.
+-/
+theorem problem6ClosedX_sub_closedY_reverse_half_succ_center_eq_zero {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) = 0 := by
+  have hright :=
+    problem6RightSum_half_eq_leftSum_half_add_inv_pairShare_of_pivot_succ_reverse
+      (v := v) (t := t) hpos hsucc
+  have hden_right :=
+    problem6ClosedDenominator_half_succ_center_eq_rightSum
+      (v := v) (t := t) hpos hsucc
+  let q : ℝ := pairShare (1 / 2) v t
+  let L : ℝ := problem6LeftSum (1 / 2) v t
+  let D : ℝ := problem6ClosedDenominator (1 / 2) v t
+  have hD_eq : D = L + q⁻¹ := by
+    dsimp [D, L, q]
+    rw [hden_right, hright]
+  have hqpos : 0 < q := by
+    simpa [q] using
+      pairShare_pos t (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+  have hqne : q ≠ 0 := ne_of_gt hqpos
+  have hDpos : 0 < D := by
+    simpa [D] using
+      problem6ClosedDenominator_pos t
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+  have hDne : D ≠ 0 := ne_of_gt hDpos
+  have hmirror_gt : t.val < (reverseItem t).val := by
+    omega
+  have hshare := pairShare_half_eq_one_sub_reverse t hpos
+  rw [problem6ClosedX_at, problem6ClosedY_after (1 / 2) v hmirror_gt]
+  unfold problem6ClosedValue
+  rw [← hshare]
+  change 1 - 1 / D * L - (1 / D / q) = 0
+  have hmul : 1 / D * (L + q⁻¹) = 1 := by
+    rw [← hD_eq]
+    field_simp [hDne]
+  have hdiv_eq : 1 / D / q = 1 / D * q⁻¹ := by
+    ring
+  rw [hdiv_eq]
+  nlinarith
+
+/--
+Appendix D, Lemma 6 pivot-gap side condition for the even midpoint candidate,
+as a nonnegativity fact.
+-/
+theorem problem6ClosedX_sub_closedY_reverse_half_succ_center_nonneg {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    0 ≤ problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) := by
+  rw [problem6ClosedX_sub_closedY_reverse_half_succ_center_eq_zero hpos hsucc]
+
 /-- Build a finite PMF from a nonnegative real vector with total mass one. -/
 noncomputable def pmfOfRealVector {n : ℕ}
     (x : Item n → ℝ)
@@ -2060,6 +2150,88 @@ theorem problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half
     (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
     (problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best
       halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap)
+
+/--
+Appendix D, Lemma 6 specialized to the exact midpoint candidate: its closed
+policy's type fairness is type `1`'s normalized utility.
+-/
+theorem problem6ClosedPolicy_typeFairness_eq_one_half_center
+    {n : ℕ} [NeZero n] {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val = (reverseItem t).val) :
+    let hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        (problem6ClosedPivotDenominatorBounds_half_center
+          (v := v) (t := t) hpos hcenter)
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) 1 := by
+  dsimp
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half
+    (by norm_num : (0 : ℝ) < 1 / 2)
+    (by norm_num : (1 / 2 : ℝ) < 1)
+    (by norm_num : (1 / 2 : ℝ) ≤ 1 / 2)
+    hpos hdec
+    (problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      (problem6ClosedPivotDenominatorBounds_half_center
+        (v := v) (t := t) hpos hcenter))
+    hcenter.le
+    (problem6ClosedX_sub_closedY_reverse_half_center_nonneg
+      hpos hcenter)
+
+/--
+Appendix D, Lemma 6 specialized to the even midpoint candidate: its closed
+policy's type fairness is type `1`'s normalized utility.
+-/
+theorem problem6ClosedPolicy_typeFairness_eq_one_half_succ_center
+    {n : ℕ} [NeZero n] {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    let hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        (problem6ClosedPivotDenominatorBounds_half_succ_center
+          (v := v) (t := t) hpos hsucc)
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) 1 := by
+  dsimp
+  have hcenter : t.val ≤ (reverseItem t).val := by
+    omega
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half
+    (by norm_num : (0 : ℝ) < 1 / 2)
+    (by norm_num : (1 / 2 : ℝ) < 1)
+    (by norm_num : (1 / 2 : ℝ) ≤ 1 / 2)
+    hpos hdec
+    (problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      (problem6ClosedPivotDenominatorBounds_half_succ_center
+        (v := v) (t := t) hpos hsucc))
+    hcenter
+    (problem6ClosedX_sub_closedY_reverse_half_succ_center_nonneg
+      hpos hsucc)
 
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq

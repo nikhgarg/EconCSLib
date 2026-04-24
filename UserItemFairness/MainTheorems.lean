@@ -1458,6 +1458,114 @@ theorem paper_lemma10_closedValue_le_of_succ_center_candidate_before
   exact problem6ClosedValue_le_of_succ_center_candidate_before
     hpos hsucc hct hpivot
 
+/--
+Appendix D, Lemma 6/10 bridge: an exact midpoint candidate has zero pivot
+mirror gap.
+-/
+theorem paper_lemma10_closedX_sub_closedY_reverse_half_center_eq_zero
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) = 0 := by
+  exact problem6ClosedX_sub_closedY_reverse_half_center_eq_zero
+    hpos hcenter
+
+/--
+Appendix D, Lemma 6/10 bridge: an exact midpoint candidate satisfies the
+nonnegative pivot-gap condition used by Lemma 6.
+-/
+theorem paper_lemma10_closedX_sub_closedY_reverse_half_center_nonneg
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    0 ≤ problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) := by
+  exact problem6ClosedX_sub_closedY_reverse_half_center_nonneg
+    hpos hcenter
+
+/--
+Appendix D, Lemma 6/10 bridge: an even midpoint candidate has zero pivot
+mirror gap.
+-/
+theorem paper_lemma10_closedX_sub_closedY_reverse_half_succ_center_eq_zero
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) = 0 := by
+  exact problem6ClosedX_sub_closedY_reverse_half_succ_center_eq_zero
+    hpos hsucc
+
+/--
+Appendix D, Lemma 6/10 bridge: an even midpoint candidate satisfies the
+nonnegative pivot-gap condition used by Lemma 6.
+-/
+theorem paper_lemma10_closedX_sub_closedY_reverse_half_succ_center_nonneg
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    0 ≤ problem6ClosedX (1 / 2) v t t -
+      problem6ClosedY (1 / 2) v t (reverseItem t) := by
+  exact problem6ClosedX_sub_closedY_reverse_half_succ_center_nonneg
+    hpos hsucc
+
+/--
+Appendix D, Lemma 6/10 bridge: the exact midpoint closed policy has type
+fairness equal to type `1`'s normalized utility.
+-/
+theorem paper_lemma10_closedPolicy_typeFairness_eq_one_half_center
+    {n : ℕ} [NeZero n] {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val = (reverseItem t).val) :
+    let hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        (problem6ClosedPivotDenominatorBounds_half_center
+          (v := v) (t := t) hpos hcenter)
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_half_center
+    hpos hdec hcenter
+
+/--
+Appendix D, Lemma 6/10 bridge: the even midpoint closed policy has type
+fairness equal to type `1`'s normalized utility.
+-/
+theorem paper_lemma10_closedPolicy_typeFairness_eq_one_half_succ_center
+    {n : ℕ} [NeZero n] {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    let hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        (problem6ClosedPivotDenominatorBounds_half_succ_center
+          (v := v) (t := t) hpos hsucc)
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 / 2) v)
+        (problem6ClosedPolicy (1 / 2) v t
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_half_succ_center
+    hpos hdec hsucc
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
