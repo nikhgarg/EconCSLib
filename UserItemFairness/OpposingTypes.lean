@@ -445,6 +445,42 @@ def problem6LPFeasible {n : ℕ}
     ell ≤ pairShare alpha v j * (ρ 0 j).toReal +
       (1 - pairShare alpha v j) * (ρ 1 j).toReal
 
+/-- Problem 6 variable nonnegativity for `x_j = ρ_{0j}`. -/
+theorem problem6_typeZero_prob_nonneg {n : ℕ}
+    (ρ : TypePolicy 2 n) (j : Item n) :
+    0 ≤ (ρ 0 j).toReal := by
+  exact ENNReal.toReal_nonneg
+
+/-- Problem 6 variable nonnegativity for `y_j = ρ_{1j}`. -/
+theorem problem6_typeOne_prob_nonneg {n : ℕ}
+    (ρ : TypePolicy 2 n) (j : Item n) :
+    0 ≤ (ρ 1 j).toReal := by
+  exact ENNReal.toReal_nonneg
+
+/-- Problem 6 row constraint `∑_j x_j = 1`. -/
+theorem problem6_typeZero_sum_eq_one {n : ℕ}
+    (ρ : TypePolicy 2 n) :
+    (∑ j : Item n, (ρ 0 j).toReal) = 1 := by
+  exact DecisionCore.pmfToRealSum (ρ 0)
+
+/-- Problem 6 row constraint `∑_j y_j = 1`. -/
+theorem problem6_typeOne_sum_eq_one {n : ℕ}
+    (ρ : TypePolicy 2 n) :
+    (∑ j : Item n, (ρ 1 j).toReal) = 1 := by
+  exact DecisionCore.pmfToRealSum (ρ 1)
+
+/--
+A certificate that a proposed Problem 6 policy and value solve the finite LP:
+the policy attains `ell`, and no feasible policy can exceed `ell`.
+-/
+structure Problem6OptimalityCertificate {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ell : ℝ) where
+  policy : TypePolicy 2 n
+  feasible : problem6LPFeasible alpha v policy ell
+  upper_bound :
+    ∀ (ρ : TypePolicy 2 n) (ell' : ℝ),
+      problem6LPFeasible alpha v ρ ell' → ell' ≤ ell
+
 /-- Feasible objective values for Problem 6's LP. -/
 def problem6LPValueSet {n : ℕ} [NeZero n]
     (alpha : ℝ) (v : Item n → ℝ) : Set ℝ :=
@@ -612,6 +648,30 @@ theorem problem6LPOptimalValue_eq_optimalItemFairness
           (twoTypeReducedModel alpha v) ρ)
         halpha0 halpha1 hpos).mpr le_rfl⟩
     exact le_csSup hLPBdd hlp_mem
+
+/--
+If the paper's proposed closed-form policy/value pair satisfies the finite
+upper-bound certificate, then it is exactly the Problem 6 LP optimum.
+-/
+theorem problem6LPOptimalValue_eq_of_certificate
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ell : ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6OptimalityCertificate alpha v ell) :
+    problem6LPOptimalValue alpha v = ell := by
+  have hLPNonempty :=
+    problem6LPValueSet_nonempty alpha v halpha0 halpha1 hpos
+  have hLPBdd :=
+    problem6LPValueSet_bddAbove alpha v halpha0 halpha1 hpos
+  apply le_antisymm
+  · unfold problem6LPOptimalValue
+    refine csSup_le hLPNonempty ?_
+    intro ell' hell'
+    obtain ⟨ρ, hρ⟩ := hell'
+    exact cert.upper_bound ρ ell' hρ
+  · unfold problem6LPOptimalValue
+    exact le_csSup hLPBdd ⟨cert.policy, cert.feasible⟩
 
 end OpposingTypes
 end UserItemFairness

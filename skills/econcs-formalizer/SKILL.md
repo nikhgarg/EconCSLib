@@ -220,14 +220,19 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `historyFinset history = Finset.univ`. In parallel, define a recursive
   revenue-increment trace for the same fold, prove final run revenue equals the
   trace from the initial state, and prove the recursive Balance charge is
-  bounded by that revenue trace. Package the remaining hard analytic step as a
-  history-accounting certificate whose only substantive field is the scaled
-  advertiser-alpha plus Balance-charge plus explicit max-bid-error inequality;
-  then prove the existing objective-bound certificate from it. For finite
-  small-bids results, prefer an approximate objective-bound certificate with an
-  explicit additive error and a separate limiting theorem; do not force the
-  discrete finite-bid theorem to be exactly `1 - 1/e` before the error term has
-  been sent to zero.
+  bounded by that revenue trace. For the advertiser-alpha part, use the
+  normalized-dual increment identity and the finite analytic bound
+  `exp x - 1 ≤ x * exp ε` for `0 ≤ x ≤ ε`; this gives a per-assignment charge
+  bounded by the assigned bid plus `bid * (exp ε - 1)`. Fold that through the
+  history as an explicit `historyMaxBidAlphaErrorSum` and combine it with the
+  exhausted-advertiser beta error `historyMaxBidErrorSum`. Package the exact
+  idealized theorem as a history-accounting certificate and the finite
+  small-bids theorem as an approximate objective-bound certificate with the
+  additive error
+  `historyMaxBidAlphaErrorSum ε history + historyMaxBidErrorSum ε history`.
+  The remaining paper seam is then a separate limiting theorem sending this
+  explicit error to zero; do not force the discrete finite-bid theorem to be
+  exactly `1 - 1/e` before that limit has been stated.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

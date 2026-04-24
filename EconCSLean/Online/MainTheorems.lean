@@ -696,6 +696,55 @@ theorem paper_adwords_balance_msvv_approx_objective_bound_of_history_accounting
     I history hcert
 
 /--
+Explicit finite small-bids accounting for the Balance run. Under nonnegative
+bids, positive budgets, a duplicate-free history covering all query identifiers,
+and `ε`-small bids, the remaining additive error is exactly the sum of the
+advertiser-alpha discretization error and the exhausted-advertiser query-dual
+error.
+-/
+theorem paper_adwords_balance_msvv_history_approx_accounting_with_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    I.MsvvHistoryApproxAccountingCertificate history ε
+      (I.historyMaxBidAlphaErrorSum ε history +
+        I.historyMaxBidErrorSum ε history) := by
+  exact AdWordsInstance.msvvHistoryApproxAccountingCertificate_balanceChoiceRun
+    I hbid hbudget history hnodup hcover hε hsmall
+
+/--
+Explicit finite small-bids objective bound for the Balance run, with the
+history-level additive error carried in closed form.
+-/
+theorem paper_adwords_balance_msvv_approx_objective_bound_with_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    I.MsvvApproxObjectiveBoundCertificate history
+      (I.historyMaxBidAlphaErrorSum ε history +
+        I.historyMaxBidErrorSum ε history) := by
+  exact AdWordsInstance.msvvApproxObjectiveBoundCertificate_balanceChoiceRun
+    I hbid hbudget history hnodup hcover hε hsmall
+
+/--
 Final finite MSVV theorem seam: the Balance run is `1 - 1/e` competitive once
 the single scaled dual-objective bound for the assignment-induced MSVV duals is
 proved.
@@ -734,6 +783,32 @@ theorem paper_adwords_balance_msvv_approx_competitive_of_approx_objective_bound
       I.revenue (I.runAssignment I.balanceChoiceRule history) + error := by
   exact AdWordsInstance.balance_msvv_approx_competitive_of_approxObjectiveBound
     I hbid hbudget history hcert
+
+/--
+Finite small-bids MSVV theorem with explicit history error. This is the
+formal finite version of the Balance/MSVV guarantee before sending the small
+bids error to zero.
+-/
+theorem paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) +
+        (I.historyMaxBidAlphaErrorSum ε history +
+          I.historyMaxBidErrorSum ε history) := by
+  exact AdWordsInstance.balance_msvv_approx_competitive_with_history_error
+    I hbid hbudget history hnodup hcover hε hsmall
 
 end Online
 end EconCSLean

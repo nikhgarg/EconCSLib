@@ -746,6 +746,32 @@ theorem paper_problem6_LPOptimalValue_eq_optimalItemFairness
   exact problem6LPOptimalValue_eq_optimalItemFairness
     alpha v halpha0 halpha1 hpos
 
+/-- Problem 6 LP row constraint `∑_j x_j = 1`. -/
+theorem paper_problem6_typeZero_sum_eq_one
+    {n : ℕ} (ρ : TypePolicy 2 n) :
+    (∑ j : Item n, (ρ 0 j).toReal) = 1 := by
+  exact problem6_typeZero_sum_eq_one ρ
+
+/-- Problem 6 LP row constraint `∑_j y_j = 1`. -/
+theorem paper_problem6_typeOne_sum_eq_one
+    {n : ℕ} (ρ : TypePolicy 2 n) :
+    (∑ j : Item n, (ρ 1 j).toReal) = 1 := by
+  exact problem6_typeOne_sum_eq_one ρ
+
+/--
+Problem 6 optimality certificate wrapper for the paper's eventual closed-form
+LP solution.
+-/
+theorem paper_problem6_LPOptimalValue_eq_of_certificate
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ell : ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6OptimalityCertificate alpha v ell) :
+    problem6LPOptimalValue alpha v = ell := by
+  exact problem6LPOptimalValue_eq_of_certificate
+    alpha v ell halpha0 halpha1 hpos cert
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
