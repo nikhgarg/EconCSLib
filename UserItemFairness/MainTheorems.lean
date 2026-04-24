@@ -2007,6 +2007,45 @@ theorem paper_lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
     hpos hdec hcenter cert cert'
 
 /--
+Appendix D, Lemma 11 selected-policy fixed-interval form: if two equalized
+optimal policies select the same first-half pivot, then the Problem 6 LP
+optimum is monotone between their `α` values.
+-/
+theorem paper_lemma11_problem6LPOptimalValue_mono_of_same_selected_pivot
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρ =
+        TypePolicy.lastActiveTypeZero ρ')
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha' v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha' v l) * (ρ' 1 l).toReal = ell')
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt' : Problem6PolicyOptimal alpha' v ρ' ell')
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    problem6LPOptimalValue alpha v ≤ problem6LPOptimalValue alpha' v := by
+  exact lemma11_problem6LPOptimalValue_mono_of_same_selected_pivot
+    hn halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter hitem_eq hitem_eq'
+    hopt hopt' hshared hshared'
+
+/--
 Appendix D, Lemma 11 reduced-model form: on a certified fixed-pivot interval,
 the reduced optimal item fairness is monotone in `α`.
 -/
@@ -2028,6 +2067,47 @@ theorem paper_lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert
   exact lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert
     halpha0 halpha1 halpha0' halpha1' halpha_le
     hpos hdec hcenter cert cert'
+
+/--
+Appendix D, Lemma 11 reduced-model selected-policy form: the reduced optimal
+item fairness is monotone on a same-selected-pivot interval.
+-/
+theorem paper_lemma11_reducedOptimalItemFairness_mono_of_same_selected_pivot
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρ =
+        TypePolicy.lastActiveTypeZero ρ')
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha' v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha' v l) * (ρ' 1 l).toReal = ell')
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt' : Problem6PolicyOptimal alpha' v ρ' ell')
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact lemma11_reducedOptimalItemFairness_mono_of_same_selected_pivot
+    hn halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter hitem_eq hitem_eq'
+    hopt hopt' hshared hshared'
 
 /--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
