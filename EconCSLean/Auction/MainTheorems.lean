@@ -66,6 +66,26 @@ theorem paper_threshold_price_truthful
   exact thresholdPriceAuction_truthful threshold hind
 
 /--
+If a digital-goods offer price is computed after erasing the bidder's own bid,
+the resulting threshold-price auction is dominant-strategy truthful.
+-/
+theorem paper_own_erased_threshold_price_truthful
+    {Agent : Type*} [DecidableEq Agent]
+    (priceRule : Agent → (Agent → ℝ) → ℝ) :
+    (thresholdPriceAuction
+      (ownErasedThreshold priceRule)).TruthfulDominantStrategy := by
+  exact ownErasedThresholdPriceAuction_truthful priceRule
+
+/--
+The finite bidder-value candidate benchmark is nonnegative.
+-/
+theorem paper_finite_candidate_fixed_price_benchmark_nonneg
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    0 ≤ finiteCandidateFixedPriceBenchmark values minWinners := by
+  exact finiteCandidateFixedPriceBenchmark_nonneg values minWinners
+
+/--
 Own-bid-independent threshold-price digital-goods auctions are individually
 rational.
 -/

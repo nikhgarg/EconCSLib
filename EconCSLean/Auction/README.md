@@ -37,7 +37,9 @@ formalized.
 | Posted-price no-positive-transfers theorem | `paper_posted_price_no_positive_transfers` | formalized | `EconCSLean/Auction/MainTheorems.lean` | nonnegative prices |
 | Posted-price revenue equals single-price revenue | `paper_posted_price_revenue_eq_single_price` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
 | Fixed-price benchmark interface | `IsFixedPriceBenchmark`, `IsTwoWinnerFixedPriceBenchmark` | formalized as certificate predicate | `EconCSLean/Auction/DigitalGoods.lean` | existence of a maximizing price not yet proved |
+| Finite bidder-value candidate benchmark | `finiteCandidateFixedPriceBenchmark`, `paper_finite_candidate_fixed_price_benchmark_nonneg` | formalized | `EconCSLean/Auction/MainTheorems.lean` | still need paper lemma that a globally optimal feasible fixed price can be chosen from a bidder value |
 | Own-bid-independent threshold auction truthfulness | `paper_threshold_price_truthful` | formalized | `EconCSLean/Auction/MainTheorems.lean` | threshold offered to each bidder must be independent of that bidder's own report |
+| Other-bid computed threshold truthfulness | `paper_own_erased_threshold_price_truthful` | formalized | `EconCSLean/Auction/MainTheorems.lean` | price rule sees the bid profile with the bidder's own report erased |
 | Threshold auction individual rationality | `paper_threshold_price_individually_rational` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
 | Threshold auction no-positive-transfers | `paper_threshold_price_no_positive_transfers` | formalized | `EconCSLean/Auction/MainTheorems.lean` | nonnegative thresholds |
 | Position-auction interface | `PositionEnvironment`, `PositionOutcome` | formalized | `EconCSLean/Auction/Position.lean` | none |

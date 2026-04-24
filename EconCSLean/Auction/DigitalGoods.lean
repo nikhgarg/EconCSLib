@@ -1,4 +1,5 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Finset.Max
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Linarith
 
@@ -172,6 +173,75 @@ def IsTwoWinnerFixedPriceBenchmark [Fintype Agent]
   IsFixedPriceBenchmark values 2 benchmark
 
 /--
+Revenue from using bidder `i`'s value as the candidate single price, with
+infeasible prices assigned value `0`.
+-/
+noncomputable def candidateFixedPriceRevenue [Fintype Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) (i : Agent) : ℝ :=
+  if 0 ≤ values i ∧ minWinners ≤ saleCount values (values i) then
+    singlePriceRevenue values (values i)
+  else 0
+
+theorem candidateFixedPriceRevenue_nonneg [Fintype Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) (i : Agent) :
+    0 ≤ candidateFixedPriceRevenue values minWinners i := by
+  classical
+  by_cases h : 0 ≤ values i ∧ minWinners ≤ saleCount values (values i)
+  · simpa [candidateFixedPriceRevenue, h] using
+      singlePriceRevenue_nonneg values h.1
+  · simp [candidateFixedPriceRevenue, h]
+
+/--
+Finite candidate-price benchmark obtained by maximizing over bidder values.
+
+The full `F^(2)` theorem still needs the paper lemma that a globally optimal
+single price may be chosen from a bidder value. This definition provides the
+finite maximizer needed once that reduction is proved.
+-/
+noncomputable def finiteCandidateFixedPriceBenchmark [Fintype Agent]
+    [Nonempty Agent] (values : Agent → ℝ) (minWinners : ℕ) : ℝ :=
+  (Finset.univ : Finset Agent).sup'
+    (by
+      obtain ⟨i⟩ := (inferInstance : Nonempty Agent)
+      exact ⟨i, by simp⟩)
+    (candidateFixedPriceRevenue values minWinners)
+
+theorem candidateFixedPriceRevenue_le_finiteCandidateFixedPriceBenchmark
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) (i : Agent) :
+    candidateFixedPriceRevenue values minWinners i ≤
+      finiteCandidateFixedPriceBenchmark values minWinners := by
+  unfold finiteCandidateFixedPriceBenchmark
+  exact Finset.le_sup'
+    (s := (Finset.univ : Finset Agent))
+    (f := candidateFixedPriceRevenue values minWinners)
+    (b := i) (by simp)
+
+theorem finiteCandidateFixedPriceBenchmark_nonneg
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    0 ≤ finiteCandidateFixedPriceBenchmark values minWinners := by
+  obtain ⟨i⟩ := (inferInstance : Nonempty Agent)
+  exact le_trans (candidateFixedPriceRevenue_nonneg values minWinners i)
+    (candidateFixedPriceRevenue_le_finiteCandidateFixedPriceBenchmark
+      values minWinners i)
+
+theorem singlePriceRevenue_candidate_le_finiteCandidateFixedPriceBenchmark
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) (i : Agent)
+    (hprice : 0 ≤ values i)
+    (hwinners : minWinners ≤ saleCount values (values i)) :
+    singlePriceRevenue values (values i) ≤
+      finiteCandidateFixedPriceBenchmark values minWinners := by
+  have hcand :
+      candidateFixedPriceRevenue values minWinners i =
+        singlePriceRevenue values (values i) := by
+    simp [candidateFixedPriceRevenue, hprice, hwinners]
+  rw [← hcand]
+  exact candidateFixedPriceRevenue_le_finiteCandidateFixedPriceBenchmark
+    values minWinners i
+
+/--
 A threshold price rule is own-bid independent when changing bidder `i`'s report
 does not change the price offered to `i`.
 -/
@@ -179,6 +249,36 @@ def OwnBidIndependent [DecidableEq Agent]
     (threshold : (Agent → ℝ) → Agent → ℝ) : Prop :=
   ∀ (bids : Agent → ℝ) (i : Agent) (report : ℝ),
     threshold (Function.update bids i report) i = threshold bids i
+
+/-- Bid profile with bidder `i`'s own bid erased to `0`. -/
+def eraseOwnBid [DecidableEq Agent]
+    (bids : Agent → ℝ) (i : Agent) : Agent → ℝ :=
+  Function.update bids i 0
+
+theorem eraseOwnBid_update_self [DecidableEq Agent]
+    (bids : Agent → ℝ) (i : Agent) (report : ℝ) :
+    eraseOwnBid (Function.update bids i report) i = eraseOwnBid bids i := by
+  funext j
+  by_cases h : j = i
+  · subst j
+    simp [eraseOwnBid]
+  · simp [eraseOwnBid, Function.update, h]
+
+/--
+Build a threshold rule from a pricing rule that only sees bidder `i`'s own bid
+after it has been erased. This is the direct formal hook for random-sampling
+and market-price auctions whose offer to `i` is computed from other bidders.
+-/
+def ownErasedThreshold [DecidableEq Agent]
+    (priceRule : Agent → (Agent → ℝ) → ℝ) :
+    (Agent → ℝ) → Agent → ℝ :=
+  fun bids i => priceRule i (eraseOwnBid bids i)
+
+theorem ownErasedThreshold_ownBidIndependent [DecidableEq Agent]
+    (priceRule : Agent → (Agent → ℝ) → ℝ) :
+    OwnBidIndependent (ownErasedThreshold priceRule) := by
+  intro bids i report
+  exact congrArg (priceRule i) (eraseOwnBid_update_self bids i report)
 
 /--
 Digital-goods auction that offers every bidder a threshold price and sells iff
@@ -230,6 +330,13 @@ theorem thresholdPriceAuction_truthful [DecidableEq Agent]
     · simpa only [htruth, hreport, ↓reduceIte, ge_iff_le]
         using sub_nonpos.mpr (le_of_lt (lt_of_not_ge htruth))
     · simp [htruth, hreport]
+
+theorem ownErasedThresholdPriceAuction_truthful [DecidableEq Agent]
+    (priceRule : Agent → (Agent → ℝ) → ℝ) :
+    (thresholdPriceAuction
+      (ownErasedThreshold priceRule)).TruthfulDominantStrategy := by
+  exact thresholdPriceAuction_truthful _
+    (ownErasedThreshold_ownBidIndependent priceRule)
 
 theorem thresholdPriceAuction_individuallyRational [DecidableEq Agent]
     (threshold : (Agent → ℝ) → Agent → ℝ) :

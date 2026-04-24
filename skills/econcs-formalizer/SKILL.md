@@ -184,7 +184,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   the threshold-rule level: if the threshold offered to bidder `i` is
   independent of `i`'s own report, accepting iff bid exceeds that threshold is
   DSIC. Then instantiate random-sampling or market-price auctions by proving
-  the relevant own-bid-independence lemma.
+  the relevant own-bid-independence lemma. For fixed-price benchmarks, define a
+  finite bidder-value candidate benchmark early; the remaining paper lemma is
+  then the reduction from arbitrary feasible prices to bidder-value prices.
 - For GSP/position-auction work, first formalize `PositionOutcome` with
   per-click payments, utility, revenue, welfare, and feasibility. A concrete
   non-truthfulness witness is a good first theorem before building a generic
