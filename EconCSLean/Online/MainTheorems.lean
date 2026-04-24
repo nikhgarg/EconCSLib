@@ -107,6 +107,22 @@ theorem paper_adwords_balance_run_assignment_feasible
   exact AdWordsInstance.balanceRunAssignment_feasible I hbudget history
 
 /--
+The Balance/MSVV run never assigns a query identifier that does not appear in
+the input history.
+-/
+theorem paper_adwords_balance_assignment_assigned_only_from_history
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query) {q : Query} {a : Advertiser}
+    (hassigned : I.runAssignment I.balanceChoiceRule history q = some a) :
+    q ∈ AdWordsInstance.historyFinset history := by
+  exact AdWordsInstance.balanceRunAssignment_assigned_mem_historyFinset
+    I hbudget history hassigned
+
+/--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the
 advertised competitive-ratio inequality against the offline optimum.
 
