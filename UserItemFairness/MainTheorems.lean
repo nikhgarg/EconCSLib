@@ -3060,6 +3060,74 @@ theorem paper_lemma8_reducedOptimalItemFairness_mono_of_same_firstClosedPivot_or
     hpivot_or_eq hcenter
 
 /--
+Appendix D, Lemma 8 canonical finite-stitch core, odd-center first-half case:
+Lemma 10 and canonical first-pivot monotonicity supply the pivot-before-mirror
+condition for the canonical `A(t)` chain.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_center_firstClosedPivot_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_def :
+      ∀ i, ∀ hi : i ≤ r,
+        pivotSeq i =
+          problem6FirstClosedPivot (alphaSeq i) v
+            (halpha0 i hi) (halpha1 i hi) hpos)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        pivotSeq i = pivotSeq (i + 1) ∨
+        alphaSeq i = alphaSeq (i + 1)) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_firstHalf_center_firstClosedPivot_chain
+    r alphaSeq pivotSeq halpha0 halpha1 halpha_half hstep hpos hdec
+    hcenter_c hpivot_def hpivot_or_eq
+
+/--
+Appendix D, Lemma 8 canonical finite-stitch core, even-center first-half case.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_firstClosedPivot_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_def :
+      ∀ i, ∀ hi : i ≤ r,
+        pivotSeq i =
+          problem6FirstClosedPivot (alphaSeq i) v
+            (halpha0 i hi) (halpha1 i hi) hpos)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        pivotSeq i = pivotSeq (i + 1) ∨
+        alphaSeq i = alphaSeq (i + 1)) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_firstClosedPivot_chain
+    r alphaSeq pivotSeq halpha0 halpha1 halpha_half hstep hpos hdec
+    hsucc hpivot_def hpivot_or_eq
+
+/--
 Appendix D, Lemma 8 finite-stitch core, odd-center case: along a first-half
 finite chain, Lemma 10 supplies the pivot-before-mirror side condition.
 -/
@@ -3825,6 +3893,45 @@ theorem paper_lemma5_problem6FirstClosedPivot_denominatorBounds
     halpha0 halpha1 hpos
 
 /--
+Appendix D, Lemma 5 converse slack bridge: denominator bounds imply the lower
+crossing inequality used to define the canonical first pivot.
+-/
+theorem paper_lemma5_problem6PivotGap_lower_bound_of_closedPivotDenominatorBounds
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t := by
+  exact problem6PivotGap_lower_bound_of_closedPivotDenominatorBounds
+    halpha0 halpha1 hpos hbounds
+
+/--
+Appendix D, Lemma 5 converse slack bridge: denominator bounds imply the upper
+crossing inequality for the pivot gap.
+-/
+theorem paper_lemma5_problem6PivotGap_upper_bound_of_closedPivotDenominatorBounds
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    problem6PivotGap alpha v t ≤ (1 - pairShare alpha v t)⁻¹ := by
+  exact problem6PivotGap_upper_bound_of_closedPivotDenominatorBounds
+    halpha0 halpha1 hpos hbounds
+
+/--
+Appendix D, Lemma 5: any denominator-bounded closed-form pivot lies weakly
+after the canonical first crossing pivot.
+-/
+theorem paper_lemma5_problem6FirstClosedPivot_le_of_closedPivotDenominatorBounds
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤ t.val := by
+  exact problem6FirstClosedPivot_le_of_closedPivotDenominatorBounds
+    halpha0 halpha1 hpos hbounds
+
+/--
 Appendix D, Lemma 7-style monotonicity for the canonical Lemma 5 pivot:
 as `α` increases, the first crossing pivot weakly moves right.
 -/
@@ -3838,6 +3945,38 @@ theorem paper_lemma7_problem6FirstClosedPivot_mono_alpha
       (problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos).val := by
   exact problem6FirstClosedPivot_mono_alpha
     halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/--
+Appendix D, Lemma 10 / Lemma 8 bridge: for `α ≤ 1/2`, the canonical first
+closed pivot lies before its mirror in the exact-center case.
+-/
+theorem paper_lemma10_problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : c.val = (reverseItem c).val) :
+    (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+      (reverseItem
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val := by
+  exact problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+    halpha0 halpha1 halpha_half hpos hcenter
+
+/--
+Appendix D, Lemma 10 / Lemma 8 bridge: for `α ≤ 1/2`, the canonical first
+closed pivot lies before its mirror in the even-center case.
+-/
+theorem paper_lemma10_problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+      (reverseItem
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val := by
+  exact problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+    halpha0 halpha1 halpha_half hpos hsucc
 
 /--
 Theorem 3 fixed-pivot multiplier monotonicity:
