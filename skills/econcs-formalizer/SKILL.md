@@ -261,10 +261,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   convergence of the unscaled offline optimum, use a nonnegative scalar
   convergence lemma such as `Sequence.SeqTendsTo.const_mul_of_nonneg` to state
   the conclusion as `msvvRatio * optLimit ≤ revenueLimit`.
-  The remaining faithful paper seam is then a model-level limiting theorem over
-  the paper's concrete small-bid instance family; do not force the discrete
-  fixed-instance theorem to be exactly `1 - 1/e` before that family has been
-  instantiated.
+  Package the final paper-facing statement as an explicit family structure
+  (`MsvvSmallBidsLimitFamily` in `EconCSLean`) rather than leaving a long list
+  of hypotheses at every theorem call site.
+  This is the faithful paper-level theorem for the finite-family model; do not
+  force any fixed finite instance theorem to be exactly `1 - 1/e`.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

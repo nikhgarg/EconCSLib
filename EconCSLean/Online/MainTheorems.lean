@@ -627,9 +627,9 @@ theorem paper_adwords_small_bids_blocked_advertiser_spent_fraction
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the
 advertised competitive-ratio inequality against the offline optimum.
 
-For the full MSVV theorem, the remaining paper-specific work is to construct
-this certificate for the Balance algorithm with ratio `1 - 1 / Real.exp 1`,
-plus the paper's small-bids limiting argument.
+This is kept as a reusable exact-certificate interface. The concrete finite
+small-bids theorem and limiting Balance/MSVV theorem below no longer require a
+separate primal-dual certificate from users.
 -/
 theorem paper_adwords_competitive_of_primal_dual_certificate
     {Advertiser Query : Type*}
@@ -644,7 +644,9 @@ theorem paper_adwords_competitive_of_primal_dual_certificate
 /--
 MSVV paper-facing seam for the Balance run: once the primal-dual certificate is
 constructed for `msvvRatio = 1 - 1/e`, the Balance assignment is competitive
-against the offline optimum at that ratio.
+against the offline optimum at that ratio. This is the exact finite
+certificate form; the small-bids theorem below supplies the paper-level
+limiting guarantee.
 -/
 theorem paper_adwords_balance_msvv_competitive_of_primal_dual_certificate
     {Advertiser Query : Type*}
@@ -664,9 +666,10 @@ theorem paper_adwords_balance_msvv_competitive_of_primal_dual_certificate
     AdWordsInstance.msvvRatio hcert
 
 /--
-History-accounting seam: once the remaining advertiser-alpha plus
-Balance-charge inequality is proved with the explicit small-bids error, the
-finite MSVV objective-bound certificate follows automatically.
+History-accounting seam for the ideal exact proof: once the advertiser-alpha
+plus Balance-charge inequality is supplied, the finite MSVV objective-bound
+certificate follows automatically. The concrete small-bids accounting theorem
+below proves the approximate version used by the paper-level limit theorem.
 -/
 theorem paper_adwords_balance_msvv_objective_bound_of_history_accounting
     {Advertiser Query : Type*}
@@ -1274,6 +1277,19 @@ theorem paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bi
   exact
     AdWordsInstance.balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold_of_offlineOpt_convergence
       n I hbid hbudget hmaxBidSum_pos hsmall_eventually hopt hrevenue
+
+/--
+Paper-level Balance/MSVV limiting theorem. Any finite-query small-bids family
+that satisfies the explicit MSVV threshold eventually, and whose offline
+optimum and Balance/MSVV revenue converge, has limiting competitive ratio
+`1 - 1/e`.
+-/
+theorem paper_adwords_balance_msvv_competitive_of_small_bids_limit_family
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (F : AdWordsInstance.MsvvSmallBidsLimitFamily Advertiser) :
+    AdWordsInstance.msvvRatio * F.optLimit ≤ F.revenueLimit := by
+  exact AdWordsInstance.balance_msvv_competitive_of_smallBidsLimitFamily F
 
 end Online
 end EconCSLean

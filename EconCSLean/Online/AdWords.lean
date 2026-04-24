@@ -4291,6 +4291,57 @@ theorem balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold_of
       (Sequence.SeqTendsTo.const_mul_of_nonneg hopt msvvRatio_nonneg)
       hrevenue
 
+/--
+Paper-level small-bids limiting family for Balance/MSVV.
+
+The paper's limiting theorem is not a statement about one fixed finite
+instance; it is a statement about a sequence of finite instances in which bids
+become small relative to budgets. This structure packages exactly the finite
+query model, positivity assumptions, small-bids threshold, and convergence
+hypotheses needed by the formal limiting theorem.
+-/
+structure MsvvSmallBidsLimitFamily
+    (Advertiser : Type*) [Fintype Advertiser] [Nonempty Advertiser]
+    [DecidableEq Advertiser] where
+  queryCount : ℕ → ℕ
+  instanceAt : (k : ℕ) → AdWordsInstance Advertiser (Fin (queryCount k))
+  optLimit : ℝ
+  revenueLimit : ℝ
+  nonnegative_bids : ∀ k, (instanceAt k).NonnegativeBids
+  positive_budgets : ∀ k, (instanceAt k).PositiveBudgets
+  maxBidSum_pos :
+    ∀ k, 0 < ∑ q : Fin (queryCount k), (instanceAt k).maxBidForQuery q
+  small_bids_eventually :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+        (instanceAt k).SmallBids
+          (min 1
+            (δ / ((Real.exp 1 + 1) *
+              (∑ q : Fin (queryCount k), (instanceAt k).maxBidForQuery q))))
+  offlineOptimum_tendsTo :
+    Sequence.SeqTendsTo
+      (fun k =>
+        (instanceAt k).offlineOptimumValue
+          (fun a => (positive_budgets k a).le))
+      optLimit
+  revenue_tendsTo :
+    Sequence.SeqTendsTo
+      (fun k =>
+        (instanceAt k).revenue
+          ((instanceAt k).runAssignment (instanceAt k).balanceChoiceRule
+            (List.finRange (queryCount k))))
+      revenueLimit
+
+theorem balance_msvv_competitive_of_smallBidsLimitFamily
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (F : MsvvSmallBidsLimitFamily Advertiser) :
+    msvvRatio * F.optLimit ≤ F.revenueLimit := by
+  exact
+    balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold_of_offlineOpt_convergence
+      F.queryCount F.instanceAt F.nonnegative_bids F.positive_budgets
+      F.maxBidSum_pos F.small_bids_eventually F.offlineOptimum_tendsTo
+      F.revenue_tendsTo
+
 end AdWordsInstance
 
 end Online
