@@ -367,6 +367,79 @@ theorem paper_adwords_max_slack_beta_le_balance_score_add_max_bid_error
     I hbid hbudget rule hrule history S hS hε hsmall q chosen hchoice
 
 /--
+History-summed beta charge for the Balance/MSVV run: over a nodup history, the
+sum of final max-slack query duals along the history is bounded by the
+recursive Balance charge plus the explicit max-bid exhausted-advertiser error
+sum.
+-/
+theorem paper_adwords_balance_history_max_slack_beta_sum_le_charge_add_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup) {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    AdWordsInstance.historyMaxSlackBetaSum I
+        (I.msvvAlphaFromAssignment
+          (I.runAssignment I.balanceChoiceRule history))
+        history ≤
+      AdWordsInstance.historyBalanceChargeFrom I I.balanceChoiceRule
+        AdWordsInstance.initialHistoryState history +
+        AdWordsInstance.historyMaxBidErrorSum I ε history := by
+  have hnonneg : I.NonnegativeBudgets := fun a => (hbudget a).le
+  have hS :
+      I.StateInvariant
+        (AdWordsInstance.initialHistoryState :
+          AdWordsInstance.HistoryState Advertiser Query) :=
+    AdWordsInstance.initialHistoryState_invariant I hnonneg
+  have hfresh :
+      ∀ q,
+        q ∈ AdWordsInstance.historyFinset history →
+          q ∉
+            (AdWordsInstance.initialHistoryState :
+              AdWordsInstance.HistoryState Advertiser Query).seen := by
+    simp [AdWordsInstance.initialHistoryState]
+  have h :=
+    AdWordsInstance.historyMaxSlackBetaSum_balanceChoiceRun_le_balanceCharge_add_maxBidError
+      I hbid hbudget history
+      (AdWordsInstance.initialHistoryState :
+        AdWordsInstance.HistoryState Advertiser Query)
+      hS hfresh hnodup hε hsmall
+  simpa [AdWordsInstance.runAssignment, AdWordsInstance.runHistoryState] using h
+
+/--
+Query-dual sum charge for a history that enumerates all query identifiers:
+the finite LP query-dual contribution is bounded by the recursive Balance
+charge plus the explicit max-bid small-bids error.
+-/
+theorem paper_adwords_balance_query_dual_sum_le_charge_add_error_of_history_cover
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hsmall : I.SmallBids ε) :
+    (∑ q : Query,
+      I.maxSlackBeta
+        (I.msvvAlphaFromAssignment
+          (I.runAssignment I.balanceChoiceRule history)) q) ≤
+      AdWordsInstance.historyBalanceChargeFrom I I.balanceChoiceRule
+        AdWordsInstance.initialHistoryState history +
+        AdWordsInstance.historyMaxBidErrorSum I ε history := by
+  exact AdWordsInstance.sum_maxSlackBeta_balanceRun_le_balanceCharge_add_maxBidError_of_cover
+    I hbid hbudget history hnodup hcover hε hsmall
+
+/--
 Small-bids boundary lemma: if advertiser `a` cannot accept query `q`, then
 under the `ε`-small-bids condition `a` has already spent more than a
 `1 - ε` fraction of her budget.

@@ -49,6 +49,8 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Non-exhausted-query beta charge | `paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign` | formalized | `EconCSLean/Online/MainTheorems.lean` | all advertisers can still accept the query |
 | Exhausted-advertiser alpha/slack charge | `paper_adwords_blocked_advertiser_final_alpha_ge_exp_neg_epsilon`, `paper_adwords_blocked_advertiser_final_slack_score_le_error` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids, positive blocked-advertiser budget, `ε`-small bids |
 | Mixed query beta charge | `paper_adwords_max_slack_beta_le_balance_score_or_max_bid_error`, `paper_adwords_max_slack_beta_le_balance_score_add_max_bid_error` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids, positive budgets, `0 ≤ ε`, `ε`-small bids, Balance choice at the query state |
+| History-summed beta charge | `paper_adwords_balance_history_max_slack_beta_sum_le_charge_add_error` | formalized | `EconCSLean/Online/MainTheorems.lean` | nodup history; positive budgets; nonnegative bids; `0 ≤ ε`; `ε`-small bids |
+| Query-dual sum charge | `paper_adwords_balance_query_dual_sum_le_charge_add_error_of_history_cover` | formalized | `EconCSLean/Online/MainTheorems.lean` | nodup history that covers the finite query type; positive budgets; nonnegative bids; `0 ≤ ε`; `ε`-small bids |
 | Standard AdWords LP dual feasibility | `DualFeasible`, `dualObjective` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | AdWords LP weak duality | `paper_adwords_lp_weak_duality` | formalized | `EconCSLean/Online/MainTheorems.lean` | feasible assignment and dual-feasible variables |
 | Fractional AdWords LP primal | `FractionalAssignment`, `FractionalFeasible`, `fractionalRevenue` | formalized | `EconCSLean/Online/AdWords.lean` | finite advertisers and queries |
@@ -70,10 +72,10 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    primal and dual variable updates.
 3. Then prove the stepwise/primal-dual charging argument as
    `MsvvObjectiveBoundCertificate` for the Balance run. The non-exhausted and
-   exhausted query-dual charges are now both formalized; the next useful lemma
-   is the summation step turning
-   `paper_adwords_max_slack_beta_le_balance_score_add_max_bid_error` over the
-   history fold into the scaled dual-objective bound, with the explicit
-   max-bid error kept as the small-bids seam.
+   exhausted query-dual charges and their history/query-dual summation forms are
+   now formalized. The next useful lemma is the advertiser-alpha plus recursive
+   Balance-charge accounting bound that turns the query-dual sum bound into the
+   scaled dual-objective bound, with the explicit max-bid error kept as the
+   small-bids seam.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
    isolate the small-bids limiting argument as a separate theorem seam.

@@ -196,7 +196,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   proving a final-alpha lower bound `exp (-ε)` and then a final-slack bound
   `bid * (1 - exp (-ε))`. For finite max-slack query duals, package the mixed
   query charge in a summation-friendly form: chosen Balance score plus an
-  explicit max-bid small-bids error term.
+  explicit max-bid small-bids error term. Then introduce recursive history
+  charge sums mirroring the online fold, prove the list-summed beta bound for
+  fresh nodup histories, and reindex from list sums to finite query sums only
+  under an explicit coverage assumption such as
+  `historyFinset history = Finset.univ`.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
