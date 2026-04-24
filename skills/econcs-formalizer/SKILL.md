@@ -187,6 +187,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   the relevant own-bid-independence lemma. For fixed-price benchmarks, define a
   finite bidder-value candidate benchmark early; the remaining paper lemma is
   then the reduction from arbitrary feasible prices to bidder-value prices.
+  For random-sampling digital-goods auctions, first prove the deterministic
+  cross-sample threshold mechanism truthful for an arbitrary fixed partition;
+  only after that add probability over partitions and revenue approximation.
 - For GSP/position-auction work, first formalize `PositionOutcome` with
   per-click payments, utility, revenue, welfare, and feasibility. A concrete
   non-truthfulness witness is a good first theorem before building a generic

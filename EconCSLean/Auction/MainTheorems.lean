@@ -77,6 +77,18 @@ theorem paper_own_erased_threshold_price_truthful
   exact ownErasedThresholdPriceAuction_truthful priceRule
 
 /--
+RSOP-style deterministic skeleton: for any fixed sample partition, offering each
+bidder the finite candidate price computed from the opposite side is
+dominant-strategy truthful.
+-/
+theorem paper_cross_sample_candidate_threshold_truthful
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (thresholdPriceAuction
+      (crossSampleCandidateThreshold side minWinners)).TruthfulDominantStrategy := by
+  exact crossSampleCandidateThresholdPriceAuction_truthful side minWinners
+
+/--
 The finite bidder-value candidate benchmark is nonnegative.
 -/
 theorem paper_finite_candidate_fixed_price_benchmark_nonneg

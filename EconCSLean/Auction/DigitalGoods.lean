@@ -241,6 +241,43 @@ theorem singlePriceRevenue_candidate_le_finiteCandidateFixedPriceBenchmark
   exact candidateFixedPriceRevenue_le_finiteCandidateFixedPriceBenchmark
     values minWinners i
 
+theorem exists_candidateFixedPriceRevenue_eq_finiteCandidateFixedPriceBenchmark
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    ∃ i : Agent,
+      finiteCandidateFixedPriceBenchmark values minWinners =
+        candidateFixedPriceRevenue values minWinners i := by
+  classical
+  let H : (Finset.univ : Finset Agent).Nonempty := by
+    obtain ⟨i⟩ := (inferInstance : Nonempty Agent)
+    exact ⟨i, by simp⟩
+  obtain ⟨i, _hi, hmax⟩ :=
+    (Finset.univ : Finset Agent).exists_mem_eq_sup'
+      (f := candidateFixedPriceRevenue values minWinners) H
+  exact ⟨i, hmax⟩
+
+/-- A bidder whose value attains the finite candidate-price benchmark. -/
+noncomputable def finiteCandidateBenchmarkBidder [Fintype Agent]
+    [Nonempty Agent] (values : Agent → ℝ) (minWinners : ℕ) : Agent :=
+  Classical.choose
+    (exists_candidateFixedPriceRevenue_eq_finiteCandidateFixedPriceBenchmark
+      values minWinners)
+
+/-- Candidate price selected from a benchmark-attaining bidder value. -/
+noncomputable def finiteCandidateBenchmarkPrice [Fintype Agent]
+    [Nonempty Agent] (values : Agent → ℝ) (minWinners : ℕ) : ℝ :=
+  values (finiteCandidateBenchmarkBidder values minWinners)
+
+theorem finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    finiteCandidateFixedPriceBenchmark values minWinners =
+      candidateFixedPriceRevenue values minWinners
+        (finiteCandidateBenchmarkBidder values minWinners) := by
+  exact Classical.choose_spec
+    (exists_candidateFixedPriceRevenue_eq_finiteCandidateFixedPriceBenchmark
+      values minWinners)
+
 /--
 A threshold price rule is own-bid independent when changing bidder `i`'s report
 does not change the price offered to `i`.
@@ -279,6 +316,46 @@ theorem ownErasedThreshold_ownBidIndependent [DecidableEq Agent]
     OwnBidIndependent (ownErasedThreshold priceRule) := by
   intro bids i report
   exact congrArg (priceRule i) (eraseOwnBid_update_self bids i report)
+
+/-- Keep bids on one side of a sample partition and zero the rest. -/
+def restrictBidsBySide (side : Agent → Bool) (keep : Bool)
+    (bids : Agent → ℝ) : Agent → ℝ :=
+  fun j => if side j = keep then bids j else 0
+
+theorem restrictBidsBySide_update_of_not_kept [DecidableEq Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (bids : Agent → ℝ) (i : Agent) (report : ℝ)
+    (hkeep : side i ≠ keep) :
+    restrictBidsBySide side keep (Function.update bids i report) =
+      restrictBidsBySide side keep bids := by
+  funext j
+  by_cases hji : j = i
+  · subst j
+    simp [restrictBidsBySide, hkeep]
+  · simp [restrictBidsBySide, Function.update, hji]
+
+/--
+Finite-candidate cross-sample threshold rule: each bidder is offered the
+candidate benchmark price computed from the opposite side of the partition.
+-/
+noncomputable def crossSampleCandidateThreshold
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (Agent → ℝ) → Agent → ℝ :=
+  fun bids i =>
+    finiteCandidateBenchmarkPrice
+      (restrictBidsBySide side (!side i) bids) minWinners
+
+theorem crossSampleCandidateThreshold_ownBidIndependent
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    OwnBidIndependent (crossSampleCandidateThreshold side minWinners) := by
+  intro bids i report
+  unfold crossSampleCandidateThreshold
+  apply congrArg (fun profile =>
+    finiteCandidateBenchmarkPrice profile minWinners)
+  apply restrictBidsBySide_update_of_not_kept
+  cases side i <;> simp
 
 /--
 Digital-goods auction that offers every bidder a threshold price and sells iff
@@ -337,6 +414,14 @@ theorem ownErasedThresholdPriceAuction_truthful [DecidableEq Agent]
       (ownErasedThreshold priceRule)).TruthfulDominantStrategy := by
   exact thresholdPriceAuction_truthful _
     (ownErasedThreshold_ownBidIndependent priceRule)
+
+theorem crossSampleCandidateThresholdPriceAuction_truthful
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (thresholdPriceAuction
+      (crossSampleCandidateThreshold side minWinners)).TruthfulDominantStrategy := by
+  exact thresholdPriceAuction_truthful _
+    (crossSampleCandidateThreshold_ownBidIndependent side minWinners)
 
 theorem thresholdPriceAuction_individuallyRational [DecidableEq Agent]
     (threshold : (Agent → ℝ) → Agent → ℝ) :
