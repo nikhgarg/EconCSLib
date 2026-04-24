@@ -1641,6 +1641,59 @@ structure BMatchingTheorem9FeasiblePrefixRuleFamily
       (∑ bidder ∈ obs round,
         prefixAllocation N algorithm obs round bidder) ≤ 1
 
+/-- A deterministic integral algorithm chooses at most one actual bidder from the visible prefix. -/
+def BMatchingIntegralPrefixChoice (N : ℕ) :=
+  (Fin N → Finset (Fin N)) → Fin N → Option (Fin N)
+
+/-- Feasibility for an integral prefix choice rule: chosen bidders must be visible. -/
+def BMatchingIntegralPrefixChoice.Feasible
+    {N : ℕ} (choice : BMatchingIntegralPrefixChoice N) : Prop :=
+  ∀ obs round bidder, choice obs round = some bidder → bidder ∈ obs round
+
+/-- Concrete deterministic integral algorithms for the Section 7 hard instance. -/
+abbrev BMatchingIntegralPrefixAlgorithm (N : ℕ) :=
+  { choice : BMatchingIntegralPrefixChoice N //
+    BMatchingIntegralPrefixChoice.Feasible choice }
+
+namespace BMatchingIntegralPrefixAlgorithm
+
+/-- The `0/1` allocation induced by an integral prefix choice rule. -/
+noncomputable def prefixAllocation {N : ℕ}
+    (algorithm : BMatchingIntegralPrefixAlgorithm N)
+    (obs : Fin N → Finset (Fin N)) (round bidder : Fin N) : ℝ :=
+  if algorithm.1 obs round = some bidder then 1 else 0
+
+theorem prefixAllocation_zero_of_not_visible {N : ℕ}
+    (algorithm : BMatchingIntegralPrefixAlgorithm N)
+    (obs : Fin N → Finset (Fin N)) (round bidder : Fin N)
+    (hnot : bidder ∉ obs round) :
+    prefixAllocation algorithm obs round bidder = 0 := by
+  unfold prefixAllocation
+  by_cases hchoice : algorithm.1 obs round = some bidder
+  · exact False.elim (hnot (algorithm.2 obs round bidder hchoice))
+  · simp [hchoice]
+
+theorem prefixAllocation_sum_le_one {N : ℕ}
+    (algorithm : BMatchingIntegralPrefixAlgorithm N)
+    (obs : Fin N → Finset (Fin N)) (round : Fin N) :
+    (∑ bidder ∈ obs round,
+      prefixAllocation algorithm obs round bidder) ≤ 1 := by
+  unfold prefixAllocation
+  cases hchoice : algorithm.1 obs round with
+  | none =>
+      simp
+  | some chosen =>
+      have hchosen : chosen ∈ obs round :=
+        algorithm.2 obs round chosen hchoice
+      have hsum :
+          (∑ bidder ∈ obs round,
+            (if some chosen = some bidder then (1 : ℝ) else 0)) = 1 := by
+        simpa [hchosen] using
+          (Finset.sum_ite_eq' (obs round) chosen (fun _ => (1 : ℝ)))
+      exact le_of_eq hsum
+
+end BMatchingIntegralPrefixAlgorithm
+
 /--
 Family-level round-allocation certificate with the harmonic side represented
 by the paper's finite layer-count estimate instead of an opaque eventual
@@ -2681,6 +2734,76 @@ theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
   exact Cfeasible.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
 
 end BMatchingTheorem9FeasiblePrefixRuleFamily
+
+/--
+Finite families of integral prefix choice algorithms. The algorithm type may be
+any finite type; each algorithm supplies a deterministic choice rule that
+selects at most one visible actual bidder per round.
+-/
+structure BMatchingTheorem9IntegralPrefixChoiceFamily
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] where
+  choice :
+    (N : ℕ) → Algorithm N → BMatchingIntegralPrefixChoice N
+  choice_feasible :
+    ∀ N algorithm, BMatchingIntegralPrefixChoice.Feasible (choice N algorithm)
+
+namespace BMatchingTheorem9IntegralPrefixChoiceFamily
+
+variable {Algorithm : ℕ → Type*}
+variable [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+
+/-- Convert an integral prefix choice family to the feasible prefix-rule interface. -/
+noncomputable def toFeasiblePrefixRuleFamily
+    (C : BMatchingTheorem9IntegralPrefixChoiceFamily Algorithm) :
+    BMatchingTheorem9FeasiblePrefixRuleFamily Algorithm where
+  prefixAllocation := fun N algorithm obs round bidder =>
+    if C.choice N algorithm obs round = some bidder then (1 : ℝ) else 0
+  prefixAllocation_zero_of_not_visible := by
+    intro N algorithm obs round bidder hnot
+    by_cases hchoice : C.choice N algorithm obs round = some bidder
+    · exact False.elim (hnot (C.choice_feasible N algorithm obs round bidder hchoice))
+    · simp [hchoice]
+  prefixAllocation_sum_le_one := by
+    intro N algorithm obs round
+    cases hchoice : C.choice N algorithm obs round with
+    | none =>
+        simp
+    | some chosen =>
+        have hchosen : chosen ∈ obs round :=
+          C.choice_feasible N algorithm obs round chosen hchoice
+        have hsum :
+            (∑ bidder ∈ obs round,
+              (if some chosen = some bidder then (1 : ℝ) else 0)) = 1 := by
+          simpa [hchosen] using
+            (Finset.sum_ite_eq' (obs round) chosen (fun _ => (1 : ℝ)))
+        exact le_of_eq hsum
+
+/-- Capped normalized revenue for an integral prefix choice family. -/
+noncomputable def normalizedRevenue
+    (C : BMatchingTheorem9IntegralPrefixChoiceFamily Algorithm)
+    (N : ℕ) (algorithm : Algorithm N)
+    (permutation : Equiv.Perm (Fin N)) : ℝ :=
+  C.toFeasiblePrefixRuleFamily.normalizedRevenue N algorithm permutation
+
+/--
+Theorem 9 endpoint for finite randomized distributions over integral prefix
+choice algorithms.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    (C : BMatchingTheorem9IntegralPrefixChoiceFamily Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact
+    C.toFeasiblePrefixRuleFamily
+      |>.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+end BMatchingTheorem9IntegralPrefixChoiceFamily
 
 namespace BMatchingTheorem9LayerCountFamilyCertificate
 

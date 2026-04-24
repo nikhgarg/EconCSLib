@@ -322,7 +322,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `theorem9ActualEligibleBidders_sum_eq`. If the desired payoff is exactly the
   paper's capped normalized spend expression, use
   `BMatchingTheorem9FeasiblePrefixRuleFamily`; it avoids a separate
-  capped-revenue field.
+  capped-revenue field. For integral online b-matching algorithms, use
+  `BMatchingTheorem9IntegralPrefixChoiceFamily`, where each deterministic rule
+  chooses at most one visible actual bidder per round.
   For the harmonic cap, split the proof into the logarithmic
   tail-spend bound, a finite layer-count comparison, and a separate
   exponential-grid estimate. In `EconCSLean`, these are now represented by
@@ -339,8 +341,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate` /
   `BMatchingTheorem9ObservedPrefixFamilyCertificate` /
   `BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate` /
-  `BMatchingTheorem9FeasiblePrefixRuleFamily` in `EconCSLean`) so future work
-  instantiates only the deterministic prefix allocation and, when needed,
+  `BMatchingTheorem9FeasiblePrefixRuleFamily` /
+  `BMatchingTheorem9IntegralPrefixChoiceFamily` in `EconCSLean`) so future work
+  instantiates only the deterministic choice/allocation rule and, when needed,
   actual-revenue bridge directly. Do not add a
   separate
   harmonic-limit field to new Section 7 family certificates; use the built-in

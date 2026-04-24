@@ -1096,6 +1096,24 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
   exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
 
 /--
+Paper-level Section 7 / Theorem 9 endpoint for finite families of integral
+prefix choice algorithms.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9IntegralPrefixChoiceFamily Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm =>
+                  C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
 Paper-level Section 7 / Theorem 9 endpoint from round-allocation inequalities
 and finite layer-count harmonic bounds.
 -/
