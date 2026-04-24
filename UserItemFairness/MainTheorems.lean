@@ -610,6 +610,22 @@ theorem paper_lemma11_one_sub_pairShare_div_one_sub_pairShare_eq
     t j halpha0 halpha1 hpos
 
 /--
+Appendix D, Lemma 11 mirror-paired pre-pivot algebra:
+`q_t/q_j + (1-q_t)/(1-q_{n-j+1})` equals the paper's `h_t(α)` expression.
+-/
+theorem paper_lemma11_paired_q_term_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v t / pairShare alpha v j +
+        (1 - pairShare alpha v t) /
+          (1 - pairShare alpha v (reverseItem j)) =
+      1 + (v (reverseItem j) / v j) *
+        (((1 - alpha) * v t + alpha * v (reverseItem t)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  exact lemma11_paired_q_term_eq t j halpha0 halpha1 hpos
+
+/--
 Appendix D, Lemma 11 scalar monotonicity template: the paper's derivative sign
 argument in two-point, denominator-cleared form.
 -/
@@ -702,6 +718,50 @@ theorem paper_lemma11_pairedExpression_antitone
     halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
 
 /--
+Appendix D, Lemma 11 mirror-paired term monotonicity:
+`q_t/q_j + (1-q_t)/(1-q_{n-j+1})` decreases with `α`.
+-/
+theorem paper_lemma11_paired_q_term_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    pairShare alpha' v t / pairShare alpha' v j +
+        (1 - pairShare alpha' v t) /
+          (1 - pairShare alpha' v (reverseItem j)) ≤
+      pairShare alpha v t / pairShare alpha v j +
+        (1 - pairShare alpha v t) /
+          (1 - pairShare alpha v (reverseItem j)) := by
+  exact lemma11_paired_q_term_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
+Appendix D, Lemma 11 paired-sum monotonicity: summing the paper's mirror-paired
+pre-pivot terms preserves the antitonicity in `α`.
+-/
+theorem paper_lemma11_pairedWeightedSum_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    (∑ j : Item n, if j.val < t.val then
+        pairShare alpha' v t / pairShare alpha' v j +
+          (1 - pairShare alpha' v t) /
+            (1 - pairShare alpha' v (reverseItem j)) else 0) ≤
+      (∑ j : Item n, if j.val < t.val then
+        pairShare alpha v t / pairShare alpha v j +
+          (1 - pairShare alpha v t) /
+            (1 - pairShare alpha v (reverseItem j)) else 0) := by
+  exact lemma11_pairedWeightedSum_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
 Appendix D, Lemma 11 right-side sum monotonicity:
 `(1-q_t)R_t` decreases with `α` for a fixed pivot.
 -/
@@ -716,6 +776,98 @@ theorem paper_lemma11_rightWeightedSum_antitone
       (1 - pairShare alpha v t) * problem6RightSum alpha v t := by
   exact lemma11_rightWeightedSum_antitone
     halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec
+
+/--
+Appendix D, Lemma 11 denominator decomposition:
+`q_t L_t + (1-q_t)R_t` is the paper's mirror-paired pre-pivot sum plus the
+unpaired residual right-side sum.
+-/
+theorem paper_lemma11_weightedCore_eq_paired_add_residual
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    pairShare alpha v t * problem6LeftSum alpha v t +
+        (1 - pairShare alpha v t) * problem6RightSum alpha v t =
+      (∑ j : Item n, if j.val < t.val then
+        pairShare alpha v t / pairShare alpha v j +
+          (1 - pairShare alpha v t) /
+            (1 - pairShare alpha v (reverseItem j)) else 0) +
+      (∑ j : Item n, if t.val < j.val ∧
+          t.val ≤ (reverseItem j).val then
+        (1 - pairShare alpha v t) / (1 - pairShare alpha v j) else 0) := by
+  exact lemma11_weightedCore_eq_paired_add_residual hcenter
+
+/--
+Appendix D, Lemma 11 residual right-sum monotonicity: after mirror pairing,
+the remaining post-pivot complement-ratio terms decrease with `α`.
+-/
+theorem paper_lemma11_residualRightSum_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    (∑ j : Item n, if t.val < j.val ∧
+          t.val ≤ (reverseItem j).val then
+        (1 - pairShare alpha' v t) / (1 - pairShare alpha' v j) else 0) ≤
+      (∑ j : Item n, if t.val < j.val ∧
+          t.val ≤ (reverseItem j).val then
+        (1 - pairShare alpha v t) / (1 - pairShare alpha v j) else 0) := by
+  exact lemma11_residualRightSum_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec
+
+/--
+Appendix D, Lemma 11 fixed-pivot denominator-core monotonicity:
+`q_t L_t + (1-q_t)R_t` decreases with `α`.
+-/
+theorem paper_lemma11_fixedPivotWeightedCore_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    pairShare alpha' v t * problem6LeftSum alpha' v t +
+        (1 - pairShare alpha' v t) * problem6RightSum alpha' v t ≤
+      pairShare alpha v t * problem6LeftSum alpha v t +
+        (1 - pairShare alpha v t) * problem6RightSum alpha v t := by
+  exact lemma11_fixedPivotWeightedCore_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
+Appendix D, Lemma 11 fixed-pivot denominator monotonicity: the full closed-form
+denominator decreases with `α`.
+-/
+theorem paper_lemma11_fixedPivotDenominator_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedDenominator alpha' v t ≤
+      problem6ClosedDenominator alpha v t := by
+  exact lemma11_fixedPivotDenominator_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
+Appendix D, Lemma 11 fixed-pivot closed-value monotonicity: holding the pivot
+fixed, the closed-form value `I^*_{min}` increases with `α`.
+-/
+theorem paper_lemma11_fixedPivotClosedValue_monotone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedValue alpha v t ≤
+      problem6ClosedValue alpha' v t := by
+  exact lemma11_fixedPivotClosedValue_monotone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
 
 /-- Problem 6 setup: `q_j(α)` is strictly positive. -/
 theorem paper_problem6_pairShare_pos
