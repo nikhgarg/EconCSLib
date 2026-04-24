@@ -111,6 +111,111 @@ theorem paper_appendixE_independentPairTerm_add_swap
   exact M.independentPairTerm_add_swap value c d
 
 /--
+Appendix E (rank-factorized bracket sign): the closed-form Mallows top-fiber
+formulas imply nonnegative paired independent-reranking brackets.
+-/
+theorem paper_appendixE_independentPairBracket_nonneg_of_rankFactorization
+    {n : ℕ} (M : MallowsSpec n)
+    (fac : M.RankFactorization) (hq_le_one : M.q ≤ 1)
+    {c d : Candidate n} (hlt : rankOf M.center c < rankOf M.center d) :
+    0 ≤ M.independentPairBracket c d := by
+  exact M.independentPairBracket_nonneg_of_rankFactorization fac hq_le_one hlt
+
+/--
+Appendix E (independent-reranking finite inequality): for at least three
+candidates, `0 < q < 1`, and strictly center-ordered values, the cleared
+independent-reranking Mallows sum is positive.
+-/
+theorem paper_appendixE_independent_weight_sum_pos_of_rankFactorization
+    {n : ℕ} (M : MallowsSpec n) {value : Candidate n → ℝ}
+    (fac : M.RankFactorization) (hn : 0 < n) (hq_lt_one : M.q < 1)
+    (hvalue : StrictlyOrderedBy M.center value) :
+    0 < ∑ c : Candidate n,
+      (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c := by
+  exact M.independent_weight_sum_pos_of_rankFactorization fac hn hq_lt_one hvalue
+
+/--
+Theorem 3 / weaker-competition center comparison: when the algorithm Mallows law
+has strictly lower inverse-noise parameter than the human law, the rank
+factorization formulas imply the strict center first-choice cross-product
+comparison used by the paper.
+-/
+theorem paper_theorem3_centerFirstWeight_cross_lt_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    C.human.firstWeight C.human.centerFirst * C.algorithm.partition <
+      C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition := by
+  exact C.centerFirstWeight_cross_lt_of_rankFactorization
+    halg_rank hhuman_rank hq_lt
+
+/--
+Theorem 3 / center first-choice probability comparison: under rank
+factorization and `qA < qH`, the algorithm law gives the center top candidate
+strictly larger first-choice probability than the human law.
+-/
+theorem paper_theorem3_centerFirstProb_lt_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    firstChoiceProb C.human.law C.human.centerFirst <
+      firstChoiceProb C.algorithm.law C.human.centerFirst := by
+  exact C.centerFirstProb_lt_of_rankFactorization
+    halg_rank hhuman_rank hq_lt
+
+/--
+Theorem 3 / first-choice prefix dominance: for every proper center-rank prefix,
+rank factorization and `qA < qH` imply the algorithm law has strictly more
+cross-multiplied first-choice mass on that prefix.
+-/
+theorem paper_theorem3_firstWeightPrefix_cross_lt_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q)
+    (k : Fin (n + 1)) :
+    C.human.firstWeightPrefix k * C.algorithm.partition <
+      C.algorithm.firstWeightPrefix k * C.human.partition := by
+  exact C.firstWeightPrefix_cross_lt_of_rankFactorization
+    halg_rank hhuman_rank hq_lt k
+
+/--
+Theorem 3 / weaker-competition center term: under strict center ordering and
+`qA < qH`, rank factorization makes the center candidate's weaker-competition
+product strictly positive.
+-/
+theorem paper_theorem3_weaker_center_cross_product_pos_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    0 < (C.algorithm.firstWeight C.human.centerFirst * C.human.partition -
+        C.human.firstWeight C.human.centerFirst * C.algorithm.partition) *
+      firstChoiceGapMass C.human.law value C.human.centerFirst := by
+  exact C.weaker_center_cross_product_pos_of_rankFactorization
+    hstrict halg_rank hhuman_rank hq_lt
+
+/--
+Theorem 3 / weaker-competition center summand, denominator-cleared form: under
+strict center ordering and `qA < qH`, the center candidate's cleared
+weaker-competition summand is strictly positive.
+-/
+theorem paper_theorem3_weaker_center_cross_weight_summand_pos_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    0 < (C.algorithm.firstWeight C.human.centerFirst * C.human.partition -
+        C.human.firstWeight C.human.centerFirst * C.algorithm.partition) *
+      C.human.firstChoiceGapWeight value C.human.centerFirst := by
+  exact C.weaker_center_cross_weight_summand_pos_of_rankFactorization
+    hstrict halg_rank hhuman_rank hq_lt
+
+/--
 Theorem 3 (finite-sum Mallows form): from the cleared finite Mallows certificate,
 paper hypotheses follow for the induced pointwise model.
 
@@ -146,6 +251,28 @@ theorem paper_theorem3_pointwise_finite_mallows_sum_of_certificate
     (cert : C.CenterMallowsFiniteSumCertificate value) :
     Model.PaperHypotheses (C.toModel value) := by
   exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate cert
+
+/--
+Theorem 3 (rank-factorized independent sums): the two
+independent-reranking finite inequalities are proved from the Mallows
+rank-factorization formulas. The remaining explicit inequality is only the
+cleared weaker-competition Mallows sum.
+-/
+theorem paper_theorem3_pointwise_rankFactorization_and_crossWeight
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (hn : 0 < n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (halg_q_lt_one : C.algorithm.q < 1)
+    (hhuman_q_lt_one : C.human.q < 1)
+    (hweaker : 0 < ∑ c : Candidate n,
+      (C.algorithm.firstWeight c * C.human.partition -
+          C.human.firstWeight c * C.algorithm.partition) *
+        C.human.firstChoiceGapWeight value c) :
+    Model.PaperHypotheses (C.toModel value) := by
+  exact C.theorem3_pointwise_of_rankFactorization_and_crossWeight
+    hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hweaker
 
 /--
 Theorem 3 (reduced product-sign form): from reduced product-sign finite Mallows

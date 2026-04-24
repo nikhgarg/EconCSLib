@@ -59,6 +59,55 @@ def bestRemainingAfter {n : ℕ} (π : Ranking n) (c : Candidate n) : Candidate 
     rankOf π (secondChoice π) = 1 := by
   simp [rankOf, secondChoice]
 
+@[simp] theorem rankOf_swapTopTwo_firstChoice {n : ℕ} (π : Ranking n) :
+    rankOf (swapTopTwo π) (firstChoice π) = 1 := by
+  simp [rankOf, swapTopTwo, firstChoice]
+
+@[simp] theorem rankOf_swapTopTwo_secondChoice {n : ℕ} (π : Ranking n) :
+    rankOf (swapTopTwo π) (secondChoice π) = 0 := by
+  simp [rankOf, swapTopTwo, secondChoice]
+
+theorem rankOf_swapTopTwo_of_ne_first_second {n : ℕ} (π : Ranking n)
+    {c : Candidate n}
+    (hfirst : c ≠ firstChoice π) (hsecond : c ≠ secondChoice π) :
+    rankOf (swapTopTwo π) c = rankOf π c := by
+  unfold rankOf swapTopTwo
+  have h0 : π.symm c ≠ (0 : Candidate n) := by
+    intro h
+    apply hfirst
+    have hc : π 0 = c := by
+      simpa using congrArg π h.symm
+    simpa [firstChoice] using hc.symm
+  have h1 : π.symm c ≠ (1 : Candidate n) := by
+    intro h
+    apply hsecond
+    have hc : π 1 = c := by
+      simpa using congrArg π h.symm
+    simpa [secondChoice] using hc.symm
+  change (Equiv.swap (0 : Candidate n) 1) (π.symm c) = π.symm c
+  rw [Equiv.swap_apply_of_ne_of_ne h0 h1]
+
+theorem one_lt_rankOf_of_ne_first_second {n : ℕ} (π : Ranking n)
+    {c : Candidate n}
+    (hfirst : c ≠ firstChoice π) (hsecond : c ≠ secondChoice π) :
+    (1 : Candidate n) < rankOf π c := by
+  have h0 : (rankOf π c).val ≠ 0 := by
+    intro h
+    apply hfirst
+    have hrank : rankOf π c = 0 := Fin.ext h
+    have hc : π 0 = c := by
+      simpa [rankOf] using congrArg π hrank.symm
+    simpa [firstChoice] using hc.symm
+  have h1 : (rankOf π c).val ≠ 1 := by
+    intro h
+    apply hsecond
+    have hrank : rankOf π c = 1 := Fin.ext h
+    have hc : π 1 = c := by
+      simpa [rankOf] using congrArg π hrank.symm
+    simpa [secondChoice] using hc.symm
+  change 1 < (rankOf π c).val
+  omega
+
 @[simp] theorem firstChoice_ne_secondChoice {n : ℕ} (π : Ranking n) :
     firstChoice π ≠ secondChoice π := by
   intro h

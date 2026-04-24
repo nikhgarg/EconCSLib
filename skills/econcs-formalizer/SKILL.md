@@ -512,6 +512,33 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   prove the antisymmetric swap identity. Discharge the remaining proof through
   bracket inequalities for `(i,j)` plus `(j,i)`. This is safer than forcing
   first-choice fiber signs.
+- For Mallows proofs, separate three layers explicitly:
+  1. the denominator-cleared paper sum,
+  2. the top-two pair/bracket regrouping,
+  3. the rank-factorization formulas for first/top-two Mallows fibers.
+  Prove the algebra from layer 3 to layer 1 before attempting the finite
+  permutation bijections that instantiate layer 3. This keeps proof search
+  focused and prevents repeatedly reopening already-proved expectation
+  decompositions.
+- Check strictness and boundary cases before claiming a Mallows theorem is fully
+  assumption-free. Strict weaker-competition conclusions cannot follow from
+  non-strict equal-parameter comparisons, and independent-reranking positivity
+  can fail or become equality in two-candidate edge cases. State the required
+  interior parameter and candidate-count assumptions explicitly at the
+  paper-facing wrapper, then prove them away only when the paper supplies a
+  genuine witness.
+- For weaker-competition Mallows sums, do not assume every `(i,j)`/`(j,i)`
+  cross bracket is nonnegative unless the algebra has been checked. Unlike the
+  independent-reranking bracket, individual cross brackets can be negative while
+  the total adjacent-gap/majorization sum is positive. Use prefix/adjacent-gap
+  coefficients or another total-sum certificate for that part.
+- For Mallows first-choice dominance, prove the pure geometric prefix lemma
+  once, then lift it through rank factorization. The useful pattern is a
+  pair-sum regrouping of
+  `prefix(qA) * total(qH) - prefix(qH) * total(qA)` into center-ordered
+  cross-prefix terms `qA^i*qH^j - qH^i*qA^j`, discharged by a reusable
+  rank-power comparison for `qA < qH`. This avoids redoing stochastic-dominance
+  algebra at each probability/cross-weight wrapper.
 - When clearing positive probability denominators, expose the unnormalised
   numerator as a reusable definition and prove an equality from the normalized
   expectation to numerator divided by a positive denominator. Also prove the
