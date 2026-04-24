@@ -24,6 +24,7 @@ algebra lives in `EconCSLean/Statistics/BinaryRating.lean`.
 
 | Paper item | Lean declaration | Status | File | Remaining assumptions |
 |---|---|---|---|---|
+| Theorem 3.1, variance weakly decreases in prior strength | `paper_theorem3_1_variance_weak_decrease` | formalized with corrected weak statement | `ProducerFairness/MainTheorems.lean` | assumes `0 ≤ q_v ≤ 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
 | Theorem 3.1, variance strictly decreases in prior strength | `paper_theorem3_1_variance_strict_decrease_interior`; boundary checks `paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero`, `paper_theorem3_1_variance_strict_decrease_counterexample_quality_one` | formalized with corrected interior assumption; boundary bug found | `ProducerFairness/MainTheorems.lean` | The corrected strict theorem assumes `0 < q_v < 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow < etaHigh`. |
 | Theorem 3.1, squared bias nondecreases in prior strength | `paper_theorem3_1_squared_bias_nondecreasing` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
 | Theorem 3.2, squared bias convex in true quality | `paper_theorem3_2_squared_bias_convex_in_quality` | formalized | `ProducerFairness/MainTheorems.lean` | denominator nonzero |
@@ -36,4 +37,5 @@ algebra lives in `EconCSLean/Statistics/BinaryRating.lean`.
 The published strict variance-decrease statement should explicitly exclude
 boundary qualities. The formalized corrected version assumes `0 < q_v < 1`.
 Alternatively, the paper could state weak decrease on `0 ≤ q_v ≤ 1` and reserve
-strict decrease for the interior case.
+strict decrease for the interior case; the weak version is now formalized as
+`paper_theorem3_1_variance_weak_decrease`.

@@ -331,6 +331,57 @@ theorem not_strictly_decreasing_priorWeightedVariance_quality_one
   simp
 
 /--
+Weak variance decrease for all Bernoulli qualities in `[0, 1]`.
+
+The strict version fails at the boundary, but the weak monotonicity statement is
+valid throughout the closed quality interval.
+-/
+theorem priorWeightedVariance_weak_decrease
+    {alpha beta t q etaLow etaHigh : ℝ}
+    (hshape : 0 < alpha + beta)
+    (ht : 0 < t)
+    (hq0 : 0 ≤ q)
+    (hq1 : q ≤ 1)
+    (hetaLow_nonneg : 0 ≤ etaLow)
+    (heta_le : etaLow ≤ etaHigh) :
+    priorWeightedVariance alpha beta etaHigh t q ≤
+      priorWeightedVariance alpha beta etaLow t q := by
+  have hetaHigh_nonneg : 0 ≤ etaHigh := le_trans hetaLow_nonneg heta_le
+  have hq_gap : 0 ≤ 1 - q := sub_nonneg.mpr hq1
+  have hnum_nonneg : 0 ≤ t * q * (1 - q) := by
+    exact mul_nonneg (mul_nonneg ht.le hq0) hq_gap
+  have hden_low_pos : 0 < etaLow * alpha + etaLow * beta + t := by
+    calc
+      0 < etaLow * (alpha + beta) + t :=
+        add_pos_of_nonneg_of_pos
+          (mul_nonneg hetaLow_nonneg hshape.le) ht
+      _ = etaLow * alpha + etaLow * beta + t := by ring
+  have hden_high_pos : 0 < etaHigh * alpha + etaHigh * beta + t := by
+    calc
+      0 < etaHigh * (alpha + beta) + t :=
+        add_pos_of_nonneg_of_pos
+          (mul_nonneg hetaHigh_nonneg hshape.le) ht
+      _ = etaHigh * alpha + etaHigh * beta + t := by ring
+  have hden_le :
+      etaLow * alpha + etaLow * beta + t ≤
+        etaHigh * alpha + etaHigh * beta + t := by
+    calc
+      etaLow * alpha + etaLow * beta + t
+          = etaLow * (alpha + beta) + t := by ring
+      _ ≤ etaHigh * (alpha + beta) + t := by
+          simpa [add_comm, add_left_comm, add_assoc] using
+            add_le_add_right
+              (mul_le_mul_of_nonneg_right heta_le hshape.le) t
+      _ = etaHigh * alpha + etaHigh * beta + t := by ring
+  have hsq_le :
+      (etaLow * alpha + etaLow * beta + t) ^ 2 ≤
+        (etaHigh * alpha + etaHigh * beta + t) ^ 2 := by
+    exact pow_le_pow_left₀ hden_low_pos.le hden_le 2
+  unfold priorWeightedVariance
+  exact div_le_div_of_nonneg_left hnum_nonneg
+    (sq_pos_of_pos hden_low_pos) hsq_le
+
+/--
 Interior-quality corrected strict variance decrease for the fixed binary-rating
 model.
 

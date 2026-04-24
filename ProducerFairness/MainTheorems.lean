@@ -12,6 +12,25 @@ boundary-quality counterexamples.
 namespace ProducerFairness
 
 /--
+Correct weak version of Theorem 3.1's variance-decrease clause.
+
+Across the full Bernoulli quality interval `0 ≤ q_v ≤ 1`, increasing prior
+strength weakly decreases the posterior-mean variance term.
+-/
+theorem paper_theorem3_1_variance_weak_decrease
+    {alpha beta t q etaLow etaHigh : ℝ}
+    (hshape : 0 < alpha + beta)
+    (ht : 0 < t)
+    (hq0 : 0 ≤ q)
+    (hq1 : q ≤ 1)
+    (hetaLow_nonneg : 0 ≤ etaLow)
+    (heta_le : etaLow ≤ etaHigh) :
+    EconCSLean.Statistics.priorWeightedVariance alpha beta etaHigh t q ≤
+      EconCSLean.Statistics.priorWeightedVariance alpha beta etaLow t q := by
+  exact EconCSLean.Statistics.priorWeightedVariance_weak_decrease
+    hshape ht hq0 hq1 hetaLow_nonneg heta_le
+
+/--
 Corrected interior-quality version of the strict variance-decrease clause of
 Theorem 3.1.
 

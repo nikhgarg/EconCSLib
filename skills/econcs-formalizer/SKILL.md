@@ -178,7 +178,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says
-  "strictly decreasing" may need an explicit interior assumption.
+  "strictly decreasing" may need an explicit interior assumption. Also prove
+  the corresponding weak monotonicity theorem on the closed interval when it is
+  true; that is usually the paper-safe replacement.
 - Prefer sum-level certificates when the theorem is about a total expectation
   or finite sum. Do not impose candidatewise nonnegativity merely because it
   would make a `sum_univ_pos_of_pos_of_nonneg` proof convenient; in ranking and
