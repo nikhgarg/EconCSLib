@@ -183,6 +183,30 @@ theorem activePairsBound_of_basicFeasibleSupportCertificate {K n : ℕ}
   simp [UserType, Item, Nat.mul_comm] at hsupport
   exact le_trans hsupport (by omega)
 
+/--
+Appendix D, Lemma 4, Part 1 for the two-type Problem 6 LP: a basic feasible
+solution has at most `n + 1` positive `x_j,y_j` variables.
+-/
+theorem activePairsCard_le_n_add_one_of_basicFeasibleSupportCertificate_two
+    {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) (hcert : BasicFeasibleSupportCertificate ρ) :
+    activeTypeItemPairsCard ρ ≤ n + 1 := by
+  have hactive :=
+    activePairsBound_of_basicFeasibleSupportCertificate ρ hcert
+  unfold ActivePairsBound at hactive
+  omega
+
+/--
+Appendix D, Lemma 4, Part 1 for the two-type Problem 6 LP: at least `n - 1`
+of the `x_j,y_j` variables are zero in a basic feasible solution.
+-/
+theorem inactivePairsCard_ge_n_sub_one_of_basicFeasibleSupportCertificate_two
+    {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) (hcert : BasicFeasibleSupportCertificate ρ) :
+    n - 1 ≤ inactiveTypeItemPairsCard ρ := by
+  unfold BasicFeasibleSupportCertificate at hcert
+  omega
+
 /-- Types that recommend item `j` with positive probability. -/
 noncomputable def activeTypesForItem {K n : ℕ}
     (ρ : TypePolicy K n) (j : Item n) : Finset (UserType K) :=

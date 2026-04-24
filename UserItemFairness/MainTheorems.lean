@@ -933,6 +933,28 @@ end EstimatedRecommendationModel
 namespace TypePolicy
 
 /--
+Appendix D, Lemma 4, Part 1: a two-type basic feasible solution has at most
+`n + 1` positive `x_j,y_j` variables.
+-/
+theorem paper_lemma4_problem6_active_pairs_le_n_add_one
+    {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) (hcert : BasicFeasibleSupportCertificate ρ) :
+    activeTypeItemPairsCard ρ ≤ n + 1 := by
+  exact activePairsCard_le_n_add_one_of_basicFeasibleSupportCertificate_two
+    ρ hcert
+
+/--
+Appendix D, Lemma 4, Part 1: a two-type basic feasible solution has at least
+`n - 1` zero `x_j,y_j` variables.
+-/
+theorem paper_lemma4_problem6_inactive_pairs_ge_n_sub_one
+    {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) (hcert : BasicFeasibleSupportCertificate ρ) :
+    n - 1 ≤ inactiveTypeItemPairsCard ρ := by
+  exact inactivePairsCard_ge_n_sub_one_of_basicFeasibleSupportCertificate_two
+    ρ hcert
+
+/--
 Proposition 1 sparse shared-item consequence.
 
 If a reduced type-level policy has at most `n + K - 1` active type-item pairs
