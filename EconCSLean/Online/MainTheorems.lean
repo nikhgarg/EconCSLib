@@ -1,4 +1,4 @@
-import EconCSLean.Online.AdWords
+import EconCSLean.Online.AdWordsExtensions
 
 /-!
 # Paper-Facing Theorems: AdWords and Generalized Online Matching
@@ -622,6 +622,63 @@ theorem paper_adwords_small_bids_blocked_advertiser_spent_fraction
     1 - ε < I.spentFraction A a := by
   exact AdWordsInstance.spentFraction_gt_one_sub_epsilon_of_not_canAssign
     I A a q hbudget hsmall hnot
+
+/--
+Section 6 effective-bid reduction: replacing bids by any effective charge
+function preserves advertiser budgets, and it is an AdWords instance whenever
+the effective charges satisfy the same nonnegativity and small-bids hypotheses.
+-/
+theorem paper_adwords_effective_bids_small_bids
+    {Advertiser Query : Type*}
+    (I : AdWordsInstance Advertiser Query)
+    (effectiveBid : Advertiser → Query → ℝ) {ε : ℝ}
+    (hsmall : ∀ a q, effectiveBid a q ≤ ε * I.budget a) :
+    (I.withEffectiveBids effectiveBid).SmallBids ε := by
+  exact AdWordsInstance.withEffectiveBids_smallBids I effectiveBid hsmall
+
+/--
+Section 6 click-through-rate reduction: if CTRs are at most one and original
+bids are nonnegative and small, then expected effective bids are small.
+-/
+theorem paper_adwords_click_through_rates_small_bids
+    {Advertiser Query : Type*}
+    (I : AdWordsInstance Advertiser Query)
+    (ctr : Advertiser → Query → ℝ) {ε : ℝ}
+    (hctr_le_one : ∀ a q, ctr a q ≤ 1)
+    (hbid : I.NonnegativeBids)
+    (hsmall : I.SmallBids ε) :
+    (I.withClickThroughRates ctr).SmallBids ε := by
+  exact AdWordsInstance.withClickThroughRates_smallBids_of_ctr_le_one
+    I ctr hctr_le_one hbid hsmall
+
+/--
+Section 6 delayed-entry/availability reduction: inactive advertisers can be
+modeled by zero effective bids without breaking the small-bids hypothesis.
+-/
+theorem paper_adwords_availability_small_bids
+    {Advertiser Query : Type*}
+    (I : AdWordsInstance Advertiser Query)
+    (active : Advertiser → Query → Prop)
+    [∀ a q, Decidable (active a q)]
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hbudget : I.PositiveBudgets)
+    (hsmall : I.SmallBids ε) :
+    (I.withAvailability active).SmallBids ε := by
+  exact AdWordsInstance.withAvailability_smallBids
+    I active hε hbudget hsmall
+
+/--
+Section 6 multiple-ads reduction: expanding each original query into a finite
+family of slot queries preserves the small-bids hypothesis.
+-/
+theorem paper_adwords_multiple_slots_small_bids
+    {Advertiser Query : Type*}
+    (I : AdWordsInstance Advertiser Query)
+    (Slot : Query → Type*) {ε : ℝ}
+    (hsmall : I.SmallBids ε) :
+    (I.withSlots Slot).SmallBids ε := by
+  exact AdWordsInstance.withSlots_smallBids I Slot hsmall
 
 /--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the

@@ -266,6 +266,18 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   of hypotheses at every theorem call site.
   This is the faithful paper-level theorem for the finite-family model; do not
   force any fixed finite instance theorem to be exactly `1 - 1/e`.
+  After the family theorem is closed, formalize Section 6-style variants as
+  reductions to effective-bid AdWords instances. The useful transformations are
+  arbitrary effective charges, click-through-rate bids (`CTR * bid`),
+  availability/delayed-entry masks that zero inactive bids, and slot-query
+  expansion. Be explicit that the slot-query expansion is an independent
+  slot-query reduction; it does not by itself enforce a per-page
+  distinct-advertiser constraint unless a separate feasibility layer is added.
+  For the Section 7 randomized lower bound, do not bury Yao's lemma inside the
+  algorithm proof. First add a finite lower-bound certificate interface whose
+  fields are the distributional instance family, deterministic-algorithm
+  expected revenue bound, offline benchmark lower bound, and limiting ratio;
+  then connect the paper's construction to that certificate.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

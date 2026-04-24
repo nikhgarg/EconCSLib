@@ -20,7 +20,8 @@ version; the author PDF is listed only for easier access.
 
 That file contains the paper-facing theorem wrappers currently available.
 Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
-`AdWords.lean`.
+`AdWords.lean`. Section 6 effective-bid reductions live in
+`AdWordsExtensions.lean`.
 
 ## Theorem Status
 
@@ -34,6 +35,10 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Finite offline optimum exists | `paper_adwords_offline_optimum_exists` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets; finite advertisers and queries |
 | Residual budget and feasible next-query assignment | `residualBudget`, `CanAssign`, `canAssign_iff_bid_le_residualBudget` | formalized | `EconCSLean/Online/AdWords.lean` | finite query type |
 | Small-bids condition | `SmallBids`, `paper_adwords_small_bids_blocked_advertiser_spent_fraction` | formalized boundary lemma | `EconCSLean/Online/MainTheorems.lean` | positive budget for blocked advertiser |
+| Section 6 arbitrary effective charges | `withEffectiveBids`, `paper_adwords_effective_bids_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | effective charges must satisfy the target small-bids bound |
+| Section 6 click-through rates | `withClickThroughRates`, `paper_adwords_click_through_rates_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | CTRs at most one; original bids nonnegative and small |
+| Section 6 advertiser availability / delayed entry | `withAvailability`, `paper_adwords_availability_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | nonnegative `ε`, positive budgets, original small-bids condition |
+| Section 6 slot-query expansion | `withSlots`, `paper_adwords_multiple_slots_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | models independent slot queries; per-page distinct-advertiser feasibility is not encoded |
 | Balance/MSVV discount, dual-alpha, and scaled bid | `balanceDiscount`, `msvvDualAlpha`, `msvvNormalizedDualAlpha`, `balanceScore`, `slackScore` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | Slack-score dual-feasibility builder | `paper_adwords_dual_feasible_of_slack_score_bound` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative alpha/beta and pointwise slack-score cover |
 | Max-slack query duals | `maxSlackBeta`, `paper_adwords_dual_feasible_max_slack_beta` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonempty finite advertiser type |
@@ -122,3 +127,12 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family`: any
    `MsvvSmallBidsLimitFamily` has limiting guarantee
    `msvvRatio * optLimit ≤ revenueLimit`.
+5. Section 6 extension reductions are now formalized as effective-bid
+   transformations: arbitrary effective charges, click-through rates,
+   delayed-entry/availability masks, and slot-query expansion. The slot
+   expansion is the independent slot-query reduction; a stronger per-page
+   distinct-advertiser model would require an additional feasibility layer.
+6. Remaining paper work is Section 7's randomized lower bound. The next local
+   seam is a finite lower-bound certificate interface for distributions over
+   b-matching instances, before any attempt to mechanize Yao's lemma and the
+   asymptotic construction.
