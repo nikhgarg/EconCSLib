@@ -1,6 +1,7 @@
 import DecisionCore.FiniteExpectation
 import DecisionCore.FiniteSigns
 import DecisionCore.Policy
+import DecisionCore.PolicyAveraging
 import DecisionCore.Conditional
 import DecisionCore.Classwise
 import DecisionCore.Allocation

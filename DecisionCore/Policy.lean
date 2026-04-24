@@ -17,6 +17,20 @@ noncomputable def finiteMin {α : Type*} [Fintype α] [Nonempty α]
     (f : α → ℝ) : ℝ :=
   (Finset.univ : Finset α).inf' Finset.univ_nonempty f
 
+/-- A finite maximum is at least every indexed value. -/
+theorem le_finiteMax {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) (a : α) :
+    f a ≤ finiteMax f := by
+  unfold finiteMax
+  exact Finset.le_sup' (s := (Finset.univ : Finset α)) (f := f) (by simp)
+
+/-- A finite minimum is at most every indexed value. -/
+theorem finiteMin_le {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) (a : α) :
+    finiteMin f ≤ f a := by
+  unfold finiteMin
+  exact Finset.inf'_le (s := (Finset.univ : Finset α)) (f := f) (by simp)
+
 namespace Policy
 
 /-- Deterministic policy induced by a pure action selector. -/

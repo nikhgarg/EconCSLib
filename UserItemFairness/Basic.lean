@@ -55,6 +55,19 @@ noncomputable def userFairness {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (ρ : Policy m n) : ℝ :=
   finiteMin (normalizedUserUtility W ρ)
 
+/-- Row positivity makes the user-normalization denominator strictly positive. -/
+theorem bestItemUtility_pos_of_rowHasPositiveItem {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hRow : W.RowHasPositiveItem) (u : User m) :
+    0 < bestItemUtility W u := by
+  obtain ⟨j, hj⟩ := hRow u
+  exact lt_of_lt_of_le hj (DecisionCore.le_finiteMax (W.utility u) j)
+
+/-- Minimum user fairness is bounded above by every user's normalized utility. -/
+theorem userFairness_le_normalizedUserUtility {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) :
+    userFairness W ρ ≤ normalizedUserUtility W ρ u := by
+  exact DecisionCore.finiteMin_le (normalizedUserUtility W ρ) u
+
 /-- Raw utility accumulated by item `j` under policy `ρ`. -/
 noncomputable def rawItemUtility {m n : ℕ}
     (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) : ℝ :=

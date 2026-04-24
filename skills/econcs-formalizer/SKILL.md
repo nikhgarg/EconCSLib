@@ -130,6 +130,12 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - Related probability sources referenced by that project include
   `auto-res/lean-rademacher` for Rademacher/Dudley material and
   `RemyDegenne/CLT` for characteristic-function/CLT infrastructure.
+- Optimization and convex analysis: `optsuite/optlib` (`Optlib/*`) formalizes
+  convex functions, subgradients, Farkas-style alternatives, weak duality, KKT
+  conditions, and convergence of standard first-order optimization algorithms.
+  It is the first external place to inspect before building convex-optimization
+  or LP-duality infrastructure for recommendation, market, and admissions
+  papers.
 - Do not add one of these as a dependency blindly. First inspect
   `lean-toolchain`, `lakefile`, and `lake-manifest`; if the toolchain is behind
   the current repo, either port only the needed lemmas into a local generic
@@ -188,9 +194,12 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   weighted sums by type-cardinality equal sums over original agents, and finite
   minima over agents equal finite minima over types when representatives witness
   every fiber. Then paper reductions become mostly rewriting. For optimization
-  reductions, separate exact functional preservation from the remaining
-  optimal-value equality seam; prove lift and descend theorems conditional on
-  that seam.
+  reductions, separate exact functional preservation from supremum reasoning:
+  first prove lift/descend preservation, then prove symmetrization dominance
+  (same item feasibility and weakly better objective), then prove the `sSup`
+  equality from explicit nonempty/bounded-above feasible-value side conditions.
+  Avoid opaque assumptions such as "the optimal values are equal" when they can
+  be replaced by this order-theoretic reduction.
 - For finite exchange arguments, avoid re-proving whole objective sums by hand.
   Use a generic two-point finite-sum update lemma: if two functions differ only
   at `src` and `dst`, the total sum changes by the two pointwise deltas. Then
