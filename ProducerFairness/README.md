@@ -15,7 +15,9 @@ for theorem-number and definition comparisons.
 
 ## Central Theorem File
 
-- `ProducerFairness/MainTheorems.lean`
+- `ProducerFairness/PaperFacingTheorems.lean`
+  (imports and re-exports the wrappers in `ProducerFairness/MainTheorems.lean` for a
+  single-file audit target)
 
 That file contains the paper-facing theorem wrappers. Reusable binary-rating
 algebra lives in `EconCSLean/Statistics/BinaryRating.lean`.
