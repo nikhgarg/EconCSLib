@@ -32,6 +32,22 @@ abbrev Assignment (Advertiser Query : Type*) :=
 def emptyAssignment : Assignment Advertiser Query :=
   fun _ => none
 
+/-- Update an assignment by assigning query `q` to advertiser `a`. -/
+def assignQuery [DecidableEq Query]
+    (A : Assignment Advertiser Query) (q : Query) (a : Advertiser) :
+    Assignment Advertiser Query :=
+  fun q' => if q' = q then some a else A q'
+
+/-- State carried by an online AdWords algorithm over a query history. -/
+structure HistoryState (Advertiser Query : Type*) where
+  assignment : Assignment Advertiser Query
+  seen : Finset Query
+
+/-- Initial online state: nothing assigned and no queries seen. -/
+def initialHistoryState [DecidableEq Query] : HistoryState Advertiser Query where
+  assignment := emptyAssignment
+  seen := ∅
+
 /-- Spend charged to one advertiser by an assignment. -/
 noncomputable def spend [Fintype Query] [DecidableEq Advertiser]
     (I : AdWordsInstance Advertiser Query)
@@ -78,6 +94,30 @@ def NonnegativeBids (I : AdWordsInstance Advertiser Query) : Prop :=
 /-- Nonnegative advertiser budgets. -/
 def NonnegativeBudgets (I : AdWordsInstance Advertiser Query) : Prop :=
   ∀ a, 0 ≤ I.budget a
+
+/-- A choice rule maps the current assignment and query to an optional advertiser. -/
+abbrev ChoiceRule (Advertiser Query : Type*) :=
+  Assignment Advertiser Query → Query → Option Advertiser
+
+/--
+A choice rule is feasible if every advertiser it returns can accept the query
+under the current assignment.
+-/
+def ChoiceRuleFeasible
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query) : Prop :=
+  ∀ A q a, rule A q = some a → I.CanAssign A q a
+
+/--
+Online-state invariant: the current assignment is budget-feasible and every
+query outside the `seen` set is still unassigned.
+-/
+def StateInvariant
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (S : HistoryState Advertiser Query) : Prop :=
+  I.Feasible S.assignment ∧ ∀ q, q ∉ S.seen → S.assignment q = none
 
 /--
 The finite set of feasible offline assignments. This is the offline benchmark
@@ -167,6 +207,51 @@ def IsBalanceChoice
     ∀ b, I.CanAssign A q b → I.balanceScore A b q ≤ I.balanceScore A a q
 
 /--
+One online update step. Repeated queries are marked as seen but not reassigned;
+new queries are assigned according to the choice rule when it returns an
+advertiser.
+-/
+def stepHistoryState
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (_I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query)
+    (S : HistoryState Advertiser Query) (q : Query) :
+    HistoryState Advertiser Query :=
+  if q ∈ S.seen then
+    { S with seen := insert q S.seen }
+  else
+    match rule S.assignment q with
+    | none => { assignment := S.assignment, seen := insert q S.seen }
+    | some a =>
+        { assignment := assignQuery S.assignment q a
+          seen := insert q S.seen }
+
+/-- Run an online choice rule from an arbitrary state over a finite query history. -/
+def runHistoryStateFrom
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query) :
+    HistoryState Advertiser Query → List Query → HistoryState Advertiser Query
+  | S, [] => S
+  | S, q :: qs => runHistoryStateFrom I rule (stepHistoryState I rule S q) qs
+
+/-- Run an online choice rule from the initial empty state. -/
+def runHistoryState
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query) (history : List Query) :
+    HistoryState Advertiser Query :=
+  runHistoryStateFrom I rule initialHistoryState history
+
+/-- The final assignment returned by an online choice rule on a query history. -/
+def runAssignment
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query) (history : List Query) :
+    Assignment Advertiser Query :=
+  (runHistoryState I rule history).assignment
+
+/--
 A reusable certificate for the competitive-ratio conclusion. The hard paper
 proof supplies this certificate for the Balance/MSVV algorithm with ratio
 `1 - 1 / Real.exp 1` in the small-bids limit.
@@ -212,6 +297,96 @@ theorem emptyAssignment_feasible [Fintype Query] [DecidableEq Advertiser]
   intro a
   rw [spend_emptyAssignment]
   exact hbudget a
+
+@[simp]
+theorem assignQuery_apply_self [DecidableEq Query]
+    (A : Assignment Advertiser Query) (q : Query) (a : Advertiser) :
+    assignQuery A q a q = some a := by
+  simp [assignQuery]
+
+theorem assignQuery_apply_ne [DecidableEq Query]
+    (A : Assignment Advertiser Query) {q q' : Query} (a : Advertiser)
+    (hne : q' ≠ q) :
+    assignQuery A q a q' = A q' := by
+  simp [assignQuery, hne]
+
+theorem spend_assignQuery_self_of_unassigned
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (q : Query) (a : Advertiser)
+    (hunassigned : A q = none) :
+    I.spend (assignQuery A q a) a = I.spend A a + I.bid a q := by
+  classical
+  unfold spend assignQuery
+  calc
+    (∑ q' : Query,
+        match (if q' = q then some a else A q') with
+        | none => 0
+        | some a' => if a' = a then I.bid a q' else 0) =
+        ∑ q' : Query,
+          ((match A q' with
+            | none => 0
+            | some a' => if a' = a then I.bid a q' else 0) +
+            if q' = q then I.bid a q else 0) := by
+      apply Finset.sum_congr rfl
+      intro q' _hq'
+      by_cases hq : q' = q
+      · subst q'
+        simp [hunassigned]
+      · simp [hq]
+    _ = (∑ q' : Query,
+          match A q' with
+          | none => 0
+          | some a' => if a' = a then I.bid a q' else 0) +
+        ∑ q' : Query, (if q' = q then I.bid a q else 0) := by
+      rw [Finset.sum_add_distrib]
+    _ = (∑ q' : Query,
+          match A q' with
+          | none => 0
+          | some a' => if a' = a then I.bid a q' else 0) + I.bid a q := by
+      rw [Finset.sum_ite_eq']
+      simp
+
+theorem spend_assignQuery_other_of_unassigned
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (q : Query) {a b : Advertiser}
+    (hunassigned : A q = none) (hne : b ≠ a) :
+    I.spend (assignQuery A q a) b = I.spend A b := by
+  classical
+  unfold spend assignQuery
+  apply Finset.sum_congr rfl
+  intro q' _hq'
+  by_cases hq : q' = q
+  · subst q'
+    simp [hunassigned, hne.symm]
+  · simp [hq]
+
+theorem feasible_assignQuery_of_canAssign
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (q : Query) (a : Advertiser)
+    (hfeasible : I.Feasible A)
+    (hunassigned : A q = none)
+    (hcan : I.CanAssign A q a) :
+    I.Feasible (assignQuery A q a) := by
+  intro b
+  by_cases hb : b = a
+  · subst b
+    rw [spend_assignQuery_self_of_unassigned I A q a hunassigned]
+    exact hcan
+  · rw [spend_assignQuery_other_of_unassigned I A q hunassigned hb]
+    exact hfeasible b
+
+theorem initialHistoryState_invariant
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets) :
+    I.StateInvariant (initialHistoryState : HistoryState Advertiser Query) := by
+  constructor
+  · exact emptyAssignment_feasible I hbudget
+  · intro q _hq
+    rfl
 
 theorem residualBudget_nonneg_of_feasible
     [Fintype Query] [DecidableEq Advertiser]
@@ -531,6 +706,129 @@ theorem exists_balanceChoice_of_exists_canAssign
   · exact (mem_feasibleAdvertisers I A q a).1 ha
   · intro b hb
     exact hmax b ((mem_feasibleAdvertisers I A q b).2 hb)
+
+/-- Canonical Balance/MSVV choice rule: pick a scaled-bid maximizer if one exists. -/
+noncomputable def balanceChoiceRule
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query) :
+    ChoiceRule Advertiser Query := by
+  classical
+  exact fun A q =>
+    if h : ∃ a, I.CanAssign A q a then
+      some (Classical.choose (exists_balanceChoice_of_exists_canAssign I A q h))
+    else
+      none
+
+theorem balanceChoiceRule_isBalanceChoice_of_eq_some
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (q : Query) (a : Advertiser)
+    (hchoice : I.balanceChoiceRule A q = some a) :
+    I.IsBalanceChoice A q a := by
+  classical
+  unfold balanceChoiceRule at hchoice
+  by_cases h : ∃ a, I.CanAssign A q a
+  · simp [h] at hchoice
+    have hspec :=
+      Classical.choose_spec (exists_balanceChoice_of_exists_canAssign I A q h)
+    simpa [← hchoice] using hspec
+  · simp [h] at hchoice
+
+theorem balanceChoiceRule_feasible
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query) :
+    I.ChoiceRuleFeasible I.balanceChoiceRule := by
+  intro A q a hchoice
+  exact (balanceChoiceRule_isBalanceChoice_of_eq_some I A q a hchoice).1
+
+set_option linter.flexible false in
+theorem stepHistoryState_invariant
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (S : HistoryState Advertiser Query) (q : Query)
+    (hS : I.StateInvariant S) :
+    I.StateInvariant (stepHistoryState I rule S q) := by
+  classical
+  by_cases hseen : q ∈ S.seen
+  · simp [stepHistoryState, hseen]
+    constructor
+    · exact hS.1
+    · intro q' hq'
+      exact hS.2 q' hq'
+  · cases hchoice : rule S.assignment q with
+    | none =>
+        simp [stepHistoryState, hseen, hchoice]
+        constructor
+        · exact hS.1
+        · intro q' hq'
+          have hnotseen : q' ∉ S.seen := by
+            intro hin
+            exact hq' (by simp [hin])
+          exact hS.2 q' hnotseen
+    | some a =>
+        simp [stepHistoryState, hseen, hchoice]
+        constructor
+        · exact feasible_assignQuery_of_canAssign I S.assignment q a
+            hS.1 (hS.2 q hseen) (hrule S.assignment q a hchoice)
+        · intro q' hq'
+          have hne : q' ≠ q := by
+            intro heq
+            apply hq'
+            simp [heq]
+          have hnotseen : q' ∉ S.seen := by
+            intro hin
+            exact hq' (by simp [hin])
+          change assignQuery S.assignment q a q' = none
+          rw [assignQuery_apply_ne S.assignment a hne]
+          exact hS.2 q' hnotseen
+
+theorem runHistoryStateFrom_invariant
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) :
+    I.StateInvariant (runHistoryStateFrom I rule S history) := by
+  induction history generalizing S with
+  | nil =>
+      exact hS
+  | cons q qs ih =>
+      exact ih (stepHistoryState I rule S q)
+        (stepHistoryState_invariant I rule hrule S q hS)
+
+theorem runHistoryState_invariant
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) :
+    I.StateInvariant (runHistoryState I rule history) := by
+  exact runHistoryStateFrom_invariant I rule hrule history
+    initialHistoryState (initialHistoryState_invariant I hbudget)
+
+theorem runAssignment_feasible
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) :
+    I.Feasible (I.runAssignment rule history) := by
+  exact (runHistoryState_invariant I hbudget rule hrule history).1
+
+theorem balanceRunAssignment_feasible
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query) :
+    I.Feasible (I.runAssignment I.balanceChoiceRule history) := by
+  exact runAssignment_feasible I hbudget I.balanceChoiceRule
+    (balanceChoiceRule_feasible I) history
 
 theorem competitive_of_certificate
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]

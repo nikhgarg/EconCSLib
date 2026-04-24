@@ -78,6 +78,35 @@ theorem paper_adwords_balance_choice_exists
   exact AdWordsInstance.exists_balanceChoice_of_exists_canAssign I A q h
 
 /--
+Any feasible online choice rule preserves AdWords budget feasibility over a
+finite query history.
+-/
+theorem paper_adwords_run_assignment_feasible
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) :
+    I.Feasible (I.runAssignment rule history) := by
+  exact AdWordsInstance.runAssignment_feasible I hbudget rule hrule history
+
+/--
+The canonical Balance/MSVV scaled-bid choice rule preserves budget feasibility
+over a finite query history.
+-/
+theorem paper_adwords_balance_run_assignment_feasible
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query) :
+    I.Feasible (I.runAssignment I.balanceChoiceRule history) := by
+  exact AdWordsInstance.balanceRunAssignment_feasible I hbudget history
+
+/--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the
 advertised competitive-ratio inequality against the offline optimum.
 

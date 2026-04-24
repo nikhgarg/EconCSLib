@@ -169,7 +169,8 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   feasible next-query assignment, offline optimum, dual feasibility, and dual
   objective. Then model Balance/MSVV as a history fold whose local step chooses
   a feasible advertiser maximizing the scaled bid
-  `bid * (1 - exp(spentFraction - 1))`.
+  `bid * (1 - exp(spentFraction - 1))`; prove run feasibility separately from
+  the competitive-ratio invariant.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
@@ -257,8 +258,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `PrimalDualCompetitiveCertificate` with fields for primal feasibility,
   nonnegative ratio, dual variables, dual feasibility, and the scaled
   dual-objective bound. The remaining Balance/MSVV work should construct that
-  certificate from a query-history fold; the small-bids limit should be a
-  separate paper-local theorem, not mixed into the finite LP layer.
+  certificate from the query-history fold; run feasibility should already be
+  closed through a generic `ChoiceRuleFeasible` theorem. The small-bids limit
+  should be a separate paper-local theorem, not mixed into the finite LP layer.
 - For symmetry/type-reduction arguments, prove the generic fiber facts first:
   weighted sums by type-cardinality equal sums over original agents, and finite
   minima over agents equal finite minima over types when representatives witness

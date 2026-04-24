@@ -35,6 +35,9 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Residual budget and feasible next-query assignment | `residualBudget`, `CanAssign`, `canAssign_iff_bid_le_residualBudget` | formalized | `EconCSLean/Online/AdWords.lean` | finite query type |
 | Balance/MSVV discount and scaled bid | `balanceDiscount`, `balanceScore` | formalized | `EconCSLean/Online/AdWords.lean` | analytic competitive proof not included |
 | Balance/MSVV next-query choice exists | `paper_adwords_balance_choice_exists` | formalized | `EconCSLean/Online/MainTheorems.lean` | at least one advertiser can accept the query |
+| Online history state and run fold | `HistoryState`, `stepHistoryState`, `runHistoryState`, `runAssignment` | formalized | `EconCSLean/Online/AdWords.lean` | repeated query IDs are skipped after first sighting |
+| Feasible choice rules preserve feasibility | `paper_adwords_run_assignment_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | choice rule must satisfy `ChoiceRuleFeasible` |
+| Balance/MSVV run is feasible | `paper_adwords_balance_run_assignment_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
 | Standard AdWords LP dual feasibility | `DualFeasible`, `dualObjective` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | AdWords LP weak duality | `paper_adwords_lp_weak_duality` | formalized | `EconCSLean/Online/MainTheorems.lean` | feasible assignment and dual-feasible variables |
 | Competitive-ratio certificate | `CompetitiveRatioCertificate` | formalized certificate interface | `EconCSLean/Online/AdWords.lean` | certificate must be supplied by algorithm analysis |
@@ -45,8 +48,9 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 
 1. Keep the finite LP and offline benchmark layer stable: `offlineOptimumValue`,
    `DualFeasible`, and `paper_adwords_lp_weak_duality` are the reusable core.
-2. Next define an explicit online history/fold for the Balance/MSVV algorithm
-   using `IsBalanceChoice` for each arriving query.
+2. The online history/fold for feasible choice rules and the canonical
+   Balance/MSVV choice rule is formalized. Next connect per-query choices to
+   primal and dual variable updates.
 3. Then prove a stepwise primal-dual invariant that constructs
    `PrimalDualCompetitiveCertificate` for the algorithm in certificate form.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
