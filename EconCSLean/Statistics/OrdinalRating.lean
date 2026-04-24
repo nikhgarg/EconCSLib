@@ -1,5 +1,6 @@
 import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Tactic.Ring
 
 namespace EconCSLean
 namespace Statistics
@@ -34,10 +35,16 @@ theorem dirichletCategoricalPosteriorMean_eq_weighted_sum
     dirichletCategoricalPosteriorMean rating alpha N =
       ∑ j : K, ((alpha j + N j) / (∑ j : K, (alpha j + N j))) * rating j := by
   unfold dirichletCategoricalPosteriorMean
-  rw [Finset.sum_div]
-  congr 1
+  have h_div : (∑ j : K, (alpha j + N j) * rating j) / (∑ j : K, (alpha j + N j)) =
+    (∑ j : K, (alpha j + N j) * rating j) * (∑ j : K, (alpha j + N j))⁻¹ := by
+    exact div_eq_mul_inv _ _
+  rw [h_div, Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro x _
+  have h_div2 : ((alpha x + N x) / ∑ j : K, (alpha j + N j)) * rating x =
+    (alpha x + N x) * (∑ j : K, (alpha j + N j))⁻¹ * rating x := by
+    exact congrArg (fun a => a * rating x) (div_eq_mul_inv _ _)
+  rw [h_div2]
   ring
 
 end Statistics

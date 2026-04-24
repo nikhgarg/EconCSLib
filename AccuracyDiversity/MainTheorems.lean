@@ -145,7 +145,9 @@ theorem paper_uniform_sqrt_homogeneity_of_count_closeness
   refine sqrtLikelihoodProfile.approx_of_count_abs_error
     likelihood a hN hNpos ?_
   intro t
-  sorry -- Bridge to targetShare needs hnorm handle
+  have ht := hclose t
+  have hshare := sqrtLikelihoodProfile.targetShare_eq likelihood t hnorm
+  rwa [← hshare] at ht
 
 /--
 Proposition 2 for the uniform top-one objective.
@@ -159,9 +161,41 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     (hNpos : 0 < N)
     (hlike_pos : ∀ t, 0 < likelihood t)
     (a : CountAllocation T)
+    (h_interior : ∀ t, 1 ≤ uniformSqrtShiftedTarget likelihood N t)
     (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a) :
     (sqrtLikelihoodProfile likelihood).Approx a
       (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
+  have hnorm : ∑ i : ItemType T, Real.sqrt (likelihood i) ≠ 0 := by
+    have hsum : 0 < ∑ i : ItemType T, likelihood i := by
+      apply Finset.sum_pos
+      · intro i _
+        exact hlike_pos i
+      · exact Finset.univ_nonempty
+    exact sqrtLikelihoodProfile_normalizer_ne_zero likelihood hsum (fun i => le_of_lt (hlike_pos i))
+  let lower := uniformSqrtLowerAnchor likelihood N
+  let upper := uniformSqrtUpperAnchor likelihood N
+  have horder : ∀ t, lower.count t ≤ upper.count t := by
+    intro t
+    unfold lower upper uniformSqrtLowerAnchor uniformSqrtUpperAnchor floorCountAnchor
+    dsimp only
+    have h1 : 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ := by
+      exact Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
+    exact Nat.sub_le _ _
+  have hcert : UniformTopOne.StrictRoundingExchangeCertificateBetween likelihood lower upper := by
+    apply UniformTopOne.strictRoundingExchangeCertificateBetween_of_shifted_target likelihood lower upper (uniformSqrtScale likelihood N) (uniformSqrtShiftedTarget likelihood N)
+    · unfold uniformSqrtScale
+      have hden : (N + T : ℝ) ^ 2 > 0 := by positivity
+      have hnum : 0 < (∑ i, Real.sqrt (likelihood i)) ^ 2 := by positivity
+      positivity
+    · intro t
+      exact likelihood_eq_scale_mul_shiftedTarget_sq likelihood N t (fun i => le_of_lt (hlike_pos i)) hnorm
+    · intro t
+      exact uniformSqrtShiftedTarget_nonneg likelihood N t
+    · intro t
+      exact uniformSqrtUpperAnchor_shift_le likelihood N t
+    · intro t _
+      exact uniformSqrtLowerAnchor_le_shift likelihood N t h_interior
+  have hno := UniformTopOne.noRoundingCrossingBetween_of_strictExchangeCertificate likelihood N hopt (fun t => le_of_lt (hlike_pos t)) horder hcert
   sorry
 
 /--

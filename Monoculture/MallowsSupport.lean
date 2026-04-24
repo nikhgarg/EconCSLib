@@ -19,9 +19,80 @@ theorem mallowsWeight_nonneg {n : ℕ} {q : ℝ} (hq : 0 < q)
     0 ≤ mallowsWeight q ρ π := by
   exact le_of_lt (mallowsWeight_pos (hq := hq) ρ π)
 
+/-- The finite Mallows partition function is strictly positive when `q > 0`. -/
+theorem mallowsPartition_pos {n : ℕ} {q : ℝ} (hq : 0 < q)
+    (ρ : Ranking n) :
+    0 < mallowsPartition q ρ := by
+  classical
+  unfold mallowsPartition
+  apply DecisionCore.sum_univ_pos_of_pos_of_nonneg (a₀ := ρ)
+  · simpa using mallowsWeight_pos (hq := hq) ρ ρ
+  · intro π
+    exact mallowsWeight_nonneg (hq := hq) ρ π
+
+/-- The actual finite Mallows PMF obtained by normalizing the real weights. -/
+noncomputable def mallowsPMF {n : ℕ} (q : ℝ) (ρ : Ranking n)
+    (hq : 0 < q) : PMF (Ranking n) :=
+  PMF.ofFintype
+    (fun π : Ranking n =>
+      ENNReal.ofReal (mallowsWeight q ρ π / mallowsPartition q ρ))
+    (by
+      classical
+      have hpartition_pos : 0 < mallowsPartition q ρ :=
+        mallowsPartition_pos (hq := hq) ρ
+      have hnonneg :
+          ∀ π ∈ (Finset.univ : Finset (Ranking n)),
+            0 ≤ mallowsWeight q ρ π / mallowsPartition q ρ := by
+        intro π _
+        exact div_nonneg (mallowsWeight_nonneg (hq := hq) ρ π)
+          (le_of_lt hpartition_pos)
+      have hsum :
+          (∑ π : Ranking n, mallowsWeight q ρ π / mallowsPartition q ρ) =
+            1 := by
+        rw [(Finset.sum_div
+          (s := (Finset.univ : Finset (Ranking n)))
+          (f := fun π : Ranking n => mallowsWeight q ρ π)
+          (a := mallowsPartition q ρ)).symm]
+        unfold mallowsPartition
+        field_simp [ne_of_gt hpartition_pos]
+      calc
+        (∑ π : Ranking n,
+            ENNReal.ofReal (mallowsWeight q ρ π / mallowsPartition q ρ))
+            =
+            ENNReal.ofReal
+              (∑ π : Ranking n, mallowsWeight q ρ π / mallowsPartition q ρ) := by
+              rw [ENNReal.ofReal_sum_of_nonneg hnonneg]
+        _ = 1 := by
+              rw [hsum]
+              simp)
+
+@[simp] theorem mallowsPMF_apply_toReal {n : ℕ} {q : ℝ}
+    (hq : 0 < q) (ρ π : Ranking n) :
+    ((mallowsPMF q ρ hq) π).toReal =
+      mallowsWeight q ρ π / mallowsPartition q ρ := by
+  unfold mallowsPMF
+  rw [PMF.ofFintype_apply]
+  exact ENNReal.toReal_ofReal
+    (div_nonneg (mallowsWeight_nonneg (hq := hq) ρ π)
+      (le_of_lt (mallowsPartition_pos (hq := hq) ρ)))
+
 namespace MallowsSpec
 
 variable {n : ℕ} (M : MallowsSpec n)
+
+/-- Concrete finite Mallows specification at center `ρ` and inverse parameter `q`. -/
+noncomputable def ofQ (ρ : Ranking n) (q : ℝ) (hq : 0 < q) :
+    MallowsSpec n where
+  center := ρ
+  q := q
+  law := mallowsPMF q ρ hq
+  partition := mallowsPartition q ρ
+  q_pos := hq
+  partition_pos := mallowsPartition_pos (hq := hq) ρ
+  partition_eq_sum := rfl
+  law_apply_toReal := by
+    intro π
+    exact mallowsPMF_apply_toReal hq ρ π
 
 /-- The center ranking has normalized mass `1 / partition`. -/
 @[simp] theorem center_mass_toReal_eq_inv_partition :

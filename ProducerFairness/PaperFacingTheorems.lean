@@ -23,14 +23,45 @@ namespace ProducerFairness
 
 /-! ## 1) Binary-rating model primitives - -/
 
-noncomputable abbrev priorWeightedPosteriorMean :=
-  EconCSLean.Statistics.priorWeightedPosteriorMean
-noncomputable abbrev priorWeightedBias :=
-  EconCSLean.Statistics.priorWeightedBias
-noncomputable abbrev priorWeightedVariance :=
-  EconCSLean.Statistics.priorWeightedVariance
-noncomputable abbrev priorWeightedSquaredBias :=
-  EconCSLean.Statistics.priorWeightedSquaredBias
+/-- The posterior mean estimated quality in the fixed binary rating model.
+    Paper Definition: $\frac{\eta \alpha + t q_v}{\eta (\alpha + \beta) + t}$
+-/
+noncomputable def paper_posterior_mean (alpha beta eta t q_v : ℝ) : ℝ :=
+  (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t)
+
+theorem paper_posterior_mean_eq (alpha beta eta t q_v : ℝ) :
+  paper_posterior_mean alpha beta eta t q_v = EconCSLean.Statistics.priorWeightedPosteriorMean alpha beta eta t q_v := by
+  rfl
+
+/-- The bias of the estimated quality.
+    Paper Definition: $E[\hat{q}_v] - q_v$
+-/
+noncomputable def paper_bias (alpha beta eta t q_v : ℝ) : ℝ :=
+  paper_posterior_mean alpha beta eta t q_v - q_v
+
+theorem paper_bias_eq (alpha beta eta t q_v : ℝ) :
+  paper_bias alpha beta eta t q_v = EconCSLean.Statistics.priorWeightedBias alpha beta eta t q_v := by
+  rfl
+
+/-- The variance of the estimated quality.
+    Paper Definition: $\frac{t q_v (1 - q_v)}{(\eta (\alpha + \beta) + t)^2}$
+-/
+noncomputable def paper_variance (alpha beta eta t q_v : ℝ) : ℝ :=
+  t * q_v * (1 - q_v) / (eta * alpha + eta * beta + t) ^ 2
+
+theorem paper_variance_eq (alpha beta eta t q_v : ℝ) :
+  paper_variance alpha beta eta t q_v = EconCSLean.Statistics.priorWeightedVariance alpha beta eta t q_v := by
+  rfl
+
+/-- The squared bias of the estimated quality.
+    Paper Definition: $(E[\hat{q}_v] - q_v)^2$
+-/
+noncomputable def paper_squared_bias (alpha beta eta t q_v : ℝ) : ℝ :=
+  (paper_bias alpha beta eta t q_v) ^ 2
+
+theorem paper_squared_bias_eq (alpha beta eta t q_v : ℝ) :
+  paper_squared_bias alpha beta eta t q_v = EconCSLean.Statistics.priorWeightedSquaredBias alpha beta eta t q_v := by
+  rfl
 
 abbrev JensenConvex := EconCSLean.Statistics.JensenConvex
 abbrev JensenConcave := EconCSLean.Statistics.JensenConcave

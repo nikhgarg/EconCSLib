@@ -3,28 +3,38 @@
 
 \begin{document}
 \begin{tikzpicture}[
-    node distance=1.5cm and 1cm,
-    result/.style={rectangle, draw, fill=green!20, minimum width=3cm, minimum height=1cm, align=center},
-    model/.style={ellipse, draw, fill=blue!10, minimum width=3cm, minimum height=1cm, align=center},
+    node distance=1.5cm and 2cm,
+    result/.style={rectangle, draw, fill=green!20, minimum width=3.5cm, minimum height=1cm, align=center},
+    model/.style={ellipse, draw, fill=blue!10, minimum width=3.5cm, minimum height=1cm, align=center},
     caveat/.style={diamond, draw, fill=red!10, minimum width=2.5cm, align=center, inner sep=0pt, font=\small},
+    unformalized/.style={rectangle, draw, dashed, fill=gray!10, minimum width=3.5cm, minimum height=1cm, align=center},
     arrow/.style={-{Stealth}, thick}
 ]
 
-% Nodes
+% Center Column (Models)
 \node[model] (ModelDefs) {Binary Rating Model \\ Primitives};
+\node[model, below=2cm of ModelDefs] (DynamicDefs) {Responsive Market \\ Primitives};
 
-\node[result, right=of ModelDefs, yshift=2.5cm] (Thm3_1_Var_Weak) {Thm 3.1: Variance \\ Weak Decrease};
+% Right Column (Fixed Model Theorems)
+\node[result, right=3cm of ModelDefs, yshift=2.5cm] (Thm3_1_Var_Weak) {Thm 3.1: Variance \\ Weak Decrease};
 \node[result, below=of Thm3_1_Var_Weak] (Thm3_1_Var_Strict) {Thm 3.1: Variance \\ Strict Interior};
 \node[result, below=of Thm3_1_Var_Strict] (Thm3_1_Bias) {Thm 3.1: Squared Bias \\ Nondecreasing};
 
-\node[result, right=of ModelDefs, yshift=-1.5cm] (Thm3_2_Bias_Convex) {Thm 3.2: Squared Bias \\ Convexity};
+\node[result, right=3cm of DynamicDefs, yshift=2cm] (Thm3_2_Bias_Convex) {Thm 3.2: Squared Bias \\ Convexity};
 \node[result, below=of Thm3_2_Bias_Convex] (Thm3_2_Bias_Min) {Thm 3.2: Squared Bias \\ Global Min};
 \node[result, below=of Thm3_2_Bias_Min] (Thm3_2_Var_Concave) {Thm 3.2: Variance \\ Concavity};
 \node[result, below=of Thm3_2_Var_Concave] (Thm3_2_Var_Max) {Thm 3.2: Variance \\ Global Max};
 
-\node[caveat, above=of Thm3_1_Var_Strict, xshift=3cm] (Boundary_Caveats) {Boundary \\ Caveats};
+\node[caveat, right=2cm of Thm3_1_Var_Strict] (Boundary_Caveats) {Boundary \\ Caveats};
 
-% Edges
+% Left Column (Dynamic Model Theorems / Apps)
+\node[result, left=3cm of DynamicDefs, yshift=2cm] (Unfairness) {Sec 4: Individual \\ Producer Unfairness};
+\node[result, below=of Unfairness] (Thompson) {Sec 4: Thompson Sampling \\ Mechanism};
+\node[result, below=of Thompson] (Regret) {Sec 4: Total Expected \\ Regret};
+\node[result, below=of Regret] (MSE_Decomp) {Appx C: MSE \\ Decomposition};
+\node[result, left=2cm of Unfairness] (Dirichlet) {Appx E: Dirichlet-Cat \\ Posterior Mean};
+
+% Edges - Fixed
 \draw[arrow] (ModelDefs) -- (Thm3_1_Var_Weak);
 \draw[arrow] (ModelDefs) -- (Thm3_1_Var_Strict);
 \draw[arrow] (ModelDefs) -- (Thm3_1_Bias);
@@ -32,15 +42,22 @@
 \draw[arrow] (ModelDefs) -- (Thm3_2_Bias_Min);
 \draw[arrow] (ModelDefs) -- (Thm3_2_Var_Concave);
 \draw[arrow] (ModelDefs) -- (Thm3_2_Var_Max);
-
 \draw[arrow, dashed] (Boundary_Caveats) -- (Thm3_1_Var_Strict);
 
+% Edges - Dynamic
+\draw[arrow] (DynamicDefs) -- (Thompson);
+\draw[arrow] (DynamicDefs) -- (Regret);
+\draw[arrow] (DynamicDefs) -- (Unfairness);
+\draw[arrow] (DynamicDefs) -- (MSE_Decomp);
+\draw[arrow] (ModelDefs) -- (MSE_Decomp);
+
 % Legend
-\node[draw, rectangle, below=of Thm3_2_Var_Max, xshift=-2cm, yshift=-0.5cm, align=left] (Legend) {
+\node[draw, rectangle, below=2cm of DynamicDefs, align=left] (Legend) {
     \textbf{Legend} \\
-    \tikz\draw[fill=green!20] (0,0) rectangle (0.3,0.2); Fully Formalized \\
+    \tikz\draw[fill=green!20] (0,0) rectangle (0.3,0.2); Fully Formalized Result \\
     \tikz\draw[fill=blue!10] (0,0) ellipse (0.15 and 0.1); Model/Definitions \\
-    \tikz\draw[fill=red!10] (0,0) (0.15,0) -- (0,0.1) -- (-0.15,0) -- (0,-0.1) -- cycle; Counterexample/Caveat
+    \tikz\draw[fill=red!10] (0,0) (0.15,0) -- (0,0.1) -- (-0.15,0) -- (0,-0.1) -- cycle; Counterexample/Caveat \\
+    \tikz\draw[dashed, fill=gray!10] (0,0) rectangle (0.3,0.2); Not Formalized
 };
 
 \end{tikzpicture}

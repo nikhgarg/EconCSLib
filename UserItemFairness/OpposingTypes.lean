@@ -4144,6 +4144,142 @@ def Problem6PolicyOptimal {n : ℕ}
       problem6LPFeasible alpha v ρ' ell' → ell' ≤ ell
 
 /--
+Finite dual certificate for upper-bounding type `1` raw utility over the
+Problem 6 feasible face at item value `ell`.
+
+The fields are the two row-sum dual variables and nonnegative item-constraint
+dual weights. The coefficient inequalities are exactly the finite weak-duality
+conditions for the LP that maximizes type-`1` utility subject to the Problem 6
+item lower bounds and row-simplex constraints.
+-/
+structure Problem6TypeOneRawUtilityDualCertificate {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ell upper : ℝ) : Prop where
+  rowZero rowOne : ℝ
+  itemWeight : Item n → ℝ
+  itemWeight_nonneg : ∀ j : Item n, 0 ≤ itemWeight j
+  typeZero_coeff_nonneg :
+    ∀ j : Item n, 0 ≤ rowZero - itemWeight j * pairShare alpha v j
+  typeOne_coeff_upper :
+    ∀ j : Item n,
+      v (reverseItem j) ≤
+        rowOne - itemWeight j * (1 - pairShare alpha v j)
+  objective_bound :
+    rowZero + rowOne - ell * (∑ j : Item n, itemWeight j) ≤ upper
+
+/--
+Problem 6 finite weak duality for the auxiliary LP that maximizes type `1`
+raw utility over policies satisfying item lower bound `ell`.
+-/
+theorem problem6_typeOneRawUtility_le_of_dualCertificate {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ell upper : ℝ}
+    (ρ : TypePolicy 2 n)
+    (hfeas : problem6LPFeasible alpha v ρ ell)
+    (cert : Problem6TypeOneRawUtilityDualCertificate alpha v ell upper) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 ≤ upper := by
+  let x : Item n → ℝ := fun j => (ρ 0 j).toReal
+  let y : Item n → ℝ := fun j => (ρ 1 j).toReal
+  let q : Item n → ℝ := fun j => pairShare alpha v j
+  let β : Item n → ℝ := cert.itemWeight
+  have hy_nonneg : ∀ j : Item n, 0 ≤ y j := by
+    intro j
+    exact ENNReal.toReal_nonneg
+  have hx_nonneg : ∀ j : Item n, 0 ≤ x j := by
+    intro j
+    exact ENNReal.toReal_nonneg
+  have hy_bound :
+      (∑ j : Item n, v (reverseItem j) * y j) ≤
+        ∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j := by
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    exact mul_le_mul_of_nonneg_right
+      (by simpa [q, β] using cert.typeOne_coeff_upper j)
+      (hy_nonneg j)
+  have hy_sum :
+      (∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j) =
+        cert.rowOne - ∑ j : Item n, β j * (1 - q j) * y j := by
+    calc
+      (∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j)
+          = (∑ j : Item n, cert.rowOne * y j) -
+              ∑ j : Item n, β j * (1 - q j) * y j := by
+              rw [← Finset.sum_sub_distrib]
+              refine Finset.sum_congr rfl ?_
+              intro j _hj
+              ring
+      _ = cert.rowOne - ∑ j : Item n, β j * (1 - q j) * y j := by
+              rw [← Finset.mul_sum]
+              have hsumy : (∑ j : Item n, y j) = 1 := by
+                dsimp [y]
+                exact problem6_typeOne_sum_eq_one ρ
+              rw [hsumy]
+              ring
+  have hconstraint :
+      ell * (∑ j : Item n, β j) ≤
+        (∑ j : Item n, β j * q j * x j) +
+          ∑ j : Item n, β j * (1 - q j) * y j := by
+    calc
+      ell * (∑ j : Item n, β j)
+          = ∑ j : Item n, β j * ell := by
+              rw [Finset.sum_mul]
+              ring
+      _ ≤ ∑ j : Item n, β j * (q j * x j + (1 - q j) * y j) := by
+              refine Finset.sum_le_sum ?_
+              intro j _hj
+              exact mul_le_mul_of_nonneg_left
+                (by simpa [q, x, y] using hfeas j)
+                (by simpa [β] using cert.itemWeight_nonneg j)
+      _ =
+        (∑ j : Item n, β j * q j * x j) +
+          ∑ j : Item n, β j * (1 - q j) * y j := by
+              rw [← Finset.sum_add_distrib]
+              refine Finset.sum_congr rfl ?_
+              intro j _hj
+              ring
+  have hx_bound :
+      (∑ j : Item n, β j * q j * x j) ≤ cert.rowZero := by
+    calc
+      (∑ j : Item n, β j * q j * x j)
+          ≤ ∑ j : Item n, cert.rowZero * x j := by
+              refine Finset.sum_le_sum ?_
+              intro j _hj
+              have hcoeff : β j * q j ≤ cert.rowZero := by
+                have h := cert.typeZero_coeff_nonneg j
+                linarith
+              exact mul_le_mul_of_nonneg_right hcoeff (hx_nonneg j)
+      _ = cert.rowZero := by
+              rw [← Finset.mul_sum]
+              have hsumx : (∑ j : Item n, x j) = 1 := by
+                dsimp [x]
+                exact problem6_typeZero_sum_eq_one ρ
+              rw [hsumx]
+              ring
+  have hraw_eq :
+      TypeWeightedRecommendationModel.rawTypeUtility
+          (twoTypeReducedModel alpha v) ρ 1 =
+        ∑ j : Item n, v (reverseItem j) * y j := by
+    unfold TypeWeightedRecommendationModel.rawTypeUtility
+      DecisionCore.Policy.agentScore DecisionCore.pmfExp
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    simp [twoTypeReducedModel, y]
+  calc
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1
+        = ∑ j : Item n, v (reverseItem j) * y j := hraw_eq
+    _ ≤ ∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j := hy_bound
+    _ = cert.rowOne - ∑ j : Item n, β j * (1 - q j) * y j := hy_sum
+    _ ≤ cert.rowOne +
+        ((∑ j : Item n, β j * q j * x j) -
+          ell * (∑ j : Item n, β j)) := by
+          linarith
+    _ ≤ cert.rowOne + (cert.rowZero -
+          ell * (∑ j : Item n, β j)) := by
+          linarith
+    _ = cert.rowZero + cert.rowOne -
+          ell * (∑ j : Item n, β j) := by ring
+    _ ≤ upper := cert.objective_bound
+
+/--
 The paper's equality-form Problem 6 data before rebuilding the PMF policy.
 The feasibility field carries the simplex/nonnegativity constraints, `item_eq`
 is the equality-form constraint, `optimal` is optimality against all real

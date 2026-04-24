@@ -76,6 +76,7 @@ the Lean statements against the paper.
   The file should be declaration-ordered by paper section and should expose the
   paper-facing definitions and full theorem statements (with assumptions and
   short paper-context comments) rather than `#check` entries alone.
+- **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLean.Statistics.priorWeightedVariance`). The ledger file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the ledger that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements (or prove they equal the generic terms). A reviewer must see the actual math equations inside this single file without needing to open imported generic modules.
   Include for each entry:
   1. the declaration name,
   2. a compact paper-style statement in comments,
@@ -90,10 +91,11 @@ the Lean statements against the paper.
   definitions, lemmas, propositions, theorems, and corollaries before deep
   proof work. Keep it as a TikZ source file (and rendered image) in the paper
   folder so humans can audit theorem flow quickly.
-- The DAG must encode formalization status in the node styling: include clear
-  color and shape/border coding for at least `not started`, `partially
-  formalized`, and `fully formalized`, and include a short legend in the
-  artifact.
+- **DAG Formatting and Clarity Mandates:**
+  - The DAG must encode formalization status and node type explicitly in the styling.
+  - Include distinct color and shape coding for `fully formalized result` (e.g., green rectangle), `fully formalized lemma` (e.g., yellow rounded rectangle), `model/definition` (e.g., blue ellipse), and `not formalized` (e.g., dashed gray rectangle).
+  - You MUST include a Legend in the TikZ artifact that explicitly defines what shapes and colors mean (e.g., explicitly stating that "Lemma" boxes represent fully formalized code).
+  - Use explicit positioning (`node distance`, `below=of`, `xshift`, `yshift`) carefully to ensure boxes do not overlap. Avoid crossing complex diagonal edges that place nodes on top of one another.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
   a status transition between scaffold/conditional/formalized).
@@ -234,7 +236,7 @@ search.
 - Existing warnings are not build failures unless the user asks for lint cleanup
   or the project enforces warning-free builds.
 - If build logs are dominated by repeated non-actionable linter warnings,
-  quiet only those specific style/noise linters in `lakefile.toml`; do not
+  quiet only those specific style/noise linters in `lakefile.toml` (e.g., `weak.linter.style.whitespace = false`); do not
   disable proof checking or hide theorem errors.
 - To save context during iteration, redirect targeted builds to a temporary log
   and print only the tail on failure or completion, e.g.:
@@ -294,13 +296,10 @@ Before declaring a paper "done," run a final human-facing validation pass:
   in both the theorem statement and the paper README status table, with exact
   declaration names and no vague wording.
 - Produce a final human-facing report in the paper folder alongside the DAG
-  artifacts (TikZ source and rendered image). The report must summarize:
-  source version checked, theorem-by-theorem completion status, additional
-  assumptions introduced beyond the paper, proof-strategy deviations from the
-  paper, and any suspected paper errors or inconsistencies found during
-  formalization.
-- If no extra assumptions, deviations, or errors were needed/found, state that
-  explicitly in the report rather than leaving sections implicit.
+  artifacts (TikZ source and rendered image). 
+- **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
+- The report must summarize: source version checked, theorem-by-theorem completion status (including unformalized items), additional assumptions introduced beyond the paper, proof-strategy deviations from the paper, and any suspected paper errors or inconsistencies found during formalization.
+- If no extra assumptions, deviations, or errors were needed/found, state that explicitly in the report rather than leaving sections implicit.
 
 Use this report template (create in the paper folder, for example
 `FINAL_VALIDATION_REPORT.md`):
@@ -370,6 +369,11 @@ and wasted proof search.
   dominance. Do not keep unfolding PMFs once the theorem is reduced to rank
   weights; the remaining proof should mention only rank sums, positive
   denominators, and value monotonicity.
+  If a deleted or conditioned rank creates piecewise weights, first prove small
+  closed-form side lemmas for the below/above/self cases and a deletion-sum
+  geometric identity. Then prove same-side cases by the basic power MLR lemma
+  and isolate the cross-boundary case as its own factor inequality. This is
+  faster and more auditable than trying to `ring` a large all-cases theorem.
 - **Sign and inequality arguments.** Use certificate structures whose fields are
   exactly the nonnegativity, strict positivity, monotonicity, or comparison
   facts needed by the final theorem. Prefer sum-level certificates for
@@ -804,6 +808,14 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   cross-prefix terms `qA^i*qH^j - qH^i*qA^j`, discharged by a reusable
   rank-power comparison for `qA < qH`. This avoids redoing stochastic-dominance
   algebra at each probability/cross-weight wrapper.
+- For Mallows singleton-removal monotonicity, reduce to the rank-only
+  best-after-removal weights and prove pairwise cross-ratio dominance. The
+  useful split is: removed rank has zero weight; ranks on the same side use the
+  usual power MLR after factoring a common positive term; the cross-boundary
+  case uses the deletion power sum identity
+  `S(q,k) * (1-q) = 1 - q^(n+1)` to prove the boundary factor
+  `(S_A+qA^k)*(qH*S_H+qH^k) >= (qA*S_A+qA^k)*(S_H+qH^k)`, then combines it
+  with the power comparison for the shifted suffix exponent.
 - For Mallows weaker-competition totals, use the paper's conditional-gap route:
   define the rank-only conditional gap, prove it is strictly antitone by
   adjacent-rank comparison, prove the finite MLR weighted-average inequality by
@@ -935,6 +947,18 @@ have hd : d = rawSecond := by simpa [secondAbbrev] using h.2
 ```
 
 - To transport hypotheses across equality of reference structures, rewrite the
+  reference explicitly rather than hoping `simp` finds it.
+- Mark definitions `noncomputable` when they depend on real comparisons,
+  filtered finite sets over propositions, `PMF` normalization, or classical
+  choice.
+- Keep imports narrow. Prefer specific Mathlib modules over `import Mathlib` in
+  new or actively repaired files.
+ively repaired files.
+� → ℝ`) rather than jumping immediately to measure-theoretic random variables. This allows explicit expected-value decompositions (like Variance/Bias MSE splits) to be proven using straightforward finite summation algebra (`pmfExp`).
+- Keep imports narrow. Prefer specific Mathlib modules over `import Mathlib` in
+  new or actively repaired files.
+ively repaired files.
+ures, rewrite the
   reference explicitly rather than hoping `simp` finds it.
 - Mark definitions `noncomputable` when they depend on real comparisons,
   filtered finite sets over propositions, `PMF` normalization, or classical

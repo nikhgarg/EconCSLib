@@ -34,6 +34,16 @@ algebra lives in `EconCSLean/Statistics/BinaryRating.lean`.
 | Theorem 3.2, variance concave in true quality | `paper_theorem3_2_variance_concave_in_quality` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 ≤ t` |
 | Theorem 3.2, variance maximized at `1/2` | `paper_theorem3_2_variance_global_max_at_half` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 ≤ t` |
 
+### Dynamic and Responsive Extensions
+
+| Paper item | Lean declaration | Status | File | Remaining assumptions |
+|---|---|---|---|---|
+| Section 4, Individual Producer Unfairness | `paper_facing_individual_producer_unfairness` | formalized | `ProducerFairness/ResponsiveMarket.lean` | - |
+| Section 4, Thompson Sampling | `paper_facing_thompson_sampling_mechanism` | formalized | `EconCSLean/Decision/ThompsonSampling.lean` | - |
+| Section 4, Expected Regret | `paper_facing_expected_regret` | formalized | `EconCSLean/Online/Regret.lean` | - |
+| Appendix C, MSE Decomposition | `paper_facing_responsive_mse_decomposition` | formalized | `ProducerFairness/ResponsiveMarket.lean` | - |
+| Appendix E, Ordinal Rating | `EconCSLean.Statistics.dirichletCategoricalPosteriorMean_eq_weighted_sum` | formalized | `EconCSLean/Statistics/OrdinalRating.lean` | `∑ (alpha + N) ≠ 0` |
+
 ## Fix Needed In Paper Statement
 
 The published strict variance-decrease statement should explicitly exclude

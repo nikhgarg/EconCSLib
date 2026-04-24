@@ -17,6 +17,10 @@
 | Theorem 3.2, Bias Minimizer | `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` | fully formalized | exact | |
 | Theorem 3.2, Var. Concavity | `paper_facing_theorem3_2_variance_concave_in_quality` | fully formalized | exact | |
 | Theorem 3.2, Var. Maximizer | `paper_facing_theorem3_2_variance_global_max_at_half` | fully formalized | exact | |
+| Appx C, MSE Decomposition | `paper_facing_responsive_mse_decomposition` | fully formalized | exact | Treats the number of reviews $N$ as a random variable explicitly. |
+| Section 4, Indiv. Unfairness | `paper_facing_individual_producer_unfairness` | fully formalized | exact | Maps standard deviation formula to variance metric explicitly. |
+| Section 4, Thompson Sampling | `paper_facing_thompson_sampling_mechanism` | fully formalized | exact | Standard generalized definition. |
+| Section 4, Expected Regret | `paper_facing_expected_regret` | fully formalized | exact | |
 
 ## 3. Additional Assumptions Beyond Paper
 - `0 < alpha + beta`: Required for the prior mean to be well-defined (non-zero denominator).
