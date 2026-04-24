@@ -1,4 +1,4 @@
-import UserItemFairness.Symmetrization
+import UserItemFairness.OpposingTypes
 
 /-!
 # Paper-Facing Theorems: User-Item Fairness Tradeoffs in Recommendations
@@ -492,6 +492,57 @@ theorem paper_proposition2_symmetric_optimum_exists
     reps hRow hopt
 
 end RecommendationModel.SymmetricData
+
+namespace OpposingTypes
+
+/--
+Appendix D, Lemma 9, scalar monotonicity in `α`.
+
+For a fixed opposing item pair with positive utilities, the paper's
+`q_j(α)` strictly increases as the mass `α` on the first type increases.
+-/
+theorem paper_lemma9_typeOneShare_strictly_increases_in_alpha
+    {alpha alpha' left right : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (hlt : alpha < alpha')
+    (hleft : 0 < left) (hright : 0 < right) :
+    typeOneShare alpha left right <
+      typeOneShare alpha' left right := by
+  exact typeOneShare_strictMono_alpha
+    halpha0 halpha1 halpha0' halpha1' hlt hleft hright
+
+/--
+Appendix E, Lemma 16, scalar midpoint comparison: if the left-side utility is
+larger, then the midpoint share is above `1/2`.
+-/
+theorem paper_lemma16_half_lt_typeOneShare_half_of_right_lt_left
+    {left right : ℝ}
+    (hleft : 0 < left) (hright : 0 < right) (hlt : right < left) :
+    (1 / 2 : ℝ) < typeOneShare (1 / 2) left right := by
+  exact half_lt_typeOneShare_half_of_right_lt_left hleft hright hlt
+
+/--
+Appendix E, Lemma 16, scalar midpoint comparison: if the left-side utility is
+smaller, then the midpoint share is below `1/2`.
+-/
+theorem paper_lemma16_typeOneShare_half_lt_half_of_left_lt_right
+    {left right : ℝ}
+    (hleft : 0 < left) (hright : 0 < right) (hlt : left < right) :
+    typeOneShare (1 / 2) left right < (1 / 2 : ℝ) := by
+  exact typeOneShare_half_lt_half_of_left_lt_right hleft hright hlt
+
+/--
+Appendix E, Lemma 16, scalar midpoint comparison: equal opposing utilities
+give midpoint share exactly `1/2`.
+-/
+theorem paper_lemma16_typeOneShare_half_eq_half_of_eq
+    {left right : ℝ}
+    (hleft : 0 < left) (heq : left = right) :
+    typeOneShare (1 / 2) left right = (1 / 2 : ℝ) := by
+  exact typeOneShare_half_eq_half_of_eq hleft heq
+
+end OpposingTypes
 
 namespace EstimatedRecommendationModel
 

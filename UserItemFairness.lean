@@ -4,5 +4,6 @@ import UserItemFairness.Symmetry
 import UserItemFairness.LPReduction
 import UserItemFairness.ReductionPreservation
 import UserItemFairness.Symmetrization
+import UserItemFairness.OpposingTypes
 import UserItemFairness.Examples
 import UserItemFairness.MainTheorems
