@@ -7846,6 +7846,145 @@ theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of
     hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
 
 /--
+Appendix D, Lemma 10 consequence, odd-center case, using the closed-form
+midpoint optimum instead of an external midpoint BFS hypothesis.
+-/
+theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  have ht_le_c : t.val ≤ c.val := by
+    dsimp [t]
+    exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center_of_closed_half
+      hn halpha0 halpha1 halpha_half hpos hdec hcenter h
+  have hc_arith : 2 * c.val + 1 = n :=
+    (val_eq_reverseItem_iff c).mp hcenter
+  have ht_arith : 2 * t.val + 1 ≤ n := by omega
+  exact (val_le_reverseItem_iff t).mpr ht_arith
+
+/--
+Appendix D, Lemma 10 consequence, even-center case, using the closed-form
+midpoint optimum instead of an external midpoint BFS hypothesis.
+-/
+theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  have ht_le_c : t.val ≤ c.val := by
+    dsimp [t]
+    exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of_closed_half
+      hn halpha0 halpha1 halpha_half hpos hdec hsucc h
+  have hc_arith : 2 * c.val + 2 = n := by
+    simp [reverseItem] at hsucc
+    omega
+  have ht_arith : 2 * t.val + 1 ≤ n := by omega
+  exact (val_le_reverseItem_iff t).mpr ht_arith
+
+/--
+Theorem 3 finite-stitch selected-policy core, odd-center first-half chain,
+using the Lemma 5 closed midpoint optimum internally.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_center_chain_of_closed_half
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i)) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) := by
+  exact theorem3_typeFairness_mono_of_same_selected_or_equal_alpha_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hpivot_or_eq
+    (fun i hi =>
+      lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center_of_closed_half
+        hn (halpha0 i (Nat.le_of_lt hi))
+        (halpha1 i (Nat.le_of_lt hi))
+        (halpha_half i (Nat.le_of_lt hi))
+        hpos hdec hcenter_c (hopt i (Nat.le_of_lt hi)))
+    hopt
+
+/--
+Theorem 3 finite-stitch selected-policy core, even-center first-half chain,
+using the Lemma 5 closed midpoint optimum internally.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_succ_center_chain_of_closed_half
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i)) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) := by
+  exact theorem3_typeFairness_mono_of_same_selected_or_equal_alpha_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hpivot_or_eq
+    (fun i hi =>
+      lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center_of_closed_half
+        hn (halpha0 i (Nat.le_of_lt hi))
+        (halpha1 i (Nat.le_of_lt hi))
+        (halpha_half i (Nat.le_of_lt hi))
+        hpos hdec hsucc (hopt i (Nat.le_of_lt hi)))
+    hopt
+
+/--
 Appendix D, Lemma 6 with Lemma 10, odd-center case, using the closed-form
 midpoint optimum instead of an external midpoint BFS hypothesis.
 -/
