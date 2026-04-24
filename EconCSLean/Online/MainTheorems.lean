@@ -719,19 +719,36 @@ theorem paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_permu
 /--
 Section 7 / Theorem 9 wrapper from the paper's explicit finite revenue-bound
 expression. The certificate fields are exactly the deterministic average
-revenue bound and the comparison of that finite harmonic expression with
-`1 - 1/e`.
+revenue bound and the comparison of that finite harmonic expression with the
+requested finite ratio.
 -/
-theorem paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_revenue_bound_certificate
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_revenue_bound_certificate
     {N : ℕ} {Algorithm : Type*}
     [Fintype Algorithm] [DecidableEq Algorithm]
-    (C : BMatchingPermutationRevenueBoundCertificate N Algorithm)
+    {ratio : ℝ}
+    (C : BMatchingPermutationRevenueBoundCertificate N Algorithm ratio)
     (randomizedAlgorithm : PMF Algorithm) :
     ¬ ∀ permutation,
-      AdWordsInstance.msvvRatio <
+      ratio <
         DecisionCore.pmfExp randomizedAlgorithm
           (fun algorithm => C.normalizedRevenue algorithm permutation) := by
-  exact C.no_randomized_algorithm_beats_msvvRatio randomizedAlgorithm
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+/--
+Section 7 / Theorem 9 wrapper from the paper's expected round-allocation
+inequality `E[q_ij] <= 1 / (N - i + 1)`.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_round_allocation_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    {ratio : ℝ}
+    (C : BMatchingRoundAllocationRevenueCertificate N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 /--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the

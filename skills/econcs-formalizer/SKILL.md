@@ -289,7 +289,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   the round-allocation symmetry argument is fully modeled. Name the paper's
   harmonic spend cap separately (`theorem9BidderSpendUpperBound` and
   `theorem9NormalizedRevenueUpperBound`) so the asymptotic comparison with
-  `1 - 1/e` is not hidden inside a generic certificate.
+  `1 - 1/e` is not hidden inside a generic certificate. Also isolate the
+  paper's `E[q_ij] <= 1 / (N - i + 1)` claim as a round-allocation certificate
+  before proving the harmonic cap; this keeps the symmetry argument and the
+  summation argument separate.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
