@@ -109,6 +109,20 @@ theorem paper_adwords_dual_feasible_of_slack_score_bound
     I alpha beta halpha hbeta hcover
 
 /--
+Finite max-slack construction of query duals: for any nonnegative advertiser
+dual `alpha`, setting each `beta q` to the nonnegative maximum slack score over
+advertisers gives a dual-feasible AdWords LP solution.
+-/
+theorem paper_adwords_dual_feasible_max_slack_beta
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ)
+    (halpha : ∀ a, 0 ≤ alpha a) :
+    I.DualFeasible alpha (I.maxSlackBeta alpha) := by
+  exact AdWordsInstance.dualFeasible_maxSlackBeta I alpha halpha
+
+/--
 If some advertiser can still accept a query, a Balance/MSVV scaled-bid maximizer
 exists for that query.
 -/

@@ -246,6 +246,22 @@ noncomputable def slackScore
     (alpha : Advertiser → ℝ) (a : Advertiser) (q : Query) : ℝ :=
   I.bid a q * (1 - alpha a)
 
+/--
+For a fixed advertiser dual `alpha`, choose the nonnegative query dual `beta q`
+as the maximum advertiser slack score for query `q`, floored at zero.
+-/
+noncomputable def maxSlackBeta
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (q : Query) : ℝ := by
+  classical
+  let scores : Finset ℝ :=
+    Finset.univ.image fun a : Advertiser => I.slackScore alpha a q
+  have hscores : scores.Nonempty := by
+    obtain ⟨a⟩ := (inferInstance : Nonempty Advertiser)
+    exact ⟨I.slackScore alpha a q, by simp [scores]⟩
+  exact max 0 (scores.max' hscores)
+
 /-- Feasible advertisers for the next query under the current partial assignment. -/
 noncomputable def feasibleAdvertisers
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
@@ -965,6 +981,43 @@ theorem dualFeasible_of_slackScore_le_beta
   have h := hcover a q
   unfold slackScore at h
   nlinarith
+
+theorem slackScore_le_maxSlackBeta
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (a : Advertiser) (q : Query) :
+    I.slackScore alpha a q ≤ I.maxSlackBeta alpha q := by
+  classical
+  unfold maxSlackBeta
+  let scores : Finset ℝ :=
+    Finset.univ.image fun a : Advertiser => I.slackScore alpha a q
+  have hmem : I.slackScore alpha a q ∈ scores := by
+    simp [scores]
+  have hle_max : I.slackScore alpha a q ≤
+      scores.max' ⟨I.slackScore alpha a q, hmem⟩ :=
+    scores.le_max' (I.slackScore alpha a q) hmem
+  exact hle_max.trans (le_max_right 0 _)
+
+theorem maxSlackBeta_nonneg
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (q : Query) :
+    0 ≤ I.maxSlackBeta alpha q := by
+  classical
+  unfold maxSlackBeta
+  let scores : Finset ℝ :=
+    Finset.univ.image fun a : Advertiser => I.slackScore alpha a q
+  exact le_max_left 0 (scores.max' _)
+
+theorem dualFeasible_maxSlackBeta
+    [Fintype Advertiser] [Nonempty Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ)
+    (halpha : ∀ a, 0 ≤ alpha a) :
+    I.DualFeasible alpha (I.maxSlackBeta alpha) := by
+  exact dualFeasible_of_slackScore_le_beta I alpha (I.maxSlackBeta alpha)
+    halpha (maxSlackBeta_nonneg I alpha)
+    (slackScore_le_maxSlackBeta I alpha)
 
 theorem mem_feasibleAdvertisers
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
