@@ -395,7 +395,7 @@ finite-removal monotonicity.
 -/
 structure Theorem1GlobalAnalyticCertificate {n : ℕ}
     (F : AccuracyFamily n) (θH : ℝ) : Type where
-  paper_hypotheses_at_equal : Model.PaperHypotheses (F.modelAt θH θH)
+  prefers_independent_at_equal : Model.PrefersIndependentReranking (F.dist θH) F.value
   dist_atom_continuity :
     ∀ θA, θH ≤ θA →
       ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θA
@@ -406,6 +406,29 @@ structure Theorem1GlobalAnalyticCertificate {n : ℕ}
     ∀ θA, θH < θA → Model.PaperHypotheses (F.modelAt θA θH)
   removal_monotonicity :
     ∀ θA, θH < θA → Theorem1RemovalMonotonicityAt F θA θH
+
+/--
+Paper Theorem 1 assumptions, stated in the order used by the proof.
+
+This is the family-level statement closest to the paper's theorem: Definition 2
+holds at every positive accuracy, Definition 3 holds for every strictly more
+accurate algorithm, and the Definition 1 analytic inputs needed in the two-firm
+proof hold at the relevant finite-discrete level.
+-/
+structure Theorem1PaperAssumptions {n : ℕ} (F : AccuracyFamily n) : Type where
+  prefers_independent :
+    ∀ θ, 0 < θ → Model.PrefersIndependentReranking (F.dist θ) F.value
+  prefers_weaker_competition :
+    ∀ θA θH, 0 < θH → θH < θA →
+      Model.PrefersWeakerCompetition (F.dist θA) (F.dist θH) F.value
+  dist_atom_continuity :
+    ∀ θ, 0 < θ →
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θ' => ((F.dist θ') π).toReal) θ
+  asymptotic_first_dominance :
+    ∀ θH lower, 0 < θH → θH < lower →
+      ∃ hi, lower < hi ∧ theorem1_g F hi θH < theorem1_f F hi θH
+  removal_monotonicity :
+    ∀ θA θH, 0 < θH → θH < θA → Theorem1RemovalMonotonicityAt F θA θH
 
 /--
 The direct payoff certificate for Theorem 1's conclusion.
@@ -701,15 +724,18 @@ theorem theorem1_f_lt_g_of_paperHypotheses_equalAccuracy {n : ℕ}
 /--
 Definition 2 plus atomwise continuity gives a left interval endpoint strictly
 above `θH` where the initial comparison `f < g` still holds.
+
+This is the exact paper premise used at equal accuracies; it does not require
+Definition 3 at `θA = θH`.
 -/
-theorem theorem1_exists_right_initial_f_lt_g_of_atom_continuity {n : ℕ}
+theorem theorem1_exists_right_initial_f_lt_g_of_prefersIndependent_and_atom_continuity {n : ℕ}
     (F : AccuracyFamily n) (θH : ℝ)
-    (hpaper : Model.PaperHypotheses (F.modelAt θH θH))
+    (hind : Model.PrefersIndependentReranking (F.dist θH) F.value)
     (hdist :
       ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θH) :
     ∃ lo : ℝ, θH < lo ∧ theorem1_f F lo θH < theorem1_g F lo θH := by
   have hlt : theorem1_f F θH θH < theorem1_g F θH θH :=
-    theorem1_f_lt_g_of_paperHypotheses_equalAccuracy F θH hpaper
+    theorem1_f_lt_g_of_prefersIndependent_equalAccuracy F θH hind
   rcases exists_right_radius_lt_of_epsilonContinuousAt
       (theorem1_f_epsilonContinuousAt_of_atom_continuity F θH θH hdist)
       (theorem1_g_epsilonContinuousAt_of_atom_continuity F θH θH hdist)
@@ -718,6 +744,19 @@ theorem theorem1_exists_right_initial_f_lt_g_of_atom_continuity {n : ℕ}
   refine ⟨θH + δ / 2, ?_, ?_⟩
   · linarith
   · exact hpersist (θH + δ / 2) (by linarith) (by linarith)
+
+/--
+Definition 2 plus atomwise continuity gives a left interval endpoint strictly
+above `θH` where the initial comparison `f < g` still holds.
+-/
+theorem theorem1_exists_right_initial_f_lt_g_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θH θH))
+    (hdist :
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θH) :
+    ∃ lo : ℝ, θH < lo ∧ theorem1_f F lo θH < theorem1_g F lo θH :=
+  theorem1_exists_right_initial_f_lt_g_of_prefersIndependent_and_atom_continuity
+    F θH hpaper.1 hdist
 
 /--
 Paper Theorem 1 from the global analytic certificate.
@@ -730,8 +769,8 @@ theorem theorem1Target_of_globalAnalyticCertificate {n : ℕ}
     {F : AccuracyFamily n} {θH : ℝ}
     (cert : Theorem1GlobalAnalyticCertificate F θH) :
     Theorem1Target F θH := by
-  rcases theorem1_exists_right_initial_f_lt_g_of_atom_continuity
-      F θH cert.paper_hypotheses_at_equal
+  rcases theorem1_exists_right_initial_f_lt_g_of_prefersIndependent_and_atom_continuity
+      F θH cert.prefers_independent_at_equal
       (cert.dist_atom_continuity θH le_rfl) with
     ⟨lo, hθH_lo, hf_lt_g_lo⟩
   rcases cert.asymptotic_first_dominance lo hθH_lo with
@@ -756,6 +795,35 @@ theorem theorem1Target_of_globalAnalyticCertificate {n : ℕ}
     exact cert.dist_atom_continuity θA (le_trans (le_of_lt hθH_lo) hlo_θA)
   · intro θA hθA hθA_hi
     exact cert.paper_hypotheses_above θA hθA
+
+/--
+The paper-level Theorem 1 assumptions imply the fixed-`θH` global analytic
+certificate used by the constructive crossing proof.
+-/
+def globalAnalyticCertificate_of_paperAssumptions {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (hθH : 0 < θH) (assumptions : Theorem1PaperAssumptions F) :
+    Theorem1GlobalAnalyticCertificate F θH where
+  prefers_independent_at_equal := assumptions.prefers_independent θH hθH
+  dist_atom_continuity := fun θA hθH_le =>
+    assumptions.dist_atom_continuity θA (lt_of_lt_of_le hθH hθH_le)
+  asymptotic_first_dominance := fun lower hθH_lower =>
+    assumptions.asymptotic_first_dominance θH lower hθH hθH_lower
+  paper_hypotheses_above := fun θA hθA =>
+    ⟨assumptions.prefers_independent θA (lt_trans hθH hθA),
+      assumptions.prefers_weaker_competition θA θH hθH hθA⟩
+  removal_monotonicity := fun θA hθA =>
+    assumptions.removal_monotonicity θA θH hθH hθA
+
+/--
+Paper Theorem 1 from paper-level assumptions.
+-/
+theorem theorem1Target_of_paperAssumptions {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (hθH : 0 < θH) (assumptions : Theorem1PaperAssumptions F) :
+    Theorem1Target F θH :=
+  theorem1Target_of_globalAnalyticCertificate
+    (globalAnalyticCertificate_of_paperAssumptions hθH assumptions)
 
 end AccuracyFamily
 end Monoculture

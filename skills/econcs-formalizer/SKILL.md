@@ -383,6 +383,12 @@ and wasted proof search.
   wrapper, then instantiate each assumption in separate files. Do not hide
   unproved model facts as fields of the final theorem unless the README marks
   the result conditional by that exact certificate name.
+  When a paper has both fixed-parameter model facts and family-level analytic
+  facts, split them. First prove a family bridge that discharges the
+  fixed-parameter definitions from the model theorem for every parameter pair;
+  leave only the true family analytic fields (continuity, limits/asymptotics,
+  monotonicity) as named obligations. Add small parameter-convention lemmas
+  such as inverse-noise monotonicity instead of redoing algebra at every use.
 - **Validation/reporting proofs.** Use when checking whether a paper is done.
   Rebuild the human-facing theorem file, search the paper folder for
   placeholders, compare every paper-facing theorem statement to the source, and
@@ -409,6 +415,14 @@ editing. Use this compact map to avoid broad proof search.
 | Analytic/existence/crossing | local certificate, then continuity/limit instantiation lemmas | paper theorem from the certificate; no hidden topology assumptions | using continuity to infer a one-sided crossing direction it does not imply |
 | Model-instantiation | abstract theorem first, model assumptions in separate files | concrete model wrapper has no unproved model fields | hiding model facts inside a final theorem premise |
 | Validation/reporting | paper-facing Lean ledger plus final validation report | build, placeholder search, theorem-by-theorem statement check | relying on commit history instead of current compiled declarations |
+
+For assumption-heavy theorem statements, split paper definitions by the domain
+where the paper actually quantifies them. Do not package multiple definitions
+into one broad predicate and then use it at a boundary point where one of the
+definitions is not stated. A common example is a theorem that uses Definition 2
+at equal parameters and Definition 3 only for strict parameter inequality; make
+the equal-parameter lemma take only the Definition 2 field, and keep the broader
+paper-hypothesis predicate as a compatibility wrapper.
 
 For finite analytic arguments, prefer elementary local interfaces before loading
 heavy topology: epsilon-delta continuity for real functions, finite sums of

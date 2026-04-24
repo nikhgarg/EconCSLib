@@ -1,6 +1,7 @@
 import Monoculture.MallowsFiniteLemmas
 import Monoculture.Theorem1
 import Monoculture.MallowsPairwise
+import Monoculture.MallowsFamily
 
 /-!
 # Paper-Facing Theorems: Algorithmic Monoculture and Social Welfare
@@ -435,6 +436,36 @@ theorem paper_theorem3_finite_sum_certificate_from_candidate_sums
 
 end MallowsComparison
 
+namespace MallowsAccuracyFamilySpec
+
+/--
+Mallows family bridge to the paper-level Theorem 1 assumptions.
+
+The fixed-parameter Mallows finite-sum proof supplies Definition 2 for every
+positive parameter and Definition 3 for every `θA > θH > 0`.  The remaining
+fields of `MallowsAccuracyFamilySpec` are the Definition 1 analytic obligations
+used by the Theorem 1 crossing proof.
+-/
+noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
+    {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
+    (hn : 0 < n) :
+    AccuracyFamily.Theorem1PaperAssumptions MF.toAccuracyFamily :=
+  MF.theorem1PaperAssumptions hn
+
+/--
+Paper Theorem 1 for a parameterized Mallows family, conditional only on the
+Definition 1 analytic fields recorded in `MallowsAccuracyFamilySpec`.
+
+Definitions 2 and 3 are discharged by the formalized Mallows Theorem 3 route.
+-/
+theorem paper_theorem1_mallows_family
+    {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
+    (hn : 0 < n) (θH : ℝ) (hθH : 0 < θH) :
+    AccuracyFamily.Theorem1Target MF.toAccuracyFamily θH :=
+  MF.theorem1Target hn θH hθH
+
+end MallowsAccuracyFamilySpec
+
 /--
 Theorem 1 proof notation: `h(θA)` is constant in `θA`.
 -/
@@ -576,6 +607,25 @@ theorem paper_theorem1_exists_right_initial_f_lt_g_from_definition2_and_continui
     F θH hpaper hdist
 
 /--
+Theorem 1 proof notation, left endpoint from exactly Definition 2.
+
+This is the paper-faithful version of the previous wrapper: Definition 3 is not
+used at equal accuracies, so Lean only assumes independent reranking preference
+for `F_θH`.
+-/
+theorem paper_theorem1_exists_right_initial_f_lt_g_from_independent_reranking_and_continuity
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (hind : Model.PrefersIndependentReranking (F.dist θH) F.value)
+    (hdist :
+      ∀ π : Ranking n, DecisionCore.EpsilonContinuousAt
+        (fun θ => ((F.dist θ) π).toReal) θH) :
+    ∃ lo : ℝ, θH < lo ∧
+      AccuracyFamily.theorem1_f F lo θH <
+        AccuracyFamily.theorem1_g F lo θH :=
+  AccuracyFamily.theorem1_exists_right_initial_f_lt_g_of_prefersIndependent_and_atom_continuity
+    F θH hind hdist
+
+/--
 Theorem 1 proof notation, weaker-competition side.
 
 Paper statement in the proof: by Definition 3, for `θA > θH`,
@@ -711,14 +761,39 @@ theorem paper_theorem1_from_interval_analytic_certificate
 Paper Theorem 1 from the global analytic certificate.
 
 This is the strongest current Theorem 1 wrapper: it packages the paper's
-Definition 2, Definition 3, continuity, asymptotic dominance, and monotonicity
-inputs at fixed `θH`, then Lean constructs the witness `θA > θH`.
+Definition 2 at equal accuracy, Definition 3 above `θH`, continuity,
+asymptotic dominance, and monotonicity inputs at fixed `θH`, then Lean
+constructs the witness `θA > θH`.
 -/
 theorem paper_theorem1_from_global_analytic_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1GlobalAnalyticCertificate F θH) :
     AccuracyFamily.Theorem1Target F θH :=
   AccuracyFamily.theorem1Target_of_globalAnalyticCertificate cert
+
+/--
+Paper Theorem 1 from paper-level family assumptions.
+
+Paper statement: suppose the candidate values and noisy permutation family
+satisfy Definition 2 and Definition 3, and the family has the Definition 1
+analytic properties used in the proof. Then for every positive human accuracy
+`θH`, there exists a higher algorithmic accuracy `θA > θH` at which algorithmic
+monoculture is strictly dominant but has lower welfare than all-human ranking.
+
+The Lean assumption structure records the finite-discrete version of those
+paper hypotheses:
+1. independent-reranking preference for every positive accuracy;
+2. weaker-competition preference for every `θA > θH > 0`;
+3. atomwise continuity of the finite ranking law;
+4. the asymptotic dominance consequence used in the crossing argument; and
+5. finite-removal monotonicity for the first and second mover inequalities.
+-/
+theorem paper_theorem1_from_paper_assumptions
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (hθH : 0 < θH)
+    (assumptions : AccuracyFamily.Theorem1PaperAssumptions F) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_paperAssumptions hθH assumptions
 
 /--
 Paper Theorem 1 from the direct payoff certificate.
