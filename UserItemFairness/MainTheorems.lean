@@ -2087,6 +2087,94 @@ theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_o
     hn halpha0 halpha1 hpos hdec h hcanonical
 
 /--
+Problem 6 equality-form helper: for an equality-form optimal BFS policy, every
+item equality is equality to the reduced item-fairness value itself.
+-/
+theorem paper_problem6_equalizedBasicOptimal_item_value_eq_itemFairness
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (l : Item n) :
+    pairShare alpha v l * (ρ 0 l).toReal +
+        (1 - pairShare alpha v l) * (ρ 1 l).toReal =
+      TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6EqualizedBasicOptimal_item_value_eq_itemFairness
+    halpha0 halpha1 hpos h l
+
+/--
+Proposition-1/LP-selection bridge: dominating equality-form optimal BFS
+representatives supply the canonical equalized/shared representatives used by
+the reduced `γ = 1` optimality bridge.
+-/
+theorem paper_problem6_feasibleCanonicalization_of_equalizedBasicOptimal_dominance
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdom :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ (ρbar : TypePolicy 2 n) (ellbar : ℝ),
+          Problem6EqualizedBasicOptimal alpha v ρbar ellbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar) :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar := by
+  exact problem6_feasibleCanonicalization_of_equalizedBasicOptimal_dominance
+    halpha0 halpha1 hpos hdom
+
+/--
+Selected-policy optimality bridge in LP-selection form: if every reduced
+`γ = 1` feasible policy is weakly dominated by some equality-form optimal BFS
+representative, then the selected equality-form optimal BFS policy realizes
+`U^*_min(1, α)`.
+-/
+theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equalizedBasicOptimal_dominance
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hdom :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ (ρbar : TypePolicy 2 n) (ellbar : ℝ),
+          Problem6EqualizedBasicOptimal alpha v ρbar ellbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_equalizedBasicOptimal_dominance
+    hn halpha0 halpha1 hpos hdec h hdom
+
+/--
 Appendix D, Lemma 5: the closed-form value for any sparse equalized
 Problem 6 solution.
 -/
@@ -3770,6 +3858,153 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center
   exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_chain_of_feasible_canonicalization
     r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
     hsucc hpivot_or_eq hopt hhalf hcanonical
+
+/--
+Theorem 3 reduced-optimum bridge in LP-selection form: along a first-half
+finite chain, dominating equality-form optimal BFS representatives identify
+the reduced `γ = 1` type-fairness optimum and yield monotonicity.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_equalizedBasicOptimal_dominance
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hdom :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+        ∃ (ρbar : TypePolicy 2 n) (ellbar : ℝ),
+          Problem6EqualizedBasicOptimal (alphaSeq i) v ρbar ellbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_equalizedBasicOptimal_dominance
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hpivot_or_eq hcenter hopt hdom
+
+/--
+Theorem 3 reduced-optimum bridge, odd-center first-half chain, in the
+LP-selection dominance form.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_chain_of_equalizedBasicOptimal_dominance
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf)
+    (hdom :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+        ∃ (ρbar : TypePolicy 2 n) (ellbar : ℝ),
+          Problem6EqualizedBasicOptimal (alphaSeq i) v ρbar ellbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_chain_of_equalizedBasicOptimal_dominance
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hcenter_c hpivot_or_eq hopt hhalf hdom
+
+/--
+Theorem 3 reduced-optimum bridge, even-center first-half chain, in the
+LP-selection dominance form.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_chain_of_equalizedBasicOptimal_dominance
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf)
+    (hdom :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+        ∃ (ρbar : TypePolicy 2 n) (ellbar : ℝ),
+          Problem6EqualizedBasicOptimal (alphaSeq i) v ρbar ellbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_chain_of_equalizedBasicOptimal_dominance
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hsucc hpivot_or_eq hopt hhalf hdom
 
 /--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
