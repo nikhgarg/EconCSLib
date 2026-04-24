@@ -393,6 +393,29 @@ to another paper theorem. For example, in a game/existence proof, finish the
 payoff algebra and abstract crossing theorem before trying to prove a concrete
 Mallows/RUM family satisfies the analytic assumptions.
 
+### 2.0.1 Proof-Type Playbooks
+
+For each named result, write down the proof type and the next artifact before
+editing. Use this compact map to avoid broad proof search.
+
+| Proof type | First Lean artifact | Validation target | Common trap |
+|---|---|---|---|
+| Definition/interface wrapper | paper-facing theorem with the paper statement in the docstring | wrapper imports and compiles, assumptions match prior declarations | counting a restated assumption as proved |
+| Finite expectation decomposition | pointwise identity, then `pmfExp`/`pmfPairExp` sum lemma | paper equivalence without unfolding PMF internals at the wrapper | expanding PMF probabilities too early |
+| Denominator-cleared finite sum | numerator definition plus denominator positivity lemma | normalized and cleared positivity equivalence | carrying division through every sign proof |
+| Sign/inequality proof | certificate with exactly the needed nonnegative/positive fields | final strict inequality from certificate fields | strengthening assumptions to termwise positivity without documenting it |
+| Bijection/fiber enumeration | equivalence/bijection plus preservation lemmas | transported finite sum by `Finset.sum_bij` or an existing relabel lemma | mixing counting and economics in one theorem |
+| Game/payoff bridge | paper scalar functions and payoff certificate | strategy/welfare predicate follows by algebra | proving analytic existence before payoff semantics are settled |
+| Analytic/existence/crossing | local certificate, then continuity/limit instantiation lemmas | paper theorem from the certificate; no hidden topology assumptions | using continuity to infer a one-sided crossing direction it does not imply |
+| Model-instantiation | abstract theorem first, model assumptions in separate files | concrete model wrapper has no unproved model fields | hiding model facts inside a final theorem premise |
+| Validation/reporting | paper-facing Lean ledger plus final validation report | build, placeholder search, theorem-by-theorem statement check | relying on commit history instead of current compiled declarations |
+
+For finite analytic arguments, prefer elementary local interfaces before loading
+heavy topology: epsilon-delta continuity for real functions, finite sums of
+continuous functions, and atomwise PMF continuity implying finite-expectation
+continuity. Move those lemmas into reusable library modules when another paper
+could need them.
+
 ### 2.1 External Library Reconnaissance
 
 Before implementing substantial probability, statistics, or learning-theory
@@ -845,6 +868,10 @@ simpa using
   `Mathlib.Algebra.BigOperators.Field` and use `Finset.sum_div`.
 - For `PMF` over finite types, prefer existing finite-expectation lemmas and
   `pmfExp`/`pmfProb` abstractions over hand-expanding `PMF` internals.
+- For finite analytic PMF families, prove continuity at the atom level
+  `fun θ => ((μ θ) a).toReal`, then lift through a finite expectation lemma
+  such as `epsilonContinuousAt_pmfExp_of_atom`. Do not import broad topology
+  just to prove a finite epsilon-delta continuity bridge.
 - For uniform PMFs over finite spaces, derive relabeling invariance with
   `pmfExp_uniformPMF_comp_equiv` or
   `pmfExp_uniformPMF_eq_of_comp_equiv` instead of expanding the uniform mass by

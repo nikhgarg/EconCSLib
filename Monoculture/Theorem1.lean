@@ -1,5 +1,6 @@
 import Monoculture.Family
 import Monoculture.Payoff
+import DecisionCore.EpsilonContinuity
 
 open DecisionCore
 
@@ -112,6 +113,60 @@ theorem theorem1_h_eq_human_welfare {n : ℕ}
   rw [Model.welfareOrdered_eq_firstMoverEU_add_secondMoverEU]
   rfl
 
+/-- Since `h(θA)` is constant in `θA`, it is epsilon-delta continuous. -/
+theorem theorem1_h_epsilonContinuousAt {n : ℕ}
+    (F : AccuracyFamily n) (θH θstar : ℝ) :
+    EpsilonContinuousAt (fun θA => theorem1_h F θA θH) θstar := by
+  intro ε hε
+  refine ⟨1, zero_lt_one, ?_⟩
+  intro θA hdist
+  change |theorem1_h F θA θH - theorem1_h F θstar θH| < ε
+  rw [theorem1_h_const F θA θstar θH]
+  simpa using hε
+
+/--
+If every ranking atom of the accuracy family is epsilon-delta continuous at
+`θstar`, then the paper's all-algorithm welfare expression `f` is continuous
+there. This is the finite-probability bridge needed by the local nudge
+certificate.
+-/
+theorem theorem1_f_epsilonContinuousAt_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θA => ((F.dist θA) π).toReal) θstar) :
+    EpsilonContinuousAt (fun θA => theorem1_f F θA θH) θstar := by
+  dsimp [theorem1_f, modelAt, Model.firstMoverEU, Model.secondMoverEU,
+    Model.rankingDist, expectedFirstMoverUtility, expectedSecondMoverShared]
+  exact epsilonContinuousAt_add
+    (epsilonContinuousAt_pmfExp_of_atom
+      (μ := fun θA => F.dist θA)
+      (x := θstar)
+      hdist
+      (fun π => F.value (firstChoice π)))
+    (epsilonContinuousAt_pmfExp_of_atom
+      (μ := fun θA => F.dist θA)
+      (x := θstar)
+      hdist
+      (fun π => F.value (secondChoice π)))
+
+/--
+The paper's `f < h` persistence step follows from finite atomwise continuity of
+the ranking law. This isolates the continuity part of the final nudge from the
+separate one-sided crossing obligation `g < f`.
+-/
+theorem theorem1_f_lt_h_persists_right_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θA => ((F.dist θA) π).toReal) θstar)
+    (hgap : theorem1_f F θstar θH < theorem1_h F θstar θH) :
+    ∃ δ : ℝ, 0 < δ ∧
+      ∀ θA : ℝ, θstar < θA → θA < θstar + δ →
+        theorem1_f F θA θH < theorem1_h F θA θH :=
+  exists_right_radius_lt_of_epsilonContinuousAt
+    (theorem1_f_epsilonContinuousAt_of_atom_continuity F θH θstar hdist)
+    (theorem1_h_epsilonContinuousAt F θH θstar)
+    hgap
+
 /--
 The local monotonicity consequences of Definition 1 used for inequality (5) in
 the proof of Theorem 1.
@@ -187,6 +242,46 @@ structure Theorem1RightNudgeCertificate {n : ℕ} (F : AccuracyFamily n) (θH : 
     ∀ θA, θstar < θA → θA < θstar + radius →
       theorem1_g F θA θH < theorem1_f F θA θH ∧
         theorem1_f F θA θH < theorem1_h F θA θH
+  monotonicity :
+    ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
+
+/--
+A local analytic certificate for the paper's final nudge. The `g < f` side is
+given on a right interval after `θstar`; the `f < h` side is obtained from
+epsilon-delta continuity of `f` and the strict inequality at `θstar`.
+-/
+structure Theorem1LocalNudgeCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
+    Type where
+  θstar : ℝ
+  gf_radius : ℝ
+  thetaH_lt_star : θH < θstar
+  gf_radius_pos : 0 < gf_radius
+  f_epsilonContinuousAt :
+    EpsilonContinuousAt (fun θA => theorem1_f F θA θH) θstar
+  f_lt_h_at_star : theorem1_f F θstar θH < theorem1_h F θstar θH
+  first_dominance_on_right :
+    ∀ θA, θstar < θA → θA < θstar + gf_radius →
+      theorem1_g F θA θH < theorem1_f F θA θH
+  monotonicity :
+    ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
+
+/--
+A local nudge certificate whose continuity field is stated at the finite PMF
+atom level.  This is closer to Definition 1's family-level continuity premise
+than asking directly for continuity of the already-aggregated payoff `f`.
+-/
+structure Theorem1AtomLocalNudgeCertificate {n : ℕ}
+    (F : AccuracyFamily n) (θH : ℝ) : Type where
+  θstar : ℝ
+  gf_radius : ℝ
+  thetaH_lt_star : θH < θstar
+  gf_radius_pos : 0 < gf_radius
+  dist_atom_continuity :
+    ∀ π : Ranking n, EpsilonContinuousAt (fun θA => ((F.dist θA) π).toReal) θstar
+  f_lt_h_at_star : theorem1_f F θstar θH < theorem1_h F θstar θH
+  first_dominance_on_right :
+    ∀ θA, θstar < θA → θA < θstar + gf_radius →
+      theorem1_g F θA θH < theorem1_f F θA θH
   monotonicity :
     ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
 
@@ -305,6 +400,64 @@ theorem theorem1Target_of_rightNudgeCertificate {n : ℕ}
     Theorem1Target F θH :=
   theorem1Target_of_crossingCertificate
     (crossingCertificate_of_rightNudgeCertificate cert)
+
+/--
+Paper Theorem 1 from the local analytic nudge certificate.
+-/
+theorem theorem1Target_of_localNudgeCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1LocalNudgeCertificate F θH) :
+    Theorem1Target F θH := by
+  rcases exists_right_radius_lt_of_epsilonContinuousAt
+      cert.f_epsilonContinuousAt
+      (theorem1_h_epsilonContinuousAt F θH cert.θstar)
+      cert.f_lt_h_at_star with
+    ⟨fh_radius, hfh_radius_pos, hfh⟩
+  refine theorem1Target_of_rightNudgeCertificate ?_
+  refine
+    { θstar := cert.θstar
+      radius := min cert.gf_radius fh_radius
+      thetaH_lt_star := cert.thetaH_lt_star
+      radius_pos := lt_min cert.gf_radius_pos hfh_radius_pos
+      between_on_right := ?_
+      monotonicity := cert.monotonicity }
+  intro θA hstar hwithin
+  have hgf_within : θA < cert.θstar + cert.gf_radius := by
+    have hmin : min cert.gf_radius fh_radius ≤ cert.gf_radius :=
+      min_le_left cert.gf_radius fh_radius
+    linarith
+  have hfh_within : θA < cert.θstar + fh_radius := by
+    have hmin : min cert.gf_radius fh_radius ≤ fh_radius :=
+      min_le_right cert.gf_radius fh_radius
+    linarith
+  exact ⟨cert.first_dominance_on_right θA hstar hgf_within,
+    hfh θA hstar hfh_within⟩
+
+/-- Convert atomwise continuity into the aggregated local nudge certificate. -/
+def localNudgeCertificate_of_atomLocalNudgeCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1AtomLocalNudgeCertificate F θH) :
+    Theorem1LocalNudgeCertificate F θH where
+  θstar := cert.θstar
+  gf_radius := cert.gf_radius
+  thetaH_lt_star := cert.thetaH_lt_star
+  gf_radius_pos := cert.gf_radius_pos
+  f_epsilonContinuousAt :=
+    theorem1_f_epsilonContinuousAt_of_atom_continuity
+      F θH cert.θstar cert.dist_atom_continuity
+  f_lt_h_at_star := cert.f_lt_h_at_star
+  first_dominance_on_right := cert.first_dominance_on_right
+  monotonicity := cert.monotonicity
+
+/--
+Paper Theorem 1 from the atomwise local analytic nudge certificate.
+-/
+theorem theorem1Target_of_atomLocalNudgeCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1AtomLocalNudgeCertificate F θH) :
+    Theorem1Target F θH :=
+  theorem1Target_of_localNudgeCertificate
+    (localNudgeCertificate_of_atomLocalNudgeCertificate cert)
 
 /--
 Definition 3 gives `g(θA) < h(θA)` at any pair `θA > θH` where the induced model

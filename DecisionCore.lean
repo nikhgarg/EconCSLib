@@ -1,4 +1,5 @@
 import DecisionCore.FiniteExpectation
+import DecisionCore.EpsilonContinuity
 import DecisionCore.FiniteSigns
 import DecisionCore.Policy
 import DecisionCore.PolicyAveraging

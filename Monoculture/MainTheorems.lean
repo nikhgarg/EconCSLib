@@ -465,6 +465,46 @@ theorem paper_theorem1_h_eq_human_welfare
   AccuracyFamily.theorem1_h_eq_human_welfare F θA θH
 
 /--
+Theorem 1 proof notation, finite continuity bridge for `f`.
+
+Paper statement in the proof: the payoff/welfare expressions are continuous in
+`θA`. For the all-algorithm expression `f`, Lean proves this from atomwise
+epsilon-delta continuity of the finite ranking law `F_θ`.
+-/
+theorem paper_theorem1_f_continuous_from_atom_continuity
+    {n : ℕ} (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, DecisionCore.EpsilonContinuousAt
+        (fun θA => ((F.dist θA) π).toReal) θstar) :
+    DecisionCore.EpsilonContinuousAt
+      (fun θA => AccuracyFamily.theorem1_f F θA θH) θstar :=
+  AccuracyFamily.theorem1_f_epsilonContinuousAt_of_atom_continuity
+    F θH θstar hdist
+
+/--
+Theorem 1 proof notation, continuity persistence step.
+
+Paper statement in the proof: after finding a point with `f(θ*) < h(θ*)`,
+continuity makes `f(θA) < h(θA)` continue to hold for a sufficiently small
+increase of `θA`. Lean proves this finite version from atomwise continuity of
+the ranking law.
+-/
+theorem paper_theorem1_f_lt_h_persists_right_from_atom_continuity
+    {n : ℕ} (F : AccuracyFamily n) (θH θstar : ℝ)
+    (hdist :
+      ∀ π : Ranking n, DecisionCore.EpsilonContinuousAt
+        (fun θA => ((F.dist θA) π).toReal) θstar)
+    (hgap :
+      AccuracyFamily.theorem1_f F θstar θH <
+        AccuracyFamily.theorem1_h F θstar θH) :
+    ∃ δ : ℝ, 0 < δ ∧
+      ∀ θA : ℝ, θstar < θA → θA < θstar + δ →
+        AccuracyFamily.theorem1_f F θA θH <
+          AccuracyFamily.theorem1_h F θA θH :=
+  AccuracyFamily.theorem1_f_lt_h_persists_right_of_atom_continuity
+    F θH θstar hdist hgap
+
+/--
 Theorem 1 proof notation, initial crossing side.
 
 Paper statement in the proof: by Definition 2, at equal accuracies
@@ -556,6 +596,32 @@ theorem paper_theorem1_from_right_nudge_certificate
     (cert : AccuracyFamily.Theorem1RightNudgeCertificate F θH) :
     AccuracyFamily.Theorem1Target F θH :=
   AccuracyFamily.theorem1Target_of_rightNudgeCertificate cert
+
+/--
+Paper Theorem 1 from the local analytic nudge certificate.
+
+This version proves the `f < h` part of the right-neighborhood nudge from
+epsilon-delta continuity of `f` and the strict inequality `f(θ*) < h(θ*)`.
+The remaining analytic crossing obligation is the right-neighborhood `g < f`
+field in `AccuracyFamily.Theorem1LocalNudgeCertificate`.
+-/
+theorem paper_theorem1_from_local_nudge_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1LocalNudgeCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_localNudgeCertificate cert
+
+/--
+Paper Theorem 1 from the atomwise local analytic nudge certificate.
+
+This is the local nudge theorem with the continuity premise stated directly as
+atomwise epsilon-delta continuity of the finite ranking family.
+-/
+theorem paper_theorem1_from_atom_local_nudge_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1AtomLocalNudgeCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_atomLocalNudgeCertificate cert
 
 /--
 Paper Theorem 1 from the direct payoff certificate.
