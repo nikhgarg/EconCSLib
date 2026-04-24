@@ -3407,6 +3407,24 @@ def Problem6PolicyOptimal {n : ℕ}
     ∀ (ρ' : TypePolicy 2 n) (ell' : ℝ),
       problem6LPFeasible alpha v ρ' ell' → ell' ≤ ell
 
+/--
+The paper's equality-form optimal basic feasible solution package for Problem
+6.  The equality field is the constraint
+`q_j x_j + (1-q_j)y_j = λ` for every item, `optimal` records optimality for
+the epigraph LP formulation used in the formalization, and `basic_feasible`
+is the support-count consequence supplied by the basic-feasible-solution
+theorem.
+-/
+structure Problem6EqualizedBasicOptimal {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (ell : ℝ) :
+    Prop where
+  item_eq :
+    ∀ l : Item n,
+      pairShare alpha v l * (ρ 0 l).toReal +
+        (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell
+  optimal : Problem6PolicyOptimal alpha v ρ ell
+  basic_feasible : TypePolicy.BasicFeasibleSupportCertificate ρ
+
 /-- A Problem 6 optimal epigraph value is the minimum item value of its policy. -/
 theorem problem6PolicyOptimal_value_eq_finiteMin {n : ℕ} [NeZero n]
     {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
@@ -3473,6 +3491,99 @@ theorem problem6_noStrictPointwiseImprovement_of_policyOptimal
   have hle := hopt.2 ρ' ell' hfeas'
   dsimp [ell'] at hle
   linarith
+
+/-- An optimal Problem 6 epigraph policy has strictly positive value. -/
+theorem problem6PolicyOptimal_value_pos {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    0 < ell := by
+  let ρu : TypePolicy 2 n :=
+    TypeWeightedRecommendationModel.uniformTypePolicy (K := 2) (n := n)
+  let value : Item n → ℝ := fun j =>
+    pairShare alpha v j * (ρu 0 j).toReal +
+      (1 - pairShare alpha v j) * (ρu 1 j).toReal
+  let ell0 : ℝ := DecisionCore.finiteMin value
+  have hvalue_pos : ∀ j : Item n, 0 < value j := by
+    intro j
+    have hqpos : 0 < pairShare alpha v j :=
+      pairShare_pos j halpha0 halpha1 hpos
+    have hqcomp_pos : 0 < 1 - pairShare alpha v j :=
+      one_sub_pairShare_pos j halpha0 halpha1 hpos
+    have hxpos : 0 < (ρu 0 j).toReal := by
+      simpa [ρu] using
+        TypeWeightedRecommendationModel.uniformTypePolicy_apply_toReal_pos
+          (K := 2) (n := n) (0 : UserType 2) j
+    have hypos : 0 < (ρu 1 j).toReal := by
+      simpa [ρu] using
+        TypeWeightedRecommendationModel.uniformTypePolicy_apply_toReal_pos
+          (K := 2) (n := n) (1 : UserType 2) j
+    have hleft : 0 < pairShare alpha v j * (ρu 0 j).toReal :=
+      mul_pos hqpos hxpos
+    have hright : 0 < (1 - pairShare alpha v j) * (ρu 1 j).toReal :=
+      mul_pos hqcomp_pos hypos
+    dsimp [value]
+    linarith
+  have hell0_pos : 0 < ell0 := by
+    dsimp [ell0]
+    exact DecisionCore.finiteMin_pos value hvalue_pos
+  have hfeas0 : problem6LPFeasible alpha v ρu ell0 := by
+    intro j
+    dsimp [ell0, value]
+    exact DecisionCore.finiteMin_le value j
+  have hell0_le : ell0 ≤ ell :=
+    hopt.2 ρu ell0 hfeas0
+  exact lt_of_lt_of_le hell0_pos hell0_le
+
+/--
+An equalized optimal Problem 6 policy covers every item: if no type
+recommended an item, its equalized item value would be zero, contradicting the
+strictly positive optimum value.
+-/
+theorem problem6_item_coverage_of_equalized_policyOptimal {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+  ∀ j : Item n, ∃ k : UserType 2, ρ k j ≠ 0 := by
+  intro j
+  by_contra hnone
+  push Not at hnone
+  have h0 : ρ 0 j = 0 := hnone 0
+  have h1 : ρ 1 j = 0 := hnone 1
+  have hell_zero : ell = 0 := by
+    have h := hitem_eq j
+    simp [h0, h1] at h
+    exact h.symm
+  have hell_pos :
+      0 < ell :=
+    problem6PolicyOptimal_value_pos halpha0 halpha1 hpos hopt
+  linarith
+
+/--
+For the paper's equality-form optimal BFS package, the basic-feasible support
+count and positive equalized item values imply the Proposition 2 shared-item
+bound.
+-/
+theorem problem6_sharedItemsBound_of_equalizedBasicOptimal {n : ℕ}
+    [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypePolicy.SharedItemsBound ρ := by
+  have hactive : TypePolicy.ActivePairsBound ρ :=
+    TypePolicy.activePairsBound_of_basicFeasibleSupportCertificate
+      ρ h.basic_feasible
+  exact TypePolicy.sharedItemsBound_of_activePairsBound_of_item_coverage
+    ρ hactive
+    (problem6_item_coverage_of_equalized_policyOptimal
+      halpha0 halpha1 hpos h.item_eq h.optimal)
 
 /--
 An equalized optimal Problem 6 policy admits no feasible policy that strictly
@@ -3981,6 +4092,27 @@ theorem problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
       hitem_eq hopt
   exact problem6SparseEqualizedActive_of_noStrictPointwiseImprovement_of_two_lt
     hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
+
+/--
+Appendix D, Lemma 4 active sparse bridge for the paper's equality-form optimal
+BFS package.  The shared-item bound is derived from the basic-feasible support
+count and positive equalized item values.
+-/
+theorem problem6SparseEqualizedActive_of_equalizedBasicOptimal_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    Problem6SparseEqualizedActive alpha v (TypePolicy.lastActiveTypeZero ρ)
+      (fun l : Item n => (ρ 0 l).toReal)
+      (fun l : Item n => (ρ 1 l).toReal) ell := by
+  exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec h.item_eq h.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
 
 /-- The Problem 6 closed-form real solution as a two-type policy. -/
 noncomputable def problem6ClosedPolicy {n : ℕ}
@@ -5333,6 +5465,31 @@ theorem lemma7_policyOptimal_lastActive_mono_of_alpha_lt
     halpha0 halpha1 halpha0' halpha1' halpha_lt hpos hsparse hsparse'
 
 /--
+Appendix D, Lemma 7 for the paper's equality-form optimal BFS package.
+-/
+theorem lemma7_equalizedBasicOptimal_lastActive_mono_of_alpha_lt
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha' v ρ' ell') :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (TypePolicy.lastActiveTypeZero ρ').val := by
+  exact lemma7_policyOptimal_lastActive_mono_of_alpha_lt
+    hn halpha0 halpha1 halpha0' halpha1' halpha_lt
+    hpos hdec h.item_eq h'.item_eq h.optimal h'.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0' halpha1' hpos h')
+
+/--
 Appendix D, Lemma 4 uniqueness for equalized optimal Problem 6 policies,
 conditional on the paper's shared-item sparsity bound and `2 < n`.
 -/
@@ -5397,6 +5554,39 @@ theorem problem6PolicyOptimal_equalized_unique_sparseActive_of_two_lt
         (fun l : Item n => (ρ' 1 l).toReal) ell' := by
     simpa [hpivot] using hsparse'
   exact ⟨t, hsparse, hsparse'_same, hell_eq, hx_eq, hy_eq⟩
+
+/--
+Appendix D, Lemma 4 uniqueness for the paper's equality-form optimal BFS
+package.
+-/
+theorem problem6EqualizedBasicOptimal_unique_sparseActive_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha v ρ' ell') :
+    ∃ t : Item n,
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell ∧
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ' 0 l).toReal)
+        (fun l : Item n => (ρ' 1 l).toReal) ell' ∧
+      ell = ell' ∧
+      (fun l : Item n => (ρ 0 l).toReal) =
+        (fun l : Item n => (ρ' 0 l).toReal) ∧
+      (fun l : Item n => (ρ 1 l).toReal) =
+        (fun l : Item n => (ρ' 1 l).toReal) := by
+  exact problem6PolicyOptimal_equalized_unique_sparseActive_of_two_lt
+    hn halpha0 halpha1 hpos hdec h.item_eq h'.item_eq h.optimal h'.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h')
 
 /--
 Appendix D, Lemma 10, selected-pivot bridge at `α = 1/2`: if a midpoint
@@ -5589,6 +5779,32 @@ theorem lemma10_alpha_le_half_optimal_lastActive_le_center
       hn hpos hdec hcenter hitem_eq hopt hshared
 
 /--
+Appendix D, Lemma 10 stitched with Lemma 7 for the paper's equality-form
+optimal BFS package, odd-center case.
+-/
+theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_alpha_le_half_optimal_lastActive_le_center
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter
+    h.item_eq hhalf.item_eq h.optimal hhalf.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hhalf)
+
+/--
 Appendix D, Lemma 10 stitched with Lemma 7, even-center case: for
 `α ≤ 1/2`, the selected pivot is no later than the item immediately before its
 mirror, conditional on a supplied equalized optimum at the midpoint.
@@ -5634,6 +5850,32 @@ theorem lemma10_alpha_le_half_optimal_lastActive_le_succ_center
   · subst alpha
     exact lemma10_half_optimal_lastActive_le_succ_center
       hn hpos hdec hsucc hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 10 stitched with Lemma 7 for the paper's equality-form
+optimal BFS package, even-center case.
+-/
+theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_alpha_le_half_optimal_lastActive_le_succ_center
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc
+    h.item_eq hhalf.item_eq h.optimal hhalf.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hhalf)
 
 /--
 A certificate that a proposed Problem 6 policy and value solve the finite LP:
@@ -6073,6 +6315,26 @@ theorem problem6ClosedOptimalityCertificate_of_policyOptimal_equalized_of_two_lt
     exact hle.trans_eq hvalue
 
 /--
+Appendix D, Lemma 4/5 bridge for the paper's equality-form optimal BFS
+package: the active sparse bridge and closed-form optimality certificate no
+longer need a separate shared-item hypothesis.
+-/
+theorem problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    Problem6ClosedOptimalityCertificate alpha v
+      (TypePolicy.lastActiveTypeZero ρ) := by
+  exact problem6ClosedOptimalityCertificate_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec h.item_eq h.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+
+/--
 A closed-form certificate supplies the generic `Problem6OptimalityCertificate`
 for the value `problem6ClosedValue`.
 -/
@@ -6325,6 +6587,25 @@ theorem problem6LPOptimalValue_eq_closedValue_of_policyOptimal_equalized_of_two_
       hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared)
 
 /--
+Appendix D, Lemma 4/5 optimal-value bridge for the paper's equality-form
+optimal BFS package.
+-/
+theorem problem6LPOptimalValue_eq_closedValue_of_equalizedBasicOptimal_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    problem6LPOptimalValue alpha v =
+      problem6ClosedValue alpha v (TypePolicy.lastActiveTypeZero ρ) := by
+  exact problem6LPOptimalValue_eq_closedValue_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec h.item_eq h.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+
+/--
 Appendix D, Lemma 11 interval form: if the same pivot `t` has the paper's
 closed-form optimality certificate at `α` and `α'`, then the actual Problem 6
 LP optimum is monotone on that fixed-pivot interval.
@@ -6403,6 +6684,38 @@ theorem lemma11_problem6LPOptimalValue_mono_of_same_selected_pivot
     hpos hdec (by simpa [t] using hcenter) cert cert'
 
 /--
+Appendix D, Lemma 11 selected-policy fixed-interval form for the paper's
+equality-form optimal BFS package.
+-/
+theorem lemma11_problem6LPOptimalValue_mono_of_same_selected_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρ =
+        TypePolicy.lastActiveTypeZero ρ')
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha' v ρ' ell') :
+    problem6LPOptimalValue alpha v ≤ problem6LPOptimalValue alpha' v := by
+  exact lemma11_problem6LPOptimalValue_mono_of_same_selected_pivot
+    hn halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter h.item_eq h'.item_eq
+    h.optimal h'.optimal
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos h)
+    (problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0' halpha1' hpos h')
+
+/--
 Appendix D, Lemma 11 reduced-model form: on a fixed-pivot interval certified by
 the paper's closed-form optimality certificates, the reduced optimal item
 fairness is monotone in `α`.
@@ -6474,6 +6787,40 @@ theorem lemma11_reducedOptimalItemFairness_mono_of_same_selected_pivot
     hn halpha0 halpha1 halpha0' halpha1' halpha_le
     hpos hdec hpivot hcenter hitem_eq hitem_eq'
     hopt hopt' hshared hshared'
+
+/--
+Appendix D, Lemma 11 reduced-model selected-policy form for the paper's
+equality-form optimal BFS package.
+-/
+theorem lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρ =
+        TypePolicy.lastActiveTypeZero ρ')
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha' v ρ' ell') :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  rw [← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha v halpha0 halpha1 hpos,
+    ← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha' v halpha0' halpha1' hpos]
+  exact lemma11_problem6LPOptimalValue_mono_of_same_selected_equalizedBasicOptimal
+    hn halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter h h'
 
 end OpposingTypes
 end UserItemFairness
