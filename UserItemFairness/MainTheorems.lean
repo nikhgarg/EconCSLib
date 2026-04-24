@@ -3761,6 +3761,33 @@ theorem paper_lemma8_problem6BoundaryGap_exists_zero_of_lower_crossing_changes
     halphaLeft0 halphaRight1 hleft_le_right hpos
     hcross_left hnot_cross_right
 
+/-- Appendix D, Lemma 8: the boundary gap is strictly decreasing in `α`. -/
+theorem paper_lemma8_problem6BoundaryGap_strictAnti_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6BoundaryGap alpha' v t <
+      problem6BoundaryGap alpha v t := by
+  exact problem6BoundaryGap_strictAnti_alpha
+    t halpha0 halpha1 halpha0' halpha1' halpha_lt hpos
+
+/--
+Appendix D, Lemma 8: at a tight boundary for `t`, the next pivot has positive
+boundary gap.
+-/
+theorem paper_lemma8_problem6BoundaryGap_next_pos_of_boundary
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹) :
+    0 < problem6BoundaryGap alpha v u := by
+  exact problem6BoundaryGap_next_pos_of_boundary
+    halpha0 halpha1 hpos hnext hboundary
+
 /--
 Appendix D, Lemma 8 adjacent canonical boundary existence: if the canonical
 first pivot changes from `t` to `t+1`, the tight boundary equation for `t`
@@ -3788,6 +3815,58 @@ theorem paper_lemma8_problem6FirstClosedPivot_adjacentBoundary_exists
   exact problem6FirstClosedPivot_adjacentBoundary_exists
     halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
     hleft_le_right hpos hleft_pivot hright_pivot hnext
+
+/--
+Appendix D, Lemma 8: a tight boundary reached from a left interval still has
+canonical first pivot `t`.
+-/
+theorem paper_lemma8_problem6FirstClosedPivot_eq_of_left_pivot_and_boundary
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹) :
+    problem6FirstClosedPivot alphaBoundary v
+      halphaBoundary0 halphaBoundary1 hpos = t := by
+  exact problem6FirstClosedPivot_eq_of_left_pivot_and_boundary
+    halphaLeft0 halphaLeft1 halphaBoundary0 halphaBoundary1
+    hleft_le_boundary hpos hleft_pivot hboundary
+
+/--
+Appendix D, Lemma 8 no-skip bridge: if the canonical first pivot jumps past
+`t+1`, some intermediate parameter has first pivot exactly `t+1`.
+-/
+theorem paper_lemma8_problem6FirstClosedPivot_successor_exists_of_pivot_jump
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hskip : t.val + 1 < u.val) :
+    ∃ (alphaMid : ℝ) (halphaMid0 : 0 < alphaMid)
+      (halphaMid1 : alphaMid < 1) (s : Item n),
+      alphaLeft ≤ alphaMid ∧ alphaMid ≤ alphaRight ∧
+      s.val = t.val + 1 ∧
+      problem6FirstClosedPivot alphaMid v
+        halphaMid0 halphaMid1 hpos = s := by
+  exact problem6FirstClosedPivot_successor_exists_of_pivot_jump
+    halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+    hleft_le_right hpos hleft_pivot hright_pivot hskip
 
 /--
 Appendix D, Lemma 6, mirror-pair algebra for
