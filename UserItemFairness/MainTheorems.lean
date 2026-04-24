@@ -542,6 +542,53 @@ theorem paper_lemma16_typeOneShare_half_eq_half_of_eq
     typeOneShare (1 / 2) left right = (1 / 2 : ℝ) := by
   exact typeOneShare_half_eq_half_of_eq hleft heq
 
+/--
+Appendix D, Lemma 9, indexed form: for each item `j`, the paper's
+`q_j(α)` strictly increases as `α` increases.
+-/
+theorem paper_lemma9_pairShare_strictly_increases_in_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (hlt : alpha < alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j < pairShare alpha' v j := by
+  exact pairShare_strictMono_alpha j
+    halpha0 halpha1 halpha0' halpha1' hlt hpos
+
+/--
+Appendix E, Lemma 16, indexed form: `q_j(1/2) > 1/2` when item `j` has
+higher value than its opposite item.
+-/
+theorem paper_lemma16_half_lt_pairShare_half_of_reverse_lt
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hlt : v (reverseItem j) < v j) :
+    (1 / 2 : ℝ) < pairShare (1 / 2) v j := by
+  exact half_lt_pairShare_half_of_reverse_lt j hpos hlt
+
+/--
+Appendix E, Lemma 16, indexed form: `q_j(1/2) < 1/2` when item `j` has
+lower value than its opposite item.
+-/
+theorem paper_lemma16_pairShare_half_lt_half_of_lt_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hlt : v j < v (reverseItem j)) :
+    pairShare (1 / 2) v j < (1 / 2 : ℝ) := by
+  exact pairShare_half_lt_half_of_lt_reverse j hpos hlt
+
+/--
+Appendix E, Lemma 16, indexed form: `q_j(1/2) = 1/2` when item `j` and its
+opposite have equal value.
+-/
+theorem paper_lemma16_pairShare_half_eq_half_of_eq_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (heq : v j = v (reverseItem j)) :
+    pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
+  exact pairShare_half_eq_half_of_eq_reverse j hpos heq
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel

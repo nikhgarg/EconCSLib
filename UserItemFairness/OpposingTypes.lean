@@ -91,5 +91,63 @@ theorem typeOneShare_half_eq_half_of_eq
   field_simp [hden]
   ring
 
+/-- The opposite item index `n - j + 1` in zero-based `Fin n` notation. -/
+def reverseItem {n : ℕ} (j : Item n) : Item n :=
+  ⟨n - 1 - j.val, by omega⟩
+
+/-- The indexed `q_j(α)` used in the opposing-preference proofs. -/
+noncomputable def pairShare {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) : ℝ :=
+  typeOneShare alpha (v j) (v (reverseItem j))
+
+/--
+Appendix D, Lemma 9, indexed alpha-monotonicity component:
+for each item `j`, `q_j(α)` strictly increases with `α`.
+-/
+theorem pairShare_strictMono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (hlt : alpha < alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j < pairShare alpha' v j := by
+  exact typeOneShare_strictMono_alpha
+    halpha0 halpha1 halpha0' halpha1' hlt (hpos j) (hpos (reverseItem j))
+
+/--
+Appendix E, Lemma 16, indexed midpoint component: if item `j` has higher value
+than its opposite item, then `q_j(1/2) > 1/2`.
+-/
+theorem half_lt_pairShare_half_of_reverse_lt
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hlt : v (reverseItem j) < v j) :
+    (1 / 2 : ℝ) < pairShare (1 / 2) v j := by
+  exact half_lt_typeOneShare_half_of_right_lt_left
+    (hpos j) (hpos (reverseItem j)) hlt
+
+/--
+Appendix E, Lemma 16, indexed midpoint component: if item `j` has lower value
+than its opposite item, then `q_j(1/2) < 1/2`.
+-/
+theorem pairShare_half_lt_half_of_lt_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hlt : v j < v (reverseItem j)) :
+    pairShare (1 / 2) v j < (1 / 2 : ℝ) := by
+  exact typeOneShare_half_lt_half_of_left_lt_right
+    (hpos j) (hpos (reverseItem j)) hlt
+
+/--
+Appendix E, Lemma 16, indexed midpoint component: equal opposite item values
+give `q_j(1/2) = 1/2`.
+-/
+theorem pairShare_half_eq_half_of_eq_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (heq : v j = v (reverseItem j)) :
+    pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
+  exact typeOneShare_half_eq_half_of_eq (hpos j) heq
+
 end OpposingTypes
 end UserItemFairness
