@@ -538,6 +538,17 @@ theorem pivot_lt_reverseItem_iff_val_lt_pivot_of_pivot_eq_reverse
   omega
 
 /--
+For an even midpoint pivot immediately before its mirror, post-pivot mirrors
+are exactly the pivot and pre-pivot items.
+-/
+theorem pivot_lt_reverseItem_iff_val_le_pivot_of_pivot_succ_reverse
+    {n : ℕ} {t j : Item n}
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    t.val < (reverseItem j).val ↔ j.val ≤ t.val := by
+  simp [reverseItem] at hsucc ⊢
+  omega
+
+/--
 The reduced two-type model for the opposing-preference setting in Theorem 3.
 Type `0` has values `v_j`; type `1` has reversed values `v_{n-j+1}`.
 -/
@@ -944,6 +955,97 @@ private theorem problem6_sum_eq_pivot_add_right_part_of_before_zero {n : ℕ}
     _ = y t + (∑ j : Item n, if t.val < j.val then y j else 0) := by
           simp
 
+/--
+Appendix D, Lemma 10 even-center case: when the midpoint candidate is
+immediately before its mirror, the right inverse-share sum is the left sum plus
+the pivot's inverse share.
+-/
+theorem problem6RightSum_half_eq_leftSum_half_add_inv_pairShare_of_pivot_succ_reverse
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    problem6RightSum (1 / 2) v t =
+      problem6LeftSum (1 / 2) v t + (pairShare (1 / 2) v t)⁻¹ := by
+  unfold problem6LeftSum problem6RightSum
+  rw [← sum_reverseItem
+    (fun j : Item n =>
+      if t.val < j.val then (1 - pairShare (1 / 2) v j)⁻¹ else 0)]
+  have hreindex :
+      (∑ j : Item n,
+        if t.val < (reverseItem j).val then
+          (1 - pairShare (1 / 2) v (reverseItem j))⁻¹
+        else 0) =
+        ∑ j : Item n,
+          if j.val ≤ t.val then (pairShare (1 / 2) v j)⁻¹ else 0 := by
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    have hiff :=
+      pivot_lt_reverseItem_iff_val_le_pivot_of_pivot_succ_reverse
+        (t := t) (j := j) hsucc
+    by_cases hj : j.val ≤ t.val
+    · have hmirror : t.val < (reverseItem j).val := hiff.mpr hj
+      have hshare := pairShare_half_eq_one_sub_reverse j hpos
+      simpa [hj, hmirror, one_div] using hshare.symm
+    · have hmirror : ¬ t.val < (reverseItem j).val := by
+        intro hlt
+        exact hj (hiff.mp hlt)
+      simp [hj, hmirror]
+  rw [hreindex]
+  let x : Item n → ℝ :=
+    fun j => if j.val ≤ t.val then (pairShare (1 / 2) v j)⁻¹ else 0
+  have hzero : ∀ {j : Item n}, t.val < j.val → x j = 0 := by
+    intro j hj
+    have hnle_fin : ¬ j ≤ t := not_le.mpr hj
+    simp [x, hnle_fin]
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_of_after_zero x t hzero
+  have hleft :
+      (∑ j : Item n, if j.val < t.val then x j else 0) =
+        ∑ j : Item n,
+          if j.val < t.val then (pairShare (1 / 2) v j)⁻¹ else 0 := by
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    by_cases hlt : j.val < t.val
+    · have hle_fin : j ≤ t := le_of_lt hlt
+      simp [x, hlt, hle_fin]
+    · simp [x, hlt]
+  calc
+    (∑ j : Item n, if j.val ≤ t.val then
+        (pairShare (1 / 2) v j)⁻¹ else 0)
+        = (∑ j : Item n, if j.val < t.val then x j else 0) + x t := by
+          simpa [x] using hsplit
+    _ = (∑ j : Item n,
+          if j.val < t.val then (pairShare (1 / 2) v j)⁻¹ else 0) +
+          (pairShare (1 / 2) v t)⁻¹ := by
+          rw [hleft]
+          simp [x]
+
+/--
+Appendix D, Lemma 10 even-center case: for the midpoint pivot immediately
+before its mirror, Lemma 5's denominator equals the right inverse-share sum.
+-/
+theorem problem6ClosedDenominator_half_succ_center_eq_rightSum {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    problem6ClosedDenominator (1 / 2) v t =
+      problem6RightSum (1 / 2) v t := by
+  have hright :=
+    problem6RightSum_half_eq_leftSum_half_add_inv_pairShare_of_pivot_succ_reverse
+      (v := v) (t := t) hpos hsucc
+  set q := pairShare (1 / 2) v t
+  set L := problem6LeftSum (1 / 2) v t
+  have hqpos : 0 < q := by
+    simpa [q] using
+      pairShare_pos t (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+  have hqne : q ≠ 0 := ne_of_gt hqpos
+  unfold problem6ClosedDenominator
+  rw [hright]
+  change 1 + q * L + (1 - q) * (L + q⁻¹) = L + q⁻¹
+  field_simp [hqne]
+  ring
+
 /-- Lemma 5: before the pivot, `x_j = λ / q_j`. -/
 theorem problem6SparseEqualized_x_before_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
@@ -1176,6 +1278,31 @@ theorem problem6ClosedPivotDenominatorBounds_half_center {n : ℕ}
     linarith
   · rw [← hsum, hden]
     linarith
+
+/--
+Appendix D, Lemma 10 even-center feasibility certificate: the midpoint
+candidate immediately before its mirror has nonnegative closed-form pivot masses.
+-/
+theorem problem6ClosedPivotDenominatorBounds_half_succ_center {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    Problem6ClosedPivotDenominatorBounds (1 / 2) v t := by
+  have hright :=
+    problem6RightSum_half_eq_leftSum_half_add_inv_pairShare_of_pivot_succ_reverse
+      (v := v) (t := t) hpos hsucc
+  have hden :=
+    problem6ClosedDenominator_half_succ_center_eq_rightSum
+      (v := v) (t := t) hpos hsucc
+  have hq_nonneg :
+      0 ≤ (pairShare (1 / 2) v t)⁻¹ :=
+    inv_nonneg.mpr
+      (pairShare_pos t (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos).le
+  constructor
+  · rw [hden, hright]
+    exact le_add_of_nonneg_right hq_nonneg
+  · rw [hden]
 
 /-- Denominator bounds imply nonnegative pivot coordinates. -/
 theorem problem6ClosedNonnegativePivots_of_denominatorBounds {n : ℕ}

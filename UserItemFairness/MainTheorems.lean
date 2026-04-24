@@ -1306,6 +1306,18 @@ theorem paper_lemma10_pivot_lt_reverseItem_iff_val_lt_pivot_of_pivot_eq_reverse
     (t := t) (j := j) hcenter
 
 /--
+Appendix D, Lemma 10 even-center mirror indexing: when the candidate pivot is
+immediately before its mirror, post-pivot mirrors are exactly the pivot and
+pre-pivot items.
+-/
+theorem paper_lemma10_pivot_lt_reverseItem_iff_val_le_pivot_of_pivot_succ_reverse
+    {n : ℕ} {t j : Item n}
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    t.val < (reverseItem j).val ↔ j.val ≤ t.val := by
+  exact pivot_lt_reverseItem_iff_val_le_pivot_of_pivot_succ_reverse
+    (t := t) (j := j) hsucc
+
+/--
 Appendix D, Lemma 10 exact-center case: at `α = 1/2`, the Lemma 5 left and
 right inverse-share sums coincide.
 -/
@@ -1316,6 +1328,20 @@ theorem paper_lemma10_LeftSum_half_eq_RightSum_half_of_center
     problem6LeftSum (1 / 2) v t = problem6RightSum (1 / 2) v t := by
   exact problem6LeftSum_half_eq_rightSum_half_of_pivot_eq_reverse
     (v := v) (t := t) hpos hcenter
+
+/--
+Appendix D, Lemma 10 even-center case: the right inverse-share sum is the left
+sum plus the pivot inverse-share term.
+-/
+theorem paper_lemma10_RightSum_half_eq_LeftSum_half_add_inv_pairShare_of_succ_center
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    problem6RightSum (1 / 2) v t =
+      problem6LeftSum (1 / 2) v t + (pairShare (1 / 2) v t)⁻¹ := by
+  exact
+    problem6RightSum_half_eq_leftSum_half_add_inv_pairShare_of_pivot_succ_reverse
+      (v := v) (t := t) hpos hsucc
 
 /--
 Appendix D, Lemma 10 exact-center case: the closed-form denominator simplifies
@@ -1331,6 +1357,19 @@ theorem paper_lemma10_ClosedDenominator_half_center_eq_one_add_LeftSum
     (v := v) (t := t) hpos hcenter
 
 /--
+Appendix D, Lemma 10 even-center case: the closed-form denominator equals the
+right inverse-share sum.
+-/
+theorem paper_lemma10_ClosedDenominator_half_succ_center_eq_RightSum
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    problem6ClosedDenominator (1 / 2) v t =
+      problem6RightSum (1 / 2) v t := by
+  exact problem6ClosedDenominator_half_succ_center_eq_rightSum
+    (v := v) (t := t) hpos hsucc
+
+/--
 Appendix D, Lemma 10 exact-center case: the midpoint Lemma 5 construction has
 the denominator bounds needed for nonnegative pivot masses.
 -/
@@ -1341,6 +1380,18 @@ theorem paper_lemma10_ClosedPivotDenominatorBounds_half_center
     Problem6ClosedPivotDenominatorBounds (1 / 2) v t := by
   exact problem6ClosedPivotDenominatorBounds_half_center
     (v := v) (t := t) hpos hcenter
+
+/--
+Appendix D, Lemma 10 even-center case: the midpoint Lemma 5 construction has
+the denominator bounds needed for nonnegative pivot masses.
+-/
+theorem paper_lemma10_ClosedPivotDenominatorBounds_half_succ_center
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    Problem6ClosedPivotDenominatorBounds (1 / 2) v t := by
+  exact problem6ClosedPivotDenominatorBounds_half_succ_center
+    (v := v) (t := t) hpos hsucc
 
 end OpposingTypes
 
