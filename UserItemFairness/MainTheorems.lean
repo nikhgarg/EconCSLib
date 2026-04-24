@@ -410,6 +410,17 @@ theorem paper_unconstrained_user_fairness_optimum_eq_one
   exact W.optimalUserFairnessAtLevel_zero_eq_one hNonneg hRow
 
 /--
+Appendix D, Lemma 3: without item-fairness constraints, the user-fairness
+optimum is `1`.
+-/
+theorem paper_lemma3_unconstrained_user_fairness_eq_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) :
+    W.optimalUserFairnessAtLevel 0 = 1 := by
+  exact W.paper_unconstrained_user_fairness_optimum_eq_one hNonneg hRow
+
+/--
 Price-of-fairness identity at an arbitrary item-fairness fraction.
 
 Once the unconstrained optimum is normalized to `1`, the paper's price of
@@ -588,6 +599,40 @@ theorem paper_lemma16_pairShare_half_eq_half_of_eq_reverse
     (heq : v j = v (reverseItem j)) :
     pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
   exact pairShare_half_eq_half_of_eq_reverse j hpos heq
+
+/--
+Appendix E, Lemma 16, indexed order form under the paper's strictly decreasing
+value vector assumption.
+-/
+theorem paper_lemma16_half_lt_pairShare_half_of_val_lt_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hval : j.val < (reverseItem j).val) :
+    (1 / 2 : ℝ) < pairShare (1 / 2) v j := by
+  exact half_lt_pairShare_half_of_val_lt_reverse j hpos hdec hval
+
+/--
+Appendix E, Lemma 16, indexed order form under the paper's strictly decreasing
+value vector assumption.
+-/
+theorem paper_lemma16_pairShare_half_lt_half_of_reverse_val_lt
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hval : (reverseItem j).val < j.val) :
+    pairShare (1 / 2) v j < (1 / 2 : ℝ) := by
+  exact pairShare_half_lt_half_of_reverse_val_lt j hpos hdec hval
+
+/--
+Appendix E, Lemma 16, indexed order form for the middle item.
+-/
+theorem paper_lemma16_pairShare_half_eq_half_of_val_eq_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hval : j.val = (reverseItem j).val) :
+    pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
+  exact pairShare_half_eq_half_of_val_eq_reverse j hpos hval
 
 end OpposingTypes
 

@@ -149,5 +149,64 @@ theorem pairShare_half_eq_half_of_eq_reverse
     pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
   exact typeOneShare_half_eq_half_of_eq (hpos j) heq
 
+/-- Values are strictly decreasing in the item index, matching `v₁ > ... > vₙ`. -/
+def StrictlyDecreasingByIndex {n : ℕ} (v : Item n → ℝ) : Prop :=
+  ∀ ⦃i j : Item n⦄, i.val < j.val → v j < v i
+
+/-- If `j` is before its reverse partner, strict index-decrease gives `v_rev < v_j`. -/
+theorem reverse_value_lt_of_val_lt_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hval : j.val < (reverseItem j).val) :
+    v (reverseItem j) < v j := by
+  exact hdec hval
+
+/-- If `j` is after its reverse partner, strict index-decrease gives `v_j < v_rev`. -/
+theorem value_lt_reverse_value_of_reverse_val_lt
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hval : (reverseItem j).val < j.val) :
+    v j < v (reverseItem j) := by
+  exact hdec hval
+
+/--
+Appendix E, Lemma 16, indexed order form: an item before its reverse partner
+has `q_j(1/2) > 1/2`.
+-/
+theorem half_lt_pairShare_half_of_val_lt_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hval : j.val < (reverseItem j).val) :
+    (1 / 2 : ℝ) < pairShare (1 / 2) v j := by
+  exact half_lt_pairShare_half_of_reverse_lt j hpos
+    (reverse_value_lt_of_val_lt_reverse j hdec hval)
+
+/--
+Appendix E, Lemma 16, indexed order form: an item after its reverse partner
+has `q_j(1/2) < 1/2`.
+-/
+theorem pairShare_half_lt_half_of_reverse_val_lt
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hval : (reverseItem j).val < j.val) :
+    pairShare (1 / 2) v j < (1 / 2 : ℝ) := by
+  exact pairShare_half_lt_half_of_lt_reverse j hpos
+    (value_lt_reverse_value_of_reverse_val_lt j hdec hval)
+
+/--
+Appendix E, Lemma 16, indexed order form: an item equal to its reverse partner
+has `q_j(1/2) = 1/2`.
+-/
+theorem pairShare_half_eq_half_of_val_eq_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hval : j.val = (reverseItem j).val) :
+    pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
+  have heq_item : j = reverseItem j := by
+    exact Fin.ext hval
+  exact pairShare_half_eq_half_of_eq_reverse j hpos (congrArg v heq_item)
+
 end OpposingTypes
 end UserItemFairness
