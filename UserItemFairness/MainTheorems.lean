@@ -580,6 +580,30 @@ theorem paper_lemma9_pairShare_strictly_decreases_in_index
     pairShare alpha v j < pairShare alpha v i := by
   exact pairShare_strictAnti_index halpha0 halpha1 hpos hdec hij
 
+/-- Problem 6 setup: `q_j(α)` is strictly positive. -/
+theorem paper_problem6_pairShare_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < pairShare alpha v j := by
+  exact pairShare_pos j halpha0 halpha1 hpos
+
+/-- Problem 6 setup: `q_j(α)` is strictly below one. -/
+theorem paper_problem6_pairShare_lt_one
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j < 1 := by
+  exact pairShare_lt_one j halpha0 halpha1 hpos
+
+/-- Problem 6 setup: the complementary share `1 - q_j(α)` is strictly positive. -/
+theorem paper_problem6_one_sub_pairShare_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < 1 - pairShare alpha v j := by
+  exact one_sub_pairShare_pos j halpha0 halpha1 hpos
+
 /--
 Appendix E, Lemma 16, indexed form: `q_j(1/2) > 1/2` when item `j` has
 higher value than its opposite item.

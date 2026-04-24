@@ -23,6 +23,36 @@ theorem typeOneShare_denom_pos
   exact add_pos (mul_pos halpha0 hleft)
     (mul_pos (sub_pos.mpr halpha1) hright)
 
+/-- `q_j(α)` is positive for interior `α` and positive utilities. -/
+theorem typeOneShare_pos
+    {alpha left right : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : 0 < left) (hright : 0 < right) :
+    0 < typeOneShare alpha left right := by
+  unfold typeOneShare
+  exact div_pos (mul_pos halpha0 hleft)
+    (typeOneShare_denom_pos halpha0 halpha1 hleft hright)
+
+/-- `q_j(α)` is less than one for interior `α` and positive utilities. -/
+theorem typeOneShare_lt_one
+    {alpha left right : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : 0 < left) (hright : 0 < right) :
+    typeOneShare alpha left right < 1 := by
+  unfold typeOneShare
+  have hden := typeOneShare_denom_pos halpha0 halpha1 hleft hright
+  rw [div_lt_one hden]
+  nlinarith [mul_pos (sub_pos.mpr halpha1) hright]
+
+/-- The complementary share `1 - q_j(α)` is positive. -/
+theorem one_sub_typeOneShare_pos
+    {alpha left right : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : 0 < left) (hright : 0 < right) :
+    0 < 1 - typeOneShare alpha left right := by
+  have hlt := typeOneShare_lt_one halpha0 halpha1 hleft hright
+  linarith
+
 /--
 Appendix D, Lemma 9, scalar alpha-monotonicity component:
 `q_j(α)` strictly increases as `α` increases.
@@ -140,6 +170,30 @@ theorem pairShare_strictMono_alpha
     pairShare alpha v j < pairShare alpha' v j := by
   exact typeOneShare_strictMono_alpha
     halpha0 halpha1 halpha0' halpha1' hlt (hpos j) (hpos (reverseItem j))
+
+/-- The indexed share `q_j(α)` is positive. -/
+theorem pairShare_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < pairShare alpha v j := by
+  exact typeOneShare_pos halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+
+/-- The indexed share `q_j(α)` is less than one. -/
+theorem pairShare_lt_one
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j < 1 := by
+  exact typeOneShare_lt_one halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+
+/-- The indexed complementary share `1 - q_j(α)` is positive. -/
+theorem one_sub_pairShare_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < 1 - pairShare alpha v j := by
+  exact one_sub_typeOneShare_pos halpha0 halpha1 (hpos j) (hpos (reverseItem j))
 
 /-- Reversing item indices flips strict order. -/
 theorem reverseItem_val_lt_of_val_lt {n : ℕ} {i j : Item n}
