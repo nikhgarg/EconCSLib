@@ -228,6 +228,75 @@ theorem paper_uniform_rounding_count_close_of_strict_exchange_certificate
     a anchor hopt.1 hanchor hBle hNlt hno
 
 /--
+Finite Proposition 2 bridge from square-root anchors to homogeneity.
+
+For the uniform `[0,1]`, `k = 1` objective, suppose the real-relaxation floor
+anchor is within one item of the square-root target count and satisfies the
+strict boundary exchange certificate. Then every finite optimum is
+approximately `1/2`-homogeneous with the paper's finite rounding error
+`(m + 1) / N`.
+
+The remaining paper-specific work is to construct this anchor from the
+square-root real-relaxation optimizer.
+-/
+theorem paper_uniform_top_one_sqrt_homogeneity_of_anchor_certificate
+    {T : ℕ} (likelihood : ItemType T → ℝ)
+    (a anchor : CountAllocation T) {N B : ℕ}
+    (hNpos : 0 < N)
+    (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0)
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hanchor : DecisionCore.Allocation.total anchor = B)
+    (hlike_nonneg : ∀ t, 0 ≤ likelihood t)
+    (hBle : B ≤ N)
+    (hNlt : N < B + Fintype.card (ItemType T))
+    (hcert : UniformTopOne.StrictRoundingExchangeCertificate likelihood anchor)
+    (hanchor_close :
+      ∀ t,
+        |(anchor.count t : ℝ) -
+          (N : ℝ) *
+            (Real.sqrt (likelihood t) /
+              ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤ 1) :
+    (sqrtLikelihoodProfile likelihood).Approx a
+      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
+  have hround :=
+    paper_uniform_rounding_count_close_of_strict_exchange_certificate
+      likelihood a anchor hopt hanchor hlike_nonneg hBle hNlt hcert
+  refine paper_uniform_sqrt_homogeneity_of_count_closeness
+    likelihood a hnorm hopt.1 hNpos ?_
+  intro t
+  let target : ℝ :=
+    (N : ℝ) *
+      (Real.sqrt (likelihood t) /
+        ∑ i : ItemType T, Real.sqrt (likelihood i))
+  have hcount_anchor :
+      |(a.count t : ℝ) - (anchor.count t : ℝ)| ≤
+        (Fintype.card (ItemType T) : ℝ) := by
+    have hleft : (anchor.count t : ℝ) <
+        (a.count t : ℝ) + (Fintype.card (ItemType T) : ℝ) := by
+      exact_mod_cast (hround t).1
+    have hright : (a.count t : ℝ) <
+        (anchor.count t : ℝ) + (Fintype.card (ItemType T) : ℝ) := by
+      exact_mod_cast (hround t).2
+    rw [abs_le]
+    constructor <;> linarith
+  have hanchor_target : |(anchor.count t : ℝ) - target| ≤ 1 := by
+    simpa [target] using hanchor_close t
+  have hsplit :
+      (a.count t : ℝ) - target =
+        ((a.count t : ℝ) - (anchor.count t : ℝ)) +
+          ((anchor.count t : ℝ) - target) := by
+    ring
+  calc
+    |(a.count t : ℝ) - target|
+        = |((a.count t : ℝ) - (anchor.count t : ℝ)) +
+            ((anchor.count t : ℝ) - target)| := by
+            rw [hsplit]
+    _ ≤ |(a.count t : ℝ) - (anchor.count t : ℝ)| +
+          |(anchor.count t : ℝ) - target| := abs_add_le _ _
+    _ ≤ (Fintype.card (ItemType T) : ℝ) + 1 :=
+          add_le_add hcount_anchor hanchor_target
+
+/--
 Two-type Bernoulli first-order condition from type `0` to type `1`.
 -/
 theorem paper_two_type_forward_one_le_backward_zero

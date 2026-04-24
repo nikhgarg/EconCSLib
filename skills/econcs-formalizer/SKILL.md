@@ -215,6 +215,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - For inequality-heavy proofs, use certificate structures with fields matching
   the exact nonnegativity, strict positivity, and comparison obligations needed
   by the final theorem.
+- For finite rounding arguments, split the proof into reusable layers: a
+  generic no-crossing combinatorial theorem, a paper-specific exchange
+  certificate that rules out crossings at optima, and a final triangle
+  inequality step converting anchor closeness plus rounding closeness into the
+  paper's approximation guarantee.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says
