@@ -638,6 +638,41 @@ theorem paper_lemma4_exchange_j_value_gt
   exact lemma4_exchange_j_value_gt hqi1 hqij hc
 
 /--
+Appendix D, Lemma 4 exchange algebra: there are small positive `ε₁, ε₂`
+making both affected item values strictly larger after the perturbation.
+-/
+theorem paper_lemma4_exchange_exists_pos_eps_i_j_value_gt
+    {qi qj c yi yj : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) (hc : 0 < c) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ 0 < eps2 ∧
+      (1 - qi) * (yi + qi * c / (1 - qi) + eps2) >
+        qi * c + (1 - qi) * yi ∧
+      qj * (c - eps1) +
+          (1 - qj) * (yj - qi * c / (1 - qi) - eps2) >
+        (1 - qj) * yj := by
+  exact lemma4_exchange_exists_pos_eps_i_j_value_gt hqi1 hqij hc
+
+/--
+Appendix D, Lemma 4 exchange algebra with validity bounds: `ε₁, ε₂` can be
+chosen below arbitrary positive caps.
+-/
+theorem paper_lemma4_exchange_exists_bounded_pos_eps_i_j_value_gt
+    {qi qj c yi yj b1 b2 : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) (hc : 0 < c)
+    (hb1 : 0 < b1) (hb2 : 0 < b2) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ eps1 < b1 ∧
+      0 < eps2 ∧ eps2 < b2 ∧
+      (1 - qi) * (yi + qi * c / (1 - qi) + eps2) >
+        qi * c + (1 - qi) * yi ∧
+      qj * (c - eps1) +
+          (1 - qj) * (yj - qi * c / (1 - qi) - eps2) >
+        (1 - qj) * yj := by
+  exact lemma4_exchange_exists_bounded_pos_eps_i_j_value_gt
+    hqi1 hqij hc hb1 hb2
+
+/--
 Appendix D, Lemma 4 exchange algebra: the donor coordinate remains
 nonnegative after the exact transfer.
 -/
@@ -758,6 +793,265 @@ theorem paper_lemma4_pairShare_exchange_j_value_gt
       (1 - pairShare alpha v j) * yj := by
   exact lemma4_pairShare_exchange_j_value_gt
     halpha0 halpha1 hpos hdec hji hc
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: small positive `ε₁, ε₂` can be
+chosen so both affected item values strictly increase.
+-/
+theorem paper_lemma4_pairShare_exchange_exists_pos_eps_i_j_value_gt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ 0 < eps2 ∧
+      (1 - pairShare alpha v i) *
+          (yi + pairShare alpha v i * c /
+            (1 - pairShare alpha v i) + eps2) >
+        pairShare alpha v i * c +
+          (1 - pairShare alpha v i) * yi ∧
+      pairShare alpha v j * (c - eps1) +
+          (1 - pairShare alpha v j) *
+            (yj - pairShare alpha v i * c /
+              (1 - pairShare alpha v i) - eps2) >
+        (1 - pairShare alpha v j) * yj := by
+  exact lemma4_pairShare_exchange_exists_pos_eps_i_j_value_gt
+    halpha0 halpha1 hpos hdec hji hc
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra with validity bounds: the small
+positive `ε₁, ε₂` can also be chosen below arbitrary positive caps.
+-/
+theorem paper_lemma4_pairShare_exchange_exists_bounded_pos_eps_i_j_value_gt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj b1 b2 : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hb1 : 0 < b1) (hb2 : 0 < b2) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ eps1 < b1 ∧
+      0 < eps2 ∧ eps2 < b2 ∧
+      (1 - pairShare alpha v i) *
+          (yi + pairShare alpha v i * c /
+            (1 - pairShare alpha v i) + eps2) >
+        pairShare alpha v i * c +
+          (1 - pairShare alpha v i) * yi ∧
+      pairShare alpha v j * (c - eps1) +
+          (1 - pairShare alpha v j) *
+            (yj - pairShare alpha v i * c /
+              (1 - pairShare alpha v i) - eps2) >
+        (1 - pairShare alpha v j) * yj := by
+  exact lemma4_pairShare_exchange_exists_bounded_pos_eps_i_j_value_gt
+    halpha0 halpha1 hpos hdec hji hc hb1 hb2
+
+/--
+Appendix D, Lemma 4 indexed perturbation construction: an earlier zero `x_j`
+and a later positive `x_i` admit the paper's `ε₁, ε₂` exchange, producing
+nonnegative row vectors with the same row sums and strictly larger item value at
+every item. The vector `r` abstracts the paper's redistribution of `ε₁` over
+unaffected items.
+-/
+theorem paper_lemma4_pairShare_gap_exchange_exists_strictly_improves
+    {n : ℕ} {alpha : ℝ} {v x y r : Item n → ℝ} {i j : Item n}
+    {c ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hy_nonneg : ∀ l : Item n, 0 ≤ y l)
+    (hxi : x i = c) (hxj : x j = 0) (hc : 0 < c)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumy : (∑ l : Item n, y l) = 1)
+    (hr_nonneg : ∀ l : Item n, 0 ≤ r l)
+    (hr_pos : ∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l)
+    (hri : r i = 0) (hrj : r j = 0)
+    (hrsum : (∑ l : Item n, r l) = 1)
+    (hi_eq :
+      pairShare alpha v i * x i +
+        (1 - pairShare alpha v i) * y i = ell)
+    (hj_eq :
+      pairShare alpha v j * x j +
+        (1 - pairShare alpha v j) * y j = ell) :
+    ∃ eps1 eps2 : ℝ, ∃ x' y' : Item n → ℝ,
+      0 < eps1 ∧ eps1 < c ∧ 0 < eps2 ∧
+      (eps2 < y j - pairShare alpha v i * c /
+        (1 - pairShare alpha v i)) ∧
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ y' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, y' l) = 1 ∧
+      (∀ l : Item n,
+        pairShare alpha v l * x l +
+          (1 - pairShare alpha v l) * y l <
+        pairShare alpha v l * x' l +
+          (1 - pairShare alpha v l) * y' l) := by
+  exact lemma4_pairShare_gap_exchange_exists_strictly_improves
+    halpha0 halpha1 hpos hdec hji hx_nonneg hy_nonneg hxi hxj hc
+    hsumx hsumy hr_nonneg hr_pos hri hrj hrsum hi_eq hj_eq
+
+/--
+Appendix D, Lemma 4 no-gap consequence for the first row: if the equalized
+Problem 6 policy admits no feasible policy that strictly improves every item
+value, then an earlier zero `x_j` rules out later positive `x_i`.
+-/
+theorem paper_lemma4_twoTypeXZeroClosed_of_noStrictPointwiseImprovement
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hredistrib :
+      ∀ {i j : Item n}, j.val < i.val →
+        ∃ r : Item n → ℝ,
+          (∀ l : Item n, 0 ≤ r l) ∧
+          (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+          r i = 0 ∧ r j = 0 ∧
+          (∑ l : Item n, r l) = 1)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ) :
+    TypePolicy.TwoTypeXZeroClosed ρ := by
+  exact lemma4_twoTypeXZeroClosed_of_noStrictPointwiseImprovement
+    halpha0 halpha1 hpos hdec hredistrib hitem_eq hno
+
+/--
+Appendix D, Lemma 4 symmetric indexed perturbation construction: an earlier
+positive `y_i` and later zero `y_j` admit the symmetric exchange, producing
+nonnegative row vectors with the same row sums and strictly larger item value at
+every item.
+-/
+theorem paper_lemma4_pairShare_y_gap_exchange_exists_strictly_improves
+    {n : ℕ} {alpha : ℝ} {v x y r : Item n → ℝ} {i j : Item n}
+    {c ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val < j.val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hy_nonneg : ∀ l : Item n, 0 ≤ y l)
+    (hyi : y i = c) (hyj : y j = 0) (hc : 0 < c)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumy : (∑ l : Item n, y l) = 1)
+    (hr_nonneg : ∀ l : Item n, 0 ≤ r l)
+    (hr_pos : ∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l)
+    (hri : r i = 0) (hrj : r j = 0)
+    (hrsum : (∑ l : Item n, r l) = 1)
+    (hi_eq :
+      pairShare alpha v i * x i +
+        (1 - pairShare alpha v i) * y i = ell)
+    (hj_eq :
+      pairShare alpha v j * x j +
+        (1 - pairShare alpha v j) * y j = ell) :
+    ∃ eps1 eps2 : ℝ, ∃ x' y' : Item n → ℝ,
+      0 < eps1 ∧ eps1 < c ∧ 0 < eps2 ∧
+      (eps2 < x j - (1 - pairShare alpha v i) * c /
+        pairShare alpha v i) ∧
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ y' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, y' l) = 1 ∧
+      (∀ l : Item n,
+        pairShare alpha v l * x l +
+          (1 - pairShare alpha v l) * y l <
+        pairShare alpha v l * x' l +
+          (1 - pairShare alpha v l) * y' l) := by
+  exact lemma4_pairShare_y_gap_exchange_exists_strictly_improves
+    halpha0 halpha1 hpos hdec hij hx_nonneg hy_nonneg hyi hyj hc
+    hsumx hsumy hr_nonneg hr_pos hri hrj hrsum hi_eq hj_eq
+
+/--
+Appendix D, Lemma 4 no-gap consequence for the second row: if the equalized
+Problem 6 policy admits no feasible policy that strictly improves every item
+value, then a later zero `y_j` rules out earlier positive `y_i`.
+-/
+theorem paper_lemma4_twoTypeYZeroClosed_of_noStrictPointwiseImprovement
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hredistrib :
+      ∀ {i j : Item n}, i.val < j.val →
+        ∃ r : Item n → ℝ,
+          (∀ l : Item n, 0 ≤ r l) ∧
+          (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+          r i = 0 ∧ r j = 0 ∧
+          (∑ l : Item n, r l) = 1)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ) :
+    TypePolicy.TwoTypeYZeroClosed ρ := by
+  exact lemma4_twoTypeYZeroClosed_of_noStrictPointwiseImprovement
+    halpha0 halpha1 hpos hdec hredistrib hitem_eq hno
+
+/--
+Appendix D, Lemma 4 threshold-support conclusion from the perturbation
+argument and the Proposition 2 shared-item bound.
+-/
+theorem paper_lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hredistrib :
+      ∀ {i j : Item n}, i ≠ j →
+        ∃ r : Item n → ℝ,
+          (∀ l : Item n, 0 ≤ r l) ∧
+          (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+          r i = 0 ∧ r j = 0 ∧
+          (∑ l : Item n, r l) = 1)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    TypePolicy.TwoTypeThresholdSupport ρ := by
+  exact lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement
+    halpha0 halpha1 hpos hdec hredistrib hitem_eq hno hshared
+
+/--
+Appendix D, Lemma 4 redistribution vector: for `2 < n`, the paper's uniform
+`1/(n-2)` distribution over items outside an exchanged pair exists.
+-/
+theorem paper_lemma4_redistribution_exists_of_two_lt
+    {n : ℕ} (hn : 2 < n) {i j : Item n} (hij : i ≠ j) :
+    ∃ r : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ r l) ∧
+      (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+      r i = 0 ∧ r j = 0 ∧
+      (∑ l : Item n, r l) = 1 := by
+  exact lemma4_redistribution_exists_of_two_lt hn hij
+
+/--
+Appendix D, Lemma 4 threshold-support conclusion with the paper's uniform
+redistribution vector discharged by `2 < n`.
+-/
+theorem paper_lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    TypePolicy.TwoTypeThresholdSupport ρ := by
+  exact lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
 
 /--
 Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the

@@ -691,6 +691,75 @@ theorem lemma4_exchange_exists_pos_eps_i_j_value_gt
     nlinarith
 
 /--
+Appendix D, Lemma 4 exchange algebra with validity bounds: the small positive
+`ε₁, ε₂` can also be chosen below arbitrary positive caps.
+-/
+theorem lemma4_exchange_exists_bounded_pos_eps_i_j_value_gt
+    {qi qj c yi yj b1 b2 : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) (hc : 0 < c)
+    (hb1 : 0 < b1) (hb2 : 0 < b2) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ eps1 < b1 ∧
+      0 < eps2 ∧ eps2 < b2 ∧
+      (1 - qi) * (yi + qi * c / (1 - qi) + eps2) >
+        qi * c + (1 - qi) * yi ∧
+      qj * (c - eps1) +
+          (1 - qj) * (yj - qi * c / (1 - qi) - eps2) >
+        (1 - qj) * yj := by
+  let margin : ℝ := qj - qi * ((1 - qj) / (1 - qi))
+  let totalMargin : ℝ := c * margin
+  let cap : ℝ := min (min b1 b2) totalMargin
+  let eps : ℝ := cap / 4
+  have hmargin : 0 < margin := by
+    simpa [margin] using lemma4_exchange_margin_pos hqi1 hqij
+  have hMpos : 0 < totalMargin := by
+    dsimp [totalMargin]
+    exact mul_pos hc hmargin
+  have hcap_pos : 0 < cap := by
+    dsimp [cap]
+    exact lt_min (lt_min hb1 hb2) hMpos
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    positivity
+  have heps_lt_cap : eps < cap := by
+    dsimp [eps]
+    nlinarith
+  have hcap_le_b1 : cap ≤ b1 := by
+    dsimp [cap]
+    exact le_trans (min_le_left _ _) (min_le_left _ _)
+  have hcap_le_b2 : cap ≤ b2 := by
+    dsimp [cap]
+    exact le_trans (min_le_left _ _) (min_le_right _ _)
+  have hcap_le_margin : cap ≤ totalMargin := by
+    dsimp [cap]
+    exact min_le_right _ _
+  have heps_lt_b1 : eps < b1 := lt_of_lt_of_le heps_lt_cap hcap_le_b1
+  have heps_lt_b2 : eps < b2 := lt_of_lt_of_le heps_lt_cap hcap_le_b2
+  have heps_lt_margin : eps < totalMargin :=
+    lt_of_lt_of_le heps_lt_cap hcap_le_margin
+  have hden : 1 - qi ≠ 0 := ne_of_gt (sub_pos.mpr hqi1)
+  refine ⟨eps, eps, heps_pos, heps_lt_b1,
+    heps_pos, heps_lt_b2, ?_, ?_⟩
+  · have hdiff :
+        (1 - qi) * (yi + qi * c / (1 - qi) + eps) -
+            (qi * c + (1 - qi) * yi) =
+          (1 - qi) * eps := by
+        field_simp [hden]
+        ring
+    have hpos : 0 < (1 - qi) * eps :=
+      mul_pos (sub_pos.mpr hqi1) heps_pos
+    nlinarith
+  · have hdiff :
+        qj * (c - eps) +
+            (1 - qj) * (yj - qi * c / (1 - qi) - eps) -
+            (1 - qj) * yj =
+          totalMargin - eps := by
+        dsimp [totalMargin, margin]
+        field_simp [hden]
+        ring
+    nlinarith
+
+/--
 Appendix D, Lemma 4 exchange algebra: after the exact transfer, the donor
 coordinate `y_j` remains nonnegative.
 -/
@@ -891,6 +960,38 @@ theorem lemma4_pairShare_exchange_exists_pos_eps_i_j_value_gt
     (pairShare_lt_one i halpha0 halpha1 hpos) hqij hc
 
 /--
+Appendix D, Lemma 4 indexed exchange algebra with validity bounds: the small
+positive `ε₁, ε₂` can also be chosen below arbitrary positive caps.
+-/
+theorem lemma4_pairShare_exchange_exists_bounded_pos_eps_i_j_value_gt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj b1 b2 : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hb1 : 0 < b1) (hb2 : 0 < b2) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ eps1 < b1 ∧
+      0 < eps2 ∧ eps2 < b2 ∧
+      (1 - pairShare alpha v i) *
+          (yi + pairShare alpha v i * c /
+            (1 - pairShare alpha v i) + eps2) >
+        pairShare alpha v i * c +
+          (1 - pairShare alpha v i) * yi ∧
+      pairShare alpha v j * (c - eps1) +
+          (1 - pairShare alpha v j) *
+            (yj - pairShare alpha v i * c /
+              (1 - pairShare alpha v i) - eps2) >
+        (1 - pairShare alpha v j) * yj := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_exists_bounded_pos_eps_i_j_value_gt
+    (pairShare_lt_one i halpha0 halpha1 hpos) hqij hc hb1 hb2
+
+/--
 Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
 donor coordinate `y_j` remains nonnegative.
 -/
@@ -946,6 +1047,479 @@ theorem lemma4_pairShare_exchange_yi_after_lt_one
     (pairShare_lt_one i halpha0 halpha1 hpos)
     (pairShare_lt_one j halpha0 halpha1 hpos)
     hqij hc hyi hyj_le_one heq
+
+/--
+Appendix D, Lemma 4 perturbation of the first row `x`.
+
+The paper moves all mass `c = x_i` from the later positive coordinate `i` to
+the earlier zero coordinate `j`, except for a small `ε₁` that is redistributed
+to the other items through `r`.
+-/
+noncomputable def lemma4GapExchangeX {n : ℕ}
+    (x : Item n → ℝ) (i j : Item n) (c eps1 : ℝ)
+    (r : Item n → ℝ) (l : Item n) : ℝ :=
+  x l + (if l = i then -c else 0) +
+    (if l = j then c - eps1 else 0) + eps1 * r l
+
+/--
+Appendix D, Lemma 4 perturbation of the second row `y`.
+
+The transfer `q_i c/(1-q_i)` offsets the loss at item `i`; the small `ε₂`
+strictly improves item `i` and is taken from item `j`.
+-/
+noncomputable def lemma4GapExchangeY {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (y : Item n → ℝ)
+    (i j : Item n) (c eps2 : ℝ) (l : Item n) : ℝ :=
+  y l +
+    (if l = i then
+      pairShare alpha v i * c / (1 - pairShare alpha v i) + eps2
+    else 0) +
+    (if l = j then
+      -(pairShare alpha v i * c / (1 - pairShare alpha v i) + eps2)
+    else 0)
+
+/-- Lemma 4's `x` perturbation preserves the row sum. -/
+theorem lemma4GapExchangeX_sum_eq {n : ℕ}
+    (x : Item n → ℝ) (i j : Item n) (c eps1 : ℝ)
+    (r : Item n → ℝ)
+    (hrsum : (∑ l : Item n, r l) = 1) :
+    (∑ l : Item n, lemma4GapExchangeX x i j c eps1 r l) =
+      ∑ l : Item n, x l := by
+  unfold lemma4GapExchangeX
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib,
+    Finset.sum_add_distrib, ← Finset.mul_sum]
+  simp [hrsum]
+  ring
+
+/-- Lemma 4's `y` perturbation preserves the row sum. -/
+theorem lemma4GapExchangeY_sum_eq {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (y : Item n → ℝ)
+    (i j : Item n) (c eps2 : ℝ) :
+    (∑ l : Item n, lemma4GapExchangeY alpha v y i j c eps2 l) =
+      ∑ l : Item n, y l := by
+  unfold lemma4GapExchangeY
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
+  simp
+  ring
+
+/-- Lemma 4's `x` perturbation remains nonnegative under the paper's bounds. -/
+theorem lemma4GapExchangeX_nonneg {n : ℕ}
+    {x r : Item n → ℝ} {i j : Item n} {c eps1 : ℝ}
+    (hnonneg : ∀ l : Item n, 0 ≤ x l)
+    (hxi : x i = c) (hxj : x j = 0) (hij : i ≠ j)
+    (hrnonneg : ∀ l : Item n, 0 ≤ r l)
+    (hri : r i = 0) (hrj : r j = 0)
+    (heps1_pos : 0 < eps1) (heps1_lt_c : eps1 < c) :
+    ∀ l : Item n, 0 ≤ lemma4GapExchangeX x i j c eps1 r l := by
+  intro l
+  by_cases hli : l = i
+  · subst l
+    simp [lemma4GapExchangeX, hxi, hri, hij]
+  · by_cases hlj : l = j
+    · subst l
+      have hji : j ≠ i := hij.symm
+      simp [lemma4GapExchangeX, hxj, hrj, hji]
+      linarith
+    · have hdist_i : l ≠ i := hli
+      have hdist_j : l ≠ j := hlj
+      have hredistrib : 0 ≤ eps1 * r l :=
+        mul_nonneg heps1_pos.le (hrnonneg l)
+      simpa [lemma4GapExchangeX, hdist_i, hdist_j] using
+        add_nonneg (hnonneg l) hredistrib
+
+/-- Lemma 4's `y` perturbation remains nonnegative under the paper's bounds. -/
+theorem lemma4GapExchangeY_nonneg {n : ℕ}
+    {alpha : ℝ} {v y : Item n → ℝ} {i j : Item n} {c eps2 : ℝ}
+    (hnonneg : ∀ l : Item n, 0 ≤ y l) (hij : i ≠ j)
+    (htransfer_nonneg :
+      0 ≤ pairShare alpha v i * c / (1 - pairShare alpha v i))
+    (heps2_pos : 0 < eps2)
+    (heps2_lt_gap :
+      eps2 < y j - pairShare alpha v i * c /
+        (1 - pairShare alpha v i)) :
+    ∀ l : Item n, 0 ≤ lemma4GapExchangeY alpha v y i j c eps2 l := by
+  intro l
+  by_cases hli : l = i
+  · subst l
+    simp [lemma4GapExchangeY, hij]
+    nlinarith [hnonneg i, htransfer_nonneg, heps2_pos]
+  · by_cases hlj : l = j
+    · subst l
+      have hji : j ≠ i := hij.symm
+      simp [lemma4GapExchangeY, hji]
+      linarith
+    · simpa [lemma4GapExchangeY, hli, hlj] using hnonneg l
+
+/--
+Appendix D, Lemma 4 perturbation construction.
+
+If an optimal equalized solution had an earlier zero `x_j` and a later positive
+`x_i = c`, then the paper's exchange produces nonnegative row vectors with the
+same row sums and strictly larger item value at every item.  The redistribution
+vector `r` is an abstract version of the paper's uniform `ε₁/(n-2)` spread over
+the unaffected items.
+-/
+theorem lemma4_pairShare_gap_exchange_exists_strictly_improves
+    {n : ℕ} {alpha : ℝ} {v x y r : Item n → ℝ} {i j : Item n}
+    {c ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hy_nonneg : ∀ l : Item n, 0 ≤ y l)
+    (hxi : x i = c) (hxj : x j = 0) (hc : 0 < c)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumy : (∑ l : Item n, y l) = 1)
+    (hr_nonneg : ∀ l : Item n, 0 ≤ r l)
+    (hr_pos : ∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l)
+    (hri : r i = 0) (hrj : r j = 0)
+    (hrsum : (∑ l : Item n, r l) = 1)
+    (hi_eq :
+      pairShare alpha v i * x i +
+        (1 - pairShare alpha v i) * y i = ell)
+    (hj_eq :
+      pairShare alpha v j * x j +
+        (1 - pairShare alpha v j) * y j = ell) :
+    ∃ eps1 eps2 : ℝ, ∃ x' y' : Item n → ℝ,
+      0 < eps1 ∧ eps1 < c ∧ 0 < eps2 ∧
+      (eps2 < y j - pairShare alpha v i * c /
+        (1 - pairShare alpha v i)) ∧
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ y' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, y' l) = 1 ∧
+      (∀ l : Item n,
+        pairShare alpha v l * x l +
+          (1 - pairShare alpha v l) * y l <
+        pairShare alpha v l * x' l +
+          (1 - pairShare alpha v l) * y' l) := by
+  classical
+  have hij_ne : i ≠ j := by
+    intro hij
+    subst i
+    omega
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index halpha0 halpha1 hpos hdec hji
+  have heq_transfer :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * y i =
+          (1 - pairShare alpha v j) * y j := by
+    have hi :
+        pairShare alpha v i * c +
+          (1 - pairShare alpha v i) * y i = ell := by
+      simpa [hxi] using hi_eq
+    have hj :
+        (1 - pairShare alpha v j) * y j = ell := by
+      simpa [hxj] using hj_eq
+    exact hi.trans hj.symm
+  have hy_gap_pos :
+      0 < y j - pairShare alpha v i * c /
+        (1 - pairShare alpha v i) := by
+    have hlt :=
+      lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
+        halpha0 halpha1 hpos hdec hji hc (hy_nonneg i) heq_transfer
+    exact lt_of_le_of_lt (hy_nonneg i) hlt
+  obtain ⟨eps1, eps2, heps1_pos, heps1_lt_c,
+      heps2_pos, heps2_lt_gap, hi_gt, hj_gt⟩ :=
+    lemma4_pairShare_exchange_exists_bounded_pos_eps_i_j_value_gt
+      halpha0 halpha1 hpos hdec hji hc hc hy_gap_pos
+      (yi := y i) (yj := y j)
+  let x' : Item n → ℝ := lemma4GapExchangeX x i j c eps1 r
+  let y' : Item n → ℝ := lemma4GapExchangeY alpha v y i j c eps2
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact lemma4GapExchangeX_nonneg hx_nonneg hxi hxj hij_ne
+      hr_nonneg hri hrj heps1_pos heps1_lt_c l
+  have htransfer_nonneg :
+      0 ≤ pairShare alpha v i * c / (1 - pairShare alpha v i) := by
+    exact div_nonneg
+      (mul_nonneg (pairShare_pos i halpha0 halpha1 hpos).le hc.le)
+      (one_sub_pairShare_pos i halpha0 halpha1 hpos).le
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact lemma4GapExchangeY_nonneg hy_nonneg hij_ne htransfer_nonneg
+      heps2_pos heps2_lt_gap l
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [lemma4GapExchangeX_sum_eq x i j c eps1 r hrsum, hsumx]
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [lemma4GapExchangeY_sum_eq alpha v y i j c eps2, hsumy]
+  refine ⟨eps1, eps2, x', y', heps1_pos, heps1_lt_c,
+    heps2_pos, heps2_lt_gap, hx'_nonneg, hy'_nonneg,
+    hx'_sum, hy'_sum, ?_⟩
+  intro l
+  by_cases hli : l = i
+  · subst l
+    have hx'i : x' i = 0 := by
+      dsimp [x']
+      simp [lemma4GapExchangeX, hxi, hri, hij_ne]
+    have hy'i :
+        y' i =
+          y i + pairShare alpha v i * c /
+            (1 - pairShare alpha v i) + eps2 := by
+      dsimp [y']
+      simp [lemma4GapExchangeY, hij_ne]
+      ring
+    rw [hx'i, hy'i, hxi]
+    simpa [mul_comm, mul_left_comm, mul_assoc] using hi_gt
+  · by_cases hlj : l = j
+    · subst l
+      have hji_ne : j ≠ i := hij_ne.symm
+      have hx'j : x' j = c - eps1 := by
+        dsimp [x']
+        simp [lemma4GapExchangeX, hxj, hrj, hji_ne]
+      have hy'j :
+          y' j =
+            y j - pairShare alpha v i * c /
+              (1 - pairShare alpha v i) - eps2 := by
+        dsimp [y']
+        simp [lemma4GapExchangeY, hji_ne]
+        ring
+      rw [hx'j, hy'j, hxj]
+      simpa [mul_comm, mul_left_comm, mul_assoc] using hj_gt
+    · have hx'l : x' l = x l + eps1 * r l := by
+        dsimp [x']
+        simp [lemma4GapExchangeX, hli, hlj]
+      have hy'l : y' l = y l := by
+        dsimp [y']
+        simp [lemma4GapExchangeY, hli, hlj]
+      rw [hx'l, hy'l]
+      have hq_pos : 0 < pairShare alpha v l :=
+        pairShare_pos l halpha0 halpha1 hpos
+      have hdelta_pos : 0 < pairShare alpha v l * (eps1 * r l) :=
+        mul_pos hq_pos (mul_pos heps1_pos (hr_pos hli hlj))
+      nlinarith
+
+/--
+Appendix D, Lemma 4 symmetric perturbation of the first row `x` when the gap is
+in the second row `y`.
+-/
+noncomputable def lemma4GapExchangeXFromY {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (x : Item n → ℝ)
+    (i j : Item n) (c eps2 : ℝ) (l : Item n) : ℝ :=
+  x l +
+    (if l = i then
+      (1 - pairShare alpha v i) * c / pairShare alpha v i + eps2
+    else 0) +
+    (if l = j then
+      -((1 - pairShare alpha v i) * c / pairShare alpha v i + eps2)
+    else 0)
+
+/-- The symmetric Lemma 4 `x` compensation preserves the row sum. -/
+theorem lemma4GapExchangeXFromY_sum_eq {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (x : Item n → ℝ)
+    (i j : Item n) (c eps2 : ℝ) :
+    (∑ l : Item n, lemma4GapExchangeXFromY alpha v x i j c eps2 l) =
+      ∑ l : Item n, x l := by
+  unfold lemma4GapExchangeXFromY
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
+  simp
+  ring
+
+/-- The symmetric Lemma 4 `x` compensation remains nonnegative. -/
+theorem lemma4GapExchangeXFromY_nonneg {n : ℕ}
+    {alpha : ℝ} {v x : Item n → ℝ} {i j : Item n} {c eps2 : ℝ}
+    (hnonneg : ∀ l : Item n, 0 ≤ x l) (hij : i ≠ j)
+    (htransfer_nonneg :
+      0 ≤ (1 - pairShare alpha v i) * c / pairShare alpha v i)
+    (heps2_pos : 0 < eps2)
+    (heps2_lt_gap :
+      eps2 < x j - (1 - pairShare alpha v i) * c /
+        pairShare alpha v i) :
+    ∀ l : Item n, 0 ≤ lemma4GapExchangeXFromY alpha v x i j c eps2 l := by
+  intro l
+  by_cases hli : l = i
+  · subst l
+    simp [lemma4GapExchangeXFromY, hij]
+    nlinarith [hnonneg i, htransfer_nonneg, heps2_pos]
+  · by_cases hlj : l = j
+    · subst l
+      have hji : j ≠ i := hij.symm
+      simp [lemma4GapExchangeXFromY, hji]
+      linarith
+    · simpa [lemma4GapExchangeXFromY, hli, hlj] using hnonneg l
+
+/--
+Appendix D, Lemma 4 symmetric perturbation construction.
+
+If an equalized locally optimal solution had an earlier positive `y_i = c` and
+a later zero `y_j`, the symmetric exchange strictly improves every item value.
+-/
+theorem lemma4_pairShare_y_gap_exchange_exists_strictly_improves
+    {n : ℕ} {alpha : ℝ} {v x y r : Item n → ℝ} {i j : Item n}
+    {c ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val < j.val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hy_nonneg : ∀ l : Item n, 0 ≤ y l)
+    (hyi : y i = c) (hyj : y j = 0) (hc : 0 < c)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumy : (∑ l : Item n, y l) = 1)
+    (hr_nonneg : ∀ l : Item n, 0 ≤ r l)
+    (hr_pos : ∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l)
+    (hri : r i = 0) (hrj : r j = 0)
+    (hrsum : (∑ l : Item n, r l) = 1)
+    (hi_eq :
+      pairShare alpha v i * x i +
+        (1 - pairShare alpha v i) * y i = ell)
+    (hj_eq :
+      pairShare alpha v j * x j +
+        (1 - pairShare alpha v j) * y j = ell) :
+    ∃ eps1 eps2 : ℝ, ∃ x' y' : Item n → ℝ,
+      0 < eps1 ∧ eps1 < c ∧ 0 < eps2 ∧
+      (eps2 < x j - (1 - pairShare alpha v i) * c /
+        pairShare alpha v i) ∧
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ y' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, y' l) = 1 ∧
+      (∀ l : Item n,
+        pairShare alpha v l * x l +
+          (1 - pairShare alpha v l) * y l <
+        pairShare alpha v l * x' l +
+          (1 - pairShare alpha v l) * y' l) := by
+  classical
+  have hij_ne : i ≠ j := by
+    intro h
+    subst j
+    omega
+  have hqji :
+      pairShare alpha v j < pairShare alpha v i :=
+    pairShare_strictAnti_index halpha0 halpha1 hpos hdec hij
+  have hpij :
+      1 - pairShare alpha v i < 1 - pairShare alpha v j := by
+    linarith
+  have heq_transfer :
+      (1 - pairShare alpha v i) * c +
+        pairShare alpha v i * x i =
+          pairShare alpha v j * x j := by
+    have hi :
+        pairShare alpha v i * x i +
+          (1 - pairShare alpha v i) * c = ell := by
+      simpa [hyi] using hi_eq
+    have hj :
+        pairShare alpha v j * x j = ell := by
+      simpa [hyj] using hj_eq
+    nlinarith
+  have hx_gap_pos :
+      0 < x j - (1 - pairShare alpha v i) * c /
+        pairShare alpha v i := by
+    have heq_transfer_scalar :
+        (1 - pairShare alpha v i) * c +
+          (1 - (1 - pairShare alpha v i)) * x i =
+            (1 - (1 - pairShare alpha v j)) * x j := by
+      nlinarith [heq_transfer]
+    have hlt :=
+      lemma4_exchange_yj_sub_transfer_gt_yi
+        (one_sub_pairShare_pos i halpha0 halpha1 hpos)
+        (by
+          have hqpos := pairShare_pos i halpha0 halpha1 hpos
+          linarith)
+        (by
+          have hqpos := pairShare_pos j halpha0 halpha1 hpos
+          linarith)
+        hpij hc (hx_nonneg i) heq_transfer_scalar
+    have hlt' :
+        x i < x j - (1 - pairShare alpha v i) * c /
+          pairShare alpha v i := by
+      convert hlt using 1
+      ring
+    exact lt_of_le_of_lt (hx_nonneg i) hlt'
+  obtain ⟨eps1, eps2, heps1_pos, heps1_lt_c,
+      heps2_pos, heps2_lt_gap, hi_gt, hj_gt⟩ :=
+    lemma4_exchange_exists_bounded_pos_eps_i_j_value_gt
+      (by
+        have hqpos := pairShare_pos i halpha0 halpha1 hpos
+        linarith)
+      hpij hc hc hx_gap_pos
+      (qi := 1 - pairShare alpha v i)
+      (qj := 1 - pairShare alpha v j)
+      (yi := x i) (yj := x j)
+  have hi_gt_pair :
+      pairShare alpha v i *
+          (x i + (1 - pairShare alpha v i) * c /
+            pairShare alpha v i + eps2) >
+        (1 - pairShare alpha v i) * c +
+          pairShare alpha v i * x i := by
+    convert hi_gt using 1 <;> ring
+  have hj_gt_pair :
+      (1 - pairShare alpha v j) * (c - eps1) +
+          pairShare alpha v j *
+            (x j - (1 - pairShare alpha v i) * c /
+              pairShare alpha v i - eps2) >
+        pairShare alpha v j * x j := by
+    convert hj_gt using 1 <;> ring
+  let y' : Item n → ℝ := lemma4GapExchangeX y i j c eps1 r
+  let x' : Item n → ℝ := lemma4GapExchangeXFromY alpha v x i j c eps2
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact lemma4GapExchangeX_nonneg hy_nonneg hyi hyj hij_ne
+      hr_nonneg hri hrj heps1_pos heps1_lt_c l
+  have htransfer_nonneg :
+      0 ≤ (1 - pairShare alpha v i) * c / pairShare alpha v i := by
+    exact div_nonneg
+      (mul_nonneg (one_sub_pairShare_pos i halpha0 halpha1 hpos).le hc.le)
+      (pairShare_pos i halpha0 halpha1 hpos).le
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact lemma4GapExchangeXFromY_nonneg hx_nonneg hij_ne htransfer_nonneg
+      heps2_pos heps2_lt_gap l
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [lemma4GapExchangeX_sum_eq y i j c eps1 r hrsum, hsumy]
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [lemma4GapExchangeXFromY_sum_eq alpha v x i j c eps2, hsumx]
+  refine ⟨eps1, eps2, x', y', heps1_pos, heps1_lt_c,
+    heps2_pos, heps2_lt_gap, hx'_nonneg, hy'_nonneg,
+    hx'_sum, hy'_sum, ?_⟩
+  intro l
+  by_cases hli : l = i
+  · subst l
+    have hy'i : y' i = 0 := by
+      dsimp [y']
+      simp [lemma4GapExchangeX, hyi, hri, hij_ne]
+    have hx'i :
+        x' i =
+          x i + (1 - pairShare alpha v i) * c /
+            pairShare alpha v i + eps2 := by
+      dsimp [x']
+      simp [lemma4GapExchangeXFromY, hij_ne]
+      ring
+    rw [hy'i, hx'i, hyi]
+    nlinarith [hi_gt_pair]
+  · by_cases hlj : l = j
+    · subst l
+      have hji_ne : j ≠ i := hij_ne.symm
+      have hy'j : y' j = c - eps1 := by
+        dsimp [y']
+        simp [lemma4GapExchangeX, hyj, hrj, hji_ne]
+      have hx'j :
+          x' j =
+            x j - (1 - pairShare alpha v i) * c /
+              pairShare alpha v i - eps2 := by
+        dsimp [x']
+        simp [lemma4GapExchangeXFromY, hji_ne]
+        ring
+      rw [hy'j, hx'j, hyj]
+      nlinarith [hj_gt_pair]
+    · have hy'l : y' l = y l + eps1 * r l := by
+        dsimp [y']
+        simp [lemma4GapExchangeX, hli, hlj]
+      have hx'l : x' l = x l := by
+        dsimp [x']
+        simp [lemma4GapExchangeXFromY, hli, hlj]
+      rw [hy'l, hx'l]
+      have hone_sub_pos : 0 < 1 - pairShare alpha v l :=
+        one_sub_pairShare_pos l halpha0 halpha1 hpos
+      have hdelta_pos : 0 < (1 - pairShare alpha v l) * (eps1 * r l) :=
+        mul_pos hone_sub_pos (mul_pos heps1_pos (hr_pos hli hlj))
+      nlinarith
 
 /--
 Appendix E, Lemma 16, indexed midpoint component: if item `j` has higher value
@@ -2738,6 +3312,304 @@ noncomputable def pmfOfRealVector {n : ℕ}
   unfold pmfOfRealVector
   rw [PMF.ofFintype_apply]
   exact ENNReal.toReal_ofReal (hnonneg j)
+
+/--
+Problem 6 local optimality condition used in Appendix D, Lemma 4:
+there is no other two-type policy that strictly improves every item value.
+-/
+def Problem6PolicyNoStrictPointwiseImprovement {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) : Prop :=
+  ¬ ∃ ρ' : TypePolicy 2 n,
+    ∀ j : Item n,
+      pairShare alpha v j * (ρ 0 j).toReal +
+        (1 - pairShare alpha v j) * (ρ 1 j).toReal <
+      pairShare alpha v j * (ρ' 0 j).toReal +
+        (1 - pairShare alpha v j) * (ρ' 1 j).toReal
+
+/--
+Appendix D, Lemma 4 no-gap consequence for the first row.
+
+Under the equalized Problem 6 constraints and the local optimality condition
+that no feasible policy strictly improves every item value, an earlier zero
+`x_j` rules out any later positive `x_i`.
+-/
+theorem lemma4_twoTypeXZeroClosed_of_noStrictPointwiseImprovement {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hredistrib :
+      ∀ {i j : Item n}, j.val < i.val →
+        ∃ r : Item n → ℝ,
+          (∀ l : Item n, 0 ≤ r l) ∧
+          (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+          r i = 0 ∧ r j = 0 ∧
+          (∑ l : Item n, r l) = 1)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ) :
+    TypePolicy.TwoTypeXZeroClosed ρ := by
+  classical
+  intro j i hji hxj_zero
+  by_contra hxi_not_zero
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let y : Item n → ℝ := fun l => (ρ 1 l).toReal
+  let c : ℝ := x i
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hy_nonneg : ∀ l : Item n, 0 ≤ y l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hxi : x i = c := rfl
+  have hxj : x j = 0 := by
+    dsimp [x]
+    simp [hxj_zero]
+  have hc : 0 < c := by
+    have htoReal_ne : (ρ 0 i).toReal ≠ 0 := by
+      intro hzero
+      have hzero_or_top :=
+        (ENNReal.toReal_eq_zero_iff (ρ 0 i)).mp hzero
+      rcases hzero_or_top with hzero_enn | htop
+      · exact hxi_not_zero hzero_enn
+      · exact (ρ 0).apply_ne_top i htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact problem6_typeZero_sum_eq_one ρ
+  have hsumy : (∑ l : Item n, y l) = 1 := by
+    dsimp [y]
+    exact problem6_typeOne_sum_eq_one ρ
+  obtain ⟨r, hr_nonneg, hr_pos, hri, hrj, hrsum⟩ := hredistrib hji
+  have hi_eq :
+      pairShare alpha v i * x i +
+        (1 - pairShare alpha v i) * y i = ell := by
+    simpa [x, y] using hitem_eq i
+  have hj_eq :
+      pairShare alpha v j * x j +
+        (1 - pairShare alpha v j) * y j = ell := by
+    simpa [x, y] using hitem_eq j
+  obtain ⟨eps1, eps2, x', y', _heps1_pos, _heps1_lt_c,
+      _heps2_pos, _heps2_lt_gap, hx'_nonneg, hy'_nonneg,
+      hx'_sum, hy'_sum, hstrict⟩ :=
+    lemma4_pairShare_gap_exchange_exists_strictly_improves
+      halpha0 halpha1 hpos hdec hji hx_nonneg hy_nonneg hxi hxj hc
+      hsumx hsumy hr_nonneg hr_pos hri hrj hrsum hi_eq hj_eq
+  let ρ' : TypePolicy 2 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+  apply hno
+  refine ⟨ρ', ?_⟩
+  intro l
+  have h := hstrict l
+  simpa [ρ', x, y] using h
+
+/--
+Appendix D, Lemma 4 no-gap consequence for the second row.
+
+This is the symmetric argument in the paper: under the equalized Problem 6
+constraints and the same local optimality condition, a later zero `y_j` rules
+out any earlier positive `y_i`.
+-/
+theorem lemma4_twoTypeYZeroClosed_of_noStrictPointwiseImprovement {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hredistrib :
+      ∀ {i j : Item n}, i.val < j.val →
+        ∃ r : Item n → ℝ,
+          (∀ l : Item n, 0 ≤ r l) ∧
+          (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+          r i = 0 ∧ r j = 0 ∧
+          (∑ l : Item n, r l) = 1)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ) :
+    TypePolicy.TwoTypeYZeroClosed ρ := by
+  classical
+  intro i j hij hyj_zero
+  by_contra hyi_not_zero
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let y : Item n → ℝ := fun l => (ρ 1 l).toReal
+  let c : ℝ := y i
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hy_nonneg : ∀ l : Item n, 0 ≤ y l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hyi : y i = c := rfl
+  have hyj : y j = 0 := by
+    dsimp [y]
+    simp [hyj_zero]
+  have hc : 0 < c := by
+    have htoReal_ne : (ρ 1 i).toReal ≠ 0 := by
+      intro hzero
+      have hzero_or_top :=
+        (ENNReal.toReal_eq_zero_iff (ρ 1 i)).mp hzero
+      rcases hzero_or_top with hzero_enn | htop
+      · exact hyi_not_zero hzero_enn
+      · exact (ρ 1).apply_ne_top i htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact problem6_typeZero_sum_eq_one ρ
+  have hsumy : (∑ l : Item n, y l) = 1 := by
+    dsimp [y]
+    exact problem6_typeOne_sum_eq_one ρ
+  obtain ⟨r, hr_nonneg, hr_pos, hri, hrj, hrsum⟩ := hredistrib hij
+  have hi_eq :
+      pairShare alpha v i * x i +
+        (1 - pairShare alpha v i) * y i = ell := by
+    simpa [x, y] using hitem_eq i
+  have hj_eq :
+      pairShare alpha v j * x j +
+        (1 - pairShare alpha v j) * y j = ell := by
+    simpa [x, y] using hitem_eq j
+  obtain ⟨eps1, eps2, x', y', _heps1_pos, _heps1_lt_c,
+      _heps2_pos, _heps2_lt_gap, hx'_nonneg, hy'_nonneg,
+      hx'_sum, hy'_sum, hstrict⟩ :=
+    lemma4_pairShare_y_gap_exchange_exists_strictly_improves
+      halpha0 halpha1 hpos hdec hij hx_nonneg hy_nonneg hyi hyj hc
+      hsumx hsumy hr_nonneg hr_pos hri hrj hrsum hi_eq hj_eq
+  let ρ' : TypePolicy 2 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+  apply hno
+  refine ⟨ρ', ?_⟩
+  intro l
+  have h := hstrict l
+  simpa [ρ', x, y] using h
+
+/--
+The redistribution vector used in Appendix D, Lemma 4 exists whenever there is
+at least one item other than the exchanged pair.  It is the paper's uniform
+`1/(n-2)` distribution over all unaffected items.
+-/
+theorem lemma4_redistribution_exists_of_two_lt {n : ℕ}
+    (hn : 2 < n) {i j : Item n} (hij : i ≠ j) :
+    ∃ r : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ r l) ∧
+      (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+      r i = 0 ∧ r j = 0 ∧
+      (∑ l : Item n, r l) = 1 := by
+  classical
+  let s : Finset (Item n) := (Finset.univ.erase i).erase j
+  have hi_mem : i ∈ (Finset.univ : Finset (Item n)) := by
+    simp
+  have hj_mem : j ∈ (Finset.univ.erase i : Finset (Item n)) := by
+    simp [hij.symm]
+  have hcard_s : s.card = n - 2 := by
+    dsimp [s]
+    rw [Finset.card_erase_of_mem hj_mem]
+    rw [Finset.card_erase_of_mem hi_mem]
+    simp [Item]
+    omega
+  have hcard_pos_nat : 0 < s.card := by
+    rw [hcard_s]
+    omega
+  have hcard_pos_real : 0 < (s.card : ℝ) := by
+    exact_mod_cast hcard_pos_nat
+  let r : Item n → ℝ := fun l =>
+    if l ∈ s then ((s.card : ℝ)⁻¹) else 0
+  refine ⟨r, ?_, ?_, ?_, ?_, ?_⟩
+  · intro l
+    by_cases hls : l ∈ s
+    · simp [r, hls, inv_nonneg.mpr hcard_pos_real.le]
+    · simp [r, hls]
+  · intro l hli hlj
+    have hls : l ∈ s := by
+      simp [s, hli, hlj]
+    simpa [r, hls] using inv_pos.mpr hcard_pos_real
+  · simp [r, s]
+  · simp [r, s]
+  · calc
+      (∑ l : Item n, r l)
+          = ∑ l : Item n, if l ∈ s then ((s.card : ℝ)⁻¹) else 0 := by
+              rfl
+      _ = ∑ l ∈ s, ((s.card : ℝ)⁻¹) := by
+              simp [Finset.sum_ite_mem]
+      _ = (s.card : ℝ) * ((s.card : ℝ)⁻¹) := by
+              simp [Finset.sum_const, nsmul_eq_mul]
+      _ = 1 := by
+              exact mul_inv_cancel₀ (ne_of_gt hcard_pos_real)
+
+/--
+Appendix D, Lemma 4 threshold-support conclusion from the perturbation
+argument and the Proposition 2 shared-item bound.
+-/
+theorem lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement {n : ℕ}
+    [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hredistrib :
+      ∀ {i j : Item n}, i ≠ j →
+        ∃ r : Item n → ℝ,
+          (∀ l : Item n, 0 ≤ r l) ∧
+          (∀ {l : Item n}, l ≠ i → l ≠ j → 0 < r l) ∧
+          r i = 0 ∧ r j = 0 ∧
+          (∑ l : Item n, r l) = 1)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    TypePolicy.TwoTypeThresholdSupport ρ := by
+  have hx : TypePolicy.TwoTypeXZeroClosed ρ :=
+    lemma4_twoTypeXZeroClosed_of_noStrictPointwiseImprovement
+      halpha0 halpha1 hpos hdec
+      (fun {i j} hji =>
+        hredistrib (by
+          intro hij
+          subst i
+          omega))
+      hitem_eq hno
+  have hy : TypePolicy.TwoTypeYZeroClosed ρ :=
+    lemma4_twoTypeYZeroClosed_of_noStrictPointwiseImprovement
+      halpha0 halpha1 hpos hdec
+      (fun {i j} hij =>
+        hredistrib (by
+          intro h
+          subst j
+          omega))
+      hitem_eq hno
+  exact TypePolicy.twoTypeThresholdSupport_of_zeroClosed_of_sharedBound
+    ρ hx hy hshared
+
+/--
+Appendix D, Lemma 4 threshold-support conclusion with the paper's uniform
+redistribution vector discharged by `2 < n`.
+-/
+theorem lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    TypePolicy.TwoTypeThresholdSupport ρ := by
+  exact lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement
+    halpha0 halpha1 hpos hdec
+    (fun hij => lemma4_redistribution_exists_of_two_lt hn hij)
+    hitem_eq hno hshared
 
 /-- The Problem 6 closed-form real solution as a two-type policy. -/
 noncomputable def problem6ClosedPolicy {n : ℕ}
