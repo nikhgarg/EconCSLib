@@ -66,6 +66,21 @@ the Lean statements against the paper.
   paper statement closely enough that a human can inspect just this file and
   verify the intended theorem was formalized. Use paper theorem numbers/names in
   docstrings and keep wrappers thin.
+- For large campaigns, add one adjacent "paper-facing declaration index" (for
+  example `PaperFacingTheorems.md`) that is the single-file human verification
+  target for the folder’s claims.
+  The index should list the paper-facing declarations in source-paper order.
+  Each entry should include:
+  1. the declaration name,
+  2. the paper statement in comment form (close to the paper's wording),
+  3. the exact assumptions in the theorem form,
+  4. and source location (`MainTheorems.lean` for wrappers, proof file for
+     local lemmas/certificates).
+  A completed index should also include an in-file verification checklist:
+  - every listed declaration resolves to a real object in code,
+  - no unresolved placeholder remains,
+  - the sequence is paper-order and complete,
+  - and the paper-level final theorem statement appears explicitly.
 - Add a structured folder `README.md` theorem-status table with columns like:
   paper theorem/definition, Lean declaration, status (`formalized`,
   `conditional`, `scaffold`, `not started`), file, and remaining assumptions.
