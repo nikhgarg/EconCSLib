@@ -368,9 +368,144 @@ theorem candidateRankPowerSum_inner_pos_zero_one
     exact pow_lt_pow_right_of_lt_one₀ hq_pos hq_lt_one (by omega)
   nlinarith [hgeom, hpow_lt]
 
+/-- The fiber of rankings whose first center-rank is `r`, for the identity center. -/
+noncomputable def reflFirstChoiceFiber (n : ℕ) (r : Candidate n) :
+    Finset (Ranking n) := by
+  classical
+  exact Finset.univ.filter (fun τ => r = firstChoice τ)
+
+/-- Unnormalised identity-center first-choice Mallows mass. -/
+noncomputable def reflFirstWeight (n : ℕ) (q : ℝ) (r : Candidate n) : ℝ :=
+  ∑ τ ∈ reflFirstChoiceFiber n r,
+    q ^ kendallTau (Equiv.refl (Candidate n)) τ
+
+theorem reflFirstWeight_eq_rank_mul_zero
+    (n : ℕ) (q : ℝ) (r : Candidate n) :
+    reflFirstWeight n q r =
+      q ^ (r : ℕ) * reflFirstWeight n q 0 := by
+  classical
+  let E : Ranking n := Fin.cycleRange r
+  unfold reflFirstWeight
+  calc
+    ∑ τ ∈ reflFirstChoiceFiber n r,
+        q ^ kendallTau (Equiv.refl (Candidate n)) τ
+        = ∑ σ ∈ reflFirstChoiceFiber n 0,
+            q ^ (r : ℕ) *
+              q ^ kendallTau (Equiv.refl (Candidate n)) σ := by
+          refine Finset.sum_bij
+            (i := fun τ _ => τ.trans E) ?hi ?hinj ?hsurj ?hweight
+          · intro τ hτ
+            have hfirst : firstChoice τ = r := by
+              exact (Finset.mem_filter.mp hτ).2.symm
+            unfold reflFirstChoiceFiber
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+            rw [firstChoice_trans, hfirst]
+            simp [E, Fin.cycleRange_self]
+          · intro τ₁ _ τ₂ _ h
+            apply Equiv.ext
+            intro x
+            exact E.injective (Equiv.ext_iff.mp h x)
+          · intro σ hσ
+            refine ⟨σ.trans E.symm, ?_, ?_⟩
+            · have hfirst : firstChoice σ = 0 := by
+                exact (Finset.mem_filter.mp hσ).2.symm
+              have hcycle : E.symm 0 = r := by
+                change (Fin.cycleRange r).symm 0 = r
+                exact Fin.cycleRange_symm_zero r
+              unfold reflFirstChoiceFiber
+              simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+              rw [firstChoice_trans, hfirst, hcycle]
+            · ext x
+              simp [E]
+          · intro τ hτ
+            have hfirst : firstChoice τ = r := by
+              exact (Finset.mem_filter.mp hτ).2.symm
+            have hfirst_apply : τ 0 = r := by
+              simpa [firstChoice] using hfirst
+            have hkend :
+                kendallTau (Equiv.refl (Candidate n)) τ =
+                  (r : ℕ) +
+                    kendallTau (Equiv.refl (Candidate n)) (τ.trans E) := by
+              simpa [E, firstChoice, hfirst_apply] using
+                kendallTau_eq_firstChoice_add_cycleRange τ
+            rw [hkend, pow_add]
+    _ = q ^ (r : ℕ) *
+        ∑ σ ∈ reflFirstChoiceFiber n 0,
+          q ^ kendallTau (Equiv.refl (Candidate n)) σ := by
+          rw [Finset.mul_sum]
+
 namespace MallowsSpec
 
 variable {n : ℕ} (M : MallowsSpec n)
+
+theorem firstWeight_eq_reflFirstWeight (c : Candidate n) :
+    M.firstWeight c =
+      reflFirstWeight n M.q (rankOf M.center c) := by
+  classical
+  unfold firstWeight reflFirstWeight reflFirstChoiceFiber mallowsWeight
+  rw [← Finset.sum_filter]
+  refine Finset.sum_bij
+    (s := Finset.univ.filter (fun π : Ranking n => c = firstChoice π))
+    (t := Finset.univ.filter
+      (fun τ : Ranking n => rankOf M.center c = firstChoice τ))
+    (i := fun π _ => π.trans M.center.symm) ?hi ?hinj ?hsurj ?hweight
+  · intro π hπ
+    have hc : c = firstChoice π := (Finset.mem_filter.mp hπ).2
+    simp [rankOf, firstChoice, hc]
+  · intro π₁ _ π₂ _ h
+    apply Equiv.ext
+    intro x
+    exact M.center.symm.injective (Equiv.ext_iff.mp h x)
+  · intro τ hτ
+    refine ⟨τ.trans M.center, ?_, ?_⟩
+    · have hfirst :
+          rankOf M.center c = firstChoice τ := (Finset.mem_filter.mp hτ).2
+      have hc : c = M.center (firstChoice τ) := by
+        rw [← hfirst]
+        simp [rankOf]
+      simp [firstChoice, hc]
+    · ext x
+      simp
+  · intro π hπ
+    have hkend :
+        kendallTau M.center π =
+          kendallTau (Equiv.refl (Candidate n)) (π.trans M.center.symm) := by
+      have hπ : (π.trans M.center.symm).trans M.center = π := by
+        ext x
+        simp
+      simpa [hπ] using
+        kendallTau_center_trans M.center (π.trans M.center.symm)
+    rw [hkend]
+
+theorem firstWeight_eq_rank_mul_centerFirst (c : Candidate n) :
+    M.firstWeight c =
+      M.q ^ (rankOf M.center c : ℕ) * M.firstWeight M.centerFirst := by
+  rw [M.firstWeight_eq_reflFirstWeight c]
+  rw [reflFirstWeight_eq_rank_mul_zero]
+  congr 1
+  rw [M.firstWeight_eq_reflFirstWeight M.centerFirst]
+  simp [centerFirst, firstChoice, rankOf]
+
+theorem partition_eq_rankPowerSum_mul_centerFirstWeight :
+    M.partition =
+      candidateRankPowerSum n M.q * M.firstWeight M.centerFirst := by
+  rw [← M.sum_firstWeight_eq_partition]
+  calc
+    ∑ c : Candidate n, M.firstWeight c
+        = ∑ c : Candidate n,
+            M.q ^ (rankOf M.center c : ℕ) * M.firstWeight M.centerFirst := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          rw [M.firstWeight_eq_rank_mul_centerFirst c]
+    _ = ∑ r : Candidate n,
+          M.q ^ (r : ℕ) * M.firstWeight M.centerFirst := by
+          simpa [rankOf] using
+            (Equiv.sum_comp M.center.symm
+              (fun r : Candidate n =>
+                M.q ^ (r : ℕ) * M.firstWeight M.centerFirst))
+    _ = candidateRankPowerSum n M.q * M.firstWeight M.centerFirst := by
+          unfold candidateRankPowerSum
+          rw [Finset.sum_mul]
 
 /--
 Closed-form rank factorization for the first and top-two Mallows weights.

@@ -59,8 +59,9 @@ the Lean statements against the paper.
   available, also cache the arXiv or publisher HTML page and a text extraction
   next to the PDF. Add the cached source paths or a narrow folder pattern to
   `.gitignore` unless the project explicitly wants source artifacts committed.
-  Work from these local files first; do not repeatedly search the web or
-  rediscover the same PDF after the exact source version is known.
+  Work from these local files first. Do not repeatedly search the web,
+  re-open search results, or rediscover the same PDF after the exact source
+  version is known; spend those tokens on the Lean statements and proof seams.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
