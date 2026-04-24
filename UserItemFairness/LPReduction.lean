@@ -27,6 +27,17 @@ def symmetricOptimalPolicies {m n K : ℕ} [NeZero m] [NeZero n]
     (S : SymmetricData m n K) (γ : ℝ) : Set (Policy m n) :=
   {ρ | UserTypeAssignment.IsTypeSymmetric S.types ρ ∧ IsOptimalAtLevel S.model γ ρ}
 
+/-- Item-fairness values attainable by type-symmetric user-level policies. -/
+def symmetricAttainableItemFairnessSet {m n K : ℕ} [NeZero n]
+    (S : SymmetricData m n K) : Set ℝ :=
+  {r | ∃ ρ : Policy m n,
+    UserTypeAssignment.IsTypeSymmetric S.types ρ ∧ r = itemFairness S.model ρ}
+
+/-- Supremal item fairness over type-symmetric user-level policies. -/
+noncomputable def symmetricOptimalItemFairness {m n K : ℕ} [NeZero n]
+    (S : SymmetricData m n K) : ℝ :=
+  sSup (symmetricAttainableItemFairnessSet S)
+
 end RecommendationModel
 
 namespace RecommendationModel.UserTypeAssignment

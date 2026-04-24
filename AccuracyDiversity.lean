@@ -4,4 +4,6 @@ import AccuracyDiversity.TopKOracle
 import AccuracyDiversity.Bernoulli
 import AccuracyDiversity.Optimization
 import AccuracyDiversity.Exchange
+import AccuracyDiversity.BernoulliExchange
 import AccuracyDiversity.Examples
+import AccuracyDiversity.MainTheorems

@@ -63,9 +63,9 @@ minimal-counterexample proof:
 5. use the already-proved list-to-permutation and permutation-to-reduction
    lemmas.
 
-This seam is now closed in `EconCSLean.FairDivision.IndivisibleGoods` by
-`exists_simple_cycle_list_of_stepCycle` and
-`hasEnvyCycleListExtraction_of_finite`.
+This seam is now closed in the reusable module `EconCSLean.Graph.Cycle` by
+`EconCSLean.Graph.exists_simple_cycle_list_of_stepCycle`; the fair-division
+paper applies it via `hasEnvyCycleListExtraction_of_finite`.
 
 ### Relation Rewriting
 

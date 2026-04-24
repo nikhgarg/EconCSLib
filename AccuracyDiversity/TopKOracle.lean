@@ -31,6 +31,11 @@ def HasDiminishingReturnsAt {T : ℕ}
     (O : TopKValueOracle T) (ℓ : ℕ) : Prop :=
   ∀ t q, marginalTopK O ℓ t (q + 1) ≤ marginalTopK O ℓ t q
 
+/-- Nonnegative marginal top-`ℓ` value for every type and count. -/
+def HasNonnegativeMarginalsAt {T : ℕ}
+    (O : TopKValueOracle T) (ℓ : ℕ) : Prop :=
+  ∀ t q, 0 ≤ marginalTopK O ℓ t q
+
 @[simp] theorem toConsumptionModel_objective {T : ℕ}
     (O : TopKValueOracle T) (likelihood : ItemType T → ℝ) (ℓ : ℕ)
     (a : CountAllocation T) :
@@ -40,6 +45,22 @@ def HasDiminishingReturnsAt {T : ℕ}
 @[simp] theorem marginalTopK_apply {T : ℕ}
     (O : TopKValueOracle T) (ℓ : ℕ) (t : ItemType T) (q : ℕ) :
     marginalTopK O ℓ t q = O.expectedTopSum ℓ t (q + 1) - O.expectedTopSum ℓ t q := rfl
+
+/-- A top-`k` oracle with nonnegative marginals yields a consumption model with nonnegative marginals. -/
+theorem toConsumptionModel_has_nonnegative_marginals {T : ℕ}
+    (O : TopKValueOracle T) (likelihood : ItemType T → ℝ) (ℓ : ℕ)
+    (h : O.HasNonnegativeMarginalsAt ℓ) :
+    (O.toConsumptionModel likelihood ℓ).HasNonnegativeMarginals := by
+  intro t q
+  exact h t q
+
+/-- A top-`k` oracle with diminishing marginals yields a consumption model with diminishing returns. -/
+theorem toConsumptionModel_has_diminishing_returns {T : ℕ}
+    (O : TopKValueOracle T) (likelihood : ItemType T → ℝ) (ℓ : ℕ)
+    (h : O.HasDiminishingReturnsAt ℓ) :
+    (O.toConsumptionModel likelihood ℓ).HasDiminishingReturns := by
+  intro t q
+  exact h t q
 
 end TopKValueOracle
 end AccuracyDiversity

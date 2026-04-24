@@ -32,6 +32,15 @@ theorem bernoulliAtLeastOneValue_succ_sub (p : ℝ) (q : ℕ) :
     _ = p * (1 - p) ^ q := by
           ring
 
+/-- Closed form for the value lost by removing the last Bernoulli recommendation. -/
+theorem bernoulliAtLeastOneValue_sub_pred {p : ℝ} {q : ℕ} (hq : 0 < q) :
+    bernoulliAtLeastOneValue p q - bernoulliAtLeastOneValue p (q - 1) =
+      p * (1 - p) ^ (q - 1) := by
+  have hsucc : q - 1 + 1 = q :=
+    Nat.sub_add_cancel (Nat.succ_le_of_lt hq)
+  nth_rewrite 1 [← hsucc]
+  exact bernoulliAtLeastOneValue_succ_sub p (q - 1)
+
 /-- Bernoulli satisfaction has nonnegative marginal values for `0 ≤ p ≤ 1`. -/
 theorem bernoulliAtLeastOneValue_succ_sub_nonneg {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (q : ℕ) :

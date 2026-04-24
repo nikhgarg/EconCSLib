@@ -1,5 +1,7 @@
 import DecisionCore.Policy
 
+open scoped BigOperators
+
 namespace DecisionCore
 namespace Policy
 
@@ -73,6 +75,55 @@ theorem isClasswise_iff_exists_liftAlong {α κ β : Type*}
   · rintro ⟨ρκ, hEq⟩
     rw [← hEq]
     exact liftAlong_isClasswise τ ρκ
+
+/--
+Fiber-cardinality weighted sums over classes are the same as sums over the
+underlying population when the summand only depends on the class.
+-/
+theorem sum_fiber_card_mul {α κ : Type*} [Fintype α] [Fintype κ] [DecidableEq κ]
+    (τ : α → κ) (f : κ → ℝ) :
+    (∑ k : κ, (((Finset.univ : Finset α).filter fun a => τ a = k).card : ℝ) * f k) =
+      ∑ a : α, f (τ a) := by
+  classical
+  calc
+    (∑ k : κ, (((Finset.univ : Finset α).filter fun a => τ a = k).card : ℝ) * f k)
+        = ∑ k : κ, ∑ a ∈ (Finset.univ : Finset α) with τ a = k, f (τ a) := by
+          refine Finset.sum_congr rfl ?_
+          intro k _
+          calc
+            (((Finset.univ : Finset α).filter fun a => τ a = k).card : ℝ) * f k
+                = ∑ a ∈ (Finset.univ : Finset α) with τ a = k, f k := by
+                  simp [nsmul_eq_mul, mul_comm]
+            _ = ∑ a ∈ (Finset.univ : Finset α) with τ a = k, f (τ a) := by
+                  refine Finset.sum_congr rfl ?_
+                  intro a ha
+                  have hτ : τ a = k := by
+                    simpa using ha
+                  rw [hτ]
+    _ = ∑ a : α, f (τ a) := by
+          simpa using (Finset.sum_fiberwise (s := (Finset.univ : Finset α)) (g := τ)
+            (f := fun a => f (τ a)))
+
+/--
+Taking a finite minimum after lifting along a surjective class map gives the
+same value as taking the minimum on the class space.  Surjectivity is packaged
+as chosen fiber representatives.
+-/
+theorem finiteMin_comp_of_fiberRepresentatives {α κ : Type*}
+    [Fintype α] [Fintype κ] [Nonempty α] [Nonempty κ]
+    (τ : α → κ) (reps : FiberRepresentatives τ) (f : κ → ℝ) :
+    finiteMin (fun a : α => f (τ a)) = finiteMin f := by
+  unfold finiteMin
+  apply le_antisymm
+  · apply Finset.le_inf'
+    intro k _hk
+    have hle := Finset.inf'_le (s := (Finset.univ : Finset α))
+      (f := fun a : α => f (τ a)) (b := reps.repr k) (by simp)
+    simpa [reps.repr_spec k] using hle
+  · apply Finset.le_inf'
+    intro a _ha
+    exact Finset.inf'_le (s := (Finset.univ : Finset κ))
+      (f := f) (b := τ a) (by simp)
 
 end Policy
 end DecisionCore

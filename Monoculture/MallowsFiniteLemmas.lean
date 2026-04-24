@@ -1,9 +1,149 @@
+import EconCSLean.Math.PositiveDenominator
 import Monoculture.MallowsCenterCertificate
 
 open scoped BigOperators
 open DecisionCore
 
 namespace Monoculture
+
+namespace MallowsSpec
+
+variable {n : ℕ} (M : MallowsSpec n)
+
+/--
+Unnormalised first-choice fiber gap mass.
+
+This is the Mallows-weight numerator corresponding to
+`firstChoiceGapMass M.law value c`.  Keeping this numerator explicit lets the
+main theorem use finite Mallows sum inequalities without imposing false
+candidatewise sign assumptions.
+-/
+noncomputable def firstChoiceGapWeight
+    (value : Candidate n → ℝ) (c : Candidate n) : ℝ :=
+  ∑ π : Ranking n,
+    if c = firstChoice π then
+      mallowsWeight M.q M.center π * valueGap value π
+    else
+      0
+
+/-- First-choice gap mass reduces to an unnormalised Mallows-weight numerator. -/
+theorem firstChoiceGapMass_eq_firstChoiceGapWeight_div_partition
+    (value : Candidate n → ℝ) (c : Candidate n) :
+    firstChoiceGapMass M.law value c =
+      M.firstChoiceGapWeight value c / M.partition := by
+  classical
+  unfold firstChoiceGapMass pmfExp firstChoiceGapWeight
+  calc
+    ∑ π : Ranking n, (M.law π).toReal *
+        (if c = firstChoice π then valueGap value π else 0)
+        = ∑ π : Ranking n,
+            (mallowsWeight M.q M.center π / M.partition) *
+              (if c = firstChoice π then valueGap value π else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          rw [M.law_apply_toReal]
+    _ = ∑ π : Ranking n,
+          (if c = firstChoice π then
+              mallowsWeight M.q M.center π * valueGap value π
+            else
+              0) / M.partition := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          by_cases h : c = firstChoice π
+          · have h' : c = π 0 := by simpa [firstChoice] using h
+            simp [h']
+            ring
+          · have h' : c ≠ π 0 := by simpa [firstChoice] using h
+            simp [h']
+    _ = (∑ π : Ranking n,
+          if c = firstChoice π then
+            mallowsWeight M.q M.center π * valueGap value π
+          else
+            0) / M.partition := by
+          rw [Finset.sum_div]
+
+/-- First-choice miss probability with the positive Mallows denominator exposed. -/
+theorem firstChoiceMissProb_eq_partition_sub_firstWeight_div_partition
+    (c : Candidate n) :
+    firstChoiceMissProb M.law c =
+      (M.partition - M.firstWeight c) / M.partition := by
+  rw [firstChoiceMissProb]
+  rw [M.firstChoiceProb_eq_firstWeight_div_partition c]
+  field_simp [M.partition_ne_zero]
+
+/--
+The independent-reranking candidate sum with all positive Mallows denominators
+cleared.
+-/
+theorem firstChoice_miss_gap_sum_eq_weight_sum_div
+    (value : Candidate n → ℝ) :
+    (∑ c : Candidate n,
+      firstChoiceMissProb M.law c * firstChoiceGapMass M.law value c) =
+      (∑ c : Candidate n,
+        (M.partition - M.firstWeight c) *
+          M.firstChoiceGapWeight value c) /
+        (M.partition * M.partition) := by
+  classical
+  calc
+    ∑ c : Candidate n,
+      firstChoiceMissProb M.law c * firstChoiceGapMass M.law value c
+        = ∑ c : Candidate n,
+            ((M.partition - M.firstWeight c) *
+              M.firstChoiceGapWeight value c) /
+              (M.partition * M.partition) := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          rw [M.firstChoiceMissProb_eq_partition_sub_firstWeight_div_partition c]
+          rw [M.firstChoiceGapMass_eq_firstChoiceGapWeight_div_partition value c]
+          field_simp [M.partition_ne_zero]
+    _ = (∑ c : Candidate n,
+          (M.partition - M.firstWeight c) *
+            M.firstChoiceGapWeight value c) /
+        (M.partition * M.partition) := by
+          rw [Finset.sum_div]
+
+/-- Positive cleared finite Mallows sum implies positive independent-reranking sum. -/
+theorem firstChoice_miss_gap_sum_pos_of_weight_sum_pos
+    {value : Candidate n → ℝ}
+    (hsum :
+      0 < ∑ c : Candidate n,
+        (M.partition - M.firstWeight c) *
+          M.firstChoiceGapWeight value c) :
+    0 < ∑ c : Candidate n,
+      firstChoiceMissProb M.law c * firstChoiceGapMass M.law value c := by
+  rw [M.firstChoice_miss_gap_sum_eq_weight_sum_div value]
+  exact div_pos hsum (mul_pos M.partition_pos M.partition_pos)
+
+/-- Positivity of the normalized first-choice sum is equivalent to its cleared form. -/
+theorem firstChoice_miss_gap_sum_pos_iff_weight_sum_pos
+    (value : Candidate n → ℝ) :
+    (0 < ∑ c : Candidate n,
+      firstChoiceMissProb M.law c * firstChoiceGapMass M.law value c) ↔
+      0 < ∑ c : Candidate n,
+        (M.partition - M.firstWeight c) *
+          M.firstChoiceGapWeight value c := by
+  rw [M.firstChoice_miss_gap_sum_eq_weight_sum_div value]
+  constructor
+  · intro h
+    by_contra hnot
+    have hsum_nonpos :
+        (∑ c : Candidate n,
+          (M.partition - M.firstWeight c) *
+            M.firstChoiceGapWeight value c) ≤ 0 := le_of_not_gt hnot
+    have hden_nonneg : 0 ≤ M.partition * M.partition :=
+      le_of_lt (mul_pos M.partition_pos M.partition_pos)
+    have hdiv_nonpos :
+        (∑ c : Candidate n,
+          (M.partition - M.firstWeight c) *
+            M.firstChoiceGapWeight value c) /
+          (M.partition * M.partition) ≤ 0 := by
+      exact div_nonpos_of_nonpos_of_nonneg hsum_nonpos hden_nonneg
+    linarith
+  · intro h
+    exact div_pos h (mul_pos M.partition_pos M.partition_pos)
+
+end MallowsSpec
+
 namespace MallowsComparison
 
 variable {n : ℕ} (C : MallowsComparison n)
@@ -21,17 +161,8 @@ theorem firstWeight_div_le_of_cross_mul_le
         C.algorithm.firstWeight c * C.human.partition) :
     C.human.firstWeight c / C.human.partition ≤
       C.algorithm.firstWeight c / C.algorithm.partition := by
-  apply le_of_mul_le_mul_right (a := C.human.partition * C.algorithm.partition)
-  · calc
-      C.human.firstWeight c / C.human.partition *
-          (C.human.partition * C.algorithm.partition)
-          = C.human.firstWeight c * C.algorithm.partition := by
-            field_simp [C.human.partition_ne_zero]
-      _ ≤ C.algorithm.firstWeight c * C.human.partition := hcross
-      _ = C.algorithm.firstWeight c / C.algorithm.partition *
-          (C.human.partition * C.algorithm.partition) := by
-            field_simp [C.algorithm.partition_ne_zero]
-  · exact mul_pos C.human.partition_pos C.algorithm.partition_pos
+  exact EconCSLean.PositiveDenominator.div_le_div_of_cross_mul_le
+    C.human.partition_pos C.algorithm.partition_pos hcross
 
 /--
 Strict cross-multiplied center-weight improvement implies strict normalized
@@ -43,17 +174,8 @@ theorem centerFirstWeight_div_lt_of_cross_mul_lt
         C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition) :
     C.human.firstWeight C.human.centerFirst / C.human.partition <
       C.algorithm.firstWeight C.algorithm.centerFirst / C.algorithm.partition := by
-  apply lt_of_mul_lt_mul_right (a := C.human.partition * C.algorithm.partition)
-  · calc
-      C.human.firstWeight C.human.centerFirst / C.human.partition *
-          (C.human.partition * C.algorithm.partition)
-          = C.human.firstWeight C.human.centerFirst * C.algorithm.partition := by
-            field_simp [C.human.partition_ne_zero]
-      _ < C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition := hcross
-      _ = C.algorithm.firstWeight C.algorithm.centerFirst / C.algorithm.partition *
-          (C.human.partition * C.algorithm.partition) := by
-            field_simp [C.algorithm.partition_ne_zero]
-  · exact le_of_lt (mul_pos C.human.partition_pos C.algorithm.partition_pos)
+  exact EconCSLean.PositiveDenominator.div_lt_div_of_cross_mul_lt
+    C.human.partition_pos C.algorithm.partition_pos hcross
 
 /--
 Cross-multiplied first-choice weight differences imply the normalized
@@ -72,19 +194,178 @@ theorem collisionDiff_mul_gap_nonneg_of_cross_mul_gap_nonneg
   rw [firstChoiceCollisionDiff]
   rw [C.algorithm.firstChoiceProb_eq_firstWeight_div_partition c]
   rw [C.human.firstChoiceProb_eq_firstWeight_div_partition c]
-  have hden_nonneg : 0 ≤ C.algorithm.partition * C.human.partition :=
-    le_of_lt (mul_pos C.algorithm.partition_pos C.human.partition_pos)
-  have hrewrite :
-      (C.algorithm.firstWeight c / C.algorithm.partition -
-          C.human.firstWeight c / C.human.partition) *
-        firstChoiceGapMass C.human.law value c =
-      ((C.algorithm.firstWeight c * C.human.partition -
+  exact EconCSLean.PositiveDenominator.sub_div_mul_nonneg_of_cross_sub_mul_nonneg
+    C.algorithm.partition_pos C.human.partition_pos hcross
+
+/--
+The weaker-competition candidate sum with all positive Mallows denominators
+cleared.
+-/
+theorem firstChoice_collision_gap_sum_eq_cross_weight_sum_div
+    (value : Candidate n → ℝ) :
+    (∑ c : Candidate n,
+      firstChoiceCollisionDiff C.algorithm.law C.human.law c *
+        firstChoiceGapMass C.human.law value c) =
+      (∑ c : Candidate n,
+        (C.algorithm.firstWeight c * C.human.partition -
+            C.human.firstWeight c * C.algorithm.partition) *
+          C.human.firstChoiceGapWeight value c) /
+        (C.algorithm.partition * C.human.partition * C.human.partition) := by
+  classical
+  calc
+    ∑ c : Candidate n,
+      firstChoiceCollisionDiff C.algorithm.law C.human.law c *
+        firstChoiceGapMass C.human.law value c
+        = ∑ c : Candidate n,
+            ((C.algorithm.firstWeight c * C.human.partition -
+                C.human.firstWeight c * C.algorithm.partition) *
+              C.human.firstChoiceGapWeight value c) /
+              (C.algorithm.partition * C.human.partition *
+                C.human.partition) := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          rw [firstChoiceCollisionDiff]
+          rw [C.algorithm.firstChoiceProb_eq_firstWeight_div_partition c]
+          rw [C.human.firstChoiceProb_eq_firstWeight_div_partition c]
+          rw [C.human.firstChoiceGapMass_eq_firstChoiceGapWeight_div_partition value c]
+          field_simp [C.algorithm.partition_ne_zero, C.human.partition_ne_zero]
+    _ = (∑ c : Candidate n,
+          (C.algorithm.firstWeight c * C.human.partition -
+              C.human.firstWeight c * C.algorithm.partition) *
+            C.human.firstChoiceGapWeight value c) /
+        (C.algorithm.partition * C.human.partition * C.human.partition) := by
+          rw [Finset.sum_div]
+
+/--
+Positive cleared finite Mallows cross-weight sum implies the positive
+weaker-competition candidate sum.
+-/
+theorem firstChoice_collision_gap_sum_pos_of_cross_weight_sum_pos
+    {value : Candidate n → ℝ}
+    (hsum :
+      0 < ∑ c : Candidate n,
+        (C.algorithm.firstWeight c * C.human.partition -
+            C.human.firstWeight c * C.algorithm.partition) *
+          C.human.firstChoiceGapWeight value c) :
+    0 < ∑ c : Candidate n,
+      firstChoiceCollisionDiff C.algorithm.law C.human.law c *
+        firstChoiceGapMass C.human.law value c := by
+  rw [C.firstChoice_collision_gap_sum_eq_cross_weight_sum_div value]
+  exact div_pos hsum
+    (mul_pos (mul_pos C.algorithm.partition_pos C.human.partition_pos)
+      C.human.partition_pos)
+
+/-- Positivity of the normalized weaker-competition sum is equivalent to its cleared form. -/
+theorem firstChoice_collision_gap_sum_pos_iff_cross_weight_sum_pos
+    (value : Candidate n → ℝ) :
+    (0 < ∑ c : Candidate n,
+      firstChoiceCollisionDiff C.algorithm.law C.human.law c *
+        firstChoiceGapMass C.human.law value c) ↔
+      0 < ∑ c : Candidate n,
+        (C.algorithm.firstWeight c * C.human.partition -
+            C.human.firstWeight c * C.algorithm.partition) *
+          C.human.firstChoiceGapWeight value c := by
+  rw [C.firstChoice_collision_gap_sum_eq_cross_weight_sum_div value]
+  constructor
+  · intro h
+    by_contra hnot
+    have hsum_nonpos :
+        (∑ c : Candidate n,
+          (C.algorithm.firstWeight c * C.human.partition -
+              C.human.firstWeight c * C.algorithm.partition) *
+            C.human.firstChoiceGapWeight value c) ≤ 0 := le_of_not_gt hnot
+    have hden_nonneg :
+        0 ≤ C.algorithm.partition * C.human.partition * C.human.partition :=
+      le_of_lt
+        (mul_pos
+          (mul_pos C.algorithm.partition_pos C.human.partition_pos)
+          C.human.partition_pos)
+    have hdiv_nonpos :
+        (∑ c : Candidate n,
+          (C.algorithm.firstWeight c * C.human.partition -
+              C.human.firstWeight c * C.algorithm.partition) *
+            C.human.firstChoiceGapWeight value c) /
+          (C.algorithm.partition * C.human.partition *
+            C.human.partition) ≤ 0 := by
+      exact div_nonpos_of_nonpos_of_nonneg hsum_nonpos hden_nonneg
+    linarith
+  · intro h
+    exact div_pos h
+      (mul_pos
+        (mul_pos C.algorithm.partition_pos C.human.partition_pos)
+        C.human.partition_pos)
+
+/--
+Sum-level finite Mallows certificate.
+
+This is the preferred paper-facing target: the finite inequalities are stated
+after clearing the positive Mallows partition denominators, but no candidatewise
+sign assumption is imposed.  Non-center first-choice fibers may have negative
+gap mass, so the theorem should be driven by these total finite sums.
+-/
+structure CenterMallowsFiniteSumCertificate
+    (value : Candidate n → ℝ) : Prop where
+  strictly_center_ordered : C.StrictlyCenterOrdered value
+  algorithm_weight_sum_pos :
+    0 < ∑ c : Candidate n,
+      (C.algorithm.partition - C.algorithm.firstWeight c) *
+        C.algorithm.firstChoiceGapWeight value c
+  human_weight_sum_pos :
+    0 < ∑ c : Candidate n,
+      (C.human.partition - C.human.firstWeight c) *
+        C.human.firstChoiceGapWeight value c
+  weaker_cross_weight_sum_pos :
+    0 < ∑ c : Candidate n,
+      (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
-        firstChoiceGapMass C.human.law value c) /
-          (C.algorithm.partition * C.human.partition) := by
-    field_simp [C.algorithm.partition_ne_zero, C.human.partition_ne_zero]
-  rw [hrewrite]
-  exact div_nonneg hcross hden_nonneg
+        C.human.firstChoiceGapWeight value c
+
+/--
+Cleared sum-level Mallows inequalities instantiate the candidate-sum certificate
+used by the monoculture model.
+-/
+theorem candidateSumCertificate_of_centerMallowsFiniteSumCertificate
+    {value : Candidate n → ℝ}
+    (cert : C.CenterMallowsFiniteSumCertificate value) :
+    C.CandidateSumCertificate value := by
+  constructor
+  · exact C.algorithm.firstChoice_miss_gap_sum_pos_of_weight_sum_pos
+      cert.algorithm_weight_sum_pos
+  · exact C.human.firstChoice_miss_gap_sum_pos_of_weight_sum_pos
+      cert.human_weight_sum_pos
+  · exact C.firstChoice_collision_gap_sum_pos_of_cross_weight_sum_pos
+      cert.weaker_cross_weight_sum_pos
+
+/--
+The normalized candidate-sum certificate is equivalent to the cleared finite
+Mallows sum certificate, once the strict center ordering hypothesis is supplied.
+-/
+theorem centerMallowsFiniteSumCertificate_of_candidateSumCertificate
+    {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (cert : C.CandidateSumCertificate value) :
+    C.CenterMallowsFiniteSumCertificate value := by
+  constructor
+  · exact hstrict
+  · exact (C.algorithm.firstChoice_miss_gap_sum_pos_iff_weight_sum_pos value).mp
+      cert.algorithm_firstChoiceSum_pos
+  · exact (C.human.firstChoice_miss_gap_sum_pos_iff_weight_sum_pos value).mp
+      cert.human_firstChoiceSum_pos
+  · exact (C.firstChoice_collision_gap_sum_pos_iff_cross_weight_sum_pos value).mp
+      cert.weaker_competition_firstChoiceSum_pos
+
+/--
+Paper-facing finite-sum Mallows theorem for the monoculture formalization.
+
+The assumptions are exactly positive denominator-cleared finite Mallows sums for
+the two independent-reranking preferences and the weaker-competition preference.
+-/
+theorem theorem3_pointwise_of_centerMallowsFiniteSumCertificate
+    {value : Candidate n → ℝ}
+    (cert : C.CenterMallowsFiniteSumCertificate value) :
+    Model.PaperHypotheses (C.toModel value) := by
+  exact C.paperHypotheses_of_candidateSumCertificate
+    (C.candidateSumCertificate_of_centerMallowsFiniteSumCertificate cert)
 
 /--
 The strong finite Mallows inequality certificate with partition denominators
@@ -216,6 +497,32 @@ structure CenterMallowsProductCrossWeightCertificate
       C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition
 
 /--
+Reduced product-sign Mallows certificate.
+
+The center-candidate positivity obligations are discharged by generic support
+lemmas, so this certificate only asks for non-center finite Mallows inequalities.
+-/
+structure CenterMallowsReducedProductCrossWeightCertificate
+    (value : Candidate n → ℝ) : Prop where
+  strictly_center_ordered : C.StrictlyCenterOrdered value
+  algorithm_noncenter_nonneg :
+    ∀ c : Candidate n, c ≠ C.algorithm.centerFirst →
+      0 ≤ firstChoiceMissProb C.algorithm.law c *
+        firstChoiceGapMass C.algorithm.law value c
+  human_noncenter_nonneg :
+    ∀ c : Candidate n, c ≠ C.human.centerFirst →
+      0 ≤ firstChoiceMissProb C.human.law c *
+        firstChoiceGapMass C.human.law value c
+  weaker_noncenter_cross_product_nonneg :
+    ∀ c : Candidate n, c ≠ C.human.centerFirst →
+      0 ≤ (C.algorithm.firstWeight c * C.human.partition -
+          C.human.firstWeight c * C.algorithm.partition) *
+        firstChoiceGapMass C.human.law value c
+  center_firstWeight_cross_lt :
+    C.human.firstWeight C.human.centerFirst * C.algorithm.partition <
+      C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition
+
+/--
 The product-sign finite Mallows certificate instantiates the main Mallows
 certificate without requiring over-strong candidatewise probability monotonicity.
 -/
@@ -235,6 +542,39 @@ theorem centerMallowsCertificate_of_productCrossWeightCertificate
         cert.center_firstWeight_cross_lt)
 
 /--
+The reduced product-sign certificate instantiates the full product-sign
+certificate; only non-center Mallows finite inequalities remain as assumptions.
+-/
+theorem centerMallowsProductCrossWeightCertificate_of_reduced
+    {value : Candidate n → ℝ}
+    (cert : C.CenterMallowsReducedProductCrossWeightCertificate value) :
+    C.CenterMallowsProductCrossWeightCertificate value := by
+  constructor
+  · exact cert.strictly_center_ordered
+  · intro c
+    by_cases hc : c = C.algorithm.centerFirst
+    · subst c
+      exact le_of_lt
+        (C.algorithm_center_summand_pos_of_strictlyCenterOrdered
+          cert.strictly_center_ordered)
+    · exact cert.algorithm_noncenter_nonneg c hc
+  · intro c
+    by_cases hc : c = C.human.centerFirst
+    · subst c
+      exact le_of_lt
+        (C.human_center_summand_pos_of_strictlyCenterOrdered
+          cert.strictly_center_ordered)
+    · exact cert.human_noncenter_nonneg c hc
+  · intro c
+    by_cases hc : c = C.human.centerFirst
+    · subst c
+      exact le_of_lt
+        (C.weaker_center_cross_product_pos_of_strictlyCenterOrdered
+          cert.strictly_center_ordered cert.center_firstWeight_cross_lt)
+    · exact cert.weaker_noncenter_cross_product_nonneg c hc
+  · exact cert.center_firstWeight_cross_lt
+
+/--
 Product-sign finite Mallows inequalities imply the paper hypotheses for the
 pointwise-value monoculture model.
 -/
@@ -244,6 +584,28 @@ theorem paperHypotheses_of_centerMallowsProductCrossWeightCertificate
     Model.PaperHypotheses (C.toModel value) := by
   exact C.paperHypotheses_of_centerMallowsCertificate
     (C.centerMallowsCertificate_of_productCrossWeightCertificate cert)
+
+/--
+Reduced product-sign finite Mallows inequalities imply the paper hypotheses for
+the pointwise-value monoculture model.
+-/
+theorem paperHypotheses_of_centerMallowsReducedProductCrossWeightCertificate
+    {value : Candidate n → ℝ}
+    (cert : C.CenterMallowsReducedProductCrossWeightCertificate value) :
+    Model.PaperHypotheses (C.toModel value) := by
+  exact C.paperHypotheses_of_centerMallowsProductCrossWeightCertificate
+    (C.centerMallowsProductCrossWeightCertificate_of_reduced cert)
+
+/--
+Paper-facing pointwise Mallows theorem for the monoculture formalization.  The
+remaining assumptions are exactly the non-center finite Mallows product
+inequalities plus strict center first-choice improvement.
+-/
+theorem theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate
+    {value : Candidate n → ℝ}
+    (cert : C.CenterMallowsReducedProductCrossWeightCertificate value) :
+    Model.PaperHypotheses (C.toModel value) := by
+  exact C.paperHypotheses_of_centerMallowsReducedProductCrossWeightCertificate cert
 
 end MallowsComparison
 end Monoculture

@@ -1,0 +1,36 @@
+# Reconciling the Accuracy-Diversity Trade-off in Recommendations
+
+## Source Version
+
+- Paper: *Reconciling the accuracy-diversity trade-off in recommendations*
+- Authors: Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg
+- Version formalized: TheWebConf 2024 / arXiv:2307.15142
+- Official URL: https://openreview.net/forum?id=rSHR9YKBVy
+- arXiv URL: https://arxiv.org/abs/2307.15142
+- PDF URL: https://arxiv.org/pdf/2307.15142
+- Accessed: 2026-04-23
+
+The PDF is not committed to git. Use the OpenReview page and arXiv PDF above as
+the source versions for theorem-number and definition comparisons.
+
+## Central Theorem File
+
+- `AccuracyDiversity/MainTheorems.lean`
+
+That file contains the paper-facing theorem wrappers. Detailed count-allocation,
+representation, Bernoulli, top-k, and exchange lemmas live in the other files in
+this folder.
+
+## Theorem Status
+
+| Paper item | Lean declaration | Status | File | Remaining assumptions |
+|---|---|---|---|---|
+| Count allocation and consumption-constrained objective | `ConsumptionModel.objective` | formalized | `AccuracyDiversity/Basic.lean` | none |
+| Representation and γ-homogeneity profiles | `GammaHomogeneityProfile.Approx` | formalized | `AccuracyDiversity/Representation.lean` | none |
+| Top-k oracle interface | `TopKValueOracle.toConsumptionModel_has_diminishing_returns` | conditional | `AccuracyDiversity/TopKOracle.lean` | oracle marginal assumptions |
+| Bernoulli diminishing-return specialization | `BernoulliSatisfactionModel.toConsumptionModel_has_diminishing_returns` | formalized | `AccuracyDiversity/Bernoulli.lean` | valid Bernoulli probabilities |
+| Finite exchange-improvement theorem | `ConsumptionModel.paper_finite_exchange_improvement` | formalized | `AccuracyDiversity/MainTheorems.lean` | none |
+| Finite first-order condition at an optimum | `ConsumptionModel.paper_finite_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
+| Bernoulli first-order condition | `BernoulliSatisfactionModel.paper_bernoulli_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
+| Two-type Bernoulli exchange inequalities | `paper_two_type_forward_one_le_backward_zero`, `paper_two_type_forward_zero_le_backward_one` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and positive source count |
+| Asymptotic homogeneity of optima | `ConsumptionModel.AsymptoticHomogeneityTarget` | scaffold | `AccuracyDiversity/Optimization.lean` | connect finite exchange inequalities to asymptotic approximation bounds |

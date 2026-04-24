@@ -15,6 +15,53 @@ Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
 
+## Library Layering Rule
+
+Put generic EC/CS/econ results in the main EconCS library, then make paper
+folders mostly apply those results.
+
+- Main library modules should own reusable primitives, definitions, and theorems:
+  allocations, valuations, mechanisms, rankings, PMFs, finite expectations,
+  graph/path lemmas, sign lemmas, certificate interfaces, and generic algorithm
+  correctness patterns.
+- Paper-specific folders should mainly translate paper notation into the shared
+  primitives, instantiate assumptions, prove genuinely paper-local lemmas, and
+  state the paper-facing theorem.
+- If two papers could use a lemma after renaming variables, it belongs in the
+  generic library first. Do not let reusable results accumulate inside a paper
+  namespace just because that is where they were discovered.
+- If a proof starts with a paper-local lemma and it becomes generic, extract it
+  before building more paper-specific code on top of it.
+- Paper folders may keep thin wrappers with paper names, but those wrappers
+  should usually call generic theorems rather than duplicate their proofs.
+
+## Paper Folder Contract
+
+Each paper-specific folder should be auditable by a human who wants to compare
+the Lean statements against the paper.
+
+- Record the exact paper source version in the folder. Prefer a folder
+  `README.md` with the arXiv/ACM/official URL, title, authors, venue/version,
+  and access date. If the project policy allows PDFs, keep the paper PDF there;
+  otherwise do not commit the PDF and make the README link to the exact version
+  being formalized.
+- Add one central Lean file for paper-facing theorem statements, conventionally
+  named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
+  the folder already has a root module. This file should state and prove only
+  the main theorem wrappers and import the detailed proof files.
+- Main theorem definitions/functions in that central file should mirror the
+  paper statement closely enough that a human can inspect just this file and
+  verify the intended theorem was formalized. Use paper theorem numbers/names in
+  docstrings and keep wrappers thin.
+- Add a structured folder `README.md` theorem-status table with columns like:
+  paper theorem/definition, Lean declaration, status (`formalized`,
+  `conditional`, `scaffold`, `not started`), file, and remaining assumptions.
+- If a theorem is only conditional, the README must name the exact certificate
+  or assumption declaration that remains. Do not describe it vaguely as
+  "technical details".
+- Detailed lemmas may live in many files, but the central theorem file should be
+  the stable public interface for that paper.
+
 ## Workflow
 
 1. Orient before editing.
@@ -33,15 +80,17 @@ that result.
    those before attempting asymptotic, measure-theoretic, or complexity-heavy
    layers.
 
-4. Extract shared primitives.
+4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,
-   rankings, conditional expectations, and sign lemmas should live in shared
-   modules. Keep only paper-specific definitions in paper namespaces.
+   rankings, conditional expectations, graph lemmas, and sign lemmas should live
+   in main library modules, not buried in one paper folder. Keep only
+   paper-specific definitions and wrappers in paper namespaces.
 
 5. Make every paper pay library rent.
    When a proof needs a reusable object, add the general version once and reuse
    it. Avoid parallel versions of allocations, randomized policies, mechanisms,
-   or expectations in each paper folder.
+   expectations, graph reachability, or inequality certificates in each paper
+   folder.
 
 6. Prefer compileable partial progress.
    If the full main theorem is not ready, add definitions, local invariants,
@@ -57,6 +106,29 @@ that result.
    First build the touched module. Then build the parent paper root. Run full
    `lake build` for release/integration checks.
 
+## External Library Reconnaissance
+
+Before implementing substantial probability, statistics, or learning-theory
+machinery from scratch, check whether existing Lean libraries already contain
+the needed theorem and whether their Lean/mathlib versions are compatible.
+
+- Statistical learning theory: `YuanheZ/lean-stat-learning-theory`
+  (`SLT/*`) formalizes empirical-process infrastructure, covering numbers,
+  metric entropy, sub-Gaussian processes, Gaussian concentration, Efron-Stein,
+  Dudley's entropy integral, and least-squares regression bounds. Useful module
+  names include `SLT.CoveringNumber`, `SLT.MetricEntropy`, `SLT.SubGaussian`,
+  `SLT.Dudley`, `SLT.EfronStein`, `SLT.GaussianLipConcen`, and
+  `SLT.LeastSquares.*`.
+- Related probability sources referenced by that project include
+  `auto-res/lean-rademacher` for Rademacher/Dudley material and
+  `RemyDegenne/CLT` for characteristic-function/CLT infrastructure.
+- Do not add one of these as a dependency blindly. First inspect
+  `lean-toolchain`, `lakefile`, and `lake-manifest`; if the toolchain is behind
+  the current repo, either port only the needed lemmas into a local generic
+  module with attribution or isolate a compatibility branch.
+- Prefer using upstream theorem names as search terms. If porting, preserve the
+  conceptual interface but adapt notation/imports to the local library layer.
+
 ## Modeling Heuristics
 
 - Fair division: start with finite bundles, allocations, monotone valuations,
@@ -68,6 +140,11 @@ that result.
   stability, deferred acceptance, and strategic-report predicates.
 - Games/learning: separate finite games, mixed distributions, payoffs,
   equilibrium predicates, regret/calibration, and empirical distributions.
+- Statistical learning/probability: before building custom measure-theoretic
+  probability, look for reusable concentration, sub-Gaussian, covering-number,
+  entropy, empirical-process, and regression results in SLT-style libraries;
+  when toolchain mismatch prevents direct import, port narrowly into generic
+  EconCS probability/statistics modules.
 - Online algorithms: separate histories, feasible irrevocable actions,
   objective value, benchmark/offline optimum, and competitive-ratio statements.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
@@ -84,6 +161,32 @@ that result.
 - For inequality-heavy proofs, use certificate structures with fields matching
   the exact nonnegativity, strict positivity, and comparison obligations needed
   by the final theorem.
+- Prefer sum-level certificates when the theorem is about a total expectation
+  or finite sum. Do not impose candidatewise nonnegativity merely because it
+  would make a `sum_univ_pos_of_pos_of_nonneg` proof convenient; in ranking and
+  Mallows-style arguments, non-center fibers can have negative gap mass even
+  when the total theorem is true.
+- When clearing positive probability denominators, expose the unnormalised
+  numerator as a reusable definition and prove an equality from the normalized
+  expectation to numerator divided by a positive denominator. Also prove the
+  positivity equivalence in both directions, so later certificate interfaces can
+  move freely between normalized probabilities and denominator-cleared finite
+  sums.
+- For symmetry/type-reduction arguments, prove the generic fiber facts first:
+  weighted sums by type-cardinality equal sums over original agents, and finite
+  minima over agents equal finite minima over types when representatives witness
+  every fiber. Then paper reductions become mostly rewriting. For optimization
+  reductions, separate exact functional preservation from the remaining
+  optimal-value equality seam; prove lift and descend theorems conditional on
+  that seam.
+- For finite exchange arguments, avoid re-proving whole objective sums by hand.
+  Use a generic two-point finite-sum update lemma: if two functions differ only
+  at `src` and `dst`, the total sum changes by the two pointwise deltas. Then
+  derive first-order inequalities at finite optima from "no profitable
+  exchange" rather than restating optimality from scratch.
+- For finite fair-division allocation theorems, first prove the theorem for an
+  abstract marginal bound. Then add a paper-facing corollary instantiating the
+  bound as the finite maximum one-good marginal value.
 - For algorithmic statements, separate the existence/correctness theorem from
   runtime or complexity claims unless the complexity layer is already in scope.
 - When a theorem is conditional, name the remaining seam mathematically, not as

@@ -25,8 +25,16 @@ That imported track is organized around one reusable finite/discrete core:
 - `UserItemFairness/*` for the fairness paper
 - `AccuracyDiversity/*` for the diversity-aware recommendation paper
 
+Each paper folder now follows the same audit pattern:
+
+- `README.md` records the exact paper source version and theorem-status table.
+- `MainTheorems.lean` is the central human-readable theorem interface.
+- Detailed proof files stay in the folder and are imported by the central file.
+
 The broader EC Test-of-Time track has also started:
 
+- `EconCSLean/Graph/*` for reusable finite directed-relation/cycle lemmas
+- `EconCSLean/Math/*` for reusable algebraic proof helpers
 - `EconCSLean/FairDivision/*` for the 2025 Test-of-Time indivisible-goods paper
 - `EconCSLean/Auction/*` for the 2021 digital-goods auction paper and later
   auction papers
@@ -38,13 +46,28 @@ monoculture/Mallows branch through:
 
 ```lean
 MallowsComparison.CenterMallowsCertificate
+MallowsComparison.CenterMallowsFiniteSumCertificate
+MallowsComparison.centerMallowsFiniteSumCertificate_of_candidateSumCertificate
+MallowsComparison.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
 MallowsComparison.CenterMallowsProductCrossWeightCertificate
+MallowsComparison.CenterMallowsReducedProductCrossWeightCertificate
 MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate
+MallowsComparison.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate
 ```
 
 The below-one center-probability obligations are now proved from Mallows support
-using the top-two-swapped ranking. The useful next work is to prove the remaining
-finite Mallows product-sign inequalities, not to start a new continuous branch.
+using the top-two-swapped ranking. The preferred continuation target is now the
+sum-level finite Mallows certificate, because non-center first-choice fibers can
+have negative gap mass and should not be forced into candidatewise
+nonnegativity assumptions.
+
+Other current theorem anchors:
+
+- `EconCSLean.FairDivision.lmms_theorem_2_1_finite_maxMarginal`
+- `ReductionWitness.symmetricOptimalItemFairness_eq_reduced`
+- `ReductionWitness.exists_reducedOptimalAtLevel_of_original_symmetric_optimal`
+- `ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum`
+- `BernoulliSatisfactionModel.forwardMarginal_le_backwardMarginal_of_optimum`
 
 ## Orientation
 

@@ -38,6 +38,11 @@ Best beginner files:
 - `UserItemFairness/Basic.lean`
 - `AccuracyDiversity/Basic.lean`
 
+Each paper folder also has:
+
+- `README.md`, with the exact paper source version and theorem-status table
+- `MainTheorems.lean`, with the central paper-facing theorem statements
+
 Then read the shared layer:
 
 - `DecisionCore/FiniteExpectation.lean`
@@ -59,11 +64,23 @@ The key theorem interfaces are:
 - `MallowsComparison.CenterProbabilityCertificate`
 - `MallowsComparison.CenterMallowsCertificate`
 - `MallowsComparison.CenterMallowsWeightCertificate`
+- `MallowsComparison.CenterMallowsFiniteSumCertificate`
+- `MallowsComparison.centerMallowsFiniteSumCertificate_of_candidateSumCertificate`
+- `MallowsComparison.theorem3_pointwise_of_centerMallowsFiniteSumCertificate`
 - `MallowsComparison.CenterMallowsProductCrossWeightCertificate`
+- `MallowsComparison.CenterMallowsReducedProductCrossWeightCertificate`
 - `MallowsComparison.paperHypotheses_of_centerMallowsCertificate`
 - `MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate`
+- `MallowsComparison.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate`
 
 The Mallows-specific certificate is the near-term continuation target because
 the generic below-one probability fields are already discharged by Mallows
-support lemmas. If proving finite inequalities directly, start from
-`MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate`.
+support lemmas. If proving finite inequalities directly, use the finite-sum
+target
+`MallowsComparison.theorem3_pointwise_of_centerMallowsFiniteSumCertificate`.
+
+The fair-division Test-of-Time theorem is closed at
+`EconCSLean.FairDivision.lmms_theorem_2_1_finite_maxMarginal`. The imported
+fairness and diversity-aware recommendation tracks now have two-sided conditional LP
+reduction and finite exchange first-order conditions, respectively; see
+`HumanStartHere.lean` for the current `#check` anchors.
