@@ -3685,6 +3685,70 @@ theorem lemma4_twoTypeThresholdSupport_of_policyOptimal_equalized_of_two_lt
   exact lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_two_lt
     hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
 
+/--
+Lemma 4 to Lemma 5 bridge: once the paper's perturbation argument has produced
+threshold support, the policy is exactly a sparse equalized real solution with
+the threshold pivot.
+-/
+theorem problem6SparseEqualized_of_twoTypeThresholdSupport {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hthreshold : TypePolicy.TwoTypeThresholdSupport ρ) :
+    ∃ t : Item n,
+      Problem6SparseEqualized alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+  rcases hthreshold with ⟨t, hx_after, hy_before⟩
+  refine ⟨t, ?_⟩
+  refine
+    { item_eq := ?_
+      sum_x := ?_
+      sum_y := ?_
+      x_after_pivot_zero := ?_
+      y_before_pivot_zero := ?_ }
+  · intro j
+    exact hitem_eq j
+  · exact problem6_typeZero_sum_eq_one ρ
+  · exact problem6_typeOne_sum_eq_one ρ
+  · intro j hj
+    have hzero : ρ 0 j = 0 := hx_after hj
+    simpa [hzero]
+  · intro j hj
+    have hzero : ρ 1 j = 0 := hy_before hj
+    simpa [hzero]
+
+/--
+Appendix D, Lemma 4 to Lemma 5 bridge for an equalized optimal Problem 6
+policy: the threshold-support conclusion supplies a sparse equalized real
+solution for some pivot.
+-/
+theorem problem6SparseEqualized_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    ∃ t : Item n,
+      Problem6SparseEqualized alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+  have hthreshold :
+      TypePolicy.TwoTypeThresholdSupport ρ :=
+    lemma4_twoTypeThresholdSupport_of_policyOptimal_equalized_of_two_lt
+      hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+  exact problem6SparseEqualized_of_twoTypeThresholdSupport
+    hitem_eq hthreshold
+
 /-- The Problem 6 closed-form real solution as a two-type policy. -/
 noncomputable def problem6ClosedPolicy {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (t : Item n)

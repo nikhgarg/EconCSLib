@@ -1091,6 +1091,49 @@ theorem paper_lemma4_twoTypeThresholdSupport_of_policyOptimal_equalized_of_two_l
     hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
 
 /--
+Appendix D, Lemma 4 to Lemma 5 bridge: threshold support plus item
+equalization gives the sparse equalized real Problem 6 shape.
+-/
+theorem paper_lemma4_sparseEqualized_of_twoTypeThresholdSupport
+    {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hthreshold : TypePolicy.TwoTypeThresholdSupport ρ) :
+    ∃ t : Item n,
+      Problem6SparseEqualized alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+  exact problem6SparseEqualized_of_twoTypeThresholdSupport
+    hitem_eq hthreshold
+
+/--
+Appendix D, Lemma 4 to Lemma 5 bridge for an equalized optimal Problem 6
+policy: the Lemma 4 threshold pivot gives a sparse equalized real solution.
+-/
+theorem paper_lemma4_sparseEqualized_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    ∃ t : Item n,
+      Problem6SparseEqualized alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+  exact problem6SparseEqualized_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+
+/--
 Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
 donor coordinate remains nonnegative.
 -/
