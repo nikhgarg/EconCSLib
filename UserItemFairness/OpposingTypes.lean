@@ -10732,6 +10732,217 @@ theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_adjacentBou
       hnext hboundary
 
 /--
+Appendix D, Lemma 8 adjacent canonical-pivot change, odd-center case: if the
+canonical first closed pivot moves from `t` to the adjacent pivot `t+1`, the
+boundary point exists by IVT and the local boundary stitch proves reduced
+item-fairness monotonicity across the whole change.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  rcases problem6FirstClosedPivot_adjacentBoundary_exists
+      halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+      hleft_le_right hpos hleft_pivot hright_pivot hnext with
+    ⟨alphaBoundary, hleft_le_boundary, hboundary_le_right,
+      halphaBoundary0, halphaBoundary1, hboundary⟩
+  exact
+    lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_boundary_center
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hcenter_c hleft_pivot hright_pivot
+      hnext hboundary
+
+/--
+Appendix D, Lemma 8 adjacent canonical-pivot change, even-center case.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  rcases problem6FirstClosedPivot_adjacentBoundary_exists
+      halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+      hleft_le_right hpos hleft_pivot hright_pivot hnext with
+    ⟨alphaBoundary, hleft_le_boundary, hboundary_le_right,
+      halphaBoundary0, halphaBoundary1, hboundary⟩
+  exact
+    lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_boundary_succ_center
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hsucc hleft_pivot hright_pivot
+      hnext hboundary
+
+/--
+Appendix D, Lemma 8 finite adjacent canonical-pivot change chain,
+odd-center case.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_center_adjacentPivotChange_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_def :
+      ∀ i, ∀ hi : i ≤ r,
+        problem6FirstClosedPivot (alphaSeq i) v
+          (halpha0 i hi) (halpha1 i hi) hpos = pivotSeq i)
+    (hnext :
+      ∀ i, i < r → (pivotSeq (i + 1)).val = (pivotSeq i).val + 1) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  induction r with
+  | zero =>
+      exact le_rfl
+  | succ r ih =>
+      have hprev :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq 0) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) := by
+        exact ih
+          (fun i hi => halpha0 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha1 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha_half i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hpivot_def i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hnext i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+      have hlast :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq (r + 1)) v) := by
+        exact
+          lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_center
+            (halpha0 r (Nat.le_succ r))
+            (halpha1 r (Nat.le_succ r))
+            (halpha0 (r + 1) le_rfl)
+            (halpha1 (r + 1) le_rfl)
+            (hstep r (Nat.lt_succ_self r))
+            (halpha_half r (Nat.le_succ r))
+            (halpha_half (r + 1) le_rfl)
+            hpos hdec hcenter_c
+            (hpivot_def r (Nat.le_succ r))
+            (hpivot_def (r + 1) le_rfl)
+            (hnext r (Nat.lt_succ_self r))
+      exact hprev.trans hlast
+
+/--
+Appendix D, Lemma 8 finite adjacent canonical-pivot change chain,
+even-center case.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_adjacentPivotChange_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_def :
+      ∀ i, ∀ hi : i ≤ r,
+        problem6FirstClosedPivot (alphaSeq i) v
+          (halpha0 i hi) (halpha1 i hi) hpos = pivotSeq i)
+    (hnext :
+      ∀ i, i < r → (pivotSeq (i + 1)).val = (pivotSeq i).val + 1) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  induction r with
+  | zero =>
+      exact le_rfl
+  | succ r ih =>
+      have hprev :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq 0) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) := by
+        exact ih
+          (fun i hi => halpha0 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha1 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha_half i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hpivot_def i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hnext i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+      have hlast :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq (r + 1)) v) := by
+        exact
+          lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+            (halpha0 r (Nat.le_succ r))
+            (halpha1 r (Nat.le_succ r))
+            (halpha0 (r + 1) le_rfl)
+            (halpha1 (r + 1) le_rfl)
+            (hstep r (Nat.lt_succ_self r))
+            (halpha_half r (Nat.le_succ r))
+            (halpha_half (r + 1) le_rfl)
+            hpos hdec hsucc
+            (hpivot_def r (Nat.le_succ r))
+            (hpivot_def (r + 1) le_rfl)
+            (hnext r (Nat.lt_succ_self r))
+      exact hprev.trans hlast
+
+/--
 Appendix D, Lemma 11 reduced-model selected-policy form: the reduced optimal
 item fairness is monotone on a same-selected-pivot interval.
 -/
