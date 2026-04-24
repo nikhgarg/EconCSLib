@@ -2325,6 +2325,57 @@ theorem paper_problem6_closedPivotDenominatorBounds_of_nonnegativePivots
     halpha0 halpha1 hpos hpivot
 
 /--
+Appendix D, Lemma 5 gap algebra: the left denominator slack is the upper
+gap inequality written as denominator form.
+-/
+theorem paper_lemma5_problem6_closedDenominator_sub_leftSum_eq
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedDenominator alpha v t -
+        problem6LeftSum alpha v t =
+      1 - (1 - pairShare alpha v t) *
+        problem6PivotGap alpha v t := by
+  exact problem6ClosedDenominator_sub_leftSum_eq alpha v t
+
+/--
+Appendix D, Lemma 5 gap algebra: the right denominator slack is the lower
+gap inequality written as denominator form.
+-/
+theorem paper_lemma5_problem6_closedDenominator_sub_rightSum_eq
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedDenominator alpha v t -
+        problem6RightSum alpha v t =
+      1 + pairShare alpha v t * problem6PivotGap alpha v t := by
+  exact problem6ClosedDenominator_sub_rightSum_eq alpha v t
+
+/--
+Appendix D, Lemma 5 pivot feasibility: lower and upper bounds on the crossing
+gap imply the denominator bounds for the closed-form pivot.
+-/
+theorem paper_lemma5_problem6_closedPivotDenominatorBounds_of_pivotGap_bounds
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hlower : - (pairShare alpha v t)⁻¹ ≤
+      problem6PivotGap alpha v t)
+    (hupper : problem6PivotGap alpha v t ≤
+      (1 - pairShare alpha v t)⁻¹) :
+    Problem6ClosedPivotDenominatorBounds alpha v t := by
+  exact problem6ClosedPivotDenominatorBounds_of_pivotGap_bounds
+    halpha0 halpha1 hpos hlower hupper
+
+/--
+Appendix D, Lemma 5 pivot existence: a finite crossing argument selects a
+closed-form pivot whose denominator bounds hold.
+-/
+theorem paper_lemma5_problem6_closedPivotDenominatorBounds_exists
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ∃ t : Item n, Problem6ClosedPivotDenominatorBounds alpha v t := by
+  exact problem6ClosedPivotDenominatorBounds_exists
+    halpha0 halpha1 hpos
+
+/--
 Appendix D, Lemma 5 denominator-bound bridge: an active sparse equalized
 solution supplies the closed-form denominator bounds at the same pivot.
 -/
@@ -2425,6 +2476,19 @@ theorem paper_problem6_closedOptimalityCertificate_of_denominatorBounds
     halpha0 halpha1 hpos hdec hbounds
 
 /--
+Appendix D, Lemma 5 full certificate: the finite pivot choice and closed dual
+produce a closed-form optimality certificate.
+-/
+theorem paper_problem6_closedOptimalityCertificate_exists
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ t : Item n, Problem6ClosedOptimalityCertificate alpha v t := by
+  exact problem6ClosedOptimalityCertificate_exists
+    halpha0 halpha1 hpos hdec
+
+/--
 Appendix D, Lemma 5 closed-policy bridge: a closed-form optimality certificate
 builds the paper's equality-form optimal BFS package; the support-count field
 comes from the closed policy's threshold support.
@@ -2443,6 +2507,26 @@ theorem paper_problem6_equalizedBasicOptimal_of_closed_certificate
       (problem6ClosedValue alpha v t) := by
   exact problem6EqualizedBasicOptimal_of_closed_certificate
     halpha0 halpha1 hpos cert
+
+/--
+Appendix D, Lemma 5 existence as an equality-form optimal BFS package: the
+closed-form pivot, policy, and value solve Problem 6.
+-/
+theorem paper_problem6_equalizedBasicOptimal_exists_closed
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ t : Item n,
+      ∃ cert : Problem6ClosedOptimalityCertificate alpha v t,
+        let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+          problem6ClosedNonnegativePivots_of_denominatorBounds
+            halpha0 halpha1 hpos cert.denominator_bounds
+        Problem6EqualizedBasicOptimal alpha v
+          (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+          (problem6ClosedValue alpha v t) := by
+  exact problem6EqualizedBasicOptimal_exists_closed
+    halpha0 halpha1 hpos hdec
 
 /--
 Appendix D, Lemma 4/5 bridge: an equalized optimal Problem 6 policy supplies

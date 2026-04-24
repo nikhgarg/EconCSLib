@@ -2584,6 +2584,114 @@ private theorem problem6_sum_eq_left_part_add_pivot_add_right_part {n : ℕ}
           simp [add_assoc]
 
 /--
+Moving the closed-form pivot one item to the right adds the old pivot's
+inverse `q` contribution to the left sum.
+-/
+theorem problem6LeftSum_next_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hnext : u.val = t.val + 1) :
+    problem6LeftSum alpha v u =
+      problem6LeftSum alpha v t + (pairShare alpha v t)⁻¹ := by
+  let x : Item n → ℝ :=
+    fun j => if j.val < u.val then (pairShare alpha v j)⁻¹ else 0
+  have hzero : ∀ {j : Item n}, t.val < j.val → x j = 0 := by
+    intro j hj
+    have hnlt : ¬ j.val < u.val := by omega
+    change (if j.val < u.val then (pairShare alpha v j)⁻¹ else 0) = 0
+    simp [hnlt]
+  have hsplit := problem6_sum_eq_left_part_add_pivot_of_after_zero x t hzero
+  have hleft :
+      (∑ j : Item n, if j.val < t.val then x j else 0) =
+        problem6LeftSum alpha v t := by
+    unfold problem6LeftSum
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    by_cases hjt : j.val < t.val
+    · have hju : j.val < u.val := by omega
+      rw [if_pos hjt, if_pos hjt]
+      change (if j.val < u.val then (pairShare alpha v j)⁻¹ else 0) =
+        (pairShare alpha v j)⁻¹
+      rw [if_pos hju]
+    · rw [if_neg hjt, if_neg hjt]
+  have hpivot :
+      x t = (pairShare alpha v t)⁻¹ := by
+    have htu : t.val < u.val := by omega
+    change (if t.val < u.val then (pairShare alpha v t)⁻¹ else 0) =
+      (pairShare alpha v t)⁻¹
+    simp [htu]
+  calc
+    problem6LeftSum alpha v u = ∑ j : Item n, x j := by
+      unfold problem6LeftSum
+      rfl
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) + x t := hsplit
+    _ = problem6LeftSum alpha v t + (pairShare alpha v t)⁻¹ := by
+      rw [hleft, hpivot]
+
+/--
+Moving the closed-form pivot one item to the right removes the new pivot's
+inverse `(1-q)` contribution from the right sum.
+-/
+theorem problem6RightSum_next_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hnext : u.val = t.val + 1) :
+    problem6RightSum alpha v t =
+      (1 - pairShare alpha v u)⁻¹ + problem6RightSum alpha v u := by
+  let y : Item n → ℝ :=
+    fun j => if t.val < j.val then (1 - pairShare alpha v j)⁻¹ else 0
+  have hzero : ∀ {j : Item n}, j.val < u.val → y j = 0 := by
+    intro j hj
+    have hnlt : ¬ t.val < j.val := by omega
+    change (if t.val < j.val then (1 - pairShare alpha v j)⁻¹ else 0) = 0
+    simp [hnlt]
+  have hsplit := problem6_sum_eq_pivot_add_right_part_of_before_zero y u hzero
+  have hright :
+      (∑ j : Item n, if u.val < j.val then y j else 0) =
+        problem6RightSum alpha v u := by
+    unfold problem6RightSum
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    by_cases huj : u.val < j.val
+    · have htj : t.val < j.val := by omega
+      rw [if_pos huj, if_pos huj]
+      change (if t.val < j.val then (1 - pairShare alpha v j)⁻¹ else 0) =
+        (1 - pairShare alpha v j)⁻¹
+      rw [if_pos htj]
+    · rw [if_neg huj, if_neg huj]
+  have hpivot :
+      y u = (1 - pairShare alpha v u)⁻¹ := by
+    have htu : t.val < u.val := by omega
+    change (if t.val < u.val then (1 - pairShare alpha v u)⁻¹ else 0) =
+      (1 - pairShare alpha v u)⁻¹
+    simp [htu]
+  calc
+    problem6RightSum alpha v t = ∑ j : Item n, y j := by
+      unfold problem6RightSum
+      rfl
+    _ = y u + (∑ j : Item n, if u.val < j.val then y j else 0) := hsplit
+    _ = (1 - pairShare alpha v u)⁻¹ + problem6RightSum alpha v u := by
+      rw [hpivot, hright]
+
+/-- The closed-form pivot-crossing gap `L_t - R_t`. -/
+noncomputable def problem6PivotGap {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  problem6LeftSum alpha v t - problem6RightSum alpha v t
+
+/--
+Adjacent-pivot update for the closed-form crossing gap.  This is the discrete
+intermediate-value arithmetic behind choosing the valid Lemma 5 pivot.
+-/
+theorem problem6PivotGap_next_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hnext : u.val = t.val + 1) :
+    problem6PivotGap alpha v u =
+      problem6PivotGap alpha v t + (pairShare alpha v t)⁻¹ +
+        (1 - pairShare alpha v u)⁻¹ := by
+  unfold problem6PivotGap
+  rw [problem6LeftSum_next_eq (alpha := alpha) (v := v) hnext,
+    problem6RightSum_next_eq (alpha := alpha) (v := v) hnext]
+  ring
+
+/--
 Appendix D, Lemma 10 even-center case: when the midpoint candidate is
 immediately before its mirror, the right inverse-share sum is the left sum plus
 the pivot's inverse share.
@@ -2997,6 +3105,157 @@ structure Problem6ClosedPivotDenominatorBounds {n : ℕ}
     problem6LeftSum alpha v t ≤ problem6ClosedDenominator alpha v t
   right_le_denominator :
     problem6RightSum alpha v t ≤ problem6ClosedDenominator alpha v t
+
+/-- Left pivot-mass denominator slack written in terms of the gap `L_t - R_t`. -/
+theorem problem6ClosedDenominator_sub_leftSum_eq {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedDenominator alpha v t -
+        problem6LeftSum alpha v t =
+      1 - (1 - pairShare alpha v t) * problem6PivotGap alpha v t := by
+  unfold problem6ClosedDenominator problem6PivotGap
+  ring
+
+/-- Right pivot-mass denominator slack written in terms of the gap `L_t - R_t`. -/
+theorem problem6ClosedDenominator_sub_rightSum_eq {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedDenominator alpha v t -
+        problem6RightSum alpha v t =
+      1 + pairShare alpha v t * problem6PivotGap alpha v t := by
+  unfold problem6ClosedDenominator problem6PivotGap
+  ring
+
+/--
+Gap bounds imply the two denominator inequalities needed for Lemma 5's
+closed-form pivot masses to be nonnegative.
+-/
+theorem problem6ClosedPivotDenominatorBounds_of_pivotGap_bounds {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hlower : - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t)
+    (hupper : problem6PivotGap alpha v t ≤
+      (1 - pairShare alpha v t)⁻¹) :
+    Problem6ClosedPivotDenominatorBounds alpha v t := by
+  have hqpos := pairShare_pos t halpha0 halpha1 hpos
+  have hcomp_pos := one_sub_pairShare_pos t halpha0 halpha1 hpos
+  constructor
+  · rw [← sub_nonneg,
+      problem6ClosedDenominator_sub_leftSum_eq]
+    have hmul :=
+      mul_le_mul_of_nonneg_left hupper hcomp_pos.le
+    have hcancel :
+        (1 - pairShare alpha v t) *
+            (1 - pairShare alpha v t)⁻¹ = 1 := by
+      exact mul_inv_cancel₀ (ne_of_gt hcomp_pos)
+    nlinarith
+  · rw [← sub_nonneg,
+      problem6ClosedDenominator_sub_rightSum_eq]
+    have hmul :=
+      mul_le_mul_of_nonneg_left hlower hqpos.le
+    have hcancel :
+        pairShare alpha v t * (-(pairShare alpha v t)⁻¹) = -1 := by
+      rw [mul_neg, mul_inv_cancel₀ (ne_of_gt hqpos)]
+    nlinarith
+
+/--
+Lemma 5 finite pivot choice: some closed-form pivot satisfies the denominator
+bounds, without appealing to an external LP existence theorem.
+-/
+theorem problem6ClosedPivotDenominatorBounds_exists {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ∃ t : Item n, Problem6ClosedPivotDenominatorBounds alpha v t := by
+  classical
+  have hnpos : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+  let last : Item n := ⟨n - 1, by omega⟩
+  have hlast_lower :
+      - (pairShare alpha v last)⁻¹ ≤ problem6PivotGap alpha v last := by
+    have hRzero : problem6RightSum alpha v last = 0 := by
+      unfold problem6RightSum
+      refine Finset.sum_eq_zero ?_
+      intro j _hj
+      have hnlt : ¬ last.val < j.val := by
+        change ¬ n - 1 < j.val
+        omega
+      simp [hnlt]
+    have hLnonneg :
+        0 ≤ problem6LeftSum alpha v last :=
+      problem6LeftSum_nonneg last halpha0 halpha1 hpos
+    have hqinv_nonneg :
+        0 ≤ (pairShare alpha v last)⁻¹ :=
+      inv_nonneg.mpr (pairShare_pos last halpha0 halpha1 hpos).le
+    unfold problem6PivotGap
+    rw [hRzero]
+    nlinarith
+  let crossingSet : Finset (Item n) :=
+    Finset.univ.filter
+      (fun t : Item n =>
+        - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t)
+  have hlast_mem : last ∈ crossingSet := by
+    simp [crossingSet, hlast_lower]
+  obtain ⟨t, htmem, hmin⟩ :=
+    Finset.exists_min_image crossingSet (fun t : Item n => t.val)
+      ⟨last, hlast_mem⟩
+  have hlower :
+      - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t := by
+    have htmem_filter :
+        t ∈ Finset.univ.filter
+          (fun t : Item n =>
+            - (pairShare alpha v t)⁻¹ ≤
+              problem6PivotGap alpha v t) := by
+      simpa [crossingSet] using htmem
+    exact (Finset.mem_filter.mp htmem_filter).2
+  have hupper :
+      problem6PivotGap alpha v t ≤
+        (1 - pairShare alpha v t)⁻¹ := by
+    by_cases ht0 : t.val = 0
+    · have hLzero : problem6LeftSum alpha v t = 0 := by
+        unfold problem6LeftSum
+        refine Finset.sum_eq_zero ?_
+        intro j _hj
+        have hnlt : ¬ j.val < t.val := by omega
+        simp [hnlt]
+      have hRnonneg :
+          0 ≤ problem6RightSum alpha v t :=
+        problem6RightSum_nonneg t halpha0 halpha1 hpos
+      have hcomp_inv_nonneg :
+          0 ≤ (1 - pairShare alpha v t)⁻¹ :=
+        inv_nonneg.mpr
+          (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
+      unfold problem6PivotGap
+      rw [hLzero]
+      nlinarith
+    · have htpos : 0 < t.val := Nat.pos_of_ne_zero ht0
+      let p : Item n := ⟨t.val - 1, by omega⟩
+      have hpnext : t.val = p.val + 1 := by
+        dsimp [p]
+        omega
+      have hp_not :
+          ¬ (- (pairShare alpha v p)⁻¹ ≤
+              problem6PivotGap alpha v p) := by
+        intro hp
+        have hp_mem : p ∈ crossingSet := by
+          simp [crossingSet, hp]
+        have hminp := hmin p hp_mem
+        dsimp [p] at hminp
+        omega
+      have hp_lt :
+          problem6PivotGap alpha v p <
+            - (pairShare alpha v p)⁻¹ :=
+        not_le.mp hp_not
+      have hgap_eq :=
+        problem6PivotGap_next_eq
+          (alpha := alpha) (v := v) (t := p) (u := t) hpnext
+      have hupper_lt :
+          problem6PivotGap alpha v t <
+            (1 - pairShare alpha v t)⁻¹ := by
+        rw [hgap_eq]
+        nlinarith
+      exact le_of_lt hupper_lt
+  exact ⟨t,
+    problem6ClosedPivotDenominatorBounds_of_pivotGap_bounds
+      halpha0 halpha1 hpos hlower hupper⟩
 
 /--
 Appendix D, Lemma 10 exact-center feasibility certificate: the closed-form
@@ -7033,6 +7292,23 @@ theorem problem6ClosedOptimalityCertificate_of_denominatorBounds {n : ℕ}
       halpha0 halpha1 hpos hdec ρ ell hfeas
 
 /--
+Lemma 5 full closed-form optimality certificate: the finite pivot choice
+provides denominator bounds, and the closed dual proves the LP upper bound.
+-/
+theorem problem6ClosedOptimalityCertificate_exists {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ t : Item n, Problem6ClosedOptimalityCertificate alpha v t := by
+  rcases problem6ClosedPivotDenominatorBounds_exists
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos with
+    ⟨t, hbounds⟩
+  exact ⟨t,
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halpha0 halpha1 hpos hdec hbounds⟩
+
+/--
 Appendix D, Lemma 4/5 bridge: an equalized optimal Problem 6 policy supplies
 the closed-form optimality certificate at its active sparse pivot.
 -/
@@ -7760,6 +8036,30 @@ theorem problem6EqualizedBasicOptimal_of_closed_certificate
         cert.upper_bound⟩
   · exact problem6ClosedPolicy_basicFeasibleSupportCertificate
       halpha0 halpha1 hpos hpivot
+
+/--
+Lemma 5 existence as the paper's equality-form optimal BFS package: the
+closed-form pivot, closed policy, and closed value solve Problem 6.
+-/
+theorem problem6EqualizedBasicOptimal_exists_closed {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ t : Item n,
+      ∃ cert : Problem6ClosedOptimalityCertificate alpha v t,
+        let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+          problem6ClosedNonnegativePivots_of_denominatorBounds
+            halpha0 halpha1 hpos cert.denominator_bounds
+        Problem6EqualizedBasicOptimal alpha v
+          (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+          (problem6ClosedValue alpha v t) := by
+  rcases problem6ClosedOptimalityCertificate_exists
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos hdec with
+    ⟨t, cert⟩
+  exact ⟨t, cert,
+    problem6EqualizedBasicOptimal_of_closed_certificate
+      halpha0 halpha1 hpos cert⟩
 
 /--
 Appendix D, Lemma 10, odd-center case without an external midpoint BFS
