@@ -98,6 +98,34 @@ theorem paper_finite_candidate_fixed_price_benchmark_nonneg
   exact finiteCandidateFixedPriceBenchmark_nonneg values minWinners
 
 /--
+Any feasible nonnegative fixed price with at least one required winner is
+dominated by the finite bidder-value candidate benchmark.
+-/
+theorem paper_single_price_revenue_le_candidate_benchmark_of_feasible
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) {minWinners : ℕ} {p : ℝ}
+    (hmin : 1 ≤ minWinners)
+    (hp : 0 ≤ p)
+    (hfeasible : minWinners ≤ saleCount values p) :
+    singlePriceRevenue values p ≤
+      finiteCandidateFixedPriceBenchmark values minWinners := by
+  exact singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+    values hmin hp hfeasible
+
+/--
+If there is at least one feasible two-winner fixed price, the finite
+bidder-value candidate benchmark is the `F^(2)` fixed-price benchmark.
+-/
+theorem paper_two_winner_fixed_price_benchmark
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ)
+    (hexists : ∃ p, 0 ≤ p ∧ 2 ≤ saleCount values p) :
+    IsTwoWinnerFixedPriceBenchmark values
+      (finiteCandidateFixedPriceBenchmark values 2) := by
+  exact finiteCandidateFixedPriceBenchmark_isTwoWinnerFixedPriceBenchmark_of_feasible
+    values hexists
+
+/--
 Own-bid-independent threshold-price digital-goods auctions are individually
 rational.
 -/

@@ -36,8 +36,10 @@ formalized.
 | Posted-price individual rationality | `paper_posted_price_individually_rational` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
 | Posted-price no-positive-transfers theorem | `paper_posted_price_no_positive_transfers` | formalized | `EconCSLean/Auction/MainTheorems.lean` | nonnegative prices |
 | Posted-price revenue equals single-price revenue | `paper_posted_price_revenue_eq_single_price` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
-| Fixed-price benchmark interface | `IsFixedPriceBenchmark`, `IsTwoWinnerFixedPriceBenchmark` | formalized as certificate predicate | `EconCSLean/Auction/DigitalGoods.lean` | existence of a maximizing price not yet proved |
-| Finite bidder-value candidate benchmark | `finiteCandidateFixedPriceBenchmark`, `paper_finite_candidate_fixed_price_benchmark_nonneg` | formalized | `EconCSLean/Auction/MainTheorems.lean` | still need paper lemma that a globally optimal feasible fixed price can be chosen from a bidder value |
+| Fixed-price benchmark interface | `IsFixedPriceBenchmark`, `IsTwoWinnerFixedPriceBenchmark` | formalized | `EconCSLean/Auction/DigitalGoods.lean` | feasible price set must be nonempty |
+| Finite bidder-value candidate benchmark | `finiteCandidateFixedPriceBenchmark`, `paper_finite_candidate_fixed_price_benchmark_nonneg` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
+| Feasible fixed price dominated by bidder-value benchmark | `paper_single_price_revenue_le_candidate_benchmark_of_feasible` | formalized | `EconCSLean/Auction/MainTheorems.lean` | requires at least one required winner |
+| Two-winner fixed-price benchmark | `paper_two_winner_fixed_price_benchmark` | formalized | `EconCSLean/Auction/MainTheorems.lean` | assumes there exists a nonnegative price selling to at least two bidders |
 | Own-bid-independent threshold auction truthfulness | `paper_threshold_price_truthful` | formalized | `EconCSLean/Auction/MainTheorems.lean` | threshold offered to each bidder must be independent of that bidder's own report |
 | Other-bid computed threshold truthfulness | `paper_own_erased_threshold_price_truthful` | formalized | `EconCSLean/Auction/MainTheorems.lean` | price rule sees the bid profile with the bidder's own report erased |
 | Cross-sample candidate threshold truthfulness | `paper_cross_sample_candidate_threshold_truthful` | formalized deterministic RSOP-style skeleton | `EconCSLean/Auction/MainTheorems.lean` | approximation guarantee and randomized partition expectation not formalized |
@@ -55,13 +57,12 @@ formalized.
 
 ## Current Formalization Plan
 
-1. Digital goods: the deterministic RSOP-style truthfulness skeleton is now
-   closed through `paper_cross_sample_candidate_threshold_truthful`. The next
-   seam is the benchmark-reduction lemma: prove an arbitrary feasible
-   fixed-price optimum can be chosen from a bidder value, connecting
-   `finiteCandidateFixedPriceBenchmark` to `IsTwoWinnerFixedPriceBenchmark`.
-   After that, add the randomized partition expectation and approximation
-   certificate.
+1. Digital goods: the deterministic fixed-price benchmark layer and the
+   deterministic RSOP-style truthfulness skeleton are now closed through
+   `paper_two_winner_fixed_price_benchmark` and
+   `paper_cross_sample_candidate_threshold_truthful`. The remaining major seam
+   for the 2021 paper is probabilistic: add randomized partitions, expected
+   revenue, and the RSOP approximation certificate.
 2. GSP/position auctions: extend `PositionOutcome` to a sorted-bid GSP
    mechanism for finite ordered slots, define envy-free/symmetric Nash
    equilibrium predicates, then formalize the Varian/Edelman-Ostrovsky-Schwarz

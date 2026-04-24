@@ -190,6 +190,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   For random-sampling digital-goods auctions, first prove the deterministic
   cross-sample threshold mechanism truthful for an arbitrary fixed partition;
   only after that add probability over partitions and revenue approximation.
+  The fixed-price benchmark reduction should use the minimum accepted bidder
+  value: raising a feasible price to that value preserves the sale count lower
+  bound and weakly increases revenue.
 - For GSP/position-auction work, first formalize `PositionOutcome` with
   per-click payments, utility, revenue, welfare, and feasibility. A concrete
   non-truthfulness witness is a good first theorem before building a generic

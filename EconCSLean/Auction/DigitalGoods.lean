@@ -241,6 +241,85 @@ theorem singlePriceRevenue_candidate_le_finiteCandidateFixedPriceBenchmark
   exact candidateFixedPriceRevenue_le_finiteCandidateFixedPriceBenchmark
     values minWinners i
 
+/--
+Any nonnegative feasible fixed price is dominated by a feasible bidder-value
+candidate price, provided at least one winner is required.
+
+This is the finite benchmark-reduction lemma for the digital-goods track: after
+this point, it is enough to maximize over bidder values.
+-/
+theorem singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) {minWinners : ℕ} {p : ℝ}
+    (hmin : 1 ≤ minWinners)
+    (hp : 0 ≤ p)
+    (hfeasible : minWinners ≤ saleCount values p) :
+    singlePriceRevenue values p ≤
+      finiteCandidateFixedPriceBenchmark values minWinners := by
+  classical
+  let winners : Finset Agent :=
+    (Finset.univ : Finset Agent).filter fun i => p ≤ values i
+  have hwinners_card : winners.card = saleCount values p := by
+    simp [winners, saleCount]
+  have hmin_pos : 0 < minWinners :=
+    Nat.lt_of_lt_of_le Nat.zero_lt_one hmin
+  have hwinners_nonempty : winners.Nonempty := by
+    apply Finset.card_pos.mp
+    rw [hwinners_card]
+    exact lt_of_lt_of_le hmin_pos hfeasible
+  let winnerValues : Finset ℝ := winners.image values
+  have hwinnerValues_nonempty : winnerValues.Nonempty :=
+    hwinners_nonempty.image values
+  let q : ℝ := winnerValues.min' hwinnerValues_nonempty
+  have hq_mem : q ∈ winnerValues := by
+    exact Finset.min'_mem winnerValues hwinnerValues_nonempty
+  obtain ⟨i, hi_winner, hiq⟩ := Finset.mem_image.mp hq_mem
+  have hp_le_of_winnerValue : ∀ x ∈ winnerValues, p ≤ x := by
+    intro x hx
+    rcases Finset.mem_image.mp hx with ⟨j, hj, rfl⟩
+    exact (Finset.mem_filter.mp hj).2
+  have hpq : p ≤ q := by
+    exact Finset.le_min' (s := winnerValues)
+      (H := hwinnerValues_nonempty) p hp_le_of_winnerValue
+  have hq_le_of_winner : ∀ j, j ∈ winners → q ≤ values j := by
+    intro j hj
+    have hmem : values j ∈ winnerValues :=
+      Finset.mem_image.mpr ⟨j, hj, rfl⟩
+    exact Finset.min'_le winnerValues (values j) hmem
+  have hwinners_subset_q :
+      winners ⊆
+        ((Finset.univ : Finset Agent).filter fun j => q ≤ values j) := by
+    intro j hj
+    exact Finset.mem_filter.mpr ⟨by simp, hq_le_of_winner j hj⟩
+  have hcount_le : saleCount values p ≤ saleCount values q := by
+    rw [← hwinners_card]
+    unfold saleCount
+    exact Finset.card_le_card hwinners_subset_q
+  have hrev_le_q : singlePriceRevenue values p ≤ singlePriceRevenue values q := by
+    rw [singlePriceRevenue_eq_saleCount_mul values p,
+      singlePriceRevenue_eq_saleCount_mul values q]
+    have hcount_cast :
+        (saleCount values p : ℝ) ≤ (saleCount values q : ℝ) := by
+      exact_mod_cast hcount_le
+    have hq_nonneg : 0 ≤ q := le_trans hp hpq
+    calc
+      (saleCount values p : ℝ) * p
+          ≤ (saleCount values p : ℝ) * q :=
+            mul_le_mul_of_nonneg_left hpq (Nat.cast_nonneg _)
+      _ ≤ (saleCount values q : ℝ) * q :=
+            mul_le_mul_of_nonneg_right hcount_cast hq_nonneg
+  have hq_nonneg : 0 ≤ q := le_trans hp hpq
+  have hq_feasible : minWinners ≤ saleCount values q :=
+    le_trans hfeasible hcount_le
+  have hq_rev_le_benchmark :
+      singlePriceRevenue values q ≤
+        finiteCandidateFixedPriceBenchmark values minWinners := by
+    rw [← hiq]
+    exact singlePriceRevenue_candidate_le_finiteCandidateFixedPriceBenchmark
+      values minWinners i (by simpa [hiq] using hq_nonneg)
+      (by simpa [hiq] using hq_feasible)
+  exact le_trans hrev_le_q hq_rev_le_benchmark
+
 theorem exists_candidateFixedPriceRevenue_eq_finiteCandidateFixedPriceBenchmark
     [Fintype Agent] [Nonempty Agent]
     (values : Agent → ℝ) (minWinners : ℕ) :
@@ -277,6 +356,54 @@ theorem finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
   exact Classical.choose_spec
     (exists_candidateFixedPriceRevenue_eq_finiteCandidateFixedPriceBenchmark
       values minWinners)
+
+theorem finiteCandidateFixedPriceBenchmark_isFixedPriceBenchmark_of_feasible
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) {minWinners : ℕ}
+    (hmin : 1 ≤ minWinners)
+    (hexists : ∃ p, 0 ≤ p ∧ minWinners ≤ saleCount values p) :
+    IsFixedPriceBenchmark values minWinners
+      (finiteCandidateFixedPriceBenchmark values minWinners) := by
+  classical
+  constructor
+  · let i := finiteCandidateBenchmarkBidder values minWinners
+    have hbench :
+        finiteCandidateFixedPriceBenchmark values minWinners =
+          candidateFixedPriceRevenue values minWinners i := by
+      simpa [i] using
+        finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
+          values minWinners
+    by_cases hsel : 0 ≤ values i ∧
+        minWinners ≤ saleCount values (values i)
+    · refine ⟨values i, hsel.1, hsel.2, ?_⟩
+      simpa [candidateFixedPriceRevenue, hsel] using hbench
+    · have hbench_zero :
+          finiteCandidateFixedPriceBenchmark values minWinners = 0 := by
+        simpa [candidateFixedPriceRevenue, hsel] using hbench
+      obtain ⟨p, hp, hfeasible⟩ := hexists
+      have hrev_le :
+          singlePriceRevenue values p ≤
+            finiteCandidateFixedPriceBenchmark values minWinners :=
+        singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+          values hmin hp hfeasible
+      have hrev_nonneg : 0 ≤ singlePriceRevenue values p :=
+        singlePriceRevenue_nonneg values hp
+      have hrev_zero : singlePriceRevenue values p = 0 := by
+        exact le_antisymm (by simpa [hbench_zero] using hrev_le) hrev_nonneg
+      refine ⟨p, hp, hfeasible, ?_⟩
+      rw [hbench_zero, hrev_zero]
+  · intro p hp hfeasible
+    exact singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+      values hmin hp hfeasible
+
+theorem finiteCandidateFixedPriceBenchmark_isTwoWinnerFixedPriceBenchmark_of_feasible
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ)
+    (hexists : ∃ p, 0 ≤ p ∧ 2 ≤ saleCount values p) :
+    IsTwoWinnerFixedPriceBenchmark values
+      (finiteCandidateFixedPriceBenchmark values 2) := by
+  exact finiteCandidateFixedPriceBenchmark_isFixedPriceBenchmark_of_feasible
+    values (minWinners := 2) (by decide) hexists
 
 /--
 A threshold price rule is own-bid independent when changing bidder `i`'s report
