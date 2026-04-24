@@ -7386,6 +7386,202 @@ theorem theorem3_typeFairness_mono_of_same_selected_equalizedBasicOptimal
     (by simpa [t] using hcenter) hpiv hpiv'_t
 
 /--
+Theorem 3 finite-stitch core: along a first-half chain whose adjacent steps
+either stay in one selected-pivot interval or repeat the same `α` at a
+boundary, the selected policies' type-fairness values are monotone.
+-/
+theorem theorem3_typeFairness_mono_of_same_selected_or_equal_alpha_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i)) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) := by
+  induction r with
+  | zero =>
+      exact le_rfl
+  | succ r ih =>
+      have hprev :
+          TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) ≤
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) := by
+        exact ih
+          (fun i hi => halpha0 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha1 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha_half i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hpivot_or_eq i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hcenter i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hopt i (Nat.le_trans hi (Nat.le_succ r)))
+      have hlast :
+          TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) ≤
+            TypeWeightedRecommendationModel.typeFairness
+              (twoTypeReducedModel (alphaSeq (r + 1)) v) (ρSeq (r + 1)) := by
+        rcases hpivot_or_eq r (Nat.lt_succ_self r) with hpivot | halpha_eq
+        · exact
+            theorem3_typeFairness_mono_of_same_selected_equalizedBasicOptimal
+              hn
+              (halpha0 r (Nat.le_succ r))
+              (halpha1 r (Nat.le_succ r))
+              (halpha0 (r + 1) le_rfl)
+              (halpha1 (r + 1) le_rfl)
+              (halpha_half r (Nat.le_succ r))
+              (halpha_half (r + 1) le_rfl)
+              (hstep r (Nat.lt_succ_self r))
+              hpos hdec hpivot
+              (hcenter r (Nat.lt_succ_self r))
+              (hopt r (Nat.le_succ r))
+              (hopt (r + 1) le_rfl)
+        · have hopt_next_same :
+              Problem6EqualizedBasicOptimal (alphaSeq r) v
+                (ρSeq (r + 1)) (ellSeq (r + 1)) := by
+            rw [halpha_eq]
+            exact hopt (r + 1) le_rfl
+          have hpivot_same :
+              TypePolicy.lastActiveTypeZero (ρSeq r) =
+                TypePolicy.lastActiveTypeZero (ρSeq (r + 1)) :=
+            problem6EqualizedBasicOptimal_lastActive_eq_of_same_alpha
+              hn
+              (halpha0 r (Nat.le_succ r))
+              (halpha1 r (Nat.le_succ r))
+              hpos hdec
+              (hopt r (Nat.le_succ r))
+              hopt_next_same
+          have hmono_same :
+              TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) ≤
+                TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel (alphaSeq r) v) (ρSeq (r + 1)) :=
+            theorem3_typeFairness_mono_of_same_selected_equalizedBasicOptimal
+              hn
+              (halpha0 r (Nat.le_succ r))
+              (halpha1 r (Nat.le_succ r))
+              (halpha0 r (Nat.le_succ r))
+              (halpha1 r (Nat.le_succ r))
+              (halpha_half r (Nat.le_succ r))
+              (halpha_half r (Nat.le_succ r))
+              le_rfl hpos hdec hpivot_same
+              (hcenter r (Nat.lt_succ_self r))
+              (hopt r (Nat.le_succ r))
+              hopt_next_same
+          simpa [halpha_eq] using hmono_same
+      exact hprev.trans hlast
+
+/--
+Theorem 3 finite-stitch core, odd-center case: Lemma 10 supplies the
+pivot-before-mirror side condition throughout the first-half chain.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_center_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) := by
+  exact theorem3_typeFairness_mono_of_same_selected_or_equal_alpha_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hpivot_or_eq
+    (fun i hi =>
+      lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center
+        hn (halpha0 i (Nat.le_of_lt hi))
+        (halpha1 i (Nat.le_of_lt hi))
+        (halpha_half i (Nat.le_of_lt hi))
+        hpos hdec hcenter_c (hopt i (Nat.le_of_lt hi)) hhalf)
+    hopt
+
+/--
+Theorem 3 finite-stitch core, even-center case: Lemma 10 supplies the
+pivot-before-mirror side condition throughout the first-half chain.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_succ_center_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) := by
+  exact theorem3_typeFairness_mono_of_same_selected_or_equal_alpha_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hpivot_or_eq
+    (fun i hi =>
+      lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center
+        hn (halpha0 i (Nat.le_of_lt hi))
+        (halpha1 i (Nat.le_of_lt hi))
+        (halpha_half i (Nat.le_of_lt hi))
+        hpos hdec hsucc (hopt i (Nat.le_of_lt hi)) hhalf)
+    hopt
+
+/--
 Lemma 6 stitched with Lemma 10 for the actual selected equality-form optimal
 BFS policy, odd-center case.
 -/
