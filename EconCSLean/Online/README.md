@@ -1,0 +1,53 @@
+# AdWords and Generalized Online Matching
+
+## Source Version
+
+- Paper: *AdWords and Generalized Online Matching*
+- Authors: Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani
+- Version formalized: Journal of the ACM 54(5), 2007, Article 22
+- Official DOI: https://doi.org/10.1145/1284320.1284321
+- Official ACM URL: https://dl.acm.org/doi/10.1145/1284320.1284321
+- Award listing: https://www.sigecom.org/award-tot.html
+- Public author PDF: https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf
+- Accessed: 2026-04-24
+
+The PDF is not committed to git. Use the ACM DOI/JACM version as the source
+version; the author PDF is listed only for easier access.
+
+## Central Theorem File
+
+- `EconCSLean/Online/MainTheorems.lean`
+
+That file contains the paper-facing theorem wrappers currently available.
+Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
+`AdWords.lean`.
+
+## Theorem Status
+
+| Paper item | Lean declaration | Status | File | Remaining assumptions |
+|---|---|---|---|---|
+| Finite AdWords instance | `AdWordsInstance` | formalized | `EconCSLean/Online/AdWords.lean` | none |
+| Offline assignment, spend, revenue, budget feasibility | `Assignment`, `spend`, `revenue`, `Feasible` | formalized | `EconCSLean/Online/AdWords.lean` | finite query type for sums |
+| Empty feasible assignment | `paper_adwords_empty_assignment_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
+| Revenue equals sum of advertiser spends | `revenue_eq_sum_spend` | formalized | `EconCSLean/Online/AdWords.lean` | finite advertisers and queries |
+| Feasible revenue bounded by total budget | `paper_adwords_revenue_le_total_budget_of_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | assignment must be feasible |
+| Finite offline optimum exists | `paper_adwords_offline_optimum_exists` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets; finite advertisers and queries |
+| Residual budget and feasible next-query assignment | `residualBudget`, `CanAssign`, `canAssign_iff_bid_le_residualBudget` | formalized | `EconCSLean/Online/AdWords.lean` | finite query type |
+| Balance/MSVV discount and scaled bid | `balanceDiscount`, `balanceScore` | formalized | `EconCSLean/Online/AdWords.lean` | analytic competitive proof not included |
+| Balance/MSVV next-query choice exists | `paper_adwords_balance_choice_exists` | formalized | `EconCSLean/Online/MainTheorems.lean` | at least one advertiser can accept the query |
+| Standard AdWords LP dual feasibility | `DualFeasible`, `dualObjective` | formalized | `EconCSLean/Online/AdWords.lean` | none |
+| AdWords LP weak duality | `paper_adwords_lp_weak_duality` | formalized | `EconCSLean/Online/MainTheorems.lean` | feasible assignment and dual-feasible variables |
+| Competitive-ratio certificate | `CompetitiveRatioCertificate` | formalized certificate interface | `EconCSLean/Online/AdWords.lean` | certificate must be supplied by algorithm analysis |
+| Primal-dual competitive certificate | `paper_adwords_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV certificate for ratio `1 - 1 / Real.exp 1` and formalize small-bids limiting argument |
+| Full MSVV competitive theorem | none | not started | none | online history/algorithm execution, tradeoff-revealing LP, and small-bids analysis |
+
+## Current Formalization Plan
+
+1. Keep the finite LP and offline benchmark layer stable: `offlineOptimumValue`,
+   `DualFeasible`, and `paper_adwords_lp_weak_duality` are the reusable core.
+2. Next define an explicit online history/fold for the Balance/MSVV algorithm
+   using `IsBalanceChoice` for each arriving query.
+3. Then prove a stepwise primal-dual invariant that constructs
+   `PrimalDualCompetitiveCertificate` for the algorithm in certificate form.
+4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
+   isolate the small-bids limiting argument as a separate theorem seam.

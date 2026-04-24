@@ -164,6 +164,12 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   EconCS probability/statistics modules.
 - Online algorithms: separate histories, feasible irrevocable actions,
   objective value, benchmark/offline optimum, and competitive-ratio statements.
+  For AdWords/MSVV, first close the finite offline benchmark and LP weak-duality
+  layer: assignments, spend, revenue, budget feasibility, residual budget,
+  feasible next-query assignment, offline optimum, dual feasibility, and dual
+  objective. Then model Balance/MSVV as a history fold whose local step chooses
+  a feasible advertiser maximizing the scaled bid
+  `bid * (1 - exp(spentFraction - 1))`.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
@@ -243,6 +249,14 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   positivity equivalence in both directions, so later certificate interfaces can
   move freely between normalized probabilities and denominator-cleared finite
   sums.
+- For AdWords and generalized online matching, use the LP-duality theorem seam
+  before attempting the full `1 - 1/e` proof. Prove weak duality once from
+  `DualFeasible`, then package the algorithm analysis as a
+  `PrimalDualCompetitiveCertificate` with fields for primal feasibility,
+  nonnegative ratio, dual variables, dual feasibility, and the scaled
+  dual-objective bound. The remaining Balance/MSVV work should construct that
+  certificate from a query-history fold; the small-bids limit should be a
+  separate paper-local theorem, not mixed into the finite LP layer.
 - For symmetry/type-reduction arguments, prove the generic fiber facts first:
   weighted sums by type-cardinality equal sums over original agents, and finite
   minima over agents equal finite minima over types when representatives witness
