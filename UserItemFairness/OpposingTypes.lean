@@ -529,6 +529,14 @@ theorem reverseItem_after_pivot_of_before_pivot_of_pivot_le_reverse
     t.val < (reverseItem j).val := by
   exact lt_of_le_of_lt hcenter (reverseItem_val_lt_of_val_lt hj)
 
+/-- For an exact center pivot, mirroring identifies post-pivot and pre-pivot items. -/
+theorem pivot_lt_reverseItem_iff_val_lt_pivot_of_pivot_eq_reverse
+    {n : ℕ} {t j : Item n}
+    (hcenter : t.val = (reverseItem t).val) :
+    t.val < (reverseItem j).val ↔ j.val < t.val := by
+  simp [reverseItem] at hcenter ⊢
+  omega
+
 /--
 The reduced two-type model for the opposing-preference setting in Theorem 3.
 Type `0` has values `v_j`; type `1` has reversed values `v_{n-j+1}`.
@@ -755,6 +763,51 @@ theorem problem6RightSum_nonneg {n : ℕ}
   by_cases hlt : t.val < j.val
   · simp [hlt, inv_nonneg.mpr (one_sub_pairShare_pos j halpha0 halpha1 hpos).le]
   · simp [hlt]
+
+/--
+Appendix D, Lemma 10 exact-center case: at `α = 1/2`, an exact center pivot
+has identical left and right inverse-share sums after mirror reindexing.
+-/
+theorem problem6LeftSum_half_eq_rightSum_half_of_pivot_eq_reverse {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    problem6LeftSum (1 / 2) v t = problem6RightSum (1 / 2) v t := by
+  unfold problem6LeftSum problem6RightSum
+  rw [← sum_reverseItem
+    (fun j : Item n =>
+      if t.val < j.val then (1 - pairShare (1 / 2) v j)⁻¹ else 0)]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  have hiff :=
+    pivot_lt_reverseItem_iff_val_lt_pivot_of_pivot_eq_reverse
+      (t := t) (j := j) hcenter
+  by_cases hj : j.val < t.val
+  · have hmirror : t.val < (reverseItem j).val := hiff.mpr hj
+    have hshare := pairShare_half_eq_one_sub_reverse j hpos
+    simpa [hj, hmirror, one_div] using hshare
+  · have hmirror : ¬ t.val < (reverseItem j).val := by
+      intro hlt
+      exact hj (hiff.mp hlt)
+    simp [hj, hmirror]
+
+/--
+Appendix D, Lemma 10 exact-center denominator simplification:
+at `α = 1/2` and an exact center pivot, Lemma 5's denominator is `1 + L_t`.
+-/
+theorem problem6ClosedDenominator_half_center_eq_one_add_leftSum {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    problem6ClosedDenominator (1 / 2) v t =
+      1 + problem6LeftSum (1 / 2) v t := by
+  have hsum :=
+    problem6LeftSum_half_eq_rightSum_half_of_pivot_eq_reverse
+      (v := v) (t := t) hpos hcenter
+  have hshare := pairShare_half_eq_half_of_val_eq_reverse t hpos hcenter
+  unfold problem6ClosedDenominator
+  rw [hshare, ← hsum]
+  ring
 
 /-- The Lemma 5 denominator is strictly positive. -/
 theorem problem6ClosedDenominator_pos {n : ℕ}
@@ -1099,6 +1152,30 @@ structure Problem6ClosedPivotDenominatorBounds {n : ℕ}
     problem6LeftSum alpha v t ≤ problem6ClosedDenominator alpha v t
   right_le_denominator :
     problem6RightSum alpha v t ≤ problem6ClosedDenominator alpha v t
+
+/--
+Appendix D, Lemma 10 exact-center feasibility certificate: the closed-form
+Lemma 5 midpoint construction has nonnegative pivot masses.
+-/
+theorem problem6ClosedPivotDenominatorBounds_half_center {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    Problem6ClosedPivotDenominatorBounds (1 / 2) v t := by
+  have hsum :=
+    problem6LeftSum_half_eq_rightSum_half_of_pivot_eq_reverse
+      (v := v) (t := t) hpos hcenter
+  have hden :=
+    problem6ClosedDenominator_half_center_eq_one_add_leftSum
+      (v := v) (t := t) hpos hcenter
+  have hleft_nonneg :
+      0 ≤ problem6LeftSum (1 / 2) v t :=
+    problem6LeftSum_nonneg t (by norm_num) (by norm_num) hpos
+  constructor
+  · rw [hden]
+    linarith
+  · rw [← hsum, hden]
+    linarith
 
 /-- Denominator bounds imply nonnegative pivot coordinates. -/
 theorem problem6ClosedNonnegativePivots_of_denominatorBounds {n : ℕ}

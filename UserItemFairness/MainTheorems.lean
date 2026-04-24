@@ -1294,6 +1294,54 @@ theorem paper_lemma10_pairShare_half_eq_one_sub_reverse
       1 - pairShare (1 / 2) v (reverseItem j) := by
   exact pairShare_half_eq_one_sub_reverse j hpos
 
+/--
+Appendix D, Lemma 10 exact-center mirror indexing: when the candidate pivot is
+its own mirror, post-pivot mirrors are exactly the pre-pivot items.
+-/
+theorem paper_lemma10_pivot_lt_reverseItem_iff_val_lt_pivot_of_pivot_eq_reverse
+    {n : ℕ} {t j : Item n}
+    (hcenter : t.val = (reverseItem t).val) :
+    t.val < (reverseItem j).val ↔ j.val < t.val := by
+  exact pivot_lt_reverseItem_iff_val_lt_pivot_of_pivot_eq_reverse
+    (t := t) (j := j) hcenter
+
+/--
+Appendix D, Lemma 10 exact-center case: at `α = 1/2`, the Lemma 5 left and
+right inverse-share sums coincide.
+-/
+theorem paper_lemma10_LeftSum_half_eq_RightSum_half_of_center
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    problem6LeftSum (1 / 2) v t = problem6RightSum (1 / 2) v t := by
+  exact problem6LeftSum_half_eq_rightSum_half_of_pivot_eq_reverse
+    (v := v) (t := t) hpos hcenter
+
+/--
+Appendix D, Lemma 10 exact-center case: the closed-form denominator simplifies
+to `1 + L_t`.
+-/
+theorem paper_lemma10_ClosedDenominator_half_center_eq_one_add_LeftSum
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    problem6ClosedDenominator (1 / 2) v t =
+      1 + problem6LeftSum (1 / 2) v t := by
+  exact problem6ClosedDenominator_half_center_eq_one_add_leftSum
+    (v := v) (t := t) hpos hcenter
+
+/--
+Appendix D, Lemma 10 exact-center case: the midpoint Lemma 5 construction has
+the denominator bounds needed for nonnegative pivot masses.
+-/
+theorem paper_lemma10_ClosedPivotDenominatorBounds_half_center
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : t.val = (reverseItem t).val) :
+    Problem6ClosedPivotDenominatorBounds (1 / 2) v t := by
+  exact problem6ClosedPivotDenominatorBounds_half_center
+    (v := v) (t := t) hpos hcenter
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
