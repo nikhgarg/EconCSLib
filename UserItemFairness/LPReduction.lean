@@ -448,6 +448,33 @@ theorem attainableTypeFairnessAtLevel_zero_nonempty_of_nonnegative
   exact ⟨defaultTypePolicy (K := K) (n := n),
     feasibleAtLevel_zero_of_nonnegative T hWeight hUtil _, rfl⟩
 
+/--
+For any strict fraction `γ < 1`, strictly positive reduced data makes the
+`γ`-constrained feasible-value set nonempty. This avoids an attainment theorem
+for the item-fairness optimum away from the maximal boundary `γ = 1`.
+-/
+theorem attainableTypeFairnessAtLevel_nonempty_of_gamma_lt_one
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    {γ : ℝ} (hγ : γ < 1) :
+    (attainableTypeFairnessAtLevel T γ).Nonempty := by
+  have hopt_pos := optimalItemFairness_pos_of_positive T hWeight hUtil
+  have hlt :
+      γ * optimalItemFairness T < optimalItemFairness T := by
+    simpa using (mul_lt_mul_of_pos_right hγ hopt_pos)
+  have hitem_nonempty : (attainableItemFairnessSet T).Nonempty := by
+    exact ⟨itemFairness T (uniformTypePolicy (K := K) (n := n)),
+      ⟨uniformTypePolicy (K := K) (n := n), rfl⟩⟩
+  obtain ⟨r, hrmem, hrgt⟩ :=
+    exists_lt_of_lt_csSup hitem_nonempty hlt
+  obtain ⟨ρ, hr⟩ := hrmem
+  refine ⟨typeFairness T ρ, ?_⟩
+  refine ⟨ρ, ?_, rfl⟩
+  unfold feasibleAtLevel
+  rw [← hr]
+  exact le_of_lt hrgt
+
 /-- The reduced analogue of `U^*_min(γ, w)`. -/
 noncomputable def optimalTypeFairnessAtLevel {K n : ℕ} [NeZero K] [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (γ : ℝ) : ℝ :=

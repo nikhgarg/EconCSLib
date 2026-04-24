@@ -575,6 +575,116 @@ theorem optimalUserFairnessAtLevel_eq_reduced_of_nonempty
   exact R.optimalUserFairnessAtLevel_eq_reduced_of_bddAbove_nonempty
     reps hRow γ hOrigNonempty hOrigBdd hRedNonempty hRedBdd
 
+/--
+For strict item-fairness fractions `γ < 1`, the original/reduced optimal
+user-fairness values agree under the paper's positive-utility assumption. The
+feasible-value nonemptiness side conditions are discharged by the `sSup`
+approximation property for the item-fairness optimum.
+-/
+theorem optimalUserFairnessAtLevel_eq_reduced_of_gamma_lt_one
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive)
+    (γ : ℝ) (hγ : γ < 1) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model γ =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced γ := by
+  have hRow : R.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos
+  have hNonneg : R.data.model.Nonnegative :=
+    RecommendationModel.nonnegative_of_positive R.data.model hPos
+  have hCol : R.data.model.ColumnHasPositiveDemand :=
+    RecommendationModel.columnHasPositiveDemand_of_positive R.data.model hPos
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model γ).Nonempty :=
+    RecommendationModel.attainableUserFairnessAtLevel_nonempty_of_gamma_lt_one
+      R.data.model hNonneg hCol hγ
+  have hRedWeight : R.reduced.PositiveWeights :=
+    R.reduced_positiveWeights_of_representatives reps
+  have hRedUtil : R.reduced.PositiveUtilities :=
+    R.reduced_positiveUtilities_of_positive reps hPos
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty :=
+    TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel_nonempty_of_gamma_lt_one
+      R.reduced hRedWeight hRedUtil hγ
+  exact R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+    reps hRow γ hOrigNonempty hRedNonempty
+
+/--
+If a reduced optimum is supplied, its lifted policy witnesses original
+feasibility. Hence reduced-to-original optimality needs no separate feasible-set
+nonemptiness assumptions.
+-/
+theorem isOptimalAtLevel_liftedPolicy_of_reduced_auto_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ) (ρ : TypePolicy K n)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρ) :
+    RecommendationModel.IsOptimalAtLevel R.data.model γ (R.liftedPolicy ρ) := by
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty := by
+    exact ⟨TypeWeightedRecommendationModel.typeFairness R.reduced ρ,
+      ⟨ρ, hopt.1, rfl⟩⟩
+  have hOrigFeas :
+      RecommendationModel.feasibleAtLevel R.data.model γ (R.liftedPolicy ρ) := by
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R.optimalItemFairness_eq_reduced reps]
+    rw [R.itemFairness_liftedPolicy_eq_itemFairness ρ]
+    exact hopt.1
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ).Nonempty := by
+    exact ⟨RecommendationModel.userFairness R.data.model (R.liftedPolicy ρ),
+      ⟨R.liftedPolicy ρ, hOrigFeas, rfl⟩⟩
+  have hUserOptEq :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow γ hOrigNonempty hRedNonempty
+  exact R.isOptimalAtLevel_liftedPolicy_of_reduced reps γ ρ
+    (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
+
+/--
+If a symmetric original optimum is supplied, its reduced representative
+witnesses reduced feasibility. Hence original-to-reduced optimality needs no
+separate feasible-set nonemptiness assumptions.
+-/
+theorem exists_reducedOptimalAtLevel_of_original_symmetric_optimal_auto_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ) {ρ : Policy m n}
+    (hρ : UserTypeAssignment.IsTypeSymmetric R.data.types ρ)
+    (hopt : RecommendationModel.IsOptimalAtLevel R.data.model γ ρ) :
+    ∃ ρK : TypePolicy K n,
+      R.liftedPolicy ρK = ρ ∧
+        TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρK := by
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ).Nonempty := by
+    exact ⟨RecommendationModel.userFairness R.data.model ρ,
+      ⟨ρ, hopt.1, rfl⟩⟩
+  obtain ⟨ρK, hlift, hitem, _huser⟩ :=
+    R.exists_typePolicy_preserving_fairness_of_isTypeSymmetric reps hρ
+  have hRedFeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel R.reduced γ ρK := by
+    unfold TypeWeightedRecommendationModel.feasibleAtLevel
+    rw [← R.optimalItemFairness_eq_reduced reps]
+    rw [← hitem]
+    exact hopt.1
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty := by
+    exact ⟨TypeWeightedRecommendationModel.typeFairness R.reduced ρK,
+      ⟨ρK, hRedFeas, rfl⟩⟩
+  have hUserOptEq :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow γ hOrigNonempty hRedNonempty
+  exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal
+    reps γ hρ (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
+
 end ReductionWitness
 
 end UserItemFairness

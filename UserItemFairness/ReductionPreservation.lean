@@ -70,6 +70,21 @@ theorem reduced_nonnegativeWeights {m n K : ℕ}
   rw [R.weight_eq_typeWeight k]
   exact RecommendationModel.UserTypeAssignment.typeWeight_nonneg R.data.types k
 
+/-- Chosen representatives make every reduced type weight strictly positive. -/
+theorem reduced_positiveWeights_of_representatives {m n K : ℕ}
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types) :
+    R.reduced.PositiveWeights := by
+  intro k
+  rw [R.weight_eq_typeWeight k]
+  unfold RecommendationModel.UserTypeAssignment.typeWeight
+    RecommendationModel.UserTypeAssignment.typeCard
+  have hmem :
+      reps.repr k ∈
+        (Finset.univ.filter fun u => R.data.types.toType u = k) := by
+    simp [reps.repr_spec k]
+  exact_mod_cast Finset.card_pos.mpr ⟨reps.repr k, hmem⟩
+
 /-- Original entrywise utility nonnegativity transfers to the reduced model. -/
 theorem reduced_nonnegativeUtilities_of_nonnegative
     {m n K : ℕ}
@@ -79,6 +94,18 @@ theorem reduced_nonnegativeUtilities_of_nonnegative
     R.reduced.NonnegativeUtilities := by
   intro k j
   have h := hNonneg (reps.repr k) j
+  rw [R.utility_agrees (reps.repr k) j] at h
+  simpa [reps.repr_spec k] using h
+
+/-- Original entrywise strict positivity transfers to the reduced model. -/
+theorem reduced_positiveUtilities_of_positive
+    {m n K : ℕ}
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive) :
+    R.reduced.PositiveUtilities := by
+  intro k j
+  have h := hPos (reps.repr k) j
   rw [R.utility_agrees (reps.repr k) j] at h
   simpa [reps.repr_spec k] using h
 

@@ -122,6 +122,26 @@ theorem paper_original_reduced_user_optimal_value_reduction_of_nonempty
     reps hRow γ hOrigNonempty hRedNonempty
 
 /--
+Original/reduced optimal user-fairness value reduction for strict item-fairness
+fractions.
+
+Under the paper's positive-utility assumption, the original and reduced
+feasible value sets are automatically nonempty for every `γ < 1`; exact
+item-fairness optimum attainment is only needed at the maximal boundary
+`γ = 1`.
+-/
+theorem paper_original_reduced_user_optimal_value_reduction_of_gamma_lt_one
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive)
+    (γ : ℝ) (hγ : γ < 1) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model γ =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced γ := by
+  exact R.optimalUserFairnessAtLevel_eq_reduced_of_gamma_lt_one
+    reps hPos γ hγ
+
+/--
 Baseline original/reduced optimal user-fairness value reduction.
 
 For `γ = 0`, nonnegative utilities automatically make both original and
@@ -205,6 +225,44 @@ theorem paper_reduced_optimum_lifts_to_original_of_nonempty
     (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
 
 /--
+Reduced-to-original optimum theorem with feasible-set nonemptiness discharged
+from the supplied reduced optimum.
+
+This version applies at the maximal item-fairness boundary `γ = 1` as soon as
+a reduced optimum is available.
+-/
+theorem paper_reduced_optimum_lifts_to_original_auto_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ) (ρ : TypePolicy K n)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρ) :
+    RecommendationModel.IsOptimalAtLevel R.data.model γ (R.liftedPolicy ρ) := by
+  exact R.isOptimalAtLevel_liftedPolicy_of_reduced_auto_nonempty
+    reps hRow γ ρ hopt
+
+/--
+Reduced-to-original optimum theorem for strict item-fairness fractions.
+
+For `γ < 1`, positive utilities discharge the feasible-value nonemptiness
+conditions used by the value-reduction theorem.
+-/
+theorem paper_reduced_optimum_lifts_to_original_of_gamma_lt_one
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive)
+    (γ : ℝ) (hγ : γ < 1) (ρ : TypePolicy K n)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρ) :
+    RecommendationModel.IsOptimalAtLevel R.data.model γ (R.liftedPolicy ρ) := by
+  have hUserOptEq :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_gamma_lt_one
+      reps hPos γ hγ
+  exact R.isOptimalAtLevel_liftedPolicy_of_reduced reps γ ρ
+    (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
+
+/--
 Symmetric original-to-reduced optimum theorem under the explicit supremum
 conditions used by the value-reduction theorem.
 -/
@@ -260,6 +318,51 @@ theorem paper_symmetric_original_optimum_descends_to_reduced_of_nonempty
   have hUserOptEq :=
     R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
       reps hRow γ hOrigNonempty hRedNonempty
+  exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal
+    reps γ hρ (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
+
+/--
+Symmetric original-to-reduced optimum theorem with feasible-set nonemptiness
+discharged from the supplied original optimum.
+
+This version applies at the maximal item-fairness boundary `γ = 1` as soon as a
+type-symmetric original optimum is available.
+-/
+theorem paper_symmetric_original_optimum_descends_to_reduced_auto_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ) {ρ : Policy m n}
+    (hρ : UserTypeAssignment.IsTypeSymmetric R.data.types ρ)
+    (hopt : RecommendationModel.IsOptimalAtLevel R.data.model γ ρ) :
+    ∃ ρK : TypePolicy K n,
+      R.liftedPolicy ρK = ρ ∧
+        TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρK := by
+  exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal_auto_nonempty
+    reps hRow γ hρ hopt
+
+/--
+Symmetric original-to-reduced optimum theorem for strict item-fairness
+fractions.
+
+For `γ < 1`, positive utilities discharge the feasible-value nonemptiness
+conditions used by the value-reduction theorem.
+-/
+theorem paper_symmetric_original_optimum_descends_to_reduced_of_gamma_lt_one
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive)
+    (γ : ℝ) (hγ : γ < 1) {ρ : Policy m n}
+    (hρ : UserTypeAssignment.IsTypeSymmetric R.data.types ρ)
+    (hopt : RecommendationModel.IsOptimalAtLevel R.data.model γ ρ) :
+    ∃ ρK : TypePolicy K n,
+      R.liftedPolicy ρK = ρ ∧
+        TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρK := by
+  have hUserOptEq :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_gamma_lt_one
+      reps hPos γ hγ
   exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal
     reps γ hρ (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
 

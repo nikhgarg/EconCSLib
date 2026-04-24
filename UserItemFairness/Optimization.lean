@@ -30,6 +30,34 @@ noncomputable def optimalItemFairness {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) : ℝ :=
   sSup (attainableItemFairnessSet W)
 
+/-- Nonnegative utilities bound every attainable original item-fairness value above by one. -/
+theorem attainableItemFairnessSet_bddAbove_of_nonnegative {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    BddAbove (attainableItemFairnessSet W) := by
+  refine ⟨1, ?_⟩
+  intro r hr
+  obtain ⟨ρ, hr⟩ := hr
+  rw [hr]
+  exact itemFairness_le_one_of_nonnegative W hNonneg ρ
+
+/--
+Positive item demand and nonnegative utilities make the original optimal
+item-fairness value strictly positive.
+-/
+theorem optimalItemFairness_pos_of_columnHasPositiveDemand
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hCol : W.ColumnHasPositiveDemand) :
+    0 < optimalItemFairness W := by
+  have hbdd := attainableItemFairnessSet_bddAbove_of_nonnegative W hNonneg
+  have hmem :
+      itemFairness W (uniformPolicy (m := m) (n := n)) ∈
+        attainableItemFairnessSet W := by
+    exact ⟨uniformPolicy (m := m) (n := n), rfl⟩
+  exact lt_of_lt_of_le
+    (itemFairness_uniformPolicy_pos_of_columnHasPositiveDemand W hCol)
+    (le_csSup hbdd hmem)
+
 /-- Feasibility for the paper's `γ`-constrained problem. -/
 def feasibleAtLevel {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) (ρ : Policy m n) : Prop :=
@@ -76,6 +104,33 @@ theorem attainableUserFairnessAtLevel_zero_nonempty_of_nonnegative
   refine ⟨userFairness W (defaultPolicy (m := m) (n := n)), ?_⟩
   exact ⟨defaultPolicy (m := m) (n := n),
     feasibleAtLevel_zero_of_nonnegative W hNonneg _, rfl⟩
+
+/--
+For any strict fraction `γ < 1`, positive item demand makes the original
+`γ`-constrained feasible-value set nonempty. This uses the defining
+approximation property of `sSup`; exact attainment is only needed at `γ = 1`.
+-/
+theorem attainableUserFairnessAtLevel_nonempty_of_gamma_lt_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hCol : W.ColumnHasPositiveDemand)
+    {γ : ℝ} (hγ : γ < 1) :
+    (attainableUserFairnessAtLevel W γ).Nonempty := by
+  have hopt_pos := optimalItemFairness_pos_of_columnHasPositiveDemand W hNonneg hCol
+  have hlt :
+      γ * optimalItemFairness W < optimalItemFairness W := by
+    simpa using (mul_lt_mul_of_pos_right hγ hopt_pos)
+  have hitem_nonempty : (attainableItemFairnessSet W).Nonempty := by
+    exact ⟨itemFairness W (uniformPolicy (m := m) (n := n)),
+      ⟨uniformPolicy (m := m) (n := n), rfl⟩⟩
+  obtain ⟨r, hrmem, hrgt⟩ :=
+    exists_lt_of_lt_csSup hitem_nonempty hlt
+  obtain ⟨ρ, hr⟩ := hrmem
+  refine ⟨userFairness W ρ, ?_⟩
+  refine ⟨ρ, ?_, rfl⟩
+  unfold feasibleAtLevel
+  rw [← hr]
+  exact le_of_lt hrgt
 
 /-- `U^*_min(γ, w)` in the paper. -/
 noncomputable def optimalUserFairnessAtLevel {m n : ℕ} [NeZero m] [NeZero n]
