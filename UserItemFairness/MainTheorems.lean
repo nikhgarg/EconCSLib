@@ -2172,6 +2172,55 @@ theorem paper_lemma4_policyOptimal_equalized_unique_sparseActive_of_two_lt
     hopt hopt' hshared hshared'
 
 /--
+Appendix D, Lemma 7 sparse-solution form: as `α` increases, the active pivot
+`t = max {j : x_j > 0}` cannot move left.
+-/
+theorem paper_lemma7_sparseActive_pivot_mono_of_alpha_lt
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {t t' : Item n} {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell)
+    (h' : Problem6SparseEqualizedActive alpha' v t' x' y' ell') :
+    t.val ≤ t'.val := by
+  exact lemma7_sparseActive_pivot_mono_of_alpha_lt
+    halpha0 halpha1 halpha0' halpha1' halpha_lt hpos h h'
+
+/--
+Appendix D, Lemma 7 for equalized optimal Problem 6 policies, conditional on
+the Lemma 4 active-sparse bridge hypotheses.
+-/
+theorem paper_lemma7_policyOptimal_lastActive_mono_of_alpha_lt
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha' v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha' v l) * (ρ' 1 l).toReal = ell')
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt' : Problem6PolicyOptimal alpha' v ρ' ell')
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (TypePolicy.lastActiveTypeZero ρ').val := by
+  exact lemma7_policyOptimal_lastActive_mono_of_alpha_lt
+    hn halpha0 halpha1 halpha0' halpha1' halpha_lt
+    hpos hdec hitem_eq hitem_eq' hopt hopt' hshared hshared'
+
+/--
 Appendix D, Lemma 6, mirror-pair algebra for
 `1/q_j - 1/(1-q_{n-j+1})`.
 -/
@@ -2698,6 +2747,70 @@ theorem paper_lemma10_half_optimal_lastActive_le_succ_center
     (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
   exact lemma10_half_optimal_lastActive_le_succ_center
     hn hpos hdec hsucc hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 10 stitched with Lemma 7, odd-center case: for
+`α ≤ 1/2`, the selected pivot is no later than the exact center, conditional on
+a supplied equalized optimum at the midpoint.
+-/
+theorem paper_lemma10_alpha_le_half_optimal_lastActive_le_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq_half :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρhalf 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρhalf 1 l).toReal = ellHalf)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt_half : Problem6PolicyOptimal (1 / 2) v ρhalf ellHalf)
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared_half : TypePolicy.SharedItemsBound ρhalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_alpha_le_half_optimal_lastActive_le_center
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter
+    hitem_eq hitem_eq_half hopt hopt_half hshared hshared_half
+
+/--
+Appendix D, Lemma 10 stitched with Lemma 7, even-center case: for
+`α ≤ 1/2`, the selected pivot is no later than the item immediately before its
+mirror, conditional on a supplied equalized optimum at the midpoint.
+-/
+theorem paper_lemma10_alpha_le_half_optimal_lastActive_le_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq_half :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρhalf 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρhalf 1 l).toReal = ellHalf)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt_half : Problem6PolicyOptimal (1 / 2) v ρhalf ellHalf)
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared_half : TypePolicy.SharedItemsBound ρhalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_alpha_le_half_optimal_lastActive_le_succ_center
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc
+    hitem_eq hitem_eq_half hopt hopt_half hshared hshared_half
 
 /--
 Appendix D, Lemma 6/10 bridge: an exact midpoint candidate has zero pivot

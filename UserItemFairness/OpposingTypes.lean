@@ -4908,6 +4908,430 @@ theorem problem6ClosedPivotDenominatorBounds_of_sparseEqualizedActive
     (problem6ClosedNonnegativePivots_of_sparseEqualizedActive
       halpha0 halpha1 hpos h)
 
+/-- Active sparse equalized solutions have strictly positive equalized value. -/
+theorem problem6SparseEqualizedActive_value_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell) :
+    0 < ell := by
+  let q : ℝ := pairShare alpha v t
+  have hqpos : 0 < q := by
+    simpa [q] using pairShare_pos t halpha0 halpha1 hpos
+  have hqcomp_nonneg : 0 ≤ 1 - q := by
+    exact (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
+  have hmain :
+      0 < q * x t + (1 - q) * y t := by
+    have hleft : 0 < q * x t := mul_pos hqpos h.x_pivot_pos
+    have hright : 0 ≤ (1 - q) * y t :=
+      mul_nonneg hqcomp_nonneg (h.y_nonneg t)
+    exact lt_of_lt_of_le hleft (by nlinarith)
+  simpa [q, h.sparse.item_eq t] using hmain
+
+/--
+Appendix D, Lemma 7 in sparse-solution form: as `α` increases, the active
+pivot `t = max {j : x_j > 0}` cannot move left.
+
+This follows the paper's two-case proof comparing the equalized values
+`I^*_{min}(α)` and `I^*_{min}(α')`.
+-/
+theorem lemma7_sparseActive_pivot_mono_of_alpha_lt
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {t t' : Item n} {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell)
+    (h' : Problem6SparseEqualizedActive alpha' v t' x' y' ell') :
+    t.val ≤ t'.val := by
+  classical
+  by_contra hnot
+  have ht't : t'.val < t.val := by omega
+  have hell_pos : 0 < ell :=
+    problem6SparseEqualizedActive_value_pos halpha0 halpha1 hpos h
+  have hell'_pos : 0 < ell' :=
+    problem6SparseEqualizedActive_value_pos halpha0' halpha1' hpos h'
+  rcases lt_or_ge ell ell' with hell_lt | hell_ge
+  · let q : ℝ := pairShare alpha v t
+    let q' : ℝ := pairShare alpha' v t
+    have hqpos : 0 < q := by
+      simpa [q] using pairShare_pos t halpha0 halpha1 hpos
+    have hq'comp_pos : 0 < 1 - q' := by
+      simpa [q'] using one_sub_pairShare_pos t halpha0' halpha1' hpos
+    have hq_lt : q < q' := by
+      simpa [q, q'] using
+        pairShare_strictMono_alpha t halpha0 halpha1
+          halpha0' halpha1' halpha_lt hpos
+    have hx'_t_zero : x' t = 0 :=
+      h'.sparse.x_after_pivot_zero ht't
+    have hitem_t :
+        q * x t + (1 - q) * y t = ell := by
+      simpa [q] using h.sparse.item_eq t
+    have hitem_t' :
+        (1 - q') * y' t = ell' := by
+      have heq := h'.sparse.item_eq t
+      rw [hx'_t_zero] at heq
+      simpa [q'] using heq
+    by_cases hright_exists : ∃ j : Item n, t.val < j.val
+    · have hy_after_lt :
+          ∀ {j : Item n}, t.val < j.val → y j < y' j := by
+        intro j hj
+        have hj' : t'.val < j.val := lt_trans ht't hj
+        let qj : ℝ := pairShare alpha v j
+        let qj' : ℝ := pairShare alpha' v j
+        have hqj_lt : qj < qj' := by
+          simpa [qj, qj'] using
+            pairShare_strictMono_alpha j halpha0 halpha1
+              halpha0' halpha1' halpha_lt hpos
+        have hden : 0 < 1 - qj := by
+          simpa [qj] using one_sub_pairShare_pos j halpha0 halpha1 hpos
+        have hden' : 0 < 1 - qj' := by
+          simpa [qj'] using one_sub_pairShare_pos j halpha0' halpha1' hpos
+        have hval_lt_same_denom :
+            ell / (1 - qj) < ell' / (1 - qj) :=
+          div_lt_div_of_pos_right hell_lt hden
+        have hsame_val_lt :
+            ell' / (1 - qj) < ell' / (1 - qj') := by
+          rw [div_lt_div_iff₀ hden hden']
+          nlinarith [hell'_pos, hqj_lt]
+        rw [problem6SparseEqualized_y_after_eq
+            halpha0 halpha1 hpos h.sparse hj,
+          problem6SparseEqualized_y_after_eq
+            halpha0' halpha1' hpos h'.sparse hj']
+        exact lt_trans hval_lt_same_denom hsame_val_lt
+      let rightY : ℝ :=
+        ∑ j : Item n, if t.val < j.val then y j else 0
+      let rightY' : ℝ :=
+        ∑ j : Item n, if t.val < j.val then y' j else 0
+      have hright_lt : rightY < rightY' := by
+        unfold rightY rightY'
+        refine Finset.sum_lt_sum ?_ ?_
+        · intro j _hj
+          by_cases hj : t.val < j.val
+          · exact le_of_lt (by simpa [hj] using hy_after_lt hj)
+          · simp [hj]
+        · rcases hright_exists with ⟨j, hj⟩
+          exact ⟨j, by simp, by simpa [hj] using hy_after_lt hj⟩
+      have hsplit_y :=
+        problem6_sum_eq_pivot_add_right_part_of_before_zero
+          y t h.sparse.y_before_pivot_zero
+      have hy_t_eq : y t = 1 - rightY := by
+        have hsum :
+            (∑ j : Item n, y j) = y t + rightY := by
+          simpa [rightY] using hsplit_y
+        nlinarith [h.sparse.sum_y, hsum]
+      let leftY' : ℝ :=
+        ∑ j : Item n, if j.val < t.val then y' j else 0
+      have hleftY'_nonneg : 0 ≤ leftY' := by
+        unfold leftY'
+        refine Finset.sum_nonneg ?_
+        intro j _hj
+        by_cases hj : j.val < t.val
+        · simp [hj, h'.y_nonneg j]
+        · simp [hj]
+      have hsplit_y' :=
+        problem6_sum_eq_left_part_add_pivot_add_right_part y' t
+      have hy'_plus_right_le : y' t + rightY' ≤ 1 := by
+        have hsum :
+            (∑ j : Item n, y' j) =
+              leftY' + y' t + rightY' := by
+          simpa [leftY', rightY'] using hsplit_y'
+        nlinarith [h'.sparse.sum_y, hsum, hleftY'_nonneg]
+      have hy'_t_lt_y_t : y' t < y t := by
+        nlinarith [hright_lt, hy_t_eq, hy'_plus_right_le]
+      have hfirst :
+          q * x t + (1 - q) * y t < (1 - q') * y' t := by
+        rw [hitem_t, hitem_t']
+        exact hell_lt
+      have hsecond :
+          (1 - q') * y' t < (1 - q') * y t :=
+        mul_lt_mul_of_pos_left hy'_t_lt_y_t hq'comp_pos
+      have hbad :
+          q * x t + (1 - q) * y t < (1 - q') * y t :=
+        lt_trans hfirst hsecond
+      have hleft_nonneg : 0 ≤ q * x t :=
+        mul_nonneg hqpos.le (h.x_nonneg t)
+      have hright_nonpos : (q - q') * y t ≤ 0 :=
+        mul_nonpos_of_nonpos_of_nonneg
+          (sub_nonpos.mpr hq_lt.le) (h.y_nonneg t)
+      have hlt_right : q * x t < (q - q') * y t := by
+        nlinarith
+      exact (not_lt_of_ge hleft_nonneg)
+        (lt_of_lt_of_le hlt_right hright_nonpos)
+    · let rightY : ℝ :=
+        ∑ j : Item n, if t.val < j.val then y j else 0
+      have hright_zero : rightY = 0 := by
+        unfold rightY
+        refine Finset.sum_eq_zero ?_
+        intro j _hj
+        have hj : ¬ t.val < j.val := by
+          intro htj
+          exact hright_exists ⟨j, htj⟩
+        simp [hj]
+      have hsplit_y :=
+        problem6_sum_eq_pivot_add_right_part_of_before_zero
+          y t h.sparse.y_before_pivot_zero
+      have hy_t_eq : y t = 1 := by
+        have hsum :
+            (∑ j : Item n, y j) = y t + rightY := by
+          simpa [rightY] using hsplit_y
+        nlinarith [h.sparse.sum_y, hsum, hright_zero]
+      let leftY' : ℝ :=
+        ∑ j : Item n, if j.val < t.val then y' j else 0
+      let rightY' : ℝ :=
+        ∑ j : Item n, if t.val < j.val then y' j else 0
+      have hleftY'_nonneg : 0 ≤ leftY' := by
+        unfold leftY'
+        refine Finset.sum_nonneg ?_
+        intro j _hj
+        by_cases hj : j.val < t.val
+        · simp [hj, h'.y_nonneg j]
+        · simp [hj]
+      have hrightY'_nonneg : 0 ≤ rightY' := by
+        unfold rightY'
+        refine Finset.sum_nonneg ?_
+        intro j _hj
+        by_cases hj : t.val < j.val
+        · simp [hj, h'.y_nonneg j]
+        · simp [hj]
+      have hsplit_y' :=
+        problem6_sum_eq_left_part_add_pivot_add_right_part y' t
+      have hy'_t_le_one : y' t ≤ 1 := by
+        have hsum :
+            (∑ j : Item n, y' j) =
+              leftY' + y' t + rightY' := by
+          simpa [leftY', rightY'] using hsplit_y'
+        nlinarith [h'.sparse.sum_y, hsum, hleftY'_nonneg, hrightY'_nonneg]
+      have hell_ge_comp : 1 - q ≤ ell := by
+        have hleft_nonneg : 0 ≤ q * x t :=
+          mul_nonneg hqpos.le (h.x_nonneg t)
+        nlinarith [hitem_t, hy_t_eq, hleft_nonneg]
+      have hell'_le_comp : ell' ≤ 1 - q' := by
+        have hmul_le : (1 - q') * y' t ≤ (1 - q') * 1 :=
+          mul_le_mul_of_nonneg_left hy'_t_le_one hq'comp_pos.le
+        nlinarith [hitem_t', hmul_le]
+      have hcomp_lt : 1 - q' < 1 - q := by
+        nlinarith [hq_lt]
+      linarith
+  · let q : ℝ := pairShare alpha v t'
+    let q' : ℝ := pairShare alpha' v t'
+    have hqpos : 0 < q := by
+      simpa [q] using pairShare_pos t' halpha0 halpha1 hpos
+    have hq'pos : 0 < q' := by
+      simpa [q'] using pairShare_pos t' halpha0' halpha1' hpos
+    have hq'comp_nonneg : 0 ≤ 1 - q' := by
+      exact (one_sub_pairShare_pos t' halpha0' halpha1' hpos).le
+    have hq_lt : q < q' := by
+      simpa [q, q'] using
+        pairShare_strictMono_alpha t' halpha0 halpha1
+          halpha0' halpha1' halpha_lt hpos
+    have hy_t'_zero : y t' = 0 :=
+      h.sparse.y_before_pivot_zero ht't
+    have hitem_t' :
+        q * x t' = ell := by
+      have heq := h.sparse.item_eq t'
+      rw [hy_t'_zero] at heq
+      simpa [q] using heq
+    have hitem_t'' :
+        q' * x' t' + (1 - q') * y' t' = ell' := by
+      simpa [q'] using h'.sparse.item_eq t'
+    by_cases hleft_exists : ∃ j : Item n, j.val < t'.val
+    · have hx_before_lt :
+          ∀ {j : Item n}, j.val < t'.val → x' j < x j := by
+        intro j hj
+        have hjt : j.val < t.val := lt_trans hj ht't
+        let qj : ℝ := pairShare alpha v j
+        let qj' : ℝ := pairShare alpha' v j
+        have hqj_lt : qj < qj' := by
+          simpa [qj, qj'] using
+            pairShare_strictMono_alpha j halpha0 halpha1
+              halpha0' halpha1' halpha_lt hpos
+        have hqj_pos : 0 < qj := by
+          simpa [qj] using pairShare_pos j halpha0 halpha1 hpos
+        have hqj'_pos : 0 < qj' := by
+          simpa [qj'] using pairShare_pos j halpha0' halpha1' hpos
+        have hsame_val_lt :
+            ell' / qj' < ell' / qj := by
+          rw [div_lt_div_iff₀ hqj'_pos hqj_pos]
+          nlinarith [hell'_pos, hqj_lt]
+        have hval_le_same_denom :
+            ell' / qj ≤ ell / qj :=
+          div_le_div_of_nonneg_right hell_ge hqj_pos.le
+        rw [problem6SparseEqualized_x_before_eq
+            halpha0' halpha1' hpos h'.sparse hj,
+          problem6SparseEqualized_x_before_eq
+            halpha0 halpha1 hpos h.sparse hjt]
+        exact lt_of_lt_of_le hsame_val_lt hval_le_same_denom
+      let leftX : ℝ :=
+        ∑ j : Item n, if j.val < t'.val then x j else 0
+      let leftX' : ℝ :=
+        ∑ j : Item n, if j.val < t'.val then x' j else 0
+      have hleft_lt : leftX' < leftX := by
+        unfold leftX leftX'
+        refine Finset.sum_lt_sum ?_ ?_
+        · intro j _hj
+          by_cases hj : j.val < t'.val
+          · exact le_of_lt (by simpa [hj] using hx_before_lt hj)
+          · simp [hj]
+        · rcases hleft_exists with ⟨j, hj⟩
+          exact ⟨j, by simp, by simpa [hj] using hx_before_lt hj⟩
+      have hsplit_x' :=
+        problem6_sum_eq_left_part_add_pivot_of_after_zero
+          x' t' h'.sparse.x_after_pivot_zero
+      have hx'_t_eq : x' t' = 1 - leftX' := by
+        have hsum :
+            (∑ j : Item n, x' j) = leftX' + x' t' := by
+          simpa [leftX'] using hsplit_x'
+        nlinarith [h'.sparse.sum_x, hsum]
+      let rightX : ℝ :=
+        ∑ j : Item n, if t'.val < j.val then x j else 0
+      have hrightX_nonneg : 0 ≤ rightX := by
+        unfold rightX
+        refine Finset.sum_nonneg ?_
+        intro j _hj
+        by_cases hj : t'.val < j.val
+        · simp [hj, h.x_nonneg j]
+        · simp [hj]
+      have hsplit_x :=
+        problem6_sum_eq_left_part_add_pivot_add_right_part x t'
+      have hprefix_le : leftX + x t' ≤ 1 := by
+        have hsum :
+            (∑ j : Item n, x j) =
+              leftX + x t' + rightX := by
+          simpa [leftX, rightX] using hsplit_x
+        nlinarith [h.sparse.sum_x, hsum, hrightX_nonneg]
+      have hx_t'_lt_x'_t' : x t' < x' t' := by
+        nlinarith [hleft_lt, hx'_t_eq, hprefix_le]
+      have hopt_ineq : q' * x' t' ≤ q * x t' := by
+        have hright_nonneg : 0 ≤ (1 - q') * y' t' :=
+          mul_nonneg hq'comp_nonneg (h'.y_nonneg t')
+        have hx_le_ell' : q' * x' t' ≤ ell' := by
+          calc
+            q' * x' t' ≤ q' * x' t' + (1 - q') * y' t' :=
+              le_add_of_nonneg_right hright_nonneg
+            _ = ell' := hitem_t''
+        calc
+          q' * x' t' ≤ ell' := hx_le_ell'
+          _ ≤ ell := hell_ge
+          _ = q * x t' := hitem_t'.symm
+      have hstrict_mul : q * x t' < q' * x' t' := by
+        have hfirst : q * x t' < q * x' t' :=
+          mul_lt_mul_of_pos_left hx_t'_lt_x'_t' hqpos
+        have hsecond : q * x' t' < q' * x' t' :=
+          mul_lt_mul_of_pos_right hq_lt h'.x_pivot_pos
+        exact lt_trans hfirst hsecond
+      exact (not_lt_of_ge hopt_ineq) hstrict_mul
+    · let leftX' : ℝ :=
+        ∑ j : Item n, if j.val < t'.val then x' j else 0
+      have hleft_zero : leftX' = 0 := by
+        unfold leftX'
+        refine Finset.sum_eq_zero ?_
+        intro j _hj
+        have hj : ¬ j.val < t'.val := by
+          intro hj
+          exact hleft_exists ⟨j, hj⟩
+        simp [hj]
+      have hsplit_x' :=
+        problem6_sum_eq_left_part_add_pivot_of_after_zero
+          x' t' h'.sparse.x_after_pivot_zero
+      have hx'_t_eq : x' t' = 1 := by
+        have hsum :
+            (∑ j : Item n, x' j) = leftX' + x' t' := by
+          simpa [leftX'] using hsplit_x'
+        linarith [h'.sparse.sum_x, hsum, hleft_zero]
+      let leftX : ℝ :=
+        ∑ j : Item n, if j.val < t'.val then x j else 0
+      let rightX : ℝ :=
+        ∑ j : Item n, if t'.val < j.val then x j else 0
+      have hleftX_nonneg : 0 ≤ leftX := by
+        unfold leftX
+        refine Finset.sum_nonneg ?_
+        intro j _hj
+        by_cases hj : j.val < t'.val
+        · simp [hj, h.x_nonneg j]
+        · simp [hj]
+      have hrightX_nonneg : 0 ≤ rightX := by
+        unfold rightX
+        refine Finset.sum_nonneg ?_
+        intro j _hj
+        by_cases hj : t'.val < j.val
+        · simp [hj, h.x_nonneg j]
+        · simp [hj]
+      have hsplit_x :=
+        problem6_sum_eq_left_part_add_pivot_add_right_part x t'
+      have hx_t'_le_one : x t' ≤ 1 := by
+        have hsum :
+            (∑ j : Item n, x j) =
+              leftX + x t' + rightX := by
+          simpa [leftX, rightX] using hsplit_x
+        linarith [h.sparse.sum_x, hsum, hleftX_nonneg, hrightX_nonneg]
+      have hell_le_q : ell ≤ q := by
+        have hmul_le : q * x t' ≤ q * 1 :=
+          mul_le_mul_of_nonneg_left hx_t'_le_one hqpos.le
+        calc
+          ell = q * x t' := hitem_t'.symm
+          _ ≤ q * 1 := hmul_le
+          _ = q := by ring
+      have hell'_ge_q' : q' ≤ ell' := by
+        have hright_nonneg : 0 ≤ (1 - q') * y' t' :=
+          mul_nonneg hq'comp_nonneg (h'.y_nonneg t')
+        calc
+          q' = q' * x' t' := by rw [hx'_t_eq]; ring
+          _ ≤ q' * x' t' + (1 - q') * y' t' :=
+            le_add_of_nonneg_right hright_nonneg
+          _ = ell' := hitem_t''
+      linarith
+
+/--
+Appendix D, Lemma 7 for the paper's selected optimal Problem 6 policies:
+`t(α) = max {j : x_j > 0}` is weakly increasing in `α`, conditional on the
+Lemma 4 active-sparse bridge hypotheses.
+-/
+theorem lemma7_policyOptimal_lastActive_mono_of_alpha_lt
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_lt : alpha < alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha' v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha' v l) * (ρ' 1 l).toReal = ell')
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt' : Problem6PolicyOptimal alpha' v ρ' ell')
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (TypePolicy.lastActiveTypeZero ρ').val := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  let t' : Item n := TypePolicy.lastActiveTypeZero ρ'
+  have hsparse :
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+    dsimp [t]
+    exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+      hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+  have hsparse' :
+      Problem6SparseEqualizedActive alpha' v t'
+        (fun l : Item n => (ρ' 0 l).toReal)
+        (fun l : Item n => (ρ' 1 l).toReal) ell' := by
+    dsimp [t']
+    exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+      hn halpha0' halpha1' hpos hdec hitem_eq' hopt' hshared'
+  exact lemma7_sparseActive_pivot_mono_of_alpha_lt
+    halpha0 halpha1 halpha0' halpha1' halpha_lt hpos hsparse hsparse'
+
 /--
 Appendix D, Lemma 4 uniqueness for equalized optimal Problem 6 policies,
 conditional on the paper's shared-item sparsity bound and `2 < n`.
@@ -5116,6 +5540,100 @@ theorem lemma10_half_optimal_lastActive_le_succ_center
       problem6ClosedValue_le_of_succ_center_candidate_before
         hpos hsucc hct hpivot)
     hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 10 stitched with Lemma 7, odd-center case: for
+`α ≤ 1/2`, the selected pivot is no later than the exact center, conditional on
+a supplied equalized optimum at the midpoint.
+-/
+theorem lemma10_alpha_le_half_optimal_lastActive_le_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq_half :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρhalf 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρhalf 1 l).toReal = ellHalf)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt_half : Problem6PolicyOptimal (1 / 2) v ρhalf ellHalf)
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared_half : TypePolicy.SharedItemsBound ρhalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  rcases lt_or_eq_of_le halpha_half with halpha_lt_half | halpha_eq_half
+  · have hmono :
+        (TypePolicy.lastActiveTypeZero ρ).val ≤
+          (TypePolicy.lastActiveTypeZero ρhalf).val :=
+      lemma7_policyOptimal_lastActive_mono_of_alpha_lt
+        hn halpha0 halpha1
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1)
+        halpha_lt_half hpos hdec hitem_eq hitem_eq_half
+        hopt hopt_half hshared hshared_half
+    have hhalf :
+        (TypePolicy.lastActiveTypeZero ρhalf).val ≤ c.val :=
+      lemma10_half_optimal_lastActive_le_center
+        hn hpos hdec hcenter hitem_eq_half hopt_half hshared_half
+    exact le_trans hmono hhalf
+  · subst alpha
+    exact lemma10_half_optimal_lastActive_le_center
+      hn hpos hdec hcenter hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 10 stitched with Lemma 7, even-center case: for
+`α ≤ 1/2`, the selected pivot is no later than the item immediately before its
+mirror, conditional on a supplied equalized optimum at the midpoint.
+-/
+theorem lemma10_alpha_le_half_optimal_lastActive_le_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq_half :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρhalf 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρhalf 1 l).toReal = ellHalf)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt_half : Problem6PolicyOptimal (1 / 2) v ρhalf ellHalf)
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared_half : TypePolicy.SharedItemsBound ρhalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  rcases lt_or_eq_of_le halpha_half with halpha_lt_half | halpha_eq_half
+  · have hmono :
+        (TypePolicy.lastActiveTypeZero ρ).val ≤
+          (TypePolicy.lastActiveTypeZero ρhalf).val :=
+      lemma7_policyOptimal_lastActive_mono_of_alpha_lt
+        hn halpha0 halpha1
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1)
+        halpha_lt_half hpos hdec hitem_eq hitem_eq_half
+        hopt hopt_half hshared hshared_half
+    have hhalf :
+        (TypePolicy.lastActiveTypeZero ρhalf).val ≤ c.val :=
+      lemma10_half_optimal_lastActive_le_succ_center
+        hn hpos hdec hsucc hitem_eq_half hopt_half hshared_half
+    exact le_trans hmono hhalf
+  · subst alpha
+    exact lemma10_half_optimal_lastActive_le_succ_center
+      hn hpos hdec hsucc hitem_eq hopt hshared
 
 /--
 A certificate that a proposed Problem 6 policy and value solve the finite LP:
