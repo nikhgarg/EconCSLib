@@ -54,6 +54,49 @@ theorem one_sub_typeOneShare_pos
   linarith
 
 /--
+Lemma 6 scalar algebra: the inverse share gap for mirror items expands to the
+paper's denominator-cleared expression.
+-/
+theorem typeOneShare_inv_sub_inv_one_sub_reverse_eq
+    {alpha left right : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : 0 < left) (hright : 0 < right) :
+    (typeOneShare alpha left right)⁻¹ -
+        (1 - typeOneShare alpha right left)⁻¹ =
+      right / left * (1 - 2 * alpha) / (alpha * (1 - alpha)) := by
+  have hden₁ :=
+    typeOneShare_denom_pos halpha0 halpha1 hleft hright
+  have hden₂ :=
+    typeOneShare_denom_pos halpha0 halpha1 hright hleft
+  have hq₁ :
+      typeOneShare alpha left right ≠ 0 :=
+    ne_of_gt (typeOneShare_pos halpha0 halpha1 hleft hright)
+  have hq₂ :
+      1 - typeOneShare alpha right left ≠ 0 :=
+    ne_of_gt (one_sub_typeOneShare_pos halpha0 halpha1 hright hleft)
+  have halpha_ne : alpha ≠ 0 := ne_of_gt halpha0
+  have hone_sub_ne : 1 - alpha ≠ 0 := ne_of_gt (sub_pos.mpr halpha1)
+  have hleft_ne : left ≠ 0 := ne_of_gt hleft
+  have halpha_left_ne : alpha * left ≠ 0 :=
+    mul_ne_zero halpha_ne hleft_ne
+  have honesub_left_ne : (1 - alpha) * left ≠ 0 :=
+    mul_ne_zero hone_sub_ne hleft_ne
+  have hinv_left :
+      (typeOneShare alpha left right)⁻¹ =
+        (alpha * left + (1 - alpha) * right) / (alpha * left) := by
+    unfold typeOneShare
+    field_simp [hden₁.ne', halpha_left_ne]
+  have hinv_right :
+      (1 - typeOneShare alpha right left)⁻¹ =
+        (alpha * right + (1 - alpha) * left) / ((1 - alpha) * left) := by
+    unfold typeOneShare
+    field_simp [hden₂.ne', honesub_left_ne]
+    ring
+  rw [hinv_left, hinv_right]
+  field_simp [halpha_ne, hone_sub_ne, hleft_ne]
+  ring_nf
+
+/--
 Appendix D, Lemma 9, scalar alpha-monotonicity component:
 `q_j(α)` strictly increases as `α` increases.
 -/
@@ -148,10 +191,54 @@ theorem typeOneShare_half_eq_half_of_eq
 def reverseItem {n : ℕ} (j : Item n) : Item n :=
   ⟨n - 1 - j.val, by omega⟩
 
+/-- Reversing the opposite item index returns the original item. -/
+theorem reverseItem_reverseItem {n : ℕ} (j : Item n) :
+    reverseItem (reverseItem j) = j := by
+  ext
+  simp [reverseItem]
+  omega
+
 /-- The indexed `q_j(α)` used in the opposing-preference proofs. -/
 noncomputable def pairShare {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (j : Item n) : ℝ :=
   typeOneShare alpha (v j) (v (reverseItem j))
+
+/--
+Appendix D, Lemma 6, indexed mirror-pair algebra:
+`1/q_j - 1/(1-q_{n-j+1})` has the paper's closed form.
+-/
+theorem pairShare_inv_sub_inv_one_sub_reverse_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (pairShare alpha v j)⁻¹ -
+        (1 - pairShare alpha v (reverseItem j))⁻¹ =
+      v (reverseItem j) / v j * (1 - 2 * alpha) /
+        (alpha * (1 - alpha)) := by
+  unfold pairShare
+  rw [reverseItem_reverseItem]
+  exact typeOneShare_inv_sub_inv_one_sub_reverse_eq
+    halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+
+/--
+Appendix D, Lemma 6, indexed mirror-pair inequality for `α ≤ 1/2`.
+-/
+theorem pairShare_inv_sub_inv_one_sub_reverse_nonneg_of_alpha_le_half
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 ≤ (pairShare alpha v j)⁻¹ -
+        (1 - pairShare alpha v (reverseItem j))⁻¹ := by
+  rw [pairShare_inv_sub_inv_one_sub_reverse_eq
+    j halpha0 halpha1 hpos]
+  have hratio : 0 ≤ v (reverseItem j) / v j :=
+    div_nonneg (hpos (reverseItem j)).le (hpos j).le
+  have hnum : 0 ≤ 1 - 2 * alpha := by
+    nlinarith
+  have hden : 0 ≤ alpha * (1 - alpha) :=
+    (mul_pos halpha0 (sub_pos.mpr halpha1)).le
+  exact div_nonneg (mul_nonneg hratio hnum) hden
 
 /-- Values are strictly decreasing in the item index, matching `v₁ > ... > vₙ`. -/
 def StrictlyDecreasingByIndex {n : ℕ} (v : Item n → ℝ) : Prop :=

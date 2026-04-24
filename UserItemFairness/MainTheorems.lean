@@ -857,6 +857,35 @@ theorem paper_lemma5_problem6_y_after_pivot
   exact problem6SparseEqualized_y_after_eq_closed
     halpha0 halpha1 hpos h hj
 
+/--
+Appendix D, Lemma 6, mirror-pair algebra for
+`1/q_j - 1/(1-q_{n-j+1})`.
+-/
+theorem paper_lemma6_pairShare_mirror_inverse_gap_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (pairShare alpha v j)⁻¹ -
+        (1 - pairShare alpha v (reverseItem j))⁻¹ =
+      v (reverseItem j) / v j * (1 - 2 * alpha) /
+        (alpha * (1 - alpha)) := by
+  exact pairShare_inv_sub_inv_one_sub_reverse_eq
+    j halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 6, nonnegativity of the mirror-pair inverse gap for
+`α ≤ 1/2`.
+-/
+theorem paper_lemma6_pairShare_mirror_inverse_gap_nonneg
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 ≤ (pairShare alpha v j)⁻¹ -
+        (1 - pairShare alpha v (reverseItem j))⁻¹ := by
+  exact pairShare_inv_sub_inv_one_sub_reverse_nonneg_of_alpha_le_half
+    j halpha0 halpha1 halpha_half hpos
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
