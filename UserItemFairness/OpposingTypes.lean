@@ -1247,6 +1247,31 @@ theorem problem6ClosedTypeOneRawUtility_eq_mirror_sum {n : ℕ}
     (sum_reverseItem
       (fun j : Item n => v j * problem6ClosedY alpha v t (reverseItem j)))
 
+/-- Mirrored closed-form `y` coordinates still have total mass one. -/
+theorem problem6ClosedY_reverse_sum_eq_one {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, problem6ClosedY alpha v t (reverseItem j)) = 1 := by
+  rw [sum_reverseItem]
+  exact problem6ClosedY_sum_eq_one alpha v t
+
+/--
+Appendix D, Lemma 6 summation identity: the raw utility gap is the weighted
+sum of mirror-coordinate gaps.
+-/
+theorem problem6ClosedRawUtility_sub_eq_mirror_gap_sum {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeZeroRawUtility alpha v t -
+        problem6ClosedTypeOneRawUtility alpha v t =
+      ∑ j : Item n,
+        v j * (problem6ClosedX alpha v t j -
+          problem6ClosedY alpha v t (reverseItem j)) := by
+  unfold problem6ClosedTypeZeroRawUtility
+  rw [problem6ClosedTypeOneRawUtility_eq_mirror_sum]
+  rw [← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  ring
+
 /--
 Appendix D, Lemma 6 coordinate dominance: for `α ≤ 1/2`, a pre-pivot
 closed-form `x_j` coordinate dominates the mirrored `y_{n-j+1}` coordinate

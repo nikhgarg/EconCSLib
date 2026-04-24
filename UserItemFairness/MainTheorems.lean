@@ -1028,6 +1028,25 @@ theorem paper_lemma6_closedTypeOneRawUtility_eq_mirror_sum
       ∑ j : Item n, v j * problem6ClosedY alpha v t (reverseItem j) := by
   exact problem6ClosedTypeOneRawUtility_eq_mirror_sum alpha v t
 
+/-- Appendix D, Lemma 6 summation setup: mirrored `y` masses sum to one. -/
+theorem paper_lemma6_closedY_reverse_sum_eq_one
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, problem6ClosedY alpha v t (reverseItem j)) = 1 := by
+  exact problem6ClosedY_reverse_sum_eq_one alpha v t
+
+/--
+Appendix D, Lemma 6 summation identity: the closed-form raw utility gap is a
+weighted sum of mirror-coordinate gaps.
+-/
+theorem paper_lemma6_closedRawUtility_sub_eq_mirror_gap_sum
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeZeroRawUtility alpha v t -
+        problem6ClosedTypeOneRawUtility alpha v t =
+      ∑ j : Item n,
+        v j * (problem6ClosedX alpha v t j -
+          problem6ClosedY alpha v t (reverseItem j)) := by
+  exact problem6ClosedRawUtility_sub_eq_mirror_gap_sum alpha v t
+
 /--
 Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
 shares.
