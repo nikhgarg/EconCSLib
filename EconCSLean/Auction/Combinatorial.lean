@@ -45,6 +45,20 @@ def TruthfulDominantStrategy [DecidableEq Bidder]
     M.utility values (Function.update values i report) i ≤
       M.utility values values i
 
+/-- Truthfulness restricted to an admissible class of valuation profiles. -/
+def TruthfulDominantStrategyOn [DecidableEq Bidder]
+    (M : CombinatorialAuction Bidder Item)
+    (admissible : CombinatorialReport Bidder Item → Prop) : Prop :=
+  ∀ (values : CombinatorialReport Bidder Item),
+    admissible values →
+      ∀ (i : Bidder) (report : Bundle Item → ℝ),
+        M.utility values (Function.update values i report) i ≤
+          M.utility values values i
+
+/-- Bundle valuations normalized to give the empty bundle value zero. -/
+def Normalized (values : CombinatorialReport Bidder Item) : Prop :=
+  ∀ i, values i ∅ = 0
+
 /-- Truthful utility is always nonnegative. -/
 def IndividuallyRational (M : CombinatorialAuction Bidder Item) : Prop :=
   ∀ (values : CombinatorialReport Bidder Item) (i : Bidder),
@@ -128,6 +142,80 @@ theorem rejectAllAuction_noPositiveTransfers :
     (rejectAllAuction : CombinatorialAuction Bidder Item).NoPositiveTransfers := by
   intro reports i
   simp [rejectAllAuction]
+
+/-! ## Critical-price target-bundle mechanisms -/
+
+/--
+A bundle price rule is own-report independent when changing bidder `i`'s report
+does not change the price offered to bidder `i`.
+-/
+def BundlePriceOwnReportIndependent [DecidableEq Bidder]
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ) : Prop :=
+  ∀ (reports : CombinatorialReport Bidder Item)
+      (i : Bidder) (report : Bundle Item → ℝ),
+    price (Function.update reports i report) i = price reports i
+
+/--
+Target-bundle threshold auction: bidder `i` either receives `target i` at the
+offered price, or receives the empty bundle and pays zero.
+-/
+noncomputable def targetBundleThresholdAuction
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ) :
+    CombinatorialAuction Bidder Item where
+  allocation reports i :=
+    if price reports i ≤ reports i (target i) then target i else ∅
+  payment reports i :=
+    if price reports i ≤ reports i (target i) then price reports i else 0
+
+theorem targetBundleThresholdAuction_utility_eq
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (values reports : CombinatorialReport Bidder Item) (i : Bidder) :
+    (targetBundleThresholdAuction target price).utility values reports i =
+      if price reports i ≤ reports i (target i) then
+        values i (target i) - price reports i
+      else
+        values i ∅ := by
+  by_cases h : price reports i ≤ reports i (target i) <;>
+    simp [CombinatorialAuction.utility, targetBundleThresholdAuction, h]
+
+/--
+Critical-price truthfulness for target-bundle mechanisms on normalized
+valuations. This is the reusable theorem shape for single-minded combinatorial
+auction critical-value payments.
+-/
+theorem targetBundleThresholdAuction_truthfulOn_normalized [DecidableEq Bidder]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (hind : BundlePriceOwnReportIndependent price) :
+    (targetBundleThresholdAuction target price).TruthfulDominantStrategyOn
+      CombinatorialAuction.Normalized := by
+  intro values hnorm i report
+  have htruthUtility :
+      (targetBundleThresholdAuction target price).utility values values i =
+        if price values i ≤ values i (target i) then
+          values i (target i) - price values i
+        else 0 := by
+    rw [targetBundleThresholdAuction_utility_eq]
+    simp [hnorm i]
+  have hreportUtility :
+      (targetBundleThresholdAuction target price).utility values
+          (Function.update values i report) i =
+        if price values i ≤ report (target i) then
+          values i (target i) - price values i
+        else 0 := by
+    rw [targetBundleThresholdAuction_utility_eq]
+    simp [Function.update, hind values i report, hnorm i]
+  rw [htruthUtility, hreportUtility]
+  by_cases htruth : price values i ≤ values i (target i)
+  · by_cases hreport : price values i ≤ report (target i)
+    · simp [htruth, hreport]
+    · simp [htruth, hreport]
+  · by_cases hreport : price values i ≤ report (target i)
+    · simpa only [htruth, hreport, ↓reduceIte, ge_iff_le]
+        using sub_nonpos.mpr (le_of_lt (lt_of_not_ge htruth))
+    · simp [htruth, hreport]
 
 /--
 Single-minded bundle value: the bidder has value `value` exactly when the

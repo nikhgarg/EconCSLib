@@ -50,6 +50,7 @@ formalized.
 | Feasible partial bundle allocation | `IsFeasibleBundleAllocation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Single-minded bidder valuation | `SingleMindedBid.valuation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Reject-all combinatorial auction truthfulness | `paper_combinatorial_reject_all_truthful` | formalized baseline theorem | `EconCSLean/Auction/MainTheorems.lean` | none |
+| Target-bundle critical-price truthfulness | `paper_combinatorial_target_bundle_threshold_truthful_on_normalized` | formalized on normalized valuations | `EconCSLean/Auction/MainTheorems.lean` | offered bundle price must be own-report independent |
 
 ## Current Formalization Plan
 

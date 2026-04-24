@@ -142,5 +142,19 @@ theorem paper_combinatorial_reject_all_no_positive_transfers
     (rejectAllAuction : CombinatorialAuction Bidder Item).NoPositiveTransfers := by
   exact rejectAllAuction_noPositiveTransfers
 
+/--
+Target-bundle critical-price mechanisms are truthful on normalized bundle
+valuations when each bidder's offered price is independent of that bidder's own
+report.
+-/
+theorem paper_combinatorial_target_bundle_threshold_truthful_on_normalized
+    {Bidder Item : Type*} [DecidableEq Bidder]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (hind : BundlePriceOwnReportIndependent price) :
+    (targetBundleThresholdAuction target price).TruthfulDominantStrategyOn
+      CombinatorialAuction.Normalized := by
+  exact targetBundleThresholdAuction_truthfulOn_normalized target price hind
+
 end Auction
 end EconCSLean
