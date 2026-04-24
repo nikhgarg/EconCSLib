@@ -35,3 +35,6 @@ name = "UserItemFairness"
 
 [[lean_lib]]
 name = "AccuracyDiversity"
+
+[[lean_lib]]
+name = "DiscretizationBias"

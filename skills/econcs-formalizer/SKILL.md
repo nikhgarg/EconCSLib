@@ -106,6 +106,14 @@ the Lean statements against the paper.
    First build the touched module. Then build the parent paper root. Run full
    `lake build` for release/integration checks.
 
+9. For author-wide paper campaigns, maintain a running markdown report.
+   Record every paper screened, the source version, venue, author-position
+   decision, theorem-status decision, declarations added, blocker if any, build
+   command, and commit hash. Do not advance from a paper until either its main
+   theorem interface is closed without `sorry`/conditional assumptions or the
+   report states the precise bug/too-hard reason blocking faithful
+   formalization.
+
 ## External Library Reconnaissance
 
 Before implementing substantial probability, statistics, or learning-theory
