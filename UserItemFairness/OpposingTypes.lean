@@ -469,6 +469,321 @@ theorem problem6_typeOne_sum_eq_one {n : ℕ}
     (∑ j : Item n, (ρ 1 j).toReal) = 1 := by
   exact DecisionCore.pmfToRealSum (ρ 1)
 
+/-- Lemma 5's left-side sum `L_t = ∑_{j<t} 1 / q_j`. -/
+noncomputable def problem6LeftSum {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  ∑ j : Item n, if j.val < t.val then (pairShare alpha v j)⁻¹ else 0
+
+/-- Lemma 5's right-side sum `R_t = ∑_{j>t} 1 / (1 - q_j)`. -/
+noncomputable def problem6RightSum {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  ∑ j : Item n, if t.val < j.val then (1 - pairShare alpha v j)⁻¹ else 0
+
+/-- Lemma 5's denominator `1 + q_t L_t + (1 - q_t) R_t`. -/
+noncomputable def problem6ClosedDenominator {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  1 + pairShare alpha v t * problem6LeftSum alpha v t +
+    (1 - pairShare alpha v t) * problem6RightSum alpha v t
+
+/-- Lemma 5's closed-form value `I^*_min = 1 / (1 + q_t L_t + (1-q_t)R_t)`. -/
+noncomputable def problem6ClosedValue {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  1 / problem6ClosedDenominator alpha v t
+
+/--
+The sparse, equalized solution shape produced by Lemma 4 and used in Lemma 5.
+The real variables `x` and `y` correspond to the two type policies.
+-/
+structure Problem6SparseEqualized {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n)
+    (x y : Item n → ℝ) (ell : ℝ) : Prop where
+  item_eq :
+    ∀ j : Item n,
+      pairShare alpha v j * x j + (1 - pairShare alpha v j) * y j = ell
+  sum_x : (∑ j : Item n, x j) = 1
+  sum_y : (∑ j : Item n, y j) = 1
+  x_after_pivot_zero : ∀ {j : Item n}, t.val < j.val → x j = 0
+  y_before_pivot_zero : ∀ {j : Item n}, j.val < t.val → y j = 0
+
+theorem problem6LeftSum_nonneg {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 ≤ problem6LeftSum alpha v t := by
+  unfold problem6LeftSum
+  refine Finset.sum_nonneg ?_
+  intro j _hj
+  by_cases hlt : j.val < t.val
+  · simp [hlt, inv_nonneg.mpr (pairShare_pos j halpha0 halpha1 hpos).le]
+  · simp [hlt]
+
+theorem problem6RightSum_nonneg {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 ≤ problem6RightSum alpha v t := by
+  unfold problem6RightSum
+  refine Finset.sum_nonneg ?_
+  intro j _hj
+  by_cases hlt : t.val < j.val
+  · simp [hlt, inv_nonneg.mpr (one_sub_pairShare_pos j halpha0 halpha1 hpos).le]
+  · simp [hlt]
+
+/-- The Lemma 5 denominator is strictly positive. -/
+theorem problem6ClosedDenominator_pos {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < problem6ClosedDenominator alpha v t := by
+  have hL := problem6LeftSum_nonneg t halpha0 halpha1 hpos
+  have hR := problem6RightSum_nonneg t halpha0 halpha1 hpos
+  have hq := (pairShare_pos t halpha0 halpha1 hpos).le
+  have hqc := (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
+  unfold problem6ClosedDenominator
+  nlinarith
+
+private theorem problem6_sum_eq_left_part_add_pivot_of_after_zero {n : ℕ}
+    (x : Item n → ℝ) (t : Item n)
+    (hzero : ∀ {j : Item n}, t.val < j.val → x j = 0) :
+    (∑ j : Item n, x j) =
+      (∑ j : Item n, if j.val < t.val then x j else 0) + x t := by
+  classical
+  calc
+    (∑ j : Item n, x j)
+        = ∑ j : Item n,
+            ((if j.val < t.val then x j else 0) +
+              (if j = t then x t else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          by_cases hlt : j.val < t.val
+          · have hne : j ≠ t := by
+              intro h
+              subst h
+              omega
+            simp [hlt, hne]
+          · by_cases heq : j = t
+            · subst heq
+              simp
+            · have hgt : t.val < j.val := by
+                have hne_val : j.val ≠ t.val := by
+                  intro hval
+                  exact heq (Fin.ext hval)
+                omega
+              simp [hlt, heq, hzero hgt]
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) +
+          (∑ j : Item n, if j = t then x t else 0) := by
+          rw [Finset.sum_add_distrib]
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) + x t := by
+          simp
+
+private theorem problem6_sum_eq_pivot_add_right_part_of_before_zero {n : ℕ}
+    (y : Item n → ℝ) (t : Item n)
+    (hzero : ∀ {j : Item n}, j.val < t.val → y j = 0) :
+    (∑ j : Item n, y j) =
+      y t + (∑ j : Item n, if t.val < j.val then y j else 0) := by
+  classical
+  calc
+    (∑ j : Item n, y j)
+        = ∑ j : Item n,
+            ((if j = t then y t else 0) +
+              (if t.val < j.val then y j else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          by_cases heq : j = t
+          · subst heq
+            simp
+          · by_cases hgt : t.val < j.val
+            · simp [heq, hgt]
+            · have hlt : j.val < t.val := by
+                have hne_val : j.val ≠ t.val := by
+                  intro hval
+                  exact heq (Fin.ext hval)
+                omega
+              simp [heq, hgt, hzero hlt]
+    _ = (∑ j : Item n, if j = t then y t else 0) +
+          (∑ j : Item n, if t.val < j.val then y j else 0) := by
+          rw [Finset.sum_add_distrib]
+    _ = y t + (∑ j : Item n, if t.val < j.val then y j else 0) := by
+          simp
+
+/-- Lemma 5: before the pivot, `x_j = λ / q_j`. -/
+theorem problem6SparseEqualized_x_before_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : j.val < t.val) :
+    x j = ell / pairShare alpha v j := by
+  have hqne : pairShare alpha v j ≠ 0 :=
+    ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+  have hmul : pairShare alpha v j * x j = ell := by
+    have heq := h.item_eq j
+    rw [h.y_before_pivot_zero hj] at heq
+    simpa using heq
+  calc
+    x j = (pairShare alpha v j * x j) / pairShare alpha v j := by
+      field_simp [hqne]
+    _ = ell / pairShare alpha v j := by
+      rw [hmul]
+
+/-- Lemma 5: after the pivot, `y_j = λ / (1 - q_j)`. -/
+theorem problem6SparseEqualized_y_after_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : t.val < j.val) :
+    y j = ell / (1 - pairShare alpha v j) := by
+  have hqne : 1 - pairShare alpha v j ≠ 0 :=
+    ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
+  have hmul : (1 - pairShare alpha v j) * y j = ell := by
+    have heq := h.item_eq j
+    rw [h.x_after_pivot_zero hj] at heq
+    simpa using heq
+  calc
+    y j = ((1 - pairShare alpha v j) * y j) /
+        (1 - pairShare alpha v j) := by
+      field_simp [hqne]
+    _ = ell / (1 - pairShare alpha v j) := by
+      rw [hmul]
+
+private theorem problem6SparseEqualized_left_part_sum_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    (∑ j : Item n, if j.val < t.val then x j else 0) =
+      ell * problem6LeftSum alpha v t := by
+  unfold problem6LeftSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases hj : j.val < t.val
+  · simp [hj, problem6SparseEqualized_x_before_eq
+      halpha0 halpha1 hpos h hj, div_eq_mul_inv]
+  · simp [hj]
+
+private theorem problem6SparseEqualized_right_part_sum_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    (∑ j : Item n, if t.val < j.val then y j else 0) =
+      ell * problem6RightSum alpha v t := by
+  unfold problem6RightSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases hj : t.val < j.val
+  · simp [hj, problem6SparseEqualized_y_after_eq
+      halpha0 halpha1 hpos h hj, div_eq_mul_inv]
+  · simp [hj]
+
+/-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
+theorem problem6SparseEqualized_x_pivot_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    x t = 1 - ell * problem6LeftSum alpha v t := by
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_of_after_zero x t
+      h.x_after_pivot_zero
+  have hleft :=
+    problem6SparseEqualized_left_part_sum_eq halpha0 halpha1 hpos h
+  nlinarith [h.sum_x, hsplit, hleft]
+
+/-- Lemma 5 pivot equation: `y_t = 1 - λ R_t`. -/
+theorem problem6SparseEqualized_y_pivot_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    y t = 1 - ell * problem6RightSum alpha v t := by
+  have hsplit :=
+    problem6_sum_eq_pivot_add_right_part_of_before_zero y t
+      h.y_before_pivot_zero
+  have hright :=
+    problem6SparseEqualized_right_part_sum_eq halpha0 halpha1 hpos h
+  nlinarith [h.sum_y, hsplit, hright]
+
+/-- Lemma 5 closed value: `λ = 1 / (1 + q_t L_t + (1-q_t)R_t)`. -/
+theorem problem6SparseEqualized_value_eq_closed
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    ell = problem6ClosedValue alpha v t := by
+  have hx :=
+    problem6SparseEqualized_x_pivot_eq halpha0 halpha1 hpos h
+  have hy :=
+    problem6SparseEqualized_y_pivot_eq halpha0 halpha1 hpos h
+  have ht := h.item_eq t
+  rw [hx, hy] at ht
+  have hmul : ell * problem6ClosedDenominator alpha v t = 1 := by
+    unfold problem6ClosedDenominator
+    nlinarith
+  have hDpos :=
+    problem6ClosedDenominator_pos t halpha0 halpha1 hpos
+  unfold problem6ClosedValue
+  rw [eq_div_iff (ne_of_gt hDpos)]
+  exact hmul
+
+/-- Lemma 5 closed form: before the pivot, `x_j = I^*_min / q_j`. -/
+theorem problem6SparseEqualized_x_before_eq_closed
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : j.val < t.val) :
+    x j = problem6ClosedValue alpha v t / pairShare alpha v j := by
+  rw [problem6SparseEqualized_x_before_eq halpha0 halpha1 hpos h hj,
+    problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h]
+
+/-- Lemma 5 closed form: after the pivot, `y_j = I^*_min / (1 - q_j)`. -/
+theorem problem6SparseEqualized_y_after_eq_closed
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : t.val < j.val) :
+    y j = problem6ClosedValue alpha v t / (1 - pairShare alpha v j) := by
+  rw [problem6SparseEqualized_y_after_eq halpha0 halpha1 hpos h hj,
+    problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h]
+
+/-- Lemma 5 closed form for the pivot `x_t`. -/
+theorem problem6SparseEqualized_x_pivot_eq_closed
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    x t = 1 - problem6ClosedValue alpha v t *
+      problem6LeftSum alpha v t := by
+  rw [problem6SparseEqualized_x_pivot_eq halpha0 halpha1 hpos h,
+    problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h]
+
+/-- Lemma 5 closed form for the pivot `y_t`. -/
+theorem problem6SparseEqualized_y_pivot_eq_closed
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    y t = 1 - problem6ClosedValue alpha v t *
+      problem6RightSum alpha v t := by
+  rw [problem6SparseEqualized_y_pivot_eq halpha0 halpha1 hpos h,
+    problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h]
+
 /--
 A certificate that a proposed Problem 6 policy and value solve the finite LP:
 the policy attains `ell`, and no feasible policy can exceed `ell`.

@@ -772,6 +772,91 @@ theorem paper_problem6_LPOptimalValue_eq_of_certificate
   exact problem6LPOptimalValue_eq_of_certificate
     alpha v ell halpha0 halpha1 hpos cert
 
+/--
+Appendix D, Lemma 5: the closed-form value for any sparse equalized
+Problem 6 solution.
+-/
+theorem paper_lemma5_problem6_closed_value
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    ell = problem6ClosedValue alpha v t := by
+  exact problem6SparseEqualized_value_eq_closed
+    halpha0 halpha1 hpos h
+
+/--
+Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
+-/
+theorem paper_lemma5_problem6_x_before_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : j.val < t.val) :
+    x j = problem6ClosedValue alpha v t / pairShare alpha v j := by
+  exact problem6SparseEqualized_x_before_eq_closed
+    halpha0 halpha1 hpos h hj
+
+/-- Appendix D, Lemma 5: after the pivot, `x_j = 0`. -/
+theorem paper_lemma5_problem6_x_after_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : t.val < j.val) :
+    x j = 0 := by
+  exact h.x_after_pivot_zero hj
+
+/-- Appendix D, Lemma 5: pivot formula for `x_t`. -/
+theorem paper_lemma5_problem6_x_at_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    x t = 1 - problem6ClosedValue alpha v t *
+      problem6LeftSum alpha v t := by
+  exact problem6SparseEqualized_x_pivot_eq_closed
+    halpha0 halpha1 hpos h
+
+/-- Appendix D, Lemma 5: before the pivot, `y_j = 0`. -/
+theorem paper_lemma5_problem6_y_before_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : j.val < t.val) :
+    y j = 0 := by
+  exact h.y_before_pivot_zero hj
+
+/-- Appendix D, Lemma 5: pivot formula for `y_t`. -/
+theorem paper_lemma5_problem6_y_at_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell) :
+    y t = 1 - problem6ClosedValue alpha v t *
+      problem6RightSum alpha v t := by
+  exact problem6SparseEqualized_y_pivot_eq_closed
+    halpha0 halpha1 hpos h
+
+/--
+Appendix D, Lemma 5: after the pivot, `y_j = I^*_min / (1 - q_j)`.
+-/
+theorem paper_lemma5_problem6_y_after_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hj : t.val < j.val) :
+    y j = problem6ClosedValue alpha v t /
+      (1 - pairShare alpha v j) := by
+  exact problem6SparseEqualized_y_after_eq_closed
+    halpha0 halpha1 hpos h hj
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
