@@ -5807,6 +5807,60 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center
     hsucc hpivot_or_eq hopt hdom
 
 /--
+Theorem 3 canonical closed-policy first-half monotonicity, odd-center case:
+after the Appendix D Lemma 8 no-skip stitch, the closed Problem 6 solution's
+type fairness is monotone for any `α ≤ α' ≤ 1/2`.
+-/
+theorem paper_theorem3_typeFairness_mono_firstHalf_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v)
+        (problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos) := by
+  exact
+    theorem3_typeFairness_mono_firstHalf_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c
+
+/--
+Theorem 3 canonical closed-policy first-half monotonicity, even-center case.
+-/
+theorem paper_theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v)
+        (problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos) := by
+  exact
+    theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc
+
+/--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
 normalized type-utility comparison when the two best-item denominators agree.
 -/

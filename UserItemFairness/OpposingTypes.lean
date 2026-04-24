@@ -5738,6 +5738,53 @@ theorem problem6FirstClosedPivot_denominatorBounds {n : ℕ} [NeZero n]
     halpha0 halpha1 hpos hlower hupper
 
 /--
+Canonical Lemma 5 closed-form policy using the first closed pivot.  This
+convenience definition keeps paper-facing Theorem 3 statements from exposing
+the denominator-bound proof object.
+-/
+noncomputable def problem6FirstClosedPolicy {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) : TypePolicy 2 n :=
+  let t : Item n := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos
+      (problem6FirstClosedPivot_denominatorBounds
+        (alpha := alpha) (v := v) halpha0 halpha1 hpos)
+  problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot
+
+/--
+Unfold the canonical first-closed policy at a supplied proof of the first
+closed pivot.  The proof is extensional because the policy coordinates do not
+depend on the particular denominator-bound certificate.
+-/
+theorem problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot_eq :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos = t) :
+    problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos =
+      problem6ClosedPolicy alpha v t halpha0 halpha1 hpos
+        (problem6ClosedNonnegativePivots_of_denominatorBounds
+          halpha0 halpha1 hpos
+          (by
+            simpa [hpivot_eq] using
+              problem6FirstClosedPivot_denominatorBounds
+                (alpha := alpha) (v := v) halpha0 halpha1 hpos)) := by
+  unfold problem6FirstClosedPolicy
+  funext k
+  fin_cases k
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    simp [hpivot_eq]
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    simp [hpivot_eq]
+
+/--
 The canonical first closed pivot is monotone in `α`: as the first type's
 weight increases, the first crossing index can only move to the right.
 -/
@@ -11642,6 +11689,784 @@ theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_alpha_le
       (t := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)
       (u := problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
       halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc rfl rfl
+
+/--
+Theorem 3 adjacent-boundary stitch for closed-form policies: fixed-pivot
+type-1 utility monotonicity proves each side of the boundary, while uniqueness
+of the equality-form optimal Problem 6 policy identifies the two adjacent
+closed policies at the tight boundary.
+-/
+theorem theorem3_typeFairness_mono_across_adjacent_closed_boundary
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary alphaRight : ℝ}
+    {v : Item n → ℝ} {t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hboundary_le_right : alphaBoundary ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_t : t.val ≤ (reverseItem t).val)
+    (hcenter_u : u.val ≤ (reverseItem u).val)
+    (hleft_bounds : Problem6ClosedPivotDenominatorBounds alphaLeft v t)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹)
+    (hright_bounds : Problem6ClosedPivotDenominatorBounds alphaRight v u) :
+    let hpivotLeft : Problem6ClosedNonnegativePivots alphaLeft v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halphaLeft0 halphaLeft1 hpos hleft_bounds
+    let hpivotRight : Problem6ClosedNonnegativePivots alphaRight v u :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halphaRight0 halphaRight1 hpos hright_bounds
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6ClosedPolicy alphaLeft v t
+          halphaLeft0 halphaLeft1 hpos hpivotLeft) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6ClosedPolicy alphaRight v u
+          halphaRight0 halphaRight1 hpos hpivotRight) := by
+  dsimp
+  let hpivotLeft : Problem6ClosedNonnegativePivots alphaLeft v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halphaLeft0 halphaLeft1 hpos hleft_bounds
+  let hpivotRight : Problem6ClosedNonnegativePivots alphaRight v u :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halphaRight0 halphaRight1 hpos hright_bounds
+  rcases problem6ClosedPivotDenominatorBounds_adjacent_of_boundary
+      halphaBoundary0 halphaBoundary1 hpos hnext hboundary with
+    ⟨hboundary_t, hboundary_u⟩
+  let hpivotBoundaryT :
+      Problem6ClosedNonnegativePivots alphaBoundary v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halphaBoundary0 halphaBoundary1 hpos hboundary_t
+  let hpivotBoundaryU :
+      Problem6ClosedNonnegativePivots alphaBoundary v u :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halphaBoundary0 halphaBoundary1 hpos hboundary_u
+  have halphaBoundary_half : alphaBoundary ≤ 1 / 2 :=
+    hboundary_le_right.trans halphaRight_half
+  have hleft_to_boundary :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alphaLeft v)
+          (problem6ClosedPolicy alphaLeft v t
+            halphaLeft0 halphaLeft1 hpos hpivotLeft) ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alphaBoundary v)
+          (problem6ClosedPolicy alphaBoundary v t
+            halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryT) := by
+    rw [
+      problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+        halphaLeft0 halphaLeft1 halphaLeft_half hpos hdec hpivotLeft
+        hcenter_t,
+      problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+        halphaBoundary0 halphaBoundary1 halphaBoundary_half hpos hdec
+        hpivotBoundaryT hcenter_t]
+    exact
+      theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+        halphaLeft0 halphaLeft1 halphaBoundary0 halphaBoundary1
+        hleft_le_boundary hpos hdec hcenter_t hpivotLeft hpivotBoundaryT
+  let certBoundaryT : Problem6ClosedOptimalityCertificate alphaBoundary v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halphaBoundary0 halphaBoundary1 hpos hdec hboundary_t
+  let certBoundaryU : Problem6ClosedOptimalityCertificate alphaBoundary v u :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halphaBoundary0 halphaBoundary1 hpos hdec hboundary_u
+  have hoptBoundaryT :
+      Problem6EqualizedBasicOptimal alphaBoundary v
+        (problem6ClosedPolicy alphaBoundary v t
+          halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryT)
+        (problem6ClosedValue alphaBoundary v t) := by
+    dsimp [hpivotBoundaryT, certBoundaryT]
+    exact
+      problem6EqualizedBasicOptimal_of_closed_certificate
+        halphaBoundary0 halphaBoundary1 hpos certBoundaryT
+  have hoptBoundaryU :
+      Problem6EqualizedBasicOptimal alphaBoundary v
+        (problem6ClosedPolicy alphaBoundary v u
+          halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryU)
+        (problem6ClosedValue alphaBoundary v u) := by
+    dsimp [hpivotBoundaryU, certBoundaryU]
+    exact
+      problem6EqualizedBasicOptimal_of_closed_certificate
+        halphaBoundary0 halphaBoundary1 hpos certBoundaryU
+  have hpolicy_boundary :
+      problem6ClosedPolicy alphaBoundary v u
+          halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryU =
+        problem6ClosedPolicy alphaBoundary v t
+          halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryT := by
+    exact
+      problem6EqualizedBasicOptimal_policy_eq_of_feasibleAtLevel_one_equalized_shared
+        hn halphaBoundary0 halphaBoundary1 hpos hdec
+        hoptBoundaryT
+        (problem6EqualizedBasicOptimal_feasibleAtLevel_one
+          halphaBoundary0 halphaBoundary1 hpos hoptBoundaryU)
+        (fun l =>
+          problem6EqualizedBasicOptimal_item_value_eq_itemFairness
+            halphaBoundary0 halphaBoundary1 hpos hoptBoundaryU l)
+        (problem6_sharedItemsBound_of_equalizedBasicOptimal
+          halphaBoundary0 halphaBoundary1 hpos hoptBoundaryU)
+  have hboundary_step :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alphaBoundary v)
+          (problem6ClosedPolicy alphaBoundary v t
+            halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryT) ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alphaBoundary v)
+          (problem6ClosedPolicy alphaBoundary v u
+            halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryU) := by
+    rw [hpolicy_boundary]
+  have hboundary_to_right :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alphaBoundary v)
+          (problem6ClosedPolicy alphaBoundary v u
+            halphaBoundary0 halphaBoundary1 hpos hpivotBoundaryU) ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alphaRight v)
+          (problem6ClosedPolicy alphaRight v u
+            halphaRight0 halphaRight1 hpos hpivotRight) := by
+    rw [
+      problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+        halphaBoundary0 halphaBoundary1 halphaBoundary_half hpos hdec
+        hpivotBoundaryU hcenter_u,
+      problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+        halphaRight0 halphaRight1 halphaRight_half hpos hdec hpivotRight
+        hcenter_u]
+    exact
+      theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+        halphaBoundary0 halphaBoundary1 halphaRight0 halphaRight1
+        hboundary_le_right hpos hdec hcenter_u hpivotBoundaryU hpivotRight
+  exact hleft_to_boundary.trans (hboundary_step.trans hboundary_to_right)
+
+/--
+Theorem 3 adjacent-boundary stitch for the canonical Lemma 5 first closed
+pivot, odd-center case.
+-/
+theorem theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_boundary_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hboundary_le_right : alphaBoundary ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6FirstClosedPolicy alphaLeft v
+          halphaLeft0 halphaLeft1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6FirstClosedPolicy alphaRight v
+          halphaRight0 halphaRight1 hpos) := by
+  have hcenter_t :
+      t.val ≤ (reverseItem t).val := by
+    have h :=
+      problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+        halphaLeft0 halphaLeft1 halphaLeft_half hpos hcenter_c
+    simpa [← hleft_pivot] using h
+  have hcenter_u :
+      u.val ≤ (reverseItem u).val := by
+    have h :=
+      problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+        halphaRight0 halphaRight1 halphaRight_half hpos hcenter_c
+    simpa [← hright_pivot] using h
+  have hclosed :=
+    theorem3_typeFairness_mono_across_adjacent_closed_boundary
+      hn
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hcenter_t hcenter_u
+      (by
+        simpa [hleft_pivot] using
+          problem6FirstClosedPivot_denominatorBounds
+            (alpha := alphaLeft) (v := v)
+            halphaLeft0 halphaLeft1 hpos)
+      hnext hboundary
+      (by
+        simpa [hright_pivot] using
+          problem6FirstClosedPivot_denominatorBounds
+            (alpha := alphaRight) (v := v)
+            halphaRight0 halphaRight1 hpos)
+  rw [
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halphaLeft0 halphaLeft1 hpos hleft_pivot,
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halphaRight0 halphaRight1 hpos hright_pivot]
+  exact hclosed
+
+/--
+Theorem 3 adjacent-boundary stitch for the canonical Lemma 5 first closed
+pivot, even-center case.
+-/
+theorem theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_boundary_succ_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hboundary_le_right : alphaBoundary ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6FirstClosedPolicy alphaLeft v
+          halphaLeft0 halphaLeft1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6FirstClosedPolicy alphaRight v
+          halphaRight0 halphaRight1 hpos) := by
+  have hcenter_t :
+      t.val ≤ (reverseItem t).val := by
+    have h :=
+      problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+        halphaLeft0 halphaLeft1 halphaLeft_half hpos hsucc
+    simpa [← hleft_pivot] using h
+  have hcenter_u :
+      u.val ≤ (reverseItem u).val := by
+    have h :=
+      problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+        halphaRight0 halphaRight1 halphaRight_half hpos hsucc
+    simpa [← hright_pivot] using h
+  have hclosed :=
+    theorem3_typeFairness_mono_across_adjacent_closed_boundary
+      hn
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hcenter_t hcenter_u
+      (by
+        simpa [hleft_pivot] using
+          problem6FirstClosedPivot_denominatorBounds
+            (alpha := alphaLeft) (v := v)
+            halphaLeft0 halphaLeft1 hpos)
+      hnext hboundary
+      (by
+        simpa [hright_pivot] using
+          problem6FirstClosedPivot_denominatorBounds
+            (alpha := alphaRight) (v := v)
+            halphaRight0 halphaRight1 hpos)
+  rw [
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halphaLeft0 halphaLeft1 hpos hleft_pivot,
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halphaRight0 halphaRight1 hpos hright_pivot]
+  exact hclosed
+
+/--
+Theorem 3 same-canonical-pivot step, odd-center case: if the canonical
+Lemma 5 first closed pivot is unchanged between two first-half parameters,
+the canonical closed policy's type fairness is monotone.
+-/
+theorem theorem3_typeFairness_mono_of_same_firstClosedPivot_center
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v)
+        (problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos) := by
+  let t : Item n := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  have hpivot' :
+      problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos = t := by
+    simpa [t] using hpivot.symm
+  have hcenter_t :
+      t.val ≤ (reverseItem t).val := by
+    dsimp [t]
+    exact
+      problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+        halpha0 halpha1 halpha_half hpos hcenter_c
+  rw [
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halpha0 halpha1 hpos (show
+        problem6FirstClosedPivot alpha v halpha0 halpha1 hpos = t from rfl),
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halpha0' halpha1' hpos hpivot']
+  rw [
+    problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      halpha0 halpha1 halpha_half hpos hdec _ hcenter_t,
+    problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      halpha0' halpha1' halpha_half' hpos hdec _ hcenter_t]
+  exact
+    theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec
+      hcenter_t _ _
+
+/--
+Theorem 3 same-canonical-pivot step, even-center case.
+-/
+theorem theorem3_typeFairness_mono_of_same_firstClosedPivot_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v)
+        (problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos) := by
+  let t : Item n := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  have hpivot' :
+      problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos = t := by
+    simpa [t] using hpivot.symm
+  have hcenter_t :
+      t.val ≤ (reverseItem t).val := by
+    dsimp [t]
+    exact
+      problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+        halpha0 halpha1 halpha_half hpos hsucc
+  rw [
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halpha0 halpha1 hpos (show
+        problem6FirstClosedPivot alpha v halpha0 halpha1 hpos = t from rfl),
+    problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+      halpha0' halpha1' hpos hpivot']
+  rw [
+    problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      halpha0 halpha1 halpha_half hpos hdec _ hcenter_t,
+    problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      halpha0' halpha1' halpha_half' hpos hdec _ hcenter_t]
+  exact
+    theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec
+      hcenter_t _ _
+
+/--
+Theorem 3 adjacent canonical-pivot change, odd-center case: the tight boundary
+is constructed internally from the endpoint pivot change.
+-/
+theorem theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_change_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6FirstClosedPolicy alphaLeft v
+          halphaLeft0 halphaLeft1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6FirstClosedPolicy alphaRight v
+          halphaRight0 halphaRight1 hpos) := by
+  rcases problem6FirstClosedPivot_adjacentBoundary_exists
+      halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+      hleft_le_right hpos hleft_pivot hright_pivot hnext with
+    ⟨alphaBoundary, hleft_le_boundary, hboundary_le_right,
+      halphaBoundary0, halphaBoundary1, hboundary⟩
+  exact
+    theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_boundary_center
+      hn
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hcenter_c hleft_pivot hright_pivot
+      hnext hboundary
+
+/--
+Theorem 3 adjacent canonical-pivot change, even-center case.
+-/
+theorem theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6FirstClosedPolicy alphaLeft v
+          halphaLeft0 halphaLeft1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6FirstClosedPolicy alphaRight v
+          halphaRight0 halphaRight1 hpos) := by
+  rcases problem6FirstClosedPivot_adjacentBoundary_exists
+      halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+      hleft_le_right hpos hleft_pivot hright_pivot hnext with
+    ⟨alphaBoundary, hleft_le_boundary, hboundary_le_right,
+      halphaBoundary0, halphaBoundary1, hboundary⟩
+  exact
+    theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_boundary_succ_center
+      hn
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hsucc hleft_pivot hright_pivot
+      hnext hboundary
+
+/--
+Theorem 3 global canonical closed-policy first-half stitch, odd-center case:
+the no-skip adjacent-pivot construction connects any two endpoint canonical
+first pivots.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {c t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6FirstClosedPolicy alphaLeft v
+          halphaLeft0 halphaLeft1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6FirstClosedPolicy alphaRight v
+          halphaRight0 halphaRight1 hpos) := by
+  have htu : t.val ≤ u.val := by
+    have h :=
+      problem6FirstClosedPivot_mono_alpha
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right hpos
+    simpa [hleft_pivot, hright_pivot] using h
+  generalize hgap_eq : u.val - t.val = gap
+  revert alphaLeft alphaRight t u
+  induction gap using Nat.strong_induction_on with
+  | h gap ih =>
+      intro alphaLeft alphaRight t u
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right halphaLeft_half halphaRight_half
+        hleft_pivot hright_pivot htu hgap_eq
+      by_cases hsame_val : t.val = u.val
+      · have htu_eq : t = u := Fin.ext hsame_val
+        have hpivot_eq :
+            problem6FirstClosedPivot alphaLeft v
+                halphaLeft0 halphaLeft1 hpos =
+              problem6FirstClosedPivot alphaRight v
+                halphaRight0 halphaRight1 hpos := by
+          rw [hleft_pivot, hright_pivot, htu_eq]
+        exact
+          theorem3_typeFairness_mono_of_same_firstClosedPivot_center
+            halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+            hleft_le_right halphaLeft_half halphaRight_half
+            hpos hdec hcenter_c hpivot_eq
+      · have ht_lt_u : t.val < u.val := lt_of_le_of_ne htu hsame_val
+        by_cases hadj : u.val = t.val + 1
+        · exact
+            theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_change_center
+              hn halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right halphaLeft_half halphaRight_half
+              hpos hdec hcenter_c hleft_pivot hright_pivot hadj
+        · have hskip : t.val + 1 < u.val := by omega
+          rcases problem6FirstClosedPivot_successor_exists_of_pivot_jump
+              halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right hpos hleft_pivot hright_pivot hskip with
+            ⟨alphaMid, halphaMid0, halphaMid1, s,
+              hleft_le_mid, hmid_le_right, hs_val, hmid_pivot⟩
+          have halphaMid_half : alphaMid ≤ 1 / 2 :=
+            hmid_le_right.trans halphaRight_half
+          have hleft_mid :
+              TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaLeft v)
+                  (problem6FirstClosedPolicy alphaLeft v
+                    halphaLeft0 halphaLeft1 hpos) ≤
+                TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaMid v)
+                  (problem6FirstClosedPolicy alphaMid v
+                    halphaMid0 halphaMid1 hpos) := by
+            exact
+              theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_change_center
+                hn halphaLeft0 halphaLeft1 halphaMid0 halphaMid1
+                hleft_le_mid halphaLeft_half halphaMid_half
+                hpos hdec hcenter_c hleft_pivot hmid_pivot hs_val
+          have hs_le_u : s.val ≤ u.val := by
+            rw [hs_val]
+            exact le_of_lt hskip
+          have hsmaller : u.val - s.val < gap := by
+            rw [← hgap_eq, hs_val]
+            omega
+          have hmid_right :
+              TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaMid v)
+                  (problem6FirstClosedPolicy alphaMid v
+                    halphaMid0 halphaMid1 hpos) ≤
+                TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaRight v)
+                  (problem6FirstClosedPolicy alphaRight v
+                    halphaRight0 halphaRight1 hpos) := by
+            exact ih (u.val - s.val) hsmaller
+              halphaMid0 halphaMid1 halphaRight0 halphaRight1
+              hmid_le_right halphaMid_half halphaRight_half
+              hmid_pivot hright_pivot hs_le_u rfl
+          exact hleft_mid.trans hmid_right
+
+/--
+Theorem 3 global canonical closed-policy first-half stitch, even-center case.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {c t u : Item n}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaLeft v)
+        (problem6FirstClosedPolicy alphaLeft v
+          halphaLeft0 halphaLeft1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alphaRight v)
+        (problem6FirstClosedPolicy alphaRight v
+          halphaRight0 halphaRight1 hpos) := by
+  have htu : t.val ≤ u.val := by
+    have h :=
+      problem6FirstClosedPivot_mono_alpha
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right hpos
+    simpa [hleft_pivot, hright_pivot] using h
+  generalize hgap_eq : u.val - t.val = gap
+  revert alphaLeft alphaRight t u
+  induction gap using Nat.strong_induction_on with
+  | h gap ih =>
+      intro alphaLeft alphaRight t u
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right halphaLeft_half halphaRight_half
+        hleft_pivot hright_pivot htu hgap_eq
+      by_cases hsame_val : t.val = u.val
+      · have htu_eq : t = u := Fin.ext hsame_val
+        have hpivot_eq :
+            problem6FirstClosedPivot alphaLeft v
+                halphaLeft0 halphaLeft1 hpos =
+              problem6FirstClosedPivot alphaRight v
+                halphaRight0 halphaRight1 hpos := by
+          rw [hleft_pivot, hright_pivot, htu_eq]
+        exact
+          theorem3_typeFairness_mono_of_same_firstClosedPivot_succ_center
+            halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+            hleft_le_right halphaLeft_half halphaRight_half
+            hpos hdec hsucc hpivot_eq
+      · have ht_lt_u : t.val < u.val := lt_of_le_of_ne htu hsame_val
+        by_cases hadj : u.val = t.val + 1
+        · exact
+            theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+              hn halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right halphaLeft_half halphaRight_half
+              hpos hdec hsucc hleft_pivot hright_pivot hadj
+        · have hskip : t.val + 1 < u.val := by omega
+          rcases problem6FirstClosedPivot_successor_exists_of_pivot_jump
+              halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right hpos hleft_pivot hright_pivot hskip with
+            ⟨alphaMid, halphaMid0, halphaMid1, s,
+              hleft_le_mid, hmid_le_right, hs_val, hmid_pivot⟩
+          have halphaMid_half : alphaMid ≤ 1 / 2 :=
+            hmid_le_right.trans halphaRight_half
+          have hleft_mid :
+              TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaLeft v)
+                  (problem6FirstClosedPolicy alphaLeft v
+                    halphaLeft0 halphaLeft1 hpos) ≤
+                TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaMid v)
+                  (problem6FirstClosedPolicy alphaMid v
+                    halphaMid0 halphaMid1 hpos) := by
+            exact
+              theorem3_typeFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+                hn halphaLeft0 halphaLeft1 halphaMid0 halphaMid1
+                hleft_le_mid halphaLeft_half halphaMid_half
+                hpos hdec hsucc hleft_pivot hmid_pivot hs_val
+          have hs_le_u : s.val ≤ u.val := by
+            rw [hs_val]
+            exact le_of_lt hskip
+          have hsmaller : u.val - s.val < gap := by
+            rw [← hgap_eq, hs_val]
+            omega
+          have hmid_right :
+              TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaMid v)
+                  (problem6FirstClosedPolicy alphaMid v
+                    halphaMid0 halphaMid1 hpos) ≤
+                TypeWeightedRecommendationModel.typeFairness
+                  (twoTypeReducedModel alphaRight v)
+                  (problem6FirstClosedPolicy alphaRight v
+                    halphaRight0 halphaRight1 hpos) := by
+            exact ih (u.val - s.val) hsmaller
+              halphaMid0 halphaMid1 halphaRight0 halphaRight1
+              hmid_le_right halphaMid_half halphaRight_half
+              hmid_pivot hright_pivot hs_le_u rfl
+          exact hleft_mid.trans hmid_right
+
+/--
+Theorem 3 paper-style canonical closed-policy first-half monotonicity,
+odd-center case.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v)
+        (problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos) := by
+  exact
+    theorem3_typeFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints
+      (alphaLeft := alpha) (alphaRight := alpha') (v := v) (c := c)
+      (t := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)
+      (u := problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c rfl rfl
+
+/--
+Theorem 3 paper-style canonical closed-policy first-half monotonicity,
+even-center case.
+-/
+theorem theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v)
+        (problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos) := by
+  exact
+    theorem3_typeFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints
+      (alphaLeft := alpha) (alphaRight := alpha') (v := v) (c := c)
+      (t := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)
+      (u := problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
       halpha_half halpha_half' hpos hdec hsucc rfl rfl
 
 /--
