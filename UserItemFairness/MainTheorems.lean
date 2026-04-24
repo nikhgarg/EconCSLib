@@ -1048,6 +1048,45 @@ theorem paper_lemma6_closedRawUtility_sub_eq_mirror_gap_sum
   exact problem6ClosedRawUtility_sub_eq_mirror_gap_sum alpha v t
 
 /--
+Appendix D, Lemma 6 finite-sum comparison: left-side mirror gaps imply
+type-0 raw utility dominates type-1 raw utility.
+-/
+theorem paper_lemma6_closedTypeOneRawUtility_le_typeZeroRawUtility_of_left_gaps
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft :
+      ∀ j : Item n, j.val ≤ t.val →
+        0 ≤ problem6ClosedX alpha v t j -
+          problem6ClosedY alpha v t (reverseItem j))
+    (hy_nonneg :
+      ∀ j : Item n, 0 ≤ problem6ClosedY alpha v t (reverseItem j)) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  exact problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_left_gaps
+    hdec hleft hy_nonneg
+
+/--
+Appendix D, Lemma 6 comparison specialized to `α ≤ 1/2`, with the remaining
+pivot-gap and mirror-index obligations explicit.
+-/
+theorem paper_lemma6_closedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hmirror :
+      ∀ j : Item n, j.val < t.val → t.val < (reverseItem j).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t)) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  exact problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
+    halpha0 halpha1 halpha_half hpos hdec hpivot hmirror hpivot_gap
+
+/--
 Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
 shares.
 -/

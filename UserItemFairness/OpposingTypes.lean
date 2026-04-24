@@ -1307,6 +1307,99 @@ theorem problem6ClosedX_sub_closedY_reverse_nonneg_of_alpha_le_half
   rw [heq]
   exact mul_nonneg hcv hgap
 
+/--
+Appendix D, Lemma 6 finite-sum comparison: if all mirror gaps up to the pivot
+are nonnegative, and all mirrored `y` masses are nonnegative, then the closed
+type-0 raw utility dominates the closed type-1 raw utility.
+-/
+theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_left_gaps
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft :
+      ∀ j : Item n, j.val ≤ t.val →
+        0 ≤ problem6ClosedX alpha v t j -
+          problem6ClosedY alpha v t (reverseItem j))
+    (hy_nonneg :
+      ∀ j : Item n, 0 ≤ problem6ClosedY alpha v t (reverseItem j)) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  let gap : Item n → ℝ :=
+    fun j => problem6ClosedX alpha v t j -
+      problem6ClosedY alpha v t (reverseItem j)
+  have hgap_sum : (∑ j : Item n, gap j) = 0 := by
+    unfold gap
+    rw [Finset.sum_sub_distrib]
+    rw [problem6ClosedX_sum_eq_one, problem6ClosedY_reverse_sum_eq_one]
+    ring
+  have hterm :
+      (∑ j : Item n, v t * gap j) ≤
+        ∑ j : Item n, v j * gap j := by
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    by_cases hjle : j.val ≤ t.val
+    · have hv : v t ≤ v j := by
+        by_cases heq : j = t
+        · subst j
+          rfl
+        · have hlt : j.val < t.val := by
+            have hne_val : j.val ≠ t.val := by
+              intro hval
+              exact heq (Fin.ext hval)
+            omega
+          exact (hdec hlt).le
+      exact mul_le_mul_of_nonneg_right hv (hleft j hjle)
+    · have hgt : t.val < j.val := by omega
+      have hv : v j ≤ v t := (hdec hgt).le
+      have hgap_nonpos : gap j ≤ 0 := by
+        unfold gap
+        rw [problem6ClosedX_after alpha v hgt]
+        linarith [hy_nonneg j]
+      exact mul_le_mul_of_nonpos_right hv hgap_nonpos
+  have hweighted_nonneg :
+      0 ≤ ∑ j : Item n, v j * gap j := by
+    have hconst :
+        (∑ j : Item n, v t * gap j) = 0 := by
+      rw [← Finset.mul_sum, hgap_sum, mul_zero]
+    linarith
+  have hraw :=
+    problem6ClosedRawUtility_sub_eq_mirror_gap_sum alpha v t
+  unfold gap at hweighted_nonneg
+  linarith
+
+/--
+Appendix D, Lemma 6 comparison specialized to `α ≤ 1/2`: the scalar
+mirror-gap algebra supplies all pre-pivot gaps; the pivot gap is left explicit.
+-/
+theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hmirror :
+      ∀ j : Item n, j.val < t.val → t.val < (reverseItem j).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t)) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  refine problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_left_gaps
+    hdec ?_ ?_
+  · intro j hjle
+    by_cases hj : j = t
+    · subst j
+      exact hpivot_gap
+    · have hjlt : j.val < t.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact hj (Fin.ext hval)
+        omega
+      exact problem6ClosedX_sub_closedY_reverse_nonneg_of_alpha_le_half
+        halpha0 halpha1 halpha_half hpos hjlt (hmirror j hjlt)
+  · intro j
+    exact problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot (reverseItem j)
+
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
