@@ -118,6 +118,20 @@ noncomputable def activeTypeItemPairs {K n : ℕ}
 noncomputable def activeTypeItemPairsCard {K n : ℕ} (ρ : TypePolicy K n) : ℕ :=
   DecisionCore.Policy.activePairsCard ρ
 
+/-- Zero-support type-item pairs `(k, j)`. -/
+noncomputable def inactiveTypeItemPairs {K n : ℕ}
+    (ρ : TypePolicy K n) : Finset (UserType K × Item n) :=
+  DecisionCore.Policy.inactivePairs ρ
+
+@[simp] theorem mem_inactiveTypeItemPairs {K n : ℕ}
+    (ρ : TypePolicy K n) (p : UserType K × Item n) :
+    p ∈ inactiveTypeItemPairs ρ ↔ ρ p.1 p.2 = 0 := by
+  simp [inactiveTypeItemPairs]
+
+/-- Number of zero-support type-item pairs. -/
+noncomputable def inactiveTypeItemPairsCard {K n : ℕ} (ρ : TypePolicy K n) : ℕ :=
+  DecisionCore.Policy.inactivePairsCard ρ
+
 /-- Items recommended to more than one user type. -/
 noncomputable def sharedItems {K n : ℕ} (ρ : TypePolicy K n) : Finset (Item n) :=
   DecisionCore.Policy.multiAssignedActions ρ
@@ -133,6 +147,41 @@ def SharedItemsBound {K n : ℕ} (ρ : TypePolicy K n) : Prop :=
 /-- The combined sparse-support shape extracted from Proposition 2. -/
 def SparseShape {K n : ℕ} (ρ : TypePolicy K n) : Prop :=
   ActivePairsBound ρ ∧ SharedItemsBound ρ
+
+/--
+Support-count consequence of the LP basic-feasible-solution theorem used in
+the paper. The linear-programming fact supplies that at least
+`nK + 1 - (n + K)` nonnegativity constraints bind; in the recommendation LP
+these binding nonnegativity constraints are exactly zero-probability type-item
+pairs.
+-/
+def BasicFeasibleSupportCertificate {K n : ℕ} (ρ : TypePolicy K n) : Prop :=
+  n * K + 1 - (n + K) ≤ inactiveTypeItemPairsCard ρ
+
+/-- Active and inactive type-item pairs partition all `K * n` type-item pairs. -/
+theorem activeTypeItemPairsCard_add_inactiveTypeItemPairsCard_eq {K n : ℕ}
+    (ρ : TypePolicy K n) :
+    activeTypeItemPairsCard ρ + inactiveTypeItemPairsCard ρ = K * n := by
+  simpa [activeTypeItemPairsCard, inactiveTypeItemPairsCard, UserType, Item]
+    using (DecisionCore.Policy.activePairsCard_add_inactivePairsCard_eq_card
+      (ρ := ρ))
+
+/--
+The paper's support-count arithmetic: once the basic-feasible-solution theorem
+gives enough binding nonnegativity constraints, at most `n + K - 1` type-item
+pairs can have positive support.
+-/
+theorem activePairsBound_of_basicFeasibleSupportCertificate {K n : ℕ}
+    [NeZero K] [NeZero n]
+    (ρ : TypePolicy K n) (hcert : BasicFeasibleSupportCertificate ρ) :
+    ActivePairsBound ρ := by
+  unfold ActivePairsBound activeTypeItemPairsCard
+    BasicFeasibleSupportCertificate inactiveTypeItemPairsCard at *
+  have hsupport :=
+    DecisionCore.Policy.activePairsCard_le_card_sub_of_inactivePairsCard_ge
+      (ρ := ρ) hcert
+  simp [UserType, Item, Nat.mul_comm] at hsupport
+  exact le_trans hsupport (by omega)
 
 /-- Types that recommend item `j` with positive probability. -/
 noncomputable def activeTypesForItem {K n : ℕ}

@@ -103,6 +103,54 @@ noncomputable def activePairsCard {α β : Type*}
     (ρ : Policy α β) : ℕ :=
   (activePairs ρ).card
 
+/-- All state-action pairs unused by a policy. -/
+noncomputable def inactivePairs {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (ρ : Policy α β) : Finset (α × β) :=
+  Finset.univ.filter fun p => ρ p.1 p.2 = 0
+
+@[simp] theorem mem_inactivePairs {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (ρ : Policy α β) (p : α × β) :
+    p ∈ inactivePairs ρ ↔ ρ p.1 p.2 = 0 := by
+  simp [inactivePairs]
+
+/-- Cardinality of the unused state-action pairs of a policy. -/
+noncomputable def inactivePairsCard {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (ρ : Policy α β) : ℕ :=
+  (inactivePairs ρ).card
+
+/-- Active and inactive state-action pairs partition the finite product. -/
+theorem activePairsCard_add_inactivePairsCard_eq_card {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (ρ : Policy α β) :
+    activePairsCard ρ + inactivePairsCard ρ =
+      Fintype.card α * Fintype.card β := by
+  classical
+  unfold activePairsCard inactivePairsCard activePairs inactivePairs
+  have hfilter :
+      (Finset.univ.filter fun p : α × β => ρ p.1 p.2 = 0) =
+        (Finset.univ.filter fun p : α × β => ¬ ρ p.1 p.2 ≠ 0) := by
+    ext p
+    simp
+  rw [hfilter]
+  rw [Finset.card_filter_add_card_filter_not]
+  rw [Finset.card_univ, Fintype.card_prod]
+
+/--
+If at least `b` nonnegativity constraints bind, i.e. at least `b`
+state-action pairs have zero probability, then the positive support has size at
+most total pairs minus `b`.
+-/
+theorem activePairsCard_le_card_sub_of_inactivePairsCard_ge {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (ρ : Policy α β) {b : ℕ}
+    (hzero : b ≤ inactivePairsCard ρ) :
+    activePairsCard ρ ≤ Fintype.card α * Fintype.card β - b := by
+  have htotal := activePairsCard_add_inactivePairsCard_eq_card ρ
+  omega
+
 /-- Actions used by more than one distinct state/agent. -/
 noncomputable def multiAssignedActions {α β : Type*}
     [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]

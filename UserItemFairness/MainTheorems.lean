@@ -265,6 +265,26 @@ theorem paper_symmetric_original_optimum_descends_to_reduced_of_nonempty
 
 end ReductionWitness
 
+namespace EstimatedRecommendationModel
+
+/--
+Exact-estimation benchmark for the price of misestimation.
+
+If the estimated utilities coincide with the true utilities, then any policy
+that solves the estimated problem has zero price of misestimation when evaluated
+against the true model.
+-/
+theorem paper_priceOfMisestimation_exact_estimation_eq_zero
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (γ : ℝ) (ρhat : Policy m n)
+    (hutility : E.estimatedUtility = E.trueModel.utility)
+    (hopt : E.SolvesEstimatedProblem γ ρhat) :
+    E.priceOfMisestimation γ ρhat = 0 := by
+  exact E.priceOfMisestimation_eq_zero_of_estimatedUtility_eq_true
+    γ ρhat hutility hopt
+
+end EstimatedRecommendationModel
+
 namespace TypePolicy
 
 /--
@@ -343,6 +363,22 @@ theorem paper_reduced_optimal_item_fairness_positive
     T hWeight hUtil
 
 /--
+Proposition 1 active-support bound from the LP basic-feasible-solution support
+count.
+
+This is the finite arithmetic part of the paper's BFS sparsity proof:
+`nK + 1` variables, `n + K` equality constraints, and therefore at least
+`nK + 1 - (n + K)` binding nonnegativity constraints imply at most
+`n + K - 1` positive type-item pairs.
+-/
+theorem paper_active_pairs_bound_of_basic_feasible_support
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (ρ : TypePolicy K n)
+    (hcert : BasicFeasibleSupportCertificate ρ) :
+    ActivePairsBound ρ := by
+  exact activePairsBound_of_basicFeasibleSupportCertificate ρ hcert
+
+/--
 Proposition 1 sparse shared-item consequence for a maximal-item-fairness
 reduced optimum.
 
@@ -382,6 +418,37 @@ theorem paper_sparse_shape_of_active_pairs_bound_of_maximal_optimum
   exact ⟨hactive,
     paper_sparse_shared_items_of_active_pairs_bound_of_maximal_optimum
       T ρ hWeight hUtil hactive hopt⟩
+
+/--
+Proposition 1 sparse shared-item consequence for a maximal-item-fairness
+reduced optimum, using the paper's basic-feasible-solution support count
+directly.
+-/
+theorem paper_sparse_shared_items_of_basic_feasible_maximal_optimum
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (hcert : BasicFeasibleSupportCertificate ρ)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel T 1 ρ) :
+    SharedItemsBound ρ := by
+  exact paper_sparse_shared_items_of_active_pairs_bound_of_maximal_optimum
+    T ρ hWeight hUtil
+    (activePairsBound_of_basicFeasibleSupportCertificate ρ hcert) hopt
+
+/--
+Proposition 1 sparse-shape consequence for a maximal-item-fairness reduced
+optimum, using the paper's basic-feasible-solution support count directly.
+-/
+theorem paper_sparse_shape_of_basic_feasible_maximal_optimum
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (hcert : BasicFeasibleSupportCertificate ρ)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel T 1 ρ) :
+    SparseShape ρ := by
+  exact paper_sparse_shape_of_active_pairs_bound_of_maximal_optimum
+    T ρ hWeight hUtil
+    (activePairsBound_of_basicFeasibleSupportCertificate ρ hcert) hopt
 
 end TypePolicy
 
