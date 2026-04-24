@@ -706,5 +706,28 @@ theorem averageCrossSampleCandidateOfferRevenue_nonneg
     exact_mod_cast (Nat.zero_le _ : 0 ≤ Fintype.card (Agent → Bool))
   exact div_nonneg hsum hcard_nonneg
 
+/-- The finite `F^(2)` fixed-price benchmark value. -/
+noncomputable def twoWinnerFixedPriceBenchmarkValue
+    [Fintype Agent] [Nonempty Agent] (values : Agent → ℝ) : ℝ :=
+  finiteCandidateFixedPriceBenchmark values 2
+
+/--
+Certificate that the cross-sample offer auction is `ratio`-competitive against
+the two-winner fixed-price benchmark.
+-/
+def CrossSampleOfferApproximationCertificate
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (ratio : ℝ) : Prop :=
+  twoWinnerFixedPriceBenchmarkValue values ≤
+    ratio * averageCrossSampleCandidateOfferRevenue values 2
+
+theorem crossSampleOffer_competitive_of_certificate
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (ratio : ℝ)
+    (hcert : CrossSampleOfferApproximationCertificate values ratio) :
+    twoWinnerFixedPriceBenchmarkValue values ≤
+      ratio * averageCrossSampleCandidateOfferRevenue values 2 := by
+  exact hcert
+
 end Auction
 end EconCSLean

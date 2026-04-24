@@ -122,6 +122,19 @@ theorem paper_average_cross_sample_candidate_offer_revenue_nonneg
   exact averageCrossSampleCandidateOfferRevenue_nonneg values minWinners
 
 /--
+Paper-facing RSOP approximation seam: once the finite probabilistic
+approximation certificate is proved, the cross-sample offer auction is
+competitive against the two-winner fixed-price benchmark.
+-/
+theorem paper_cross_sample_offer_competitive_of_certificate
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (ratio : ℝ)
+    (hcert : CrossSampleOfferApproximationCertificate values ratio) :
+    twoWinnerFixedPriceBenchmarkValue values ≤
+      ratio * averageCrossSampleCandidateOfferRevenue values 2 := by
+  exact crossSampleOffer_competitive_of_certificate values ratio hcert
+
+/--
 The finite bidder-value candidate benchmark is nonnegative.
 -/
 theorem paper_finite_candidate_fixed_price_benchmark_nonneg
