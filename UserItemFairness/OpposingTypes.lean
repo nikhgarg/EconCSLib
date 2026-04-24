@@ -9804,6 +9804,108 @@ theorem lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
     hpos hdec hpivot hcenter
 
 /--
+Appendix D, Lemma 8 canonical finite-stitch core with explicit boundary
+repeats: a finite chain may either stay inside one `A(t)` interval for the
+canonical Lemma 5 first crossing pivot, where Lemma 11 applies, or repeat the
+same `α` at an interval boundary.
+
+The auxiliary `pivotSeq` records the canonical first pivot at each chain point
+without making later hypotheses depend on proof-term choices for
+`0 < α < 1`.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_of_same_firstClosedPivot_or_equal_alpha_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_def :
+      ∀ i, ∀ hi : i ≤ r,
+        pivotSeq i =
+          problem6FirstClosedPivot (alphaSeq i) v
+            (halpha0 i hi) (halpha1 i hi) hpos)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        pivotSeq i = pivotSeq (i + 1) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (pivotSeq i).val ≤ (reverseItem (pivotSeq i)).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  induction r with
+  | zero =>
+      exact le_rfl
+  | succ r ih =>
+      have hprev :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq 0) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) := by
+        exact ih
+          (fun i hi => halpha0 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha1 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hpivot_def i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hpivot_or_eq i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hcenter i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+      have hlast :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq (r + 1)) v) := by
+        rcases hpivot_or_eq r (Nat.lt_succ_self r) with hpivot | halpha_eq
+        · have hfpivot :
+              problem6FirstClosedPivot (alphaSeq r) v
+                  (halpha0 r (Nat.le_succ r))
+                  (halpha1 r (Nat.le_succ r)) hpos =
+                problem6FirstClosedPivot (alphaSeq (r + 1)) v
+                  (halpha0 (r + 1) le_rfl)
+                  (halpha1 (r + 1) le_rfl) hpos := by
+            calc
+              problem6FirstClosedPivot (alphaSeq r) v
+                  (halpha0 r (Nat.le_succ r))
+                  (halpha1 r (Nat.le_succ r)) hpos
+                  = pivotSeq r := (hpivot_def r (Nat.le_succ r)).symm
+              _ = pivotSeq (r + 1) := hpivot
+              _ =
+                problem6FirstClosedPivot (alphaSeq (r + 1)) v
+                  (halpha0 (r + 1) le_rfl)
+                  (halpha1 (r + 1) le_rfl) hpos :=
+                hpivot_def (r + 1) le_rfl
+          have hc :
+              (problem6FirstClosedPivot (alphaSeq r) v
+                  (halpha0 r (Nat.le_succ r))
+                  (halpha1 r (Nat.le_succ r)) hpos).val ≤
+                (reverseItem
+                  (problem6FirstClosedPivot (alphaSeq r) v
+                    (halpha0 r (Nat.le_succ r))
+                    (halpha1 r (Nat.le_succ r)) hpos)).val := by
+            simpa [hpivot_def r (Nat.le_succ r)] using
+              hcenter r (Nat.lt_succ_self r)
+          exact
+            lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
+              (halpha0 r (Nat.le_succ r))
+              (halpha1 r (Nat.le_succ r))
+              (halpha0 (r + 1) le_rfl)
+              (halpha1 (r + 1) le_rfl)
+              (hstep r (Nat.lt_succ_self r))
+              hpos hdec hfpivot hc
+        · simpa [halpha_eq] using
+            (le_rfl :
+              TypeWeightedRecommendationModel.optimalItemFairness
+                (twoTypeReducedModel (alphaSeq r) v) ≤
+              TypeWeightedRecommendationModel.optimalItemFairness
+                (twoTypeReducedModel (alphaSeq r) v))
+      exact hprev.trans hlast
+
+/--
 Appendix D, Lemma 8 finite-stitch core: if a finite sequence of selected
 equality-form optimal BFS policies moves from `α₀` to `αᵣ`, and every adjacent
 pair lies in one same-selected-pivot first-half interval, then the reduced

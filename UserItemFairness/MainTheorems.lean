@@ -3024,6 +3024,42 @@ theorem paper_lemma8_reducedOptimalItemFairness_mono_of_same_selected_or_equal_a
     hcenter hopt
 
 /--
+Appendix D, Lemma 8 canonical finite-stitch core with explicit boundary
+repeats: adjacent steps may either stay in one `A(t)` interval for the
+canonical Lemma 5 first crossing pivot or repeat the same `α` at a partition
+boundary.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_of_same_firstClosedPivot_or_equal_alpha_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_def :
+      ∀ i, ∀ hi : i ≤ r,
+        pivotSeq i =
+          problem6FirstClosedPivot (alphaSeq i) v
+            (halpha0 i hi) (halpha1 i hi) hpos)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        pivotSeq i = pivotSeq (i + 1) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (pivotSeq i).val ≤ (reverseItem (pivotSeq i)).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_of_same_firstClosedPivot_or_equal_alpha_chain
+    r alphaSeq pivotSeq halpha0 halpha1 hstep hpos hdec hpivot_def
+    hpivot_or_eq hcenter
+
+/--
 Appendix D, Lemma 8 finite-stitch core, odd-center case: along a first-half
 finite chain, Lemma 10 supplies the pivot-before-mirror side condition.
 -/
