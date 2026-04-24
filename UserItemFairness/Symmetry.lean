@@ -360,6 +360,85 @@ theorem inactivePairsCard_ge_n_sub_one_of_basicFeasibleSupportCertificate_two
   unfold BasicFeasibleSupportCertificate at hcert
   omega
 
+/--
+Appendix D threshold-support count: a two-type threshold policy has at least
+`n - 1` zero type-item coordinates.  Every item except the pivot is zero for
+one of the two types.
+-/
+theorem inactivePairsCard_ge_n_sub_one_of_twoTypeThresholdSupport
+    {n : ℕ} (ρ : TypePolicy 2 n) (hthreshold : TwoTypeThresholdSupport ρ) :
+    n - 1 ≤ inactiveTypeItemPairsCard ρ := by
+  classical
+  rcases hthreshold with ⟨t, hx, hy⟩
+  let s : Finset (Item n) := Finset.univ.erase t
+  let f :
+      {j : Item n // j ∈ s} →
+        {p : UserType 2 × Item n // p ∈ inactiveTypeItemPairs ρ} :=
+    fun j =>
+      if hj : j.1.val < t.val then
+        ⟨(1, j.1), by
+          have hz : ρ 1 j.1 = 0 := hy hj
+          simpa [inactiveTypeItemPairs, hz]⟩
+      else
+        ⟨(0, j.1), by
+          have hne : j.1 ≠ t := by
+            have hmem : j.1 ∈ (Finset.univ.erase t : Finset (Item n)) := by
+              simpa only [s] using j.2
+            exact (Finset.mem_erase.mp hmem).1
+          have hgt : t.val < j.1.val := by
+            have hval_ne : j.1.val ≠ t.val := by
+              intro hval
+              exact hne (Fin.ext hval)
+            omega
+          have hz : ρ 0 j.1 = 0 := hx hgt
+          simpa [inactiveTypeItemPairs, hz]⟩
+  have hf : Function.Injective f := by
+    intro a b hab
+    have f_snd (x : {j : Item n // j ∈ s}) :
+        ((f x).1 : UserType 2 × Item n).2 = x.1 := by
+      by_cases hx : x.1.val < t.val
+      · have hx' : (x.1 : Item n) < t := hx
+        simp [f, hx']
+      · have hx' : ¬ (x.1 : Item n) < t := by
+          intro h
+          exact hx h
+        simp [f, hx']
+    have hitem : a.1 = b.1 := by
+      have hp := congrArg (fun p :
+        {p : UserType 2 × Item n // p ∈ inactiveTypeItemPairs ρ} =>
+          (p.1 : UserType 2 × Item n).2) hab
+      change ((f a).1 : UserType 2 × Item n).2 =
+        ((f b).1 : UserType 2 × Item n).2 at hp
+      rw [f_snd a, f_snd b] at hp
+      exact hp
+    exact Subtype.ext hitem
+  have hcard :=
+    Fintype.card_le_of_injective f hf
+  have hs_card : Fintype.card {j : Item n // j ∈ s} = n - 1 := by
+    simp [s, Item]
+  have hinactive_card :
+      Fintype.card {p : UserType 2 × Item n // p ∈ inactiveTypeItemPairs ρ} =
+        inactiveTypeItemPairsCard ρ := by
+    simpa [inactiveTypeItemPairsCard, inactiveTypeItemPairs] using
+      (Fintype.card_coe (inactiveTypeItemPairs ρ))
+  calc
+    n - 1 = Fintype.card {j : Item n // j ∈ s} := hs_card.symm
+    _ ≤ Fintype.card
+        {p : UserType 2 × Item n // p ∈ inactiveTypeItemPairs ρ} := hcard
+    _ = inactiveTypeItemPairsCard ρ := hinactive_card
+
+/--
+Appendix D threshold-support count as the paper's basic-feasible support
+certificate in the two-type Problem 6 LP.
+-/
+theorem basicFeasibleSupportCertificate_of_twoTypeThresholdSupport
+    {n : ℕ} (ρ : TypePolicy 2 n) (hthreshold : TwoTypeThresholdSupport ρ) :
+    BasicFeasibleSupportCertificate ρ := by
+  have hzero :=
+    inactivePairsCard_ge_n_sub_one_of_twoTypeThresholdSupport ρ hthreshold
+  unfold BasicFeasibleSupportCertificate
+  omega
+
 /-- Types that recommend item `j` with positive probability. -/
 noncomputable def activeTypesForItem {K n : ℕ}
     (ρ : TypePolicy K n) (j : Item n) : Finset (UserType K) :=

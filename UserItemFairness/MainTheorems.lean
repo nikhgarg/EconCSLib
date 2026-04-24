@@ -2356,6 +2356,34 @@ theorem paper_problem6_closedPolicy_feasible_of_denominatorBounds
     halpha0 halpha1 hpos hbounds
 
 /--
+Appendix D, Lemma 5 closed-policy bridge: the closed-form policy has the
+threshold support shape used in Lemma 4.
+-/
+theorem paper_problem6_closedPolicy_twoTypeThresholdSupport
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypePolicy.TwoTypeThresholdSupport
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) := by
+  exact problem6ClosedPolicy_twoTypeThresholdSupport
+    halpha0 halpha1 hpos hpivot
+
+/--
+Appendix D, Lemma 5 closed-policy bridge: threshold support gives the paper's
+basic-feasible support-count certificate for the closed-form policy.
+-/
+theorem paper_problem6_closedPolicy_basicFeasibleSupportCertificate
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypePolicy.BasicFeasibleSupportCertificate
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) := by
+  exact problem6ClosedPolicy_basicFeasibleSupportCertificate
+    halpha0 halpha1 hpos hpivot
+
+/--
 Problem 6 dual certificate: the paper's closed-form dual weights sum to one.
 -/
 theorem paper_problem6_closedDualWeight_sum_eq_one
@@ -2395,6 +2423,26 @@ theorem paper_problem6_closedOptimalityCertificate_of_denominatorBounds
     Problem6ClosedOptimalityCertificate alpha v t := by
   exact problem6ClosedOptimalityCertificate_of_denominatorBounds
     halpha0 halpha1 hpos hdec hbounds
+
+/--
+Appendix D, Lemma 5 closed-policy bridge: a closed-form optimality certificate
+builds the paper's equality-form optimal BFS package; the support-count field
+comes from the closed policy's threshold support.
+-/
+theorem paper_problem6_equalizedBasicOptimal_of_closed_certificate
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t) :
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    Problem6EqualizedBasicOptimal alpha v
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+      (problem6ClosedValue alpha v t) := by
+  exact problem6EqualizedBasicOptimal_of_closed_certificate
+    halpha0 halpha1 hpos cert
 
 /--
 Appendix D, Lemma 4/5 bridge: an equalized optimal Problem 6 policy supplies
@@ -4431,6 +4479,50 @@ theorem paper_lemma6_equalizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_
     hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
 
 /--
+Appendix D, Lemma 6 stitched with Lemma 10, odd-center case, with the
+midpoint optimum supplied by the Lemma 5 closed form.
+-/
+theorem paper_lemma6_equalizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  exact problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_center_of_closed_half
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter_c h
+
+/--
+Appendix D, Lemma 6 stitched with Lemma 10, even-center case, with the
+midpoint optimum supplied by the Lemma 5 closed form.
+-/
+theorem paper_lemma6_equalizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_succ_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  exact problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_succ_center_of_closed_half
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc h
+
+/--
 Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
 every pre-pivot item to a post-pivot mirror.
 -/
@@ -4810,6 +4902,44 @@ theorem paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_cen
     hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
 
 /--
+Appendix D, Lemma 10 for the paper's equality-form optimal BFS package,
+odd-center case, with the midpoint optimum supplied by the Lemma 5 closed form.
+-/
+theorem paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center_of_closed_half
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter h
+
+/--
+Appendix D, Lemma 10 for the paper's equality-form optimal BFS package,
+even-center case, with the midpoint optimum supplied by the Lemma 5 closed form.
+-/
+theorem paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of_closed_half
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc h
+
+/--
 Appendix D, Lemma 10 consequence, odd-center case: for `α ≤ 1/2`, the
 selected pivot is at or before its mirror.
 -/
@@ -5026,6 +5156,27 @@ theorem paper_lemma4_problem6_inactive_pairs_ge_n_sub_one
     n - 1 ≤ inactiveTypeItemPairsCard ρ := by
   exact inactivePairsCard_ge_n_sub_one_of_basicFeasibleSupportCertificate_two
     ρ hcert
+
+/--
+Appendix D threshold-support count: a two-type threshold-support policy has at
+least `n - 1` zero `x_j,y_j` coordinates.
+-/
+theorem paper_lemma4_problem6_inactive_pairs_ge_n_sub_one_of_thresholdSupport
+    {n : ℕ} (ρ : TypePolicy 2 n) (hthreshold : TwoTypeThresholdSupport ρ) :
+    n - 1 ≤ inactiveTypeItemPairsCard ρ := by
+  exact inactivePairsCard_ge_n_sub_one_of_twoTypeThresholdSupport
+    ρ hthreshold
+
+/--
+Appendix D threshold-support count: in the two-type Problem 6 setting, the
+threshold support shape itself supplies the paper's basic-feasible support
+certificate.
+-/
+theorem paper_lemma4_problem6_basicFeasibleSupportCertificate_of_thresholdSupport
+    {n : ℕ} (ρ : TypePolicy 2 n) (hthreshold : TwoTypeThresholdSupport ρ) :
+    BasicFeasibleSupportCertificate ρ := by
+  exact basicFeasibleSupportCertificate_of_twoTypeThresholdSupport
+    ρ hthreshold
 
 /--
 Appendix D, Lemma 4, Part 2 threshold-support extraction: after the

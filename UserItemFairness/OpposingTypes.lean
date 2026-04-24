@@ -3392,6 +3392,15 @@ theorem pmf_eq_of_forall_toReal_eq {n : ℕ}
   exact (ENNReal.toReal_eq_toReal_iff'
     (μ.apply_ne_top j) (ν.apply_ne_top j)).mp (h j)
 
+/-- A finite PMF coordinate with zero real value is zero as an `ENNReal`. -/
+theorem pmf_apply_eq_zero_of_toReal_eq_zero {n : ℕ}
+    {μ : PMF (Item n)} {j : Item n}
+    (h : (μ j).toReal = 0) :
+    μ j = 0 := by
+  rcases (ENNReal.toReal_eq_zero_iff (μ j)).mp h with hzero | htop
+  · exact hzero
+  · exact False.elim ((μ.apply_ne_top j) htop)
+
 /-- Problem 6's real-vector epigraph feasibility in the paper's variables. -/
 structure Problem6RealLPFeasible {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ)
@@ -4319,6 +4328,44 @@ theorem problem6ClosedPolicy_feasible_of_denominatorBounds {n : ℕ}
   exact problem6ClosedPolicy_feasible halpha0 halpha1 hpos
     (problem6ClosedNonnegativePivots_of_denominatorBounds
       halpha0 halpha1 hpos hbounds)
+
+/--
+The Lemma 5 closed-form policy has the threshold support shape used in
+Appendix D, Lemma 4: type `0` is zero after the pivot and type `1` is zero
+before it.
+-/
+theorem problem6ClosedPolicy_twoTypeThresholdSupport {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypePolicy.TwoTypeThresholdSupport
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) := by
+  refine ⟨t, ?_, ?_⟩
+  · intro j hj
+    apply pmf_apply_eq_zero_of_toReal_eq_zero
+    rw [problem6ClosedPolicy_zero_toReal halpha0 halpha1 hpos hpivot,
+      problem6ClosedX_after alpha v hj]
+  · intro j hj
+    apply pmf_apply_eq_zero_of_toReal_eq_zero
+    rw [problem6ClosedPolicy_one_toReal halpha0 halpha1 hpos hpivot,
+      problem6ClosedY_before alpha v hj]
+
+/--
+Closed-form Problem 6 policies satisfy the paper's two-type basic-feasible
+support-count certificate directly from their threshold support.
+-/
+theorem problem6ClosedPolicy_basicFeasibleSupportCertificate {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypePolicy.BasicFeasibleSupportCertificate
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) := by
+  exact TypePolicy.basicFeasibleSupportCertificate_of_twoTypeThresholdSupport
+    (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+    (problem6ClosedPolicy_twoTypeThresholdSupport
+      halpha0 halpha1 hpos hpivot)
 
 /-- Raw type-0 utility of the closed-form Problem 6 policy. -/
 noncomputable def problem6ClosedTypeZeroRawUtility {n : ℕ}
@@ -7677,6 +7724,193 @@ noncomputable def problem6OptimalityCertificate_of_closed {n : ℕ} [NeZero n]
     problem6ClosedPolicy_feasible_of_denominatorBounds
       halpha0 halpha1 hpos cert.denominator_bounds
   upper_bound := cert.upper_bound
+
+/--
+Closed-form Problem 6 certificate as the paper's equality-form optimal BFS
+package.  The basic-feasible support certificate is supplied by the closed
+policy's threshold support.
+-/
+theorem problem6EqualizedBasicOptimal_of_closed_certificate
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t) :
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    Problem6EqualizedBasicOptimal alpha v
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+      (problem6ClosedValue alpha v t) := by
+  dsimp
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos cert.denominator_bounds
+  refine
+    { item_eq := ?_
+      optimal := ?_
+      basic_feasible := ?_ }
+  · intro j
+    rw [problem6ClosedPolicy_zero_toReal halpha0 halpha1 hpos hpivot,
+      problem6ClosedPolicy_one_toReal halpha0 halpha1 hpos hpivot]
+    exact problem6Closed_item_eq t j halpha0 halpha1 hpos
+  · exact
+      ⟨problem6ClosedPolicy_feasible_of_denominatorBounds
+          halpha0 halpha1 hpos cert.denominator_bounds,
+        cert.upper_bound⟩
+  · exact problem6ClosedPolicy_basicFeasibleSupportCertificate
+      halpha0 halpha1 hpos hpivot
+
+/--
+Appendix D, Lemma 10, odd-center case without an external midpoint BFS
+hypothesis.  The midpoint equality-form optimum is the Lemma 5 closed-form
+policy at the center pivot.
+-/
+theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  let certHalf : Problem6ClosedOptimalityCertificate (1 / 2) v c :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hdec
+      (problem6ClosedPivotDenominatorBounds_half_center
+        (v := v) (t := c) hpos hcenter)
+  let hpivotHalf : Problem6ClosedNonnegativePivots (1 / 2) v c :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      certHalf.denominator_bounds
+  let ρhalf : TypePolicy 2 n :=
+    problem6ClosedPolicy (1 / 2) v c
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivotHalf
+  have hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf
+        (problem6ClosedValue (1 / 2) v c) := by
+    dsimp [ρhalf, hpivotHalf, certHalf]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos certHalf
+  exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter h hhalf
+
+/--
+Appendix D, Lemma 10, even-center case without an external midpoint BFS
+hypothesis.  The midpoint equality-form optimum is the Lemma 5 closed-form
+policy at the item immediately before its mirror.
+-/
+theorem lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  let certHalf : Problem6ClosedOptimalityCertificate (1 / 2) v c :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hdec
+      (problem6ClosedPivotDenominatorBounds_half_succ_center
+        (v := v) (t := c) hpos hsucc)
+  let hpivotHalf : Problem6ClosedNonnegativePivots (1 / 2) v c :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      certHalf.denominator_bounds
+  let ρhalf : TypePolicy 2 n :=
+    problem6ClosedPolicy (1 / 2) v c
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivotHalf
+  have hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf
+        (problem6ClosedValue (1 / 2) v c) := by
+    dsimp [ρhalf, hpivotHalf, certHalf]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos certHalf
+  exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
+
+/--
+Appendix D, Lemma 6 with Lemma 10, odd-center case, using the closed-form
+midpoint optimum instead of an external midpoint BFS hypothesis.
+-/
+theorem problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  have ht_le_c : t.val ≤ c.val := by
+    dsimp [t]
+    exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center_of_closed_half
+      hn halpha0 halpha1 halpha_half hpos hdec hcenter_c h
+  have ht_center : t.val ≤ (reverseItem t).val := by
+    have hc_arith : 2 * c.val + 1 = n :=
+      (val_eq_reverseItem_iff c).mp hcenter_c
+    have ht_arith : 2 * t.val + 1 ≤ n := by omega
+    exact (val_le_reverseItem_iff t).mpr ht_arith
+  exact
+    problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0 halpha1 halpha_half hpos hdec h (by simpa [t] using ht_center)
+
+/--
+Appendix D, Lemma 6 with Lemma 10, even-center case, using the closed-form
+midpoint optimum instead of an external midpoint BFS hypothesis.
+-/
+theorem problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_succ_center_of_closed_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  have ht_le_c : t.val ≤ c.val := by
+    dsimp [t]
+    exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of_closed_half
+      hn halpha0 halpha1 halpha_half hpos hdec hsucc h
+  have ht_center : t.val ≤ (reverseItem t).val := by
+    have hc_arith : 2 * c.val + 2 = n := by
+      simp [reverseItem] at hsucc
+      omega
+    have ht_arith : 2 * t.val + 1 ≤ n := by omega
+    exact (val_le_reverseItem_iff t).mpr ht_arith
+  exact
+    problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0 halpha1 halpha_half hpos hdec h (by simpa [t] using ht_center)
 
 /-- Feasible objective values for Problem 6's LP. -/
 def problem6LPValueSet {n : ℕ} [NeZero n]
