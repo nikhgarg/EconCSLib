@@ -2866,6 +2866,127 @@ theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_
     halpha0 halpha1 halpha_half hpos hdec hpivot hcenter
 
 /--
+Appendix D, Lemma 6 consequence from a closed-form optimality certificate,
+with the pivot-gap side condition removed.
+-/
+theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_closed_certificate_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_closed_certificate_alpha_le_half_of_pivot_le_reverse
+    halpha0 halpha1 halpha_half hpos hdec cert hcenter
+
+/--
+Appendix D, Lemma 6 consequence for the paper's equality-form optimal BFS
+package, conditional on the selected pivot being at or before its mirror.
+-/
+theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val) :
+    let t : Item n := TypePolicy.lastActiveTypeZero ρ
+    let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+      problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+        hn halpha0 halpha1 hpos hdec h
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_alpha_le_half_of_pivot_le_reverse
+    hn halpha0 halpha1 halpha_half hpos hdec h hcenter
+
+/--
+Appendix D, Lemma 6 stitched with Lemma 10 for the paper's equality-form
+optimal BFS package, odd-center case.
+-/
+theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_alpha_le_half_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    let t : Item n := TypePolicy.lastActiveTypeZero ρ
+    let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+      problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+        hn halpha0 halpha1 hpos hdec h
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_alpha_le_half_center
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter_c h hhalf
+
+/--
+Appendix D, Lemma 6 stitched with Lemma 10 for the paper's equality-form
+optimal BFS package, even-center case.
+-/
+theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_alpha_le_half_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    let t : Item n := TypePolicy.lastActiveTypeZero ρ
+    let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+      problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+        hn halpha0 halpha1 hpos hdec h
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_equalizedBasicOptimal_alpha_le_half_succ_center
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
+
+/--
 Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
 every pre-pivot item to a post-pivot mirror.
 -/
