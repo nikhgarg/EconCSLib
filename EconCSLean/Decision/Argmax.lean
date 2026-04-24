@@ -1,5 +1,7 @@
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Finset.Max
 import Mathlib.Data.Real.Basic
 
 open scoped BigOperators
@@ -42,6 +44,34 @@ theorem averageScore_le_of_isPointwiseMax {ι α : Type*} [Fintype ι]
   exact div_le_div_of_nonneg_right
     (sum_score_le_of_isPointwiseMax score hopt)
     (Nat.cast_nonneg (Fintype.card ι))
+
+/--
+Every real-valued objective over finite deterministic decision rules has a
+maximizing rule.
+
+This is the reusable finite-existence core behind paper statements that define
+an optimization over deterministic rules and then assert an optimal rule exists.
+-/
+theorem exists_maximizingDecisionRule {ι α : Type*}
+    [Fintype ι] [Fintype α] [Nonempty α]
+    (objective : (ι → α) → ℝ) :
+    ∃ opt : ι → α, ∀ rule : ι → α, objective rule ≤ objective opt := by
+  classical
+  let defaultRule : ι → α := fun _ => Classical.choice inferInstance
+  have hnonempty : (Finset.univ : Finset (ι → α)).Nonempty :=
+    ⟨defaultRule, by simp⟩
+  obtain ⟨opt, _hmem, hopt⟩ :=
+    Finset.exists_mem_eq_sup'
+      (s := (Finset.univ : Finset (ι → α)))
+      (H := hnonempty) (f := objective)
+  refine ⟨opt, ?_⟩
+  intro rule
+  have hle :
+      objective rule ≤
+        (Finset.univ : Finset (ι → α)).sup' hnonempty objective :=
+    Finset.le_sup' (s := (Finset.univ : Finset (ι → α)))
+      (f := objective) (by simp)
+  rwa [hopt] at hle
 
 end Decision
 end EconCSLean

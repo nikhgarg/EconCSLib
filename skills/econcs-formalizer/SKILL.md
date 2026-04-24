@@ -169,6 +169,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 
 - For constructive paper proofs, formalize local invariants first, then assemble
   the main theorem by induction or finite recursion.
+- For finite deterministic-rule optimization statements, first prove a generic
+  maximizer-existence theorem over the finite function type `(instances →
+  actions)`. Then keep paper folders responsible only for defining the
+  paper-specific real-valued objective and applying the generic existence
+  result.
 - For proofs whose hard part is a known paper lemma, package the lemma as a
   named predicate or certificate and prove the surrounding algebra/induction
   unconditionally.
