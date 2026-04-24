@@ -61,6 +61,7 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Competitive-ratio certificate | `CompetitiveRatioCertificate` | formalized certificate interface | `EconCSLean/Online/AdWords.lean` | certificate must be supplied by algorithm analysis |
 | Primal-dual competitive certificate | `paper_adwords_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV certificate for ratio `1 - 1 / Real.exp 1` and formalize small-bids limiting argument |
 | Balance/MSVV `1 - 1/e` theorem seam | `paper_adwords_balance_msvv_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV primal-dual certificate |
+| History-accounting objective seam | `MsvvHistoryAccountingCertificate`, `paper_adwords_balance_msvv_objective_bound_of_history_accounting` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | prove the advertiser-alpha plus Balance-charge accounting inequality with the explicit max-bid error |
 | Balance/MSVV objective-bound seam | `MsvvObjectiveBoundCertificate`, `paper_adwords_balance_msvv_competitive_of_objective_bound` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | prove the scaled dual-objective bound for the assignment-induced MSVV duals |
 | Full MSVV competitive theorem | none | not started | none | online history/algorithm execution, tradeoff-revealing LP, and small-bids analysis |
 
@@ -76,9 +77,10 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    `MsvvObjectiveBoundCertificate` for the Balance run. The non-exhausted and
    exhausted query-dual charges and their history/query-dual summation forms are
    now formalized. The recursive Balance charge is also bounded by actual run
-   revenue. The next useful lemma is the advertiser-alpha increment accounting
-   bound that combines the advertiser part of the dual objective with the
-   already-bounded Balance charge, with the explicit max-bid error kept as the
-   small-bids seam.
+   revenue. The final remaining finite seam is now packaged as
+   `MsvvHistoryAccountingCertificate`: prove the advertiser-alpha increment
+   accounting bound that combines the advertiser part of the dual objective
+   with the already-bounded Balance charge, with the explicit max-bid error kept
+   as the small-bids seam.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
    isolate the small-bids limiting argument as a separate theorem seam.

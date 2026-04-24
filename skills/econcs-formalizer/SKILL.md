@@ -210,7 +210,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `historyFinset history = Finset.univ`. In parallel, define a recursive
   revenue-increment trace for the same fold, prove final run revenue equals the
   trace from the initial state, and prove the recursive Balance charge is
-  bounded by that revenue trace before attacking advertiser-alpha accounting.
+  bounded by that revenue trace. Package the remaining hard analytic step as a
+  history-accounting certificate whose only substantive field is the scaled
+  advertiser-alpha plus Balance-charge plus explicit max-bid-error inequality;
+  then prove the existing objective-bound certificate from it.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

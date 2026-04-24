@@ -535,6 +535,22 @@ theorem paper_adwords_balance_msvv_competitive_of_primal_dual_certificate
     AdWordsInstance.msvvRatio hcert
 
 /--
+History-accounting seam: once the remaining advertiser-alpha plus
+Balance-charge inequality is proved with the explicit small-bids error, the
+finite MSVV objective-bound certificate follows automatically.
+-/
+theorem paper_adwords_balance_msvv_objective_bound_of_history_accounting
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query) {ε : ℝ}
+    (hcert : I.MsvvHistoryAccountingCertificate history ε) :
+    I.MsvvObjectiveBoundCertificate history := by
+  exact AdWordsInstance.msvvObjectiveBoundCertificate_of_historyAccounting
+    I history hcert
+
+/--
 Final finite MSVV theorem seam: the Balance run is `1 - 1/e` competitive once
 the single scaled dual-objective bound for the assignment-induced MSVV duals is
 proved.
