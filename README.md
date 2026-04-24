@@ -36,10 +36,12 @@ The broader EC Test-of-Time track has also started:
 - `EconCSLean/Decision/*` for reusable finite decision-rule lemmas
 - `EconCSLean/Graph/*` for reusable finite directed-relation/cycle lemmas
 - `EconCSLean/Math/*` for reusable algebraic proof helpers
+- `EconCSLean/Statistics/*` for reusable finite/statistical algebra
 - `EconCSLean/FairDivision/*` for the 2025 Test-of-Time indivisible-goods paper
 - `EconCSLean/Auction/*` for the 2021 digital-goods auction paper and later
   auction papers
 - `DiscretizationBias/*` for the current author-paper formalization pass
+- `ProducerFairness/*` for the current prior-weighted rating-system pass
 
 ## Current Continuation Target
 

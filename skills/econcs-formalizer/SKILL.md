@@ -169,6 +169,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - For inequality-heavy proofs, use certificate structures with fields matching
   the exact nonnegativity, strict positivity, and comparison obligations needed
   by the final theorem.
+- For strict monotonicity claims, check boundary cases before proving the
+  general theorem. Bernoulli/probability variance terms often become
+  identically zero at `q = 0` or `q = 1`, so a paper statement that says
+  "strictly decreasing" may need an explicit interior assumption.
 - Prefer sum-level certificates when the theorem is about a total expectation
   or finite sum. Do not impose candidatewise nonnegativity merely because it
   would make a `sum_univ_pos_of_pos_of_nonneg` proof convenient; in ranking and

@@ -38,3 +38,6 @@ name = "AccuracyDiversity"
 
 [[lean_lib]]
 name = "DiscretizationBias"
+
+[[lean_lib]]
+name = "ProducerFairness"
