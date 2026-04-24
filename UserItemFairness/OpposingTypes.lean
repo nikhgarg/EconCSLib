@@ -10002,6 +10002,118 @@ theorem lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
     hpos hdec hpivot hcenter
 
 /--
+Appendix D, Lemma 8 finite-stitch core for closed-form certificates: a finite
+chain may either stay inside one certified same-pivot interval, where Lemma 11
+applies, or repeat the same `α` at a boundary.  This is the closed-form version
+of the paper's continuity stitch across adjacent `A(t)` intervals.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_of_closedPivot_cert_or_equal_alpha_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcert :
+      ∀ i, ∀ hi : i ≤ r,
+        Problem6ClosedOptimalityCertificate (alphaSeq i) v (pivotSeq i))
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        pivotSeq i = pivotSeq (i + 1) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (pivotSeq i).val ≤ (reverseItem (pivotSeq i)).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  induction r with
+  | zero =>
+      exact le_rfl
+  | succ r ih =>
+      have hprev :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq 0) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) := by
+        exact ih
+          (fun i hi => halpha0 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha1 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hcert i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hpivot_or_eq i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hcenter i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+      have hlast :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq (r + 1)) v) := by
+        rcases hpivot_or_eq r (Nat.lt_succ_self r) with hpivot | halpha_eq
+        · have cert' :
+              Problem6ClosedOptimalityCertificate (alphaSeq (r + 1)) v
+                (pivotSeq r) := by
+            simpa [hpivot] using hcert (r + 1) le_rfl
+          exact
+            lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert
+              (halpha0 r (Nat.le_succ r))
+              (halpha1 r (Nat.le_succ r))
+              (halpha0 (r + 1) le_rfl)
+              (halpha1 (r + 1) le_rfl)
+              (hstep r (Nat.lt_succ_self r))
+              hpos hdec
+              (hcenter r (Nat.lt_succ_self r))
+              (hcert r (Nat.le_succ r))
+              cert'
+        · simpa [halpha_eq] using
+            (le_rfl :
+              TypeWeightedRecommendationModel.optimalItemFairness
+                (twoTypeReducedModel (alphaSeq r) v) ≤
+              TypeWeightedRecommendationModel.optimalItemFairness
+                (twoTypeReducedModel (alphaSeq r) v))
+      exact hprev.trans hlast
+
+/--
+Appendix D, Lemma 8 finite-stitch core for closed-form denominator bounds:
+denominator-bounded closed pivots supply the optimality certificates required
+by the certified stitch theorem.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_of_closedPivotBounds_or_equal_alpha_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (pivotSeq : ℕ → Item n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hbounds :
+      ∀ i, ∀ hi : i ≤ r,
+        Problem6ClosedPivotDenominatorBounds (alphaSeq i) v (pivotSeq i))
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        pivotSeq i = pivotSeq (i + 1) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (pivotSeq i).val ≤ (reverseItem (pivotSeq i)).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_of_closedPivot_cert_or_equal_alpha_chain
+      r alphaSeq pivotSeq halpha0 halpha1 hstep hpos hdec
+      (fun i hi =>
+        problem6ClosedOptimalityCertificate_of_denominatorBounds
+          (halpha0 i hi) (halpha1 i hi) hpos hdec (hbounds i hi))
+      hpivot_or_eq hcenter
+
+/--
 Appendix D, Lemma 8 canonical finite-stitch core with explicit boundary
 repeats: a finite chain may either stay inside one `A(t)` interval for the
 canonical Lemma 5 first crossing pivot, where Lemma 11 applies, or repeat the
