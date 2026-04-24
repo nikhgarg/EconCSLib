@@ -2803,6 +2803,46 @@ theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
     C.toFeasiblePrefixRuleFamily
       |>.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
 
+/--
+If a richer integral-choice model has realized normalized revenue bounded pointwise
+by the induced capped-prefix payoff, then the same asymptotic lower-bound
+statement applies to realized revenue.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta_of_realized_revenue
+    (C : BMatchingTheorem9IntegralPrefixChoiceFamily Algorithm)
+    (normalizedRevenue :
+      (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ)
+    (hrealized_le_capped :
+      ∀ N algorithm permutation,
+        normalizedRevenue N algorithm permutation ≤
+          C.normalizedRevenue N algorithm permutation) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => normalizedRevenue N algorithm permutation) := by
+  intro δ hδ
+  obtain
+      ⟨N0, hN0⟩ :=
+    C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta δ hδ
+  refine ⟨N0, ?_⟩
+  intro N hN randomizedAlgorithm hforall
+  have hboundedPayoff :
+      ¬ ∀ permutation,
+        AdWordsInstance.msvvRatio + δ <
+          pmfExp randomizedAlgorithm
+            (fun algorithm => C.normalizedRevenue N algorithm permutation) :=
+    hN0 N hN randomizedAlgorithm
+  exact hboundedPayoff (fun permutation =>
+    lt_of_lt_of_le
+      (hforall permutation)
+      (pmfExp_le_pmfExp_of_forall_le randomizedAlgorithm
+        (fun algorithm => normalizedRevenue N algorithm permutation)
+        (fun algorithm => C.normalizedRevenue N algorithm permutation)
+        (fun algorithm => hrealized_le_capped N algorithm permutation)))
+
 end BMatchingTheorem9IntegralPrefixChoiceFamily
 
 namespace BMatchingTheorem9LayerCountFamilyCertificate
