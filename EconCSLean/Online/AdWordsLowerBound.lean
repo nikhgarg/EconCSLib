@@ -226,6 +226,40 @@ structure BMatchingRoundAllocationRevenueCertificate
   revenueBound_le_ratio :
     theorem9NormalizedRevenueUpperBound N ≤ ratio
 
+/--
+Family-level certificate for the asymptotic Section 7 lower bound. It packages
+the deterministic round-allocation calculation for every market size together
+with the eventual harmonic-cap comparison.
+-/
+structure BMatchingTheorem9FamilyCertificate
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] where
+  normalizedRevenue :
+    (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ
+  expectedRoundBidderAllocation :
+    (N : ℕ) → Algorithm N → Fin N → Fin N → ℝ
+  deterministicAverage_le_cappedExpectedSpend :
+    ∀ N algorithm,
+      pmfExp (uniformPermutationDistribution N)
+          (fun permutation => normalizedRevenue N algorithm permutation) ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              expectedRoundBidderAllocation N algorithm round bidder)) /
+          (N : ℝ)
+  expectedRoundBidderAllocation_le :
+    ∀ N algorithm round bidder,
+      expectedRoundBidderAllocation N algorithm round bidder ≤
+        if (round : ℕ) ≤ (bidder : ℕ) then
+          1 / ((N - (round : ℕ) : ℕ) : ℝ)
+        else
+          0
+  harmonic_eventually_le_msvvRatio_add :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        theorem9NormalizedRevenueUpperBound N ≤
+          AdWordsInstance.msvvRatio + δ
+
 namespace BMatchingPermutationLowerBoundCertificate
 
 variable {N : ℕ} {Algorithm : Type*}
@@ -389,6 +423,32 @@ theorem theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
     revenueBound_le_ratio := hN0 N hN
   }
   exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+namespace BMatchingTheorem9FamilyCertificate
+
+variable {Algorithm : ℕ → Type*}
+variable [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+
+/--
+Family-level Theorem 9 endpoint from the packaged lower-bound certificate.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    (C : BMatchingTheorem9FamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact
+    theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+      C.normalizedRevenue C.expectedRoundBidderAllocation
+      C.deterministicAverage_le_cappedExpectedSpend
+      C.expectedRoundBidderAllocation_le
+      C.harmonic_eventually_le_msvvRatio_add
+
+end BMatchingTheorem9FamilyCertificate
 
 end Online
 end EconCSLean

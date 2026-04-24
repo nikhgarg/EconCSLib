@@ -295,7 +295,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   before proving the harmonic cap; this keeps the symmetry argument and the
   summation argument separate. The finite harmonic cap may be above
   `1 - 1/e`, so state the paper endpoint as an eventual additive-`δ` theorem
-  rather than as an exact finite inequality.
+  rather than as an exact finite inequality. Package the final lower-bound
+  endpoint as a family structure (`BMatchingTheorem9FamilyCertificate` in
+  `EconCSLean`) so future work instantiates the symmetry and harmonic-limit
+  fields directly.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

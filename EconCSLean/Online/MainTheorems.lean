@@ -812,6 +812,24 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
       hharmonic
 
 /--
+Paper-level Section 7 / Theorem 9 lower-bound endpoint. The certificate
+packages the paper's random-permutation construction, deterministic
+round-allocation expectation inequalities, and harmonic-cap limiting bound.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9FamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the
 advertised competitive-ratio inequality against the offline optimum.
 
