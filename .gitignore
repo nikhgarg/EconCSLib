@@ -3,6 +3,7 @@
 /.build/
 /build/
 /lake-packages/
+/generated-docs/
 
 # Lean compiler artifacts if generated outside .lake
 *.olean
