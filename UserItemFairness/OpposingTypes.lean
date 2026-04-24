@@ -8195,6 +8195,56 @@ theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_all_f
             hcanon.1 hcanon.2))
 
 /--
+Proposition-1-shaped upper-bound bridge: if every reduced `γ = 1` feasible
+policy has an equalized/shared canonical representative with weakly larger
+type fairness, then the selected equality-form optimal BFS policy realizes the
+reduced `U^*_min(1, α)` optimum.
+-/
+theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hcanonical :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact
+    problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_upper_bound
+      halpha0 halpha1 hpos h
+      (fun ρ' hfeas' => by
+        rcases hcanonical ρ' hfeas' with
+          ⟨ρbar, hbar_feas, hbar_eq, hbar_shared, hle_bar⟩
+        have hbar_type :
+            TypeWeightedRecommendationModel.typeFairness
+                (twoTypeReducedModel alpha v) ρbar =
+              TypeWeightedRecommendationModel.typeFairness
+                (twoTypeReducedModel alpha v) ρ :=
+          problem6EqualizedBasicOptimal_typeFairness_eq_of_feasibleAtLevel_one_equalized_shared
+            hn halpha0 halpha1 hpos hdec h hbar_feas hbar_eq hbar_shared
+        exact hle_bar.trans hbar_type.le)
+
+/--
 Closed-form Problem 6 optimal-value theorem: after the paper-specific
 denominator and upper-bound certificate is supplied, the LP optimum is the
 Lemma 5 closed value.

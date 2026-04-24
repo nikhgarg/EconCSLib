@@ -2049,6 +2049,44 @@ theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_o
     hn halpha0 halpha1 hpos hdec h hcanonical
 
 /--
+Proposition-1-shaped upper-bound bridge: if every reduced `γ = 1` feasible
+policy has an equalized/shared canonical representative with weakly larger type
+fairness, then the selected equality-form optimal BFS policy realizes
+`U^*_min(1, α)`.
+-/
+theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hcanonical :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+    hn halpha0 halpha1 hpos hdec h hcanonical
+
+/--
 Appendix D, Lemma 5: the closed-form value for any sparse equalized
 Problem 6 solution.
 -/
