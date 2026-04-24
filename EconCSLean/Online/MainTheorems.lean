@@ -766,10 +766,118 @@ theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_round_allo
   exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 /--
+Section 7 / Theorem 9 wrapper from realized per-permutation allocations. The
+finite expectation algebra from pointwise capped spend to capped expected spend
+is proved in Lean; the remaining paper-specific fields are the symmetry bound
+on expected round/bidder allocation and the harmonic-cap comparison.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_pointwise_allocation_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    {ratio : ℝ}
+    (C : BMatchingPointwiseAllocationRevenueCertificate N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+/--
+Section 7 / Theorem 9 wrapper from the paper's symmetry/capacity calculation:
+eligible positions have equal expected allocation under the random permutation
+distribution, each round allocates at most one unit, and ineligible positions
+receive zero.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_symmetric_pointwise_allocation_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    {ratio : ℝ}
+    (C : BMatchingSymmetricPointwiseAllocationRevenueCertificate
+      N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+/--
+Section 7 / Theorem 9 harmonic-cap wrapper: the logarithmic tail-spend bound
+implies the finite layer-count estimate used in the asymptotic lower bound.
+-/
+theorem paper_adwords_theorem9_harmonic_layer_count_bound_of_log_spend_cap
+    {N M : ℕ} (hN : 0 < N) (hM : 0 < M)
+    (hlog :
+      ∀ bidder : Fin N,
+        0 < N - (bidder : ℕ) - 1 →
+          theorem9BidderSpendUpperBound N bidder ≤
+            Real.log ((N : ℝ) / ((N - (bidder : ℕ) - 1 : ℕ) : ℝ))) :
+    theorem9HarmonicLayerCountBound N M := by
+  exact theorem9HarmonicLayerCountBound_of_logSpendCap hN hM hlog
+
+/--
+Section 7 / Theorem 9 harmonic-prefix wrapper: each capped bidder spend is
+bounded by the logarithmic tail ratio used in the paper's layer-count argument.
+-/
+theorem paper_adwords_theorem9_bidder_spend_upper_bound_le_log_tail
+    {N : ℕ} (bidder : Fin N)
+    (htail : 0 < N - (bidder : ℕ) - 1) :
+    theorem9BidderSpendUpperBound N bidder ≤
+      Real.log ((N : ℝ) / ((N - (bidder : ℕ) - 1 : ℕ) : ℝ)) := by
+  exact theorem9BidderSpendUpperBound_le_log_tail bidder htail
+
+/--
+Section 7 / Theorem 9 finite layer-count estimate. The logarithmic spend bound
+is formalized, so the layer-count hypothesis is no longer an external field.
+-/
+theorem paper_adwords_theorem9_harmonic_layer_count_bound
+    {N M : ℕ} (hN : 0 < N) (hM : 0 < M) :
+    theorem9HarmonicLayerCountBound N M := by
+  exact theorem9HarmonicLayerCountBound_of_pos hN hM
+
+/--
+Section 7 / Theorem 9 finite harmonic comparison. Given the finite layer-count
+estimate, the explicit harmonic revenue cap is at most `1 - 1/e` plus the grid
+errors `1/M + 1/N`.
+-/
+theorem paper_adwords_theorem9_normalized_revenue_upper_bound_le_msvv_ratio_add_grid_errors
+    {N M : ℕ} (hN : 0 < N) (hM : 0 < M)
+    (hlayer : theorem9HarmonicLayerCountBound N M) :
+    theorem9NormalizedRevenueUpperBound N ≤
+      AdWordsInstance.msvvRatio + 1 / (M : ℝ) + 1 / (N : ℝ) := by
+  exact theorem9NormalizedRevenueUpperBound_le_msvvRatio_add_gridErrors
+    hN hM hlayer
+
+/--
+Section 7 / Theorem 9 asymptotic harmonic comparison from diagonal finite
+layer-count bounds.
+-/
+theorem paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta_of_layer_count_bound
+    (hlayer : ∀ N : ℕ, 0 < N → theorem9HarmonicLayerCountBound N N) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        theorem9NormalizedRevenueUpperBound N ≤
+          AdWordsInstance.msvvRatio + δ := by
+  exact theorem9_harmonic_eventually_le_msvvRatio_add_of_layerCountBound
+    hlayer
+
+/--
+Section 7 / Theorem 9 harmonic-cap theorem: the explicit finite harmonic cap is
+eventually within every positive additive error of `1 - 1/e`.
+-/
+theorem paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        theorem9NormalizedRevenueUpperBound N ≤
+          AdWordsInstance.msvvRatio + δ := by
+  exact theorem9_harmonic_eventually_le_msvvRatio_add
+
+/--
 Section 7 / Theorem 9 asymptotic lower-bound wrapper. Once the deterministic
-round-allocation expectation inequalities and the harmonic-cap limit are
-supplied for a family of market sizes, no randomized algorithm family beats
-`1 - 1/e + δ` on every sufficiently large permutation instance.
+round-allocation expectation inequalities are supplied for a family of market
+sizes, the formalized harmonic-cap limit gives that no randomized algorithm
+family beats `1 - 1/e + δ` on every sufficiently large permutation instance.
 -/
 theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta
     {Algorithm : ℕ → Type*}
@@ -793,12 +901,7 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
           if (round : ℕ) ≤ (bidder : ℕ) then
             1 / ((N - (round : ℕ) : ℕ) : ℝ)
           else
-            0)
-    (hharmonic :
-      ∀ δ : ℝ, 0 < δ →
-        ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
-          theorem9NormalizedRevenueUpperBound N ≤
-            AdWordsInstance.msvvRatio + δ) :
+            0) :
     ∀ δ : ℝ, 0 < δ →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
         ∀ randomizedAlgorithm : PMF (Algorithm N),
@@ -809,17 +912,105 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
   exact
     theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
       normalizedRevenue expectedRoundBidderAllocation haverage hexpected_le
-      hharmonic
+      theorem9_harmonic_eventually_le_msvvRatio_add
 
 /--
 Paper-level Section 7 / Theorem 9 lower-bound endpoint. The certificate
 packages the paper's random-permutation construction, deterministic
-round-allocation expectation inequalities, and harmonic-cap limiting bound.
+round-allocation expectation inequalities; the harmonic-cap limit is proved
+internally.
 -/
 theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_family_certificate
     {Algorithm : ℕ → Type*}
     [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
     (C : BMatchingTheorem9FamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 lower-bound endpoint from realized
+per-permutation allocation variables. This wrapper derives the finite
+expected-allocation certificate internally for every market size.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_pointwise_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9PointwiseFamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint from the symmetry/capacity form of
+the deterministic lower-bound calculation.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_symmetric_pointwise_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9SymmetricPointwiseFamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint from round-allocation inequalities
+and finite layer-count harmonic bounds.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_layer_count_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9LayerCountFamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint from pointwise allocations and
+finite layer-count harmonic bounds.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_pointwise_layer_count_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9PointwiseLayerCountFamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint from symmetry/capacity allocations
+and finite layer-count harmonic bounds.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_symmetric_pointwise_layer_count_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9SymmetricPointwiseLayerCountFamilyCertificate
+      Algorithm) :
     ∀ δ : ℝ, 0 < δ →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
         ∀ randomizedAlgorithm : PMF (Algorithm N),

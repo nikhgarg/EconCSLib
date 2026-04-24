@@ -203,6 +203,49 @@ theorem pmfExp_le_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
                     rw [pmfToRealSum μ]
                     ring
 
+/-- Monotonicity of finite PMF expectation. -/
+theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f g : α → ℝ)
+    (h : ∀ a, f a ≤ g a) :
+    pmfExp μ f ≤ pmfExp μ g := by
+  unfold pmfExp
+  exact Finset.sum_le_sum (by
+    intro a _
+    exact mul_le_mul_of_nonneg_left (h a) ENNReal.toReal_nonneg)
+
+/-- Finite sums commute with finite PMF expectation. -/
+theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (s : Finset ι) (f : ι → α → ℝ) :
+    pmfExp μ (fun a => ∑ i ∈ s, f i a) =
+      ∑ i ∈ s, pmfExp μ (f i) := by
+  unfold pmfExp
+  calc
+    ∑ a : α, (μ a).toReal * (∑ i ∈ s, f i a)
+        = ∑ a : α, ∑ i ∈ s, (μ a).toReal * f i a := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          rw [Finset.mul_sum]
+    _ = ∑ i ∈ s, ∑ a : α, (μ a).toReal * f i a := by
+          exact Finset.sum_comm
+
+/--
+The capped function `min 1` is expectation-subadditive in the only form needed
+for finite allocation caps: the expectation of a capped random variable is at
+most the cap of its expectation.
+-/
+theorem pmfExp_min_one_le_min_one_pmfExp {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) :
+    pmfExp μ (fun a => min 1 (f a)) ≤ min 1 (pmfExp μ f) := by
+  refine le_min ?_ ?_
+  · exact pmfExp_le_of_forall_le μ (fun a => min 1 (f a)) 1
+      (fun a => min_le_left 1 (f a))
+  · unfold pmfExp
+    exact Finset.sum_le_sum (by
+      intro a _
+      exact mul_le_mul_of_nonneg_left (min_le_right 1 (f a))
+        ENNReal.toReal_nonneg)
+
 /-- A finite PMF expectation is strictly above a constant if every value is. -/
 theorem pmfExp_lt_of_forall_lt {α : Type*}
     [Fintype α] [DecidableEq α] [Nonempty α]

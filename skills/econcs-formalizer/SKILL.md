@@ -52,6 +52,12 @@ the Lean statements against the paper.
   and access date. If the project policy allows PDFs, keep the paper PDF there;
   otherwise do not commit the PDF and make the README link to the exact version
   being formalized.
+- For active paper folders, feel free to download the source PDF locally so the
+  proof text can be searched repeatedly without re-querying the internet. Add
+  the downloaded PDF path or a narrow folder pattern to `.gitignore` unless the
+  project explicitly wants PDFs committed. When available, also check the arXiv
+  or publisher HTML version; it is often easier to search and quote-map than a
+  PDF.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
@@ -293,12 +299,30 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `1 - 1/e` is not hidden inside a generic certificate. Also isolate the
   paper's `E[q_ij] <= 1 / (N - i + 1)` claim as a round-allocation certificate
   before proving the harmonic cap; this keeps the symmetry argument and the
-  summation argument separate. The finite harmonic cap may be above
-  `1 - 1/e`, so state the paper endpoint as an eventual additive-`δ` theorem
-  rather than as an exact finite inequality. Package the final lower-bound
-  endpoint as a family structure (`BMatchingTheorem9FamilyCertificate` in
-  `EconCSLean`) so future work instantiates the symmetry and harmonic-limit
-  fields directly.
+  summation argument separate. If the model has realized per-instance
+  allocation variables, add a pointwise allocation certificate and prove the
+  finite-expectation algebra from pointwise capped spend to capped expected
+  spend. Then, when the paper argues by uniform random order, add a
+  symmetry/capacity certificate: ineligible positions get zero allocation, each
+  round has total eligible allocation at most one, eligible positions have equal
+  expected allocation, and the eligible set cardinality supplies the
+  `1 / (N - i + 1)` denominator. For the harmonic cap, split the proof into the
+  logarithmic tail-spend bound, a finite layer-count comparison, and a separate
+  exponential-grid estimate. In `EconCSLean`, these are now represented by
+  `theorem9BidderSpendUpperBound_le_log_tail`,
+  `theorem9HarmonicLayerCountBound_of_pos`,
+  `theorem9ExponentialGridUpperSum_le_msvvRatio`, and
+  `theorem9_harmonic_eventually_le_msvvRatio_add`. The finite harmonic cap may
+  be above `1 - 1/e`, so state the paper endpoint as an eventual
+  additive-`δ` theorem rather than as an exact finite inequality. Package the
+  final lower-bound endpoint as a family structure
+  (`BMatchingTheorem9FamilyCertificate`, or when using realized allocations,
+  `BMatchingTheorem9PointwiseFamilyCertificate` /
+  `BMatchingTheorem9SymmetricPointwiseFamilyCertificate` in `EconCSLean`) so
+  future work instantiates only the online-information symmetry and
+  deterministic allocation fields directly. Do not add a separate
+  harmonic-limit field to new Section 7 family certificates; use the built-in
+  harmonic theorem instead.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
