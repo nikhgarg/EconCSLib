@@ -568,6 +568,34 @@ theorem paper_lemma9_pairShare_strictly_increases_in_alpha
     halpha0 halpha1 halpha0' halpha1' hlt hpos
 
 /--
+Appendix D, Lemma 9, indexed form: `q_j(α)` weakly increases as `α`
+increases.
+-/
+theorem paper_lemma9_pairShare_weakly_increases_in_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j ≤ pairShare alpha' v j := by
+  exact pairShare_mono_alpha j
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/--
+Appendix D, Lemma 9 consequence: `q_j(α)⁻¹` weakly decreases as `α`
+increases.
+-/
+theorem paper_lemma9_pairShare_inv_weakly_decreases_in_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (pairShare alpha' v j)⁻¹ ≤ (pairShare alpha v j)⁻¹ := by
+  exact pairShare_inv_antitone_alpha j
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/--
 Appendix D, Lemma 9, indexed form: for a strictly decreasing value vector,
 `q_j(α)` strictly decreases as the item index `j` increases.
 -/
@@ -2529,6 +2557,36 @@ theorem paper_problem6_equalizedBasicOptimal_exists_closed
     halpha0 halpha1 hpos hdec
 
 /--
+Appendix D, Lemma 5 existence, paper-facing form: Problem 6 has an
+equality-form optimal BFS representative.
+-/
+theorem paper_problem6_equalizedBasicOptimal_exists
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ (ρ : TypePolicy 2 n) (ell : ℝ),
+      Problem6EqualizedBasicOptimal alpha v ρ ell := by
+  exact problem6EqualizedBasicOptimal_exists
+    halpha0 halpha1 hpos hdec
+
+/--
+Problem 6/Problem 1 bridge: the Lemma 5 equality-form optimum supplies a
+reduced `γ = 1` feasible policy.
+-/
+theorem paper_problem6_equalizedBasicOptimal_feasibleAtLevel_one_exists
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ (ρ : TypePolicy 2 n) (ell : ℝ),
+      Problem6EqualizedBasicOptimal alpha v ρ ell ∧
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ := by
+  exact problem6EqualizedBasicOptimal_feasibleAtLevel_one_exists
+    halpha0 halpha1 hpos hdec
+
+/--
 Appendix D, Lemma 4/5 bridge: an equalized optimal Problem 6 policy supplies
 the closed-form optimality certificate at its active sparse pivot.
 -/
@@ -3567,6 +3625,92 @@ theorem paper_theorem3_one_sub_pairShare_inv_mono_alpha
     (1 - pairShare alpha v j)⁻¹ ≤
       (1 - pairShare alpha' v j)⁻¹ := by
   exact one_sub_pairShare_inv_mono_alpha j
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/-- Appendix D, Lemma 5: fixed-pivot left inverse sum decreases with `α`. -/
+theorem paper_lemma5_problem6LeftSum_antitone_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6LeftSum alpha' v t ≤ problem6LeftSum alpha v t := by
+  exact problem6LeftSum_antitone_alpha t
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/-- Appendix D, Lemma 5: fixed-pivot right inverse-complement sum increases with `α`. -/
+theorem paper_lemma5_problem6RightSum_mono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6RightSum alpha v t ≤ problem6RightSum alpha' v t := by
+  exact problem6RightSum_mono_alpha t
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/-- Appendix D, Lemma 5: the fixed-pivot crossing gap decreases with `α`. -/
+theorem paper_lemma5_problem6PivotGap_antitone_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6PivotGap alpha' v t ≤ problem6PivotGap alpha v t := by
+  exact problem6PivotGap_antitone_alpha t
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/--
+Appendix D, Lemma 5 crossing monotonicity: if pivot `t` crosses at the larger
+`α'`, then it has already crossed at the smaller `α`.
+-/
+theorem paper_lemma5_problem6PivotGap_lower_crossing_of_alpha_le
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcross' :
+      - (pairShare alpha' v t)⁻¹ ≤ problem6PivotGap alpha' v t) :
+    - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t := by
+  exact problem6PivotGap_lower_crossing_of_alpha_le
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hcross'
+
+/-- Appendix D, Lemma 5: the lower crossing set is nonempty. -/
+theorem paper_lemma5_problem6PivotCrossingSet_nonempty
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (problem6PivotCrossingSet alpha v).Nonempty := by
+  exact problem6PivotCrossingSet_nonempty
+    halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 5: the canonical first crossing pivot satisfies the
+closed-form denominator bounds.
+-/
+theorem paper_lemma5_problem6FirstClosedPivot_denominatorBounds
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    Problem6ClosedPivotDenominatorBounds alpha v
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos) := by
+  exact problem6FirstClosedPivot_denominatorBounds
+    halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 7-style monotonicity for the canonical Lemma 5 pivot:
+as `α` increases, the first crossing pivot weakly moves right.
+-/
+theorem paper_lemma7_problem6FirstClosedPivot_mono_alpha
+    {n : ℕ} [NeZero n] {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+      (problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos).val := by
+  exact problem6FirstClosedPivot_mono_alpha
     halpha0 halpha1 halpha0' halpha1' halpha_le hpos
 
 /--

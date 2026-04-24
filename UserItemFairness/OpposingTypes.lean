@@ -479,6 +479,23 @@ theorem pairShare_strictMono_alpha
   exact typeOneShare_strictMono_alpha
     halpha0 halpha1 halpha0' halpha1' hlt (hpos j) (hpos (reverseItem j))
 
+/--
+Appendix D, Lemma 9, non-strict indexed alpha-monotonicity:
+`q_j(α)` is weakly increasing in `α`.
+-/
+theorem pairShare_mono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v j ≤ pairShare alpha' v j := by
+  rcases lt_or_eq_of_le halpha_le with hlt | heq
+  · exact (pairShare_strictMono_alpha j
+      halpha0 halpha1 halpha0' halpha1' hlt hpos).le
+  · subst alpha'
+    exact le_rfl
+
 /-- The indexed share `q_j(α)` is positive. -/
 theorem pairShare_pos
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
@@ -494,6 +511,23 @@ theorem pairShare_lt_one
     (hpos : ∀ j : Item n, 0 < v j) :
     pairShare alpha v j < 1 := by
   exact typeOneShare_lt_one halpha0 halpha1 (hpos j) (hpos (reverseItem j))
+
+/-- The reciprocal `q_j(α)⁻¹` is weakly decreasing in `α`. -/
+theorem pairShare_inv_antitone_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (pairShare alpha' v j)⁻¹ ≤ (pairShare alpha v j)⁻¹ := by
+  have hq_le :
+      pairShare alpha v j ≤ pairShare alpha' v j :=
+    pairShare_mono_alpha j
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  have h :=
+    one_div_le_one_div_of_le
+      (pairShare_pos j halpha0 halpha1 hpos) hq_le
+  simpa [one_div] using h
 
 /-- The indexed complementary share `1 - q_j(α)` is positive. -/
 theorem one_sub_pairShare_pos
@@ -5036,6 +5070,271 @@ theorem one_sub_pairShare_inv_mono_alpha
       hden_le
   simpa [one_div] using h
 
+/-- Fixed-pivot left inverse sum is weakly decreasing in `α`. -/
+theorem problem6LeftSum_antitone_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6LeftSum alpha' v t ≤ problem6LeftSum alpha v t := by
+  unfold problem6LeftSum
+  refine Finset.sum_le_sum ?_
+  intro j _hj
+  by_cases hlt : j.val < t.val
+  · simp [hlt, pairShare_inv_antitone_alpha j
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos]
+  · simp [hlt]
+
+/-- Fixed-pivot right inverse-complement sum is weakly increasing in `α`. -/
+theorem problem6RightSum_mono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6RightSum alpha v t ≤ problem6RightSum alpha' v t := by
+  unfold problem6RightSum
+  refine Finset.sum_le_sum ?_
+  intro j _hj
+  by_cases hlt : t.val < j.val
+  · simp [hlt, one_sub_pairShare_inv_mono_alpha j
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos]
+  · simp [hlt]
+
+/-- The fixed-pivot crossing gap `L_t - R_t` is weakly decreasing in `α`. -/
+theorem problem6PivotGap_antitone_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6PivotGap alpha' v t ≤ problem6PivotGap alpha v t := by
+  have hL :=
+    problem6LeftSum_antitone_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  have hR :=
+    problem6RightSum_mono_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  unfold problem6PivotGap
+  linarith
+
+/-- The lower crossing threshold `-q_t(α)⁻¹` is weakly increasing in `α`. -/
+theorem problem6PivotGap_lowerThreshold_mono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    - (pairShare alpha v t)⁻¹ ≤ - (pairShare alpha' v t)⁻¹ := by
+  have hinv :=
+    pairShare_inv_antitone_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  linarith
+
+/--
+Fixed-pivot crossing persistence backward in `α`: if pivot `t` has crossed the
+lower gap threshold at the larger `α'`, then it has also crossed at the smaller
+`α`.
+-/
+theorem problem6PivotGap_lower_crossing_of_alpha_le
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcross' :
+      - (pairShare alpha' v t)⁻¹ ≤ problem6PivotGap alpha' v t) :
+    - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t := by
+  have hlower :=
+    problem6PivotGap_lowerThreshold_mono_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  have hgap :=
+    problem6PivotGap_antitone_alpha t
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  linarith
+
+/-- The finite set of pivots whose lower crossing inequality holds. -/
+noncomputable def problem6PivotCrossingSet {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) : Finset (Item n) :=
+  Finset.univ.filter
+    (fun t : Item n =>
+      - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t)
+
+/-- The lower crossing set is nonempty: the last item always belongs to it. -/
+theorem problem6PivotCrossingSet_nonempty {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (problem6PivotCrossingSet alpha v).Nonempty := by
+  classical
+  have hnpos : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+  let last : Item n := ⟨n - 1, by omega⟩
+  have hlast_lower :
+      - (pairShare alpha v last)⁻¹ ≤ problem6PivotGap alpha v last := by
+    have hRzero : problem6RightSum alpha v last = 0 := by
+      unfold problem6RightSum
+      refine Finset.sum_eq_zero ?_
+      intro j _hj
+      have hnlt : ¬ last.val < j.val := by
+        change ¬ n - 1 < j.val
+        omega
+      simp [hnlt]
+    have hLnonneg :
+        0 ≤ problem6LeftSum alpha v last :=
+      problem6LeftSum_nonneg last halpha0 halpha1 hpos
+    have hqinv_nonneg :
+        0 ≤ (pairShare alpha v last)⁻¹ :=
+      inv_nonneg.mpr (pairShare_pos last halpha0 halpha1 hpos).le
+    unfold problem6PivotGap
+    rw [hRzero]
+    nlinarith
+  exact ⟨last, by simp [problem6PivotCrossingSet, hlast_lower]⟩
+
+/-- The canonical Lemma 5 pivot: the first item satisfying the lower crossing inequality. -/
+noncomputable def problem6FirstClosedPivot {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) : Item n :=
+  Classical.choose
+    (Finset.exists_min_image (problem6PivotCrossingSet alpha v)
+      (fun t : Item n => t.val)
+      (problem6PivotCrossingSet_nonempty
+        (alpha := alpha) (v := v) halpha0 halpha1 hpos))
+
+theorem problem6FirstClosedPivot_mem_crossingSet {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos ∈
+      problem6PivotCrossingSet alpha v := by
+  exact (Classical.choose_spec
+    (Finset.exists_min_image (problem6PivotCrossingSet alpha v)
+      (fun t : Item n => t.val)
+      (problem6PivotCrossingSet_nonempty
+        (alpha := alpha) (v := v) halpha0 halpha1 hpos))).1
+
+theorem problem6FirstClosedPivot_lower_crossing {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    - (pairShare alpha v
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos))⁻¹ ≤
+      problem6PivotGap alpha v
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos) := by
+  have hmem :=
+    problem6FirstClosedPivot_mem_crossingSet
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos
+  simpa [problem6PivotCrossingSet] using hmem
+
+theorem problem6FirstClosedPivot_min {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {u : Item n} (hu : u ∈ problem6PivotCrossingSet alpha v) :
+    (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤ u.val := by
+  exact (Classical.choose_spec
+    (Finset.exists_min_image (problem6PivotCrossingSet alpha v)
+      (fun t : Item n => t.val)
+      (problem6PivotCrossingSet_nonempty
+        (alpha := alpha) (v := v) halpha0 halpha1 hpos))).2 u hu
+
+/--
+The first closed pivot satisfies Lemma 5's denominator bounds.
+-/
+theorem problem6FirstClosedPivot_denominatorBounds {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    Problem6ClosedPivotDenominatorBounds alpha v
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos) := by
+  let t : Item n := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  have hlower :
+      - (pairShare alpha v t)⁻¹ ≤ problem6PivotGap alpha v t := by
+    dsimp [t]
+    exact problem6FirstClosedPivot_lower_crossing
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos
+  have hupper :
+      problem6PivotGap alpha v t ≤
+        (1 - pairShare alpha v t)⁻¹ := by
+    by_cases ht0 : t.val = 0
+    · have hLzero : problem6LeftSum alpha v t = 0 := by
+        unfold problem6LeftSum
+        refine Finset.sum_eq_zero ?_
+        intro j _hj
+        have hnlt : ¬ j.val < t.val := by omega
+        simp [hnlt]
+      have hRnonneg :
+          0 ≤ problem6RightSum alpha v t :=
+        problem6RightSum_nonneg t halpha0 halpha1 hpos
+      have hcomp_inv_nonneg :
+          0 ≤ (1 - pairShare alpha v t)⁻¹ :=
+        inv_nonneg.mpr
+          (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
+      unfold problem6PivotGap
+      rw [hLzero]
+      nlinarith
+    · have htpos : 0 < t.val := Nat.pos_of_ne_zero ht0
+      let p : Item n := ⟨t.val - 1, by omega⟩
+      have hpnext : t.val = p.val + 1 := by
+        dsimp [p]
+        omega
+      have hp_not :
+          ¬ (- (pairShare alpha v p)⁻¹ ≤
+              problem6PivotGap alpha v p) := by
+        intro hp
+        have hp_mem : p ∈ problem6PivotCrossingSet alpha v := by
+          simp [problem6PivotCrossingSet, hp]
+        have hmin :=
+          problem6FirstClosedPivot_min
+            (alpha := alpha) (v := v)
+            halpha0 halpha1 hpos hp_mem
+        dsimp [t, p] at hmin
+        omega
+      have hp_lt :
+          problem6PivotGap alpha v p <
+            - (pairShare alpha v p)⁻¹ :=
+        not_le.mp hp_not
+      have hgap_eq :=
+        problem6PivotGap_next_eq
+          (alpha := alpha) (v := v) (t := p) (u := t) hpnext
+      have hupper_lt :
+          problem6PivotGap alpha v t <
+            (1 - pairShare alpha v t)⁻¹ := by
+        rw [hgap_eq]
+        nlinarith
+      exact le_of_lt hupper_lt
+  exact problem6ClosedPivotDenominatorBounds_of_pivotGap_bounds
+    halpha0 halpha1 hpos hlower hupper
+
+/--
+The canonical first closed pivot is monotone in `α`: as the first type's
+weight increases, the first crossing index can only move to the right.
+-/
+theorem problem6FirstClosedPivot_mono_alpha {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+      (problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos).val := by
+  let t' : Item n :=
+    problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos
+  have hcross' :
+      - (pairShare alpha' v t')⁻¹ ≤ problem6PivotGap alpha' v t' := by
+    dsimp [t']
+    exact problem6FirstClosedPivot_lower_crossing
+      (alpha := alpha') (v := v) halpha0' halpha1' hpos
+  have hcross :
+      - (pairShare alpha v t')⁻¹ ≤ problem6PivotGap alpha v t' :=
+    problem6PivotGap_lower_crossing_of_alpha_le
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hcross'
+  have ht'_mem : t' ∈ problem6PivotCrossingSet alpha v := by
+    simp [problem6PivotCrossingSet, hcross]
+  exact problem6FirstClosedPivot_min
+    (alpha := alpha) (v := v) halpha0 halpha1 hpos ht'_mem
+
 /--
 Theorem 3 fixed-pivot multiplier monotonicity: on a fixed-pivot first-half
 interval, Lemma 8/11 monotonicity of `I^*_{min}` and Lemma 9 monotonicity of
@@ -8062,6 +8361,26 @@ theorem problem6EqualizedBasicOptimal_exists_closed {n : ℕ} [NeZero n]
       halpha0 halpha1 hpos cert⟩
 
 /--
+Problem 6 equality-form optimal BFS existence, hiding the closed-form pivot
+and certificate internals.
+-/
+theorem problem6EqualizedBasicOptimal_exists {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ (ρ : TypePolicy 2 n) (ell : ℝ),
+      Problem6EqualizedBasicOptimal alpha v ρ ell := by
+  rcases problem6EqualizedBasicOptimal_exists_closed
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos hdec with
+    ⟨t, cert, hclosed⟩
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos cert.denominator_bounds
+  exact ⟨problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot,
+    problem6ClosedValue alpha v t, by simpa [hpivot] using hclosed⟩
+
+/--
 Appendix D, Lemma 10, odd-center case without an external midpoint BFS
 hypothesis.  The midpoint equality-form optimum is the Lemma 5 closed-form
 policy at the center pivot.
@@ -8668,6 +8987,26 @@ theorem problem6EqualizedBasicOptimal_feasibleAtLevel_one
       (twoTypeReducedModel alpha v) 1 ρ := by
   exact problem6PolicyOptimal_feasibleAtLevel_one
     halpha0 halpha1 hpos h.optimal
+
+/--
+The closed Lemma 5 construction supplies a reduced `γ = 1` feasible policy:
+an equality-form optimal BFS policy attains the maximal item-fairness level.
+-/
+theorem problem6EqualizedBasicOptimal_feasibleAtLevel_one_exists {n : ℕ}
+    [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∃ (ρ : TypePolicy 2 n) (ell : ℝ),
+      Problem6EqualizedBasicOptimal alpha v ρ ell ∧
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ := by
+  rcases problem6EqualizedBasicOptimal_exists
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos hdec with
+    ⟨ρ, ell, h⟩
+  exact ⟨ρ, ell, h,
+    problem6EqualizedBasicOptimal_feasibleAtLevel_one
+      halpha0 halpha1 hpos h⟩
 
 /--
 The selected equality-form optimal BFS policy contributes its type-fairness
