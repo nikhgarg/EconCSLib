@@ -43,7 +43,9 @@ formalized.
 | Threshold auction individual rationality | `paper_threshold_price_individually_rational` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
 | Threshold auction no-positive-transfers | `paper_threshold_price_no_positive_transfers` | formalized | `EconCSLean/Auction/MainTheorems.lean` | nonnegative thresholds |
 | Position-auction interface | `PositionEnvironment`, `PositionOutcome` | formalized | `EconCSLean/Auction/Position.lean` | none |
+| Position-mechanism truthfulness/Nash predicates | `PositionMechanism.TruthfulDominantStrategy`, `PositionMechanism.IsNashEquilibrium` | formalized | `EconCSLean/Auction/Position.lean` | none |
 | GSP is not truthful | `paper_gsp_truthful_bidding_not_dominant_example` | formalized as concrete two-slot witness | `EconCSLean/Auction/MainTheorems.lean` | full generic GSP mechanism and equilibrium theory not yet formalized |
+| GSP mechanism is not truthful | `paper_gsp_mechanism_not_truthful` | formalized as concrete two-slot mechanism witness | `EconCSLean/Auction/MainTheorems.lean` | full generic sorted-bid GSP not yet formalized |
 | Direct combinatorial-auction interface | `CombinatorialAuction` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Feasible partial bundle allocation | `IsFeasibleBundleAllocation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Single-minded bidder valuation | `SingleMindedBid.valuation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |

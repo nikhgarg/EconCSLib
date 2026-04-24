@@ -118,6 +118,15 @@ theorem paper_gsp_truthful_bidding_not_dominant_example :
   exact gspCounterexample_lowerBid_profitable
 
 /--
+Mechanism-level two-slot GSP witness: the GSP-style position mechanism is not
+dominant-strategy truthful.
+-/
+theorem paper_gsp_mechanism_not_truthful :
+    ¬ PositionMechanism.TruthfulDominantStrategy
+      gspCounterexampleEnvironment gspCounterexampleMechanism := by
+  exact gspCounterexampleMechanism_not_truthful
+
+/--
 The reject-all direct combinatorial auction is dominant-strategy truthful.
 -/
 theorem paper_combinatorial_reject_all_truthful

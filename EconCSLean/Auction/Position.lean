@@ -87,6 +87,70 @@ theorem revenue_nonneg [Fintype Bidder]
 
 end PositionOutcome
 
+/-! ## Position mechanisms and equilibrium predicates -/
+
+/-- A position mechanism maps bid profiles to position outcomes. -/
+abbrev PositionMechanism (Bidder Slot : Type*) :=
+  (Bidder → ℝ) → PositionOutcome Bidder Slot
+
+namespace PositionMechanism
+
+variable {Bidder Slot : Type*}
+
+/-- Utility induced by a position mechanism at a bid profile. -/
+def utility (E : PositionEnvironment Slot)
+    (M : PositionMechanism Bidder Slot)
+    (values bids : Bidder → ℝ) (i : Bidder) : ℝ :=
+  (M bids).utility E values i
+
+/-- Dominant-strategy truthfulness for one-dimensional position-auction bids. -/
+def TruthfulDominantStrategy [DecidableEq Bidder]
+    (E : PositionEnvironment Slot) (M : PositionMechanism Bidder Slot) : Prop :=
+  ∀ (values : Bidder → ℝ) (i : Bidder) (report : ℝ),
+    utility E M values (Function.update values i report) i ≤
+      utility E M values values i
+
+/-- Pure Nash equilibrium of a position-auction bidding game. -/
+def IsNashEquilibrium [DecidableEq Bidder]
+    (E : PositionEnvironment Slot) (M : PositionMechanism Bidder Slot)
+    (values bids : Bidder → ℝ) : Prop :=
+  ∀ (i : Bidder) (report : ℝ),
+    utility E M values (Function.update bids i report) i ≤
+      utility E M values bids i
+
+end PositionMechanism
+
+/-! ## Position-outcome envy predicates -/
+
+namespace PositionOutcome
+
+variable {Bidder Slot : Type*}
+
+/--
+No bidder prefers another bidder's assigned slot at that other bidder's
+per-click payment. This is the outcome-level envy-freeness predicate used as a
+building block for GSP equilibrium analyses.
+-/
+def SlotEnvyFree (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ) : Prop :=
+  ∀ (i j : Bidder) (s : Slot),
+    O.slotOf j = some s →
+      E.clickThroughRate s * (values i - O.paymentPerClick j) ≤
+        O.utility E values i
+
+theorem slotEnvyFree_own_comparison
+    (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ)
+    (h : O.SlotEnvyFree E values) :
+    ∀ (i : Bidder) (s : Slot),
+      O.slotOf i = some s →
+        E.clickThroughRate s * (values i - O.paymentPerClick i) ≤
+          O.utility E values i := by
+  intro i s hslot
+  exact h i i s hslot
+
+end PositionOutcome
+
 /-!
 ## A small GSP non-truthfulness witness
 
@@ -133,6 +197,20 @@ def gspCounterexampleLowerBidOutcome : PositionOutcome (Fin 3) (Fin 2) where
     else if i = (0 : Fin 3) then 1
     else 0
 
+/--
+A minimal GSP-style mechanism sufficient to expose the profitable deviation in
+the counterexample. If bidder `0` bids below bidder `1`, bidder `0` receives the
+second slot and pays bidder `2`'s bid; otherwise bidder `0` receives the top
+slot and pays bidder `1`'s bid.
+-/
+noncomputable def gspCounterexampleMechanism :
+    PositionMechanism (Fin 3) (Fin 2) :=
+  fun bids =>
+    if bids (0 : Fin 3) < bids (1 : Fin 3) then
+      gspCounterexampleLowerBidOutcome
+    else
+      gspCounterexampleTruthfulOutcome
+
 theorem gspCounterexample_truthfulUtility_bidder0 :
     gspCounterexampleTruthfulOutcome.utility
       gspCounterexampleEnvironment gspCounterexampleValues (0 : Fin 3) = 2 := by
@@ -157,6 +235,38 @@ theorem gspCounterexample_lowerBid_profitable :
   rw [gspCounterexample_truthfulUtility_bidder0,
     gspCounterexample_lowerBidUtility_bidder0]
   norm_num
+
+theorem gspCounterexampleMechanism_truthfulUtility_bidder0 :
+    PositionMechanism.utility gspCounterexampleEnvironment
+      gspCounterexampleMechanism
+      gspCounterexampleValues gspCounterexampleValues (0 : Fin 3) = 2 := by
+  norm_num [PositionMechanism.utility, gspCounterexampleMechanism,
+    PositionOutcome.utility, gspCounterexampleEnvironment,
+    gspCounterexampleValues, gspCounterexampleTruthfulOutcome]
+
+theorem gspCounterexampleMechanism_lowerBidUtility_bidder0 :
+    PositionMechanism.utility gspCounterexampleEnvironment
+      gspCounterexampleMechanism
+      gspCounterexampleValues
+      (Function.update gspCounterexampleValues (0 : Fin 3) 7)
+      (0 : Fin 3) = 9 / 2 := by
+  norm_num [PositionMechanism.utility, gspCounterexampleMechanism,
+    PositionOutcome.utility, gspCounterexampleEnvironment,
+    gspCounterexampleValues, gspCounterexampleLowerBidOutcome,
+    Function.update]
+
+/--
+Mechanism-level version of the GSP counterexample: truthful bidding is not a
+dominant strategy for this two-slot GSP-style mechanism.
+-/
+theorem gspCounterexampleMechanism_not_truthful :
+    ¬ PositionMechanism.TruthfulDominantStrategy
+      gspCounterexampleEnvironment gspCounterexampleMechanism := by
+  intro htruth
+  have hle := htruth gspCounterexampleValues (0 : Fin 3) 7
+  rw [gspCounterexampleMechanism_lowerBidUtility_bidder0,
+    gspCounterexampleMechanism_truthfulUtility_bidder0] at hle
+  norm_num at hle
 
 end Auction
 end EconCSLean
