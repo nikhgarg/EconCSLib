@@ -1211,6 +1211,41 @@ theorem problem6ClosedPolicy_feasible_of_denominatorBounds {n : ℕ}
     (problem6ClosedNonnegativePivots_of_denominatorBounds
       halpha0 halpha1 hpos hbounds)
 
+/--
+Appendix D, Lemma 6 coordinate dominance: for `α ≤ 1/2`, a pre-pivot
+closed-form `x_j` coordinate dominates the mirrored `y_{n-j+1}` coordinate
+whenever the mirror item lies after the pivot.
+-/
+theorem problem6ClosedX_sub_closedY_reverse_nonneg_of_alpha_le_half
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hj : j.val < t.val)
+    (hrev : t.val < (reverseItem j).val) :
+    0 ≤ problem6ClosedX alpha v t j -
+      problem6ClosedY alpha v t (reverseItem j) := by
+  rw [problem6ClosedX_before alpha v hj,
+    problem6ClosedY_after alpha v hrev]
+  have hcv : 0 ≤ problem6ClosedValue alpha v t :=
+    (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+  have hgap :
+      0 ≤ (pairShare alpha v j)⁻¹ -
+        (1 - pairShare alpha v (reverseItem j))⁻¹ :=
+    pairShare_inv_sub_inv_one_sub_reverse_nonneg_of_alpha_le_half
+      j halpha0 halpha1 halpha_half hpos
+  have heq :
+      problem6ClosedValue alpha v t / pairShare alpha v j -
+          problem6ClosedValue alpha v t /
+            (1 - pairShare alpha v (reverseItem j)) =
+        problem6ClosedValue alpha v t *
+          ((pairShare alpha v j)⁻¹ -
+            (1 - pairShare alpha v (reverseItem j))⁻¹) := by
+    rw [div_eq_mul_inv, div_eq_mul_inv]
+    ring
+  rw [heq]
+  exact mul_nonneg hcv hgap
+
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}

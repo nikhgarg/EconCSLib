@@ -1003,6 +1003,22 @@ theorem paper_lemma6_pairShare_mirror_inverse_gap_nonneg
     j halpha0 halpha1 halpha_half hpos
 
 /--
+Appendix D, Lemma 6 coordinate dominance: before the pivot, closed-form
+`x_j` dominates mirrored `y_{n-j+1}` under the paper's `α ≤ 1/2` condition.
+-/
+theorem paper_lemma6_closedX_sub_closedY_reverse_nonneg
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hj : j.val < t.val)
+    (hrev : t.val < (reverseItem j).val) :
+    0 ≤ problem6ClosedX alpha v t j -
+      problem6ClosedY alpha v t (reverseItem j) := by
+  exact problem6ClosedX_sub_closedY_reverse_nonneg_of_alpha_le_half
+    halpha0 halpha1 halpha_half hpos hj hrev
+
+/--
 Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
 shares.
 -/
