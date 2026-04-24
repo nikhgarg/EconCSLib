@@ -258,6 +258,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   support, its raw and normalized item utility are zero, contradicting a
   strictly positive finite minimum. Keep the remaining LP/BFS active-support
   theorem as the separate hard seam.
+  To prove the paper's `IF* > 0` lemma, use the uniform finite PMF as an
+  explicit witness: with strictly positive weights/utilities every item has
+  positive raw and normalized utility under the uniform policy, so the finite
+  minimum is positive and `sSup` is positive once attainable values are bounded
+  above by one.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says

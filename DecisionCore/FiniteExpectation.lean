@@ -1,4 +1,5 @@
 import Mathlib.Probability.ProbabilityMassFunction.Monad
+import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring
 
@@ -39,6 +40,36 @@ theorem pmfToRealSum {α : Type*} [Fintype α] [DecidableEq α]
       simpa using (ENNReal.toReal_sum (s := (Finset.univ : Finset α)) (f := fun a => μ a) h_ne_top)
     _ = 1 := by
       simpa [h_sum_enn]
+
+/-- Every atom of a PMF has real mass at most one. -/
+theorem pmf_apply_toReal_le_one {α : Type*} (μ : PMF α) (a : α) :
+    (μ a).toReal ≤ 1 := by
+  have hle : μ a ≤ 1 := by
+    rw [← PMF.tsum_coe μ]
+    exact ENNReal.le_tsum a
+  exact ENNReal.toReal_mono ENNReal.one_ne_top hle
+
+/-- The uniform PMF over a finite nonempty type. -/
+noncomputable def uniformPMF (α : Type*) [Fintype α] [Nonempty α] : PMF α :=
+  PMF.ofFintype (fun _ : α => ((Fintype.card α : ENNReal)⁻¹)) (by
+    rw [Finset.sum_const, Finset.card_univ]
+    have hcard : (Fintype.card α : ENNReal) ≠ 0 := by
+      exact_mod_cast (Fintype.card_pos_iff.mpr ‹Nonempty α›).ne'
+    simpa [nsmul_eq_mul] using
+      (ENNReal.mul_inv_cancel hcard (ENNReal.natCast_ne_top (Fintype.card α))))
+
+@[simp] theorem uniformPMF_apply {α : Type*} [Fintype α] [Nonempty α] (a : α) :
+    uniformPMF α a = ((Fintype.card α : ENNReal)⁻¹) := by
+  rfl
+
+theorem uniformPMF_apply_toReal {α : Type*} [Fintype α] [Nonempty α] (a : α) :
+    (uniformPMF α a).toReal = (Fintype.card α : ℝ)⁻¹ := by
+  simp [uniformPMF]
+
+theorem uniformPMF_apply_toReal_pos {α : Type*} [Fintype α] [Nonempty α] (a : α) :
+    0 < (uniformPMF α a).toReal := by
+  rw [uniformPMF_apply_toReal]
+  exact inv_pos.mpr (by exact_mod_cast (Fintype.card_pos_iff.mpr ‹Nonempty α›))
 
 @[simp] theorem pmfExp_const {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (c : ℝ) :

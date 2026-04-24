@@ -327,6 +327,62 @@ theorem paper_sparse_shape_of_active_pairs_bound_of_positive_item_fairness
   exact sparseShape_of_activePairsBound_of_item_coverage ρ hactive
     (TypeWeightedRecommendationModel.item_coverage_of_itemFairness_pos T ρ hitem_pos)
 
+/--
+Lemma `IF* > 0` from the paper, in the reduced type-level model.
+
+Strictly positive type weights and utility entries imply that the maximal
+reduced item-fairness value is strictly positive; the proof is witnessed by the
+uniform policy.
+-/
+theorem paper_reduced_optimal_item_fairness_positive
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities) :
+    0 < TypeWeightedRecommendationModel.optimalItemFairness T := by
+  exact TypeWeightedRecommendationModel.optimalItemFairness_pos_of_positive
+    T hWeight hUtil
+
+/--
+Proposition 1 sparse shared-item consequence for a maximal-item-fairness
+reduced optimum.
+
+The only remaining hypothesis is the paper's basic-feasible-solution
+active-pair bound. Positivity of the item-fairness optimum is discharged from
+strictly positive weights/utilities.
+-/
+theorem paper_sparse_shared_items_of_active_pairs_bound_of_maximal_optimum
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (hactive : ActivePairsBound ρ)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel T 1 ρ) :
+    SharedItemsBound ρ := by
+  have hopt_pos :
+      0 < TypeWeightedRecommendationModel.optimalItemFairness T :=
+    TypeWeightedRecommendationModel.optimalItemFairness_pos_of_positive
+      T hWeight hUtil
+  have hitem_pos : 0 < TypeWeightedRecommendationModel.itemFairness T ρ := by
+    have hfeas := hopt.1
+    unfold TypeWeightedRecommendationModel.feasibleAtLevel at hfeas
+    exact lt_of_lt_of_le hopt_pos (by simpa using hfeas)
+  exact sharedItemsBound_of_activePairsBound_of_item_coverage ρ hactive
+    (TypeWeightedRecommendationModel.item_coverage_of_itemFairness_pos T ρ hitem_pos)
+
+/--
+Proposition 1 sparse-shape consequence for a maximal-item-fairness reduced
+optimum, with positivity discharged from strictly positive data.
+-/
+theorem paper_sparse_shape_of_active_pairs_bound_of_maximal_optimum
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (hactive : ActivePairsBound ρ)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel T 1 ρ) :
+    SparseShape ρ := by
+  exact ⟨hactive,
+    paper_sparse_shared_items_of_active_pairs_bound_of_maximal_optimum
+      T ρ hWeight hUtil hactive hopt⟩
+
 end TypePolicy
 
 end UserItemFairness

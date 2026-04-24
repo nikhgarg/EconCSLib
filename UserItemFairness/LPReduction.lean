@@ -77,9 +77,29 @@ def NonnegativeWeights {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : P
 def NonnegativeUtilities {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
   ∀ k j, 0 ≤ T.utility k j
 
+/-- Strict positivity of all type weights. -/
+def PositiveWeights {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
+  ∀ k, 0 < T.weight k
+
+/-- Strict positivity of all reduced utility entries. -/
+def PositiveUtilities {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
+  ∀ k j, 0 < T.utility k j
+
 /-- Every user type has at least one strictly positive item. -/
 def RowHasPositiveItem {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
   ∀ k, ∃ j, 0 < T.utility k j
+
+theorem nonnegativeWeights_of_positiveWeights {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n) (hWeight : T.PositiveWeights) :
+    T.NonnegativeWeights := by
+  intro k
+  exact (hWeight k).le
+
+theorem nonnegativeUtilities_of_positiveUtilities {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n) (hUtil : T.PositiveUtilities) :
+    T.NonnegativeUtilities := by
+  intro k j
+  exact (hUtil k j).le
 
 /-- Raw expected utility received by a type `k`. -/
 noncomputable def rawTypeUtility {K n : ℕ}
@@ -121,6 +141,22 @@ noncomputable def normalizedItemUtility {K n : ℕ}
 noncomputable def itemFairness {K n : ℕ} [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n) : ℝ :=
   DecisionCore.finiteMin (normalizedItemUtility T ρ)
+
+/-- The policy that recommends every item uniformly to every type. -/
+noncomputable def uniformTypePolicy {K n : ℕ} [NeZero n] : TypePolicy K n :=
+  fun _ => DecisionCore.uniformPMF (Item n)
+
+@[simp] theorem uniformTypePolicy_apply_toReal {K n : ℕ} [NeZero n]
+    (k : UserType K) (j : Item n) :
+    ((uniformTypePolicy (K := K) (n := n) k) j).toReal = (n : ℝ)⁻¹ := by
+  simpa [uniformTypePolicy, Item] using
+    (DecisionCore.uniformPMF_apply_toReal (α := Item n) j)
+
+theorem uniformTypePolicy_apply_toReal_pos {K n : ℕ} [NeZero n]
+    (k : UserType K) (j : Item n) :
+    0 < ((uniformTypePolicy (K := K) (n := n) k) j).toReal := by
+  simpa [uniformTypePolicy] using
+    (DecisionCore.uniformPMF_apply_toReal_pos (α := Item n) j)
 
 /-- Positive reduced item fairness implies every item is used by some type. -/
 theorem item_coverage_of_itemFairness_pos {K n : ℕ} [NeZero n]
@@ -185,6 +221,41 @@ theorem normalizedItemUtility_nonneg_of_nonnegative
       (rawItemUtility_nonneg_of_nonnegative T hWeight hUtil ρ j)
       (itemNormalizer_nonneg_of_nonnegative T hWeight hUtil j)
 
+/-- Nonnegative weights/utilities make raw item utility at most its normalizer. -/
+theorem rawItemUtility_le_itemNormalizer_of_nonnegative
+    {K n : ℕ} (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (ρ : TypePolicy K n) (j : Item n) :
+    rawItemUtility T ρ j ≤ itemNormalizer T j := by
+  unfold rawItemUtility itemNormalizer
+  exact Finset.sum_le_sum (by
+    intro k _hk
+    have hcoeff : 0 ≤ T.weight k * T.utility k j :=
+      mul_nonneg (hWeight k) (hUtil k j)
+    have hprob : ((ρ k) j).toReal ≤ 1 :=
+      DecisionCore.pmf_apply_toReal_le_one (ρ k) j
+    calc
+      T.weight k * T.utility k j * ((ρ k) j).toReal
+          ≤ (T.weight k * T.utility k j) * 1 := by
+            exact mul_le_mul_of_nonneg_left hprob hcoeff
+      _ = T.weight k * T.utility k j := by ring)
+
+/-- Nonnegative weights/utilities make reduced normalized item utility at most one. -/
+theorem normalizedItemUtility_le_one_of_nonnegative
+    {K n : ℕ} (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (ρ : TypePolicy K n) (j : Item n) :
+    normalizedItemUtility T ρ j ≤ 1 := by
+  unfold normalizedItemUtility
+  by_cases hden : itemNormalizer T j = 0
+  · simp [hden]
+  · have hden_nonneg := itemNormalizer_nonneg_of_nonnegative T hWeight hUtil j
+    have hden_pos : 0 < itemNormalizer T j := lt_of_le_of_ne hden_nonneg (Ne.symm hden)
+    have hraw_le := rawItemUtility_le_itemNormalizer_of_nonnegative T hWeight hUtil ρ j
+    simp [hden]
+    rw [div_le_iff₀ hden_pos]
+    simpa using hraw_le
+
 /-- Nonnegative weights/utilities make reduced minimum item fairness nonnegative. -/
 theorem itemFairness_nonneg_of_nonnegative {K n : ℕ} [NeZero n]
     (T : TypeWeightedRecommendationModel K n)
@@ -193,6 +264,53 @@ theorem itemFairness_nonneg_of_nonnegative {K n : ℕ} [NeZero n]
     0 ≤ itemFairness T ρ := by
   exact DecisionCore.finiteMin_nonneg (normalizedItemUtility T ρ)
     (normalizedItemUtility_nonneg_of_nonnegative T hWeight hUtil ρ)
+
+/-- Strictly positive weights and utilities make each item normalizer positive. -/
+theorem itemNormalizer_pos_of_positive
+    {K n : ℕ} [NeZero K] (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (j : Item n) :
+    0 < itemNormalizer T j := by
+  unfold itemNormalizer
+  exact Finset.sum_pos (by
+    intro k _hk
+    exact mul_pos (hWeight k) (hUtil k j)) Finset.univ_nonempty
+
+/-- Under the uniform type policy, strictly positive data gives every item positive raw utility. -/
+theorem rawItemUtility_uniform_pos_of_positive
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (j : Item n) :
+    0 < rawItemUtility T (uniformTypePolicy (K := K) (n := n)) j := by
+  unfold rawItemUtility
+  exact Finset.sum_pos (by
+    intro k _hk
+    exact mul_pos (mul_pos (hWeight k) (hUtil k j))
+      (uniformTypePolicy_apply_toReal_pos (K := K) (n := n) k j))
+    Finset.univ_nonempty
+
+/-- The uniform type policy has strictly positive normalized item utility. -/
+theorem normalizedItemUtility_uniform_pos_of_positive
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities)
+    (j : Item n) :
+    0 < normalizedItemUtility T (uniformTypePolicy (K := K) (n := n)) j := by
+  unfold normalizedItemUtility
+  have hden_pos := itemNormalizer_pos_of_positive T hWeight hUtil j
+  have hraw_pos := rawItemUtility_uniform_pos_of_positive T hWeight hUtil j
+  simp [hden_pos.ne.symm, div_pos hraw_pos hden_pos]
+
+/-- The uniform type policy witnesses positive item fairness under strictly positive data. -/
+theorem itemFairness_uniform_pos_of_positive
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities) :
+    0 < itemFairness T (uniformTypePolicy (K := K) (n := n)) := by
+  exact DecisionCore.finiteMin_pos (normalizedItemUtility T
+    (uniformTypePolicy (K := K) (n := n)))
+    (normalizedItemUtility_uniform_pos_of_positive T hWeight hUtil)
 
 /-- Attainable reduced-problem item fairness levels. -/
 def attainableItemFairnessSet {K n : ℕ} [NeZero n]
@@ -203,6 +321,41 @@ def attainableItemFairnessSet {K n : ℕ} [NeZero n]
 noncomputable def optimalItemFairness {K n : ℕ} [NeZero n]
     (T : TypeWeightedRecommendationModel K n) : ℝ :=
   sSup (attainableItemFairnessSet T)
+
+/-- Nonnegative weights/utilities bound every attainable item-fairness value above by one. -/
+theorem attainableItemFairnessSet_bddAbove_of_nonnegative {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities) :
+    BddAbove (attainableItemFairnessSet T) := by
+  refine ⟨1, ?_⟩
+  intro r hr
+  obtain ⟨ρ, hr⟩ := hr
+  rw [hr]
+  let j0 : Item n := Classical.choice inferInstance
+  exact (DecisionCore.finiteMin_le (normalizedItemUtility T ρ) j0).trans
+    (normalizedItemUtility_le_one_of_nonnegative T hWeight hUtil ρ j0)
+
+/--
+Strictly positive weights and utilities make the reduced optimal item-fairness
+value positive. This formalizes the paper's `IF* > 0` lemma for the reduced
+type-level problem.
+-/
+theorem optimalItemFairness_pos_of_positive
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.PositiveWeights) (hUtil : T.PositiveUtilities) :
+    0 < optimalItemFairness T := by
+  have hWeight_nonneg := nonnegativeWeights_of_positiveWeights T hWeight
+  have hUtil_nonneg := nonnegativeUtilities_of_positiveUtilities T hUtil
+  have hbdd := attainableItemFairnessSet_bddAbove_of_nonnegative
+    T hWeight_nonneg hUtil_nonneg
+  have hmem :
+      itemFairness T (uniformTypePolicy (K := K) (n := n)) ∈
+        attainableItemFairnessSet T := by
+    exact ⟨uniformTypePolicy (K := K) (n := n), rfl⟩
+  exact lt_of_lt_of_le
+    (itemFairness_uniform_pos_of_positive T hWeight hUtil)
+    (le_csSup hbdd hmem)
 
 /-- Feasibility for the reduced problem at fairness level `γ`. -/
 def feasibleAtLevel {K n : ℕ} [NeZero n]

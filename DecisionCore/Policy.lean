@@ -40,6 +40,15 @@ theorem finiteMin_nonneg {α : Type*} [Fintype α] [Nonempty α]
   intro a _ha
   exact h a
 
+/-- A finite minimum of strictly positive values is strictly positive. -/
+theorem finiteMin_pos {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) (h : ∀ a, 0 < f a) :
+    0 < finiteMin f := by
+  unfold finiteMin
+  rw [Finset.lt_inf'_iff]
+  intro a _ha
+  exact h a
+
 namespace Policy
 
 /-- Deterministic policy induced by a pure action selector. -/
