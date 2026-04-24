@@ -3178,5 +3178,29 @@ theorem problem6LPOptimalValue_eq_closedValue_of_closed_certificate
     alpha v (problem6ClosedValue alpha v t) halpha0 halpha1 hpos
     (problem6OptimalityCertificate_of_closed halpha0 halpha1 hpos cert)
 
+/--
+Appendix D, Lemma 11 interval form: if the same pivot `t` has the paper's
+closed-form optimality certificate at `α` and `α'`, then the actual Problem 6
+LP optimum is monotone on that fixed-pivot interval.
+-/
+theorem lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t)
+    (cert' : Problem6ClosedOptimalityCertificate alpha' v t) :
+    problem6LPOptimalValue alpha v ≤ problem6LPOptimalValue alpha' v := by
+  rw [problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+      halpha0 halpha1 hpos cert,
+    problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+      halpha0' halpha1' hpos cert']
+  exact lemma11_fixedPivotClosedValue_monotone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
 end OpposingTypes
 end UserItemFairness

@@ -1229,6 +1229,27 @@ theorem paper_problem6_LPOptimalValue_eq_closedValue_of_closed_certificate
     halpha0 halpha1 hpos cert
 
 /--
+Appendix D, Lemma 11 interval form: if the same pivot has closed-form
+optimality certificates at `α` and `α'`, then the Problem 6 LP optimum is
+monotone on that fixed-pivot interval.
+-/
+theorem paper_lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t)
+    (cert' : Problem6ClosedOptimalityCertificate alpha' v t) :
+    problem6LPOptimalValue alpha v ≤ problem6LPOptimalValue alpha' v := by
+  exact lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hcenter cert cert'
+
+/--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
 theorem paper_lemma5_problem6_x_before_pivot
