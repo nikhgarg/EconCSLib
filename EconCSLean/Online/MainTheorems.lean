@@ -751,6 +751,52 @@ theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_round_allo
   exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 /--
+Section 7 / Theorem 9 asymptotic lower-bound wrapper. Once the deterministic
+round-allocation expectation inequalities and the harmonic-cap limit are
+supplied for a family of market sizes, no randomized algorithm family beats
+`1 - 1/e + δ` on every sufficiently large permutation instance.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (normalizedRevenue :
+      (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ)
+    (expectedRoundBidderAllocation :
+      (N : ℕ) → Algorithm N → Fin N → Fin N → ℝ)
+    (haverage :
+      ∀ N algorithm,
+        DecisionCore.pmfExp (uniformPermutationDistribution N)
+            (fun permutation => normalizedRevenue N algorithm permutation) ≤
+          (∑ bidder : Fin N,
+            min 1
+              (∑ round : Fin N,
+                expectedRoundBidderAllocation N algorithm round bidder)) /
+            (N : ℝ))
+    (hexpected_le :
+      ∀ N algorithm round bidder,
+        expectedRoundBidderAllocation N algorithm round bidder ≤
+          if (round : ℕ) ≤ (bidder : ℕ) then
+            1 / ((N - (round : ℕ) : ℕ) : ℝ)
+          else
+            0)
+    (hharmonic :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+          theorem9NormalizedRevenueUpperBound N ≤
+            AdWordsInstance.msvvRatio + δ) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => normalizedRevenue N algorithm permutation) := by
+  exact
+    theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+      normalizedRevenue expectedRoundBidderAllocation haverage hexpected_le
+      hharmonic
+
+/--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the
 advertised competitive-ratio inequality against the offline optimum.
 

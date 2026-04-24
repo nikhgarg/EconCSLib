@@ -292,7 +292,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `1 - 1/e` is not hidden inside a generic certificate. Also isolate the
   paper's `E[q_ij] <= 1 / (N - i + 1)` claim as a round-allocation certificate
   before proving the harmonic cap; this keeps the symmetry argument and the
-  summation argument separate.
+  summation argument separate. The finite harmonic cap may be above
+  `1 - 1/e`, so state the paper endpoint as an eventual additive-`δ` theorem
+  rather than as an exact finite inequality.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

@@ -335,5 +335,60 @@ theorem no_randomized_algorithm_beats_ratio
 
 end BMatchingRoundAllocationRevenueCertificate
 
+/--
+Asymptotic Section 7 wrapper. If the round-allocation calculation is available
+for every market size and the explicit harmonic cap is eventually within every
+positive additive error of `msvvRatio`, then no randomized algorithm family can
+beat `msvvRatio + δ` on every large permutation instance.
+-/
+theorem theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (normalizedRevenue :
+      (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ)
+    (expectedRoundBidderAllocation :
+      (N : ℕ) → Algorithm N → Fin N → Fin N → ℝ)
+    (haverage :
+      ∀ N algorithm,
+        pmfExp (uniformPermutationDistribution N)
+            (fun permutation => normalizedRevenue N algorithm permutation) ≤
+          (∑ bidder : Fin N,
+            min 1
+              (∑ round : Fin N,
+                expectedRoundBidderAllocation N algorithm round bidder)) /
+            (N : ℝ))
+    (hexpected_le :
+      ∀ N algorithm round bidder,
+        expectedRoundBidderAllocation N algorithm round bidder ≤
+          if (round : ℕ) ≤ (bidder : ℕ) then
+            1 / ((N - (round : ℕ) : ℕ) : ℝ)
+          else
+            0)
+    (hharmonic :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+          theorem9NormalizedRevenueUpperBound N ≤
+            AdWordsInstance.msvvRatio + δ) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => normalizedRevenue N algorithm permutation) := by
+  intro δ hδ
+  obtain ⟨N0, hN0⟩ := hharmonic δ hδ
+  refine ⟨N0, ?_⟩
+  intro N hN randomizedAlgorithm
+  let C : BMatchingRoundAllocationRevenueCertificate
+      N (Algorithm N) (AdWordsInstance.msvvRatio + δ) := {
+    normalizedRevenue := normalizedRevenue N
+    expectedRoundBidderAllocation := expectedRoundBidderAllocation N
+    deterministicAverage_le_cappedExpectedSpend := haverage N
+    expectedRoundBidderAllocation_le := hexpected_le N
+    revenueBound_le_ratio := hN0 N hN
+  }
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
 end Online
 end EconCSLean
