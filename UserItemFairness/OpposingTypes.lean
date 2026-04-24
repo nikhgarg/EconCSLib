@@ -4325,6 +4325,63 @@ theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_left_gaps
   linarith
 
 /--
+Appendix D, Lemma 6 finite-sum comparison in the paper's sharper form: only
+the strict pre-pivot mirror gaps need to be nonnegative.  The pivot gap has
+coefficient `v_t` in the constant-weight decomposition and cancels out.
+-/
+theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_strict_left_gaps
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft :
+      ∀ j : Item n, j.val < t.val →
+        0 ≤ problem6ClosedX alpha v t j -
+          problem6ClosedY alpha v t (reverseItem j))
+    (hy_nonneg :
+      ∀ j : Item n, 0 ≤ problem6ClosedY alpha v t (reverseItem j)) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  let gap : Item n → ℝ :=
+    fun j => problem6ClosedX alpha v t j -
+      problem6ClosedY alpha v t (reverseItem j)
+  have hgap_sum : (∑ j : Item n, gap j) = 0 := by
+    unfold gap
+    rw [Finset.sum_sub_distrib]
+    rw [problem6ClosedX_sum_eq_one, problem6ClosedY_reverse_sum_eq_one]
+    ring
+  have hterm :
+      (∑ j : Item n, v t * gap j) ≤
+        ∑ j : Item n, v j * gap j := by
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    by_cases hjlt : j.val < t.val
+    · have hv : v t ≤ v j := (hdec hjlt).le
+      exact mul_le_mul_of_nonneg_right hv (hleft j hjlt)
+    · by_cases heq : j = t
+      · subst j
+        exact le_rfl
+      · have hgt : t.val < j.val := by
+          have hne_val : j.val ≠ t.val := by
+            intro hval
+            exact heq (Fin.ext hval)
+          omega
+        have hv : v j ≤ v t := (hdec hgt).le
+        have hgap_nonpos : gap j ≤ 0 := by
+          unfold gap
+          rw [problem6ClosedX_after alpha v hgt]
+          linarith [hy_nonneg j]
+        exact mul_le_mul_of_nonpos_right hv hgap_nonpos
+  have hweighted_nonneg :
+      0 ≤ ∑ j : Item n, v j * gap j := by
+    have hconst :
+        (∑ j : Item n, v t * gap j) = 0 := by
+      rw [← Finset.mul_sum, hgap_sum, mul_zero]
+    linarith
+  have hraw :=
+    problem6ClosedRawUtility_sub_eq_mirror_gap_sum alpha v t
+  unfold gap at hweighted_nonneg
+  linarith
+
+/--
 Appendix D, Lemma 6 comparison specialized to `α ≤ 1/2`: the scalar
 mirror-gap algebra supplies all pre-pivot gaps; the pivot gap is left explicit.
 -/
@@ -4355,6 +4412,31 @@ theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half
         omega
       exact problem6ClosedX_sub_closedY_reverse_nonneg_of_alpha_le_half
         halpha0 halpha1 halpha_half hpos hjlt (hmirror j hjlt)
+  · intro j
+    exact problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot (reverseItem j)
+
+/--
+Appendix D, Lemma 6 comparison specialized to `α ≤ 1/2`, following the
+paper's strict pre-pivot summation argument.  Once the pivot is at or before
+its mirror, no separate pivot-gap obligation is needed.
+-/
+theorem problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeZeroRawUtility alpha v t := by
+  refine problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_strict_left_gaps
+    hdec ?_ ?_
+  · intro j hj
+    exact problem6ClosedX_sub_closedY_reverse_nonneg_of_alpha_le_half
+      halpha0 halpha1 halpha_half hpos hj
+      (reverseItem_after_pivot_of_before_pivot_of_pivot_le_reverse
+        hcenter hj)
   · intro j
     exact problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot (reverseItem j)
 
@@ -4473,6 +4555,41 @@ theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
     halpha0 halpha1 hpos hpivot hbest hbest_pos hraw
 
 /--
+Lemma 6 normalized-utility comparison under `α ≤ 1/2`, with the pivot-gap
+obligation removed by the paper's strict pre-pivot summation argument.
+-/
+theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hbest :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 =
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 0)
+    (hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  have hraw :
+      problem6ClosedTypeOneRawUtility alpha v t ≤
+        problem6ClosedTypeZeroRawUtility alpha v t :=
+    problem6ClosedTypeOneRawUtility_le_typeZeroRawUtility_of_alpha_le_half_of_pivot_le_reverse
+      halpha0 halpha1 halpha_half hpos hdec hpivot hcenter
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_raw
+    halpha0 halpha1 hpos hpivot hbest hbest_pos hraw
+
+/--
 Lemma 6 normalized-utility comparison under `α ≤ 1/2`, with the common
 best-item denominator discharged by the opposing-preference model.
 -/
@@ -4496,6 +4613,30 @@ theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_be
         (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
   exact problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
     halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
+    (twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v)
+    (twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos)
+
+/--
+Lemma 6 normalized-utility comparison under `α ≤ 1/2`, with the common
+best-item denominator discharged and no pivot-gap side condition.
+-/
+theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_of_pivot_le_reverse
+    halpha0 halpha1 halpha_half hpos hdec hpivot hcenter
     (twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v)
     (twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos)
 
@@ -4547,6 +4688,32 @@ theorem problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half
     (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
     (problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best
       halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap)
+
+/--
+Lemma 6 consequence with the pivot-gap side condition removed: if `α ≤ 1/2`
+and the closed-form pivot is at or before its mirror, the closed policy's type
+fairness is exactly type `1`'s normalized utility.
+-/
+theorem problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact twoType_typeFairness_eq_one_of_one_le_zero
+    (twoTypeReducedModel alpha v)
+    (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+    (problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best_of_pivot_le_reverse
+      halpha0 halpha1 halpha_half hpos hdec hpivot hcenter)
 
 /--
 Appendix D, Lemma 6 specialized to the exact midpoint candidate: its closed
