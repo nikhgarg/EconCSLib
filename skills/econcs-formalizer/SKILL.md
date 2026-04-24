@@ -416,6 +416,12 @@ continuous functions, and atomwise PMF continuity implying finite-expectation
 continuity. Move those lemmas into reusable library modules when another paper
 could need them.
 
+For crossing arguments, do not assume that any intermediate-value crossing has
+the desired one-sided sign. If the proof needs positivity immediately to the
+right, use a last-nonpositive or first-nonnegative compact-interval lemma (for
+example `exists_last_nonpos_with_right_pos_on_Icc`) and state the interval sign
+change explicitly.
+
 ### 2.1 External Library Reconnaissance
 
 Before implementing substantial probability, statistics, or learning-theory

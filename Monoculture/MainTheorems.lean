@@ -624,6 +624,21 @@ theorem paper_theorem1_from_atom_local_nudge_certificate
   AccuracyFamily.theorem1Target_of_atomLocalNudgeCertificate cert
 
 /--
+Paper Theorem 1 from the interval sign-change nudge certificate.
+
+Paper statement in the proof: after `f` starts below `g` and eventually exceeds
+`g`, continuity supplies a crossing, and then a slight increase of `θA` gives
+`g < f < h`. Lean uses a last-nonpositive-point version of this argument on a
+compact interval, avoiding any hidden assumption that an arbitrary crossing has
+the right one-sided sign.
+-/
+theorem paper_theorem1_from_sign_change_nudge_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1SignChangeNudgeCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_signChangeNudgeCertificate cert
+
+/--
 Paper Theorem 1 from the direct payoff certificate.
 
 This is the same final conclusion stated directly in terms of the two strict

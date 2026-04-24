@@ -1,6 +1,7 @@
 import Monoculture.Family
 import Monoculture.Payoff
 import DecisionCore.EpsilonContinuity
+import DecisionCore.IntervalCrossing
 
 open DecisionCore
 
@@ -286,6 +287,31 @@ structure Theorem1AtomLocalNudgeCertificate {n : ℕ}
     ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
 
 /--
+An interval sign-change certificate for the paper's final nudge.  It replaces a
+direct right-neighborhood `g < f` assumption with a compact-interval argument:
+on `[lo, hi]`, `f - g` is continuous, starts nonpositive, and ends positive.
+Lean then chooses the last nonpositive point.
+-/
+structure Theorem1SignChangeNudgeCertificate {n : ℕ}
+    (F : AccuracyFamily n) (θH : ℝ) : Type where
+  lo : ℝ
+  hi : ℝ
+  thetaH_lt_lo : θH < lo
+  lo_lt_hi : lo < hi
+  diff_continuousOn :
+    ContinuousOn (fun θA => theorem1_f F θA θH - theorem1_g F θA θH)
+      (Set.Icc lo hi)
+  nonpos_at_lo : theorem1_f F lo θH ≤ theorem1_g F lo θH
+  positive_at_hi : theorem1_g F hi θH < theorem1_f F hi θH
+  dist_atom_continuity :
+    ∀ θA, lo ≤ θA → θA < hi →
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θA
+  weaker_side :
+    ∀ θA, θH < θA → θA < hi → theorem1_g F θA θH < theorem1_h F θA θH
+  monotonicity :
+    ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
+
+/--
 The direct payoff certificate for Theorem 1's conclusion.
 -/
 structure Theorem1PayoffCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
@@ -458,6 +484,50 @@ theorem theorem1Target_of_atomLocalNudgeCertificate {n : ℕ}
     Theorem1Target F θH :=
   theorem1Target_of_localNudgeCertificate
     (localNudgeCertificate_of_atomLocalNudgeCertificate cert)
+
+/--
+Paper Theorem 1 from an interval sign-change nudge certificate.
+
+This formalizes the robust version of the paper's crossing step: choose the last
+point in an interval where `f ≤ g`; immediately to its right, `g < f`, while
+`f < h` follows from `f ≤ g < h` at that point and finite atomwise continuity.
+-/
+theorem theorem1Target_of_signChangeNudgeCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1SignChangeNudgeCertificate F θH) :
+    Theorem1Target F θH := by
+  have hlo_nonpos :
+      theorem1_f F cert.lo θH - theorem1_g F cert.lo θH ≤ 0 := by
+    linarith [cert.nonpos_at_lo]
+  have hhi_pos :
+      0 < theorem1_f F cert.hi θH - theorem1_g F cert.hi θH := by
+    linarith [cert.positive_at_hi]
+  rcases exists_last_nonpos_with_right_pos_on_Icc
+      (d := fun θA => theorem1_f F θA θH - theorem1_g F θA θH)
+      cert.lo_lt_hi cert.diff_continuousOn hlo_nonpos hhi_pos with
+    ⟨θstar, hlo_star, hstar_hi, hdiff_nonpos, hright_pos⟩
+  have hthetaH_star : θH < θstar := cert.thetaH_lt_lo.trans_le hlo_star
+  have hgap : theorem1_f F θstar θH < theorem1_h F θstar θH := by
+    have hfg : theorem1_f F θstar θH ≤ theorem1_g F θstar θH := by
+      linarith [hdiff_nonpos]
+    have hgh : theorem1_g F θstar θH < theorem1_h F θstar θH :=
+      cert.weaker_side θstar hthetaH_star hstar_hi
+    exact lt_of_le_of_lt hfg hgh
+  refine theorem1Target_of_atomLocalNudgeCertificate ?_
+  refine
+    { θstar := θstar
+      gf_radius := (cert.hi - θstar) / 2
+      thetaH_lt_star := hthetaH_star
+      gf_radius_pos := by linarith
+      dist_atom_continuity := cert.dist_atom_continuity θstar hlo_star hstar_hi
+      f_lt_h_at_star := hgap
+      first_dominance_on_right := ?_
+      monotonicity := cert.monotonicity }
+  intro θA hstar_lt hwithin
+  have hθA_le_hi : θA ≤ cert.hi := by
+    linarith
+  have hpos := hright_pos θA hstar_lt hθA_le_hi
+  linarith
 
 /--
 Definition 3 gives `g(θA) < h(θA)` at any pair `θA > θH` where the induced model
