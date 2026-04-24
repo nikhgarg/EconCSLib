@@ -156,6 +156,29 @@ def theorem9ActualEligibleBidders
         (round : ℕ) ≤ (position : ℕ) ∧ permutation position = bidder := by
   simp [theorem9ActualEligibleBidders, mem_theorem9EligibleBidders]
 
+theorem theorem9ActualEligibleBidders_not_mem_of_not_eligible
+    {N : ℕ} {permutation : Equiv.Perm (Fin N)} {round position : Fin N}
+    (hposition : ¬ (round : ℕ) ≤ (position : ℕ)) :
+    permutation position ∉ theorem9ActualEligibleBidders N permutation round := by
+  intro hmem
+  rcases (mem_theorem9ActualEligibleBidders N permutation round
+    (permutation position)).mp hmem with ⟨position', hposition', heq⟩
+  have hsame : position' = position := permutation.injective heq
+  subst position'
+  exact hposition hposition'
+
+/--
+Summing over actual eligible bidders is the same as summing over eligible
+positions and applying the permutation label map.
+-/
+theorem theorem9ActualEligibleBidders_sum_eq
+    {N : ℕ} (permutation : Equiv.Perm (Fin N)) (round : Fin N)
+    (f : Fin N → ℝ) :
+    (∑ bidder ∈ theorem9ActualEligibleBidders N permutation round, f bidder) =
+      ∑ position ∈ theorem9EligibleBidders N round, f (permutation position) := by
+  unfold theorem9ActualEligibleBidders
+  exact Finset.sum_image permutation.injective.injOn
+
 /--
 The prefix of the hard b-matching instance observed by an online algorithm at
 `currentRound`: future rounds are hidden, while past and current rounds expose
@@ -1357,6 +1380,38 @@ structure BMatchingObservedPrefixAllocationRevenueCertificate
     theorem9NormalizedRevenueUpperBound N ≤ ratio
 
 /--
+Feasible observed-prefix allocation certificate. This is closer to a concrete
+deterministic online algorithm: allocations are made to actual bidder labels as
+a function of the visible prefix, are zero outside the currently visible
+eligible set, and allocate at most one unit in each round.
+-/
+structure BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
+    (N : ℕ) (Algorithm : Type*) (ratio : ℝ) where
+  normalizedRevenue : Algorithm → Equiv.Perm (Fin N) → ℝ
+  prefixAllocation :
+    Algorithm → (Fin N → Finset (Fin N)) → Fin N → Fin N → ℝ
+  normalizedRevenue_le_cappedPrefixAllocationSpend :
+    ∀ algorithm permutation,
+      normalizedRevenue algorithm permutation ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              prefixAllocation algorithm
+                (theorem9ObservedPrefix N permutation round)
+                round (permutation bidder))) /
+          (N : ℝ)
+  prefixAllocation_zero_of_not_visible :
+    ∀ algorithm obs round bidder,
+      bidder ∉ obs round →
+        prefixAllocation algorithm obs round bidder = 0
+  prefixAllocation_sum_le_one :
+    ∀ algorithm obs round,
+      (∑ bidder ∈ obs round,
+        prefixAllocation algorithm obs round bidder) ≤ 1
+  revenueBound_le_ratio :
+    theorem9NormalizedRevenueUpperBound N ≤ ratio
+
+/--
 Family-level certificate for the asymptotic Section 7 lower bound. It packages
 the deterministic round-allocation calculation for every market size. The
 harmonic-cap comparison is proved in this file.
@@ -1533,6 +1588,38 @@ structure BMatchingTheorem9ObservedPrefixFamilyCertificate
     ∀ N algorithm permutation (round : Fin N),
       (∑ bidder ∈ theorem9EligibleBidders N round,
         allocation N algorithm permutation round bidder) ≤ 1
+
+/--
+Family-level feasible observed-prefix allocation certificate. It packages
+allocation rules that act on actual bidder labels from the visible prefix and
+are directly feasible in every visible round.
+-/
+structure BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] where
+  normalizedRevenue :
+    (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ
+  prefixAllocation :
+    (N : ℕ) → Algorithm N → (Fin N → Finset (Fin N)) →
+      Fin N → Fin N → ℝ
+  normalizedRevenue_le_cappedPrefixAllocationSpend :
+    ∀ N algorithm permutation,
+      normalizedRevenue N algorithm permutation ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              prefixAllocation N algorithm
+                (theorem9ObservedPrefix N permutation round)
+                round (permutation bidder))) /
+          (N : ℝ)
+  prefixAllocation_zero_of_not_visible :
+    ∀ N algorithm obs round bidder,
+      bidder ∉ obs round →
+        prefixAllocation N algorithm obs round bidder = 0
+  prefixAllocation_sum_le_one :
+    ∀ N algorithm obs round,
+      (∑ bidder ∈ obs round,
+        prefixAllocation N algorithm obs round bidder) ≤ 1
 
 /--
 Family-level round-allocation certificate with the harmonic side represented
@@ -1892,6 +1979,65 @@ noncomputable def toRelabelSymmetricPointwiseAllocationRevenueCertificate
 
 end BMatchingObservedPrefixAllocationRevenueCertificate
 
+namespace BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
+
+variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
+
+/--
+Convert a feasible actual-bidder prefix allocation rule into the
+observed-prefix position-allocation certificate.
+-/
+noncomputable def toObservedPrefixAllocationRevenueCertificate
+    (C : BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
+      N Algorithm ratio) :
+    BMatchingObservedPrefixAllocationRevenueCertificate
+      N Algorithm ratio where
+  normalizedRevenue := C.normalizedRevenue
+  allocation := fun algorithm permutation round bidder =>
+    C.prefixAllocation algorithm
+      (theorem9ObservedPrefix N permutation round)
+      round (permutation bidder)
+  prefixAllocation := C.prefixAllocation
+  allocation_eq_prefix := by
+    intro algorithm permutation round bidder
+    rfl
+  normalizedRevenue_le_cappedAllocationSpend :=
+    C.normalizedRevenue_le_cappedPrefixAllocationSpend
+  allocation_zero_of_ineligible := by
+    intro algorithm permutation round bidder hnot
+    exact
+      C.prefixAllocation_zero_of_not_visible algorithm
+        (theorem9ObservedPrefix N permutation round) round
+        (permutation bidder)
+        (by
+          simp [theorem9ObservedPrefix,
+            theorem9ActualEligibleBidders_not_mem_of_not_eligible hnot])
+  round_allocation_sum_le_one := by
+    intro algorithm permutation round
+    let obs := theorem9ObservedPrefix N permutation round
+    have hcap := C.prefixAllocation_sum_le_one algorithm obs round
+    have hcurrent :
+        obs round = theorem9ActualEligibleBidders N permutation round := by
+      simp [obs, theorem9ObservedPrefix]
+    have hcapActual :
+        (∑ bidder ∈ theorem9ActualEligibleBidders N permutation round,
+          C.prefixAllocation algorithm obs round bidder) ≤ 1 := by
+      simpa [hcurrent] using hcap
+    have hsum :=
+      theorem9ActualEligibleBidders_sum_eq permutation round
+        (fun bidder => C.prefixAllocation algorithm obs round bidder)
+    calc
+      (∑ bidder ∈ theorem9EligibleBidders N round,
+        C.prefixAllocation algorithm obs round (permutation bidder))
+          =
+        (∑ bidder ∈ theorem9ActualEligibleBidders N permutation round,
+          C.prefixAllocation algorithm obs round bidder) := by
+          exact hsum.symm
+      _ ≤ 1 := hcapActual
+  revenueBound_le_ratio := C.revenueBound_le_ratio
+
+end BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
+
 namespace BMatchingSymmetricPointwiseAllocationRevenueCertificate
 
 variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
@@ -2119,6 +2265,25 @@ theorem no_randomized_algorithm_beats_ratio
       |>.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 end BMatchingObservedPrefixAllocationRevenueCertificate
+
+namespace BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
+
+variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
+
+theorem no_randomized_algorithm_beats_ratio
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    (C : BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
+      N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact
+    C.toObservedPrefixAllocationRevenueCertificate
+      |>.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+end BMatchingFeasibleObservedPrefixAllocationRevenueCertificate
 
 /--
 Asymptotic Section 7 wrapper. If the round-allocation calculation is available
@@ -2381,6 +2546,74 @@ theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
   exact Crelabel.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
 
 end BMatchingTheorem9ObservedPrefixFamilyCertificate
+
+namespace BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
+
+variable {Algorithm : ℕ → Type*}
+variable [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+
+/--
+Family-level Theorem 9 endpoint from feasible actual-bidder allocation rules
+over the observed prefix.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    (C : BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
+      Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  let Cprefix :
+      BMatchingTheorem9ObservedPrefixFamilyCertificate Algorithm := {
+    normalizedRevenue := C.normalizedRevenue
+    allocation := fun N algorithm permutation round bidder =>
+      C.prefixAllocation N algorithm
+        (theorem9ObservedPrefix N permutation round)
+        round (permutation bidder)
+    prefixAllocation := C.prefixAllocation
+    allocation_eq_prefix := by
+      intro N algorithm permutation round bidder
+      rfl
+    normalizedRevenue_le_cappedAllocationSpend :=
+      C.normalizedRevenue_le_cappedPrefixAllocationSpend
+    allocation_zero_of_ineligible := by
+      intro N algorithm permutation round bidder hnot
+      exact
+        C.prefixAllocation_zero_of_not_visible N algorithm
+          (theorem9ObservedPrefix N permutation round) round
+          (permutation bidder)
+          (by
+            simp [theorem9ObservedPrefix,
+              theorem9ActualEligibleBidders_not_mem_of_not_eligible hnot])
+    round_allocation_sum_le_one := by
+      intro N algorithm permutation round
+      let obs := theorem9ObservedPrefix N permutation round
+      have hcap := C.prefixAllocation_sum_le_one N algorithm obs round
+      have hcurrent :
+          obs round = theorem9ActualEligibleBidders N permutation round := by
+        simp [obs, theorem9ObservedPrefix]
+      have hcapActual :
+          (∑ bidder ∈ theorem9ActualEligibleBidders N permutation round,
+            C.prefixAllocation N algorithm obs round bidder) ≤ 1 := by
+        simpa [hcurrent] using hcap
+      have hsum :=
+        theorem9ActualEligibleBidders_sum_eq permutation round
+          (fun bidder => C.prefixAllocation N algorithm obs round bidder)
+      calc
+        (∑ bidder ∈ theorem9EligibleBidders N round,
+          C.prefixAllocation N algorithm obs round (permutation bidder))
+            =
+          (∑ bidder ∈ theorem9ActualEligibleBidders N permutation round,
+            C.prefixAllocation N algorithm obs round bidder) := by
+            exact hsum.symm
+        _ ≤ 1 := hcapActual
+  }
+  exact Cprefix.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+end BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
 
 namespace BMatchingTheorem9LayerCountFamilyCertificate
 
