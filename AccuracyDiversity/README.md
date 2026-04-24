@@ -37,6 +37,7 @@ this folder.
 | Finite i.i.d. Bernoulli pairwise balance | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_pairwise_balanced` | formalized | `AccuracyDiversity/MainTheorems.lean` | identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Finite i.i.d. Bernoulli `0`-homogeneity | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_uniform_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | positive slate size, nonempty finite type space, identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Uniform `[0,1]`, `k = 1` marginal algebra | `UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum`, `paper_uniform_top_one_optimum_first_order_condition` | formalized | `AccuracyDiversity/Uniform.lean`, `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
+| Floor/ceiling count-anchor primitives | `floorCountAnchor`, `ceilCountAnchor`, `floorCountAnchor_abs_close`, `ceilCountAnchor_abs_close` | formalized | `AccuracyDiversity/Uniform.lean` | nonnegative real target for absolute-closeness lemmas |
 | Proposition 2 square-root representation bridge | `paper_uniform_sqrt_homogeneity_of_count_closeness` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires a count-closeness theorem for the square-root target |
 | Appendix D.5 rounding combinatorics and exchange certificate bridge | `paper_rounding_count_close_of_no_crossing`, `paper_uniform_rounding_count_close_of_strict_exchange_certificate`, `paper_uniform_rounding_count_close_of_two_anchor_certificate`, `paper_uniform_rounding_count_close_of_shifted_square_anchors` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires constructing lower/upper anchors that bracket the squared shifted real targets |
 | Finite Proposition 2 anchor-certificate theorem | `paper_uniform_top_one_sqrt_homogeneity_of_anchor_certificate`, `paper_uniform_top_one_sqrt_homogeneity_of_two_anchor_certificate`, `paper_uniform_top_one_sqrt_homogeneity_of_shifted_square_anchors` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires constructing the square-root lower/upper anchors and proving one-item closeness to the square-root target |
@@ -58,3 +59,10 @@ real-relaxation arguments. The remaining mathematical work is the
 real-relaxation optimizer and the proof that the square-root lower/upper
 anchors bracket the shifted square-root real targets and have one-item
 closeness to the square-root target.
+
+Proof-audit note: the arXiv appendix solves the real relaxation under
+`∑_t x_t = n` but writes the optimizer as proportional to `n`; a direct
+Lagrange-multiplier calculation gives shifted counts proportional to `n + m`.
+The current Lean development therefore keeps the final unconditional
+Proposition 2 open until the sharper discrete argument connecting that
+relaxation to the stated `(m + 1) / n` bound is formalized.

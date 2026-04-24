@@ -1,5 +1,6 @@
 import AccuracyDiversity.Exchange
 import EconCSLean.Math.FiniteRounding
+import Mathlib.Algebra.Order.Floor.Semiring
 import Mathlib.Data.Real.Sqrt
 import Mathlib.Tactic.Linarith
 
@@ -102,6 +103,57 @@ theorem approx_of_count_abs_error {T : ℕ}
     (sqrtLikelihoodProfile likelihood) a hN hNpos hclose
 
 end sqrtLikelihoodProfile
+
+/-- Coordinatewise natural-floor count anchor for a nonnegative real target. -/
+noncomputable def floorCountAnchor {T : ℕ}
+    (target : ItemType T → ℝ) : CountAllocation T where
+  count := fun t => ⌊target t⌋₊
+
+/-- Coordinatewise natural-ceiling count anchor for a real target. -/
+noncomputable def ceilCountAnchor {T : ℕ}
+    (target : ItemType T → ℝ) : CountAllocation T where
+  count := fun t => ⌈target t⌉₊
+
+@[simp] theorem floorCountAnchor_count {T : ℕ}
+    (target : ItemType T → ℝ) (t : ItemType T) :
+    (floorCountAnchor target).count t = ⌊target t⌋₊ := rfl
+
+@[simp] theorem ceilCountAnchor_count {T : ℕ}
+    (target : ItemType T → ℝ) (t : ItemType T) :
+    (ceilCountAnchor target).count t = ⌈target t⌉₊ := rfl
+
+theorem floorCountAnchor_le_ceilCountAnchor {T : ℕ}
+    (target : ItemType T → ℝ) :
+    ∀ t, (floorCountAnchor target).count t ≤
+      (ceilCountAnchor target).count t := by
+  intro t
+  exact Nat.floor_le_ceil (target t)
+
+theorem floorCountAnchor_le_target {T : ℕ}
+    (target : ItemType T → ℝ) (hnonneg : ∀ t, 0 ≤ target t) :
+    ∀ t, ((floorCountAnchor target).count t : ℝ) ≤ target t := by
+  intro t
+  exact Nat.floor_le (hnonneg t)
+
+theorem target_le_ceilCountAnchor {T : ℕ}
+    (target : ItemType T → ℝ) :
+    ∀ t, target t ≤ ((ceilCountAnchor target).count t : ℝ) := by
+  intro t
+  exact Nat.le_ceil (target t)
+
+theorem floorCountAnchor_abs_close {T : ℕ}
+    (target : ItemType T → ℝ) (hnonneg : ∀ t, 0 ≤ target t) :
+    ∀ t, |((floorCountAnchor target).count t : ℝ) - target t| ≤ 1 := by
+  intro t
+  simpa [floorCountAnchor] using
+    (Nat.abs_floor_sub_le (a := target t) (hnonneg t))
+
+theorem ceilCountAnchor_abs_close {T : ℕ}
+    (target : ItemType T → ℝ) (hnonneg : ∀ t, 0 ≤ target t) :
+    ∀ t, |((ceilCountAnchor target).count t : ℝ) - target t| ≤ 1 := by
+  intro t
+  simpa [ceilCountAnchor] using
+    (Nat.abs_ceil_sub_le (a := target t) (hnonneg t))
 
 namespace UniformTopOne
 

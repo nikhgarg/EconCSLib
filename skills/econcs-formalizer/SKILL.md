@@ -232,6 +232,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   with square-root first-order conditions, discharge abstract exchange
   certificates by proving likelihoods are a positive scale times squared
   shifted targets and that anchors bracket those shifted targets.
+- When a paper proof derives a continuous relaxation by Lagrange multipliers,
+  verify the normalization algebra before encoding the theorem. Off-by-`m`
+  shifts can appear when the derivative depends on `x_t + 1`; keep the theorem
+  conditional or log a proof-audit note until the exact discrete rounding bound
+  is recovered.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says
