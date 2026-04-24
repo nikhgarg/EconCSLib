@@ -609,6 +609,32 @@ theorem lemma4_exchange_yj_sub_transfer_gt_yi
   nlinarith
 
 /--
+Problem 6 dual algebra: if `q_t ≤ q_j`, the left-side dual coefficient also
+respects the `y` budget.
+-/
+theorem problem6Dual_left_coeff_le
+    {qt qj : ℝ}
+    (hqj0 : 0 < qj) (hqj1 : qj < 1) (hqt_le : qt ≤ qj) :
+    (qt / qj) * (1 - qj) ≤ 1 - qt := by
+  have hqj_ne : qj ≠ 0 := ne_of_gt hqj0
+  rw [div_mul_eq_mul_div]
+  rw [div_le_iff₀ hqj0]
+  nlinarith
+
+/--
+Problem 6 dual algebra: if `q_j ≤ q_t`, the right-side dual coefficient also
+respects the `x` budget.
+-/
+theorem problem6Dual_right_coeff_le
+    {qt qj : ℝ}
+    (hqj1 : qj < 1) (hqt_le : qj ≤ qt) :
+    ((1 - qt) / (1 - qj)) * qj ≤ qt := by
+  have hden : 0 < 1 - qj := sub_pos.mpr hqj1
+  rw [div_mul_eq_mul_div]
+  rw [div_le_iff₀ hden]
+  nlinarith
+
+/--
 Appendix D, Lemma 4 indexed exchange margin: if `j` is before `i`, then
 `q_j > q_i`, so the item-`j` perturbation has positive slack.
 -/
@@ -3170,6 +3196,375 @@ structure Problem6ClosedOptimalityCertificate {n : ℕ} [NeZero n]
     ∀ (ρ : TypePolicy 2 n) (ell' : ℝ),
       problem6LPFeasible alpha v ρ ell' →
         ell' ≤ problem6ClosedValue alpha v t
+
+/--
+Dual weights for the closed-form Problem 6 solution.  These are the finite
+dual variables implicit in Lemma 5: left items get weight
+`λ q_t / q_j`, the pivot gets `λ`, and right items get
+`λ (1-q_t)/(1-q_j)`.
+-/
+noncomputable def problem6ClosedDualWeight {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t j : Item n) : ℝ :=
+  if j.val < t.val then
+    problem6ClosedValue alpha v t * pairShare alpha v t /
+      pairShare alpha v j
+  else if j = t then
+    problem6ClosedValue alpha v t
+  else
+    problem6ClosedValue alpha v t * (1 - pairShare alpha v t) /
+      (1 - pairShare alpha v j)
+
+theorem problem6ClosedDualWeight_before {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (hj : j.val < t.val) :
+    problem6ClosedDualWeight alpha v t j =
+      problem6ClosedValue alpha v t * pairShare alpha v t /
+        pairShare alpha v j := by
+  simp [problem6ClosedDualWeight, hj]
+
+theorem problem6ClosedDualWeight_at {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    problem6ClosedDualWeight alpha v t t =
+      problem6ClosedValue alpha v t := by
+  simp [problem6ClosedDualWeight]
+
+theorem problem6ClosedDualWeight_after {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (hj : t.val < j.val) :
+    problem6ClosedDualWeight alpha v t j =
+      problem6ClosedValue alpha v t * (1 - pairShare alpha v t) /
+        (1 - pairShare alpha v j) := by
+  have hnlt : ¬ j.val < t.val := by omega
+  have hne : j ≠ t := by
+    intro h
+    subst h
+    omega
+  simp [problem6ClosedDualWeight, hnlt, hne]
+
+theorem problem6ClosedDualWeight_nonneg {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) (j : Item n) :
+    0 ≤ problem6ClosedDualWeight alpha v t j := by
+  by_cases hjlt : j.val < t.val
+  · rw [problem6ClosedDualWeight_before hjlt]
+    exact div_nonneg
+      (mul_nonneg
+        (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+        (pairShare_pos t halpha0 halpha1 hpos).le)
+      (pairShare_pos j halpha0 halpha1 hpos).le
+  · by_cases hjeq : j = t
+    · subst j
+      rw [problem6ClosedDualWeight_at]
+      exact (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+    · have hjgt : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact hjeq (Fin.ext hval)
+        omega
+      rw [problem6ClosedDualWeight_after hjgt]
+      exact div_nonneg
+        (mul_nonneg
+          (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+          (one_sub_pairShare_pos t halpha0 halpha1 hpos).le)
+        (one_sub_pairShare_pos j halpha0 halpha1 hpos).le
+
+private theorem problem6ClosedDualWeight_left_part_sum_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n, if j.val < t.val then
+        problem6ClosedDualWeight alpha v t j else 0) =
+      problem6ClosedValue alpha v t * pairShare alpha v t *
+        problem6LeftSum alpha v t := by
+  unfold problem6LeftSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases hjt : j.val < t.val
+  · simp [hjt, problem6ClosedDualWeight_before hjt, div_eq_mul_inv,
+      mul_comm, mul_left_comm]
+  · simp [hjt]
+
+private theorem problem6ClosedDualWeight_right_part_sum_eq {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n, if t.val < j.val then
+        problem6ClosedDualWeight alpha v t j else 0) =
+      problem6ClosedValue alpha v t * (1 - pairShare alpha v t) *
+        problem6RightSum alpha v t := by
+  unfold problem6RightSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases htj : t.val < j.val
+  · simp [htj, problem6ClosedDualWeight_after htj, div_eq_mul_inv,
+      mul_comm, mul_left_comm]
+  · simp [htj]
+
+theorem problem6ClosedDualWeight_sum_eq_one {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (∑ j : Item n, problem6ClosedDualWeight alpha v t j) = 1 := by
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_add_right_part
+      (problem6ClosedDualWeight alpha v t) t
+  have hleft :
+      (∑ j : Item n, if j.val < t.val then
+          problem6ClosedDualWeight alpha v t j else 0) =
+        problem6ClosedValue alpha v t * pairShare alpha v t *
+          problem6LeftSum alpha v t :=
+    problem6ClosedDualWeight_left_part_sum_eq
+  have hright :
+      (∑ j : Item n, if t.val < j.val then
+          problem6ClosedDualWeight alpha v t j else 0) =
+        problem6ClosedValue alpha v t * (1 - pairShare alpha v t) *
+          problem6RightSum alpha v t :=
+    problem6ClosedDualWeight_right_part_sum_eq
+  have hDpos := problem6ClosedDenominator_pos t halpha0 halpha1 hpos
+  have hDmul :
+      problem6ClosedValue alpha v t *
+          problem6ClosedDenominator alpha v t = 1 := by
+    unfold problem6ClosedValue
+    field_simp [ne_of_gt hDpos]
+  rw [hsplit, hleft, hright, problem6ClosedDualWeight_at]
+  unfold problem6ClosedDenominator at hDmul
+  nlinarith
+
+/--
+Problem 6 closed-form dual feasibility: the `x_j` coefficients of the dual
+weighted item constraints are bounded by `λ q_t`.
+-/
+theorem problem6ClosedDualWeight_pairShare_le {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    problem6ClosedDualWeight alpha v t j * pairShare alpha v j ≤
+      problem6ClosedValue alpha v t * pairShare alpha v t := by
+  by_cases hjlt : j.val < t.val
+  · rw [problem6ClosedDualWeight_before hjlt]
+    have hqj : pairShare alpha v j ≠ 0 :=
+      ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+    calc
+      (problem6ClosedValue alpha v t * pairShare alpha v t /
+          pairShare alpha v j) * pairShare alpha v j =
+          problem6ClosedValue alpha v t * pairShare alpha v t := by
+        field_simp [hqj]
+      _ ≤ problem6ClosedValue alpha v t * pairShare alpha v t := le_rfl
+  · by_cases hjeq : j = t
+    · subst j
+      rw [problem6ClosedDualWeight_at]
+    · have htj : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact hjeq (Fin.ext hval)
+        omega
+      have hq_le : pairShare alpha v j ≤ pairShare alpha v t :=
+        (pairShare_strictAnti_index
+          halpha0 halpha1 hpos hdec htj).le
+      have hcoeff :
+          ((1 - pairShare alpha v t) /
+              (1 - pairShare alpha v j)) *
+            pairShare alpha v j ≤ pairShare alpha v t :=
+        problem6Dual_right_coeff_le
+          (pairShare_lt_one j halpha0 halpha1 hpos) hq_le
+      have hmul :=
+        mul_le_mul_of_nonneg_left hcoeff
+          (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+      rw [problem6ClosedDualWeight_after htj]
+      convert hmul using 1
+      ring
+
+/--
+Problem 6 closed-form dual feasibility: the `y_j` coefficients of the dual
+weighted item constraints are bounded by `λ (1-q_t)`.
+-/
+theorem problem6ClosedDualWeight_one_sub_pairShare_le {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    problem6ClosedDualWeight alpha v t j *
+        (1 - pairShare alpha v j) ≤
+      problem6ClosedValue alpha v t *
+        (1 - pairShare alpha v t) := by
+  by_cases hjlt : j.val < t.val
+  · have hqt_le : pairShare alpha v t ≤ pairShare alpha v j :=
+      (pairShare_strictAnti_index
+        halpha0 halpha1 hpos hdec hjlt).le
+    have hcoeff :
+        (pairShare alpha v t / pairShare alpha v j) *
+          (1 - pairShare alpha v j) ≤
+            1 - pairShare alpha v t :=
+      problem6Dual_left_coeff_le
+        (pairShare_pos j halpha0 halpha1 hpos)
+        (pairShare_lt_one j halpha0 halpha1 hpos) hqt_le
+    have hmul :=
+      mul_le_mul_of_nonneg_left hcoeff
+        (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+    rw [problem6ClosedDualWeight_before hjlt]
+    convert hmul using 1
+    ring
+  · by_cases hjeq : j = t
+    · subst j
+      rw [problem6ClosedDualWeight_at]
+    · have htj : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact hjeq (Fin.ext hval)
+        omega
+      rw [problem6ClosedDualWeight_after htj]
+      have hqj : 1 - pairShare alpha v j ≠ 0 :=
+        ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
+      calc
+        (problem6ClosedValue alpha v t *
+            (1 - pairShare alpha v t) /
+            (1 - pairShare alpha v j)) *
+            (1 - pairShare alpha v j) =
+            problem6ClosedValue alpha v t *
+              (1 - pairShare alpha v t) := by
+          field_simp [hqj]
+        _ ≤ problem6ClosedValue alpha v t *
+              (1 - pairShare alpha v t) := le_rfl
+
+/-- Problem 6 dual `x`-budget bound. -/
+theorem problem6ClosedDual_x_budget_le {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (ρ : TypePolicy 2 n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    (∑ j : Item n,
+        problem6ClosedDualWeight alpha v t j *
+          pairShare alpha v j * (ρ 0 j).toReal) ≤
+      problem6ClosedValue alpha v t * pairShare alpha v t := by
+  calc
+    (∑ j : Item n,
+        problem6ClosedDualWeight alpha v t j *
+          pairShare alpha v j * (ρ 0 j).toReal)
+        ≤ ∑ j : Item n,
+            (problem6ClosedValue alpha v t * pairShare alpha v t) *
+              (ρ 0 j).toReal := by
+          refine Finset.sum_le_sum ?_
+          intro j _hj
+          exact mul_le_mul_of_nonneg_right
+            (problem6ClosedDualWeight_pairShare_le
+              halpha0 halpha1 hpos hdec)
+            (ENNReal.toReal_nonneg)
+    _ = problem6ClosedValue alpha v t * pairShare alpha v t := by
+          rw [← Finset.mul_sum, problem6_typeZero_sum_eq_one]
+          ring
+
+/-- Problem 6 dual `y`-budget bound. -/
+theorem problem6ClosedDual_y_budget_le {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (ρ : TypePolicy 2 n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    (∑ j : Item n,
+        problem6ClosedDualWeight alpha v t j *
+          (1 - pairShare alpha v j) * (ρ 1 j).toReal) ≤
+      problem6ClosedValue alpha v t *
+        (1 - pairShare alpha v t) := by
+  calc
+    (∑ j : Item n,
+        problem6ClosedDualWeight alpha v t j *
+          (1 - pairShare alpha v j) * (ρ 1 j).toReal)
+        ≤ ∑ j : Item n,
+            (problem6ClosedValue alpha v t *
+              (1 - pairShare alpha v t)) * (ρ 1 j).toReal := by
+          refine Finset.sum_le_sum ?_
+          intro j _hj
+          exact mul_le_mul_of_nonneg_right
+            (problem6ClosedDualWeight_one_sub_pairShare_le
+              halpha0 halpha1 hpos hdec)
+            (ENNReal.toReal_nonneg)
+    _ = problem6ClosedValue alpha v t *
+          (1 - pairShare alpha v t) := by
+          rw [← Finset.mul_sum, problem6_typeOne_sum_eq_one]
+          ring
+
+/--
+Problem 6 closed-form weak duality certificate: every feasible policy/value is
+bounded above by the Lemma 5 closed value for the pivot.
+-/
+theorem problem6ClosedDual_upper_bound {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (ρ : TypePolicy 2 n) (ell : ℝ)
+    (hfeas : problem6LPFeasible alpha v ρ ell) :
+    ell ≤ problem6ClosedValue alpha v t := by
+  let w : Item n → ℝ := problem6ClosedDualWeight alpha v t
+  have hweighted :
+      (∑ j : Item n, w j * ell) ≤
+        ∑ j : Item n, w j *
+          (pairShare alpha v j * (ρ 0 j).toReal +
+            (1 - pairShare alpha v j) * (ρ 1 j).toReal) := by
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    exact mul_le_mul_of_nonneg_left (hfeas j)
+      (problem6ClosedDualWeight_nonneg halpha0 halpha1 hpos j)
+  have hleft :
+      (∑ j : Item n, w j * ell) = ell := by
+    calc
+      (∑ j : Item n, w j * ell) = (∑ j : Item n, w j) * ell := by
+        rw [Finset.sum_mul]
+      _ = ell := by
+        rw [show (∑ j : Item n, w j) = 1 by
+          simpa [w] using
+            problem6ClosedDualWeight_sum_eq_one
+              (alpha := alpha) (v := v) (t := t)
+              halpha0 halpha1 hpos]
+        ring
+  have hright_split :
+      (∑ j : Item n, w j *
+          (pairShare alpha v j * (ρ 0 j).toReal +
+            (1 - pairShare alpha v j) * (ρ 1 j).toReal)) =
+        (∑ j : Item n,
+          w j * pairShare alpha v j * (ρ 0 j).toReal) +
+        (∑ j : Item n,
+          w j * (1 - pairShare alpha v j) * (ρ 1 j).toReal) := by
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    ring
+  have hx :=
+    problem6ClosedDual_x_budget_le ρ halpha0 halpha1 hpos hdec
+      (t := t)
+  have hy :=
+    problem6ClosedDual_y_budget_le ρ halpha0 halpha1 hpos hdec
+      (t := t)
+  calc
+    ell = ∑ j : Item n, w j * ell := hleft.symm
+    _ ≤ ∑ j : Item n, w j *
+          (pairShare alpha v j * (ρ 0 j).toReal +
+            (1 - pairShare alpha v j) * (ρ 1 j).toReal) := hweighted
+    _ = (∑ j : Item n,
+          w j * pairShare alpha v j * (ρ 0 j).toReal) +
+        (∑ j : Item n,
+          w j * (1 - pairShare alpha v j) * (ρ 1 j).toReal) := hright_split
+    _ ≤ problem6ClosedValue alpha v t * pairShare alpha v t +
+        problem6ClosedValue alpha v t *
+          (1 - pairShare alpha v t) := add_le_add hx hy
+    _ = problem6ClosedValue alpha v t := by ring
+
+/--
+Denominator bounds plus the closed-form dual certificate produce the full
+closed-form optimality certificate for Problem 6.
+-/
+theorem problem6ClosedOptimalityCertificate_of_denominatorBounds {n : ℕ}
+    [NeZero n] {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    Problem6ClosedOptimalityCertificate alpha v t where
+  denominator_bounds := hbounds
+  upper_bound := fun ρ ell hfeas =>
+    problem6ClosedDual_upper_bound
+      halpha0 halpha1 hpos hdec ρ ell hfeas
 
 /--
 A closed-form certificate supplies the generic `Problem6OptimalityCertificate`

@@ -1309,6 +1309,47 @@ theorem paper_problem6_closedPolicy_feasible_of_denominatorBounds
     halpha0 halpha1 hpos hbounds
 
 /--
+Problem 6 dual certificate: the paper's closed-form dual weights sum to one.
+-/
+theorem paper_problem6_closedDualWeight_sum_eq_one
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (∑ j : Item n, problem6ClosedDualWeight alpha v t j) = 1 := by
+  exact problem6ClosedDualWeight_sum_eq_one
+    (alpha := alpha) (v := v) (t := t) halpha0 halpha1 hpos
+
+/--
+Problem 6 dual certificate: the closed-form dual weights upper-bound every
+feasible Problem 6 LP value by the Lemma 5 closed value at pivot `t`.
+-/
+theorem paper_problem6_closedDual_upper_bound
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (ρ : TypePolicy 2 n) (ell : ℝ)
+    (hfeas : problem6LPFeasible alpha v ρ ell) :
+    ell ≤ problem6ClosedValue alpha v t := by
+  exact problem6ClosedDual_upper_bound
+    halpha0 halpha1 hpos hdec ρ ell hfeas
+
+/--
+Problem 6 closed-form optimality certificate: denominator bounds now supply
+both primal feasibility and the closed-form dual upper bound.
+-/
+theorem paper_problem6_closedOptimalityCertificate_of_denominatorBounds
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    Problem6ClosedOptimalityCertificate alpha v t := by
+  exact problem6ClosedOptimalityCertificate_of_denominatorBounds
+    halpha0 halpha1 hpos hdec hbounds
+
+/--
 Problem 6 closed-form optimal-value wrapper: a denominator-bound plus
 upper-bound certificate proves the LP optimum equals the Lemma 5 value.
 -/
