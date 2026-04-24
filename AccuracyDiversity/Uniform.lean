@@ -8,9 +8,6 @@ open scoped BigOperators
 
 namespace AccuracyDiversity
 
-/--
-Expected maximum of `q` iid `U([0,1])` draws.
--/
 noncomputable def uniformTopOneValue (q : ℕ) : ℝ :=
   1 - 1 / (q + 1 : ℝ)
 
@@ -243,7 +240,18 @@ theorem count_close_of_no_rounding_crossing_between {T : ℕ}
     ∀ t : ItemType T,
       lower.count t < a.count t + Fintype.card (ItemType T) ∧
         a.count t < upper.count t + Fintype.card (ItemType T) := by
-  sorry
+  intro t
+  constructor
+  · exact EconCSLean.FiniteRounding.NoRoundingCrossingBetween.lower_lt_count_add_card
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => lower.count t)
+      (fun t : ItemType T => upper.count t)
+      t ha hupper hUlt horder hno
+  · exact EconCSLean.FiniteRounding.NoRoundingCrossingBetween.count_lt_upper_add_card
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => lower.count t)
+      (fun t : ItemType T => upper.count t)
+      t ha hlower hNlt horder hno
 
 end UniformRounding
 
