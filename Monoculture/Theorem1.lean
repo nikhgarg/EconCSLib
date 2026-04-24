@@ -676,5 +676,26 @@ theorem theorem1_f_lt_g_of_paperHypotheses_equalAccuracy {n : ℕ}
     theorem1_f F θ θ < theorem1_g F θ θ :=
   theorem1_f_lt_g_of_prefersIndependent_equalAccuracy F θ hpaper.1
 
+/--
+Definition 2 plus atomwise continuity gives a left interval endpoint strictly
+above `θH` where the initial comparison `f < g` still holds.
+-/
+theorem theorem1_exists_right_initial_f_lt_g_of_atom_continuity {n : ℕ}
+    (F : AccuracyFamily n) (θH : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θH θH))
+    (hdist :
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θH) :
+    ∃ lo : ℝ, θH < lo ∧ theorem1_f F lo θH < theorem1_g F lo θH := by
+  have hlt : theorem1_f F θH θH < theorem1_g F θH θH :=
+    theorem1_f_lt_g_of_paperHypotheses_equalAccuracy F θH hpaper
+  rcases exists_right_radius_lt_of_epsilonContinuousAt
+      (theorem1_f_epsilonContinuousAt_of_atom_continuity F θH θH hdist)
+      (theorem1_g_epsilonContinuousAt_of_atom_continuity F θH θH hdist)
+      hlt with
+    ⟨δ, hδ_pos, hpersist⟩
+  refine ⟨θH + δ / 2, ?_, ?_⟩
+  · linarith
+  · exact hpersist (θH + δ / 2) (by linarith) (by linarith)
+
 end AccuracyFamily
 end Monoculture

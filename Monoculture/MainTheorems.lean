@@ -557,6 +557,25 @@ theorem paper_theorem1_initial_f_lt_g_from_definition2
     F θH hpaper
 
 /--
+Theorem 1 proof notation, left endpoint for the interval sign-change argument.
+
+Paper statement in the proof: by Definition 2, `f(θH) < g(θH)`, and by
+continuity this inequality persists for a slightly larger algorithm accuracy.
+Lean proves the finite version from atomwise continuity at `θH`.
+-/
+theorem paper_theorem1_exists_right_initial_f_lt_g_from_definition2_and_continuity
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θH θH))
+    (hdist :
+      ∀ π : Ranking n, DecisionCore.EpsilonContinuousAt
+        (fun θ => ((F.dist θ) π).toReal) θH) :
+    ∃ lo : ℝ, θH < lo ∧
+      AccuracyFamily.theorem1_f F lo θH <
+        AccuracyFamily.theorem1_g F lo θH :=
+  AccuracyFamily.theorem1_exists_right_initial_f_lt_g_of_atom_continuity
+    F θH hpaper hdist
+
+/--
 Theorem 1 proof notation, weaker-competition side.
 
 Paper statement in the proof: by Definition 3, for `θA > θH`,
