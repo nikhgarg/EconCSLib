@@ -1,5 +1,6 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 open scoped BigOperators
@@ -28,6 +29,20 @@ structure PositionOutcome (Bidder Slot : Type*) where
 namespace PositionOutcome
 
 variable {Bidder Slot : Type*}
+
+@[ext]
+theorem ext (O P : PositionOutcome Bidder Slot)
+    (hslot : ∀ i, O.slotOf i = P.slotOf i)
+    (hpay : ∀ i, O.paymentPerClick i = P.paymentPerClick i) :
+    O = P := by
+  cases O
+  cases P
+  simp only at hslot hpay
+  congr
+  · funext i
+    exact hslot i
+  · funext i
+    exact hpay i
 
 /-- Quasilinear expected utility in a position auction. -/
 def utility (E : PositionEnvironment Slot)
@@ -166,8 +181,24 @@ that deviation improves utility from `2` to `9/2`.
 noncomputable def gspCounterexampleEnvironment : PositionEnvironment (Fin 2) where
   clickThroughRate s := if s = (0 : Fin 2) then 1 else 1 / 2
 
-def gspCounterexampleValues : Fin 3 → ℝ :=
-  fun i => if i = (0 : Fin 3) then 10 else if i = (1 : Fin 3) then 8 else 1
+def gspCounterexampleValues (i : Fin 3) : ℝ :=
+  match i with
+  | ⟨0, _⟩ => 10
+  | ⟨1, _⟩ => 8
+  | ⟨_, _⟩ => 1
+
+def gspCounterexampleLowerBids (i : Fin 3) : ℝ :=
+  match i with
+  | ⟨0, _⟩ => 7
+  | ⟨1, _⟩ => 8
+  | ⟨_, _⟩ => 1
+
+theorem gspCounterexampleLowerBids_eq_update :
+    gspCounterexampleLowerBids =
+      Function.update gspCounterexampleValues (0 : Fin 3) 7 := by
+  funext i
+  fin_cases i <;> norm_num [gspCounterexampleLowerBids,
+    gspCounterexampleValues, Function.update]
 
 /--
 Truthful GSP-style next-price outcome for values/bids `(10, 8, 1)`.
@@ -196,6 +227,73 @@ def gspCounterexampleLowerBidOutcome : PositionOutcome (Fin 3) (Fin 2) where
     if i = (1 : Fin 3) then 7
     else if i = (0 : Fin 3) then 1
     else 0
+
+/-! ## A concrete sorted GSP mechanism for three bidders and two slots -/
+
+/-- Highest bidder among three bidders, with deterministic tie-breaking. -/
+noncomputable def topBidder3 (bids : Fin 3 → ℝ) : Fin 3 :=
+  if bids (0 : Fin 3) < bids (1 : Fin 3) then
+    if bids (1 : Fin 3) < bids (2 : Fin 3) then
+      (2 : Fin 3)
+    else
+      (1 : Fin 3)
+  else
+    if bids (0 : Fin 3) < bids (2 : Fin 3) then
+      (2 : Fin 3)
+    else
+      (0 : Fin 3)
+
+/-- Second-highest bidder among three bidders, with deterministic tie-breaking. -/
+noncomputable def secondBidder3 (bids : Fin 3 → ℝ) : Fin 3 :=
+  if bids (0 : Fin 3) < bids (1 : Fin 3) then
+    if bids (1 : Fin 3) < bids (2 : Fin 3) then
+      (1 : Fin 3)
+    else if bids (0 : Fin 3) < bids (2 : Fin 3) then
+      (2 : Fin 3)
+    else
+      (0 : Fin 3)
+  else
+    if bids (0 : Fin 3) < bids (2 : Fin 3) then
+      (0 : Fin 3)
+    else if bids (1 : Fin 3) < bids (2 : Fin 3) then
+      (2 : Fin 3)
+    else
+      (1 : Fin 3)
+
+/-- Third-highest bidder among three bidders, with deterministic tie-breaking. -/
+noncomputable def thirdBidder3 (bids : Fin 3 → ℝ) : Fin 3 :=
+  if bids (0 : Fin 3) < bids (1 : Fin 3) then
+    if bids (1 : Fin 3) < bids (2 : Fin 3) then
+      (0 : Fin 3)
+    else if bids (0 : Fin 3) < bids (2 : Fin 3) then
+      (0 : Fin 3)
+    else
+      (2 : Fin 3)
+  else
+    if bids (0 : Fin 3) < bids (2 : Fin 3) then
+      (1 : Fin 3)
+    else if bids (1 : Fin 3) < bids (2 : Fin 3) then
+      (1 : Fin 3)
+    else
+      (2 : Fin 3)
+
+/--
+Sorted three-bidder/two-slot GSP mechanism.
+
+The highest bidder gets slot `0` and pays the second-highest bid per click; the
+second-highest bidder gets slot `1` and pays the third-highest bid per click.
+-/
+noncomputable def gsp3TwoSlotMechanism :
+    PositionMechanism (Fin 3) (Fin 2) :=
+  fun bids =>
+    { slotOf := fun i =>
+        if i = topBidder3 bids then some (0 : Fin 2)
+        else if i = secondBidder3 bids then some (1 : Fin 2)
+        else none
+      paymentPerClick := fun i =>
+        if i = topBidder3 bids then bids (secondBidder3 bids)
+        else if i = secondBidder3 bids then bids (thirdBidder3 bids)
+        else 0 }
 
 /--
 A minimal GSP-style mechanism sufficient to expose the profitable deviation in
@@ -266,6 +364,48 @@ theorem gspCounterexampleMechanism_not_truthful :
   have hle := htruth gspCounterexampleValues (0 : Fin 3) 7
   rw [gspCounterexampleMechanism_lowerBidUtility_bidder0,
     gspCounterexampleMechanism_truthfulUtility_bidder0] at hle
+  norm_num at hle
+
+theorem gsp3TwoSlot_truthfulUtility_bidder0 :
+    PositionMechanism.utility gspCounterexampleEnvironment
+      gsp3TwoSlotMechanism
+      gspCounterexampleValues gspCounterexampleValues (0 : Fin 3) = 2 := by
+  have hmech :
+      gsp3TwoSlotMechanism gspCounterexampleValues =
+        gspCounterexampleTruthfulOutcome := by
+    ext i <;> fin_cases i <;>
+      norm_num [gsp3TwoSlotMechanism, gspCounterexampleTruthfulOutcome,
+        gspCounterexampleValues, topBidder3, secondBidder3, thirdBidder3]
+  rw [PositionMechanism.utility, hmech]
+  exact gspCounterexample_truthfulUtility_bidder0
+
+theorem gsp3TwoSlot_lowerBidUtility_bidder0 :
+    PositionMechanism.utility gspCounterexampleEnvironment
+      gsp3TwoSlotMechanism
+      gspCounterexampleValues
+      (Function.update gspCounterexampleValues (0 : Fin 3) 7)
+      (0 : Fin 3) = 9 / 2 := by
+  have hmech :
+      gsp3TwoSlotMechanism
+          (Function.update gspCounterexampleValues (0 : Fin 3) 7) =
+        gspCounterexampleLowerBidOutcome := by
+    rw [← gspCounterexampleLowerBids_eq_update]
+    ext i <;> fin_cases i <;>
+      norm_num [gsp3TwoSlotMechanism, gspCounterexampleLowerBidOutcome,
+        gspCounterexampleLowerBids, topBidder3, secondBidder3, thirdBidder3]
+  rw [PositionMechanism.utility, hmech]
+  exact gspCounterexample_lowerBidUtility_bidder0
+
+/--
+Sorted three-bidder/two-slot GSP is not dominant-strategy truthful.
+-/
+theorem gsp3TwoSlot_not_truthful :
+    ¬ PositionMechanism.TruthfulDominantStrategy
+      gspCounterexampleEnvironment gsp3TwoSlotMechanism := by
+  intro htruth
+  have hle := htruth gspCounterexampleValues (0 : Fin 3) 7
+  rw [gsp3TwoSlot_lowerBidUtility_bidder0,
+    gsp3TwoSlot_truthfulUtility_bidder0] at hle
   norm_num at hle
 
 end Auction

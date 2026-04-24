@@ -52,6 +52,7 @@ formalized.
 | Position-mechanism truthfulness/Nash predicates | `PositionMechanism.TruthfulDominantStrategy`, `PositionMechanism.IsNashEquilibrium` | formalized | `EconCSLean/Auction/Position.lean` | none |
 | GSP is not truthful | `paper_gsp_truthful_bidding_not_dominant_example` | formalized as concrete two-slot witness | `EconCSLean/Auction/MainTheorems.lean` | full generic GSP mechanism and equilibrium theory not yet formalized |
 | GSP mechanism is not truthful | `paper_gsp_mechanism_not_truthful` | formalized as concrete two-slot mechanism witness | `EconCSLean/Auction/MainTheorems.lean` | full generic sorted-bid GSP not yet formalized |
+| Sorted three-bidder/two-slot GSP is not truthful | `paper_sorted_gsp_three_bidder_two_slot_not_truthful` | formalized for a concrete sorted GSP mechanism | `EconCSLean/Auction/MainTheorems.lean` | equilibrium and revenue/welfare comparison theorems not yet formalized |
 | Direct combinatorial-auction interface | `CombinatorialAuction` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Feasible partial bundle allocation | `IsFeasibleBundleAllocation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Single-minded bidder valuation | `SingleMindedBid.valuation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
@@ -68,10 +69,10 @@ formalized.
    major seam for the 2021 paper is the RSOP approximation certificate:
    instantiate `CrossSampleOfferApproximationCertificate` with a concrete ratio
    by lower-bounding the uniform partition-average revenue relative to `F^(2)`.
-2. GSP/position auctions: extend `PositionOutcome` to a sorted-bid GSP
-   mechanism for finite ordered slots, define envy-free/symmetric Nash
-   equilibrium predicates, then formalize the Varian/Edelman-Ostrovsky-Schwarz
-   welfare/revenue comparisons in certificate form.
+2. GSP/position auctions: the concrete sorted three-bidder/two-slot GSP
+   non-truthfulness theorem is closed. Next define the generic sorted-bid GSP
+   mechanism for finite ordered slots and formalize envy-free/symmetric Nash
+   equilibrium revenue/welfare comparisons in certificate form.
 3. Combinatorial auctions: build on `CombinatorialAuction`,
    `IsFeasibleBundleAllocation`, and `SingleMindedBid.valuation`; next add the
    greedy allocation rule for single-minded bidders and its critical-value

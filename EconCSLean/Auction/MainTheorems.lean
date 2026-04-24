@@ -213,6 +213,15 @@ theorem paper_gsp_mechanism_not_truthful :
   exact gspCounterexampleMechanism_not_truthful
 
 /--
+Sorted three-bidder/two-slot GSP with next-bid payments is not
+dominant-strategy truthful.
+-/
+theorem paper_sorted_gsp_three_bidder_two_slot_not_truthful :
+    ¬ PositionMechanism.TruthfulDominantStrategy
+      gspCounterexampleEnvironment gsp3TwoSlotMechanism := by
+  exact gsp3TwoSlot_not_truthful
+
+/--
 The reject-all direct combinatorial auction is dominant-strategy truthful.
 -/
 theorem paper_combinatorial_reject_all_truthful
