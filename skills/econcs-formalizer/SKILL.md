@@ -247,9 +247,15 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `ε * (Real.exp 1 + 1) * (∑ q : Fin n, maxBidForQuery q)`. This avoids making
   paper-facing theorem statements carry nodup-cover hypotheses when the
   standard finite index type already supplies them.
+  For the paper's small-bids limit, do not collapse the argument to a fixed
+  finite instance. State a family-level theorem over dependent query sizes
+  `Fin (n k)`: if the explicit finite error is eventually below every positive
+  `δ`, or if the explicit small-bids threshold eventually holds for every
+  positive `δ`, then the Balance/MSVV guarantee is eventually additive-`δ`.
   The remaining faithful paper seam is then a model-level limiting theorem over
-  a nontrivial family of small-bid instances; do not force the discrete
-  finite-bid theorem to be exactly `1 - 1/e` before that limit has been stated.
+  the paper's concrete small-bid instance family; do not force the discrete
+  fixed-instance theorem to be exactly `1 - 1/e` before that family has been
+  instantiated.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

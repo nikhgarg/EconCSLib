@@ -4092,6 +4092,68 @@ theorem balance_msvv_finRange_competitive_of_arbitrarily_smallBids_threshold
     linarith
   exact (not_lt_of_ge happrox) hgap
 
+theorem balance_msvv_finRange_family_eventually_up_to_delta
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (ε : ℕ → ℝ)
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hε : ∀ k, 0 ≤ ε k)
+    (hε_le_one : ∀ k, ε k ≤ 1)
+    (hsmall : ∀ k, (I k).SmallBids (ε k))
+    (herror_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          ε k * (Real.exp 1 + 1) *
+              (∑ q : Fin (n k), (I k).maxBidForQuery q) ≤ δ) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+        msvvRatio *
+            (I k).offlineOptimumValue (fun a => (hbudget k a).le) ≤
+          (I k).revenue
+              ((I k).runAssignment (I k).balanceChoiceRule
+                (List.finRange (n k))) +
+            δ := by
+  intro δ hδ
+  obtain ⟨N, hN⟩ := herror_eventually δ hδ
+  refine ⟨N, ?_⟩
+  intro k hk
+  exact balance_msvv_approx_competitive_finRange_up_to_delta
+    (I k) (hbid k) (hbudget k) (hε k) (hε_le_one k) (hsmall k)
+    (hN k hk)
+
+theorem balance_msvv_finRange_family_eventually_up_to_delta_of_smallBids_threshold
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hmaxBidSum_pos :
+      ∀ k, 0 < ∑ q : Fin (n k), (I k).maxBidForQuery q)
+    (hsmall_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          (I k).SmallBids
+            (min 1
+              (δ / ((Real.exp 1 + 1) *
+                (∑ q : Fin (n k), (I k).maxBidForQuery q))))) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+        msvvRatio *
+            (I k).offlineOptimumValue (fun a => (hbudget k a).le) ≤
+          (I k).revenue
+              ((I k).runAssignment (I k).balanceChoiceRule
+                (List.finRange (n k))) +
+            δ := by
+  intro δ hδ
+  obtain ⟨N, hN⟩ := hsmall_eventually δ hδ
+  refine ⟨N, ?_⟩
+  intro k hk
+  exact
+    balance_msvv_approx_competitive_finRange_up_to_delta_of_smallBids_threshold
+      (I k) (hbid k) (hbudget k) hδ.le (hmaxBidSum_pos k) (hN k hk)
+
 end AdWordsInstance
 
 end Online

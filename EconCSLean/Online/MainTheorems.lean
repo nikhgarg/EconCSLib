@@ -1049,5 +1049,72 @@ theorem paper_adwords_balance_msvv_finRange_competitive_of_arbitrarily_small_bid
     AdWordsInstance.balance_msvv_finRange_competitive_of_arbitrarily_smallBids_threshold
       I hbid hbudget hmaxBidSum_pos hsmall
 
+/--
+Family-level finite-query MSVV limiting seam. For a dependent family of
+finite-query instances `Fin (n k)`, if the explicit finite error is eventually
+below every positive target `δ`, then the Balance/MSVV run is eventually
+competitive up to additive `δ`.
+-/
+theorem paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (ε : ℕ → ℝ)
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hε : ∀ k, 0 ≤ ε k)
+    (hε_le_one : ∀ k, ε k ≤ 1)
+    (hsmall : ∀ k, (I k).SmallBids (ε k))
+    (herror_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          ε k * (Real.exp 1 + 1) *
+              (∑ q : Fin (n k), (I k).maxBidForQuery q) ≤ δ) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+        AdWordsInstance.msvvRatio *
+            (I k).offlineOptimumValue (fun a => (hbudget k a).le) ≤
+          (I k).revenue
+              ((I k).runAssignment (I k).balanceChoiceRule
+                (List.finRange (n k))) +
+            δ := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_family_eventually_up_to_delta
+      n I ε hbid hbudget hε hε_le_one hsmall herror_eventually
+
+/--
+Family-level small-bids threshold seam. If every positive additive target `δ`
+eventually satisfies the explicit small-bids threshold in the family, then the
+MSVV guarantee is eventually additive-`δ`.
+-/
+theorem paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta_of_small_bids_threshold
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (n : ℕ → ℕ)
+    (I : (k : ℕ) → AdWordsInstance Advertiser (Fin (n k)))
+    (hbid : ∀ k, (I k).NonnegativeBids)
+    (hbudget : ∀ k, (I k).PositiveBudgets)
+    (hmaxBidSum_pos :
+      ∀ k, 0 < ∑ q : Fin (n k), (I k).maxBidForQuery q)
+    (hsmall_eventually :
+      ∀ δ : ℝ, 0 < δ →
+        ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+          (I k).SmallBids
+            (min 1
+              (δ / ((Real.exp 1 + 1) *
+                (∑ q : Fin (n k), (I k).maxBidForQuery q))))) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+        AdWordsInstance.msvvRatio *
+            (I k).offlineOptimumValue (fun a => (hbudget k a).le) ≤
+          (I k).revenue
+              ((I k).runAssignment (I k).balanceChoiceRule
+                (List.finRange (n k))) +
+            δ := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_family_eventually_up_to_delta_of_smallBids_threshold
+      n I hbid hbudget hmaxBidSum_pos hsmall_eventually
+
 end Online
 end EconCSLean
