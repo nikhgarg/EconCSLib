@@ -281,6 +281,52 @@ theorem inversionFinsetInvolvingSecondNotFirst_card {n : ℕ}
   simpa using
     (Finset.card_Ico (a := (1 : Candidate n)) (b := secondChoice τ))
 
+theorem inversionFinsetInvolving_secondChoice_eq_involvingSecondNotFirst {n : ℕ}
+    (τ : Ranking n) (hfirst : firstChoice τ = 0) :
+    inversionFinsetInvolving (Equiv.refl (Candidate n)) τ (secondChoice τ) =
+      inversionFinsetInvolvingSecondNotFirst (Equiv.refl (Candidate n)) τ := by
+  classical
+  ext ab
+  constructor
+  · intro hab
+    have hinv_mem : ab ∈ inversionFinset (Equiv.refl (Candidate n)) τ :=
+      (Finset.mem_filter.mp hab).1
+    have hinvolves : ab.1 = secondChoice τ ∨ ab.2 = secondChoice τ :=
+      (Finset.mem_filter.mp hab).2
+    have hinv : invertedPair (Equiv.refl (Candidate n)) τ ab := by
+      simpa [inversionFinset] using hinv_mem
+    have hnot_first_left : ab.1 ≠ firstChoice τ := by
+      intro hleft
+      have hnot : ¬ rankOf τ ab.2 < rankOf τ ab.1 := by
+        rw [hleft, rankOf_firstChoice]
+        exact not_lt_bot
+      exact hnot hinv.2
+    have hnot_first_right : ab.2 ≠ firstChoice τ := by
+      intro hright
+      have hnot :
+          ¬ rankOf (Equiv.refl (Candidate n)) ab.1 <
+            rankOf (Equiv.refl (Candidate n)) ab.2 := by
+        rw [hright, hfirst]
+        exact not_lt_bot
+      exact hnot hinv.1
+    exact Finset.mem_filter.mpr
+      ⟨hinv_mem, ⟨hinvolves, hnot_first_left, hnot_first_right⟩⟩
+  · intro hab
+    have hmem : ab ∈ inversionFinset (Equiv.refl (Candidate n)) τ :=
+      (Finset.mem_filter.mp hab).1
+    have hinvolves :
+        ab.1 = secondChoice τ ∨ ab.2 = secondChoice τ :=
+      (Finset.mem_filter.mp hab).2.1
+    exact Finset.mem_filter.mpr ⟨hmem, hinvolves⟩
+
+theorem inversionFinsetInvolving_secondChoice_card_of_first_zero {n : ℕ}
+    (τ : Ranking n) (hfirst : firstChoice τ = 0) :
+    (inversionFinsetInvolving (Equiv.refl (Candidate n)) τ
+      (secondChoice τ)).card =
+      (secondChoice τ : ℕ) - 1 := by
+  rw [inversionFinsetInvolving_secondChoice_eq_involvingSecondNotFirst τ hfirst]
+  exact inversionFinsetInvolvingSecondNotFirst_card τ hfirst
+
 theorem cycleRange_lt_cycleRange_iff_of_ne {n : ℕ}
     (r a b : Candidate n) (ha : a ≠ r) (hb : b ≠ r) :
     Fin.cycleRange r a < Fin.cycleRange r b ↔ a < b := by
@@ -316,6 +362,193 @@ theorem cycleIcc_one_apply_of_ne {n : ℕ}
     · have hsx : s < x := lt_of_le_of_ne (le_of_not_gt hxs) (Ne.symm hx)
       rw [Fin.cycleIcc_of_gt hsx]
       simp [hx_one, hxs]
+
+theorem cycleIcc_one_val_of_ne {n : ℕ}
+    {s x : Candidate n} (hx : x ≠ s) :
+    ((Fin.cycleIcc (1 : Candidate n) s x) : ℕ) =
+      if x < (1 : Candidate n) then (x : ℕ)
+      else if x < s then (x : ℕ) + 1
+      else (x : ℕ) := by
+  by_cases hx_one : x < (1 : Candidate n)
+  · rw [Fin.cycleIcc_of_lt hx_one]
+    simp [hx_one]
+  · by_cases hxs : x < s
+    · have hle : (1 : Candidate n) ≤ x := le_of_not_gt hx_one
+      rw [Fin.cycleIcc_of_ge_of_lt hle hxs]
+      simp [hx_one, hxs, candidate_val_add_one_of_lt hxs]
+    · have hsx : s < x := lt_of_le_of_ne (le_of_not_gt hxs) (Ne.symm hx)
+      rw [Fin.cycleIcc_of_gt hsx]
+      simp [hx_one, hxs]
+
+theorem cycleIcc_one_lt_cycleIcc_one_iff_of_ne {n : ℕ}
+    (s a b : Candidate n) (ha : a ≠ s) (hb : b ≠ s) :
+    Fin.cycleIcc (1 : Candidate n) s a <
+        Fin.cycleIcc (1 : Candidate n) s b ↔
+      a < b := by
+  by_cases hs0 : s = 0
+  · subst s
+    simp
+  have hs1 : (1 : Candidate n) ≤ s := one_le_of_ne_zero hs0
+  change
+    ((Fin.cycleIcc (1 : Candidate n) s a) : ℕ) <
+        ((Fin.cycleIcc (1 : Candidate n) s b) : ℕ) ↔
+      (a : ℕ) < (b : ℕ)
+  rw [cycleIcc_one_val_of_ne ha, cycleIcc_one_val_of_ne hb]
+  split_ifs
+  all_goals
+    try
+      have hsb : s < b :=
+        lt_of_le_of_ne (le_of_not_gt (by assumption : ¬ b < s)) (Ne.symm hb)
+    try omega
+    try fin_omega
+
+theorem invertedPair_refl_trans_cycleIcc_one_iff_of_ne {n : ℕ}
+    (τ : Ranking n) (s a b : Candidate n) (ha : a ≠ s) (hb : b ≠ s) :
+    invertedPair (Equiv.refl (Candidate n))
+        (τ.trans (Fin.cycleIcc (1 : Candidate n) s))
+        (Fin.cycleIcc (1 : Candidate n) s a,
+          Fin.cycleIcc (1 : Candidate n) s b) ↔
+      invertedPair (Equiv.refl (Candidate n)) τ (a, b) := by
+  constructor
+  · intro h
+    constructor
+    · exact (cycleIcc_one_lt_cycleIcc_one_iff_of_ne s a b ha hb).mp h.1
+    · simpa [rankOf] using h.2
+  · intro h
+    constructor
+    · exact (cycleIcc_one_lt_cycleIcc_one_iff_of_ne s a b ha hb).mpr h.1
+    · simpa [rankOf] using h.2
+
+theorem inversionFinsetNotInvolving_secondChoice_card_eq_cycleIcc_one {n : ℕ}
+    (τ : Ranking n) (hfirst : firstChoice τ = 0) :
+    (inversionFinsetNotInvolving (Equiv.refl (Candidate n)) τ
+        (secondChoice τ)).card =
+      (inversionFinset (Equiv.refl (Candidate n))
+        (τ.trans (Fin.cycleIcc (1 : Candidate n) (secondChoice τ)))).card := by
+  classical
+  let s : Candidate n := secondChoice τ
+  let E : Ranking n := Fin.cycleIcc (1 : Candidate n) s
+  have hs_ne_zero : s ≠ 0 := by
+    intro hs0
+    have hsame : firstChoice τ = secondChoice τ := by
+      rw [hfirst, ← hs0]
+    exact (firstChoice_ne_secondChoice τ) hsame
+  have hs1 : (1 : Candidate n) ≤ s := one_le_of_ne_zero hs_ne_zero
+  have hE_s : E s = 1 := by
+    simp [E, Fin.cycleIcc_of_last hs1]
+  have h01 : (0 : Candidate n) < 1 := by
+    change (0 : ℕ) < 1
+    omega
+  have hE_zero : E 0 = 0 := by
+    simpa [E] using
+      (Fin.cycleIcc_of_lt (i := (1 : Candidate n)) (j := s) h01)
+  have hfirst_norm : firstChoice (τ.trans E) = 0 := by
+    have hτ0 : τ 0 = 0 := by
+      simpa [firstChoice] using hfirst
+    simp [firstChoice, hτ0, hE_zero]
+  have hsecond_norm : secondChoice (τ.trans E) = 1 := by
+    have hτ1 : τ 1 = s := by
+      simp [s]
+    simp [secondChoice, hτ1, hE_s]
+  refine Finset.card_bij
+    (s := inversionFinsetNotInvolving (Equiv.refl (Candidate n)) τ s)
+    (t := inversionFinset (Equiv.refl (Candidate n)) (τ.trans E))
+    (i := fun ab _ => (E ab.1, E ab.2)) ?hi ?hinj ?hsurj
+  · intro ab hab
+    have hinv : invertedPair (Equiv.refl (Candidate n)) τ ab := by
+      simpa [inversionFinsetNotInvolving, inversionFinset] using
+        (Finset.mem_filter.mp hab).1
+    have hnot : ¬(ab.1 = s ∨ ab.2 = s) := by
+      simpa [inversionFinsetNotInvolving] using (Finset.mem_filter.mp hab).2
+    have ha : ab.1 ≠ s := fun h => hnot (Or.inl h)
+    have hb : ab.2 ≠ s := fun h => hnot (Or.inr h)
+    have hnorm :
+        invertedPair (Equiv.refl (Candidate n)) (τ.trans E)
+          (E ab.1, E ab.2) := by
+      simpa [E, s] using
+        (invertedPair_refl_trans_cycleIcc_one_iff_of_ne τ s ab.1 ab.2
+          ha hb).2 hinv
+    simpa [inversionFinset] using hnorm
+  · intro ab _ cd _ h
+    exact Prod.ext
+      (E.injective (Prod.ext_iff.mp h).1)
+      (E.injective (Prod.ext_iff.mp h).2)
+  · intro ab hab
+    have hinvNorm :
+        invertedPair (Equiv.refl (Candidate n)) (τ.trans E) ab := by
+      simpa [inversionFinset] using hab
+    have hrank_one : rankOf (τ.trans E) (1 : Candidate n) = 1 := by
+      conv_lhs =>
+        rw [← hsecond_norm]
+      exact rankOf_secondChoice (τ.trans E)
+    have hab1_ne_one : ab.1 ≠ (1 : Candidate n) := by
+      intro h1
+      have hrank_y2_lt : rankOf (τ.trans E) ab.2 < (1 : Candidate n) := by
+        simpa [h1, hrank_one] using hinvNorm.2
+      have hrank_y2_zero : rankOf (τ.trans E) ab.2 = 0 :=
+        rankOf_lt_one_eq_zero hrank_y2_lt
+      have hy2_zero : ab.2 = 0 := by
+        have hy2_first :=
+          (rankOf_eq_zero_iff_eq_firstChoice (τ.trans E) ab.2).mp
+            hrank_y2_zero
+        rw [hfirst_norm] at hy2_first
+        exact hy2_first
+      have hbad : (1 : Candidate n) < 0 := by
+        simpa [rankOf, h1, hy2_zero] using hinvNorm.1
+      have hbadNat : (1 : ℕ) < 0 := hbad
+      omega
+    have hab2_ne_one : ab.2 ≠ (1 : Candidate n) := by
+      intro h2
+      have hy1_lt_one : ab.1 < (1 : Candidate n) := by
+        simpa [rankOf, h2] using hinvNorm.1
+      have hy1_zero : ab.1 = 0 := rankOf_lt_one_eq_zero hy1_lt_one
+      have hrank_y1_zero : rankOf (τ.trans E) ab.1 = 0 := by
+        rw [hy1_zero]
+        conv_lhs =>
+          rw [← hfirst_norm]
+        exact rankOf_firstChoice (τ.trans E)
+      have hbad : (1 : Candidate n) < 0 := by
+        have hlt := hinvNorm.2
+        rw [h2, hrank_one, hrank_y1_zero] at hlt
+        exact hlt
+      have hbadNat : (1 : ℕ) < 0 := hbad
+      omega
+    let pre : Candidate n × Candidate n := (E.symm ab.1, E.symm ab.2)
+    have hpre1 : pre.1 ≠ s := by
+      intro h
+      apply hab1_ne_one
+      have hE : E pre.1 = E s := by rw [h]
+      simpa [pre, hE_s] using hE
+    have hpre2 : pre.2 ≠ s := by
+      intro h
+      apply hab2_ne_one
+      have hE : E pre.2 = E s := by rw [h]
+      simpa [pre, hE_s] using hE
+    have hinvPre :
+        invertedPair (Equiv.refl (Candidate n)) τ pre := by
+      have hnorm :
+          invertedPair (Equiv.refl (Candidate n)) (τ.trans E)
+            (E pre.1, E pre.2) := by
+        simpa [pre] using hinvNorm
+      simpa [E, s, pre] using
+        (invertedPair_refl_trans_cycleIcc_one_iff_of_ne τ s pre.1 pre.2
+          hpre1 hpre2).1 hnorm
+    refine ⟨pre, ?_, ?_⟩
+    · simp [inversionFinsetNotInvolving, inversionFinset, hinvPre, hpre1, hpre2]
+    · simp [pre]
+
+theorem kendallTau_eq_secondChoice_sub_one_add_cycleIcc_one {n : ℕ}
+    (τ : Ranking n) (hfirst : firstChoice τ = 0) :
+    kendallTau (Equiv.refl (Candidate n)) τ =
+      ((secondChoice τ : ℕ) - 1) +
+        kendallTau (Equiv.refl (Candidate n))
+          (τ.trans (Fin.cycleIcc (1 : Candidate n) (secondChoice τ))) := by
+  rw [kendallTau]
+  rw [← inversionFinsetInvolving_card_add_notInvolving_card
+    (ρ := Equiv.refl (Candidate n)) (π := τ) (c := secondChoice τ)]
+  rw [inversionFinsetInvolving_secondChoice_card_of_first_zero τ hfirst]
+  rw [inversionFinsetNotInvolving_secondChoice_card_eq_cycleIcc_one τ hfirst]
+  rfl
 
 @[simp] theorem firstChoice_trans {n : ℕ}
     (π e : Ranking n) :

@@ -693,8 +693,12 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   adjacent-rank comparison, prove the finite MLR weighted-average inequality by
   pair-sum regrouping, and combine it with the positive same-human
   square-weighted conditional gap. Once this closes at the rank-factorized
-  layer, the remaining assumption-free work is the finite permutation-fiber
-  constructor for `MallowsSpec.RankFactorization`.
+  layer, construct finite permutation fibers directly rather than leaving a
+  structure assumption. For ranking fibers over `Fin`, normalize first-choice
+  rank `r` with `Fin.cycleRange r`; normalize ordered top-two ranks `r < s`
+  with `cycleRange r` followed by `cycleIcc 1 s`; normalize swapped top-two
+  ranks with `cycleRange s` followed by `cycleIcc 1 (r+1)`. Prove the Kendall
+  exponent shifts separately, then lift the finite sums through a `sum_bij`.
 - When clearing positive probability denominators, expose the unnormalised
   numerator as a reusable definition and prove an equality from the normalized
   expectation to numerator divided by a positive denominator. Also prove the

@@ -332,21 +332,21 @@ center-ordered candidate value profile the induced model satisfies the paper's
 independent-reranking and weaker-competition hypotheses.
 
 Lean statement uses the inverse Mallows parameter `q`, so "algorithm more
-accurate" is `C.algorithm.q < C.human.q`. The rank-factorization hypotheses are
-the finite Mallows top-one/top-two fiber formulas used in Appendix E.
+accurate" is `C.algorithm.q < C.human.q`. The finite Mallows top-one/top-two
+fiber formulas used in Appendix E are constructed in Lean by
+`MallowsSpec.rankFactorization`, so they are no longer assumptions here.
 -/
 theorem paper_theorem3_pointwise_rankFactorization
     {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
     (hstrict : C.StrictlyCenterOrdered value)
     (hn : 0 < n)
-    (halg_rank : C.algorithm.RankFactorization)
-    (hhuman_rank : C.human.RankFactorization)
     (halg_q_lt_one : C.algorithm.q < 1)
     (hhuman_q_lt_one : C.human.q < 1)
     (hq_lt : C.algorithm.q < C.human.q) :
     Model.PaperHypotheses (C.toModel value) := by
   exact C.theorem3_pointwise_of_rankFactorization
-    hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hq_lt
+    hstrict hn C.algorithm.rankFactorization C.human.rankFactorization
+    halg_q_lt_one hhuman_q_lt_one hq_lt
 
 /--
 Theorem 3 (reduced product-sign form): from reduced product-sign finite Mallows
