@@ -5480,6 +5480,95 @@ theorem lemma8_firstClosedPivot_eq_of_between_endpoints
   exact Fin.ext (le_antisymm hright_mono hleft_mono)
 
 /--
+The canonical `A(t)` set from Appendix D, Lemma 8: parameters whose canonical
+first closed pivot is `t`.
+-/
+def problem6FirstClosedPivotRegion {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) (hpos : ∀ j : Item n, 0 < v j)
+    (t : Item n) : Set ℝ :=
+  { alpha | ∃ (halpha0 : 0 < alpha) (halpha1 : alpha < 1),
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos = t }
+
+/-- Every interior parameter belongs to the region of its canonical first pivot. -/
+theorem problem6FirstClosedPivotRegion_mem {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    alpha ∈
+      problem6FirstClosedPivotRegion v hpos
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos) := by
+  exact ⟨halpha0, halpha1, rfl⟩
+
+/-- The canonical regions cover the open interval `(0,1)`. -/
+theorem problem6FirstClosedPivotRegion_cover {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ∃ t : Item n, alpha ∈ problem6FirstClosedPivotRegion v hpos t := by
+  exact ⟨problem6FirstClosedPivot alpha v halpha0 halpha1 hpos,
+    problem6FirstClosedPivotRegion_mem halpha0 halpha1 hpos⟩
+
+/-- A parameter belongs to at most one canonical first-pivot region. -/
+theorem problem6FirstClosedPivotRegion_unique {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ht : alpha ∈ problem6FirstClosedPivotRegion v hpos t)
+    (hu : alpha ∈ problem6FirstClosedPivotRegion v hpos u) :
+    t = u := by
+  rcases ht with ⟨halpha0, halpha1, ht⟩
+  rcases hu with ⟨halpha0', halpha1', hu⟩
+  have hsame :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha v halpha0' halpha1' hpos := by
+    congr
+  exact ht.symm.trans (hsame.trans hu)
+
+/--
+The canonical `A(t)` sets are intervals: if two endpoints have canonical first
+pivot `t`, then every intermediate parameter has canonical first pivot `t`.
+-/
+theorem problem6FirstClosedPivotRegion_interval {n : ℕ} [NeZero n]
+    {alphaLeft alpha alphaRight : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hLeft : alphaLeft ∈ problem6FirstClosedPivotRegion v hpos t)
+    (hRight : alphaRight ∈ problem6FirstClosedPivotRegion v hpos t)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : alphaLeft ≤ alpha)
+    (hright : alpha ≤ alphaRight) :
+    alpha ∈ problem6FirstClosedPivotRegion v hpos t := by
+  rcases hLeft with ⟨halphaLeft0, halphaLeft1, hpivotLeft⟩
+  rcases hRight with ⟨halphaRight0, halphaRight1, hpivotRight⟩
+  have hpivot_end :
+      problem6FirstClosedPivot alphaLeft v
+          halphaLeft0 halphaLeft1 hpos =
+        problem6FirstClosedPivot alphaRight v
+          halphaRight0 halphaRight1 hpos :=
+    hpivotLeft.trans hpivotRight.symm
+  have hpivot_mid :=
+    lemma8_firstClosedPivot_eq_of_between_endpoints
+      halphaLeft0 halphaLeft1 halpha0 halpha1
+      halphaRight0 halphaRight1 hleft hright hpos hpivot_end
+  exact ⟨halpha0, halpha1, hpivot_mid.trans hpivotLeft⟩
+
+/--
+The canonical first-pivot regions are consecutive in item order: moving to a
+larger `α` can only move to the same or a later region.
+-/
+theorem problem6FirstClosedPivotRegion_order {n : ℕ} [NeZero n]
+    {alpha beta : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (halpha : alpha ∈ problem6FirstClosedPivotRegion v hpos t)
+    (hbeta : beta ∈ problem6FirstClosedPivotRegion v hpos u)
+    (hle : alpha ≤ beta) :
+    t.val ≤ u.val := by
+  rcases halpha with ⟨halpha0, halpha1, ht⟩
+  rcases hbeta with ⟨hbeta0, hbeta1, hu⟩
+  have hmono :=
+    problem6FirstClosedPivot_mono_alpha
+      halpha0 halpha1 hbeta0 hbeta1 hle hpos
+  simpa [ht, hu] using hmono
+
+/--
 At `α = 1/2`, the exact-center Lemma 10 candidate lies weakly after the
 canonical first closed pivot.
 -/

@@ -3671,6 +3671,62 @@ theorem paper_lemma8_firstClosedPivot_eq_of_between_endpoints
     hleft hright hpos hpivot
 
 /--
+Appendix D, Lemma 8 canonical `A(t)` definition: every interior parameter
+belongs to the region of its canonical first pivot.
+-/
+theorem paper_lemma8_problem6FirstClosedPivotRegion_mem
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    alpha ∈
+      problem6FirstClosedPivotRegion v hpos
+        (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos) := by
+  exact problem6FirstClosedPivotRegion_mem halpha0 halpha1 hpos
+
+/-- Appendix D, Lemma 8 canonical `A(t)` cover of `(0,1)`. -/
+theorem paper_lemma8_problem6FirstClosedPivotRegion_cover
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ∃ t : Item n, alpha ∈ problem6FirstClosedPivotRegion v hpos t := by
+  exact problem6FirstClosedPivotRegion_cover halpha0 halpha1 hpos
+
+/-- Appendix D, Lemma 8 canonical `A(t)` uniqueness. -/
+theorem paper_lemma8_problem6FirstClosedPivotRegion_unique
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    {t u : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ht : alpha ∈ problem6FirstClosedPivotRegion v hpos t)
+    (hu : alpha ∈ problem6FirstClosedPivotRegion v hpos u) :
+    t = u := by
+  exact problem6FirstClosedPivotRegion_unique hpos ht hu
+
+/-- Appendix D, Lemma 8 canonical `A(t)` interval property. -/
+theorem paper_lemma8_problem6FirstClosedPivotRegion_interval
+    {n : ℕ} [NeZero n]
+    {alphaLeft alpha alphaRight : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hLeft : alphaLeft ∈ problem6FirstClosedPivotRegion v hpos t)
+    (hRight : alphaRight ∈ problem6FirstClosedPivotRegion v hpos t)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : alphaLeft ≤ alpha)
+    (hright : alpha ≤ alphaRight) :
+    alpha ∈ problem6FirstClosedPivotRegion v hpos t := by
+  exact problem6FirstClosedPivotRegion_interval
+    hpos hLeft hRight halpha0 halpha1 hleft hright
+
+/-- Appendix D, Lemma 8 canonical `A(t)` consecutive order property. -/
+theorem paper_lemma8_problem6FirstClosedPivotRegion_order
+    {n : ℕ} [NeZero n]
+    {alpha beta : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (halpha : alpha ∈ problem6FirstClosedPivotRegion v hpos t)
+    (hbeta : beta ∈ problem6FirstClosedPivotRegion v hpos u)
+    (hle : alpha ≤ beta) :
+    t.val ≤ u.val := by
+  exact problem6FirstClosedPivotRegion_order hpos halpha hbeta hle
+
+/--
 Appendix D, Lemma 6, mirror-pair algebra for
 `1/q_j - 1/(1-q_{n-j+1})`.
 -/
