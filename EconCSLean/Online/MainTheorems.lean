@@ -215,6 +215,43 @@ theorem paper_adwords_spend_monotone_over_history
     I hbid rule hrule history S hS a
 
 /--
+Revenue accounting for online runs: final revenue equals the recursive sum of
+per-step revenue increments from the initial state.
+-/
+theorem paper_adwords_run_revenue_eq_history_revenue_charge
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) :
+    I.revenue (I.runAssignment rule history) =
+      AdWordsInstance.historyRevenueChargeFrom I rule
+        AdWordsInstance.initialHistoryState history := by
+  exact AdWordsInstance.revenue_runAssignment_eq_historyRevenueChargeFrom
+    I hbudget rule hrule history
+
+/--
+The recursive Balance/MSVV charge is bounded by the actual revenue earned by
+the same online run.
+-/
+theorem paper_adwords_balance_charge_le_run_revenue
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query) :
+    AdWordsInstance.historyBalanceChargeFrom I I.balanceChoiceRule
+        AdWordsInstance.initialHistoryState history ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) := by
+  exact AdWordsInstance.historyBalanceChargeFrom_initial_le_runAssignment_revenue
+    I hbid hbudget I.balanceChoiceRule
+    (AdWordsInstance.balanceChoiceRule_feasible I) history
+
+/--
 MSVV monotonicity bridge: final assignment-induced slack scores are bounded by
 the earlier Balance score at any prior state in the same run.
 -/

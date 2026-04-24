@@ -207,7 +207,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   charge sums mirroring the online fold, prove the list-summed beta bound for
   fresh nodup histories, and reindex from list sums to finite query sums only
   under an explicit coverage assumption such as
-  `historyFinset history = Finset.univ`.
+  `historyFinset history = Finset.univ`. In parallel, define a recursive
+  revenue-increment trace for the same fold, prove final run revenue equals the
+  trace from the initial state, and prove the recursive Balance charge is
+  bounded by that revenue trace before attacking advertiser-alpha accounting.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

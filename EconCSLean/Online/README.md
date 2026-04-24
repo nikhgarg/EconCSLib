@@ -45,6 +45,8 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Balance/MSVV run is feasible | `paper_adwords_balance_run_assignment_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
 | Balance/MSVV assigns only seen query IDs | `paper_adwords_balance_assignment_assigned_only_from_history` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
 | Spend monotone over online histories | `paper_adwords_spend_monotone_over_history` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids and feasible choice rule |
+| Online revenue trace | `paper_adwords_run_revenue_eq_history_revenue_charge` | formalized | `EconCSLean/Online/MainTheorems.lean` | feasible choice rule and nonnegative budgets |
+| Balance charge bounded by revenue | `paper_adwords_balance_charge_le_run_revenue` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids and budgets |
 | Final MSVV slack bounded by earlier Balance score | `paper_adwords_final_slack_score_le_initial_balance_score` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids, feasible choice rule, positive advertiser budget |
 | Non-exhausted-query beta charge | `paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign` | formalized | `EconCSLean/Online/MainTheorems.lean` | all advertisers can still accept the query |
 | Exhausted-advertiser alpha/slack charge | `paper_adwords_blocked_advertiser_final_alpha_ge_exp_neg_epsilon`, `paper_adwords_blocked_advertiser_final_slack_score_le_error` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids, positive blocked-advertiser budget, `ε`-small bids |
@@ -73,9 +75,10 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 3. Then prove the stepwise/primal-dual charging argument as
    `MsvvObjectiveBoundCertificate` for the Balance run. The non-exhausted and
    exhausted query-dual charges and their history/query-dual summation forms are
-   now formalized. The next useful lemma is the advertiser-alpha plus recursive
-   Balance-charge accounting bound that turns the query-dual sum bound into the
-   scaled dual-objective bound, with the explicit max-bid error kept as the
+   now formalized. The recursive Balance charge is also bounded by actual run
+   revenue. The next useful lemma is the advertiser-alpha increment accounting
+   bound that combines the advertiser part of the dual objective with the
+   already-bounded Balance charge, with the explicit max-bid error kept as the
    small-bids seam.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
    isolate the small-bids limiting argument as a separate theorem seam.
