@@ -249,6 +249,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   by basic feasible solutions, then prove reusable counting lemmas such as:
   if every item has an active type and total active type-item pairs are at most
   `n + K - 1`, then at most `K - 1` items can be shared by multiple types.
+  For normalized min-item-fairness objectives, positive item fairness usually
+  discharges the "every item active" side condition: if an item has no positive
+  support, its raw and normalized item utility are zero, contradicting a
+  strictly positive finite minimum. Keep the remaining LP/BFS active-support
+  theorem as the separate hard seam.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says

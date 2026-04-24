@@ -122,6 +122,33 @@ noncomputable def itemFairness {K n : ℕ} [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n) : ℝ :=
   DecisionCore.finiteMin (normalizedItemUtility T ρ)
 
+/-- Positive reduced item fairness implies every item is used by some type. -/
+theorem item_coverage_of_itemFairness_pos {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hpos : 0 < itemFairness T ρ) :
+    ∀ j : Item n, ∃ k : UserType K, ρ k j ≠ 0 := by
+  classical
+  intro j
+  by_contra hnone
+  have hall_zero : ∀ k : UserType K, ρ k j = 0 := by
+    intro k
+    exact Classical.byContradiction (by
+      intro hk
+      exact hnone ⟨k, hk⟩)
+  have hraw_zero : rawItemUtility T ρ j = 0 := by
+    unfold rawItemUtility
+    simp [hall_zero]
+  have hnorm_zero : normalizedItemUtility T ρ j = 0 := by
+    unfold normalizedItemUtility
+    rw [hraw_zero]
+    by_cases hden : itemNormalizer T j = 0
+    · simp [hden]
+    · simp [hden]
+  have hle := DecisionCore.finiteMin_le (normalizedItemUtility T ρ) j
+  have hnorm_pos : 0 < normalizedItemUtility T ρ j := lt_of_lt_of_le hpos hle
+  rw [hnorm_zero] at hnorm_pos
+  exact (lt_irrefl (0 : ℝ)) hnorm_pos
+
 /-- Nonnegative weights/utilities make every reduced raw item utility nonnegative. -/
 theorem rawItemUtility_nonneg_of_nonnegative
     {K n : ℕ} (T : TypeWeightedRecommendationModel K n)

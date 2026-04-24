@@ -296,6 +296,37 @@ theorem paper_sparse_shape_of_active_pairs_bound
     SparseShape ρ := by
   exact sparseShape_of_activePairsBound_of_item_coverage ρ hactive hcover
 
+/--
+Proposition 1 sparse shared-item consequence with item coverage discharged from
+positive reduced item fairness.
+
+If the reduced type policy has positive minimum normalized item utility, then
+every item is recommended by at least one type. Therefore the paper's
+basic-feasible-solution active-pair bound implies that at most `K - 1` items
+are shared by multiple user types.
+-/
+theorem paper_sparse_shared_items_of_active_pairs_bound_of_positive_item_fairness
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hactive : ActivePairsBound ρ)
+    (hitem_pos : 0 < TypeWeightedRecommendationModel.itemFairness T ρ) :
+    SharedItemsBound ρ := by
+  exact sharedItemsBound_of_activePairsBound_of_item_coverage ρ hactive
+    (TypeWeightedRecommendationModel.item_coverage_of_itemFairness_pos T ρ hitem_pos)
+
+/--
+Proposition 1 sparse-shape consequence with item coverage discharged from
+positive reduced item fairness.
+-/
+theorem paper_sparse_shape_of_active_pairs_bound_of_positive_item_fairness
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (hactive : ActivePairsBound ρ)
+    (hitem_pos : 0 < TypeWeightedRecommendationModel.itemFairness T ρ) :
+    SparseShape ρ := by
+  exact sparseShape_of_activePairsBound_of_item_coverage ρ hactive
+    (TypeWeightedRecommendationModel.item_coverage_of_itemFairness_pos T ρ hitem_pos)
+
 end TypePolicy
 
 end UserItemFairness
