@@ -1,4 +1,5 @@
 import EconCSLean.Online.AdWordsExtensions
+import EconCSLean.Online.AdWordsLowerBound
 
 /-!
 # Paper-Facing Theorems: AdWords and Generalized Online Matching
@@ -679,6 +680,58 @@ theorem paper_adwords_multiple_slots_small_bids
     (hsmall : I.SmallBids ε) :
     (I.withSlots Slot).SmallBids ε := by
   exact AdWordsInstance.withSlots_smallBids I Slot hsmall
+
+/--
+Section 7 / Theorem 9 lower-bound wrapper. A finite Yao certificate for the
+paper's random-permutation b-matching construction implies that no randomized
+online algorithm has normalized revenue strictly above `1 - 1/e` on every
+input in the certified family.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_certificate
+    {Algorithm Input : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    [Fintype Input] [DecidableEq Input] [Nonempty Input]
+    (C : BMatchingYaoLowerBoundCertificate Algorithm Input)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ input,
+      AdWordsInstance.msvvRatio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm input) := by
+  exact
+    bMatching_no_randomized_algorithm_beats_msvvRatio_of_certificate
+      C randomizedAlgorithm
+
+/--
+Section 7 / Theorem 9 wrapper specialized to the paper's hard distribution:
+the uniform distribution over bidder permutations.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_permutation_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    (C : BMatchingPermutationLowerBoundCertificate N Algorithm)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      AdWordsInstance.msvvRatio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_msvvRatio randomizedAlgorithm
+
+/--
+Section 7 / Theorem 9 wrapper from the paper's explicit finite revenue-bound
+expression. The certificate fields are exactly the deterministic average
+revenue bound and the comparison of that finite harmonic expression with
+`1 - 1/e`.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_revenue_bound_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    (C : BMatchingPermutationRevenueBoundCertificate N Algorithm)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      AdWordsInstance.msvvRatio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_msvvRatio randomizedAlgorithm
 
 /--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the

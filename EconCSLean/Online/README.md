@@ -39,6 +39,8 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Section 6 click-through rates | `withClickThroughRates`, `paper_adwords_click_through_rates_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | CTRs at most one; original bids nonnegative and small |
 | Section 6 advertiser availability / delayed entry | `withAvailability`, `paper_adwords_availability_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | nonnegative `ε`, positive budgets, original small-bids condition |
 | Section 6 slot-query expansion | `withSlots`, `paper_adwords_multiple_slots_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | models independent slot queries; per-page distinct-advertiser feasibility is not encoded |
+| Section 7 finite Yao lower-bound lemma | `Decision.exists_input_randomized_payoff_le_of_forall_deterministic_average_le` | formalized generic lemma | `EconCSLean/Decision/Yao.lean` | finite deterministic algorithm and input types |
+| Theorem 9 randomized b-matching lower bound | `theorem9BidderSpendUpperBound`, `theorem9NormalizedRevenueUpperBound`, `BMatchingYaoLowerBoundCertificate`, `BMatchingPermutationLowerBoundCertificate`, `BMatchingPermutationRevenueBoundCertificate`, `paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_certificate`, `paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_permutation_certificate`, `paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_revenue_bound_certificate` | conditional certificate wrappers formalized | `EconCSLean/Online/AdWordsLowerBound.lean`, `EconCSLean/Online/MainTheorems.lean` | prove the deterministic average-revenue bound and the finite/asymptotic harmonic comparison for the paper's uniform permutation distribution |
 | Balance/MSVV discount, dual-alpha, and scaled bid | `balanceDiscount`, `msvvDualAlpha`, `msvvNormalizedDualAlpha`, `balanceScore`, `slackScore` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | Slack-score dual-feasibility builder | `paper_adwords_dual_feasible_of_slack_score_bound` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative alpha/beta and pointwise slack-score cover |
 | Max-slack query duals | `maxSlackBeta`, `paper_adwords_dual_feasible_max_slack_beta` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonempty finite advertiser type |
@@ -132,7 +134,9 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    delayed-entry/availability masks, and slot-query expansion. The slot
    expansion is the independent slot-query reduction; a stronger per-page
    distinct-advertiser model would require an additional feasibility layer.
-6. Remaining paper work is Section 7's randomized lower bound. The next local
-   seam is a finite lower-bound certificate interface for distributions over
-   b-matching instances, before any attempt to mechanize Yao's lemma and the
-   asymptotic construction.
+6. Section 7 now has the finite Yao/minimax expectation lemma, the uniform
+   permutation distribution over bidders, the paper's explicit finite harmonic
+   revenue-bound expression, and paper-facing Theorem 9 wrappers. Remaining
+   work is to prove the deterministic average-revenue inequality and compare
+   `theorem9NormalizedRevenueUpperBound` to `msvvRatio` in the intended
+   large-market limit.

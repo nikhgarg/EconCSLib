@@ -203,6 +203,32 @@ theorem pmfExp_le_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
                     rw [pmfToRealSum μ]
                     ring
 
+/-- A finite PMF expectation is strictly above a constant if every value is. -/
+theorem pmfExp_lt_of_forall_lt {α : Type*}
+    [Fintype α] [DecidableEq α] [Nonempty α]
+    (μ : PMF α) (f : α → ℝ) (c : ℝ)
+    (h : ∀ a, c < f a) :
+    c < pmfExp μ f := by
+  classical
+  have hpos_atom : ∃ a : α, 0 < (μ a).toReal := by
+    by_contra hnone
+    push Not at hnone
+    have hzero : ∀ a : α, (μ a).toReal = 0 := by
+      intro a
+      exact le_antisymm (hnone a) ENNReal.toReal_nonneg
+    have hsum_zero : ∑ a : α, (μ a).toReal = 0 := by
+      simp [hzero]
+    have hsum_one : ∑ a : α, (μ a).toReal = 1 := pmfToRealSum μ
+    linarith
+  rw [← pmfExp_const μ c]
+  unfold pmfExp
+  refine Finset.sum_lt_sum ?_ ?_
+  · intro a _
+    exact mul_le_mul_of_nonneg_left (le_of_lt (h a)) ENNReal.toReal_nonneg
+  · rcases hpos_atom with ⟨a, ha⟩
+    exact ⟨a, Finset.mem_univ a,
+      mul_lt_mul_of_pos_left (h a) ha⟩
+
 @[simp] theorem pmfExp_pure {α : Type*} [Fintype α] [DecidableEq α]
     (a : α) (f : α → ℝ) :
     pmfExp (PMF.pure a) f = f a := by
@@ -236,6 +262,35 @@ theorem pmfPairExp_sub {α β : Type*}
       pmfPairExp μ ν f - pmfPairExp μ ν g := by
   unfold pmfPairExp
   simp [pmfExp_sub]
+
+/-- Swap the order of two finite independent PMF expectations. -/
+theorem pmfPairExp_swap {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF α) (ν : PMF β) (f : α → β → ℝ) :
+    pmfPairExp μ ν f = pmfPairExp ν μ (fun b a => f a b) := by
+  unfold pmfPairExp pmfExp
+  calc
+    ∑ a : α, (μ a).toReal * (∑ b : β, (ν b).toReal * f a b)
+        = ∑ a : α, ∑ b : β,
+            (μ a).toReal * ((ν b).toReal * f a b) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          rw [Finset.mul_sum]
+    _ = ∑ a : α, ∑ b : β,
+            (ν b).toReal * ((μ a).toReal * f a b) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          ring
+    _ = ∑ b : β, ∑ a : α,
+            (ν b).toReal * ((μ a).toReal * f a b) := by
+          exact Finset.sum_comm
+    _ = ∑ b : β, (ν b).toReal *
+            (∑ a : α, (μ a).toReal * f a b) := by
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          rw [Finset.mul_sum]
 
 @[simp] theorem pmfPairExp_zero {α β : Type*}
     [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]

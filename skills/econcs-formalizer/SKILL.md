@@ -278,6 +278,18 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   fields are the distributional instance family, deterministic-algorithm
   expected revenue bound, offline benchmark lower bound, and limiting ratio;
   then connect the paper's construction to that certificate.
+  In `EconCSLean`, use the generic finite Yao theorem in
+  `EconCSLean.Decision.Yao` for this step: prove deterministic average payoff
+  under a finite input distribution, then derive the existence of a bad input
+  for every randomized algorithm. Keep normalized revenue explicit so the
+  offline benchmark division is visible at the paper wrapper. For the MSVV
+  b-matching construction, specialize the hard input distribution to uniform
+  bidder permutations (`uniformPermutationDistribution`) and leave the
+  deterministic expected-revenue inequality as the named remaining field until
+  the round-allocation symmetry argument is fully modeled. Name the paper's
+  harmonic spend cap separately (`theorem9BidderSpendUpperBound` and
+  `theorem9NormalizedRevenueUpperBound`) so the asymptotic comparison with
+  `1 - 1/e` is not hidden inside a generic certificate.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
