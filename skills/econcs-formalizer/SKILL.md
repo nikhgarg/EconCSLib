@@ -240,6 +240,13 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `min 1 (δ / ((Real.exp 1 + 1) * historyMaxBidSum))` for the `SmallBids`
   assumption. A fixed-instance limit-style wrapper can remove the additive term
   under an arbitrarily-small-threshold assumption by a half-gap contradiction.
+  For canonical finite query models, use `Query = Fin n` and
+  `List.finRange n` as the history: prove a tiny helper pair
+  `historyFinset_finRange` and `finRange_history_nodup`, then provide
+  no-boilerplate wrappers whose additive term is stated directly as
+  `ε * (Real.exp 1 + 1) * (∑ q : Fin n, maxBidForQuery q)`. This avoids making
+  paper-facing theorem statements carry nodup-cover hypotheses when the
+  standard finite index type already supplies them.
   The remaining faithful paper seam is then a model-level limiting theorem over
   a nontrivial family of small-bid instances; do not force the discrete
   finite-bid theorem to be exactly `1 - 1/e` before that limit has been stated.

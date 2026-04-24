@@ -1,5 +1,6 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Finset.Max
+import Mathlib.Data.List.FinRange
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.SpecialFunctions.Exp
@@ -86,6 +87,16 @@ theorem sum_univ_eq_list_sum_of_historyFinset_eq_univ
     (∑ q : Query, f q) = (history.map f).sum := by
   rw [← hcover]
   exact sum_historyFinset_eq_list_sum history hnodup f
+
+theorem historyFinset_finRange (n : ℕ) :
+    historyFinset (List.finRange n) = (Finset.univ : Finset (Fin n)) := by
+  ext q
+  rw [mem_historyFinset]
+  simp
+
+theorem finRange_history_nodup (n : ℕ) :
+    (List.finRange n).Nodup :=
+  List.nodup_finRange n
 
 /-- Spend charged to one advertiser by an assignment. -/
 noncomputable def spend [Fintype Query] [DecidableEq Advertiser]
@@ -3830,6 +3841,24 @@ theorem balance_msvv_approx_competitive_with_query_sum_error_bound
   rw [hsum]
   exact hbase
 
+theorem balance_msvv_approx_competitive_finRange_with_query_sum_error_bound
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+        ε * (Real.exp 1 + 1) *
+          (∑ q : Fin n, I.maxBidForQuery q) := by
+  exact balance_msvv_approx_competitive_with_query_sum_error_bound
+    I hbid hbudget (List.finRange n) (finRange_history_nodup n)
+    (historyFinset_finRange n) hε hε_le_one hsmall
+
 theorem balance_msvv_approx_competitive_up_to_delta
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
@@ -3858,6 +3887,37 @@ theorem balance_msvv_approx_competitive_up_to_delta
       simpa [add_comm, add_left_comm, add_assoc] using
         add_le_add_left herror_le_delta
           (I.revenue (I.runAssignment I.balanceChoiceRule history))
+  exact hbase.trans hbound
+
+theorem balance_msvv_approx_competitive_finRange_up_to_delta
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    {ε δ : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε)
+    (herror_le_delta :
+      ε * (Real.exp 1 + 1) *
+          (∑ q : Fin n, I.maxBidForQuery q) ≤ δ) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+        δ := by
+  have hbase :=
+    balance_msvv_approx_competitive_finRange_with_query_sum_error_bound
+      I hbid hbudget hε hε_le_one hsmall
+  have hbound :
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+          ε * (Real.exp 1 + 1) *
+            (∑ q : Fin n, I.maxBidForQuery q) ≤
+        I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+          δ :=
+    by
+      simpa [add_comm, add_left_comm, add_assoc] using
+        add_le_add_left herror_le_delta
+          (I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)))
   exact hbase.trans hbound
 
 theorem balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
@@ -3911,6 +3971,58 @@ theorem balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
     I hbid hbudget history hnodup hcover hε_nonneg hε_le_one hsmall
     herror_le_delta
 
+theorem balance_msvv_approx_competitive_finRange_up_to_delta_of_smallBids_threshold
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    {δ : ℝ}
+    (hδ : 0 ≤ δ)
+    (hmaxBidSum_pos : 0 < ∑ q : Fin n, I.maxBidForQuery q)
+    (hsmall :
+      I.SmallBids
+        (min 1
+          (δ / ((Real.exp 1 + 1) *
+            (∑ q : Fin n, I.maxBidForQuery q))))) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+        δ := by
+  let ε :=
+    min 1
+      (δ / ((Real.exp 1 + 1) *
+        (∑ q : Fin n, I.maxBidForQuery q)))
+  let scale := (Real.exp 1 + 1) * (∑ q : Fin n, I.maxBidForQuery q)
+  have hcoef_pos : 0 < Real.exp 1 + 1 := by
+    have hexp_pos : 0 < Real.exp 1 := Real.exp_pos 1
+    linarith
+  have hscale_pos : 0 < scale := by
+    exact mul_pos hcoef_pos hmaxBidSum_pos
+  have hε_nonneg : 0 ≤ ε := by
+    unfold ε
+    exact le_min zero_le_one (div_nonneg hδ hscale_pos.le)
+  have hε_le_one : ε ≤ 1 := by
+    unfold ε
+    exact min_le_left 1 (δ / scale)
+  have hε_le_threshold : ε ≤ δ / scale := by
+    unfold ε
+    exact min_le_right 1 (δ / scale)
+  have herror_le_delta :
+      ε * (Real.exp 1 + 1) *
+          (∑ q : Fin n, I.maxBidForQuery q) ≤ δ := by
+    have hmul :=
+      mul_le_mul_of_nonneg_right hε_le_threshold hscale_pos.le
+    calc
+      ε * (Real.exp 1 + 1) * (∑ q : Fin n, I.maxBidForQuery q) =
+          ε * scale := by
+          simp [scale]
+          ring
+      _ ≤ (δ / scale) * scale := hmul
+      _ = δ := by
+          exact div_mul_cancel₀ δ hscale_pos.ne'
+  exact balance_msvv_approx_competitive_finRange_up_to_delta
+    I hbid hbudget hε_nonneg hε_le_one hsmall herror_le_delta
+
 theorem balance_msvv_competitive_of_arbitrarily_smallBids_threshold
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
@@ -3942,6 +4054,39 @@ theorem balance_msvv_competitive_of_arbitrarily_smallBids_threshold
       balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
         I hbid hbudget history hnodup hcover hδ_pos.le hmaxBidSum_pos
         (hsmall δ hδ_pos)
+  have hgap : rhs + δ < lhs := by
+    dsimp [δ]
+    linarith
+  exact (not_lt_of_ge happrox) hgap
+
+theorem balance_msvv_finRange_competitive_of_arbitrarily_smallBids_threshold
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (hmaxBidSum_pos : 0 < ∑ q : Fin n, I.maxBidForQuery q)
+    (hsmall :
+      ∀ δ : ℝ, 0 < δ →
+        I.SmallBids
+          (min 1
+            (δ / ((Real.exp 1 + 1) *
+              (∑ q : Fin n, I.maxBidForQuery q))))) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) := by
+  let lhs := msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le)
+  let rhs := I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n))
+  by_contra hnot
+  have hlt : rhs < lhs := lt_of_not_ge hnot
+  let δ := (lhs - rhs) / 2
+  have hδ_pos : 0 < δ := by
+    dsimp [δ]
+    linarith
+  have happrox :
+      lhs ≤ rhs + δ := by
+    simpa [lhs, rhs] using
+      balance_msvv_approx_competitive_finRange_up_to_delta_of_smallBids_threshold
+        I hbid hbudget hδ_pos.le hmaxBidSum_pos (hsmall δ hδ_pos)
   have hgap : rhs + δ < lhs := by
     dsimp [δ]
     linarith

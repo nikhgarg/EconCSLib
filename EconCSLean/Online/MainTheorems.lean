@@ -863,6 +863,31 @@ theorem paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound
     I hbid hbudget history hnodup hcover hε hε_le_one hsmall
 
 /--
+Canonical finite-query version of the small-bids MSVV theorem. When queries
+are indexed by `Fin n` and the history is `List.finRange n`, the nodup and
+coverage assumptions are discharged automatically.
+-/
+theorem paper_adwords_balance_msvv_finRange_approx_competitive_with_query_sum_error_bound
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+        ε * (Real.exp 1 + 1) *
+          (∑ q : Fin n, I.maxBidForQuery q) := by
+  exact
+    AdWordsInstance.balance_msvv_approx_competitive_finRange_with_query_sum_error_bound
+      I hbid hbudget hε hε_le_one hsmall
+
+/--
 Delta-form finite small-bids MSVV theorem. Once the explicit algebraic error
 bound is at most `δ`, the Balance/MSVV run is competitive up to additive `δ`.
 -/
@@ -888,6 +913,31 @@ theorem paper_adwords_balance_msvv_approx_competitive_up_to_delta
   exact AdWordsInstance.balance_msvv_approx_competitive_up_to_delta
     I hbid hbudget history hnodup hcover hε hε_le_one hsmall
     herror_le_delta
+
+/--
+Canonical `Fin n` delta-form small-bids theorem. The error side condition is
+stated directly with the finite query sum `∑ q, maxBidForQuery q`.
+-/
+theorem paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    {ε δ : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε)
+    (herror_le_delta :
+      ε * (Real.exp 1 + 1) *
+          (∑ q : Fin n, I.maxBidForQuery q) ≤ δ) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+        δ := by
+  exact AdWordsInstance.balance_msvv_approx_competitive_finRange_up_to_delta
+    I hbid hbudget hε hε_le_one hsmall herror_le_delta
 
 /--
 Threshold form of the finite small-bids MSVV theorem. For a target additive
@@ -919,6 +969,34 @@ theorem paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_
       I hbid hbudget history hnodup hcover hδ hmaxBidSum_pos hsmall
 
 /--
+Canonical `Fin n` threshold form. For the history `List.finRange n`, the
+small-bids threshold is expressed using the finite query sum
+`∑ q, maxBidForQuery q`.
+-/
+theorem paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta_of_small_bids_threshold
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    {δ : ℝ}
+    (hδ : 0 ≤ δ)
+    (hmaxBidSum_pos : 0 < ∑ q : Fin n, I.maxBidForQuery q)
+    (hsmall :
+      I.SmallBids
+        (min 1
+          (δ / ((Real.exp 1 + 1) *
+            (∑ q : Fin n, I.maxBidForQuery q))))) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) +
+        δ := by
+  exact
+    AdWordsInstance.balance_msvv_approx_competitive_finRange_up_to_delta_of_smallBids_threshold
+      I hbid hbudget hδ hmaxBidSum_pos hsmall
+
+/--
 Limit-style finite MSVV theorem. If the same finite instance satisfies the
 explicit small-bids threshold for every positive additive target `δ`, then the
 additive term can be removed.
@@ -945,6 +1023,31 @@ theorem paper_adwords_balance_msvv_competitive_of_arbitrarily_small_bids_thresho
   exact
     AdWordsInstance.balance_msvv_competitive_of_arbitrarily_smallBids_threshold
       I hbid hbudget history hnodup hcover hmaxBidSum_pos hsmall
+
+/--
+Canonical `Fin n` limit-style MSVV theorem. This is the no-boilerplate version
+of the finite limit-style wrapper for the standard history `List.finRange n`.
+-/
+theorem paper_adwords_balance_msvv_finRange_competitive_of_arbitrarily_small_bids_threshold
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    {n : ℕ}
+    (I : AdWordsInstance Advertiser (Fin n))
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (hmaxBidSum_pos : 0 < ∑ q : Fin n, I.maxBidForQuery q)
+    (hsmall :
+      ∀ δ : ℝ, 0 < δ →
+        I.SmallBids
+          (min 1
+            (δ / ((Real.exp 1 + 1) *
+              (∑ q : Fin n, I.maxBidForQuery q))))) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule (List.finRange n)) := by
+  exact
+    AdWordsInstance.balance_msvv_finRange_competitive_of_arbitrarily_smallBids_threshold
+      I hbid hbudget hmaxBidSum_pos hsmall
 
 end Online
 end EconCSLean
