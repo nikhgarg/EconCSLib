@@ -28,6 +28,10 @@ variable {Advertiser Query : Type*}
 abbrev Assignment (Advertiser Query : Type*) :=
   Query → Option Advertiser
 
+/-- Fractional AdWords assignment variables `x a q`. -/
+abbrev FractionalAssignment (Advertiser Query : Type*) :=
+  Advertiser → Query → ℝ
+
 /-- The assignment that leaves every query unmatched. -/
 def emptyAssignment : Assignment Advertiser Query :=
   fun _ => none
@@ -76,6 +80,35 @@ def Feasible [Fintype Query] [DecidableEq Advertiser]
     (I : AdWordsInstance Advertiser Query)
     (A : Assignment Advertiser Query) : Prop :=
   ∀ a, I.spend A a ≤ I.budget a
+
+/-- Revenue of a fractional AdWords assignment. -/
+noncomputable def fractionalRevenue
+    [Fintype Advertiser] [Fintype Query]
+    (I : AdWordsInstance Advertiser Query)
+    (X : FractionalAssignment Advertiser Query) : ℝ :=
+  ∑ q : Query, ∑ a : Advertiser, I.bid a q * X a q
+
+/--
+Feasibility of the standard fractional AdWords LP: nonnegative assignment
+variables, at most one unit assigned per query, and advertiser budget
+constraints.
+-/
+structure FractionalFeasible
+    [Fintype Advertiser] [Fintype Query]
+    (I : AdWordsInstance Advertiser Query)
+    (X : FractionalAssignment Advertiser Query) : Prop where
+  nonneg : ∀ a q, 0 ≤ X a q
+  query : ∀ q, (∑ a : Advertiser, X a q) ≤ 1
+  budget : ∀ a, (∑ q : Query, I.bid a q * X a q) ≤ I.budget a
+
+/-- Embed an integral assignment as a `0/1` fractional assignment. -/
+def assignmentFraction [DecidableEq Advertiser]
+    (A : Assignment Advertiser Query) :
+    FractionalAssignment Advertiser Query :=
+  fun a q =>
+    match A q with
+    | none => 0
+    | some owner => if owner = a then 1 else 0
 
 /-- Remaining budget for advertiser `a` under assignment `A`. -/
 noncomputable def residualBudget [Fintype Query] [DecidableEq Advertiser]
@@ -465,6 +498,156 @@ theorem revenue_le_totalBudget_of_feasible
       revenue_eq_sum_spend I A
     _ ≤ ∑ a : Advertiser, I.budget a :=
       Finset.sum_le_sum fun a _ => hfeasible a
+
+theorem assignmentFraction_nonneg
+    [DecidableEq Advertiser]
+    (A : Assignment Advertiser Query) :
+    ∀ a q, 0 ≤ assignmentFraction A a q := by
+  intro a q
+  unfold assignmentFraction
+  cases A q with
+  | none =>
+      simp
+  | some owner =>
+      by_cases h : owner = a <;> simp [h]
+
+theorem assignmentFraction_query_sum_le_one
+    [Fintype Advertiser] [DecidableEq Advertiser]
+    (A : Assignment Advertiser Query) (q : Query) :
+    (∑ a : Advertiser, assignmentFraction A a q) ≤ 1 := by
+  classical
+  unfold assignmentFraction
+  cases A q with
+  | none =>
+      simp
+  | some owner =>
+      simp
+
+theorem assignmentFraction_budget_sum_eq_spend
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) :
+    (∑ q : Query, I.bid a q * assignmentFraction A a q) =
+      I.spend A a := by
+  classical
+  unfold assignmentFraction spend
+  apply Finset.sum_congr rfl
+  intro q _hq
+  cases hassign : A q with
+  | none =>
+      simp
+  | some owner =>
+      by_cases h : owner = a
+      · subst owner
+        simp
+      · simp [h]
+
+theorem assignmentFraction_fractionalFeasible_of_feasible
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query)
+    (hfeasible : I.Feasible A) :
+    I.FractionalFeasible (assignmentFraction A) where
+  nonneg := assignmentFraction_nonneg A
+  query := assignmentFraction_query_sum_le_one A
+  budget := by
+    intro a
+    rw [assignmentFraction_budget_sum_eq_spend I A a]
+    exact hfeasible a
+
+theorem fractionalRevenue_assignmentFraction_eq_revenue
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) :
+    I.fractionalRevenue (assignmentFraction A) = I.revenue A := by
+  classical
+  unfold fractionalRevenue revenue assignmentFraction
+  apply Finset.sum_congr rfl
+  intro q _hq
+  cases A q with
+  | none =>
+      simp
+  | some owner =>
+      simp
+
+theorem fractional_dual_expansion
+    [Fintype Advertiser] [Fintype Query]
+    (I : AdWordsInstance Advertiser Query)
+    (X : FractionalAssignment Advertiser Query)
+    (alpha : Advertiser → ℝ) (beta : Query → ℝ) :
+    (∑ q : Query, ∑ a : Advertiser,
+        (I.bid a q * alpha a + beta q) * X a q) =
+      (∑ a : Advertiser, (∑ q : Query, I.bid a q * X a q) * alpha a) +
+        ∑ q : Query, beta q * ∑ a : Advertiser, X a q := by
+  classical
+  calc
+    (∑ q : Query, ∑ a : Advertiser,
+        (I.bid a q * alpha a + beta q) * X a q) =
+        ∑ q : Query, ∑ a : Advertiser,
+          ((I.bid a q * X a q) * alpha a + beta q * X a q) := by
+      apply Finset.sum_congr rfl
+      intro q _hq
+      apply Finset.sum_congr rfl
+      intro a _ha
+      ring
+    _ =
+        (∑ q : Query, ∑ a : Advertiser,
+          (I.bid a q * X a q) * alpha a) +
+          ∑ q : Query, ∑ a : Advertiser, beta q * X a q := by
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intro q _hq
+      rw [← Finset.sum_add_distrib]
+    _ =
+        (∑ a : Advertiser, ∑ q : Query,
+          (I.bid a q * X a q) * alpha a) +
+          ∑ q : Query, ∑ a : Advertiser, beta q * X a q := by
+      rw [Finset.sum_comm]
+    _ =
+        (∑ a : Advertiser, (∑ q : Query, I.bid a q * X a q) * alpha a) +
+          ∑ q : Query, beta q * ∑ a : Advertiser, X a q := by
+      congr 1
+      · apply Finset.sum_congr rfl
+        intro a _ha
+        rw [Finset.sum_mul]
+      · apply Finset.sum_congr rfl
+        intro q _hq
+        rw [Finset.mul_sum]
+
+theorem fractionalRevenue_le_dualObjective_of_dualFeasible
+    [Fintype Advertiser] [Fintype Query]
+    (I : AdWordsInstance Advertiser Query)
+    (X : FractionalAssignment Advertiser Query)
+    (alpha : Advertiser → ℝ) (beta : Query → ℝ)
+    (hfeasible : I.FractionalFeasible X)
+    (hdual : I.DualFeasible alpha beta) :
+    I.fractionalRevenue X ≤ I.dualObjective alpha beta := by
+  have hpoint :
+      I.fractionalRevenue X ≤
+        ∑ q : Query, ∑ a : Advertiser,
+          (I.bid a q * alpha a + beta q) * X a q := by
+    unfold fractionalRevenue
+    exact Finset.sum_le_sum fun q _ =>
+      Finset.sum_le_sum fun a _ =>
+        mul_le_mul_of_nonneg_right (hdual.covers a q)
+          (hfeasible.nonneg a q)
+  have hbudget :
+      (∑ a : Advertiser, (∑ q : Query, I.bid a q * X a q) * alpha a) ≤
+        ∑ a : Advertiser, I.budget a * alpha a := by
+    exact Finset.sum_le_sum fun a _ =>
+      mul_le_mul_of_nonneg_right (hfeasible.budget a)
+        (hdual.alpha_nonneg a)
+  have hquery :
+      (∑ q : Query, beta q * ∑ a : Advertiser, X a q) ≤
+        ∑ q : Query, beta q := by
+    exact Finset.sum_le_sum fun q _ => by
+      have hmul :=
+        mul_le_mul_of_nonneg_left (hfeasible.query q)
+          (hdual.beta_nonneg q)
+      simpa using hmul
+  rw [fractional_dual_expansion I X alpha beta] at hpoint
+  unfold dualObjective
+  linarith
 
 theorem assignedWeightedSpend_eq_sum_spend_mul
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]

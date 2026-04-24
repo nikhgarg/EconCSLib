@@ -65,6 +65,34 @@ theorem paper_adwords_lp_weak_duality
     I A alpha beta hfeasible hdual
 
 /--
+Integral AdWords assignments embed as feasible `0/1` fractional LP solutions.
+-/
+theorem paper_adwords_integral_assignment_fractional_feasible
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : AdWordsInstance.Assignment Advertiser Query)
+    (hfeasible : I.Feasible A) :
+    I.FractionalFeasible (AdWordsInstance.assignmentFraction A) := by
+  exact AdWordsInstance.assignmentFraction_fractionalFeasible_of_feasible
+    I A hfeasible
+
+/--
+Fractional weak duality for the standard AdWords LP.
+-/
+theorem paper_adwords_fractional_lp_weak_duality
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query]
+    (I : AdWordsInstance Advertiser Query)
+    (X : AdWordsInstance.FractionalAssignment Advertiser Query)
+    (alpha : Advertiser → ℝ) (beta : Query → ℝ)
+    (hfeasible : I.FractionalFeasible X)
+    (hdual : I.DualFeasible alpha beta) :
+    I.fractionalRevenue X ≤ I.dualObjective alpha beta := by
+  exact AdWordsInstance.fractionalRevenue_le_dualObjective_of_dualFeasible
+    I X alpha beta hfeasible hdual
+
+/--
 If some advertiser can still accept a query, a Balance/MSVV scaled-bid maximizer
 exists for that query.
 -/

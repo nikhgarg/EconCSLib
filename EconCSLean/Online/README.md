@@ -41,6 +41,9 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Balance/MSVV assigns only seen query IDs | `paper_adwords_balance_assignment_assigned_only_from_history` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
 | Standard AdWords LP dual feasibility | `DualFeasible`, `dualObjective` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | AdWords LP weak duality | `paper_adwords_lp_weak_duality` | formalized | `EconCSLean/Online/MainTheorems.lean` | feasible assignment and dual-feasible variables |
+| Fractional AdWords LP primal | `FractionalAssignment`, `FractionalFeasible`, `fractionalRevenue` | formalized | `EconCSLean/Online/AdWords.lean` | finite advertisers and queries |
+| Integral-to-fractional embedding | `paper_adwords_integral_assignment_fractional_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | integral assignment must be feasible |
+| Fractional AdWords LP weak duality | `paper_adwords_fractional_lp_weak_duality` | formalized | `EconCSLean/Online/MainTheorems.lean` | fractional feasible assignment and dual-feasible variables |
 | Competitive-ratio certificate | `CompetitiveRatioCertificate` | formalized certificate interface | `EconCSLean/Online/AdWords.lean` | certificate must be supplied by algorithm analysis |
 | Primal-dual competitive certificate | `paper_adwords_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV certificate for ratio `1 - 1 / Real.exp 1` and formalize small-bids limiting argument |
 | Full MSVV competitive theorem | none | not started | none | online history/algorithm execution, tradeoff-revealing LP, and small-bids analysis |
@@ -48,7 +51,8 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 ## Current Formalization Plan
 
 1. Keep the finite LP and offline benchmark layer stable: `offlineOptimumValue`,
-   `DualFeasible`, and `paper_adwords_lp_weak_duality` are the reusable core.
+   `FractionalFeasible`, `DualFeasible`, and
+   `paper_adwords_fractional_lp_weak_duality` are the reusable core.
 2. The online history/fold for feasible choice rules and the canonical
    Balance/MSVV choice rule is formalized. Next connect per-query choices to
    primal and dual variable updates.

@@ -166,8 +166,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   objective value, benchmark/offline optimum, and competitive-ratio statements.
   For AdWords/MSVV, first close the finite offline benchmark and LP weak-duality
   layer: assignments, spend, revenue, budget feasibility, residual budget,
-  feasible next-query assignment, offline optimum, dual feasibility, and dual
-  objective. Then model Balance/MSVV as a history fold whose local step chooses
+  feasible next-query assignment, offline optimum, fractional LP feasibility,
+  integral-to-fractional embedding, dual feasibility, and dual objective. Then
+  model Balance/MSVV as a history fold whose local step chooses
   a feasible advertiser maximizing the scaled bid
   `bid * (1 - exp(spentFraction - 1))`; prove run feasibility separately from
   the competitive-ratio invariant.
