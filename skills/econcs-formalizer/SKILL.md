@@ -180,7 +180,12 @@ search.
    First build the touched module. Then build the parent paper root. Run full
    `lake build` for release/integration checks.
 
-9. For author-wide paper campaigns, maintain a running markdown report.
+9. For long-running branches with many sessions, avoid broad history archaeology.
+   A fast resume loop is: (`git status --short --branch`), inspect the paper
+   README + paper-facing theorem file, verify the latest build command in the handoff
+   doc, and only then do targeted `rg`/`lake build` steps.
+
+10. For author-wide paper campaigns, maintain a running markdown report.
    Record every paper screened, the source version, venue, author-position
    decision, theorem-status decision, declarations added, blocker if any, build
    command, and commit hash. Do not advance from a paper until either its main
