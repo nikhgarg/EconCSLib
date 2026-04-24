@@ -279,5 +279,27 @@ theorem paper_combinatorial_target_bundle_threshold_truthful_on_single_minded
   exact targetBundleThresholdAuction_truthfulOn_singleMindedProfiles
     target price hind
 
+/--
+Target-bundle threshold allocations are feasible when every accepted target is
+contained in the goods set and accepted targets are pairwise disjoint.
+-/
+theorem paper_combinatorial_target_bundle_threshold_feasible_of_pairwise_disjoint
+    {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Bidder] [DecidableEq Item]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (reports : CombinatorialReport Bidder Item)
+    (goods : Finset Item)
+    (hgoods : ∀ i,
+      i ∈ targetBundleWinners target price reports → target i ⊆ goods)
+    (hdisjoint :
+      PairwiseDisjointDesired
+        (targetAsSingleMindedBids target reports)
+        (targetBundleWinners target price reports)) :
+    IsFeasibleBundleAllocation
+      ((targetBundleThresholdAuction target price).allocation reports)
+      goods := by
+  exact targetBundleThresholdAuction_feasible_of_pairwiseDisjoint
+    target price reports goods hgoods hdisjoint
+
 end Auction
 end EconCSLean

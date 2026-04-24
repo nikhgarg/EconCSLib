@@ -61,6 +61,7 @@ formalized.
 | Target-bundle critical-price truthfulness | `paper_combinatorial_target_bundle_threshold_truthful_on_normalized` | formalized on normalized valuations | `EconCSLean/Auction/MainTheorems.lean` | offered bundle price must be own-report independent |
 | Target-bundle critical-price truthfulness for single-minded profiles | `paper_combinatorial_target_bundle_threshold_truthful_on_single_minded` | formalized | `EconCSLean/Auction/MainTheorems.lean` | desired bundles must be nonempty |
 | Pairwise-disjoint accepted single-minded allocation feasibility | `singleMindedAllocation_feasible` | formalized | `EconCSLean/Auction/Combinatorial.lean` | accepted desired bundles must be pairwise disjoint and contained in goods |
+| Target-bundle threshold allocation feasibility | `paper_combinatorial_target_bundle_threshold_feasible_of_pairwise_disjoint` | formalized | `EconCSLean/Auction/MainTheorems.lean` | accepted target bundles must be contained in goods and pairwise disjoint |
 
 ## Current Formalization Plan
 

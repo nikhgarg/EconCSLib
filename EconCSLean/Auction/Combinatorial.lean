@@ -341,5 +341,67 @@ theorem singleMindedAllocation_feasible [DecidableEq Bidder] [DecidableEq Item]
       · simp [singleMindedAllocation, hj] at hgj
     · simp [singleMindedAllocation, hi] at hgi
 
+/-! ## Feasibility of target-bundle threshold outcomes -/
+
+/-- Winners of a target-bundle threshold auction under a report profile. -/
+noncomputable def targetBundleWinners [Fintype Bidder]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (reports : CombinatorialReport Bidder Item) : Finset Bidder :=
+  (Finset.univ : Finset Bidder).filter fun i =>
+    price reports i ≤ reports i (target i)
+
+/--
+View a target-bundle threshold report profile as a single-minded bid profile
+whose desired bundle is the mechanism target and whose value is the reported
+value for that target.
+-/
+def targetAsSingleMindedBids
+    (target : Bidder → Bundle Item)
+    (reports : CombinatorialReport Bidder Item) :
+    Bidder → SingleMindedBid Item :=
+  fun i => { desired := target i, value := reports i (target i) }
+
+theorem targetBundleThresholdAuction_allocation_eq_singleMindedAllocation
+    [Fintype Bidder] [DecidableEq Bidder]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (reports : CombinatorialReport Bidder Item) :
+    (targetBundleThresholdAuction target price).allocation reports =
+      singleMindedAllocation
+        (targetAsSingleMindedBids target reports)
+        (targetBundleWinners target price reports) := by
+  funext i
+  by_cases hwin : price reports i ≤ reports i (target i)
+  · simp [targetBundleThresholdAuction, singleMindedAllocation,
+      targetBundleWinners, targetAsSingleMindedBids, hwin]
+  · simp [targetBundleThresholdAuction, singleMindedAllocation,
+      targetBundleWinners, hwin]
+
+theorem targetBundleThresholdAuction_feasible_of_pairwiseDisjoint
+    [Fintype Bidder] [DecidableEq Bidder] [DecidableEq Item]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (reports : CombinatorialReport Bidder Item)
+    (goods : Finset Item)
+    (hgoods : ∀ i,
+      i ∈ targetBundleWinners target price reports → target i ⊆ goods)
+    (hdisjoint :
+      PairwiseDisjointDesired
+        (targetAsSingleMindedBids target reports)
+        (targetBundleWinners target price reports)) :
+    IsFeasibleBundleAllocation
+      ((targetBundleThresholdAuction target price).allocation reports)
+      goods := by
+  rw [targetBundleThresholdAuction_allocation_eq_singleMindedAllocation]
+  exact singleMindedAllocation_feasible
+    (targetAsSingleMindedBids target reports)
+    (targetBundleWinners target price reports)
+    goods
+    (by
+      intro i hi
+      exact hgoods i hi)
+    hdisjoint
+
 end Auction
 end EconCSLean
