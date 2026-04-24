@@ -312,6 +312,31 @@ structure Theorem1SignChangeNudgeCertificate {n : ℕ}
     ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
 
 /--
+Paper-shaped interval certificate for the final Theorem 1 nudge.  Compared with
+`Theorem1SignChangeNudgeCertificate`, this version asks for Definitions 2/3 as
+`Model.PaperHypotheses` and for Definition 1 monotonicity in finite-removal
+form; Lean fills the exact payoff fields.
+-/
+structure Theorem1IntervalAnalyticCertificate {n : ℕ}
+    (F : AccuracyFamily n) (θH : ℝ) : Type where
+  lo : ℝ
+  hi : ℝ
+  thetaH_lt_lo : θH < lo
+  lo_lt_hi : lo < hi
+  diff_continuousOn :
+    ContinuousOn (fun θA => theorem1_f F θA θH - theorem1_g F θA θH)
+      (Set.Icc lo hi)
+  nonpos_at_lo : theorem1_f F lo θH ≤ theorem1_g F lo θH
+  positive_at_hi : theorem1_g F hi θH < theorem1_f F hi θH
+  dist_atom_continuity :
+    ∀ θA, lo ≤ θA → θA < hi →
+      ∀ π : Ranking n, EpsilonContinuousAt (fun θ => ((F.dist θ) π).toReal) θA
+  paper_hypotheses_on_interval :
+    ∀ θA, θH < θA → θA < hi → Model.PaperHypotheses (F.modelAt θA θH)
+  removal_monotonicity :
+    ∀ θA, θH < θA → Theorem1RemovalMonotonicityAt F θA θH
+
+/--
 The direct payoff certificate for Theorem 1's conclusion.
 -/
 structure Theorem1PayoffCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
@@ -550,6 +575,36 @@ theorem theorem1_g_lt_h_of_paperHypotheses {n : ℕ}
     (hpaper : Model.PaperHypotheses (F.modelAt θA θH)) :
     theorem1_g F θA θH < theorem1_h F θA θH :=
   theorem1_g_lt_h_of_prefersWeakerCompetition F θA θH hpaper.2
+
+/-- Convert the paper-shaped interval certificate into the direct sign-change certificate. -/
+def signChangeNudgeCertificate_of_intervalAnalyticCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1IntervalAnalyticCertificate F θH) :
+    Theorem1SignChangeNudgeCertificate F θH where
+  lo := cert.lo
+  hi := cert.hi
+  thetaH_lt_lo := cert.thetaH_lt_lo
+  lo_lt_hi := cert.lo_lt_hi
+  diff_continuousOn := cert.diff_continuousOn
+  nonpos_at_lo := cert.nonpos_at_lo
+  positive_at_hi := cert.positive_at_hi
+  dist_atom_continuity := cert.dist_atom_continuity
+  weaker_side := fun θA hθ hhi =>
+    theorem1_g_lt_h_of_paperHypotheses F θA θH
+      (cert.paper_hypotheses_on_interval θA hθ hhi)
+  monotonicity := fun θA hθ =>
+    theorem1MonotonicityAt_of_removalMonotonicity F θA θH
+      (cert.removal_monotonicity θA hθ)
+
+/--
+Paper Theorem 1 from the interval analytic certificate.
+-/
+theorem theorem1Target_of_intervalAnalyticCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1IntervalAnalyticCertificate F θH) :
+    Theorem1Target F θH :=
+  theorem1Target_of_signChangeNudgeCertificate
+    (signChangeNudgeCertificate_of_intervalAnalyticCertificate cert)
 
 /--
 Definition 2 supplies the initial strict inequality `f(θ) < g(θ)` when the

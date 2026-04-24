@@ -639,6 +639,20 @@ theorem paper_theorem1_from_sign_change_nudge_certificate
   AccuracyFamily.theorem1Target_of_signChangeNudgeCertificate cert
 
 /--
+Paper Theorem 1 from the paper-shaped interval analytic certificate.
+
+This variant states the remaining inputs closer to the paper: Definitions 2/3
+as `Model.PaperHypotheses` on the interval, Definition 1 monotonicity as the
+finite-removal monotonicity certificate, and the analytic sign-change data for
+`f - g`.
+-/
+theorem paper_theorem1_from_interval_analytic_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1IntervalAnalyticCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_intervalAnalyticCertificate cert
+
+/--
 Paper Theorem 1 from the direct payoff certificate.
 
 This is the same final conclusion stated directly in terms of the two strict
