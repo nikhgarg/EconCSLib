@@ -68,7 +68,7 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Balance/MSVV `1 - 1/e` theorem seam | `paper_adwords_balance_msvv_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV primal-dual certificate |
 | History-accounting objective seam | `MsvvHistoryAccountingCertificate`, `paper_adwords_balance_msvv_objective_bound_of_history_accounting` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | prove the advertiser-alpha plus Balance-charge accounting inequality with the explicit max-bid error |
 | Balance/MSVV objective-bound seam | `MsvvObjectiveBoundCertificate`, `paper_adwords_balance_msvv_competitive_of_objective_bound` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | prove the scaled dual-objective bound for the normalized assignment-induced MSVV duals |
-| Approximate small-bids objective seam | `MsvvHistoryApproxAccountingCertificate`, `MsvvApproxObjectiveBoundCertificate`, `paper_adwords_balance_msvv_history_approx_accounting_with_explicit_error`, `paper_adwords_balance_msvv_approx_objective_bound_with_explicit_error`, `paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error` | finite explicit-error theorem formalized | `EconCSLean/Online/MainTheorems.lean` | send the explicit history error to zero and/or replace the nodup-cover history assumption with the paper's arrival model |
+| Approximate small-bids objective seam | `MsvvHistoryApproxAccountingCertificate`, `MsvvApproxObjectiveBoundCertificate`, `paper_adwords_balance_msvv_history_approx_accounting_with_explicit_error`, `paper_adwords_balance_msvv_approx_objective_bound_with_explicit_error`, `paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error`, `paper_adwords_balance_msvv_approx_competitive_with_error_bound` | finite explicit-error theorem and algebraic error bound formalized | `EconCSLean/Online/MainTheorems.lean` | package the final small-bids limit over a family of instances or replace the nodup-cover history assumption with the paper's arrival model |
 | Full MSVV competitive theorem | none | not started | none | online history/algorithm execution, tradeoff-revealing LP, and small-bids analysis |
 
 ## Current Formalization Plan
@@ -85,7 +85,11 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    increment bound, and explicit history error are packaged as
    `MsvvHistoryApproxAccountingCertificate` and derive
    `paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error`.
-   The ideal exact seam `MsvvHistoryAccountingCertificate` remains available for
-   a zero-error limiting theorem.
+   The combined explicit error is bounded by
+   `ε * (Real.exp 1 + 1) * historyMaxBidSum`, exposed through
+   `paper_adwords_balance_msvv_approx_competitive_with_error_bound`. The ideal
+   exact seam `MsvvHistoryAccountingCertificate` remains available for a
+   zero-error limiting theorem.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
-   isolate the small-bids limiting argument as a separate theorem seam.
+   isolate the model-level small-bids limiting argument as a separate theorem
+   seam.

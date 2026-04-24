@@ -810,5 +810,31 @@ theorem paper_adwords_balance_msvv_approx_competitive_with_explicit_history_erro
   exact AdWordsInstance.balance_msvv_approx_competitive_with_history_error
     I hbid hbudget history hnodup hcover hε hsmall
 
+/--
+Finite small-bids MSVV theorem with the explicit history error bounded by
+`ε * (e + 1)` times the sum of per-query maximum bids. This is the algebraic
+form of the remaining small-bids limiting seam.
+-/
+theorem paper_adwords_balance_msvv_approx_competitive_with_error_bound
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) +
+        ε * (Real.exp 1 + 1) * I.historyMaxBidSum history := by
+  exact AdWordsInstance.balance_msvv_approx_competitive_with_error_bound
+    I hbid hbudget history hnodup hcover hε hε_le_one hsmall
+
 end Online
 end EconCSLean

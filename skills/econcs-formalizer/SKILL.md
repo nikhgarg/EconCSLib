@@ -230,9 +230,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   small-bids theorem as an approximate objective-bound certificate with the
   additive error
   `historyMaxBidAlphaErrorSum ε history + historyMaxBidErrorSum ε history`.
-  The remaining paper seam is then a separate limiting theorem sending this
-  explicit error to zero; do not force the discrete finite-bid theorem to be
-  exactly `1 - 1/e` before that limit has been stated.
+  Then combine the two error sums into `historyMsvvSmallBidsErrorSum` and prove
+  the algebraic bound by `ε * (Real.exp 1 + 1) * historyMaxBidSum` for
+  `0 ≤ ε ≤ 1`. The remaining paper seam is then a model-level limiting theorem
+  over a family of small-bid instances; do not force the discrete finite-bid
+  theorem to be exactly `1 - 1/e` before that limit has been stated.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
