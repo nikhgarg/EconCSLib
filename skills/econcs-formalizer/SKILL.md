@@ -178,8 +178,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `bid * (1 - alpha) ≤ beta` implies the LP dual constraint
   `bid ≤ bid * alpha + beta`; this is the bridge from Balance choices to
   `DualFeasible`. For finite advertiser sets, define max-slack query duals and
-  prove they are dual-feasible before trying to prove the global scaled
-  dual-objective bound.
+  assignment-induced MSVV advertiser duals from spent fractions, then prove they
+  are dual-feasible before trying to prove the global scaled dual-objective
+  bound.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

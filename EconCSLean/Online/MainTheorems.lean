@@ -123,6 +123,20 @@ theorem paper_adwords_dual_feasible_max_slack_beta
   exact AdWordsInstance.dualFeasible_maxSlackBeta I alpha halpha
 
 /--
+The MSVV assignment-induced advertiser duals, paired with finite max-slack
+query duals, form a dual-feasible AdWords LP solution.
+-/
+theorem paper_adwords_dual_feasible_msvv_assignment
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : AdWordsInstance.Assignment Advertiser Query) :
+    I.DualFeasible (I.msvvAlphaFromAssignment A)
+      (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) := by
+  exact AdWordsInstance.dualFeasible_msvvAssignment I A
+
+/--
 If some advertiser can still accept a query, a Balance/MSVV scaled-bid maximizer
 exists for that query.
 -/

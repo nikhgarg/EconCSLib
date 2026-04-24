@@ -240,6 +240,13 @@ noncomputable def balanceScore [Fintype Query] [DecidableEq Advertiser]
     (A : Assignment Advertiser Query) (a : Advertiser) (q : Query) : ℝ :=
   I.bid a q * balanceDiscount (I.spentFraction A a)
 
+/-- MSVV advertiser duals induced by an assignment's spent fractions. -/
+noncomputable def msvvAlphaFromAssignment
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) : ℝ :=
+  msvvDualAlpha (I.spentFraction A a)
+
 /-- Slack-score form of a dual covering constraint for one advertiser-query pair. -/
 noncomputable def slackScore
     (I : AdWordsInstance Advertiser Query)
@@ -969,6 +976,23 @@ theorem balanceScore_eq_slackScore_msvvDualAlpha
       I.slackScore (fun b => msvvDualAlpha (I.spentFraction A b)) a q := by
   simp [balanceScore, balanceDiscount, slackScore, msvvDualAlpha]
 
+theorem msvvAlphaFromAssignment_nonneg
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) :
+    ∀ a, 0 ≤ I.msvvAlphaFromAssignment A a := by
+  intro a
+  exact msvvDualAlpha_nonneg (I.spentFraction A a)
+
+theorem balanceScore_eq_slackScore_msvvAlphaFromAssignment
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) (q : Query) :
+    I.balanceScore A a q =
+      I.slackScore (I.msvvAlphaFromAssignment A) a q := by
+  simp [balanceScore, balanceDiscount, slackScore,
+    msvvAlphaFromAssignment, msvvDualAlpha]
+
 theorem dualFeasible_of_slackScore_le_beta
     (I : AdWordsInstance Advertiser Query)
     (alpha : Advertiser → ℝ) (beta : Query → ℝ)
@@ -1018,6 +1042,16 @@ theorem dualFeasible_maxSlackBeta
   exact dualFeasible_of_slackScore_le_beta I alpha (I.maxSlackBeta alpha)
     halpha (maxSlackBeta_nonneg I alpha)
     (slackScore_le_maxSlackBeta I alpha)
+
+theorem dualFeasible_msvvAssignment
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) :
+    I.DualFeasible (I.msvvAlphaFromAssignment A)
+      (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) := by
+  exact dualFeasible_maxSlackBeta I (I.msvvAlphaFromAssignment A)
+    (msvvAlphaFromAssignment_nonneg I A)
 
 theorem mem_feasibleAdvertisers
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
