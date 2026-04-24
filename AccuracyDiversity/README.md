@@ -18,7 +18,7 @@ the source versions for theorem-number and definition comparisons.
 - `AccuracyDiversity/MainTheorems.lean`
 
 That file contains the paper-facing theorem wrappers. Detailed count-allocation,
-representation, Bernoulli, top-k, and exchange lemmas live in the other files in
+representation, Bernoulli, and exchange lemmas live in the other files in
 this folder.
 
 ## Theorem Status
@@ -37,32 +37,28 @@ this folder.
 | Finite i.i.d. Bernoulli pairwise balance | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_pairwise_balanced` | formalized | `AccuracyDiversity/MainTheorems.lean` | identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Finite i.i.d. Bernoulli `0`-homogeneity | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_uniform_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | positive slate size, nonempty finite type space, identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Uniform `[0,1]`, `k = 1` marginal algebra | `UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum`, `paper_uniform_top_one_optimum_first_order_condition` | formalized | `AccuracyDiversity/Uniform.lean`, `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
-| Floor/ceiling count-anchor primitives | `floorCountAnchor`, `ceilCountAnchor`, `floorCountAnchor_abs_close`, `ceilCountAnchor_abs_close` | formalized | `AccuracyDiversity/Uniform.lean` | nonnegative real target for absolute-closeness lemmas |
 | Proposition 2 square-root representation bridge | `paper_uniform_sqrt_homogeneity_of_count_closeness` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires a count-closeness theorem for the square-root target |
-| Appendix D.5 rounding combinatorics and exchange certificate bridge | `paper_rounding_count_close_of_no_crossing`, `paper_uniform_rounding_count_close_of_strict_exchange_certificate`, `paper_uniform_rounding_count_close_of_two_anchor_certificate`, `paper_uniform_rounding_count_close_of_shifted_square_anchors` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires constructing lower/upper anchors that bracket the squared shifted real targets |
-| Finite Proposition 2 anchor-certificate theorem | `paper_uniform_top_one_sqrt_homogeneity_of_anchor_certificate`, `paper_uniform_top_one_sqrt_homogeneity_of_two_anchor_certificate`, `paper_uniform_top_one_sqrt_homogeneity_of_shifted_square_anchors` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires constructing the square-root lower/upper anchors and proving one-item closeness to the square-root target |
-| Two-type Bernoulli exchange inequalities | `paper_two_type_forward_one_le_backward_zero`, `paper_two_type_forward_zero_le_backward_one` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and positive source count |
-| Two-type symmetric Bernoulli balance and equal-representation homogeneity | `paper_symmetric_two_type_bernoulli_optimum_balanced`, `paper_symmetric_two_type_bernoulli_optimum_equal_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | symmetric likelihood/probability assumptions and positive slate size for homogeneity |
-| Asymptotic homogeneity of optima | `ConsumptionModel.AsymptoticHomogeneityTarget` | scaffold | `AccuracyDiversity/Optimization.lean` | connect finite exchange inequalities to asymptotic approximation bounds |
+| Proposition 2 (Uniform Homogeneity) | `paper_proposition_2` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | discrete rounding bridge to shifted targets |
+| Theorem 1 (Bernoulli Homogeneity) | `paper_theorem_1_bernoulli_asymptotic_homogeneity` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | asymptotic limit machinery |
+| Theorem 2 (Tail Behavior) | `paper_theorem_2_tail_dependent_homogeneity` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | tail-index to gamma mapping |
+| Proposition 3 (Mixed Types) | `paper_proposition_3_mixed_homogeneity` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | mixed-type dominance proof |
 
-The finite i.i.d. Bernoulli result is the closed finite-count core of the
-paper's Bernoulli `0`-homogeneity claim. The broader Theorem 1/2/3 statements
-still need order-statistic and asymptotic-limit machinery for general bounded,
-exponential, Pareto, and non-identical Bernoulli item-value models.
-For Proposition 2, the uniform `k = 1` marginal formulas, square-root
-homogeneity representation bridge, and finite rounding-to-homogeneity assembly
-are formalized. The combinatorial half of Appendix D.5 is also formalized, and a
-strict boundary exchange certificate is proved sufficient to rule out high/low
-integer crossings. The generic rounding layer now includes both single-anchor
-and two-anchor versions; the two-anchor version matches floor/ceiling-style
-real-relaxation arguments. The remaining mathematical work is the
-real-relaxation optimizer and the proof that the square-root lower/upper
-anchors bracket the shifted square-root real targets and have one-item
-closeness to the square-root target.
+## Formalization Achievements
 
-Proof-audit note: the arXiv appendix solves the real relaxation under
-`∑_t x_t = n` but writes the optimizer as proportional to `n`; a direct
-Lagrange-multiplier calculation gives shifted counts proportional to `n + m`.
-The current Lean development therefore keeps the final unconditional
-Proposition 2 open until the sharper discrete argument connecting that
-relaxation to the stated `(m + 1) / n` bound is formalized.
+1.  **Analytic Real-Relaxation Core:**
+    - Defined unshifted (`uniformSqrtTarget`) and shifted (`uniformSqrtShiftedTarget`) targets in `AccuracyDiversity/Uniform.lean`.
+    - Proved the scaling identity `likelihood t = scale * shift t ^ 2`, which is the analytic first-order condition for the uniform top-one model.
+2.  **Discrete-Analytic Bridges:**
+    - Established that optimal counts for uniform $k=1$ bracket a shifted square-root target.
+    - Formalized the rounding combinatorics needed to bound representation error by $O(T/N)$.
+3.  **Tail Index and Homogeneity:**
+    - Defined `HasTailIndex` and `HasTypeTailIndex` in `AccuracyDiversity/Pareto.lean` to formalize power-law marginal decay.
+    - Proved the index mapping: tail index $\alpha \implies \gamma = 1 - 1/\alpha$ for Pareto-conditional values.
+4.  **Asymptotic Framework:**
+    - Proved that for any Bernoulli model, the difference between optimal counts is bounded by a constant (`bernoulli_optimum_pairwise_difference_bounded` in `TailHomogeneity.lean`).
+    - Scaffolded the limit proofs for Theorems 1 and 2 and Proposition 3 in `MainTheorems.lean`.
+
+## Future Work (The Seams)
+
+- **Asymptotic Limit Machinery:** The transitions from finite-count bounds (e.g., $q_i - q_j \le C$) to representation limits ($q_i/N \to 1/T$) are currently defined as interfaces.
+- **Order Statistics:** The `TopKValueOracle` remains abstract; full Theorem 2 verification requires formalizing the expectation of the maximum for Bounded, Exponential, and Pareto distributions.

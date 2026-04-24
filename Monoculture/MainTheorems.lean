@@ -444,7 +444,9 @@ Mallows family bridge to the paper-level Theorem 1 assumptions.
 The fixed-parameter Mallows finite-sum proof supplies Definition 2 for every
 positive parameter and Definition 3 for every `θA > θH > 0`.  The remaining
 fields of `MallowsAccuracyFamilySpec` are the Definition 1 analytic obligations
-used by the Theorem 1 crossing proof.
+used by the Theorem 1 crossing proof: atomwise continuity, asymptotic first
+dominance, and singleton-removal weak monotonicity. The strict no-removal
+first-mover monotonicity is proved from the Mallows rank-power MLR theorem.
 -/
 noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)

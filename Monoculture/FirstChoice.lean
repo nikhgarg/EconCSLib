@@ -137,6 +137,50 @@ theorem sum_firstChoiceProb_eq_one {n : ℕ}
     _ = ∑ π : Ranking n, (μ π).toReal := by simp
     _ = 1 := pmfToRealSum μ
 
+/--
+First-mover expected utility can be regrouped by the candidate selected first.
+-/
+theorem expectedFirstMoverUtility_eq_sum_firstChoiceProb {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedFirstMoverUtility μ value =
+      ∑ c : Candidate n, firstChoiceProb μ c * value c := by
+  classical
+  unfold expectedFirstMoverUtility firstChoiceProb pmfProb pmfExp
+  calc
+    ∑ π : Ranking n, (μ π).toReal * value (firstChoice π)
+        = ∑ π : Ranking n, ∑ c : Candidate n,
+            if c = firstChoice π then (μ π).toReal * value c else 0 := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          have hsum :
+              (∑ c : Candidate n,
+                if c = firstChoice π then (μ π).toReal * value c else 0) =
+                (μ π).toReal * value (firstChoice π) := by
+            simpa using
+              (Finset.sum_ite_eq' Finset.univ (firstChoice π)
+                (fun c : Candidate n => (μ π).toReal * value c))
+          rw [hsum]
+    _ = ∑ c : Candidate n, ∑ π : Ranking n,
+            if c = firstChoice π then (μ π).toReal * value c else 0 := by
+          exact Finset.sum_comm
+    _ = ∑ c : Candidate n, ∑ π : Ranking n,
+            ((μ π).toReal *
+              (if c = firstChoice π then (1 : ℝ) else 0)) * value c := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          by_cases h : c = firstChoice π
+          · simp [h]
+          · simp
+    _ = ∑ c : Candidate n,
+          (∑ π : Ranking n,
+            (μ π).toReal *
+              (if c = firstChoice π then (1 : ℝ) else 0)) * value c := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          rw [Finset.sum_mul]
+
 private theorem pmf_compl_indicator_sum {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] :
     (∑ a : α, (μ a).toReal * (if p a then (0 : ℝ) else 1)) =

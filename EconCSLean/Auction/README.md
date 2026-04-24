@@ -21,7 +21,13 @@ The PDFs are not committed to git.
 
 - `EconCSLean/Auction/MainTheorems.lean`
 
-That file contains the paper-facing theorem wrappers currently available.
+That file contains the core paper-facing theorem wrappers currently available.
+
+For a single-file declaration-ordered human-audit surface (theorems in paper
+order, with status-facing comments and all required assumptions tracked), see:
+
+- `EconCSLean/Auction/PaperFacingTheorems.lean`
+
 The full competitive-auction approximation, GSP equilibrium/revenue, and
 combinatorial-auction approximation/truthfulness theorems are not yet
 formalized.

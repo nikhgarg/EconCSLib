@@ -107,6 +107,10 @@ the Lean statements against the paper.
   docs, but do not leave a paper or checkpoint with stale `scaffold`,
   `conditional`, or remaining-assumption text; either close the seam or record
   the exact blocker and the next theorem to attack.
+- Do not update the author-wide formalization report file
+  `docs/GARG_AUTHOR_FORMALIZATION_REPORT.md` during routine intermediate work.
+  Update it only when the paper is finished, when stopping, or when you are
+  moving on to another paper.
 - Commit at paper-scale checkpoints, not every small lemma. Prefer committing
   when a named theorem/proposition/lemma from the paper is proven or when
   moving on from a paper; otherwise keep related intermediate proof work
@@ -211,6 +215,8 @@ search.
    theorem interface is closed without `sorry`/conditional assumptions or the
    report states the precise bug/too-hard reason blocking faithful
    formalization.
+   Update this report only at paper completion, at explicit handoff boundaries,
+   or when stopping/resuming across papers.
 
 ### 1.6 Build Hygiene
 
@@ -389,6 +395,9 @@ and wasted proof search.
   leave only the true family analytic fields (continuity, limits/asymptotics,
   monotonicity) as named obligations. Add small parameter-convention lemmas
   such as inverse-noise monotonicity instead of redoing algebra at every use.
+  If a monotonicity definition has multiple cases, split those cases too:
+  prove the cases that follow from existing model MLR/order lemmas immediately
+  and leave only the genuinely harder removal/conditioning cases as fields.
 - **Validation/reporting proofs.** Use when checking whether a paper is done.
   Rebuild the human-facing theorem file, search the paper folder for
   placeholders, compare every paper-facing theorem statement to the source, and

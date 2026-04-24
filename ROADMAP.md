@@ -173,9 +173,10 @@ Imported next targets:
 - user-item fairness:
   item-side preservation lemmas, fairness-functional preservation, and the LP
   reduction path
-- accuracy-diversity:
-  two-type allocation expansions, exchange lemmas, and discrete `TopKValueOracle`
-  instantiations
+- accuracy-diversity (In Progress):
+  two-type allocation expansions, exchange lemmas, and the Proposition 2
+  square-root homogeneity bridge. The finite Proposition 2 theorem for
+  uniform top-one models is now stated at the paper-facing level.
 
 Exit criteria:
 

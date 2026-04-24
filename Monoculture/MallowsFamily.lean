@@ -34,15 +34,136 @@ theorem mallowsInverseAccuracyQ_strictAnti {θA θH : ℝ}
   have hH : 0 < θH + 1 := by linarith
   exact (inv_lt_inv₀ hA hH).2 (by linarith)
 
+namespace MallowsSpec
+
+variable {n : ℕ} (M : MallowsSpec n)
+
+/--
+First-mover utility under a Mallows law is the rank-power weighted average of
+candidate values in the center order.
+-/
+theorem expectedFirstMoverUtility_eq_rankAverage
+    (fac : M.RankFactorization) (value : Candidate n → ℝ) :
+    expectedFirstMoverUtility M.law value =
+      (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r)) /
+        candidateRankPowerSum n M.q := by
+  classical
+  rw [expectedFirstMoverUtility_eq_sum_firstChoiceProb]
+  have hweight :
+      (∑ c : Candidate n, M.firstWeight c * value c) =
+        fac.firstTail *
+          (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r)) := by
+    calc
+      ∑ c : Candidate n, M.firstWeight c * value c
+          = ∑ c : Candidate n,
+              (M.q ^ (rankOf M.center c : ℕ) * fac.firstTail) * value c := by
+            refine Finset.sum_congr rfl ?_
+            intro c _
+            rw [fac.firstWeight_eq c]
+      _ = ∑ c : Candidate n,
+              fac.firstTail * (M.q ^ (rankOf M.center c : ℕ) * value c) := by
+            refine Finset.sum_congr rfl ?_
+            intro c _
+            ring
+      _ = fac.firstTail *
+            (∑ c : Candidate n, M.q ^ (rankOf M.center c : ℕ) * value c) := by
+            rw [Finset.mul_sum]
+      _ = fac.firstTail *
+            (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r)) := by
+            congr 1
+            simpa [rankOf] using
+              (Equiv.sum_comp M.center
+                (fun c : Candidate n =>
+                  M.q ^ (rankOf M.center c : ℕ) * value c)).symm
+  calc
+    ∑ c : Candidate n, firstChoiceProb M.law c * value c
+        = ∑ c : Candidate n, (M.firstWeight c / M.partition) * value c := by
+            refine Finset.sum_congr rfl ?_
+            intro c _
+            rw [M.firstChoiceProb_eq_firstWeight_div_partition c]
+    _ = (∑ c : Candidate n, M.firstWeight c * value c) / M.partition := by
+            calc
+              ∑ c : Candidate n, (M.firstWeight c / M.partition) * value c
+                  = ∑ c : Candidate n, (M.firstWeight c * value c) / M.partition := by
+                    refine Finset.sum_congr rfl ?_
+                    intro c _
+                    ring
+              _ = (∑ c : Candidate n, M.firstWeight c * value c) / M.partition := by
+                    rw [Finset.sum_div]
+    _ = (fac.firstTail *
+            (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r))) /
+          (candidateRankPowerSum n M.q * fac.firstTail) := by
+            rw [hweight, fac.partition_eq]
+    _ = (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r)) /
+          candidateRankPowerSum n M.q := by
+            field_simp [ne_of_gt fac.firstTail_pos]
+
+end MallowsSpec
+
+namespace MallowsComparison
+
+variable {n : ℕ} (C : MallowsComparison n)
+
+/--
+The Mallows rank-power MLR inequality proves the strict `S = ∅` part of
+Definition 1 monotonicity: the more concentrated/lower-`q` law has higher
+expected first choice when values strictly decrease down the common center.
+-/
+theorem firstMoverUtility_strict_of_rankFactorization
+    {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    expectedFirstMoverUtility C.human.law value <
+      expectedFirstMoverUtility C.algorithm.law value := by
+  classical
+  let A : ℝ :=
+    ∑ r : Candidate n, C.algorithm.q ^ (r : ℕ) * value (C.human.center r)
+  let H : ℝ :=
+    ∑ r : Candidate n, C.human.q ^ (r : ℕ) * value (C.human.center r)
+  let SA : ℝ := candidateRankPowerSum n C.algorithm.q
+  let SH : ℝ := candidateRankPowerSum n C.human.q
+  have hB : StrictAnti (fun r : Candidate n => value (C.human.center r)) := by
+    intro i j hij
+    exact hstrict (by
+      simpa [MallowsComparison.StrictlyCenterOrdered, rankOf, C.same_center] using hij)
+  have hmain : 0 < SH * A - SA * H := by
+    simpa [A, H, SA, SH] using
+      candidateRankWeightedAverage_strictAnti
+        n C.algorithm.q_pos hq_lt hB
+  have hSA_pos : 0 < SA := by
+    exact candidateRankPowerSum_pos n C.algorithm.q_pos
+  have hSH_pos : 0 < SH := by
+    exact candidateRankPowerSum_pos n C.human.q_pos
+  have havg : H / SH < A / SA := by
+    field_simp [ne_of_gt hSA_pos, ne_of_gt hSH_pos]
+    nlinarith [hmain]
+  rw [C.algorithm.expectedFirstMoverUtility_eq_rankAverage halg_rank value]
+  rw [C.human.expectedFirstMoverUtility_eq_rankAverage hhuman_rank value]
+  have halg_sum :
+      (∑ r : Candidate n,
+        C.algorithm.q ^ (r : ℕ) * value (C.algorithm.center r)) = A := by
+    simp [A, C.same_center]
+  have hhuman_sum :
+      (∑ r : Candidate n,
+        C.human.q ^ (r : ℕ) * value (C.human.center r)) = H := by
+    simp [H]
+  simpa [halg_sum, hhuman_sum, SA, SH] using havg
+
+end MallowsComparison
+
 /--
 A one-parameter Mallows accuracy family with a common center ranking and a fixed
 value vector.
 
 The finite Mallows algebra in `MallowsPairwise` proves Definitions 2 and 3 from
-the common-center ordering and `qA < qH`.  The fields here that remain after that
-are the Definition 1 analytic/family facts used by Theorem 1: atomwise
-continuity, asymptotic first-dominance in the proof's payoff notation, and
-finite-removal monotonicity.
+the common-center ordering and `qA < qH`.  The fields here that remain after
+that are the Definition 1 analytic/family facts used by Theorem 1: atomwise
+continuity, asymptotic first-dominance in the proof's payoff notation, and the
+singleton-removal weak monotonicity needed for the second mover.  The strict
+`S = ∅` first-mover monotonicity is proved below from the Mallows rank-power
+MLR inequality.
 -/
 structure MallowsAccuracyFamilySpec (n : ℕ) where
   value : Candidate n → ℝ
@@ -65,11 +186,11 @@ structure MallowsAccuracyFamilySpec (n : ℕ) where
           AccuracyFamily.theorem1_f
             ({ dist := fun θ => (spec θ).law, value := value } : AccuracyFamily n)
             hi θH
-  removal_monotonicity :
+  bestRemaining_weak :
     ∀ θA θH, 0 < θH → θH < θA →
-      AccuracyFamily.Theorem1RemovalMonotonicityAt
-        ({ dist := fun θ => (spec θ).law, value := value } : AccuracyFamily n)
-        θA θH
+      ∀ c : Candidate n,
+        AccuracyFamily.expectedBestAfterRemoval (spec θH).law value c ≤
+          AccuracyFamily.expectedBestAfterRemoval (spec θA).law value c
 
 namespace MallowsAccuracyFamilySpec
 
@@ -149,6 +270,42 @@ theorem prefersWeakerCompetition
   simpa [C, toAccuracyFamily, comparisonAt] using hpaper.2
 
 /--
+Mallows rank-power MLR proves the strict first-mover part of Definition 1
+monotonicity for every `θA > θH > 0`.
+-/
+theorem firstMoverUtility_strict
+    (hn : 0 < n) (θA θH : ℝ) (hθH : 0 < θH) (hθ : θH < θA) :
+    expectedFirstMoverUtility (MF.spec θH).law MF.value <
+      expectedFirstMoverUtility (MF.spec θA).law MF.value := by
+  let C := MF.comparisonAt θA θH
+  have hstrict : C.StrictlyCenterOrdered MF.value := by
+    intro a b h
+    exact (MF.comparisonAt_strictlyCenterOrdered θA θH)
+      (by simpa [C] using h)
+  have hmain := C.firstMoverUtility_strict_of_rankFactorization
+    hstrict
+    C.algorithm.rankFactorization
+    C.human.rankFactorization
+    (MF.q_strictAnti θA θH hθH hθ)
+  simpa [C, comparisonAt] using hmain
+
+/--
+The remaining singleton-removal weak monotonicity field, together with the
+proved Mallows first-mover strict monotonicity, gives the Theorem 1 removal
+monotonicity certificate.
+-/
+theorem theorem1RemovalMonotonicityAt
+    (hn : 0 < n) (θA θH : ℝ) (hθH : 0 < θH) (hθ : θH < θA) :
+    AccuracyFamily.Theorem1RemovalMonotonicityAt MF.toAccuracyFamily θA θH where
+  firstMover_strict := by
+    simpa [toAccuracyFamily] using
+      MF.firstMoverUtility_strict hn θA θH hθH hθ
+  bestRemaining_weak := by
+    intro c
+    simpa [toAccuracyFamily] using
+      MF.bestRemaining_weak θA θH hθH hθ c
+
+/--
 The parameterized Mallows fields instantiate the paper-level assumptions for
 Theorem 1. Definitions 2 and 3 are filled by the proved finite Mallows route;
 the remaining fields are exactly the Definition 1 analytic obligations recorded
@@ -166,7 +323,7 @@ noncomputable def theorem1PaperAssumptions
   asymptotic_first_dominance := fun θH lower hθH hθ =>
     MF.asymptotic_first_dominance θH lower hθH hθ
   removal_monotonicity := fun θA θH hθH hθ =>
-    MF.removal_monotonicity θA θH hθH hθ
+    MF.theorem1RemovalMonotonicityAt hn θA θH hθH hθ
 
 /--
 Family-level Mallows Theorem 1 bridge.
