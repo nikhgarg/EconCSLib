@@ -581,6 +581,100 @@ theorem paper_lemma9_pairShare_strictly_decreases_in_index
   exact pairShare_strictAnti_index halpha0 halpha1 hpos hdec hij
 
 /--
+Appendix D, Lemma 4 exchange algebra: if `q_i < q_j < 1`, then the item-`j`
+perturbation coefficient is strictly positive.
+-/
+theorem paper_lemma4_exchange_margin_pos
+    {qi qj : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) :
+    0 < qj - qi * ((1 - qj) / (1 - qi)) := by
+  exact lemma4_exchange_margin_pos hqi1 hqij
+
+/--
+Appendix D, Lemma 4 exchange algebra: the transfer from item `j` to item `i`
+keeps `y_j` above `y_i`.
+-/
+theorem paper_lemma4_exchange_transfer_lt
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    yi + qi * c / (1 - qi) < yj := by
+  exact lemma4_exchange_transfer_lt
+    hqi0 hqi1 hqj1 hqij hc hyi heq
+
+/--
+Appendix D, Lemma 4 exchange algebra: after the transfer, item `j` keeps more
+than the original `y_i` mass.
+-/
+theorem paper_lemma4_exchange_yj_sub_transfer_gt_yi
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    yi < yj - qi * c / (1 - qi) := by
+  exact lemma4_exchange_yj_sub_transfer_gt_yi
+    hqi0 hqi1 hqj1 hqij hc hyi heq
+
+/--
+Appendix D, Lemma 4 indexed exchange margin: if `j` is before `i`, then
+`q_j > q_i`, so the item-`j` perturbation has positive slack.
+-/
+theorem paper_lemma4_pairShare_exchange_margin_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val) :
+    0 < pairShare alpha v j -
+      pairShare alpha v i *
+        ((1 - pairShare alpha v j) / (1 - pairShare alpha v i)) := by
+  exact lemma4_pairShare_exchange_margin_pos
+    halpha0 halpha1 hpos hdec hji
+
+/--
+Appendix D, Lemma 4 indexed exchange transfer bound:
+`y_i + q_i c/(1-q_i) < y_j`.
+-/
+theorem paper_lemma4_pairShare_exchange_transfer_lt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    yi + pairShare alpha v i * c /
+        (1 - pairShare alpha v i) < yj := by
+  exact lemma4_pairShare_exchange_transfer_lt
+    halpha0 halpha1 hpos hdec hji hc hyi heq
+
+/--
+Appendix D, Lemma 4 indexed exchange transfer bound:
+`y_j - q_i c/(1-q_i) > y_i`.
+-/
+theorem paper_lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    yi < yj - pairShare alpha v i * c /
+        (1 - pairShare alpha v i) := by
+  exact lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
+    halpha0 halpha1 hpos hdec hji hc hyi heq
+
+/--
 Appendix D, Lemma 11 algebra: the ratio `q_t(α)/q_j(α)` after expanding the
 paper's `q` denominators.
 -/
@@ -1742,6 +1836,25 @@ theorem paper_lemma10_ClosedPivotDenominatorBounds_half_succ_center
     (v := v) (t := t) hpos hsucc
 
 /--
+Appendix D, Lemma 4 comparison core: a sparse equalized solution with a pivot
+to the right of another sparse equalized candidate cannot have a larger value
+under the paper's nonnegativity side conditions.
+-/
+theorem paper_lemma4_sparseEqualized_value_le_of_candidate_before_general
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {c t : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hcand : Problem6SparseEqualized alpha v c x' y' ell')
+    (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
+    (hy'_pivot_nonneg : 0 ≤ y' c) :
+    ell ≤ ell' := by
+  exact problem6SparseEqualized_value_le_of_candidate_before_general
+    halpha0 halpha1 hpos hct h hcand hx_nonneg hy'_pivot_nonneg
+
+/--
 Appendix D, Lemma 10 comparison core: a sparse equalized solution with a pivot
 to the right of another sparse equalized candidate cannot have a larger value
 under the paper's nonnegativity side conditions.
@@ -1758,6 +1871,23 @@ theorem paper_lemma10_sparseEqualized_value_le_of_candidate_before
     ell ≤ ell' := by
   exact problem6SparseEqualized_value_le_of_candidate_before
     hpos hct h hcand hx_nonneg hy'_pivot_nonneg
+
+/--
+Appendix D, Lemma 4 comparison for Lemma 5 closed forms: a nonnegative
+closed-form pivot to the right of a nonnegative closed-form candidate cannot
+have a larger value.
+-/
+theorem paper_lemma4_closedValue_le_of_closed_candidate_before_general
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {c t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcandidate : Problem6ClosedNonnegativePivots alpha v c) :
+    problem6ClosedValue alpha v t ≤
+      problem6ClosedValue alpha v c := by
+  exact problem6ClosedValue_le_of_closed_candidate_before_general
+    halpha0 halpha1 hpos hct hpivot hcandidate
 
 /--
 Appendix D, Lemma 10 comparison for Lemma 5 closed forms: a nonnegative

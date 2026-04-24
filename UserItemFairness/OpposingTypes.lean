@@ -546,6 +546,140 @@ theorem pairShare_strictAnti_index
     halpha0 halpha1 hleft hright hleft' hright' hcross
 
 /--
+Appendix D, Lemma 4 exchange algebra: if `q_i < q_j < 1`, then the coefficient
+left in the item-`j` perturbation is strictly positive.
+-/
+theorem lemma4_exchange_margin_pos
+    {qi qj : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) :
+    0 < qj - qi * ((1 - qj) / (1 - qi)) := by
+  have hden : 0 < 1 - qi := sub_pos.mpr hqi1
+  rw [sub_pos]
+  have hmul :
+      qi * ((1 - qj) / (1 - qi)) =
+        qi * (1 - qj) / (1 - qi) := by
+    ring
+  rw [hmul]
+  rw [div_lt_iff₀ hden]
+  nlinarith
+
+/--
+Appendix D, Lemma 4 exchange algebra: the transfer from item `j` to item `i`
+keeps `y_j` positive under the paper's equality relation.
+-/
+theorem lemma4_exchange_transfer_lt
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    yi + qi * c / (1 - qi) < yj := by
+  have hden_i : 0 < 1 - qi := sub_pos.mpr hqi1
+  have hden_j : 0 < 1 - qj := sub_pos.mpr hqj1
+  have hyj_pos : 0 < yj := by
+    have hleft : 0 < qi * c + (1 - qi) * yi :=
+      add_pos_of_pos_of_nonneg (mul_pos hqi0 hc)
+        (mul_nonneg hden_i.le hyi)
+    nlinarith
+  have hrewrite :
+      yi + qi * c / (1 - qi) =
+        ((1 - qj) / (1 - qi)) * yj := by
+    field_simp [ne_of_gt hden_i]
+    nlinarith
+  have hratio : (1 - qj) / (1 - qi) < 1 := by
+    rw [div_lt_one hden_i]
+    nlinarith
+  calc
+    yi + qi * c / (1 - qi)
+        = ((1 - qj) / (1 - qi)) * yj := hrewrite
+    _ < 1 * yj := mul_lt_mul_of_pos_right hratio hyj_pos
+    _ = yj := by ring
+
+/--
+Appendix D, Lemma 4 exchange algebra: after the transfer, item `j` keeps more
+than the original `y_i` mass.
+-/
+theorem lemma4_exchange_yj_sub_transfer_gt_yi
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    yi < yj - qi * c / (1 - qi) := by
+  have hlt :=
+    lemma4_exchange_transfer_lt hqi0 hqi1 hqj1 hqij hc hyi heq
+  nlinarith
+
+/--
+Appendix D, Lemma 4 indexed exchange margin: if `j` is before `i`, then
+`q_j > q_i`, so the item-`j` perturbation has positive slack.
+-/
+theorem lemma4_pairShare_exchange_margin_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val) :
+    0 < pairShare alpha v j -
+      pairShare alpha v i *
+        ((1 - pairShare alpha v j) / (1 - pairShare alpha v i)) := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_margin_pos
+    (pairShare_lt_one i halpha0 halpha1 hpos) hqij
+
+/--
+Appendix D, Lemma 4 indexed exchange transfer bound. This is the paper's
+`y_i + q_i c/(1-q_i) < y_j` inequality.
+-/
+theorem lemma4_pairShare_exchange_transfer_lt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    yi + pairShare alpha v i * c /
+        (1 - pairShare alpha v i) < yj := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_transfer_lt
+    (pairShare_pos i halpha0 halpha1 hpos)
+    (pairShare_lt_one i halpha0 halpha1 hpos)
+    (pairShare_lt_one j halpha0 halpha1 hpos)
+    hqij hc hyi heq
+
+/--
+Appendix D, Lemma 4 indexed exchange transfer bound. This is the paper's
+`y_j - q_i c/(1-q_i) > y_i` inequality.
+-/
+theorem lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    yi < yj - pairShare alpha v i * c /
+        (1 - pairShare alpha v i) := by
+  have hlt :=
+    lemma4_pairShare_exchange_transfer_lt
+      halpha0 halpha1 hpos hdec hji hc hyi heq
+  nlinarith
+
+/--
 Appendix E, Lemma 16, indexed midpoint component: if item `j` has higher value
 than its opposite item, then `q_j(1/2) > 1/2`.
 -/
@@ -1721,34 +1855,33 @@ theorem problem6SparseEqualized_y_after_eq
       rw [hmul]
 
 /--
-Appendix D, Lemma 10 comparison core.  A sparse equalized solution whose pivot
+Appendix D, Lemma 4 comparison core.  A sparse equalized solution whose pivot
 is to the right of another sparse equalized candidate cannot have a strictly
 larger value, provided the later solution's `x` masses and the candidate's
 pivot `y` mass are nonnegative.
 -/
-theorem problem6SparseEqualized_value_le_of_candidate_before
-    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+theorem problem6SparseEqualized_value_le_of_candidate_before_general
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {c t : Item n}
     {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
     (hpos : ∀ j : Item n, 0 < v j)
     (hct : c.val < t.val)
-    (h : Problem6SparseEqualized (1 / 2) v t x y ell)
-    (hcand : Problem6SparseEqualized (1 / 2) v c x' y' ell')
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (hcand : Problem6SparseEqualized alpha v c x' y' ell')
     (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
     (hy'_pivot_nonneg : 0 ≤ y' c) :
     ell ≤ ell' := by
   by_contra hnot
   have hell_lt : ell' < ell := lt_of_not_ge hnot
-  let q : ℝ := pairShare (1 / 2) v c
+  let q : ℝ := pairShare alpha v c
   have hqpos : 0 < q := by
     simpa [q] using
-      pairShare_pos c (by norm_num : (0 : ℝ) < 1 / 2)
-        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      pairShare_pos c halpha0 halpha1 hpos
   have hqnonneg : 0 ≤ q := hqpos.le
   have hqcomp_nonneg : 0 ≤ 1 - q := by
     have hqcomp_pos :
-        0 < 1 - pairShare (1 / 2) v c :=
-      one_sub_pairShare_pos c (by norm_num : (0 : ℝ) < 1 / 2)
-        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        0 < 1 - pairShare alpha v c :=
+      one_sub_pairShare_pos c halpha0 halpha1 hpos
     simpa [q] using hqcomp_pos.le
   have hitem_later : q * x c = ell := by
     have heq := h.item_eq c
@@ -1771,16 +1904,13 @@ theorem problem6SparseEqualized_value_le_of_candidate_before
     by_cases hjc : j.val < c.val
     · have hjt : j.val < t.val := lt_trans hjc hct
       have hqj_nonneg :
-          0 ≤ pairShare (1 / 2) v j :=
-        (pairShare_pos j (by norm_num : (0 : ℝ) < 1 / 2)
-          (by norm_num : (1 / 2 : ℝ) < 1) hpos).le
+          0 ≤ pairShare alpha v j :=
+        (pairShare_pos j halpha0 halpha1 hpos).le
       simp [hjc]
       rw [problem6SparseEqualized_x_before_eq
-          (by norm_num : (0 : ℝ) < 1 / 2)
-          (by norm_num : (1 / 2 : ℝ) < 1) hpos hcand hjc,
+          halpha0 halpha1 hpos hcand hjc,
         problem6SparseEqualized_x_before_eq
-          (by norm_num : (0 : ℝ) < 1 / 2)
-          (by norm_num : (1 / 2 : ℝ) < 1) hpos h hjt]
+          halpha0 halpha1 hpos h hjt]
       exact div_le_div_of_nonneg_right hell_lt.le hqj_nonneg
     · simp [hjc]
   have hsplit_candidate :=
@@ -1819,6 +1949,25 @@ theorem problem6SparseEqualized_value_le_of_candidate_before
   have hlater_le : q * x c ≤ q * (1 - leftx) :=
     mul_le_mul_of_nonneg_left hxc_le hqnonneg
   nlinarith
+
+/--
+Appendix D, Lemma 10 comparison core at the midpoint.  This is the `α = 1/2`
+specialization used by the midpoint candidate construction.
+-/
+theorem problem6SparseEqualized_value_le_of_candidate_before
+    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (h : Problem6SparseEqualized (1 / 2) v t x y ell)
+    (hcand : Problem6SparseEqualized (1 / 2) v c x' y' ell')
+    (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
+    (hy'_pivot_nonneg : 0 ≤ y' c) :
+    ell ≤ ell' := by
+  exact problem6SparseEqualized_value_le_of_candidate_before_general
+    (by norm_num : (0 : ℝ) < 1 / 2)
+    (by norm_num : (1 / 2 : ℝ) < 1)
+    hpos hct h hcand hx_nonneg hy'_pivot_nonneg
 
 private theorem problem6SparseEqualized_left_part_sum_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
@@ -2124,9 +2273,33 @@ theorem problem6ClosedY_nonneg {n : ℕ}
         (one_sub_pairShare_pos j halpha0 halpha1 hpos).le
 
 /--
-Appendix D, Lemma 10 comparison specialized to Lemma 5's closed form:
+Appendix D, Lemma 4 comparison specialized to Lemma 5's closed form:
 a closed-form pivot to the right of a nonnegative closed-form candidate cannot
 have a larger `I^*_min` value.
+-/
+theorem problem6ClosedValue_le_of_closed_candidate_before_general {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {c t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcandidate : Problem6ClosedNonnegativePivots alpha v c) :
+    problem6ClosedValue alpha v t ≤
+      problem6ClosedValue alpha v c := by
+  exact problem6SparseEqualized_value_le_of_candidate_before_general
+    halpha0 halpha1
+    hpos hct
+    (problem6Closed_sparseEqualized t halpha0 halpha1 hpos)
+    (problem6Closed_sparseEqualized c halpha0 halpha1 hpos)
+    (fun j =>
+      problem6ClosedX_nonneg
+        halpha0 halpha1 hpos hpivot j)
+    (problem6ClosedY_nonneg
+      halpha0 halpha1 hpos hcandidate c)
+
+/--
+Appendix D, Lemma 10 comparison specialized to Lemma 5's closed form at the
+midpoint.
 -/
 theorem problem6ClosedValue_le_of_closed_candidate_before {n : ℕ}
     {v : Item n → ℝ} {c t : Item n}
@@ -2136,21 +2309,10 @@ theorem problem6ClosedValue_le_of_closed_candidate_before {n : ℕ}
     (hcandidate : Problem6ClosedNonnegativePivots (1 / 2) v c) :
     problem6ClosedValue (1 / 2) v t ≤
       problem6ClosedValue (1 / 2) v c := by
-  exact problem6SparseEqualized_value_le_of_candidate_before
-    hpos hct
-    (problem6Closed_sparseEqualized t
+  exact problem6ClosedValue_le_of_closed_candidate_before_general
       (by norm_num : (0 : ℝ) < 1 / 2)
-      (by norm_num : (1 / 2 : ℝ) < 1) hpos)
-    (problem6Closed_sparseEqualized c
-      (by norm_num : (0 : ℝ) < 1 / 2)
-      (by norm_num : (1 / 2 : ℝ) < 1) hpos)
-    (fun j =>
-      problem6ClosedX_nonneg
-        (by norm_num : (0 : ℝ) < 1 / 2)
-        (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot j)
-    (problem6ClosedY_nonneg
-      (by norm_num : (0 : ℝ) < 1 / 2)
-      (by norm_num : (1 / 2 : ℝ) < 1) hpos hcandidate c)
+      (by norm_num : (1 / 2 : ℝ) < 1)
+      hpos hct hpivot hcandidate
 
 /--
 Appendix D, Lemma 10 exact-center candidate comparison: any nonnegative
