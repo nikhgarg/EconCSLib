@@ -113,6 +113,19 @@ def SolvesEstimatedProblem {m n : ℕ} [NeZero m] [NeZero n]
   RecommendationModel.IsOptimalAtLevel E.estimatedModel γ ρ
 
 /--
+If the estimated utility matrix is exactly the true matrix, then the estimated
+recommendation model is the true recommendation model.
+-/
+theorem estimatedModel_eq_true_of_estimatedUtility_eq_true
+    {m n : ℕ} (E : EstimatedRecommendationModel m n)
+    (h : E.estimatedUtility = E.trueModel.utility) :
+    E.estimatedModel = E.trueModel := by
+  cases E with
+  | mk trueModel estimatedUtility =>
+    cases trueModel
+    simpa [estimatedModel] using h
+
+/--
 The paper's price of misestimation, evaluated on a chosen policy `ρ̂` that is intended
 to solve the estimated problem.
 -/
@@ -121,6 +134,40 @@ noncomputable def priceOfMisestimation {m n : ℕ} [NeZero m] [NeZero n]
   let base := RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ
   if h : base = 0 then 0 else
     (base - RecommendationModel.userFairness E.trueModel ρhat) / base
+
+/--
+Exact-estimation benchmark for the paper's price of misestimation: if the
+estimated model is the true model and `ρ̂` solves the estimated problem, then
+there is no loss from misestimation.
+-/
+theorem priceOfMisestimation_eq_zero_of_estimatedModel_eq_true
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (γ : ℝ) (ρhat : Policy m n)
+    (hmodel : E.estimatedModel = E.trueModel)
+    (hopt : E.SolvesEstimatedProblem γ ρhat) :
+    E.priceOfMisestimation γ ρhat = 0 := by
+  unfold SolvesEstimatedProblem at hopt
+  rw [hmodel] at hopt
+  have huser :
+      RecommendationModel.userFairness E.trueModel ρhat =
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ := hopt.2
+  unfold priceOfMisestimation
+  by_cases hbase :
+      RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ = 0
+  · simp [hbase]
+  · simp [hbase, huser]
+
+/--
+Exact-estimation benchmark stated directly in terms of utility matrices.
+-/
+theorem priceOfMisestimation_eq_zero_of_estimatedUtility_eq_true
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (γ : ℝ) (ρhat : Policy m n)
+    (hutility : E.estimatedUtility = E.trueModel.utility)
+    (hopt : E.SolvesEstimatedProblem γ ρhat) :
+    E.priceOfMisestimation γ ρhat = 0 := by
+  exact E.priceOfMisestimation_eq_zero_of_estimatedModel_eq_true γ ρhat
+    (E.estimatedModel_eq_true_of_estimatedUtility_eq_true hutility) hopt
 
 end EstimatedRecommendationModel
 end UserItemFairness
