@@ -25,8 +25,11 @@ algebra lives in `EconCSLean/Statistics/BinaryRating.lean`.
 | Paper item | Lean declaration | Status | File | Remaining assumptions |
 |---|---|---|---|---|
 | Theorem 3.1, variance strictly decreases in prior strength | `paper_theorem3_1_variance_strict_decrease_interior`; boundary checks `paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero`, `paper_theorem3_1_variance_strict_decrease_counterexample_quality_one` | formalized with corrected interior assumption; boundary bug found | `ProducerFairness/MainTheorems.lean` | The corrected strict theorem assumes `0 < q_v < 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow < etaHigh`. |
-| Theorem 3.1, squared bias nondecreases in prior strength | none | not formalized | none | likely true under positive prior-shape/review-count assumptions; not pursued after the strict-variance bug was found |
-| Theorem 3.2, bias convex and variance concave in true quality | none | not formalized | none | should be formalized after restating Theorem 3.1 with boundary cases handled |
+| Theorem 3.1, squared bias nondecreases in prior strength | `paper_theorem3_1_squared_bias_nondecreasing` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
+| Theorem 3.2, squared bias convex in true quality | `paper_theorem3_2_squared_bias_convex_in_quality` | formalized | `ProducerFairness/MainTheorems.lean` | denominator nonzero |
+| Theorem 3.2, squared bias minimized at prior mean | `paper_theorem3_2_squared_bias_global_min_at_prior_mean` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 < alpha + beta`, `0 ≤ eta`, and `0 < t` |
+| Theorem 3.2, variance concave in true quality | `paper_theorem3_2_variance_concave_in_quality` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 ≤ t` |
+| Theorem 3.2, variance maximized at `1/2` | `paper_theorem3_2_variance_global_max_at_half` | formalized | `ProducerFairness/MainTheorems.lean` | assumes `0 ≤ t` |
 
 ## Fix Needed In Paper Statement
 

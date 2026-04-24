@@ -35,6 +35,90 @@ theorem paper_theorem3_1_variance_strict_decrease_interior
     hshape ht hq0 hq1 hetaLow_nonneg heta_lt
 
 /--
+Theorem 3.1, squared-bias clause.
+
+For the fixed binary-rating model, squared posterior-mean bias is nondecreasing
+as prior strength increases.
+-/
+theorem paper_theorem3_1_squared_bias_nondecreasing
+    {alpha beta t q etaLow etaHigh : ℝ}
+    (hshape : 0 < alpha + beta)
+    (ht : 0 < t)
+    (hetaLow_nonneg : 0 ≤ etaLow)
+    (heta_le : etaLow ≤ etaHigh) :
+    EconCSLean.Statistics.priorWeightedSquaredBias alpha beta etaLow t q ≤
+      EconCSLean.Statistics.priorWeightedSquaredBias alpha beta etaHigh t q := by
+  exact EconCSLean.Statistics.priorWeightedSquaredBias_mono
+    hshape ht hetaLow_nonneg heta_le
+
+/--
+Theorem 3.2, squared-bias convexity clause.
+
+As a function of true quality, squared posterior-mean bias is Jensen-convex.
+-/
+theorem paper_theorem3_2_squared_bias_convex_in_quality
+    {alpha beta eta t : ℝ}
+    (hden : eta * alpha + eta * beta + t ≠ 0) :
+    EconCSLean.Statistics.JensenConvex
+      (fun q => EconCSLean.Statistics.priorWeightedSquaredBias
+        alpha beta eta t q) := by
+  exact EconCSLean.Statistics.priorWeightedSquaredBias_jensenConvex_quality
+    hden
+
+/--
+Theorem 3.2, squared-bias minimizer clause.
+
+As a function of true quality, squared posterior-mean bias has a global minimum
+at the prior mean `alpha / (alpha + beta)`.
+-/
+theorem paper_theorem3_2_squared_bias_global_min_at_prior_mean
+    {alpha beta eta t : ℝ}
+    (hshape : 0 < alpha + beta)
+    (heta_nonneg : 0 ≤ eta)
+    (ht : 0 < t) :
+    EconCSLean.Statistics.GlobalMinAt
+      (fun q => EconCSLean.Statistics.priorWeightedSquaredBias
+        alpha beta eta t q)
+      (alpha / (alpha + beta)) := by
+  have hden_pos : 0 < eta * alpha + eta * beta + t := by
+    calc
+      0 < eta * (alpha + beta) + t :=
+        add_pos_of_nonneg_of_pos
+          (mul_nonneg heta_nonneg hshape.le) ht
+      _ = eta * alpha + eta * beta + t := by ring
+  exact EconCSLean.Statistics.priorWeightedSquaredBias_globalMin_priorMean
+    (hshape := ne_of_gt hshape)
+    (hden := ne_of_gt hden_pos)
+
+/--
+Theorem 3.2, variance concavity clause.
+
+As a function of true quality, posterior-mean variance is Jensen-concave.
+-/
+theorem paper_theorem3_2_variance_concave_in_quality
+    {alpha beta eta t : ℝ}
+    (ht : 0 ≤ t) :
+    EconCSLean.Statistics.JensenConcave
+      (fun q => EconCSLean.Statistics.priorWeightedVariance
+        alpha beta eta t q) := by
+  exact EconCSLean.Statistics.priorWeightedVariance_jensenConcave_quality ht
+
+/--
+Theorem 3.2, variance maximizer clause.
+
+As a function of true quality, posterior-mean variance has a global maximum at
+`1/2`.
+-/
+theorem paper_theorem3_2_variance_global_max_at_half
+    {alpha beta eta t : ℝ}
+    (ht : 0 ≤ t) :
+    EconCSLean.Statistics.GlobalMaxAt
+      (fun q => EconCSLean.Statistics.priorWeightedVariance
+        alpha beta eta t q)
+      (1 / 2) := by
+  exact EconCSLean.Statistics.priorWeightedVariance_globalMax_half ht
+
+/--
 Boundary counterexample to the strict variance-decrease clause of Theorem 3.1.
 
 At true quality `q_v = 0`, the Bernoulli variance term is zero for every prior
