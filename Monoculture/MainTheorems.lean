@@ -135,6 +135,20 @@ theorem paper_appendixE_independent_weight_sum_pos_of_rankFactorization
   exact M.independent_weight_sum_pos_of_rankFactorization fac hn hq_lt_one hvalue
 
 /--
+Appendix E (independent-reranking finite inequality, finite Mallows form): the
+rank factorization is constructed from the finite Kendall fibers, so the paper
+inequality needs only the paper's size/noise/order assumptions.
+-/
+theorem paper_appendixE_independent_weight_sum_pos
+    {n : ℕ} (M : MallowsSpec n) {value : Candidate n → ℝ}
+    (hn : 0 < n) (hq_lt_one : M.q < 1)
+    (hvalue : StrictlyOrderedBy M.center value) :
+    0 < ∑ c : Candidate n,
+      (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c := by
+  exact M.independent_weight_sum_pos_of_rankFactorization
+    M.rankFactorization hn hq_lt_one hvalue
+
+/--
 Appendix E (conditional-gap factorization): after applying the Mallows top-two
 rank factorization, the first-choice gap attached to a candidate is its first
 rank factor times the rank-only conditional gap `x_i - V_-i`.
@@ -182,6 +196,24 @@ theorem paper_appendixE_cross_weight_sum_pos_of_rankFactorization
         C.human.firstChoiceGapWeight value c := by
   exact C.cross_weight_sum_pos_of_rankFactorization
     hvalue halg_rank hhuman_rank hq_lt hhuman_q_lt_one
+
+/--
+Appendix E (weaker-competition finite inequality, finite Mallows form): the
+algorithm and human rank factorizations are constructed from their finite
+Kendall fibers.
+-/
+theorem paper_appendixE_cross_weight_sum_pos
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hvalue : StrictlyOrderedBy C.human.center value)
+    (hq_lt : C.algorithm.q < C.human.q)
+    (hhuman_q_lt_one : C.human.q < 1) :
+    0 < ∑ c : Candidate n,
+      (C.algorithm.firstWeight c * C.human.partition -
+          C.human.firstWeight c * C.algorithm.partition) *
+        C.human.firstChoiceGapWeight value c := by
+  exact C.cross_weight_sum_pos_of_rankFactorization
+    hvalue C.algorithm.rankFactorization C.human.rankFactorization
+    hq_lt hhuman_q_lt_one
 
 /--
 Theorem 3 / weaker-competition center comparison: when the algorithm Mallows law
