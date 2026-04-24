@@ -1776,6 +1776,49 @@ theorem paper_problem6_typeOne_sum_eq_one
   exact problem6_typeOne_sum_eq_one ρ
 
 /--
+Problem 6 real-vector feasibility extracted from a policy satisfying the
+paper's epigraph constraints.
+-/
+theorem paper_problem6_realLPFeasible_of_policy
+    {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hfeas : problem6LPFeasible alpha v ρ ell) :
+    Problem6RealLPFeasible alpha v
+      (fun j : Item n => (ρ 0 j).toReal)
+      (fun j : Item n => (ρ 1 j).toReal) ell := by
+  exact problem6RealLPFeasible_of_policy hfeas
+
+/--
+Problem 6 equality-form extraction: real `x,y,λ` optimal BFS data rebuilds an
+optimal two-type policy for the epigraph LP.
+-/
+theorem paper_problem6_policyOptimal_of_equalityFormOptimalBFS
+    {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6EqualityFormOptimalBFS alpha v x y ell) :
+    Problem6PolicyOptimal alpha v
+      (problem6PolicyOfRealVectors x y
+        h.feasible.x_nonneg h.feasible.y_nonneg
+        h.feasible.sum_x h.feasible.sum_y) ell := by
+  exact problem6PolicyOptimal_of_equalityFormOptimalBFS h
+
+/--
+Problem 6 equality-form extraction: the paper's real optimal BFS supplies the
+`Problem6EqualizedBasicOptimal` package consumed by Lemmas 4-11.
+-/
+theorem paper_problem6_equalizedBasicOptimal_of_equalityFormOptimalBFS
+    {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6EqualityFormOptimalBFS alpha v x y ell) :
+    Problem6EqualizedBasicOptimal alpha v
+      (problem6PolicyOfRealVectors x y
+        h.feasible.x_nonneg h.feasible.y_nonneg
+        h.feasible.sum_x h.feasible.sum_y) ell := by
+  exact problem6EqualizedBasicOptimal_of_equalityFormOptimalBFS h
+
+/--
 Problem 6 optimality certificate wrapper for the paper's eventual closed-form
 LP solution.
 -/

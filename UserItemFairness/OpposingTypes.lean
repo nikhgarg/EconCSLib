@@ -3383,6 +3383,66 @@ theorem pmf_eq_of_forall_toReal_eq {n : ℕ}
   exact (ENNReal.toReal_eq_toReal_iff'
     (μ.apply_ne_top j) (ν.apply_ne_top j)).mp (h j)
 
+/-- Problem 6's real-vector epigraph feasibility in the paper's variables. -/
+structure Problem6RealLPFeasible {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ)
+    (x y : Item n → ℝ) (ell : ℝ) : Prop where
+  x_nonneg : ∀ j : Item n, 0 ≤ x j
+  y_nonneg : ∀ j : Item n, 0 ≤ y j
+  sum_x : (∑ j : Item n, x j) = 1
+  sum_y : (∑ j : Item n, y j) = 1
+  item_le :
+    ∀ j : Item n,
+      ell ≤ pairShare alpha v j * x j + (1 - pairShare alpha v j) * y j
+
+/-- Rebuild a two-type policy from feasible real `x` and `y` rows. -/
+noncomputable def problem6PolicyOfRealVectors {n : ℕ}
+    (x y : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hy : ∀ j : Item n, 0 ≤ y j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsy : (∑ j : Item n, y j) = 1) :
+    TypePolicy 2 n :=
+  fun k =>
+    if k = 0 then
+      pmfOfRealVector x hx hsx
+    else
+      pmfOfRealVector y hy hsy
+
+@[simp] theorem problem6PolicyOfRealVectors_zero_toReal {n : ℕ}
+    (x y : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hy : ∀ j : Item n, 0 ≤ y j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsy : (∑ j : Item n, y j) = 1)
+    (j : Item n) :
+    ((problem6PolicyOfRealVectors x y hx hy hsx hsy 0) j).toReal = x j := by
+  simp [problem6PolicyOfRealVectors]
+
+@[simp] theorem problem6PolicyOfRealVectors_one_toReal {n : ℕ}
+    (x y : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hy : ∀ j : Item n, 0 ≤ y j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsy : (∑ j : Item n, y j) = 1)
+    (j : Item n) :
+    ((problem6PolicyOfRealVectors x y hx hy hsx hsy 1) j).toReal = y j := by
+  simp [problem6PolicyOfRealVectors]
+
+/-- A policy satisfying the epigraph constraints gives a feasible real-vector LP point. -/
+theorem problem6RealLPFeasible_of_policy {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hfeas : problem6LPFeasible alpha v ρ ell) :
+    Problem6RealLPFeasible alpha v
+      (fun j : Item n => (ρ 0 j).toReal)
+      (fun j : Item n => (ρ 1 j).toReal) ell := by
+  exact
+    { x_nonneg := fun j => ENNReal.toReal_nonneg
+      y_nonneg := fun j => ENNReal.toReal_nonneg
+      sum_x := problem6_typeZero_sum_eq_one ρ
+      sum_y := problem6_typeOne_sum_eq_one ρ
+      item_le := hfeas }
+
 /-- A nonzero PMF coordinate has strictly positive real value. -/
 theorem typePolicy_toReal_pos_of_ne_zero {K n : ℕ}
     (ρ : TypePolicy K n) {k : UserType K} {j : Item n}
@@ -3418,6 +3478,28 @@ def Problem6PolicyOptimal {n : ℕ}
       problem6LPFeasible alpha v ρ' ell' → ell' ≤ ell
 
 /--
+The paper's equality-form Problem 6 data before rebuilding the PMF policy.
+The feasibility field carries the simplex/nonnegativity constraints, `item_eq`
+is the equality-form constraint, `optimal` is optimality against all real
+epigraph-feasible points, and `basic_feasible` is the support-count certificate
+for the rebuilt policy.
+-/
+structure Problem6EqualityFormOptimalBFS {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ)
+    (x y : Item n → ℝ) (ell : ℝ) : Prop where
+  feasible : Problem6RealLPFeasible alpha v x y ell
+  item_eq :
+    ∀ j : Item n,
+      pairShare alpha v j * x j + (1 - pairShare alpha v j) * y j = ell
+  optimal :
+    ∀ {x' y' : Item n → ℝ} {ell' : ℝ},
+      Problem6RealLPFeasible alpha v x' y' ell' → ell' ≤ ell
+  basic_feasible :
+    TypePolicy.BasicFeasibleSupportCertificate
+      (problem6PolicyOfRealVectors x y
+        feasible.x_nonneg feasible.y_nonneg feasible.sum_x feasible.sum_y)
+
+/--
 The paper's equality-form optimal basic feasible solution package for Problem
 6.  The equality field is the constraint
 `q_j x_j + (1-q_j)y_j = λ` for every item, `optimal` records optimality for
@@ -3434,6 +3516,43 @@ structure Problem6EqualizedBasicOptimal {n : ℕ}
         (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell
   optimal : Problem6PolicyOptimal alpha v ρ ell
   basic_feasible : TypePolicy.BasicFeasibleSupportCertificate ρ
+
+/--
+The paper's real equality-form optimal BFS gives an optimal policy after
+rebuilding the two PMF rows from `x` and `y`.
+-/
+theorem problem6PolicyOptimal_of_equalityFormOptimalBFS {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6EqualityFormOptimalBFS alpha v x y ell) :
+    Problem6PolicyOptimal alpha v
+      (problem6PolicyOfRealVectors x y
+        h.feasible.x_nonneg h.feasible.y_nonneg
+        h.feasible.sum_x h.feasible.sum_y) ell := by
+  refine ⟨?_, ?_⟩
+  · intro j
+    simpa using le_of_eq (h.item_eq j).symm
+  · intro ρ' ell' hfeas'
+    exact h.optimal (problem6RealLPFeasible_of_policy hfeas')
+
+/--
+Extraction bridge from the paper's real equality-form optimal BFS to the
+`Problem6EqualizedBasicOptimal` package consumed by Lemmas 4-11.
+-/
+theorem problem6EqualizedBasicOptimal_of_equalityFormOptimalBFS {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6EqualityFormOptimalBFS alpha v x y ell) :
+    Problem6EqualizedBasicOptimal alpha v
+      (problem6PolicyOfRealVectors x y
+        h.feasible.x_nonneg h.feasible.y_nonneg
+        h.feasible.sum_x h.feasible.sum_y) ell := by
+  refine
+    { item_eq := ?_
+      optimal := problem6PolicyOptimal_of_equalityFormOptimalBFS h
+      basic_feasible := h.basic_feasible }
+  intro j
+  simpa using h.item_eq j
 
 /-- A Problem 6 optimal epigraph value is the minimum item value of its policy. -/
 theorem problem6PolicyOptimal_value_eq_finiteMin {n : ℕ} [NeZero n]
