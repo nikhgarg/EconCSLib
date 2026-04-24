@@ -256,6 +256,43 @@ theorem paper_uniform_rounding_count_close_of_two_anchor_certificate
     a lower upper hopt.1 hlower hupper hNlt hUlt horder hno
 
 /--
+Appendix D.5 two-anchor rounding step from squared shifted real targets.
+
+This discharges the strict exchange certificate when likelihoods are a positive
+scale times squared shifted targets and the lower/upper anchors bracket those
+targets.
+-/
+theorem paper_uniform_rounding_count_close_of_shifted_square_anchors
+    {T : ℕ} (likelihood : ItemType T → ℝ)
+    (a lower upper : CountAllocation T) {N L U : ℕ}
+    (scale : ℝ) (shift : ItemType T → ℝ)
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hlower : DecisionCore.Allocation.total lower = L)
+    (hupper : DecisionCore.Allocation.total upper = U)
+    (hNlt : N < L + Fintype.card (ItemType T))
+    (hUlt : U < N + Fintype.card (ItemType T))
+    (horder : ∀ t, lower.count t ≤ upper.count t)
+    (hscale_pos : 0 < scale)
+    (hlike : ∀ t, likelihood t = scale * (shift t) ^ 2)
+    (hshift_nonneg : ∀ t, 0 ≤ shift t)
+    (hupper_shift : ∀ t, shift t ≤ (upper.count t : ℝ) + 1)
+    (hlower_shift : ∀ t, (lower.count t : ℝ) + 1 ≤ shift t) :
+    ∀ t : ItemType T,
+      lower.count t < a.count t + Fintype.card (ItemType T) ∧
+        a.count t < upper.count t + Fintype.card (ItemType T) := by
+  have hlike_nonneg : ∀ t, 0 ≤ likelihood t := by
+    intro t
+    rw [hlike t]
+    exact mul_nonneg (le_of_lt hscale_pos) (sq_nonneg (shift t))
+  have hcert :=
+    UniformTopOne.strictRoundingExchangeCertificateBetween_of_shifted_target
+      likelihood lower upper scale shift hscale_pos hlike
+      hshift_nonneg hupper_shift hlower_shift
+  exact paper_uniform_rounding_count_close_of_two_anchor_certificate
+    likelihood a lower upper hopt hlower hupper hlike_nonneg
+    hNlt hUlt horder hcert
+
+/--
 Finite Proposition 2 bridge from square-root anchors to homogeneity.
 
 For the uniform `[0,1]`, `k = 1` objective, suppose the real-relaxation floor
@@ -388,6 +425,55 @@ theorem paper_uniform_top_one_sqrt_homogeneity_of_two_anchor_certificate
     (abs_le.mp hupper_abs).2
   rw [abs_le]
   constructor <;> linarith
+
+/--
+Finite Proposition 2 bridge from squared shifted real targets to homogeneity.
+
+This combines the two-anchor shifted-target exchange certificate, rounding
+combinatorics, and square-root-profile representation bridge.
+-/
+theorem paper_uniform_top_one_sqrt_homogeneity_of_shifted_square_anchors
+    {T : ℕ} (likelihood : ItemType T → ℝ)
+    (a lower upper : CountAllocation T) {N L U : ℕ}
+    (scale : ℝ) (shift : ItemType T → ℝ)
+    (hNpos : 0 < N)
+    (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0)
+    (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a)
+    (hlower : DecisionCore.Allocation.total lower = L)
+    (hupper : DecisionCore.Allocation.total upper = U)
+    (hNlt : N < L + Fintype.card (ItemType T))
+    (hUlt : U < N + Fintype.card (ItemType T))
+    (horder : ∀ t, lower.count t ≤ upper.count t)
+    (hscale_pos : 0 < scale)
+    (hlike : ∀ t, likelihood t = scale * (shift t) ^ 2)
+    (hshift_nonneg : ∀ t, 0 ≤ shift t)
+    (hupper_shift : ∀ t, shift t ≤ (upper.count t : ℝ) + 1)
+    (hlower_shift : ∀ t, (lower.count t : ℝ) + 1 ≤ shift t)
+    (hlower_close :
+      ∀ t,
+        |(lower.count t : ℝ) -
+          (N : ℝ) *
+            (Real.sqrt (likelihood t) /
+              ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤ 1)
+    (hupper_close :
+      ∀ t,
+        |(upper.count t : ℝ) -
+          (N : ℝ) *
+            (Real.sqrt (likelihood t) /
+              ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤ 1) :
+    (sqrtLikelihoodProfile likelihood).Approx a
+      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
+  have hlike_nonneg : ∀ t, 0 ≤ likelihood t := by
+    intro t
+    rw [hlike t]
+    exact mul_nonneg (le_of_lt hscale_pos) (sq_nonneg (shift t))
+  have hcert :=
+    UniformTopOne.strictRoundingExchangeCertificateBetween_of_shifted_target
+      likelihood lower upper scale shift hscale_pos hlike
+      hshift_nonneg hupper_shift hlower_shift
+  exact paper_uniform_top_one_sqrt_homogeneity_of_two_anchor_certificate
+    likelihood a lower upper hNpos hnorm hopt hlower hupper
+    hlike_nonneg hNlt hUlt horder hcert hlower_close hupper_close
 
 /--
 Two-type Bernoulli first-order condition from type `0` to type `1`.

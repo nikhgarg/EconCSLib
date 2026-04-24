@@ -350,6 +350,78 @@ theorem noRoundingCrossingBetween_of_strictExchangeCertificate {T : ℕ}
         (lt_of_lt_of_le (hcert high low hlow_pos) hlower_gain_le_actual)
     exact (not_lt_of_ge hfo) hstrict
 
+/--
+Square-root shifted-target sufficient condition for the strict two-anchor
+exchange certificate.
+
+This captures the analytic core of the uniform `k = 1` relaxation: if
+`likelihood t = scale * shift t ^ 2`, lower anchors satisfy
+`lower.count t + 1 ≤ shift t`, and shifted targets satisfy
+`shift t ≤ upper.count t + 1`, then the boundary marginal at every upper anchor
+is strictly smaller than the boundary marginal at every positive lower anchor.
+-/
+theorem strictRoundingExchangeCertificateBetween_of_shifted_target {T : ℕ}
+    (likelihood : ItemType T → ℝ)
+    (lower upper : CountAllocation T)
+    (scale : ℝ) (shift : ItemType T → ℝ)
+    (hscale_pos : 0 < scale)
+    (hlike : ∀ t, likelihood t = scale * (shift t) ^ 2)
+    (hshift_nonneg : ∀ t, 0 ≤ shift t)
+    (hupper : ∀ t, shift t ≤ (upper.count t : ℝ) + 1)
+    (hlower : ∀ t, (lower.count t : ℝ) + 1 ≤ shift t) :
+    StrictRoundingExchangeCertificateBetween likelihood lower upper := by
+  intro high low hlow
+  let upperDen : ℝ := ((upper.count high + 1 : ℝ) * (upper.count high + 2 : ℝ))
+  let lowerDen : ℝ := ((lower.count low : ℝ) * (lower.count low + 1 : ℝ))
+  have hupperDen_pos : 0 < upperDen := by
+    dsimp [upperDen]
+    positivity
+  have hlowerDen_pos : 0 < lowerDen := by
+    dsimp [lowerDen]
+    positivity
+  have hupper_sq_lt :
+      (shift high) ^ 2 < upperDen := by
+    have hnonneg := hshift_nonneg high
+    have hle := hupper high
+    dsimp [upperDen]
+    nlinarith
+  have hlower_den_lt_sq :
+      lowerDen < (shift low) ^ 2 := by
+    have hle := hlower low
+    have hlow_cast : 0 < (lower.count low : ℝ) := by
+      exact_mod_cast hlow
+    dsimp [lowerDen]
+    nlinarith
+  have hupper_frac_lt_one :
+      (shift high) ^ 2 / upperDen < 1 := by
+    have hdiv :=
+      div_lt_div_of_pos_right hupper_sq_lt hupperDen_pos
+    have hden_ne : upperDen ≠ 0 := ne_of_gt hupperDen_pos
+    simpa [hden_ne] using hdiv
+  have hone_lt_lower_frac :
+      1 < (shift low) ^ 2 / lowerDen := by
+    have hdiv :=
+      div_lt_div_of_pos_right hlower_den_lt_sq hlowerDen_pos
+    have hden_ne : lowerDen ≠ 0 := ne_of_gt hlowerDen_pos
+    simpa [hden_ne] using hdiv
+  have hleft_lt_scale :
+      likelihood high * anchorLoss upper high < scale := by
+    have hmul := mul_lt_mul_of_pos_left hupper_frac_lt_one hscale_pos
+    have hden_ne : upperDen ≠ 0 := ne_of_gt hupperDen_pos
+    rw [hlike high, anchorLoss]
+    dsimp [upperDen] at hden_ne hmul ⊢
+    field_simp [hden_ne] at hmul ⊢
+    nlinarith
+  have hscale_lt_right :
+      scale < likelihood low * anchorGain lower low := by
+    have hmul := mul_lt_mul_of_pos_left hone_lt_lower_frac hscale_pos
+    have hden_ne : lowerDen ≠ 0 := ne_of_gt hlowerDen_pos
+    rw [hlike low, anchorGain]
+    dsimp [lowerDen] at hden_ne hmul ⊢
+    field_simp [hden_ne] at hmul ⊢
+    nlinarith
+  exact lt_trans hleft_lt_scale hscale_lt_right
+
 end UniformTopOne
 
 namespace UniformRounding

@@ -228,7 +228,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   inequality step converting anchor closeness plus rounding closeness into the
   paper's approximation guarantee. If the paper proof uses floor/ceiling
   thresholds around a real optimum, use separate lower and upper anchors rather
-  than forcing one integer anchor to play both roles.
+  than forcing one integer anchor to play both roles. For separable objectives
+  with square-root first-order conditions, discharge abstract exchange
+  certificates by proving likelihoods are a positive scale times squared
+  shifted targets and that anchors bracket those shifted targets.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says
