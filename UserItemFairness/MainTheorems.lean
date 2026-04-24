@@ -1963,6 +1963,92 @@ theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_o
     halpha0 halpha1 hpos h hupper
 
 /--
+Upper-bound bridge, uniqueness form: a reduced `γ = 1` feasible policy that
+is equalized and satisfies the shared-item sparsity bound is the selected
+equality-form optimal BFS policy.
+-/
+theorem paper_problem6_equalizedBasicOptimal_policy_eq_of_feasibleAtLevel_one_equalized_shared
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ ρ' : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hfeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ')
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ' 1 l).toReal =
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ')
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    ρ' = ρ := by
+  exact problem6EqualizedBasicOptimal_policy_eq_of_feasibleAtLevel_one_equalized_shared
+    hn halpha0 halpha1 hpos hdec h hfeas' hitem_eq' hshared'
+
+/--
+The selected equality-form optimal BFS policy has the same type-fairness value
+as any reduced `γ = 1` feasible, equalized, shared policy.
+-/
+theorem paper_problem6_equalizedBasicOptimal_typeFairness_eq_of_feasibleAtLevel_one_equalized_shared
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ ρ' : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hfeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ')
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ' 1 l).toReal =
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ')
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ' =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6EqualizedBasicOptimal_typeFairness_eq_of_feasibleAtLevel_one_equalized_shared
+    hn halpha0 halpha1 hpos hdec h hfeas' hitem_eq' hshared'
+
+/--
+If every reduced `γ = 1` feasible policy is in the equalized/shared canonical
+form, then the selected equality-form optimal BFS policy realizes
+`U^*_min(1, α)`.
+-/
+theorem paper_problem6_equalizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_all_feasible_equalized_shared
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hcanonical :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        (∀ l : Item n,
+          pairShare alpha v l * (ρ' 0 l).toReal +
+            (1 - pairShare alpha v l) * (ρ' 1 l).toReal =
+          TypeWeightedRecommendationModel.itemFairness
+            (twoTypeReducedModel alpha v) ρ') ∧
+        TypePolicy.SharedItemsBound ρ') :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_all_feasible_equalized_shared
+    hn halpha0 halpha1 hpos hdec h hcanonical
+
+/--
 Appendix D, Lemma 5: the closed-form value for any sparse equalized
 Problem 6 solution.
 -/

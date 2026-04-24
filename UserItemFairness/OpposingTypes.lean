@@ -8078,6 +8078,123 @@ theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_upper
         halpha0 halpha1 hpos h
 
 /--
+Upper-bound bridge, uniqueness form: any `γ = 1` feasible policy that
+equalizes all Problem 6 item constraints and satisfies the shared-item sparsity
+bound is the selected equality-form optimal BFS policy.
+-/
+theorem problem6EqualizedBasicOptimal_policy_eq_of_feasibleAtLevel_one_equalized_shared
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ ρ' : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hfeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ')
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ' 1 l).toReal =
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ')
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    ρ' = ρ := by
+  let ell' : ℝ :=
+    TypeWeightedRecommendationModel.itemFairness
+      (twoTypeReducedModel alpha v) ρ'
+  have hopt' : Problem6PolicyOptimal alpha v ρ' ell' := by
+    dsimp [ell']
+    exact problem6PolicyOptimal_of_feasibleAtLevel_one
+      halpha0 halpha1 hpos hfeas'
+  have huniq :=
+    problem6PolicyOptimal_equalized_unique_sparseActive_of_two_lt
+      hn halpha0 halpha1 hpos hdec h.item_eq
+      (by simpa [ell'] using hitem_eq')
+      h.optimal hopt'
+      (problem6_sharedItemsBound_of_equalizedBasicOptimal
+        halpha0 halpha1 hpos h)
+      hshared'
+  rcases huniq with ⟨_t, _hsparse, _hsparse', _hell, hx, hy⟩
+  funext k
+  fin_cases k
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    change ((ρ' 0) j).toReal = ((ρ 0) j).toReal
+    exact (congrFun hx j).symm
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    change ((ρ' 1) j).toReal = ((ρ 1) j).toReal
+    exact (congrFun hy j).symm
+
+/--
+The corresponding type-fairness uniqueness bridge for `γ = 1` feasible,
+equalized, shared policies.
+-/
+theorem problem6EqualizedBasicOptimal_typeFairness_eq_of_feasibleAtLevel_one_equalized_shared
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ ρ' : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hfeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ')
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ' 1 l).toReal =
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ')
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ' =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  rw [problem6EqualizedBasicOptimal_policy_eq_of_feasibleAtLevel_one_equalized_shared
+    hn halpha0 halpha1 hpos hdec h hfeas' hitem_eq' hshared']
+
+/--
+If every `γ = 1` feasible policy is already in the paper's equalized/shared
+canonical form, then the selected equality-form optimal BFS policy realizes the
+reduced `U^*_min(1, α)` optimum.
+-/
+theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_all_feasible_equalized_shared
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hcanonical :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        (∀ l : Item n,
+          pairShare alpha v l * (ρ' 0 l).toReal +
+            (1 - pairShare alpha v l) * (ρ' 1 l).toReal =
+          TypeWeightedRecommendationModel.itemFairness
+            (twoTypeReducedModel alpha v) ρ') ∧
+        TypePolicy.SharedItemsBound ρ') :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  exact
+    problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_upper_bound
+      halpha0 halpha1 hpos h
+      (fun ρ' hfeas' =>
+        let hcanon := hcanonical ρ' hfeas'
+        le_of_eq
+          (problem6EqualizedBasicOptimal_typeFairness_eq_of_feasibleAtLevel_one_equalized_shared
+            hn halpha0 halpha1 hpos hdec h hfeas'
+            hcanon.1 hcanon.2))
+
+/--
 Closed-form Problem 6 optimal-value theorem: after the paper-specific
 denominator and upper-bound certificate is supplied, the LP optimum is the
 Lemma 5 closed value.
