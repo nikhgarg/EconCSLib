@@ -926,6 +926,20 @@ theorem paper_problem6_closedPolicy_feasible_of_denominatorBounds
     halpha0 halpha1 hpos hbounds
 
 /--
+Problem 6 closed-form optimal-value wrapper: a denominator-bound plus
+upper-bound certificate proves the LP optimum equals the Lemma 5 value.
+-/
+theorem paper_problem6_LPOptimalValue_eq_closedValue_of_closed_certificate
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t) :
+    problem6LPOptimalValue alpha v = problem6ClosedValue alpha v t := by
+  exact problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+    halpha0 halpha1 hpos cert
+
+/--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
 theorem paper_lemma5_problem6_x_before_pivot

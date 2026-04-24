@@ -1711,6 +1711,38 @@ structure Problem6OptimalityCertificate {n : ℕ} [NeZero n]
     ∀ (ρ : TypePolicy 2 n) (ell' : ℝ),
       problem6LPFeasible alpha v ρ ell' → ell' ≤ ell
 
+/--
+Closed-form certificate target for Problem 6: denominator bounds make the
+closed coordinates a feasible policy, and the remaining field is the LP
+upper-bound proof for the paper's proposed value.
+-/
+structure Problem6ClosedOptimalityCertificate {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : Prop where
+  denominator_bounds : Problem6ClosedPivotDenominatorBounds alpha v t
+  upper_bound :
+    ∀ (ρ : TypePolicy 2 n) (ell' : ℝ),
+      problem6LPFeasible alpha v ρ ell' →
+        ell' ≤ problem6ClosedValue alpha v t
+
+/--
+A closed-form certificate supplies the generic `Problem6OptimalityCertificate`
+for the value `problem6ClosedValue`.
+-/
+noncomputable def problem6OptimalityCertificate_of_closed {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t) :
+    Problem6OptimalityCertificate alpha v (problem6ClosedValue alpha v t) where
+  policy :=
+    problem6ClosedPolicy alpha v t halpha0 halpha1 hpos
+      (problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds)
+  feasible :=
+    problem6ClosedPolicy_feasible_of_denominatorBounds
+      halpha0 halpha1 hpos cert.denominator_bounds
+  upper_bound := cert.upper_bound
+
 /-- Feasible objective values for Problem 6's LP. -/
 def problem6LPValueSet {n : ℕ} [NeZero n]
     (alpha : ℝ) (v : Item n → ℝ) : Set ℝ :=
@@ -1902,6 +1934,22 @@ theorem problem6LPOptimalValue_eq_of_certificate
     exact cert.upper_bound ρ ell' hρ
   · unfold problem6LPOptimalValue
     exact le_csSup hLPBdd ⟨cert.policy, cert.feasible⟩
+
+/--
+Closed-form Problem 6 optimal-value theorem: after the paper-specific
+denominator and upper-bound certificate is supplied, the LP optimum is the
+Lemma 5 closed value.
+-/
+theorem problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t) :
+    problem6LPOptimalValue alpha v = problem6ClosedValue alpha v t := by
+  exact problem6LPOptimalValue_eq_of_certificate
+    alpha v (problem6ClosedValue alpha v t) halpha0 halpha1 hpos
+    (problem6OptimalityCertificate_of_closed halpha0 halpha1 hpos cert)
 
 end OpposingTypes
 end UserItemFairness
