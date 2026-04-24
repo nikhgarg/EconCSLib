@@ -4076,6 +4076,41 @@ theorem paper_lemma5_problem6FirstClosedPivot_le_of_closedPivotDenominatorBounds
     halpha0 halpha1 hpos hbounds
 
 /--
+Appendix D, Lemma 8 boundary stitch: if adjacent pivots meet at a tight lower
+crossing boundary, both closed-form pivots satisfy the Lemma 5 denominator
+bounds.
+-/
+theorem paper_lemma8_problem6ClosedPivotDenominatorBounds_adjacent_of_boundary
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹) :
+    Problem6ClosedPivotDenominatorBounds alpha v t ∧
+      Problem6ClosedPivotDenominatorBounds alpha v u := by
+  exact problem6ClosedPivotDenominatorBounds_adjacent_of_boundary
+    halpha0 halpha1 hpos hnext hboundary
+
+/--
+Appendix D, Lemma 8 boundary stitch: at an adjacent tight-crossing boundary,
+the two adjacent closed-form values agree.
+-/
+theorem paper_lemma8_problem6ClosedValue_eq_of_adjacent_boundary
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹) :
+    problem6ClosedValue alpha v t =
+      problem6ClosedValue alpha v u := by
+  exact problem6ClosedValue_eq_of_adjacent_boundary
+    halpha0 halpha1 hpos hdec hnext hboundary
+
+/--
 Appendix D, Lemma 7-style monotonicity for the canonical Lemma 5 pivot:
 as `α` increases, the first crossing pivot weakly moves right.
 -/

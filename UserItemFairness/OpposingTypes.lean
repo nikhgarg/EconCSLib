@@ -3276,6 +3276,56 @@ theorem problem6PivotGap_upper_bound_of_closedPivotDenominatorBounds {n : ℕ}
     _ = (1 - pairShare alpha v t)⁻¹ := by ring
 
 /--
+Adjacent-boundary denominator bridge for Lemma 8: if `u` is the item after
+`t` and the lower crossing inequality for `t` is tight, then both adjacent
+pivots satisfy the Lemma 5 denominator bounds.  This is the local algebraic
+form of the paper's continuity stitch between consecutive `A(t)` intervals.
+-/
+theorem problem6ClosedPivotDenominatorBounds_adjacent_of_boundary
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹) :
+    Problem6ClosedPivotDenominatorBounds alpha v t ∧
+      Problem6ClosedPivotDenominatorBounds alpha v u := by
+  have hqpos_t := pairShare_pos t halpha0 halpha1 hpos
+  have hcomp_pos_t := one_sub_pairShare_pos t halpha0 halpha1 hpos
+  have hqpos_u := pairShare_pos u halpha0 halpha1 hpos
+  have hcomp_pos_u := one_sub_pairShare_pos u halpha0 halpha1 hpos
+  have hneg_inv_t_nonpos :
+      - (pairShare alpha v t)⁻¹ ≤ 0 :=
+    neg_nonpos.mpr (inv_nonneg.mpr hqpos_t.le)
+  have hcomp_inv_t_nonneg :
+      0 ≤ (1 - pairShare alpha v t)⁻¹ :=
+    inv_nonneg.mpr hcomp_pos_t.le
+  have hgap_u :
+      problem6PivotGap alpha v u =
+        (1 - pairShare alpha v u)⁻¹ := by
+    rw [problem6PivotGap_next_eq
+      (alpha := alpha) (v := v) (t := t) (u := u) hnext,
+      hboundary]
+    ring
+  have hneg_inv_u_nonpos :
+      - (pairShare alpha v u)⁻¹ ≤ 0 :=
+    neg_nonpos.mpr (inv_nonneg.mpr hqpos_u.le)
+  have hcomp_inv_u_nonneg :
+      0 ≤ (1 - pairShare alpha v u)⁻¹ :=
+    inv_nonneg.mpr hcomp_pos_u.le
+  constructor
+  · exact
+      problem6ClosedPivotDenominatorBounds_of_pivotGap_bounds
+        halpha0 halpha1 hpos
+        (by rw [hboundary])
+        (by rw [hboundary]; linarith)
+  · exact
+      problem6ClosedPivotDenominatorBounds_of_pivotGap_bounds
+        halpha0 halpha1 hpos
+        (by rw [hgap_u]; linarith)
+        (by rw [hgap_u])
+
+/--
 Lemma 5 finite pivot choice: some closed-form pivot satisfies the denominator
 bounds, without appealing to an external LP existence theorem.
 -/
@@ -9797,6 +9847,41 @@ theorem problem6LPOptimalValue_eq_closedValue_of_closed_certificate
   exact problem6LPOptimalValue_eq_of_certificate
     alpha v (problem6ClosedValue alpha v t) halpha0 halpha1 hpos
     (problem6OptimalityCertificate_of_closed halpha0 halpha1 hpos cert)
+
+/--
+Adjacent-boundary value continuity for Lemma 8: at a boundary where the lower
+crossing inequality for pivot `t` is tight and `u = t+1`, the two adjacent
+closed-form values agree.  The proof uses the closed-form optimality
+certificates on both sides of the boundary.
+-/
+theorem problem6ClosedValue_eq_of_adjacent_boundary
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t u : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alpha v t = - (pairShare alpha v t)⁻¹) :
+    problem6ClosedValue alpha v t =
+      problem6ClosedValue alpha v u := by
+  rcases problem6ClosedPivotDenominatorBounds_adjacent_of_boundary
+      halpha0 halpha1 hpos hnext hboundary with
+    ⟨hbounds_t, hbounds_u⟩
+  let cert_t : Problem6ClosedOptimalityCertificate alpha v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halpha0 halpha1 hpos hdec hbounds_t
+  let cert_u : Problem6ClosedOptimalityCertificate alpha v u :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halpha0 halpha1 hpos hdec hbounds_u
+  calc
+    problem6ClosedValue alpha v t =
+        problem6LPOptimalValue alpha v := by
+      exact (problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+        halpha0 halpha1 hpos cert_t).symm
+    _ = problem6ClosedValue alpha v u :=
+      problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+        halpha0 halpha1 hpos cert_u
 
 /--
 Appendix D, Lemma 4/5 optimal-value bridge: an equalized optimal Problem 6
