@@ -634,6 +634,24 @@ theorem paper_lemma16_pairShare_half_eq_half_of_val_eq_reverse
     pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
   exact pairShare_half_eq_half_of_val_eq_reverse j hpos hval
 
+/-- Appendix E, Lemma 16, zero-based midpoint arithmetic for `j` before center. -/
+theorem paper_lemma16_val_lt_reverseItem_iff
+    {n : ℕ} (j : Item n) :
+    j.val < (reverseItem j).val ↔ 2 * j.val + 1 < n := by
+  exact val_lt_reverseItem_iff j
+
+/-- Appendix E, Lemma 16, zero-based midpoint arithmetic for `j` after center. -/
+theorem paper_lemma16_reverseItem_val_lt_iff
+    {n : ℕ} (j : Item n) :
+    (reverseItem j).val < j.val ↔ n < 2 * j.val + 1 := by
+  exact reverseItem_val_lt_iff j
+
+/-- Appendix E, Lemma 16, zero-based midpoint arithmetic for the center item. -/
+theorem paper_lemma16_val_eq_reverseItem_iff
+    {n : ℕ} (j : Item n) :
+    j.val = (reverseItem j).val ↔ 2 * j.val + 1 = n := by
+  exact val_eq_reverseItem_iff j
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel

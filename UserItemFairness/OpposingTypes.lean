@@ -208,5 +208,23 @@ theorem pairShare_half_eq_half_of_val_eq_reverse
     exact Fin.ext hval
   exact pairShare_half_eq_half_of_eq_reverse j hpos (congrArg v heq_item)
 
+/-- Zero-based arithmetic form of being before the reverse item. -/
+theorem val_lt_reverseItem_iff {n : ℕ} (j : Item n) :
+    j.val < (reverseItem j).val ↔ 2 * j.val + 1 < n := by
+  simp [reverseItem]
+  omega
+
+/-- Zero-based arithmetic form of being after the reverse item. -/
+theorem reverseItem_val_lt_iff {n : ℕ} (j : Item n) :
+    (reverseItem j).val < j.val ↔ n < 2 * j.val + 1 := by
+  simp [reverseItem]
+  omega
+
+/-- Zero-based arithmetic form of being the middle item. -/
+theorem val_eq_reverseItem_iff {n : ℕ} (j : Item n) :
+    j.val = (reverseItem j).val ↔ 2 * j.val + 1 = n := by
+  simp [reverseItem]
+  omega
+
 end OpposingTypes
 end UserItemFairness
