@@ -186,8 +186,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   when the total theorem is true.
 - For Mallows/ranking proofs, match the paper's pairwise decomposition when the
   argument compares `(i,j)` and `(j,i)` top-two events. First prove the exact
-  top-two expansion of the finite sum, then discharge the antisymmetric pair
-  inequalities. This is safer than forcing first-choice fiber signs.
+  top-two expansion of the finite sum, then define the ordered-pair term and
+  prove the antisymmetric swap identity. Discharge the remaining proof through
+  bracket inequalities for `(i,j)` plus `(j,i)`. This is safer than forcing
+  first-choice fiber signs.
 - When clearing positive probability denominators, expose the unnormalised
   numerator as a reusable definition and prove an equality from the normalized
   expectation to numerator divided by a positive denominator. Also prove the
