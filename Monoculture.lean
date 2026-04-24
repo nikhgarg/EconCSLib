@@ -16,6 +16,7 @@ import Monoculture.Mallows
 import Monoculture.MallowsSupport
 import Monoculture.MallowsCenterCertificate
 import Monoculture.MallowsFiniteLemmas
+import Monoculture.MallowsPairwise
 import Monoculture.Family
 import Monoculture.Examples
 import Monoculture.MainTheorems
