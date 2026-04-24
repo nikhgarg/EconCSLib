@@ -186,5 +186,27 @@ theorem paper_adwords_competitive_of_primal_dual_certificate
     ratio * I.offlineOptimumValue hbudget ≤ I.revenue A := by
   exact AdWordsInstance.competitive_of_primalDual I hbudget A ratio hcert
 
+/--
+MSVV paper-facing seam for the Balance run: once the primal-dual certificate is
+constructed for `msvvRatio = 1 - 1/e`, the Balance assignment is competitive
+against the offline optimum at that ratio.
+-/
+theorem paper_adwords_balance_msvv_competitive_of_primal_dual_certificate
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query)
+    (hcert :
+      I.PrimalDualCompetitiveCertificate
+        (I.runAssignment I.balanceChoiceRule history)
+        AdWordsInstance.msvvRatio) :
+    AdWordsInstance.msvvRatio * I.offlineOptimumValue hbudget ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) := by
+  exact AdWordsInstance.competitive_of_primalDual I hbudget
+    (I.runAssignment I.balanceChoiceRule history)
+    AdWordsInstance.msvvRatio hcert
+
 end Online
 end EconCSLean

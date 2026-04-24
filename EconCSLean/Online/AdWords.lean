@@ -226,6 +226,10 @@ For fractions in `[0, 1]`, this lies in `[0, 1]`.
 noncomputable def balanceDiscount (x : ℝ) : ℝ :=
   1 - Real.exp (x - 1)
 
+/-- The classical MSVV competitive ratio `1 - 1/e`. -/
+noncomputable def msvvRatio : ℝ :=
+  1 - 1 / Real.exp 1
+
 /-- Balance/MSVV scaled bid for assigning query `q` to advertiser `a`. -/
 noncomputable def balanceScore [Fintype Query] [DecidableEq Advertiser]
     (I : AdWordsInstance Advertiser Query)
@@ -887,6 +891,23 @@ theorem balanceDiscount_le_one (x : ℝ) :
 theorem balanceDiscount_mem_unit_interval_of_le_one {x : ℝ} (hx : x ≤ 1) :
     0 ≤ balanceDiscount x ∧ balanceDiscount x ≤ 1 :=
   ⟨balanceDiscount_nonneg_of_le_one hx, balanceDiscount_le_one x⟩
+
+theorem msvvRatio_pos : 0 < msvvRatio := by
+  unfold msvvRatio
+  have hexp_pos : 0 < Real.exp 1 := Real.exp_pos 1
+  have hfrac_lt : 1 / Real.exp 1 < 1 := by
+    exact (div_lt_one hexp_pos).2
+      (Real.one_lt_exp_iff.mpr zero_lt_one)
+  linarith
+
+theorem msvvRatio_nonneg : 0 ≤ msvvRatio :=
+  le_of_lt msvvRatio_pos
+
+theorem msvvRatio_lt_one : msvvRatio < 1 := by
+  unfold msvvRatio
+  have hfrac_pos : 0 < 1 / Real.exp 1 := by
+    positivity
+  linarith
 
 theorem balanceScore_nonneg_of_feasible
     [Fintype Query] [DecidableEq Advertiser]
