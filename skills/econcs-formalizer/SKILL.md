@@ -86,6 +86,43 @@ the Lean statements against the paper.
 - Detailed lemmas may live in many files, but the central theorem file should be
   the stable public interface for that paper.
 
+## Context Budget and Resume Protocol
+
+Resume from the current public interface, not from the commit history. For long
+formalization campaigns, the fastest reliable map is the status docs, the paper
+README theorem table, the paper-facing theorem file, and targeted declaration
+search.
+
+- Start every resumed task with `git status --short --branch`, then read the
+  current repo/paper status note and the paper folder README. Protect unrelated
+  dirty files, and let the documented current seam define the first theorem to
+  inspect.
+- Use targeted `rg` searches for the strongest paper-facing wrapper, the exact
+  remaining certificate/assumption named in the README, and the internal lemma
+  that feeds it. Avoid scanning broad proof files or docs until those anchors are
+  identified.
+- Treat successfully compiling declarations and current status tables as the
+  source of truth for "what is done." Use commit history only for provenance,
+  rename recovery, or checking what changed since a known checkpoint. If history
+  is needed, keep it bounded: `git log --oneline -n 10`, `git show --stat
+  <recent>`, or a narrow path-limited diff. Do not use open-ended commit
+  archaeology as the default way to regain context.
+- After a long interruption or a user asks whether anything was lost, perform
+  the three cheap checks: worktree status, targeted declaration search, and a
+  targeted `lake build <active-module>`. Do not replay old proof search unless
+  those checks reveal a real gap.
+- Before editing, state the one active seam in local notes or the handoff doc:
+  public theorem wrapper, internal lemma/certificate being attacked, exact
+  remaining assumption, and the build command that validates the slice.
+- Do not revisit closed layers first. Search for the strongest current endpoint
+  and the precise "remaining" text, then work on that next bridge. In this repo,
+  paper README rows and `docs/ECONCSLEAN_CURRENT_STATUS.md` should say which
+  algebra, symmetry, probability, or model-integration layers are already closed.
+- When stopping or moving papers, document "do not redo" information: closed
+  theorem layers, the current endpoint, the next bridge, known traps, and the
+  last passing build command. This prevents future agents from spending tokens
+  re-deriving the same orientation.
+
 ## Workflow
 
 1. Orient before editing.
@@ -123,8 +160,9 @@ the Lean statements against the paper.
 
 7. Document exact theorem seams.
    When stopping mid-proof, record the module, theorem, assumptions still
-   missing, commands run, and the next lemma to prove. Future agents should not
-   have to rediscover the proof state.
+   missing, commands run, the next lemma to prove, and any closed layers that
+   should not be revisited. Future agents should not have to rediscover the
+   proof state.
 
 8. Verify narrowly, then broadly.
    First build the touched module. Then build the parent paper root. Run full
@@ -356,6 +394,16 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 
 - For constructive paper proofs, formalize local invariants first, then assemble
   the main theorem by induction or finite recursion.
+- If a Lean goal is not moving after a few local attempts, stop expanding the
+  proof script in place. Extract the exact algebraic, finite-sum, relabeling, or
+  monotonicity fact as a named helper lemma, prove or search for that smaller
+  fact, then return to the main theorem. Long inline tactic blocks are usually a
+  signal that the theorem seam is too coarse.
+- When the paper proof has an informal model bridge, do not over-generalize the
+  model before the current theorem is reachable. Add the narrow certificate or
+  structure that expresses exactly the missing bridge, prove all surrounding
+  algebra unconditionally, and later refine the model by instantiating that
+  certificate.
 - For finite deterministic-rule optimization statements, first prove a generic
   maximizer-existence theorem over the finite function type `(instances →
   actions)`. Then keep paper folders responsible only for defining the
@@ -622,4 +670,7 @@ Before ending work, update a repo note or paper handoff with:
 - active theorem seam,
 - assumptions imported from the paper,
 - shared abstractions added,
-- next lemma a future agent should prove.
+- next lemma a future agent should prove,
+- closed layers and traps future agents should not re-open,
+- whether commit history is needed for the next resume; usually it should not be
+  if the status docs and README are current.
