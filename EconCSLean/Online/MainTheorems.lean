@@ -1139,6 +1139,61 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
     normalizedRevenue hrealized_le_capped
 
 /--
+Canonical family of finite integral-prefix algorithms for the Section 7 hard
+instance: each algorithm is exactly a feasible prefix choice rule.
+-/
+def paper_adwords_theorem9_integral_prefix_algorithm_family :
+    BMatchingTheorem9IntegralPrefixChoiceFamily
+      (fun N => BMatchingIntegralPrefixAlgorithm N) :=
+  { choice := fun N algorithm => algorithm.1
+    choice_feasible := fun N algorithm => algorithm.2 }
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint for finite families of concrete
+integral prefix algorithms (the subtype of feasible integral rules), with the
+paper's capped normalized spend as normalized revenue.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms
+    :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (BMatchingIntegralPrefixAlgorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm =>
+                  paper_adwords_theorem9_integral_prefix_algorithm_family.normalizedRevenue
+                    N algorithm permutation) := by
+  exact
+    paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family
+      paper_adwords_theorem9_integral_prefix_algorithm_family
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint for finite families of concrete
+integral prefix algorithms under a richer realized-revenue model.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue
+    (normalizedRevenue :
+      (N : ℕ) → BMatchingIntegralPrefixAlgorithm N → Equiv.Perm (Fin N) → ℝ)
+    (hrealized_le_capped :
+      ∀ N algorithm permutation,
+        normalizedRevenue N algorithm permutation ≤
+          paper_adwords_theorem9_integral_prefix_algorithm_family.normalizedRevenue
+            N algorithm permutation) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (BMatchingIntegralPrefixAlgorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm =>
+                  normalizedRevenue N algorithm permutation) := by
+  exact
+    paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family_of_realized_revenue
+      paper_adwords_theorem9_integral_prefix_algorithm_family
+      normalizedRevenue hrealized_le_capped
+
+/--
 Paper-level Section 7 / Theorem 9 endpoint from round-allocation inequalities
 and finite layer-count harmonic bounds.
 -/

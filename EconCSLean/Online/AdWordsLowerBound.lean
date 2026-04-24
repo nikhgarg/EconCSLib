@@ -1642,7 +1642,7 @@ structure BMatchingTheorem9FeasiblePrefixRuleFamily
         prefixAllocation N algorithm obs round bidder) ≤ 1
 
 /-- A deterministic integral algorithm chooses at most one actual bidder from the visible prefix. -/
-def BMatchingIntegralPrefixChoice (N : ℕ) :=
+abbrev BMatchingIntegralPrefixChoice (N : ℕ) :=
   (Fin N → Finset (Fin N)) → Fin N → Option (Fin N)
 
 /-- Feasibility for an integral prefix choice rule: chosen bidders must be visible. -/
@@ -1650,10 +1650,30 @@ def BMatchingIntegralPrefixChoice.Feasible
     {N : ℕ} (choice : BMatchingIntegralPrefixChoice N) : Prop :=
   ∀ obs round bidder, choice obs round = some bidder → bidder ∈ obs round
 
+/--
+Classical instances for the concrete finite integral-prefix choice types used in the
+AdWords lower-bound bridge.
+-/
+noncomputable instance (N : ℕ) : DecidablePred (BMatchingIntegralPrefixChoice.Feasible (N := N)) := by
+  classical
+  exact Classical.decPred _
+
+instance (N : ℕ) : Fintype (BMatchingIntegralPrefixChoice N) := by
+  infer_instance
+
+instance (N : ℕ) : DecidableEq (BMatchingIntegralPrefixChoice N) := by
+  infer_instance
+
 /-- Concrete deterministic integral algorithms for the Section 7 hard instance. -/
 abbrev BMatchingIntegralPrefixAlgorithm (N : ℕ) :=
   { choice : BMatchingIntegralPrefixChoice N //
     BMatchingIntegralPrefixChoice.Feasible choice }
+
+noncomputable instance (N : ℕ) : Fintype (BMatchingIntegralPrefixAlgorithm N) := by
+  infer_instance
+
+noncomputable instance (N : ℕ) : DecidableEq (BMatchingIntegralPrefixAlgorithm N) := by
+  infer_instance
 
 namespace BMatchingIntegralPrefixAlgorithm
 
