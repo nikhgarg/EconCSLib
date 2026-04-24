@@ -2341,6 +2341,119 @@ theorem paper_lemma8_reducedOptimalItemFairness_mono_of_same_selected_equalizedB
     r alphaSeq ρSeq ellSeq hn halpha0 halpha1 hstep hpos hdec hpivot hcenter hopt
 
 /--
+Appendix D, Lemma 8 finite-stitch core with explicit boundary repeats: adjacent
+steps may either stay in one same-selected-pivot interval or repeat the same
+`α` at a partition boundary.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_of_same_selected_or_equal_alpha_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i)) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_of_same_selected_or_equal_alpha_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 hstep hpos hdec hpivot_or_eq
+    hcenter hopt
+
+/--
+Appendix D, Lemma 8 finite-stitch core, odd-center case: along a first-half
+finite chain, Lemma 10 supplies the pivot-before-mirror side condition.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_center_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_firstHalf_center_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hcenter_c hpivot_or_eq hopt hhalf
+
+/--
+Appendix D, Lemma 8 finite-stitch core, even-center case: along a first-half
+finite chain, Lemma 10 supplies the pivot-before-mirror side condition.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep hpos hdec
+    hsucc hpivot_or_eq hopt hhalf
+
+/--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
 theorem paper_lemma5_problem6_x_before_pivot
@@ -2580,6 +2693,74 @@ theorem paper_lemma7_equalizedBasicOptimal_lastActive_mono_of_alpha_lt
   exact lemma7_equalizedBasicOptimal_lastActive_mono_of_alpha_lt
     hn halpha0 halpha1 halpha0' halpha1' halpha_lt
     hpos hdec h h'
+
+/--
+Same-`α` selected-pivot uniqueness for equality-form optimal BFS packages.
+-/
+theorem paper_problem6EqualizedBasicOptimal_lastActive_eq_of_same_alpha
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha v ρ' ell') :
+    TypePolicy.lastActiveTypeZero ρ =
+      TypePolicy.lastActiveTypeZero ρ' := by
+  exact problem6EqualizedBasicOptimal_lastActive_eq_of_same_alpha
+    hn halpha0 halpha1 hpos hdec h h'
+
+/--
+Appendix D, Lemma 7 in non-strict form for equality-form optimal BFS packages.
+-/
+theorem paper_lemma7_equalizedBasicOptimal_lastActive_mono_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha' v ρ' ell') :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (TypePolicy.lastActiveTypeZero ρ').val := by
+  exact lemma7_equalizedBasicOptimal_lastActive_mono_of_alpha_le
+    hn halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec h h'
+
+/--
+Appendix D, Lemma 8 interval step: the selected-pivot set `A(t)` is an
+interval for equality-form optimal BFS selections.
+-/
+theorem paper_lemma8_selectedPivot_eq_of_between_equalizedBasicOptimal_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alpha alphaRight : ℝ} {v : Item n → ℝ}
+    {ρLeft ρ ρRight : TypePolicy 2 n} {ellLeft ell ellRight : ℝ}
+    (hn : 2 < n)
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft : alphaLeft ≤ alpha)
+    (hright : alpha ≤ alphaRight)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρLeft =
+        TypePolicy.lastActiveTypeZero ρRight)
+    (hLeft :
+      Problem6EqualizedBasicOptimal alphaLeft v ρLeft ellLeft)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hRight :
+      Problem6EqualizedBasicOptimal alphaRight v ρRight ellRight) :
+    TypePolicy.lastActiveTypeZero ρ =
+      TypePolicy.lastActiveTypeZero ρLeft := by
+  exact lemma8_selectedPivot_eq_of_between_equalizedBasicOptimal_endpoints
+    hn halphaLeft0 halphaLeft1 halpha0 halpha1 halphaRight0 halphaRight1
+    hleft hright hpos hdec hpivot hLeft h hRight
 
 /--
 Appendix D, Lemma 6, mirror-pair algebra for
@@ -3533,6 +3714,48 @@ theorem paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_cen
     (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
     (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
   exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center
+    hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
+
+/--
+Appendix D, Lemma 10 consequence, odd-center case: for `α ≤ 1/2`, the
+selected pivot is at or before its mirror.
+-/
+theorem paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val := by
+  exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center
+    hn halpha0 halpha1 halpha_half hpos hdec hcenter h hhalf
+
+/--
+Appendix D, Lemma 10 consequence, even-center case: for `α ≤ 1/2`, the
+selected pivot is at or before its mirror.
+-/
+theorem paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρhalf : TypePolicy 2 n} {ell ellHalf : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hhalf : Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤
+      (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val := by
+  exact lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center
     hn halpha0 halpha1 halpha_half hpos hdec hsucc h hhalf
 
 /--
