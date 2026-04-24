@@ -171,7 +171,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   model Balance/MSVV as a history fold whose local step chooses
   a feasible advertiser maximizing the scaled bid
   `bid * (1 - exp(spentFraction - 1))`; prove run feasibility separately from
-  the competitive-ratio invariant.
+  the competitive-ratio invariant. Under small bids, prove the boundary lemma
+  that a blocked advertiser has spent fraction strictly above `1 - ε`; this is
+  the finite replacement for repeatedly handwaving away exhausted advertisers.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

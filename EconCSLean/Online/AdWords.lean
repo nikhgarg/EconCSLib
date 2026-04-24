@@ -133,6 +133,14 @@ def NonnegativeBids (I : AdWordsInstance Advertiser Query) : Prop :=
 def NonnegativeBudgets (I : AdWordsInstance Advertiser Query) : Prop :=
   ∀ a, 0 ≤ I.budget a
 
+/-- Strictly positive advertiser budgets. -/
+def PositiveBudgets (I : AdWordsInstance Advertiser Query) : Prop :=
+  ∀ a, 0 < I.budget a
+
+/-- Small-bids condition: every bid is at most an `ε` fraction of the budget. -/
+def SmallBids (I : AdWordsInstance Advertiser Query) (ε : ℝ) : Prop :=
+  ∀ a q, I.bid a q ≤ ε * I.budget a
+
 /-- A choice rule maps the current assignment and query to an optional advertiser. -/
 abbrev ChoiceRule (Advertiser Query : Type*) :=
   Assignment Advertiser Query → Query → Option Advertiser
@@ -837,6 +845,30 @@ theorem spentFraction_le_one_of_feasible
       div_le_div_of_nonneg_right (hfeasible a) hbudget.le
     _ = 1 := by
       exact div_self hbudget.ne'
+
+theorem spentFraction_gt_one_sub_epsilon_of_not_canAssign
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) (q : Query)
+    {ε : ℝ}
+    (hbudget : 0 < I.budget a)
+    (hsmall : I.SmallBids ε)
+    (hnot : ¬ I.CanAssign A q a) :
+    1 - ε < I.spentFraction A a := by
+  unfold CanAssign at hnot
+  have hlt : I.budget a < I.spend A a + I.bid a q :=
+    lt_of_not_ge hnot
+  have hbidle : I.bid a q ≤ ε * I.budget a := hsmall a q
+  have hlt' : I.budget a < I.spend A a + ε * I.budget a :=
+    lt_of_lt_of_le hlt (add_le_add_right hbidle (I.spend A a))
+  have hmul : (1 - ε) * I.budget a < I.spend A a := by
+    nlinarith
+  have hdiv :=
+    div_lt_div_of_pos_right hmul hbudget
+  have hleft :
+      ((1 - ε) * I.budget a) / I.budget a = 1 - ε := by
+    exact mul_div_cancel_right₀ _ hbudget.ne'
+  simpa [spentFraction, hleft] using hdiv
 
 theorem balanceDiscount_nonneg_of_le_one {x : ℝ} (hx : x ≤ 1) :
     0 ≤ balanceDiscount x := by

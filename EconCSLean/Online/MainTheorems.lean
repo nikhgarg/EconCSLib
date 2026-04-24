@@ -151,6 +151,24 @@ theorem paper_adwords_balance_assignment_assigned_only_from_history
     I hbudget history hassigned
 
 /--
+Small-bids boundary lemma: if advertiser `a` cannot accept query `q`, then
+under the `ε`-small-bids condition `a` has already spent more than a
+`1 - ε` fraction of her budget.
+-/
+theorem paper_adwords_small_bids_blocked_advertiser_spent_fraction
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : AdWordsInstance.Assignment Advertiser Query)
+    (a : Advertiser) (q : Query) {ε : ℝ}
+    (hbudget : 0 < I.budget a)
+    (hsmall : I.SmallBids ε)
+    (hnot : ¬ I.CanAssign A q a) :
+    1 - ε < I.spentFraction A a := by
+  exact AdWordsInstance.spentFraction_gt_one_sub_epsilon_of_not_canAssign
+    I A a q hbudget hsmall hnot
+
+/--
 Paper-facing primal-dual seam: a finite primal-dual certificate implies the
 advertised competitive-ratio inequality against the offline optimum.
 
