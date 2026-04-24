@@ -59,6 +59,11 @@ the Lean statements against the paper.
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
   "technical details".
+- Update the paper folder `README.md` in the same work pass as the Lean change
+  whenever theorem status changes. Do not leave a paper for the next one while
+  its README still has stale `scaffold`, `conditional`, or remaining-assumption
+  text; either close the seam or record the exact blocker and the next theorem
+  to attack.
 - Detailed lemmas may live in many files, but the central theorem file should be
   the stable public interface for that paper.
 
