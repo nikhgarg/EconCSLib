@@ -8,6 +8,15 @@ pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
+# These warnings are high-volume in existing proof files and obscure real build
+# failures in agent logs. Keep proof obligations enforced; quiet only style/noise.
+weak.linter.unnecessarySimpa = false
+weak.linter.unusedDecidableInType = false
+weak.linter.unusedFintypeInType = false
+weak.linter.unusedSectionVars = false
+weak.linter.unusedVariables = false
+weak.linter.flexible = false
+weak.linter.style.longLine = false
 
 [[require]]
 name = "mathlib"

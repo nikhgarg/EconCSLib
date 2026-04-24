@@ -285,6 +285,75 @@ theorem withSlots_smallBids
   intro a qs
   exact hsmall a qs.1
 
+/-- Distinct-advertiser condition for slot-expanded queries. -/
+def withSlotsPerPageDistinct
+    (Slot : Query → Type*) (A : Assignment Advertiser (Σ q : Query, Slot q)) : Prop :=
+  ∀ q s₁ s₂ a,
+    A ⟨q, s₁⟩ = some a →
+    A ⟨q, s₂⟩ = some a →
+    s₁ = s₂
+
+theorem withSlotsPerPageDistinct_empty :
+    (Slot : Query → Type*) →
+    withSlotsPerPageDistinct
+      Slot
+      (emptyAssignment : Assignment Advertiser (Σ q : Query, Slot q)) := by
+  intro Slot q s₁ s₂ a h1 h2
+  simpa [emptyAssignment] using h1
+
+/--
+Choice rule wrapper for slot-expanded queries that forbids assigning the same
+advertiser twice to different slots of the same original query.
+-/
+noncomputable def withSlotsDistinctChoice
+    (Slot : Query → Type*) (rule : ChoiceRule Advertiser (Σ q : Query, Slot q))
+    (A : Assignment Advertiser (Σ q : Query, Slot q)) :
+    (Σ q : Query, Slot q) → Option Advertiser :=
+  by
+    classical
+    intro qs
+    exact
+    match rule A qs with
+    | none => none
+    | some a =>
+      if hrepeat : ∃ s : Slot qs.1, A ⟨qs.1, s⟩ = some a then
+        none
+      else
+        some a
+
+theorem withSlotsDistinctChoice_rejects_used_advertiser
+    (Slot : Query → Type*) (rule : ChoiceRule Advertiser (Σ q : Query, Slot q))
+    (A : Assignment Advertiser (Σ q : Query, Slot q))
+    (qs : Σ q : Query, Slot q) (a : Advertiser)
+    (hchoice : withSlotsDistinctChoice Slot rule A qs = some a) :
+    ¬ ∃ s : Slot qs.1, A ⟨qs.1, s⟩ = some a := by
+  classical
+  unfold withSlotsDistinctChoice at hchoice
+  cases h : rule A qs with
+  | none =>
+      simp [h] at hchoice
+  | some a' =>
+    by_cases hrepeat : ∃ s : Slot qs.1, A ⟨qs.1, s⟩ = some a'
+    · simp [h, hrepeat] at hchoice
+    · have hEq' : some a' = some a := by
+        simpa [h, hrepeat] using hchoice
+      have hEq : a' = a := by simpa using hEq'
+      intro hUsed
+      exact hrepeat <| by simpa [hEq] using hUsed
+
+theorem withSlotsDistinctChoice_allows_if_unused
+    (Slot : Query → Type*) (rule : ChoiceRule Advertiser (Σ q : Query, Slot q))
+    (A : Assignment Advertiser (Σ q : Query, Slot q))
+    (qs : Σ q : Query, Slot q) (a : Advertiser)
+    (hfree : ¬ ∃ s : Slot qs.1, A ⟨qs.1, s⟩ = some a)
+    (hrule : rule A qs = some a) :
+    withSlotsDistinctChoice Slot rule A qs = some a := by
+  classical
+  unfold withSlotsDistinctChoice
+  rw [hrule]
+  have hrepeat : ¬ ∃ s : Slot qs.1, A ⟨qs.1, s⟩ = some a := hfree
+  simp [hrepeat]
+
 end AdWordsInstance
 
 end Online

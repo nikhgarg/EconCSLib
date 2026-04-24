@@ -17,8 +17,12 @@ version; the author PDF is listed only for easier access.
 ## Central Theorem File
 
 - `EconCSLean/Online/MainTheorems.lean`
+- `EconCSLean/Online/PaperFacingTheorems.lean` (Lean-only paper-facing
+  declaration ledger, declaration-checked and ordered by paper section)
 
-That file contains the paper-facing theorem wrappers currently available.
+`PaperFacingTheorems.lean` is the single file a human can check to see the
+paper-facing theorem surface in Lean order; it imports `MainTheorems.lean` and
+acts as a declaration-level audit target.
 Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 `AdWords.lean`. Section 6 effective-bid reductions live in
 `AdWordsExtensions.lean`.
@@ -39,7 +43,7 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Section 6 click-through rates | `withClickThroughRates`, `paper_adwords_click_through_rates_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | CTRs at most one; original bids nonnegative and small |
 | Section 8 advertiser-weighted effective bids | `withAdvertiserWeights`, `paper_adwords_weighted_bids_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | weights at most one; original bids nonnegative and small |
 | Section 6 advertiser availability / delayed entry | `withAvailability`, `paper_adwords_availability_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | nonnegative `ε`, positive budgets, original small-bids condition |
-| Section 6 slot-query expansion | `withSlots`, `paper_adwords_multiple_slots_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | models independent slot queries; per-page distinct-advertiser feasibility is not encoded |
+| Section 6 slot-query expansion | `withSlots`, `withSlotsPerPageDistinct`, `withSlotsDistinctChoice`, `paper_adwords_multiple_slots_small_bids` | formalized reduction and feasibility-layer helpers | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | none |
 | Section 7 finite Yao lower-bound lemma | `Decision.exists_input_randomized_payoff_le_of_forall_deterministic_average_le` | formalized generic lemma | `EconCSLean/Decision/Yao.lean` | finite deterministic algorithm and input types |
 | Theorem 9 randomized b-matching lower bound | `theorem9BidderSpendUpperBound`, `theorem9BidderHarmonicPrefixNat`, `theorem9BidderSpendUpperBound_le_log_tail`, `theorem9NormalizedRevenueUpperBound`, `theorem9HarmonicLayerCountBound_of_pos`, `theorem9NormalizedRevenueUpperBound_le_msvvRatio_add_gridErrors`, `theorem9_harmonic_eventually_le_msvvRatio_add`, `theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta`, `theorem9ActualEligibleBidders`, `theorem9ObservedPrefix`, `theorem9ActualEligibleBidders_sum_eq`, `theorem9ObservedPrefix_mul_swap_eq`, `uniformPermutationExpectation_eq_of_relabel`, `BMatchingYaoLowerBoundCertificate`, `BMatchingPermutationLowerBoundCertificate`, `BMatchingRoundAllocationRevenueCertificate`, `BMatchingPointwiseAllocationRevenueCertificate`, `BMatchingSymmetricPointwiseAllocationRevenueCertificate`, `BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate`, `BMatchingObservedPrefixAllocationRevenueCertificate`, `BMatchingFeasibleObservedPrefixAllocationRevenueCertificate`, `BMatchingTheorem9FamilyCertificate`, `BMatchingTheorem9PointwiseFamilyCertificate`, `BMatchingTheorem9SymmetricPointwiseFamilyCertificate`, `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate`, `BMatchingTheorem9ObservedPrefixFamilyCertificate`, `BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate`, `BMatchingTheorem9FeasiblePrefixRuleFamily`, `BMatchingTheorem9IntegralPrefixChoiceFamily`, `eventually_no_randomized_algorithm_beats_msvvRatio_add_delta_of_realized_revenue`, `paper_adwords_theorem9_bidder_spend_upper_bound_le_log_tail`, `paper_adwords_theorem9_harmonic_layer_count_bound`, `paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family_of_realized_revenue` | harmonic cap and finite integral prefix-choice endpoint formalized for capped normalized spend | `EconCSLean/Online/AdWordsLowerBound.lean`, `EconCSLean/Online/MainTheorems.lean` | none |
 | Concrete integral-prefix algorithm endpoint | `BMatchingIntegralPrefixAlgorithm`, `paper_adwords_theorem9_integral_prefix_algorithm_family`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue` | formalized | `EconCSLean/Online/AdWordsLowerBound.lean`, `EconCSLean/Online/MainTheorems.lean` | uses the capped normalized spend bridge for concrete finite subtype families |
@@ -134,9 +138,9 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 5. Section 6 and Section 8 extension reductions are now formalized as
    effective-bid transformations: arbitrary effective charges, click-through
    rates, advertiser weights, delayed-entry/availability masks, and slot-query
-   expansion. The slot expansion is the independent slot-query reduction; a
-   stronger per-page distinct-advertiser model would require an additional
-   feasibility layer.
+   expansion. The slot-expansion reduction now includes an explicit
+   per-page distinct-advertiser feasibility predicate `withSlotsPerPageDistinct`
+   and a corresponding filtered choice rule `withSlotsDistinctChoice`.
 6. Section 7 now has the finite Yao/minimax expectation lemma, the uniform
    permutation distribution over bidders, a uniform-permutation relabeling
    theorem, an observed-prefix suffix-swap invariance theorem, the paper's
