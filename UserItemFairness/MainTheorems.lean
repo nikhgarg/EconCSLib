@@ -2517,6 +2517,20 @@ theorem paper_problem6_closedOptimalityCertificate_exists
     halpha0 halpha1 hpos hdec
 
 /--
+Appendix D, Lemma 5 canonical-pivot certificate: the first crossing pivot
+supplies the full closed-form optimality certificate.
+-/
+theorem paper_problem6_firstClosedPivot_optimalityCertificate
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    Problem6ClosedOptimalityCertificate alpha v
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos) := by
+  exact problem6FirstClosedPivot_optimalityCertificate
+    halpha0 halpha1 hpos hdec
+
+/--
 Appendix D, Lemma 5 closed-policy bridge: a closed-form optimality certificate
 builds the paper's equality-form optimal BFS package; the support-count field
 comes from the closed policy's threshold support.
@@ -2535,6 +2549,29 @@ theorem paper_problem6_equalizedBasicOptimal_of_closed_certificate
       (problem6ClosedValue alpha v t) := by
   exact problem6EqualizedBasicOptimal_of_closed_certificate
     halpha0 halpha1 hpos cert
+
+/--
+Appendix D, Lemma 5 canonical-pivot BFS package: the first crossing pivot
+builds the paper's equality-form optimal BFS policy.
+-/
+theorem paper_problem6_firstClosedPivot_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    let t : Item n :=
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+    let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+      problem6FirstClosedPivot_optimalityCertificate
+        halpha0 halpha1 hpos hdec
+    let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+      problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds
+    Problem6EqualizedBasicOptimal alpha v
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+      (problem6ClosedValue alpha v t) := by
+  exact problem6FirstClosedPivot_equalizedBasicOptimal
+    halpha0 halpha1 hpos hdec
 
 /--
 Appendix D, Lemma 5 existence as an equality-form optimal BFS package: the
