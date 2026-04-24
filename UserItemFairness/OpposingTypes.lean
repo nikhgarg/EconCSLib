@@ -1598,6 +1598,55 @@ theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_be
     (twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v)
     (twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos)
 
+/-- In a two-type model, if type `1` is no better than type `0`, it is the minimum. -/
+theorem twoType_typeFairness_eq_one_of_one_le_zero {n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel 2 n) (ρ : TypePolicy 2 n)
+    (hle :
+      TypeWeightedRecommendationModel.normalizedTypeUtility T ρ 1 ≤
+        TypeWeightedRecommendationModel.normalizedTypeUtility T ρ 0) :
+    TypeWeightedRecommendationModel.typeFairness T ρ =
+      TypeWeightedRecommendationModel.normalizedTypeUtility T ρ 1 := by
+  unfold TypeWeightedRecommendationModel.typeFairness DecisionCore.finiteMin
+  apply le_antisymm
+  · exact Finset.inf'_le
+      (s := (Finset.univ : Finset (UserType 2)))
+      (f := TypeWeightedRecommendationModel.normalizedTypeUtility T ρ)
+      (by simp : (1 : UserType 2) ∈ Finset.univ)
+  · apply Finset.le_inf'
+    intro k _hk
+    fin_cases k
+    · exact hle
+    · rfl
+
+/--
+Lemma 6 consequence: under the remaining pivot-gap and center-position
+obligations, the closed policy's type fairness is exactly type `1`'s
+normalized utility.
+-/
+theorem problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t)) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact twoType_typeFairness_eq_one_of_one_le_zero
+    (twoTypeReducedModel alpha v)
+    (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+    (problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best
+      halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap)
+
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}

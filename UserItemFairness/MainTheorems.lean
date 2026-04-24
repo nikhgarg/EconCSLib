@@ -1239,6 +1239,31 @@ theorem paper_lemma6_closedPolicy_normalizedType_one_le_zero_of_alpha_le_half_au
     halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
 
 /--
+Appendix D, Lemma 6 consequence: under the paper's remaining pivot-gap
+condition, the closed policy's type fairness is type `1`'s normalized utility.
+-/
+theorem paper_lemma6_closedPolicy_typeFairness_eq_one_of_alpha_le_half
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t)) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  exact problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half
+    halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
+
+/--
 Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
 every pre-pivot item to a post-pivot mirror.
 -/
