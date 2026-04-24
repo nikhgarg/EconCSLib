@@ -174,6 +174,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   the competitive-ratio invariant. Under small bids, prove the boundary lemma
   that a blocked advertiser has spent fraction strictly above `1 - ε`; this is
   the finite replacement for repeatedly handwaving away exhausted advertisers.
+  Also expose the dual-cover proof through slack scores:
+  `bid * (1 - alpha) ≤ beta` implies the LP dual constraint
+  `bid ≤ bid * alpha + beta`; this is the bridge from Balance choices to
+  `DualFeasible`.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

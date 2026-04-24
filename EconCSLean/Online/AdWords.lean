@@ -226,6 +226,10 @@ For fractions in `[0, 1]`, this lies in `[0, 1]`.
 noncomputable def balanceDiscount (x : ℝ) : ℝ :=
   1 - Real.exp (x - 1)
 
+/-- The MSVV dual variable as a function of used budget fraction. -/
+noncomputable def msvvDualAlpha (x : ℝ) : ℝ :=
+  Real.exp (x - 1)
+
 /-- The classical MSVV competitive ratio `1 - 1/e`. -/
 noncomputable def msvvRatio : ℝ :=
   1 - 1 / Real.exp 1
@@ -235,6 +239,12 @@ noncomputable def balanceScore [Fintype Query] [DecidableEq Advertiser]
     (I : AdWordsInstance Advertiser Query)
     (A : Assignment Advertiser Query) (a : Advertiser) (q : Query) : ℝ :=
   I.bid a q * balanceDiscount (I.spentFraction A a)
+
+/-- Slack-score form of a dual covering constraint for one advertiser-query pair. -/
+noncomputable def slackScore
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (a : Advertiser) (q : Query) : ℝ :=
+  I.bid a q * (1 - alpha a)
 
 /-- Feasible advertisers for the next query under the current partial assignment. -/
 noncomputable def feasibleAdvertisers
@@ -892,6 +902,19 @@ theorem balanceDiscount_mem_unit_interval_of_le_one {x : ℝ} (hx : x ≤ 1) :
     0 ≤ balanceDiscount x ∧ balanceDiscount x ≤ 1 :=
   ⟨balanceDiscount_nonneg_of_le_one hx, balanceDiscount_le_one x⟩
 
+theorem msvvDualAlpha_pos (x : ℝ) :
+    0 < msvvDualAlpha x := by
+  unfold msvvDualAlpha
+  exact Real.exp_pos (x - 1)
+
+theorem msvvDualAlpha_nonneg (x : ℝ) :
+    0 ≤ msvvDualAlpha x :=
+  (msvvDualAlpha_pos x).le
+
+theorem balanceDiscount_eq_one_sub_msvvDualAlpha (x : ℝ) :
+    balanceDiscount x = 1 - msvvDualAlpha x := by
+  rfl
+
 theorem msvvRatio_pos : 0 < msvvRatio := by
   unfold msvvRatio
   have hexp_pos : 0 < Real.exp 1 := Real.exp_pos 1
@@ -921,6 +944,27 @@ theorem balanceScore_nonneg_of_feasible
   exact mul_nonneg (hbid a q)
     (balanceDiscount_nonneg_of_le_one
       (spentFraction_le_one_of_feasible I A a hbudget hfeasible))
+
+theorem balanceScore_eq_slackScore_msvvDualAlpha
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : AdWordsInstance Advertiser Query)
+    (A : Assignment Advertiser Query) (a : Advertiser) (q : Query) :
+    I.balanceScore A a q =
+      I.slackScore (fun b => msvvDualAlpha (I.spentFraction A b)) a q := by
+  simp [balanceScore, balanceDiscount, slackScore, msvvDualAlpha]
+
+theorem dualFeasible_of_slackScore_le_beta
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (beta : Query → ℝ)
+    (halpha : ∀ a, 0 ≤ alpha a)
+    (hbeta : ∀ q, 0 ≤ beta q)
+    (hcover : ∀ a q, I.slackScore alpha a q ≤ beta q) :
+    I.DualFeasible alpha beta := by
+  refine ⟨halpha, hbeta, ?_⟩
+  intro a q
+  have h := hcover a q
+  unfold slackScore at h
+  nlinarith
 
 theorem mem_feasibleAdvertisers
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]

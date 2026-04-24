@@ -93,6 +93,22 @@ theorem paper_adwords_fractional_lp_weak_duality
     I X alpha beta hfeasible hdual
 
 /--
+Dual-feasibility builder in the form used by the Balance/MSVV analysis: it is
+enough to lower-bound every query dual `beta q` by the advertiser slack score
+`bid a q * (1 - alpha a)`.
+-/
+theorem paper_adwords_dual_feasible_of_slack_score_bound
+    {Advertiser Query : Type*}
+    (I : AdWordsInstance Advertiser Query)
+    (alpha : Advertiser → ℝ) (beta : Query → ℝ)
+    (halpha : ∀ a, 0 ≤ alpha a)
+    (hbeta : ∀ q, 0 ≤ beta q)
+    (hcover : ∀ a q, I.slackScore alpha a q ≤ beta q) :
+    I.DualFeasible alpha beta := by
+  exact AdWordsInstance.dualFeasible_of_slackScore_le_beta
+    I alpha beta halpha hbeta hcover
+
+/--
 If some advertiser can still accept a query, a Balance/MSVV scaled-bid maximizer
 exists for that query.
 -/

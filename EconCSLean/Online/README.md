@@ -34,7 +34,8 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Finite offline optimum exists | `paper_adwords_offline_optimum_exists` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets; finite advertisers and queries |
 | Residual budget and feasible next-query assignment | `residualBudget`, `CanAssign`, `canAssign_iff_bid_le_residualBudget` | formalized | `EconCSLean/Online/AdWords.lean` | finite query type |
 | Small-bids condition | `SmallBids`, `paper_adwords_small_bids_blocked_advertiser_spent_fraction` | formalized boundary lemma | `EconCSLean/Online/MainTheorems.lean` | positive budget for blocked advertiser |
-| Balance/MSVV discount and scaled bid | `balanceDiscount`, `balanceScore` | formalized | `EconCSLean/Online/AdWords.lean` | analytic competitive proof not included |
+| Balance/MSVV discount, dual-alpha, and scaled bid | `balanceDiscount`, `msvvDualAlpha`, `balanceScore`, `slackScore` | formalized | `EconCSLean/Online/AdWords.lean` | analytic competitive proof not included |
+| Slack-score dual-feasibility builder | `paper_adwords_dual_feasible_of_slack_score_bound` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative alpha/beta and pointwise slack-score cover |
 | MSVV ratio | `msvvRatio`, `msvvRatio_pos`, `msvvRatio_lt_one` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | Balance/MSVV next-query choice exists | `paper_adwords_balance_choice_exists` | formalized | `EconCSLean/Online/MainTheorems.lean` | at least one advertiser can accept the query |
 | Online history state and run fold | `HistoryState`, `stepHistoryState`, `runHistoryState`, `runAssignment` | formalized | `EconCSLean/Online/AdWords.lean` | repeated query IDs are skipped after first sighting |
