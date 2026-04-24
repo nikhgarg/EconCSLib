@@ -28,5 +28,18 @@ The theorem-1 target for a fixed `θH`: there exists a better algorithmic accura
 noncomputable def Theorem1Target {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) : Prop :=
   ∃ θA, θH < θA ∧ Model.HasMonocultureParadox (AccuracyFamily.modelAt F θA θH)
 
+/--
+Paper-facing theorem statement equivalent.
+
+Theorem 1 (family form) is exactly the existence witness for a higher-accuracy
+algorithm parameter where the induced model has a monoculture paradox.
+-/
+theorem theorem1Target_iff_exists_paradox
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
+    AccuracyFamily.Theorem1Target F θH ↔
+      ∃ θA, θH < θA ∧
+        Model.HasMonocultureParadox (AccuracyFamily.modelAt F θA θH) := by
+  rfl
+
 end AccuracyFamily
 end Monoculture

@@ -157,6 +157,6 @@ theorem paper_theorem1_target
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (h : ∃ θA, θH < θA ∧ Model.HasMonocultureParadox (AccuracyFamily.modelAt F θA θH)) :
     AccuracyFamily.Theorem1Target F θH := by
-  exact h
+  exact (AccuracyFamily.theorem1Target_iff_exists_paradox (F := F) (θH := θH)).2 h
 
 end Monoculture
