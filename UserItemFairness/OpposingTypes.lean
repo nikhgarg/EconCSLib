@@ -955,6 +955,45 @@ private theorem problem6_sum_eq_pivot_add_right_part_of_before_zero {n : ℕ}
     _ = y t + (∑ j : Item n, if t.val < j.val then y j else 0) := by
           simp
 
+private theorem problem6_sum_eq_left_part_add_pivot_add_right_part {n : ℕ}
+    (x : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, x j) =
+      (∑ j : Item n, if j.val < t.val then x j else 0) + x t +
+        (∑ j : Item n, if t.val < j.val then x j else 0) := by
+  classical
+  calc
+    (∑ j : Item n, x j)
+        = ∑ j : Item n,
+            ((if j.val < t.val then x j else 0) +
+              (if j = t then x t else 0) +
+              (if t.val < j.val then x j else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          by_cases hlt : j.val < t.val
+          · have hne : j ≠ t := by
+              intro h
+              subst h
+              omega
+            have hnlt : ¬ t.val < j.val := by omega
+            simp [hlt, hne, hnlt]
+          · by_cases heq : j = t
+            · subst heq
+              simp
+            · have hgt : t.val < j.val := by
+                have hne_val : j.val ≠ t.val := by
+                  intro hval
+                  exact heq (Fin.ext hval)
+                omega
+              simp [hlt, heq, hgt]
+    _ =
+        ((∑ j : Item n, if j.val < t.val then x j else 0) +
+          (∑ j : Item n, if j = t then x t else 0)) +
+          (∑ j : Item n, if t.val < j.val then x j else 0) := by
+          rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) + x t +
+        (∑ j : Item n, if t.val < j.val then x j else 0) := by
+          simp [add_assoc]
+
 /--
 Appendix D, Lemma 10 even-center case: when the midpoint candidate is
 immediately before its mirror, the right inverse-share sum is the left sum plus
@@ -1088,6 +1127,106 @@ theorem problem6SparseEqualized_y_after_eq
       field_simp [hqne]
     _ = ell / (1 - pairShare alpha v j) := by
       rw [hmul]
+
+/--
+Appendix D, Lemma 10 comparison core.  A sparse equalized solution whose pivot
+is to the right of another sparse equalized candidate cannot have a strictly
+larger value, provided the later solution's `x` masses and the candidate's
+pivot `y` mass are nonnegative.
+-/
+theorem problem6SparseEqualized_value_le_of_candidate_before
+    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (h : Problem6SparseEqualized (1 / 2) v t x y ell)
+    (hcand : Problem6SparseEqualized (1 / 2) v c x' y' ell')
+    (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
+    (hy'_pivot_nonneg : 0 ≤ y' c) :
+    ell ≤ ell' := by
+  by_contra hnot
+  have hell_lt : ell' < ell := lt_of_not_ge hnot
+  let q : ℝ := pairShare (1 / 2) v c
+  have hqpos : 0 < q := by
+    simpa [q] using
+      pairShare_pos c (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+  have hqnonneg : 0 ≤ q := hqpos.le
+  have hqcomp_nonneg : 0 ≤ 1 - q := by
+    have hqcomp_pos :
+        0 < 1 - pairShare (1 / 2) v c :=
+      one_sub_pairShare_pos c (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos
+    simpa [q] using hqcomp_pos.le
+  have hitem_later : q * x c = ell := by
+    have heq := h.item_eq c
+    rw [h.y_before_pivot_zero hct] at heq
+    simpa [q] using heq
+  have hitem_candidate : q * x' c + (1 - q) * y' c = ell' := by
+    have heq := hcand.item_eq c
+    simpa [q] using heq
+  have hstrict :
+      q * x c > q * x' c + (1 - q) * y' c := by
+    nlinarith
+  let leftx : ℝ :=
+    ∑ j : Item n, if j.val < c.val then x j else 0
+  let leftx' : ℝ :=
+    ∑ j : Item n, if j.val < c.val then x' j else 0
+  have hleft_le : leftx' ≤ leftx := by
+    unfold leftx leftx'
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    by_cases hjc : j.val < c.val
+    · have hjt : j.val < t.val := lt_trans hjc hct
+      have hqj_nonneg :
+          0 ≤ pairShare (1 / 2) v j :=
+        (pairShare_pos j (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos).le
+      simp [hjc]
+      rw [problem6SparseEqualized_x_before_eq
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hcand hjc,
+        problem6SparseEqualized_x_before_eq
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos h hjt]
+      exact div_le_div_of_nonneg_right hell_lt.le hqj_nonneg
+    · simp [hjc]
+  have hsplit_candidate :=
+    problem6_sum_eq_left_part_add_pivot_of_after_zero
+      x' c hcand.x_after_pivot_zero
+  have hx'_pivot : x' c = 1 - leftx' := by
+    have hsum :
+        (∑ j : Item n, x' j) = leftx' + x' c := by
+      simpa [leftx'] using hsplit_candidate
+    nlinarith [hcand.sum_x, hsum]
+  let rightx : ℝ :=
+    ∑ j : Item n, if c.val < j.val then x j else 0
+  have hright_nonneg : 0 ≤ rightx := by
+    unfold rightx
+    refine Finset.sum_nonneg ?_
+    intro j _hj
+    by_cases hj : c.val < j.val
+    · simp [hj, hx_nonneg j]
+    · simp [hj]
+  have hsplit_later :=
+    problem6_sum_eq_left_part_add_pivot_add_right_part x c
+  have hxc_le : x c ≤ 1 - leftx := by
+    have hsum :
+        (∑ j : Item n, x j) = leftx + x c + rightx := by
+      simpa [leftx, rightx] using hsplit_later
+    nlinarith [h.sum_x, hsum, hright_nonneg]
+  have hx'_ge : 1 - leftx ≤ x' c := by
+    nlinarith [hx'_pivot, hleft_le]
+  have hcandidate_ge :
+      q * (1 - leftx) ≤ q * x' c + (1 - q) * y' c := by
+    have hq_part : q * (1 - leftx) ≤ q * x' c :=
+      mul_le_mul_of_nonneg_left hx'_ge hqnonneg
+    have hy_part : 0 ≤ (1 - q) * y' c :=
+      mul_nonneg hqcomp_nonneg hy'_pivot_nonneg
+    nlinarith
+  have hlater_le : q * x c ≤ q * (1 - leftx) :=
+    mul_le_mul_of_nonneg_left hxc_le hqnonneg
+  nlinarith
 
 private theorem problem6SparseEqualized_left_part_sum_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
@@ -1391,6 +1530,77 @@ theorem problem6ClosedY_nonneg {n : ℕ}
       exact div_nonneg
         (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
         (one_sub_pairShare_pos j halpha0 halpha1 hpos).le
+
+/--
+Appendix D, Lemma 10 comparison specialized to Lemma 5's closed form:
+a closed-form pivot to the right of a nonnegative closed-form candidate cannot
+have a larger `I^*_min` value.
+-/
+theorem problem6ClosedValue_le_of_closed_candidate_before {n : ℕ}
+    {v : Item n → ℝ} {c t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t)
+    (hcandidate : Problem6ClosedNonnegativePivots (1 / 2) v c) :
+    problem6ClosedValue (1 / 2) v t ≤
+      problem6ClosedValue (1 / 2) v c := by
+  exact problem6SparseEqualized_value_le_of_candidate_before
+    hpos hct
+    (problem6Closed_sparseEqualized t
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+    (problem6Closed_sparseEqualized c
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+    (fun j =>
+      problem6ClosedX_nonneg
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot j)
+    (problem6ClosedY_nonneg
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hcandidate c)
+
+/--
+Appendix D, Lemma 10 exact-center candidate comparison: any nonnegative
+closed-form pivot strictly after an exact center candidate has value no larger
+than that candidate.
+-/
+theorem problem6ClosedValue_le_of_center_candidate_before {n : ℕ}
+    {v : Item n → ℝ} {c t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : c.val = (reverseItem c).val)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t) :
+    problem6ClosedValue (1 / 2) v t ≤
+      problem6ClosedValue (1 / 2) v c := by
+  exact problem6ClosedValue_le_of_closed_candidate_before
+    hpos hct hpivot
+    (problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      (problem6ClosedPivotDenominatorBounds_half_center
+        (v := v) (t := c) hpos hcenter))
+
+/--
+Appendix D, Lemma 10 even-center candidate comparison: any nonnegative
+closed-form pivot strictly after the candidate immediately before its mirror has
+value no larger than that candidate.
+-/
+theorem problem6ClosedValue_le_of_succ_center_candidate_before {n : ℕ}
+    {v : Item n → ℝ} {c t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t) :
+    problem6ClosedValue (1 / 2) v t ≤
+      problem6ClosedValue (1 / 2) v c := by
+  exact problem6ClosedValue_le_of_closed_candidate_before
+    hpos hct hpivot
+    (problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      (problem6ClosedPivotDenominatorBounds_half_succ_center
+        (v := v) (t := c) hpos hsucc))
 
 /-- Build a finite PMF from a nonnegative real vector with total mass one. -/
 noncomputable def pmfOfRealVector {n : ℕ}

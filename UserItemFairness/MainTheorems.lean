@@ -1393,6 +1393,71 @@ theorem paper_lemma10_ClosedPivotDenominatorBounds_half_succ_center
   exact problem6ClosedPivotDenominatorBounds_half_succ_center
     (v := v) (t := t) hpos hsucc
 
+/--
+Appendix D, Lemma 10 comparison core: a sparse equalized solution with a pivot
+to the right of another sparse equalized candidate cannot have a larger value
+under the paper's nonnegativity side conditions.
+-/
+theorem paper_lemma10_sparseEqualized_value_le_of_candidate_before
+    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (h : Problem6SparseEqualized (1 / 2) v t x y ell)
+    (hcand : Problem6SparseEqualized (1 / 2) v c x' y' ell')
+    (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
+    (hy'_pivot_nonneg : 0 ≤ y' c) :
+    ell ≤ ell' := by
+  exact problem6SparseEqualized_value_le_of_candidate_before
+    hpos hct h hcand hx_nonneg hy'_pivot_nonneg
+
+/--
+Appendix D, Lemma 10 comparison for Lemma 5 closed forms: a nonnegative
+closed-form pivot to the right of a nonnegative closed-form candidate cannot
+have a larger value.
+-/
+theorem paper_lemma10_closedValue_le_of_closed_candidate_before
+    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t)
+    (hcandidate : Problem6ClosedNonnegativePivots (1 / 2) v c) :
+    problem6ClosedValue (1 / 2) v t ≤
+      problem6ClosedValue (1 / 2) v c := by
+  exact problem6ClosedValue_le_of_closed_candidate_before
+    hpos hct hpivot hcandidate
+
+/--
+Appendix D, Lemma 10 exact-center comparison: a nonnegative closed-form pivot
+strictly after an exact center candidate has value no larger than that candidate.
+-/
+theorem paper_lemma10_closedValue_le_of_center_candidate_before
+    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hcenter : c.val = (reverseItem c).val)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t) :
+    problem6ClosedValue (1 / 2) v t ≤
+      problem6ClosedValue (1 / 2) v c := by
+  exact problem6ClosedValue_le_of_center_candidate_before
+    hpos hcenter hct hpivot
+
+/--
+Appendix D, Lemma 10 even-center comparison: a nonnegative closed-form pivot
+strictly after the candidate immediately before its mirror has value no larger
+than that candidate.
+-/
+theorem paper_lemma10_closedValue_le_of_succ_center_candidate_before
+    {n : ℕ} {v : Item n → ℝ} {c t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hct : c.val < t.val)
+    (hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t) :
+    problem6ClosedValue (1 / 2) v t ≤
+      problem6ClosedValue (1 / 2) v c := by
+  exact problem6ClosedValue_le_of_succ_center_candidate_before
+    hpos hsucc hct hpivot
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
