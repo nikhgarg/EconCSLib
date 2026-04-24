@@ -1,5 +1,5 @@
 import Monoculture.MallowsFiniteLemmas
-import Monoculture.Family
+import Monoculture.Theorem1
 import Monoculture.MallowsPairwise
 
 /-!
@@ -434,6 +434,123 @@ theorem paper_theorem3_finite_sum_certificate_from_candidate_sums
   exact C.centerMallowsFiniteSumCertificate_of_candidateSumCertificate hstrict cert
 
 end MallowsComparison
+
+/--
+Theorem 1 proof notation: `h(θA)` is constant in `θA`.
+-/
+theorem paper_theorem1_h_is_constant
+    {n : ℕ} (F : AccuracyFamily n) (θA θA' θH : ℝ) :
+    AccuracyFamily.theorem1_h F θA θH =
+      AccuracyFamily.theorem1_h F θA' θH :=
+  AccuracyFamily.theorem1_h_const F θA θA' θH
+
+/--
+Theorem 1 proof notation: `f(θA)` is the all-algorithm welfare expression.
+-/
+theorem paper_theorem1_f_eq_algorithm_welfare
+    {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) :
+    AccuracyFamily.theorem1_f F θA θH =
+      Model.welfareRandomOrder (F.modelAt θA θH)
+        Strategy.algorithm Strategy.algorithm :=
+  AccuracyFamily.theorem1_f_eq_algorithm_welfare F θA θH
+
+/--
+Theorem 1 proof notation: `h(θA)` is the all-human welfare expression.
+-/
+theorem paper_theorem1_h_eq_human_welfare
+    {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) :
+    AccuracyFamily.theorem1_h F θA θH =
+      Model.welfareRandomOrder (F.modelAt θA θH)
+        Strategy.human Strategy.human :=
+  AccuracyFamily.theorem1_h_eq_human_welfare F θA θH
+
+/--
+Theorem 1 proof notation, initial crossing side.
+
+Paper statement in the proof: by Definition 2, at equal accuracies
+`f(θH) < g(θH)`, where
+`f(θA) = UA(θA, θH) + UAA(θA, θH)` and
+`g(θA) = UH(θA, θH) + UAH(θA, θH)`.
+-/
+theorem paper_theorem1_initial_f_lt_g_from_definition2
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θH θH)) :
+    AccuracyFamily.theorem1_f F θH θH <
+      AccuracyFamily.theorem1_g F θH θH :=
+  AccuracyFamily.theorem1_f_lt_g_of_paperHypotheses_equalAccuracy
+    F θH hpaper
+
+/--
+Theorem 1 proof notation, weaker-competition side.
+
+Paper statement in the proof: by Definition 3, for `θA > θH`,
+`g(θA) < h(θA)`, where
+`h(θA) = UH(θA, θH) + UHH(θA, θH)`.
+-/
+theorem paper_theorem1_g_lt_h_from_definition3
+    {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θA θH)) :
+    AccuracyFamily.theorem1_g F θA θH <
+      AccuracyFamily.theorem1_h F θA θH :=
+  AccuracyFamily.theorem1_g_lt_h_of_paperHypotheses F θA θH hpaper
+
+/--
+Theorem 1 proof notation, inequality (5).
+
+Paper statement in the proof: Definition 1 monotonicity gives
+`UA(θA, θH) + UHA(θA, θH) > UH(θA, θH) + UHH(θA, θH)`.
+-/
+theorem paper_theorem1_inequality5_from_monotonicity
+    {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ)
+    (hmono : AccuracyFamily.Theorem1MonotonicityAt F θA θH) :
+    AccuracyFamily.theorem1_h F θA θH <
+      AccuracyFamily.theorem1_algorithmAgainstHuman F θA θH :=
+  AccuracyFamily.theorem1_algorithmAgainstHuman_gt_h_of_monotonicity
+    F θA θH hmono
+
+/--
+Paper Theorem 1 from the final crossing certificate.
+
+Paper statement: if a candidate distribution and noisy permutation family satisfy
+Definitions 2 and 3, then for every baseline human accuracy `θH` there exists
+`θA > θH` such that using the common algorithmic ranking is strictly dominant,
+but all-human welfare is higher.
+
+This theorem formalizes the final game-theoretic step: once the paper's
+continuity/asymptotic-optimality argument supplies a `θA` with `g < f < h` and
+Definition 1 monotonicity supplies inequality (5), the monoculture paradox
+follows.
+-/
+theorem paper_theorem1_from_crossing_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1CrossingCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_crossingCertificate cert
+
+/--
+Paper Theorem 1 from the right-neighborhood nudge certificate.
+
+This exposes the final "slightly increase `θA`" move: if there is a right
+neighborhood after the equality point where `g < f < h`, Lean constructs the
+witness accuracy at the midpoint of that neighborhood.
+-/
+theorem paper_theorem1_from_right_nudge_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1RightNudgeCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_rightNudgeCertificate cert
+
+/--
+Paper Theorem 1 from the direct payoff certificate.
+
+This is the same final conclusion stated directly in terms of the two strict
+dominance inequalities and the all-human/all-algorithm welfare comparison.
+-/
+theorem paper_theorem1_from_payoff_certificate
+    {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
+    (cert : AccuracyFamily.Theorem1PayoffCertificate F θH) :
+    AccuracyFamily.Theorem1Target F θH :=
+  AccuracyFamily.theorem1Target_of_payoffCertificate cert
 
 /--
 Paper Theorem 1 (family form).

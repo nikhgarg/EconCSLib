@@ -337,6 +337,62 @@ Use this report template (create in the paper folder, for example
 
 ## Component 2: Theorem Proving Strategies and Suggestions
 
+### 2.0 Classify the Proof Type First
+
+Before writing Lean for a named paper result, classify the hard part. Different
+proof types need different theorem seams; mixing them usually creates huge goals
+and wasted proof search.
+
+- **Definition/interface wrappers.** Use when the paper statement is mostly a
+  named predicate or equivalence of notation. Keep wrappers thin, put the paper
+  wording in docstrings, and do not mark the paper theorem complete unless the
+  wrapper's hypotheses are themselves proved from earlier paper assumptions.
+- **Finite expectation decompositions.** Use when the paper rewrites an expected
+  payoff, utility, welfare, or probability. First prove pointwise identities,
+  then finite PMF/pair-PMF sum identities, then the paper-facing equivalence.
+  Group by the event/fiber that appears in the paper, not by whatever makes the
+  immediate `simp` goal shortest.
+- **Denominator-cleared finite sums.** Use when probabilities or PMFs introduce
+  positive normalizers. Define the unnormalized numerator, prove denominator
+  positivity once, and expose both normalized and cleared positivity
+  equivalences. This keeps later sign certificates independent of probability
+  division noise.
+- **Sign and inequality arguments.** Use certificate structures whose fields are
+  exactly the nonnegativity, strict positivity, monotonicity, or comparison
+  facts needed by the final theorem. Prefer sum-level certificates for
+  expectation theorems; avoid adding candidatewise or termwise assumptions just
+  because they make a finite-sum lemma convenient.
+- **Bijection/fiber enumeration.** Use when a paper counts rankings,
+  allocations, histories, or type fibers. Normalize the objects with explicit
+  equivalences, prove weight/exponent/cardinality preservation separately, then
+  lift sums through `Finset.sum_bij`. Do not combine the bijection proof with
+  the final economic inequality.
+- **Game/payoff bridges.** Use when the paper says a strategy is dominant or a
+  welfare comparison follows from payoff inequalities. Define the paper's
+  scalar functions exactly (`f`, `g`, `h`, utilities, welfare), prove algebraic
+  equivalences to the existing game predicates, then prove the theorem from a
+  small crossing or payoff certificate.
+- **Analytic/existence/crossing proofs.** Use when the paper invokes
+  differentiability, continuity, limits, asymptotic optimality, or an
+  intermediate-value argument. First prove the finite game/probability algebra
+  conditionally from a named analytic certificate. Only then instantiate that
+  certificate from topology/analysis assumptions. Keep continuity/limit imports
+  local and narrow.
+- **Model-instantiation proofs.** Use when a theorem says a concrete model
+  satisfies abstract assumptions. Preserve the abstract theorem as a thin
+  wrapper, then instantiate each assumption in separate files. Do not hide
+  unproved model facts as fields of the final theorem unless the README marks
+  the result conditional by that exact certificate name.
+- **Validation/reporting proofs.** Use when checking whether a paper is done.
+  Rebuild the human-facing theorem file, search the paper folder for
+  placeholders, compare every paper-facing theorem statement to the source, and
+  state remaining conditional certificates explicitly in the validation report.
+
+When stuck, move sideways to a smaller seam of the same type instead of jumping
+to another paper theorem. For example, in a game/existence proof, finish the
+payoff algebra and abstract crossing theorem before trying to prove a concrete
+Mallows/RUM family satisfies the analytic assumptions.
+
 ### 2.1 External Library Reconnaissance
 
 Before implementing substantial probability, statistics, or learning-theory

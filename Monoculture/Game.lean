@@ -33,11 +33,17 @@ Utility when the labeled first mover uses `s₁`
 and the labeled second mover uses `s₂`.
 -/
 noncomputable def secondMoverEU {n : ℕ} (M : Model n) (s₁ s₂ : Strategy) : ℝ :=
-  expectedSecondMoverIndependent (M.rankingDist s₂) (M.rankingDist s₁) M.value
+  match s₁, s₂ with
+  | .algorithm, .algorithm => expectedSecondMoverShared M.algorithmRanking M.value
+  | _, _ => expectedSecondMoverIndependent (M.rankingDist s₂) (M.rankingDist s₁) M.value
 
 /-- Social welfare for the ordered game in which the `s₁`-firm hires first. -/
 noncomputable def welfareOrdered {n : ℕ} (M : Model n) (s₁ s₂ : Strategy) : ℝ :=
-  expectedWelfareOrdered (M.rankingDist s₂) (M.rankingDist s₁) M.value
+  match s₁, s₂ with
+  | .algorithm, .algorithm =>
+      expectedFirstMoverUtility M.algorithmRanking M.value +
+        expectedSecondMoverShared M.algorithmRanking M.value
+  | _, _ => expectedWelfareOrdered (M.rankingDist s₂) (M.rankingDist s₁) M.value
 
 /-- Ex ante welfare when the order of the two labeled firms is uniform. -/
 noncomputable def welfareRandomOrder {n : ℕ} (M : Model n) (s₁ s₂ : Strategy) : ℝ :=

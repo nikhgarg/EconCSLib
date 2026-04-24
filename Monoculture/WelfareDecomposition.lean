@@ -65,9 +65,9 @@ namespace Model
 theorem welfareOrdered_eq_firstMoverEU_add_secondMoverEU {n : ℕ}
     (M : Model n) (s₁ s₂ : Strategy) :
     welfareOrdered M s₁ s₂ = firstMoverEU M s₁ + secondMoverEU M s₁ s₂ := by
-  unfold welfareOrdered firstMoverEU secondMoverEU
-  exact expectedWelfareOrdered_eq_firstMover_add_secondMoverIndependent
-    (μ₂ := M.rankingDist s₂) (μ₁ := M.rankingDist s₁) (value := M.value)
+  cases s₁ <;> cases s₂ <;>
+    simp [welfareOrdered, firstMoverEU, secondMoverEU, rankingDist,
+      expectedWelfareOrdered_eq_firstMover_add_secondMoverIndependent]
 
 end Model
 

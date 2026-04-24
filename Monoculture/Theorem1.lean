@@ -1,0 +1,294 @@
+import Monoculture.Family
+import Monoculture.Payoff
+
+namespace Monoculture
+namespace AccuracyFamily
+
+/-!
+# Theorem 1 Payoff Bridge
+
+This file formalizes the game-theoretic core of paper Theorem 1.  The remaining
+analytic task is to instantiate the crossing certificate from Definition 1's
+differentiability/asymptotic-optimality/monotonicity assumptions.
+-/
+
+/--
+Paper proof notation:
+
+`f(θA) = UA(θA, θH) + UAA(θA, θH)`.
+
+This is the random-order payoff numerator for using the algorithm when the
+opponent also uses the algorithm.
+-/
+noncomputable def theorem1_f {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) : ℝ :=
+  let M := F.modelAt θA θH
+  Model.firstMoverEU M Strategy.algorithm +
+    Model.secondMoverEU M Strategy.algorithm Strategy.algorithm
+
+/--
+Paper proof notation:
+
+`g(θA) = UH(θA, θH) + UAH(θA, θH)`.
+
+This is the random-order payoff numerator for using a human evaluator when the
+opponent uses the algorithm.
+-/
+noncomputable def theorem1_g {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) : ℝ :=
+  let M := F.modelAt θA θH
+  Model.firstMoverEU M Strategy.human +
+    Model.secondMoverEU M Strategy.algorithm Strategy.human
+
+/--
+Paper proof notation:
+
+`h(θA) = UH(θA, θH) + UHH(θA, θH)`.
+
+This is both the all-human welfare expression and the payoff numerator for using
+a human evaluator when the opponent also uses a human evaluator.
+-/
+noncomputable def theorem1_h {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) : ℝ :=
+  let M := F.modelAt θA θH
+  Model.firstMoverEU M Strategy.human +
+    Model.secondMoverEU M Strategy.human Strategy.human
+
+/--
+The second strict-dominance numerator in the paper:
+
+`UA(θA, θH) + UHA(θA, θH)`.
+-/
+noncomputable def theorem1_algorithmAgainstHuman {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ) : ℝ :=
+  let M := F.modelAt θA θH
+  Model.firstMoverEU M Strategy.algorithm +
+    Model.secondMoverEU M Strategy.human Strategy.algorithm
+
+/-- In the paper's notation, `h(θA)` is constant as `θA` varies. -/
+theorem theorem1_h_const {n : ℕ} (F : AccuracyFamily n) (θA θA' θH : ℝ) :
+    theorem1_h F θA θH = theorem1_h F θA' θH := by
+  simp [theorem1_h, modelAt, Model.firstMoverEU, Model.secondMoverEU,
+    Model.rankingDist]
+
+/-- `f(θA)` is exactly all-algorithm random-order welfare. -/
+theorem theorem1_f_eq_algorithm_welfare {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ) :
+    theorem1_f F θA θH =
+      Model.welfareRandomOrder (F.modelAt θA θH)
+        Strategy.algorithm Strategy.algorithm := by
+  rw [Model.welfareRandomOrder_self]
+  rw [Model.welfareOrdered_eq_firstMoverEU_add_secondMoverEU]
+  rfl
+
+/-- `h(θA)` is exactly all-human random-order welfare. -/
+theorem theorem1_h_eq_human_welfare {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ) :
+    theorem1_h F θA θH =
+      Model.welfareRandomOrder (F.modelAt θA θH)
+        Strategy.human Strategy.human := by
+  rw [Model.welfareRandomOrder_self]
+  rw [Model.welfareOrdered_eq_firstMoverEU_add_secondMoverEU]
+  rfl
+
+/--
+The local monotonicity consequences of Definition 1 used for inequality (5) in
+the proof of Theorem 1.
+-/
+structure Theorem1MonotonicityAt {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) :
+    Prop where
+  firstMover_strict :
+    Model.firstMoverEU (F.modelAt θA θH) Strategy.human <
+      Model.firstMoverEU (F.modelAt θA θH) Strategy.algorithm
+  secondMover_weak :
+    Model.secondMoverEU (F.modelAt θA θH) Strategy.human Strategy.human ≤
+      Model.secondMoverEU (F.modelAt θA θH) Strategy.human Strategy.algorithm
+
+/--
+The paper's final crossing state: after the initial equality point is nudged
+upward, `g < f < h`, and monotonicity supplies the second dominance inequality.
+-/
+structure Theorem1CrossingCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
+    Type where
+  θA : ℝ
+  theta_gt : θH < θA
+  first_dominance_crossing : theorem1_g F θA θH < theorem1_f F θA θH
+  welfare_gap_persists : theorem1_f F θA θH < theorem1_h F θA θH
+  monotonicity : Theorem1MonotonicityAt F θA θH
+
+/--
+The paper's final "slightly increase `θA`" step as a right-neighborhood
+certificate.  It is designed to be instantiated later from continuity and the
+chosen crossing point.
+-/
+structure Theorem1RightNudgeCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
+    Type where
+  θstar : ℝ
+  radius : ℝ
+  thetaH_lt_star : θH < θstar
+  radius_pos : 0 < radius
+  between_on_right :
+    ∀ θA, θstar < θA → θA < θstar + radius →
+      theorem1_g F θA θH < theorem1_f F θA θH ∧
+        theorem1_f F θA θH < theorem1_h F θA θH
+  monotonicity :
+    ∀ θA, θH < θA → Theorem1MonotonicityAt F θA θH
+
+/--
+The direct payoff certificate for Theorem 1's conclusion.
+-/
+structure Theorem1PayoffCertificate {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
+    Type where
+  θA : ℝ
+  theta_gt : θH < θA
+  algorithm_beats_human_against_algorithm :
+    theorem1_g F θA θH < theorem1_f F θA θH
+  algorithm_beats_human_against_human :
+    theorem1_h F θA θH < theorem1_algorithmAgainstHuman F θA θH
+  human_welfare_beats_algorithm :
+    theorem1_f F θA θH < theorem1_h F θA θH
+
+/--
+Monotonicity converts the paper's inequality (5) into the second strict
+dominance comparison.
+-/
+theorem theorem1_algorithmAgainstHuman_gt_h_of_monotonicity {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ)
+    (hmono : Theorem1MonotonicityAt F θA θH) :
+    theorem1_h F θA θH < theorem1_algorithmAgainstHuman F θA θH := by
+  unfold theorem1_h theorem1_algorithmAgainstHuman
+  linarith [hmono.firstMover_strict, hmono.secondMover_weak]
+
+/--
+The crossing certificate is exactly the paper's final `g < f < h` step plus the
+monotonicity proof of inequality (5).
+-/
+def payoffCertificate_of_crossingCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1CrossingCertificate F θH) :
+    Theorem1PayoffCertificate F θH where
+  θA := cert.θA
+  theta_gt := cert.theta_gt
+  algorithm_beats_human_against_algorithm := cert.first_dominance_crossing
+  algorithm_beats_human_against_human :=
+    theorem1_algorithmAgainstHuman_gt_h_of_monotonicity
+      F cert.θA θH cert.monotonicity
+  human_welfare_beats_algorithm := cert.welfare_gap_persists
+
+/--
+The right-neighborhood version of the paper's nudge step supplies a concrete
+crossing certificate by choosing the midpoint `θstar + radius / 2`.
+-/
+noncomputable def crossingCertificate_of_rightNudgeCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1RightNudgeCertificate F θH) :
+    Theorem1CrossingCertificate F θH := by
+  let θA := cert.θstar + cert.radius / 2
+  have hhalf_pos : 0 < cert.radius / 2 := half_pos cert.radius_pos
+  have hstar_lt : cert.θstar < θA := by
+    dsimp [θA]
+    linarith
+  have hθ : θH < θA := cert.thetaH_lt_star.trans hstar_lt
+  have hwithin : θA < cert.θstar + cert.radius := by
+    dsimp [θA]
+    linarith
+  have hbetween := cert.between_on_right θA hstar_lt hwithin
+  exact
+    { θA := θA
+      theta_gt := hθ
+      first_dominance_crossing := hbetween.1
+      welfare_gap_persists := hbetween.2
+      monotonicity := cert.monotonicity θA hθ }
+
+/--
+A payoff certificate yields the fixed-parameter monoculture paradox.
+-/
+theorem hasMonocultureParadox_of_payoffCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1PayoffCertificate F θH) :
+    Model.HasMonocultureParadox (F.modelAt cert.θA θH) := by
+  constructor
+  · unfold Model.AlgorithmStrictlyDominant
+    constructor
+    · simpa [theorem1_f, theorem1_g] using
+        cert.algorithm_beats_human_against_algorithm
+    · simpa [theorem1_h, theorem1_algorithmAgainstHuman] using
+        cert.algorithm_beats_human_against_human
+  · unfold Model.HumanProfileBeatsAlgorithmProfile
+    rw [Model.welfareRandomOrder_self, Model.welfareRandomOrder_self]
+    rw [Model.welfareOrdered_eq_firstMoverEU_add_secondMoverEU,
+      Model.welfareOrdered_eq_firstMoverEU_add_secondMoverEU]
+    simpa [theorem1_f, theorem1_h] using cert.human_welfare_beats_algorithm
+
+/--
+Paper Theorem 1, conditional on the final crossing certificate.
+-/
+theorem theorem1Target_of_payoffCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1PayoffCertificate F θH) :
+    Theorem1Target F θH := by
+  exact ⟨cert.θA, cert.theta_gt, hasMonocultureParadox_of_payoffCertificate cert⟩
+
+/--
+Paper Theorem 1, conditional on the crossing certificate produced by the paper's
+continuity/asymptotic-optimality argument.
+-/
+theorem theorem1Target_of_crossingCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1CrossingCertificate F θH) :
+    Theorem1Target F θH :=
+  theorem1Target_of_payoffCertificate
+    (payoffCertificate_of_crossingCertificate cert)
+
+/--
+Paper Theorem 1 from the right-neighborhood nudge certificate.
+-/
+theorem theorem1Target_of_rightNudgeCertificate {n : ℕ}
+    {F : AccuracyFamily n} {θH : ℝ}
+    (cert : Theorem1RightNudgeCertificate F θH) :
+    Theorem1Target F θH :=
+  theorem1Target_of_crossingCertificate
+    (crossingCertificate_of_rightNudgeCertificate cert)
+
+/--
+Definition 3 gives `g(θA) < h(θA)` at any pair `θA > θH` where the induced model
+satisfies the paper hypotheses.
+-/
+theorem theorem1_g_lt_h_of_prefersWeakerCompetition {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ)
+    (hweak :
+      Model.PrefersWeakerCompetition (F.dist θA) (F.dist θH) F.value) :
+    theorem1_g F θA θH < theorem1_h F θA θH := by
+  unfold theorem1_g theorem1_h Model.PrefersWeakerCompetition at *
+  simp [modelAt, Model.firstMoverEU, Model.secondMoverEU, Model.rankingDist] at *
+  linarith
+
+/--
+Definition 3, read through `Model.PaperHypotheses`.
+-/
+theorem theorem1_g_lt_h_of_paperHypotheses {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θA θH)) :
+    theorem1_g F θA θH < theorem1_h F θA θH :=
+  theorem1_g_lt_h_of_prefersWeakerCompetition F θA θH hpaper.2
+
+/--
+Definition 2 supplies the initial strict inequality `f(θ) < g(θ)` when the
+algorithm and human accuracies are equal.
+-/
+theorem theorem1_f_lt_g_of_prefersIndependent_equalAccuracy {n : ℕ}
+    (F : AccuracyFamily n) (θ : ℝ)
+    (hind : Model.PrefersIndependentReranking (F.dist θ) F.value) :
+    theorem1_f F θ θ < theorem1_g F θ θ := by
+  unfold theorem1_f theorem1_g Model.PrefersIndependentReranking at *
+  simp [modelAt, Model.firstMoverEU, Model.secondMoverEU, Model.rankingDist] at *
+  linarith
+
+/--
+Definition 2, read through `Model.PaperHypotheses` at equal accuracies.
+-/
+theorem theorem1_f_lt_g_of_paperHypotheses_equalAccuracy {n : ℕ}
+    (F : AccuracyFamily n) (θ : ℝ)
+    (hpaper : Model.PaperHypotheses (F.modelAt θ θ)) :
+    theorem1_f F θ θ < theorem1_g F θ θ :=
+  theorem1_f_lt_g_of_prefersIndependent_equalAccuracy F θ hpaper.1
+
+end AccuracyFamily
+end Monoculture
