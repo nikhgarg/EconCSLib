@@ -232,9 +232,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `historyMaxBidAlphaErrorSum ε history + historyMaxBidErrorSum ε history`.
   Then combine the two error sums into `historyMsvvSmallBidsErrorSum` and prove
   the algebraic bound by `ε * (Real.exp 1 + 1) * historyMaxBidSum` for
-  `0 ≤ ε ≤ 1`. Add a delta-form wrapper saying the algorithm is competitive up
-  to additive `δ` whenever that algebraic error is at most `δ`; when
-  `historyMaxBidSum` is positive, also expose the explicit threshold
+  `0 ≤ ε ≤ 1`; under a nodup-cover history, reindex `historyMaxBidSum` to the
+  finite query sum `∑ q, maxBidForQuery q` for the paper-facing statement. Add
+  a delta-form wrapper saying the algorithm is competitive up to additive `δ`
+  whenever that algebraic error is at most `δ`; when `historyMaxBidSum` is
+  positive, also expose the explicit threshold
   `min 1 (δ / ((Real.exp 1 + 1) * historyMaxBidSum))` for the `SmallBids`
   assumption. The remaining paper seam is then a model-level limiting theorem
   over a family of small-bid instances; do not force the discrete finite-bid

@@ -590,6 +590,18 @@ theorem sum_univ_maxBidError_eq_historyMaxBidErrorSum_of_cover
   rw [sum_univ_eq_list_sum_of_historyFinset_eq_univ history hnodup hcover]
   rw [historyMaxBidErrorSum_eq_list_sum]
 
+theorem sum_univ_maxBidForQuery_eq_historyMaxBidSum_of_cover
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : historyFinset history = Finset.univ) :
+    (∑ q : Query, I.maxBidForQuery q) =
+      I.historyMaxBidSum history := by
+  rw [sum_univ_eq_list_sum_of_historyFinset_eq_univ history hnodup hcover]
+  rw [historyMaxBidSum_eq_list_sum]
+
 /--
 A reusable certificate for the competitive-ratio conclusion. The hard paper
 proof supplies this certificate for the Balance/MSVV algorithm with ratio
@@ -3789,8 +3801,34 @@ theorem balance_msvv_approx_competitive_with_error_bound
           ε * (Real.exp 1 + 1) * I.historyMaxBidSum history := by
     simpa [add_comm, add_left_comm, add_assoc] using
       add_le_add_left herror
-        (I.revenue (I.runAssignment I.balanceChoiceRule history))
+          (I.revenue (I.runAssignment I.balanceChoiceRule history))
   exact hbase'.trans hbound
+
+theorem balance_msvv_approx_competitive_with_query_sum_error_bound
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : historyFinset history = Finset.univ)
+    {ε : ℝ}
+    (hε : 0 ≤ ε)
+    (hε_le_one : ε ≤ 1)
+    (hsmall : I.SmallBids ε) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) +
+        ε * (Real.exp 1 + 1) *
+          (∑ q : Query, I.maxBidForQuery q) := by
+  have hbase :=
+    balance_msvv_approx_competitive_with_error_bound
+      I hbid hbudget history hnodup hcover hε hε_le_one hsmall
+  have hsum :=
+    sum_univ_maxBidForQuery_eq_historyMaxBidSum_of_cover
+      I history hnodup hcover
+  rw [hsum]
+  exact hbase
 
 theorem balance_msvv_approx_competitive_up_to_delta
     [Fintype Advertiser] [Nonempty Advertiser]
