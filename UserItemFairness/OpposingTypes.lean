@@ -1859,6 +1859,15 @@ theorem twoTypeReducedModel_positiveUtilities {n : ℕ}
   intro k j
   fin_cases k <;> simp [hpos]
 
+/-- Positive base values give every opposing type a positive item. -/
+theorem twoTypeReducedModel_rowHasPositiveItem {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (twoTypeReducedModel alpha v).RowHasPositiveItem := by
+  intro k
+  let j0 : Item n := Classical.choice inferInstance
+  exact ⟨j0, twoTypeReducedModel_positiveUtilities alpha v hpos k j0⟩
+
 /-- The two opposing types have the same best-item utility. -/
 theorem twoTypeReducedModel_bestItemUtility_one_eq_zero {n : ℕ} [NeZero n]
     (alpha : ℝ) (v : Item n → ℝ) :
@@ -7862,6 +7871,213 @@ theorem problem6LPOptimalValue_eq_of_certificate
     exact le_csSup hLPBdd ⟨cert.policy, cert.feasible⟩
 
 /--
+Problem 6 optimal-value theorem for any policy/value pair that is already
+known to solve the epigraph LP.
+-/
+theorem problem6LPOptimalValue_eq_of_policyOptimal
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    problem6LPOptimalValue alpha v = ell := by
+  exact problem6LPOptimalValue_eq_of_certificate
+    alpha v ell halpha0 halpha1 hpos
+    { policy := ρ
+      feasible := hopt.1
+      upper_bound := hopt.2 }
+
+/--
+Any Problem 6 policy-optimal solution is feasible for the reduced
+maximal-item-fairness problem at level `γ = 1`.
+-/
+theorem problem6PolicyOptimal_feasibleAtLevel_one
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (twoTypeReducedModel alpha v) 1 ρ := by
+  have hLP_eq_item :=
+    problem6LPOptimalValue_eq_optimalItemFairness
+      alpha v halpha0 halpha1 hpos
+  have hLP_eq_ell :=
+    problem6LPOptimalValue_eq_of_policyOptimal
+      halpha0 halpha1 hpos hopt
+  have hell_le_item :
+      ell ≤ TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ :=
+    (problem6LPFeasible_iff_le_itemFairness
+      alpha v ρ ell halpha0 halpha1 hpos).mp hopt.1
+  simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using
+    (calc
+      TypeWeightedRecommendationModel.optimalItemFairness
+          (twoTypeReducedModel alpha v)
+          = problem6LPOptimalValue alpha v := hLP_eq_item.symm
+      _ = ell := hLP_eq_ell
+      _ ≤ TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ := hell_le_item)
+
+/--
+Conversely, every policy feasible at maximal item-fairness level `γ = 1`
+solves Problem 6 when paired with its reduced item-fairness value.
+-/
+theorem problem6PolicyOptimal_of_feasibleAtLevel_one
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ) :
+    Problem6PolicyOptimal alpha v ρ
+      (TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ) := by
+  refine ⟨?_, ?_⟩
+  · exact (problem6LPFeasible_iff_le_itemFairness
+      alpha v ρ
+      (TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ)
+      halpha0 halpha1 hpos).mpr le_rfl
+  · intro ρ' ell' hfeas'
+    have hell'_le_item :
+        ell' ≤ TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ' :=
+      (problem6LPFeasible_iff_le_itemFairness
+        alpha v ρ' ell' halpha0 halpha1 hpos).mp hfeas'
+    have hWeightNonneg :
+        (twoTypeReducedModel alpha v).NonnegativeWeights :=
+      TypeWeightedRecommendationModel.nonnegativeWeights_of_positiveWeights
+        (twoTypeReducedModel alpha v)
+        (twoTypeReducedModel_positiveWeights alpha v halpha0 halpha1)
+    have hUtilNonneg :
+        (twoTypeReducedModel alpha v).NonnegativeUtilities :=
+      TypeWeightedRecommendationModel.nonnegativeUtilities_of_positiveUtilities
+        (twoTypeReducedModel alpha v)
+        (twoTypeReducedModel_positiveUtilities alpha v hpos)
+    have hbdd :
+        BddAbove (TypeWeightedRecommendationModel.attainableItemFairnessSet
+          (twoTypeReducedModel alpha v)) :=
+      TypeWeightedRecommendationModel.attainableItemFairnessSet_bddAbove_of_nonnegative
+        (twoTypeReducedModel alpha v) hWeightNonneg hUtilNonneg
+    have hitem_mem :
+        TypeWeightedRecommendationModel.itemFairness
+          (twoTypeReducedModel alpha v) ρ' ∈
+            TypeWeightedRecommendationModel.attainableItemFairnessSet
+              (twoTypeReducedModel alpha v) := by
+      exact ⟨ρ', rfl⟩
+    have hitem_le_opt :
+        TypeWeightedRecommendationModel.itemFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.optimalItemFairness
+            (twoTypeReducedModel alpha v) :=
+      le_csSup hbdd hitem_mem
+    have hopt_le_item :
+        TypeWeightedRecommendationModel.optimalItemFairness
+            (twoTypeReducedModel alpha v) ≤
+          TypeWeightedRecommendationModel.itemFairness
+            (twoTypeReducedModel alpha v) ρ := by
+      simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using hfeas
+    exact hell'_le_item.trans (hitem_le_opt.trans hopt_le_item)
+
+/--
+The paper's selected equality-form optimal BFS policy is feasible for the
+reduced maximal-item-fairness problem at level `γ = 1`.
+-/
+theorem problem6EqualizedBasicOptimal_feasibleAtLevel_one
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (twoTypeReducedModel alpha v) 1 ρ := by
+  exact problem6PolicyOptimal_feasibleAtLevel_one
+    halpha0 halpha1 hpos h.optimal
+
+/--
+The selected equality-form optimal BFS policy contributes its type-fairness
+value to the `γ = 1` feasible type-fairness set.
+-/
+theorem problem6EqualizedBasicOptimal_typeFairness_mem_attainable_one
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ ∈
+      TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 := by
+  exact ⟨ρ,
+    problem6EqualizedBasicOptimal_feasibleAtLevel_one
+      halpha0 halpha1 hpos h,
+    rfl⟩
+
+/--
+The selected Problem 6 policy's type fairness is bounded above by the reduced
+`U^*_min(1, α)` value.
+-/
+theorem problem6EqualizedBasicOptimal_typeFairness_le_optimalTypeFairnessAtLevel_one
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 := by
+  have hbdd :
+      BddAbove (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1) :=
+    TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+      (twoTypeReducedModel alpha v)
+      (twoTypeReducedModel_rowHasPositiveItem alpha v hpos) 1
+  exact le_csSup hbdd
+    (problem6EqualizedBasicOptimal_typeFairness_mem_attainable_one
+      halpha0 halpha1 hpos h)
+
+/--
+If the selected equality-form optimal BFS policy upper-bounds the type fairness
+of every policy feasible at level `γ = 1`, then it realizes the reduced
+`U^*_min(1, α)` optimum.
+-/
+theorem problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_upper_bound
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (hupper :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha v) ρ' ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha v) ρ) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  apply le_antisymm
+  · unfold TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+    refine csSup_le ?_ ?_
+    · exact ⟨TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ,
+        problem6EqualizedBasicOptimal_typeFairness_mem_attainable_one
+          halpha0 halpha1 hpos h⟩
+    · intro r hr
+      rcases hr with ⟨ρ', hfeas', hr⟩
+      rw [hr]
+      exact hupper ρ' hfeas'
+  · exact
+      problem6EqualizedBasicOptimal_typeFairness_le_optimalTypeFairnessAtLevel_one
+        halpha0 halpha1 hpos h
+
+/--
 Closed-form Problem 6 optimal-value theorem: after the paper-specific
 denominator and upper-bound certificate is supplied, the LP optimum is the
 Lemma 5 closed value.
@@ -8383,6 +8599,188 @@ theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_chain
         (hopt i (Nat.le_trans (Nat.le_of_lt hi) (Nat.le_refl r)))
         hhalf)
     hopt
+
+/--
+Theorem 3 bridge to the reduced `U^*_min(1, α)` objective: if every selected
+equality-form optimal BFS policy in the finite chain also upper-bounds all
+`γ = 1` feasible policies in type fairness, then the reduced optimal
+type-fairness value is monotone along that chain.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_upper_bound
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hupper :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) (ρSeq i)) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  have hleft :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel (alphaSeq 0) v) 1 =
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel (alphaSeq 0) v) (ρSeq 0) :=
+    problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_upper_bound
+      (halpha0 0 (Nat.zero_le r))
+      (halpha1 0 (Nat.zero_le r))
+      hpos
+      (hopt 0 (Nat.zero_le r))
+      (hupper 0 (Nat.zero_le r))
+  have hright :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel (alphaSeq r) v) 1 =
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel (alphaSeq r) v) (ρSeq r) :=
+    problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_upper_bound
+      (halpha0 r le_rfl)
+      (halpha1 r le_rfl)
+      hpos
+      (hopt r le_rfl)
+      (hupper r le_rfl)
+  rw [hleft, hright]
+  exact theorem3_typeFairness_mono_of_same_selected_or_equal_alpha_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep
+    hpos hdec hpivot_or_eq hcenter hopt
+
+/--
+Theorem 3 bridge to reduced `U^*_min(1, α)`, odd-center first-half chain:
+Lemma 10 supplies the first-half pivot condition, while the supplied upper
+bound identifies each selected policy with the reduced `γ = 1` type-fairness
+optimum.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_chain_of_upper_bound
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf)
+    (hupper :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) (ρSeq i)) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact
+    theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_upper_bound
+      r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep
+      hpos hdec hpivot_or_eq
+      (fun i hi =>
+        lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center
+          hn (halpha0 i (Nat.le_of_lt hi))
+          (halpha1 i (Nat.le_of_lt hi))
+          (halpha_half i (Nat.le_of_lt hi))
+          hpos hdec hcenter_c (hopt i (Nat.le_of_lt hi)) hhalf)
+      hopt hupper
+
+/--
+Theorem 3 bridge to reduced `U^*_min(1, α)`, even-center first-half chain.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_chain_of_upper_bound
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {c : Item n}
+    (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    {ρhalf : TypePolicy 2 n} {ellHalf : ℝ}
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (halpha_half : ∀ i, i ≤ r → alphaSeq i ≤ 1 / 2)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hpivot_or_eq :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)) ∨
+        alphaSeq i = alphaSeq (i + 1))
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i))
+    (hhalf :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρhalf ellHalf)
+    (hupper :
+      ∀ i, i ≤ r →
+        ∀ ρ' : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel (alphaSeq i) v) 1 ρ' →
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel (alphaSeq i) v) (ρSeq i)) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq 0) v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (alphaSeq r) v) 1 := by
+  exact
+    theorem3_optimalTypeFairnessAtLevel_one_mono_of_same_selected_or_equal_alpha_chain_of_upper_bound
+      r alphaSeq ρSeq ellSeq hn halpha0 halpha1 halpha_half hstep
+      hpos hdec hpivot_or_eq
+      (fun i hi =>
+        lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center
+          hn (halpha0 i (Nat.le_of_lt hi))
+          (halpha1 i (Nat.le_of_lt hi))
+          (halpha_half i (Nat.le_of_lt hi))
+          hpos hdec hsucc (hopt i (Nat.le_of_lt hi)) hhalf)
+      hopt hupper
 
 end OpposingTypes
 end UserItemFairness
