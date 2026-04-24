@@ -117,6 +117,62 @@ theorem withClickThroughRates_smallBids_of_ctr_le_one
     _ ≤ ε * I.budget a := hsmall a q
 
 /--
+Section 8 weighted-bid variant: advertiser weights scale all bids from the
+same advertiser.
+-/
+def withAdvertiserWeights
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ) :
+    AdWordsInstance Advertiser Query :=
+  I.withEffectiveBids fun a q => weight a * I.bid a q
+
+@[simp]
+theorem withAdvertiserWeights_budget
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ) :
+    (I.withAdvertiserWeights weight).budget = I.budget :=
+  rfl
+
+@[simp]
+theorem withAdvertiserWeights_bid
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ) (a : Advertiser) (q : Query) :
+    (I.withAdvertiserWeights weight).bid a q = weight a * I.bid a q :=
+  rfl
+
+theorem withAdvertiserWeights_nonnegativeBids
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ)
+    (hweight : ∀ a, 0 ≤ weight a)
+    (hbid : I.NonnegativeBids) :
+    (I.withAdvertiserWeights weight).NonnegativeBids := by
+  intro a q
+  exact mul_nonneg (hweight a) (hbid a q)
+
+theorem withAdvertiserWeights_positiveBudgets
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ)
+    (hbudget : I.PositiveBudgets) :
+    (I.withAdvertiserWeights weight).PositiveBudgets :=
+  hbudget
+
+theorem withAdvertiserWeights_smallBids_of_weight_le_one
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ) {ε : ℝ}
+    (hweight_le_one : ∀ a, weight a ≤ 1)
+    (hbid : I.NonnegativeBids)
+    (hsmall : I.SmallBids ε) :
+    (I.withAdvertiserWeights weight).SmallBids ε := by
+  intro a q
+  have hmul : weight a * I.bid a q ≤ 1 * I.bid a q :=
+    mul_le_mul_of_nonneg_right (hweight_le_one a) (hbid a q)
+  calc
+    (I.withAdvertiserWeights weight).bid a q = weight a * I.bid a q := rfl
+    _ ≤ 1 * I.bid a q := hmul
+    _ = I.bid a q := by ring
+    _ ≤ ε * I.budget a := hsmall a q
+
+/--
 Advertiser-availability variant: inactive advertisers have effective bid zero.
 This models delayed entry, scheduled eligibility, or other exogenous activity
 constraints expressible at the query level.

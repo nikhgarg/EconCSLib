@@ -269,10 +269,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   After the family theorem is closed, formalize Section 6-style variants as
   reductions to effective-bid AdWords instances. The useful transformations are
   arbitrary effective charges, click-through-rate bids (`CTR * bid`),
-  availability/delayed-entry masks that zero inactive bids, and slot-query
-  expansion. Be explicit that the slot-query expansion is an independent
-  slot-query reduction; it does not by itself enforce a per-page
-  distinct-advertiser constraint unless a separate feasibility layer is added.
+  advertiser-weighted bids (`weight * bid`), availability/delayed-entry masks
+  that zero inactive bids, and slot-query expansion. Be explicit that the
+  slot-query expansion is an independent slot-query reduction; it does not by
+  itself enforce a per-page distinct-advertiser constraint unless a separate
+  feasibility layer is added.
   For the Section 7 randomized lower bound, do not bury Yao's lemma inside the
   algorithm proof. First add a finite lower-bound certificate interface whose
   fields are the distributional instance family, deterministic-algorithm

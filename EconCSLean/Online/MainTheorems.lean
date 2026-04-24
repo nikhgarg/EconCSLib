@@ -653,6 +653,21 @@ theorem paper_adwords_click_through_rates_small_bids
     I ctr hctr_le_one hbid hsmall
 
 /--
+Section 8 weighted-bid reduction: if advertiser weights are at most one and
+original bids are nonnegative and small, then weighted effective bids are small.
+-/
+theorem paper_adwords_weighted_bids_small_bids
+    {Advertiser Query : Type*}
+    (I : AdWordsInstance Advertiser Query)
+    (weight : Advertiser → ℝ) {ε : ℝ}
+    (hweight_le_one : ∀ a, weight a ≤ 1)
+    (hbid : I.NonnegativeBids)
+    (hsmall : I.SmallBids ε) :
+    (I.withAdvertiserWeights weight).SmallBids ε := by
+  exact AdWordsInstance.withAdvertiserWeights_smallBids_of_weight_le_one
+    I weight hweight_le_one hbid hsmall
+
+/--
 Section 6 delayed-entry/availability reduction: inactive advertisers can be
 modeled by zero effective bids without breaking the small-bids hypothesis.
 -/

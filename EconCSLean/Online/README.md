@@ -37,6 +37,7 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Small-bids condition | `SmallBids`, `paper_adwords_small_bids_blocked_advertiser_spent_fraction` | formalized boundary lemma | `EconCSLean/Online/MainTheorems.lean` | positive budget for blocked advertiser |
 | Section 6 arbitrary effective charges | `withEffectiveBids`, `paper_adwords_effective_bids_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | effective charges must satisfy the target small-bids bound |
 | Section 6 click-through rates | `withClickThroughRates`, `paper_adwords_click_through_rates_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | CTRs at most one; original bids nonnegative and small |
+| Section 8 advertiser-weighted effective bids | `withAdvertiserWeights`, `paper_adwords_weighted_bids_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | weights at most one; original bids nonnegative and small |
 | Section 6 advertiser availability / delayed entry | `withAvailability`, `paper_adwords_availability_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | nonnegative `ε`, positive budgets, original small-bids condition |
 | Section 6 slot-query expansion | `withSlots`, `paper_adwords_multiple_slots_small_bids` | formalized reduction | `EconCSLean/Online/AdWordsExtensions.lean`, `EconCSLean/Online/MainTheorems.lean` | models independent slot queries; per-page distinct-advertiser feasibility is not encoded |
 | Section 7 finite Yao lower-bound lemma | `Decision.exists_input_randomized_payoff_le_of_forall_deterministic_average_le` | formalized generic lemma | `EconCSLean/Decision/Yao.lean` | finite deterministic algorithm and input types |
@@ -129,11 +130,12 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family`: any
    `MsvvSmallBidsLimitFamily` has limiting guarantee
    `msvvRatio * optLimit ≤ revenueLimit`.
-5. Section 6 extension reductions are now formalized as effective-bid
-   transformations: arbitrary effective charges, click-through rates,
-   delayed-entry/availability masks, and slot-query expansion. The slot
-   expansion is the independent slot-query reduction; a stronger per-page
-   distinct-advertiser model would require an additional feasibility layer.
+5. Section 6 and Section 8 extension reductions are now formalized as
+   effective-bid transformations: arbitrary effective charges, click-through
+   rates, advertiser weights, delayed-entry/availability masks, and slot-query
+   expansion. The slot expansion is the independent slot-query reduction; a
+   stronger per-page distinct-advertiser model would require an additional
+   feasibility layer.
 6. Section 7 now has the finite Yao/minimax expectation lemma, the uniform
    permutation distribution over bidders, the paper's explicit finite harmonic
    revenue-bound expression, and paper-facing Theorem 9 wrappers. Remaining
