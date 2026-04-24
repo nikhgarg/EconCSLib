@@ -1054,6 +1054,43 @@ theorem paper_lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_
     hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
 
 /--
+Appendix D, Lemma 4 optimality bridge: an equalized optimal Problem 6 policy
+admits no feasible policy that strictly improves every item value.
+-/
+theorem paper_problem6_noStrictPointwiseImprovement_of_policyOptimal_equalized
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    Problem6PolicyNoStrictPointwiseImprovement alpha v ρ := by
+  exact problem6_noStrictPointwiseImprovement_of_policyOptimal_equalized
+    hitem_eq hopt
+
+/--
+Appendix D, Lemma 4 threshold-support conclusion for an equalized optimal
+Problem 6 policy, with the paper's redistribution vector discharged by `2 < n`.
+-/
+theorem paper_lemma4_twoTypeThresholdSupport_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    TypePolicy.TwoTypeThresholdSupport ρ := by
+  exact lemma4_twoTypeThresholdSupport_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+
+/--
 Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
 donor coordinate remains nonnegative.
 -/

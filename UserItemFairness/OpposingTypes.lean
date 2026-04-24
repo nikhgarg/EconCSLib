@@ -3326,6 +3326,55 @@ def Problem6PolicyNoStrictPointwiseImprovement {n : ℕ}
       pairShare alpha v j * (ρ' 0 j).toReal +
         (1 - pairShare alpha v j) * (ρ' 1 j).toReal
 
+/-- A policy/value pair is optimal for the Problem 6 epigraph LP. -/
+def Problem6PolicyOptimal {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (ell : ℝ) : Prop :=
+  problem6LPFeasible alpha v ρ ell ∧
+    ∀ (ρ' : TypePolicy 2 n) (ell' : ℝ),
+      problem6LPFeasible alpha v ρ' ell' → ell' ≤ ell
+
+/--
+An equalized optimal Problem 6 policy admits no feasible policy that strictly
+improves every item value.
+-/
+theorem problem6_noStrictPointwiseImprovement_of_policyOptimal_equalized
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    Problem6PolicyNoStrictPointwiseImprovement alpha v ρ := by
+  classical
+  intro hbad
+  rcases hbad with ⟨ρ', hstrict⟩
+  let value' : Item n → ℝ := fun l =>
+    pairShare alpha v l * (ρ' 0 l).toReal +
+      (1 - pairShare alpha v l) * (ρ' 1 l).toReal
+  let delta : ℝ := DecisionCore.finiteMin (fun l : Item n => value' l - ell)
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    apply DecisionCore.finiteMin_pos
+    intro l
+    have hs := hstrict l
+    rw [hitem_eq l] at hs
+    dsimp [value']
+    exact sub_pos.mpr hs
+  let ell' : ℝ := ell + delta
+  have hfeas' : problem6LPFeasible alpha v ρ' ell' := by
+    intro l
+    have hdelta_le :
+        delta ≤ value' l - ell := by
+      dsimp [delta]
+      exact DecisionCore.finiteMin_le
+        (fun l : Item n => value' l - ell) l
+    dsimp [ell', value'] at hdelta_le ⊢
+    linarith
+  have hle := hopt.2 ρ' ell' hfeas'
+  dsimp [ell'] at hle
+  linarith
+
 /--
 Appendix D, Lemma 4 no-gap consequence for the first row.
 
@@ -3610,6 +3659,31 @@ theorem lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_two_lt
     halpha0 halpha1 hpos hdec
     (fun hij => lemma4_redistribution_exists_of_two_lt hn hij)
     hitem_eq hno hshared
+
+/--
+Appendix D, Lemma 4 threshold-support conclusion for an equalized optimal
+Problem 6 policy, with the paper's redistribution vector discharged by `2 < n`.
+-/
+theorem lemma4_twoTypeThresholdSupport_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    TypePolicy.TwoTypeThresholdSupport ρ := by
+  have hno :
+      Problem6PolicyNoStrictPointwiseImprovement alpha v ρ :=
+    problem6_noStrictPointwiseImprovement_of_policyOptimal_equalized
+      hitem_eq hopt
+  exact lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
 
 /-- The Problem 6 closed-form real solution as a two-type policy. -/
 noncomputable def problem6ClosedPolicy {n : ℕ}
