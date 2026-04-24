@@ -134,5 +134,139 @@ def SharedItemsBound {K n : ℕ} (ρ : TypePolicy K n) : Prop :=
 def SparseShape {K n : ℕ} (ρ : TypePolicy K n) : Prop :=
   ActivePairsBound ρ ∧ SharedItemsBound ρ
 
+/-- Types that recommend item `j` with positive probability. -/
+noncomputable def activeTypesForItem {K n : ℕ}
+    (ρ : TypePolicy K n) (j : Item n) : Finset (UserType K) :=
+  Finset.univ.filter fun k => ρ k j ≠ 0
+
+@[simp] theorem mem_activeTypesForItem {K n : ℕ}
+    (ρ : TypePolicy K n) (j : Item n) (k : UserType K) :
+    k ∈ activeTypesForItem ρ j ↔ ρ k j ≠ 0 := by
+  simp [activeTypesForItem]
+
+noncomputable def primaryActiveType {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0)
+    (j : Item n) : UserType K :=
+  Classical.choose (hcover j)
+
+theorem primaryActiveType_spec {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0)
+    (j : Item n) :
+    ρ (primaryActiveType ρ hcover j) j ≠ 0 :=
+  Classical.choose_spec (hcover j)
+
+theorem exists_activeType_ne_primary_of_shared {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0)
+    {j : Item n} (hj : j ∈ sharedItems ρ) :
+    ∃ k, k ≠ primaryActiveType ρ hcover j ∧ ρ k j ≠ 0 := by
+  rcases (DecisionCore.Policy.mem_multiAssignedActions ρ j).mp hj with
+    ⟨k, k', hne, hk, hk'⟩
+  by_cases hp : primaryActiveType ρ hcover j = k
+  · refine ⟨k', ?_, hk'⟩
+    intro hkp
+    exact hne (hp.symm.trans hkp.symm)
+  · exact ⟨k, (by intro h; exact hp h.symm), hk⟩
+
+noncomputable def secondaryActiveType {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0)
+    (j : {j : Item n // j ∈ sharedItems ρ}) : UserType K :=
+  Classical.choose (exists_activeType_ne_primary_of_shared ρ hcover j.property)
+
+theorem secondaryActiveType_ne_primary {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0)
+    (j : {j : Item n // j ∈ sharedItems ρ}) :
+    secondaryActiveType ρ hcover j ≠ primaryActiveType ρ hcover j :=
+  (Classical.choose_spec
+    (exists_activeType_ne_primary_of_shared ρ hcover j.property)).1
+
+theorem secondaryActiveType_spec {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0)
+    (j : {j : Item n // j ∈ sharedItems ρ}) :
+    ρ (secondaryActiveType ρ hcover j) j.1 ≠ 0 :=
+  (Classical.choose_spec
+    (exists_activeType_ne_primary_of_shared ρ hcover j.property)).2
+
+noncomputable def itemSharedInjection {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    (Item n ⊕ {j : Item n // j ∈ sharedItems ρ}) →
+      {p : UserType K × Item n // p ∈ activeTypeItemPairs ρ}
+  | Sum.inl j =>
+      ⟨(primaryActiveType ρ hcover j, j), by
+        simpa [activeTypeItemPairs] using primaryActiveType_spec ρ hcover j⟩
+  | Sum.inr j =>
+      ⟨(secondaryActiveType ρ hcover j, j.1), by
+        simpa [activeTypeItemPairs] using secondaryActiveType_spec ρ hcover j⟩
+
+theorem itemSharedInjection_injective {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    Function.Injective (itemSharedInjection ρ hcover) := by
+  intro x y hxy
+  cases x with
+  | inl j =>
+      cases y with
+      | inl j' =>
+          simp [itemSharedInjection] at hxy
+          exact congrArg Sum.inl hxy.2
+      | inr sj =>
+          simp [itemSharedInjection] at hxy
+          have hitem : j = sj.1 := hxy.2
+          subst hitem
+          exact False.elim ((secondaryActiveType_ne_primary ρ hcover sj) hxy.1.symm)
+  | inr sj =>
+      cases y with
+      | inl j =>
+          simp [itemSharedInjection] at hxy
+          have hitem : sj.1 = j := hxy.2
+          subst hitem
+          exact False.elim ((secondaryActiveType_ne_primary ρ hcover sj) hxy.1)
+      | inr sj' =>
+          simp [itemSharedInjection] at hxy
+          exact congrArg Sum.inr hxy.2
+
+/--
+If every item is recommended by some type, then active type-item pairs contain
+one pair for every item plus one additional pair for every shared item.
+-/
+theorem card_items_add_sharedItems_le_activePairsCard {K n : ℕ}
+    (ρ : TypePolicy K n) (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    n + (sharedItems ρ).card ≤ activeTypeItemPairsCard ρ := by
+  have hcard :=
+    Fintype.card_le_of_injective (itemSharedInjection ρ hcover)
+      (itemSharedInjection_injective ρ hcover)
+  have hdomain :
+      Fintype.card (Item n ⊕ {j : Item n // j ∈ sharedItems ρ}) =
+        n + (sharedItems ρ).card := by
+    simp [Fintype.card_sum, Fintype.card_coe, Item]
+  have hcodomain :
+      Fintype.card {p : UserType K × Item n // p ∈ activeTypeItemPairs ρ} =
+        (activeTypeItemPairs ρ).card := by
+    exact Fintype.card_coe (activeTypeItemPairs ρ)
+  rw [hdomain, hcodomain] at hcard
+  simpa [activeTypeItemPairsCard] using hcard
+
+theorem sharedItemsBound_of_activePairsBound_of_item_coverage {K n : ℕ}
+    [NeZero K]
+    (ρ : TypePolicy K n)
+    (hactive : ActivePairsBound ρ)
+    (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    SharedItemsBound ρ := by
+  have hlower := card_items_add_sharedItems_le_activePairsCard ρ hcover
+  unfold ActivePairsBound at hactive
+  unfold SharedItemsBound
+  have hK : 1 ≤ K := Nat.succ_le_of_lt (Nat.pos_of_ne_zero (NeZero.ne K))
+  have hle : n + (sharedItems ρ).card ≤ n + (K - 1) := by
+    rw [← Nat.add_sub_assoc hK n]
+    exact le_trans hlower hactive
+  exact Nat.add_le_add_iff_left.mp hle
+
+theorem sparseShape_of_activePairsBound_of_item_coverage {K n : ℕ}
+    [NeZero K]
+    (ρ : TypePolicy K n)
+    (hactive : ActivePairsBound ρ)
+    (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    SparseShape ρ := by
+  exact ⟨hactive, sharedItemsBound_of_activePairsBound_of_item_coverage
+    ρ hactive hcover⟩
+
 end TypePolicy
 end UserItemFairness

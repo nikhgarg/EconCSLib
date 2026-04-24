@@ -240,6 +240,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   shifts can appear when the derivative depends on `x_t + 1`; keep the theorem
   conditional or log a proof-audit note until the exact discrete rounding bound
   is recovered.
+- For LP sparsity results, separate the linear-programming theorem from the
+  finite counting consequence. First encode the active-support bound supplied
+  by basic feasible solutions, then prove reusable counting lemmas such as:
+  if every item has an active type and total active type-item pairs are at most
+  `n + K - 1`, then at most `K - 1` items can be shared by multiple types.
 - For strict monotonicity claims, check boundary cases before proving the
   general theorem. Bernoulli/probability variance terms often become
   identically zero at `q = 0` or `q = 1`, so a paper statement that says

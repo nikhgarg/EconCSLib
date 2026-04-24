@@ -264,4 +264,38 @@ theorem paper_symmetric_original_optimum_descends_to_reduced_of_nonempty
     reps γ hρ (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
 
 end ReductionWitness
+
+namespace TypePolicy
+
+/--
+Proposition 1 sparse shared-item consequence.
+
+If a reduced type-level policy has at most `n + K - 1` active type-item pairs
+and every item is recommended by at least one type, then at most `K - 1` items
+are shared by multiple user types. This is the finite counting half of the
+paper's sparse-support statement, separated from the LP basic-feasible-solution
+theorem that supplies the active-pair bound.
+-/
+theorem paper_sparse_shared_items_of_active_pairs_bound
+    {K n : ℕ} [NeZero K]
+    (ρ : TypePolicy K n)
+    (hactive : ActivePairsBound ρ)
+    (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    SharedItemsBound ρ := by
+  exact sharedItemsBound_of_activePairsBound_of_item_coverage ρ hactive hcover
+
+/--
+Proposition 1 sparse-shape consequence from active-pair sparsity and item
+coverage.
+-/
+theorem paper_sparse_shape_of_active_pairs_bound
+    {K n : ℕ} [NeZero K]
+    (ρ : TypePolicy K n)
+    (hactive : ActivePairsBound ρ)
+    (hcover : ∀ j : Item n, ∃ k, ρ k j ≠ 0) :
+    SparseShape ρ := by
+  exact sparseShape_of_activePairsBound_of_item_coverage ρ hactive hcover
+
+end TypePolicy
+
 end UserItemFairness
