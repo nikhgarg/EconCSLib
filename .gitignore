@@ -19,6 +19,9 @@
 !.env.example
 *.log
 
+# Paper source PDFs cached locally for formalization
+UserItemFairness/*.pdf
+
 # Editor and OS noise
 .DS_Store
 Thumbs.db

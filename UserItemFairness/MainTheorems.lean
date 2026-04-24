@@ -2154,6 +2154,20 @@ theorem paper_lemma4_problem6_inactive_pairs_ge_n_sub_one
     ρ hcert
 
 /--
+Appendix D, Lemma 4, Part 2 threshold-support extraction: after the
+perturbation argument has ruled out gaps in the `x` and `y` supports, the
+shared-item sparsity bound forces a single pivot `t`.
+-/
+theorem paper_lemma4_problem6_thresholdSupport_of_zeroClosed_of_sharedBound
+    {n : ℕ} [NeZero n] (ρ : TypePolicy 2 n)
+    (hx : TwoTypeXZeroClosed ρ)
+    (hy : TwoTypeYZeroClosed ρ)
+    (hshared : SharedItemsBound ρ) :
+    TwoTypeThresholdSupport ρ := by
+  exact twoTypeThresholdSupport_of_zeroClosed_of_sharedBound
+    ρ hx hy hshared
+
+/--
 Proposition 1 sparse shared-item consequence.
 
 If a reduced type-level policy has at most `n + K - 1` active type-item pairs

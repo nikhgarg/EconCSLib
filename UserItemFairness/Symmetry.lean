@@ -149,6 +149,144 @@ def SparseShape {K n : ℕ} (ρ : TypePolicy K n) : Prop :=
   ActivePairsBound ρ ∧ SharedItemsBound ρ
 
 /--
+Two-type threshold support shape from Appendix D, Lemma 4: type `0` only uses
+items weakly before the pivot and type `1` only uses items weakly after it.
+-/
+def TwoTypeThresholdSupport {n : ℕ} (ρ : TypePolicy 2 n) : Prop :=
+  ∃ t : Item n,
+    (∀ {j : Item n}, t.val < j.val → ρ 0 j = 0) ∧
+    (∀ {j : Item n}, j.val < t.val → ρ 1 j = 0)
+
+/--
+No-gap condition for the first row of Problem 6: once an earlier `x_j` is zero,
+all later `x_i` are zero.
+-/
+def TwoTypeXZeroClosed {n : ℕ} (ρ : TypePolicy 2 n) : Prop :=
+  ∀ {j i : Item n}, j.val < i.val → ρ 0 j = 0 → ρ 0 i = 0
+
+/--
+No-gap condition for the second row of Problem 6: once a later `y_j` is zero,
+all earlier `y_i` are zero.
+-/
+def TwoTypeYZeroClosed {n : ℕ} (ρ : TypePolicy 2 n) : Prop :=
+  ∀ {i j : Item n}, i.val < j.val → ρ 1 j = 0 → ρ 1 i = 0
+
+/-- Every PMF row of a type policy uses at least one item. -/
+theorem exists_active_item_for_type {K n : ℕ} [NeZero n]
+    (ρ : TypePolicy K n) (k : UserType K) :
+    ∃ j : Item n, ρ k j ≠ 0 := by
+  by_contra hnone
+  push Not at hnone
+  have hsum := DecisionCore.pmfToRealSum (ρ k)
+  have hzero : (∑ j : Item n, (ρ k j).toReal) = 0 := by
+    simp [hnone]
+  linarith
+
+/-- Items used with positive probability by type `0`. -/
+noncomputable def typeZeroActiveItems {n : ℕ}
+    (ρ : TypePolicy 2 n) : Finset (Item n) :=
+  Finset.univ.filter fun j => ρ 0 j ≠ 0
+
+theorem typeZeroActiveItems_nonempty {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) :
+    (typeZeroActiveItems ρ).Nonempty := by
+  rcases exists_active_item_for_type ρ 0 with ⟨j, hj⟩
+  exact ⟨j, by simp [typeZeroActiveItems, hj]⟩
+
+/-- The last item used by type `0`; this is the pivot candidate in Lemma 4. -/
+noncomputable def lastActiveTypeZero {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) : Item n :=
+  (typeZeroActiveItems ρ).max' (typeZeroActiveItems_nonempty ρ)
+
+theorem lastActiveTypeZero_active {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) :
+    ρ 0 (lastActiveTypeZero ρ) ≠ 0 := by
+  have hmem :=
+    Finset.max'_mem (typeZeroActiveItems ρ)
+      (typeZeroActiveItems_nonempty ρ)
+  simpa [lastActiveTypeZero, typeZeroActiveItems] using hmem
+
+theorem typeZero_zero_after_lastActive {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n) {j : Item n}
+    (hj : (lastActiveTypeZero ρ).val < j.val) :
+    ρ 0 j = 0 := by
+  by_contra hne
+  have hmem : j ∈ typeZeroActiveItems ρ := by
+    simp [typeZeroActiveItems, hne]
+  have hle :
+      j ≤ lastActiveTypeZero ρ := by
+    simpa [lastActiveTypeZero] using
+      (typeZeroActiveItems ρ).le_max' j hmem
+  have hle_val : j.val ≤ (lastActiveTypeZero ρ).val := hle
+  omega
+
+theorem typeZero_active_before_lastActive_of_zeroClosed {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 2 n)
+    (hx : TwoTypeXZeroClosed ρ) {j : Item n}
+    (hj : j.val < (lastActiveTypeZero ρ).val) :
+    ρ 0 j ≠ 0 := by
+  by_contra hz
+  exact lastActiveTypeZero_active ρ (hx hj hz)
+
+theorem mem_sharedItems_of_two_type_active {n : ℕ}
+    (ρ : TypePolicy 2 n) {j : Item n}
+    (hx : ρ 0 j ≠ 0) (hy : ρ 1 j ≠ 0) :
+    j ∈ sharedItems ρ := by
+  simp [sharedItems]
+  exact Or.inl ⟨hx, hy⟩
+
+/--
+Appendix D, Lemma 4 threshold extraction: the support no-gap properties,
+together with the Proposition 2 shared-item bound, force the sparse threshold
+shape used in Lemma 5.
+-/
+theorem twoTypeThresholdSupport_of_zeroClosed_of_sharedBound {n : ℕ}
+    [NeZero n] (ρ : TypePolicy 2 n)
+    (hx : TwoTypeXZeroClosed ρ)
+    (hy : TwoTypeYZeroClosed ρ)
+    (hshared : SharedItemsBound ρ) :
+    TwoTypeThresholdSupport ρ := by
+  classical
+  refine ⟨lastActiveTypeZero ρ, ?_, ?_⟩
+  · intro j hj
+    exact typeZero_zero_after_lastActive ρ hj
+  · intro j hj
+    by_contra hyj_zero
+    have hxj : ρ 0 j ≠ 0 :=
+      typeZero_active_before_lastActive_of_zeroClosed ρ hx hj
+    have hyj : ρ 1 j ≠ 0 := hyj_zero
+    have hyt : ρ 1 (lastActiveTypeZero ρ) ≠ 0 := by
+      by_contra hyt_zero
+      exact hyj (hy hj hyt_zero)
+    have hxt : ρ 0 (lastActiveTypeZero ρ) ≠ 0 :=
+      lastActiveTypeZero_active ρ
+    have hj_shared : j ∈ sharedItems ρ :=
+      mem_sharedItems_of_two_type_active ρ hxj hyj
+    have ht_shared : lastActiveTypeZero ρ ∈ sharedItems ρ :=
+      mem_sharedItems_of_two_type_active ρ hxt hyt
+    have hne : j ≠ lastActiveTypeZero ρ := by
+      intro h
+      subst h
+      omega
+    have hpair_subset :
+        ({j, lastActiveTypeZero ρ} : Finset (Item n)) ⊆ sharedItems ρ := by
+      intro a ha
+      simp at ha
+      rcases ha with rfl | rfl
+      · exact hj_shared
+      · exact ht_shared
+    have htwo : 2 ≤ (sharedItems ρ).card := by
+      have hcard :
+          ({j, lastActiveTypeZero ρ} : Finset (Item n)).card = 2 := by
+        simp [hne]
+      calc
+        2 = ({j, lastActiveTypeZero ρ} : Finset (Item n)).card := hcard.symm
+        _ ≤ (sharedItems ρ).card := Finset.card_le_card hpair_subset
+    have hone : (sharedItems ρ).card ≤ 1 := by
+      simpa [SharedItemsBound] using hshared
+    omega
+
+/--
 Support-count consequence of the LP basic-feasible-solution theorem used in
 the paper. The linear-programming fact supplies that at least
 `nK + 1 - (n + K)` nonnegativity constraints bind; in the recommendation LP
