@@ -2805,6 +2805,31 @@ theorem paper_lemma11_problem6LPOptimalValue_mono_of_same_selected_equalizedBasi
     hpos hdec hpivot hcenter h h'
 
 /--
+Appendix D, Lemma 11 canonical first-pivot interval form: if the paper's
+canonical Lemma 5 first crossing pivot stays fixed on an `A(t)` interval, then
+the Problem 6 LP optimum is monotone there.
+-/
+theorem paper_lemma11_problem6LPOptimalValue_mono_of_same_firstClosedPivot
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    problem6LPOptimalValue alpha v ≤ problem6LPOptimalValue alpha' v := by
+  exact lemma11_problem6LPOptimalValue_mono_of_same_firstClosedPivot
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter
+
+/--
 Appendix D, Lemma 11 reduced-model form: on a certified fixed-pivot interval,
 the reduced optimal item fairness is monotone in `α`.
 -/
@@ -2897,6 +2922,34 @@ theorem paper_lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalized
   exact lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal
     hn halpha0 halpha1 halpha0' halpha1' halpha_le
     hpos hdec hpivot hcenter h h'
+
+/--
+Appendix D, Lemma 11 canonical first-pivot reduced-model form: the reduced
+optimal item-fairness value is monotone on each first-half `A(t)` interval for
+the canonical Lemma 5 first crossing pivot.
+-/
+theorem paper_lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter
 
 /--
 Appendix D, Lemma 8 finite-stitch core: a finite chain of adjacent

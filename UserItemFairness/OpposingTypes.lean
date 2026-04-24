@@ -9626,6 +9626,45 @@ theorem lemma11_problem6LPOptimalValue_mono_of_same_selected_equalizedBasicOptim
       halpha0' halpha1' hpos h')
 
 /--
+Appendix D, Lemma 11 canonical first-pivot interval form: if the first
+closed-form crossing pivot is the same at `α ≤ α'`, and that pivot lies in the
+first half, then the actual Problem 6 LP optimum is monotone on this `A(t)`
+interval.  This removes the arbitrary selected-BFS family from the fixed-pivot
+step by using the canonical Lemma 5 first crossing pivot.
+-/
+theorem lemma11_problem6LPOptimalValue_mono_of_same_firstClosedPivot
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    problem6LPOptimalValue alpha v ≤ problem6LPOptimalValue alpha' v := by
+  let t : Item n := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  have cert : Problem6ClosedOptimalityCertificate alpha v t := by
+    dsimp [t]
+    exact problem6FirstClosedPivot_optimalityCertificate
+      halpha0 halpha1 hpos hdec
+  have cert' : Problem6ClosedOptimalityCertificate alpha' v t := by
+    have cert'_raw :
+        Problem6ClosedOptimalityCertificate alpha' v
+          (problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos) :=
+      problem6FirstClosedPivot_optimalityCertificate
+        halpha0' halpha1' hpos hdec
+    simpa [t, hpivot] using cert'_raw
+  exact lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec (by simpa [t] using hcenter) cert cert'
+
+/--
 Appendix D, Lemma 11 reduced-model form: on a fixed-pivot interval certified by
 the paper's closed-form optimality certificates, the reduced optimal item
 fairness is monotone in `α`.
@@ -9731,6 +9770,38 @@ theorem lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicO
   exact lemma11_problem6LPOptimalValue_mono_of_same_selected_equalizedBasicOptimal
     hn halpha0 halpha1 halpha0' halpha1' halpha_le
     hpos hdec hpivot hcenter h h'
+
+/--
+Appendix D, Lemma 11 canonical first-pivot reduced-model form: on an `A(t)`
+interval where the canonical Lemma 5 first pivot stays fixed in the first half,
+the reduced optimal item-fairness value is monotone.
+-/
+theorem lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      problem6FirstClosedPivot alpha v halpha0 halpha1 hpos =
+        problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  rw [← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha v halpha0 halpha1 hpos,
+    ← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha' v halpha0' halpha1' hpos]
+  exact lemma11_problem6LPOptimalValue_mono_of_same_firstClosedPivot
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hpivot hcenter
 
 /--
 Appendix D, Lemma 8 finite-stitch core: if a finite sequence of selected
