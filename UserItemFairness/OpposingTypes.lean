@@ -236,6 +236,23 @@ theorem sum_reverseItem {n : ℕ} (f : Item n → ℝ) :
   simpa [reverseItemEquiv] using
     (Equiv.sum_comp (reverseItemEquiv n) f)
 
+/-- Reindexing by item reversal preserves finite maxima. -/
+theorem finiteMax_reverseItem {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    DecisionCore.finiteMax (fun j : Item n => v (reverseItem j)) =
+      DecisionCore.finiteMax v := by
+  apply le_antisymm
+  · obtain ⟨j, hj⟩ :=
+      DecisionCore.exists_finiteMax_eq
+        (fun j : Item n => v (reverseItem j))
+    rw [hj]
+    exact DecisionCore.le_finiteMax v (reverseItem j)
+  · obtain ⟨j, hj⟩ := DecisionCore.exists_finiteMax_eq v
+    rw [hj]
+    have hle :=
+      DecisionCore.le_finiteMax
+        (fun j : Item n => v (reverseItem j)) (reverseItem j)
+    simpa [reverseItem_reverseItem] using hle
+
 /-- The indexed `q_j(α)` used in the opposing-preference proofs. -/
 noncomputable def pairShare {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (j : Item n) : ℝ :=
@@ -557,6 +574,29 @@ theorem twoTypeReducedModel_positiveUtilities {n : ℕ}
     (twoTypeReducedModel alpha v).PositiveUtilities := by
   intro k j
   fin_cases k <;> simp [hpos]
+
+/-- The two opposing types have the same best-item utility. -/
+theorem twoTypeReducedModel_bestItemUtility_one_eq_zero {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0 := by
+  unfold TypeWeightedRecommendationModel.bestItemUtility
+  change DecisionCore.finiteMax (fun j : Item n => v (reverseItem j)) =
+    DecisionCore.finiteMax v
+  exact finiteMax_reverseItem v
+
+/-- Positive base values give a positive common best-item denominator. -/
+theorem twoTypeReducedModel_bestItemUtility_zero_pos {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < TypeWeightedRecommendationModel.bestItemUtility
+      (twoTypeReducedModel alpha v) 0 := by
+  let j0 : Item n := Classical.choice inferInstance
+  unfold TypeWeightedRecommendationModel.bestItemUtility
+  change 0 < DecisionCore.finiteMax v
+  exact lt_of_lt_of_le (hpos j0) (DecisionCore.le_finiteMax v j0)
 
 /-- Item normalizers in the two-type model are the denominators of `q_j(α)`. -/
 theorem twoTypeReducedModel_itemNormalizer_eq {n : ℕ}
@@ -1530,6 +1570,33 @@ theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
       hpivot_gap
   exact problem6ClosedPolicy_normalizedType_one_le_zero_of_raw
     halpha0 halpha1 hpos hpivot hbest hbest_pos hraw
+
+/--
+Lemma 6 normalized-utility comparison under `α ≤ 1/2`, with the common
+best-item denominator discharged by the opposing-preference model.
+-/
+theorem problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t)) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
+    halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
+    (twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v)
+    (twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos)
 
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq

@@ -706,6 +706,23 @@ theorem paper_problem6_twoType_itemNormalizer_eq
       alpha * v j + (1 - alpha) * v (reverseItem j) := by
   exact twoTypeReducedModel_itemNormalizer_eq alpha v j
 
+/-- The two opposing types have the same best-item denominator. -/
+theorem paper_problem6_twoType_bestItemUtility_one_eq_zero
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0 := by
+  exact twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v
+
+/-- Positive base values make the common best-item denominator positive. -/
+theorem paper_problem6_twoType_bestItemUtility_zero_pos
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < TypeWeightedRecommendationModel.bestItemUtility
+      (twoTypeReducedModel alpha v) 0 := by
+  exact twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos
+
 /--
 Problem 6 setup: in the two-type opposing-preference model, normalized item
 utility expands as `q_j(α) x_j + (1 - q_j(α)) y_j`.
@@ -1181,6 +1198,31 @@ theorem paper_lemma6_closedPolicy_normalizedType_one_le_zero_of_alpha_le_half
   exact problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half
     halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
     hbest hbest_pos
+
+/--
+Appendix D, Lemma 6 normalized-utility comparison under `α ≤ 1/2`, with the
+common best-item denominator discharged by the opposing-preference model.
+-/
+theorem paper_lemma6_closedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot_gap :
+      0 ≤ problem6ClosedX alpha v t t -
+        problem6ClosedY alpha v t (reverseItem t)) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 0 := by
+  exact problem6ClosedPolicy_normalizedType_one_le_zero_of_alpha_le_half_auto_best
+    halpha0 halpha1 halpha_half hpos hdec hpivot hcenter hpivot_gap
 
 /--
 Appendix D, Lemma 6 mirror-index condition: a pivot at or before center sends
