@@ -2938,6 +2938,168 @@ theorem paper_lemma6_closedPolicy_rawTypeUtility_one_eq
     halpha0 halpha1 hpos hpivot
 
 /--
+Theorem 3 closed-form expansion for type `1`'s raw utility: pivot mirror value
+plus the tail correction weighted by `I^*_{min}/(1-q_j)`.
+-/
+theorem paper_theorem3_closedTypeOneRawUtility_eq_pivot_add_tail
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeOneRawUtility alpha v t =
+      v (reverseItem t) +
+        ∑ j : Item n,
+          if t.val < j.val then
+            problem6ClosedValue alpha v t / (1 - pairShare alpha v j) *
+              (v (reverseItem j) - v (reverseItem t))
+          else 0 := by
+  exact problem6ClosedTypeOneRawUtility_eq_pivot_add_tail alpha v t
+
+/--
+Theorem 3 displayed formula for type `1`'s normalized utility of the closed
+Problem 6 policy, with the best-item denominator explicit.
+-/
+theorem paper_theorem3_closedPolicy_normalizedTypeUtility_one_eq_pivot_add_tail
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 =
+      (v (reverseItem t) +
+        ∑ j : Item n,
+          if t.val < j.val then
+            problem6ClosedValue alpha v t / (1 - pairShare alpha v j) *
+              (v (reverseItem j) - v (reverseItem t))
+          else 0) /
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 := by
+  exact problem6ClosedPolicy_normalizedTypeUtility_one_eq_pivot_add_tail
+    halpha0 halpha1 hpos hpivot
+
+/--
+Theorem 3 tail-gap positivity: for items after the pivot, the mirror value is
+strictly above the pivot mirror value.
+-/
+theorem paper_theorem3_tailGap_pos_of_pivot_lt
+    {n : ℕ} {v : Item n → ℝ} {t j : Item n}
+    (hdec : StrictlyDecreasingByIndex v)
+    (htj : t.val < j.val) :
+    0 < v (reverseItem j) - v (reverseItem t) := by
+  exact theorem3_tailGap_pos_of_pivot_lt hdec htj
+
+/--
+The reciprocal tail factor `1/(1-q_j(α))` is increasing in `α`.
+-/
+theorem paper_theorem3_one_sub_pairShare_inv_mono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l) :
+    (1 - pairShare alpha v j)⁻¹ ≤
+      (1 - pairShare alpha' v j)⁻¹ := by
+  exact one_sub_pairShare_inv_mono_alpha j
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+
+/--
+Theorem 3 fixed-pivot multiplier monotonicity:
+`I^*_{min}(α)/(1-q_j(α))` is increasing on a fixed-pivot first-half interval.
+-/
+theorem paper_theorem3_fixedPivot_tailMultiplier_mono
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedValue alpha v t / (1 - pairShare alpha v j) ≤
+      problem6ClosedValue alpha' v t / (1 - pairShare alpha' v j) := by
+  exact theorem3_fixedPivot_tailMultiplier_mono
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/-- Type-1's best-item denominator in the opposing model is independent of `α`. -/
+theorem paper_theorem3_bestItemUtility_one_eq_of_alpha
+    {n : ℕ} [NeZero n] (alpha alpha' : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha' v) 1 := by
+  exact twoTypeReducedModel_bestItemUtility_one_eq_of_alpha alpha alpha' v
+
+/--
+Theorem 3 fixed-pivot raw utility monotonicity for type `1`.
+-/
+theorem paper_theorem3_fixedPivot_closedTypeOneRawUtility_mono
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeOneRawUtility alpha' v t := by
+  exact theorem3_fixedPivot_closedTypeOneRawUtility_mono
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
+Theorem 3 fixed-pivot normalized utility monotonicity for type `1`.
+-/
+theorem paper_theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hpivot' : Problem6ClosedNonnegativePivots alpha' v t) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha' v)
+        (problem6ClosedPolicy alpha' v t halpha0' halpha1' hpos hpivot') 1 := by
+  exact theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter hpivot hpivot'
+
+/--
+Theorem 3 same-selected-pivot interval step for actual equality-form optimal
+BFS policies: selected type fairness is monotone on a first-half interval where
+the selected pivot does not change.
+-/
+theorem paper_theorem3_typeFairness_mono_of_same_selected_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρ =
+        TypePolicy.lastActiveTypeZero ρ')
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha' v ρ' ell') :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v) ρ' := by
+  exact theorem3_typeFairness_mono_of_same_selected_equalizedBasicOptimal
+    hn halpha0 halpha1 halpha0' halpha1' halpha_half halpha_half'
+    halpha_le hpos hdec hpivot hcenter h h'
+
+/--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
 normalized type-utility comparison when the two best-item denominators agree.
 -/

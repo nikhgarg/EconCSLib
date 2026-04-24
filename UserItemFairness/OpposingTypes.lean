@@ -4608,6 +4608,227 @@ theorem problem6ClosedPolicy_rawTypeUtility_one_eq {n : ℕ}
   ring
 
 /--
+The closed-form type-1 raw utility expansion used in Theorem 3:
+the tail is written as a positive correction above the pivot mirror value.
+-/
+theorem problem6ClosedTypeOneRawUtility_eq_pivot_add_tail {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeOneRawUtility alpha v t =
+      v (reverseItem t) +
+        ∑ j : Item n,
+          if t.val < j.val then
+            problem6ClosedValue alpha v t / (1 - pairShare alpha v j) *
+              (v (reverseItem j) - v (reverseItem t))
+          else 0 := by
+  unfold problem6ClosedTypeOneRawUtility
+  have hdecomp :
+      (∑ j : Item n, v (reverseItem j) * problem6ClosedY alpha v t j) =
+        (∑ j : Item n,
+          v (reverseItem t) * problem6ClosedY alpha v t j) +
+        (∑ j : Item n,
+          (v (reverseItem j) - v (reverseItem t)) *
+            problem6ClosedY alpha v t j) := by
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    ring
+  rw [hdecomp]
+  have hfirst :
+      (∑ j : Item n,
+          v (reverseItem t) * problem6ClosedY alpha v t j) =
+        v (reverseItem t) := by
+    rw [← Finset.mul_sum, problem6ClosedY_sum_eq_one]
+    ring
+  rw [hfirst]
+  congr 1
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases htj : t.val < j.val
+  · rw [if_pos htj, problem6ClosedY_after alpha v htj]
+    ring
+  · rw [if_neg htj]
+    by_cases hjt : j.val < t.val
+    · rw [problem6ClosedY_before alpha v hjt]
+      ring
+    · have hval : j.val = t.val := by omega
+      have hjeq : j = t := Fin.ext hval
+      subst j
+      ring
+
+/--
+The normalized type-1 utility of the closed policy in the displayed Theorem 3
+form, with the common best-item denominator left explicit.
+-/
+theorem problem6ClosedPolicy_normalizedTypeUtility_one_eq_pivot_add_tail
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 =
+      (v (reverseItem t) +
+        ∑ j : Item n,
+          if t.val < j.val then
+            problem6ClosedValue alpha v t / (1 - pairShare alpha v j) *
+              (v (reverseItem j) - v (reverseItem t))
+          else 0) /
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [problem6ClosedPolicy_rawTypeUtility_one_eq halpha0 halpha1 hpos hpivot,
+    problem6ClosedTypeOneRawUtility_eq_pivot_add_tail]
+
+/--
+Theorem 3 tail-gap positivity: if `j` is after the selected pivot, then the
+mirror value of `j` is strictly above the mirror value of the pivot.
+-/
+theorem theorem3_tailGap_pos_of_pivot_lt
+    {n : ℕ} {v : Item n → ℝ} {t j : Item n}
+    (hdec : StrictlyDecreasingByIndex v)
+    (htj : t.val < j.val) :
+    0 < v (reverseItem j) - v (reverseItem t) := by
+  have hrev : (reverseItem j).val < (reverseItem t).val :=
+    reverseItem_val_lt_of_val_lt htj
+  have hv : v (reverseItem t) < v (reverseItem j) :=
+    hdec hrev
+  linarith
+
+/--
+The reciprocal tail factor `1 / (1-q_j(α))` is increasing in `α`.
+-/
+theorem one_sub_pairShare_inv_mono_alpha
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} (j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l) :
+    (1 - pairShare alpha v j)⁻¹ ≤
+      (1 - pairShare alpha' v j)⁻¹ := by
+  have hq_le : pairShare alpha v j ≤ pairShare alpha' v j := by
+    rcases lt_or_eq_of_le halpha_le with hlt | heq
+    · exact (pairShare_strictMono_alpha j
+        halpha0 halpha1 halpha0' halpha1' hlt hpos).le
+    · subst alpha'
+      exact le_rfl
+  have hden_le :
+      1 - pairShare alpha' v j ≤ 1 - pairShare alpha v j := by
+    linarith
+  have h :=
+    one_div_le_one_div_of_le
+      (one_sub_pairShare_pos j halpha0' halpha1' hpos)
+      hden_le
+  simpa [one_div] using h
+
+/--
+Theorem 3 fixed-pivot multiplier monotonicity: on a fixed-pivot first-half
+interval, Lemma 8/11 monotonicity of `I^*_{min}` and Lemma 9 monotonicity of
+`q_j` imply monotonicity of `I^*_{min}/(1-q_j)`.
+-/
+theorem theorem3_fixedPivot_tailMultiplier_mono
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedValue alpha v t / (1 - pairShare alpha v j) ≤
+      problem6ClosedValue alpha' v t / (1 - pairShare alpha' v j) := by
+  rw [div_eq_mul_inv, div_eq_mul_inv]
+  have hvalue :
+      problem6ClosedValue alpha v t ≤
+        problem6ClosedValue alpha' v t :=
+    lemma11_fixedPivotClosedValue_monotone
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+  have hinv :
+      (1 - pairShare alpha v j)⁻¹ ≤
+        (1 - pairShare alpha' v j)⁻¹ :=
+    one_sub_pairShare_inv_mono_alpha j
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos
+  exact mul_le_mul hvalue hinv
+    (inv_nonneg.mpr (one_sub_pairShare_pos j halpha0 halpha1 hpos).le)
+    (problem6ClosedValue_pos t halpha0' halpha1' hpos).le
+
+/-- Type-1's best-item denominator in the opposing model does not depend on `α`. -/
+theorem twoTypeReducedModel_bestItemUtility_one_eq_of_alpha
+    {n : ℕ} [NeZero n] (alpha alpha' : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha' v) 1 := by
+  simp [TypeWeightedRecommendationModel.bestItemUtility, twoTypeReducedModel]
+
+/--
+Theorem 3 fixed-pivot raw utility monotonicity for type `1`.
+-/
+theorem theorem3_fixedPivot_closedTypeOneRawUtility_mono
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    problem6ClosedTypeOneRawUtility alpha v t ≤
+      problem6ClosedTypeOneRawUtility alpha' v t := by
+  rw [problem6ClosedTypeOneRawUtility_eq_pivot_add_tail alpha v t,
+    problem6ClosedTypeOneRawUtility_eq_pivot_add_tail alpha' v t]
+  have hsum :
+      (∑ j : Item n,
+          if t.val < j.val then
+            problem6ClosedValue alpha v t / (1 - pairShare alpha v j) *
+              (v (reverseItem j) - v (reverseItem t))
+          else 0) ≤
+        ∑ j : Item n,
+          if t.val < j.val then
+            problem6ClosedValue alpha' v t / (1 - pairShare alpha' v j) *
+              (v (reverseItem j) - v (reverseItem t))
+          else 0 := by
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    by_cases htj : t.val < j.val
+    · rw [if_pos htj, if_pos htj]
+      exact mul_le_mul_of_nonneg_right
+        (theorem3_fixedPivot_tailMultiplier_mono
+          halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter)
+        (theorem3_tailGap_pos_of_pivot_lt hdec htj).le
+    · rw [if_neg htj, if_neg htj]
+  simpa [add_comm] using add_le_add_left hsum (v (reverseItem t))
+
+/--
+Theorem 3 fixed-pivot normalized utility monotonicity for type `1`.
+-/
+theorem theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hpivot' : Problem6ClosedNonnegativePivots alpha' v t) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha' v)
+        (problem6ClosedPolicy alpha' v t halpha0' halpha1' hpos hpivot') 1 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [problem6ClosedPolicy_rawTypeUtility_one_eq halpha0 halpha1 hpos hpivot,
+    problem6ClosedPolicy_rawTypeUtility_one_eq halpha0' halpha1' hpos hpivot']
+  rw [twoTypeReducedModel_bestItemUtility_one_eq_of_alpha alpha' alpha v]
+  exact div_le_div_of_nonneg_right
+    (theorem3_fixedPivot_closedTypeOneRawUtility_mono
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter)
+    (by
+      rw [twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v]
+      exact (twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos).le)
+
+/--
 Lemma 6 normalization bridge: once the raw closed-form utility of type `0`
 dominates type `1` and their best-item normalizers coincide, the normalized
 type utility comparison follows.
@@ -7062,6 +7283,107 @@ theorem problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pi
   exact
     problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
       halpha0 halpha1 halpha_half hpos hdec hpivot (by simpa [t] using hcenter)
+
+/--
+Theorem 3 same-selected-pivot step for the actual equality-form optimal BFS
+policies: on a first-half interval where the selected pivot does not change,
+the selected policy's type fairness is monotone in `α`.
+-/
+theorem theorem3_typeFairness_mono_of_same_selected_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      TypePolicy.lastActiveTypeZero ρ =
+        TypePolicy.lastActiveTypeZero ρ')
+    (hcenter :
+      (TypePolicy.lastActiveTypeZero ρ).val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ)).val)
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell)
+    (h' : Problem6EqualizedBasicOptimal alpha' v ρ' ell') :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha' v) ρ' := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  let t' : Item n := TypePolicy.lastActiveTypeZero ρ'
+  let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+    problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+      hn halpha0 halpha1 hpos hdec h
+  let cert' : Problem6ClosedOptimalityCertificate alpha' v t' :=
+    problem6ClosedOptimalityCertificate_of_equalizedBasicOptimal_of_two_lt
+      hn halpha0' halpha1' hpos hdec h'
+  let hpiv : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos cert.denominator_bounds
+  let hpiv' : Problem6ClosedNonnegativePivots alpha' v t' :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0' halpha1' hpos cert'.denominator_bounds
+  have hpivot_tt' : t = t' := by
+    dsimp [t, t']
+    exact hpivot
+  let hpiv'_t : Problem6ClosedNonnegativePivots alpha' v t := by
+    simpa [hpivot_tt'] using hpiv'
+  have hρ_closed :
+      ρ = problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpiv := by
+    dsimp [t, cert, hpiv]
+    exact problem6EqualizedBasicOptimal_policy_eq_closedPolicy_of_two_lt
+      hn halpha0 halpha1 hpos hdec h
+  have hρ'_closed :
+      ρ' = problem6ClosedPolicy alpha' v t halpha0' halpha1' hpos hpiv'_t := by
+    have hraw :
+        ρ' = problem6ClosedPolicy alpha' v t' halpha0' halpha1' hpos hpiv' := by
+      dsimp [t', cert', hpiv']
+      exact problem6EqualizedBasicOptimal_policy_eq_closedPolicy_of_two_lt
+        hn halpha0' halpha1' hpos hdec h'
+    have hclosed_eq :
+        problem6ClosedPolicy alpha' v t' halpha0' halpha1' hpos hpiv' =
+          problem6ClosedPolicy alpha' v t halpha0' halpha1' hpos hpiv'_t := by
+      funext k
+      fin_cases k
+      · apply pmf_eq_of_forall_toReal_eq
+        intro j
+        change ((problem6ClosedPolicy alpha' v t' halpha0' halpha1' hpos hpiv' 0) j).toReal =
+          ((problem6ClosedPolicy alpha' v t halpha0' halpha1' hpos hpiv'_t 0) j).toReal
+        rw [problem6ClosedPolicy_zero_toReal, problem6ClosedPolicy_zero_toReal]
+        simp [hpivot_tt']
+      · apply pmf_eq_of_forall_toReal_eq
+        intro j
+        change ((problem6ClosedPolicy alpha' v t' halpha0' halpha1' hpos hpiv' 1) j).toReal =
+          ((problem6ClosedPolicy alpha' v t halpha0' halpha1' hpos hpiv'_t 1) j).toReal
+        rw [problem6ClosedPolicy_one_toReal, problem6ClosedPolicy_one_toReal]
+        simp [hpivot_tt']
+    exact hraw.trans hclosed_eq
+  have htf :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha v) ρ =
+        TypeWeightedRecommendationModel.normalizedTypeUtility
+          (twoTypeReducedModel alpha v) ρ 1 :=
+    problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0 halpha1 halpha_half hpos hdec h hcenter
+  have hcenter' :
+      (TypePolicy.lastActiveTypeZero ρ').val ≤
+        (reverseItem (TypePolicy.lastActiveTypeZero ρ')).val := by
+    simpa [← hpivot] using hcenter
+  have htf' :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha' v) ρ' =
+        TypeWeightedRecommendationModel.normalizedTypeUtility
+          (twoTypeReducedModel alpha' v) ρ' 1 :=
+    problem6EqualizedBasicOptimal_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0' halpha1' halpha_half' hpos hdec h' hcenter'
+  rw [htf, htf', hρ_closed, hρ'_closed]
+  exact theorem3_fixedPivot_closedPolicy_normalizedTypeUtility_one_mono
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec
+    (by simpa [t] using hcenter) hpiv hpiv'_t
 
 /--
 Lemma 6 stitched with Lemma 10 for the actual selected equality-form optimal
