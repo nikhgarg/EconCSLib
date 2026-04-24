@@ -195,6 +195,48 @@ theorem paper_adwords_balance_assignment_assigned_only_from_history
     I hbudget history hassigned
 
 /--
+Spend is monotone along any feasible online AdWords run when bids are
+nonnegative.
+-/
+theorem paper_adwords_spend_monotone_over_history
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser) :
+    I.spend S.assignment a ≤
+      I.spend
+        (I.runHistoryStateFrom rule S history).assignment a := by
+  exact AdWordsInstance.spend_le_runHistoryStateFrom_spend
+    I hbid rule hrule history S hS a
+
+/--
+MSVV monotonicity bridge: final assignment-induced slack scores are bounded by
+the earlier Balance score at any prior state in the same run.
+-/
+theorem paper_adwords_final_slack_score_le_initial_balance_score
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : AdWordsInstance.ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query)
+    (S : AdWordsInstance.HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a) :
+    I.slackScore
+        (I.msvvAlphaFromAssignment
+          (I.runHistoryStateFrom rule S history).assignment) a q ≤
+      I.balanceScore S.assignment a q := by
+  exact AdWordsInstance.final_slackScore_le_initial_balanceScore
+    I hbid rule hrule history S hS a q hbudget
+
+/--
 Small-bids boundary lemma: if advertiser `a` cannot accept query `q`, then
 under the `ε`-small-bids condition `a` has already spent more than a
 `1 - ε` fraction of her budget.

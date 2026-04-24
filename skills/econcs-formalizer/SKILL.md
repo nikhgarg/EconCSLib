@@ -182,6 +182,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   are dual-feasible before trying to prove the global scaled dual-objective
   bound. Package that last finite charging argument as a named objective-bound
   certificate so the paper-facing `1 - 1/e` theorem remains a thin wrapper.
+  Before attacking the objective bound, prove run monotonicity: spend, spent
+  fractions, and assignment-induced MSVV dual alphas only increase along a
+  feasible online history. This yields the key comparison that final slack
+  scores are bounded by earlier Balance scores.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.

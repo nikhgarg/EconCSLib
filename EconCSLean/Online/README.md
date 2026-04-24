@@ -44,6 +44,8 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Feasible choice rules preserve feasibility | `paper_adwords_run_assignment_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | choice rule must satisfy `ChoiceRuleFeasible` |
 | Balance/MSVV run is feasible | `paper_adwords_balance_run_assignment_feasible` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
 | Balance/MSVV assigns only seen query IDs | `paper_adwords_balance_assignment_assigned_only_from_history` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative budgets |
+| Spend monotone over online histories | `paper_adwords_spend_monotone_over_history` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids and feasible choice rule |
+| Final MSVV slack bounded by earlier Balance score | `paper_adwords_final_slack_score_le_initial_balance_score` | formalized | `EconCSLean/Online/MainTheorems.lean` | nonnegative bids, feasible choice rule, positive advertiser budget |
 | Standard AdWords LP dual feasibility | `DualFeasible`, `dualObjective` | formalized | `EconCSLean/Online/AdWords.lean` | none |
 | AdWords LP weak duality | `paper_adwords_lp_weak_duality` | formalized | `EconCSLean/Online/MainTheorems.lean` | feasible assignment and dual-feasible variables |
 | Fractional AdWords LP primal | `FractionalAssignment`, `FractionalFeasible`, `fractionalRevenue` | formalized | `EconCSLean/Online/AdWords.lean` | finite advertisers and queries |
@@ -64,6 +66,9 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
    Balance/MSVV choice rule is formalized. Next connect per-query choices to
    primal and dual variable updates.
 3. Then prove the stepwise/primal-dual charging argument as
-   `MsvvObjectiveBoundCertificate` for the Balance run.
+   `MsvvObjectiveBoundCertificate` for the Balance run. The next useful lemma
+   is a per-query beta charge bound using
+   `paper_adwords_final_slack_score_le_initial_balance_score` plus the
+   Balance-choice maximization condition.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
    isolate the small-bids limiting argument as a separate theorem seam.

@@ -934,6 +934,11 @@ theorem msvvDualAlpha_nonneg (x : ℝ) :
     0 ≤ msvvDualAlpha x :=
   (msvvDualAlpha_pos x).le
 
+theorem msvvDualAlpha_mono {x y : ℝ} (hxy : x ≤ y) :
+    msvvDualAlpha x ≤ msvvDualAlpha y := by
+  unfold msvvDualAlpha
+  exact Real.exp_le_exp.mpr (by linarith)
+
 theorem balanceDiscount_eq_one_sub_msvvDualAlpha (x : ℝ) :
     balanceDiscount x = 1 - msvvDualAlpha x := by
   rfl
@@ -992,6 +997,17 @@ theorem balanceScore_eq_slackScore_msvvAlphaFromAssignment
       I.slackScore (I.msvvAlphaFromAssignment A) a q := by
   simp [balanceScore, balanceDiscount, slackScore,
     msvvAlphaFromAssignment, msvvDualAlpha]
+
+theorem slackScore_anti_mono_alpha
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (alpha alpha' : Advertiser → ℝ) (a : Advertiser) (q : Query)
+    (halpha : alpha a ≤ alpha' a) :
+    I.slackScore alpha' a q ≤ I.slackScore alpha a q := by
+  unfold slackScore
+  have hfactor : 1 - alpha' a ≤ 1 - alpha a := by
+    linarith
+  exact mul_le_mul_of_nonneg_left hfactor (hbid a q)
 
 theorem dualFeasible_of_slackScore_le_beta
     (I : AdWordsInstance Advertiser Query)
@@ -1113,6 +1129,41 @@ theorem balanceChoiceRule_feasible
   intro A q a hchoice
   exact (balanceChoiceRule_isBalanceChoice_of_eq_some I A q a hchoice).1
 
+theorem spend_le_spend_assignQuery_of_unassigned
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (A : Assignment Advertiser Query) (q : Query) (owner a : Advertiser)
+    (hunassigned : A q = none) :
+    I.spend A a ≤ I.spend (assignQuery A q owner) a := by
+  by_cases ha : a = owner
+  · subst a
+    rw [spend_assignQuery_self_of_unassigned I A q owner hunassigned]
+    exact le_add_of_nonneg_right (hbid owner q)
+  · rw [spend_assignQuery_other_of_unassigned I A q
+      (a := owner) (b := a) hunassigned ha]
+
+set_option linter.flexible false in
+theorem spend_le_stepHistoryState_spend
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (S : HistoryState Advertiser Query) (q : Query)
+    (hS : I.StateInvariant S) (a : Advertiser) :
+    I.spend S.assignment a ≤
+      I.spend (stepHistoryState I rule S q).assignment a := by
+  classical
+  by_cases hseen : q ∈ S.seen
+  · simp [stepHistoryState, hseen]
+  · cases hchoice : rule S.assignment q with
+    | none =>
+        simp [stepHistoryState, hseen, hchoice]
+    | some owner =>
+        simp [stepHistoryState, hseen, hchoice]
+        exact spend_le_spend_assignQuery_of_unassigned I hbid
+          S.assignment q owner a (hS.2 q hseen)
+
 set_option linter.flexible false in
 theorem stepHistoryState_invariant
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
@@ -1170,6 +1221,93 @@ theorem runHistoryStateFrom_invariant
   | cons q qs ih =>
       exact ih (stepHistoryState I rule S q)
         (stepHistoryState_invariant I rule hrule S q hS)
+
+theorem spend_le_runHistoryStateFrom_spend
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser) :
+    I.spend S.assignment a ≤
+      I.spend (runHistoryStateFrom I rule S history).assignment a := by
+  induction history generalizing S with
+  | nil =>
+      simp [runHistoryStateFrom]
+  | cons q qs ih =>
+      have hstep :
+          I.spend S.assignment a ≤
+            I.spend (stepHistoryState I rule S q).assignment a :=
+        spend_le_stepHistoryState_spend I hbid rule S q hS a
+      have hSstep :
+          I.StateInvariant (stepHistoryState I rule S q) :=
+        stepHistoryState_invariant I rule hrule S q hS
+      have htail :
+          I.spend (stepHistoryState I rule S q).assignment a ≤
+            I.spend
+              (runHistoryStateFrom I rule
+                (stepHistoryState I rule S q) qs).assignment a :=
+        ih (stepHistoryState I rule S q) hSstep
+      exact hstep.trans htail
+
+theorem spentFraction_le_runHistoryStateFrom_spentFraction
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser)
+    (hbudget : 0 < I.budget a) :
+    I.spentFraction S.assignment a ≤
+      I.spentFraction (runHistoryStateFrom I rule S history).assignment a := by
+  unfold spentFraction
+  exact div_le_div_of_nonneg_right
+    (spend_le_runHistoryStateFrom_spend I hbid rule hrule history S hS a)
+    hbudget.le
+
+theorem msvvAlphaFromAssignment_le_runHistoryStateFrom
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser)
+    (hbudget : 0 < I.budget a) :
+    I.msvvAlphaFromAssignment S.assignment a ≤
+      I.msvvAlphaFromAssignment
+        (runHistoryStateFrom I rule S history).assignment a := by
+  unfold msvvAlphaFromAssignment
+  exact msvvDualAlpha_mono
+    (spentFraction_le_runHistoryStateFrom_spentFraction
+      I hbid rule hrule history S hS a hbudget)
+
+theorem final_slackScore_le_initial_balanceScore
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (rule : ChoiceRule Advertiser Query)
+    (hrule : I.ChoiceRuleFeasible rule)
+    (history : List Query) (S : HistoryState Advertiser Query)
+    (hS : I.StateInvariant S) (a : Advertiser) (q : Query)
+    (hbudget : 0 < I.budget a) :
+    I.slackScore
+        (I.msvvAlphaFromAssignment
+          (runHistoryStateFrom I rule S history).assignment) a q ≤
+      I.balanceScore S.assignment a q := by
+  have halpha :=
+    msvvAlphaFromAssignment_le_runHistoryStateFrom
+      I hbid rule hrule history S hS a hbudget
+  have hslack :=
+    slackScore_anti_mono_alpha I hbid
+      (I.msvvAlphaFromAssignment S.assignment)
+      (I.msvvAlphaFromAssignment
+        (runHistoryStateFrom I rule S history).assignment)
+      a q halpha
+  simpa [balanceScore_eq_slackScore_msvvAlphaFromAssignment I S.assignment a q]
+    using hslack
 
 theorem stepHistoryState_seen
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
