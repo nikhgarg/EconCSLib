@@ -71,6 +71,10 @@ the Lean statements against the paper.
   its README still has stale `scaffold`, `conditional`, or remaining-assumption
   text; either close the seam or record the exact blocker and the next theorem
   to attack.
+- Commit at paper-scale checkpoints, not every small lemma. Prefer committing
+  when a named theorem/proposition/lemma from the paper is proven or when
+  moving on from a paper; otherwise keep related intermediate proof work
+  together in the working tree.
 - Detailed lemmas may live in many files, but the central theorem file should be
   the stable public interface for that paper.
 

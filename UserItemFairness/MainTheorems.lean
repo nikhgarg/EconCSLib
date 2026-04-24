@@ -371,6 +371,18 @@ end ReductionWitness
 namespace RecommendationModel
 
 /--
+Appendix C, Lemma 1: under the paper's strictly positive utility assumption,
+the optimal minimum item fairness value is strictly positive.
+-/
+theorem paper_lemma1_optimal_item_fairness_positive
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive) :
+    0 < W.optimalItemFairness := by
+  exact W.optimalItemFairness_pos_of_columnHasPositiveDemand
+    (W.nonnegative_of_positive hPos)
+    (W.columnHasPositiveDemand_of_positive hPos)
+
+/--
 Problem 1 baseline theorem.
 
 With nonnegative utilities and a positive row normalizer for every user, the
@@ -410,6 +422,30 @@ theorem paper_priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
     hNonneg hRow
 
 end RecommendationModel
+
+namespace RecommendationModel.SymmetricData
+
+/--
+Proposition 2, part 1: `S_symm` satisfies the paper's symmetric-optimum
+existence condition.
+
+Given any optimum for the maximal item-fairness problem, averaging the policy
+inside each equal-utility user type produces an optimum in `S_symm`.
+-/
+theorem paper_proposition2_symmetric_optimum_exists
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (S : RecommendationModel.SymmetricData m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives S.types)
+    (hRow : S.model.RowHasPositiveItem)
+    {ρ : Policy m n}
+    (hopt : RecommendationModel.IsOptimalAtLevel S.model 1 ρ) :
+    ∃ ρsym : Policy m n,
+      UserTypeAssignment.IsTypeSymmetric S.types ρsym ∧
+        RecommendationModel.IsOptimalAtLevel S.model 1 ρsym := by
+  exact S.exists_typeSymmetric_isOptimalAtLevel_of_isOptimalAtLevel
+    reps hRow hopt
+
+end RecommendationModel.SymmetricData
 
 namespace EstimatedRecommendationModel
 

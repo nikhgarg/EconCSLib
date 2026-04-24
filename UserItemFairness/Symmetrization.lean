@@ -403,6 +403,71 @@ theorem itemFairness_symmetrizedPolicy_eq {m n K : ℕ} [NeZero n] [NeZero K]
         (S := S) (reps := reps) (ρ := ρ) (j := j))
 
 /--
+The averaging step in Proposition 2, part 1: symmetrizing an optimal policy
+over identical user-type fibers preserves feasibility and remains optimal. The
+proof follows the paper's argument: item fairness is unchanged, while minimum
+normalized user utility weakly improves.
+-/
+theorem isOptimalAtLevel_symmetrizedPolicy_of_isOptimalAtLevel
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (S : RecommendationModel.SymmetricData m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives S.types)
+    (hRow : S.model.RowHasPositiveItem)
+    {γ : ℝ} {ρ : Policy m n}
+    (hopt : RecommendationModel.IsOptimalAtLevel S.model γ ρ) :
+    RecommendationModel.IsOptimalAtLevel S.model γ
+      (S.symmetrizedPolicy reps ρ) := by
+  constructor
+  · have hfeas := hopt.1
+    unfold RecommendationModel.feasibleAtLevel at hfeas ⊢
+    rw [itemFairness_symmetrizedPolicy_eq (S := S) (reps := reps) (ρ := ρ)]
+    exact hfeas
+  · have hsym_feas :
+        RecommendationModel.feasibleAtLevel S.model γ
+          (S.symmetrizedPolicy reps ρ) := by
+      have hfeas := hopt.1
+      unfold RecommendationModel.feasibleAtLevel at hfeas ⊢
+      rw [itemFairness_symmetrizedPolicy_eq (S := S) (reps := reps) (ρ := ρ)]
+      exact hfeas
+    have hsym_mem :
+        RecommendationModel.userFairness S.model (S.symmetrizedPolicy reps ρ) ∈
+          RecommendationModel.attainableUserFairnessAtLevel S.model γ := by
+      exact ⟨S.symmetrizedPolicy reps ρ, hsym_feas, rfl⟩
+    have hbdd :
+        BddAbove (RecommendationModel.attainableUserFairnessAtLevel S.model γ) :=
+      RecommendationModel.attainableUserFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+        S.model hRow γ
+    have hsym_le_opt :
+        RecommendationModel.userFairness S.model (S.symmetrizedPolicy reps ρ) ≤
+          RecommendationModel.optimalUserFairnessAtLevel S.model γ := by
+      unfold RecommendationModel.optimalUserFairnessAtLevel
+      exact le_csSup hbdd hsym_mem
+    have hopt_le_sym :
+        RecommendationModel.optimalUserFairnessAtLevel S.model γ ≤
+          RecommendationModel.userFairness S.model (S.symmetrizedPolicy reps ρ) := by
+      rw [← hopt.2]
+      exact userFairness_le_userFairness_symmetrizedPolicy S reps hRow ρ
+    exact le_antisymm hsym_le_opt hopt_le_sym
+
+/--
+Proposition 2, part 1, as an existence statement: from any supplied optimum,
+averaging over equal utility rows gives an optimal policy in `S_symm`.
+-/
+theorem exists_typeSymmetric_isOptimalAtLevel_of_isOptimalAtLevel
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (S : RecommendationModel.SymmetricData m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives S.types)
+    (hRow : S.model.RowHasPositiveItem)
+    {γ : ℝ} {ρ : Policy m n}
+    (hopt : RecommendationModel.IsOptimalAtLevel S.model γ ρ) :
+    ∃ ρsym : Policy m n,
+      UserTypeAssignment.IsTypeSymmetric S.types ρsym ∧
+        RecommendationModel.IsOptimalAtLevel S.model γ ρsym := by
+  exact ⟨S.symmetrizedPolicy reps ρ,
+    S.symmetrizedPolicy_isTypeSymmetric reps ρ,
+    S.isOptimalAtLevel_symmetrizedPolicy_of_isOptimalAtLevel reps hRow hopt⟩
+
+/--
 Every item-fairness value attainable by an arbitrary policy is attainable by a
 type-symmetric policy, and conversely.
 -/
