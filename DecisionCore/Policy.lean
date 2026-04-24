@@ -24,12 +24,37 @@ theorem le_finiteMax {α : Type*} [Fintype α] [Nonempty α]
   unfold finiteMax
   exact Finset.le_sup' (s := (Finset.univ : Finset α)) (f := f) (by simp)
 
+/-- A finite maximum is attained. -/
+theorem exists_finiteMax_eq {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) :
+    ∃ a : α, finiteMax f = f a := by
+  unfold finiteMax
+  obtain ⟨a, _ha, hmax⟩ :=
+    Finset.exists_mem_eq_sup'
+      (s := (Finset.univ : Finset α))
+      (H := Finset.univ_nonempty) (f := f)
+  exact ⟨a, hmax⟩
+
 /-- A finite minimum is at most every indexed value. -/
 theorem finiteMin_le {α : Type*} [Fintype α] [Nonempty α]
     (f : α → ℝ) (a : α) :
     finiteMin f ≤ f a := by
   unfold finiteMin
   exact Finset.inf'_le (s := (Finset.univ : Finset α)) (f := f) (by simp)
+
+/-- A finite minimum of a constant-valued function equals that constant. -/
+theorem finiteMin_eq_of_forall {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) (c : ℝ) (h : ∀ a, f a = c) :
+    finiteMin f = c := by
+  unfold finiteMin
+  apply le_antisymm
+  · let a0 : α := Classical.choice inferInstance
+    exact (Finset.inf'_le
+      (s := (Finset.univ : Finset α)) (f := f) (by simp : a0 ∈ Finset.univ)).trans_eq
+      (h a0)
+  · apply Finset.le_inf'
+    intro a _ha
+    exact le_of_eq (h a).symm
 
 /-- A finite minimum of nonnegative values is nonnegative. -/
 theorem finiteMin_nonneg {α : Type*} [Fintype α] [Nonempty α]

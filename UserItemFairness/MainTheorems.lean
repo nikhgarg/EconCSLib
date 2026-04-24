@@ -368,6 +368,49 @@ theorem paper_symmetric_original_optimum_descends_to_reduced_of_gamma_lt_one
 
 end ReductionWitness
 
+namespace RecommendationModel
+
+/--
+Problem 1 baseline theorem.
+
+With nonnegative utilities and a positive row normalizer for every user, the
+unconstrained user-fairness optimum `U^*_min(w)` equals `1`. The witness is the
+deterministic policy that recommends a best item to each user.
+-/
+theorem paper_unconstrained_user_fairness_optimum_eq_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) :
+    W.optimalUserFairnessAtLevel 0 = 1 := by
+  exact W.optimalUserFairnessAtLevel_zero_eq_one hNonneg hRow
+
+/--
+Price-of-fairness identity at an arbitrary item-fairness fraction.
+
+Once the unconstrained optimum is normalized to `1`, the paper's price of
+fairness is exactly `1 - U^*_min(γ,w)`.
+-/
+theorem paper_priceOfFairnessAt_eq_one_sub_optimalUserFairnessAtLevel
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) (γ : ℝ) :
+    W.priceOfFairnessAt γ = 1 - W.optimalUserFairnessAtLevel γ := by
+  exact W.priceOfFairnessAt_eq_one_sub_optimalUserFairnessAtLevel
+    hNonneg hRow γ
+
+/--
+Price-of-fairness identity for the maximal item-fairness problem.
+-/
+theorem paper_priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) :
+    W.priceOfFairness = 1 - W.optimalUserFairnessAtLevel 1 := by
+  exact W.priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
+    hNonneg hRow
+
+end RecommendationModel
+
 namespace EstimatedRecommendationModel
 
 /--

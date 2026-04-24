@@ -84,6 +84,53 @@ noncomputable def defaultPolicy {m n : ℕ} [NeZero n] : Policy m n :=
   DecisionCore.Policy.pure
     (fun _ : User m => Classical.choice (inferInstance : Nonempty (Item n)))
 
+/-- The deterministic policy that recommends each user an item attaining their finite row maximum. -/
+noncomputable def bestItemPolicy {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) : Policy m n :=
+  DecisionCore.Policy.pure
+    (fun u : User m =>
+      Classical.choose (DecisionCore.exists_finiteMax_eq (W.utility u)))
+
+theorem bestItemPolicy_utility_eq_bestItemUtility
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (u : User m) :
+    W.utility u
+        (Classical.choose (DecisionCore.exists_finiteMax_eq (W.utility u))) =
+      bestItemUtility W u := by
+  exact (Classical.choose_spec
+    (DecisionCore.exists_finiteMax_eq (W.utility u))).symm
+
+/-- The best-item policy gives each user their row maximum in raw utility. -/
+theorem rawUserUtility_bestItemPolicy_eq_bestItemUtility
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (u : User m) :
+    rawUserUtility W (bestItemPolicy W) u = bestItemUtility W u := by
+  unfold rawUserUtility bestItemPolicy
+  rw [DecisionCore.Policy.agentScore_pure]
+  exact bestItemPolicy_utility_eq_bestItemUtility W u
+
+/-- Under positive row normalizers, the best-item policy gives every user normalized utility `1`. -/
+theorem normalizedUserUtility_bestItemPolicy_eq_one
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hRow : W.RowHasPositiveItem) (u : User m) :
+    normalizedUserUtility W (bestItemPolicy W) u = 1 := by
+  unfold normalizedUserUtility
+  rw [rawUserUtility_bestItemPolicy_eq_bestItemUtility]
+  exact div_self (ne_of_gt (bestItemUtility_pos_of_rowHasPositiveItem W hRow u))
+
+/--
+Without item-fairness constraints, the deterministic best-item policy gives
+minimum normalized user utility `1`.
+-/
+theorem userFairness_bestItemPolicy_eq_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hRow : W.RowHasPositiveItem) :
+    userFairness W (bestItemPolicy W) = 1 := by
+  unfold userFairness
+  exact DecisionCore.finiteMin_eq_of_forall
+    (normalizedUserUtility W (bestItemPolicy W)) 1
+    (normalizedUserUtility_bestItemPolicy_eq_one W hRow)
+
 /-- At baseline `γ = 0`, every policy is feasible under nonnegative utilities. -/
 theorem feasibleAtLevel_zero_of_nonnegative {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
@@ -137,6 +184,37 @@ noncomputable def optimalUserFairnessAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) : ℝ :=
   sSup (attainableUserFairnessAtLevel W γ)
 
+/--
+The paper's unconstrained user-fairness optimum:
+`U^*_min(w) = 1` when utilities are nonnegative and every user has a positive
+row normalizer.
+-/
+theorem optimalUserFairnessAtLevel_zero_eq_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) :
+    optimalUserFairnessAtLevel W 0 = 1 := by
+  have hset_nonempty :
+      (attainableUserFairnessAtLevel W 0).Nonempty :=
+    attainableUserFairnessAtLevel_zero_nonempty_of_nonnegative W hNonneg
+  have hbdd :
+      BddAbove (attainableUserFairnessAtLevel W 0) :=
+    attainableUserFairnessAtLevel_bddAbove_of_rowHasPositiveItem W hRow 0
+  have hbest_mem :
+      userFairness W (bestItemPolicy W) ∈
+        attainableUserFairnessAtLevel W 0 := by
+    exact ⟨bestItemPolicy W, feasibleAtLevel_zero_of_nonnegative W hNonneg _, rfl⟩
+  apply le_antisymm
+  · unfold optimalUserFairnessAtLevel
+    refine csSup_le hset_nonempty ?_
+    intro r hr
+    obtain ⟨ρ, _hfeas, hr⟩ := hr
+    rw [hr]
+    exact userFairness_le_one_of_rowHasPositiveItem W hRow ρ
+  · rw [← userFairness_bestItemPolicy_eq_one W hRow]
+    unfold optimalUserFairnessAtLevel
+    exact le_csSup hbdd hbest_mem
+
 /-- A policy solves the paper's optimization problem at fairness level `γ`. -/
 def IsOptimalAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) (ρ : Policy m n) : Prop :=
@@ -148,10 +226,34 @@ noncomputable def priceOfFairnessAt {m n : ℕ} [NeZero m] [NeZero n]
   let base := optimalUserFairnessAtLevel W 0
   if h : base = 0 then 0 else (base - optimalUserFairnessAtLevel W γ) / base
 
+/--
+When the unconstrained optimum is `1`, the price of fairness is just
+`1 - U^*_min(γ,w)`.
+-/
+theorem priceOfFairnessAt_eq_one_sub_optimalUserFairnessAtLevel
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) (γ : ℝ) :
+    priceOfFairnessAt W γ = 1 - optimalUserFairnessAtLevel W γ := by
+  unfold priceOfFairnessAt
+  rw [optimalUserFairnessAtLevel_zero_eq_one W hNonneg hRow]
+  simp
+
 /-- The price of maximal item fairness on user fairness. -/
 noncomputable def priceOfFairness {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) : ℝ :=
   priceOfFairnessAt W 1
+
+/--
+Paper-facing specialization of the price-of-fairness simplification at maximal
+item fairness.
+-/
+theorem priceOfFairness_eq_one_sub_optimalUserFairnessAtLevel_one
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n)
+    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem) :
+    priceOfFairness W = 1 - optimalUserFairnessAtLevel W 1 := by
+  exact priceOfFairnessAt_eq_one_sub_optimalUserFairnessAtLevel W hNonneg hRow 1
 
 /-- Problem 1 from the paper, as a predicate on candidate solution policies. -/
 def SolvesProblemOne {m n : ℕ} [NeZero m] [NeZero n]
