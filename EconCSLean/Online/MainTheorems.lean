@@ -768,8 +768,8 @@ theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_round_allo
 /--
 Section 7 / Theorem 9 wrapper from realized per-permutation allocations. The
 finite expectation algebra from pointwise capped spend to capped expected spend
-is proved in Lean; the remaining paper-specific fields are the symmetry bound
-on expected round/bidder allocation and the harmonic-cap comparison.
+is proved in Lean; more specialized wrappers below derive the expected
+round/bidder allocation bound from symmetry and observed-prefix structure.
 -/
 theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_pointwise_allocation_certificate
     {N : ℕ} {Algorithm : Type*}
@@ -1025,8 +1025,8 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
 
 /--
 Paper-level Section 7 / Theorem 9 endpoint from pointwise input-relabeling
-symmetry. This is the closest generic wrapper to the paper's deterministic
-online-information argument.
+symmetry. Observed-prefix wrappers below derive this relabeling field from the
+paper's online-information argument.
 -/
 theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_relabel_symmetric_pointwise_family_certificate
     {Algorithm : ℕ → Type*}
