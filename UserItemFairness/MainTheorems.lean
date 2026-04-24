@@ -1054,6 +1054,31 @@ theorem paper_lemma4_twoTypeThresholdSupport_of_noStrictPointwiseImprovement_of_
     hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
 
 /--
+Problem 6 optimality bridge: an optimal epigraph value is the minimum item
+value of its policy.
+-/
+theorem paper_problem6_policyOptimal_value_eq_finiteMin
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    ell =
+      DecisionCore.finiteMin (fun l : Item n =>
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal) := by
+  exact problem6PolicyOptimal_value_eq_finiteMin hopt
+
+/--
+Appendix D, Lemma 4 optimality bridge: an optimal Problem 6 policy admits no
+feasible policy that strictly improves every item value.
+-/
+theorem paper_problem6_noStrictPointwiseImprovement_of_policyOptimal
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    Problem6PolicyNoStrictPointwiseImprovement alpha v ρ := by
+  exact problem6_noStrictPointwiseImprovement_of_policyOptimal hopt
+
+/--
 Appendix D, Lemma 4 optimality bridge: an equalized optimal Problem 6 policy
 admits no feasible policy that strictly improves every item value.
 -/
@@ -1131,6 +1156,30 @@ theorem paper_lemma4_sparseEqualized_of_policyOptimal_equalized_of_two_lt
         (fun l : Item n => (ρ 0 l).toReal)
         (fun l : Item n => (ρ 1 l).toReal) ell := by
   exact problem6SparseEqualized_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 4 to Lemma 5 bridge retaining the paper's pivot
+`max {j : x_j > 0}`: an equalized optimal Problem 6 policy gives an active
+sparse equalized solution.
+-/
+theorem paper_lemma4_sparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    Problem6SparseEqualizedActive alpha v (TypePolicy.lastActiveTypeZero ρ)
+      (fun l : Item n => (ρ 0 l).toReal)
+      (fun l : Item n => (ρ 1 l).toReal) ell := by
+  exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
     hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
 
 /--
@@ -1793,6 +1842,33 @@ theorem paper_problem6_closedNonnegativePivots_of_denominatorBounds
     halpha0 halpha1 hpos hbounds
 
 /--
+Problem 6 policy bridge: nonnegative closed-form pivot coordinates imply the
+denominator bounds.
+-/
+theorem paper_problem6_closedPivotDenominatorBounds_of_nonnegativePivots
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    Problem6ClosedPivotDenominatorBounds alpha v t := by
+  exact problem6ClosedPivotDenominatorBounds_of_nonnegativePivots
+    halpha0 halpha1 hpos hpivot
+
+/--
+Appendix D, Lemma 5 denominator-bound bridge: an active sparse equalized
+solution supplies the closed-form denominator bounds at the same pivot.
+-/
+theorem paper_lemma5_problem6_closedPivotDenominatorBounds_of_sparseEqualizedActive
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell) :
+    Problem6ClosedPivotDenominatorBounds alpha v t := by
+  exact problem6ClosedPivotDenominatorBounds_of_sparseEqualizedActive
+    halpha0 halpha1 hpos h
+
+/--
 Problem 6 policy bridge: denominator bounds are enough for closed-policy
 feasibility.
 -/
@@ -1851,6 +1927,28 @@ theorem paper_problem6_closedOptimalityCertificate_of_denominatorBounds
     halpha0 halpha1 hpos hdec hbounds
 
 /--
+Appendix D, Lemma 4/5 bridge: an equalized optimal Problem 6 policy supplies
+the closed-form optimality certificate at its active sparse pivot.
+-/
+theorem paper_problem6_closedOptimalityCertificate_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    Problem6ClosedOptimalityCertificate alpha v
+      (TypePolicy.lastActiveTypeZero ρ) := by
+  exact problem6ClosedOptimalityCertificate_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+
+/--
 Problem 6 closed-form optimal-value wrapper: a denominator-bound plus
 upper-bound certificate proves the LP optimum equals the Lemma 5 value.
 -/
@@ -1863,6 +1961,29 @@ theorem paper_problem6_LPOptimalValue_eq_closedValue_of_closed_certificate
     problem6LPOptimalValue alpha v = problem6ClosedValue alpha v t := by
   exact problem6LPOptimalValue_eq_closedValue_of_closed_certificate
     halpha0 halpha1 hpos cert
+
+/--
+Appendix D, Lemma 4/5 optimal-value bridge: an equalized optimal Problem 6
+policy identifies the LP optimum with the Lemma 5 closed value at its active
+sparse pivot.
+-/
+theorem paper_problem6_LPOptimalValue_eq_closedValue_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    problem6LPOptimalValue alpha v =
+      problem6ClosedValue alpha v (TypePolicy.lastActiveTypeZero ρ) := by
+  exact problem6LPOptimalValue_eq_closedValue_of_policyOptimal_equalized_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
 
 /--
 Appendix D, Lemma 11 interval form: if the same pivot has closed-form
@@ -1993,6 +2114,62 @@ theorem paper_lemma4_sparseEqualized_eq_of_same_pivot
     ell = ell' ∧ x = x' ∧ y = y' := by
   exact problem6SparseEqualized_eq_of_same_pivot
     halpha0 halpha1 hpos h h'
+
+/--
+Appendix D, Lemma 4 uniqueness for active sparse equalized solutions: equal
+optimal values force the pivots, values, and coordinates to agree.
+-/
+theorem paper_lemma4_sparseEqualizedActive_eq_of_equal_value
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t t' : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell)
+    (h' : Problem6SparseEqualizedActive alpha v t' x' y' ell')
+    (hell : ell = ell') :
+    t = t' ∧ ell = ell' ∧ x = x' ∧ y = y' := by
+  exact problem6SparseEqualizedActive_eq_of_equal_value
+    halpha0 halpha1 hpos h h' hell
+
+/--
+Appendix D, Lemma 4 uniqueness for equalized optimal Problem 6 policies,
+conditional on the paper's shared-item sparsity bound and `2 < n`.
+-/
+theorem paper_lemma4_policyOptimal_equalized_unique_sparseActive_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ' 1 l).toReal = ell')
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt' : Problem6PolicyOptimal alpha v ρ' ell')
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    ∃ t : Item n,
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell ∧
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ' 0 l).toReal)
+        (fun l : Item n => (ρ' 1 l).toReal) ell' ∧
+      ell = ell' ∧
+      (fun l : Item n => (ρ 0 l).toReal) =
+        (fun l : Item n => (ρ' 0 l).toReal) ∧
+      (fun l : Item n => (ρ 1 l).toReal) =
+        (fun l : Item n => (ρ' 1 l).toReal) := by
+  exact problem6PolicyOptimal_equalized_unique_sparseActive_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hitem_eq'
+    hopt hopt' hshared hshared'
 
 /--
 Appendix D, Lemma 6, mirror-pair algebra for
@@ -2477,6 +2654,50 @@ theorem paper_lemma10_closedValue_le_of_succ_center_candidate_before
       problem6ClosedValue (1 / 2) v c := by
   exact problem6ClosedValue_le_of_succ_center_candidate_before
     hpos hsucc hct hpivot
+
+/--
+Appendix D, Lemma 10 selected-pivot bridge at `α = 1/2`, odd-center case:
+an equalized optimal Problem 6 policy cannot select a pivot after an exact
+center candidate.
+-/
+theorem paper_lemma10_half_optimal_lastActive_le_center
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρ 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal (1 / 2) v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_half_optimal_lastActive_le_center
+    hn hpos hdec hcenter hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 10 selected-pivot bridge at `α = 1/2`, even-center case:
+an equalized optimal Problem 6 policy cannot select a pivot after the candidate
+immediately before its mirror.
+-/
+theorem paper_lemma10_half_optimal_lastActive_le_succ_center
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρ 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal (1 / 2) v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_half_optimal_lastActive_le_succ_center
+    hn hpos hdec hsucc hitem_eq hopt hshared
 
 /--
 Appendix D, Lemma 6/10 bridge: an exact midpoint candidate has zero pivot

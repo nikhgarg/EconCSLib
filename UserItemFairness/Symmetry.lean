@@ -236,6 +236,53 @@ theorem mem_sharedItems_of_two_type_active {n : ℕ}
   exact Or.inl ⟨hx, hy⟩
 
 /--
+With the no-gap properties and the shared-item bound, type `1` is zero before
+the last item used by type `0`.
+-/
+theorem typeOne_zero_before_lastActive_of_zeroClosed_of_sharedBound {n : ℕ}
+    [NeZero n] (ρ : TypePolicy 2 n)
+    (hx : TwoTypeXZeroClosed ρ)
+    (hy : TwoTypeYZeroClosed ρ)
+    (hshared : SharedItemsBound ρ)
+    {j : Item n} (hj : j.val < (lastActiveTypeZero ρ).val) :
+    ρ 1 j = 0 := by
+  classical
+  by_contra hyj_zero
+  have hxj : ρ 0 j ≠ 0 :=
+    typeZero_active_before_lastActive_of_zeroClosed ρ hx hj
+  have hyj : ρ 1 j ≠ 0 := hyj_zero
+  have hyt : ρ 1 (lastActiveTypeZero ρ) ≠ 0 := by
+    by_contra hyt_zero
+    exact hyj (hy hj hyt_zero)
+  have hxt : ρ 0 (lastActiveTypeZero ρ) ≠ 0 :=
+    lastActiveTypeZero_active ρ
+  have hj_shared : j ∈ sharedItems ρ :=
+    mem_sharedItems_of_two_type_active ρ hxj hyj
+  have ht_shared : lastActiveTypeZero ρ ∈ sharedItems ρ :=
+    mem_sharedItems_of_two_type_active ρ hxt hyt
+  have hne : j ≠ lastActiveTypeZero ρ := by
+    intro h
+    subst h
+    omega
+  have hpair_subset :
+      ({j, lastActiveTypeZero ρ} : Finset (Item n)) ⊆ sharedItems ρ := by
+    intro a ha
+    simp at ha
+    rcases ha with rfl | rfl
+    · exact hj_shared
+    · exact ht_shared
+  have htwo : 2 ≤ (sharedItems ρ).card := by
+    have hcard :
+        ({j, lastActiveTypeZero ρ} : Finset (Item n)).card = 2 := by
+      simp [hne]
+    calc
+      2 = ({j, lastActiveTypeZero ρ} : Finset (Item n)).card := hcard.symm
+      _ ≤ (sharedItems ρ).card := Finset.card_le_card hpair_subset
+  have hone : (sharedItems ρ).card ≤ 1 := by
+    simpa [SharedItemsBound] using hshared
+  omega
+
+/--
 Appendix D, Lemma 4 threshold extraction: the support no-gap properties,
 together with the Proposition 2 shared-item bound, force the sparse threshold
 shape used in Lemma 5.
@@ -251,40 +298,8 @@ theorem twoTypeThresholdSupport_of_zeroClosed_of_sharedBound {n : ℕ}
   · intro j hj
     exact typeZero_zero_after_lastActive ρ hj
   · intro j hj
-    by_contra hyj_zero
-    have hxj : ρ 0 j ≠ 0 :=
-      typeZero_active_before_lastActive_of_zeroClosed ρ hx hj
-    have hyj : ρ 1 j ≠ 0 := hyj_zero
-    have hyt : ρ 1 (lastActiveTypeZero ρ) ≠ 0 := by
-      by_contra hyt_zero
-      exact hyj (hy hj hyt_zero)
-    have hxt : ρ 0 (lastActiveTypeZero ρ) ≠ 0 :=
-      lastActiveTypeZero_active ρ
-    have hj_shared : j ∈ sharedItems ρ :=
-      mem_sharedItems_of_two_type_active ρ hxj hyj
-    have ht_shared : lastActiveTypeZero ρ ∈ sharedItems ρ :=
-      mem_sharedItems_of_two_type_active ρ hxt hyt
-    have hne : j ≠ lastActiveTypeZero ρ := by
-      intro h
-      subst h
-      omega
-    have hpair_subset :
-        ({j, lastActiveTypeZero ρ} : Finset (Item n)) ⊆ sharedItems ρ := by
-      intro a ha
-      simp at ha
-      rcases ha with rfl | rfl
-      · exact hj_shared
-      · exact ht_shared
-    have htwo : 2 ≤ (sharedItems ρ).card := by
-      have hcard :
-          ({j, lastActiveTypeZero ρ} : Finset (Item n)).card = 2 := by
-        simp [hne]
-      calc
-        2 = ({j, lastActiveTypeZero ρ} : Finset (Item n)).card := hcard.symm
-        _ ≤ (sharedItems ρ).card := Finset.card_le_card hpair_subset
-    have hone : (sharedItems ρ).card ≤ 1 := by
-      simpa [SharedItemsBound] using hshared
-    omega
+    exact typeOne_zero_before_lastActive_of_zeroClosed_of_sharedBound
+      ρ hx hy hshared hj
 
 /--
 Support-count consequence of the LP basic-feasible-solution theorem used in

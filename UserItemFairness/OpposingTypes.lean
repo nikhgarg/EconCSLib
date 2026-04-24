@@ -2016,6 +2016,18 @@ structure Problem6SparseEqualized {n : ℕ}
   x_after_pivot_zero : ∀ {j : Item n}, t.val < j.val → x j = 0
   y_before_pivot_zero : ∀ {j : Item n}, j.val < t.val → y j = 0
 
+/--
+The sparse equalized shape with the extra facts carried by the paper's pivot
+choice `t = max {j : x_j > 0}`: nonnegative coordinates and positive `x_t`.
+-/
+structure Problem6SparseEqualizedActive {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n)
+    (x y : Item n → ℝ) (ell : ℝ) : Prop where
+  sparse : Problem6SparseEqualized alpha v t x y ell
+  x_nonneg : ∀ j : Item n, 0 ≤ x j
+  y_nonneg : ∀ j : Item n, 0 ≤ y j
+  x_pivot_pos : 0 < x t
+
 theorem problem6LeftSum_nonneg {n : ℕ}
     {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
     (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
@@ -3068,6 +3080,54 @@ theorem problem6ClosedNonnegativePivots_of_denominatorBounds {n : ℕ}
     rw [heq]
     exact hdiv
 
+/-- Nonnegative closed-form pivot coordinates imply the denominator bounds. -/
+theorem problem6ClosedPivotDenominatorBounds_of_nonnegativePivots {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    Problem6ClosedPivotDenominatorBounds alpha v t := by
+  have hDpos := problem6ClosedDenominator_pos t halpha0 halpha1 hpos
+  constructor
+  · have hx := hpivot.x_pivot_nonneg
+    rw [problem6ClosedX_at] at hx
+    unfold problem6ClosedValue at hx
+    have hmul :
+        1 / problem6ClosedDenominator alpha v t *
+            problem6LeftSum alpha v t ≤ 1 := by
+      linarith
+    have hdiv :
+        problem6LeftSum alpha v t /
+            problem6ClosedDenominator alpha v t ≤ 1 := by
+      calc
+        problem6LeftSum alpha v t /
+            problem6ClosedDenominator alpha v t =
+              (problem6ClosedDenominator alpha v t)⁻¹ *
+                problem6LeftSum alpha v t := by
+                ring
+        _ ≤ 1 := by simpa [one_div] using hmul
+    rw [div_le_iff₀ hDpos] at hdiv
+    simpa using hdiv
+  · have hy := hpivot.y_pivot_nonneg
+    rw [problem6ClosedY_at] at hy
+    unfold problem6ClosedValue at hy
+    have hmul :
+        1 / problem6ClosedDenominator alpha v t *
+            problem6RightSum alpha v t ≤ 1 := by
+      linarith
+    have hdiv :
+        problem6RightSum alpha v t /
+            problem6ClosedDenominator alpha v t ≤ 1 := by
+      calc
+        problem6RightSum alpha v t /
+            problem6ClosedDenominator alpha v t =
+              (problem6ClosedDenominator alpha v t)⁻¹ *
+                problem6RightSum alpha v t := by
+                ring
+        _ ≤ 1 := by simpa [one_div] using hmul
+    rw [div_le_iff₀ hDpos] at hdiv
+    simpa using hdiv
+
 /-- Under pivot nonnegativity, all closed-form `x_j` coordinates are nonnegative. -/
 theorem problem6ClosedX_nonneg {n : ℕ}
     {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
@@ -3313,6 +3373,20 @@ noncomputable def pmfOfRealVector {n : ℕ}
   rw [PMF.ofFintype_apply]
   exact ENNReal.toReal_ofReal (hnonneg j)
 
+/-- A nonzero PMF coordinate has strictly positive real value. -/
+theorem typePolicy_toReal_pos_of_ne_zero {K n : ℕ}
+    (ρ : TypePolicy K n) {k : UserType K} {j : Item n}
+    (h : ρ k j ≠ 0) :
+    0 < (ρ k j).toReal := by
+  have htoReal_ne : (ρ k j).toReal ≠ 0 := by
+    intro hzero
+    have hzero_or_top :=
+      (ENNReal.toReal_eq_zero_iff (ρ k j)).mp hzero
+    rcases hzero_or_top with hzero_enn | htop
+    · exact h hzero_enn
+    · exact (ρ k).apply_ne_top j htop
+  exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+
 /--
 Problem 6 local optimality condition used in Appendix D, Lemma 4:
 there is no other two-type policy that strictly improves every item value.
@@ -3333,6 +3407,73 @@ def Problem6PolicyOptimal {n : ℕ}
     ∀ (ρ' : TypePolicy 2 n) (ell' : ℝ),
       problem6LPFeasible alpha v ρ' ell' → ell' ≤ ell
 
+/-- A Problem 6 optimal epigraph value is the minimum item value of its policy. -/
+theorem problem6PolicyOptimal_value_eq_finiteMin {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    ell =
+      DecisionCore.finiteMin (fun l : Item n =>
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal) := by
+  let value : Item n → ℝ := fun l =>
+    pairShare alpha v l * (ρ 0 l).toReal +
+      (1 - pairShare alpha v l) * (ρ 1 l).toReal
+  have hell_le_min : ell ≤ DecisionCore.finiteMin value := by
+    dsimp [DecisionCore.finiteMin]
+    apply Finset.le_inf'
+    intro l _hl
+    exact hopt.1 l
+  have hmin_feas : problem6LPFeasible alpha v ρ
+      (DecisionCore.finiteMin value) := by
+    intro l
+    dsimp [value]
+    exact DecisionCore.finiteMin_le value l
+  have hmin_le_ell : DecisionCore.finiteMin value ≤ ell :=
+    hopt.2 ρ (DecisionCore.finiteMin value) hmin_feas
+  exact le_antisymm hell_le_min hmin_le_ell
+
+/--
+An optimal Problem 6 policy admits no feasible policy that strictly improves
+every item value.  This uses optimality to identify `ell` with the minimum item
+value of the current policy.
+-/
+theorem problem6_noStrictPointwiseImprovement_of_policyOptimal
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hopt : Problem6PolicyOptimal alpha v ρ ell) :
+    Problem6PolicyNoStrictPointwiseImprovement alpha v ρ := by
+  classical
+  intro hbad
+  rcases hbad with ⟨ρ', hstrict⟩
+  let value : Item n → ℝ := fun l =>
+    pairShare alpha v l * (ρ 0 l).toReal +
+      (1 - pairShare alpha v l) * (ρ 1 l).toReal
+  let value' : Item n → ℝ := fun l =>
+    pairShare alpha v l * (ρ' 0 l).toReal +
+      (1 - pairShare alpha v l) * (ρ' 1 l).toReal
+  let delta : ℝ := DecisionCore.finiteMin (fun l : Item n => value' l - value l)
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    apply DecisionCore.finiteMin_pos
+    intro l
+    exact sub_pos.mpr (hstrict l)
+  let ell' : ℝ := ell + delta
+  have hfeas' : problem6LPFeasible alpha v ρ' ell' := by
+    intro l
+    have hdelta_le :
+        delta ≤ value' l - value l := by
+      dsimp [delta]
+      exact DecisionCore.finiteMin_le
+        (fun l : Item n => value' l - value l) l
+    have hell_le_value : ell ≤ value l := by
+      dsimp [value]
+      exact hopt.1 l
+    dsimp [ell', value, value'] at hdelta_le hell_le_value ⊢
+    linarith
+  have hle := hopt.2 ρ' ell' hfeas'
+  dsimp [ell'] at hle
+  linarith
+
 /--
 An equalized optimal Problem 6 policy admits no feasible policy that strictly
 improves every item value.
@@ -3346,34 +3487,7 @@ theorem problem6_noStrictPointwiseImprovement_of_policyOptimal_equalized
           (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
     (hopt : Problem6PolicyOptimal alpha v ρ ell) :
     Problem6PolicyNoStrictPointwiseImprovement alpha v ρ := by
-  classical
-  intro hbad
-  rcases hbad with ⟨ρ', hstrict⟩
-  let value' : Item n → ℝ := fun l =>
-    pairShare alpha v l * (ρ' 0 l).toReal +
-      (1 - pairShare alpha v l) * (ρ' 1 l).toReal
-  let delta : ℝ := DecisionCore.finiteMin (fun l : Item n => value' l - ell)
-  have hdelta_pos : 0 < delta := by
-    dsimp [delta]
-    apply DecisionCore.finiteMin_pos
-    intro l
-    have hs := hstrict l
-    rw [hitem_eq l] at hs
-    dsimp [value']
-    exact sub_pos.mpr hs
-  let ell' : ℝ := ell + delta
-  have hfeas' : problem6LPFeasible alpha v ρ' ell' := by
-    intro l
-    have hdelta_le :
-        delta ≤ value' l - ell := by
-      dsimp [delta]
-      exact DecisionCore.finiteMin_le
-        (fun l : Item n => value' l - ell) l
-    dsimp [ell', value'] at hdelta_le ⊢
-    linarith
-  have hle := hopt.2 ρ' ell' hfeas'
-  dsimp [ell'] at hle
-  linarith
+  exact problem6_noStrictPointwiseImprovement_of_policyOptimal hopt
 
 /--
 Appendix D, Lemma 4 no-gap consequence for the first row.
@@ -3748,6 +3862,125 @@ theorem problem6SparseEqualized_of_policyOptimal_equalized_of_two_lt
       hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
   exact problem6SparseEqualized_of_twoTypeThresholdSupport
     hitem_eq hthreshold
+
+/--
+Lemma 4 to Lemma 5 bridge retaining the paper's pivot choice
+`t = max {j : x_j > 0}`.  From the no-gap support shape and shared-item bound,
+the last active type-`0` item yields a sparse equalized solution with
+nonnegative coordinates and positive pivot `x_t`.
+-/
+theorem problem6SparseEqualizedActive_of_zeroClosed_sharedBound
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hx : TypePolicy.TwoTypeXZeroClosed ρ)
+    (hy : TypePolicy.TwoTypeYZeroClosed ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    Problem6SparseEqualizedActive alpha v (TypePolicy.lastActiveTypeZero ρ)
+      (fun l : Item n => (ρ 0 l).toReal)
+      (fun l : Item n => (ρ 1 l).toReal) ell := by
+  refine
+    { sparse := ?_
+      x_nonneg := ?_
+      y_nonneg := ?_
+      x_pivot_pos := ?_ }
+  · refine
+      { item_eq := ?_
+        sum_x := ?_
+        sum_y := ?_
+        x_after_pivot_zero := ?_
+        y_before_pivot_zero := ?_ }
+    · intro j
+      exact hitem_eq j
+    · exact problem6_typeZero_sum_eq_one ρ
+    · exact problem6_typeOne_sum_eq_one ρ
+    · intro j hj
+      have hzero : ρ 0 j = 0 :=
+        TypePolicy.typeZero_zero_after_lastActive ρ hj
+      simpa [hzero]
+    · intro j hj
+      have hzero : ρ 1 j = 0 :=
+        TypePolicy.typeOne_zero_before_lastActive_of_zeroClosed_of_sharedBound
+          ρ hx hy hshared hj
+      simpa [hzero]
+  · intro j
+    exact ENNReal.toReal_nonneg
+  · intro j
+    exact ENNReal.toReal_nonneg
+  · exact typePolicy_toReal_pos_of_ne_zero ρ
+      (TypePolicy.lastActiveTypeZero_active ρ)
+
+/--
+Appendix D, Lemma 4 active sparse bridge under the local optimality condition:
+the perturbation argument gives the no-gap support shape, and the paper pivot
+is the last active type-`0` item.
+-/
+theorem problem6SparseEqualizedActive_of_noStrictPointwiseImprovement_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hno : Problem6PolicyNoStrictPointwiseImprovement alpha v ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    Problem6SparseEqualizedActive alpha v (TypePolicy.lastActiveTypeZero ρ)
+      (fun l : Item n => (ρ 0 l).toReal)
+      (fun l : Item n => (ρ 1 l).toReal) ell := by
+  have hx : TypePolicy.TwoTypeXZeroClosed ρ :=
+    lemma4_twoTypeXZeroClosed_of_noStrictPointwiseImprovement
+      halpha0 halpha1 hpos hdec
+      (fun {i j} hji =>
+        lemma4_redistribution_exists_of_two_lt hn (by
+          intro hij
+          subst i
+          omega))
+      hitem_eq hno
+  have hy : TypePolicy.TwoTypeYZeroClosed ρ :=
+    lemma4_twoTypeYZeroClosed_of_noStrictPointwiseImprovement
+      halpha0 halpha1 hpos hdec
+      (fun {i j} hij =>
+        lemma4_redistribution_exists_of_two_lt hn (by
+          intro h
+          subst j
+          omega))
+      hitem_eq hno
+  exact problem6SparseEqualizedActive_of_zeroClosed_sharedBound
+    hitem_eq hx hy hshared
+
+/--
+Appendix D, Lemma 4 active sparse bridge for an equalized optimal Problem 6
+policy.
+-/
+theorem problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    Problem6SparseEqualizedActive alpha v (TypePolicy.lastActiveTypeZero ρ)
+      (fun l : Item n => (ρ 0 l).toReal)
+      (fun l : Item n => (ρ 1 l).toReal) ell := by
+  have hno :
+      Problem6PolicyNoStrictPointwiseImprovement alpha v ρ :=
+    problem6_noStrictPointwiseImprovement_of_policyOptimal_equalized
+      hitem_eq hopt
+  exact problem6SparseEqualizedActive_of_noStrictPointwiseImprovement_of_two_lt
+    hn halpha0 halpha1 hpos hdec hitem_eq hno hshared
 
 /-- The Problem 6 closed-form real solution as a two-type policy. -/
 noncomputable def problem6ClosedPolicy {n : ℕ}
@@ -4425,6 +4658,466 @@ theorem problem6SparseEqualized_eq_of_same_pivot
   exact ⟨hell.trans hell'.symm, hx, hy⟩
 
 /--
+Appendix D, Lemma 4 cross-pivot contradiction.  If two sparse equalized
+solutions have the same value and the second pivot is strictly to the right,
+then the later pivot cannot carry positive `x` mass.
+
+This is the paper's final uniqueness argument with the active-pivot positivity
+assumption made explicit.
+-/
+theorem problem6SparseEqualized_cross_pivot_contradiction_of_right_pivot_active
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t t' : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (htt' : t.val < t'.val)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (h' : Problem6SparseEqualized alpha v t' x' y' ell')
+    (hell : ell = ell')
+    (hy_pivot_nonneg : 0 ≤ y t)
+    (hx'_nonneg : ∀ j : Item n, 0 ≤ x' j)
+    (hx'_pivot_pos : 0 < x' t') :
+    False := by
+  classical
+  let leftx : ℝ :=
+    ∑ j : Item n, if j.val < t.val then x j else 0
+  let leftx' : ℝ :=
+    ∑ j : Item n, if j.val < t.val then x' j else 0
+  have hleft_eq : leftx = leftx' := by
+    unfold leftx leftx'
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    by_cases hjt : j.val < t.val
+    · have hjt' : j.val < t'.val := lt_trans hjt htt'
+      have hqne : pairShare alpha v j ≠ 0 :=
+        ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+      have hitem :
+          pairShare alpha v j * x j = ell := by
+        have heq := h.item_eq j
+        rw [h.y_before_pivot_zero hjt] at heq
+        simpa using heq
+      have hitem' :
+          pairShare alpha v j * x' j = ell' := by
+        have heq := h'.item_eq j
+        rw [h'.y_before_pivot_zero hjt'] at heq
+        simpa using heq
+      have hmul :
+          pairShare alpha v j * x j =
+            pairShare alpha v j * x' j := by
+        calc
+          pairShare alpha v j * x j = ell := hitem
+          _ = ell' := hell
+          _ = pairShare alpha v j * x' j := hitem'.symm
+      have hxj_eq : x j = x' j := by
+        calc
+          x j =
+              (pairShare alpha v j * x j) /
+                pairShare alpha v j := by
+                field_simp [hqne]
+          _ =
+              (pairShare alpha v j * x' j) /
+                pairShare alpha v j := by
+                rw [hmul]
+          _ = x' j := by
+                field_simp [hqne]
+      simp [hjt, hxj_eq]
+    · simp [hjt]
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_of_after_zero
+      x t h.x_after_pivot_zero
+  have hxt_eq : x t = 1 - leftx := by
+    have hsum :
+        (∑ j : Item n, x j) = leftx + x t := by
+      simpa [leftx] using hsplit
+    nlinarith [h.sum_x, hsum]
+  let rightx' : ℝ :=
+    ∑ j : Item n, if t.val < j.val then x' j else 0
+  have hrightx'_nonneg : 0 ≤ rightx' := by
+    unfold rightx'
+    refine Finset.sum_nonneg ?_
+    intro j _hj
+    by_cases hj : t.val < j.val
+    · simp [hj, hx'_nonneg j]
+    · simp [hj]
+  have hrightx'_pos : 0 < rightx' := by
+    have hle : x' t' ≤ rightx' := by
+      unfold rightx'
+      simpa [htt'] using
+        Finset.single_le_sum
+          (s := (Finset.univ : Finset (Item n)))
+          (f := fun j : Item n => if t.val < j.val then x' j else 0)
+          (fun j _hj => by
+            by_cases hj : t.val < j.val
+            · simp [hj, hx'_nonneg j]
+            · simp [hj])
+          (by simp : t' ∈ (Finset.univ : Finset (Item n)))
+    exact lt_of_lt_of_le hx'_pivot_pos hle
+  have hsplit' :=
+    problem6_sum_eq_left_part_add_pivot_add_right_part x' t
+  have hprefix_lt : leftx' + x' t < 1 := by
+    have hsum :
+        (∑ j : Item n, x' j) = leftx' + x' t + rightx' := by
+      simpa [leftx', rightx'] using hsplit'
+    nlinarith [h'.sum_x, hsum, hrightx'_pos]
+  let q : ℝ := pairShare alpha v t
+  have hqpos : 0 < q := by
+    simpa [q] using pairShare_pos t halpha0 halpha1 hpos
+  have hqcomp_pos : 0 < 1 - q := by
+    simpa [q] using one_sub_pairShare_pos t halpha0 halpha1 hpos
+  have hitem_t :
+      q * x t + (1 - q) * y t = ell := by
+    simpa [q] using h.item_eq t
+  have hitem_t' :
+      q * x' t = ell' := by
+    have heq := h'.item_eq t
+    rw [h'.y_before_pivot_zero htt'] at heq
+    simpa [q] using heq
+  have hsame_item :
+      q * x t + (1 - q) * y t = q * x' t := by
+    calc
+      q * x t + (1 - q) * y t = ell := hitem_t
+      _ = ell' := hell
+      _ = q * x' t := hitem_t'.symm
+  have hdelta_eq :
+      (1 - q) * y t = q * (x' t - (1 - leftx)) := by
+    rw [hxt_eq] at hsame_item
+    nlinarith
+  have hxprime_minus_neg : x' t - (1 - leftx) < 0 := by
+    nlinarith [hprefix_lt, hleft_eq]
+  have hright_neg : q * (x' t - (1 - leftx)) < 0 :=
+    mul_neg_of_pos_of_neg hqpos hxprime_minus_neg
+  have hleft_nonneg : 0 ≤ (1 - q) * y t :=
+    mul_nonneg hqcomp_pos.le hy_pivot_nonneg
+  linarith
+
+/--
+Appendix D, Lemma 4 cross-pivot uniqueness under the active-pivot side
+condition: two sparse equalized solutions with the same value, nonnegative
+coordinates, and positive active `x` mass at both pivots must use the same
+pivot.
+-/
+theorem problem6SparseEqualized_pivot_eq_of_equal_value_and_active_pivots
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t t' : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (h' : Problem6SparseEqualized alpha v t' x' y' ell')
+    (hell : ell = ell')
+    (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
+    (hy_nonneg : ∀ j : Item n, 0 ≤ y j)
+    (hx'_nonneg : ∀ j : Item n, 0 ≤ x' j)
+    (hy'_nonneg : ∀ j : Item n, 0 ≤ y' j)
+    (hxt_pos : 0 < x t)
+    (hxt'_pos : 0 < x' t') :
+    t = t' := by
+  rcases lt_trichotomy t.val t'.val with htt' | hval_eq | ht't
+  · exact False.elim
+      (problem6SparseEqualized_cross_pivot_contradiction_of_right_pivot_active
+        halpha0 halpha1 hpos htt' h h' hell (hy_nonneg t)
+        hx'_nonneg hxt'_pos)
+  · exact Fin.ext hval_eq
+  · exact False.elim
+      (problem6SparseEqualized_cross_pivot_contradiction_of_right_pivot_active
+        halpha0 halpha1 hpos ht't h' h hell.symm (hy'_nonneg t')
+        hx_nonneg hxt_pos)
+
+/--
+Appendix D, Lemma 4 uniqueness under the active-pivot side condition: once
+cross-pivot cases are ruled out, the same-pivot closed-form argument identifies
+the value and all coordinates.
+-/
+theorem problem6SparseEqualized_eq_of_equal_value_and_active_pivots
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t t' : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (h' : Problem6SparseEqualized alpha v t' x' y' ell')
+    (hell : ell = ell')
+    (hx_nonneg : ∀ j : Item n, 0 ≤ x j)
+    (hy_nonneg : ∀ j : Item n, 0 ≤ y j)
+    (hx'_nonneg : ∀ j : Item n, 0 ≤ x' j)
+    (hy'_nonneg : ∀ j : Item n, 0 ≤ y' j)
+    (hxt_pos : 0 < x t)
+    (hxt'_pos : 0 < x' t') :
+    t = t' ∧ ell = ell' ∧ x = x' ∧ y = y' := by
+  have hpivot :
+      t = t' :=
+    problem6SparseEqualized_pivot_eq_of_equal_value_and_active_pivots
+      halpha0 halpha1 hpos h h' hell hx_nonneg hy_nonneg
+      hx'_nonneg hy'_nonneg hxt_pos hxt'_pos
+  subst t'
+  have hsame :=
+    problem6SparseEqualized_eq_of_same_pivot
+      halpha0 halpha1 hpos h h'
+  exact ⟨rfl, hsame⟩
+
+/--
+Appendix D, Lemma 4 uniqueness for active sparse equalized solutions: if two
+active-pivot sparse solutions have the same value, then the pivots, value, and
+all coordinates agree.
+-/
+theorem problem6SparseEqualizedActive_eq_of_equal_value
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t t' : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell)
+    (h' : Problem6SparseEqualizedActive alpha v t' x' y' ell')
+    (hell : ell = ell') :
+    t = t' ∧ ell = ell' ∧ x = x' ∧ y = y' := by
+  exact problem6SparseEqualized_eq_of_equal_value_and_active_pivots
+    halpha0 halpha1 hpos h.sparse h'.sparse hell h.x_nonneg h.y_nonneg
+    h'.x_nonneg h'.y_nonneg h.x_pivot_pos h'.x_pivot_pos
+
+/--
+Lemma 5 feasibility bridge: an active sparse equalized solution makes the
+closed-form pivot coordinates nonnegative at the same pivot.
+-/
+theorem problem6ClosedNonnegativePivots_of_sparseEqualizedActive
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell) :
+    Problem6ClosedNonnegativePivots alpha v t := by
+  constructor
+  · rw [problem6ClosedX_at]
+    rw [← problem6SparseEqualized_x_pivot_eq_closed
+      halpha0 halpha1 hpos h.sparse]
+    exact h.x_nonneg t
+  · rw [problem6ClosedY_at]
+    rw [← problem6SparseEqualized_y_pivot_eq_closed
+      halpha0 halpha1 hpos h.sparse]
+    exact h.y_nonneg t
+
+/--
+Lemma 5 denominator-bound bridge: for the active sparse pivot of Lemma 4, the
+closed-form denominator bounds follow from the nonnegative pivot coordinates.
+-/
+theorem problem6ClosedPivotDenominatorBounds_of_sparseEqualizedActive
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualizedActive alpha v t x y ell) :
+    Problem6ClosedPivotDenominatorBounds alpha v t := by
+  exact problem6ClosedPivotDenominatorBounds_of_nonnegativePivots
+    halpha0 halpha1 hpos
+    (problem6ClosedNonnegativePivots_of_sparseEqualizedActive
+      halpha0 halpha1 hpos h)
+
+/--
+Appendix D, Lemma 4 uniqueness for equalized optimal Problem 6 policies,
+conditional on the paper's shared-item sparsity bound and `2 < n`.
+-/
+theorem problem6PolicyOptimal_equalized_unique_sparseActive_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 2 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hitem_eq' :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ' 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ' 1 l).toReal = ell')
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hopt' : Problem6PolicyOptimal alpha v ρ' ell')
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hshared' : TypePolicy.SharedItemsBound ρ') :
+    ∃ t : Item n,
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell ∧
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ' 0 l).toReal)
+        (fun l : Item n => (ρ' 1 l).toReal) ell' ∧
+      ell = ell' ∧
+      (fun l : Item n => (ρ 0 l).toReal) =
+        (fun l : Item n => (ρ' 0 l).toReal) ∧
+      (fun l : Item n => (ρ 1 l).toReal) =
+        (fun l : Item n => (ρ' 1 l).toReal) := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  let t' : Item n := TypePolicy.lastActiveTypeZero ρ'
+  have hsparse :
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+    dsimp [t]
+    exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+      hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+  have hsparse' :
+      Problem6SparseEqualizedActive alpha v t'
+        (fun l : Item n => (ρ' 0 l).toReal)
+        (fun l : Item n => (ρ' 1 l).toReal) ell' := by
+    dsimp [t']
+    exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+      hn halpha0 halpha1 hpos hdec hitem_eq' hopt' hshared'
+  have hell_le : ell' ≤ ell := hopt.2 ρ' ell' hopt'.1
+  have hell_ge : ell ≤ ell' := hopt'.2 ρ ell hopt.1
+  have hell : ell = ell' := le_antisymm hell_ge hell_le
+  have huniq :=
+    problem6SparseEqualizedActive_eq_of_equal_value
+      halpha0 halpha1 hpos hsparse hsparse' hell
+  rcases huniq with ⟨hpivot, hell_eq, hx_eq, hy_eq⟩
+  have hsparse'_same :
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ' 0 l).toReal)
+        (fun l : Item n => (ρ' 1 l).toReal) ell' := by
+    simpa [hpivot] using hsparse'
+  exact ⟨t, hsparse, hsparse'_same, hell_eq, hx_eq, hy_eq⟩
+
+/--
+Appendix D, Lemma 10, selected-pivot bridge at `α = 1/2`: if a midpoint
+candidate has denominator bounds and every later nonnegative closed pivot has
+weakly smaller closed value, then an equalized optimal policy cannot select a
+pivot after that candidate.
+-/
+theorem lemma10_half_optimal_lastActive_le_candidate
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hboundsc : Problem6ClosedPivotDenominatorBounds (1 / 2) v c)
+    (hcompare :
+      ∀ {t : Item n}, c.val < t.val →
+        Problem6ClosedNonnegativePivots (1 / 2) v t →
+          problem6ClosedValue (1 / 2) v t ≤
+            problem6ClosedValue (1 / 2) v c)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρ 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal (1 / 2) v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  have hsparse :
+      Problem6SparseEqualizedActive (1 / 2) v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+    dsimp [t]
+    exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+      hn (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hdec hitem_eq hopt hshared
+  have hvalue :
+      ell = problem6ClosedValue (1 / 2) v t :=
+    problem6SparseEqualized_value_eq_closed
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hsparse.sparse
+  have hpivt :
+      Problem6ClosedNonnegativePivots (1 / 2) v t :=
+    problem6ClosedNonnegativePivots_of_sparseEqualizedActive
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hsparse
+  let hpivc : Problem6ClosedNonnegativePivots (1 / 2) v c :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hboundsc
+  by_contra hnot
+  have hct : c.val < t.val := by
+    dsimp [t] at hnot ⊢
+    omega
+  have hcompare_tc :
+      problem6ClosedValue (1 / 2) v t ≤
+        problem6ClosedValue (1 / 2) v c :=
+    hcompare hct hpivt
+  have hfeas_c :
+      problem6LPFeasible (1 / 2) v
+        (problem6ClosedPolicy (1 / 2) v c
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivc)
+        (problem6ClosedValue (1 / 2) v c) :=
+    problem6ClosedPolicy_feasible_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hboundsc
+  have hle_c_ell :
+      problem6ClosedValue (1 / 2) v c ≤ ell :=
+    hopt.2
+      (problem6ClosedPolicy (1 / 2) v c
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivc)
+      (problem6ClosedValue (1 / 2) v c) hfeas_c
+  have hle_ell_c :
+      ell ≤ problem6ClosedValue (1 / 2) v c := by
+    rw [hvalue]
+    exact hcompare_tc
+  have hell_c :
+      problem6ClosedValue (1 / 2) v c = ell :=
+    le_antisymm hle_c_ell hle_ell_c
+  exact problem6SparseEqualized_cross_pivot_contradiction_of_right_pivot_active
+    (by norm_num : (0 : ℝ) < 1 / 2)
+    (by norm_num : (1 / 2 : ℝ) < 1) hpos hct
+    (problem6Closed_sparseEqualized c
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+    hsparse.sparse hell_c
+    (problem6ClosedY_nonneg
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivc c)
+    hsparse.x_nonneg hsparse.x_pivot_pos
+
+/--
+Appendix D, Lemma 10, selected-pivot bridge at `α = 1/2`, odd-center case.
+-/
+theorem lemma10_half_optimal_lastActive_le_center
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρ 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal (1 / 2) v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_half_optimal_lastActive_le_candidate
+    hn hpos hdec
+    (problem6ClosedPivotDenominatorBounds_half_center
+      (v := v) (t := c) hpos hcenter)
+    (fun hct hpivot =>
+      problem6ClosedValue_le_of_center_candidate_before
+        hpos hcenter hct hpivot)
+    hitem_eq hopt hshared
+
+/--
+Appendix D, Lemma 10, selected-pivot bridge at `α = 1/2`, even-center case.
+-/
+theorem lemma10_half_optimal_lastActive_le_succ_center
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare (1 / 2) v l * (ρ 0 l).toReal +
+          (1 - pairShare (1 / 2) v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal (1 / 2) v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    (TypePolicy.lastActiveTypeZero ρ).val ≤ c.val := by
+  exact lemma10_half_optimal_lastActive_le_candidate
+    hn hpos hdec
+    (problem6ClosedPivotDenominatorBounds_half_succ_center
+      (v := v) (t := c) hpos hsucc)
+    (fun hct hpivot =>
+      problem6ClosedValue_le_of_succ_center_candidate_before
+        hpos hsucc hct hpivot)
+    hitem_eq hopt hshared
+
+/--
 A certificate that a proposed Problem 6 policy and value solve the finite LP:
 the policy attains `ell`, and no feasible policy can exceed `ell`.
 -/
@@ -4819,6 +5512,49 @@ theorem problem6ClosedOptimalityCertificate_of_denominatorBounds {n : ℕ}
       halpha0 halpha1 hpos hdec ρ ell hfeas
 
 /--
+Appendix D, Lemma 4/5 bridge: an equalized optimal Problem 6 policy supplies
+the closed-form optimality certificate at its active sparse pivot.
+-/
+theorem problem6ClosedOptimalityCertificate_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    Problem6ClosedOptimalityCertificate alpha v
+      (TypePolicy.lastActiveTypeZero ρ) := by
+  let t : Item n := TypePolicy.lastActiveTypeZero ρ
+  have hsparse :
+      Problem6SparseEqualizedActive alpha v t
+        (fun l : Item n => (ρ 0 l).toReal)
+        (fun l : Item n => (ρ 1 l).toReal) ell := by
+    dsimp [t]
+    exact problem6SparseEqualizedActive_of_policyOptimal_equalized_of_two_lt
+      hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared
+  have hvalue :
+      ell = problem6ClosedValue alpha v t :=
+    problem6SparseEqualized_value_eq_closed
+      halpha0 halpha1 hpos hsparse.sparse
+  have hbounds :
+      Problem6ClosedPivotDenominatorBounds alpha v t :=
+    problem6ClosedPivotDenominatorBounds_of_sparseEqualizedActive
+      halpha0 halpha1 hpos hsparse
+  refine
+    { denominator_bounds := ?_
+      upper_bound := ?_ }
+  · simpa [t] using hbounds
+  · intro ρ' ell' hfeas'
+    have hle : ell' ≤ ell := hopt.2 ρ' ell' hfeas'
+    exact hle.trans_eq hvalue
+
+/--
 A closed-form certificate supplies the generic `Problem6OptimalityCertificate`
 for the value `problem6ClosedValue`.
 -/
@@ -5044,6 +5780,31 @@ theorem problem6LPOptimalValue_eq_closedValue_of_closed_certificate
   exact problem6LPOptimalValue_eq_of_certificate
     alpha v (problem6ClosedValue alpha v t) halpha0 halpha1 hpos
     (problem6OptimalityCertificate_of_closed halpha0 halpha1 hpos cert)
+
+/--
+Appendix D, Lemma 4/5 optimal-value bridge: an equalized optimal Problem 6
+policy identifies the LP optimum with the Lemma 5 closed value at its active
+sparse pivot.
+-/
+theorem problem6LPOptimalValue_eq_closedValue_of_policyOptimal_equalized_of_two_lt
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hitem_eq :
+      ∀ l : Item n,
+        pairShare alpha v l * (ρ 0 l).toReal +
+          (1 - pairShare alpha v l) * (ρ 1 l).toReal = ell)
+    (hopt : Problem6PolicyOptimal alpha v ρ ell)
+    (hshared : TypePolicy.SharedItemsBound ρ) :
+    problem6LPOptimalValue alpha v =
+      problem6ClosedValue alpha v (TypePolicy.lastActiveTypeZero ρ) := by
+  exact problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+    halpha0 halpha1 hpos
+    (problem6ClosedOptimalityCertificate_of_policyOptimal_equalized_of_two_lt
+      hn halpha0 halpha1 hpos hdec hitem_eq hopt hshared)
 
 /--
 Appendix D, Lemma 11 interval form: if the same pivot `t` has the paper's
