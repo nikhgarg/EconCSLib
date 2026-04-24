@@ -1,4 +1,5 @@
 import DecisionCore.FiniteExpectation
+import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Tactic.Linarith
 
 open scoped BigOperators
@@ -14,6 +15,29 @@ theorem epsilonContinuousAt_const (c x : ℝ) :
     EpsilonContinuousAt (fun _ : ℝ => c) x := by
   intro ε hε
   exact ⟨1, zero_lt_one, by intro y hy; simpa using hε⟩
+
+/-- Mathlib continuity at a point implies the elementary epsilon-delta interface. -/
+theorem epsilonContinuousAt_of_continuousAt {f : ℝ → ℝ} {x : ℝ}
+    (hf : ContinuousAt f x) :
+    EpsilonContinuousAt f x := by
+  rw [Metric.continuousAt_iff] at hf
+  simpa [Real.dist_eq] using hf
+
+/-- Finite sums preserve mathlib continuity at a point. -/
+theorem continuousAt_finset_sum {ι : Type*} [DecidableEq ι]
+    (s : Finset ι) {f : ι → ℝ → ℝ} {x : ℝ}
+    (hf : ∀ i ∈ s, ContinuousAt (f i) x) :
+    ContinuousAt (fun y => ∑ i ∈ s, f i y) x := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simpa using (continuousAt_const : ContinuousAt (fun _ : ℝ => (0 : ℝ)) x)
+  | insert a s ha ih =>
+      have ha_cont : ContinuousAt (f a) x := hf a (Finset.mem_insert_self a s)
+      have hs_cont :
+          ContinuousAt (fun y => ∑ i ∈ s, f i y) x := by
+        exact ih (fun i hi => hf i (Finset.mem_insert_of_mem hi))
+      simpa [Finset.sum_insert, ha] using ha_cont.add hs_cont
 
 /-- Sums of epsilon-delta continuous real functions are continuous. -/
 theorem epsilonContinuousAt_add {f g : ℝ → ℝ} {x : ℝ}

@@ -53,8 +53,10 @@ noncomputable def mallowsPMF {n : ℕ} (q : ℝ) (ρ : Ranking n)
           (s := (Finset.univ : Finset (Ranking n)))
           (f := fun π : Ranking n => mallowsWeight q ρ π)
           (a := mallowsPartition q ρ)).symm]
+        have hsum_pos : 0 < ∑ π : Ranking n, mallowsWeight q ρ π := by
+          simpa [mallowsPartition] using hpartition_pos
         unfold mallowsPartition
-        field_simp [ne_of_gt hpartition_pos]
+        field_simp [ne_of_gt hsum_pos]
       calc
         (∑ π : Ranking n,
             ENNReal.ofReal (mallowsWeight q ρ π / mallowsPartition q ρ))

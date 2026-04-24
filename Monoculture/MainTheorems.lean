@@ -15,6 +15,22 @@ support lemmas below.
 -/
 
 namespace Monoculture
+
+/--
+Definition 1 / Mallows atomwise continuity.
+
+Paper statement: for the Mallows family with parameter `θ = φ - 1`, the
+probability of any fixed permutation varies continuously with positive `θ`.
+
+Lean uses the finite epsilon-delta interface required by the Theorem 1 proof.
+-/
+theorem paper_definition1_concreteMallowsSpec_atom_continuity
+    {n : ℕ} (center : Ranking n) {θ : ℝ} (hθ : 0 < θ)
+    (π : Ranking n) :
+    DecisionCore.EpsilonContinuousAt
+      (fun θ' => (((concreteMallowsSpec center θ').law) π).toReal) θ :=
+  concreteMallowsSpec_atom_continuity center hθ π
+
 namespace MallowsComparison
 
 /--

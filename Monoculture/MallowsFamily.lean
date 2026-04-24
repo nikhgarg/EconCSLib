@@ -37,6 +37,96 @@ theorem mallowsInverseAccuracyQ_strictAnti {θA θH : ℝ}
   have hH : 0 < θH + 1 := by linarith
   exact (inv_lt_inv₀ hA hH).2 (by linarith)
 
+/--
+Totalized inverse Mallows accuracy parameter.
+
+The paper only uses positive `θ`; outside that domain this definition returns
+`1` so that `θ ↦ MallowsSpec.ofQ ...` is a total Lean function.
+-/
+noncomputable def mallowsAccuracyQ (θ : ℝ) : ℝ :=
+  if 0 < θ then mallowsInverseAccuracyQ θ else 1
+
+theorem mallowsAccuracyQ_eq_of_pos {θ : ℝ} (hθ : 0 < θ) :
+    mallowsAccuracyQ θ = mallowsInverseAccuracyQ θ := by
+  simp [mallowsAccuracyQ, hθ]
+
+theorem mallowsAccuracyQ_pos (θ : ℝ) :
+    0 < mallowsAccuracyQ θ := by
+  unfold mallowsAccuracyQ
+  by_cases hθ : 0 < θ
+  · simp [hθ, mallowsInverseAccuracyQ_pos hθ]
+  · simp [hθ]
+
+theorem mallowsAccuracyQ_lt_one {θ : ℝ} (hθ : 0 < θ) :
+    mallowsAccuracyQ θ < 1 := by
+  rw [mallowsAccuracyQ_eq_of_pos hθ]
+  exact mallowsInverseAccuracyQ_lt_one hθ
+
+theorem mallowsAccuracyQ_strictAnti {θA θH : ℝ}
+    (hθH : 0 < θH) (hθ : θH < θA) :
+    mallowsAccuracyQ θA < mallowsAccuracyQ θH := by
+  rw [mallowsAccuracyQ_eq_of_pos (lt_trans hθH hθ),
+    mallowsAccuracyQ_eq_of_pos hθH]
+  exact mallowsInverseAccuracyQ_strictAnti hθH hθ
+
+/-- Concrete Mallows specification for the paper's `θ = φ - 1` convention. -/
+noncomputable def concreteMallowsSpec {n : ℕ}
+    (center : Ranking n) (θ : ℝ) : MallowsSpec n :=
+  MallowsSpec.ofQ center (mallowsAccuracyQ θ) (mallowsAccuracyQ_pos θ)
+
+theorem mallowsAccuracyQ_continuousAt_of_pos {θ : ℝ} (hθ : 0 < θ) :
+    ContinuousAt mallowsAccuracyQ θ := by
+  have hlocal : mallowsInverseAccuracyQ =ᶠ[nhds θ] mallowsAccuracyQ := by
+    filter_upwards [eventually_gt_nhds hθ] with y hy
+    simp [mallowsAccuracyQ, hy]
+  have hcont : ContinuousAt mallowsInverseAccuracyQ θ := by
+    unfold mallowsInverseAccuracyQ
+    exact (continuousAt_id.add_const 1).inv₀
+      (by
+        change θ + 1 ≠ 0
+        linarith)
+  exact hcont.congr hlocal
+
+/--
+Atomwise continuity of the concrete finite Mallows law at every positive
+accuracy parameter. This is the continuity part of the paper's Definition 1 in
+the finite epsilon-delta interface used by Theorem 1.
+-/
+theorem concreteMallowsSpec_atom_continuity
+    {n : ℕ} (center : Ranking n) {θ : ℝ} (hθ : 0 < θ)
+    (π : Ranking n) :
+    DecisionCore.EpsilonContinuousAt
+      (fun θ' => (((concreteMallowsSpec center θ').law) π).toReal) θ := by
+  have hq_cont : ContinuousAt mallowsAccuracyQ θ :=
+    mallowsAccuracyQ_continuousAt_of_pos hθ
+  have hnum_cont :
+      ContinuousAt
+        (fun θ' => mallowsWeight (mallowsAccuracyQ θ') center π) θ := by
+    unfold mallowsWeight
+    exact hq_cont.pow _
+  have hden_cont :
+      ContinuousAt
+        (fun θ' => mallowsPartition (mallowsAccuracyQ θ') center) θ := by
+    unfold mallowsPartition
+    exact DecisionCore.continuousAt_finset_sum
+      (s := (Finset.univ : Finset (Ranking n)))
+      (f := fun τ θ' => mallowsWeight (mallowsAccuracyQ θ') center τ)
+      (fun τ _ => by
+        unfold mallowsWeight
+        exact hq_cont.pow _)
+  have hden_ne :
+      mallowsPartition (mallowsAccuracyQ θ) center ≠ 0 :=
+    ne_of_gt (mallowsPartition_pos (hq := mallowsAccuracyQ_pos θ) center)
+  have hratio :
+      ContinuousAt
+        (fun θ' =>
+          mallowsWeight (mallowsAccuracyQ θ') center π /
+            mallowsPartition (mallowsAccuracyQ θ') center) θ :=
+    hnum_cont.div hden_cont hden_ne
+  exact DecisionCore.epsilonContinuousAt_of_continuousAt
+    (by
+      simpa [concreteMallowsSpec, MallowsSpec.ofQ] using hratio)
+
 namespace MallowsSpec
 
 variable {n : ℕ} (M : MallowsSpec n)
