@@ -11386,6 +11386,265 @@ theorem lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
     hpos hdec hpivot hcenter
 
 /--
+Appendix D, Lemma 8 global canonical first-pivot stitch, odd-center case:
+for any two first-half parameters `α ≤ α'`, endpoint canonical first pivots
+can be connected by the no-skip adjacent-pivot construction, so reduced
+optimal item fairness is monotone.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  have htu : t.val ≤ u.val := by
+    have h :=
+      problem6FirstClosedPivot_mono_alpha
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right hpos
+    simpa [hleft_pivot, hright_pivot] using h
+  generalize hgap_eq : u.val - t.val = gap
+  revert alphaLeft alphaRight t u
+  induction gap using Nat.strong_induction_on with
+  | h gap ih =>
+      intro alphaLeft alphaRight t u
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right halphaLeft_half halphaRight_half
+        hleft_pivot hright_pivot htu hgap_eq
+      by_cases hsame_val : t.val = u.val
+      · have htu_eq : t = u := Fin.ext hsame_val
+        have hpivot_eq :
+            problem6FirstClosedPivot alphaLeft v
+                halphaLeft0 halphaLeft1 hpos =
+              problem6FirstClosedPivot alphaRight v
+                halphaRight0 halphaRight1 hpos := by
+          rw [hleft_pivot, hright_pivot, htu_eq]
+        have hcenter_t :
+            (problem6FirstClosedPivot alphaLeft v
+                halphaLeft0 halphaLeft1 hpos).val ≤
+              (reverseItem
+                (problem6FirstClosedPivot alphaLeft v
+                  halphaLeft0 halphaLeft1 hpos)).val :=
+          problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+            halphaLeft0 halphaLeft1 halphaLeft_half hpos hcenter_c
+        exact
+          lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
+            halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+            hleft_le_right hpos hdec hpivot_eq hcenter_t
+      · have ht_lt_u : t.val < u.val := lt_of_le_of_ne htu hsame_val
+        by_cases hadj : u.val = t.val + 1
+        · exact
+            lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_center
+              halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right halphaLeft_half halphaRight_half
+              hpos hdec hcenter_c hleft_pivot hright_pivot hadj
+        · have hskip : t.val + 1 < u.val := by omega
+          rcases problem6FirstClosedPivot_successor_exists_of_pivot_jump
+              halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right hpos hleft_pivot hright_pivot hskip with
+            ⟨alphaMid, halphaMid0, halphaMid1, s,
+              hleft_le_mid, hmid_le_right, hs_val, hmid_pivot⟩
+          have halphaMid_half : alphaMid ≤ 1 / 2 :=
+            hmid_le_right.trans halphaRight_half
+          have hleft_mid :
+              TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaLeft v) ≤
+                TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaMid v) := by
+            exact
+              lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_center
+                halphaLeft0 halphaLeft1 halphaMid0 halphaMid1
+                hleft_le_mid halphaLeft_half halphaMid_half
+                hpos hdec hcenter_c hleft_pivot hmid_pivot hs_val
+          have hs_le_u : s.val ≤ u.val := by
+            rw [hs_val]
+            exact le_of_lt hskip
+          have hsmaller : u.val - s.val < gap := by
+            rw [← hgap_eq, hs_val]
+            omega
+          have hmid_right :
+              TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaMid v) ≤
+                TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaRight v) := by
+            exact ih (u.val - s.val) hsmaller
+              halphaMid0 halphaMid1 halphaRight0 halphaRight1
+              hmid_le_right halphaMid_half halphaRight_half
+              hmid_pivot hright_pivot hs_le_u rfl
+          exact hleft_mid.trans hmid_right
+
+/--
+Appendix D, Lemma 8 global canonical first-pivot stitch, even-center case:
+the same no-skip adjacent-pivot construction proves first-half monotonicity
+when the two middle items are adjacent.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  have htu : t.val ≤ u.val := by
+    have h :=
+      problem6FirstClosedPivot_mono_alpha
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right hpos
+    simpa [hleft_pivot, hright_pivot] using h
+  generalize hgap_eq : u.val - t.val = gap
+  revert alphaLeft alphaRight t u
+  induction gap using Nat.strong_induction_on with
+  | h gap ih =>
+      intro alphaLeft alphaRight t u
+        halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+        hleft_le_right halphaLeft_half halphaRight_half
+        hleft_pivot hright_pivot htu hgap_eq
+      by_cases hsame_val : t.val = u.val
+      · have htu_eq : t = u := Fin.ext hsame_val
+        have hpivot_eq :
+            problem6FirstClosedPivot alphaLeft v
+                halphaLeft0 halphaLeft1 hpos =
+              problem6FirstClosedPivot alphaRight v
+                halphaRight0 halphaRight1 hpos := by
+          rw [hleft_pivot, hright_pivot, htu_eq]
+        have hcenter_t :
+            (problem6FirstClosedPivot alphaLeft v
+                halphaLeft0 halphaLeft1 hpos).val ≤
+              (reverseItem
+                (problem6FirstClosedPivot alphaLeft v
+                  halphaLeft0 halphaLeft1 hpos)).val :=
+          problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+            halphaLeft0 halphaLeft1 halphaLeft_half hpos hsucc
+        exact
+          lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot
+            halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+            hleft_le_right hpos hdec hpivot_eq hcenter_t
+      · have ht_lt_u : t.val < u.val := lt_of_le_of_ne htu hsame_val
+        by_cases hadj : u.val = t.val + 1
+        · exact
+            lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+              halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right halphaLeft_half halphaRight_half
+              hpos hdec hsucc hleft_pivot hright_pivot hadj
+        · have hskip : t.val + 1 < u.val := by omega
+          rcases problem6FirstClosedPivot_successor_exists_of_pivot_jump
+              halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+              hleft_le_right hpos hleft_pivot hright_pivot hskip with
+            ⟨alphaMid, halphaMid0, halphaMid1, s,
+              hleft_le_mid, hmid_le_right, hs_val, hmid_pivot⟩
+          have halphaMid_half : alphaMid ≤ 1 / 2 :=
+            hmid_le_right.trans halphaRight_half
+          have hleft_mid :
+              TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaLeft v) ≤
+                TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaMid v) := by
+            exact
+              lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_change_succ_center
+                halphaLeft0 halphaLeft1 halphaMid0 halphaMid1
+                hleft_le_mid halphaLeft_half halphaMid_half
+                hpos hdec hsucc hleft_pivot hmid_pivot hs_val
+          have hs_le_u : s.val ≤ u.val := by
+            rw [hs_val]
+            exact le_of_lt hskip
+          have hsmaller : u.val - s.val < gap := by
+            rw [← hgap_eq, hs_val]
+            omega
+          have hmid_right :
+              TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaMid v) ≤
+                TypeWeightedRecommendationModel.optimalItemFairness
+                  (twoTypeReducedModel alphaRight v) := by
+            exact ih (u.val - s.val) hsmaller
+              halphaMid0 halphaMid1 halphaRight0 halphaRight1
+              hmid_le_right halphaMid_half halphaRight_half
+              hmid_pivot hright_pivot hs_le_u rfl
+          exact hleft_mid.trans hmid_right
+
+/--
+Appendix D, Lemma 8 in paper-style endpoint-free form, odd-center case:
+on the first half of the parameter range, reduced optimal item fairness is
+monotone in `α`.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints
+      (alphaLeft := alpha) (alphaRight := alpha') (v := v) (c := c)
+      (t := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)
+      (u := problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+      halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c rfl rfl
+
+/--
+Appendix D, Lemma 8 in paper-style endpoint-free form, even-center case.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints
+      (alphaLeft := alpha) (alphaRight := alpha') (v := v) (c := c)
+      (t := problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)
+      (u := problem6FirstClosedPivot alpha' v halpha0' halpha1' hpos)
+      halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc rfl rfl
+
+/--
 Appendix D, Lemma 8 finite-stitch core for closed-form certificates: a finite
 chain may either stay inside one certified same-pivot interval, where Lemma 11
 applies, or repeat the same `α` at a boundary.  This is the closed-form version

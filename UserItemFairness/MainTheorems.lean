@@ -4631,6 +4631,116 @@ theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_adjac
       hpos hdec hsucc hpivot_def hnext
 
 /--
+Appendix D, Lemma 8 global canonical first-pivot stitch, odd-center case:
+the no-skip adjacent-pivot construction connects any endpoint canonical
+first pivots in the first half.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints
+      halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+      hleft_le_right halphaLeft_half halphaRight_half
+      hpos hdec hcenter_c hleft_pivot hright_pivot
+
+/--
+Appendix D, Lemma 8 global canonical first-pivot stitch, even-center case:
+the same endpoint stitch applies when the middle items are adjacent.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaRight : ℝ} {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_right : alphaLeft ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints
+      halphaLeft0 halphaLeft1 halphaRight0 halphaRight1
+      hleft_le_right halphaLeft_half halphaRight_half
+      hpos hdec hsucc hleft_pivot hright_pivot
+
+/--
+Appendix D, Lemma 8 paper-style form, odd-center case: for any first-half
+`α ≤ α'`, reduced optimal item fairness is monotone.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_alpha_le
+      halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c
+
+/--
+Appendix D, Lemma 8 paper-style form, even-center case.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_alpha_le
+      halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc
+
+/--
 Appendix D, Lemma 7-style monotonicity for the canonical Lemma 5 pivot:
 as `α` increases, the first crossing pivot weakly moves right.
 -/
