@@ -150,6 +150,28 @@ theorem pmfExp_mul_const {α : Type*} [Fintype α] [DecidableEq α]
     _ = (∑ a : α, (μ a).toReal * f a) * c := by
           rw [Finset.sum_mul]
 
+/-- A finite PMF expectation is bounded above by any pointwise upper bound. -/
+theorem pmfExp_le_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (c : ℝ)
+    (h : ∀ a, f a ≤ c) :
+    pmfExp μ f ≤ c := by
+  unfold pmfExp
+  calc
+    ∑ a : α, (μ a).toReal * f a
+        ≤ ∑ a : α, (μ a).toReal * c := by
+          exact Finset.sum_le_sum (by
+            intro a _
+            exact mul_le_mul_of_nonneg_left (h a) ENNReal.toReal_nonneg)
+    _ = c := by
+          calc
+            ∑ a : α, (μ a).toReal * c
+                = (∑ a : α, (μ a).toReal) * c := by
+                    simpa using (Finset.sum_mul (s := (Finset.univ : Finset α))
+                      (f := fun a => (μ a).toReal) (a := c)).symm
+            _ = c := by
+                    rw [pmfToRealSum μ]
+                    ring
+
 @[simp] theorem pmfExp_pure {α : Type*} [Fintype α] [DecidableEq α]
     (a : α) (f : α → ℝ) :
     pmfExp (PMF.pure a) f = f a := by

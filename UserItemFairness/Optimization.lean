@@ -40,6 +40,17 @@ def attainableUserFairnessAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) : Set ℝ :=
   {r | ∃ ρ : Policy m n, feasibleAtLevel W γ ρ ∧ r = userFairness W ρ}
 
+/-- Feasible user-fairness values are bounded above by one under positive row normalizers. -/
+theorem attainableUserFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hRow : W.RowHasPositiveItem) (γ : ℝ) :
+    BddAbove (attainableUserFairnessAtLevel W γ) := by
+  refine ⟨1, ?_⟩
+  intro r hr
+  obtain ⟨ρ, _hfeas, hr⟩ := hr
+  rw [hr]
+  exact userFairness_le_one_of_rowHasPositiveItem W hRow ρ
+
 /-- `U^*_min(γ, w)` in the paper. -/
 noncomputable def optimalUserFairnessAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) : ℝ :=

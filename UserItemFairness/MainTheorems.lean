@@ -99,6 +99,29 @@ theorem paper_original_reduced_user_optimal_value_reduction
     reps hRow γ hOrigNonempty hOrigBdd hRedNonempty hRedBdd
 
 /--
+Original/reduced optimal user-fairness value reduction with automatic
+boundedness.
+
+The remaining side condition is now only nonemptiness of the original and
+reduced feasible value sets; row positivity gives the common `≤ 1` upper bound.
+-/
+theorem paper_original_reduced_user_optimal_value_reduction_of_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ)
+    (hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ).Nonempty)
+    (hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model γ =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced γ := by
+  exact R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+    reps hRow γ hOrigNonempty hRedNonempty
+
+/--
 Reduced-to-original optimum theorem under the explicit supremum conditions used
 by the value-reduction theorem.
 -/
@@ -123,6 +146,31 @@ theorem paper_reduced_optimum_lifts_to_original
   have hUserOptEq :=
     R.optimalUserFairnessAtLevel_eq_reduced_of_bddAbove_nonempty
       reps hRow γ hOrigNonempty hOrigBdd hRedNonempty hRedBdd
+  exact R.isOptimalAtLevel_liftedPolicy_of_reduced reps γ ρ
+    (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
+
+/--
+Reduced-to-original optimum theorem with automatic boundedness.
+
+Only nonemptiness of the original and reduced feasible value sets remains
+explicit; row positivity supplies the `≤ 1` bounds needed by `sSup`.
+-/
+theorem paper_reduced_optimum_lifts_to_original_of_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ) (ρ : TypePolicy K n)
+    (hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ).Nonempty)
+    (hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty)
+    (hopt : TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρ) :
+    RecommendationModel.IsOptimalAtLevel R.data.model γ (R.liftedPolicy ρ) := by
+  have hUserOptEq :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow γ hOrigNonempty hRedNonempty
   exact R.isOptimalAtLevel_liftedPolicy_of_reduced reps γ ρ
     (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
 
@@ -154,6 +202,34 @@ theorem paper_symmetric_original_optimum_descends_to_reduced
   have hUserOptEq :=
     R.optimalUserFairnessAtLevel_eq_reduced_of_bddAbove_nonempty
       reps hRow γ hOrigNonempty hOrigBdd hRedNonempty hRedBdd
+  exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal
+    reps γ hρ (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
+
+/--
+Symmetric original-to-reduced optimum theorem with automatic boundedness.
+
+Only nonemptiness of the original and reduced feasible value sets remains
+explicit; row positivity supplies the `≤ 1` bounds needed by `sSup`.
+-/
+theorem paper_symmetric_original_optimum_descends_to_reduced_of_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ) {ρ : Policy m n}
+    (hρ : UserTypeAssignment.IsTypeSymmetric R.data.types ρ)
+    (hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ).Nonempty)
+    (hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty)
+    (hopt : RecommendationModel.IsOptimalAtLevel R.data.model γ ρ) :
+    ∃ ρK : TypePolicy K n,
+      R.liftedPolicy ρK = ρ ∧
+        TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρK := by
+  have hUserOptEq :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow γ hOrigNonempty hRedNonempty
   exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal
     reps γ hρ (R.optimalItemFairness_eq_reduced reps) hUserOptEq hopt
 

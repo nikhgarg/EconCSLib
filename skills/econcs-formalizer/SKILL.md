@@ -204,6 +204,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   equality from explicit nonempty/bounded-above feasible-value side conditions.
   Avoid opaque assumptions such as "the optimal values are equal" when they can
   be replaced by this order-theoretic reduction.
+- For normalized utility objectives, prove boundedness before attempting
+  compactness. A finite PMF expectation of row utilities is at most the finite
+  row maximum, so positive normalizers usually give normalized utility `≤ 1`
+  and immediately discharge `BddAbove` obligations for feasible value sets.
 - For finite exchange arguments, avoid re-proving whole objective sums by hand.
   Use a generic two-point finite-sum update lemma: if two functions differ only
   at `src` and `dst`, the total sum changes by the two pointwise deltas. Then

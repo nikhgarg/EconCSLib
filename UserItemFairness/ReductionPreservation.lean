@@ -49,6 +49,19 @@ end RecommendationModel.SymmetricData
 
 namespace ReductionWitness
 
+/-- Row positivity in the original symmetric model transfers to the reduced model. -/
+theorem reduced_rowHasPositiveItem_of_rowHasPositiveItem
+    {m n K : ℕ}
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem) :
+    R.reduced.RowHasPositiveItem := by
+  intro k
+  obtain ⟨j, hj⟩ := hRow (reps.repr k)
+  refine ⟨j, ?_⟩
+  rw [R.utility_agrees (reps.repr k) j] at hj
+  simpa [reps.repr_spec k] using hj
+
 /--
 A lifted reduced policy gives each original user exactly the raw utility of that
 user's type in the reduced model.

@@ -68,6 +68,36 @@ theorem userFairness_le_normalizedUserUtility {m n : ℕ} [NeZero m] [NeZero n]
     userFairness W ρ ≤ normalizedUserUtility W ρ u := by
   exact DecisionCore.finiteMin_le (normalizedUserUtility W ρ) u
 
+/-- A user's raw expected utility is at most that user's best item utility. -/
+theorem rawUserUtility_le_bestItemUtility {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) :
+    rawUserUtility W ρ u ≤ bestItemUtility W u := by
+  unfold rawUserUtility bestItemUtility DecisionCore.Policy.agentScore
+  exact DecisionCore.pmfExp_le_of_forall_le (ρ u) (W.utility u)
+    (DecisionCore.finiteMax (W.utility u))
+    (fun j => DecisionCore.le_finiteMax (W.utility u) j)
+
+/-- Positive row normalizers make every normalized user utility at most one. -/
+theorem normalizedUserUtility_le_one_of_rowHasPositiveItem {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hRow : W.RowHasPositiveItem)
+    (ρ : Policy m n) (u : User m) :
+    normalizedUserUtility W ρ u ≤ 1 := by
+  have hraw := rawUserUtility_le_bestItemUtility W ρ u
+  have hbest_pos := bestItemUtility_pos_of_rowHasPositiveItem W hRow u
+  unfold normalizedUserUtility
+  rw [div_le_iff₀ hbest_pos]
+  simpa using hraw
+
+/-- Minimum user fairness is bounded above by one. -/
+theorem userFairness_le_one_of_rowHasPositiveItem {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hRow : W.RowHasPositiveItem)
+    (ρ : Policy m n) :
+    userFairness W ρ ≤ 1 := by
+  classical
+  let u0 : User m := Classical.choice inferInstance
+  exact (userFairness_le_normalizedUserUtility W ρ u0).trans
+    (normalizedUserUtility_le_one_of_rowHasPositiveItem W hRow ρ u0)
+
 /-- Raw utility accumulated by item `j` under policy `ρ`. -/
 noncomputable def rawItemUtility {m n : ℕ}
     (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) : ℝ :=

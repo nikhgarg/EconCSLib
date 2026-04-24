@@ -73,6 +73,10 @@ namespace TypeWeightedRecommendationModel
 def NonnegativeWeights {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
   ∀ k, 0 ≤ T.weight k
 
+/-- Every user type has at least one strictly positive item. -/
+def RowHasPositiveItem {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
+  ∀ k, ∃ j, 0 < T.utility k j
+
 /-- Raw expected utility received by a type `k`. -/
 noncomputable def rawTypeUtility {K n : ℕ}
     (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n) (k : UserType K) : ℝ :=
@@ -133,6 +137,59 @@ def feasibleAtLevel {K n : ℕ} [NeZero n]
 def attainableTypeFairnessAtLevel {K n : ℕ} [NeZero K] [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (γ : ℝ) : Set ℝ :=
   {r | ∃ ρ : TypePolicy K n, feasibleAtLevel T γ ρ ∧ r = typeFairness T ρ}
+
+/-- Row positivity makes the type-normalization denominator strictly positive. -/
+theorem bestItemUtility_pos_of_rowHasPositiveItem {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem)
+    (k : UserType K) :
+    0 < bestItemUtility T k := by
+  obtain ⟨j, hj⟩ := hRow k
+  exact lt_of_lt_of_le hj (DecisionCore.le_finiteMax (T.utility k) j)
+
+/-- A type's raw expected utility is at most that type's best item utility. -/
+theorem rawTypeUtility_le_bestItemUtility {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
+    (k : UserType K) :
+    rawTypeUtility T ρ k ≤ bestItemUtility T k := by
+  unfold rawTypeUtility bestItemUtility DecisionCore.Policy.agentScore
+  exact DecisionCore.pmfExp_le_of_forall_le (ρ k) (T.utility k)
+    (DecisionCore.finiteMax (T.utility k))
+    (fun j => DecisionCore.le_finiteMax (T.utility k) j)
+
+/-- Positive row normalizers make every normalized type utility at most one. -/
+theorem normalizedTypeUtility_le_one_of_rowHasPositiveItem
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem)
+    (ρ : TypePolicy K n) (k : UserType K) :
+    normalizedTypeUtility T ρ k ≤ 1 := by
+  have hraw := rawTypeUtility_le_bestItemUtility T ρ k
+  have hbest_pos := bestItemUtility_pos_of_rowHasPositiveItem T hRow k
+  unfold normalizedTypeUtility
+  rw [div_le_iff₀ hbest_pos]
+  simpa using hraw
+
+/-- Minimum type fairness is bounded above by one. -/
+theorem typeFairness_le_one_of_rowHasPositiveItem
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem)
+    (ρ : TypePolicy K n) :
+    typeFairness T ρ ≤ 1 := by
+  classical
+  let k0 : UserType K := Classical.choice inferInstance
+  exact (DecisionCore.finiteMin_le (normalizedTypeUtility T ρ) k0).trans
+    (normalizedTypeUtility_le_one_of_rowHasPositiveItem T hRow ρ k0)
+
+/-- Feasible type-fairness values are bounded above by one under positive row normalizers. -/
+theorem attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem)
+    (γ : ℝ) :
+    BddAbove (attainableTypeFairnessAtLevel T γ) := by
+  refine ⟨1, ?_⟩
+  intro r hr
+  obtain ⟨ρ, _hfeas, hr⟩ := hr
+  rw [hr]
+  exact typeFairness_le_one_of_rowHasPositiveItem T hRow ρ
 
 /-- The reduced analogue of `U^*_min(γ, w)`. -/
 noncomputable def optimalTypeFairnessAtLevel {K n : ℕ} [NeZero K] [NeZero n]

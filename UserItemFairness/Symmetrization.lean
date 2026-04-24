@@ -543,6 +543,38 @@ theorem optimalUserFairnessAtLevel_eq_reduced_of_bddAbove_nonempty
     rw [hr, ← huser]
     exact le_csSup hOrigBdd horig_mem
 
+/--
+Original and reduced feasible user-fairness suprema agree under row positivity
+and nonempty feasible value sets. Boundedness follows automatically from the
+normalized-utility upper bound `≤ 1`.
+-/
+theorem optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (γ : ℝ)
+    (hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ).Nonempty)
+    (hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ).Nonempty) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model γ =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced γ := by
+  have hOrigBdd :
+      BddAbove (RecommendationModel.attainableUserFairnessAtLevel R.data.model γ) :=
+    RecommendationModel.attainableUserFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+      R.data.model hRow γ
+  have hRedRow : R.reduced.RowHasPositiveItem :=
+    R.reduced_rowHasPositiveItem_of_rowHasPositiveItem reps hRow
+  have hRedBdd :
+      BddAbove (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced γ) :=
+    TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+      R.reduced hRedRow γ
+  exact R.optimalUserFairnessAtLevel_eq_reduced_of_bddAbove_nonempty
+    reps hRow γ hOrigNonempty hOrigBdd hRedNonempty hRedBdd
+
 end ReductionWitness
 
 end UserItemFairness
