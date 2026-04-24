@@ -2306,6 +2306,41 @@ theorem paper_lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalized
     hpos hdec hpivot hcenter h h'
 
 /--
+Appendix D, Lemma 8 finite-stitch core: a finite chain of adjacent
+same-selected-pivot first-half intervals gives monotonicity of the reduced
+optimal item-fairness value.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i)) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  exact lemma8_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal_chain
+    r alphaSeq ρSeq ellSeq hn halpha0 halpha1 hstep hpos hdec hpivot hcenter hopt
+
+/--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
 theorem paper_lemma5_problem6_x_before_pivot

@@ -7449,5 +7449,77 @@ theorem lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicO
     hn halpha0 halpha1 halpha0' halpha1' halpha_le
     hpos hdec hpivot hcenter h h'
 
+/--
+Appendix D, Lemma 8 finite-stitch core: if a finite sequence of selected
+equality-form optimal BFS policies moves from `α₀` to `αᵣ`, and every adjacent
+pair lies in one same-selected-pivot first-half interval, then the reduced
+optimal item fairness is monotone along the whole chain.
+
+This isolates the paper's interval-partition/continuity step from the already
+formalized same-interval Lemma 11 inequality.
+-/
+theorem lemma8_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal_chain
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} (r : ℕ)
+    (alphaSeq : ℕ → ℝ)
+    (ρSeq : ℕ → TypePolicy 2 n)
+    (ellSeq : ℕ → ℝ)
+    (hn : 2 < n)
+    (halpha0 : ∀ i, i ≤ r → 0 < alphaSeq i)
+    (halpha1 : ∀ i, i ≤ r → alphaSeq i < 1)
+    (hstep : ∀ i, i < r → alphaSeq i ≤ alphaSeq (i + 1))
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot :
+      ∀ i, i < r →
+        TypePolicy.lastActiveTypeZero (ρSeq i) =
+          TypePolicy.lastActiveTypeZero (ρSeq (i + 1)))
+    (hcenter :
+      ∀ i, i < r →
+        (TypePolicy.lastActiveTypeZero (ρSeq i)).val ≤
+          (reverseItem (TypePolicy.lastActiveTypeZero (ρSeq i))).val)
+    (hopt :
+      ∀ i, i ≤ r →
+        Problem6EqualizedBasicOptimal (alphaSeq i) v (ρSeq i) (ellSeq i)) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq 0) v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (alphaSeq r) v) := by
+  induction r with
+  | zero =>
+      exact le_rfl
+  | succ r ih =>
+      have hprev :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq 0) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) := by
+        exact ih
+          (fun i hi => halpha0 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => halpha1 i (Nat.le_trans hi (Nat.le_succ r)))
+          (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hpivot i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hcenter i (Nat.lt_trans hi (Nat.lt_succ_self r)))
+          (fun i hi => hopt i (Nat.le_trans hi (Nat.le_succ r)))
+      have hlast :
+          TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq r) v) ≤
+            TypeWeightedRecommendationModel.optimalItemFairness
+              (twoTypeReducedModel (alphaSeq (r + 1)) v) := by
+        exact
+          lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal
+            hn
+            (halpha0 r (Nat.le_succ r))
+            (halpha1 r (Nat.le_succ r))
+            (halpha0 (r + 1) le_rfl)
+            (halpha1 (r + 1) le_rfl)
+            (hstep r (Nat.lt_succ_self r))
+            hpos hdec
+            (hpivot r (Nat.lt_succ_self r))
+            (hcenter r (Nat.lt_succ_self r))
+            (hopt r (Nat.le_succ r))
+            (hopt (r + 1) le_rfl)
+      exact hprev.trans hlast
+
 end OpposingTypes
 end UserItemFairness
