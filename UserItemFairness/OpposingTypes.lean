@@ -3202,5 +3202,33 @@ theorem lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
   exact lemma11_fixedPivotClosedValue_monotone
     halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
 
+/--
+Appendix D, Lemma 11 reduced-model form: on a fixed-pivot interval certified by
+the paper's closed-form optimality certificates, the reduced optimal item
+fairness is monotone in `α`.
+-/
+theorem lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t)
+    (cert' : Problem6ClosedOptimalityCertificate alpha' v t) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  rw [← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha v halpha0 halpha1 hpos,
+    ← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha' v halpha0' halpha1' hpos]
+  exact lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hcenter cert cert'
+
 end OpposingTypes
 end UserItemFairness

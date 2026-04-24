@@ -1250,6 +1250,29 @@ theorem paper_lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert
     hpos hdec hcenter cert cert'
 
 /--
+Appendix D, Lemma 11 reduced-model form: on a certified fixed-pivot interval,
+the reduced optimal item fairness is monotone in `α`.
+-/
+theorem paper_lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t)
+    (cert' : Problem6ClosedOptimalityCertificate alpha' v t) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha' v) := by
+  exact lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert
+    halpha0 halpha1 halpha0' halpha1' halpha_le
+    hpos hdec hcenter cert cert'
+
+/--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
 theorem paper_lemma5_problem6_x_before_pivot
