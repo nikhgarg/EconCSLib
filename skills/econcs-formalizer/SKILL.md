@@ -319,7 +319,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   visible set, use the feasible observed-prefix certificate; it derives
   position-level ineligible-zero and capacity from visible-set feasibility via
   `theorem9ActualEligibleBidders_not_mem_of_not_eligible` and
-  `theorem9ActualEligibleBidders_sum_eq`.
+  `theorem9ActualEligibleBidders_sum_eq`. If the desired payoff is exactly the
+  paper's capped normalized spend expression, use
+  `BMatchingTheorem9FeasiblePrefixRuleFamily`; it avoids a separate
+  capped-revenue field.
   For the harmonic cap, split the proof into the logarithmic
   tail-spend bound, a finite layer-count comparison, and a separate
   exponential-grid estimate. In `EconCSLean`, these are now represented by
@@ -335,9 +338,10 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `BMatchingTheorem9SymmetricPointwiseFamilyCertificate` /
   `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate` /
   `BMatchingTheorem9ObservedPrefixFamilyCertificate` /
-  `BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate` in `EconCSLean`)
-  so future work instantiates only the deterministic prefix allocation and
-  capped-revenue fields directly. Do not add a
+  `BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate` /
+  `BMatchingTheorem9FeasiblePrefixRuleFamily` in `EconCSLean`) so future work
+  instantiates only the deterministic prefix allocation and, when needed,
+  actual-revenue bridge directly. Do not add a
   separate
   harmonic-limit field to new Section 7 family certificates; use the built-in
   harmonic theorem instead.

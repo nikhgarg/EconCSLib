@@ -80,8 +80,8 @@ end RandomizedLowerBoundCertificate
 
 /--
 The Section 7 b-matching lower-bound certificate at the MSVV ratio `1 - 1/e`.
-The paper's remaining construction work is to instantiate this certificate with
-the random permutation distribution over round instances.
+Later certificates in this file specialize the hard distribution to uniform
+bidder permutations and progressively derive the deterministic average bound.
 -/
 abbrev BMatchingYaoLowerBoundCertificate
     (Algorithm Input : Type*) [Fintype Input] [DecidableEq Input] :=
@@ -1511,9 +1511,9 @@ structure BMatchingTheorem9SymmetricPointwiseFamilyCertificate
 
 /--
 Family-level relabeling version of the Section 7 lower-bound certificate. This
-is the closest generic seam to the paper's online-information argument: the
-remaining work for a concrete deterministic-algorithm model is to give the
-input relabeling equivalence and prove the pointwise allocation identity.
+keeps the input relabeling equivalence and pointwise allocation identity
+explicit; later observed-prefix certificates derive those fields from the
+online-information model.
 -/
 structure BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
     (Algorithm : ℕ → Type*)
@@ -1612,6 +1612,26 @@ structure BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
                 (theorem9ObservedPrefix N permutation round)
                 round (permutation bidder))) /
           (N : ℝ)
+  prefixAllocation_zero_of_not_visible :
+    ∀ N algorithm obs round bidder,
+      bidder ∉ obs round →
+        prefixAllocation N algorithm obs round bidder = 0
+  prefixAllocation_sum_le_one :
+    ∀ N algorithm obs round,
+      (∑ bidder ∈ obs round,
+        prefixAllocation N algorithm obs round bidder) ≤ 1
+
+/--
+Family of feasible prefix allocation rules for the Section 7 hard instance.
+The normalized payoff is defined by the capped spend expression itself, so this
+interface has no separate revenue-bound field.
+-/
+structure BMatchingTheorem9FeasiblePrefixRuleFamily
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] where
+  prefixAllocation :
+    (N : ℕ) → Algorithm N → (Fin N → Finset (Fin N)) →
+      Fin N → Fin N → ℝ
   prefixAllocation_zero_of_not_visible :
     ∀ N algorithm obs round bidder,
       bidder ∉ obs round →
@@ -2614,6 +2634,53 @@ theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
   exact Cprefix.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
 
 end BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
+
+namespace BMatchingTheorem9FeasiblePrefixRuleFamily
+
+variable {Algorithm : ℕ → Type*}
+variable [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+
+/-- Capped normalized revenue induced by a feasible observed-prefix rule. -/
+noncomputable def normalizedRevenue
+    (C : BMatchingTheorem9FeasiblePrefixRuleFamily Algorithm)
+    (N : ℕ) (algorithm : Algorithm N)
+    (permutation : Equiv.Perm (Fin N)) : ℝ :=
+  (∑ bidder : Fin N,
+    min 1
+      (∑ round : Fin N,
+        C.prefixAllocation N algorithm
+          (theorem9ObservedPrefix N permutation round)
+          round (permutation bidder))) /
+    (N : ℝ)
+
+/--
+Family-level Theorem 9 endpoint for feasible prefix allocation rules, with the
+payoff defined as the paper's capped normalized spend expression.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    (C : BMatchingTheorem9FeasiblePrefixRuleFamily Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  let Cfeasible :
+      BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate
+        Algorithm := {
+    normalizedRevenue := C.normalizedRevenue
+    prefixAllocation := C.prefixAllocation
+    normalizedRevenue_le_cappedPrefixAllocationSpend := by
+      intro N algorithm permutation
+      exact le_rfl
+    prefixAllocation_zero_of_not_visible :=
+      C.prefixAllocation_zero_of_not_visible
+    prefixAllocation_sum_le_one := C.prefixAllocation_sum_le_one
+  }
+  exact Cfeasible.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+end BMatchingTheorem9FeasiblePrefixRuleFamily
 
 namespace BMatchingTheorem9LayerCountFamilyCertificate
 
