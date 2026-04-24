@@ -221,9 +221,46 @@ end GammaHomogeneityProfile
     (G := uniformProfile T) (t := t) hnorm_ne]
   rw [hnorm]
   simp [uniformProfile]
+/--
+If all type counts are pairwise bounded by `C`, then each count is within
+`C` of the uniform real average `N / T`.
+-/
+theorem count_abs_sub_uniform_average_le_C_of_pairwise_bounded
+    {T : ℕ} [NeZero T]
+    (a : CountAllocation T) {N : ℕ} {C : ℝ}
+    (hN : DecisionCore.Allocation.total a = N)
+    (hbound : ∀ i j : ItemType T, (a.count i : ℝ) ≤ (a.count j : ℝ) + C)
+    (t : ItemType T) :
+    |(a.count t : ℝ) - (N : ℝ) / (T : ℝ)| ≤ C := by
+  have hTposNat : 0 < T := Nat.pos_of_ne_zero (NeZero.ne T)
+  have hTpos : 0 < (T : ℝ) := by exact_mod_cast hTposNat
+  have hTne : (T : ℝ) ≠ 0 := ne_of_gt hTpos
+  have hsum_counts : (∑ j : ItemType T, (a.count j : ℝ)) = (N : ℝ) := by
+    rw [← Nat.cast_sum]
+    exact_mod_cast hN
+  rw [abs_le]
+  constructor
+  · -- (a.count t) - N/T >= -C  => T * (a.count t) - N >= -T * C => T * (a.count t) + T * C >= N
+    field_simp [hTne]
+    have hsum : (∑ j : ItemType T, (a.count j : ℝ)) ≤ ∑ j : ItemType T, ((a.count t : ℝ) + C) := by
+      apply Finset.sum_le_sum
+      intro j _
+      exact hbound j t
+    simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul] at hsum
+    linarith
+  · -- (a.count t) - N/T <= C => T * (a.count t) - N <= T * C => T * (a.count t) <= N + T * C
+    field_simp [hTne]
+    have hsum : (∑ j : ItemType T, (a.count t : ℝ)) ≤ ∑ j : ItemType T, ((a.count j : ℝ) + C) := by
+      apply Finset.sum_le_sum
+      intro j _
+      exact hbound t j
+    rw [Finset.sum_add_distrib] at hsum
+    simp [hsum_counts, Finset.sum_const, Fintype.card_fin, nsmul_eq_mul] at hsum
+    linarith
 
 /--
 If all type counts differ pairwise by at most one, then each count is within
+...
 one of the uniform real average `N / T`.
 -/
 theorem count_abs_sub_uniform_average_le_one_of_pairwise_balanced

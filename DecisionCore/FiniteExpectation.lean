@@ -305,6 +305,26 @@ theorem pmfExp_lt_of_forall_lt {α : Type*}
     exact ⟨a, Finset.mem_univ a,
       mul_lt_mul_of_pos_left (h a) ha⟩
 
+/--
+A finite PMF expectation is strictly below a constant if every atom is at most
+that constant and one positive-mass atom is strictly below it.
+-/
+theorem pmfExp_lt_of_forall_le_exists_lt {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (c : ℝ)
+    (hle : ∀ a, f a ≤ c)
+    (hex : ∃ a, 0 < (μ a).toReal ∧ f a < c) :
+    pmfExp μ f < c := by
+  classical
+  rw [← pmfExp_const μ c]
+  unfold pmfExp
+  refine Finset.sum_lt_sum ?_ ?_
+  · intro a _
+    exact mul_le_mul_of_nonneg_left (hle a) ENNReal.toReal_nonneg
+  · rcases hex with ⟨a, hmass, hlt⟩
+    exact ⟨a, Finset.mem_univ a,
+      mul_lt_mul_of_pos_left hlt hmass⟩
+
 @[simp] theorem pmfExp_pure {α : Type*} [Fintype α] [DecidableEq α]
     (a : α) (f : α → ℝ) :
     pmfExp (PMF.pure a) f = f a := by

@@ -54,6 +54,24 @@ theorem one_sub_typeOneShare_pos
   have hlt := typeOneShare_lt_one halpha0 halpha1 hleft hright
   linarith
 
+/-- On `(0,1)`, `q/(1-q)` is monotone increasing in `q`. -/
+theorem ratio_self_one_sub_mono_of_le
+    {q q' : ℝ} (hq0 : 0 < q) (hq1 : q < 1)
+    (hq0' : 0 < q') (hq1' : q' < 1) (hle : q ≤ q') :
+    q / (1 - q) ≤ q' / (1 - q') := by
+  have hden : 0 < 1 - q := sub_pos.mpr hq1
+  have hden' : 0 < 1 - q' := sub_pos.mpr hq1'
+  rw [div_le_div_iff₀ hden hden']
+  nlinarith
+
+/-- On `(0,1)`, `(1-q)/q` is monotone decreasing in `q`. -/
+theorem ratio_one_sub_self_antitone_of_le
+    {q q' : ℝ} (hq0 : 0 < q) (hq1 : q < 1)
+    (hq0' : 0 < q') (hq1' : q' < 1) (hle : q ≤ q') :
+    (1 - q') / q' ≤ (1 - q) / q := by
+  rw [div_le_div_iff₀ hq0' hq0]
+  nlinarith
+
 /-- Algebraic complement form: `1 - q = (1-α) right / denominator`. -/
 theorem one_sub_typeOneShare_eq
     {alpha left right : ℝ}
@@ -465,6 +483,17 @@ theorem pairShare_half_eq_one_sub_reverse
 /-- Values are strictly decreasing in the item index, matching `v₁ > ... > vₙ`. -/
 def StrictlyDecreasingByIndex {n : ℕ} (v : Item n → ℝ) : Prop :=
   ∀ ⦃i j : Item n⦄, i.val < j.val → v j < v i
+
+/-- Non-strict form of `StrictlyDecreasingByIndex`. -/
+theorem value_antitone_of_val_le {n : ℕ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) {i j : Item n}
+    (hij : i.val ≤ j.val) :
+    v j ≤ v i := by
+  rcases lt_or_eq_of_le hij with hlt | heq
+  · exact (hdec hlt).le
+  · have hji : j = i := Fin.ext heq.symm
+    subst j
+    rfl
 
 /--
 Appendix D, Lemma 9, indexed alpha-monotonicity component:
@@ -4153,9 +4182,8 @@ conditions for the LP that maximizes type-`1` utility subject to the Problem 6
 item lower bounds and row-simplex constraints.
 -/
 structure Problem6TypeOneRawUtilityDualCertificate {n : ℕ}
-    (alpha : ℝ) (v : Item n → ℝ) (ell upper : ℝ) : Prop where
-  rowZero rowOne : ℝ
-  itemWeight : Item n → ℝ
+    (alpha : ℝ) (v : Item n → ℝ) (ell upper rowZero rowOne : ℝ)
+    (itemWeight : Item n → ℝ) : Prop where
   itemWeight_nonneg : ∀ j : Item n, 0 ≤ itemWeight j
   typeZero_coeff_nonneg :
     ∀ j : Item n, 0 ≤ rowZero - itemWeight j * pairShare alpha v j
@@ -4171,16 +4199,19 @@ Problem 6 finite weak duality for the auxiliary LP that maximizes type `1`
 raw utility over policies satisfying item lower bound `ell`.
 -/
 theorem problem6_typeOneRawUtility_le_of_dualCertificate {n : ℕ}
-    {alpha : ℝ} {v : Item n → ℝ} {ell upper : ℝ}
+    {alpha : ℝ} {v : Item n → ℝ} {ell upper rowZero rowOne : ℝ}
+    {itemWeight : Item n → ℝ}
     (ρ : TypePolicy 2 n)
     (hfeas : problem6LPFeasible alpha v ρ ell)
-    (cert : Problem6TypeOneRawUtilityDualCertificate alpha v ell upper) :
+    (cert :
+      Problem6TypeOneRawUtilityDualCertificate
+        alpha v ell upper rowZero rowOne itemWeight) :
     TypeWeightedRecommendationModel.rawTypeUtility
         (twoTypeReducedModel alpha v) ρ 1 ≤ upper := by
   let x : Item n → ℝ := fun j => (ρ 0 j).toReal
   let y : Item n → ℝ := fun j => (ρ 1 j).toReal
   let q : Item n → ℝ := fun j => pairShare alpha v j
-  let β : Item n → ℝ := cert.itemWeight
+  let β : Item n → ℝ := itemWeight
   have hy_nonneg : ∀ j : Item n, 0 ≤ y j := by
     intro j
     exact ENNReal.toReal_nonneg
@@ -4189,24 +4220,24 @@ theorem problem6_typeOneRawUtility_le_of_dualCertificate {n : ℕ}
     exact ENNReal.toReal_nonneg
   have hy_bound :
       (∑ j : Item n, v (reverseItem j) * y j) ≤
-        ∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j := by
+        ∑ j : Item n, (rowOne - β j * (1 - q j)) * y j := by
     refine Finset.sum_le_sum ?_
     intro j _hj
     exact mul_le_mul_of_nonneg_right
       (by simpa [q, β] using cert.typeOne_coeff_upper j)
       (hy_nonneg j)
   have hy_sum :
-      (∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j) =
-        cert.rowOne - ∑ j : Item n, β j * (1 - q j) * y j := by
+      (∑ j : Item n, (rowOne - β j * (1 - q j)) * y j) =
+        rowOne - ∑ j : Item n, β j * (1 - q j) * y j := by
     calc
-      (∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j)
-          = (∑ j : Item n, cert.rowOne * y j) -
+      (∑ j : Item n, (rowOne - β j * (1 - q j)) * y j)
+          = (∑ j : Item n, rowOne * y j) -
               ∑ j : Item n, β j * (1 - q j) * y j := by
               rw [← Finset.sum_sub_distrib]
               refine Finset.sum_congr rfl ?_
               intro j _hj
               ring
-      _ = cert.rowOne - ∑ j : Item n, β j * (1 - q j) * y j := by
+      _ = rowOne - ∑ j : Item n, β j * (1 - q j) * y j := by
               rw [← Finset.mul_sum]
               have hsumy : (∑ j : Item n, y j) = 1 := by
                 dsimp [y]
@@ -4220,8 +4251,8 @@ theorem problem6_typeOneRawUtility_le_of_dualCertificate {n : ℕ}
     calc
       ell * (∑ j : Item n, β j)
           = ∑ j : Item n, β j * ell := by
+              rw [mul_comm ell]
               rw [Finset.sum_mul]
-              ring
       _ ≤ ∑ j : Item n, β j * (q j * x j + (1 - q j) * y j) := by
               refine Finset.sum_le_sum ?_
               intro j _hj
@@ -4236,17 +4267,17 @@ theorem problem6_typeOneRawUtility_le_of_dualCertificate {n : ℕ}
               intro j _hj
               ring
   have hx_bound :
-      (∑ j : Item n, β j * q j * x j) ≤ cert.rowZero := by
+      (∑ j : Item n, β j * q j * x j) ≤ rowZero := by
     calc
       (∑ j : Item n, β j * q j * x j)
-          ≤ ∑ j : Item n, cert.rowZero * x j := by
+          ≤ ∑ j : Item n, rowZero * x j := by
               refine Finset.sum_le_sum ?_
               intro j _hj
-              have hcoeff : β j * q j ≤ cert.rowZero := by
+              have hcoeff : β j * q j ≤ rowZero := by
                 have h := cert.typeZero_coeff_nonneg j
                 linarith
               exact mul_le_mul_of_nonneg_right hcoeff (hx_nonneg j)
-      _ = cert.rowZero := by
+      _ = rowZero := by
               rw [← Finset.mul_sum]
               have hsumx : (∑ j : Item n, x j) = 1 := by
                 dsimp [x]
@@ -4261,23 +4292,277 @@ theorem problem6_typeOneRawUtility_le_of_dualCertificate {n : ℕ}
       DecisionCore.Policy.agentScore DecisionCore.pmfExp
     refine Finset.sum_congr rfl ?_
     intro j _hj
-    simp [twoTypeReducedModel, y]
+    simp [twoTypeReducedModel, y, mul_comm]
   calc
     TypeWeightedRecommendationModel.rawTypeUtility
         (twoTypeReducedModel alpha v) ρ 1
         = ∑ j : Item n, v (reverseItem j) * y j := hraw_eq
-    _ ≤ ∑ j : Item n, (cert.rowOne - β j * (1 - q j)) * y j := hy_bound
-    _ = cert.rowOne - ∑ j : Item n, β j * (1 - q j) * y j := hy_sum
-    _ ≤ cert.rowOne +
+    _ ≤ ∑ j : Item n, (rowOne - β j * (1 - q j)) * y j := hy_bound
+    _ = rowOne - ∑ j : Item n, β j * (1 - q j) * y j := hy_sum
+    _ ≤ rowOne +
         ((∑ j : Item n, β j * q j * x j) -
           ell * (∑ j : Item n, β j)) := by
           linarith
-    _ ≤ cert.rowOne + (cert.rowZero -
+    _ ≤ rowOne + (rowZero -
           ell * (∑ j : Item n, β j)) := by
           linarith
-    _ = cert.rowZero + cert.rowOne -
+    _ = rowZero + rowOne -
           ell * (∑ j : Item n, β j) := by ring
     _ ≤ upper := cert.objective_bound
+
+/-- The type-`1` utility dual uses the common opposing-model best-item value. -/
+noncomputable def problem6TypeOneDualRowOne {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) : ℝ :=
+  TypeWeightedRecommendationModel.bestItemUtility
+    (twoTypeReducedModel alpha v) 1
+
+/--
+The type-`0` row-sum dual variable for the Lemma 5 pivot in the auxiliary
+type-`1` utility maximization LP.
+-/
+noncomputable def problem6TypeOneDualRowZero {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  pairShare alpha v t *
+    (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) /
+      (1 - pairShare alpha v t)
+
+/--
+Item-constraint dual weights for the auxiliary type-`1` utility LP. At and
+before the pivot the `x`-coefficient is tight; after the pivot the
+`y`-coefficient is tight.
+-/
+noncomputable def problem6TypeOneDualWeight {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (t j : Item n) : ℝ :=
+  if j.val ≤ t.val then
+    problem6TypeOneDualRowZero alpha v t / pairShare alpha v j
+  else
+    (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+      (1 - pairShare alpha v j)
+
+theorem problem6TypeOneDualRowOne_ge_reverse {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    v (reverseItem j) ≤ problem6TypeOneDualRowOne alpha v := by
+  unfold problem6TypeOneDualRowOne
+  unfold TypeWeightedRecommendationModel.bestItemUtility
+  change v (reverseItem j) ≤
+    DecisionCore.finiteMax (fun l : Item n => v (reverseItem l))
+  exact DecisionCore.le_finiteMax (fun l : Item n => v (reverseItem l)) j
+
+theorem problem6TypeOneDualRowOne_sub_reverse_nonneg {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    0 ≤ problem6TypeOneDualRowOne alpha v - v (reverseItem j) := by
+  have h := problem6TypeOneDualRowOne_ge_reverse alpha v j
+  linarith
+
+theorem problem6TypeOneDualRowZero_nonneg {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 ≤ problem6TypeOneDualRowZero alpha v t := by
+  unfold problem6TypeOneDualRowZero
+  exact div_nonneg
+    (mul_nonneg (pairShare_pos t halpha0 halpha1 hpos).le
+      (problem6TypeOneDualRowOne_sub_reverse_nonneg alpha v t))
+    (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
+
+theorem problem6_pairShare_le_of_val_le {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val ≤ j.val) :
+    pairShare alpha v j ≤ pairShare alpha v i := by
+  rcases lt_or_eq_of_le hij with hlt | heq
+  · exact (pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hlt).le
+  · have hji : j = i := Fin.ext heq.symm
+    subst j
+    rfl
+
+theorem problem6TypeOneDualWeight_nonneg {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    ∀ j : Item n, 0 ≤ problem6TypeOneDualWeight alpha v t j := by
+  intro j
+  unfold problem6TypeOneDualWeight
+  by_cases hjt : j.val ≤ t.val
+  · rw [if_pos hjt]
+    exact div_nonneg
+      (problem6TypeOneDualRowZero_nonneg halpha0 halpha1 hpos)
+      (pairShare_pos j halpha0 halpha1 hpos).le
+  · rw [if_neg hjt]
+    exact div_nonneg
+      (problem6TypeOneDualRowOne_sub_reverse_nonneg alpha v j)
+      (one_sub_pairShare_pos j halpha0 halpha1 hpos).le
+
+theorem problem6TypeOneDual_typeZero_coeff_nonneg {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∀ j : Item n,
+      0 ≤ problem6TypeOneDualRowZero alpha v t -
+        problem6TypeOneDualWeight alpha v t j * pairShare alpha v j := by
+  intro j
+  unfold problem6TypeOneDualWeight
+  by_cases hjt : j.val ≤ t.val
+  · rw [if_pos hjt]
+	    have hq_ne : pairShare alpha v j ≠ 0 :=
+	      ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+	    field_simp [hq_ne]
+	    ring_nf
+	    norm_num
+  · rw [if_neg hjt]
+    have htj : t.val < j.val := lt_of_not_ge hjt
+    have hq_le :
+        pairShare alpha v j ≤ pairShare alpha v t :=
+      problem6_pairShare_le_of_val_le
+        halpha0 halpha1 hpos hdec htj.le
+    have hratio :
+        pairShare alpha v j / (1 - pairShare alpha v j) ≤
+          pairShare alpha v t / (1 - pairShare alpha v t) :=
+      ratio_self_one_sub_mono_of_le
+        (pairShare_pos j halpha0 halpha1 hpos)
+        (pairShare_lt_one j halpha0 halpha1 hpos)
+        (pairShare_pos t halpha0 halpha1 hpos)
+        (pairShare_lt_one t halpha0 halpha1 hpos)
+        hq_le
+    have hBjt :
+        problem6TypeOneDualRowOne alpha v - v (reverseItem j) ≤
+          problem6TypeOneDualRowOne alpha v - v (reverseItem t) := by
+      have hrev : (reverseItem j).val ≤ (reverseItem t).val :=
+        (reverseItem_val_lt_of_val_lt htj).le
+      have hv : v (reverseItem t) ≤ v (reverseItem j) :=
+        value_antitone_of_val_le hdec hrev
+      linarith
+    have hBjt_nonneg :
+        0 ≤ problem6TypeOneDualRowOne alpha v - v (reverseItem j) :=
+      problem6TypeOneDualRowOne_sub_reverse_nonneg alpha v j
+    have hBt_nonneg :
+        0 ≤ problem6TypeOneDualRowOne alpha v - v (reverseItem t) :=
+      problem6TypeOneDualRowOne_sub_reverse_nonneg alpha v t
+    have htarget :
+        (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) *
+            (pairShare alpha v j / (1 - pairShare alpha v j)) ≤
+          (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
+            (pairShare alpha v t / (1 - pairShare alpha v t)) := by
+      exact mul_le_mul hBjt hratio
+        (div_nonneg
+          (pairShare_pos j halpha0 halpha1 hpos).le
+          (one_sub_pairShare_pos j halpha0 halpha1 hpos).le)
+        hBt_nonneg
+    have hweight :
+        (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+            (1 - pairShare alpha v j) * pairShare alpha v j ≤
+          problem6TypeOneDualRowZero alpha v t := by
+      unfold problem6TypeOneDualRowZero
+      have hdenj : 1 - pairShare alpha v j ≠ 0 :=
+        ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
+      have hdent : 1 - pairShare alpha v t ≠ 0 :=
+        ne_of_gt (one_sub_pairShare_pos t halpha0 halpha1 hpos)
+      calc
+        (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+              (1 - pairShare alpha v j) * pairShare alpha v j =
+	            (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) *
+	              (pairShare alpha v j / (1 - pairShare alpha v j)) := by
+	              field_simp [hdenj]
+	        _ ≤
+	            (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
+	              (pairShare alpha v t / (1 - pairShare alpha v t)) := htarget
+        _ =
+	            pairShare alpha v t *
+	              (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) /
+	                (1 - pairShare alpha v t) := by
+	              field_simp [hdent]
+	    exact sub_nonneg.mpr hweight
+
+theorem problem6TypeOneDual_typeOne_coeff_upper {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    ∀ j : Item n,
+      v (reverseItem j) ≤
+        problem6TypeOneDualRowOne alpha v -
+          problem6TypeOneDualWeight alpha v t j *
+            (1 - pairShare alpha v j) := by
+  intro j
+  unfold problem6TypeOneDualWeight
+  by_cases hjt : j.val ≤ t.val
+  · rw [if_pos hjt]
+    have hq_le :
+        pairShare alpha v t ≤ pairShare alpha v j :=
+      problem6_pairShare_le_of_val_le
+        halpha0 halpha1 hpos hdec hjt
+    have hratio :
+        (1 - pairShare alpha v j) / pairShare alpha v j ≤
+          (1 - pairShare alpha v t) / pairShare alpha v t :=
+      ratio_one_sub_self_antitone_of_le
+        (pairShare_pos t halpha0 halpha1 hpos)
+        (pairShare_lt_one t halpha0 halpha1 hpos)
+        (pairShare_pos j halpha0 halpha1 hpos)
+        (pairShare_lt_one j halpha0 halpha1 hpos)
+        hq_le
+    have hBjt :
+        problem6TypeOneDualRowOne alpha v - v (reverseItem t) ≤
+          problem6TypeOneDualRowOne alpha v - v (reverseItem j) := by
+      have hrev : (reverseItem t).val ≤ (reverseItem j).val := by
+        simp [reverseItem]
+        omega
+      have hv : v (reverseItem j) ≤ v (reverseItem t) :=
+        value_antitone_of_val_le hdec hrev
+      linarith
+    have hBjt_nonneg :
+        0 ≤ problem6TypeOneDualRowOne alpha v - v (reverseItem t) :=
+      problem6TypeOneDualRowOne_sub_reverse_nonneg alpha v t
+    have htarget :
+        problem6TypeOneDualRowZero alpha v t / pairShare alpha v j *
+            (1 - pairShare alpha v j) ≤
+          problem6TypeOneDualRowOne alpha v - v (reverseItem j) := by
+      have hfactor_nonneg :
+          0 ≤ pairShare alpha v t / (1 - pairShare alpha v t) :=
+        div_nonneg
+          (pairShare_pos t halpha0 halpha1 hpos).le
+          (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
+      have hfactor :
+          (pairShare alpha v t / (1 - pairShare alpha v t)) *
+              ((1 - pairShare alpha v j) / pairShare alpha v j) ≤ 1 := by
+        have hmul :=
+          mul_le_mul_of_nonneg_left hratio hfactor_nonneg
+        have hright :
+            (pairShare alpha v t / (1 - pairShare alpha v t)) *
+                ((1 - pairShare alpha v t) / pairShare alpha v t) = 1 := by
+          field_simp
+            [ne_of_gt (pairShare_pos t halpha0 halpha1 hpos),
+              ne_of_gt (one_sub_pairShare_pos t halpha0 halpha1 hpos)]
+        exact hmul.trans_eq hright
+      unfold problem6TypeOneDualRowZero
+      have hqj : pairShare alpha v j ≠ 0 :=
+        ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+      have hct : 1 - pairShare alpha v t ≠ 0 :=
+        ne_of_gt (one_sub_pairShare_pos t halpha0 halpha1 hpos)
+      calc
+        pairShare alpha v t *
+              (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) /
+              (1 - pairShare alpha v t) /
+            pairShare alpha v j * (1 - pairShare alpha v j)
+            =
+	          (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
+	            ((pairShare alpha v t / (1 - pairShare alpha v t)) *
+	              ((1 - pairShare alpha v j) / pairShare alpha v j)) := by
+	              field_simp [hqj, hct]
+	        _ ≤ (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) * 1 := by
+	              exact mul_le_mul_of_nonneg_left hfactor hBjt_nonneg
+        _ ≤ problem6TypeOneDualRowOne alpha v - v (reverseItem j) := by
+              simpa using hBjt
+    linarith
+  · rw [if_neg hjt]
+	    have hden : 1 - pairShare alpha v j ≠ 0 :=
+	      ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
+	    field_simp [hden]
+	    ring_nf
+	    exact le_rfl
 
 /--
 The paper's equality-form Problem 6 data before rebuilding the PMF policy.

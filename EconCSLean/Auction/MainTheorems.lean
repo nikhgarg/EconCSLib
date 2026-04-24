@@ -19,12 +19,55 @@ exposes the closed unconditional theorem surface now available.
 namespace EconCSLean
 namespace Auction
 
+/-! ## 1) Paper-Facing Definitions: 2021 Digital Goods -/
+
+/-- Paper Definition: The revenue of a digital goods auction outcome.
+    $\sum_{i \in \text{winners}} p_i$
+-/
+noncomputable def paper_digital_goods_revenue {Agent : Type*} [Fintype Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) : ℝ :=
+  ∑ i : Agent, M.payment values i
+
+theorem paper_digital_goods_revenue_eq {Agent : Type*} [Fintype Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) :
+    paper_digital_goods_revenue M values = M.revenue values := by
+  rfl
+
+/-- Paper Definition: Dominant Strategy Truthful (DSIC).
+    $v_i x_i(v_i, b_{-i}) - p_i(v_i, b_{-i}) \ge v_i x_i(b_i, b_{-i}) - p_i(b_i, b_{-i})$
+-/
+def paper_digital_goods_truthful {Agent : Type*} [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent) : Prop :=
+  ∀ (values : Agent → ℝ) (i : Agent) (report : ℝ),
+    M.utility values i (Function.update values i report) ≤
+      M.utility values i values
+
+theorem paper_digital_goods_truthful_eq {Agent : Type*} [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent) :
+    paper_digital_goods_truthful M ↔ M.TruthfulDominantStrategy := by
+  rfl
+
+/-- Paper Definition: Two-winner Fixed Price Benchmark $\mathcal{F}^{(2)}(v)$.
+    The maximum revenue obtainable from a single price that sells to at least two bidders.
+-/
+noncomputable def paper_two_winner_benchmark {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) : ℝ :=
+  twoWinnerFixedPriceBenchmarkValue values
+
+theorem paper_two_winner_benchmark_eq {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) :
+    paper_two_winner_benchmark values = twoWinnerFixedPriceBenchmarkValue values := by
+  rfl
+
+/-! ## 2) 2021 Digital Goods Theorems -/
+
 /--
 Posted-price digital-goods auctions are dominant-strategy truthful.
 -/
 theorem paper_posted_price_truthful
     {Agent : Type*} [DecidableEq Agent] (price : Agent → ℝ) :
-    (postedPrice price).TruthfulDominantStrategy := by
+    paper_digital_goods_truthful (postedPrice price) := by
+  rw [paper_digital_goods_truthful_eq]
   exact postedPrice_truthful price
 
 /--
@@ -62,7 +105,8 @@ theorem paper_threshold_price_truthful
     {Agent : Type*} [DecidableEq Agent]
     (threshold : (Agent → ℝ) → Agent → ℝ)
     (hind : OwnBidIndependent threshold) :
-    (thresholdPriceAuction threshold).TruthfulDominantStrategy := by
+    paper_digital_goods_truthful (thresholdPriceAuction threshold) := by
+  rw [paper_digital_goods_truthful_eq]
   exact thresholdPriceAuction_truthful threshold hind
 
 /--
@@ -72,8 +116,8 @@ the resulting threshold-price auction is dominant-strategy truthful.
 theorem paper_own_erased_threshold_price_truthful
     {Agent : Type*} [DecidableEq Agent]
     (priceRule : Agent → (Agent → ℝ) → ℝ) :
-    (thresholdPriceAuction
-      (ownErasedThreshold priceRule)).TruthfulDominantStrategy := by
+    paper_digital_goods_truthful (thresholdPriceAuction (ownErasedThreshold priceRule)) := by
+  rw [paper_digital_goods_truthful_eq]
   exact ownErasedThresholdPriceAuction_truthful priceRule
 
 /--
@@ -84,8 +128,8 @@ dominant-strategy truthful.
 theorem paper_cross_sample_candidate_threshold_truthful
     {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
     (side : Agent → Bool) (minWinners : ℕ) :
-    (thresholdPriceAuction
-      (crossSampleCandidateThreshold side minWinners)).TruthfulDominantStrategy := by
+    paper_digital_goods_truthful (thresholdPriceAuction (crossSampleCandidateThreshold side minWinners)) := by
+  rw [paper_digital_goods_truthful_eq]
   exact crossSampleCandidateThresholdPriceAuction_truthful side minWinners
 
 /--
@@ -96,8 +140,8 @@ from the opposite side is dominant-strategy truthful.
 theorem paper_cross_sample_candidate_offer_threshold_truthful
     {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
     (side : Agent → Bool) (minWinners : ℕ) :
-    (thresholdPriceAuction
-      (crossSampleCandidateOfferThreshold side minWinners)).TruthfulDominantStrategy := by
+    paper_digital_goods_truthful (thresholdPriceAuction (crossSampleCandidateOfferThreshold side minWinners)) := by
+  rw [paper_digital_goods_truthful_eq]
   exact crossSampleCandidateOfferThresholdPriceAuction_truthful side minWinners
 
 /--
@@ -250,6 +294,37 @@ theorem paper_combinatorial_reject_all_no_positive_transfers
     (rejectAllAuction : CombinatorialAuction Bidder Item).NoPositiveTransfers := by
   exact rejectAllAuction_noPositiveTransfers
 
+/-- Paper Definition: Utility in a Combinatorial Auction.
+    $u_i(v_i, b) = v_i(A_i(b)) - p_i(b)$
+-/
+def paper_combinatorial_utility {Bidder Item : Type*}
+    (M : CombinatorialAuction Bidder Item)
+    (values reports : CombinatorialReport Bidder Item) (i : Bidder) : ℝ :=
+  values i (M.allocation reports i) - M.payment reports i
+
+theorem paper_combinatorial_utility_eq {Bidder Item : Type*}
+    (M : CombinatorialAuction Bidder Item) (values reports : CombinatorialReport Bidder Item) (i : Bidder) :
+    paper_combinatorial_utility M values reports i = M.utility values reports i := by
+  rfl
+
+/-- Paper Definition: Dominant Strategy Truthful on admissible domain.
+    $v_i(A_i(v_i, b_{-i})) - p_i(v_i, b_{-i}) \ge v_i(A_i(b_i, b_{-i})) - p_i(b_i, b_{-i})$
+-/
+def paper_combinatorial_truthful_on {Bidder Item : Type*} [DecidableEq Bidder]
+    (M : CombinatorialAuction Bidder Item)
+    (admissible : CombinatorialReport Bidder Item → Prop) : Prop :=
+  ∀ (values : CombinatorialReport Bidder Item),
+    admissible values →
+      ∀ (i : Bidder) (report : Bundle Item → ℝ),
+        paper_combinatorial_utility M values (Function.update values i report) i ≤
+          paper_combinatorial_utility M values values i
+
+theorem paper_combinatorial_truthful_on_eq {Bidder Item : Type*} [DecidableEq Bidder]
+    (M : CombinatorialAuction Bidder Item)
+    (admissible : CombinatorialReport Bidder Item → Prop) :
+    paper_combinatorial_truthful_on M admissible ↔ M.TruthfulDominantStrategyOn admissible := by
+  rfl
+
 /--
 Target-bundle critical-price mechanisms are truthful on normalized bundle
 valuations when each bidder's offered price is independent of that bidder's own
@@ -260,8 +335,9 @@ theorem paper_combinatorial_target_bundle_threshold_truthful_on_normalized
     (target : Bidder → Bundle Item)
     (price : CombinatorialReport Bidder Item → Bidder → ℝ)
     (hind : BundlePriceOwnReportIndependent price) :
-    (targetBundleThresholdAuction target price).TruthfulDominantStrategyOn
+    paper_combinatorial_truthful_on (targetBundleThresholdAuction target price)
       CombinatorialAuction.Normalized := by
+  rw [paper_combinatorial_truthful_on_eq]
   exact targetBundleThresholdAuction_truthfulOn_normalized target price hind
 
 /--
@@ -274,8 +350,9 @@ theorem paper_combinatorial_target_bundle_threshold_truthful_on_single_minded
     (target : Bidder → Bundle Item)
     (price : CombinatorialReport Bidder Item → Bidder → ℝ)
     (hind : BundlePriceOwnReportIndependent price) :
-    (targetBundleThresholdAuction target price).TruthfulDominantStrategyOn
+    paper_combinatorial_truthful_on (targetBundleThresholdAuction target price)
       IsNonemptySingleMindedProfile := by
+  rw [paper_combinatorial_truthful_on_eq]
   exact targetBundleThresholdAuction_truthfulOn_singleMindedProfiles
     target price hind
 

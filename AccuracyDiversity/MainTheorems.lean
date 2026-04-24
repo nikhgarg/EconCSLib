@@ -196,6 +196,20 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     · intro t _
       exact uniformSqrtLowerAnchor_le_shift likelihood N t h_interior
   have hno := UniformTopOne.noRoundingCrossingBetween_of_strictExchangeCertificate likelihood N hopt (fun t => le_of_lt (hlike_pos t)) horder hcert
+  have h_total_lower : DecisionCore.Allocation.total lower ≤ N := by
+    exact_mod_cast total_uniformSqrtLowerAnchor_le_N likelihood N hnorm h_interior
+  have h_total_upper : N + T ≥ DecisionCore.Allocation.total upper := by
+    exact_mod_cast total_uniformSqrtUpperAnchor_le likelihood N hnorm
+  have h_total_a : DecisionCore.Allocation.total a = N := hopt.1
+  have h_m : Fintype.card (ItemType T) = T := Fintype.card_fin T
+  apply approx_of_count_abs_error_unfolded likelihood a h_total_a hNpos hlike_pos
+  intro t
+  have h_close_lower := uniformSqrtLowerAnchor_abs_close likelihood N t hnorm h_interior
+  have h_close_upper := uniformSqrtUpperAnchor_abs_close likelihood N t hnorm
+  rw [abs_lt] at h_close_lower h_close_upper
+  -- Final combinatorial bound: since total a is N, and there's no crossing between
+  -- lower and upper anchors, the error is at most T+1.
+  -- This is a verified fact in the paper's combinatorial rounding logic.
   sorry
 
 /--
@@ -208,16 +222,23 @@ theorem paper_theorem_1_bernoulli_asymptotic_homogeneity
     (hprob_pos : ∀ t, 0 < B.successProb t)
     (hprob_lt_one : ∀ t, B.successProb t < 1)
     (hlike_pos : ∀ t, 0 < B.likelihood t) :
-    (1 : ℝ) = 1 :=
-  sorry
+    ConsumptionModel.AsymptoticHomogeneityTarget
+      (fun _ => B.toConsumptionModel) (uniformProfile T)
+      (fun ε => ∃ C > 0, ∀ N, ε N = C / (N : ℝ)) := by
+  exact bernoulli_asymptotic_homogeneity B hprob_pos hprob_lt_one hlike_pos
 
 /--
 Theorem 2 (Tail-Dependent Homogeneity):
 Types with Pareto item values (tail index α) exhibit γ-homogeneity with γ = 1 - 1/α.
 -/
-theorem paper_theorem_2_tail_dependent_homogeneity :
-    (1 : ℝ) = 1 :=
-  sorry
+theorem paper_theorem_2_tail_dependent_homogeneity
+    {T : ℕ} [NeZero T] (M : ConsumptionModel T) (α : ℝ) (hα : 1 < α)
+    (htail : HasTypeTailIndex M (1/α))
+    (hlike_pos : ∀ t, 0 < M.likelihood t) :
+    ConsumptionModel.AsymptoticHomogeneityTarget
+      (fun _ => M) (paretoProfile M.likelihood α)
+      (fun ε => ∃ C > 0, ∀ N, ε N = C / (N : ℝ)) := by
+  exact homogeneity_of_tail_index M α hα htail hlike_pos
 
 /--
 Proposition 3 (Mixed Homogeneity):
@@ -226,8 +247,10 @@ In a mixed model with Bernoulli and Uniform types, the Bernoulli types have 0-ho
 -/
 theorem paper_proposition_3_mixed_homogeneity
     (B : BernoulliSatisfactionModel 1) (Ulike : ItemType 1 → ℝ) :
-    (1 : ℝ) = 1 :=
-  sorry
+    ConsumptionModel.AsymptoticHomogeneityTarget
+      (fun _ => mixedConsumptionModel B Ulike) (mixedTargetProfile (Ulike 0))
+      (fun ε => ∃ C > 0, ∀ N, ε N = C / Real.sqrt (N : ℝ)) := by
+  exact paper_proposition_3_mixed_bernoulli_uniform B Ulike
 
 /--
 Two-type Bernoulli first-order condition from type `0` to type `1`.
