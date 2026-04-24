@@ -30,6 +30,38 @@ noncomputable def optimalItemFairness {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) : ℝ :=
   sSup (attainableItemFairnessSet W)
 
+/--
+The standard LP epigraph form of item-fairness maximization: `λ` is no larger
+than every normalized item utility under policy `ρ`.
+-/
+def itemFairnessLPFeasible {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) (ell : ℝ) : Prop :=
+  ∀ j : Item n, ell ≤ normalizedItemUtility W ρ j
+
+/-- Feasible objective values in the LP epigraph form of item-fairness maximization. -/
+def itemFairnessLPValueSet {m n : ℕ}
+    (W : RecommendationModel m n) : Set ℝ :=
+  {ell | ∃ ρ : Policy m n, itemFairnessLPFeasible W ρ ell}
+
+/-- The optimal value of the LP epigraph form of item-fairness maximization. -/
+noncomputable def optimalItemFairnessLPValue {m n : ℕ}
+    (W : RecommendationModel m n) : ℝ :=
+  sSup (itemFairnessLPValueSet W)
+
+/-- The LP epigraph constraints are equivalent to `λ ≤ I_min(ρ,w)`. -/
+theorem itemFairnessLPFeasible_iff_le_itemFairness
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) (ell : ℝ) :
+    itemFairnessLPFeasible W ρ ell ↔ ell ≤ itemFairness W ρ := by
+  constructor
+  · intro h
+    unfold itemFairness DecisionCore.finiteMin
+    apply Finset.le_inf'
+    intro j _hj
+    exact h j
+  · intro h j
+    exact h.trans (DecisionCore.finiteMin_le (normalizedItemUtility W ρ) j)
+
 /-- Nonnegative utilities bound every attainable original item-fairness value above by one. -/
 theorem attainableItemFairnessSet_bddAbove_of_nonnegative {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
@@ -39,6 +71,67 @@ theorem attainableItemFairnessSet_bddAbove_of_nonnegative {m n : ℕ} [NeZero n]
   obtain ⟨ρ, hr⟩ := hr
   rw [hr]
   exact itemFairness_le_one_of_nonnegative W hNonneg ρ
+
+/-- The LP epigraph value set is nonempty, witnessed by any policy's own minimum item utility. -/
+theorem itemFairnessLPValueSet_nonempty {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) :
+    (itemFairnessLPValueSet W).Nonempty := by
+  refine ⟨itemFairness W (uniformPolicy (m := m) (n := n)), ?_⟩
+  exact ⟨uniformPolicy (m := m) (n := n),
+    (itemFairnessLPFeasible_iff_le_itemFairness
+      W (uniformPolicy (m := m) (n := n))
+      (itemFairness W (uniformPolicy (m := m) (n := n)))).mpr le_rfl⟩
+
+/-- Nonnegative utilities bound the LP epigraph objective values above by one. -/
+theorem itemFairnessLPValueSet_bddAbove_of_nonnegative
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    BddAbove (itemFairnessLPValueSet W) := by
+  refine ⟨1, ?_⟩
+  intro ell hell
+  obtain ⟨ρ, hρ⟩ := hell
+  have hle_item :
+      ell ≤ itemFairness W ρ :=
+    (itemFairnessLPFeasible_iff_le_itemFairness W ρ ell).mp hρ
+  exact hle_item.trans (itemFairness_le_one_of_nonnegative W hNonneg ρ)
+
+/--
+Appendix C, Lemma 2 in max-min LP epigraph form: maximizing `λ` subject to
+`λ ≤ I_j(ρ,w)` for every item has the same value as `I^*_min(w)`.
+-/
+theorem optimalItemFairnessLPValue_eq_optimalItemFairness_of_nonnegative
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    optimalItemFairnessLPValue W = optimalItemFairness W := by
+  have hLPNonempty := itemFairnessLPValueSet_nonempty W
+  have hLPBdd := itemFairnessLPValueSet_bddAbove_of_nonnegative W hNonneg
+  have hItemNonempty : (attainableItemFairnessSet W).Nonempty := by
+    exact ⟨itemFairness W (uniformPolicy (m := m) (n := n)),
+      ⟨uniformPolicy (m := m) (n := n), rfl⟩⟩
+  have hItemBdd := attainableItemFairnessSet_bddAbove_of_nonnegative W hNonneg
+  apply le_antisymm
+  · unfold optimalItemFairnessLPValue
+    refine csSup_le hLPNonempty ?_
+    intro ell hell
+    obtain ⟨ρ, hρ⟩ := hell
+    have hle_item :
+        ell ≤ itemFairness W ρ :=
+      (itemFairnessLPFeasible_iff_le_itemFairness W ρ ell).mp hρ
+    have hitem_mem :
+        itemFairness W ρ ∈ attainableItemFairnessSet W := by
+      exact ⟨ρ, rfl⟩
+    exact hle_item.trans (le_csSup hItemBdd hitem_mem)
+  · unfold optimalItemFairness
+    refine csSup_le hItemNonempty ?_
+    intro r hr
+    obtain ⟨ρ, hr⟩ := hr
+    rw [hr]
+    have hlp_mem :
+        itemFairness W ρ ∈ itemFairnessLPValueSet W := by
+      exact ⟨ρ,
+        (itemFairnessLPFeasible_iff_le_itemFairness
+          W ρ (itemFairness W ρ)).mpr le_rfl⟩
+    exact le_csSup hLPBdd hlp_mem
 
 /--
 Positive item demand and nonnegative utilities make the original optimal

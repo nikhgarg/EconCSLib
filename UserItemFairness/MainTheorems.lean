@@ -383,6 +383,19 @@ theorem paper_lemma1_optimal_item_fairness_positive
     (W.columnHasPositiveDemand_of_positive hPos)
 
 /--
+Appendix C, Lemma 2 in max-min LP epigraph form.
+
+The LP that maximizes `ell` subject to `ell ≤ I_j(ρ,w)` for every item has the
+same optimal value as the paper's item-fairness objective `I^*_min(w)`.
+-/
+theorem paper_lemma2_item_fairness_lp_value_eq
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    W.optimalItemFairnessLPValue = W.optimalItemFairness := by
+  exact W.optimalItemFairnessLPValue_eq_optimalItemFairness_of_nonnegative
+    hNonneg
+
+/--
 Problem 1 baseline theorem.
 
 With nonnegative utilities and a positive row normalizer for every user, the
