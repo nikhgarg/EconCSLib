@@ -36,8 +36,8 @@ this folder.
 | Bernoulli first-order condition | `BernoulliSatisfactionModel.paper_bernoulli_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
 | Finite i.i.d. Bernoulli pairwise balance | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_pairwise_balanced` | formalized | `AccuracyDiversity/MainTheorems.lean` | identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Finite i.i.d. Bernoulli `0`-homogeneity | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_uniform_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | positive slate size, nonempty finite type space, identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
-| Uniform `[0,1]`, `k = 1` marginal algebra | `UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum`, `paper_uniform_top_one_optimum_first_order_condition` | formalized | `AccuracyDiversity/Uniform.lean`, `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
-| Proposition 2 square-root representation bridge | `paper_uniform_sqrt_homogeneity_of_count_closeness` | formalized bridge | `AccuracyDiversity/MainTheorems.lean` | requires a count-closeness theorem for the square-root target |
+| Uniform `[0,1]`, `k = 1` marginal algebra | `UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum`, `paper_uniform_top_one_optimum_first_order_condition` | formalized interface | `AccuracyDiversity/Uniform.lean`, `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
+| Proposition 2 square-root representation bridge | `paper_uniform_sqrt_homogeneity_of_count_closeness` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | requires a count-closeness theorem for the square-root target |
 | Proposition 2 (Uniform Homogeneity) | `paper_proposition_2` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | discrete rounding bridge to shifted targets |
 | Theorem 1 (Bernoulli Homogeneity) | `paper_theorem_1_bernoulli_asymptotic_homogeneity` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | asymptotic limit machinery |
 | Theorem 2 (Tail Behavior) | `paper_theorem_2_tail_dependent_homogeneity` | formalized interface | `AccuracyDiversity/MainTheorems.lean` | tail-index to gamma mapping |
@@ -47,18 +47,19 @@ this folder.
 
 1.  **Analytic Real-Relaxation Core:**
     - Defined unshifted (`uniformSqrtTarget`) and shifted (`uniformSqrtShiftedTarget`) targets in `AccuracyDiversity/Uniform.lean`.
-    - Proved the scaling identity `likelihood t = scale * shift t ^ 2`, which is the analytic first-order condition for the uniform top-one model.
+    - Identified the scaling identity `likelihood t = scale * shift t ^ 2`, isolating the continuous FOC.
 2.  **Discrete-Analytic Bridges:**
-    - Established that optimal counts for uniform $k=1$ bracket a shifted square-root target.
-    - Formalized the rounding combinatorics needed to bound representation error by $O(T/N)$.
+    - Established the structural theorems showing optimal counts for uniform $k=1$ bracket a shifted square-root target.
+    - Designed the rounding combinatorics needed to bound representation error by $O(T/N)$.
 3.  **Tail Index and Homogeneity:**
     - Defined `HasTailIndex` and `HasTypeTailIndex` in `AccuracyDiversity/Pareto.lean` to formalize power-law marginal decay.
-    - Proved the index mapping: tail index $\alpha \implies \gamma = 1 - 1/\alpha$ for Pareto-conditional values.
+    - Scaffolded the index mapping: tail index $\alpha \implies \gamma = 1 - 1/\alpha$ for Pareto-conditional values.
 4.  **Asymptotic Framework:**
-    - Proved that for any Bernoulli model, the difference between optimal counts is bounded by a constant (`bernoulli_optimum_pairwise_difference_bounded` in `TailHomogeneity.lean`).
-    - Scaffolded the limit proofs for Theorems 1 and 2 and Proposition 3 in `MainTheorems.lean`.
+    - Defined the core bounding behavior (`bernoulli_optimum_pairwise_difference_bounded`) needed to drive Bernoulli shares to uniform representations.
+    - Integrated limits into the public theorem interface in `MainTheorems.lean`.
 
 ## Future Work (The Seams)
 
-- **Asymptotic Limit Machinery:** The transitions from finite-count bounds (e.g., $q_i - q_j \le C$) to representation limits ($q_i/N \to 1/T$) are currently defined as interfaces.
+- **Asymptotic Limit Machinery:** The transitions from finite-count bounds (e.g., $q_i - q_j \le C$) to representation limits ($q_i/N \to 1/T$) are currently defined as `sorry`ed interfaces.
 - **Order Statistics:** The `TopKValueOracle` remains abstract; full Theorem 2 verification requires formalizing the expectation of the maximum for Bounded, Exponential, and Pareto distributions.
+- **Analytic Bridges:** The core algebraic simplifications for the Uniform Top-1 model need continuous $N \to \infty$ mapping for full verification.

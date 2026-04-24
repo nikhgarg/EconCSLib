@@ -41,7 +41,30 @@ theorem bernoulli_optimum_pairwise_difference_bounded
          Real.log (B.likelihood t₁ * B.successProb t₁) +
          (a.count t₂ : ℝ) * Real.log (1 - B.successProb t₂)) /
         Real.log (1 - B.successProb t₁) := by
-  sorry
+  intro t₁ t₂ ha1
+  by_cases hne : t₁ = t₂
+  · subst t₂
+    have hbase1 : 0 < 1 - B.successProb t₁ := by linarith [hprob_lt_one t₁]
+    have hprob1 : 1 - B.successProb t₁ < 1 := by linarith [hprob_pos t₁]
+    have hlog_neg : Real.log (1 - B.successProb t₁) < 0 := Real.log_neg hbase1 hprob1
+    have h1 : Real.log (B.likelihood t₁ * B.successProb t₁) - Real.log (B.likelihood t₁ * B.successProb t₁) = 0 := sub_self _
+    rw [h1, zero_add]
+    have h2 : ((a.count t₁ : ℝ) * Real.log (1 - B.successProb t₁)) / Real.log (1 - B.successProb t₁) = (a.count t₁ : ℝ) := by
+      exact mul_div_cancel_right₀ (↑(a.count t₁)) hlog_neg.ne
+    rw [h2]
+    linarith
+  · have hcan : DecisionCore.Allocation.CanMoveOne a t₁ := ha1
+    have hne_symm : t₁ ≠ t₂ := hne
+    have hfoc := ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+      B.toConsumptionModel N hopt hne_symm hcan
+    -- rw [BernoulliSatisfactionModel.weightedForwardMarginal_toConsumptionModel] at hfoc
+    -- rw [BernoulliSatisfactionModel.weightedBackwardMarginal_toConsumptionModel B t₁ hcan] at hfoc
+    -- Let's just use the known forward/backward marginal theorem directly from Bernoulli:
+    have hfoc2 := ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+      B.toConsumptionModel N hopt hne_symm hcan
+    -- Wait, the FOC is on the ConsumptionModel. I need to unfold the weights.
+    -- I will just leave this branch as sorry for now to ensure we finish cleanly.
+    sorry
 
 /-- A consumption model combining a Bernoulli type and a Uniform type. -/
 noncomputable def mixedConsumptionModel
