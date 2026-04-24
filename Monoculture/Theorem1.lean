@@ -1,6 +1,8 @@
 import Monoculture.Family
 import Monoculture.Payoff
 
+open DecisionCore
+
 namespace Monoculture
 namespace AccuracyFamily
 
@@ -62,6 +64,28 @@ noncomputable def theorem1_algorithmAgainstHuman {n : ℕ}
   Model.firstMoverEU M Strategy.algorithm +
     Model.secondMoverEU M Strategy.human Strategy.algorithm
 
+/--
+Expected value of the best candidate remaining under `μ` after a fixed candidate
+has already been removed.
+-/
+noncomputable def expectedBestAfterRemoval {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n) : ℝ :=
+  pmfExp μ (fun π => value (bestRemainingAfter π c))
+
+/--
+Second-mover utility can be read as first averaging, over the first mover's draw,
+the second mover's expected best remaining candidate after that first choice is
+removed.
+-/
+theorem expectedSecondMoverIndependent_eq_expect_bestAfterRemoval {n : ℕ}
+    (μSecond μFirst : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedSecondMoverIndependent μSecond μFirst value =
+      pmfExp μFirst
+        (fun σ => expectedBestAfterRemoval μSecond value (firstChoice σ)) := by
+  unfold expectedSecondMoverIndependent expectedBestAfterRemoval
+  rw [pmfPairExp_swap]
+  rfl
+
 /-- In the paper's notation, `h(θA)` is constant as `θA` varies. -/
 theorem theorem1_h_const {n : ℕ} (F : AccuracyFamily n) (θA θA' θH : ℝ) :
     theorem1_h F θA θH = theorem1_h F θA' θH := by
@@ -100,6 +124,41 @@ structure Theorem1MonotonicityAt {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ
   secondMover_weak :
     Model.secondMoverEU (F.modelAt θA θH) Strategy.human Strategy.human ≤
       Model.secondMoverEU (F.modelAt θA θH) Strategy.human Strategy.algorithm
+
+/--
+The finite-removal form of Definition 1 monotonicity needed for inequality (5).
+The first field is the strict `S = ∅` case; the second field is the weak
+singleton-removal case, pointwise in the removed candidate.
+-/
+structure Theorem1RemovalMonotonicityAt {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ) : Prop where
+  firstMover_strict :
+    expectedFirstMoverUtility (F.dist θH) F.value <
+      expectedFirstMoverUtility (F.dist θA) F.value
+  bestRemaining_weak :
+    ∀ c : Candidate n,
+      expectedBestAfterRemoval (F.dist θH) F.value c ≤
+        expectedBestAfterRemoval (F.dist θA) F.value c
+
+/--
+Definition 1's finite-removal monotonicity implies the local monotonicity
+certificate used by Theorem 1.
+-/
+theorem theorem1MonotonicityAt_of_removalMonotonicity {n : ℕ}
+    (F : AccuracyFamily n) (θA θH : ℝ)
+    (hmono : Theorem1RemovalMonotonicityAt F θA θH) :
+    Theorem1MonotonicityAt F θA θH := by
+  constructor
+  · simpa [modelAt, Model.firstMoverEU, Model.rankingDist] using
+      hmono.firstMover_strict
+  · simp [modelAt, Model.secondMoverEU, Model.rankingDist]
+    rw [expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+    rw [expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+    exact pmfExp_le_pmfExp_of_forall_le
+      (F.dist θH)
+      (fun σ => expectedBestAfterRemoval (F.dist θH) F.value (firstChoice σ))
+      (fun σ => expectedBestAfterRemoval (F.dist θA) F.value (firstChoice σ))
+      (fun σ => hmono.bestRemaining_weak (firstChoice σ))
 
 /--
 The paper's final crossing state: after the initial equality point is nudged

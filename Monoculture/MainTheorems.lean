@@ -509,6 +509,23 @@ theorem paper_theorem1_inequality5_from_monotonicity
     F θA θH hmono
 
 /--
+Theorem 1 proof notation, finite-removal monotonicity bridge.
+
+Paper statement in the proof: inequality (5) follows from Definition 1
+monotonicity, including weak improvement after removing the first mover's hired
+candidate from the pool.
+-/
+theorem paper_theorem1_inequality5_from_removal_monotonicity
+    {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ)
+    (hmono : AccuracyFamily.Theorem1RemovalMonotonicityAt F θA θH) :
+    AccuracyFamily.theorem1_h F θA θH <
+      AccuracyFamily.theorem1_algorithmAgainstHuman F θA θH :=
+  AccuracyFamily.theorem1_algorithmAgainstHuman_gt_h_of_monotonicity
+    F θA θH
+    (AccuracyFamily.theorem1MonotonicityAt_of_removalMonotonicity
+      F θA θH hmono)
+
+/--
 Paper Theorem 1 from the final crossing certificate.
 
 Paper statement: if a candidate distribution and noisy permutation family satisfy
