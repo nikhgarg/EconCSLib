@@ -3822,6 +3822,57 @@ theorem balance_msvv_approx_competitive_up_to_delta
           (I.revenue (I.runAssignment I.balanceChoiceRule history))
   exact hbase.trans hbound
 
+theorem balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : historyFinset history = Finset.univ)
+    {δ : ℝ}
+    (hδ : 0 ≤ δ)
+    (hmaxBidSum_pos : 0 < I.historyMaxBidSum history)
+    (hsmall :
+      I.SmallBids
+        (min 1
+          (δ / ((Real.exp 1 + 1) * I.historyMaxBidSum history)))) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) + δ := by
+  let ε :=
+    min 1 (δ / ((Real.exp 1 + 1) * I.historyMaxBidSum history))
+  let scale := (Real.exp 1 + 1) * I.historyMaxBidSum history
+  have hcoef_pos : 0 < Real.exp 1 + 1 := by
+    have hexp_pos : 0 < Real.exp 1 := Real.exp_pos 1
+    linarith
+  have hscale_pos : 0 < scale := by
+    exact mul_pos hcoef_pos hmaxBidSum_pos
+  have hε_nonneg : 0 ≤ ε := by
+    unfold ε
+    exact le_min zero_le_one (div_nonneg hδ hscale_pos.le)
+  have hε_le_one : ε ≤ 1 := by
+    unfold ε
+    exact min_le_left 1 (δ / scale)
+  have hε_le_threshold : ε ≤ δ / scale := by
+    unfold ε
+    exact min_le_right 1 (δ / scale)
+  have herror_le_delta :
+      ε * (Real.exp 1 + 1) * I.historyMaxBidSum history ≤ δ := by
+    have hmul :=
+      mul_le_mul_of_nonneg_right hε_le_threshold hscale_pos.le
+    calc
+      ε * (Real.exp 1 + 1) * I.historyMaxBidSum history =
+          ε * scale := by
+          simp [scale]
+          ring
+      _ ≤ (δ / scale) * scale := hmul
+      _ = δ := by
+          exact div_mul_cancel₀ δ hscale_pos.ne'
+  exact balance_msvv_approx_competitive_up_to_delta
+    I hbid hbudget history hnodup hcover hε_nonneg hε_le_one hsmall
+    herror_le_delta
+
 end AdWordsInstance
 
 end Online

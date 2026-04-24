@@ -863,5 +863,34 @@ theorem paper_adwords_balance_msvv_approx_competitive_up_to_delta
     I hbid hbudget history hnodup hcover hε hε_le_one hsmall
     herror_le_delta
 
+/--
+Threshold form of the finite small-bids MSVV theorem. For a target additive
+`δ`, it is enough to assume bids are small at the explicit threshold
+`min 1 (δ / ((e + 1) * historyMaxBidSum))`.
+-/
+theorem paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_threshold
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {δ : ℝ}
+    (hδ : 0 ≤ δ)
+    (hmaxBidSum_pos : 0 < I.historyMaxBidSum history)
+    (hsmall :
+      I.SmallBids
+        (min 1
+          (δ / ((Real.exp 1 + 1) * I.historyMaxBidSum history)))) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) + δ := by
+  exact
+    AdWordsInstance.balance_msvv_approx_competitive_up_to_delta_of_smallBids_threshold
+      I hbid hbudget history hnodup hcover hδ hmaxBidSum_pos hsmall
+
 end Online
 end EconCSLean
