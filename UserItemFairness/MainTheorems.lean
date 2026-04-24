@@ -4111,6 +4111,130 @@ theorem paper_lemma8_problem6ClosedValue_eq_of_adjacent_boundary
     halpha0 halpha1 hpos hdec hnext hboundary
 
 /--
+Appendix D, Lemma 8 boundary stitch: a certified interval with pivot `t`
+stitches through a tight adjacent boundary to a certified interval with pivot
+`t+1`.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_across_adjacent_closed_boundary
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary alphaRight : ℝ}
+    {v : Item n → ℝ} {t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hboundary_le_right : alphaBoundary ≤ alphaRight)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_t : t.val ≤ (reverseItem t).val)
+    (hcenter_u : u.val ≤ (reverseItem u).val)
+    (hleft_bounds : Problem6ClosedPivotDenominatorBounds alphaLeft v t)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹)
+    (hright_bounds : Problem6ClosedPivotDenominatorBounds alphaRight v u) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_across_adjacent_closed_boundary
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      hpos hdec hcenter_t hcenter_u hleft_bounds
+      hnext hboundary hright_bounds
+
+/--
+Appendix D, Lemma 8 boundary stitch for canonical first-crossing pivots,
+odd-center case.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_boundary_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hboundary_le_right : alphaBoundary ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_boundary_center
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hcenter_c hleft_pivot hright_pivot
+      hnext hboundary
+
+/--
+Appendix D, Lemma 8 boundary stitch for canonical first-crossing pivots,
+even-center case.
+-/
+theorem paper_lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_boundary_succ_center
+    {n : ℕ} [NeZero n]
+    {alphaLeft alphaBoundary alphaRight : ℝ}
+    {v : Item n → ℝ} {c t u : Item n}
+    (halphaLeft0 : 0 < alphaLeft) (halphaLeft1 : alphaLeft < 1)
+    (halphaBoundary0 : 0 < alphaBoundary)
+    (halphaBoundary1 : alphaBoundary < 1)
+    (halphaRight0 : 0 < alphaRight) (halphaRight1 : alphaRight < 1)
+    (hleft_le_boundary : alphaLeft ≤ alphaBoundary)
+    (hboundary_le_right : alphaBoundary ≤ alphaRight)
+    (halphaLeft_half : alphaLeft ≤ 1 / 2)
+    (halphaRight_half : alphaRight ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hleft_pivot :
+      problem6FirstClosedPivot alphaLeft v
+        halphaLeft0 halphaLeft1 hpos = t)
+    (hright_pivot :
+      problem6FirstClosedPivot alphaRight v
+        halphaRight0 halphaRight1 hpos = u)
+    (hnext : u.val = t.val + 1)
+    (hboundary :
+      problem6PivotGap alphaBoundary v t =
+        - (pairShare alphaBoundary v t)⁻¹) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaLeft v) ≤
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alphaRight v) := by
+  exact
+    lemma8_reducedOptimalItemFairness_mono_across_adjacent_firstClosedPivot_boundary_succ_center
+      halphaLeft0 halphaLeft1
+      halphaBoundary0 halphaBoundary1
+      halphaRight0 halphaRight1
+      hleft_le_boundary hboundary_le_right
+      halphaLeft_half halphaRight_half
+      hpos hdec hsucc hleft_pivot hright_pivot
+      hnext hboundary
+
+/--
 Appendix D, Lemma 7-style monotonicity for the canonical Lemma 5 pivot:
 as `α` increases, the first crossing pivot weakly moves right.
 -/
