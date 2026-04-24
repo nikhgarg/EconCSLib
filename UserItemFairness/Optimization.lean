@@ -419,5 +419,76 @@ theorem priceOfMisestimation_eq_zero_of_estimatedUtility_eq_true
   exact E.priceOfMisestimation_eq_zero_of_estimatedModel_eq_true γ ρhat
     (E.estimatedModel_eq_true_of_estimatedUtility_eq_true hutility) hopt
 
+/--
+When the true constrained optimum is positive, the price of misestimation is
+`1 - U_min(ρhat,w) / U^*_min(γ,w)`.
+-/
+theorem priceOfMisestimation_eq_one_sub_userFairness_div
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (γ : ℝ) (ρhat : Policy m n)
+    (hbase : 0 <
+      RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ) :
+    E.priceOfMisestimation γ ρhat =
+      1 - RecommendationModel.userFairness E.trueModel ρhat /
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ := by
+  unfold priceOfMisestimation
+  simp [hbase.ne']
+  field_simp [hbase.ne']
+
+/--
+If a candidate policy gives true user fairness less than an `eps` fraction of
+the true optimum, its price of misestimation is greater than `1 - eps`.
+-/
+theorem priceOfMisestimation_gt_one_sub_of_userFairness_lt_mul_optimum
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (γ eps : ℝ) (ρhat : Policy m n)
+    (hbase : 0 <
+      RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ)
+    (huser :
+      RecommendationModel.userFairness E.trueModel ρhat <
+        eps * RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ) :
+    1 - eps < E.priceOfMisestimation γ ρhat := by
+  rw [E.priceOfMisestimation_eq_one_sub_userFairness_div γ ρhat hbase]
+  have hratio :
+      RecommendationModel.userFairness E.trueModel ρhat /
+          RecommendationModel.optimalUserFairnessAtLevel E.trueModel γ < eps := by
+    rw [div_lt_iff₀ hbase]
+    simpa [mul_comm] using huser
+  linarith
+
+/--
+The final algebraic step in Appendix E's proof of Theorem 4: if the true
+maximal-fairness optimum is above `1/n` while the estimated optimum's chosen
+policy gives true user fairness below `eps/n`, then the price of
+misestimation is above `1 - eps`.
+-/
+theorem priceOfMisestimation_gt_one_sub_of_userFairness_lt_div_card
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (eps : ℝ) (ρhat : Policy m n)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (huser :
+      RecommendationModel.userFairness E.trueModel ρhat <
+        eps / (n : ℝ)) :
+    1 - eps < E.priceOfMisestimation 1 ρhat := by
+  have hn_pos : 0 < (n : ℝ) := by
+    exact_mod_cast (NeZero.pos n)
+  have hinv_pos : 0 < (n : ℝ)⁻¹ := inv_pos.mpr hn_pos
+  have hbase_pos :
+      0 < RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1 :=
+    lt_trans hinv_pos hbase
+  have huser_mul :
+      RecommendationModel.userFairness E.trueModel ρhat <
+        eps * RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1 := by
+    have hscale :
+        eps * (n : ℝ)⁻¹ <
+          eps * RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1 :=
+      mul_lt_mul_of_pos_left hbase heps
+    exact lt_trans (by simpa [div_eq_mul_inv] using huser) hscale
+  exact E.priceOfMisestimation_gt_one_sub_of_userFairness_lt_mul_optimum
+    1 eps ρhat hbase_pos huser_mul
+
 end EstimatedRecommendationModel
 end UserItemFairness

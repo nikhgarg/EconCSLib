@@ -478,6 +478,28 @@ theorem paper_priceOfMisestimation_exact_estimation_eq_zero
   exact E.priceOfMisestimation_eq_zero_of_estimatedUtility_eq_true
     γ ρhat hutility hopt
 
+/--
+Appendix E, Theorem 4 final algebraic step.
+
+If the true maximal-fairness optimum is above `1/n` while the estimated
+maximal-fairness solution gives true user fairness below `eps/n`, then the
+price of misestimation with maximal item-fairness constraints is above
+`1 - eps`.
+-/
+theorem paper_theorem4_misestimation_large_from_bounds
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (eps : ℝ) (ρhat : Policy m n)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (huser :
+      RecommendationModel.userFairness E.trueModel ρhat <
+        eps / (n : ℝ)) :
+    1 - eps < E.priceOfMisestimation 1 ρhat := by
+  exact E.priceOfMisestimation_gt_one_sub_of_userFairness_lt_div_card
+    eps ρhat heps hbase huser
+
 end EstimatedRecommendationModel
 
 namespace TypePolicy
