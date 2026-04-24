@@ -1329,6 +1329,62 @@ theorem competitive_of_primalDual
   exact competitive_of_certificate I hbudget A ratio
     (competitiveRatioCertificate_of_primalDual I A ratio hcert)
 
+/--
+The remaining finite MSVV objective-bound seam for the concrete Balance run.
+All feasibility and dual feasibility fields are already proved elsewhere; this
+certificate is exactly the scaled dual-objective inequality still requiring the
+paper's charging argument.
+-/
+structure MsvvObjectiveBoundCertificate
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query) : Prop where
+  scaled_dual_bound :
+    let A := I.runAssignment I.balanceChoiceRule history
+    msvvRatio *
+      I.dualObjective (I.msvvAlphaFromAssignment A)
+        (I.maxSlackBeta (I.msvvAlphaFromAssignment A)) ≤
+      I.revenue A
+
+noncomputable def primalDualCompetitiveCertificate_of_msvvObjectiveBound
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query)
+    (hcert : I.MsvvObjectiveBoundCertificate history) :
+    I.PrimalDualCompetitiveCertificate
+      (I.runAssignment I.balanceChoiceRule history) msvvRatio where
+  feasible := balanceRunAssignment_feasible I hbudget history
+  ratio_nonneg := msvvRatio_nonneg
+  alpha :=
+    I.msvvAlphaFromAssignment
+      (I.runAssignment I.balanceChoiceRule history)
+  beta :=
+    I.maxSlackBeta
+      (I.msvvAlphaFromAssignment
+        (I.runAssignment I.balanceChoiceRule history))
+  dual_feasible :=
+    dualFeasible_msvvAssignment I
+      (I.runAssignment I.balanceChoiceRule history)
+  scaled_dual_bound := by
+    simpa using hcert.scaled_dual_bound
+
+theorem balance_msvv_competitive_of_objectiveBound
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query)
+    (hcert : I.MsvvObjectiveBoundCertificate history) :
+    msvvRatio * I.offlineOptimumValue hbudget ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) := by
+  exact competitive_of_primalDual I hbudget
+    (I.runAssignment I.balanceChoiceRule history) msvvRatio
+    (primalDualCompetitiveCertificate_of_msvvObjectiveBound
+      I hbudget history hcert)
+
 end AdWordsInstance
 
 end Online

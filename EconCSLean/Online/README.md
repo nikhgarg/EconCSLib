@@ -52,6 +52,7 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Competitive-ratio certificate | `CompetitiveRatioCertificate` | formalized certificate interface | `EconCSLean/Online/AdWords.lean` | certificate must be supplied by algorithm analysis |
 | Primal-dual competitive certificate | `paper_adwords_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV certificate for ratio `1 - 1 / Real.exp 1` and formalize small-bids limiting argument |
 | Balance/MSVV `1 - 1/e` theorem seam | `paper_adwords_balance_msvv_competitive_of_primal_dual_certificate` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | construct the Balance/MSVV primal-dual certificate |
+| Balance/MSVV objective-bound seam | `MsvvObjectiveBoundCertificate`, `paper_adwords_balance_msvv_competitive_of_objective_bound` | conditional theorem wrapper formalized | `EconCSLean/Online/MainTheorems.lean` | prove the scaled dual-objective bound for the assignment-induced MSVV duals |
 | Full MSVV competitive theorem | none | not started | none | online history/algorithm execution, tradeoff-revealing LP, and small-bids analysis |
 
 ## Current Formalization Plan
@@ -62,7 +63,7 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 2. The online history/fold for feasible choice rules and the canonical
    Balance/MSVV choice rule is formalized. Next connect per-query choices to
    primal and dual variable updates.
-3. Then prove a stepwise primal-dual invariant that constructs
-   `PrimalDualCompetitiveCertificate` for the algorithm in certificate form.
+3. Then prove the stepwise/primal-dual charging argument as
+   `MsvvObjectiveBoundCertificate` for the Balance run.
 4. Finally connect that certificate to the paper's `1 - 1/e` guarantee and
    isolate the small-bids limiting argument as a separate theorem seam.

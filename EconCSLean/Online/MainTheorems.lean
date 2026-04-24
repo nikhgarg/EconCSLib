@@ -252,5 +252,23 @@ theorem paper_adwords_balance_msvv_competitive_of_primal_dual_certificate
     (I.runAssignment I.balanceChoiceRule history)
     AdWordsInstance.msvvRatio hcert
 
+/--
+Final finite MSVV theorem seam: the Balance run is `1 - 1/e` competitive once
+the single scaled dual-objective bound for the assignment-induced MSVV duals is
+proved.
+-/
+theorem paper_adwords_balance_msvv_competitive_of_objective_bound
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbudget : I.NonnegativeBudgets)
+    (history : List Query)
+    (hcert : I.MsvvObjectiveBoundCertificate history) :
+    AdWordsInstance.msvvRatio * I.offlineOptimumValue hbudget ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) := by
+  exact AdWordsInstance.balance_msvv_competitive_of_objectiveBound
+    I hbudget history hcert
+
 end Online
 end EconCSLean
