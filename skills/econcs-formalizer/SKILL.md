@@ -306,8 +306,13 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   symmetry/capacity certificate: ineligible positions get zero allocation, each
   round has total eligible allocation at most one, eligible positions have equal
   expected allocation, and the eligible set cardinality supplies the
-  `1 / (N - i + 1)` denominator. For the harmonic cap, split the proof into the
-  logarithmic tail-spend bound, a finite layer-count comparison, and a separate
+  `1 / (N - i + 1)` denominator. When the symmetry comes from a uniform random
+  order, prefer a pointwise relabeling certificate over assuming expected
+  equality directly: prove an input-space equivalence and use uniform finite
+  expectation invariance (`pmfExp_uniformPMF_eq_of_comp_equiv` /
+  `uniformPermutationExpectation_eq_of_relabel`) to derive the expected
+  equality. For the harmonic cap, split the proof into the logarithmic
+  tail-spend bound, a finite layer-count comparison, and a separate
   exponential-grid estimate. In `EconCSLean`, these are now represented by
   `theorem9BidderSpendUpperBound_le_log_tail`,
   `theorem9HarmonicLayerCountBound_of_pos`,
@@ -318,9 +323,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   final lower-bound endpoint as a family structure
   (`BMatchingTheorem9FamilyCertificate`, or when using realized allocations,
   `BMatchingTheorem9PointwiseFamilyCertificate` /
-  `BMatchingTheorem9SymmetricPointwiseFamilyCertificate` in `EconCSLean`) so
-  future work instantiates only the online-information symmetry and
-  deterministic allocation fields directly. Do not add a separate
+  `BMatchingTheorem9SymmetricPointwiseFamilyCertificate` /
+  `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate` in
+  `EconCSLean`) so future work instantiates only the online-information
+  relabel identity and deterministic allocation fields directly. Do not add a
+  separate
   harmonic-limit field to new Section 7 family certificates; use the built-in
   harmonic theorem instead.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
@@ -511,6 +518,11 @@ simpa using
   `Mathlib.Algebra.BigOperators.Field` and use `Finset.sum_div`.
 - For `PMF` over finite types, prefer existing finite-expectation lemmas and
   `pmfExp`/`pmfProb` abstractions over hand-expanding `PMF` internals.
+- For uniform PMFs over finite spaces, derive relabeling invariance with
+  `pmfExp_uniformPMF_comp_equiv` or
+  `pmfExp_uniformPMF_eq_of_comp_equiv` instead of expanding the uniform mass by
+  hand. For the AdWords permutation distribution, use
+  `uniformPermutationExpectation_eq_of_relabel`.
 - For pure PMF cases, use lemmas such as `pmfExp_pure`,
   `pmfPairExp_pure_left`, and `pmfPairExp_pure_right` when available.
 - When a proof branches on an abbreviation but the goal expands it, normalize

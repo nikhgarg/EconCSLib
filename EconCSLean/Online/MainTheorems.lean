@@ -803,6 +803,24 @@ theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_symmetric_
   exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 /--
+Section 7 / Theorem 9 wrapper from pointwise input-relabeling symmetry. This
+derives the equal expected allocation of eligible positions from invariance of
+the uniform permutation distribution under the supplied relabeling equivalence.
+-/
+theorem paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_relabel_symmetric_pointwise_allocation_certificate
+    {N : ℕ} {Algorithm : Type*}
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    {ratio : ℝ}
+    (C : BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+      N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        DecisionCore.pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact C.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+/--
 Section 7 / Theorem 9 harmonic-cap wrapper: the logarithmic tail-spend bound
 implies the finite layer-count estimate used in the asymptotic lower bound.
 -/
@@ -959,6 +977,25 @@ theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_rat
     {Algorithm : ℕ → Type*}
     [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
     (C : BMatchingTheorem9SymmetricPointwiseFamilyCertificate Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              DecisionCore.pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  exact C.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+/--
+Paper-level Section 7 / Theorem 9 endpoint from pointwise input-relabeling
+symmetry. This is the closest generic wrapper to the paper's deterministic
+online-information argument.
+-/
+theorem paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_relabel_symmetric_pointwise_family_certificate
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
+      Algorithm) :
     ∀ δ : ℝ, 0 < δ →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
         ∀ randomizedAlgorithm : PMF (Algorithm N),

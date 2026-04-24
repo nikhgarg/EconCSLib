@@ -109,6 +109,24 @@ noncomputable def uniformPermutationDistribution (N : ℕ) :
   DecisionCore.uniformPMF (Equiv.Perm (Fin N))
 
 /--
+Expectation under the paper's uniform permutation distribution is invariant
+under any equivalence of the permutation space. This is the finite relabeling
+step used to turn pointwise online-information symmetry into equality of
+expected allocations.
+-/
+theorem uniformPermutationExpectation_eq_of_relabel
+    {N : ℕ} (relabel : Equiv.Perm (Fin N) ≃ Equiv.Perm (Fin N))
+    {f g : Equiv.Perm (Fin N) → ℝ}
+    (h : ∀ permutation, f (relabel permutation) = g permutation) :
+    pmfExp (uniformPermutationDistribution N) f =
+      pmfExp (uniformPermutationDistribution N) g := by
+  classical
+  haveI : Nonempty (Equiv.Perm (Fin N)) := ⟨Equiv.refl (Fin N)⟩
+  simpa [uniformPermutationDistribution] using
+    DecisionCore.pmfExp_uniformPMF_eq_of_comp_equiv
+      (α := Equiv.Perm (Fin N)) relabel h
+
+/--
 The bidders eligible in Section 7 round `round`: in zero-based indexing these
 are the positions `round, round + 1, ..., N - 1`.
 -/
@@ -1145,6 +1163,47 @@ structure BMatchingSymmetricPointwiseAllocationRevenueCertificate
     theorem9NormalizedRevenueUpperBound N ≤ ratio
 
 /--
+Relabeling form of the Section 7 symmetry calculation. It replaces the
+expected-allocation equality field with a pointwise statement: for any two
+eligible positions in a round, relabeling the uniformly random permutation
+turns allocation to one position into allocation to the other. Uniform
+permutation invariance then derives the expected equality automatically.
+-/
+structure BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+    (N : ℕ) (Algorithm : Type*) (ratio : ℝ) where
+  normalizedRevenue : Algorithm → Equiv.Perm (Fin N) → ℝ
+  allocation : Algorithm → Equiv.Perm (Fin N) → Fin N → Fin N → ℝ
+  normalizedRevenue_le_cappedAllocationSpend :
+    ∀ algorithm permutation,
+      normalizedRevenue algorithm permutation ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              allocation algorithm permutation round bidder)) /
+          (N : ℝ)
+  allocation_zero_of_ineligible :
+    ∀ algorithm permutation (round bidder : Fin N),
+      ¬ (round : ℕ) ≤ (bidder : ℕ) →
+        allocation algorithm permutation round bidder = 0
+  round_allocation_sum_le_one :
+    ∀ algorithm permutation (round : Fin N),
+      (∑ bidder ∈ theorem9EligibleBidders N round,
+        allocation algorithm permutation round bidder) ≤ 1
+  relabelInput :
+    Fin N → Fin N → Fin N → Equiv.Perm (Fin N) ≃ Equiv.Perm (Fin N)
+  allocation_eq_of_relabel_eligible :
+    ∀ algorithm (round bidder bidder' : Fin N),
+      (round : ℕ) ≤ (bidder : ℕ) →
+      (round : ℕ) ≤ (bidder' : ℕ) →
+      ∀ permutation,
+        allocation algorithm
+            (relabelInput round bidder bidder' permutation)
+            round bidder =
+          allocation algorithm permutation round bidder'
+  revenueBound_le_ratio :
+    theorem9NormalizedRevenueUpperBound N ≤ ratio
+
+/--
 Family-level certificate for the asymptotic Section 7 lower bound. It packages
 the deterministic round-allocation calculation for every market size. The
 harmonic-cap comparison is proved in this file.
@@ -1241,6 +1300,48 @@ structure BMatchingTheorem9SymmetricPointwiseFamilyCertificate
             (fun permutation => allocation N algorithm permutation round bidder) =
           pmfExp (uniformPermutationDistribution N)
             (fun permutation => allocation N algorithm permutation round bidder')
+
+/--
+Family-level relabeling version of the Section 7 lower-bound certificate. This
+is the closest generic seam to the paper's online-information argument: the
+remaining work for a concrete deterministic-algorithm model is to give the
+input relabeling equivalence and prove the pointwise allocation identity.
+-/
+structure BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] where
+  normalizedRevenue :
+    (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → ℝ
+  allocation :
+    (N : ℕ) → Algorithm N → Equiv.Perm (Fin N) → Fin N → Fin N → ℝ
+  normalizedRevenue_le_cappedAllocationSpend :
+    ∀ N algorithm permutation,
+      normalizedRevenue N algorithm permutation ≤
+        (∑ bidder : Fin N,
+          min 1
+            (∑ round : Fin N,
+              allocation N algorithm permutation round bidder)) /
+          (N : ℝ)
+  allocation_zero_of_ineligible :
+    ∀ N algorithm permutation (round bidder : Fin N),
+      ¬ (round : ℕ) ≤ (bidder : ℕ) →
+        allocation N algorithm permutation round bidder = 0
+  round_allocation_sum_le_one :
+    ∀ N algorithm permutation (round : Fin N),
+      (∑ bidder ∈ theorem9EligibleBidders N round,
+        allocation N algorithm permutation round bidder) ≤ 1
+  relabelInput :
+    (N : ℕ) → Fin N → Fin N → Fin N →
+      Equiv.Perm (Fin N) ≃ Equiv.Perm (Fin N)
+  allocation_eq_of_relabel_eligible :
+    ∀ N algorithm (round bidder bidder' : Fin N),
+      (round : ℕ) ≤ (bidder : ℕ) →
+      (round : ℕ) ≤ (bidder' : ℕ) →
+      ∀ permutation,
+        allocation N algorithm
+            (relabelInput N round bidder bidder' permutation)
+            round bidder =
+          allocation N algorithm permutation round bidder'
 
 /--
 Family-level round-allocation certificate with the harmonic side represented
@@ -1514,6 +1615,37 @@ noncomputable def toRoundAllocationRevenueCertificate
 
 end BMatchingPointwiseAllocationRevenueCertificate
 
+namespace BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+
+variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
+
+/--
+Pointwise relabeling under the uniform permutation distribution implies the
+expected-allocation symmetry certificate.
+-/
+noncomputable def toSymmetricPointwiseAllocationRevenueCertificate
+    (C : BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+      N Algorithm ratio) :
+    BMatchingSymmetricPointwiseAllocationRevenueCertificate
+      N Algorithm ratio where
+  normalizedRevenue := C.normalizedRevenue
+  allocation := C.allocation
+  normalizedRevenue_le_cappedAllocationSpend :=
+    C.normalizedRevenue_le_cappedAllocationSpend
+  allocation_zero_of_ineligible := C.allocation_zero_of_ineligible
+  round_allocation_sum_le_one := C.round_allocation_sum_le_one
+  expectedAllocation_eq_of_eligible := by
+    intro algorithm round bidder bidder' hbidder hbidder'
+    exact
+      uniformPermutationExpectation_eq_of_relabel
+        (C.relabelInput round bidder bidder')
+        (fun permutation =>
+          C.allocation_eq_of_relabel_eligible
+            algorithm round bidder bidder' hbidder hbidder' permutation)
+  revenueBound_le_ratio := C.revenueBound_le_ratio
+
+end BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+
 namespace BMatchingSymmetricPointwiseAllocationRevenueCertificate
 
 variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
@@ -1704,6 +1836,25 @@ theorem no_randomized_algorithm_beats_ratio
 
 end BMatchingSymmetricPointwiseAllocationRevenueCertificate
 
+namespace BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+
+variable {N : ℕ} {Algorithm : Type*} {ratio : ℝ}
+
+theorem no_randomized_algorithm_beats_ratio
+    [Fintype Algorithm] [DecidableEq Algorithm]
+    (C : BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+      N Algorithm ratio)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ permutation,
+      ratio <
+        pmfExp randomizedAlgorithm
+          (fun algorithm => C.normalizedRevenue algorithm permutation) := by
+  exact
+    C.toSymmetricPointwiseAllocationRevenueCertificate
+      |>.no_randomized_algorithm_beats_ratio randomizedAlgorithm
+
+end BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate
+
 /--
 Asymptotic Section 7 wrapper. If the round-allocation calculation is available
 for every market size and the explicit harmonic cap is eventually within every
@@ -1860,6 +2011,46 @@ positions under the random permutation distribution.
   exact Cfinite.no_randomized_algorithm_beats_ratio randomizedAlgorithm
 
 end BMatchingTheorem9SymmetricPointwiseFamilyCertificate
+
+namespace BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
+
+variable {Algorithm : ℕ → Type*}
+variable [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+
+/--
+Family-level Theorem 9 endpoint from pointwise input-relabeling symmetry.
+-/
+theorem eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+    (C : BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
+      Algorithm) :
+    ∀ δ : ℝ, 0 < δ →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            AdWordsInstance.msvvRatio + δ <
+              pmfExp randomizedAlgorithm
+                (fun algorithm => C.normalizedRevenue N algorithm permutation) := by
+  let Csym :
+      BMatchingTheorem9SymmetricPointwiseFamilyCertificate Algorithm := {
+    normalizedRevenue := C.normalizedRevenue
+    allocation := C.allocation
+    normalizedRevenue_le_cappedAllocationSpend :=
+      C.normalizedRevenue_le_cappedAllocationSpend
+    allocation_zero_of_ineligible := C.allocation_zero_of_ineligible
+    round_allocation_sum_le_one := C.round_allocation_sum_le_one
+    expectedAllocation_eq_of_eligible := by
+      intro N algorithm round bidder bidder' hbidder hbidder'
+      exact
+        uniformPermutationExpectation_eq_of_relabel
+          (C.relabelInput N round bidder bidder')
+          (fun permutation =>
+            C.allocation_eq_of_relabel_eligible
+              N algorithm round bidder bidder' hbidder hbidder'
+              permutation)
+  }
+  exact Csym.eventually_no_randomized_algorithm_beats_msvvRatio_add_delta
+
+end BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate
 
 namespace BMatchingTheorem9LayerCountFamilyCertificate
 

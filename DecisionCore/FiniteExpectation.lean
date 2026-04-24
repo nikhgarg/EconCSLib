@@ -71,6 +71,39 @@ theorem uniformPMF_apply_toReal_pos {α : Type*} [Fintype α] [Nonempty α] (a :
   rw [uniformPMF_apply_toReal]
   exact inv_pos.mpr (by exact_mod_cast (Fintype.card_pos_iff.mpr ‹Nonempty α›))
 
+theorem pmfExp_congr {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) {f g : α → ℝ}
+    (h : ∀ a, f a = g a) :
+    pmfExp μ f = pmfExp μ g := by
+  unfold pmfExp
+  simp [h]
+
+/-- Uniform finite expectation is invariant under a relabeling equivalence. -/
+theorem pmfExp_uniformPMF_comp_equiv {α : Type*}
+    [Fintype α] [DecidableEq α] [Nonempty α]
+    (e : α ≃ α) (f : α → ℝ) :
+    pmfExp (uniformPMF α) (fun a => f (e a)) =
+      pmfExp (uniformPMF α) f := by
+  unfold pmfExp
+  simpa [uniformPMF_apply_toReal] using
+    (Equiv.sum_comp e (fun a : α => (Fintype.card α : ℝ)⁻¹ * f a))
+
+/--
+If `g` is obtained from `f` by relabeling a uniformly drawn finite input, then
+the two expectations are equal.
+-/
+theorem pmfExp_uniformPMF_eq_of_comp_equiv {α : Type*}
+    [Fintype α] [DecidableEq α] [Nonempty α]
+    (e : α ≃ α) {f g : α → ℝ}
+    (h : ∀ a, f (e a) = g a) :
+    pmfExp (uniformPMF α) f = pmfExp (uniformPMF α) g := by
+  calc
+    pmfExp (uniformPMF α) f =
+        pmfExp (uniformPMF α) (fun a => f (e a)) := by
+          exact (pmfExp_uniformPMF_comp_equiv e f).symm
+    _ = pmfExp (uniformPMF α) g := by
+          exact pmfExp_congr (uniformPMF α) h
+
 @[simp] theorem pmfExp_const {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (c : ℝ) :
     pmfExp μ (fun _ => c) = c := by
