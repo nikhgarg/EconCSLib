@@ -278,6 +278,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   marginal is `1 / (q * (q + 1))`. Proposition-style square-root homogeneity
   should be separated into: exact marginal algebra, a square-root target-profile
   representation bridge, and then the real-relaxation/integer-rounding theorem.
+  For rounding lemmas, first isolate the generic combinatorial fact: if an
+  integer vector has no high/low crossing around integer anchors and the anchor
+  total is within one type-cardinality of the target total, then every count is
+  within one type-cardinality of its anchor. The paper-specific analytic work is
+  proving that optimality of the separable objective rules out the crossing.
 - For finite fair-division allocation theorems, first prove the theorem for an
   abstract marginal bound. Then add a paper-facing corollary instantiating the
   bound as the finite maximum one-good marginal value.

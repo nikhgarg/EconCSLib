@@ -179,6 +179,29 @@ theorem paper_uniform_sqrt_homogeneity_of_count_closeness
   simpa [sqrtLikelihoodProfile.targetShare_eq likelihood t hnorm] using hclose t
 
 /--
+Appendix D.5 finite rounding combinatorics.
+
+This is the paper's rounding lemma stripped of its analytic premise. Once the
+real-relaxation proof rules out high/low crossings around integer floor
+anchors, this theorem gives the count-closeness bound needed by Proposition 2.
+-/
+theorem paper_rounding_count_close_of_no_crossing
+    {T : ℕ} (a anchor : CountAllocation T) {N B : ℕ}
+    (ha : DecisionCore.Allocation.total a = N)
+    (hanchor : DecisionCore.Allocation.total anchor = B)
+    (hBle : B ≤ N)
+    (hNlt : N < B + Fintype.card (ItemType T))
+    (hno :
+      EconCSLean.FiniteRounding.NoRoundingCrossing
+        (fun t : ItemType T => a.count t)
+        (fun t : ItemType T => anchor.count t)) :
+    ∀ t : ItemType T,
+      anchor.count t < a.count t + Fintype.card (ItemType T) ∧
+        a.count t < anchor.count t + Fintype.card (ItemType T) := by
+  exact UniformRounding.count_close_of_no_rounding_crossing
+    a anchor ha hanchor hBle hNlt hno
+
+/--
 Two-type Bernoulli first-order condition from type `0` to type `1`.
 -/
 theorem paper_two_type_forward_one_le_backward_zero

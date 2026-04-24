@@ -1,4 +1,5 @@
 import AccuracyDiversity.Exchange
+import EconCSLean.Math.FiniteRounding
 import Mathlib.Data.Real.Sqrt
 
 open scoped BigOperators
@@ -158,5 +159,41 @@ theorem forwardMarginal_le_backwardMarginal_of_optimum {T : ℕ}
   exact h
 
 end UniformTopOne
+
+namespace UniformRounding
+
+/--
+Count-allocation wrapper for the combinatorial part of Appendix D.5.
+
+If `anchor` is an integer floor/rounding anchor for a real relaxation, the
+integer optimum `a` has no high/low crossing around that anchor, and the anchor
+total is within one type-cardinality of `N`, then every count of `a` is within
+one type-cardinality of the anchor count.
+-/
+theorem count_close_of_no_rounding_crossing {T : ℕ}
+    (a anchor : CountAllocation T) {N B : ℕ}
+    (ha : DecisionCore.Allocation.total a = N)
+    (hanchor : DecisionCore.Allocation.total anchor = B)
+    (hBle : B ≤ N)
+    (hNlt : N < B + Fintype.card (ItemType T))
+    (hno :
+      EconCSLean.FiniteRounding.NoRoundingCrossing
+        (fun t : ItemType T => a.count t)
+        (fun t : ItemType T => anchor.count t)) :
+    ∀ t : ItemType T,
+      anchor.count t < a.count t + Fintype.card (ItemType T) ∧
+        a.count t < anchor.count t + Fintype.card (ItemType T) := by
+  intro t
+  constructor
+  · exact EconCSLean.FiniteRounding.NoRoundingCrossing.anchor_lt_count_add_card
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => anchor.count t)
+      t ha hanchor hBle hno
+  · exact EconCSLean.FiniteRounding.NoRoundingCrossing.count_lt_anchor_add_card
+      (fun t : ItemType T => a.count t)
+      (fun t : ItemType T => anchor.count t)
+      t ha hanchor hNlt hno
+
+end UniformRounding
 
 end AccuracyDiversity
