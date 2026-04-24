@@ -53,6 +53,48 @@ theorem one_sub_typeOneShare_pos
   have hlt := typeOneShare_lt_one halpha0 halpha1 hleft hright
   linarith
 
+/-- Algebraic complement form: `1 - q = (1-α) right / denominator`. -/
+theorem one_sub_typeOneShare_eq
+    {alpha left right : ℝ}
+    (hden : alpha * left + (1 - alpha) * right ≠ 0) :
+    1 - typeOneShare alpha left right =
+      (1 - alpha) * right /
+        (alpha * left + (1 - alpha) * right) := by
+  unfold typeOneShare
+  field_simp [hden]
+  ring
+
+/--
+Appendix D, Lemma 11 scalar monotonicity template.  This is the derivative-sign
+calculation in two-point form: if `B*X ≤ A*C`, then
+`(C + α(X-C))/(B + α(A-B))` decreases as `α` increases.
+-/
+theorem lemma11_affine_ratio_antitone_of_cross
+    {A B C X alpha alpha' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hA : 0 < A) (hB : 0 < B)
+    (hcross : B * X ≤ A * C) :
+    (C + alpha' * (X - C)) / (B + alpha' * (A - B)) ≤
+      (C + alpha * (X - C)) / (B + alpha * (A - B)) := by
+  have hD : 0 < B + alpha * (A - B) := by
+    have h :=
+      typeOneShare_denom_pos halpha0 halpha1 hA hB
+    convert h using 1
+    ring
+  have hD' : 0 < B + alpha' * (A - B) := by
+    have h :=
+      typeOneShare_denom_pos halpha0' halpha1' hA hB
+    convert h using 1
+    ring
+  rw [div_le_div_iff₀ hD' hD]
+  have hprod :
+      (alpha' - alpha) * (B * X - A * C) ≤ 0 :=
+    mul_nonpos_of_nonneg_of_nonpos
+      (sub_nonneg.mpr halpha_le) (sub_nonpos.mpr hcross)
+  nlinarith
+
 /--
 Lemma 6 scalar algebra: the inverse share gap for mirror items expands to the
 paper's denominator-cleared expression.
@@ -294,6 +336,58 @@ theorem pairShare_inv_sub_inv_one_sub_reverse_nonneg_of_alpha_le_half
   have hden : 0 ≤ alpha * (1 - alpha) :=
     (mul_pos halpha0 (sub_pos.mpr halpha1)).le
   exact div_nonneg (mul_nonneg hratio hnum) hden
+
+/--
+Appendix D, Lemma 11 algebra: ratio of two indexed `q` terms after expanding
+their denominators.
+-/
+theorem pairShare_div_pairShare_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v t / pairShare alpha v j =
+      (v t / v j) *
+        ((alpha * v j + (1 - alpha) * v (reverseItem j)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  unfold pairShare typeOneShare
+  have hDt :
+      alpha * v t + (1 - alpha) * v (reverseItem t) ≠ 0 :=
+    ne_of_gt (typeOneShare_denom_pos halpha0 halpha1
+      (hpos t) (hpos (reverseItem t)))
+  have hDj :
+      alpha * v j + (1 - alpha) * v (reverseItem j) ≠ 0 :=
+    ne_of_gt (typeOneShare_denom_pos halpha0 halpha1
+      (hpos j) (hpos (reverseItem j)))
+  have halpha_ne : alpha ≠ 0 := ne_of_gt halpha0
+  have hvj_ne : v j ≠ 0 := ne_of_gt (hpos j)
+  field_simp [hDt, hDj, halpha_ne, hvj_ne]
+
+/--
+Appendix D, Lemma 11 algebra: ratio of two indexed complement terms
+`1-q`.
+-/
+theorem one_sub_pairShare_div_one_sub_pairShare_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (1 - pairShare alpha v t) / (1 - pairShare alpha v j) =
+      (v (reverseItem t) / v (reverseItem j)) *
+        ((alpha * v j + (1 - alpha) * v (reverseItem j)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  unfold pairShare
+  have hDt :
+      alpha * v t + (1 - alpha) * v (reverseItem t) ≠ 0 :=
+    ne_of_gt (typeOneShare_denom_pos halpha0 halpha1
+      (hpos t) (hpos (reverseItem t)))
+  have hDj :
+      alpha * v j + (1 - alpha) * v (reverseItem j) ≠ 0 :=
+    ne_of_gt (typeOneShare_denom_pos halpha0 halpha1
+      (hpos j) (hpos (reverseItem j)))
+  rw [one_sub_typeOneShare_eq hDt, one_sub_typeOneShare_eq hDj]
+  have hone_sub_ne : 1 - alpha ≠ 0 := ne_of_gt (sub_pos.mpr halpha1)
+  have hvrevj_ne : v (reverseItem j) ≠ 0 :=
+    ne_of_gt (hpos (reverseItem j))
+  field_simp [hDt, hDj, hone_sub_ne, hvrevj_ne]
 
 /--
 Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
@@ -549,6 +643,130 @@ theorem pivot_lt_reverseItem_iff_val_le_pivot_of_pivot_succ_reverse
   omega
 
 /--
+Appendix D, Lemma 11 middle-term monotonicity: the denominator ratio appearing
+in `(1-q_t)/(1-q_j)` decreases with `α` when `j` is after `t`.
+-/
+theorem lemma11_middle_denominator_ratio_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (htj : t.val < j.val) :
+    (alpha' * v j + (1 - alpha') * v (reverseItem j)) /
+        (alpha' * v t + (1 - alpha') * v (reverseItem t)) ≤
+      (alpha * v j + (1 - alpha) * v (reverseItem j)) /
+        (alpha * v t + (1 - alpha) * v (reverseItem t)) := by
+  have hXleA : v j ≤ v t := (hdec htj).le
+  have hrev_lt : (reverseItem j).val < (reverseItem t).val :=
+    reverseItem_val_lt_of_val_lt htj
+  have hB_le_C : v (reverseItem t) ≤ v (reverseItem j) :=
+    (hdec hrev_lt).le
+  have hcross : v (reverseItem t) * v j ≤ v t * v (reverseItem j) := by
+    have hmul :=
+      mul_le_mul hB_le_C hXleA (hpos j).le (hpos (reverseItem j)).le
+    nlinarith
+  have h :=
+    lemma11_affine_ratio_antitone_of_cross
+      halpha0 halpha1 halpha0' halpha1' halpha_le
+      (hpos t) (hpos (reverseItem t)) hcross
+      (A := v t) (B := v (reverseItem t))
+      (C := v (reverseItem j)) (X := v j)
+  convert h using 1
+  · ring
+  · ring
+
+/--
+Appendix D, Lemma 11 right-side term monotonicity:
+`(1-q_t(α))/(1-q_j(α))` decreases with `α` for each `j > t`.
+-/
+theorem lemma11_right_term_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (htj : t.val < j.val) :
+    (1 - pairShare alpha' v t) / (1 - pairShare alpha' v j) ≤
+      (1 - pairShare alpha v t) / (1 - pairShare alpha v j) := by
+  rw [one_sub_pairShare_div_one_sub_pairShare_eq
+      t j halpha0' halpha1' hpos,
+    one_sub_pairShare_div_one_sub_pairShare_eq
+      t j halpha0 halpha1 hpos]
+  have hratio :=
+    lemma11_middle_denominator_ratio_antitone
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec htj
+  have hconst_nonneg :
+      0 ≤ v (reverseItem t) / v (reverseItem j) :=
+    div_nonneg (hpos (reverseItem t)).le (hpos (reverseItem j)).le
+  exact mul_le_mul_of_nonneg_left hratio hconst_nonneg
+
+/--
+Appendix D, Lemma 11 paired-term monotonicity: the mirror-paired ratio
+`((1-α)v_t + αv_rev(t))/(αv_t + (1-α)v_rev(t))` decreases with `α` for pivots
+at or before their mirror.
+-/
+theorem lemma11_paired_denominator_ratio_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    ((1 - alpha') * v t + alpha' * v (reverseItem t)) /
+        (alpha' * v t + (1 - alpha') * v (reverseItem t)) ≤
+      ((1 - alpha) * v t + alpha * v (reverseItem t)) /
+        (alpha * v t + (1 - alpha) * v (reverseItem t)) := by
+  have hB_le_A : v (reverseItem t) ≤ v t := by
+    by_cases heq : t.val = (reverseItem t).val
+    · have ht_eq_rev : t = reverseItem t := Fin.ext heq
+      rw [← ht_eq_rev]
+    · have hlt : t.val < (reverseItem t).val := lt_of_le_of_ne hcenter heq
+      exact (hdec hlt).le
+  have hcross : v (reverseItem t) * v (reverseItem t) ≤ v t * v t := by
+    have hmul :=
+      mul_le_mul hB_le_A hB_le_A (hpos (reverseItem t)).le (hpos t).le
+    nlinarith
+  have h :=
+    lemma11_affine_ratio_antitone_of_cross
+      halpha0 halpha1 halpha0' halpha1' halpha_le
+      (hpos t) (hpos (reverseItem t)) hcross
+      (A := v t) (B := v (reverseItem t))
+      (C := v t) (X := v (reverseItem t))
+  convert h using 1
+  · ring
+  · ring
+
+/--
+Appendix D, Lemma 11 paired `h_t(α)` expression monotonicity after the paper's
+mirror-pair expansion.
+-/
+theorem lemma11_pairedExpression_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    1 + (v (reverseItem j) / v j) *
+        (((1 - alpha') * v t + alpha' * v (reverseItem t)) /
+          (alpha' * v t + (1 - alpha') * v (reverseItem t))) ≤
+      1 + (v (reverseItem j) / v j) *
+        (((1 - alpha) * v t + alpha * v (reverseItem t)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  have hratio :=
+    lemma11_paired_denominator_ratio_antitone
+      halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+  have hconst_nonneg : 0 ≤ v (reverseItem j) / v j :=
+    div_nonneg (hpos (reverseItem j)).le (hpos j).le
+  have hmul := mul_le_mul_of_nonneg_left hratio hconst_nonneg
+  nlinarith
+
+/--
 The reduced two-type model for the opposing-preference setting in Theorem 3.
 Type `0` has values `v_j`; type `1` has reversed values `v_{n-j+1}`.
 -/
@@ -774,6 +992,30 @@ theorem problem6RightSum_nonneg {n : ℕ}
   by_cases hlt : t.val < j.val
   · simp [hlt, inv_nonneg.mpr (one_sub_pairShare_pos j halpha0 halpha1 hpos).le]
   · simp [hlt]
+
+/--
+Appendix D, Lemma 11 right-side sum monotonicity:
+`(1-q_t)R_t` decreases with `α` for a fixed pivot.
+-/
+theorem lemma11_rightWeightedSum_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    (1 - pairShare alpha' v t) * problem6RightSum alpha' v t ≤
+      (1 - pairShare alpha v t) * problem6RightSum alpha v t := by
+  unfold problem6RightSum
+  rw [Finset.mul_sum, Finset.mul_sum]
+  refine Finset.sum_le_sum ?_
+  intro j _hj
+  by_cases htj : t.val < j.val
+  · have hterm :=
+      lemma11_right_term_antitone
+        halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec htj
+    simpa [htj, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using hterm
+  · simp [htj]
 
 /--
 Appendix D, Lemma 10 exact-center case: at `α = 1/2`, an exact center pivot

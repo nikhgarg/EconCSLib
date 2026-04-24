@@ -580,6 +580,143 @@ theorem paper_lemma9_pairShare_strictly_decreases_in_index
     pairShare alpha v j < pairShare alpha v i := by
   exact pairShare_strictAnti_index halpha0 halpha1 hpos hdec hij
 
+/--
+Appendix D, Lemma 11 algebra: the ratio `q_t(α)/q_j(α)` after expanding the
+paper's `q` denominators.
+-/
+theorem paper_lemma11_pairShare_div_pairShare_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare alpha v t / pairShare alpha v j =
+      (v t / v j) *
+        ((alpha * v j + (1 - alpha) * v (reverseItem j)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  exact pairShare_div_pairShare_eq t j halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 11 algebra: the ratio `(1-q_t(α))/(1-q_j(α))` after
+expanding the paper's `q` denominators.
+-/
+theorem paper_lemma11_one_sub_pairShare_div_one_sub_pairShare_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t j : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (1 - pairShare alpha v t) / (1 - pairShare alpha v j) =
+      (v (reverseItem t) / v (reverseItem j)) *
+        ((alpha * v j + (1 - alpha) * v (reverseItem j)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  exact one_sub_pairShare_div_one_sub_pairShare_eq
+    t j halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 11 scalar monotonicity template: the paper's derivative sign
+argument in two-point, denominator-cleared form.
+-/
+theorem paper_lemma11_affine_ratio_antitone_of_cross
+    {A B C X alpha alpha' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hA : 0 < A) (hB : 0 < B)
+    (hcross : B * X ≤ A * C) :
+    (C + alpha' * (X - C)) / (B + alpha' * (A - B)) ≤
+      (C + alpha * (X - C)) / (B + alpha * (A - B)) := by
+  exact lemma11_affine_ratio_antitone_of_cross
+    halpha0 halpha1 halpha0' halpha1' halpha_le hA hB hcross
+
+/--
+Appendix D, Lemma 11 middle-term monotonicity: the denominator ratio appearing
+in `(1-q_t)/(1-q_j)` decreases with `α` for `j > t`.
+-/
+theorem paper_lemma11_middle_denominator_ratio_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (htj : t.val < j.val) :
+    (alpha' * v j + (1 - alpha') * v (reverseItem j)) /
+        (alpha' * v t + (1 - alpha') * v (reverseItem t)) ≤
+      (alpha * v j + (1 - alpha) * v (reverseItem j)) /
+        (alpha * v t + (1 - alpha) * v (reverseItem t)) := by
+  exact lemma11_middle_denominator_ratio_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec htj
+
+/--
+Appendix D, Lemma 11 right-side term monotonicity:
+`(1-q_t(α))/(1-q_j(α))` decreases with `α` for `j > t`.
+-/
+theorem paper_lemma11_right_term_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (htj : t.val < j.val) :
+    (1 - pairShare alpha' v t) / (1 - pairShare alpha' v j) ≤
+      (1 - pairShare alpha v t) / (1 - pairShare alpha v j) := by
+  exact lemma11_right_term_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec htj
+
+/--
+Appendix D, Lemma 11 paired-term monotonicity for pivots at or before their
+mirror.
+-/
+theorem paper_lemma11_paired_denominator_ratio_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    ((1 - alpha') * v t + alpha' * v (reverseItem t)) /
+        (alpha' * v t + (1 - alpha') * v (reverseItem t)) ≤
+      ((1 - alpha) * v t + alpha * v (reverseItem t)) /
+        (alpha * v t + (1 - alpha) * v (reverseItem t)) := by
+  exact lemma11_paired_denominator_ratio_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
+Appendix D, Lemma 11 paired `h_t(α)` expression monotonicity after the paper's
+mirror-pair expansion.
+-/
+theorem paper_lemma11_pairedExpression_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val ≤ (reverseItem t).val) :
+    1 + (v (reverseItem j) / v j) *
+        (((1 - alpha') * v t + alpha' * v (reverseItem t)) /
+          (alpha' * v t + (1 - alpha') * v (reverseItem t))) ≤
+      1 + (v (reverseItem j) / v j) *
+        (((1 - alpha) * v t + alpha * v (reverseItem t)) /
+          (alpha * v t + (1 - alpha) * v (reverseItem t))) := by
+  exact lemma11_pairedExpression_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec hcenter
+
+/--
+Appendix D, Lemma 11 right-side sum monotonicity:
+`(1-q_t)R_t` decreases with `α` for a fixed pivot.
+-/
+theorem paper_lemma11_rightWeightedSum_antitone
+    {n : ℕ} {alpha alpha' : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    (1 - pairShare alpha' v t) * problem6RightSum alpha' v t ≤
+      (1 - pairShare alpha v t) * problem6RightSum alpha v t := by
+  exact lemma11_rightWeightedSum_antitone
+    halpha0 halpha1 halpha0' halpha1' halpha_le hpos hdec
+
 /-- Problem 6 setup: `q_j(α)` is strictly positive. -/
 theorem paper_problem6_pairShare_pos
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (j : Item n)
