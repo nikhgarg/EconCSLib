@@ -1019,6 +1019,59 @@ structure Problem6ClosedNonnegativePivots {n : ℕ}
   x_pivot_nonneg : 0 ≤ problem6ClosedX alpha v t t
   y_pivot_nonneg : 0 ≤ problem6ClosedY alpha v t t
 
+/--
+A denominator-bound certificate implying the two closed-form pivot masses are
+nonnegative.
+-/
+structure Problem6ClosedPivotDenominatorBounds {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : Prop where
+  left_le_denominator :
+    problem6LeftSum alpha v t ≤ problem6ClosedDenominator alpha v t
+  right_le_denominator :
+    problem6RightSum alpha v t ≤ problem6ClosedDenominator alpha v t
+
+/-- Denominator bounds imply nonnegative pivot coordinates. -/
+theorem problem6ClosedNonnegativePivots_of_denominatorBounds {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    Problem6ClosedNonnegativePivots alpha v t := by
+  have hDpos := problem6ClosedDenominator_pos t halpha0 halpha1 hpos
+  constructor
+  · rw [problem6ClosedX_at]
+    rw [sub_nonneg]
+    unfold problem6ClosedValue
+    have hdiv :
+        problem6LeftSum alpha v t /
+            problem6ClosedDenominator alpha v t ≤ 1 := by
+      rw [div_le_iff₀ hDpos]
+      simpa using hbounds.left_le_denominator
+    have heq :
+        1 / problem6ClosedDenominator alpha v t *
+            problem6LeftSum alpha v t =
+          problem6LeftSum alpha v t /
+            problem6ClosedDenominator alpha v t := by
+      ring
+    rw [heq]
+    exact hdiv
+  · rw [problem6ClosedY_at]
+    rw [sub_nonneg]
+    unfold problem6ClosedValue
+    have hdiv :
+        problem6RightSum alpha v t /
+            problem6ClosedDenominator alpha v t ≤ 1 := by
+      rw [div_le_iff₀ hDpos]
+      simpa using hbounds.right_le_denominator
+    have heq :
+        1 / problem6ClosedDenominator alpha v t *
+            problem6RightSum alpha v t =
+          problem6RightSum alpha v t /
+            problem6ClosedDenominator alpha v t := by
+      ring
+    rw [heq]
+    exact hdiv
+
 /-- Under pivot nonnegativity, all closed-form `x_j` coordinates are nonnegative. -/
 theorem problem6ClosedX_nonneg {n : ℕ}
     {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
@@ -1140,6 +1193,23 @@ theorem problem6ClosedPolicy_feasible {n : ℕ}
   rw [problem6ClosedPolicy_zero_toReal halpha0 halpha1 hpos hpivot,
     problem6ClosedPolicy_one_toReal halpha0 halpha1 hpos hpivot]
   exact le_of_eq (problem6Closed_item_eq t j halpha0 halpha1 hpos).symm
+
+/--
+Denominator bounds are enough to build a feasible closed-form Problem 6 policy.
+-/
+theorem problem6ClosedPolicy_feasible_of_denominatorBounds {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hbounds : Problem6ClosedPivotDenominatorBounds alpha v t) :
+    problem6LPFeasible alpha v
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos
+        (problem6ClosedNonnegativePivots_of_denominatorBounds
+          halpha0 halpha1 hpos hbounds))
+      (problem6ClosedValue alpha v t) := by
+  exact problem6ClosedPolicy_feasible halpha0 halpha1 hpos
+    (problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos hbounds)
 
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq
