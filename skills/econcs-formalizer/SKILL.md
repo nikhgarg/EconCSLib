@@ -15,6 +15,13 @@ Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
 
+Follow the original paper's proof structure as closely as is practical. Preserve
+named definitions, lemmas, propositions, and theorem numbers in Lean declaration
+names, docstrings, and README status rows. When deviating from the paper proof
+because Lean needs a reusable intermediate lemma or a cleaner finite/discrete
+interface, make the deviation explicit and keep the paper-facing wrapper close
+to the original named result.
+
 ## Library Layering Rule
 
 Put generic EC/CS/econ results in the main EconCS library, then make paper
