@@ -2927,6 +2927,64 @@ theorem problem6SparseEqualized_y_pivot_eq_closed
     problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h]
 
 /--
+Appendix D, Lemma 4 uniqueness, same-pivot case: two sparse equalized
+solutions with the same pivot have identical value and coordinates.
+-/
+theorem problem6SparseEqualized_eq_of_same_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (h' : Problem6SparseEqualized alpha v t x' y' ell') :
+    ell = ell' ∧ x = x' ∧ y = y' := by
+  have hell :
+      ell = problem6ClosedValue alpha v t :=
+    problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h
+  have hell' :
+      ell' = problem6ClosedValue alpha v t :=
+    problem6SparseEqualized_value_eq_closed halpha0 halpha1 hpos h'
+  have hx : x = x' := by
+    funext j
+    by_cases hjlt : j.val < t.val
+    · rw [problem6SparseEqualized_x_before_eq_closed
+        halpha0 halpha1 hpos h hjlt,
+        problem6SparseEqualized_x_before_eq_closed
+          halpha0 halpha1 hpos h' hjlt]
+    · by_cases hjeq : j = t
+      · subst j
+        rw [problem6SparseEqualized_x_pivot_eq_closed
+          halpha0 halpha1 hpos h,
+          problem6SparseEqualized_x_pivot_eq_closed
+            halpha0 halpha1 hpos h']
+      · have hjgt : t.val < j.val := by
+          have hne_val : j.val ≠ t.val := by
+            intro hval
+            exact hjeq (Fin.ext hval)
+          omega
+        rw [h.x_after_pivot_zero hjgt, h'.x_after_pivot_zero hjgt]
+  have hy : y = y' := by
+    funext j
+    by_cases hjlt : j.val < t.val
+    · rw [h.y_before_pivot_zero hjlt, h'.y_before_pivot_zero hjlt]
+    · by_cases hjeq : j = t
+      · subst j
+        rw [problem6SparseEqualized_y_pivot_eq_closed
+          halpha0 halpha1 hpos h,
+          problem6SparseEqualized_y_pivot_eq_closed
+            halpha0 halpha1 hpos h']
+      · have hjgt : t.val < j.val := by
+          have hne_val : j.val ≠ t.val := by
+            intro hval
+            exact hjeq (Fin.ext hval)
+          omega
+        rw [problem6SparseEqualized_y_after_eq_closed
+          halpha0 halpha1 hpos h hjgt,
+          problem6SparseEqualized_y_after_eq_closed
+            halpha0 halpha1 hpos h' hjgt]
+  exact ⟨hell.trans hell'.symm, hx, hy⟩
+
+/--
 A certificate that a proposed Problem 6 policy and value solve the finite LP:
 the policy attains `ell`, and no feasible policy can exceed `ell`.
 -/

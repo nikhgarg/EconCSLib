@@ -1344,6 +1344,21 @@ theorem paper_lemma5_problem6_y_after_pivot
     halpha0 halpha1 hpos h hj
 
 /--
+Appendix D, Lemma 4 uniqueness, same-pivot case: two sparse equalized
+solutions with the same pivot have identical value and coordinates.
+-/
+theorem paper_lemma4_sparseEqualized_eq_of_same_pivot
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    {x y x' y' : Item n → ℝ} {ell ell' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Problem6SparseEqualized alpha v t x y ell)
+    (h' : Problem6SparseEqualized alpha v t x' y' ell') :
+    ell = ell' ∧ x = x' ∧ y = y' := by
+  exact problem6SparseEqualized_eq_of_same_pivot
+    halpha0 halpha1 hpos h h'
+
+/--
 Appendix D, Lemma 6, mirror-pair algebra for
 `1/q_j - 1/(1-q_{n-j+1})`.
 -/
