@@ -29,6 +29,7 @@ this folder.
 | Representation and γ-homogeneity profiles | `GammaHomogeneityProfile.Approx` | formalized | `AccuracyDiversity/Representation.lean` | none |
 | Top-k oracle interface | `TopKValueOracle.toConsumptionModel_has_diminishing_returns` | conditional | `AccuracyDiversity/TopKOracle.lean` | oracle marginal assumptions |
 | Bernoulli diminishing-return specialization | `BernoulliSatisfactionModel.toConsumptionModel_has_diminishing_returns` | formalized | `AccuracyDiversity/Bernoulli.lean` | valid Bernoulli probabilities |
+| Finite fixed-total optimizer existence | `ConsumptionModel.paper_finite_optimum_exists` | formalized | `AccuracyDiversity/MainTheorems.lean` | nonempty type space |
 | Finite exchange-improvement theorem | `ConsumptionModel.paper_finite_exchange_improvement` | formalized | `AccuracyDiversity/MainTheorems.lean` | none |
 | Finite first-order condition at an optimum | `ConsumptionModel.paper_finite_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
 | Bernoulli first-order condition | `BernoulliSatisfactionModel.paper_bernoulli_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |

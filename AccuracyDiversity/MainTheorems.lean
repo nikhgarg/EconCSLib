@@ -13,6 +13,18 @@ namespace AccuracyDiversity
 namespace ConsumptionModel
 
 /--
+Finite optimizer existence for a fixed slate size.
+
+Because count allocations of total `N` form a finite search space, every
+consumption-constrained model over a nonempty finite type space has an
+objective-maximizing allocation.
+-/
+theorem paper_finite_optimum_exists
+    {T : ℕ} [Nonempty (ItemType T)] (M : ConsumptionModel T) (N : ℕ) :
+    ∃ a : CountAllocation T, M.IsOptimalAtTotal N a := by
+  exact M.exists_isOptimalAtTotal N
+
+/--
 Finite exchange-improvement theorem.
 
 If moving one recommendation from `src` to `dst` loses no more weighted marginal

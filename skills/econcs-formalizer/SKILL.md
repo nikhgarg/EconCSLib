@@ -212,6 +212,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - For finite fair-division allocation theorems, first prove the theorem for an
   abstract marginal bound. Then add a paper-facing corollary instantiating the
   bound as the finite maximum one-good marginal value.
+- For finite fixed-total count-allocation optimization, encode feasible
+  allocations as functions into `Fin (N + 1)` plus a total-sum proof. Optimize
+  over that finite code space, then decode back to the paper allocation type.
+  This is often enough to discharge "there exists an optimum" seams before
+  invoking exchange or first-order conditions.
 - For algorithmic statements, separate the existence/correctness theorem from
   runtime or complexity claims unless the complexity layer is already in scope.
 - When a theorem is conditional, name the remaining seam mathematically, not as

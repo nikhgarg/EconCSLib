@@ -77,6 +77,14 @@ def HasDiminishingReturns (valueOfCount : κ → ℕ → ℝ) : Prop :=
     k ∈ support a ↔ a.count k ≠ 0 := by
   simp [support]
 
+/-- Each class count is bounded by the total allocation size. -/
+theorem count_le_total (a : Allocation κ) (k : κ) :
+    a.count k ≤ a.total := by
+  unfold total
+  exact Finset.single_le_sum
+    (by intro _ _; exact Nat.zero_le _)
+    (Finset.mem_univ k)
+
 @[simp] theorem share_of_total_zero (a : Allocation κ) (k : κ)
     (h : a.total = 0) :
     share a k = 0 := by
