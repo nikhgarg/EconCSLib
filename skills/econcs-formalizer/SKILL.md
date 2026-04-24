@@ -69,8 +69,9 @@ the Lean statements against the paper.
 - For large campaigns, add one adjacent Lean declaration ledger file (for
   example `PaperFacingTheorems.lean`) that is the single-file human verification
   target for the folder’s claims.
-  The file should be declaration-ordered by paper section and may use `#check`
-  entries or alias-style wrapper declarations.
+  The file should be declaration-ordered by paper section and should expose the
+  paper-facing definitions and full theorem statements (with assumptions and
+  short paper-context comments) rather than `#check` entries alone.
   Include for each entry:
   1. the declaration name,
   2. a compact paper-style statement in comments,
