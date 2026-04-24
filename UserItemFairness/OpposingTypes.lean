@@ -12470,6 +12470,277 @@ theorem theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le
       halpha_half halpha_half' hpos hdec hsucc rfl rfl
 
 /--
+Problem 6 canonical closed-policy optimality bridge: under the
+Proposition-1-shaped feasible-policy canonicalization assumption, the Lemma 5
+first-closed policy realizes the reduced `U^*_min(1, α)` value.
+-/
+theorem problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcanonical :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  let t : Item n :=
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  let hbounds : Problem6ClosedPivotDenominatorBounds alpha v t :=
+    problem6FirstClosedPivot_denominatorBounds
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos
+  let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halpha0 halpha1 hpos hdec hbounds
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos hbounds
+  have hclosed :
+      Problem6EqualizedBasicOptimal alpha v
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+        (problem6ClosedValue alpha v t) := by
+    dsimp [cert, hpivot]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      halpha0 halpha1 hpos cert
+  have hvalue :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel alpha v) 1 =
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha v)
+          (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) :=
+    problem6EqualizedBasicOptimal_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+      hn halpha0 halpha1 hpos hdec hclosed hcanonical
+  have hpolicy :
+      problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos =
+        problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot := by
+    dsimp [t, hpivot, hbounds]
+    exact
+      problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+        halpha0 halpha1 hpos rfl
+  rw [hvalue, hpolicy]
+
+/--
+Problem 6 canonical closed-policy optimality bridge, packaged as
+`IsOptimalAtLevel`.
+-/
+theorem problem6FirstClosedPolicy_isOptimalAtLevel_one_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcanonical :
+      ∀ ρ' : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ' →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ' ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (twoTypeReducedModel alpha v) 1
+      (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  let t : Item n :=
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  let hbounds : Problem6ClosedPivotDenominatorBounds alpha v t :=
+    problem6FirstClosedPivot_denominatorBounds
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos
+  let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halpha0 halpha1 hpos hdec hbounds
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos hbounds
+  have hclosed :
+      Problem6EqualizedBasicOptimal alpha v
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+        (problem6ClosedValue alpha v t) := by
+    dsimp [cert, hpivot]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      halpha0 halpha1 hpos cert
+  have hpolicy :
+      problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos =
+        problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot := by
+    dsimp [t, hpivot, hbounds]
+    exact
+      problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+        halpha0 halpha1 hpos rfl
+  refine ⟨?_, ?_⟩
+  · have hfeas :
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1
+          (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) :=
+      problem6EqualizedBasicOptimal_feasibleAtLevel_one
+        halpha0 halpha1 hpos hclosed
+    simpa [hpolicy] using hfeas
+  · exact
+      (problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+        hn halpha0 halpha1 hpos hdec hcanonical).symm
+
+/--
+Theorem 3 reduced-optimum bridge, odd-center first-half endpoint form, under
+the Proposition-1-shaped feasible-policy canonicalization assumption at the
+two endpoints.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_of_alpha_le_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hcanonical :
+      ∀ ρ : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar)
+    (hcanonical' :
+      ∀ ρ : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha' v) 1 ρ →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha' v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha' v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha' v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha' v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha' v) ρ ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha' v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  have hleft :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+      hn halpha0 halpha1 hpos hdec hcanonical
+  have hright :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+      hn halpha0' halpha1' hpos hdec hcanonical'
+  rw [hleft, hright]
+  exact
+    theorem3_typeFairness_mono_firstHalf_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c
+
+/--
+Theorem 3 reduced-optimum bridge, even-center first-half endpoint form, under
+the Proposition-1-shaped feasible-policy canonicalization assumption at the
+two endpoints.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_alpha_le_of_feasible_canonicalization
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hcanonical :
+      ∀ ρ : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρ →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρ ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha v) ρbar)
+    (hcanonical' :
+      ∀ ρ : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha' v) 1 ρ →
+        ∃ ρbar : TypePolicy 2 n,
+          TypeWeightedRecommendationModel.feasibleAtLevel
+            (twoTypeReducedModel alpha' v) 1 ρbar ∧
+          (∀ l : Item n,
+            pairShare alpha' v l * (ρbar 0 l).toReal +
+              (1 - pairShare alpha' v l) * (ρbar 1 l).toReal =
+            TypeWeightedRecommendationModel.itemFairness
+              (twoTypeReducedModel alpha' v) ρbar) ∧
+          TypePolicy.SharedItemsBound ρbar ∧
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha' v) ρ ≤
+          TypeWeightedRecommendationModel.typeFairness
+            (twoTypeReducedModel alpha' v) ρbar) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  have hleft :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+      hn halpha0 halpha1 hpos hdec hcanonical
+  have hright :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+      hn halpha0' halpha1' hpos hdec hcanonical'
+  rw [hleft, hright]
+  exact
+    theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc
+
+/--
 Appendix D, Lemma 8 finite-stitch core for closed-form certificates: a finite
 chain may either stay inside one certified same-pivot interval, where Lemma 11
 applies, or repeat the same `α` at a boundary.  This is the closed-form version
