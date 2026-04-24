@@ -193,6 +193,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   The fixed-price benchmark reduction should use the minimum accepted bidder
   value: raising a feasible price to that value preserves the sale count lower
   bound and weakly increases revenue.
+  Use a nonnegative offer-price wrapper around finite candidate prices so
+  no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
+  infeasible negative candidate values from empty samples.
 - For GSP/position-auction work, first formalize `PositionOutcome` with
   per-click payments, utility, revenue, welfare, and feasibility. A concrete
   non-truthfulness witness is a good first theorem before building a generic

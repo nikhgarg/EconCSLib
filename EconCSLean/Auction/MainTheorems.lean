@@ -89,6 +89,39 @@ theorem paper_cross_sample_candidate_threshold_truthful
   exact crossSampleCandidateThresholdPriceAuction_truthful side minWinners
 
 /--
+RSOP-style deterministic skeleton with nonnegative offer prices: for any fixed
+sample partition, offering each bidder the finite candidate offer price computed
+from the opposite side is dominant-strategy truthful.
+-/
+theorem paper_cross_sample_candidate_offer_threshold_truthful
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (thresholdPriceAuction
+      (crossSampleCandidateOfferThreshold side minWinners)).TruthfulDominantStrategy := by
+  exact crossSampleCandidateOfferThresholdPriceAuction_truthful side minWinners
+
+/--
+The deterministic cross-sample offer auction has no positive transfers.
+-/
+theorem paper_cross_sample_candidate_offer_no_positive_transfers
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (thresholdPriceAuction
+      (crossSampleCandidateOfferThreshold side minWinners)).NoPositiveTransfers := by
+  exact crossSampleCandidateOfferThresholdPriceAuction_noPositiveTransfers
+    side minWinners
+
+/--
+Uniform average revenue over all deterministic cross-sample offer partitions is
+nonnegative.
+-/
+theorem paper_average_cross_sample_candidate_offer_revenue_nonneg
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    0 ≤ averageCrossSampleCandidateOfferRevenue values minWinners := by
+  exact averageCrossSampleCandidateOfferRevenue_nonneg values minWinners
+
+/--
 The finite bidder-value candidate benchmark is nonnegative.
 -/
 theorem paper_finite_candidate_fixed_price_benchmark_nonneg

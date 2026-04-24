@@ -43,6 +43,8 @@ formalized.
 | Own-bid-independent threshold auction truthfulness | `paper_threshold_price_truthful` | formalized | `EconCSLean/Auction/MainTheorems.lean` | threshold offered to each bidder must be independent of that bidder's own report |
 | Other-bid computed threshold truthfulness | `paper_own_erased_threshold_price_truthful` | formalized | `EconCSLean/Auction/MainTheorems.lean` | price rule sees the bid profile with the bidder's own report erased |
 | Cross-sample candidate threshold truthfulness | `paper_cross_sample_candidate_threshold_truthful` | formalized deterministic RSOP-style skeleton | `EconCSLean/Auction/MainTheorems.lean` | approximation guarantee and randomized partition expectation not formalized |
+| Cross-sample candidate offer truthfulness/NPT | `paper_cross_sample_candidate_offer_threshold_truthful`, `paper_cross_sample_candidate_offer_no_positive_transfers` | formalized deterministic RSOP-style skeleton with nonnegative offers | `EconCSLean/Auction/MainTheorems.lean` | approximation guarantee not formalized |
+| Uniform partition-average revenue nonnegativity | `paper_average_cross_sample_candidate_offer_revenue_nonneg` | formalized | `EconCSLean/Auction/MainTheorems.lean` | lower-bound approximation guarantee not formalized |
 | Threshold auction individual rationality | `paper_threshold_price_individually_rational` | formalized | `EconCSLean/Auction/MainTheorems.lean` | none |
 | Threshold auction no-positive-transfers | `paper_threshold_price_no_positive_transfers` | formalized | `EconCSLean/Auction/MainTheorems.lean` | nonnegative thresholds |
 | Position-auction interface | `PositionEnvironment`, `PositionOutcome` | formalized | `EconCSLean/Auction/Position.lean` | none |
@@ -60,9 +62,10 @@ formalized.
 1. Digital goods: the deterministic fixed-price benchmark layer and the
    deterministic RSOP-style truthfulness skeleton are now closed through
    `paper_two_winner_fixed_price_benchmark` and
-   `paper_cross_sample_candidate_threshold_truthful`. The remaining major seam
-   for the 2021 paper is probabilistic: add randomized partitions, expected
-   revenue, and the RSOP approximation certificate.
+   `paper_cross_sample_candidate_offer_threshold_truthful` and
+   `paper_average_cross_sample_candidate_offer_revenue_nonneg`. The remaining
+   major seam for the 2021 paper is the RSOP approximation certificate: prove a
+   lower bound on the uniform partition-average revenue relative to `F^(2)`.
 2. GSP/position auctions: extend `PositionOutcome` to a sorted-bid GSP
    mechanism for finite ordered slots, define envy-free/symmetric Nash
    equilibrium predicates, then formalize the Varian/Edelman-Ostrovsky-Schwarz

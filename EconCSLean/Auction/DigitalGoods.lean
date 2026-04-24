@@ -1,5 +1,6 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Finset.Max
+import Mathlib.Data.Fintype.Pi
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Linarith
 
@@ -52,6 +53,14 @@ def NoPositiveTransfers (M : DigitalGoodsAuction Agent) : Prop :=
 noncomputable def revenue [Fintype Agent]
     (M : DigitalGoodsAuction Agent) (bids : Agent → ℝ) : ℝ :=
   ∑ i : Agent, M.payment bids i
+
+theorem revenue_nonneg_of_noPositiveTransfers [Fintype Agent]
+    (M : DigitalGoodsAuction Agent) (hM : M.NoPositiveTransfers)
+    (bids : Agent → ℝ) :
+    0 ≤ M.revenue bids := by
+  classical
+  unfold revenue
+  exact Finset.sum_nonneg fun i _ => hM bids i
 
 end DigitalGoodsAuction
 
@@ -347,6 +356,27 @@ noncomputable def finiteCandidateBenchmarkPrice [Fintype Agent]
     [Nonempty Agent] (values : Agent → ℝ) (minWinners : ℕ) : ℝ :=
   values (finiteCandidateBenchmarkBidder values minWinners)
 
+/--
+Nonnegative offer price extracted from the finite candidate benchmark. If the
+selected bidder value is not a feasible nonnegative candidate, use price `0`.
+-/
+noncomputable def finiteCandidateOfferPrice [Fintype Agent]
+    [Nonempty Agent] (values : Agent → ℝ) (minWinners : ℕ) : ℝ :=
+  let i := finiteCandidateBenchmarkBidder values minWinners
+  if 0 ≤ values i ∧ minWinners ≤ saleCount values (values i) then
+    values i
+  else
+    0
+
+theorem finiteCandidateOfferPrice_nonneg [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    0 ≤ finiteCandidateOfferPrice values minWinners := by
+  classical
+  let i := finiteCandidateBenchmarkBidder values minWinners
+  by_cases h : 0 ≤ values i ∧ minWinners ≤ saleCount values (values i)
+  · simp [finiteCandidateOfferPrice, i, h]
+  · simp [finiteCandidateOfferPrice, i, h]
+
 theorem finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
     [Fintype Agent] [Nonempty Agent]
     (values : Agent → ℝ) (minWinners : ℕ) :
@@ -356,6 +386,36 @@ theorem finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
   exact Classical.choose_spec
     (exists_candidateFixedPriceRevenue_eq_finiteCandidateFixedPriceBenchmark
       values minWinners)
+
+theorem singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    singlePriceRevenue values
+      (finiteCandidateOfferPrice values minWinners) =
+        finiteCandidateFixedPriceBenchmark values minWinners := by
+  classical
+  let i := finiteCandidateBenchmarkBidder values minWinners
+  have hbench :
+      finiteCandidateFixedPriceBenchmark values minWinners =
+        candidateFixedPriceRevenue values minWinners i := by
+    simpa [i] using
+      finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
+        values minWinners
+  by_cases hsel : 0 ≤ values i ∧
+      minWinners ≤ saleCount values (values i)
+  · have hprice :
+        finiteCandidateOfferPrice values minWinners = values i := by
+      simp [finiteCandidateOfferPrice, i, hsel]
+    rw [hprice, hbench]
+    simp [candidateFixedPriceRevenue, hsel]
+  · have hprice :
+        finiteCandidateOfferPrice values minWinners = 0 := by
+      simp [finiteCandidateOfferPrice, i, hsel]
+    have hbench_zero :
+        finiteCandidateFixedPriceBenchmark values minWinners = 0 := by
+      simpa [candidateFixedPriceRevenue, hsel] using hbench
+    rw [hprice, hbench_zero]
+    simp [singlePriceRevenue]
 
 theorem finiteCandidateFixedPriceBenchmark_isFixedPriceBenchmark_of_feasible
     [Fintype Agent] [Nonempty Agent]
@@ -485,6 +545,37 @@ theorem crossSampleCandidateThreshold_ownBidIndependent
   cases side i <;> simp
 
 /--
+Cross-sample threshold rule using the nonnegative finite candidate offer price.
+This is the deterministic core of the RSOP auction for a fixed partition.
+-/
+noncomputable def crossSampleCandidateOfferThreshold
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (Agent → ℝ) → Agent → ℝ :=
+  fun bids i =>
+    finiteCandidateOfferPrice
+      (restrictBidsBySide side (!side i) bids) minWinners
+
+theorem crossSampleCandidateOfferThreshold_ownBidIndependent
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    OwnBidIndependent (crossSampleCandidateOfferThreshold side minWinners) := by
+  intro bids i report
+  unfold crossSampleCandidateOfferThreshold
+  apply congrArg (fun profile =>
+    finiteCandidateOfferPrice profile minWinners)
+  apply restrictBidsBySide_update_of_not_kept
+  cases side i <;> simp
+
+theorem crossSampleCandidateOfferThreshold_nonneg
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (minWinners : ℕ)
+    (bids : Agent → ℝ) (i : Agent) :
+    0 ≤ crossSampleCandidateOfferThreshold side minWinners bids i := by
+  exact finiteCandidateOfferPrice_nonneg
+    (restrictBidsBySide side (!side i) bids) minWinners
+
+/--
 Digital-goods auction that offers every bidder a threshold price and sells iff
 the bid meets that threshold.
 -/
@@ -550,6 +641,14 @@ theorem crossSampleCandidateThresholdPriceAuction_truthful
   exact thresholdPriceAuction_truthful _
     (crossSampleCandidateThreshold_ownBidIndependent side minWinners)
 
+theorem crossSampleCandidateOfferThresholdPriceAuction_truthful
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (thresholdPriceAuction
+      (crossSampleCandidateOfferThreshold side minWinners)).TruthfulDominantStrategy := by
+  exact thresholdPriceAuction_truthful _
+    (crossSampleCandidateOfferThreshold_ownBidIndependent side minWinners)
+
 theorem thresholdPriceAuction_individuallyRational [DecidableEq Agent]
     (threshold : (Agent → ℝ) → Agent → ℝ) :
     (thresholdPriceAuction threshold).IndividuallyRational := by
@@ -567,6 +666,45 @@ theorem thresholdPriceAuction_noPositiveTransfers [DecidableEq Agent]
   by_cases h : threshold bids i ≤ bids i
   · simpa [thresholdPriceAuction, h] using hthreshold bids i
   · simp [thresholdPriceAuction, h]
+
+theorem crossSampleCandidateOfferThresholdPriceAuction_noPositiveTransfers
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (minWinners : ℕ) :
+    (thresholdPriceAuction
+      (crossSampleCandidateOfferThreshold side minWinners)).NoPositiveTransfers := by
+  exact thresholdPriceAuction_noPositiveTransfers _
+    (crossSampleCandidateOfferThreshold_nonneg side minWinners)
+
+/--
+Uniform average revenue of the deterministic cross-sample offer auction over
+all sample partitions.
+-/
+noncomputable def averageCrossSampleCandidateOfferRevenue
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) : ℝ :=
+  (∑ side : Agent → Bool,
+      (thresholdPriceAuction
+        (crossSampleCandidateOfferThreshold side minWinners)).revenue values) /
+    (Fintype.card (Agent → Bool) : ℝ)
+
+theorem averageCrossSampleCandidateOfferRevenue_nonneg
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    0 ≤ averageCrossSampleCandidateOfferRevenue values minWinners := by
+  classical
+  unfold averageCrossSampleCandidateOfferRevenue
+  have hsum :
+      0 ≤ ∑ side : Agent → Bool,
+        (thresholdPriceAuction
+          (crossSampleCandidateOfferThreshold side minWinners)).revenue values := by
+    exact Finset.sum_nonneg fun side _ =>
+      DigitalGoodsAuction.revenue_nonneg_of_noPositiveTransfers _
+        (crossSampleCandidateOfferThresholdPriceAuction_noPositiveTransfers
+          side minWinners)
+        values
+  have hcard_nonneg : 0 ≤ (Fintype.card (Agent → Bool) : ℝ) := by
+    exact_mod_cast (Nat.zero_le _ : 0 ≤ Fintype.card (Agent → Bool))
+  exact div_nonneg hsum hcard_nonneg
 
 end Auction
 end EconCSLean
