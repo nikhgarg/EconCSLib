@@ -187,6 +187,31 @@ theorem typeOneShare_half_eq_half_of_eq
   field_simp [hden]
   ring
 
+/--
+At `α = 1/2`, mirror shares are complementary:
+`q(left,right) + q(right,left) = 1`.
+-/
+theorem typeOneShare_half_add_reverse_eq_one
+    {left right : ℝ}
+    (hleft : 0 < left) (hright : 0 < right) :
+    typeOneShare (1 / 2) left right +
+        typeOneShare (1 / 2) right left = 1 := by
+  unfold typeOneShare
+  have hden₁ :
+      (1 / 2 : ℝ) * left + (1 - (1 / 2 : ℝ)) * right ≠ 0 := by
+    have hpos : 0 <
+        (1 / 2 : ℝ) * left + (1 - (1 / 2 : ℝ)) * right := by
+      nlinarith
+    exact ne_of_gt hpos
+  have hden₂ :
+      (1 / 2 : ℝ) * right + (1 - (1 / 2 : ℝ)) * left ≠ 0 := by
+    have hpos : 0 <
+        (1 / 2 : ℝ) * right + (1 - (1 / 2 : ℝ)) * left := by
+      nlinarith
+    exact ne_of_gt hpos
+  field_simp [hden₁, hden₂]
+  ring
+
 /-- The opposite item index `n - j + 1` in zero-based `Fin n` notation. -/
 def reverseItem {n : ℕ} (j : Item n) : Item n :=
   ⟨n - 1 - j.val, by omega⟩
@@ -239,6 +264,31 @@ theorem pairShare_inv_sub_inv_one_sub_reverse_nonneg_of_alpha_le_half
   have hden : 0 ≤ alpha * (1 - alpha) :=
     (mul_pos halpha0 (sub_pos.mpr halpha1)).le
   exact div_nonneg (mul_nonneg hratio hnum) hden
+
+/--
+Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
+shares.
+-/
+theorem pairShare_half_add_reverse_eq_one
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare (1 / 2) v j +
+        pairShare (1 / 2) v (reverseItem j) = 1 := by
+  unfold pairShare
+  rw [reverseItem_reverseItem]
+  exact typeOneShare_half_add_reverse_eq_one
+    (hpos j) (hpos (reverseItem j))
+
+/--
+Appendix D, Lemma 10 setup: `q_j(1/2) = 1 - q_{n-j+1}(1/2)`.
+-/
+theorem pairShare_half_eq_one_sub_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare (1 / 2) v j =
+      1 - pairShare (1 / 2) v (reverseItem j) := by
+  have hsum := pairShare_half_add_reverse_eq_one j hpos
+  linarith
 
 /-- Values are strictly decreasing in the item index, matching `v₁ > ... > vₙ`. -/
 def StrictlyDecreasingByIndex {n : ℕ} (v : Item n → ℝ) : Prop :=
@@ -628,6 +678,16 @@ theorem problem6ClosedDenominator_pos {n : ℕ}
   have hqc := (one_sub_pairShare_pos t halpha0 halpha1 hpos).le
   unfold problem6ClosedDenominator
   nlinarith
+
+/-- Lemma 5's closed-form value is positive. -/
+theorem problem6ClosedValue_pos {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < problem6ClosedValue alpha v t := by
+  unfold problem6ClosedValue
+  exact one_div_pos.mpr
+    (problem6ClosedDenominator_pos t halpha0 halpha1 hpos)
 
 private theorem problem6_sum_eq_left_part_add_pivot_of_after_zero {n : ℕ}
     (x : Item n → ℝ) (t : Item n)

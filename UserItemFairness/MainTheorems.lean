@@ -786,6 +786,14 @@ theorem paper_lemma5_problem6_closed_value
   exact problem6SparseEqualized_value_eq_closed
     halpha0 halpha1 hpos h
 
+/-- Appendix D, Lemma 5: the closed-form value is positive. -/
+theorem paper_lemma5_problem6_closed_value_pos
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < problem6ClosedValue alpha v t := by
+  exact problem6ClosedValue_pos t halpha0 halpha1 hpos
+
 /--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
@@ -885,6 +893,25 @@ theorem paper_lemma6_pairShare_mirror_inverse_gap_nonneg
         (1 - pairShare alpha v (reverseItem j))⁻¹ := by
   exact pairShare_inv_sub_inv_one_sub_reverse_nonneg_of_alpha_le_half
     j halpha0 halpha1 halpha_half hpos
+
+/--
+Appendix D, Lemma 10 setup: at `α = 1/2`, opposite items have complementary
+shares.
+-/
+theorem paper_lemma10_pairShare_half_add_reverse_eq_one
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare (1 / 2) v j +
+        pairShare (1 / 2) v (reverseItem j) = 1 := by
+  exact pairShare_half_add_reverse_eq_one j hpos
+
+/-- Appendix D, Lemma 10 setup: `q_j(1/2) = 1 - q_{n-j+1}(1/2)`. -/
+theorem paper_lemma10_pairShare_half_eq_one_sub_reverse
+    {n : ℕ} {v : Item n → ℝ} (j : Item n)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    pairShare (1 / 2) v j =
+      1 - pairShare (1 / 2) v (reverseItem j) := by
+  exact pairShare_half_eq_one_sub_reverse j hpos
 
 end OpposingTypes
 
