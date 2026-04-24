@@ -135,6 +135,55 @@ theorem paper_appendixE_independent_weight_sum_pos_of_rankFactorization
   exact M.independent_weight_sum_pos_of_rankFactorization fac hn hq_lt_one hvalue
 
 /--
+Appendix E (conditional-gap factorization): after applying the Mallows top-two
+rank factorization, the first-choice gap attached to a candidate is its first
+rank factor times the rank-only conditional gap `x_i - V_-i`.
+-/
+theorem paper_appendixE_firstChoiceGapWeight_eq_rankConditionalGap
+    {n : ℕ} (M : MallowsSpec n)
+    (fac : M.RankFactorization) (value : Candidate n → ℝ) (c : Candidate n) :
+    M.firstChoiceGapWeight value c =
+      M.q ^ (rankOf M.center c : ℕ) * fac.firstSecondTail *
+        candidateRankConditionalGap n M.q
+          (fun r : Candidate n => value (M.center r)) (rankOf M.center c) := by
+  exact M.firstChoiceGapWeight_eq_rankConditionalGap fac value c
+
+/--
+Appendix E / Lemma 4 (finite MLR comparison, cross-multiplied form).
+
+When `q₁ < q₂` and `B` is strictly decreasing in rank, the geometric weights
+`q₁^i` put more mass on better ranks than `q₂^i`, so the `B`-expectation is
+strictly larger after clearing denominators.
+-/
+theorem paper_appendixE_candidateRankWeightedAverage_strictAnti
+    (n : ℕ) {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)
+    {B : Candidate n → ℝ} (hB : StrictAnti B) :
+    0 <
+      candidateRankPowerSum n q₂ *
+          (∑ i : Candidate n, q₁ ^ (i : ℕ) * B i) -
+        candidateRankPowerSum n q₁ *
+          (∑ i : Candidate n, q₂ ^ (i : ℕ) * B i) := by
+  exact candidateRankWeightedAverage_strictAnti n hq₁_pos hq_lt hB
+
+/--
+Appendix E (weaker-competition finite inequality): rank factorization plus
+`qA < qH` proves the cleared weaker-competition Mallows sum.
+-/
+theorem paper_appendixE_cross_weight_sum_pos_of_rankFactorization
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hvalue : StrictlyOrderedBy C.human.center value)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (hq_lt : C.algorithm.q < C.human.q)
+    (hhuman_q_lt_one : C.human.q < 1) :
+    0 < ∑ c : Candidate n,
+      (C.algorithm.firstWeight c * C.human.partition -
+          C.human.firstWeight c * C.algorithm.partition) *
+        C.human.firstChoiceGapWeight value c := by
+  exact C.cross_weight_sum_pos_of_rankFactorization
+    hvalue halg_rank hhuman_rank hq_lt hhuman_q_lt_one
+
+/--
 Theorem 3 / weaker-competition center comparison: when the algorithm Mallows law
 has strictly lower inverse-noise parameter than the human law, the rank
 factorization formulas imply the strict center first-choice cross-product
@@ -253,10 +302,10 @@ theorem paper_theorem3_pointwise_finite_mallows_sum_of_certificate
   exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate cert
 
 /--
-Theorem 3 (rank-factorized independent sums): the two
+Theorem 3 (rank-factorized independent sums, backward-compatible form): the two
 independent-reranking finite inequalities are proved from the Mallows
-rank-factorization formulas. The remaining explicit inequality is only the
-cleared weaker-competition Mallows sum.
+rank-factorization formulas. The cleared weaker-competition Mallows sum is kept
+as an explicit premise for callers that already have it.
 -/
 theorem paper_theorem3_pointwise_rankFactorization_and_crossWeight
     {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
@@ -273,6 +322,31 @@ theorem paper_theorem3_pointwise_rankFactorization_and_crossWeight
     Model.PaperHypotheses (C.toModel value) := by
   exact C.theorem3_pointwise_of_rankFactorization_and_crossWeight
     hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hweaker
+
+/--
+Paper Theorem 3 (Mallows model).
+
+Paper statement: for the Mallows family with common center, if the algorithmic
+ranking is more accurate than the human ranking, then for every strictly
+center-ordered candidate value profile the induced model satisfies the paper's
+independent-reranking and weaker-competition hypotheses.
+
+Lean statement uses the inverse Mallows parameter `q`, so "algorithm more
+accurate" is `C.algorithm.q < C.human.q`. The rank-factorization hypotheses are
+the finite Mallows top-one/top-two fiber formulas used in Appendix E.
+-/
+theorem paper_theorem3_pointwise_rankFactorization
+    {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
+    (hstrict : C.StrictlyCenterOrdered value)
+    (hn : 0 < n)
+    (halg_rank : C.algorithm.RankFactorization)
+    (hhuman_rank : C.human.RankFactorization)
+    (halg_q_lt_one : C.algorithm.q < 1)
+    (hhuman_q_lt_one : C.human.q < 1)
+    (hq_lt : C.algorithm.q < C.human.q) :
+    Model.PaperHypotheses (C.toModel value) := by
+  exact C.theorem3_pointwise_of_rankFactorization
+    hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hq_lt
 
 /--
 Theorem 3 (reduced product-sign form): from reduced product-sign finite Mallows

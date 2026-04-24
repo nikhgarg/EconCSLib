@@ -9,7 +9,9 @@ Use this skill to turn economics-and-computation papers into maintainable Lean
 code. Keep repository-specific status out of this file; in `EconCSLean`, that
 belongs in `docs/ECONCSLEAN_CURRENT_STATUS.md`.
 
-## Core Rule
+## Component 1: Workflow and Organization
+
+### 1.1 Core Rule
 
 Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
@@ -22,7 +24,7 @@ because Lean needs a reusable intermediate lemma or a cleaner finite/discrete
 interface, make the deviation explicit and keep the paper-facing wrapper close
 to the original named result.
 
-## Library Layering Rule
+### 1.2 Library Layering Rule
 
 Put generic EC/CS/econ results in the main EconCS library, then make paper
 folders mostly apply those results.
@@ -42,7 +44,7 @@ folders mostly apply those results.
 - Paper folders may keep thin wrappers with paper names, but those wrappers
   should usually call generic theorems rather than duplicate their proofs.
 
-## Paper Folder Contract
+### 1.3 Paper Folder Contract
 
 Each paper-specific folder should be auditable by a human who wants to compare
 the Lean statements against the paper.
@@ -52,12 +54,13 @@ the Lean statements against the paper.
   and access date. If the project policy allows PDFs, keep the paper PDF there;
   otherwise do not commit the PDF and make the README link to the exact version
   being formalized.
-- For active paper folders, feel free to download the source PDF locally so the
-  proof text can be searched repeatedly without re-querying the internet. Add
-  the downloaded PDF path or a narrow folder pattern to `.gitignore` unless the
-  project explicitly wants PDFs committed. When available, also check the arXiv
-  or publisher HTML version; it is often easier to search and quote-map than a
-  PDF.
+- For active paper folders, download the source PDF once into the paper folder
+  as the default workflow, and record the local path in the folder README. When
+  available, also cache the arXiv or publisher HTML page and a text extraction
+  next to the PDF. Add the cached source paths or a narrow folder pattern to
+  `.gitignore` unless the project explicitly wants source artifacts committed.
+  Work from these local files first; do not repeatedly search the web or
+  rediscover the same PDF after the exact source version is known.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
@@ -82,6 +85,17 @@ the Lean statements against the paper.
 - Add a structured folder `README.md` theorem-status table with columns like:
   paper theorem/definition, Lean declaration, status (`formalized`,
   `conditional`, `scaffold`, `not started`), file, and remaining assumptions.
+- When starting a new paper folder, build a dependency DAG for all named paper
+  definitions, lemmas, propositions, theorems, and corollaries before deep
+  proof work. Keep it as a TikZ source file (and rendered image) in the paper
+  folder so humans can audit theorem flow quickly.
+- The DAG must encode formalization status in the node styling: include clear
+  color and shape/border coding for at least `not started`, `partially
+  formalized`, and `fully formalized`, and include a short legend in the
+  artifact.
+- Keep the DAG updated after every major paper update (for example: a named
+  paper theorem/lemma closed, a dependency refactor that changes proof flow, or
+  a status transition between scaffold/conditional/formalized).
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
   "technical details".
@@ -99,7 +113,7 @@ the Lean statements against the paper.
 - Detailed lemmas may live in many files, but the central theorem file should be
   the stable public interface for that paper.
 
-## Context Budget and Resume Protocol
+### 1.4 Context Budget and Resume Protocol
 
 Resume from the current public interface, not from the commit history. For long
 formalization campaigns, the fastest reliable map is the status docs, the paper
@@ -136,12 +150,15 @@ search.
   last passing build command. This prevents future agents from spending tokens
   re-deriving the same orientation.
 
-## Workflow
+### 1.5 Workflow
 
 1. Orient before editing.
    Read the repo README, roadmap, architecture notes, and paper-specific
    handoff documents. Identify the public theorem target and the smallest local
    lemma that moves it forward.
+   For a brand-new paper, first produce the paper's named-result dependency DAG
+   (definitions/lemmas/propositions/theorems/corollaries) as a TikZ diagram
+   with status-coded nodes, then keep it current through the campaign.
 
 2. Stabilize the build first.
    Run targeted `lake build <module>` commands before making broad changes. Fix
@@ -194,7 +211,132 @@ search.
    report states the precise bug/too-hard reason blocking faithful
    formalization.
 
-## External Library Reconnaissance
+### 1.6 Build Hygiene
+
+- Lake reuses `.olean` artifacts when sources, imports, Lean version, and
+  dependency artifacts are unchanged.
+- After changing `lean-toolchain`, `lakefile.toml`, or dependency revisions,
+  expect substantial rebuilds.
+- If generated artifacts produce invalid headers or impossible import errors,
+  clean generated dependency outputs and rebuild rather than patching random
+  downstream files.
+- If a long build is interrupted, already-finished modules usually remain
+  cached; rerunning resumes from remaining work.
+- Do not infer that downstream files are broken until the direct imported module
+  builds.
+- Existing warnings are not build failures unless the user asks for lint cleanup
+  or the project enforces warning-free builds.
+- If build logs are dominated by repeated non-actionable linter warnings,
+  quiet only those specific style/noise linters in `lakefile.toml`; do not
+  disable proof checking or hide theorem errors.
+- To save context during iteration, redirect targeted builds to a temporary log
+  and print only the tail on failure or completion, e.g.:
+
+```bash
+lake build UserItemFairness.MainTheorems >/tmp/econcs-build.log 2>&1
+status=$?
+tail -80 /tmp/econcs-build.log
+exit $status
+```
+
+- Prefer `lake build <touched-root-module>` over full `lake build` until the
+  paper slice is ready for integration.
+
+### 1.7 Paper Triage
+
+Prefer first-pass formalizations with:
+
+- finite objects and finite sums,
+- constructive algorithms with simple invariants,
+- clean equilibrium, allocation, matching, ranking, or auction definitions,
+- reusable primitives likely to help later papers,
+- theorem statements decomposable into local lemmas.
+
+Defer or isolate papers whose first main result depends on:
+
+- large complexity-theory reductions,
+- heavy measure theory or asymptotics,
+- external solvers without certificate interfaces,
+- long empirical pipelines,
+- broad economic existence theorems before the finite library is mature.
+
+### 1.8 Handoff Checklist
+
+Before ending work, update a repo note or paper handoff with:
+
+- build commands that passed or failed,
+- active theorem seam,
+- assumptions imported from the paper,
+- shared abstractions added,
+- next lemma a future agent should prove,
+- closed layers and traps future agents should not re-open,
+- whether commit history is needed for the next resume; usually it should not be
+  if the status docs and README are current.
+
+### 1.9 Final Verification and Validation
+
+Before declaring a paper "done," run a final human-facing validation pass:
+
+- Re-read the paper-facing theorem ledger file (for example,
+  `PaperFacingTheorems.lean` or the named human-facing theorem file) and check
+  each named definition/theorem/corollary against the paper statement.
+- Confirm every final paper-facing declaration is fully formalized with no
+  hidden placeholders; no unresolved `sorry`, scaffold wrappers, or unnamed
+  gaps should remain in the claimed result chain.
+- If a result remains conditional, ensure assumptions/certificates are explicit
+  in both the theorem statement and the paper README status table, with exact
+  declaration names and no vague wording.
+- Produce a final human-facing report in the paper folder alongside the DAG
+  artifacts (TikZ source and rendered image). The report must summarize:
+  source version checked, theorem-by-theorem completion status, additional
+  assumptions introduced beyond the paper, proof-strategy deviations from the
+  paper, and any suspected paper errors or inconsistencies found during
+  formalization.
+- If no extra assumptions, deviations, or errors were needed/found, state that
+  explicitly in the report rather than leaving sections implicit.
+
+Use this report template (create in the paper folder, for example
+`FINAL_VALIDATION_REPORT.md`):
+
+```markdown
+# Final Validation Report: <Paper Short Name>
+
+## 1. Source and Scope
+- Paper: <title>
+- Source version: <arXiv/publisher URL + version/date>
+- Lean folder: <folder path>
+- Human-facing theorem file: <file path>
+- DAG artifacts: <tikz file>, <rendered image>
+
+## 2. Theorem-by-Theorem Validation
+| Paper item | Lean declaration | Status (`fully formalized` / `conditional` / `not formalized`) | Statement match (`exact` / `minor deviation` / `major deviation`) | Notes |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
+
+## 3. Additional Assumptions Beyond Paper
+- `<assumption declaration>`: <why needed, where used>
+- If none: `None`
+
+## 4. Proof-Strategy Deviations
+- `<paper result/declaration>`: <what changed in strategy and why>
+- If none: `None`
+
+## 5. Conditional Results and Remaining Gaps
+- `<paper item>`: <exact remaining certificate/assumption declaration name>
+- If none: `None`
+
+## 6. Suspected Paper Errors or Inconsistencies
+- `<location in paper>`: <issue description + Lean/formalization evidence>
+- If none: `None`
+
+## 7. Final Verdict
+- Completion status: <complete / conditionally complete / incomplete>
+- Summary: <2-5 lines>
+```
+
+## Component 2: Theorem Proving Strategies and Suggestions
+
+### 2.1 External Library Reconnaissance
 
 Before implementing substantial probability, statistics, or learning-theory
 machinery from scratch, check whether existing Lean libraries already contain
@@ -223,7 +365,7 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - Prefer using upstream theorem names as search terms. If porting, preserve the
   conceptual interface but adapt notation/imports to the local library layer.
 
-## Modeling Heuristics
+### 2.2 Modeling Heuristics
 
 - Fair division: start with finite bundles, allocations, monotone valuations,
   envy, EF/EF1-style predicates, envy graphs, and local preservation lemmas.
@@ -408,7 +550,7 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
 
-## Theorem-Seam Patterns
+### 2.3 Theorem-Seam Patterns
 
 - For constructive paper proofs, formalize local invariants first, then assemble
   the main theorem by induction or finite recursion.
@@ -532,6 +674,12 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   independent-reranking bracket, individual cross brackets can be negative while
   the total adjacent-gap/majorization sum is positive. Use prefix/adjacent-gap
   coefficients or another total-sum certificate for that part.
+- For adjacent Mallows cross coefficients, the split into shifted suffix weight
+  times weighted prefix cross-delta, minus prefix weight times weighted suffix
+  cross-delta is useful as a diagnostic. Do not try to close Theorem 3 by a
+  global weighted-suffix nonpositive claim: that sufficient condition is too
+  strong in general. For weaker-competition Mallows totals, prefer the paper's
+  conditional-gap and monotone-likelihood-ratio route.
 - For Mallows first-choice dominance, prove the pure geometric prefix lemma
   once, then lift it through rank factorization. The useful pattern is a
   pair-sum regrouping of
@@ -539,6 +687,13 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   cross-prefix terms `qA^i*qH^j - qH^i*qA^j`, discharged by a reusable
   rank-power comparison for `qA < qH`. This avoids redoing stochastic-dominance
   algebra at each probability/cross-weight wrapper.
+- For Mallows weaker-competition totals, use the paper's conditional-gap route:
+  define the rank-only conditional gap, prove it is strictly antitone by
+  adjacent-rank comparison, prove the finite MLR weighted-average inequality by
+  pair-sum regrouping, and combine it with the positive same-human
+  square-weighted conditional gap. Once this closes at the rank-factorized
+  layer, the remaining assumption-free work is the finite permutation-fiber
+  constructor for `MallowsSpec.RankFactorization`.
 - When clearing positive probability denominators, expose the unnormalised
   numerator as a reusable definition and prove an equality from the normalized
   expectation to numerator divided by a positive denominator. Also prove the
@@ -615,7 +770,7 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
 - When a theorem is conditional, name the remaining seam mathematically, not as
   an implementation excuse. Good names describe the paper lemma being assumed.
 
-## Lean Proof Patterns
+### 2.4 Lean Proof Patterns
 
 - For finite singleton indicator sums, use:
 
@@ -657,65 +812,3 @@ have hd : d = rawSecond := by simpa [secondAbbrev] using h.2
   choice.
 - Keep imports narrow. Prefer specific Mathlib modules over `import Mathlib` in
   new or actively repaired files.
-
-## Build Hygiene
-
-- Lake reuses `.olean` artifacts when sources, imports, Lean version, and
-  dependency artifacts are unchanged.
-- After changing `lean-toolchain`, `lakefile.toml`, or dependency revisions,
-  expect substantial rebuilds.
-- If generated artifacts produce invalid headers or impossible import errors,
-  clean generated dependency outputs and rebuild rather than patching random
-  downstream files.
-- If a long build is interrupted, already-finished modules usually remain
-  cached; rerunning resumes from remaining work.
-- Do not infer that downstream files are broken until the direct imported module
-  builds.
-- Existing warnings are not build failures unless the user asks for lint cleanup
-  or the project enforces warning-free builds.
-- If build logs are dominated by repeated non-actionable linter warnings,
-  quiet only those specific style/noise linters in `lakefile.toml`; do not
-  disable proof checking or hide theorem errors.
-- To save context during iteration, redirect targeted builds to a temporary log
-  and print only the tail on failure or completion, e.g.:
-
-```bash
-lake build UserItemFairness.MainTheorems >/tmp/econcs-build.log 2>&1
-status=$?
-tail -80 /tmp/econcs-build.log
-exit $status
-```
-
-- Prefer `lake build <touched-root-module>` over full `lake build` until the
-  paper slice is ready for integration.
-
-## Paper Triage
-
-Prefer first-pass formalizations with:
-
-- finite objects and finite sums,
-- constructive algorithms with simple invariants,
-- clean equilibrium, allocation, matching, ranking, or auction definitions,
-- reusable primitives likely to help later papers,
-- theorem statements decomposable into local lemmas.
-
-Defer or isolate papers whose first main result depends on:
-
-- large complexity-theory reductions,
-- heavy measure theory or asymptotics,
-- external solvers without certificate interfaces,
-- long empirical pipelines,
-- broad economic existence theorems before the finite library is mature.
-
-## Handoff Checklist
-
-Before ending work, update a repo note or paper handoff with:
-
-- build commands that passed or failed,
-- active theorem seam,
-- assumptions imported from the paper,
-- shared abstractions added,
-- next lemma a future agent should prove,
-- closed layers and traps future agents should not re-open,
-- whether commit history is needed for the next resume; usually it should not be
-  if the status docs and README are current.
