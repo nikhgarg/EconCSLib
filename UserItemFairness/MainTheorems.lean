@@ -122,6 +122,36 @@ theorem paper_original_reduced_user_optimal_value_reduction_of_nonempty
     reps hRow γ hOrigNonempty hRedNonempty
 
 /--
+Baseline original/reduced optimal user-fairness value reduction.
+
+For `γ = 0`, nonnegative utilities automatically make both original and
+reduced feasible value sets nonempty; row positivity supplies boundedness.
+-/
+theorem paper_original_reduced_user_optimal_value_reduction_zero
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (hNonneg : R.data.model.Nonnegative) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model 0 =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced 0 := by
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel R.data.model 0).Nonempty :=
+    RecommendationModel.attainableUserFairnessAtLevel_zero_nonempty_of_nonnegative
+      R.data.model hNonneg
+  have hRedWeight : R.reduced.NonnegativeWeights :=
+    R.reduced_nonnegativeWeights
+  have hRedUtil : R.reduced.NonnegativeUtilities :=
+    R.reduced_nonnegativeUtilities_of_nonnegative reps hNonneg
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced 0).Nonempty :=
+    TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel_zero_nonempty_of_nonnegative
+      R.reduced hRedWeight hRedUtil
+  exact R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+    reps hRow 0 hOrigNonempty hRedNonempty
+
+/--
 Reduced-to-original optimum theorem under the explicit supremum conditions used
 by the value-reduction theorem.
 -/

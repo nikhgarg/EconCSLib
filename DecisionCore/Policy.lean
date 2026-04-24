@@ -31,6 +31,15 @@ theorem finiteMin_le {α : Type*} [Fintype α] [Nonempty α]
   unfold finiteMin
   exact Finset.inf'_le (s := (Finset.univ : Finset α)) (f := f) (by simp)
 
+/-- A finite minimum of nonnegative values is nonnegative. -/
+theorem finiteMin_nonneg {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) (h : ∀ a, 0 ≤ f a) :
+    0 ≤ finiteMin f := by
+  unfold finiteMin
+  apply Finset.le_inf'
+  intro a _ha
+  exact h a
+
 namespace Policy
 
 /-- Deterministic policy induced by a pure action selector. -/

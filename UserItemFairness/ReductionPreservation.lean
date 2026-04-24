@@ -62,6 +62,26 @@ theorem reduced_rowHasPositiveItem_of_rowHasPositiveItem
   rw [R.utility_agrees (reps.repr k) j] at hj
   simpa [reps.repr_spec k] using hj
 
+/-- Type weights in the reduced model are nonnegative cardinalities. -/
+theorem reduced_nonnegativeWeights {m n K : ℕ}
+    (R : ReductionWitness m n K) :
+    R.reduced.NonnegativeWeights := by
+  intro k
+  rw [R.weight_eq_typeWeight k]
+  exact RecommendationModel.UserTypeAssignment.typeWeight_nonneg R.data.types k
+
+/-- Original entrywise utility nonnegativity transfers to the reduced model. -/
+theorem reduced_nonnegativeUtilities_of_nonnegative
+    {m n K : ℕ}
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hNonneg : R.data.model.Nonnegative) :
+    R.reduced.NonnegativeUtilities := by
+  intro k j
+  have h := hNonneg (reps.repr k) j
+  rw [R.utility_agrees (reps.repr k) j] at h
+  simpa [reps.repr_spec k] using h
+
 /--
 A lifted reduced policy gives each original user exactly the raw utility of that
 user's type in the reduced model.

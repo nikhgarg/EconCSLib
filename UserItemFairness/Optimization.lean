@@ -51,6 +51,32 @@ theorem attainableUserFairnessAtLevel_bddAbove_of_rowHasPositiveItem
   rw [hr]
   exact userFairness_le_one_of_rowHasPositiveItem W hRow ρ
 
+/-- A canonical policy used only to witness nonempty finite feasible sets. -/
+noncomputable def defaultPolicy {m n : ℕ} [NeZero n] : Policy m n :=
+  DecisionCore.Policy.pure
+    (fun _ : User m => Classical.choice (inferInstance : Nonempty (Item n)))
+
+/-- At baseline `γ = 0`, every policy is feasible under nonnegative utilities. -/
+theorem feasibleAtLevel_zero_of_nonnegative {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    (ρ : Policy m n) :
+    feasibleAtLevel W 0 ρ := by
+  unfold feasibleAtLevel
+  simpa using itemFairness_nonneg_of_nonnegative W hNonneg ρ
+
+/--
+The baseline feasible value set is nonempty under nonnegative utilities. This
+avoids a compactness argument for the paper's unconstrained item-fairness
+baseline.
+-/
+theorem attainableUserFairnessAtLevel_zero_nonempty_of_nonnegative
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    (attainableUserFairnessAtLevel W 0).Nonempty := by
+  refine ⟨userFairness W (defaultPolicy (m := m) (n := n)), ?_⟩
+  exact ⟨defaultPolicy (m := m) (n := n),
+    feasibleAtLevel_zero_of_nonnegative W hNonneg _, rfl⟩
+
 /-- `U^*_min(γ, w)` in the paper. -/
 noncomputable def optimalUserFairnessAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) : ℝ :=

@@ -119,6 +119,45 @@ noncomputable def itemFairness {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) (ρ : Policy m n) : ℝ :=
   finiteMin (normalizedItemUtility W ρ)
 
+/-- Nonnegative utilities make every raw item utility nonnegative. -/
+theorem rawItemUtility_nonneg_of_nonnegative {m n : ℕ}
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    (ρ : Policy m n) (j : Item n) :
+    0 ≤ rawItemUtility W ρ j := by
+  unfold rawItemUtility
+  exact Finset.sum_nonneg (by
+    intro u _hu
+    exact mul_nonneg (hNonneg u j) ENNReal.toReal_nonneg)
+
+/-- Nonnegative utilities make every item normalizer nonnegative. -/
+theorem itemNormalizer_nonneg_of_nonnegative {m n : ℕ}
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) (j : Item n) :
+    0 ≤ itemNormalizer W j := by
+  unfold itemNormalizer
+  exact Finset.sum_nonneg (by
+    intro u _hu
+    exact hNonneg u j)
+
+/-- Nonnegative utilities make every normalized item utility nonnegative. -/
+theorem normalizedItemUtility_nonneg_of_nonnegative {m n : ℕ}
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    (ρ : Policy m n) (j : Item n) :
+    0 ≤ normalizedItemUtility W ρ j := by
+  unfold normalizedItemUtility
+  by_cases hden : itemNormalizer W j = 0
+  · simp [hden]
+  · simpa [hden] using div_nonneg
+      (rawItemUtility_nonneg_of_nonnegative W hNonneg ρ j)
+      (itemNormalizer_nonneg_of_nonnegative W hNonneg j)
+
+/-- Nonnegative utilities make minimum item fairness nonnegative. -/
+theorem itemFairness_nonneg_of_nonnegative {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    (ρ : Policy m n) :
+    0 ≤ itemFairness W ρ := by
+  exact DecisionCore.finiteMin_nonneg (normalizedItemUtility W ρ)
+    (normalizedItemUtility_nonneg_of_nonnegative W hNonneg ρ)
+
 /--
 The paper's set `S_symm` is built from users sharing utility rows.
 This predicate records that utilities are identical within each user type.

@@ -234,6 +234,13 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   compactness. A finite PMF expectation of row utilities is at most the finite
   row maximum, so positive normalizers usually give normalized utility `≤ 1`
   and immediately discharge `BddAbove` obligations for feasible value sets.
+- For baseline constrained problems with constraint level `γ = 0`, first check
+  whether the constraint reduces to nonnegativity. If objectives are normalized
+  nonnegative utilities, prove each normalized coordinate is nonnegative, take a
+  finite-minimum nonnegativity lemma, and witness nonemptiness with an arbitrary
+  default policy. In type-reduction models, transfer nonnegative utilities
+  through representatives and nonnegative type weights through fiber
+  cardinalities.
 - For finite exchange arguments, avoid re-proving whole objective sums by hand.
   Use a generic two-point finite-sum update lemma: if two functions differ only
   at `src` and `dst`, the total sum changes by the two pointwise deltas. Then

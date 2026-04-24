@@ -73,6 +73,10 @@ namespace TypeWeightedRecommendationModel
 def NonnegativeWeights {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
   ∀ k, 0 ≤ T.weight k
 
+/-- Entrywise nonnegativity of the reduced utility matrix. -/
+def NonnegativeUtilities {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
+  ∀ k j, 0 ≤ T.utility k j
+
 /-- Every user type has at least one strictly positive item. -/
 def RowHasPositiveItem {K n : ℕ} (T : TypeWeightedRecommendationModel K n) : Prop :=
   ∀ k, ∃ j, 0 < T.utility k j
@@ -117,6 +121,51 @@ noncomputable def normalizedItemUtility {K n : ℕ}
 noncomputable def itemFairness {K n : ℕ} [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n) : ℝ :=
   DecisionCore.finiteMin (normalizedItemUtility T ρ)
+
+/-- Nonnegative weights/utilities make every reduced raw item utility nonnegative. -/
+theorem rawItemUtility_nonneg_of_nonnegative
+    {K n : ℕ} (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (ρ : TypePolicy K n) (j : Item n) :
+    0 ≤ rawItemUtility T ρ j := by
+  unfold rawItemUtility
+  exact Finset.sum_nonneg (by
+    intro k _hk
+    exact mul_nonneg (mul_nonneg (hWeight k) (hUtil k j))
+      ENNReal.toReal_nonneg)
+
+/-- Nonnegative weights/utilities make every reduced item normalizer nonnegative. -/
+theorem itemNormalizer_nonneg_of_nonnegative
+    {K n : ℕ} (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (j : Item n) :
+    0 ≤ itemNormalizer T j := by
+  unfold itemNormalizer
+  exact Finset.sum_nonneg (by
+    intro k _hk
+    exact mul_nonneg (hWeight k) (hUtil k j))
+
+/-- Nonnegative weights/utilities make reduced normalized item utility nonnegative. -/
+theorem normalizedItemUtility_nonneg_of_nonnegative
+    {K n : ℕ} (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (ρ : TypePolicy K n) (j : Item n) :
+    0 ≤ normalizedItemUtility T ρ j := by
+  unfold normalizedItemUtility
+  by_cases hden : itemNormalizer T j = 0
+  · simp [hden]
+  · simpa [hden] using div_nonneg
+      (rawItemUtility_nonneg_of_nonnegative T hWeight hUtil ρ j)
+      (itemNormalizer_nonneg_of_nonnegative T hWeight hUtil j)
+
+/-- Nonnegative weights/utilities make reduced minimum item fairness nonnegative. -/
+theorem itemFairness_nonneg_of_nonnegative {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (ρ : TypePolicy K n) :
+    0 ≤ itemFairness T ρ := by
+  exact DecisionCore.finiteMin_nonneg (normalizedItemUtility T ρ)
+    (normalizedItemUtility_nonneg_of_nonnegative T hWeight hUtil ρ)
 
 /-- Attainable reduced-problem item fairness levels. -/
 def attainableItemFairnessSet {K n : ℕ} [NeZero n]
@@ -190,6 +239,34 @@ theorem attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem
   obtain ⟨ρ, _hfeas, hr⟩ := hr
   rw [hr]
   exact typeFairness_le_one_of_rowHasPositiveItem T hRow ρ
+
+/-- A canonical reduced policy used only to witness nonempty finite feasible sets. -/
+noncomputable def defaultTypePolicy {K n : ℕ} [NeZero n] : TypePolicy K n :=
+  DecisionCore.Policy.pure
+    (fun _ : UserType K => Classical.choice (inferInstance : Nonempty (Item n)))
+
+/--
+At baseline `γ = 0`, every reduced policy is feasible under nonnegative
+weights and utilities.
+-/
+theorem feasibleAtLevel_zero_of_nonnegative
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (ρ : TypePolicy K n) :
+    feasibleAtLevel T 0 ρ := by
+  unfold feasibleAtLevel
+  simpa using itemFairness_nonneg_of_nonnegative T hWeight hUtil ρ
+
+/-- The baseline reduced feasible value set is nonempty under nonnegativity. -/
+theorem attainableTypeFairnessAtLevel_zero_nonempty_of_nonnegative
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities) :
+    (attainableTypeFairnessAtLevel T 0).Nonempty := by
+  refine ⟨typeFairness T (defaultTypePolicy (K := K) (n := n)), ?_⟩
+  exact ⟨defaultTypePolicy (K := K) (n := n),
+    feasibleAtLevel_zero_of_nonnegative T hWeight hUtil _, rfl⟩
 
 /-- The reduced analogue of `U^*_min(γ, w)`. -/
 noncomputable def optimalTypeFairnessAtLevel {K n : ℕ} [NeZero K] [NeZero n]
