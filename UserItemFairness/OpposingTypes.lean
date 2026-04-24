@@ -1010,6 +1010,137 @@ theorem problem6Closed_sparseEqualized {n : ℕ}
   x_after_pivot_zero := fun {j} hj => problem6ClosedX_after alpha v hj
   y_before_pivot_zero := fun {j} hj => problem6ClosedY_before alpha v hj
 
+/--
+The only coordinate-level nonnegativity conditions not automatic from the
+closed form: the two pivot masses.
+-/
+structure Problem6ClosedNonnegativePivots {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) : Prop where
+  x_pivot_nonneg : 0 ≤ problem6ClosedX alpha v t t
+  y_pivot_nonneg : 0 ≤ problem6ClosedY alpha v t t
+
+/-- Under pivot nonnegativity, all closed-form `x_j` coordinates are nonnegative. -/
+theorem problem6ClosedX_nonneg {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (j : Item n) :
+    0 ≤ problem6ClosedX alpha v t j := by
+  by_cases hlt : j.val < t.val
+  · rw [problem6ClosedX_before alpha v hlt]
+    exact div_nonneg
+      (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+      (pairShare_pos j halpha0 halpha1 hpos).le
+  · by_cases heq : j = t
+    · subst j
+      exact hpivot.x_pivot_nonneg
+    · have hgt : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact heq (Fin.ext hval)
+        omega
+      rw [problem6ClosedX_after alpha v hgt]
+
+/-- Under pivot nonnegativity, all closed-form `y_j` coordinates are nonnegative. -/
+theorem problem6ClosedY_nonneg {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (j : Item n) :
+    0 ≤ problem6ClosedY alpha v t j := by
+  by_cases hlt : j.val < t.val
+  · rw [problem6ClosedY_before alpha v hlt]
+  · by_cases heq : j = t
+    · subst j
+      exact hpivot.y_pivot_nonneg
+    · have hgt : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact heq (Fin.ext hval)
+        omega
+      rw [problem6ClosedY_after alpha v hgt]
+      exact div_nonneg
+        (problem6ClosedValue_pos t halpha0 halpha1 hpos).le
+        (one_sub_pairShare_pos j halpha0 halpha1 hpos).le
+
+/-- Build a finite PMF from a nonnegative real vector with total mass one. -/
+noncomputable def pmfOfRealVector {n : ℕ}
+    (x : Item n → ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ x j)
+    (hsum : (∑ j : Item n, x j) = 1) : PMF (Item n) :=
+  PMF.ofFintype (fun j : Item n => ENNReal.ofReal (x j)) (by
+    calc
+      (∑ j : Item n, ENNReal.ofReal (x j))
+          = ENNReal.ofReal (∑ j : Item n, x j) := by
+            rw [← ENNReal.ofReal_sum_of_nonneg
+              (s := Finset.univ) (f := x)]
+            simp [hnonneg]
+      _ = 1 := by
+            simp [hsum])
+
+@[simp] theorem pmfOfRealVector_apply_toReal {n : ℕ}
+    (x : Item n → ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ x j)
+    (hsum : (∑ j : Item n, x j) = 1)
+    (j : Item n) :
+    ((pmfOfRealVector x hnonneg hsum) j).toReal = x j := by
+  unfold pmfOfRealVector
+  rw [PMF.ofFintype_apply]
+  exact ENNReal.toReal_ofReal (hnonneg j)
+
+/-- The Problem 6 closed-form real solution as a two-type policy. -/
+noncomputable def problem6ClosedPolicy {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    TypePolicy 2 n :=
+  fun k =>
+    if k = 0 then
+      pmfOfRealVector (problem6ClosedX alpha v t)
+        (problem6ClosedX_nonneg halpha0 halpha1 hpos hpivot)
+        (problem6ClosedX_sum_eq_one alpha v t)
+    else
+      pmfOfRealVector (problem6ClosedY alpha v t)
+        (problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot)
+        (problem6ClosedY_sum_eq_one alpha v t)
+
+@[simp] theorem problem6ClosedPolicy_zero_toReal {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (j : Item n) :
+    ((problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot 0) j).toReal =
+      problem6ClosedX alpha v t j := by
+  simp [problem6ClosedPolicy]
+
+@[simp] theorem problem6ClosedPolicy_one_toReal {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (j : Item n) :
+    ((problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot 1) j).toReal =
+      problem6ClosedY alpha v t j := by
+  simp [problem6ClosedPolicy]
+
+/-- The closed-form policy satisfies Problem 6's LP epigraph constraints. -/
+theorem problem6ClosedPolicy_feasible {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    problem6LPFeasible alpha v
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+      (problem6ClosedValue alpha v t) := by
+  intro j
+  rw [problem6ClosedPolicy_zero_toReal halpha0 halpha1 hpos hpivot,
+    problem6ClosedPolicy_one_toReal halpha0 halpha1 hpos hpivot]
+  exact le_of_eq (problem6Closed_item_eq t j halpha0 halpha1 hpos).symm
+
 /-- Lemma 5 pivot equation: `x_t = 1 - λ L_t`. -/
 theorem problem6SparseEqualized_x_pivot_eq
     {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}

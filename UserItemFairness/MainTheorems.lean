@@ -833,6 +833,46 @@ theorem paper_lemma5_problem6_closed_sparseEqualized
   exact problem6Closed_sparseEqualized t halpha0 halpha1 hpos
 
 /--
+Appendix D, Lemma 5 to Problem 6 policy bridge: under pivot nonnegativity,
+all closed-form `x_j` coordinates are nonnegative.
+-/
+theorem paper_lemma5_problem6_closedX_nonneg
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (j : Item n) :
+    0 ≤ problem6ClosedX alpha v t j := by
+  exact problem6ClosedX_nonneg halpha0 halpha1 hpos hpivot j
+
+/--
+Appendix D, Lemma 5 to Problem 6 policy bridge: under pivot nonnegativity,
+all closed-form `y_j` coordinates are nonnegative.
+-/
+theorem paper_lemma5_problem6_closedY_nonneg
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (j : Item n) :
+    0 ≤ problem6ClosedY alpha v t j := by
+  exact problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot j
+
+/--
+Problem 6 policy bridge: the closed-form coordinates build a feasible
+two-type policy whenever the pivot coordinates are nonnegative.
+-/
+theorem paper_problem6_closedPolicy_feasible
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    problem6LPFeasible alpha v
+      (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+      (problem6ClosedValue alpha v t) := by
+  exact problem6ClosedPolicy_feasible halpha0 halpha1 hpos hpivot
+
+/--
 Appendix D, Lemma 5: before the pivot, `x_j = I^*_min / q_j`.
 -/
 theorem paper_lemma5_problem6_x_before_pivot
