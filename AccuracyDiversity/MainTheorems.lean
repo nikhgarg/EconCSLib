@@ -84,6 +84,50 @@ theorem paper_bernoulli_optimum_first_order_condition
         (1 - B.successProb src) ^ (a.count src - 1) := by
   exact B.forwardMarginal_le_backwardMarginal_of_optimum N hopt hne hcan
 
+/--
+Finite i.i.d. Bernoulli equal-representation balance theorem.
+
+For identical Bernoulli item types, every finite optimum has pairwise type
+counts differing by at most one.
+-/
+theorem paper_iid_bernoulli_optimum_pairwise_balanced
+    {T : ℕ} (B : BernoulliSatisfactionModel T) (N : ℕ)
+    {a : CountAllocation T}
+    (hopt : B.toConsumptionModel.IsOptimalAtTotal N a)
+    (hlike : ∀ i j : ItemType T, B.likelihood i = B.likelihood j)
+    (hprob : ∀ i j : ItemType T, B.successProb i = B.successProb j)
+    (hlike_pos : ∀ i : ItemType T, 0 < B.likelihood i)
+    (hprob_pos : ∀ i : ItemType T, 0 < B.successProb i)
+    (hprob_lt_one : ∀ i : ItemType T, B.successProb i < 1) :
+    ∀ src dst : ItemType T, a.count src ≤ a.count dst + 1 := by
+  exact B.pairwise_count_le_succ_of_symmetric_optimum
+    N hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
+
+/--
+Finite i.i.d. Bernoulli `0`-homogeneity theorem.
+
+For identical Bernoulli item types and positive slate size `N`, every finite
+optimum has each type's recommendation share within `1 / N` of the uniform
+target share. This is the finite exact-count version of the paper's
+zero-homogeneity conclusion for i.i.d. Bernoulli item values.
+-/
+theorem paper_iid_bernoulli_optimum_uniform_homogeneity
+    {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T) (N : ℕ)
+    {a : CountAllocation T}
+    (hNpos : 0 < N)
+    (hopt : B.toConsumptionModel.IsOptimalAtTotal N a)
+    (hlike : ∀ i j : ItemType T, B.likelihood i = B.likelihood j)
+    (hprob : ∀ i j : ItemType T, B.successProb i = B.successProb j)
+    (hlike_pos : ∀ i : ItemType T, 0 < B.likelihood i)
+    (hprob_pos : ∀ i : ItemType T, 0 < B.successProb i)
+    (hprob_lt_one : ∀ i : ItemType T, B.successProb i < 1) :
+    (uniformProfile T).Approx a (1 / (N : ℝ)) := by
+  have hbal :
+      ∀ src dst : ItemType T, a.count src ≤ a.count dst + 1 :=
+    B.pairwise_count_le_succ_of_symmetric_optimum
+      N hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
+  exact uniformProfile_approx_of_pairwise_balanced_counts a hopt.1 hNpos hbal
+
 end BernoulliSatisfactionModel
 
 /--
@@ -107,5 +151,44 @@ theorem paper_two_type_forward_zero_le_backward_one
     B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ a ≤
       B.likelihood 1 * B.successProb 1 * (1 - B.successProb 1) ^ (b - 1) := by
   exact twoTypeAllocation_forward_zero_le_backward_one_of_optimum B N a b hopt hb
+
+/--
+Symmetric two-type Bernoulli finite homogeneity theorem.
+
+When two Bernoulli item types have the same likelihood and success probability,
+every finite optimum splits the slate between the two types up to a one-item
+rounding error.
+-/
+theorem paper_symmetric_two_type_bernoulli_optimum_balanced
+    (B : BernoulliSatisfactionModel 2) (N a b : ℕ)
+    (hopt : B.toConsumptionModel.IsOptimalAtTotal N (twoTypeAllocation a b))
+    (hlike : B.likelihood 0 = B.likelihood 1)
+    (hprob : B.successProb 0 = B.successProb 1)
+    (hlike_pos : 0 < B.likelihood 0)
+    (hprob_pos : 0 < B.successProb 0)
+    (hprob_lt_one : B.successProb 0 < 1) :
+    a ≤ b + 1 ∧ b ≤ a + 1 := by
+  exact twoTypeAllocation_balanced_of_symmetric_bernoulli_optimum
+    B N a b hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
+
+/--
+Symmetric two-type Bernoulli finite `0`-homogeneity theorem.
+
+When two Bernoulli item types have the same likelihood and success probability,
+every positive-size finite optimum is approximately equal-representation, with
+error at most `1 / N`.
+-/
+theorem paper_symmetric_two_type_bernoulli_optimum_equal_homogeneity
+    (B : BernoulliSatisfactionModel 2) (N a b : ℕ)
+    (hNpos : 0 < N)
+    (hopt : B.toConsumptionModel.IsOptimalAtTotal N (twoTypeAllocation a b))
+    (hlike : B.likelihood 0 = B.likelihood 1)
+    (hprob : B.successProb 0 = B.successProb 1)
+    (hlike_pos : 0 < B.likelihood 0)
+    (hprob_pos : 0 < B.successProb 0)
+    (hprob_lt_one : B.successProb 0 < 1) :
+    equalTwoTypeProfile.Approx (twoTypeAllocation a b) (1 / (N : ℝ)) := by
+  exact twoTypeAllocation_equalTwoTypeProfile_approx_of_symmetric_bernoulli_optimum
+    B N a b hNpos hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
 
 end AccuracyDiversity

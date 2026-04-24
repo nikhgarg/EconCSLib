@@ -34,5 +34,13 @@ this folder.
 | Finite exchange-improvement theorem | `ConsumptionModel.paper_finite_exchange_improvement` | formalized | `AccuracyDiversity/MainTheorems.lean` | none |
 | Finite first-order condition at an optimum | `ConsumptionModel.paper_finite_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
 | Bernoulli first-order condition | `BernoulliSatisfactionModel.paper_bernoulli_optimum_first_order_condition` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and valid one-count move |
+| Finite i.i.d. Bernoulli pairwise balance | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_pairwise_balanced` | formalized | `AccuracyDiversity/MainTheorems.lean` | identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
+| Finite i.i.d. Bernoulli `0`-homogeneity | `BernoulliSatisfactionModel.paper_iid_bernoulli_optimum_uniform_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | positive slate size, nonempty finite type space, identical likelihoods and Bernoulli success probabilities, all in `(0,1)` |
 | Two-type Bernoulli exchange inequalities | `paper_two_type_forward_one_le_backward_zero`, `paper_two_type_forward_zero_le_backward_one` | formalized | `AccuracyDiversity/MainTheorems.lean` | finite optimality and positive source count |
+| Two-type symmetric Bernoulli balance and equal-representation homogeneity | `paper_symmetric_two_type_bernoulli_optimum_balanced`, `paper_symmetric_two_type_bernoulli_optimum_equal_homogeneity` | formalized | `AccuracyDiversity/MainTheorems.lean` | symmetric likelihood/probability assumptions and positive slate size for homogeneity |
 | Asymptotic homogeneity of optima | `ConsumptionModel.AsymptoticHomogeneityTarget` | scaffold | `AccuracyDiversity/Optimization.lean` | connect finite exchange inequalities to asymptotic approximation bounds |
+
+The finite i.i.d. Bernoulli result is the closed finite-count core of the
+paper's Bernoulli `0`-homogeneity claim. The broader Theorem 1/2/3 statements
+still need order-statistic and asymptotic-limit machinery for general bounded,
+exponential, Pareto, and non-identical Bernoulli item-value models.

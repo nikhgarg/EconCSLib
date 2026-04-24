@@ -196,6 +196,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.
+  When the approximation proof is too large for the current pass, package it as
+  a named certificate whose statement is exactly the benchmark/revenue
+  inequality needed by the paper-facing theorem.
 - For GSP/position-auction work, first formalize `PositionOutcome` with
   per-click payments, utility, revenue, welfare, and feasibility. A concrete
   non-truthfulness witness is a good first theorem before building a generic
@@ -257,6 +260,14 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   at `src` and `dst`, the total sum changes by the two pointwise deltas. Then
   derive first-order inequalities at finite optima from "no profitable
   exchange" rather than restating optimality from scratch.
+- For recommendation diversity/homogeneity papers, split the proof into three
+  layers. First prove finite exchange or first-order conditions that force
+  pairwise count balance. Then prove a generic representation lemma converting
+  count error, such as `|count t - N / T| <= 1`, into share error, such as
+  `1 / N`, for the paper's `gamma`-homogeneity profile. Only then attack the
+  asymptotic/order-statistic layer. For symmetric i.i.d. Bernoulli items, the
+  finite balance proof should cancel the common positive likelihood-success
+  coefficient and use strict antitonicity of `(1 - q)^k` when `0 < q < 1`.
 - For finite fair-division allocation theorems, first prove the theorem for an
   abstract marginal bound. Then add a paper-facing corollary instantiating the
   bound as the finite maximum one-good marginal value.
