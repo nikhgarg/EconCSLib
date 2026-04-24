@@ -46,6 +46,29 @@ theorem typeOneShare_strictMono_alpha
   nlinarith [hprod, hlt]
 
 /--
+For fixed `α`, the share decreases when the opposing-value ratio
+`right / left` increases, stated in denominator-cleared form.
+-/
+theorem typeOneShare_lt_of_cross_mul_lt
+    {alpha left right left' right' : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hleft : 0 < left) (hright : 0 < right)
+    (hleft' : 0 < left') (hright' : 0 < right')
+    (hcross : right * left' < right' * left) :
+    typeOneShare alpha left' right' <
+      typeOneShare alpha left right := by
+  unfold typeOneShare
+  have hden :=
+    typeOneShare_denom_pos halpha0 halpha1 hleft hright
+  have hden' :=
+    typeOneShare_denom_pos halpha0 halpha1 hleft' hright'
+  rw [div_lt_div_iff₀ hden' hden]
+  ring_nf
+  have hscale : 0 < alpha * (1 - alpha) :=
+    mul_pos halpha0 (sub_pos.mpr halpha1)
+  nlinarith [hscale, hcross]
+
+/--
 Appendix E, Lemma 16, scalar midpoint component: at `α = 1/2`, the share is
 above `1/2` when the left utility exceeds the right utility.
 -/
@@ -100,6 +123,10 @@ noncomputable def pairShare {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (j : Item n) : ℝ :=
   typeOneShare alpha (v j) (v (reverseItem j))
 
+/-- Values are strictly decreasing in the item index, matching `v₁ > ... > vₙ`. -/
+def StrictlyDecreasingByIndex {n : ℕ} (v : Item n → ℝ) : Prop :=
+  ∀ ⦃i j : Item n⦄, i.val < j.val → v j < v i
+
 /--
 Appendix D, Lemma 9, indexed alpha-monotonicity component:
 for each item `j`, `q_j(α)` strictly increases with `α`.
@@ -113,6 +140,48 @@ theorem pairShare_strictMono_alpha
     pairShare alpha v j < pairShare alpha' v j := by
   exact typeOneShare_strictMono_alpha
     halpha0 halpha1 halpha0' halpha1' hlt (hpos j) (hpos (reverseItem j))
+
+/-- Reversing item indices flips strict order. -/
+theorem reverseItem_val_lt_of_val_lt {n : ℕ} {i j : Item n}
+    (hij : i.val < j.val) :
+    (reverseItem j).val < (reverseItem i).val := by
+  simp [reverseItem]
+  omega
+
+/--
+Appendix D, Lemma 9, indexed item-monotonicity component:
+for a strictly decreasing value vector, `q_j(α)` strictly decreases as the item
+index `j` increases.
+-/
+theorem pairShare_strictAnti_index
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val < j.val) :
+    pairShare alpha v j < pairShare alpha v i := by
+  have hleft : 0 < v i := hpos i
+  have hright : 0 < v (reverseItem i) := hpos (reverseItem i)
+  have hleft' : 0 < v j := hpos j
+  have hright' : 0 < v (reverseItem j) := hpos (reverseItem j)
+  have hleft_lt : v j < v i := hdec hij
+  have hrev_val : (reverseItem j).val < (reverseItem i).val :=
+    reverseItem_val_lt_of_val_lt hij
+  have hrev_lt : v (reverseItem i) < v (reverseItem j) :=
+    hdec hrev_val
+  have hcross :
+      v (reverseItem i) * v j < v (reverseItem j) * v i := by
+    have h1 :
+        v (reverseItem i) * v j <
+          v (reverseItem j) * v j := by
+      exact mul_lt_mul_of_pos_right hrev_lt hleft'
+    have h2 :
+        v (reverseItem j) * v j <
+          v (reverseItem j) * v i := by
+      exact mul_lt_mul_of_pos_left hleft_lt hright'
+    exact lt_trans h1 h2
+  exact typeOneShare_lt_of_cross_mul_lt
+    halpha0 halpha1 hleft hright hleft' hright' hcross
 
 /--
 Appendix E, Lemma 16, indexed midpoint component: if item `j` has higher value
@@ -148,10 +217,6 @@ theorem pairShare_half_eq_half_of_eq_reverse
     (heq : v j = v (reverseItem j)) :
     pairShare (1 / 2) v j = (1 / 2 : ℝ) := by
   exact typeOneShare_half_eq_half_of_eq (hpos j) heq
-
-/-- Values are strictly decreasing in the item index, matching `v₁ > ... > vₙ`. -/
-def StrictlyDecreasingByIndex {n : ℕ} (v : Item n → ℝ) : Prop :=
-  ∀ ⦃i j : Item n⦄, i.val < j.val → v j < v i
 
 /-- If `j` is before its reverse partner, strict index-decrease gives `v_rev < v_j`. -/
 theorem reverse_value_lt_of_val_lt_reverse
@@ -225,6 +290,96 @@ theorem val_eq_reverseItem_iff {n : ℕ} (j : Item n) :
     j.val = (reverseItem j).val ↔ 2 * j.val + 1 = n := by
   simp [reverseItem]
   omega
+
+/--
+The reduced two-type model for the opposing-preference setting in Theorem 3.
+Type `0` has values `v_j`; type `1` has reversed values `v_{n-j+1}`.
+-/
+noncomputable def twoTypeReducedModel {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel 2 n where
+  utility := fun k j => if k = 0 then v j else v (reverseItem j)
+  weight := fun k => if k = 0 then alpha else 1 - alpha
+
+@[simp] theorem twoTypeReducedModel_utility_zero {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    (twoTypeReducedModel alpha v).utility 0 j = v j := by
+  simp [twoTypeReducedModel]
+
+@[simp] theorem twoTypeReducedModel_utility_one {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    (twoTypeReducedModel alpha v).utility 1 j = v (reverseItem j) := by
+  simp [twoTypeReducedModel]
+
+@[simp] theorem twoTypeReducedModel_weight_zero {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) :
+    (twoTypeReducedModel alpha v).weight 0 = alpha := by
+  simp [twoTypeReducedModel]
+
+@[simp] theorem twoTypeReducedModel_weight_one {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) :
+    (twoTypeReducedModel alpha v).weight 1 = 1 - alpha := by
+  simp [twoTypeReducedModel]
+
+/-- Interior type shares give strictly positive type weights. -/
+theorem twoTypeReducedModel_positiveWeights {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1) :
+    (twoTypeReducedModel alpha v).PositiveWeights := by
+  intro k
+  fin_cases k <;> simp [halpha0, sub_pos.mpr halpha1]
+
+/-- Positive base values give strictly positive reduced utilities. -/
+theorem twoTypeReducedModel_positiveUtilities {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (twoTypeReducedModel alpha v).PositiveUtilities := by
+  intro k j
+  fin_cases k <;> simp [hpos]
+
+/-- Item normalizers in the two-type model are the denominators of `q_j(α)`. -/
+theorem twoTypeReducedModel_itemNormalizer_eq {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    TypeWeightedRecommendationModel.itemNormalizer
+      (twoTypeReducedModel alpha v) j =
+      alpha * v j + (1 - alpha) * v (reverseItem j) := by
+  unfold TypeWeightedRecommendationModel.itemNormalizer
+  have huniv : (Finset.univ : Finset (UserType 2)) = {0, 1} := by
+    decide
+  rw [huniv]
+  simp
+
+/-- Raw item utility in the two-type model expanded by type policies. -/
+theorem twoTypeReducedModel_rawItemUtility_eq {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (j : Item n) :
+    TypeWeightedRecommendationModel.rawItemUtility
+      (twoTypeReducedModel alpha v) ρ j =
+      alpha * v j * (ρ 0 j).toReal +
+        (1 - alpha) * v (reverseItem j) * (ρ 1 j).toReal := by
+  unfold TypeWeightedRecommendationModel.rawItemUtility
+  have huniv : (Finset.univ : Finset (UserType 2)) = {0, 1} := by
+    decide
+  rw [huniv]
+  simp
+
+/--
+Problem 6 item-utility expansion: normalized item utility is the convex
+combination `q_j(α) x_j + (1-q_j(α)) y_j`.
+-/
+theorem twoTypeReducedModel_normalizedItemUtility_eq_pairShare
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (j : Item n)
+    (hden : 0 < alpha * v j + (1 - alpha) * v (reverseItem j)) :
+    TypeWeightedRecommendationModel.normalizedItemUtility
+      (twoTypeReducedModel alpha v) ρ j =
+      pairShare alpha v j * (ρ 0 j).toReal +
+        (1 - pairShare alpha v j) * (ρ 1 j).toReal := by
+  unfold TypeWeightedRecommendationModel.normalizedItemUtility
+  rw [twoTypeReducedModel_itemNormalizer_eq]
+  simp [hden.ne']
+  rw [twoTypeReducedModel_rawItemUtility_eq]
+  unfold pairShare typeOneShare
+  field_simp [hden.ne']
+  ring
 
 end OpposingTypes
 end UserItemFairness

@@ -568,6 +568,19 @@ theorem paper_lemma9_pairShare_strictly_increases_in_alpha
     halpha0 halpha1 halpha0' halpha1' hlt hpos
 
 /--
+Appendix D, Lemma 9, indexed form: for a strictly decreasing value vector,
+`q_j(α)` strictly decreases as the item index `j` increases.
+-/
+theorem paper_lemma9_pairShare_strictly_decreases_in_index
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val < j.val) :
+    pairShare alpha v j < pairShare alpha v i := by
+  exact pairShare_strictAnti_index halpha0 halpha1 hpos hdec hij
+
+/--
 Appendix E, Lemma 16, indexed form: `q_j(1/2) > 1/2` when item `j` has
 higher value than its opposite item.
 -/
@@ -651,6 +664,32 @@ theorem paper_lemma16_val_eq_reverseItem_iff
     {n : ℕ} (j : Item n) :
     j.val = (reverseItem j).val ↔ 2 * j.val + 1 = n := by
   exact val_eq_reverseItem_iff j
+
+/--
+Problem 6 setup: in the two-type opposing-preference model, item normalizers
+are the denominators of `q_j(α)`.
+-/
+theorem paper_problem6_twoType_itemNormalizer_eq
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    TypeWeightedRecommendationModel.itemNormalizer
+      (twoTypeReducedModel alpha v) j =
+      alpha * v j + (1 - alpha) * v (reverseItem j) := by
+  exact twoTypeReducedModel_itemNormalizer_eq alpha v j
+
+/--
+Problem 6 setup: in the two-type opposing-preference model, normalized item
+utility expands as `q_j(α) x_j + (1 - q_j(α)) y_j`.
+-/
+theorem paper_problem6_normalizedItemUtility_eq_pairShare
+    {n : ℕ} (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n)
+    (j : Item n)
+    (hden : 0 < alpha * v j + (1 - alpha) * v (reverseItem j)) :
+    TypeWeightedRecommendationModel.normalizedItemUtility
+      (twoTypeReducedModel alpha v) ρ j =
+      pairShare alpha v j * (ρ 0 j).toReal +
+        (1 - pairShare alpha v j) * (ρ 1 j).toReal := by
+  exact twoTypeReducedModel_normalizedItemUtility_eq_pairShare
+    alpha v ρ j hden
 
 end OpposingTypes
 
