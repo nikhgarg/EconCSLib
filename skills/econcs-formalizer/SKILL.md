@@ -209,7 +209,9 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   Keep feasibility separate from direct mechanisms because approximation
   algorithms may leave goods unallocated. For single-minded bidders, define the
   bundle-containment valuation before proving greedy allocation or
-  critical-value payment theorems.
+  critical-value payment theorems. Prove pairwise-disjoint accepted-set
+  feasibility separately from greedy optimality; this lets the greedy algorithm
+  theorem focus on its acceptance invariant and critical-price monotonicity.
 - For inequality-heavy proofs, use certificate structures with fields matching
   the exact nonnegativity, strict positivity, and comparison obligations needed
   by the final theorem.

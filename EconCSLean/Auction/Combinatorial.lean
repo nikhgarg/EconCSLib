@@ -267,5 +267,79 @@ theorem singleMindedValuationProfile_empty_eq_zero_of_nonempty
     singleMindedValuationProfile bids i ∅ = 0 := by
   exact SingleMindedBid.valuation_empty_eq_zero_of_nonempty (bids i) (hb i)
 
+theorem singleMindedValuationProfile_normalized_of_nonempty
+    [DecidableEq Item] (bids : Bidder → SingleMindedBid Item)
+    (hb : ∀ i, (bids i).desired.Nonempty) :
+    CombinatorialAuction.Normalized
+      (singleMindedValuationProfile bids) := by
+  intro i
+  exact singleMindedValuationProfile_empty_eq_zero_of_nonempty bids hb i
+
+/--
+Single-minded valuation profiles with nonempty desired bundles form an
+admissible class for normalized-profile critical-price truthfulness.
+-/
+def IsNonemptySingleMindedProfile [DecidableEq Item]
+    (values : CombinatorialReport Bidder Item) : Prop :=
+  ∃ bids : Bidder → SingleMindedBid Item,
+    (∀ i, (bids i).desired.Nonempty) ∧
+      values = singleMindedValuationProfile bids
+
+theorem targetBundleThresholdAuction_truthfulOn_singleMindedProfiles
+    [DecidableEq Bidder] [DecidableEq Item]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (hind : BundlePriceOwnReportIndependent price) :
+    (targetBundleThresholdAuction target price).TruthfulDominantStrategyOn
+      IsNonemptySingleMindedProfile := by
+  intro values hvalues i report
+  rcases hvalues with ⟨bids, hb, rfl⟩
+  exact targetBundleThresholdAuction_truthfulOn_normalized target price hind
+    (singleMindedValuationProfile bids)
+    (singleMindedValuationProfile_normalized_of_nonempty bids hb)
+    i report
+
+/-! ## Feasible allocations for accepted single-minded bidders -/
+
+/-- Accepted single-minded bidders receive their desired bundles; others receive nothing. -/
+def singleMindedAllocation [DecidableEq Bidder]
+    (bids : Bidder → SingleMindedBid Item) (accepted : Finset Bidder) :
+    BundleAllocation Bidder Item :=
+  fun i => if i ∈ accepted then (bids i).desired else ∅
+
+/-- Accepted desired bundles are pairwise disjoint. -/
+def PairwiseDisjointDesired [DecidableEq Bidder]
+    [DecidableEq Item]
+    (bids : Bidder → SingleMindedBid Item) (accepted : Finset Bidder) : Prop :=
+  ∀ ⦃i j : Bidder⦄,
+    i ∈ accepted → j ∈ accepted → i ≠ j →
+      Disjoint (bids i).desired (bids j).desired
+
+theorem singleMindedAllocation_feasible [DecidableEq Bidder] [DecidableEq Item]
+    (bids : Bidder → SingleMindedBid Item)
+    (accepted : Finset Bidder) (goods : Finset Item)
+    (hgoods : ∀ i, i ∈ accepted → (bids i).desired ⊆ goods)
+    (hdisjoint : PairwiseDisjointDesired bids accepted) :
+    IsFeasibleBundleAllocation
+      (singleMindedAllocation bids accepted) goods := by
+  constructor
+  · intro i g hg
+    by_cases hi : i ∈ accepted
+    · have hgdesired : g ∈ (bids i).desired := by
+        simpa [singleMindedAllocation, hi] using hg
+      exact hgoods i hi hgdesired
+    · simp [singleMindedAllocation, hi] at hg
+  · intro i j g hij hgi hgj
+    by_cases hi : i ∈ accepted
+    · by_cases hj : j ∈ accepted
+      · have hgiDesired : g ∈ (bids i).desired := by
+          simpa [singleMindedAllocation, hi] using hgi
+        have hgjDesired : g ∈ (bids j).desired := by
+          simpa [singleMindedAllocation, hj] using hgj
+        exact (Finset.disjoint_left.mp (hdisjoint hi hj hij))
+          hgiDesired hgjDesired
+      · simp [singleMindedAllocation, hj] at hgj
+    · simp [singleMindedAllocation, hi] at hgi
+
 end Auction
 end EconCSLean

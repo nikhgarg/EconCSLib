@@ -59,6 +59,8 @@ formalized.
 | Single-minded bidder valuation | `SingleMindedBid.valuation` | formalized | `EconCSLean/Auction/Combinatorial.lean` | none |
 | Reject-all combinatorial auction truthfulness | `paper_combinatorial_reject_all_truthful` | formalized baseline theorem | `EconCSLean/Auction/MainTheorems.lean` | none |
 | Target-bundle critical-price truthfulness | `paper_combinatorial_target_bundle_threshold_truthful_on_normalized` | formalized on normalized valuations | `EconCSLean/Auction/MainTheorems.lean` | offered bundle price must be own-report independent |
+| Target-bundle critical-price truthfulness for single-minded profiles | `paper_combinatorial_target_bundle_threshold_truthful_on_single_minded` | formalized | `EconCSLean/Auction/MainTheorems.lean` | desired bundles must be nonempty |
+| Pairwise-disjoint accepted single-minded allocation feasibility | `singleMindedAllocation_feasible` | formalized | `EconCSLean/Auction/Combinatorial.lean` | accepted desired bundles must be pairwise disjoint and contained in goods |
 
 ## Current Formalization Plan
 
@@ -76,6 +78,7 @@ formalized.
    finite ordered slots and formalize symmetric Nash equilibrium revenue/welfare
    comparisons in certificate form.
 3. Combinatorial auctions: build on `CombinatorialAuction`,
-   `IsFeasibleBundleAllocation`, and `SingleMindedBid.valuation`; next add the
-   greedy allocation rule for single-minded bidders and its critical-value
-   payment theorem. Reuse `FairDivision.Bundle` throughout.
+   `IsFeasibleBundleAllocation`, `SingleMindedBid.valuation`, and the
+   single-minded critical-price/feasibility lemmas; next add the greedy
+   allocation rule for single-minded bidders and prove its pairwise-disjoint
+   accepted-set invariant. Reuse `FairDivision.Bundle` throughout.

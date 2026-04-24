@@ -264,5 +264,20 @@ theorem paper_combinatorial_target_bundle_threshold_truthful_on_normalized
       CombinatorialAuction.Normalized := by
   exact targetBundleThresholdAuction_truthfulOn_normalized target price hind
 
+/--
+Target-bundle critical-price mechanisms are truthful on nonempty single-minded
+valuation profiles when each bidder's offered price is independent of that
+bidder's own report.
+-/
+theorem paper_combinatorial_target_bundle_threshold_truthful_on_single_minded
+    {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
+    (target : Bidder → Bundle Item)
+    (price : CombinatorialReport Bidder Item → Bidder → ℝ)
+    (hind : BundlePriceOwnReportIndependent price) :
+    (targetBundleThresholdAuction target price).TruthfulDominantStrategyOn
+      IsNonemptySingleMindedProfile := by
+  exact targetBundleThresholdAuction_truthfulOn_singleMindedProfiles
+    target price hind
+
 end Auction
 end EconCSLean
