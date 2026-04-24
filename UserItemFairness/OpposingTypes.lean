@@ -609,6 +609,119 @@ theorem lemma4_exchange_yj_sub_transfer_gt_yi
   nlinarith
 
 /--
+Appendix D, Lemma 4 exchange algebra: the exact transfer preserves item `i`'s
+item-fairness value before the small positive `ε₂` perturbation.
+-/
+theorem lemma4_exchange_i_value_eq
+    {qi c yi : ℝ} (hqi1 : qi < 1) :
+    (1 - qi) * (yi + qi * c / (1 - qi)) =
+      qi * c + (1 - qi) * yi := by
+  have hden : 1 - qi ≠ 0 := ne_of_gt (sub_pos.mpr hqi1)
+  field_simp [hden]
+  ring
+
+/--
+Appendix D, Lemma 4 exchange algebra: moving the `x_i` mass to the earlier
+zero coordinate `j` strictly improves item `j` before the small `ε` terms.
+-/
+theorem lemma4_exchange_j_value_gt
+    {qi qj c yj : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) (hc : 0 < c) :
+    qj * c + (1 - qj) * (yj - qi * c / (1 - qi)) >
+      (1 - qj) * yj := by
+  have hmargin :
+      0 < qj - qi * ((1 - qj) / (1 - qi)) :=
+    lemma4_exchange_margin_pos hqi1 hqij
+  have hden : 1 - qi ≠ 0 := ne_of_gt (sub_pos.mpr hqi1)
+  have hrewrite :
+      qj * c + (1 - qj) * (yj - qi * c / (1 - qi)) -
+          (1 - qj) * yj =
+        c * (qj - qi * ((1 - qj) / (1 - qi))) := by
+    field_simp [hden]
+    ring
+  have hpos :
+      0 < c * (qj - qi * ((1 - qj) / (1 - qi))) :=
+    mul_pos hc hmargin
+  nlinarith
+
+/--
+Appendix D, Lemma 4 exchange algebra: there are small positive `ε₁, ε₂`
+making both affected item values strictly larger after the paper's perturbation.
+-/
+theorem lemma4_exchange_exists_pos_eps_i_j_value_gt
+    {qi qj c yi yj : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) (hc : 0 < c) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ 0 < eps2 ∧
+      (1 - qi) * (yi + qi * c / (1 - qi) + eps2) >
+        qi * c + (1 - qi) * yi ∧
+      qj * (c - eps1) +
+          (1 - qj) * (yj - qi * c / (1 - qi) - eps2) >
+        (1 - qj) * yj := by
+  let margin : ℝ := qj - qi * ((1 - qj) / (1 - qi))
+  let eps : ℝ := c * margin / 4
+  have hmargin : 0 < margin := by
+    simpa [margin] using lemma4_exchange_margin_pos hqi1 hqij
+  have hMpos : 0 < c * margin := mul_pos hc hmargin
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    positivity
+  have hden : 1 - qi ≠ 0 := ne_of_gt (sub_pos.mpr hqi1)
+  refine ⟨eps, eps, heps_pos, heps_pos, ?_, ?_⟩
+  · have hdiff :
+        (1 - qi) * (yi + qi * c / (1 - qi) + eps) -
+            (qi * c + (1 - qi) * yi) =
+          (1 - qi) * eps := by
+        field_simp [hden]
+        ring
+    have hpos : 0 < (1 - qi) * eps :=
+      mul_pos (sub_pos.mpr hqi1) heps_pos
+    nlinarith
+  · have hdiff :
+        qj * (c - eps) +
+            (1 - qj) * (yj - qi * c / (1 - qi) - eps) -
+            (1 - qj) * yj =
+          c * margin - eps := by
+        dsimp [margin]
+        field_simp [hden]
+        ring
+    have hpositive : 0 < c * margin - eps := by
+      dsimp [eps]
+      nlinarith
+    nlinarith
+
+/--
+Appendix D, Lemma 4 exchange algebra: after the exact transfer, the donor
+coordinate `y_j` remains nonnegative.
+-/
+theorem lemma4_exchange_yj_after_nonneg
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    0 ≤ yj - qi * c / (1 - qi) := by
+  have hlt :=
+    lemma4_exchange_yj_sub_transfer_gt_yi
+      hqi0 hqi1 hqj1 hqij hc hyi heq
+  linarith
+
+/--
+Appendix D, Lemma 4 exchange algebra: after the exact transfer, the receiver
+coordinate `y_i` remains below one whenever the original donor coordinate did.
+-/
+theorem lemma4_exchange_yi_after_lt_one
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (hyj_le_one : yj ≤ 1)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    yi + qi * c / (1 - qi) < 1 := by
+  have hlt :=
+    lemma4_exchange_transfer_lt
+      hqi0 hqi1 hqj1 hqij hc hyi heq
+  exact lt_of_lt_of_le hlt hyj_le_one
+
+/--
 Problem 6 dual algebra: if `q_t ≤ q_j`, the left-side dual coefficient also
 respects the `y` budget.
 -/
@@ -704,6 +817,135 @@ theorem lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
     lemma4_pairShare_exchange_transfer_lt
       halpha0 halpha1 hpos hdec hji hc hyi heq
   nlinarith
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: the exact transfer preserves
+item `i`'s value before the small positive `ε₂` perturbation.
+-/
+theorem lemma4_pairShare_exchange_i_value_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i : Item n}
+    {c yi : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (1 - pairShare alpha v i) *
+        (yi + pairShare alpha v i * c /
+          (1 - pairShare alpha v i)) =
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi := by
+  exact lemma4_exchange_i_value_eq
+    (pairShare_lt_one i halpha0 halpha1 hpos)
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: moving positive `x_i` mass to
+an earlier zero coordinate `j` strictly improves item `j`.
+-/
+theorem lemma4_pairShare_exchange_j_value_gt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) :
+    pairShare alpha v j * c +
+        (1 - pairShare alpha v j) *
+          (yj - pairShare alpha v i * c /
+            (1 - pairShare alpha v i)) >
+      (1 - pairShare alpha v j) * yj := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_j_value_gt
+    (pairShare_lt_one i halpha0 halpha1 hpos) hqij hc
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: small positive `ε₁, ε₂` can be
+chosen so both affected item values strictly increase.
+-/
+theorem lemma4_pairShare_exchange_exists_pos_eps_i_j_value_gt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) :
+    ∃ eps1 eps2 : ℝ,
+      0 < eps1 ∧ 0 < eps2 ∧
+      (1 - pairShare alpha v i) *
+          (yi + pairShare alpha v i * c /
+            (1 - pairShare alpha v i) + eps2) >
+        pairShare alpha v i * c +
+          (1 - pairShare alpha v i) * yi ∧
+      pairShare alpha v j * (c - eps1) +
+          (1 - pairShare alpha v j) *
+            (yj - pairShare alpha v i * c /
+              (1 - pairShare alpha v i) - eps2) >
+        (1 - pairShare alpha v j) * yj := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_exists_pos_eps_i_j_value_gt
+    (pairShare_lt_one i halpha0 halpha1 hpos) hqij hc
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
+donor coordinate `y_j` remains nonnegative.
+-/
+theorem lemma4_pairShare_exchange_yj_after_nonneg
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    0 ≤ yj - pairShare alpha v i * c /
+        (1 - pairShare alpha v i) := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_yj_after_nonneg
+    (pairShare_pos i halpha0 halpha1 hpos)
+    (pairShare_lt_one i halpha0 halpha1 hpos)
+    (pairShare_lt_one j halpha0 halpha1 hpos)
+    hqij hc hyi heq
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
+receiver coordinate `y_i` remains below one whenever the original donor
+coordinate did.
+-/
+theorem lemma4_pairShare_exchange_yi_after_lt_one
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi) (hyj_le_one : yj ≤ 1)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    yi + pairShare alpha v i * c /
+        (1 - pairShare alpha v i) < 1 := by
+  have hqij :
+      pairShare alpha v i < pairShare alpha v j :=
+    pairShare_strictAnti_index
+      halpha0 halpha1 hpos hdec hji
+  exact lemma4_exchange_yi_after_lt_one
+    (pairShare_pos i halpha0 halpha1 hpos)
+    (pairShare_lt_one i halpha0 halpha1 hpos)
+    (pairShare_lt_one j halpha0 halpha1 hpos)
+    hqij hc hyi hyj_le_one heq
 
 /--
 Appendix E, Lemma 16, indexed midpoint component: if item `j` has higher value

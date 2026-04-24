@@ -617,6 +617,54 @@ theorem paper_lemma4_exchange_yj_sub_transfer_gt_yi
     hqi0 hqi1 hqj1 hqij hc hyi heq
 
 /--
+Appendix D, Lemma 4 exchange algebra: the exact transfer preserves item `i`
+before the small positive `ε₂` perturbation.
+-/
+theorem paper_lemma4_exchange_i_value_eq
+    {qi c yi : ℝ} (hqi1 : qi < 1) :
+    (1 - qi) * (yi + qi * c / (1 - qi)) =
+      qi * c + (1 - qi) * yi := by
+  exact lemma4_exchange_i_value_eq hqi1
+
+/--
+Appendix D, Lemma 4 exchange algebra: the exact transfer strictly improves
+item `j` before the small `ε` terms.
+-/
+theorem paper_lemma4_exchange_j_value_gt
+    {qi qj c yj : ℝ}
+    (hqi1 : qi < 1) (hqij : qi < qj) (hc : 0 < c) :
+    qj * c + (1 - qj) * (yj - qi * c / (1 - qi)) >
+      (1 - qj) * yj := by
+  exact lemma4_exchange_j_value_gt hqi1 hqij hc
+
+/--
+Appendix D, Lemma 4 exchange algebra: the donor coordinate remains
+nonnegative after the exact transfer.
+-/
+theorem paper_lemma4_exchange_yj_after_nonneg
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    0 ≤ yj - qi * c / (1 - qi) := by
+  exact lemma4_exchange_yj_after_nonneg
+    hqi0 hqi1 hqj1 hqij hc hyi heq
+
+/--
+Appendix D, Lemma 4 exchange algebra: the receiver coordinate remains below
+one after the exact transfer.
+-/
+theorem paper_lemma4_exchange_yi_after_lt_one
+    {qi qj c yi yj : ℝ}
+    (hqi0 : 0 < qi) (hqi1 : qi < 1) (hqj1 : qj < 1)
+    (hqij : qi < qj) (hc : 0 < c) (hyi : 0 ≤ yi)
+    (hyj_le_one : yj ≤ 1)
+    (heq : qi * c + (1 - qi) * yi = (1 - qj) * yj) :
+    yi + qi * c / (1 - qi) < 1 := by
+  exact lemma4_exchange_yi_after_lt_one
+    hqi0 hqi1 hqj1 hqij hc hyi hyj_le_one heq
+
+/--
 Appendix D, Lemma 4 indexed exchange margin: if `j` is before `i`, then
 `q_j > q_i`, so the item-`j` perturbation has positive slack.
 -/
@@ -673,6 +721,85 @@ theorem paper_lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
         (1 - pairShare alpha v i) := by
   exact lemma4_pairShare_exchange_yj_sub_transfer_gt_yi
     halpha0 halpha1 hpos hdec hji hc hyi heq
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: the exact transfer preserves
+item `i` before the small positive `ε₂` perturbation.
+-/
+theorem paper_lemma4_pairShare_exchange_i_value_eq
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i : Item n}
+    {c yi : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    (1 - pairShare alpha v i) *
+        (yi + pairShare alpha v i * c /
+          (1 - pairShare alpha v i)) =
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi := by
+  exact lemma4_pairShare_exchange_i_value_eq
+    halpha0 halpha1 hpos
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: moving positive `x_i` mass to
+an earlier zero coordinate `j` strictly improves item `j`.
+-/
+theorem paper_lemma4_pairShare_exchange_j_value_gt
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) :
+    pairShare alpha v j * c +
+        (1 - pairShare alpha v j) *
+          (yj - pairShare alpha v i * c /
+            (1 - pairShare alpha v i)) >
+      (1 - pairShare alpha v j) * yj := by
+  exact lemma4_pairShare_exchange_j_value_gt
+    halpha0 halpha1 hpos hdec hji hc
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
+donor coordinate remains nonnegative.
+-/
+theorem paper_lemma4_pairShare_exchange_yj_after_nonneg
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    0 ≤ yj - pairShare alpha v i * c /
+        (1 - pairShare alpha v i) := by
+  exact lemma4_pairShare_exchange_yj_after_nonneg
+    halpha0 halpha1 hpos hdec hji hc hyi heq
+
+/--
+Appendix D, Lemma 4 indexed exchange algebra: after the exact transfer, the
+receiver coordinate remains below one.
+-/
+theorem paper_lemma4_pairShare_exchange_yi_after_lt_one
+    {n : ℕ} {alpha : ℝ} {v : Item n → ℝ} {i j : Item n}
+    {c yi yj : ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hji : j.val < i.val)
+    (hc : 0 < c) (hyi : 0 ≤ yi) (hyj_le_one : yj ≤ 1)
+    (heq :
+      pairShare alpha v i * c +
+        (1 - pairShare alpha v i) * yi =
+          (1 - pairShare alpha v j) * yj) :
+    yi + pairShare alpha v i * c /
+        (1 - pairShare alpha v i) < 1 := by
+  exact lemma4_pairShare_exchange_yi_after_lt_one
+    halpha0 halpha1 hpos hdec hji hc hyi hyj_le_one heq
 
 /--
 Appendix D, Lemma 11 algebra: the ratio `q_t(α)/q_j(α)` after expanding the
