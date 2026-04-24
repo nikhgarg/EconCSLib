@@ -2846,6 +2846,19 @@ structure MsvvObjectiveBoundCertificate
         (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) ≤
       I.revenue A
 
+/-- Finite small-bids MSVV objective bound with an explicit additive error. -/
+structure MsvvApproxObjectiveBoundCertificate
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query) (error : ℝ) : Prop where
+  scaled_dual_bound :
+    let A := I.runAssignment I.balanceChoiceRule history
+    msvvRatio *
+      I.dualObjective (I.msvvNormalizedAlphaFromAssignment A)
+        (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) ≤
+      I.revenue A + error
+
 /--
 The remaining history-level MSVV accounting seam after the query-dual summation
 lemmas. This certificate isolates the analytic/small-bids step: advertiser
@@ -2871,6 +2884,30 @@ structure MsvvHistoryAccountingCertificate
         I.historyMaxBidErrorSum ε history ≤
       I.revenue A
 
+/--
+Approximate history-level accounting seam for the finite small-bids analysis.
+The explicit `error` absorbs the remaining advertiser-alpha discretization and
+small-bids limiting terms.
+-/
+structure MsvvHistoryApproxAccountingCertificate
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query) (ε error : ℝ) : Prop where
+  nonnegative_bids : I.NonnegativeBids
+  positive_budgets : I.PositiveBudgets
+  history_nodup : history.Nodup
+  history_covers_queries : historyFinset history = Finset.univ
+  epsilon_nonneg : 0 ≤ ε
+  small_bids : I.SmallBids ε
+  scaled_accounting_bound :
+    let A := I.runAssignment I.balanceChoiceRule history
+    msvvRatio *
+        (∑ a : Advertiser, I.budget a * I.msvvNormalizedAlphaFromAssignment A a) +
+        I.historyBalanceChargeFrom I.balanceChoiceRule initialHistoryState history +
+        I.historyMaxBidErrorSum ε history ≤
+      I.revenue A + error
+
 theorem msvvObjectiveBoundCertificate_of_historyAccounting
     [Fintype Advertiser] [Nonempty Advertiser]
     [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
@@ -2878,6 +2915,41 @@ theorem msvvObjectiveBoundCertificate_of_historyAccounting
     (history : List Query) {ε : ℝ}
     (hcert : I.MsvvHistoryAccountingCertificate history ε) :
     I.MsvvObjectiveBoundCertificate history := by
+  refine ⟨?_⟩
+  let A := I.runAssignment I.balanceChoiceRule history
+  have hquery :
+      msvvRatio *
+        (∑ q : Query,
+          I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A) q) ≤
+        I.historyBalanceChargeFrom I.balanceChoiceRule
+          initialHistoryState history +
+          I.historyMaxBidErrorSum ε history := by
+    simpa [A] using
+      msvvRatio_mul_sum_maxSlackBeta_normalized_balanceRun_le_balanceCharge_add_maxBidError_of_cover
+        I hcert.nonnegative_bids hcert.positive_budgets history
+        hcert.history_nodup hcert.history_covers_queries
+        hcert.epsilon_nonneg hcert.small_bids
+  have hdual :
+      msvvRatio *
+          I.dualObjective (I.msvvNormalizedAlphaFromAssignment A)
+            (I.maxSlackBeta (I.msvvNormalizedAlphaFromAssignment A)) ≤
+        msvvRatio *
+            (∑ a : Advertiser,
+              I.budget a * I.msvvNormalizedAlphaFromAssignment A a) +
+          I.historyBalanceChargeFrom I.balanceChoiceRule
+            initialHistoryState history +
+          I.historyMaxBidErrorSum ε history := by
+    unfold dualObjective
+    linarith
+  exact hdual.trans (by simpa [A] using hcert.scaled_accounting_bound)
+
+theorem msvvApproxObjectiveBoundCertificate_of_historyApproxAccounting
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query) {ε error : ℝ}
+    (hcert : I.MsvvHistoryApproxAccountingCertificate history ε error) :
+    I.MsvvApproxObjectiveBoundCertificate history error := by
   refine ⟨?_⟩
   let A := I.runAssignment I.balanceChoiceRule history
   have hquery :
@@ -2945,6 +3017,33 @@ theorem balance_msvv_competitive_of_objectiveBound
     (I.runAssignment I.balanceChoiceRule history) msvvRatio
     (primalDualCompetitiveCertificate_of_msvvObjectiveBound
       I hbid hbudget history hcert)
+
+theorem balance_msvv_approx_competitive_of_approxObjectiveBound
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query) {error : ℝ}
+    (hcert : I.MsvvApproxObjectiveBoundCertificate history error) :
+    msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) + error := by
+  let A := I.runAssignment I.balanceChoiceRule history
+  let alpha := I.msvvNormalizedAlphaFromAssignment A
+  let beta := I.maxSlackBeta alpha
+  have hdual : I.DualFeasible alpha beta := by
+    simpa [alpha, beta, A] using
+      dualFeasible_msvvNormalizedAssignment I hbid hbudget A
+  have hopt :
+      I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+        I.dualObjective alpha beta :=
+    offlineOptimumValue_le_dualObjective_of_dualFeasible
+      I (fun a => (hbudget a).le) alpha beta hdual
+  have hscaled :
+      msvvRatio * I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+        msvvRatio * I.dualObjective alpha beta :=
+    mul_le_mul_of_nonneg_left hopt msvvRatio_nonneg
+  exact hscaled.trans (by simpa [alpha, beta, A] using hcert.scaled_dual_bound)
 
 end AdWordsInstance
 

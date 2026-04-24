@@ -680,6 +680,22 @@ theorem paper_adwords_balance_msvv_objective_bound_of_history_accounting
     I history hcert
 
 /--
+Approximate history-accounting seam: the finite small-bids accounting
+certificate with explicit additive error implies the approximate objective-bound
+certificate for normalized MSVV duals.
+-/
+theorem paper_adwords_balance_msvv_approx_objective_bound_of_history_accounting
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (history : List Query) {ε error : ℝ}
+    (hcert : I.MsvvHistoryApproxAccountingCertificate history ε error) :
+    I.MsvvApproxObjectiveBoundCertificate history error := by
+  exact AdWordsInstance.msvvApproxObjectiveBoundCertificate_of_historyApproxAccounting
+    I history hcert
+
+/--
 Final finite MSVV theorem seam: the Balance run is `1 - 1/e` competitive once
 the single scaled dual-objective bound for the assignment-induced MSVV duals is
 proved.
@@ -697,6 +713,26 @@ theorem paper_adwords_balance_msvv_competitive_of_objective_bound
         I.offlineOptimumValue (fun a => (hbudget a).le) ≤
       I.revenue (I.runAssignment I.balanceChoiceRule history) := by
   exact AdWordsInstance.balance_msvv_competitive_of_objectiveBound
+    I hbid hbudget history hcert
+
+/--
+Finite small-bids theorem seam with explicit additive error: an approximate
+objective-bound certificate implies the corresponding approximate competitive
+guarantee against the offline optimum.
+-/
+theorem paper_adwords_balance_msvv_approx_competitive_of_approx_objective_bound
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : AdWordsInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query) {error : ℝ}
+    (hcert : I.MsvvApproxObjectiveBoundCertificate history error) :
+    AdWordsInstance.msvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      I.revenue (I.runAssignment I.balanceChoiceRule history) + error := by
+  exact AdWordsInstance.balance_msvv_approx_competitive_of_approxObjectiveBound
     I hbid hbudget history hcert
 
 end Online

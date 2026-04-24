@@ -223,7 +223,11 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   bounded by that revenue trace. Package the remaining hard analytic step as a
   history-accounting certificate whose only substantive field is the scaled
   advertiser-alpha plus Balance-charge plus explicit max-bid-error inequality;
-  then prove the existing objective-bound certificate from it.
+  then prove the existing objective-bound certificate from it. For finite
+  small-bids results, prefer an approximate objective-bound certificate with an
+  explicit additive error and a separate limiting theorem; do not force the
+  discrete finite-bid theorem to be exactly `1 - 1/e` before the error term has
+  been sent to zero.
 - Social choice/rankings: use finite rankings/permutations, first/second choice
   accessors, pairwise comparisons, and voting-rule interfaces before hardness
   reductions.
