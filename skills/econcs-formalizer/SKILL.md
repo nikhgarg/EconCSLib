@@ -478,6 +478,11 @@ and wasted proof search.
   coordinate-swap equation before connecting it to probability mass. Keep the
   score order interface (`wrong -> s_i < s_j`, `s_j ≤ s_i -> correct`) separate
   from the mass comparison.
+  For i.i.d. density products, first prove the two-coordinate well-ordered
+  density comparison, then multiply by the unaffected coordinate using an
+  explicit nonnegativity/positivity hypothesis. Do not bury the context factor
+  in a larger algebraic expression; expose a small three-coordinate density
+  lemma that future mass-formula rewrites can use directly.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only

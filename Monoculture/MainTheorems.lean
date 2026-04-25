@@ -219,6 +219,46 @@ theorem paper_lemma3_swapi_density_lt_of_strictlyWellOrdered
     f (r1 - x1) * f (r2 - x2) < f (r2 - x1) * f (r1 - x2) :=
   strictlyWellOrderedNoise_swap_middle_density_lt hf hx12 hr12
 
+/-- Appendix C / pointwise density comparison for the `x₁`/`x₂` lambda swap. -/
+theorem paper_theorem6_lambda_swap12_density3_le_of_weaklyWellOrdered
+    {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 ≤ f (r3 - x3))
+    (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) ≤
+      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) :=
+  weaklyWellOrderedNoise_swap12_density3_le hf hctx hx12 hr12
+
+/-- Appendix C / strict pointwise density comparison for the `x₁`/`x₂` lambda swap. -/
+theorem paper_theorem6_lambda_swap12_density3_lt_of_strictlyWellOrdered
+    {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 < f (r3 - x3))
+    (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) <
+      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) :=
+  strictlyWellOrderedNoise_swap12_density3_lt hf hctx hx12 hr12
+
+/-- Appendix C / pointwise density comparison for the `x₂`/`x₃` lambda swap. -/
+theorem paper_theorem6_lambda_swap23_density3_le_of_weaklyWellOrdered
+    {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 ≤ f (r1 - x1))
+    (hx23 : x3 < x2) (hr23 : r2 < r3) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) ≤
+      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) :=
+  weaklyWellOrderedNoise_swap23_density3_le hf hctx hx23 hr23
+
+/-- Appendix C / strict pointwise density comparison for the `x₂`/`x₃` lambda swap. -/
+theorem paper_theorem6_lambda_swap23_density3_lt_of_strictlyWellOrdered
+    {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 < f (r1 - x1))
+    (hx23 : x3 < x2) (hr23 : r2 < r3) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) <
+      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) :=
+  strictlyWellOrderedNoise_swap23_density3_lt hf hctx hx23 hr23
+
 /--
 Appendix C / Theorem 6, final three-candidate payoff algebra.
 

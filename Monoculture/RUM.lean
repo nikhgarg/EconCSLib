@@ -332,6 +332,76 @@ theorem strictlyWellOrderedNoise_swap_middle_density_lt
         f (r2 - x2) * f (r1 - x1) := by ring
     _ < f (r2 - x1) * f (r1 - x2) := h
 
+/--
+Pointwise three-coordinate density comparison for swapping the top and middle
+coordinates in a wrong `x₁`/`x₂` pairwise realization.
+-/
+theorem weaklyWellOrderedNoise_swap12_density3_le
+    {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 ≤ f (r3 - x3))
+    (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) ≤
+      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) := by
+  have hpair := weaklyWellOrderedNoise_swap_middle_density_le
+    (f := f) hf hx12 hr12
+  exact mul_le_mul_of_nonneg_right hpair hctx
+
+/--
+Strict three-coordinate density comparison for swapping the top and middle
+coordinates in a wrong `x₁`/`x₂` pairwise realization.
+-/
+theorem strictlyWellOrderedNoise_swap12_density3_lt
+    {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 < f (r3 - x3))
+    (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) <
+      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) := by
+  have hpair := strictlyWellOrderedNoise_swap_middle_density_lt
+    (f := f) hf hx12 hr12
+  exact mul_lt_mul_of_pos_right hpair hctx
+
+/--
+Pointwise three-coordinate density comparison for swapping the middle and
+bottom coordinates in a wrong `x₂`/`x₃` pairwise realization.
+-/
+theorem weaklyWellOrderedNoise_swap23_density3_le
+    {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 ≤ f (r1 - x1))
+    (hx23 : x3 < x2) (hr23 : r2 < r3) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) ≤
+      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := by
+  have hpair := weaklyWellOrderedNoise_swap_middle_density_le
+    (f := f) hf hx23 hr23
+  calc
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) =
+        f (r1 - x1) * (f (r2 - x2) * f (r3 - x3)) := by ring
+    _ ≤ f (r1 - x1) * (f (r3 - x2) * f (r2 - x3)) := by
+        exact mul_le_mul_of_nonneg_left hpair hctx
+    _ = f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := by ring
+
+/--
+Strict three-coordinate density comparison for swapping the middle and bottom
+coordinates in a wrong `x₂`/`x₃` pairwise realization.
+-/
+theorem strictlyWellOrderedNoise_swap23_density3_lt
+    {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
+    {x1 x2 x3 r1 r2 r3 : ℝ}
+    (hctx : 0 < f (r1 - x1))
+    (hx23 : x3 < x2) (hr23 : r2 < r3) :
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) <
+      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := by
+  have hpair := strictlyWellOrderedNoise_swap_middle_density_lt
+    (f := f) hf hx23 hr23
+  calc
+    f (r1 - x1) * f (r2 - x2) * f (r3 - x3) =
+        f (r1 - x1) * (f (r2 - x2) * f (r3 - x3)) := by ring
+    _ < f (r1 - x1) * (f (r3 - x2) * f (r2 - x3)) := by
+        exact mul_lt_mul_of_pos_left hpair hctx
+    _ = f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := by ring
+
 /-! ## Three-candidate RUM payoff algebra -/
 
 /-- In the three-candidate RUM proof, utility after candidate `x₁` is unavailable. -/
