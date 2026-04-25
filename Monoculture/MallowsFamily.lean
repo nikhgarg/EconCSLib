@@ -69,6 +69,27 @@ theorem mallowsAccuracyQ_strictAnti {θA θH : ℝ}
     mallowsAccuracyQ_eq_of_pos hθH]
   exact mallowsInverseAccuracyQ_strictAnti hθH hθ
 
+theorem exists_gt_mallowsAccuracyQ_lt (lower δ : ℝ) (hδ : 0 < δ) :
+    ∃ hi : ℝ, lower < hi ∧ mallowsAccuracyQ hi < δ := by
+  let hi : ℝ := max lower 0 + δ⁻¹ + 1
+  have hmax_lower : lower ≤ max lower 0 := le_max_left lower 0
+  have hmax_nonneg : 0 ≤ max lower 0 := le_max_right lower 0
+  have hinv_pos : 0 < δ⁻¹ := inv_pos.mpr hδ
+  have hlower_hi : lower < hi := by
+    dsimp [hi]
+    linarith
+  have hhi_pos : 0 < hi := by
+    dsimp [hi]
+    linarith
+  refine ⟨hi, hlower_hi, ?_⟩
+  rw [mallowsAccuracyQ_eq_of_pos hhi_pos]
+  unfold mallowsInverseAccuracyQ
+  have hden_pos : 0 < hi + 1 := by linarith
+  have h_inv_lt_den : δ⁻¹ < hi + 1 := by
+    dsimp [hi]
+    linarith
+  exact (inv_lt_comm₀ hden_pos hδ).2 h_inv_lt_den
+
 /-- Concrete Mallows specification for the paper's `θ = φ - 1` convention. -/
 noncomputable def concreteMallowsSpec {n : ℕ}
     (center : Ranking n) (θ : ℝ) : MallowsSpec n :=
@@ -127,9 +148,396 @@ theorem concreteMallowsSpec_atom_continuity
     (by
       simpa [concreteMallowsSpec, MallowsSpec.ofQ] using hratio)
 
+theorem candidateRankPowerWeightedSum_zero
+    {n : ℕ} (B : Candidate n → ℝ) :
+    (∑ r : Candidate n, (0 : ℝ) ^ (r : ℕ) * B r) = B 0 := by
+  classical
+  calc
+    (∑ r : Candidate n, (0 : ℝ) ^ (r : ℕ) * B r) =
+        (0 : ℝ) ^ ((0 : Candidate n) : ℕ) * B 0 := by
+      refine Finset.sum_eq_single
+        (s := (Finset.univ : Finset (Candidate n)))
+        (a := (0 : Candidate n))
+        (f := fun r : Candidate n => (0 : ℝ) ^ (r : ℕ) * B r)
+        ?hzero ?hnotmem
+      · intro r _ hr
+        have hrval_ne : (r : ℕ) ≠ 0 := by
+          intro h
+          exact hr (Fin.ext h)
+        have hrpos : 0 < (r : ℕ) := Nat.pos_of_ne_zero hrval_ne
+        have hpow : (0 : ℝ) ^ (r : ℕ) = 0 := by
+          exact zero_pow hrval_ne
+        simp [hpow]
+      · intro h
+        simp at h
+    _ = B 0 := by
+      simp
+
+theorem candidateRankPowerSum_zero (n : ℕ) :
+    candidateRankPowerSum n 0 = 1 := by
+  simpa [candidateRankPowerSum] using
+    (candidateRankPowerWeightedSum_zero
+      (n := n) (fun _ : Candidate n => (1 : ℝ)))
+
+theorem candidateRankWeightedAverage_zero
+    {n : ℕ} (B : Candidate n → ℝ) :
+    ((∑ r : Candidate n, (0 : ℝ) ^ (r : ℕ) * B r) /
+        candidateRankPowerSum n 0) = B 0 := by
+  rw [candidateRankPowerWeightedSum_zero, candidateRankPowerSum_zero]
+  simp
+
+theorem candidateRankWeightedAverage_continuousAt_zero
+    {n : ℕ} (B : Candidate n → ℝ) :
+    ContinuousAt
+      (fun q =>
+        (∑ r : Candidate n, q ^ (r : ℕ) * B r) /
+          candidateRankPowerSum n q)
+      0 := by
+  classical
+  have hnum :
+      ContinuousAt
+        (fun q => ∑ r : Candidate n, q ^ (r : ℕ) * B r) 0 := by
+    exact DecisionCore.continuousAt_finset_sum
+      (s := (Finset.univ : Finset (Candidate n)))
+      (f := fun r q => q ^ (r : ℕ) * B r)
+      (fun r _ => (continuousAt_id.pow (r : ℕ)).mul continuousAt_const)
+  have hden :
+      ContinuousAt (fun q => candidateRankPowerSum n q) 0 := by
+    unfold candidateRankPowerSum
+    exact DecisionCore.continuousAt_finset_sum
+      (s := (Finset.univ : Finset (Candidate n)))
+      (f := fun r q => q ^ (r : ℕ))
+      (fun r _ => continuousAt_id.pow (r : ℕ))
+  have hden_ne : candidateRankPowerSum n 0 ≠ 0 := by
+    rw [candidateRankPowerSum_zero]
+    norm_num
+  exact hnum.div hden hden_ne
+
+/-- Rank-only unnormalised weight for appearing in the second position. -/
+noncomputable def candidateRankSecondChoiceWeight
+    (n : ℕ) (q : ℝ) (s : Candidate n) : ℝ :=
+  ∑ r : Candidate n,
+    if r < s then q ^ ((r : ℕ) + (s : ℕ) - 1)
+    else if s < r then q ^ ((s : ℕ) + (r : ℕ))
+    else 0
+
+theorem candidateRankSecondChoiceWeight_zero_one
+    (n : ℕ) :
+    candidateRankSecondChoiceWeight n 0 (1 : Candidate n) = 1 := by
+  classical
+  unfold candidateRankSecondChoiceWeight
+  calc
+    (∑ r : Candidate n,
+      if r < (1 : Candidate n) then
+        (0 : ℝ) ^ ((r : ℕ) + ((1 : Candidate n) : ℕ) - 1)
+      else if (1 : Candidate n) < r then
+        (0 : ℝ) ^ (((1 : Candidate n) : ℕ) + (r : ℕ))
+      else 0) =
+        (0 : ℝ) ^ (((0 : Candidate n) : ℕ) + ((1 : Candidate n) : ℕ) - 1) := by
+      refine Finset.sum_eq_single
+        (s := (Finset.univ : Finset (Candidate n)))
+        (a := (0 : Candidate n))
+        (f := fun r : Candidate n =>
+          if r < (1 : Candidate n) then
+            (0 : ℝ) ^ ((r : ℕ) + ((1 : Candidate n) : ℕ) - 1)
+          else if (1 : Candidate n) < r then
+            (0 : ℝ) ^ (((1 : Candidate n) : ℕ) + (r : ℕ))
+          else 0)
+        ?hzero ?hnotmem
+      · intro r _ hr
+        have hnot_lt : ¬r < (1 : Candidate n) := by
+          intro hlt
+          have hr0 : r = (0 : Candidate n) := by
+            apply Fin.ext
+            have hval : (r : ℕ) < 1 := hlt
+            exact Nat.lt_one_iff.mp hval
+          exact hr hr0
+        by_cases hgt : (1 : Candidate n) < r
+        · have hexp_pos : 0 < ((1 : Candidate n) : ℕ) + (r : ℕ) := by
+            change 0 < 1 + (r : ℕ)
+            omega
+          have hpow :
+              (0 : ℝ) ^ (((1 : Candidate n) : ℕ) + (r : ℕ)) = 0 := by
+            exact zero_pow (ne_of_gt hexp_pos)
+          simp [hnot_lt, hgt]
+        · simp [hnot_lt, hgt]
+      · intro h
+        simp at h
+    _ = 1 := by
+      norm_num
+
+theorem candidateRankSecondChoiceWeight_zero_of_ne_one
+    {n : ℕ} {s : Candidate n} (hs : s ≠ (1 : Candidate n)) :
+    candidateRankSecondChoiceWeight n 0 s = 0 := by
+  classical
+  unfold candidateRankSecondChoiceWeight
+  apply Finset.sum_eq_zero
+  intro r _
+  by_cases hrs : r < s
+  · have hexp_pos : 0 < (r : ℕ) + (s : ℕ) - 1 := by
+      have hs_pos : 0 < (s : ℕ) := lt_of_le_of_lt (Nat.zero_le _) hrs
+      have hs_ne_one : (s : ℕ) ≠ 1 := by
+        intro h
+        exact hs (Fin.ext h)
+      omega
+    have hpow :
+        (0 : ℝ) ^ ((r : ℕ) + (s : ℕ) - 1) = 0 := by
+      exact zero_pow (ne_of_gt hexp_pos)
+    simp [hrs, hpow]
+  · by_cases hsr : s < r
+    · have hexp_pos : 0 < (s : ℕ) + (r : ℕ) := by
+        have hr_pos : 0 < (r : ℕ) := lt_of_le_of_lt (Nat.zero_le _) hsr
+        omega
+      have hpow : (0 : ℝ) ^ ((s : ℕ) + (r : ℕ)) = 0 := by
+        exact zero_pow (ne_of_gt hexp_pos)
+      simp [hrs, hsr, hpow]
+    · simp [hrs, hsr]
+
+theorem candidateRankSecondChoiceWeightedSum_zero
+    {n : ℕ} (B : Candidate n → ℝ) :
+    (∑ s : Candidate n,
+        candidateRankSecondChoiceWeight n 0 s * B s) = B 1 := by
+  classical
+  calc
+    (∑ s : Candidate n,
+        candidateRankSecondChoiceWeight n 0 s * B s) =
+        candidateRankSecondChoiceWeight n 0 (1 : Candidate n) * B 1 := by
+      refine Finset.sum_eq_single
+        (s := (Finset.univ : Finset (Candidate n)))
+        (a := (1 : Candidate n))
+        (f := fun s : Candidate n =>
+          candidateRankSecondChoiceWeight n 0 s * B s)
+        ?hzero ?hnotmem
+      · intro s _ hs
+        have hw := candidateRankSecondChoiceWeight_zero_of_ne_one (n := n) hs
+        simp [hw]
+      · intro h
+        simp at h
+    _ = B 1 := by
+      rw [candidateRankSecondChoiceWeight_zero_one]
+      simp
+
+theorem candidateRankRemovalPowerSum_zero (n : ℕ) (k : Candidate n) :
+    candidateRankRemovalPowerSum n 0 k = 1 := by
+  rw [candidateRankRemovalPowerSum_eq_range]
+  calc
+    (∑ m ∈ Finset.range (n + 1), (0 : ℝ) ^ m) =
+        (0 : ℝ) ^ 0 := by
+      refine Finset.sum_eq_single (s := Finset.range (n + 1)) (a := 0)
+        (f := fun m : ℕ => (0 : ℝ) ^ m) ?hzero ?hnotmem
+      · intro m hm hm0
+        have hm_pos : 0 < m := Nat.pos_of_ne_zero hm0
+        have hpow : (0 : ℝ) ^ m = 0 := zero_pow hm0
+        simpa [hpow]
+      · intro h
+        simp at h
+    _ = 1 := by norm_num
+
+theorem candidateRankSecondChoiceWeightedAverage_zero
+    {n : ℕ} (B : Candidate n → ℝ) :
+    ((∑ s : Candidate n,
+        candidateRankSecondChoiceWeight n 0 s * B s) /
+        (candidateRankPowerSum n 0 *
+          candidateRankRemovalPowerSum n 0 (0 : Candidate n))) = B 1 := by
+  rw [candidateRankSecondChoiceWeightedSum_zero,
+    candidateRankPowerSum_zero, candidateRankRemovalPowerSum_zero]
+  simp
+
+theorem candidateRankSecondChoiceWeightedAverage_continuousAt_zero
+    {n : ℕ} (B : Candidate n → ℝ) :
+    ContinuousAt
+      (fun q =>
+        (∑ s : Candidate n,
+          candidateRankSecondChoiceWeight n q s * B s) /
+          (candidateRankPowerSum n q *
+            candidateRankRemovalPowerSum n q (0 : Candidate n)))
+      0 := by
+  classical
+  have hweight :
+      ∀ s : Candidate n,
+        ContinuousAt (fun q => candidateRankSecondChoiceWeight n q s) 0 := by
+    intro s
+    unfold candidateRankSecondChoiceWeight
+    exact DecisionCore.continuousAt_finset_sum
+      (s := (Finset.univ : Finset (Candidate n)))
+      (f := fun r q =>
+        if r < s then q ^ ((r : ℕ) + (s : ℕ) - 1)
+        else if s < r then q ^ ((s : ℕ) + (r : ℕ))
+        else 0)
+      (fun r _ => by
+        by_cases hrs : r < s
+        · simpa [hrs] using
+            (continuousAt_id.pow ((r : ℕ) + (s : ℕ) - 1) :
+              ContinuousAt
+                (fun q : ℝ => q ^ ((r : ℕ) + (s : ℕ) - 1)) 0)
+        · by_cases hsr : s < r
+          · simpa [hrs, hsr] using
+              (continuousAt_id.pow ((s : ℕ) + (r : ℕ)) :
+                ContinuousAt
+                  (fun q : ℝ => q ^ ((s : ℕ) + (r : ℕ))) 0)
+          · simpa [hrs, hsr] using
+              (continuousAt_const :
+                ContinuousAt (fun _ : ℝ => (0 : ℝ)) 0))
+  have hnum :
+      ContinuousAt
+        (fun q =>
+          ∑ s : Candidate n,
+            candidateRankSecondChoiceWeight n q s * B s) 0 := by
+    exact DecisionCore.continuousAt_finset_sum
+      (s := (Finset.univ : Finset (Candidate n)))
+      (f := fun s q => candidateRankSecondChoiceWeight n q s * B s)
+      (fun s _ => (hweight s).mul continuousAt_const)
+  have hpow :
+      ContinuousAt (fun q => candidateRankPowerSum n q) 0 := by
+    unfold candidateRankPowerSum
+    exact DecisionCore.continuousAt_finset_sum
+      (s := (Finset.univ : Finset (Candidate n)))
+      (f := fun r q => q ^ (r : ℕ))
+      (fun r _ => continuousAt_id.pow (r : ℕ))
+  have hrem :
+      ContinuousAt
+        (fun q => candidateRankRemovalPowerSum n q (0 : Candidate n)) 0 := by
+    have hfun :
+        (fun q => candidateRankRemovalPowerSum n q (0 : Candidate n)) =
+          (fun q => ∑ m ∈ Finset.range (n + 1), q ^ m) := by
+      funext q
+      rw [candidateRankRemovalPowerSum_eq_range]
+    rw [hfun]
+    exact DecisionCore.continuousAt_finset_sum
+      (s := Finset.range (n + 1))
+      (f := fun m q => q ^ m)
+      (fun m _ => continuousAt_id.pow m)
+  have hden_ne :
+      candidateRankPowerSum n 0 *
+          candidateRankRemovalPowerSum n 0 (0 : Candidate n) ≠ 0 := by
+    rw [candidateRankPowerSum_zero, candidateRankRemovalPowerSum_zero]
+    norm_num
+  exact hnum.div (hpow.mul hrem) hden_ne
+
 namespace MallowsSpec
 
 variable {n : ℕ} (M : MallowsSpec n)
+
+/--
+The mixed payoff expression when the human law is fixed and the algorithm's
+first-choice distribution is represented only by its center-rank power weights.
+-/
+noncomputable def humanAgainstRankAverage
+    (value : Candidate n → ℝ) (q : ℝ) : ℝ :=
+  expectedFirstMoverUtility M.law value +
+    (∑ r : Candidate n,
+        q ^ (r : ℕ) *
+          AccuracyFamily.expectedBestAfterRemoval M.law value (M.center r)) /
+      candidateRankPowerSum n q
+
+theorem humanAgainstRankAverage_zero
+    (value : Candidate n → ℝ) :
+    M.humanAgainstRankAverage value 0 =
+      expectedFirstMoverUtility M.law value +
+        AccuracyFamily.expectedBestAfterRemoval M.law value M.centerFirst := by
+  simp [humanAgainstRankAverage, candidateRankWeightedAverage_zero, centerFirst]
+
+theorem humanAgainstRankAverage_continuousAt_zero
+    (value : Candidate n → ℝ) :
+    ContinuousAt (fun q => M.humanAgainstRankAverage value q) 0 := by
+  unfold humanAgainstRankAverage
+  exact continuousAt_const.add
+    (candidateRankWeightedAverage_continuousAt_zero
+      (n := n)
+      (fun r : Candidate n =>
+        AccuracyFamily.expectedBestAfterRemoval M.law value (M.center r)))
+
+/--
+Limit-side payoff gap for Theorem 1: if the algorithm is perfectly concentrated
+on the Mallows center, then the human-against-perfect payoff is strictly below
+the all-perfect payoff.  Mallows full support supplies the positive-mass swapped
+ranking needed for the generic finite proof.
+-/
+theorem expected_human_against_pureCenter_lt_pureCenter_payoff
+    (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy M.center value) :
+    expectedFirstMoverUtility M.law value +
+        expectedSecondMoverIndependent M.law (PMF.pure M.center) value <
+      expectedFirstMoverUtility (PMF.pure M.center) value +
+        expectedSecondMoverShared (PMF.pure M.center) value :=
+  AccuracyFamily.expected_human_against_pureCenter_lt_pureCenter_payoff
+    M.law M.center value hvalue
+    (M.law_apply_toReal_pos (swapTopTwo M.center))
+
+theorem humanAgainstRankAverage_zero_lt_pureCenter_payoff
+    (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy M.center value) :
+    M.humanAgainstRankAverage value 0 <
+      expectedFirstMoverUtility (PMF.pure M.center) value +
+        expectedSecondMoverShared (PMF.pure M.center) value := by
+  rw [M.humanAgainstRankAverage_zero]
+  have hsecond :
+      expectedSecondMoverIndependent M.law (PMF.pure M.center) value =
+        AccuracyFamily.expectedBestAfterRemoval M.law value M.centerFirst := by
+    rw [AccuracyFamily.expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+    simp [centerFirst]
+  rw [← hsecond]
+  simpa using M.expected_human_against_pureCenter_lt_pureCenter_payoff value hvalue
+
+theorem exists_pos_radius_humanAgainstRankAverage_lt_pureCenter_payoff
+    (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy M.center value) :
+    ∃ δ : ℝ, 0 < δ ∧
+      ∀ q : ℝ, 0 < q → q < δ →
+        M.humanAgainstRankAverage value q <
+          expectedFirstMoverUtility (PMF.pure M.center) value +
+            expectedSecondMoverShared (PMF.pure M.center) value := by
+  let purePayoff : ℝ :=
+    expectedFirstMoverUtility (PMF.pure M.center) value +
+      expectedSecondMoverShared (PMF.pure M.center) value
+  have hcont :
+      DecisionCore.EpsilonContinuousAt
+        (fun q => M.humanAgainstRankAverage value q) 0 :=
+    DecisionCore.epsilonContinuousAt_of_continuousAt
+      (M.humanAgainstRankAverage_continuousAt_zero value)
+  have hpure_cont :
+      DecisionCore.EpsilonContinuousAt (fun _ : ℝ => purePayoff) 0 :=
+    DecisionCore.epsilonContinuousAt_const purePayoff 0
+  have hlt :
+      M.humanAgainstRankAverage value 0 < purePayoff := by
+    exact M.humanAgainstRankAverage_zero_lt_pureCenter_payoff value hvalue
+  rcases DecisionCore.exists_right_radius_lt_of_epsilonContinuousAt
+      hcont hpure_cont hlt with ⟨δ, hδ_pos, hδ⟩
+  refine ⟨δ, hδ_pos, ?_⟩
+  intro q hq_pos hq_lt
+  simpa [purePayoff] using hδ q hq_pos (by simpa using hq_lt)
+
+/--
+The all-algorithm shared-ranking payoff expressed using center-rank weights for
+the first and second positions.
+-/
+noncomputable def sharedRankPayoffAverage
+    (value : Candidate n → ℝ) (q : ℝ) : ℝ :=
+  (∑ r : Candidate n, q ^ (r : ℕ) * value (M.center r)) /
+      candidateRankPowerSum n q +
+    (∑ s : Candidate n,
+        candidateRankSecondChoiceWeight n q s * value (M.center s)) /
+      (candidateRankPowerSum n q *
+        candidateRankRemovalPowerSum n q (0 : Candidate n))
+
+theorem sharedRankPayoffAverage_zero
+    (value : Candidate n → ℝ) :
+    M.sharedRankPayoffAverage value 0 =
+      expectedFirstMoverUtility (PMF.pure M.center) value +
+        expectedSecondMoverShared (PMF.pure M.center) value := by
+  simp [sharedRankPayoffAverage, candidateRankWeightedAverage_zero,
+    candidateRankSecondChoiceWeightedAverage_zero, expectedFirstMoverUtility,
+    expectedSecondMoverShared, firstChoice, secondChoice]
+
+theorem sharedRankPayoffAverage_continuousAt_zero
+    (value : Candidate n → ℝ) :
+    ContinuousAt (fun q => M.sharedRankPayoffAverage value q) 0 := by
+  unfold sharedRankPayoffAverage
+  exact
+    (candidateRankWeightedAverage_continuousAt_zero
+      (n := n) (fun r : Candidate n => value (M.center r))).add
+    (candidateRankSecondChoiceWeightedAverage_continuousAt_zero
+      (n := n) (fun s : Candidate n => value (M.center s)))
 
 /-- Unnormalised Mallows mass of rankings whose best candidate after removing
 `c` is `d`. -/
@@ -481,6 +889,26 @@ end MallowsSpec
 namespace MallowsComparison
 
 variable {n : ℕ} (C : MallowsComparison n)
+
+/--
+The mixed payoff `g` with a fixed Mallows human law depends on the algorithm law
+only through the algorithm's rank-power first-choice distribution.
+-/
+theorem theorem1_g_eq_humanAgainstRankAverage
+    (facA : C.algorithm.RankFactorization) (value : Candidate n → ℝ) :
+    expectedFirstMoverUtility C.human.law value +
+        expectedSecondMoverIndependent C.human.law C.algorithm.law value =
+      C.human.humanAgainstRankAverage value C.algorithm.q := by
+  classical
+  rw [AccuracyFamily.expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+  unfold MallowsSpec.humanAgainstRankAverage
+  congr 1
+  let B : Candidate n → ℝ :=
+    fun c => AccuracyFamily.expectedBestAfterRemoval C.human.law value c
+  have h :=
+    C.algorithm.expectedFirstMoverUtility_eq_rankAverage facA B
+  rw [← C.same_center]
+  simpa [expectedFirstMoverUtility, B] using h
 
 /--
 If the rank-only best-after-removal weights satisfy pairwise cross-ratio

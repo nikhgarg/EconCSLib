@@ -1,5 +1,7 @@
 import AccuracyDiversity.Basic
 import AccuracyDiversity.Representation
+import AccuracyDiversity.TopKOracle
+import AccuracyDiversity.Optimization
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 namespace AccuracyDiversity
@@ -37,6 +39,14 @@ noncomputable def ParetoTopKOracle {T : ℕ} (α : ℝ) : TopKValueOracle T wher
 Theorem 2 Bridge: If marginals decay as `q ^ (1/α - 1)`, then the optimal
 allocation is approximately γ-homogeneous with γ = 1 - 1/α.
 -/
+theorem homogeneity_of_tail_index
+    {T : ℕ} [NeZero T] (M : ConsumptionModel T) (α : ℝ) (hα : 1 < α)
+    (htail : HasTypeTailIndex M (1/α))
+    (hlike_pos : ∀ t, 0 < M.likelihood t) :
+    ConsumptionModel.AsymptoticHomogeneityTarget
+      (fun _ => M) (paretoProfile M.likelihood α) (fun ε => ∃ C > 0, ∀ N, ε N = C / N) :=
+  sorry
+
 /--
 Finite pairwise difference bound for Pareto types.
 If marginals are `L * q^(1/α - 1)`, then optimal counts satisfy a power-law balance.

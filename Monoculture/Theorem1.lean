@@ -1,4 +1,5 @@
 import Monoculture.Family
+import Monoculture.FiberSigns
 import Monoculture.FirstChoiceDecomposition
 import Monoculture.Payoff
 import DecisionCore.EpsilonContinuity
@@ -294,6 +295,91 @@ theorem theorem1MonotonicityAt_of_removalMonotonicity {n : ℕ}
       (fun σ => expectedBestAfterRemoval (F.dist θH) F.value (firstChoice σ))
       (fun σ => expectedBestAfterRemoval (F.dist θA) F.value (firstChoice σ))
       (fun σ => hmono.bestRemaining_weak (firstChoice σ))
+
+theorem value_le_centerFirst_of_strictlyOrderedBy {n : ℕ}
+    {ρ : Ranking n} {value : Candidate n → ℝ}
+    (hvalue : StrictlyOrderedBy ρ value) (c : Candidate n) :
+    value c ≤ value (firstChoice ρ) := by
+  by_cases hc : c = firstChoice ρ
+  · simp [hc]
+  · exact le_of_lt (hvalue (rankOf_firstChoice_lt_rankOf_of_ne ρ hc))
+
+theorem value_le_centerSecond_of_strictlyOrderedBy_of_ne_centerFirst {n : ℕ}
+    {ρ : Ranking n} {value : Candidate n → ℝ}
+    (hvalue : StrictlyOrderedBy ρ value) {c : Candidate n}
+    (hc : c ≠ firstChoice ρ) :
+    value c ≤ value (secondChoice ρ) := by
+  by_cases hsecond : c = secondChoice ρ
+  · simp [hsecond]
+  · have hlt : rankOf ρ (secondChoice ρ) < rankOf ρ c := by
+      simpa [rankOf, secondChoice] using
+        one_lt_rankOf_of_ne_first_second ρ hc hsecond
+    exact le_of_lt (hvalue hlt)
+
+/--
+If the algorithm were perfectly concentrated on the center ranking, then a
+human first mover followed by that perfect algorithm has strictly lower total
+payoff than the all-perfect-algorithm payoff.  This is the strict limiting gap
+used in the Mallows asymptotic-first-dominance proof.
+-/
+theorem expected_human_against_pureCenter_lt_pureCenter_payoff {n : ℕ}
+    (μ : PMF (Ranking n)) (ρ : Ranking n) (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy ρ value)
+    (hmass : 0 < (μ (swapTopTwo ρ)).toReal) :
+    expectedFirstMoverUtility μ value +
+        expectedSecondMoverIndependent μ (PMF.pure ρ) value <
+      expectedFirstMoverUtility (PMF.pure ρ) value +
+        expectedSecondMoverShared (PMF.pure ρ) value := by
+  classical
+  have hpoint :
+      pmfExp μ
+          (fun π =>
+            value (firstChoice π) +
+              value (bestRemainingAfter π (firstChoice ρ))) <
+        value (firstChoice ρ) + value (secondChoice ρ) := by
+    refine DecisionCore.pmfExp_lt_of_forall_le_exists_lt μ
+      (fun π =>
+        value (firstChoice π) +
+          value (bestRemainingAfter π (firstChoice ρ)))
+      (value (firstChoice ρ) + value (secondChoice ρ)) ?hle ?hex
+    · intro π
+      exact add_le_add
+        (value_le_centerFirst_of_strictlyOrderedBy hvalue (firstChoice π))
+        (value_le_centerSecond_of_strictlyOrderedBy_of_ne_centerFirst
+          hvalue (bestRemainingAfter_ne_removed π (firstChoice ρ)))
+    · refine ⟨swapTopTwo ρ, hmass, ?_⟩
+      have htop : value (secondChoice ρ) < value (firstChoice ρ) :=
+        hvalue (rankOf_center_first_lt_second ρ)
+      have hbest :
+          bestRemainingAfter (swapTopTwo ρ) (firstChoice ρ) = secondChoice ρ := by
+        rw [bestRemainingAfter_of_ne]
+        · simpa using firstChoice_swapTopTwo ρ
+        · exact swapTopTwo_firstChoice_ne ρ
+      have hfirst :
+          firstChoice (swapTopTwo ρ) = secondChoice ρ := by
+        simpa using firstChoice_swapTopTwo ρ
+      calc
+        value (firstChoice (swapTopTwo ρ)) +
+            value (bestRemainingAfter (swapTopTwo ρ) (firstChoice ρ))
+            = value (secondChoice ρ) + value (secondChoice ρ) := by
+              rw [hfirst, hbest]
+        _ < value (firstChoice ρ) + value (secondChoice ρ) := by
+              linarith
+  have hleft :
+      expectedFirstMoverUtility μ value +
+          expectedSecondMoverIndependent μ (PMF.pure ρ) value =
+        pmfExp μ
+          (fun π =>
+            value (firstChoice π) +
+              value (bestRemainingAfter π (firstChoice ρ))) := by
+    rw [expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+    simp [expectedFirstMoverUtility, expectedBestAfterRemoval, pmfExp_add]
+  have hright :
+      expectedFirstMoverUtility (PMF.pure ρ) value +
+          expectedSecondMoverShared (PMF.pure ρ) value =
+        value (firstChoice ρ) + value (secondChoice ρ) := by
+    simp [expectedFirstMoverUtility, expectedSecondMoverShared]
+  simpa [hleft, hright] using hpoint
 
 /--
 The paper's final crossing state: after the initial equality point is nudged

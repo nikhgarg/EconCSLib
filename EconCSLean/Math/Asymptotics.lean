@@ -1,12 +1,15 @@
+import Mathlib.Topology.Instances.Real
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+
+open Filter Topology
 
 namespace EconCSLean
 namespace Math
 
 /-- A sequence tends to zero. -/
 def TendsToZero (ε : ℕ → ℝ) : Prop :=
-  Filter.Tendsto ε Filter.atTop (nhds 0)
+  Tendsto ε atTop (nhds 0)
 
 /-- A sequence is bounded by C / N. -/
 def TendsToZeroInv (ε : ℕ → ℝ) : Prop :=
@@ -19,14 +22,20 @@ def TendsToZeroInvSqrt (ε : ℕ → ℝ) : Prop :=
 theorem TendsToZeroInv_implies_TendsToZero (ε : ℕ → ℝ) :
     TendsToZeroInv ε → TendsToZero ε := by
   intro ⟨C, hCpos, hbound⟩
-  apply Filter.tendsto_of_abs_le_seq (fun N => C / (N : ℝ))
-  · intro N hN
-    have hNpos : 0 < N := by
-      -- atTop filter means we only care about large N
-      sorry
-    exact hbound N hNpos
-  · -- tendsto C/N to 0
-    sorry
+  rw [TendsToZero]
+  have h_zero : Tendsto (fun N : ℕ => C / (N : ℝ)) atTop (nhds 0) := tendsto_const_div_atTop_nhds_zero_nat C
+  have h_neg_zero : Tendsto (fun N : ℕ => -(C / (N : ℝ))) atTop (nhds 0) := by
+    have h := h_zero.neg
+    rwa [neg_zero] at h
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' h_neg_zero h_zero
+  · filter_upwards [eventually_gt_atTop 0] with N hN
+    have h1 := hbound N hN
+    rw [abs_le] at h1
+    exact h1.1
+  · filter_upwards [eventually_gt_atTop 0] with N hN
+    have h1 := hbound N hN
+    rw [abs_le] at h1
+    exact h1.2
 
 end Math
 end EconCSLean

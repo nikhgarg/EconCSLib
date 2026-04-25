@@ -202,8 +202,16 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     exact_mod_cast total_uniformSqrtUpperAnchor_le likelihood N hnorm
   have h_total_a : DecisionCore.Allocation.total a = N := hopt.1
   have h_m : Fintype.card (ItemType T) = T := Fintype.card_fin T
-  apply approx_of_count_abs_error_unfolded likelihood a h_total_a hNpos hlike_pos
+  apply GammaHomogeneityProfile.approx_of_count_abs_error
+  · exact h_total_a
+  · exact hNpos
   intro t
+  have h_share := GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero (sqrtLikelihoodProfile likelihood) t hnorm
+  have h_target : (N : ℝ) * (sqrtLikelihoodProfile likelihood).targetShare t = uniformSqrtTarget likelihood N t := by
+    unfold sqrtLikelihoodProfile uniformSqrtTarget GammaHomogeneityProfile.normalizer at *
+    dsimp only at h_share
+    rw [h_share]
+  rw [h_target]
   have h_close_lower := uniformSqrtLowerAnchor_abs_close likelihood N t hnorm h_interior
   have h_close_upper := uniformSqrtUpperAnchor_abs_close likelihood N t hnorm
   rw [abs_lt] at h_close_lower h_close_upper

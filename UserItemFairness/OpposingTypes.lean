@@ -4408,11 +4408,11 @@ theorem problem6TypeOneDual_typeZero_coeff_nonneg {n : ℕ} [NeZero n]
   unfold problem6TypeOneDualWeight
   by_cases hjt : j.val ≤ t.val
   · rw [if_pos hjt]
-	    have hq_ne : pairShare alpha v j ≠ 0 :=
-	      ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
-	    field_simp [hq_ne]
-	    ring_nf
-	    norm_num
+    have hq_ne : pairShare alpha v j ≠ 0 :=
+      ne_of_gt (pairShare_pos j halpha0 halpha1 hpos)
+    field_simp [hq_ne]
+    ring_nf
+    norm_num
   · rw [if_neg hjt]
     have htj : t.val < j.val := lt_of_not_ge hjt
     have hq_le :
@@ -4464,18 +4464,18 @@ theorem problem6TypeOneDual_typeZero_coeff_nonneg {n : ℕ} [NeZero n]
       calc
         (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
               (1 - pairShare alpha v j) * pairShare alpha v j =
-	            (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) *
-	              (pairShare alpha v j / (1 - pairShare alpha v j)) := by
-	              field_simp [hdenj]
-	        _ ≤
-	            (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
-	              (pairShare alpha v t / (1 - pairShare alpha v t)) := htarget
+            (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) *
+              (pairShare alpha v j / (1 - pairShare alpha v j)) := by
+              field_simp [hdenj]
+        _ ≤
+            (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
+              (pairShare alpha v t / (1 - pairShare alpha v t)) := htarget
         _ =
-	            pairShare alpha v t *
-	              (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) /
-	                (1 - pairShare alpha v t) := by
-	              field_simp [hdent]
-	    exact sub_nonneg.mpr hweight
+            pairShare alpha v t *
+              (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) /
+                (1 - pairShare alpha v t) := by
+              field_simp [hdent]
+    exact sub_nonneg.mpr hweight
 
 theorem problem6TypeOneDual_typeOne_coeff_upper {n : ℕ} [NeZero n]
     {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
@@ -4548,21 +4548,97 @@ theorem problem6TypeOneDual_typeOne_coeff_upper {n : ℕ} [NeZero n]
               (1 - pairShare alpha v t) /
             pairShare alpha v j * (1 - pairShare alpha v j)
             =
-	          (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
-	            ((pairShare alpha v t / (1 - pairShare alpha v t)) *
-	              ((1 - pairShare alpha v j) / pairShare alpha v j)) := by
-	              field_simp [hqj, hct]
-	        _ ≤ (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) * 1 := by
-	              exact mul_le_mul_of_nonneg_left hfactor hBjt_nonneg
+          (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
+            ((pairShare alpha v t / (1 - pairShare alpha v t)) *
+              ((1 - pairShare alpha v j) / pairShare alpha v j)) := by
+              field_simp [hqj, hct]
+        _ ≤ (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) * 1 := by
+              exact mul_le_mul_of_nonneg_left hfactor hBjt_nonneg
         _ ≤ problem6TypeOneDualRowOne alpha v - v (reverseItem j) := by
               simpa using hBjt
     linarith
   · rw [if_neg hjt]
-	    have hden : 1 - pairShare alpha v j ≠ 0 :=
-	      ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
-	    field_simp [hden]
-	    ring_nf
-	    exact le_rfl
+    have hden : 1 - pairShare alpha v j ≠ 0 :=
+      ne_of_gt (one_sub_pairShare_pos j halpha0 halpha1 hpos)
+    field_simp [hden]
+    ring_nf
+    exact le_rfl
+
+private theorem problem6TypeOneDualWeight_left_part_sum_eq {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n, if j.val < t.val then
+        problem6TypeOneDualWeight alpha v t j else 0) =
+      problem6TypeOneDualRowZero alpha v t *
+        problem6LeftSum alpha v t := by
+  unfold problem6LeftSum
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases hjt : j.val < t.val
+  · have hjle : j.val ≤ t.val := hjt.le
+    simp [hjt, problem6TypeOneDualWeight, hjle, div_eq_mul_inv]
+  · simp [hjt]
+
+private theorem problem6TypeOneDualWeight_right_part_sum_eq {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n, if t.val < j.val then
+        problem6TypeOneDualWeight alpha v t j else 0) =
+      ∑ j : Item n, if t.val < j.val then
+        (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+          (1 - pairShare alpha v j) else 0 := by
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases htj : t.val < j.val
+  · have hnle : ¬ j.val ≤ t.val := by omega
+    simp [htj, problem6TypeOneDualWeight, hnle]
+  · simp [htj]
+
+theorem problem6TypeOneDualWeight_sum_eq {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n, problem6TypeOneDualWeight alpha v t j) =
+      problem6TypeOneDualRowZero alpha v t *
+          problem6LeftSum alpha v t +
+        problem6TypeOneDualRowZero alpha v t / pairShare alpha v t +
+        ∑ j : Item n, if t.val < j.val then
+          (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+            (1 - pairShare alpha v j) else 0 := by
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_add_right_part
+      (problem6TypeOneDualWeight alpha v t) t
+  have hleft :
+      (∑ j : Item n, if j.val < t.val then
+          problem6TypeOneDualWeight alpha v t j else 0) =
+        problem6TypeOneDualRowZero alpha v t *
+          problem6LeftSum alpha v t :=
+    problem6TypeOneDualWeight_left_part_sum_eq
+  have hright :
+      (∑ j : Item n, if t.val < j.val then
+          problem6TypeOneDualWeight alpha v t j else 0) =
+        ∑ j : Item n, if t.val < j.val then
+          (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+            (1 - pairShare alpha v j) else 0 :=
+    problem6TypeOneDualWeight_right_part_sum_eq
+  rw [hsplit, hleft, hright]
+  simp [problem6TypeOneDualWeight]
+
+private theorem problem6TypeOneDual_tail_sum_add_closed_gap_sum_eq {n : ℕ}
+    [NeZero n] {alpha : ℝ} {v : Item n → ℝ} {t : Item n} :
+    (∑ j : Item n, if t.val < j.val then
+        (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+          (1 - pairShare alpha v j) else 0) +
+      (∑ j : Item n, if t.val < j.val then
+        (v (reverseItem j) - v (reverseItem t)) /
+          (1 - pairShare alpha v j) else 0) =
+      (problem6TypeOneDualRowOne alpha v - v (reverseItem t)) *
+        problem6RightSum alpha v t := by
+  unfold problem6RightSum
+  rw [← Finset.sum_add_distrib, Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases htj : t.val < j.val
+  · simp [htj, div_eq_mul_inv]
+    ring
+  · simp [htj]
 
 /--
 The paper's equality-form Problem 6 data before rebuilding the PMF policy.
@@ -5779,6 +5855,107 @@ theorem problem6ClosedTypeOneRawUtility_eq_pivot_add_tail {n : ℕ}
       have hjeq : j = t := Fin.ext hval
       subst j
       ring
+
+theorem problem6ClosedTypeOneRawUtility_eq_pivot_add_value_mul_gap_sum {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (t : Item n) :
+    problem6ClosedTypeOneRawUtility alpha v t =
+      v (reverseItem t) +
+        problem6ClosedValue alpha v t *
+          (∑ j : Item n, if t.val < j.val then
+            (v (reverseItem j) - v (reverseItem t)) /
+              (1 - pairShare alpha v j) else 0) := by
+  rw [problem6ClosedTypeOneRawUtility_eq_pivot_add_tail]
+  congr 1
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _hj
+  by_cases htj : t.val < j.val
+  · simp [htj, div_eq_mul_inv]
+    ring
+  · simp [htj]
+
+theorem problem6TypeOneDual_objective_eq_closedTypeOneRawUtility {n : ℕ}
+    [NeZero n] {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    problem6TypeOneDualRowZero alpha v t +
+        problem6TypeOneDualRowOne alpha v -
+      problem6ClosedValue alpha v t *
+        (∑ j : Item n, problem6TypeOneDualWeight alpha v t j) =
+      problem6ClosedTypeOneRawUtility alpha v t := by
+  let A : ℝ := problem6TypeOneDualRowZero alpha v t
+  let B : ℝ := problem6TypeOneDualRowOne alpha v
+  let b : ℝ := v (reverseItem t)
+  let q : ℝ := pairShare alpha v t
+  let lam : ℝ := problem6ClosedValue alpha v t
+  let L : ℝ := problem6LeftSum alpha v t
+  let R : ℝ := problem6RightSum alpha v t
+  let T : ℝ :=
+    ∑ j : Item n, if t.val < j.val then
+      (problem6TypeOneDualRowOne alpha v - v (reverseItem j)) /
+        (1 - pairShare alpha v j) else 0
+  let G : ℝ :=
+    ∑ j : Item n, if t.val < j.val then
+      (v (reverseItem j) - v (reverseItem t)) /
+        (1 - pairShare alpha v j) else 0
+  have hsum :
+      (∑ j : Item n, problem6TypeOneDualWeight alpha v t j) =
+        A * L + A / q + T := by
+    simpa [A, q, L, T, add_assoc] using
+      (problem6TypeOneDualWeight_sum_eq (alpha := alpha) (v := v) (t := t))
+  have hraw :
+      problem6ClosedTypeOneRawUtility alpha v t = b + lam * G := by
+    simpa [b, lam, G] using
+      (problem6ClosedTypeOneRawUtility_eq_pivot_add_value_mul_gap_sum
+        alpha v t)
+  have htail : T + G = (B - b) * R := by
+    simpa [B, b, R, T, G] using
+      (problem6TypeOneDual_tail_sum_add_closed_gap_sum_eq
+        (alpha := alpha) (v := v) (t := t))
+  have hA : A = q * (B - b) / (1 - q) := by
+    rfl
+  have hDpos : 0 < problem6ClosedDenominator alpha v t :=
+    problem6ClosedDenominator_pos t halpha0 halpha1 hpos
+  have hDmul :
+      lam * (1 + q * L + (1 - q) * R) = 1 := by
+    have hDmul0 :
+        problem6ClosedValue alpha v t *
+            problem6ClosedDenominator alpha v t = 1 := by
+      unfold problem6ClosedValue
+      field_simp [ne_of_gt hDpos]
+    simpa [lam, q, L, R, problem6ClosedDenominator] using hDmul0
+  have hq_ne : q ≠ 0 := by
+    exact ne_of_gt (by simpa [q] using pairShare_pos t halpha0 halpha1 hpos)
+  have h1q_ne : 1 - q ≠ 0 := by
+    exact ne_of_gt
+      (by simpa [q] using one_sub_pairShare_pos t halpha0 halpha1 hpos)
+  rw [hsum, hraw]
+  change A + B - lam * (A * L + A / q + T) = b + lam * G
+  have htail_sub : T = (B - b) * R - G := by
+    linarith
+  rw [hA, htail_sub]
+  have hfactor :
+      lam * (q * L / (1 - q) + 1 / (1 - q) + R) =
+        1 / (1 - q) := by
+    field_simp [h1q_ne]
+    ring_nf at hDmul ⊢
+    nlinarith
+  have hqcancel :
+      q * (B - b) / (1 - q) / q = (B - b) / (1 - q) := by
+    field_simp [hq_ne]
+  rw [hqcancel]
+  calc
+    q * (B - b) / (1 - q) + B -
+        lam * (q * (B - b) / (1 - q) * L +
+          (B - b) / (1 - q) + ((B - b) * R - G)) =
+      b + lam * G + (B - b) *
+        (1 / (1 - q) -
+          lam * (q * L / (1 - q) + 1 / (1 - q) + R)) := by
+        field_simp [h1q_ne]
+        ring
+    _ = b + lam * G := by
+        rw [hfactor]
+        ring
 
 /--
 The normalized type-1 utility of the closed policy in the displayed Theorem 3

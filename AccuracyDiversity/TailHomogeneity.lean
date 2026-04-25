@@ -2,6 +2,7 @@ import AccuracyDiversity.Representation
 import AccuracyDiversity.TopKOracle
 import AccuracyDiversity.Uniform
 import AccuracyDiversity.Bernoulli
+import AccuracyDiversity.BernoulliExchange
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 open scoped BigOperators
@@ -54,8 +55,7 @@ theorem bernoulli_optimum_pairwise_difference_bounded
     rw [h2]
     linarith
   · have hcan : DecisionCore.Allocation.CanMoveOne a t₁ := ha1
-    have hne_symm : t₁ ≠ t₂ := hne
-    have hfoc := B.forwardMarginal_le_backwardMarginal_of_optimum N hopt hne_symm.symm hcan
+    have hfoc := BernoulliSatisfactionModel.forwardMarginal_le_backwardMarginal_of_optimum B N hopt hne hcan
     have h_lp1_pos : 0 < B.likelihood t₁ * B.successProb t₁ := mul_pos (hlike_pos t₁) (hprob_pos t₁)
     have h_lp2_pos : 0 < B.likelihood t₂ * B.successProb t₂ := mul_pos (hlike_pos t₂) (hprob_pos t₂)
     have h_base1 : 0 < 1 - B.successProb t₁ := by linarith [hprob_lt_one t₁]
@@ -71,6 +71,8 @@ theorem bernoulli_optimum_pairwise_difference_bounded
     rw [Real.log_mul h_lp2_pos.ne.symm (pow_pos h_base2 _).ne.symm] at hlog_le
     rw [Real.log_mul h_lp1_pos.ne.symm (pow_pos h_base1 _).ne.symm] at hlog_le
     rw [Real.log_pow, Real.log_pow] at hlog_le
+    rw [Nat.cast_sub ha1] at hlog_le
+    push_cast at hlog_le
     -- log(L2*p2) + q2 * log(1-p2) <= log(L1*p1) + (q1-1) * log(1-p1)
     have h_rearrange : (a.count t₁ : ℝ) - 1 ≤
         (Real.log (B.likelihood t₂ * B.successProb t₂) - Real.log (B.likelihood t₁ * B.successProb t₁) + (a.count t₂ : ℝ) * Real.log (1 - B.successProb t₂)) /
@@ -86,6 +88,7 @@ noncomputable def mixedConsumptionModel
   likelihood t := if t = 0 then B.likelihood 0 else Ulike 0
   valueOfCount t q := if t = 0 then bernoulliAtLeastOneValue (B.successProb 0) q
                       else uniformTopOneValue q
+
 /-- FOC for the mixed model: Uniform marginal vs Bernoulli marginal. -/
 theorem mixed_foc_one_zero (B : BernoulliSatisfactionModel 1) (Ulike : ItemType 1 → ℝ)
     (N : ℕ) {a : CountAllocation 2}
@@ -104,27 +107,23 @@ theorem mixed_foc_one_zero (B : BernoulliSatisfactionModel 1) (Ulike : ItemType 
   dsimp only at h
   have ha0ne0 : a.count 0 ≠ 0 := ne_of_gt ha0
   rw [dif_neg ha0ne0] at h
-  -- Simplify if branches manually to be sure
   have h_lhs : (if (1 : ItemType 2) = 0 then B.likelihood 0 else Ulike 0) = Ulike 0 := by
-    rw [if_neg (by norm_num : (1 : ItemType 2) = 0)]
+    exact if_neg (by norm_num : (1 : ItemType 2) ≠ 0)
   have h_rhs : (if (0 : ItemType 2) = 0 then B.likelihood 0 else Ulike 0) = B.likelihood 0 := by
-    rw [if_pos rfl]
-  have h_lhs_val : ((if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1 + 1)
-                    else uniformTopOneValue (a.count 1 + 1)) -
-                    if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1)
-                    else uniformTopOneValue (a.count 1)) =
-                   uniformTopOneValue (a.count 1 + 1) - uniformTopOneValue (a.count 1) := by
-    repeat rw [if_neg (by norm_num : (1 : ItemType 2) = 0)]
-  have h_rhs_val : ((if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0)
-                    else uniformTopOneValue (a.count 0)) -
-                    if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1)
-                    else uniformTopOneValue (a.count 0 - 1)) =
-                   bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) -
-                   bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) := by
-    repeat rw [if_pos rfl]
-  rw [h_lhs, h_rhs, h_lhs_val, h_rhs_val] at h
+    exact if_pos rfl
+  have h_lhs_val1 : (if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1 + 1) else uniformTopOneValue (a.count 1 + 1)) = uniformTopOneValue (a.count 1 + 1) := by
+    exact if_neg (by norm_num)
+  have h_lhs_val2 : (if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1) else uniformTopOneValue (a.count 1)) = uniformTopOneValue (a.count 1) := by
+    exact if_neg (by norm_num)
+  have h_rhs_val1 : (if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) else uniformTopOneValue (a.count 0)) = bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) := by
+    exact if_pos rfl
+  have h_rhs_val2 : (if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) else uniformTopOneValue (a.count 0 - 1)) = bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) := by
+    exact if_pos rfl
+  rw [h_lhs, h_rhs, h_lhs_val1, h_lhs_val2, h_rhs_val1, h_rhs_val2] at h
   rw [uniformTopOneValue_succ_sub] at h
-  rw [bernoulliAtLeastOneValue_sub_pred _ ha0] at h
+  rw [bernoulliAtLeastOneValue_sub_pred ha0] at h
+  have h_assoc : B.likelihood 0 * (B.successProb 0 * (1 - B.successProb 0) ^ (a.count 0 - 1)) = B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ (a.count 0 - 1) := by ring
+  rw [h_assoc] at h
   exact h
 
 /--
