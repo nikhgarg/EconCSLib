@@ -2,6 +2,7 @@ import Monoculture.MallowsFiniteLemmas
 import Monoculture.Theorem1
 import Monoculture.MallowsPairwise
 import Monoculture.MallowsFamily
+import Monoculture.RUM
 
 /-!
 # Paper-Facing Theorems: Algorithmic Monoculture and Social Welfare
@@ -52,6 +53,52 @@ theorem paper_definition1_concreteMallowsSpec_asymptotic_first_dominance
                 value := value } : AccuracyFamily n)
             hi θH :=
   concreteMallowsSpec_asymptotic_first_dominance center value hvalue
+
+/--
+Appendix C / Definition 4, strict well-ordered noise.
+
+Paper statement: a noise density `f` is well-ordered when for any `a > b` and
+`c > d`, the ordered assignment is more likely than the crossed assignment.
+-/
+theorem paper_definition4_strictlyWellOrderedNoise
+    (f : ℝ → ℝ) (h : StrictlyWellOrderedNoise f) :
+    StrictlyWellOrderedNoise f :=
+  h
+
+/--
+Appendix C / Lemma 1, Gaussian part.
+
+Paper statement: Gaussian noise is well-ordered.  Lean states this for the
+positive-scale Gaussian density kernel `exp (-κ x^2)`; multiplying by the usual
+positive normalizing constant does not change the product inequality.
+-/
+theorem paper_lemma1_gaussian_strictlyWellOrdered
+    {κ : ℝ} (hκ : 0 < κ) :
+    StrictlyWellOrderedNoise (gaussianNoiseKernel κ) :=
+  gaussianNoiseKernel_strictlyWellOrdered hκ
+
+/--
+Appendix C / Lemma 1, Laplacian weak form.
+
+For the Laplacian density kernel `exp (-λ |x|)`, Lean proves the weak
+well-ordering inequality.  This is the strongest globally valid pointwise form:
+the strict paper inequality can be equality for separated ordered pairs.
+-/
+theorem paper_lemma1_laplacian_weaklyWellOrdered
+    {lam : ℝ} (hlam : 0 ≤ lam) :
+    WeaklyWellOrderedNoise (laplacianNoiseKernel lam) :=
+  laplacianNoiseKernel_weaklyWellOrdered hlam
+
+/--
+Appendix C / Lemma 1, Laplacian strict-form check.
+
+With Definition 4 written using strict `>`, the Laplacian kernel does not satisfy
+the stated pointwise condition: `a=10, b=9, c=1, d=0` gives equal products.
+-/
+theorem paper_lemma1_laplacian_not_strictlyWellOrdered
+    (lam : ℝ) :
+    ¬ StrictlyWellOrderedNoise (laplacianNoiseKernel lam) :=
+  laplacianNoiseKernel_not_strictlyWellOrdered lam
 
 namespace MallowsComparison
 

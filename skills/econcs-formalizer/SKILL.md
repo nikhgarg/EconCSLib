@@ -197,6 +197,11 @@ search.
    If the full main theorem is not ready, add definitions, local invariants,
    certificate structures, and conditional theorems that compile. Avoid `sorry`
    unless the user explicitly asks for placeholder theorem statements.
+   If Lean exposes that a paper lemma is false as stated, do not silently weaken
+   the paper-facing declaration to make progress. State the paper version, prove
+   the strongest true nearby lemma separately, and add a small compiled
+   counterexample theorem when possible. Mark the README/status row as a
+   validation issue with the exact failed hypothesis or inequality.
 
 7. Document exact theorem seams.
    When stopping mid-proof, record the module, theorem, assumptions still
@@ -382,6 +387,11 @@ and wasted proof search.
   facts needed by the final theorem. Prefer sum-level certificates for
   expectation theorems; avoid adding candidatewise or termwise assumptions just
   because they make a finite-sum lemma convenient.
+  For strict inequalities over piecewise-linear functions such as absolute
+  values, test equality cases early with a concrete separated or boundary
+  example before building a long proof. If only a weak inequality is globally
+  valid, preserve the weak theorem and isolate the extra overlap/support/
+  integration argument needed for strictness.
 - **Bijection/fiber enumeration.** Use when a paper counts rankings,
   allocations, histories, or type fibers. Normalize the objects with explicit
   equivalences, prove weight/exponent/cardinality preservation separately, then
