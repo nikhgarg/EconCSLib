@@ -228,7 +228,12 @@ search.
    Update this report only at paper completion, at explicit handoff boundaries,
    or when stopping/resuming across papers.
 
-### 1.6 Build Hygiene
+### 1.6 Build Hygiene and Source Control Safety
+
+**CRITICAL MANDATE - CONCURRENT AGENT SAFETY:**
+- Assume there could be other agents or human users simultaneously working on different files within the same repository.
+- **NEVER** use aggressive global resets like `git reset --hard`, `git clean -fd`, or `git checkout .` unless explicitly instructed to do so by the user. These commands will permanently destroy work being done by other concurrent agents.
+- Always scope your git operations (e.g., `git checkout <specific_file>`, `git restore <specific_file>`) strictly to the files you are actively modifying.
 
 - Lake reuses `.olean` artifacts when sources, imports, Lean version, and
   dependency artifacts are unchanged.
