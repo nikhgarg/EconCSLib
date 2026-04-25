@@ -47,19 +47,15 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 Each paper-specific folder should be auditable by a human who wants to compare
 the Lean statements against the paper.
 
-- Record the exact paper source version in the folder. Prefer a folder
-  `README.md` with the arXiv/ACM/official URL, title, authors, venue/version,
-  and access date. If the project policy allows PDFs, keep the paper PDF there;
-  otherwise do not commit the PDF and make the README link to the exact version
-  being formalized.
-- For active paper folders, download the source PDF once into the paper folder
-  as the default workflow, and record the local path in the folder README. When
-  available, also cache the arXiv or publisher HTML page and a text extraction
-  next to the PDF. Add the cached source paths or a narrow folder pattern to
-  `.gitignore` unless the project explicitly wants source artifacts committed.
-  Work from these local files first. Do not repeatedly search the web,
-  re-open search results, or rediscover the same PDF after the exact source
-  version is known; spend those tokens on the Lean statements and proof seams.
+- **Required Template Structure:** Every paper folder must strictly follow the `papers/TEMPLATE/` format. This includes:
+  1. A `README.md` (see details below).
+  2. A `DependencyDAG.tex` providing the proof roadmap.
+  3. A `MainTheorems.lean` file holding the paper-facing wrappers.
+  4. A local `.gitignore` file.
+- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. **The overall repo `.gitignore` should not contain paper-specific exclusions.**
+- **Reproducible PDF:** A copy of the source PDF must be downloaded and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Because of the local `.gitignore`, this PDF will not be committed to Git, preventing repository bloat. Work from this local file; do not repeatedly search the web for it.
+- **README Requirements:** The `README.md` must clearly identify the exact
+  source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
