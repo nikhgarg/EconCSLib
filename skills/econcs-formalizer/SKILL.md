@@ -411,6 +411,9 @@ and wasted proof search.
   (`E[f]=Pr[event]x+(1-Pr[event])y`) before specializing to the paper's
   notation. This removes unnecessary model-specific assumptions like named
   `u_-i` identities.
+  For strict probability bounds such as `Pr[event] < 1`, avoid analytic
+  reasoning when finite support is enough: prove positive mass outside the event
+  and apply a generic finite PMF complement lemma.
 - **Analytic/existence/crossing proofs.** Use when the paper invokes
   differentiability, continuity, limits, asymptotic optimality, or an
   intermediate-value argument. First prove the finite game/probability algebra

@@ -285,6 +285,61 @@ theorem pmfProb_le_one {α : Type*} [Fintype α] [DecidableEq α]
   exact pmfExp_le_of_forall_le μ (fun a => if p a then (1 : ℝ) else 0) 1
     (by intro a; by_cases hp : p a <;> simp [hp])
 
+/-- Complement rule for finite PMF probabilities. -/
+theorem pmfProb_compl {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    pmfProb μ (fun a => ¬p a) = 1 - pmfProb μ p := by
+  classical
+  unfold pmfProb pmfExp
+  calc
+    ∑ a : α, (μ a).toReal * (if ¬p a then (1 : ℝ) else 0)
+        = ∑ a : α, (
+            (μ a).toReal * 1 -
+              (μ a).toReal * (if p a then (1 : ℝ) else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          by_cases hp : p a <;> simp [hp]
+    _ = (∑ a : α, (μ a).toReal * 1) -
+          ∑ a : α, (μ a).toReal * (if p a then (1 : ℝ) else 0) := by
+          rw [Finset.sum_sub_distrib]
+    _ = 1 - ∑ a : α, (μ a).toReal * (if p a then (1 : ℝ) else 0) := by
+          simp [pmfToRealSum μ]
+
+/-- Positive mass inside an event makes its finite PMF probability positive. -/
+theorem pmfProb_pos_of_mass {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : p a₀) (hmass : 0 < (μ a₀).toReal) :
+    0 < pmfProb μ p := by
+  classical
+  unfold pmfProb pmfExp
+  have hnonneg :
+      ∀ a ∈ (Finset.univ : Finset α),
+        0 ≤ (μ a).toReal * if p a then (1 : ℝ) else 0 := by
+    intro a _
+    refine mul_nonneg ENNReal.toReal_nonneg ?_
+    by_cases hpa : p a <;> simp [hpa]
+  have hterm :
+      (μ a₀).toReal * (if p a₀ then (1 : ℝ) else 0) = (μ a₀).toReal := by
+    simp [hp]
+  have hle :
+      (μ a₀).toReal * (if p a₀ then (1 : ℝ) else 0) ≤
+        ∑ a : α, (μ a).toReal * (if p a then (1 : ℝ) else 0) := by
+    exact Finset.single_le_sum hnonneg (Finset.mem_univ a₀)
+  rw [hterm] at hle
+  exact lt_of_lt_of_le hmass hle
+
+/-- Positive mass outside an event makes its finite PMF probability strictly below one. -/
+theorem pmfProb_lt_one_of_mass_not {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : ¬p a₀) (hmass : 0 < (μ a₀).toReal) :
+    pmfProb μ p < 1 := by
+  classical
+  have hcompl :
+      0 < pmfProb μ (fun a => ¬p a) :=
+    pmfProb_pos_of_mass μ (fun a => ¬p a) a₀ hp hmass
+  rw [pmfProb_compl μ p] at hcompl
+  linarith
+
 /-- Monotonicity of finite PMF expectation. -/
 theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (f g : α → ℝ)

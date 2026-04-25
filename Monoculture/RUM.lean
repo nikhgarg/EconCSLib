@@ -227,6 +227,114 @@ structure RUM3Theorem6Certificate
     firstChoiceProb μBetter (2 : Candidate 1) -
         firstChoiceProb μWorse (2 : Candidate 1) ≤ 0
 
+/-- The lambda side of the paper's Theorem 6 proof. -/
+structure RUM3LambdaCertificate (μWorse : PMF (Ranking 1)) : Prop where
+  lambda1_half : (1 : ℝ) / 2 < rum3Lambda1 μWorse
+  lambda1_lt_one : rum3Lambda1 μWorse < 1
+  lambda12 : rum3Lambda1 μWorse < rum3Lambda2 μWorse
+  lambda3_half : (1 : ℝ) / 2 < rum3Lambda3 μWorse
+
+/-- The first-choice-delta side of the paper's Theorem 6 proof. -/
+structure RUM3DeltaCertificate
+    (μBetter μWorse : PMF (Ranking 1)) : Prop where
+  delta_top_pos :
+    0 <
+      firstChoiceProb μBetter (0 : Candidate 1) -
+        firstChoiceProb μWorse (0 : Candidate 1)
+  delta_middle_le_top :
+    firstChoiceProb μBetter (1 : Candidate 1) -
+        firstChoiceProb μWorse (1 : Candidate 1) ≤
+      firstChoiceProb μBetter (0 : Candidate 1) -
+        firstChoiceProb μWorse (0 : Candidate 1)
+  delta_bottom_nonpos :
+    firstChoiceProb μBetter (2 : Candidate 1) -
+        firstChoiceProb μWorse (2 : Candidate 1) ≤ 0
+
+theorem rum3Theorem6Certificate_of_lambda_delta
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (lambda : RUM3LambdaCertificate μWorse)
+    (delta : RUM3DeltaCertificate μBetter μWorse) :
+    RUM3Theorem6Certificate μBetter μWorse value x1 x2 x3 where
+  value_first := hvalue1
+  value_second := hvalue2
+  value_third := hvalue3
+  value12 := hx12
+  value23 := hx23
+  lambda1_half := lambda.lambda1_half
+  lambda1_lt_one := lambda.lambda1_lt_one
+  lambda12 := lambda.lambda12
+  lambda3_half := lambda.lambda3_half
+  delta_top_pos := delta.delta_top_pos
+  delta_middle_le_top := delta.delta_middle_le_top
+  delta_bottom_nonpos := delta.delta_bottom_nonpos
+
+theorem rum3DeltaCertificate_of_paper_lemmas
+    {μBetter μWorse : PMF (Ranking 1)}
+    (monotonicity_top :
+      firstChoiceProb μWorse (0 : Candidate 1) <
+        firstChoiceProb μBetter (0 : Candidate 1))
+    (lemma3_middle :
+      firstChoiceProb μBetter (1 : Candidate 1) -
+          firstChoiceProb μWorse (1 : Candidate 1) ≤
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (lemma2_bottom :
+      firstChoiceProb μBetter (2 : Candidate 1) ≤
+        firstChoiceProb μWorse (2 : Candidate 1)) :
+    RUM3DeltaCertificate μBetter μWorse where
+  delta_top_pos := by linarith
+  delta_middle_le_top := lemma3_middle
+  delta_bottom_nonpos := by linarith
+
+theorem rum3LambdaCertificate_of_pairwise_facts
+    {μWorse : PMF (Ranking 1)}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_correct : (1 : ℝ) / 2 < rum3Lambda1 μWorse)
+    (h23_not_sure : rum3Lambda1 μWorse < 1)
+    (h12_correct : (1 : ℝ) / 2 < rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse where
+  lambda1_half := h23_correct
+  lambda1_lt_one := h23_not_sure
+  lambda12 := h13_gt_23
+  lambda3_half := h12_correct
+
+theorem rum3Lambda1_le_one (μ : PMF (Ranking 1)) :
+    rum3Lambda1 μ ≤ 1 := by
+  exact pmfProb_le_one μ
+    (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+
+theorem rum3Lambda2_le_one (μ : PMF (Ranking 1)) :
+    rum3Lambda2 μ ≤ 1 := by
+  exact pmfProb_le_one μ
+    (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1))
+
+theorem rum3Lambda3_le_one (μ : PMF (Ranking 1)) :
+    rum3Lambda3 μ ≤ 1 := by
+  exact pmfProb_le_one μ
+    (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
+
+theorem rum3Lambda1_lt_one_of_mass_choose_third_after_first_removed
+    (μ : PMF (Ranking 1)) (π₀ : Ranking 1)
+    (hchoose :
+      bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hmass : 0 < (μ π₀).toReal) :
+    rum3Lambda1 μ < 1 := by
+  unfold rum3Lambda1
+  refine pmfProb_lt_one_of_mass_not μ
+    (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+    π₀ ?hnot hmass
+  intro h
+  have : (2 : Candidate 1) = (1 : Candidate 1) := by
+    rw [← hchoose, h]
+  have hval : (2 : ℕ) = 1 := by
+    simpa using congrArg Fin.val this
+  norm_num at hval
+
 theorem expectedBestAfterRemoval_rum3_remove0
     (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :
     AccuracyFamily.expectedBestAfterRemoval μ value (0 : Candidate 1) =

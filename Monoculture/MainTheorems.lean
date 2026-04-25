@@ -239,6 +239,82 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_certificate
     Model.PrefersWeakerCompetition μBetter μWorse value :=
   rum3_prefersWeakerCompetition_of_certificate cert
 
+/--
+Appendix C / Theorem 6, certificate construction from paper sublemmas.
+
+This separates the remaining continuous RUM work into the two sources used in
+the paper proof: lambda comparisons for two-candidate human subproblems and
+first-choice delta comparisons from monotonicity/Lemmas 2 and 3.
+-/
+theorem paper_theorem6_certificate_of_lambda_delta
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (lambda : RUM3LambdaCertificate μWorse)
+    (delta : RUM3DeltaCertificate μBetter μWorse) :
+    RUM3Theorem6Certificate μBetter μWorse value x1 x2 x3 :=
+  rum3Theorem6Certificate_of_lambda_delta
+    hvalue1 hvalue2 hvalue3 hx12 hx23 lambda delta
+
+/--
+Appendix C / Lemmas 2 and 3 to Theorem 6 delta certificate.
+
+Paper inputs: monotonicity gives `Pr[τ₁=x₁] > Pr[π₁=x₁]`, Lemma 3 gives
+`Δp₂ ≤ Δp₁`, and Lemma 2 gives `Pr[τ₁=x₃] ≤ Pr[π₁=x₃]`.
+-/
+theorem paper_theorem6_deltaCertificate_of_lemmas2_3
+    {μBetter μWorse : PMF (Ranking 1)}
+    (monotonicity_top :
+      firstChoiceProb μWorse (0 : Candidate 1) <
+        firstChoiceProb μBetter (0 : Candidate 1))
+    (lemma3_middle :
+      firstChoiceProb μBetter (1 : Candidate 1) -
+          firstChoiceProb μWorse (1 : Candidate 1) ≤
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (lemma2_bottom :
+      firstChoiceProb μBetter (2 : Candidate 1) ≤
+        firstChoiceProb μWorse (2 : Candidate 1)) :
+    RUM3DeltaCertificate μBetter μWorse :=
+  rum3DeltaCertificate_of_paper_lemmas
+    monotonicity_top lemma3_middle lemma2_bottom
+
+/--
+Appendix C / pairwise human comparisons to Theorem 6 lambda certificate.
+-/
+theorem paper_theorem6_lambdaCertificate_of_pairwise_facts
+    {μWorse : PMF (Ranking 1)}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_correct : (1 : ℝ) / 2 < rum3Lambda1 μWorse)
+    (h23_not_sure : rum3Lambda1 μWorse < 1)
+    (h12_correct : (1 : ℝ) / 2 < rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_facts
+    h13_gt_23 h23_correct h23_not_sure h12_correct
+
+/--
+Appendix C / lambda upper bound: every `λᵢ` is a probability.
+-/
+theorem paper_theorem6_lambda1_le_one (μ : PMF (Ranking 1)) :
+    rum3Lambda1 μ ≤ 1 :=
+  rum3Lambda1_le_one μ
+
+/--
+Appendix C / strict `λ₁ < 1` from positive support on the wrong remaining
+candidate after `x₁` is removed.
+-/
+theorem paper_theorem6_lambda1_lt_one_of_mass_choose_third_after_first_removed
+    (μ : PMF (Ranking 1)) (π₀ : Ranking 1)
+    (hchoose :
+      bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hmass : 0 < (μ π₀).toReal) :
+    rum3Lambda1 μ < 1 :=
+  rum3Lambda1_lt_one_of_mass_choose_third_after_first_removed
+    μ π₀ hchoose hmass
+
 namespace MallowsComparison
 
 /--
