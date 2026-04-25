@@ -80,7 +80,7 @@ target
 `MallowsComparison.theorem3_pointwise_of_centerMallowsFiniteSumCertificate`.
 
 The fair-division Test-of-Time theorem is closed at
-`EconCSLean.FairDivision.lmms_theorem_2_1_finite_maxMarginal`. The imported
+`EconCSLib.FairDivision.lmms_theorem_2_1_finite_maxMarginal`. The imported
 fairness and diversity-aware recommendation tracks now have two-sided conditional LP
 reduction and finite exchange first-order conditions, respectively; see
 `HumanStartHere.lean` for the current `#check` anchors.

@@ -1,0 +1,32 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}
+
+% --- Legend ---
+\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
+\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized Lemma};
+\node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
+\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not Formalized};
+\daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
+
+% --- Main proof chain ---
+\node[dag_model, below=2.5cm of legRes] (Primitives) {\textbf{Primitives} \\ Matching, Prefs., Stability};
+\node[dag_unformalized, below=2cm of Primitives] (DA_Step) {\textbf{DA Step} \\ Iterative Construction};
+\node[dag_unformalized, below=2cm of DA_Step] (DA_Term) {\textbf{DA Termination} \\ \& Fold Construction};
+
+% --- Theorem Row ---
+\node[dag_unformalized, below=3cm of DA_Term] (Thm1) {\textbf{Theorem 1} \\ DA Stable Matching};
+\node[dag_unformalized, right=of Thm1] (Thm2) {\textbf{Theorem 2} \\ Men-Optimal Stable};
+\node[dag_unformalized, right=of Thm2] (Thm3) {\textbf{Theorem 3} \\ Truth-Telling Dominant};
+
+% --- Edges ---
+\draw[dag_arrow] (Primitives) -- (DA_Step);
+\draw[dag_dashed_arrow] (DA_Step) -- (DA_Term);
+\draw[dag_dashed_arrow] (DA_Term) -- (Thm1);
+\draw[dag_dashed_arrow] (Thm1) -- (Thm2);
+\draw[dag_dashed_arrow] (Thm2) -- (Thm3);
+
+\end{tikzpicture}
+\end{document}

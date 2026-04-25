@@ -1,0 +1,86 @@
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, shapes.misc, fit, backgrounds, calc}
+
+\tikzset{
+    >=Latex,
+    font=\sffamily\large,
+    node distance=1.5cm and 3cm,
+    dag_result/.style={
+        rectangle, 
+        draw=green!70!black, 
+        fill=green!15, 
+        very thick, 
+        minimum width=4.5cm, 
+        minimum height=1.5cm, 
+        text width=5cm,
+        align=center
+    },
+    dag_lemma/.style={
+        rounded rectangle, 
+        draw=orange!80!black, 
+        fill=yellow!20, 
+        very thick, 
+        minimum width=4.5cm, 
+        minimum height=1.5cm, 
+        text width=5cm,
+        align=center
+    },
+    dag_model/.style={
+        ellipse, 
+        draw=blue!70!black, 
+        fill=blue!12, 
+        very thick, 
+        minimum width=4.5cm, 
+        minimum height=1.5cm, 
+        text width=4.5cm,
+        align=center
+    },
+    dag_unformalized/.style={
+        rectangle, 
+        draw=gray!60!black, 
+        fill=gray!10, 
+        very thick, 
+        dashed, 
+        minimum width=4.5cm, 
+        minimum height=1.5cm, 
+        text width=5cm,
+        align=center
+    },
+    dag_conditional/.style={
+        rectangle, 
+        rounded corners,
+        draw=orange!80!black, 
+        fill=orange!10, 
+        very thick, 
+        minimum width=4.5cm, 
+        minimum height=1.5cm, 
+        text width=5cm,
+        align=center
+    },
+    dag_caveat/.style={
+        diamond, 
+        draw=red!70!black, 
+        fill=red!10, 
+        minimum width=4cm, 
+        align=center, 
+        inner sep=0pt, 
+        font=\sffamily\small
+    },
+    dag_arrow/.style={
+        -{Stealth[scale=1.2]}, 
+        very thick,
+        shorten >=1.5pt,
+        shorten <=1.5pt
+    },
+    dag_dashed_arrow/.style={
+        -{Stealth[scale=1.2]}, 
+        very thick, 
+        dashed,
+        shorten >=1.5pt,
+        shorten <=1.5pt
+    }
+}
+
+% Legend Helper
+\newcommand{\daglegend}[2]{
+    \node[draw, rounded corners, very thick, fit=#1, inner sep=12pt, label=above:\textbf{\Large Legend}] (#2) {};
+}

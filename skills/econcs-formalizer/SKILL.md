@@ -6,7 +6,7 @@ description: Formalize economics-and-computation papers in Lean. Use when asked 
 # EconCS Formalizer
 
 Use this skill to turn economics-and-computation papers into maintainable Lean
-code. Keep repository-specific status out of this file; in `EconCSLean`, that
+code. Keep repository-specific status out of this file; in `EconCSLib`, that
 belongs in `docs/ECONCSLEAN_CURRENT_STATUS.md`.
 
 ## Component 1: Workflow and Organization
@@ -76,7 +76,7 @@ the Lean statements against the paper.
   The file should be declaration-ordered by paper section and should expose the
   paper-facing definitions and full theorem statements (with assumptions and
   short paper-context comments) rather than `#check` entries alone.
-- **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLean.Statistics.priorWeightedVariance`). The ledger file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the ledger that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements (or prove they equal the generic terms). A reviewer must see the actual math equations inside this single file without needing to open imported generic modules.
+- **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLib.Statistics.priorWeightedVariance`). The ledger file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the ledger that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements (or prove they equal the generic terms). A reviewer must see the actual math equations inside this single file without needing to open imported generic modules.
   Include for each entry:
   1. the declaration name,
   2. a compact paper-style statement in comments,
@@ -87,20 +87,17 @@ the Lean statements against the paper.
 - Add a structured folder `README.md` theorem-status table with columns like:
   paper theorem/definition, Lean declaration, status (`formalized`,
   `conditional`, `scaffold`, `not started`), file, and remaining assumptions.
-- When starting a new paper folder, build a dependency DAG for all named paper
-  definitions, lemmas, propositions, theorems, and corollaries before deep
-  proof work. Keep it as a TikZ source file (and rendered image) in the paper
-  folder so humans can audit theorem flow quickly.
+- **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (e.g., `MSVV07AdWords`, `LMMS04FairDivision`, `KR21Monoculture`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
+- **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as a dependency DAG in a TikZ source file (with a rendered image) in the paper folder. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
   - **Project pattern in this repo:** for Monoculture, keep the active artifact at
-    `Monoculture/DependencyDAG.tex` and a rendered image alongside it.
-  - Use the same node styles as listed below, and prefer a conditional endpoint
-    node for any final theorem that still depends on continuous/model-specific
-    assumptions not yet discharged in Lean.
+    `papers/KR21Monoculture/DependencyDAG.tex` and a rendered image alongside it.
+  - All paper DAGs MUST `\input` the shared preamble located at `docs/tikz/dag_preamble.tex`.
+  - Use the exact node styles defined in the preamble: `dag_result` (green), `dag_lemma` (yellow rounded), `dag_model` (blue ellipse), `dag_unformalized` (dashed gray), `dag_conditional` (orange rounded), and `dag_caveat` (red diamond).
 - **DAG Formatting and Clarity Mandates:**
-  - The DAG must encode formalization status and node type explicitly in the styling.
-  - Include distinct color and shape coding for `fully formalized result` (e.g., green rectangle), `fully formalized lemma` (e.g., yellow rounded rectangle), `model/definition` (e.g., blue ellipse), and `not formalized` (e.g., dashed gray rectangle).
-  - You MUST include a Legend in the TikZ artifact that explicitly defines what shapes and colors mean (e.g., explicitly stating that "Lemma" boxes represent fully formalized code).
-  - Use explicit positioning (`node distance`, `below=of`, `xshift`, `yshift`) carefully to ensure boxes do not overlap. Avoid crossing complex diagonal edges that place nodes on top of one another.
+  - The DAG must encode formalization status and node type explicitly by using the preamble styles.
+  - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
+  - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top.
+  - **Edge Routing (No Overlaps):** Use explicit positioning (`node distance`, `below=of`, `right=of`, `xshift`, `yshift`) carefully. **Prefer straight paths or simple orthogonal routing (`|-`, `-|`) whenever possible without overlap.** Use wide horizontal spacing (standardized at `4cm` in the preamble) and a column-based layout to ensure paths are clear. Only use complex curves (`to[out=..., in=...]`) or bends when necessary to route around an immediate obstacle. Use `dag_arrow` and `dag_dashed_arrow` from the preamble for styling.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
   a status transition between scaffold/conditional/formalized).
@@ -168,9 +165,7 @@ search.
    Read the repo README, roadmap, architecture notes, and paper-specific
    handoff documents. Identify the public theorem target and the smallest local
    lemma that moves it forward.
-   For a brand-new paper, first produce the paper's named-result dependency DAG
-   (definitions/lemmas/propositions/theorems/corollaries) as a TikZ diagram
-   with status-coded nodes, then keep it current through the campaign.
+   For a brand-new paper, your *very first task* is to read through the paper to extract the proof roadmap. Produce the comprehensive named-result dependency DAG (capturing every definition, lemma, proposition, theorem, and corollary and their exact relationships) as a TikZ diagram using the shared preamble. This serves as your master plan to understand the paper's architecture. Keep it current through the campaign as results change status.
 
 2. Context Efficiency vs. Edit Accuracy (File Reading Strategy).
    Do not over-optimize context limits by reading tiny chunks of files (e.g., using `sed` to read 15-20 lines) if you are about to use the `replace` tool. Micro-reading frequently drops necessary surrounding whitespace or context, causing the `replace` tool to fail repeatedly with "0 occurrences found". The cost of spinning in a multi-turn failure loop is far higher than the cost of reading the entire file once. Use `read_file` to ingest small-to-medium files completely, or use `grep -C 20` to get substantial context, ensuring you capture exact, copy-pasteable blocks for your `old_string`.
@@ -725,7 +720,7 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   convergence lemma such as `Sequence.SeqTendsTo.const_mul_of_nonneg` to state
   the conclusion as `msvvRatio * optLimit ≤ revenueLimit`.
   Package the final paper-facing statement as an explicit family structure
-  (`MsvvSmallBidsLimitFamily` in `EconCSLean`) rather than leaving a long list
+  (`MsvvSmallBidsLimitFamily` in `EconCSLib`) rather than leaving a long list
   of hypotheses at every theorem call site.
   This is the faithful paper-level theorem for the finite-family model; do not
   force any fixed finite instance theorem to be exactly `1 - 1/e`.
@@ -742,8 +737,8 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   fields are the distributional instance family, deterministic-algorithm
   expected revenue bound, offline benchmark lower bound, and limiting ratio;
   then connect the paper's construction to that certificate.
-  In `EconCSLean`, use the generic finite Yao theorem in
-  `EconCSLean.Decision.Yao` for this step: prove deterministic average payoff
+  In `EconCSLib`, use the generic finite Yao theorem in
+  `EconCSLib.Decision.Yao` for this step: prove deterministic average payoff
   under a finite input distribution, then derive the existence of a bad input
   for every randomized algorithm. Keep normalized revenue explicit so the
   offline benchmark division is visible at the paper wrapper. For the MSVV
@@ -784,7 +779,7 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   chooses at most one visible actual bidder per round.
   For the harmonic cap, split the proof into the logarithmic
   tail-spend bound, a finite layer-count comparison, and a separate
-  exponential-grid estimate. In `EconCSLean`, these are now represented by
+  exponential-grid estimate. In `EconCSLib`, these are now represented by
   `theorem9BidderSpendUpperBound_le_log_tail`,
   `theorem9HarmonicLayerCountBound_of_pos`,
   `theorem9ExponentialGridUpperSum_le_msvvRatio`, and
@@ -799,7 +794,7 @@ the needed theorem and whether their Lean/mathlib versions are compatible.
   `BMatchingTheorem9ObservedPrefixFamilyCertificate` /
   `BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate` /
   `BMatchingTheorem9FeasiblePrefixRuleFamily` /
-  `BMatchingTheorem9IntegralPrefixChoiceFamily` in `EconCSLean`) so future work
+  `BMatchingTheorem9IntegralPrefixChoiceFamily` in `EconCSLib`) so future work
   instantiates only the deterministic choice/allocation rule and, when needed,
   actual-revenue bridge directly. Do not add a
   separate

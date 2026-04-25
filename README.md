@@ -1,6 +1,6 @@
-# EconCSLean
+# EconCSLib
 
-`EconCSLean` is a Lean 4 library for formalizing results that matter to the
+`EconCSLib` is a Lean 4 library for formalizing results that matter to the
 economics-and-computation community.
 
 The long-term project still has three linked goals:
@@ -33,12 +33,12 @@ Each paper folder now follows the same audit pattern:
 
 The broader EC Test-of-Time track has also started:
 
-- `EconCSLean/Decision/*` for reusable finite decision-rule lemmas
-- `EconCSLean/Graph/*` for reusable finite directed-relation/cycle lemmas
-- `EconCSLean/Math/*` for reusable algebraic proof helpers
-- `EconCSLean/Statistics/*` for reusable finite/statistical algebra
-- `EconCSLean/FairDivision/*` for the 2025 Test-of-Time indivisible-goods paper
-- `EconCSLean/Auction/*` for the 2021 digital-goods auction paper and later
+- `EconCSLib/Decision/*` for reusable finite decision-rule lemmas
+- `EconCSLib/Graph/*` for reusable finite directed-relation/cycle lemmas
+- `EconCSLib/Math/*` for reusable algebraic proof helpers
+- `EconCSLib/Statistics/*` for reusable finite/statistical algebra
+- `EconCSLib/FairDivision/*` for the 2025 Test-of-Time indivisible-goods paper
+- `EconCSLib/Auction/*` for the 2021 digital-goods auction paper and later
   auction papers
 - `DiscretizationBias/*` for the current author-paper formalization pass
 - `ProducerFairness/*` for the current prior-weighted rating-system pass
@@ -67,7 +67,7 @@ nonnegativity assumptions.
 
 Other current theorem anchors:
 
-- `EconCSLean.FairDivision.lmms_theorem_2_1_finite_maxMarginal`
+- `EconCSLib.FairDivision.lmms_theorem_2_1_finite_maxMarginal`
 - `ReductionWitness.symmetricOptimalItemFairness_eq_reduced`
 - `ReductionWitness.exists_reducedOptimalAtLevel_of_original_symmetric_optimal`
 - `ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum`
@@ -90,7 +90,7 @@ If you are new to the imported code, start with:
 This code is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
 
 ```bash
-lake build EconCSLean
+lake build EconCSLib
 ```
 
 ## GitHub Automation
@@ -103,6 +103,6 @@ releases should be cut manually if needed.
 
 The imported decision/fairness/recommendation track is not the whole project.
 It is the first substantial batch of paper formalization work inside
-`EconCSLean`, and it should inform how the broader library grows.
+`EconCSLib`, and it should inform how the broader library grows.
 
 That broader roadmap lives in [ROADMAP.md](ROADMAP.md).

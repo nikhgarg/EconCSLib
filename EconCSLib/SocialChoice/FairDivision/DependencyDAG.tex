@@ -1,0 +1,44 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}
+
+% --- Legend ---
+\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
+\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized Lemma};
+\node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
+\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not Formalized};
+\daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
+
+% --- Column 1 (Primitives & Graph) ---
+\node[dag_model, below=2.5cm of legRes] (Primitives) {\textbf{Primitives} \\ Valuation, Allocation, Envy};
+\node[dag_lemma, below=2cm of Primitives] (Graph) {\textbf{Envy Graph} \\ Cycle Extraction};
+\node[dag_lemma, below=1.5cm of Graph] (Acyclic) {\textbf{Acyclic Reduction} \\ Cycle Elimination};
+\node[dag_result, below=2.5cm of Acyclic] (ThmExist) {\textbf{Theorem 2.1} (Part 1) \\ Bounded Envy Existence};
+
+% --- Column 2 (Local & Algorithm) ---
+\node[dag_lemma, right=of Primitives] (Local) {\textbf{Local Invariants} \\ (Add Item, Rotate)};
+\node[dag_lemma, below=2cm of Local] (Unenvied) {\textbf{Unenvied Owner} \\ Extraction};
+\node[dag_result, below=4cm of Unenvied] (ThmAlgo) {\textbf{Theorem 2.1} (Part 2) \\ LMMS Algorithm};
+
+% --- Column 3 (Extensions) ---
+\node[dag_unformalized, right=of Local] (Sec3) {\textbf{Section 3} \\ Maximin Share Bounds};
+\node[dag_unformalized, right=of ThmAlgo] (Thm2_2) {\textbf{Theorem 2.2} \\ Polynomial Complexity};
+
+% --- Edges ---
+\draw[dag_arrow] (Primitives) -- (Graph);
+\draw[dag_arrow] (Primitives) -- (Local);
+\draw[dag_arrow] (Graph) -- (Acyclic);
+\draw[dag_arrow] (Local) -- (Unenvied);
+\draw[dag_arrow] (Acyclic) -- (Unenvied);
+\draw[dag_arrow] (Unenvied) -- (ThmExist);
+\draw[dag_arrow] (Unenvied) -- (ThmAlgo);
+\draw[dag_arrow] (Local.south east) to[out=315, in=45] (ThmAlgo.north east);
+\draw[dag_arrow] (Acyclic) -- (ThmAlgo);
+
+\draw[dag_dashed_arrow] (ThmAlgo) -- (Thm2_2);
+\draw[dag_dashed_arrow] (Primitives) -- (Sec3);
+
+\end{tikzpicture}
+\end{document}

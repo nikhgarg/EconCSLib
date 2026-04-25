@@ -1,4 +1,4 @@
-# EconCSLean Roadmap
+# EconCSLib Roadmap
 
 ## Goal
 
@@ -51,7 +51,7 @@ The imported track gives this repository:
 
 So the immediate question is no longer “what should the first paper be?”.
 The immediate question is “how do we stabilize and extend the imported track so
-it becomes the first durable slice of the broader EconCSLean library?”.
+it becomes the first durable slice of the broader EconCSLib library?”.
 
 ## Active Continuation Target
 
@@ -104,7 +104,7 @@ What not to do yet:
 ### Milestone 0: Stabilize The Imported Track
 
 Objective: make the imported three-paper track buildable, documented, and
-maintainable inside `EconCSLean`.
+maintainable inside `EconCSLib`.
 
 Tasks:
 
@@ -139,7 +139,7 @@ Exit criteria:
 ### Milestone 2: Consolidate `DecisionCore`
 
 Objective: treat `DecisionCore` as the first serious reusable core of
-`EconCSLean`.
+`EconCSLib`.
 
 Tasks:
 

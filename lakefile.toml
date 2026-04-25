@@ -1,15 +1,13 @@
-name = "EconCSLean"
+name = "EconCSLib"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["EconCSLean"]
+defaultTargets = ["EconCSLib"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
-# These warnings are high-volume in existing proof files and obscure real build
-# failures in agent logs. Keep proof obligations enforced; quiet only style/noise.
 weak.linter.unnecessarySimpa = false
 weak.linter.unusedDecidableInType = false
 weak.linter.unusedFintypeInType = false
@@ -30,24 +28,22 @@ scope = "leanprover"
 rev = "v4.30.0-rc2"
 
 [[lean_lib]]
-name = "EconCSLean"
+name = "EconCSLib"
 
 [[lean_lib]]
-name = "DecisionFairness"
+srcDir = "papers"
 
 [[lean_lib]]
-name = "DecisionCore"
+name = "GCG24UserItemFairness"
+srcDir = "papers"
 
 [[lean_lib]]
+srcDir = "papers"
 
 [[lean_lib]]
-name = "UserItemFairness"
+name = "DSWG24DiscretizationBias"
+srcDir = "papers"
 
 [[lean_lib]]
-name = "AccuracyDiversity"
-
-[[lean_lib]]
-name = "DiscretizationBias"
-
-[[lean_lib]]
-name = "ProducerFairness"
+name = "MBJG25ProducerFairness"
+srcDir = "papers"
