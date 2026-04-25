@@ -1133,6 +1133,46 @@ theorem paper_theorem6_lambdaCertificate_of_sample_swap_facts_and_full_support
     swap12 hmap12 hmass12 hwrong12 hstrict12
 
 /--
+Appendix C / score-level map for the `x₂` versus `x₃` lambda swap.
+-/
+theorem paper_theorem6_lambda1_wrong_to_correct_map_of_score_swap23
+    {Ω : Type*} (rank : Ω → Ranking 1) (s2 s3 : Ω → ℝ) (swap : Ω → Ω)
+    (hwrong_scores : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        s2 ω < s3 ω)
+    (hcorrect_of_scores : ∀ ω,
+      s3 ω ≤ s2 ω →
+        bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1))
+    (hswap2 : ∀ ω, s2 (swap ω) = s3 ω)
+    (hswap3 : ∀ ω, s3 (swap ω) = s2 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (0 : Candidate 1) =
+          (1 : Candidate 1) :=
+  rum3Lambda1_wrong_to_correct_map_of_score_swap23
+    rank s2 s3 swap hwrong_scores hcorrect_of_scores hswap2 hswap3
+
+/--
+Appendix C / score-level map for the `x₁` versus `x₂` lambda swap.
+-/
+theorem paper_theorem6_lambda3_wrong_to_correct_map_of_score_swap12
+    {Ω : Type*} (rank : Ω → Ranking 1) (s1 s2 : Ω → ℝ) (swap : Ω → Ω)
+    (hwrong_scores : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        s1 ω < s2 ω)
+    (hcorrect_of_scores : ∀ ω,
+      s2 ω ≤ s1 ω →
+        bestRemainingAfter (rank ω) (2 : Candidate 1) = (0 : Candidate 1))
+    (hswap1 : ∀ ω, s1 (swap ω) = s2 ω)
+    (hswap2 : ∀ ω, s2 (swap ω) = s1 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (2 : Candidate 1) =
+          (0 : Candidate 1) :=
+  rum3Lambda3_wrong_to_correct_map_of_score_swap12
+    rank s1 s2 swap hwrong_scores hcorrect_of_scores hswap1 hswap2
+
+/--
 Appendix C / Theorem 6 from the narrowed finite/pointwise RUM inputs.
 
 This is the strongest current paper-facing endpoint.  It replaces the raw lambda

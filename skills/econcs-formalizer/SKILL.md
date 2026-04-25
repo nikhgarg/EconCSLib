@@ -473,6 +473,11 @@ and wasted proof search.
   leaving opaque assumptions like "top cannot leave top" or "`swapi` maps this
   transition region" in the paper-facing theorem when the real-order proof is
   already available.
+  For pairwise ranking events after one candidate is removed, prove the
+  wrong-to-correct event map from the two relevant score coordinates and a
+  coordinate-swap equation before connecting it to probability mass. Keep the
+  score order interface (`wrong -> s_i < s_j`, `s_j ≤ s_i -> correct`) separate
+  from the mass comparison.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only

@@ -1228,6 +1228,54 @@ theorem rum3Lambda1_lt_lambda2_of_sample_equiv
     hmap hmass hsource hstrict
 
 /--
+Score-level event map for the `x₂` versus `x₃` lambda swap.
+
+If choosing `x₃` after removing `x₁` implies the `x₃` score strictly beats the
+`x₂` score, and a weak `x₂` score lead implies choosing `x₂`, then swapping the
+two scores maps the wrong event into the correct event.
+-/
+theorem rum3Lambda1_wrong_to_correct_map_of_score_swap23
+    {Ω : Type*} (rank : Ω → Ranking 1) (s2 s3 : Ω → ℝ) (swap : Ω → Ω)
+    (hwrong_scores : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        s2 ω < s3 ω)
+    (hcorrect_of_scores : ∀ ω,
+      s3 ω ≤ s2 ω →
+        bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1))
+    (hswap2 : ∀ ω, s2 (swap ω) = s3 ω)
+    (hswap3 : ∀ ω, s3 (swap ω) = s2 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (0 : Candidate 1) =
+          (1 : Candidate 1) := by
+  intro ω hwrong
+  apply hcorrect_of_scores
+  rw [hswap2, hswap3]
+  exact le_of_lt (hwrong_scores ω hwrong)
+
+/--
+Score-level event map for the `x₁` versus `x₂` lambda swap.
+-/
+theorem rum3Lambda3_wrong_to_correct_map_of_score_swap12
+    {Ω : Type*} (rank : Ω → Ranking 1) (s1 s2 : Ω → ℝ) (swap : Ω → Ω)
+    (hwrong_scores : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        s1 ω < s2 ω)
+    (hcorrect_of_scores : ∀ ω,
+      s2 ω ≤ s1 ω →
+        bestRemainingAfter (rank ω) (2 : Candidate 1) = (0 : Candidate 1))
+    (hswap1 : ∀ ω, s1 (swap ω) = s2 ω)
+    (hswap2 : ∀ ω, s2 (swap ω) = s1 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (2 : Candidate 1) =
+          (0 : Candidate 1) := by
+  intro ω hwrong
+  apply hcorrect_of_scores
+  rw [hswap1, hswap2]
+  exact le_of_lt (hwrong_scores ω hwrong)
+
+/--
 Lambda certificate from finite paired-density swap facts.
 
 This packages the two strict pairwise comparisons in the form produced by a
