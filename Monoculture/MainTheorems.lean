@@ -176,6 +176,50 @@ theorem paper_appendixC_contraction_bottom_first_imp_original_bottom_first
     ht0 ht1 hx31 hx32 hc31 hc32
 
 /--
+Appendix C / Lemma 3, deterministic `swapi` geometry for `i = 2`.
+
+This is the score-level statement behind the paper's claim that
+`swapi(r) ∈ S_{j→1}` whenever `r ∈ S_{j→i}` in the three-candidate middle case.
+-/
+theorem paper_lemma3_swapi_middle_transition_geometry
+    {t x1 x2 x3 r1 r2 r3 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 < x1)
+    (hr13 : r1 ≤ r3) (hr23 : r2 ≤ r3)
+    (hc12 :
+      paper_appendixC_contractedScore t x1 r1 <
+        paper_appendixC_contractedScore t x2 r2)
+    (hc32 :
+      paper_appendixC_contractedScore t x3 r3 ≤
+        paper_appendixC_contractedScore t x2 r2) :
+    r2 ≤ r3 ∧ r1 ≤ r3 ∧
+      paper_appendixC_contractedScore t x2 r1 ≤
+        paper_appendixC_contractedScore t x1 r2 ∧
+      paper_appendixC_contractedScore t x3 r3 ≤
+        paper_appendixC_contractedScore t x1 r2 :=
+  rum3_swap_middle_transition_geometry
+    ht0 ht1 hx12 hr13 hr23 hc12 hc32
+
+/--
+Appendix C / Lemma 3, pointwise density comparison under weak well-ordering.
+-/
+theorem paper_lemma3_swapi_density_le_of_weaklyWellOrdered
+    {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
+    {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) ≤ f (r2 - x1) * f (r1 - x2) :=
+  weaklyWellOrderedNoise_swap_middle_density_le hf hx12 hr12
+
+/--
+Appendix C / Lemma 3, strict pointwise density comparison under strict
+well-ordering.
+-/
+theorem paper_lemma3_swapi_density_lt_of_strictlyWellOrdered
+    {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
+    {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) < f (r2 - x1) * f (r1 - x2) :=
+  strictlyWellOrderedNoise_swap_middle_density_lt hf hx12 hr12
+
+/--
 Appendix C / Theorem 6, final three-candidate payoff algebra.
 
 Paper statement: for three candidates with values `x1 > x2 > x3`, once the RUM

@@ -436,6 +436,10 @@ and wasted proof search.
   geometry such as contraction preserving pairwise order. These lemmas are small
   algebraic inequalities and can discharge the event-implication side of a
   coupling proof independently from density/Jacobian work.
+  For swap or injection arguments under a density, split the work into
+  pointwise region mapping and pointwise density comparison before integrating.
+  The integration theorem should then consume these as named hypotheses instead
+  of mixing score geometry, density algebra, and measure transport in one proof.
   For coupling proofs, first formalize the finite probability skeleton: a common
   sample space, marginal-identification equalities, and an event implication
   proving `Pr[A] ≤ Pr[B]`. Keep the continuous map, Jacobian/pushforward, and

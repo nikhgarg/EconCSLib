@@ -266,6 +266,60 @@ theorem rum3_contract_bottom_first_imp_original_bottom_first
       rumContractScore_preserves_strict_order ht0 ht1 hx32 hr
     linarith
 
+/--
+The deterministic `swapi` geometry used in Appendix C / Lemma 3 for `i = 2`.
+
+If the original realization is bottom-first (`r₁,r₂ ≤ r₃`) and contraction
+makes the middle candidate strictly beat the top candidate while weakly beating
+the bottom candidate, then after swapping the top and middle realization
+coordinates, the original realization is still bottom-first and the contracted
+realization is top-first.
+-/
+theorem rum3_swap_middle_transition_geometry
+    {t x1 x2 x3 r1 r2 r3 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 < x1)
+    (hr13 : r1 ≤ r3) (hr23 : r2 ≤ r3)
+    (hc12 : rumContractScore t x1 r1 < rumContractScore t x2 r2)
+    (hc32 : rumContractScore t x3 r3 ≤ rumContractScore t x2 r2) :
+    r2 ≤ r3 ∧ r1 ≤ r3 ∧
+      rumContractScore t x2 r1 ≤ rumContractScore t x1 r2 ∧
+      rumContractScore t x3 r3 ≤ rumContractScore t x1 r2 := by
+  have hr12 : r1 < r2 := by
+    by_contra hnot
+    have hr21 : r2 ≤ r1 := le_of_not_gt hnot
+    have hcontract :
+        rumContractScore t x2 r2 ≤ rumContractScore t x1 r1 :=
+      rumContractScore_preserves_weak_order ht0 ht1 (le_of_lt hx12) hr21
+    linarith
+  have hswap12 :
+      rumContractScore t x2 r1 ≤ rumContractScore t x1 r2 :=
+    le_of_lt (rumContractScore_preserves_strict_order ht0 ht1 hx12 hr12)
+  have hsameRealization :
+      rumContractScore t x2 r2 ≤ rumContractScore t x1 r2 :=
+    rumContractScore_preserves_weak_order ht0 ht1 (le_of_lt hx12) le_rfl
+  exact ⟨hr23, hr13, hswap12, le_trans hc32 hsameRealization⟩
+
+theorem weaklyWellOrderedNoise_swap_middle_density_le
+    {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
+    {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) ≤ f (r2 - x1) * f (r1 - x2) := by
+  have h := hf (a := r2) (b := r1) (c := x1) (d := x2) hr12 hx12
+  calc
+    f (r1 - x1) * f (r2 - x2) =
+        f (r2 - x2) * f (r1 - x1) := by ring
+    _ ≤ f (r2 - x1) * f (r1 - x2) := h
+
+theorem strictlyWellOrderedNoise_swap_middle_density_lt
+    {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
+    {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
+    f (r1 - x1) * f (r2 - x2) < f (r2 - x1) * f (r1 - x2) := by
+  have h := hf (a := r2) (b := r1) (c := x1) (d := x2) hr12 hx12
+  calc
+    f (r1 - x1) * f (r2 - x2) =
+        f (r2 - x2) * f (r1 - x1) := by ring
+    _ < f (r2 - x1) * f (r1 - x2) := h
+
 /-! ## Three-candidate RUM payoff algebra -/
 
 /-- In the three-candidate RUM proof, utility after candidate `x₁` is unavailable. -/
