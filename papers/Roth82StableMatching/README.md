@@ -6,7 +6,7 @@
 - Author: Alvin E. Roth
 - Version formalized: Mathematics of Operations Research, Vol. 7, No. 4 (1982)
 - Official URL: https://doi.org/10.1287/moor.7.4.617
-- Public PDF: https://www.jstor.org/stable/3689518
+- Public PDF: https://kylewoodward.com/blog-data/pdfs/references/roth-mathematics-of-operations-research-1982A.pdf
 
 The PDF is not committed to git.
 
