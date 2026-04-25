@@ -116,6 +116,66 @@ theorem paper_lemma1_laplacian_strictlyWellOrdered_of_overlap
     hlam hab hcd hbc hda
 
 /--
+Appendix C contraction map for one coordinate.
+
+Paper notation: `r'ᵢ = xᵢ + (rᵢ - xᵢ) * θH / θA`.  Lean writes the contraction
+factor as `t`, with later lemmas assuming `0 ≤ t ≤ 1`.
+-/
+noncomputable abbrev paper_appendixC_contractedScore (t x r : ℝ) : ℝ :=
+  rumContractScore t x r
+
+/-- Appendix C contraction cannot create inversions, two-candidate weak form. -/
+theorem paper_appendixC_contraction_preserves_weak_order
+    {t xi xj ri rj : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx : xj ≤ xi) (hr : rj ≤ ri) :
+    paper_appendixC_contractedScore t xj rj ≤
+      paper_appendixC_contractedScore t xi ri :=
+  rumContractScore_preserves_weak_order ht0 ht1 hx hr
+
+/-- Appendix C contraction cannot create inversions, two-candidate strict form. -/
+theorem paper_appendixC_contraction_preserves_strict_order
+    {t xi xj ri rj : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx : xj < xi) (hr : rj < ri) :
+    paper_appendixC_contractedScore t xj rj <
+      paper_appendixC_contractedScore t xi ri :=
+  rumContractScore_preserves_strict_order ht0 ht1 hx hr
+
+/-- Appendix C contraction top-first preservation for three candidates. -/
+theorem paper_appendixC_contraction_top_first_of_original_top_first
+    {t x1 x2 x3 r1 r2 r3 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 ≤ x1) (hx13 : x3 ≤ x1)
+    (hr12 : r2 ≤ r1) (hr13 : r3 ≤ r1) :
+    paper_appendixC_contractedScore t x2 r2 ≤
+        paper_appendixC_contractedScore t x1 r1 ∧
+      paper_appendixC_contractedScore t x3 r3 ≤
+        paper_appendixC_contractedScore t x1 r1 :=
+  rum3_contract_top_first_of_original_top_first
+    ht0 ht1 hx12 hx13 hr12 hr13
+
+/--
+Appendix C contraction bottom-first reflection for three candidates.
+
+If the bottom candidate `x₃` is first after contraction, then it was already
+first in the original realization.
+-/
+theorem paper_appendixC_contraction_bottom_first_imp_original_bottom_first
+    {t x1 x2 x3 r1 r2 r3 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx31 : x3 < x1) (hx32 : x3 < x2)
+    (hc31 :
+      paper_appendixC_contractedScore t x1 r1 ≤
+        paper_appendixC_contractedScore t x3 r3)
+    (hc32 :
+      paper_appendixC_contractedScore t x2 r2 ≤
+        paper_appendixC_contractedScore t x3 r3) :
+    r1 ≤ r3 ∧ r2 ≤ r3 :=
+  rum3_contract_bottom_first_imp_original_bottom_first
+    ht0 ht1 hx31 hx32 hc31 hc32
+
+/--
 Appendix C / Theorem 6, final three-candidate payoff algebra.
 
 Paper statement: for three candidates with values `x1 > x2 > x3`, once the RUM

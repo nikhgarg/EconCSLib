@@ -159,9 +159,112 @@ theorem laplacianNoiseKernel_strictlyWellOrdered_of_overlap
   apply Real.exp_lt_exp.mpr
   have hmul :
       (-lam) * (|a - d| + |b - c|) <
-        (-lam) * (|a - c| + |b - d|) := by
+      (-lam) * (|a - c| + |b - d|) := by
     exact mul_lt_mul_of_neg_left habs (by linarith)
   linarith
+
+/-! ## Contraction geometry for RUM realizations -/
+
+/--
+The paper's contraction map on one coordinate:
+`r' = x + t * (r - x)`, where `x` is the candidate's true value and
+`0 ≤ t ≤ 1` corresponds to `θH / θA`.
+-/
+noncomputable def rumContractScore (t x r : ℝ) : ℝ :=
+  x + t * (r - x)
+
+theorem rumContractScore_eq_affine (t x r : ℝ) :
+    rumContractScore t x r = (1 - t) * x + t * r := by
+  unfold rumContractScore
+  ring
+
+theorem rumContractScore_sub
+    (t xi xj ri rj : ℝ) :
+    rumContractScore t xi ri - rumContractScore t xj rj =
+      (1 - t) * (xi - xj) + t * (ri - rj) := by
+  rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
+  ring
+
+/--
+Contraction cannot reverse an already-correct weak order between two candidates.
+-/
+theorem rumContractScore_preserves_weak_order
+    {t xi xj ri rj : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx : xj ≤ xi) (hr : rj ≤ ri) :
+    rumContractScore t xj rj ≤ rumContractScore t xi ri := by
+  have hx_nonneg : 0 ≤ xi - xj := sub_nonneg.mpr hx
+  have hr_nonneg : 0 ≤ ri - rj := sub_nonneg.mpr hr
+  have h1t : 0 ≤ 1 - t := by linarith
+  have hdiff :
+      0 ≤ rumContractScore t xi ri - rumContractScore t xj rj := by
+    rw [rumContractScore_sub]
+    nlinarith [mul_nonneg h1t hx_nonneg, mul_nonneg ht0 hr_nonneg]
+  linarith
+
+/--
+Strict version of the contraction order lemma.  If both true values and realized
+scores put candidate `i` above candidate `j`, then contraction keeps `i` strictly
+above `j`.
+-/
+theorem rumContractScore_preserves_strict_order
+    {t xi xj ri rj : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx : xj < xi) (hr : rj < ri) :
+    rumContractScore t xj rj < rumContractScore t xi ri := by
+  have hx_pos : 0 < xi - xj := sub_pos.mpr hx
+  have hr_pos : 0 < ri - rj := sub_pos.mpr hr
+  have h1t : 0 ≤ 1 - t := by linarith
+  have hdiff_pos :
+      0 < rumContractScore t xi ri - rumContractScore t xj rj := by
+    rw [rumContractScore_sub]
+    by_cases htpos : 0 < t
+    · have hterm2 : 0 < t * (ri - rj) := mul_pos htpos hr_pos
+      have hterm1 : 0 ≤ (1 - t) * (xi - xj) :=
+        mul_nonneg h1t (le_of_lt hx_pos)
+      nlinarith
+    · have ht_eq : t = 0 := le_antisymm (le_of_not_gt htpos) ht0
+      nlinarith
+  linarith
+
+/--
+Three-candidate top-first preservation: if `x₁` is first before contraction,
+it is still first after contraction.
+-/
+theorem rum3_contract_top_first_of_original_top_first
+    {t x1 x2 x3 r1 r2 r3 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 ≤ x1) (hx13 : x3 ≤ x1)
+    (hr12 : r2 ≤ r1) (hr13 : r3 ≤ r1) :
+    rumContractScore t x2 r2 ≤ rumContractScore t x1 r1 ∧
+      rumContractScore t x3 r3 ≤ rumContractScore t x1 r1 :=
+  ⟨rumContractScore_preserves_weak_order ht0 ht1 hx12 hr12,
+    rumContractScore_preserves_weak_order ht0 ht1 hx13 hr13⟩
+
+/--
+Three-candidate bottom-first reflection: if the lowest-value candidate `x₃` is
+first after contraction, then it was already first before contraction.
+-/
+theorem rum3_contract_bottom_first_imp_original_bottom_first
+    {t x1 x2 x3 r1 r2 r3 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx31 : x3 < x1) (hx32 : x3 < x2)
+    (hc31 : rumContractScore t x1 r1 ≤ rumContractScore t x3 r3)
+    (hc32 : rumContractScore t x2 r2 ≤ rumContractScore t x3 r3) :
+    r1 ≤ r3 ∧ r2 ≤ r3 := by
+  constructor
+  · by_contra h
+    have hr : r3 < r1 := lt_of_not_ge h
+    have hc_lt :
+        rumContractScore t x3 r3 < rumContractScore t x1 r1 :=
+      rumContractScore_preserves_strict_order ht0 ht1 hx31 hr
+    linarith
+  · by_contra h
+    have hr : r3 < r2 := lt_of_not_ge h
+    have hc_lt :
+        rumContractScore t x3 r3 < rumContractScore t x2 r2 :=
+      rumContractScore_preserves_strict_order ht0 ht1 hx32 hr
+    linarith
 
 /-! ## Three-candidate RUM payoff algebra -/
 
