@@ -346,6 +346,80 @@ noncomputable def rum3Lambda2 (μ : PMF (Ranking 1)) : ℝ :=
 noncomputable def rum3Lambda3 (μ : PMF (Ranking 1)) : ℝ :=
   pmfProb μ (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
 
+theorem rum3Lambda1_wrong_eq_one_sub (μ : PMF (Ranking 1)) :
+    pmfProb μ (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) =
+      1 - rum3Lambda1 μ := by
+  classical
+  unfold rum3Lambda1
+  rw [← pmfProb_compl μ
+    (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))]
+  unfold pmfProb
+  refine pmfExp_congr μ ?_
+  intro π
+  by_cases h1 : bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1)
+  · simp [h1]
+  · have hne0 :
+        bestRemainingAfter π (0 : Candidate 1) ≠ (0 : Candidate 1) :=
+      bestRemainingAfter_ne_removed π (0 : Candidate 1)
+    have h2 : bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) := by
+      apply Fin.ext
+      change (bestRemainingAfter π (0 : Candidate 1)).val = 2
+      have hval0 : (bestRemainingAfter π (0 : Candidate 1)).val ≠ 0 := by
+        intro hv
+        exact hne0 (Fin.ext hv)
+      have hval1 : (bestRemainingAfter π (0 : Candidate 1)).val ≠ 1 := by
+        intro hv
+        exact h1 (Fin.ext hv)
+      have hlt := (bestRemainingAfter π (0 : Candidate 1)).isLt
+      omega
+    simp [h2]
+
+theorem rum3Lambda3_wrong_eq_one_sub (μ : PMF (Ranking 1)) :
+    pmfProb μ (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) =
+      1 - rum3Lambda3 μ := by
+  classical
+  unfold rum3Lambda3
+  rw [← pmfProb_compl μ
+    (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))]
+  unfold pmfProb
+  refine pmfExp_congr μ ?_
+  intro π
+  by_cases h0 : bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1)
+  · simp [h0]
+  · have hne2 :
+        bestRemainingAfter π (2 : Candidate 1) ≠ (2 : Candidate 1) :=
+      bestRemainingAfter_ne_removed π (2 : Candidate 1)
+    have h1 : bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) := by
+      apply Fin.ext
+      change (bestRemainingAfter π (2 : Candidate 1)).val = 1
+      have hval0 : (bestRemainingAfter π (2 : Candidate 1)).val ≠ 0 := by
+        intro hv
+        exact h0 (Fin.ext hv)
+      have hval2 : (bestRemainingAfter π (2 : Candidate 1)).val ≠ 2 := by
+        intro hv
+        exact hne2 (Fin.ext hv)
+      have hlt := (bestRemainingAfter π (2 : Candidate 1)).isLt
+      omega
+    simp [h1]
+
+theorem rum3Lambda1_half_of_wrong_lt_correct
+    {μ : PMF (Ranking 1)}
+    (hwrong :
+      pmfProb μ (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μ) :
+    (1 : ℝ) / 2 < rum3Lambda1 μ := by
+  rw [rum3Lambda1_wrong_eq_one_sub μ] at hwrong
+  linarith
+
+theorem rum3Lambda3_half_of_wrong_lt_correct
+    {μ : PMF (Ranking 1)}
+    (hwrong :
+      pmfProb μ (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μ) :
+    (1 : ℝ) / 2 < rum3Lambda3 μ := by
+  rw [rum3Lambda3_wrong_eq_one_sub μ] at hwrong
+  linarith
+
 /--
 Named finite certificate for Appendix C / Theorem 6.
 
@@ -785,6 +859,27 @@ theorem rum3LambdaCertificate_of_pairwise_facts_and_support
     (rum3Lambda1_lt_one_of_mass_choose_third_after_first_removed
       μWorse π₀ hchoose hmass)
     h12_correct
+
+theorem rum3LambdaCertificate_of_pairwise_wrong_facts_and_support
+    {μWorse : PMF (Ranking 1)} {π₀ : Ranking 1}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_wrong_lt_correct :
+      pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μWorse)
+    (hchoose :
+      bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hmass : 0 < (μWorse π₀).toReal)
+    (h12_wrong_lt_correct :
+      pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_facts_and_support
+    h13_gt_23
+    (rum3Lambda1_half_of_wrong_lt_correct h23_wrong_lt_correct)
+    hchoose hmass
+    (rum3Lambda3_half_of_wrong_lt_correct h12_wrong_lt_correct)
 
 theorem expectedBestAfterRemoval_rum3_remove0
     (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :

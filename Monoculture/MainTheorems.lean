@@ -694,6 +694,73 @@ theorem paper_theorem6_lambdaCertificate_of_pairwise_facts_and_support
   rum3LambdaCertificate_of_pairwise_facts_and_support
     h13_gt_23 h23_correct hchoose hmass h12_correct
 
+/--
+Appendix C / lambda complement identity for the `x₂` vs `x₃` subproblem.
+-/
+theorem paper_theorem6_lambda1_wrong_eq_one_sub (μ : PMF (Ranking 1)) :
+    DecisionCore.pmfProb μ
+        (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) =
+      1 - rum3Lambda1 μ :=
+  rum3Lambda1_wrong_eq_one_sub μ
+
+/--
+Appendix C / lambda complement identity for the `x₁` vs `x₂` subproblem.
+-/
+theorem paper_theorem6_lambda3_wrong_eq_one_sub (μ : PMF (Ranking 1)) :
+    DecisionCore.pmfProb μ
+        (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) =
+      1 - rum3Lambda3 μ :=
+  rum3Lambda3_wrong_eq_one_sub μ
+
+/--
+Appendix C / pairwise correctness implies `λ₁ > 1/2`.
+-/
+theorem paper_theorem6_lambda1_half_of_wrong_lt_correct
+    {μ : PMF (Ranking 1)}
+    (hwrong :
+      DecisionCore.pmfProb μ
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μ) :
+    (1 : ℝ) / 2 < rum3Lambda1 μ :=
+  rum3Lambda1_half_of_wrong_lt_correct hwrong
+
+/--
+Appendix C / pairwise correctness implies `λ₃ > 1/2`.
+-/
+theorem paper_theorem6_lambda3_half_of_wrong_lt_correct
+    {μ : PMF (Ranking 1)}
+    (hwrong :
+      DecisionCore.pmfProb μ
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μ) :
+    (1 : ℝ) / 2 < rum3Lambda3 μ :=
+  rum3Lambda3_half_of_wrong_lt_correct hwrong
+
+/--
+Appendix C / lambda certificate from pairwise wrong-vs-correct comparisons.
+
+This version states the `λ₁ > 1/2` and `λ₃ > 1/2` inputs as strict
+wrong-choice-probability comparisons, which is the form naturally supplied by a
+paired density argument.
+-/
+theorem paper_theorem6_lambdaCertificate_of_pairwise_wrong_facts_and_support
+    {μWorse : PMF (Ranking 1)} {π₀ : Ranking 1}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_wrong_lt_correct :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μWorse)
+    (hchoose :
+      bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hmass : 0 < (μWorse π₀).toReal)
+    (h12_wrong_lt_correct :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_wrong_facts_and_support
+    h13_gt_23 h23_wrong_lt_correct hchoose hmass h12_wrong_lt_correct
+
 namespace MallowsComparison
 
 /--

@@ -371,6 +371,9 @@ and wasted proof search.
   `Decidable` instances inside large PMF goals. For strict event monotonicity,
   split the larger event into the smaller event plus a residual event, then
   prove positive residual mass from a single finite atom witness.
+  For two-outcome choice probabilities, first prove the complement identity
+  (`wrong = 1 - correct`) and then turn `wrong < correct` into `1/2 < correct`;
+  this matches paired-density proofs more closely than assuming a half-bound.
 - **Denominator-cleared finite sums.** Use when probabilities or PMFs introduce
   positive normalizers. Define the unnormalized numerator, prove denominator
   positivity once, and expose both normalized and cleared positivity
