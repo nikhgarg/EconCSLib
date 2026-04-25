@@ -380,6 +380,64 @@ theorem paper_theorem6_lambda_swap23_mass_lt_of_density_formula
     hswap1 hswap2 hswap3 hctx hx23 hscore
 
 /--
+Appendix C / specialized finite mass comparison for the `x₂`/`x₃`
+wrong-to-correct lambda swap.
+-/
+theorem paper_theorem6_lambda23_mass_le_of_density_and_score_facts
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (rank : Ω → Ranking 1)
+    (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r1 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r3 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r2 ω)
+    (hctx : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        0 ≤ f (r1 ω - x1))
+    (hx23 : x3 < x2)
+    (hscore : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        r2 ω < r3 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal :=
+  paper_theorem6_lambda_swap23_mass_le_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap
+    (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1))
+    hf hdens hswap1 hswap2 hswap3 hctx hx23 hscore
+
+/--
+Appendix C / specialized finite mass comparison for the `x₁`/`x₂`
+wrong-to-correct lambda swap.
+-/
+theorem paper_theorem6_lambda12_mass_le_of_density_and_score_facts
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (rank : Ω → Ranking 1)
+    (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        0 ≤ f (r3 ω - x3))
+    (hx12 : x2 < x1)
+    (hscore : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        r1 ω < r2 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal :=
+  paper_theorem6_lambda_swap12_mass_le_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap
+    (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1))
+    hf hdens hswap1 hswap2 hswap3 hctx hx12 hscore
+
+/--
 Appendix C / Theorem 6, final three-candidate payoff algebra.
 
 Paper statement: for three candidates with values `x1 > x2 > x3`, once the RUM
