@@ -7448,6 +7448,92 @@ theorem paper_lemma12_theorem4_symmetrizedPolicy_isOptimalAtLevel
     hpos hopt
 
 /--
+Appendix E, Problem 11 translation: inside the mirror-symmetric subspace `S'`,
+the estimated normalized item utilities are exactly the paper's linear
+`x,z,λ` expressions.
+-/
+theorem paper_problem11_normalizedItemUtility_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (j : Item n) :
+    TypeWeightedRecommendationModel.normalizedItemUtility
+        (theorem4EstimatedReducedModel beta v) ρ j =
+      theorem4Problem11PolicyItemValue beta v ρ j := by
+  exact theorem4EstimatedReducedModel_normalizedItemUtility_eq_problem11
+    hpos hsym j
+
+/--
+Appendix E, Lemma 15 component: if the Problem 11 closed form is evaluated at
+pivot `t = 1`, then the resulting `z₁` is negative whenever `β > 1/n` and the
+cold-start type has positive mass.
+-/
+theorem paper_lemma15_problem11_pivotOneZ_neg
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    theorem4Problem11PivotOneZ beta v < 0 := by
+  exact theorem4Problem11PivotOneZ_neg
+    hn hbeta hbeta_half hpos hdec
+
+/--
+Appendix E, Lemma 15 consequence: a pivot-one closed-form coordinate cannot
+be the cold-start row's PMF mass under the Theorem 4 assumptions.
+-/
+theorem paper_lemma15_problem11_pivotOne_closedZ_impossible
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (ρ : TypePolicy 3 n)
+    (hz :
+      (ρ 2 theorem4FirstItem).toReal =
+        theorem4Problem11PivotOneZ beta v) :
+    False := by
+  exact theorem4Problem11PivotOne_closedZ_impossible
+    hn hbeta hbeta_half hpos hdec ρ hz
+
+/--
+Appendix E, Lemma 13 support consequence: if the Problem 11 pivot is strictly
+after item `1`, then the cold-start row gives zero mass to both extreme items.
+-/
+theorem paper_lemma13_problem11_pivotSupport_no_extremes_of_first_lt
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hfirst_lt : (theorem4FirstItem : Item n).val < t.val) :
+    ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
+  exact theorem4Problem11PivotSupport_no_extremes_of_first_lt
+    hpivot hfirst_lt
+
+/--
+Appendix E Lemmas 13 and 15 combined: pivot support plus the pivot-one
+closed-form coordinate certificate imply that the estimated optimum's
+cold-start row avoids both extreme items.
+-/
+theorem paper_theorem4_problem11_no_extremes_of_pivotSupport_of_closedZ
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hclosed_first :
+      t = theorem4FirstItem →
+        (ρ 2 theorem4FirstItem).toReal =
+          theorem4Problem11PivotOneZ beta v) :
+    ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
+  exact theorem4Problem11_no_extremes_of_pivotSupport_of_closedZ
+    hn hbeta hbeta_half hpos hdec hpivot hclosed_first
+
+/--
 Appendix E, Theorem 4 no-item-fairness construction, first possible true
 cold-start type.
 
