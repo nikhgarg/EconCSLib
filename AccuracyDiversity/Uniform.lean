@@ -530,8 +530,8 @@ theorem count_close_of_no_rounding_crossing_between {T : ℕ}
     (ha : DecisionCore.Allocation.total a = N)
     (hlower : DecisionCore.Allocation.total lower = L)
     (hupper : DecisionCore.Allocation.total upper = U)
-    (hNlt : N < L + Fintype.card (ItemType T))
-    (hUlt : U < N + Fintype.card (ItemType T))
+    (hNlt : N < L + Fintype.card (ItemType T) + 1)
+    (hUlt : U < N + Fintype.card (ItemType T) + 1)
     (horder : ∀ t, lower.count t ≤ upper.count t)
     (hno :
       EconCSLean.FiniteRounding.NoRoundingCrossingBetween
@@ -539,8 +539,8 @@ theorem count_close_of_no_rounding_crossing_between {T : ℕ}
         (fun t : ItemType T => lower.count t)
         (fun t : ItemType T => upper.count t)) :
     ∀ t : ItemType T,
-      lower.count t < a.count t + Fintype.card (ItemType T) ∧
-        a.count t < upper.count t + Fintype.card (ItemType T) := by
+      lower.count t < a.count t + Fintype.card (ItemType T) + 1 ∧
+        a.count t < upper.count t + Fintype.card (ItemType T) + 1 := by
   intro t
   constructor
   · exact EconCSLean.FiniteRounding.NoRoundingCrossingBetween.lower_lt_count_add_card

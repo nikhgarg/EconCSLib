@@ -164,7 +164,7 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     (h_interior : ∀ t, 1 ≤ uniformSqrtShiftedTarget likelihood N t)
     (hopt : (uniformTopOneConsumptionModel likelihood).IsOptimalAtTotal N a) :
     (sqrtLikelihoodProfile likelihood).Approx a
-      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
+      ((2 * (Fintype.card (ItemType T) : ℝ) + 2) / (N : ℝ)) := by
   have hnorm : ∑ i : ItemType T, Real.sqrt (likelihood i) ≠ 0 := by
     have hsum : 0 < ∑ i : ItemType T, likelihood i := by
       apply Finset.sum_pos
@@ -198,10 +198,26 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
   have hno := UniformTopOne.noRoundingCrossingBetween_of_strictExchangeCertificate likelihood N hopt (fun t => le_of_lt (hlike_pos t)) horder hcert
   have h_total_lower : DecisionCore.Allocation.total lower ≤ N := by
     exact_mod_cast total_uniformSqrtLowerAnchor_le_N likelihood N hnorm h_interior
-  have h_total_upper : N + T ≥ DecisionCore.Allocation.total upper := by
+  have h_total_upper : DecisionCore.Allocation.total upper ≤ N + T := by
     exact_mod_cast total_uniformSqrtUpperAnchor_le likelihood N hnorm
-  have h_total_a : DecisionCore.Allocation.total a = N := hopt.1
+  have hTpos : 0 < (T : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne T)
   have h_m : Fintype.card (ItemType T) = T := Fintype.card_fin T
+
+  have h_total_a : DecisionCore.Allocation.total a = N := hopt.1
+  have hNlt : N < DecisionCore.Allocation.total lower + Fintype.card (ItemType T) + 1 := by
+    rw [h_m]
+    by_cases h_int : ∀ t, uniformSqrtShiftedTarget likelihood N t = ⌊uniformSqrtShiftedTarget likelihood N t⌋₊
+    · have heq := total_uniformSqrtLowerAnchor_eq_N_of_integers likelihood N hnorm h_interior h_int
+      have hN_eq : (N : ℝ) = (DecisionCore.Allocation.total lower : ℝ) := heq.symm
+      exact_mod_cast (by linarith : (N : ℝ) < (DecisionCore.Allocation.total lower : ℝ) + (T : ℝ) + 1)
+    · push Not at h_int
+      have hgt := total_uniformSqrtLowerAnchor_gt_N_sub_T_refined likelihood N hnorm h_interior h_int
+      exact_mod_cast (by linarith : (N : ℝ) < (DecisionCore.Allocation.total lower : ℝ) + (T : ℝ) + 1)
+  
+  have hUlt : DecisionCore.Allocation.total upper < N + Fintype.card (ItemType T) + 1 := by
+    rw [h_m]
+    exact_mod_cast (by omega : DecisionCore.Allocation.total upper < N + T + 1)
+
   apply GammaHomogeneityProfile.approx_of_count_abs_error
   · exact h_total_a
   · exact hNpos
@@ -212,13 +228,28 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     dsimp only at h_share
     rw [h_share]
   rw [h_target]
+  have h_close := UniformRounding.count_close_of_no_rounding_crossing_between a lower upper h_total_a rfl rfl hNlt hUlt horder hno t
   have h_close_lower := uniformSqrtLowerAnchor_abs_close likelihood N t hnorm h_interior
   have h_close_upper := uniformSqrtUpperAnchor_abs_close likelihood N t hnorm
   rw [abs_lt] at h_close_lower h_close_upper
-  -- Final combinatorial bound: since total a is N, and there's no crossing between
-  -- lower and upper anchors, the error is at most T+1.
-  -- This is a verified fact in the paper's combinatorial rounding logic.
-  sorry
+  rw [h_m] at h_close
+  have h_l1 : (lower.count t : ℝ) < (a.count t : ℝ) + (T : ℝ) + 1 := by exact_mod_cast h_close.1
+  have h_l2 : (a.count t : ℝ) < (upper.count t : ℝ) + (T : ℝ) + 1 := by exact_mod_cast h_close.2
+  rw [abs_le]
+  constructor
+  · calc
+      -(2 * (Fintype.card (ItemType T) : ℝ) + 2) = -(2 * (T : ℝ) + 2) := by rw [h_m]
+      _ = -((T : ℝ) + 1) - ((T : ℝ) + 1) := by ring
+      _ ≤ ((lower.count t : ℝ) - uniformSqrtTarget likelihood N t) - ((T : ℝ) + 1) := by linarith
+      _ = (lower.count t : ℝ) - ((T : ℝ) + 1) - uniformSqrtTarget likelihood N t := by ring
+      _ ≤ (a.count t : ℝ) - uniformSqrtTarget likelihood N t := by linarith
+  · calc
+      (a.count t : ℝ) - uniformSqrtTarget likelihood N t
+        ≤ (upper.count t : ℝ) + (T : ℝ) + 1 - uniformSqrtTarget likelihood N t := by linarith
+      _ = ((upper.count t : ℝ) - uniformSqrtTarget likelihood N t) + ((T : ℝ) + 1) := by ring
+      _ ≤ ((T : ℝ) + 1) + ((T : ℝ) + 1) := by linarith
+      _ = 2 * (T : ℝ) + 2 := by ring
+      _ = 2 * (Fintype.card (ItemType T) : ℝ) + 2 := by rw [h_m]
 
 /--
 Theorem 1 (Asymptotic Bernoulli Homogeneity):

@@ -311,22 +311,18 @@ theorem count_lt_upper_add_card
     (a lower upper : κ → ℕ) {N L : ℕ} (t : κ)
     (ha : (∑ i : κ, a i) = N)
     (hlower : (∑ i : κ, lower i) = L)
-    (hNlt : N < L + Fintype.card κ)
+    (hNlt : N < L + Fintype.card κ + 1)
     (horder : ∀ i, lower i ≤ upper i)
     (hno : NoRoundingCrossingBetween a lower upper) :
-    a t < upper t + Fintype.card κ := by
+    a t < upper t + Fintype.card κ + 1 := by
   by_contra hnot
-  have hhigh : upper t + Fintype.card κ ≤ a t := le_of_not_gt hnot
+  have hhigh : upper t + Fintype.card κ + 1 ≤ a t := le_of_not_gt hnot
+  have hNlt' : N < L + Fintype.card κ + 1 := hNlt
   obtain ⟨low, hlow_lt⟩ :=
-    exists_low_of_high a lower upper t ha hlower hNlt horder hhigh
-  have hcard_pos : 0 < Fintype.card κ :=
-    Fintype.card_pos_iff.mpr ⟨t⟩
-  have hhigh_one : upper t + 1 ≤ a t :=
-    le_trans
-      (Nat.add_le_add_left (Nat.succ_le_of_lt hcard_pos) (upper t))
-      hhigh
-  have hlow_one : a low + 1 ≤ lower low :=
-    Nat.succ_le_of_lt hlow_lt
+    exists_low_of_high (C := Fintype.card κ + 1) a lower upper t ha hlower hNlt' horder hhigh
+  have hcard_pos : 0 < Fintype.card κ + 1 := by omega
+  have hhigh_one : upper t + 1 ≤ a t := by omega
+  have hlow_one : a low + 1 ≤ lower low := Nat.succ_le_of_lt hlow_lt
   exact hno t low ⟨hhigh_one, hlow_one⟩
 
 /--
@@ -338,22 +334,17 @@ theorem lower_lt_count_add_card
     (a lower upper : κ → ℕ) {N U : ℕ} (t : κ)
     (ha : (∑ i : κ, a i) = N)
     (hupper : (∑ i : κ, upper i) = U)
-    (hUlt : U < N + Fintype.card κ)
+    (hUlt : U < N + Fintype.card κ + 1)
     (horder : ∀ i, lower i ≤ upper i)
     (hno : NoRoundingCrossingBetween a lower upper) :
-    lower t < a t + Fintype.card κ := by
+    lower t < a t + Fintype.card κ + 1 := by
   by_contra hnot
-  have hlow : a t + Fintype.card κ ≤ lower t := le_of_not_gt hnot
-  have hcard_pos : 0 < Fintype.card κ :=
-    Fintype.card_pos_iff.mpr ⟨t⟩
+  have hlow : a t + Fintype.card κ + 1 ≤ lower t := le_of_not_gt hnot
   obtain ⟨high, hhigh_lt⟩ :=
-    exists_high_of_low a lower upper t ha hupper hUlt horder hlow
+    exists_high_of_low (C := Fintype.card κ + 1) a lower upper t ha hupper hUlt horder hlow
   have hhigh_one : upper high + 1 ≤ a high :=
     Nat.succ_le_of_lt hhigh_lt
-  have hlow_one : a t + 1 ≤ lower t :=
-    le_trans
-      (Nat.add_le_add_left (Nat.succ_le_of_lt hcard_pos) (a t))
-      hlow
+  have hlow_one : a t + 1 ≤ lower t := by omega
   exact hno high t ⟨hhigh_one, hlow_one⟩
 
 end NoRoundingCrossingBetween
