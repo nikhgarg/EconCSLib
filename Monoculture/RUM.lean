@@ -189,6 +189,44 @@ noncomputable def rum3Lambda2 (μ : PMF (Ranking 1)) : ℝ :=
 noncomputable def rum3Lambda3 (μ : PMF (Ranking 1)) : ℝ :=
   pmfProb μ (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
 
+/--
+Named finite certificate for Appendix C / Theorem 6.
+
+The fields are the exact non-analytic facts used after the paper invokes
+monotonicity, Lemma 2, Lemma 3, and the pairwise human-ranking probabilities.
+-/
+structure RUM3Theorem6Certificate
+    (μBetter μWorse : PMF (Ranking 1)) (value : Candidate 1 → ℝ)
+    (x1 x2 x3 : ℝ) : Prop where
+  value_first : value (0 : Candidate 1) = x1
+  value_second : value (1 : Candidate 1) = x2
+  value_third : value (2 : Candidate 1) = x3
+  value12 : x2 < x1
+  value23 : x3 < x2
+  /-- Paper: `1/2 < λ₁`. -/
+  lambda1_half : (1 : ℝ) / 2 < rum3Lambda1 μWorse
+  /-- Paper: `λ₁ < 1`. -/
+  lambda1_lt_one : rum3Lambda1 μWorse < 1
+  /-- Paper: `λ₂ > λ₁`. -/
+  lambda12 : rum3Lambda1 μWorse < rum3Lambda2 μWorse
+  /-- Paper: `1/2 < λ₃`. -/
+  lambda3_half : (1 : ℝ) / 2 < rum3Lambda3 μWorse
+  /-- Paper monotonicity: `Δp₁ > 0`. -/
+  delta_top_pos :
+    0 <
+      firstChoiceProb μBetter (0 : Candidate 1) -
+        firstChoiceProb μWorse (0 : Candidate 1)
+  /-- Paper Lemma 3 for `i = 2`: `Δp₂ ≤ Δp₁`. -/
+  delta_middle_le_top :
+    firstChoiceProb μBetter (1 : Candidate 1) -
+        firstChoiceProb μWorse (1 : Candidate 1) ≤
+      firstChoiceProb μBetter (0 : Candidate 1) -
+        firstChoiceProb μWorse (0 : Candidate 1)
+  /-- Paper Lemma 2: `Δp₃ ≤ 0`. -/
+  delta_bottom_nonpos :
+    firstChoiceProb μBetter (2 : Candidate 1) -
+        firstChoiceProb μWorse (2 : Candidate 1) ≤ 0
+
 theorem expectedBestAfterRemoval_rum3_remove0
     (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :
     AccuracyFamily.expectedBestAfterRemoval μ value (0 : Candidate 1) =
@@ -584,5 +622,18 @@ theorem rum3_prefersWeakerCompetition
     (pmfProb_le_one μWorse
       (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1)))
     hlam3_half hd1_pos hd12 hd3_nonpos
+
+/-- Appendix C / Theorem 6 from its named finite certificate. -/
+theorem rum3_prefersWeakerCompetition_of_certificate
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (cert : RUM3Theorem6Certificate μBetter μWorse value x1 x2 x3) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  rum3_prefersWeakerCompetition
+    μBetter μWorse value
+    cert.value_first cert.value_second cert.value_third
+    cert.value12 cert.value23
+    cert.lambda1_half cert.lambda1_lt_one cert.lambda12 cert.lambda3_half
+    cert.delta_top_pos cert.delta_middle_le_top cert.delta_bottom_nonpos
 
 end Monoculture

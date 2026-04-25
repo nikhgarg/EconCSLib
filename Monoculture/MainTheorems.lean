@@ -224,6 +224,21 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition
     hlam1_half hlam1_lt_one hlam12 hlam3_half
     hd1_pos hd12 hd3_nonpos
 
+/--
+Appendix C / Theorem 6, named finite certificate form.
+
+This is the current strongest human-facing finite endpoint for Theorem 6.  The
+certificate fields correspond to the probability facts supplied in the paper by
+monotonicity, Lemma 2, Lemma 3, and the two-candidate human-ranking lambda
+comparisons.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_certificate
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (cert : RUM3Theorem6Certificate μBetter μWorse value x1 x2 x3) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  rum3_prefersWeakerCompetition_of_certificate cert
+
 namespace MallowsComparison
 
 /--
