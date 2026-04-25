@@ -186,6 +186,44 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_payoff_algebra
     hell1_half hell1_lt_one hell12 hell2_le_one hell3_half
     hd1_pos hd12 hd3_nonpos
 
+/--
+Appendix C / Theorem 6, finite three-candidate endpoint.
+
+This version derives the three `u_-i` identities from finite
+best-after-removal expectations.  It leaves only the genuine RUM probability
+facts from the paper: the value ordering, the lambda inequalities, and the
+first-choice delta inequalities.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition
+    (μBetter μWorse : PMF (Ranking 1)) (value : Candidate 1 → ℝ)
+    {x1 x2 x3 : ℝ}
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hlam1_half : (1 : ℝ) / 2 < rum3Lambda1 μWorse)
+    (hlam1_lt_one : rum3Lambda1 μWorse < 1)
+    (hlam12 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (hlam3_half : (1 : ℝ) / 2 < rum3Lambda3 μWorse)
+    (hd1_pos :
+      0 <
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd12 :
+      firstChoiceProb μBetter (1 : Candidate 1) -
+          firstChoiceProb μWorse (1 : Candidate 1) ≤
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd3_nonpos :
+      firstChoiceProb μBetter (2 : Candidate 1) -
+          firstChoiceProb μWorse (2 : Candidate 1) ≤ 0) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  rum3_prefersWeakerCompetition
+    μBetter μWorse value
+    hvalue1 hvalue2 hvalue3 hx12 hx23
+    hlam1_half hlam1_lt_one hlam12 hlam3_half
+    hd1_pos hd12 hd3_nonpos
+
 namespace MallowsComparison
 
 /--

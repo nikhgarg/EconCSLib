@@ -214,6 +214,36 @@ theorem pmfExp_mul_const {α : Type*} [Fintype α] [DecidableEq α]
     _ = (∑ a : α, (μ a).toReal * f a) * c := by
           rw [Finset.sum_mul]
 
+/--
+If a finite random variable takes value `x` on event `p` and value `y` off that
+event, its expectation is `Pr[p] * x + (1 - Pr[p]) * y`.
+-/
+theorem pmfExp_eq_prob_mul_add_one_sub_prob_mul_of_forall_eq_if
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p]
+    (f : α → ℝ) (x y : ℝ)
+    (h : ∀ a, f a = if p a then x else y) :
+    pmfExp μ f = pmfProb μ p * x + (1 - pmfProb μ p) * y := by
+  classical
+  have hpoint :
+      ∀ a, f a = y + (if p a then (1 : ℝ) else 0) * (x - y) := by
+    intro a
+    rw [h a]
+    by_cases hp : p a <;> simp [hp]
+  calc
+    pmfExp μ f =
+        pmfExp μ (fun a => y + (if p a then (1 : ℝ) else 0) * (x - y)) := by
+          exact pmfExp_congr μ hpoint
+    _ = pmfExp μ (fun _ => y) +
+          pmfExp μ (fun a => (if p a then (1 : ℝ) else 0) * (x - y)) := by
+          rw [pmfExp_add]
+    _ = y + pmfProb μ p * (x - y) := by
+          rw [pmfExp_const]
+          rw [pmfExp_mul_const]
+          rfl
+    _ = pmfProb μ p * x + (1 - pmfProb μ p) * y := by
+          ring
+
 /-- A finite PMF expectation is bounded above by any pointwise upper bound. -/
 theorem pmfExp_le_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (f : α → ℝ) (c : ℝ)
@@ -235,6 +265,25 @@ theorem pmfExp_le_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
             _ = c := by
                     rw [pmfToRealSum μ]
                     ring
+
+/-- Finite PMF probabilities are nonnegative. -/
+theorem pmfProb_nonneg {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    0 ≤ pmfProb μ p := by
+  classical
+  unfold pmfProb pmfExp
+  refine Finset.sum_nonneg ?_
+  intro a _
+  refine mul_nonneg ENNReal.toReal_nonneg ?_
+  by_cases hp : p a <;> simp [hp]
+
+/-- Finite PMF probabilities are at most one. -/
+theorem pmfProb_le_one {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    pmfProb μ p ≤ 1 := by
+  classical
+  exact pmfExp_le_of_forall_le μ (fun a => if p a then (1 : ℝ) else 0) 1
+    (by intro a; by_cases hp : p a <;> simp [hp])
 
 /-- Monotonicity of finite PMF expectation. -/
 theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
@@ -324,6 +373,48 @@ theorem pmfExp_lt_of_forall_le_exists_lt {α : Type*}
   · rcases hex with ⟨a, hmass, hlt⟩
     exact ⟨a, Finset.mem_univ a,
       mul_lt_mul_of_pos_left hlt hmass⟩
+
+/--
+A finite PMF expectation is strictly below a constant when every positive-mass
+atom is strictly below that constant. Zero-mass atoms may have arbitrary values.
+-/
+theorem pmfExp_lt_of_support_forall_lt {α : Type*}
+    [Fintype α] [DecidableEq α] [Nonempty α]
+    (μ : PMF α) (f : α → ℝ) (c : ℝ)
+    (h : ∀ a, 0 < (μ a).toReal → f a < c) :
+    pmfExp μ f < c := by
+  classical
+  let g : α → ℝ := fun a => if (μ a).toReal = 0 then c else f a
+  have hfg : pmfExp μ f = pmfExp μ g := by
+    unfold pmfExp g
+    refine Finset.sum_congr rfl ?_
+    intro a _ha
+    by_cases hzero : (μ a).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hle : ∀ a, g a ≤ c := by
+    intro a
+    by_cases hzero : (μ a).toReal = 0
+    · simp [g, hzero]
+    · have hpos : 0 < (μ a).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      exact le_of_lt (by simpa [g, hzero] using h a hpos)
+  have hex : ∃ a, 0 < (μ a).toReal ∧ g a < c := by
+    by_contra hnone
+    push Not at hnone
+    have hzero_all : ∀ a, (μ a).toReal = 0 := by
+      intro a
+      by_contra hzero
+      have hpos : 0 < (μ a).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      exact (not_lt_of_ge (hnone a hpos)) (by
+        simpa [g, hzero] using h a hpos)
+    have hsum_zero : ∑ a : α, (μ a).toReal = 0 := by
+      simp [hzero_all]
+    have hsum_one : ∑ a : α, (μ a).toReal = 1 := pmfToRealSum μ
+    linarith
+  rw [hfg]
+  exact pmfExp_lt_of_forall_le_exists_lt μ g c hle hex
 
 @[simp] theorem pmfExp_pure {α : Type*} [Fintype α] [DecidableEq α]
     (a : α) (f : α → ℝ) :

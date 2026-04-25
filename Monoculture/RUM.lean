@@ -1,7 +1,10 @@
 import Monoculture.Theorem1
 import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+
+open DecisionCore
 
 namespace Monoculture
 
@@ -173,6 +176,105 @@ noncomputable def rum3_uMinus2 (ell2 x1 x3 : ℝ) : ℝ :=
 /-- In the three-candidate RUM proof, utility after candidate `x₃` is unavailable. -/
 noncomputable def rum3_uMinus3 (ell3 x1 x2 : ℝ) : ℝ :=
   ell3 * x1 + (1 - ell3) * x2
+
+/-- Paper Theorem 6's `λ₁`: after `x₁` is unavailable, human chooses `x₂`. -/
+noncomputable def rum3Lambda1 (μ : PMF (Ranking 1)) : ℝ :=
+  pmfProb μ (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+
+/-- Paper Theorem 6's `λ₂`: after `x₂` is unavailable, human chooses `x₁`. -/
+noncomputable def rum3Lambda2 (μ : PMF (Ranking 1)) : ℝ :=
+  pmfProb μ (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1))
+
+/-- Paper Theorem 6's `λ₃`: after `x₃` is unavailable, human chooses `x₁`. -/
+noncomputable def rum3Lambda3 (μ : PMF (Ranking 1)) : ℝ :=
+  pmfProb μ (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
+
+theorem expectedBestAfterRemoval_rum3_remove0
+    (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :
+    AccuracyFamily.expectedBestAfterRemoval μ value (0 : Candidate 1) =
+      rum3Lambda1 μ * value (1 : Candidate 1) +
+        (1 - rum3Lambda1 μ) * value (2 : Candidate 1) := by
+  classical
+  unfold AccuracyFamily.expectedBestAfterRemoval rum3Lambda1
+  refine pmfExp_eq_prob_mul_add_one_sub_prob_mul_of_forall_eq_if
+    μ (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+    (fun π => value (bestRemainingAfter π (0 : Candidate 1)))
+    (value (1 : Candidate 1)) (value (2 : Candidate 1)) ?_
+  intro π
+  by_cases h : bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1)
+  · simp [h]
+  · have hne0 : bestRemainingAfter π (0 : Candidate 1) ≠ (0 : Candidate 1) :=
+      bestRemainingAfter_ne_removed π (0 : Candidate 1)
+    have h2 : bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) := by
+      apply Fin.ext
+      change (bestRemainingAfter π (0 : Candidate 1)).val = 2
+      have hval0 : (bestRemainingAfter π (0 : Candidate 1)).val ≠ 0 := by
+        intro hv
+        exact hne0 (Fin.ext hv)
+      have hval1 : (bestRemainingAfter π (0 : Candidate 1)).val ≠ 1 := by
+        intro hv
+        exact h (Fin.ext hv)
+      have hlt := (bestRemainingAfter π (0 : Candidate 1)).isLt
+      omega
+    simp [h2]
+
+theorem expectedBestAfterRemoval_rum3_remove1
+    (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :
+    AccuracyFamily.expectedBestAfterRemoval μ value (1 : Candidate 1) =
+      rum3Lambda2 μ * value (0 : Candidate 1) +
+        (1 - rum3Lambda2 μ) * value (2 : Candidate 1) := by
+  classical
+  unfold AccuracyFamily.expectedBestAfterRemoval rum3Lambda2
+  refine pmfExp_eq_prob_mul_add_one_sub_prob_mul_of_forall_eq_if
+    μ (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1))
+    (fun π => value (bestRemainingAfter π (1 : Candidate 1)))
+    (value (0 : Candidate 1)) (value (2 : Candidate 1)) ?_
+  intro π
+  by_cases h : bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1)
+  · simp [h]
+  · have hne1 : bestRemainingAfter π (1 : Candidate 1) ≠ (1 : Candidate 1) :=
+      bestRemainingAfter_ne_removed π (1 : Candidate 1)
+    have h2 : bestRemainingAfter π (1 : Candidate 1) = (2 : Candidate 1) := by
+      apply Fin.ext
+      change (bestRemainingAfter π (1 : Candidate 1)).val = 2
+      have hval0 : (bestRemainingAfter π (1 : Candidate 1)).val ≠ 0 := by
+        intro hv
+        exact h (Fin.ext hv)
+      have hval1 : (bestRemainingAfter π (1 : Candidate 1)).val ≠ 1 := by
+        intro hv
+        exact hne1 (Fin.ext hv)
+      have hlt := (bestRemainingAfter π (1 : Candidate 1)).isLt
+      omega
+    simp [h2]
+
+theorem expectedBestAfterRemoval_rum3_remove2
+    (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :
+    AccuracyFamily.expectedBestAfterRemoval μ value (2 : Candidate 1) =
+      rum3Lambda3 μ * value (0 : Candidate 1) +
+        (1 - rum3Lambda3 μ) * value (1 : Candidate 1) := by
+  classical
+  unfold AccuracyFamily.expectedBestAfterRemoval rum3Lambda3
+  refine pmfExp_eq_prob_mul_add_one_sub_prob_mul_of_forall_eq_if
+    μ (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
+    (fun π => value (bestRemainingAfter π (2 : Candidate 1)))
+    (value (0 : Candidate 1)) (value (1 : Candidate 1)) ?_
+  intro π
+  by_cases h : bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1)
+  · simp [h]
+  · have hne2 : bestRemainingAfter π (2 : Candidate 1) ≠ (2 : Candidate 1) :=
+      bestRemainingAfter_ne_removed π (2 : Candidate 1)
+    have h1 : bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) := by
+      apply Fin.ext
+      change (bestRemainingAfter π (2 : Candidate 1)).val = 1
+      have hval0 : (bestRemainingAfter π (2 : Candidate 1)).val ≠ 0 := by
+        intro hv
+        exact h (Fin.ext hv)
+      have hval2 : (bestRemainingAfter π (2 : Candidate 1)).val ≠ 2 := by
+        intro hv
+        exact hne2 (Fin.ext hv)
+      have hlt := (bestRemainingAfter π (2 : Candidate 1)).isLt
+      omega
+    simp [h1]
 
 theorem rum3_uMinus1_lt_uMinus2
     {x1 x2 x3 ell1 ell2 : ℝ}
@@ -427,5 +529,60 @@ theorem rum3_prefersWeakerCompetition_of_payoff_algebra
     rw [hdiff]
     exact hneg
   linarith
+
+/--
+Three-candidate RUM weaker-competition bridge with the `u_-i` formulas derived
+from the human ranking law itself.
+
+The remaining assumptions are exactly the upstream RUM probability facts from
+the paper: value ordering, `λ₁ > 1/2`, `λ₁ < 1`, `λ₂ > λ₁`, `λ₃ > 1/2`, and
+the first-choice delta inequalities.
+-/
+theorem rum3_prefersWeakerCompetition
+    (μBetter μWorse : PMF (Ranking 1)) (value : Candidate 1 → ℝ)
+    {x1 x2 x3 : ℝ}
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hlam1_half : (1 : ℝ) / 2 < rum3Lambda1 μWorse)
+    (hlam1_lt_one : rum3Lambda1 μWorse < 1)
+    (hlam12 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (hlam3_half : (1 : ℝ) / 2 < rum3Lambda3 μWorse)
+    (hd1_pos :
+      0 <
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd12 :
+      firstChoiceProb μBetter (1 : Candidate 1) -
+          firstChoiceProb μWorse (1 : Candidate 1) ≤
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd3_nonpos :
+      firstChoiceProb μBetter (2 : Candidate 1) -
+          firstChoiceProb μWorse (2 : Candidate 1) ≤ 0) :
+    Model.PrefersWeakerCompetition μBetter μWorse value := by
+  have hbest1 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (0 : Candidate 1) =
+        rum3_uMinus1 (rum3Lambda1 μWorse) x2 x3 := by
+    rw [expectedBestAfterRemoval_rum3_remove0]
+    simp [rum3_uMinus1, hvalue2, hvalue3]
+  have hbest2 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (1 : Candidate 1) =
+        rum3_uMinus2 (rum3Lambda2 μWorse) x1 x3 := by
+    rw [expectedBestAfterRemoval_rum3_remove1]
+    simp [rum3_uMinus2, hvalue1, hvalue3]
+  have hbest3 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (2 : Candidate 1) =
+        rum3_uMinus3 (rum3Lambda3 μWorse) x1 x2 := by
+    rw [expectedBestAfterRemoval_rum3_remove2]
+    simp [rum3_uMinus3, hvalue1, hvalue2]
+  exact rum3_prefersWeakerCompetition_of_payoff_algebra
+    μBetter μWorse value
+    hbest1 hbest2 hbest3
+    hx12 hx23 hlam1_half hlam1_lt_one hlam12
+    (pmfProb_le_one μWorse
+      (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1)))
+    hlam3_half hd1_pos hd12 hd3_nonpos
 
 end Monoculture
