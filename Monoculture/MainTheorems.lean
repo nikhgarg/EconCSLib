@@ -1344,6 +1344,27 @@ theorem paper_theorem6_lambda3_wrong_to_correct_map_of_score_swap12
     rank s1 s2 swap hwrong_scores hcorrect_of_scores hswap1 hswap2
 
 /--
+Appendix C / score-level map for the `λ₁ < λ₂` comparison.
+-/
+theorem paper_theorem6_lambda1_to_lambda2_map_of_score_swap12
+    {Ω : Type*} (rank : Ω → Ranking 1)
+    (s1 s2 s3 : Ω → ℝ) (swap : Ω → Ω)
+    (hsource_scores : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        s3 ω ≤ s2 ω)
+    (htarget_of_scores : ∀ ω,
+      s3 ω ≤ s1 ω →
+        bestRemainingAfter (rank ω) (1 : Candidate 1) = (0 : Candidate 1))
+    (hswap1 : ∀ ω, s1 (swap ω) = s2 ω)
+    (hswap3 : ∀ ω, s3 (swap ω) = s3 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (1 : Candidate 1) =
+          (0 : Candidate 1) :=
+  rum3Lambda1_to_lambda2_map_of_score_swap12
+    rank s1 s2 s3 swap hsource_scores htarget_of_scores hswap1 hswap3
+
+/--
 Appendix C / Theorem 6 from the narrowed finite/pointwise RUM inputs.
 
 This is the strongest current paper-facing endpoint.  It replaces the raw lambda
@@ -2249,6 +2270,145 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_mapped_sample_
     hlambdaSource13gap hlambdaStrict13gap
     lambdaSwap23 hlambdaMap23 hlambdaMass23 hlambdaWrong23 hlambdaStrict23
     lambdaSwap12 hlambdaMap12 hlambdaMass12 hlambdaWrong12 hlambdaStrict12
+    hbetterTop_of_scores hworseTop_scores_of_first
+    hbetterBottom_scores_of_first hworseBottom_scores_of_first
+    hworseBottom_of_scores hbetterMiddle_scores_of_first
+    hdeltaSwap1 hdeltaSwap2 hdeltaSwap3 hbetterTop hworseNotTop hmassTop
+    hdeltaMass
+
+/--
+Appendix C / Theorem 6 for mapped finite realization laws with score-derived
+lambda event maps.
+
+This version derives the three lambda-event maps from score inequalities and
+coordinate-swap equations.  It is closer to the paper proof than the raw
+sample-map endpoint: the remaining lambda-side probability assumptions are the
+finite mass dominance facts and strict witness atoms.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_mapped_score_swaps_and_score_contraction_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1)
+    (t : ℝ) (r1 r2 r3 : Ω → ℝ) (deltaSwap : Ω ≃ Ω)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hworseSupport : ∀ π : Ranking 1,
+      ∃ ω : Ω, worse ω = π ∧ 0 < (ν ω).toReal)
+    (lambdaSwap13gap : Ω ≃ Ω)
+    (hlambdaSource13gap_scores : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        r3 ω ≤ r2 ω)
+    (hlambdaTarget13gap_of_scores : ∀ ω,
+      r3 ω ≤ r1 ω →
+        bestRemainingAfter (worse ω) (1 : Candidate 1) = (0 : Candidate 1))
+    (hlambdaSwap13gap1 : ∀ ω, r1 (lambdaSwap13gap ω) = r2 ω)
+    (hlambdaSwap13gap3 : ∀ ω, r3 (lambdaSwap13gap ω) = r3 ω)
+    (hlambdaMass13gap : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (lambdaSwap13gap ω)).toReal)
+    {ω13gap : Ω}
+    (hlambdaSource13gap :
+      bestRemainingAfter (worse ω13gap) (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict13gap :
+      (ν ω13gap).toReal < (ν (lambdaSwap13gap ω13gap)).toReal)
+    (lambdaSwap23 : Ω ≃ Ω)
+    (hlambdaWrong23_scores : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        r2 ω < r3 ω)
+    (hlambdaCorrect23_of_scores : ∀ ω,
+      r3 ω ≤ r2 ω →
+        bestRemainingAfter (worse ω) (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaSwap23_2 : ∀ ω, r2 (lambdaSwap23 ω) = r3 ω)
+    (hlambdaSwap23_3 : ∀ ω, r3 (lambdaSwap23 ω) = r2 ω)
+    (hlambdaMass23 : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (lambdaSwap23 ω)).toReal)
+    {ω23 : Ω}
+    (hlambdaWrong23 :
+      bestRemainingAfter (worse ω23) (0 : Candidate 1) = (2 : Candidate 1))
+    (hlambdaStrict23 :
+      (ν ω23).toReal < (ν (lambdaSwap23 ω23)).toReal)
+    (lambdaSwap12 : Ω ≃ Ω)
+    (hlambdaWrong12_scores : ∀ ω,
+      bestRemainingAfter (worse ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        r1 ω < r2 ω)
+    (hlambdaCorrect12_of_scores : ∀ ω,
+      r2 ω ≤ r1 ω →
+        bestRemainingAfter (worse ω) (2 : Candidate 1) = (0 : Candidate 1))
+    (hlambdaSwap12_1 : ∀ ω, r1 (lambdaSwap12 ω) = r2 ω)
+    (hlambdaSwap12_2 : ∀ ω, r2 (lambdaSwap12 ω) = r1 ω)
+    (hlambdaMass12 : ∀ ω,
+      bestRemainingAfter (worse ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (lambdaSwap12 ω)).toReal)
+    {ω12 : Ω}
+    (hlambdaWrong12 :
+      bestRemainingAfter (worse ω12) (2 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict12 :
+      (ν ω12).toReal < (ν (lambdaSwap12 ω12)).toReal)
+    (hbetterTop_of_scores : ∀ ω,
+      rum3TopFirstByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    (hworseTop_scores_of_first : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        rum3TopFirstByScores (r1 ω) (r2 ω) (r3 ω))
+    (hbetterBottom_scores_of_first : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        rum3BottomFirstByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)))
+    (hworseBottom_scores_of_first : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) →
+        rum3BottomFirstByScores (r1 ω) (r2 ω) (r3 ω))
+    (hworseBottom_of_scores : ∀ ω,
+      rum3BottomFirstByScores (r1 ω) (r2 ω) (r3 ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hbetterMiddle_scores_of_first : ∀ ω,
+      (1 : Candidate 1) = firstChoice (better ω) →
+        rum3MiddleBeatsTopByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)))
+    (hdeltaSwap1 : ∀ ω, r1 (deltaSwap ω) = r2 ω)
+    (hdeltaSwap2 : ∀ ω, r2 (deltaSwap ω) = r1 ω)
+    (hdeltaSwap3 : ∀ ω, r3 (deltaSwap ω) = r3 ω)
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hdeltaMass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (deltaSwap ω)).toReal) :
+    Model.PrefersWeakerCompetition (ν.map better) (ν.map worse) value :=
+  paper_theorem6_threeCandidate_prefersWeakerCompetition_of_mapped_sample_swaps_and_score_contraction_facts
+    ν better worse t r1 r2 r3 deltaSwap
+    hvalue1 hvalue2 hvalue3 hx12 hx23 ht0 ht1 hworseSupport
+    lambdaSwap13gap
+    (paper_theorem6_lambda1_to_lambda2_map_of_score_swap12
+      worse r1 r2 r3 lambdaSwap13gap
+      hlambdaSource13gap_scores hlambdaTarget13gap_of_scores
+      hlambdaSwap13gap1 hlambdaSwap13gap3)
+    hlambdaMass13gap hlambdaSource13gap hlambdaStrict13gap
+    lambdaSwap23
+    (paper_theorem6_lambda1_wrong_to_correct_map_of_score_swap23
+      worse r2 r3 lambdaSwap23
+      hlambdaWrong23_scores hlambdaCorrect23_of_scores
+      hlambdaSwap23_2 hlambdaSwap23_3)
+    hlambdaMass23 hlambdaWrong23 hlambdaStrict23
+    lambdaSwap12
+    (paper_theorem6_lambda3_wrong_to_correct_map_of_score_swap12
+      worse r1 r2 lambdaSwap12
+      hlambdaWrong12_scores hlambdaCorrect12_of_scores
+      hlambdaSwap12_1 hlambdaSwap12_2)
+    hlambdaMass12 hlambdaWrong12 hlambdaStrict12
     hbetterTop_of_scores hworseTop_scores_of_first
     hbetterBottom_scores_of_first hworseBottom_scores_of_first
     hworseBottom_of_scores hbetterMiddle_scores_of_first

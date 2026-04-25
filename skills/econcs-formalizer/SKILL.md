@@ -509,7 +509,10 @@ and wasted proof search.
   wrong-to-correct event map from the two relevant score coordinates and a
   coordinate-swap equation before connecting it to probability mass. Keep the
   score order interface (`wrong -> s_i < s_j`, `s_j ≤ s_i -> correct`) separate
-  from the mass comparison.
+  from the mass comparison. For lambda-gap comparisons such as `λ₁ < λ₂`, do
+  the same thing with the source score order and the target after-removal
+  score criterion; do not leave the final theorem with an opaque event-map
+  premise when a two-line score-swap lemma will expose the paper argument.
   For i.i.d. density products, first prove the two-coordinate well-ordered
   density comparison, then multiply by the unaffected coordinate using an
   explicit nonnegativity/positivity hypothesis. Do not bury the context factor

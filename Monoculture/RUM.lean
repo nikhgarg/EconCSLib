@@ -1469,6 +1469,34 @@ theorem rum3Lambda3_wrong_to_correct_map_of_score_swap12
   exact le_of_lt (hwrong_scores ω hwrong)
 
 /--
+Score-level event map for the `λ₁ < λ₂` comparison.
+
+If choosing `x₂` after removing `x₁` implies that the `x₂` score weakly beats
+the `x₃` score, and a weak `x₁` score lead over `x₃` implies choosing `x₁`
+after removing `x₂`, then swapping the `x₁` and `x₂` scores maps the source
+event for `λ₁` into the target event for `λ₂`.
+-/
+theorem rum3Lambda1_to_lambda2_map_of_score_swap12
+    {Ω : Type*} (rank : Ω → Ranking 1)
+    (s1 s2 s3 : Ω → ℝ) (swap : Ω → Ω)
+    (hsource_scores : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        s3 ω ≤ s2 ω)
+    (htarget_of_scores : ∀ ω,
+      s3 ω ≤ s1 ω →
+        bestRemainingAfter (rank ω) (1 : Candidate 1) = (0 : Candidate 1))
+    (hswap1 : ∀ ω, s1 (swap ω) = s2 ω)
+    (hswap3 : ∀ ω, s3 (swap ω) = s3 ω) :
+    ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (1 : Candidate 1) =
+          (0 : Candidate 1) := by
+  intro ω hsource
+  apply htarget_of_scores
+  rw [hswap1, hswap3]
+  exact hsource_scores ω hsource
+
+/--
 Lambda certificate from finite paired-density swap facts.
 
 This packages the two strict pairwise comparisons in the form produced by a
