@@ -19,12 +19,6 @@
 !.env.example
 *.log
 
-# Paper source PDFs cached locally for formalization
-UserItemFairness/*.pdf
-Monoculture/sources/*.pdf
-Monoculture/sources/*.html
-Monoculture/sources/*.txt
-
 # Editor and OS noise
 .DS_Store
 Thumbs.db
