@@ -1,4 +1,4 @@
-import EconCSLib.Algorithms.Online.MainTheorems
+import MSVV07AdWords.MainTheorems
 
 /-!
 # Paper-Facing Theorem Ledger

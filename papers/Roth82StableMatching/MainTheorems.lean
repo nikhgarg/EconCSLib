@@ -9,8 +9,9 @@ This file contains the foundational stable matching definitions and theorem wrap
 for the 2023 EC Test-of-Time matching tracks.
 -/
 
-namespace EconCSLib
-namespace Matching
+namespace Roth82StableMatching
+open EconCSLib.Matching
+
 
 /-! ## 1) Paper-Facing Definitions: 2023 Matching -/
 
@@ -90,5 +91,5 @@ theorem paper_da_truthful_for_men {M W : Type*} [Fintype M] [Fintype W] [Decidab
     paper_truthful_for_men (deferredAcceptance (M := M) (W := W)) := by
   exact hcert
 
-end Matching
-end EconCSLib
+
+end Roth82StableMatching

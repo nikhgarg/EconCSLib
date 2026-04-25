@@ -1,5 +1,5 @@
-import EconCSLib.Algorithms.Online.AdWordsExtensions
-import EconCSLib.Algorithms.Online.AdWordsLowerBound
+import MSVV07AdWords.AdWordsExtensions
+import MSVV07AdWords.AdWordsLowerBound
 
 /-!
 # Paper-Facing Theorems: AdWords and Generalized Online Matching

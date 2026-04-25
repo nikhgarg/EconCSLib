@@ -47,3 +47,28 @@ srcDir = "papers"
 [[lean_lib]]
 name = "MBJG25ProducerFairness"
 srcDir = "papers"
+
+[[lean_lib]]
+name = "Roth82StableMatching"
+srcDir = "papers"
+
+[[lean_lib]]
+srcDir = "papers"
+
+[[lean_lib]]
+name = "GHW01DigitalGoods"
+srcDir = "papers"
+
+[[lean_lib]]
+srcDir = "papers"
+
+[[lean_lib]]
+srcDir = "papers"
+
+[[lean_lib]]
+name = "AuctionTestOfTime"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "MSVV07AdWords"
+srcDir = "papers"
