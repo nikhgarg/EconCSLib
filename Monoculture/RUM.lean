@@ -185,6 +185,18 @@ theorem rumContractScore_sub
   rw [rumContractScore_eq_affine, rumContractScore_eq_affine]
   ring
 
+/-- Candidate `x₁` is weakly first among three realized scores. -/
+def rum3TopFirstByScores (s1 s2 s3 : ℝ) : Prop :=
+  s2 ≤ s1 ∧ s3 ≤ s1
+
+/-- Candidate `x₂` strictly beats `x₁` and weakly beats `x₃`. -/
+def rum3MiddleBeatsTopByScores (s1 s2 s3 : ℝ) : Prop :=
+  s1 < s2 ∧ s3 ≤ s2
+
+/-- Candidate `x₃` is weakly first among three realized scores. -/
+def rum3BottomFirstByScores (s1 s2 s3 : ℝ) : Prop :=
+  s1 ≤ s3 ∧ s2 ≤ s3
+
 /--
 Contraction cannot reverse an already-correct weak order between two candidates.
 -/
@@ -800,6 +812,113 @@ theorem rum3DeltaCertificate_of_finite_contraction_swap_facts
     hbetterTop hworseNotTop hmassTop hbottomImp
     (rum3_bottomMiddle_transition_le_bottomTop_of_swap_equiv
       ν swap better worse hmap hmassSwap)
+
+/--
+Delta certificate from finite score-level contraction and `swapi` facts.
+
+This bridge derives the ranking-level event implications used by Lemmas 2 and 3
+from deterministic score geometry.  The remaining measure-theoretic work is only
+the marginal identification and the mass comparison for the finite/discretized
+`swapi` map.
+-/
+theorem rum3DeltaCertificate_of_finite_score_contraction_swap_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (t x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω ≃ Ω)
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hbetterTop_of_scores : ∀ ω,
+      rum3TopFirstByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    (hworseTop_scores_of_first : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        rum3TopFirstByScores (r1 ω) (r2 ω) (r3 ω))
+    (hbetterBottom_scores_of_first : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        rum3BottomFirstByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)))
+    (hworseBottom_scores_of_first : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) →
+        rum3BottomFirstByScores (r1 ω) (r2 ω) (r3 ω))
+    (hworseBottom_of_scores : ∀ ω,
+      rum3BottomFirstByScores (r1 ω) (r2 ω) (r3 ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hbetterMiddle_scores_of_first : ∀ ω,
+      (1 : Candidate 1) = firstChoice (better ω) →
+        rum3MiddleBeatsTopByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hmassSwap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal) :
+    RUM3DeltaCertificate μBetter μWorse := by
+  have hx13 : x3 < x1 := lt_trans hx23 hx12
+  have hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω) := by
+    intro ω hwTop
+    rcases hworseTop_scores_of_first ω hwTop with ⟨hr21, hr31⟩
+    exact hbetterTop_of_scores ω
+      (rum3_contract_top_first_of_original_top_first
+        ht0 ht1 (le_of_lt hx12) (le_of_lt hx13) hr21 hr31)
+  have hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω) := by
+    intro ω hbBetter
+    rcases hbetterBottom_scores_of_first ω hbBetter with ⟨hc13, hc23⟩
+    exact hworseBottom_of_scores ω
+      (rum3_contract_bottom_first_imp_original_bottom_first
+        ht0 ht1 hx13 hx23 hc13 hc23)
+  have hmap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (swap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (swap ω)) := by
+    intro ω htransition
+    rcases hworseBottom_scores_of_first ω htransition.1 with ⟨hr13, hr23⟩
+    rcases hbetterMiddle_scores_of_first ω htransition.2 with ⟨hc12, hc32⟩
+    rcases rum3_swap_middle_transition_geometry
+        ht0 ht1 hx12 hr13 hr23 hc12 hc32 with
+      ⟨hr23_swap, hr13_swap, hc21_swap, hc31_swap⟩
+    constructor
+    · apply hworseBottom_of_scores
+      unfold rum3BottomFirstByScores
+      constructor
+      · rw [hswap1, hswap3]
+        exact hr23_swap
+      · rw [hswap2, hswap3]
+        exact hr13_swap
+    · apply hbetterTop_of_scores
+      unfold rum3TopFirstByScores
+      constructor
+      · rw [hswap2, hswap1]
+        exact hc21_swap
+      · rw [hswap3, hswap1]
+        exact hc31_swap
+  exact rum3DeltaCertificate_of_finite_contraction_swap_facts
+    μBetter μWorse ν better worse swap hbetter hworse hnoTopOut
+    hbetterTop hworseNotTop hmassTop hbottomImp hmap hmassSwap
 
 theorem rum3LambdaCertificate_of_pairwise_facts
     {μWorse : PMF (Ranking 1)}

@@ -462,6 +462,12 @@ and wasted proof search.
   proving `Pr[A] ≤ Pr[B]`. Keep the continuous map, Jacobian/pushforward, and
   event-implication geometry as separate inputs. This usually yields a named
   paper lemma checkpoint before the measure-theoretic construction is complete.
+  If event implications are really order facts about realized scores, add small
+  score-level predicates and prove the event map from deterministic score
+  geometry plus explicit score-to-ranking interface hypotheses. This avoids
+  leaving opaque assumptions like "top cannot leave top" or "`swapi` maps this
+  transition region" in the paper-facing theorem when the real-order proof is
+  already available.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only
