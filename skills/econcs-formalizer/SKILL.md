@@ -24,25 +24,23 @@ because Lean needs a reusable intermediate lemma or a cleaner finite/discrete
 interface, make the deviation explicit and keep the paper-facing wrapper close
 to the original named result.
 
-### 1.2 Library Layering Rule
+### 1.2 Library Layering Rule: Textbook vs. Audit Trail
 
-Put generic EC/CS/econ results in the main EconCS library, then make paper
-folders mostly apply those results.
+Think of the repository as having two distinct roles: **`EconCSLib` is the textbook. The `papers/` directory is the audit trail.**
 
-- Main library modules should own reusable primitives, definitions, and theorems:
-  allocations, valuations, mechanisms, rankings, PMFs, finite expectations,
-  graph/path lemmas, sign lemmas, certificate interfaces, and generic algorithm
-  correctness patterns.
-- Paper-specific folders should mainly translate paper notation into the shared
-  primitives, instantiate assumptions, prove genuinely paper-local lemmas, and
-  state the paper-facing theorem.
-- If two papers could use a lemma after renaming variables, it belongs in the
-  generic library first. Do not let reusable results accumulate inside a paper
-  namespace just because that is where they were discovered.
-- If a proof starts with a paper-local lemma and it becomes generic, extract it
-  before building more paper-specific code on top of it.
-- Paper folders may keep thin wrappers with paper names, but those wrappers
-  should usually call generic theorems rather than duplicate their proofs.
+- **`EconCSLib/` (The Textbook):** Put generic, abstracted EC/CS/econ results here. If a definition, algorithm, or theorem is foundational enough that a graduate student should know it, or if a second paper might build on it (e.g., Gale-Shapley, Nash equilibrium, LP duality), it belongs in the core library.
+  - **Abstraction:** Code here should be highly abstracted and stripped of paper-specific notation. Use generic types (`α`, `β`) and naming conventions consistent with `Mathlib`.
+  - **Ownership:** Main library modules own reusable primitives: allocations, valuations, mechanisms, rankings, PMFs, finite expectations, graph/path lemmas, and generic algorithm correctness patterns.
+
+- **`papers/` (The Audit Trail):** Each paper-specific folder is a formalization artifact proving that the specific claims in a specific PDF are true.
+  - **Notation Fidelity:** Translate paper-specific notation (e.g., exactly matching the paper's index variables like `u`, `j`, `t`) into the shared primitives.
+  - **Paper-Facing Wrappers:** Write theorems whose signatures match the paper *exactly*. These should be thin wrappers that call the generic library theorems. (e.g., `theorem roth82_theorem_1 : ... := EconCSLib.Markets.Matching.da_is_stable`).
+  - **Local Ledger:** Keep the paper's specific narrative flow in `MainTheorems.lean`, `README.md`, and `DependencyDAG.tex`.
+  - **Upstreaming Workflow:** It is normal to build everything inside a `papers/` folder initially. Once a proof is stable, **upstream** the generalized math into `EconCSLib`, leaving only the thin wrappers and paper-specific stepping stones behind.
+
+- **Standard for Upstreaming:** To prevent "upstream bloat," use the "Second Paper" test: **Only move a result to `EconCSLib` if a second paper would likely need it.** Foundationally reusable math (like Gale-Shapley, Nash equilibrium, or LP duality) passes this test; hyper-specific algebraic lemmas or messy intermediate steps used only for one paper's specific narrative should remain in that paper's folder.
+- If two papers could use a lemma after renaming variables, it belongs in the generic library.
+- If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
 
 ### 1.3 Paper Folder Contract
 
