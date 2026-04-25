@@ -892,6 +892,25 @@ theorem paper_theorem6_fullSupport_of_sample_preimages
   rum3_fullSupport_of_sample_preimages μ ν rank hpreimage hsupport
 
 /--
+Appendix C / finite preimage bridge for realization events.
+
+If each ranking atom under `μ` is the probability of its realization preimage
+under `ν`, then every ranking event has the same probability as its realization
+preimage.  This is the finite pushforward layer used to discharge the marginal
+identification hypotheses in the RUM Theorem 6 endpoint.
+-/
+theorem paper_theorem6_eventProb_of_sample_preimages
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF (Ranking 1)) (ν : PMF Ω) (rank : Ω → Ranking 1)
+    (hpreimage : ∀ π : Ranking 1,
+      (μ π).toReal = DecisionCore.pmfProb ν (fun ω => rank ω = π))
+    (p : Ranking 1 → Prop) [DecidablePred p] :
+    DecisionCore.pmfProb μ p =
+      DecisionCore.pmfProb ν (fun ω => p (rank ω)) :=
+  DecisionCore.pmfProb_eq_pmfProb_preimage_of_atom_eq
+    μ ν rank hpreimage p
+
+/--
 Appendix C / lambda certificate from pairwise facts plus support.
 
 This version replaces the raw `λ₁ < 1` premise with a positive-mass witness that
@@ -1920,6 +1939,190 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_sample_swaps_a
         hworseBottom_scores_of_first hworseBottom_of_scores
         hbetterMiddle_scores_of_first hdeltaSwap1 hdeltaSwap2 hdeltaSwap3
         hbetterTop hworseNotTop hmassTop hdeltaMass))
+
+/--
+Appendix C / Theorem 6 from realization preimages, sample-space lambda swaps,
+and score-level contraction/`swapi` geometry.
+
+This strengthens the sample-space endpoint by replacing the separate lambda
+marginal equalities, first-choice marginal equalities, and finite full-support
+premise with atom-preimage facts for the two ranking laws.  The remaining
+finite hypotheses are exactly the score/ranking interfaces, realization-space
+swap maps, positive witnesses, and mass dominance facts.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_sample_preimages_swaps_and_score_contraction_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1)
+    (t : ℝ) (r1 r2 r3 : Ω → ℝ) (deltaSwap : Ω ≃ Ω)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hbetterPreimage : ∀ π : Ranking 1,
+      (μBetter π).toReal = DecisionCore.pmfProb ν (fun ω => better ω = π))
+    (hworsePreimage : ∀ π : Ranking 1,
+      (μWorse π).toReal = DecisionCore.pmfProb ν (fun ω => worse ω = π))
+    (hworseSupport : ∀ π : Ranking 1,
+      ∃ ω : Ω, worse ω = π ∧ 0 < (ν ω).toReal)
+    (lambdaSwap13gap : Ω ≃ Ω)
+    (hlambdaMap13gap : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (worse (lambdaSwap13gap ω)) (1 : Candidate 1) =
+          (0 : Candidate 1))
+    (hlambdaMass13gap : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (lambdaSwap13gap ω)).toReal)
+    {ω13gap : Ω}
+    (hlambdaSource13gap :
+      bestRemainingAfter (worse ω13gap) (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict13gap :
+      (ν ω13gap).toReal < (ν (lambdaSwap13gap ω13gap)).toReal)
+    (lambdaSwap23 : Ω ≃ Ω)
+    (hlambdaMap23 : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (worse (lambdaSwap23 ω)) (0 : Candidate 1) =
+          (1 : Candidate 1))
+    (hlambdaMass23 : ∀ ω,
+      bestRemainingAfter (worse ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (lambdaSwap23 ω)).toReal)
+    {ω23 : Ω}
+    (hlambdaWrong23 :
+      bestRemainingAfter (worse ω23) (0 : Candidate 1) = (2 : Candidate 1))
+    (hlambdaStrict23 :
+      (ν ω23).toReal < (ν (lambdaSwap23 ω23)).toReal)
+    (lambdaSwap12 : Ω ≃ Ω)
+    (hlambdaMap12 : ∀ ω,
+      bestRemainingAfter (worse ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (worse (lambdaSwap12 ω)) (2 : Candidate 1) =
+          (0 : Candidate 1))
+    (hlambdaMass12 : ∀ ω,
+      bestRemainingAfter (worse ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (lambdaSwap12 ω)).toReal)
+    {ω12 : Ω}
+    (hlambdaWrong12 :
+      bestRemainingAfter (worse ω12) (2 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict12 :
+      (ν ω12).toReal < (ν (lambdaSwap12 ω12)).toReal)
+    (hbetterTop_of_scores : ∀ ω,
+      rum3TopFirstByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    (hworseTop_scores_of_first : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        rum3TopFirstByScores (r1 ω) (r2 ω) (r3 ω))
+    (hbetterBottom_scores_of_first : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        rum3BottomFirstByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)))
+    (hworseBottom_scores_of_first : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) →
+        rum3BottomFirstByScores (r1 ω) (r2 ω) (r3 ω))
+    (hworseBottom_of_scores : ∀ ω,
+      rum3BottomFirstByScores (r1 ω) (r2 ω) (r3 ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hbetterMiddle_scores_of_first : ∀ ω,
+      (1 : Candidate 1) = firstChoice (better ω) →
+        rum3MiddleBeatsTopByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω)))
+    (hdeltaSwap1 : ∀ ω, r1 (deltaSwap ω) = r2 ω)
+    (hdeltaSwap2 : ∀ ω, r2 (deltaSwap ω) = r1 ω)
+    (hdeltaSwap3 : ∀ ω, r3 (deltaSwap ω) = r3 ω)
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hdeltaMass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (deltaSwap ω)).toReal) :
+    Model.PrefersWeakerCompetition μBetter μWorse value := by
+  have hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal :=
+    paper_theorem6_fullSupport_of_sample_preimages
+      μWorse ν worse hworsePreimage hworseSupport
+  have hlambda1μ :
+      rum3Lambda1 μWorse =
+        DecisionCore.pmfProb ν
+          (fun ω => bestRemainingAfter (worse ω) (0 : Candidate 1) =
+            (1 : Candidate 1)) := by
+    unfold rum3Lambda1
+    exact paper_theorem6_eventProb_of_sample_preimages
+      μWorse ν worse hworsePreimage
+      (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+  have hlambda2μ :
+      rum3Lambda2 μWorse =
+        DecisionCore.pmfProb ν
+          (fun ω => bestRemainingAfter (worse ω) (1 : Candidate 1) =
+            (0 : Candidate 1)) := by
+    unfold rum3Lambda2
+    exact paper_theorem6_eventProb_of_sample_preimages
+      μWorse ν worse hworsePreimage
+      (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1))
+  have hwrong23μ :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) =
+        DecisionCore.pmfProb ν
+          (fun ω => bestRemainingAfter (worse ω) (0 : Candidate 1) =
+            (2 : Candidate 1)) :=
+    paper_theorem6_eventProb_of_sample_preimages
+      μWorse ν worse hworsePreimage
+      (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1))
+  have hlambda3μ :
+      rum3Lambda3 μWorse =
+        DecisionCore.pmfProb ν
+          (fun ω => bestRemainingAfter (worse ω) (2 : Candidate 1) =
+            (0 : Candidate 1)) := by
+    unfold rum3Lambda3
+    exact paper_theorem6_eventProb_of_sample_preimages
+      μWorse ν worse hworsePreimage
+      (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
+  have hwrong12μ :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) =
+        DecisionCore.pmfProb ν
+          (fun ω => bestRemainingAfter (worse ω) (2 : Candidate 1) =
+            (1 : Candidate 1)) :=
+    paper_theorem6_eventProb_of_sample_preimages
+      μWorse ν worse hworsePreimage
+      (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1))
+  have hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)) := by
+    intro c
+    unfold firstChoiceProb
+    exact paper_theorem6_eventProb_of_sample_preimages
+      μBetter ν better hbetterPreimage
+      (fun π => c = firstChoice π)
+  have hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)) := by
+    intro c
+    unfold firstChoiceProb
+    exact paper_theorem6_eventProb_of_sample_preimages
+      μWorse ν worse hworsePreimage
+      (fun π => c = firstChoice π)
+  exact
+    paper_theorem6_threeCandidate_prefersWeakerCompetition_of_sample_swaps_and_score_contraction_facts
+      ν better worse t r1 r2 r3 deltaSwap
+      hvalue1 hvalue2 hvalue3 hx12 hx23 ht0 ht1 hfull
+      hlambda1μ hlambda2μ hwrong23μ hlambda3μ hwrong12μ
+      lambdaSwap13gap hlambdaMap13gap hlambdaMass13gap
+      hlambdaSource13gap hlambdaStrict13gap
+      lambdaSwap23 hlambdaMap23 hlambdaMass23 hlambdaWrong23 hlambdaStrict23
+      lambdaSwap12 hlambdaMap12 hlambdaMass12 hlambdaWrong12 hlambdaStrict12
+      hbetter hworse hbetterTop_of_scores hworseTop_scores_of_first
+      hbetterBottom_scores_of_first hworseBottom_scores_of_first
+      hworseBottom_of_scores hbetterMiddle_scores_of_first
+      hdeltaSwap1 hdeltaSwap2 hdeltaSwap3 hbetterTop hworseNotTop hmassTop
+      hdeltaMass
 
 namespace MallowsComparison
 

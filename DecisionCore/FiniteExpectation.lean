@@ -343,6 +343,58 @@ theorem pmf_apply_toReal_pos_of_pmfProb_preimage
   rw [hpreimage b]
   exact pmfProb_pos_of_mass ν (fun a => f a = b) a₀ hf hmass
 
+/--
+If every target atom is identified with the probability of its finite preimage,
+then every target event has probability equal to the probability of its
+preimage.
+-/
+theorem pmfProb_eq_pmfProb_preimage_of_atom_eq
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF β) (ν : PMF α) (f : α → β)
+    (hatom : ∀ b, (μ b).toReal = pmfProb ν (fun a => f a = b))
+    (p : β → Prop) [DecidablePred p] :
+    pmfProb μ p = pmfProb ν (fun a => p (f a)) := by
+  classical
+  unfold pmfProb pmfExp
+  calc
+    ∑ b : β, (μ b).toReal * (if p b then (1 : ℝ) else 0)
+        = ∑ b : β,
+            (∑ a : α, (ν a).toReal * (if f a = b then (1 : ℝ) else 0)) *
+              (if p b then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          rw [hatom b]
+          rfl
+    _ = ∑ b : β, ∑ a : α,
+            ((ν a).toReal * (if f a = b then (1 : ℝ) else 0)) *
+              (if p b then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          rw [Finset.sum_mul]
+    _ = ∑ a : α, ∑ b : β,
+            ((ν a).toReal * (if f a = b then (1 : ℝ) else 0)) *
+              (if p b then (1 : ℝ) else 0) := by
+          exact Finset.sum_comm
+    _ = ∑ a : α, (ν a).toReal * (if p (f a) then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          by_cases hp : p (f a)
+          · rw [Finset.sum_eq_single (f a)]
+            · simp [hp]
+            · intro b _ hb
+              by_cases hfb : f a = b
+              · exact False.elim (hb hfb.symm)
+              · simp [hfb]
+            · intro hnot
+              exact False.elim (hnot (Finset.mem_univ (f a)))
+          · rw [Finset.sum_eq_zero]
+            · simp [hp]
+            · intro b _
+              by_cases hfb : f a = b
+              · have hpb : ¬ p b := by simpa [hfb] using hp
+                simp [hfb, hpb]
+              · simp [hfb]
+
 /-- Positive mass outside an event makes its finite PMF probability strictly below one. -/
 theorem pmfProb_lt_one_of_mass_not {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)

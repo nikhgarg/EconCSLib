@@ -91,6 +91,11 @@ the Lean statements against the paper.
   definitions, lemmas, propositions, theorems, and corollaries before deep
   proof work. Keep it as a TikZ source file (and rendered image) in the paper
   folder so humans can audit theorem flow quickly.
+  - **Project pattern in this repo:** for Monoculture, keep the active artifact at
+    `Monoculture/DependencyDAG.tex` and a rendered image alongside it.
+  - Use the same node styles as listed below, and prefer a conditional endpoint
+    node for any final theorem that still depends on continuous/model-specific
+    assumptions not yet discharged in Lean.
 - **DAG Formatting and Clarity Mandates:**
   - The DAG must encode formalization status and node type explicitly in the styling.
   - Include distinct color and shape coding for `fully formalized result` (e.g., green rectangle), `fully formalized lemma` (e.g., yellow rounded rectangle), `model/definition` (e.g., blue ellipse), and `not formalized` (e.g., dashed gray rectangle).
@@ -473,6 +478,11 @@ and wasted proof search.
   the ranking law instead of forcing a swap equivalence directly on rankings.
   This mirrors continuous change-of-variables proofs and keeps the future
   measure-theory bridge local to pushforward/marginal facts.
+  Do not carry one marginal-identification hypothesis per event if the sample
+  law is already described by atom preimages. Prove or reuse a generic finite
+  preimage bridge of the form `mass(atom b) = Pr[f = b] -> Pr[p] =
+  Pr[p ∘ f]`, then derive lambda events, first-choice events, and support facts
+  from that single atom-preimage law.
   When a paper's continuous "support everywhere" premise is only needed to show
   a finite probability is not one, add a full-support finite wrapper
   (`∀ atom, 0 < mass atom`) and construct one concrete outside-event atom.
