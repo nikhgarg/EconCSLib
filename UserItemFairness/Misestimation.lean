@@ -1208,6 +1208,43 @@ theorem theorem4Problem11PolicyOptimal_of_isOptimalAtLevel
       simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using hopt.1
     exact hell_le_item.trans (hitem_le_opt.trans hopt_le_item)
 
+/-- An optimal Problem 11 epigraph value is the minimum item value of its policy. -/
+theorem theorem4Problem11PolicyOptimal_value_eq_finiteMin
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    ell =
+      DecisionCore.finiteMin
+        (fun j : Item n => theorem4Problem11PolicyItemValue beta v ρ j) := by
+  let value : Item n → ℝ :=
+    fun j : Item n => theorem4Problem11PolicyItemValue beta v ρ j
+  have hell_le_min : ell ≤ DecisionCore.finiteMin value := by
+    apply DecisionCore.le_finiteMin
+    intro j
+    exact hopt.2.1 j
+  have hmin_feas :
+      theorem4Problem11LPFeasible beta v ρ
+        (DecisionCore.finiteMin value) := by
+    intro j
+    exact DecisionCore.finiteMin_le value j
+  have hmin_le_ell :
+      DecisionCore.finiteMin value ≤ ell :=
+    hopt.2.2 ρ (DecisionCore.finiteMin value) hopt.1 hmin_feas
+  exact le_antisymm hell_le_min hmin_le_ell
+
+/--
+Problem 11 equality-form optimal package. This is the formal target for the
+remaining Appendix E Lemmas 13-15 selected-BFS argument.
+-/
+structure Theorem4Problem11EqualizedBasicOptimal {n : ℕ} [NeZero n]
+    (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n) (ell : ℝ) :
+    Prop where
+  mirror : Theorem4MirrorSymmetricPolicy ρ
+  item_eq :
+    ∀ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j = ell
+  optimal : Theorem4Problem11PolicyOptimal beta v ρ ell
+  basic_feasible : TypePolicy.BasicFeasibleSupportCertificate ρ
+
 /-! ### Appendix E, Lemma 15: ruling out pivot `t = 1` -/
 
 /-- Lemma 15's closed-form `λ` when the Problem 11 pivot is item `1`. -/
@@ -1834,6 +1871,83 @@ theorem theorem4_misestimation_with_fairness_large_typeOne_from_reduction
     exact huserR
   exact E.priceOfMisestimation_gt_one_sub_of_userFairness_lt_div_card
     eps (R.liftedPolicy ρ) heps hbase huserE
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, first true cold-start
+type, using the Problem 11 pivot-support/closed-form certificate rather than a
+bare no-first-item assumption.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeZero_from_problem11_certificate
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (t : Item n)
+    (hpivot : OpposingTypes.Theorem4Problem11PivotSupport ρ t)
+    (hclosed_first :
+      t = OpposingTypes.theorem4FirstItem →
+        (ρ 2 OpposingTypes.theorem4FirstItem).toReal =
+          OpposingTypes.theorem4Problem11PivotOneZ beta v) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_pivotSupport_of_closedZ
+      hn hbeta hbeta_half hpos hdec hpivot hclosed_first
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.1
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, second true cold-start
+type, using the Problem 11 pivot-support/closed-form certificate.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeOne_from_problem11_certificate
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (t : Item n)
+    (hpivot : OpposingTypes.Theorem4Problem11PivotSupport ρ t)
+    (hclosed_first :
+      t = OpposingTypes.theorem4FirstItem →
+        (ρ 2 OpposingTypes.theorem4FirstItem).toReal =
+          OpposingTypes.theorem4Problem11PivotOneZ beta v) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_pivotSupport_of_closedZ
+      hn hbeta hbeta_half hpos hdec hpivot hclosed_first
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2
 
 end EstimatedRecommendationModel
 end UserItemFairness
