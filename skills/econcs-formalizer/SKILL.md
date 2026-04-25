@@ -295,7 +295,18 @@ Before ending work, update a repo note or paper handoff with:
 - whether commit history is needed for the next resume; usually it should not be
   if the status docs and README are current.
 
-### 1.9 Final Verification and Validation
+### 1.10 Token Efficiency and Mathlib Discovery
+
+**CRITICAL MANDATE - DO NOT GUESS MATHLIB LEMMAS:**
+When you need a Mathlib lemma (e.g., for `Filter.Tendsto`, `Finset.sum`, or topological limits), **DO NOT guess its exact camelCase or snake_case name in a loop.** This wastes massive amounts of tokens and context window.
+Instead:
+1. Create a minimal `/tmp/test.lean` file.
+2. State the exact theorem you want to prove.
+3. Use the `exact?` or `apply?` tactics inside the proof.
+4. Run `lake env lean /tmp/test.lean` to let Lean's internal search engine give you the exact lemma name.
+5. If `exact?` fails, search the local `.lake/packages/mathlib` repository using `grep` or `rg` for keywords, or use `Moogle` / LeanSearchClient if configured.
+
+Never enter a cycle of modifying a single line in a shell command just to test slightly different lemma names. Stop, use `exact?`, and proceed efficiently.
 
 Before declaring a paper "done," run a final human-facing validation pass:
 
