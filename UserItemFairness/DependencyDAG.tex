@@ -1,0 +1,93 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, shapes.misc, fit, backgrounds, calc}
+
+\tikzset{
+  dag_result/.style={rectangle, draw=green!70!black, fill=green!12, very thick,
+    minimum width=5.0cm, minimum height=1cm, align=center},
+  dag_lemma/.style={rounded rectangle, draw=orange!80!black, fill=yellow!20,
+    very thick, minimum width=5.0cm, minimum height=1cm, align=center},
+  dag_model/.style={ellipse, draw=blue!70!black, fill=blue!12, very thick,
+    minimum width=4.5cm, minimum height=1cm, align=center},
+  dag_unformalized/.style={rectangle, draw=gray!60!black, fill=gray!10,
+    very thick, dashed, minimum width=5.2cm, minimum height=1cm, align=center},
+  dag_arrow/.style={-{Stealth}, thick},
+  dag_dashed_arrow/.style={-{Stealth}, thick, dashed}
+}
+
+\newcommand{\daglegend}[2]{%
+  \node[draw, rounded corners, very thick, fit=#1, inner sep=8pt,
+    label=above:\textbf{#2}] (#2) {};
+}
+
+\begin{document}
+\begin{tikzpicture}[>=Latex, node distance=1.4cm and 2.0cm,
+  font=\sffamily\small]
+
+% --- Legend ---
+\node[dag_result, text width=2.7cm] (legRes) {Fully Formalized \\ Result};
+\node[dag_lemma, right=0.55cm of legRes, text width=2.9cm] (legLem) {Fully Formalized \\ Lemma};
+\node[dag_model, right=0.55cm of legLem, text width=3.0cm] (legDef) {Model / Definition};
+\node[dag_unformalized, right=0.55cm of legDef, text width=2.9cm] (legOpen) {Not Formalized};
+\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}
+
+% --- Core models ---
+\node[dag_model, below=2.0cm of Legend] (BaseDefs) {Recommendation primitives \\ and fairness objectives};
+\node[dag_model, below=1.2cm of BaseDefs] (PolicyLP) {Type-policy LP primitives \\ (sparsity/support certificates)};
+\node[dag_model, below=1.2cm of PolicyLP] (SymmRed) {Symmetrization and \\ reduction bridges};
+
+% --- Theorem 3 branch ---
+\node[dag_result, below=2.2cm of SymmRed] (Thm3a) {Theorem 3 chain \\ (price monotonicity \\ and type-fairness)};
+\node[dag_lemma, right=2.5cm of Thm3a] (Prob6) {Problem 6 reduction + \\ closed-form certificates \\ (Lemmas 4--11)};
+
+% --- Misestimation branch ---
+\node[dag_lemma, below=2.2cm of Thm3a, text width=5.2cm] (BaseMis) {Misestimation benchmark \\ and cold-start baseline};
+\node[dag_lemma, right=1.8cm of BaseMis] (Lemma12) {Appendix E Lemma 12 \\ symmetry reduction to $S'$};
+\node[dag_lemma, right=2.0cm of Lemma12] (Problem11Core) {Problem 11 LP-policy bridge \\ normalised-item-utility};
+
+% Remaining Appendix E targets
+\node[dag_unformalized, below=1.8cm of Problem11Core] (Lemma13) {Appendix E Lemma 13 \\ Problem 11 pivot-support theorem};
+\node[dag_unformalized, below=1.8cm of Lemma13] (Lemma15) {Appendix E Lemma 15 \\ full all-pivot coordinates};
+\node[dag_unformalized, right=0.8cm of Lemma15, yshift=0cm] (Lemma14) {Appendix E Lemma 14 \\ uniqueness of selected optimum};
+\node[dag_unformalized, below=1.0cm of Lemma15, xshift=0.0cm] (VExist) {Explicit witness \\ $v_2 < \varepsilon v_1 / n$};
+
+\node[dag_result, below=2.0cm of VExist] (Theorem4Final) {Appendix E Theorem 4 \\ full formalization};
+
+% Closed-form pivot-one and no-extreme bridge that are currently available
+\node[dag_lemma, right=1.8cm of Problem11Core] (PivotOne) {Lemma 15 ($t=1$) \\ coordinate from equality \\ and pivot support};
+
+\node[dag_result, above=0.9cm of Theorem4Final] (Theorem4Part) {Problem 11 equality wrappers \\ and cold-start \\ lower bounds};
+
+\draw[dag_dashed_arrow] (Thm3a) -- (Problem11Core);
+
+\draw[dag_arrow] (BaseDefs) -- (Thm3a);
+\draw[dag_arrow] (BaseDefs) -- (SymmRed);
+\draw[dag_arrow] (SymmRed) -- (Thm3a);
+\draw[dag_arrow] (PolicyLP) -- (Thm3a);
+\draw[dag_arrow] (PolicyLP) -- (Prob6);
+\draw[dag_arrow] (PolicyLP) -- (Problem11Core);
+\draw[dag_arrow] (BaseDefs) -- (Prob6);
+\draw[dag_arrow] (SymmRed) -- (BaseMis);
+
+\draw[dag_arrow] (Thm3a) -- (Prob6);
+\draw[dag_arrow] (BaseMis) -- (Theorem4Part);
+\draw[dag_arrow] (Lemma12) -- (Problem11Core);
+\draw[dag_arrow] (Lemma12) -- (Theorem4Part);
+\draw[dag_arrow] (Prob6) -- (Problem11Core);
+\draw[dag_arrow] (Problem11Core) -- (Theorem4Part);
+\draw[dag_arrow] (PivotOne) -- (Theorem4Part);
+
+\draw[dag_arrow] (Problem11Core) -- (Lemma13);
+\draw[dag_arrow] (Problem11Core) -- (Lemma15);
+\draw[dag_arrow] (Problem11Core) -- (Lemma14);
+\draw[dag_arrow] (Problem11Core) -- (VExist);
+\draw[dag_arrow] (Lemma13) -- (Theorem4Final);
+\draw[dag_arrow] (Lemma15) -- (Theorem4Final);
+\draw[dag_arrow] (Lemma14) -- (Theorem4Final);
+\draw[dag_arrow] (VExist) -- (Theorem4Final);
+\draw[dag_arrow] (Theorem4Part) -- (Theorem4Final);
+
+% Layout helper alignment
+\node[below=0.2cm of Theorem4Part] (Spacer) {};
+
+\end{tikzpicture}
+\end{document}

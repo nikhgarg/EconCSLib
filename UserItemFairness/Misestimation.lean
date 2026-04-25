@@ -1379,6 +1379,272 @@ def Theorem4Problem11PivotSupport {n : ℕ}
     (∀ j : Item n, j.val < t.val →
       ρ 2 j = 0 ∧ ρ 2 (reverseItem j) = 0)
 
+theorem theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem)
+    (hj : j ≠ theorem4FirstItem) :
+    ρ 0 j = 0 := by
+  have hlt : t.val < j.val := by
+    simpa [ht] using theorem4FirstItem_val_lt_of_ne hj
+  exact hpivot.1 j hlt
+
+theorem theorem4Problem11PivotSupport_typeZero_first_toReal_eq_one
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    (ρ 0 theorem4FirstItem).toReal = 1 := by
+  have hsum_single :
+      (∑ j : Item n, (ρ 0 j).toReal) =
+        (ρ 0 theorem4FirstItem).toReal := by
+    apply Finset.sum_eq_single theorem4FirstItem
+    · intro j _hj hj_ne
+      have hz :
+          ρ 0 j = 0 :=
+        theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
+          hpivot ht hj_ne
+      simp [hz]
+    · intro hnot
+      simp at hnot
+  have hsum : (∑ j : Item n, (ρ 0 j).toReal) = 1 :=
+    DecisionCore.pmfToRealSum (ρ 0)
+  rw [hsum] at hsum_single
+  exact hsum_single.symm
+
+theorem theorem4Problem11PivotSupport_typeZero_reverse_first_toReal_eq_zero
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
+    (hn : 1 < n)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    (ρ 0 (reverseItem theorem4FirstItem)).toReal = 0 := by
+  have hne :
+      reverseItem (theorem4FirstItem : Item n) ≠ theorem4FirstItem := by
+    intro h
+    have hval := congrArg Fin.val h
+    simp [theorem4FirstItem, reverseItem] at hval
+    omega
+  have hz :
+      ρ 0 (reverseItem theorem4FirstItem) = 0 :=
+    theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
+      hpivot ht hne
+  simp [hz]
+
+theorem theorem4Problem11PivotSupport_sum_typeZero_q_of_pivot_first
+    {n : ℕ} [NeZero n] {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    (∑ j : Item n,
+        pairShare (1 / 2) v j * (ρ 0 j).toReal) =
+      pairShare (1 / 2) v theorem4FirstItem := by
+  have hxfirst :=
+    theorem4Problem11PivotSupport_typeZero_first_toReal_eq_one
+      hpivot ht
+  have hsum_single :
+      (∑ j : Item n,
+          pairShare (1 / 2) v j * (ρ 0 j).toReal) =
+        pairShare (1 / 2) v theorem4FirstItem *
+          (ρ 0 theorem4FirstItem).toReal := by
+    apply Finset.sum_eq_single theorem4FirstItem
+    · intro j _hj hj_ne
+      have hz :
+          ρ 0 j = 0 :=
+        theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
+          hpivot ht hj_ne
+      simp [hz]
+    · intro hnot
+      simp at hnot
+  rw [hsum_single, hxfirst]
+  ring
+
+theorem theorem4Problem11PivotSupport_sum_typeZero_reverse_q_of_pivot_first
+    {n : ℕ} [NeZero n] {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    (∑ j : Item n,
+        (1 - pairShare (1 / 2) v j) *
+          (ρ 0 (reverseItem j)).toReal) =
+      pairShare (1 / 2) v theorem4FirstItem := by
+  have hreindex :
+      (∑ j : Item n,
+          (1 - pairShare (1 / 2) v j) *
+            (ρ 0 (reverseItem j)).toReal) =
+        ∑ j : Item n,
+          (1 - pairShare (1 / 2) v (reverseItem j)) *
+            (ρ 0 j).toReal := by
+    simpa [reverseItem_reverseItem] using
+      (sum_reverseItem
+        (fun j : Item n =>
+          (1 - pairShare (1 / 2) v (reverseItem j)) *
+            (ρ 0 j).toReal))
+  have hxfirst :=
+    theorem4Problem11PivotSupport_typeZero_first_toReal_eq_one
+      hpivot ht
+  have hsum_single :
+      (∑ j : Item n,
+          (1 - pairShare (1 / 2) v (reverseItem j)) *
+            (ρ 0 j).toReal) =
+        (1 - pairShare (1 / 2) v (reverseItem theorem4FirstItem)) *
+          (ρ 0 theorem4FirstItem).toReal := by
+    apply Finset.sum_eq_single theorem4FirstItem
+    · intro j _hj hj_ne
+      have hz :
+          ρ 0 j = 0 :=
+        theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
+          hpivot ht hj_ne
+      simp [hz]
+    · intro hnot
+      simp at hnot
+  have hq :
+      1 - pairShare (1 / 2) v (reverseItem theorem4FirstItem) =
+        pairShare (1 / 2) v theorem4FirstItem :=
+    (pairShare_half_eq_one_sub_reverse theorem4FirstItem hpos).symm
+  rw [hreindex, hsum_single, hxfirst, hq]
+  ring
+
+theorem theorem4Problem11PivotSupport_sum_itemValue_of_pivot_first
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j) =
+      4 * beta * pairShare (1 / 2) v theorem4FirstItem +
+        (1 - 2 * beta) := by
+  have hsum_q :=
+    theorem4Problem11PivotSupport_sum_typeZero_q_of_pivot_first
+      (v := v) hpivot ht
+  have hsum_rev :=
+    theorem4Problem11PivotSupport_sum_typeZero_reverse_q_of_pivot_first
+      hpos hpivot ht
+  have hsum_z : (∑ j : Item n, (ρ 2 j).toReal) = 1 :=
+    DecisionCore.pmfToRealSum (ρ 2)
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  have hleft :
+      (∑ j : Item n,
+        2 * beta *
+            (pairShare (1 / 2) v j * (ρ 0 j).toReal +
+              (1 - pairShare (1 / 2) v j) *
+                (ρ 0 (reverseItem j)).toReal)) =
+        2 * beta *
+          ((∑ j : Item n,
+              pairShare (1 / 2) v j * (ρ 0 j).toReal) +
+            (∑ j : Item n,
+              (1 - pairShare (1 / 2) v j) *
+                (ρ 0 (reverseItem j)).toReal)) := by
+    rw [← Finset.mul_sum, Finset.sum_add_distrib]
+  have hright :
+      (∑ j : Item n, (1 - 2 * beta) * (ρ 2 j).toReal) =
+        (1 - 2 * beta) * (∑ j : Item n, (ρ 2 j).toReal) := by
+    rw [← Finset.mul_sum]
+  rw [Finset.sum_add_distrib, hleft, hright, hsum_q, hsum_rev, hsum_z]
+  ring
+
+theorem theorem4Problem11PivotOneLambda_eq_of_equalized_pivotSupport
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    ell = theorem4Problem11PivotOneLambda beta v := by
+  have hnpos_nat : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+  have hn_ne : (n : ℝ) ≠ 0 := by exact_mod_cast (ne_of_gt hnpos_nat)
+  have hsum_values :=
+    theorem4Problem11PivotSupport_sum_itemValue_of_pivot_first
+      (beta := beta) hpos hpivot ht
+  have hsum_eq :
+      (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j) =
+        (n : ℝ) * ell := by
+    calc
+      (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j)
+          = ∑ _j : Item n, ell := by
+            apply Finset.sum_congr rfl
+            intro j _hj
+            exact h.item_eq j
+      _ = (n : ℝ) * ell := by
+            simp [Item]
+  have hell_mul :
+      (n : ℝ) * ell =
+        4 * beta * pairShare (1 / 2) v theorem4FirstItem +
+          (1 - 2 * beta) := by
+    rw [← hsum_eq]
+    exact hsum_values
+  have hden_eq :
+      1 + (1 / 2 : ℝ) * ((n : ℝ) - 2) = (n : ℝ) / 2 := by
+    ring
+  unfold theorem4Problem11PivotOneLambda
+  rw [hden_eq]
+  rw [eq_div_iff (by positivity : (n : ℝ) / 2 ≠ 0)]
+  nlinarith
+
+theorem theorem4Problem11PivotOne_closedZ_of_equalized_pivotSupport
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht : t = theorem4FirstItem) :
+    (ρ 2 theorem4FirstItem).toReal =
+      theorem4Problem11PivotOneZ beta v := by
+  let q := pairShare (1 / 2) v theorem4FirstItem
+  have hxfirst :
+      (ρ 0 theorem4FirstItem).toReal = 1 :=
+    theorem4Problem11PivotSupport_typeZero_first_toReal_eq_one
+      hpivot ht
+  have hxrev :
+      (ρ 0 (reverseItem theorem4FirstItem)).toReal = 0 :=
+    theorem4Problem11PivotSupport_typeZero_reverse_first_toReal_eq_zero
+      hn hpivot ht
+  have hellambda :
+      ell = theorem4Problem11PivotOneLambda beta v :=
+    theorem4Problem11PivotOneLambda_eq_of_equalized_pivotSupport
+      hpos h hpivot ht
+  have hfirst_value :
+      2 * beta * q + (1 - 2 * beta) *
+          (ρ 2 theorem4FirstItem).toReal = ell := by
+    have hitem := h.item_eq theorem4FirstItem
+    unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue at hitem
+    change
+      2 * beta *
+          (q * (ρ 0 theorem4FirstItem).toReal +
+            (1 - q) * (ρ 0 (reverseItem theorem4FirstItem)).toReal) +
+        (1 - 2 * beta) * (ρ 2 theorem4FirstItem).toReal = ell at hitem
+    rw [hxfirst, hxrev] at hitem
+    nlinarith
+  have hdelta_ne : 1 - 2 * beta ≠ 0 := by
+    nlinarith
+  have hz :
+      (ρ 2 theorem4FirstItem).toReal =
+        (ell - 2 * beta * q) / (1 - 2 * beta) := by
+    rw [eq_div_iff hdelta_ne]
+    nlinarith
+  have hnpos_nat : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+  have hn_ne : (n : ℝ) ≠ 0 := by exact_mod_cast (ne_of_gt hnpos_nat)
+  have hden_eq :
+      1 + (1 / 2 : ℝ) * ((n : ℝ) - 2) = (n : ℝ) / 2 := by
+    ring
+  have hlambda_mul :
+      (n : ℝ) * theorem4Problem11PivotOneLambda beta v =
+        4 * beta * q + (1 - 2 * beta) := by
+    unfold theorem4Problem11PivotOneLambda
+    change
+      (n : ℝ) *
+          ((2 * beta * q + (1 / 2) * (1 - 2 * beta)) /
+            (1 + (1 / 2) * ((n : ℝ) - 2))) =
+        4 * beta * q + (1 - 2 * beta)
+    rw [hden_eq]
+    field_simp [hn_ne]
+    ring
+  rw [hz, hellambda]
+  unfold theorem4Problem11PivotOneZ
+  field_simp [hdelta_ne]
+  nlinarith
+
 /--
 Once Lemma 13's pivot is strictly after item `1`, the cold-start row gives zero
 probability to both extreme items.
@@ -1420,6 +1686,23 @@ theorem theorem4Problem11_no_extremes_of_pivotSupport_of_closedZ
       theorem4FirstItem_val_lt_of_ne ht
     exact theorem4Problem11PivotSupport_no_extremes_of_first_lt
       hpivot hfirst_lt
+
+theorem theorem4Problem11_no_extremes_of_equalized_pivotSupport
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t) :
+    ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
+  exact theorem4Problem11_no_extremes_of_pivotSupport_of_closedZ
+    hn hbeta hbeta_half hpos hdec hpivot
+    (fun ht =>
+      theorem4Problem11PivotOne_closedZ_of_equalized_pivotSupport
+        (by omega : 1 < n) hbeta_half hpos h hpivot ht)
 
 theorem theorem4NoFairnessPolicyTypeZero_estimated_typeFairness_eq_one
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
@@ -1945,6 +2228,82 @@ theorem theorem4_misestimation_with_fairness_large_typeOne_from_problem11_certif
   have hno :=
     OpposingTypes.theorem4Problem11_no_extremes_of_pivotSupport_of_closedZ
       hn hbeta hbeta_half hpos hdec hpivot hclosed_first
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, first true cold-start
+type, from the equality-form Problem 11 optimum plus Lemma 13 pivot support.
+
+The Lemma 15 pivot-one closed-coordinate calculation is discharged internally.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ) (t : Item n)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : OpposingTypes.Theorem4Problem11PivotSupport ρ t) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_equalized_pivotSupport
+      hn hbeta hbeta_half hpos hdec heq hpivot
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.1
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, second true cold-start
+type, from the equality-form Problem 11 optimum plus Lemma 13 pivot support.
+
+The Lemma 15 pivot-one closed-coordinate calculation is discharged internally.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ) (t : Item n)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : OpposingTypes.Theorem4Problem11PivotSupport ρ t) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_equalized_pivotSupport
+      hn hbeta hbeta_half hpos hdec heq hpivot
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
     R reps (by omega : 1 < n) htrue hred heps hbase hdec
     (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2
