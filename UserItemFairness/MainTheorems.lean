@@ -7614,6 +7614,26 @@ theorem paper_lemma13_problem11_pivotSupport_of_equalizedBasicOptimal_noGap
     hn hbeta_pos hpos hdec h hx hz
 
 /--
+Appendix E, Lemma 13 final reduction seam: the two strict-improvement
+perturbation certificates imply the no-gap predicates by optimality, and hence
+give the pivot-support form.
+-/
+theorem paper_lemma13_problem11_pivotSupport_of_equalizedBasicOptimal_gapStrictImprovements
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hxgap : Theorem4Problem11TypeZeroGapStrictImprovement beta v ρ)
+    (hzgap : Theorem4Problem11ColdStartGapStrictImprovement beta v ρ) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal_gapStrictImprovements
+    hn hbeta_pos hpos hdec h hxgap hzgap
+
+/--
 Appendix E, Lemma 15 component: if the Problem 11 closed form is evaluated at
 pivot `t = 1`, then the resulting `z₁` is negative whenever `β > 1/n` and the
 cold-start type has positive mass.

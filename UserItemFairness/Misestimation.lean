@@ -1662,6 +1662,51 @@ def Theorem4Problem11ColdStartPositiveClosed {n : ℕ}
     (ρ : TypePolicy 3 n) : Prop :=
   ∀ {i j : Item n}, i.val < j.val → ρ 2 i ≠ 0 → ρ 2 j ≠ 0
 
+/--
+Exact Appendix E Lemma 13 perturbation certificate for an `x` support gap:
+an earlier zero and a later positive known-type coordinate yield a
+mirror-symmetric policy that strictly improves every Problem 11 item value.
+-/
+def Theorem4Problem11TypeZeroGapStrictImprovement {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n) : Prop :=
+  ∀ {i j : Item n}, i.val < j.val → ρ 0 i = 0 → ρ 0 j ≠ 0 →
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l
+
+/--
+Exact Appendix E Lemma 13 perturbation certificate for a `z` support gap:
+an earlier positive and a later zero cold-start coordinate yield a
+mirror-symmetric policy that strictly improves every Problem 11 item value.
+-/
+def Theorem4Problem11ColdStartGapStrictImprovement {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n) : Prop :=
+  ∀ {i j : Item n}, i.val < j.val → ρ 2 i ≠ 0 → ρ 2 j = 0 →
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l
+
+theorem theorem4Problem11_typeZeroZeroClosed_of_gapStrictImprovement
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n}
+    (hgap : Theorem4Problem11TypeZeroGapStrictImprovement beta v ρ)
+    (hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ) :
+    Theorem4Problem11TypeZeroZeroClosed ρ := by
+  intro i j hij hi_zero
+  by_contra hj_ne
+  exact hno (hgap hij hi_zero hj_ne)
+
+theorem theorem4Problem11_coldStartPositiveClosed_of_gapStrictImprovement
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n}
+    (hgap : Theorem4Problem11ColdStartGapStrictImprovement beta v ρ)
+    (hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ) :
+    Theorem4Problem11ColdStartPositiveClosed ρ := by
+  intro i j hij hi_pos hj_zero
+  exact hno (hgap hij hi_pos hj_zero)
+
 /-- Items used with positive probability by Problem 11's known-type row. -/
 noncomputable def theorem4Problem11TypeZeroActiveItems {n : ℕ}
     (ρ : TypePolicy 3 n) : Finset (Item n) :=
@@ -1973,6 +2018,27 @@ theorem theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
     exact theorem4Problem11LastActiveTypeZero_active ρ hz0
   exact theorem4Problem11PivotSupport_of_lastActive_noGap_of_sharedBound
     h.mirror hx hz hshared hleft
+
+theorem theorem4Problem11PivotSupport_of_equalizedBasicOptimal_gapStrictImprovements
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hxgap : Theorem4Problem11TypeZeroGapStrictImprovement beta v ρ)
+    (hzgap : Theorem4Problem11ColdStartGapStrictImprovement beta v ρ) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  have hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ :=
+    theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
+  have hx : Theorem4Problem11TypeZeroZeroClosed ρ :=
+    theorem4Problem11_typeZeroZeroClosed_of_gapStrictImprovement hxgap hno
+  have hz : Theorem4Problem11ColdStartPositiveClosed ρ :=
+    theorem4Problem11_coldStartPositiveClosed_of_gapStrictImprovement hzgap hno
+  exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
+    hn hbeta_pos hpos hdec h hx hz
 
 theorem theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
     {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t j : Item n}
