@@ -429,6 +429,59 @@ theorem pmfProb_lt_of_imp_of_mass {α : Type*} [Fintype α] [DecidableEq α]
   rw [hsplit]
   linarith
 
+/--
+Finite change-of-variables bound for probabilities.
+
+If an equivalence maps every point of event `p` into event `q`, and the target
+atom has at least as much mass as the source atom on `p`, then `Pr[p] ≤ Pr[q]`.
+This is the finite analogue of the injection/change-of-variables step in many
+coupling proofs.
+-/
+theorem pmfProb_le_of_equiv_event_mass_le
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (e : α ≃ α)
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hmap : ∀ a, p a → q (e a))
+    (hmass : ∀ a, p a → (μ a).toReal ≤ (μ (e a)).toReal) :
+    pmfProb μ p ≤ pmfProb μ q := by
+  classical
+  unfold pmfProb pmfExp
+  have hleft :
+      (∑ a : α, (μ a).toReal * if p a then (1 : ℝ) else 0) =
+        ∑ a : α, if p a then (μ a).toReal else 0 := by
+    refine Finset.sum_congr rfl ?_
+    intro a _
+    by_cases hp : p a <;> simp [hp]
+  have hright :
+      (∑ a : α, (μ a).toReal * if q a then (1 : ℝ) else 0) =
+        ∑ a : α, if q a then (μ a).toReal else 0 := by
+    refine Finset.sum_congr rfl ?_
+    intro a _
+    by_cases hq : q a <;> simp [hq]
+  rw [hleft, hright]
+  calc
+    ∑ a : α, (if p a then (μ a).toReal else 0)
+        ≤ ∑ a : α, (if p a then (μ (e a)).toReal else 0) := by
+          refine Finset.sum_le_sum ?_
+          intro a _
+          by_cases hp : p a
+          · exact by simpa [hp] using hmass a hp
+          · simp [hp]
+    _ = ∑ a : α, (if p (e.symm a) then (μ a).toReal else 0) := by
+          simpa using
+            (Equiv.sum_comp e
+              (fun a : α => if p (e.symm a) then (μ a).toReal else 0))
+    _ ≤ ∑ a : α, (if q a then (μ a).toReal else 0) := by
+          refine Finset.sum_le_sum ?_
+          intro a _
+          by_cases hp : p (e.symm a)
+          · have hq : q a := by
+              simpa using hmap (e.symm a) hp
+            simp [hp, hq]
+          · by_cases hq : q a
+            · simp [hp, hq, ENNReal.toReal_nonneg]
+            · simp [hp, hq]
+
 /-- Finite sums commute with finite PMF expectation. -/
 theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (s : Finset ι) (f : ι → α → ℝ) :

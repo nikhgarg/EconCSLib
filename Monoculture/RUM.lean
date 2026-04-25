@@ -570,6 +570,41 @@ theorem rum3_lemma3_middle_of_transition_mass
   linarith
 
 /--
+Finite `swapi` change-of-variables skeleton for Appendix C / Lemma 3.
+
+An equivalence `swap` sends each `x₃ → x₂` transition realization into an
+`x₃ → x₁` transition realization, and the target atom has at least as much
+mass.  Therefore the `x₃ → x₂` transition probability is no larger.
+-/
+theorem rum3_bottomMiddle_transition_le_bottomTop_of_swap_equiv
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (ν : PMF Ω) (swap : Ω ≃ Ω)
+    (better worse : Ω → Ranking 1)
+    (hmap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (swap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (swap ω)))
+    (hmass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal) :
+    pmfProb ν (fun ω =>
+        (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω)) ≤
+      pmfProb ν (fun ω =>
+        (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (0 : Candidate 1) = firstChoice (better ω)) :=
+  pmfProb_le_of_equiv_event_mass_le ν swap
+    (fun ω =>
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+        (1 : Candidate 1) = firstChoice (better ω))
+    (fun ω =>
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+        (0 : Candidate 1) = firstChoice (better ω))
+    hmap hmass
+
+/--
 Finite coupling form of the top-candidate monotonicity step used in Appendix C /
 Theorem 6.
 
@@ -651,6 +686,46 @@ theorem rum3DeltaCertificate_of_finite_contraction_facts
     (rum3_lemma2_bottom_of_coupling
       μBetter μWorse ν better worse
       (hbetter (2 : Candidate 1)) (hworse (2 : Candidate 1)) hbottomImp)
+
+/--
+Delta certificate where the Lemma 3 transition-mass inequality is supplied by a
+finite `swapi` equivalence with pointwise mass dominance.
+-/
+theorem rum3DeltaCertificate_of_finite_contraction_swap_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1) (swap : Ω ≃ Ω)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hmap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (swap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (swap ω)))
+    (hmassSwap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal) :
+    RUM3DeltaCertificate μBetter μWorse :=
+  rum3DeltaCertificate_of_finite_contraction_facts
+    μBetter μWorse ν better worse hbetter hworse hnoTopOut
+    hbetterTop hworseNotTop hmassTop hbottomImp
+    (rum3_bottomMiddle_transition_le_bottomTop_of_swap_equiv
+      ν swap better worse hmap hmassSwap)
 
 theorem rum3LambdaCertificate_of_pairwise_facts
     {μWorse : PMF (Ranking 1)}

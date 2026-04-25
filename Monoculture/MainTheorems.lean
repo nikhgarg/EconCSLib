@@ -529,6 +529,71 @@ theorem paper_theorem6_deltaCertificate_of_finite_contraction_facts
     hbetterTop hworseNotTop hmass hbottomImp hbottomMiddle_le_bottomTop
 
 /--
+Appendix C / Lemma 3, finite `swapi` change-of-variables skeleton.
+
+This is the discrete probability version of integrating the density comparison
+over the swapped transition region.
+-/
+theorem paper_lemma3_bottomMiddle_transition_le_bottomTop_of_swap_equiv
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (ν : PMF Ω) (swap : Ω ≃ Ω)
+    (better worse : Ω → Ranking 1)
+    (hmap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (swap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (swap ω)))
+    (hmass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal) :
+    DecisionCore.pmfProb ν (fun ω =>
+        (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω)) ≤
+      DecisionCore.pmfProb ν (fun ω =>
+        (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (0 : Candidate 1) = firstChoice (better ω)) :=
+  rum3_bottomMiddle_transition_le_bottomTop_of_swap_equiv
+    ν swap better worse hmap hmass
+
+/--
+Appendix C / Theorem 6, delta certificate from a finite `swapi` equivalence.
+-/
+theorem paper_theorem6_deltaCertificate_of_finite_contraction_swap_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1) (swap : Ω ≃ Ω)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hmap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (swap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (swap ω)))
+    (hmassSwap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal) :
+    RUM3DeltaCertificate μBetter μWorse :=
+  rum3DeltaCertificate_of_finite_contraction_swap_facts
+    μBetter μWorse ν better worse swap hbetter hworse hnoTopOut
+    hbetterTop hworseNotTop hmassTop hbottomImp hmap hmassSwap
+
+/--
 Appendix C / Theorem 6 from lambda facts plus finite contraction facts.
 
 This wrapper is the current strongest non-measure-theoretic endpoint: once the

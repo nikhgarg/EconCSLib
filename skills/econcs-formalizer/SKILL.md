@@ -440,6 +440,10 @@ and wasted proof search.
   pointwise region mapping and pointwise density comparison before integrating.
   The integration theorem should then consume these as named hypotheses instead
   of mixing score geometry, density algebra, and measure transport in one proof.
+  In finite/discrete analogues, prove a generic equivalence/injection
+  probability bound: if an equivalence maps event `A` into event `B` and target
+  atoms have at least source mass, then `Pr[A] ≤ Pr[B]`. Reuse that for
+  paper-specific swap maps instead of redoing finite sums.
   For coupling proofs, first formalize the finite probability skeleton: a common
   sample space, marginal-identification equalities, and an event implication
   proving `Pr[A] ≤ Pr[B]`. Keep the continuous map, Jacobian/pushforward, and
