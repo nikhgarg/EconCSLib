@@ -7397,6 +7397,39 @@ theorem paper_lemma10_closedPolicy_typeFairness_eq_one_half_succ_center
     hpos hdec hsucc
 
 /--
+Appendix E / Theorem 4 true-model benchmark, odd midpoint case: without
+misestimation, the maximal item-fairness reduced user optimum is strictly above
+`1/n` at `α = 1/2`.
+-/
+theorem paper_theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half_center
+    {n : ℕ} [NeZero n] {v : Item n → ℝ} {t : Item n}
+    (hn : 1 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val = (reverseItem t).val) :
+    (n : ℝ)⁻¹ <
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (1 / 2) v) 1 := by
+  exact theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half_center
+    hn hpos hdec hcenter
+
+/--
+Appendix E / Theorem 4 true-model benchmark, even midpoint case: without
+misestimation, the maximal item-fairness reduced user optimum is strictly above
+`1/n` at `α = 1/2`.
+-/
+theorem paper_theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half_succ_center
+    {n : ℕ} [NeZero n] {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    (n : ℝ)⁻¹ <
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (1 / 2) v) 1 := by
+  exact theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half_succ_center
+    hpos hdec hsucc
+
+/--
 Appendix E, Theorem 4 no-item-fairness construction, first possible true
 cold-start type.
 

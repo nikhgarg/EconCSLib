@@ -306,6 +306,25 @@ theorem reverseItem_reverseItem {n : ℕ} (j : Item n) :
   simp [reverseItem]
   omega
 
+/-- The first item in zero-based Lean notation, corresponding to paper index `1`. -/
+def firstItem {n : ℕ} [NeZero n] : Item n :=
+  ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩
+
+/-- The last item in zero-based Lean notation, corresponding to paper index `n`. -/
+def lastItem {n : ℕ} [NeZero n] : Item n :=
+  reverseItem firstItem
+
+@[simp] theorem firstItem_val {n : ℕ} [NeZero n] :
+    (firstItem : Item n).val = 0 := rfl
+
+@[simp] theorem lastItem_val {n : ℕ} [NeZero n] :
+    (lastItem : Item n).val = n - 1 := by
+  simp [lastItem, firstItem, reverseItem]
+
+@[simp] theorem reverseItem_lastItem {n : ℕ} [NeZero n] :
+    reverseItem (lastItem : Item n) = firstItem := by
+  simp [lastItem, reverseItem_reverseItem]
+
 /-- Reversal as a finite equivalence on item indices. -/
 def reverseItemEquiv (n : ℕ) : Item n ≃ Item n where
   toFun := reverseItem
@@ -494,6 +513,18 @@ theorem value_antitone_of_val_le {n : ℕ} {v : Item n → ℝ}
   · have hji : j = i := Fin.ext heq.symm
     subst j
     rfl
+
+/-- A strictly decreasing value vector attains its finite maximum at item `1`. -/
+theorem finiteMax_eq_firstItem {n : ℕ} [NeZero n] {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    DecisionCore.finiteMax v = v firstItem := by
+  apply le_antisymm
+  · obtain ⟨j, hj⟩ := DecisionCore.exists_finiteMax_eq v
+    rw [hj]
+    have hle : (firstItem : Item n).val ≤ j.val := by
+      simp
+    exact value_antitone_of_val_le hdec hle
+  · exact DecisionCore.le_finiteMax v firstItem
 
 /--
 Appendix D, Lemma 9, indexed alpha-monotonicity component:
@@ -3091,6 +3122,226 @@ theorem problem6ClosedDenominator_half_succ_center_eq_rightSum {n : ℕ}
   change 1 + q * L + (1 - q) * (L + q⁻¹) = L + q⁻¹
   field_simp [hqne]
   ring
+
+/-- The number of item indices strictly before `t`, packaged as a real sum. -/
+theorem problem6_sum_left_const_eq {n : ℕ} (t : Item n) (c : ℝ) :
+    (∑ j : Item n, if j.val < t.val then c else 0) =
+      (t.val : ℝ) * c := by
+  classical
+  let s : Finset ℕ := Finset.range t.val
+  let hs : ∀ m ∈ s, m < n := by
+    intro m hm
+    exact lt_trans (Finset.mem_range.mp hm) t.isLt
+  have hfilter :
+      (Finset.univ.filter fun j : Item n => j.val < t.val) =
+        s.attachFin hs := by
+    ext j
+    simp [s]
+  calc
+    (∑ j : Item n, if j.val < t.val then c else 0) =
+        ∑ j ∈ (Finset.univ.filter (fun j : Item n => j.val < t.val)), c := by
+          rw [Finset.sum_filter]
+    _ = ∑ j ∈ s.attachFin hs, c := by
+          rw [hfilter]
+    _ = (t.val : ℝ) * c := by
+          simp [s, Finset.sum_const, nsmul_eq_mul]
+
+/-- The number of item indices strictly after `t`, packaged as a real sum. -/
+theorem problem6_sum_right_const_eq {n : ℕ} (t : Item n) (c : ℝ) :
+    (∑ j : Item n, if t.val < j.val then c else 0) =
+      ((n : ℝ) - (t.val : ℝ) - 1) * c := by
+  have hsplit :=
+    problem6_sum_eq_left_part_add_pivot_add_right_part
+      (fun _ : Item n => c) t
+  have hleft := problem6_sum_left_const_eq t c
+  have htotal : (∑ _j : Item n, c) = (n : ℝ) * c := by
+    simp [Finset.sum_const, nsmul_eq_mul, Item]
+  nlinarith
+
+/--
+Appendix E true-model lower-bound denominator estimate, odd midpoint case:
+the Lemma 5 closed value at the exact center is strictly above `1/n`.
+-/
+theorem problem6ClosedValue_half_center_gt_inv_card {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {t : Item n}
+    (hn : 1 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val = (reverseItem t).val) :
+    (n : ℝ)⁻¹ < problem6ClosedValue (1 / 2) v t := by
+  have hcenter_arith : 2 * t.val + 1 = n := by
+    exact (val_eq_reverseItem_iff t).mp hcenter
+  have hcenter_real : (2 : ℝ) * (t.val : ℝ) + 1 = (n : ℝ) := by
+    exact_mod_cast hcenter_arith
+  have hleft_lt :
+      problem6LeftSum (1 / 2) v t <
+        ∑ j : Item n, if j.val < t.val then (2 : ℝ) else 0 := by
+    unfold problem6LeftSum
+    refine Finset.sum_lt_sum ?_ ?_
+    · intro j _hj
+      by_cases hjt : j.val < t.val
+      · have hbefore : j.val < (reverseItem j).val := by
+          rw [val_lt_reverseItem_iff]
+          omega
+        have hq_half :
+            (1 / 2 : ℝ) < pairShare (1 / 2) v j :=
+          half_lt_pairShare_half_of_val_lt_reverse j hpos hdec hbefore
+        have hqpos :
+            0 < pairShare (1 / 2) v j :=
+          pairShare_pos j (by norm_num : (0 : ℝ) < 1 / 2)
+            (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        have hinv_lt :
+            (pairShare (1 / 2) v j)⁻¹ < (2 : ℝ) := by
+          have h :=
+            (inv_lt_inv₀ hqpos (by norm_num : (0 : ℝ) < 1 / 2)).2 hq_half
+          norm_num at h
+          exact h
+        exact le_of_lt (by simpa [hjt] using hinv_lt)
+      · simp [hjt]
+    · refine ⟨firstItem, by simp, ?_⟩
+      have hfirst_lt : (firstItem : Item n).val < t.val := by
+        have htpos : 0 < t.val := by omega
+        simpa using htpos
+      have hbefore : (firstItem : Item n).val <
+          (reverseItem (firstItem : Item n)).val := by
+        rw [val_lt_reverseItem_iff]
+        simp
+        omega
+      have hq_half :
+          (1 / 2 : ℝ) < pairShare (1 / 2) v firstItem :=
+        half_lt_pairShare_half_of_val_lt_reverse firstItem hpos hdec hbefore
+      have hqpos :
+          0 < pairShare (1 / 2) v firstItem :=
+        pairShare_pos firstItem (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      have hinv_lt :
+          (pairShare (1 / 2) v firstItem)⁻¹ < (2 : ℝ) := by
+        have h :=
+          (inv_lt_inv₀ hqpos (by norm_num : (0 : ℝ) < 1 / 2)).2 hq_half
+        norm_num at h
+        exact h
+      change
+        (if (firstItem : Item n).val < t.val then
+            (pairShare (1 / 2) v firstItem)⁻¹ else 0) <
+          if (firstItem : Item n).val < t.val then (2 : ℝ) else 0
+      have hfirst_lt0 : 0 < t.val := by
+        simpa using hfirst_lt
+      simpa [firstItem, hfirst_lt0] using hinv_lt
+  have hleft_count :
+      (∑ j : Item n, if j.val < t.val then (2 : ℝ) else 0) =
+        (t.val : ℝ) * 2 :=
+    problem6_sum_left_const_eq t 2
+  have hD_lt :
+      problem6ClosedDenominator (1 / 2) v t < (n : ℝ) := by
+    rw [problem6ClosedDenominator_half_center_eq_one_add_leftSum
+      (v := v) (t := t) hpos hcenter]
+    nlinarith [hleft_lt, hleft_count, hcenter_real]
+  have hDpos :
+      0 < problem6ClosedDenominator (1 / 2) v t :=
+    problem6ClosedDenominator_pos t
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+  have hnpos : 0 < (n : ℝ) := by
+    exact_mod_cast (Nat.zero_lt_of_lt hn)
+  unfold problem6ClosedValue
+  simpa [one_div] using (inv_lt_inv₀ hnpos hDpos).2 hD_lt
+
+/--
+Appendix E true-model lower-bound denominator estimate, even midpoint case:
+the Lemma 5 closed value at the item immediately before its mirror is
+strictly above `1/n`.
+-/
+theorem problem6ClosedValue_half_succ_center_gt_inv_card {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    (n : ℝ)⁻¹ < problem6ClosedValue (1 / 2) v t := by
+  have hsucc_arith : 2 * t.val + 2 = n := by
+    simp [reverseItem] at hsucc
+    omega
+  have hsucc_real : (2 : ℝ) * (t.val : ℝ) + 2 = (n : ℝ) := by
+    exact_mod_cast hsucc_arith
+  have hright_lt :
+      problem6RightSum (1 / 2) v t <
+        ∑ j : Item n, if t.val < j.val then (2 : ℝ) else 0 := by
+    unfold problem6RightSum
+    refine Finset.sum_lt_sum ?_ ?_
+    · intro j _hj
+      by_cases htj : t.val < j.val
+      · have hafter : (reverseItem j).val < j.val := by
+          rw [reverseItem_val_lt_iff]
+          omega
+        have hq_half :
+            pairShare (1 / 2) v j < (1 / 2 : ℝ) :=
+          pairShare_half_lt_half_of_reverse_val_lt j hpos hdec hafter
+        have hcomp_pos :
+            0 < 1 - pairShare (1 / 2) v j :=
+          one_sub_pairShare_pos j (by norm_num : (0 : ℝ) < 1 / 2)
+            (by norm_num : (1 / 2 : ℝ) < 1) hpos
+        have hcomp_half :
+            (1 / 2 : ℝ) < 1 - pairShare (1 / 2) v j := by
+          linarith
+        have hinv_lt :
+            (1 - pairShare (1 / 2) v j)⁻¹ < (2 : ℝ) := by
+          have h :=
+            (inv_lt_inv₀ hcomp_pos (by norm_num : (0 : ℝ) < 1 / 2)).2
+              hcomp_half
+          norm_num at h
+          exact h
+        exact le_of_lt (by simpa [htj] using hinv_lt)
+      · simp [htj]
+    · refine ⟨lastItem, by simp, ?_⟩
+      have htlast : t.val < (lastItem : Item n).val := by
+        simp
+        omega
+      have hafter : (reverseItem (lastItem : Item n)).val <
+          (lastItem : Item n).val := by
+        rw [reverseItem_val_lt_iff]
+        simp
+        omega
+      have hq_half :
+          pairShare (1 / 2) v lastItem < (1 / 2 : ℝ) :=
+        pairShare_half_lt_half_of_reverse_val_lt lastItem hpos hdec hafter
+      have hcomp_pos :
+          0 < 1 - pairShare (1 / 2) v lastItem :=
+        one_sub_pairShare_pos lastItem (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos
+      have hcomp_half :
+          (1 / 2 : ℝ) < 1 - pairShare (1 / 2) v lastItem := by
+        linarith
+      have hinv_lt :
+          (1 - pairShare (1 / 2) v lastItem)⁻¹ < (2 : ℝ) := by
+        have h :=
+          (inv_lt_inv₀ hcomp_pos (by norm_num : (0 : ℝ) < 1 / 2)).2
+            hcomp_half
+        norm_num at h
+        exact h
+      change
+        (if t < (lastItem : Item n) then
+            (1 - pairShare (1 / 2) v lastItem)⁻¹ else 0) <
+          if t < (lastItem : Item n) then (2 : ℝ) else 0
+      have htlast_fin : t < (lastItem : Item n) := by
+        simpa using htlast
+      simpa [htlast_fin] using hinv_lt
+  have hright_count :
+      (∑ j : Item n, if t.val < j.val then (2 : ℝ) else 0) =
+        ((n : ℝ) - (t.val : ℝ) - 1) * 2 :=
+    problem6_sum_right_const_eq t 2
+  have hD_lt :
+      problem6ClosedDenominator (1 / 2) v t < (n : ℝ) := by
+    rw [problem6ClosedDenominator_half_succ_center_eq_rightSum
+      (v := v) (t := t) hpos hsucc]
+    nlinarith [hright_lt, hright_count, hsucc_real]
+  have hDpos :
+      0 < problem6ClosedDenominator (1 / 2) v t :=
+    problem6ClosedDenominator_pos t
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos
+  have hnpos : 0 < (n : ℝ) := by
+    exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne n)
+  unfold problem6ClosedValue
+  simpa [one_div] using (inv_lt_inv₀ hnpos hDpos).2 hD_lt
 
 /-- Lemma 5: before the pivot, `x_j = λ / q_j`. -/
 theorem problem6SparseEqualized_x_before_eq
@@ -10724,6 +10975,263 @@ theorem problem6EqualizedBasicOptimal_typeFairness_le_optimalTypeFairnessAtLevel
   exact le_csSup hbdd
     (problem6EqualizedBasicOptimal_typeFairness_mem_attainable_one
       halpha0 halpha1 hpos h)
+
+/--
+For the closed policy, type `1`'s raw utility is at least the contribution
+from receiving the last item, whose mirror value is the first item's value.
+-/
+theorem problem6ClosedTypeOneRawUtility_ge_first_mul_closedY_last
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t) :
+    v firstItem * problem6ClosedY alpha v t lastItem ≤
+      problem6ClosedTypeOneRawUtility alpha v t := by
+  rw [problem6ClosedTypeOneRawUtility_eq_mirror_sum]
+  have hnonneg :
+      ∀ j : Item n,
+        0 ≤ v j * problem6ClosedY alpha v t (reverseItem j) := by
+    intro j
+    exact mul_nonneg (hpos j).le
+      (problem6ClosedY_nonneg halpha0 halpha1 hpos hpivot (reverseItem j))
+  have hsingle :
+      v firstItem * problem6ClosedY alpha v t (reverseItem firstItem) ≤
+        ∑ j : Item n, v j * problem6ClosedY alpha v t (reverseItem j) :=
+    Finset.single_le_sum (by intro j _hj; exact hnonneg j)
+      (Finset.mem_univ firstItem)
+  simpa [lastItem] using hsingle
+
+/--
+If the pivot lies before the last item, the closed-form last-item `y`
+coordinate is at least the Lemma 5 closed value.
+-/
+theorem problem6ClosedY_last_ge_closedValue_of_pivot_lt_last
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (htlast : t.val < (lastItem : Item n).val) :
+    problem6ClosedValue alpha v t ≤
+      problem6ClosedY alpha v t lastItem := by
+  rw [problem6ClosedY_after alpha v htlast]
+  have hval_pos :
+      0 < problem6ClosedValue alpha v t :=
+    problem6ClosedValue_pos t halpha0 halpha1 hpos
+  have hcomp_pos :
+      0 < 1 - pairShare alpha v lastItem :=
+    one_sub_pairShare_pos lastItem halpha0 halpha1 hpos
+  have hcomp_le_one :
+      1 - pairShare alpha v lastItem ≤ 1 := by
+    have hqpos : 0 < pairShare alpha v lastItem :=
+      pairShare_pos lastItem halpha0 halpha1 hpos
+    linarith
+  calc
+    problem6ClosedValue alpha v t =
+        problem6ClosedValue alpha v t / 1 := by ring
+    _ ≤ problem6ClosedValue alpha v t /
+        (1 - pairShare alpha v lastItem) := by
+          exact (div_le_div_iff_of_pos_left
+            hval_pos (by norm_num : (0 : ℝ) < 1) hcomp_pos).2 hcomp_le_one
+
+/--
+The displayed Appendix E lower-bound step: the closed policy gives type `1`
+normalized utility at least the closed Problem 6 value.
+-/
+theorem problem6ClosedPolicy_normalizedTypeUtility_one_ge_closedValue_of_pivot_lt_last
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (htlast : t.val < (lastItem : Item n).val) :
+    problem6ClosedValue alpha v t ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) 1 := by
+  have hy_ge :
+      problem6ClosedValue alpha v t ≤
+        problem6ClosedY alpha v t lastItem :=
+    problem6ClosedY_last_ge_closedValue_of_pivot_lt_last
+      halpha0 halpha1 hpos htlast
+  have hraw_ge_y :
+      v firstItem * problem6ClosedY alpha v t lastItem ≤
+        problem6ClosedTypeOneRawUtility alpha v t :=
+    problem6ClosedTypeOneRawUtility_ge_first_mul_closedY_last
+      halpha0 halpha1 hpos hpivot
+  have hfirst_pos : 0 < v (firstItem : Item n) := hpos firstItem
+  have hraw_ge :
+      v firstItem * problem6ClosedValue alpha v t ≤
+        problem6ClosedTypeOneRawUtility alpha v t := by
+    exact (mul_le_mul_of_nonneg_left hy_ge hfirst_pos.le).trans hraw_ge_y
+  have hbest :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel alpha v) 1 =
+        v firstItem := by
+    rw [twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v]
+    change DecisionCore.finiteMax v = v firstItem
+    exact finiteMax_eq_firstItem hdec
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [problem6ClosedPolicy_rawTypeUtility_one_eq
+    halpha0 halpha1 hpos hpivot, hbest]
+  rw [le_div_iff₀ hfirst_pos]
+  nlinarith
+
+/--
+When type `1` is the minimum-utility type for the closed policy, the closed
+policy's type fairness is at least the Lemma 5 closed value.
+-/
+theorem problem6ClosedPolicy_typeFairness_ge_closedValue_of_alpha_le_half_of_pivot_le_reverse_of_pivot_lt_last
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hpivot : Problem6ClosedNonnegativePivots alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (htlast : t.val < (lastItem : Item n).val) :
+    problem6ClosedValue alpha v t ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) := by
+  rw [problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+    halpha0 halpha1 halpha_half hpos hdec hpivot hcenter]
+  exact problem6ClosedPolicy_normalizedTypeUtility_one_ge_closedValue_of_pivot_lt_last
+    halpha0 halpha1 hpos hdec hpivot htlast
+
+/--
+Appendix E true-model lower bound, odd midpoint case: at `α = 1/2`, the
+reduced maximal-item-fairness user optimum is strictly above `1/n`.
+-/
+theorem theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half_center
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {t : Item n}
+    (hn : 1 < n)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : t.val = (reverseItem t).val) :
+    (n : ℝ)⁻¹ <
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (1 / 2) v) 1 := by
+  let hbounds : Problem6ClosedPivotDenominatorBounds (1 / 2) v t :=
+    problem6ClosedPivotDenominatorBounds_half_center
+      (v := v) (t := t) hpos hcenter
+  let cert : Problem6ClosedOptimalityCertificate (1 / 2) v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hdec hbounds
+  let hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hbounds
+  let ρ : TypePolicy 2 n :=
+    problem6ClosedPolicy (1 / 2) v t
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot
+  have hclosed :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρ
+        (problem6ClosedValue (1 / 2) v t) := by
+    dsimp [ρ, hpivot, cert, hbounds]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos cert
+  have hcenter_le : t.val ≤ (reverseItem t).val := le_of_eq hcenter
+  have htlast : t.val < (lastItem : Item n).val := by
+    have hcenter_arith : 2 * t.val + 1 = n := by
+      exact (val_eq_reverseItem_iff t).mp hcenter
+    rw [lastItem_val]
+    omega
+  have htf_ge :
+      problem6ClosedValue (1 / 2) v t ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel (1 / 2) v) ρ := by
+    dsimp [ρ]
+    exact
+      problem6ClosedPolicy_typeFairness_ge_closedValue_of_alpha_le_half_of_pivot_le_reverse_of_pivot_lt_last
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1)
+        (by norm_num : (1 / 2 : ℝ) ≤ 1 / 2)
+        hpos hdec hpivot hcenter_le htlast
+  have htf_le_opt :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel (1 / 2) v) ρ ≤
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel (1 / 2) v) 1 :=
+    problem6EqualizedBasicOptimal_typeFairness_le_optimalTypeFairnessAtLevel_one
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hclosed
+  exact lt_of_lt_of_le
+    (problem6ClosedValue_half_center_gt_inv_card
+      (v := v) (t := t) hn hpos hdec hcenter)
+    (htf_ge.trans htf_le_opt)
+
+/--
+Appendix E true-model lower bound, even midpoint case: at `α = 1/2`, the
+reduced maximal-item-fairness user optimum is strictly above `1/n`.
+-/
+theorem theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half_succ_center
+    {n : ℕ} [NeZero n]
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : t.val + 1 = (reverseItem t).val) :
+    (n : ℝ)⁻¹ <
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (1 / 2) v) 1 := by
+  let hbounds : Problem6ClosedPivotDenominatorBounds (1 / 2) v t :=
+    problem6ClosedPivotDenominatorBounds_half_succ_center
+      (v := v) (t := t) hpos hsucc
+  let cert : Problem6ClosedOptimalityCertificate (1 / 2) v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hdec hbounds
+  let hpivot : Problem6ClosedNonnegativePivots (1 / 2) v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hbounds
+  let ρ : TypePolicy 2 n :=
+    problem6ClosedPolicy (1 / 2) v t
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hpivot
+  have hclosed :
+      Problem6EqualizedBasicOptimal (1 / 2) v ρ
+        (problem6ClosedValue (1 / 2) v t) := by
+    dsimp [ρ, hpivot, cert, hbounds]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos cert
+  have hcenter_le : t.val ≤ (reverseItem t).val := by omega
+  have htlast : t.val < (lastItem : Item n).val := by
+    have hsucc_arith : 2 * t.val + 2 = n := by
+      simp [reverseItem] at hsucc
+      omega
+    rw [lastItem_val]
+    omega
+  have htf_ge :
+      problem6ClosedValue (1 / 2) v t ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel (1 / 2) v) ρ := by
+    dsimp [ρ]
+    exact
+      problem6ClosedPolicy_typeFairness_ge_closedValue_of_alpha_le_half_of_pivot_le_reverse_of_pivot_lt_last
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1)
+        (by norm_num : (1 / 2 : ℝ) ≤ 1 / 2)
+        hpos hdec hpivot hcenter_le htlast
+  have htf_le_opt :
+      TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel (1 / 2) v) ρ ≤
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel (1 / 2) v) 1 :=
+    problem6EqualizedBasicOptimal_typeFairness_le_optimalTypeFairnessAtLevel_one
+      (by norm_num : (0 : ℝ) < 1 / 2)
+      (by norm_num : (1 / 2 : ℝ) < 1) hpos hclosed
+  exact lt_of_lt_of_le
+    (problem6ClosedValue_half_succ_center_gt_inv_card
+      (v := v) (t := t) hpos hdec hsucc)
+    (htf_ge.trans htf_le_opt)
 
 /--
 If the selected equality-form optimal BFS policy upper-bounds the type fairness
