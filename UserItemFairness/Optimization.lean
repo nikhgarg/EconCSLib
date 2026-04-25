@@ -521,5 +521,23 @@ theorem priceOfMisestimation_gt_one_sub_of_userFairness_lt_div_card
   exact E.priceOfMisestimation_gt_one_sub_of_userFairness_lt_mul_optimum
     1 eps ρhat hbase_pos huser_mul
 
+/--
+The first-bullet algebra in Theorem 4: if the unconstrained true optimum is
+`1` and the policy chosen under estimated utilities gives true user fairness at
+least `1/2`, then the price of misestimation without item-fairness constraints
+is at most `1/2`.
+-/
+theorem priceOfMisestimation_at_zero_le_half_of_userFairness_ge_half
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (ρhat : Policy m n)
+    (hbase :
+      RecommendationModel.optimalUserFairnessAtLevel E.trueModel 0 = 1)
+    (huser :
+      (1 / 2 : ℝ) ≤ RecommendationModel.userFairness E.trueModel ρhat) :
+    E.priceOfMisestimation 0 ρhat ≤ (1 / 2 : ℝ) := by
+  unfold priceOfMisestimation
+  simp [hbase]
+  linarith
+
 end EstimatedRecommendationModel
 end UserItemFairness

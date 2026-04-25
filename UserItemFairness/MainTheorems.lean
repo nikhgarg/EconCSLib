@@ -1,4 +1,4 @@
-import UserItemFairness.OpposingTypes
+import UserItemFairness.Misestimation
 
 /-!
 # Paper-Facing Theorems: User-Item Fairness Tradeoffs in Recommendations
@@ -7396,6 +7396,88 @@ theorem paper_lemma10_closedPolicy_typeFairness_eq_one_half_succ_center
   exact problem6ClosedPolicy_typeFairness_eq_one_half_succ_center
     hpos hdec hsucc
 
+/--
+Appendix E, Theorem 4 cold-start bound, first true type.
+
+If the estimated optimal policy gives the cold-start row no probability on the
+first item and `v₂` is small relative to `v₁`, then that row's true normalized
+utility is below `eps / n`.
+-/
+theorem paper_theorem4_coldStart_typeZero_normalizedUtility_lt_from_no_first
+    {n : ℕ} [NeZero n] {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hfirst_pos : 0 < v theorem4FirstItem)
+    (hsmall : v (theorem4SecondItem hn) <
+      eps / (n : ℝ) * v theorem4FirstItem)
+    (ρ : TypePolicy 3 n)
+    (hno_first : ρ 2 theorem4FirstItem = 0) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4TrueReducedModelTypeZero beta v) ρ 2 <
+      eps / (n : ℝ) := by
+  exact paper_theorem4_coldStart_typeZero_normalizedUtility_lt
+    hn hdec hfirst_pos hsmall ρ hno_first
+
+/--
+Appendix E, Theorem 4 cold-start bound, second true type.
+
+If the estimated optimal policy gives the cold-start row no probability on the
+last item and `v₂` is small relative to `v₁`, then that row's true normalized
+utility is below `eps / n`.
+-/
+theorem paper_theorem4_coldStart_typeOne_normalizedUtility_lt_from_no_last
+    {n : ℕ} [NeZero n] {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hfirst_pos : 0 < v theorem4FirstItem)
+    (hsmall : v (theorem4SecondItem hn) <
+      eps / (n : ℝ) * v theorem4FirstItem)
+    (ρ : TypePolicy 3 n)
+    (hno_last : ρ 2 theorem4LastItem = 0) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4TrueReducedModelTypeOne beta v) ρ 2 <
+      eps / (n : ℝ) := by
+  exact paper_theorem4_coldStart_typeOne_normalizedUtility_lt
+    hn hdec hfirst_pos hsmall ρ hno_last
+
+/--
+Appendix E, Theorem 4 cold-start minimum-user-utility consequence, first true
+type.
+-/
+theorem paper_theorem4_coldStart_typeZero_typeFairness_lt_from_no_first
+    {n : ℕ} [NeZero n] {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hfirst_pos : 0 < v theorem4FirstItem)
+    (hsmall : v (theorem4SecondItem hn) <
+      eps / (n : ℝ) * v theorem4FirstItem)
+    (ρ : TypePolicy 3 n)
+    (hno_first : ρ 2 theorem4FirstItem = 0) :
+    TypeWeightedRecommendationModel.typeFairness
+        (theorem4TrueReducedModelTypeZero beta v) ρ <
+      eps / (n : ℝ) := by
+  exact paper_theorem4_coldStart_typeZero_typeFairness_lt
+    hn hdec hfirst_pos hsmall ρ hno_first
+
+/--
+Appendix E, Theorem 4 cold-start minimum-user-utility consequence, second true
+type.
+-/
+theorem paper_theorem4_coldStart_typeOne_typeFairness_lt_from_no_last
+    {n : ℕ} [NeZero n] {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hfirst_pos : 0 < v theorem4FirstItem)
+    (hsmall : v (theorem4SecondItem hn) <
+      eps / (n : ℝ) * v theorem4FirstItem)
+    (ρ : TypePolicy 3 n)
+    (hno_last : ρ 2 theorem4LastItem = 0) :
+    TypeWeightedRecommendationModel.typeFairness
+        (theorem4TrueReducedModelTypeOne beta v) ρ <
+      eps / (n : ℝ) := by
+  exact paper_theorem4_coldStart_typeOne_typeFairness_lt
+    hn hdec hfirst_pos hsmall ρ hno_last
+
 end OpposingTypes
 
 namespace EstimatedRecommendationModel
@@ -7415,6 +7497,24 @@ theorem paper_priceOfMisestimation_exact_estimation_eq_zero
     E.priceOfMisestimation γ ρhat = 0 := by
   exact E.priceOfMisestimation_eq_zero_of_estimatedUtility_eq_true
     γ ρhat hutility hopt
+
+/--
+Appendix E, Theorem 4 first-bullet algebra.
+
+Without item-fairness constraints, if the true unconstrained optimum is `1`
+and the chosen estimated-optimal policy gives true user fairness at least
+`1/2`, then the price of misestimation is at most `1/2`.
+-/
+theorem paper_theorem4_misestimation_without_fairness_le_half_from_userFairness
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n) (ρhat : Policy m n)
+    (hbase :
+      RecommendationModel.optimalUserFairnessAtLevel E.trueModel 0 = 1)
+    (huser :
+      (1 / 2 : ℝ) ≤ RecommendationModel.userFairness E.trueModel ρhat) :
+    E.priceOfMisestimation 0 ρhat ≤ (1 / 2 : ℝ) := by
+  exact E.priceOfMisestimation_at_zero_le_half_of_userFairness_ge_half
+    ρhat hbase huser
 
 /--
 Appendix E, Theorem 4 final algebraic step.
@@ -7437,6 +7537,68 @@ theorem paper_theorem4_misestimation_large_from_bounds
     1 - eps < E.priceOfMisestimation 1 ρhat := by
   exact E.priceOfMisestimation_gt_one_sub_of_userFairness_lt_div_card
     eps ρhat heps hbase huser
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the first opposing row.
+
+The remaining construction hypothesis is the named Appendix E LP certificate
+that the estimated optimum's cold-start row gives zero probability to item `1`.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hfirst_pos : 0 < v OpposingTypes.theorem4FirstItem)
+    (hsmall : v (OpposingTypes.theorem4SecondItem hn) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n)
+    (hno_first : ρ 2 OpposingTypes.theorem4FirstItem = 0) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_reduction
+    R reps hn htrue hred heps hbase hdec hfirst_pos hsmall ρ hno_first
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the second opposing row.
+
+The remaining construction hypothesis is the mirror Appendix E LP certificate
+that the estimated optimum's cold-start row gives zero probability to item `n`.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 1 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hfirst_pos : 0 < v OpposingTypes.theorem4FirstItem)
+    (hsmall : v (OpposingTypes.theorem4SecondItem hn) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n)
+    (hno_last : ρ 2 OpposingTypes.theorem4LastItem = 0) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
+    R reps hn htrue hred heps hbase hdec hfirst_pos hsmall ρ hno_last
 
 end EstimatedRecommendationModel
 

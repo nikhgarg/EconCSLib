@@ -5,5 +5,6 @@ import UserItemFairness.LPReduction
 import UserItemFairness.ReductionPreservation
 import UserItemFairness.Symmetrization
 import UserItemFairness.OpposingTypes
+import UserItemFairness.Misestimation
 import UserItemFairness.Examples
 import UserItemFairness.MainTheorems

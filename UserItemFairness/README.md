@@ -9,6 +9,8 @@
 - Official PDF: https://openreview.net/pdf?id=ZOZjMs3JTs
 - arXiv URL: https://arxiv.org/abs/2412.04466
 - Accessed: 2026-04-23
+- Local cached PDF: `UserItemFairness/user_item_fairness_tradeoffs.pdf`
+  (gitignored)
 
 The PDF is not committed to git. Use the OpenReview PDF above as the primary
 source version, with arXiv as a backup source.
@@ -22,49 +24,20 @@ and preservation lemmas live in the other files in this folder.
 
 ## Active Formalization Checkpoint
 
-- Active target: Theorem 3 global first-half monotonicity, after the Appendix D
-  Lemma 8 / Lemma 11 reduced-item-fairness stitch.
+- Active target: Appendix E / Theorem 4 misestimation construction.
 - Latest verified slice: `lake build UserItemFairness`.
-- Current endpoint: the canonical Lemma 5 first crossing pivot now supplies
-  fixed-`A(t)` Lemma 11 monotonicity, Lemma 8 finite-stitch wrappers for
-  explicit canonical-pivot chains with boundary repeats, and first-half
-  odd/even variants that discharge the pivot-before-mirror side condition. A
-  closed-form certificate/denominator-bound finite stitch is also available for
-  boundary steps in the paper's continuity argument. The canonical `A(t)` sets
-  are now explicit and have cover, uniqueness, interval, and consecutive-order
-  properties. Adjacent tight-crossing boundaries now produce valid closed
-  pivots on both sides with equal closed-form values, and a one-boundary
-  Lemma 8 stitch proves reduced item-fairness monotonicity from a certified
-  `t` interval through a tight `t`/`t+1` boundary to a certified `t+1`
-  interval. Finite adjacent-boundary chains now compose these local stitches,
-  with canonical odd/even first-half wrappers. The scalar boundary-gap
-  continuity/IVT step now proves existence of a tight boundary whenever the
-  canonical first pivot changes from `t` to `t+1`, and finite adjacent
-  canonical-pivot-change chains now compose those internally constructed
-  boundaries. A no-skip bridge now proves that if the canonical first pivot
-  jumps past `t+1`, some intermediate parameter has first pivot exactly `t+1`.
-  Strong induction over pivot distance now composes those no-skip adjacent
-  changes into global odd/even first-half endpoint stitches, and endpoint-free
-  wrappers state Appendix D Lemma 8 directly for any `α ≤ α' ≤ 1/2`. The
-  analogous Theorem 3 closed-policy stitch is also formalized: the canonical
-  Lemma 5 closed policy's type fairness is monotone for any first-half
-  `α ≤ α'`, in both odd/even center cases. A finite type-`1` raw-utility dual
-  certificate now discharges the Proposition-1-shaped feasible-policy
-  canonicalization in the first half: every reduced `γ = 1` feasible policy is
-  type-fairness dominated by the first-closed Lemma 5 policy. Consequently the
-  first-closed policy is identified unconditionally with the reduced
-  `U^*_min(1, α)` value throughout the first half, and endpoint-free first-half
-  `optimalTypeFairnessAtLevel` monotonicity is formalized for both odd/even
-  center cases. The paper-facing Theorem 3 price monotonicity wrappers now
-  thread this reduced monotonicity through the original/reduced reduction
-  interface and the existing price-of-fairness algebra for both odd/even center
-  cases. These wrappers now build the required original and reduced `γ = 1`
-  feasible-value witnesses from the first-closed reduced policy and the
-  reduction-witness lifting maps.
-- Next bridge: audit the remaining noncanonical selected-BFS statements that
-  still depend on the broader generic LP-selection theorem for arbitrary
-  selected optimal BFS families, then continue to the paper's misestimation
-  construction.
+- Current endpoint: Theorem 3's canonical first-half price monotonicity is
+  formalized through reduction witnesses. Theorem 4 now has a dedicated
+  `UserItemFairness/Misestimation.lean` layer with the Appendix E three-type
+  estimated and true reduced models, the no-extreme-to-low-utility cold-start
+  bounds for both possible true cold-start types, the `γ = 0` half-price
+  algebra, and reduction-level wrappers proving
+  `π^M_U(1,w,w_hat) > 1 - eps` from the exact remaining Appendix E certificates.
+- Next bridge: prove the Appendix E Lemma 12-15 estimated-LP construction that
+  supplies the no-extreme cold-start row certificate
+  (`ρ 2 item_1 = 0` / `ρ 2 item_n = 0`) for a policy solving
+  `U^*_min(1, w_hat)`, and close the true-model lower bound
+  `U^*_min(1,w) > 1/n` at `α = 1/2`.
 
 ## Theorem Status
 
@@ -94,5 +67,5 @@ and preservation lemmas live in the other files in this folder.
 | Appendix D Lemma 8 selected-pivot and canonical interval stitching | `OpposingTypes.paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_alpha_le`, `OpposingTypes.paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_alpha_le`, `OpposingTypes.paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_center_of_firstClosedPivot_endpoints`, `OpposingTypes.paper_lemma8_reducedOptimalItemFairness_mono_firstHalf_succ_center_of_firstClosedPivot_endpoints`, plus the adjacent-boundary, adjacent-pivot-change, finite-chain, `A(t)` region, and selected-BFS wrappers in `MainTheorems.lean` | canonical `A(t)` cover/uniqueness/interval/order facts, boundary-gap continuity/strict monotonicity and IVT boundary existence, no-skip successor existence for pivot jumps, adjacent tight-boundary value equality, adjacent and finite chain stitches, and global odd/even endpoint-free first-half reduced item-fairness monotonicity formalized | `UserItemFairness/OpposingTypes.lean`, `UserItemFairness/MainTheorems.lean` | none for the canonical Lemma 5 first-pivot version of Lemma 8; arbitrary selected-BFS statements still depend on the generic LP-selection theorem tracked in the Problem 6/Theorem 3 rows |
 | Appendix D Lemma 10 midpoint candidate construction | `OpposingTypes.paper_lemma10_pairShare_half_add_reverse_eq_one`, `OpposingTypes.paper_lemma10_pairShare_half_eq_one_sub_reverse`, `OpposingTypes.paper_lemma10_LeftSum_half_eq_RightSum_half_of_center`, `OpposingTypes.paper_lemma10_RightSum_half_eq_LeftSum_half_add_inv_pairShare_of_succ_center`, `OpposingTypes.paper_lemma10_ClosedPivotDenominatorBounds_half_center`, `OpposingTypes.paper_lemma10_ClosedPivotDenominatorBounds_half_succ_center`, `OpposingTypes.paper_lemma10_problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center`, `OpposingTypes.paper_lemma10_problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center`, `OpposingTypes.paper_lemma10_sparseEqualized_value_le_of_candidate_before`, `OpposingTypes.paper_lemma10_closedValue_le_of_center_candidate_before`, `OpposingTypes.paper_lemma10_closedValue_le_of_succ_center_candidate_before`, `OpposingTypes.paper_lemma10_half_optimal_lastActive_le_center`, `OpposingTypes.paper_lemma10_half_optimal_lastActive_le_succ_center`, `OpposingTypes.paper_lemma10_alpha_le_half_optimal_lastActive_le_center`, `OpposingTypes.paper_lemma10_alpha_le_half_optimal_lastActive_le_succ_center`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_center_of_closed_half`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_succ_center_of_closed_half`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_center_of_closed_half`, `OpposingTypes.paper_lemma10_alpha_le_half_equalizedBasicOptimal_lastActive_le_reverse_succ_center_of_closed_half`, `OpposingTypes.paper_lemma10_closedX_sub_closedY_reverse_half_center_nonneg`, `OpposingTypes.paper_lemma10_closedX_sub_closedY_reverse_half_succ_center_nonneg`, `OpposingTypes.paper_lemma10_closedPolicy_typeFairness_eq_one_half_center`, `OpposingTypes.paper_lemma10_closedPolicy_typeFairness_eq_one_half_succ_center` | midpoint complementarity algebra, exact-center/even-center mirror-sum and denominator-bound certificates, sparse/closed-form comparison core, canonical first-pivot first-half-before-mirror consequences, selected-pivot midpoint upper bounds, Lemma 7-stitched `α ≤ 1/2` selected-pivot upper bounds, equality-form optimal BFS wrappers, no-external-midpoint wrappers using the Lemma 5 closed midpoint optimum, first-half pivot-before-mirror consequences including closed-midpoint variants, midpoint pivot-gap discharge, and midpoint type-fairness consequences formalized | `UserItemFairness/OpposingTypes.lean`, `UserItemFairness/MainTheorems.lean` | generic LP theorem that supplies `Problem6EqualizedBasicOptimal` for paper statements using the selected optimal BFS family away from the constructed midpoint |
 | Appendix D Lemma 11 fixed-pivot denominator monotonicity | `OpposingTypes.paper_lemma11_affine_ratio_antitone_of_cross`, `OpposingTypes.paper_lemma11_middle_denominator_ratio_antitone`, `OpposingTypes.paper_lemma11_right_term_antitone`, `OpposingTypes.paper_lemma11_rightWeightedSum_antitone`, `OpposingTypes.paper_lemma11_paired_denominator_ratio_antitone`, `OpposingTypes.paper_lemma11_pairedExpression_antitone`, `OpposingTypes.paper_lemma11_paired_q_term_eq`, `OpposingTypes.paper_lemma11_paired_q_term_antitone`, `OpposingTypes.paper_lemma11_pairedWeightedSum_antitone`, `OpposingTypes.paper_lemma11_weightedCore_eq_paired_add_residual`, `OpposingTypes.paper_lemma11_fixedPivotDenominator_antitone`, `OpposingTypes.paper_lemma11_fixedPivotClosedValue_monotone`, `OpposingTypes.paper_lemma11_problem6LPOptimalValue_mono_of_fixed_pivot_cert`, `OpposingTypes.paper_lemma11_problem6LPOptimalValue_mono_of_same_selected_pivot`, `OpposingTypes.paper_lemma11_problem6LPOptimalValue_mono_of_same_selected_equalizedBasicOptimal`, `OpposingTypes.paper_lemma11_problem6LPOptimalValue_mono_of_same_firstClosedPivot`, `OpposingTypes.paper_lemma11_reducedOptimalItemFairness_mono_of_fixed_pivot_cert`, `OpposingTypes.paper_lemma11_reducedOptimalItemFairness_mono_of_same_selected_pivot`, `OpposingTypes.paper_lemma11_reducedOptimalItemFairness_mono_of_same_selected_equalizedBasicOptimal`, `OpposingTypes.paper_lemma11_reducedOptimalItemFairness_mono_of_same_firstClosedPivot` | scalar denominator-clearing monotonicity, mirror-pair equality, paired/right/residual sum monotonicity, denominator decomposition, fixed-pivot denominator/closed-value monotonicity, fixed-pivot LP-optimum interval monotonicity, same-selected-pivot policy interval monotonicity, equality-form optimal BFS interval wrappers, canonical first-crossing `A(t)` interval wrappers, and reduced-optimum interval monotonicity formalized | `UserItemFairness/OpposingTypes.lean`, `UserItemFairness/MainTheorems.lean` | generic LP theorem remains only for paper statements that explicitly use arbitrary selected BFS families |
-| Misestimation price definitions and exact-estimation benchmark | `EstimatedRecommendationModel.priceOfMisestimation`, `EstimatedRecommendationModel.paper_priceOfMisestimation_exact_estimation_eq_zero` | formalized benchmark | `UserItemFairness/Optimization.lean`, `UserItemFairness/MainTheorems.lean` | broader paper-specific comparative statics not yet proved |
-| Theorem 4 misestimation lower-bound algebra | `EstimatedRecommendationModel.paper_theorem4_misestimation_large_from_bounds` | final algebraic step formalized | `UserItemFairness/Optimization.lean`, `UserItemFairness/MainTheorems.lean` | construction of the sparse estimated optimum and the `U^*_min(1,w) > 1/n`, `U_min(ρhat,w) < eps/n` bounds |
+| Misestimation price definitions and exact-estimation benchmark | `EstimatedRecommendationModel.priceOfMisestimation`, `EstimatedRecommendationModel.paper_priceOfMisestimation_exact_estimation_eq_zero`, `EstimatedRecommendationModel.paper_theorem4_misestimation_without_fairness_le_half_from_userFairness` | formalized benchmark and `γ = 0` half-price algebra | `UserItemFairness/Optimization.lean`, `UserItemFairness/MainTheorems.lean` | constructing the paper's estimated-optimal `γ = 0` policy with true user fairness at least `1/2` |
+| Theorem 4 misestimation lower-bound algebra and cold-start construction | `OpposingTypes.paper_theorem4_coldStart_typeZero_normalizedUtility_lt_from_no_first`, `OpposingTypes.paper_theorem4_coldStart_typeOne_normalizedUtility_lt_from_no_last`, `OpposingTypes.paper_theorem4_coldStart_typeZero_typeFairness_lt_from_no_first`, `OpposingTypes.paper_theorem4_coldStart_typeOne_typeFairness_lt_from_no_last`, `EstimatedRecommendationModel.paper_theorem4_misestimation_large_from_bounds`, `EstimatedRecommendationModel.paper_theorem4_misestimation_with_fairness_large_typeZero_from_reduction`, `EstimatedRecommendationModel.paper_theorem4_misestimation_with_fairness_large_typeOne_from_reduction` | three-type reduced models, cold-start no-extreme-to-low-utility bounds, and reduction-level `π^M_U(1,w,w_hat) > 1 - eps` wrappers formalized | `UserItemFairness/Misestimation.lean`, `UserItemFairness/Optimization.lean`, `UserItemFairness/MainTheorems.lean` | Appendix E Lemmas 12-15 estimated-LP construction of the no-extreme optimal policy; true-model lower bound `U^*_min(1,w) > 1/n`; explicit value-vector existence satisfying `v₂ < eps * v₁ / n` |
