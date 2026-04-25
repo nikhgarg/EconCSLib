@@ -395,6 +395,52 @@ theorem pmfProb_eq_pmfProb_preimage_of_atom_eq
                 simp [hfb, hpb]
               · simp [hfb]
 
+/-- Finite PMF event probability as the real value of the PMF outer measure. -/
+theorem pmfProb_eq_toOuterMeasure_toReal
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    pmfProb μ p = (μ.toOuterMeasure {a | p a}).toReal := by
+  classical
+  unfold pmfProb pmfExp
+  have h_ne_top :
+      ∀ a ∈ (Finset.univ : Finset α),
+        Set.indicator {a | p a} μ a ≠ ⊤ := by
+    intro a _
+    by_cases hp : p a
+    · simpa [Set.indicator, hp] using μ.apply_ne_top a
+    · simp [Set.indicator, hp]
+  calc
+    ∑ a : α, (μ a).toReal * (if p a then (1 : ℝ) else 0)
+        = ∑ a : α, (Set.indicator {a | p a} μ a).toReal := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          by_cases hp : p a
+          · simp [Set.indicator, hp]
+          · simp [Set.indicator, hp]
+    _ = (∑ a : α, Set.indicator {a | p a} μ a).toReal := by
+          symm
+          simpa using (ENNReal.toReal_sum (s := (Finset.univ : Finset α))
+            (f := fun a => Set.indicator {a | p a} μ a) h_ne_top)
+    _ = (μ.toOuterMeasure {a | p a}).toReal := by
+          rw [PMF.toOuterMeasure_apply_fintype]
+
+/-- The atom mass of a finite PMF pushforward is the probability of the preimage atom. -/
+theorem pmf_map_apply_toReal_eq_pmfProb_preimage
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (ν : PMF α) (f : α → β) (b : β) :
+    ((ν.map f) b).toReal = pmfProb ν (fun a => f a = b) := by
+  classical
+  rw [pmfProb_eq_toOuterMeasure_toReal]
+  have hsingleton :
+      (ν.map f).toOuterMeasure ({b} : Set β) = (ν.map f) b :=
+    PMF.toOuterMeasure_apply_singleton (ν.map f) b
+  have hmap :
+      (ν.map f).toOuterMeasure ({b} : Set β) =
+        ν.toOuterMeasure (f ⁻¹' ({b} : Set β)) :=
+    PMF.toOuterMeasure_map_apply f ν ({b} : Set β)
+  rw [← hsingleton, hmap]
+  rfl
+
 /-- Positive mass outside an event makes its finite PMF probability strictly below one. -/
 theorem pmfProb_lt_one_of_mass_not {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)

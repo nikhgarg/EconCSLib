@@ -482,7 +482,10 @@ and wasted proof search.
   law is already described by atom preimages. Prove or reuse a generic finite
   preimage bridge of the form `mass(atom b) = Pr[f = b] -> Pr[p] =
   Pr[p ∘ f]`, then derive lambda events, first-choice events, and support facts
-  from that single atom-preimage law.
+  from that single atom-preimage law. If the law is explicitly a finite
+  `PMF.map f ν`, first prove the atom-preimage law once from the PMF map or
+  outer-measure API, then keep the paper theorem stated in terms of the mapped
+  laws rather than extra marginal-equality premises.
   When a paper's continuous "support everywhere" premise is only needed to show
   a finite probability is not one, add a full-support finite wrapper
   (`∀ atom, 0 < mass atom`) and construct one concrete outside-event atom.
