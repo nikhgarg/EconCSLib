@@ -202,7 +202,6 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     exact_mod_cast total_uniformSqrtUpperAnchor_le likelihood N hnorm
   have hTpos : 0 < (T : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne T)
   have h_m : Fintype.card (ItemType T) = T := Fintype.card_fin T
-
   have h_total_a : DecisionCore.Allocation.total a = N := hopt.1
   have hNlt : N < DecisionCore.Allocation.total lower + Fintype.card (ItemType T) + 1 := by
     rw [h_m]
@@ -213,11 +212,9 @@ theorem paper_proposition_2 {T : ℕ} [NeZero T]
     · push Not at h_int
       have hgt := total_uniformSqrtLowerAnchor_gt_N_sub_T_refined likelihood N hnorm h_interior h_int
       exact_mod_cast (by linarith : (N : ℝ) < (DecisionCore.Allocation.total lower : ℝ) + (T : ℝ) + 1)
-  
   have hUlt : DecisionCore.Allocation.total upper < N + Fintype.card (ItemType T) + 1 := by
     rw [h_m]
     exact_mod_cast (by omega : DecisionCore.Allocation.total upper < N + T + 1)
-
   apply GammaHomogeneityProfile.approx_of_count_abs_error
   · exact h_total_a
   · exact hNpos

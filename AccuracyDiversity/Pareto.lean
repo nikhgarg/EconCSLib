@@ -52,20 +52,17 @@ Finite pairwise difference bound for Pareto types.
 If marginals are `L * q^(1/α - 1)`, then optimal counts satisfy a power-law balance.
 -/
 theorem pareto_optimum_pairwise_bound
-    {T : ℕ} (M : ConsumptionModel T) (α : ℝ) (hα : 1 < α)
-    (htail : HasTypeTailIndex M (1/α))
+    {T : ℕ} (M : ConsumptionModel T) (index : ℝ)
+    (htail : HasTypeTailIndex M index)
     (N : ℕ) {a : CountAllocation T}
     (hopt : M.IsOptimalAtTotal N a)
     (hlike_pos : ∀ t, 0 < M.likelihood t) :
     ∀ t₁ t₂,
-      0 < a.count t₁ →
-      ((a.count t₁ : ℝ) - 1) ^ (1 - 1/α) ≤
-        (M.likelihood t₁ / M.likelihood t₂) * (a.count t₂ + 1 : ℝ) ^ (1 - 1/α) := by
-  intro t₁ t₂ ha1
-  obtain ⟨C, hCpos, hCval⟩ := htail t₁
-  obtain ⟨D, hDpos, hDval⟩ := htail t₂
-  -- This is a placeholder for the real power-law FOC.
-  -- The core logic is the same as Bernoulli but with power-laws.
+      0 < a.count t₁ → t₁ ≠ t₂ →
+      ((a.count t₁ : ℝ) - 1) ^ (index - 1) ≤
+        (M.likelihood t₂ / M.likelihood t₁) * (a.count t₂ + 1 : ℝ) ^ (index - 1) := by
+  intro t₁ t₂ ha1 hne
+  -- We would use FOC and diminishing marginals to bridge `a.count t₂` to `a.count t₂ + 1` for `q=0`.
   sorry
 
 end AccuracyDiversity
