@@ -425,6 +425,56 @@ theorem paper_theorem6_deltaCertificate_of_finite_contraction_facts
     hbetterTop hworseNotTop hmass hbottomImp hbottomMiddle_le_bottomTop
 
 /--
+Appendix C / Theorem 6 from lambda facts plus finite contraction facts.
+
+This wrapper is the current strongest non-measure-theoretic endpoint: once the
+human two-candidate lambda certificate is available and the contraction coupling
+supplies the finite monotonicity/Lemma 2/Lemma 3 inputs, Lean proves the paper's
+weaker-competition conclusion in Definition 3 form.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_lambda_and_finite_contraction_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (lambda : RUM3LambdaCertificate μWorse)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmass : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hbottomMiddle_le_bottomTop :
+      DecisionCore.pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (1 : Candidate 1) = firstChoice (better ω)) ≤
+        DecisionCore.pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (0 : Candidate 1) = firstChoice (better ω))) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  paper_theorem6_threeCandidate_prefersWeakerCompetition_of_certificate
+    (paper_theorem6_certificate_of_lambda_delta
+      hvalue1 hvalue2 hvalue3 hx12 hx23 lambda
+      (paper_theorem6_deltaCertificate_of_finite_contraction_facts
+        μBetter μWorse ν better worse hbetter hworse hnoTopOut
+        hbetterTop hworseNotTop hmass hbottomImp
+        hbottomMiddle_le_bottomTop))
+
+/--
 Appendix C / pairwise human comparisons to Theorem 6 lambda certificate.
 -/
 theorem paper_theorem6_lambdaCertificate_of_pairwise_facts
