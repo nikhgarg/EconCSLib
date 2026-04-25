@@ -5957,6 +5957,46 @@ theorem problem6TypeOneDual_objective_eq_closedTypeOneRawUtility {n : ℕ}
         rw [hfactor]
         ring
 
+theorem problem6TypeOneRawUtilityDualCertificate_closedTypeOneRawUtility
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    Problem6TypeOneRawUtilityDualCertificate
+      alpha v (problem6ClosedValue alpha v t)
+      (problem6ClosedTypeOneRawUtility alpha v t)
+      (problem6TypeOneDualRowZero alpha v t)
+      (problem6TypeOneDualRowOne alpha v)
+      (problem6TypeOneDualWeight alpha v t) where
+  itemWeight_nonneg :=
+    problem6TypeOneDualWeight_nonneg halpha0 halpha1 hpos
+  typeZero_coeff_nonneg :=
+    problem6TypeOneDual_typeZero_coeff_nonneg
+      halpha0 halpha1 hpos hdec
+  typeOne_coeff_upper :=
+    problem6TypeOneDual_typeOne_coeff_upper
+      halpha0 halpha1 hpos hdec
+  objective_bound := by
+    rw [problem6TypeOneDual_objective_eq_closedTypeOneRawUtility
+      halpha0 halpha1 hpos]
+
+theorem problem6_typeOneRawUtility_le_closedTypeOneRawUtility_of_closedValue_feasible
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (ρ : TypePolicy 2 n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hfeas :
+      problem6LPFeasible alpha v ρ (problem6ClosedValue alpha v t)) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 ≤
+      problem6ClosedTypeOneRawUtility alpha v t := by
+  exact problem6_typeOneRawUtility_le_of_dualCertificate ρ hfeas
+    (problem6TypeOneRawUtilityDualCertificate_closedTypeOneRawUtility
+      halpha0 halpha1 hpos hdec)
+
 /--
 The normalized type-1 utility of the closed policy in the displayed Theorem 3
 form, with the common best-item denominator left explicit.
@@ -11064,6 +11104,100 @@ theorem problem6LPOptimalValue_eq_closedValue_of_closed_certificate
     (problem6OptimalityCertificate_of_closed halpha0 halpha1 hpos cert)
 
 /--
+First-half dominance consequence of the type-`1` utility dual: for a closed
+Lemma 5 pivot at or before its mirror, every reduced `γ = 1` feasible policy has
+type fairness no larger than the closed policy.
+-/
+theorem problem6ClosedPolicy_typeFairness_dominates_feasibleAtLevel_one_of_closed_certificate_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {t : Item n}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (cert : Problem6ClosedOptimalityCertificate alpha v t)
+    (hcenter : t.val ≤ (reverseItem t).val)
+    (ρ : TypePolicy 2 n)
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos
+          (problem6ClosedNonnegativePivots_of_denominatorBounds
+            halpha0 halpha1 hpos cert.denominator_bounds)) := by
+  let T := twoTypeReducedModel alpha v
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos cert.denominator_bounds
+  let ρclosed : TypePolicy 2 n :=
+    problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot
+  have hLP_closed :
+      problem6LPOptimalValue alpha v = problem6ClosedValue alpha v t :=
+    problem6LPOptimalValue_eq_closedValue_of_closed_certificate
+      halpha0 halpha1 hpos cert
+  have hitem_opt :
+      TypeWeightedRecommendationModel.optimalItemFairness T =
+        problem6ClosedValue alpha v t := by
+    dsimp [T]
+    rw [← problem6LPOptimalValue_eq_optimalItemFairness
+      alpha v halpha0 halpha1 hpos]
+    exact hLP_closed
+  have hitem :
+      problem6ClosedValue alpha v t ≤
+        TypeWeightedRecommendationModel.itemFairness T ρ := by
+    have h := hfeas
+    change TypeWeightedRecommendationModel.feasibleAtLevel T 1 ρ at h
+    unfold TypeWeightedRecommendationModel.feasibleAtLevel at h
+    rw [one_mul, hitem_opt] at h
+    exact h
+  have hLPFeas :
+      problem6LPFeasible alpha v ρ (problem6ClosedValue alpha v t) := by
+    simpa [T] using (problem6LPFeasible_iff_le_itemFairness
+      alpha v ρ (problem6ClosedValue alpha v t)
+      halpha0 halpha1 hpos).mpr hitem
+  have hraw :
+      TypeWeightedRecommendationModel.rawTypeUtility T ρ 1 ≤
+        problem6ClosedTypeOneRawUtility alpha v t := by
+    dsimp [T]
+    exact
+      problem6_typeOneRawUtility_le_closedTypeOneRawUtility_of_closedValue_feasible
+        ρ halpha0 halpha1 hpos hdec hLPFeas
+  have hbest_nonneg :
+      0 ≤ TypeWeightedRecommendationModel.bestItemUtility T 1 := by
+    dsimp [T]
+    rw [twoTypeReducedModel_bestItemUtility_one_eq_zero alpha v]
+    exact (twoTypeReducedModel_bestItemUtility_zero_pos alpha v hpos).le
+  have hnorm :
+      TypeWeightedRecommendationModel.normalizedTypeUtility T ρ 1 ≤
+        TypeWeightedRecommendationModel.normalizedTypeUtility T ρclosed 1 := by
+    unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    dsimp [T, ρclosed, hpivot]
+    rw [problem6ClosedPolicy_rawTypeUtility_one_eq
+      halpha0 halpha1 hpos]
+    exact div_le_div_of_nonneg_right hraw hbest_nonneg
+  have htype_le_norm :
+      TypeWeightedRecommendationModel.typeFairness T ρ ≤
+        TypeWeightedRecommendationModel.normalizedTypeUtility T ρ 1 := by
+    unfold TypeWeightedRecommendationModel.typeFairness
+    exact DecisionCore.finiteMin_le
+      (TypeWeightedRecommendationModel.normalizedTypeUtility T ρ) 1
+  have hclosed_type :
+      TypeWeightedRecommendationModel.typeFairness T ρclosed =
+        TypeWeightedRecommendationModel.normalizedTypeUtility T ρclosed 1 := by
+    dsimp [T, ρclosed, hpivot]
+    exact problem6ClosedPolicy_typeFairness_eq_one_of_alpha_le_half_of_pivot_le_reverse
+      halpha0 halpha1 halpha_half hpos hdec
+      (problem6ClosedNonnegativePivots_of_denominatorBounds
+        halpha0 halpha1 hpos cert.denominator_bounds)
+      hcenter
+  change TypeWeightedRecommendationModel.typeFairness T ρ ≤
+    TypeWeightedRecommendationModel.typeFairness T ρclosed
+  exact htype_le_norm.trans (hnorm.trans (le_of_eq hclosed_type.symm))
+
+/--
 Adjacent-boundary value continuity for Lemma 8: at a boundary where the lower
 crossing inequality for pivot `t` is tight and `u = t+1`, the two adjacent
 closed-form values agree.  The proof uses the closed-form optimality
@@ -13133,8 +13267,136 @@ theorem problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_
     dsimp [t, hpivot, hbounds]
     exact
       problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
-        halpha0 halpha1 hpos rfl
+        halpha0 halpha1 hpos (hpivot_eq := rfl)
   rw [hvalue, hpolicy]
+
+/--
+Proposition 1 canonicalization bridge supplied by the type-`1` utility dual in
+the first half: every `γ = 1` feasible reduced policy is dominated by the
+Lemma 5 closed policy at the first closed pivot.
+-/
+theorem problem6FirstClosedPolicy_feasibleCanonicalization_firstHalf_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    ∀ ρ' : TypePolicy 2 n,
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1 ρ' →
+      ∃ ρbar : TypePolicy 2 n,
+        TypeWeightedRecommendationModel.feasibleAtLevel
+          (twoTypeReducedModel alpha v) 1 ρbar ∧
+        (∀ l : Item n,
+          pairShare alpha v l * (ρbar 0 l).toReal +
+            (1 - pairShare alpha v l) * (ρbar 1 l).toReal =
+          TypeWeightedRecommendationModel.itemFairness
+            (twoTypeReducedModel alpha v) ρbar) ∧
+        TypePolicy.SharedItemsBound ρbar ∧
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha v) ρ' ≤
+        TypeWeightedRecommendationModel.typeFairness
+          (twoTypeReducedModel alpha v) ρbar := by
+  intro ρ' hfeas'
+  let t : Item n :=
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  let hbounds : Problem6ClosedPivotDenominatorBounds alpha v t :=
+    problem6FirstClosedPivot_denominatorBounds
+      (alpha := alpha) (v := v) halpha0 halpha1 hpos
+  let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+    problem6ClosedOptimalityCertificate_of_denominatorBounds
+      halpha0 halpha1 hpos hdec hbounds
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos hbounds
+  let ρbar : TypePolicy 2 n :=
+    problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot
+  have hclosed :
+      Problem6EqualizedBasicOptimal alpha v ρbar
+        (problem6ClosedValue alpha v t) := by
+    dsimp [ρbar, cert, hpivot]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      halpha0 halpha1 hpos cert
+  refine ⟨ρbar, ?_, ?_, ?_, ?_⟩
+  · exact problem6EqualizedBasicOptimal_feasibleAtLevel_one
+      halpha0 halpha1 hpos hclosed
+  · intro l
+    exact problem6EqualizedBasicOptimal_item_value_eq_itemFairness
+      halpha0 halpha1 hpos hclosed l
+  · exact problem6_sharedItemsBound_of_equalizedBasicOptimal
+      halpha0 halpha1 hpos hclosed
+  · dsimp [ρbar, hpivot, cert, hbounds, t]
+    exact
+      problem6ClosedPolicy_typeFairness_dominates_feasibleAtLevel_one_of_closed_certificate_alpha_le_half_of_pivot_le_reverse
+        halpha0 halpha1 halpha_half hpos hdec cert hcenter ρ' hfeas'
+
+theorem problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  exact
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
+      hn halpha0 halpha1 hpos hdec
+      (problem6FirstClosedPolicy_feasibleCanonicalization_firstHalf_of_pivot_le_reverse
+        halpha0 halpha1 halpha_half hpos hdec hcenter)
+
+theorem problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  exact
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0 halpha1 halpha_half hpos hdec
+      (problem6FirstClosedPivot_le_reverse_of_alpha_le_half_center
+        halpha0 halpha1 halpha_half hpos hcenter_c)
+
+theorem problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  exact
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0 halpha1 halpha_half hpos hdec
+      (problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
+        halpha0 halpha1 halpha_half hpos hsucc)
 
 /--
 Problem 6 canonical closed-policy optimality bridge, packaged as
@@ -13332,6 +13594,72 @@ theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_al
   have hright :=
     problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_feasible_canonicalization
       hn halpha0' halpha1' hpos hdec hcanonical'
+  rw [hleft, hright]
+  exact
+    theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc
+
+/--
+Theorem 3 reduced-optimum bridge, odd-center first-half endpoint form.  The
+type-`1` utility dual supplies the Proposition-1-shaped canonicalization at both
+endpoints, so no external canonicalization hypothesis remains.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  have hleft :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_center
+      hn halpha0 halpha1 halpha_half hpos hdec hcenter_c
+  have hright :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_center
+      hn halpha0' halpha1' halpha_half' hpos hdec hcenter_c
+  rw [hleft, hright]
+  exact
+    theorem3_typeFairness_mono_firstHalf_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c
+
+/--
+Theorem 3 reduced-optimum bridge, even-center first-half endpoint form.  The
+type-`1` utility dual supplies the Proposition-1-shaped canonicalization at both
+endpoints, so no external canonicalization hypothesis remains.
+-/
+theorem theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  have hleft :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_succ_center
+      hn halpha0 halpha1 halpha_half hpos hdec hsucc
+  have hright :=
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_succ_center
+      hn halpha0' halpha1' halpha_half' hpos hdec hsucc
   rw [hleft, hright]
   exact
     theorem3_typeFairness_mono_firstHalf_succ_center_of_alpha_le

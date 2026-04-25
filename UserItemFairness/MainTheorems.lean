@@ -6019,6 +6019,129 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center
       halpha_half halpha_half' hpos hdec hsucc hcanonical hcanonical'
 
 /--
+Problem 6 canonical closed-policy optimality bridge in the first half: the
+type-`1` utility dual supplies the Proposition-1-shaped feasible-policy
+canonicalization, so the Lemma 5 first-closed policy realizes reduced
+`U^*_min(1, α)` whenever the first closed pivot lies at or before its mirror.
+-/
+theorem paper_problem6_firstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_alpha_le_half_of_pivot_le_reverse
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter :
+      (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos).val ≤
+        (reverseItem
+          (problem6FirstClosedPivot alpha v halpha0 halpha1 hpos)).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  exact
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_of_alpha_le_half_of_pivot_le_reverse
+      hn halpha0 halpha1 halpha_half hpos hdec hcenter
+
+/--
+Problem 6 canonical closed-policy optimality bridge, odd-center first-half
+case.  Lemma 10 supplies the pivot-before-mirror side condition.
+-/
+theorem paper_problem6_firstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  exact
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_center
+      hn halpha0 halpha1 halpha_half hpos hdec hcenter_c
+
+/--
+Problem 6 canonical closed-policy optimality bridge, even-center first-half
+case.  Lemma 10 supplies the pivot-before-mirror side condition.
+-/
+theorem paper_problem6_firstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_succ_center
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha_half : alpha ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v)
+        (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  exact
+    problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_succ_center
+      hn halpha0 halpha1 halpha_half hpos hdec hsucc
+
+/--
+Theorem 3 reduced-optimum monotonicity, odd-center first-half endpoint form,
+with the feasible-policy canonicalization discharged by the type-`1` utility
+dual.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  exact
+    theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c
+
+/--
+Theorem 3 reduced-optimum monotonicity, even-center first-half endpoint form,
+with the feasible-policy canonicalization discharged by the type-`1` utility
+dual.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  exact
+    theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc
+
+/--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
 normalized type-utility comparison when the two best-item denominators agree.
 -/
