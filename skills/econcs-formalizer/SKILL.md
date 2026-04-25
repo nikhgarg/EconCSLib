@@ -402,6 +402,10 @@ and wasted proof search.
   scalar functions exactly (`f`, `g`, `h`, utilities, welfare), prove algebraic
   equivalences to the existing game predicates, then prove the theorem from a
   small crossing or payoff certificate.
+  When only a ranking law changes, first rewrite payoff differences as
+  candidatewise probability deltas times conditional continuation values. This
+  often turns a game/probability statement into the scalar inequality written in
+  the paper and avoids duplicating expectation algebra in model-specific files.
 - **Analytic/existence/crossing proofs.** Use when the paper invokes
   differentiability, continuity, limits, asymptotic optimality, or an
   intermediate-value argument. First prove the finite game/probability algebra

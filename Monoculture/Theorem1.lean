@@ -119,6 +119,32 @@ theorem expectedSecondMoverIndependent_eq_expect_bestAfterRemoval {n : ℕ}
   rw [pmfPairExp_swap]
   rfl
 
+/--
+Changing only the first mover's ranking law changes second-mover utility by a
+candidatewise first-choice-probability delta weighted by the second mover's
+expected best remaining candidate after that candidate is removed.
+-/
+theorem expectedSecondMoverIndependent_sub_eq_sum_firstChoiceProb_sub_mul_bestAfterRemoval
+    {n : ℕ} (μSecond μFirst₁ μFirst₂ : PMF (Ranking n))
+    (value : Candidate n → ℝ) :
+    expectedSecondMoverIndependent μSecond μFirst₁ value -
+        expectedSecondMoverIndependent μSecond μFirst₂ value =
+      ∑ c : Candidate n,
+        (firstChoiceProb μFirst₁ c - firstChoiceProb μFirst₂ c) *
+          expectedBestAfterRemoval μSecond value c := by
+  classical
+  let U : Candidate n → ℝ := fun c => expectedBestAfterRemoval μSecond value c
+  rw [expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+  rw [expectedSecondMoverIndependent_eq_expect_bestAfterRemoval]
+  change expectedFirstMoverUtility μFirst₁ U - expectedFirstMoverUtility μFirst₂ U =
+    ∑ c : Candidate n, (firstChoiceProb μFirst₁ c - firstChoiceProb μFirst₂ c) * U c
+  rw [expectedFirstMoverUtility_eq_sum_firstChoiceProb μFirst₁ U]
+  rw [expectedFirstMoverUtility_eq_sum_firstChoiceProb μFirst₂ U]
+  rw [← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl ?_
+  intro c _
+  ring
+
 /-- In the paper's notation, `h(θA)` is constant as `θA` varies. -/
 theorem theorem1_h_const {n : ℕ} (F : AccuracyFamily n) (θA θA' θH : ℝ) :
     theorem1_h F θA θH = theorem1_h F θA' θH := by

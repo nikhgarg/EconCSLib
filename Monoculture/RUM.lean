@@ -1,3 +1,4 @@
+import Monoculture.Theorem1
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -87,6 +88,19 @@ theorem abs_ordered_cross_le_ordered
     cases abs_cases (b - c) <;>
     linarith
 
+/--
+Strict four-point rearrangement for absolute distance when the two ordered
+intervals overlap (`b < c` and `d < a`).
+-/
+theorem abs_ordered_cross_lt_ordered_of_overlap
+    {a b c d : ℝ} (hab : b < a) (hcd : d < c) (hbc : b < c) (hda : d < a) :
+    |a - c| + |b - d| < |a - d| + |b - c| := by
+  cases abs_cases (a - c) <;>
+    cases abs_cases (b - d) <;>
+    cases abs_cases (a - d) <;>
+    cases abs_cases (b - c) <;>
+    linarith
+
 /-- Laplacian kernels satisfy the weak well-ordering inequality. -/
 theorem laplacianNoiseKernel_weaklyWellOrdered
     {lam : ℝ} (hlam : 0 ≤ lam) :
@@ -125,6 +139,26 @@ theorem laplacianNoiseKernel_not_strictlyWellOrdered (lam : ℝ) :
     ring
   rw [heq] at hbad
   exact lt_irrefl _ hbad
+
+/--
+Laplacian kernels satisfy the strict paper inequality on the overlap region.
+This is the pointwise strict case left after the separated-interval equality
+case is removed.
+-/
+theorem laplacianNoiseKernel_strictlyWellOrdered_of_overlap
+    {lam a b c d : ℝ} (hlam : 0 < lam)
+    (hab : b < a) (hcd : d < c) (hbc : b < c) (hda : d < a) :
+    laplacianNoiseKernel lam (a - c) * laplacianNoiseKernel lam (b - d) >
+      laplacianNoiseKernel lam (a - d) * laplacianNoiseKernel lam (b - c) := by
+  have habs := abs_ordered_cross_lt_ordered_of_overlap hab hcd hbc hda
+  unfold laplacianNoiseKernel
+  rw [← Real.exp_add, ← Real.exp_add]
+  apply Real.exp_lt_exp.mpr
+  have hmul :
+      (-lam) * (|a - d| + |b - c|) <
+        (-lam) * (|a - c| + |b - d|) := by
+    exact mul_lt_mul_of_neg_left habs (by linarith)
+  linarith
 
 /-! ## Three-candidate RUM payoff algebra -/
 
@@ -298,5 +332,100 @@ theorem rum3_theorem6_payoff_algebra
     nlinarith
   exact rum3_delta_weighted_sum_neg
     hu12 hu13 hu_sum hd1_pos hd12 hd3_nonpos hd_sum
+
+/--
+Three-candidate RUM weaker-competition bridge in model notation.
+
+This turns the scalar Theorem 6 algebra into the utility predicate from
+Definition 3.  The first-choice delta hypotheses are stated directly in terms of
+the better and worse first-mover ranking laws; their total-mass identity is
+derived from `sum_firstChoiceProb_eq_one`.
+-/
+theorem rum3_prefersWeakerCompetition_of_payoff_algebra
+    (μBetter μWorse : PMF (Ranking 1)) (value : Candidate 1 → ℝ)
+    {x1 x2 x3 ell1 ell2 ell3 : ℝ}
+    (hbest1 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (0 : Candidate 1) =
+        rum3_uMinus1 ell1 x2 x3)
+    (hbest2 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (1 : Candidate 1) =
+        rum3_uMinus2 ell2 x1 x3)
+    (hbest3 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (2 : Candidate 1) =
+        rum3_uMinus3 ell3 x1 x2)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hell1_half : (1 : ℝ) / 2 < ell1) (hell1_lt_one : ell1 < 1)
+    (hell12 : ell1 < ell2) (hell2_le_one : ell2 ≤ 1)
+    (hell3_half : (1 : ℝ) / 2 < ell3)
+    (hd1_pos :
+      0 <
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd12 :
+      firstChoiceProb μBetter (1 : Candidate 1) -
+          firstChoiceProb μWorse (1 : Candidate 1) ≤
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd3_nonpos :
+      firstChoiceProb μBetter (2 : Candidate 1) -
+          firstChoiceProb μWorse (2 : Candidate 1) ≤ 0) :
+    Model.PrefersWeakerCompetition μBetter μWorse value := by
+  classical
+  let d1 : ℝ :=
+    firstChoiceProb μBetter (0 : Candidate 1) -
+      firstChoiceProb μWorse (0 : Candidate 1)
+  let d2 : ℝ :=
+    firstChoiceProb μBetter (1 : Candidate 1) -
+      firstChoiceProb μWorse (1 : Candidate 1)
+  let d3 : ℝ :=
+    firstChoiceProb μBetter (2 : Candidate 1) -
+      firstChoiceProb μWorse (2 : Candidate 1)
+  have hbetter_sum :
+      firstChoiceProb μBetter (0 : Candidate 1) +
+          firstChoiceProb μBetter (1 : Candidate 1) +
+          firstChoiceProb μBetter (2 : Candidate 1) = 1 := by
+    simpa [Candidate, Fin.sum_univ_three] using
+      (sum_firstChoiceProb_eq_one (μ := μBetter) (n := 1))
+  have hworse_sum :
+      firstChoiceProb μWorse (0 : Candidate 1) +
+          firstChoiceProb μWorse (1 : Candidate 1) +
+          firstChoiceProb μWorse (2 : Candidate 1) = 1 := by
+    simpa [Candidate, Fin.sum_univ_three] using
+      (sum_firstChoiceProb_eq_one (μ := μWorse) (n := 1))
+  have hd_sum : d1 + d2 + d3 = 0 := by
+    dsimp [d1, d2, d3]
+    nlinarith
+  have hneg :
+      d1 * rum3_uMinus1 ell1 x2 x3 +
+          d2 * rum3_uMinus2 ell2 x1 x3 +
+          d3 * rum3_uMinus3 ell3 x1 x2 < 0 := by
+    exact rum3_theorem6_payoff_algebra
+      hx12 hx23 hell1_half hell1_lt_one hell12 hell2_le_one hell3_half
+      (by simpa [d1] using hd1_pos)
+      (by simpa [d1, d2] using hd12)
+      (by simpa [d3] using hd3_nonpos)
+      hd_sum
+  have hdiff :
+      expectedSecondMoverIndependent μWorse μBetter value -
+          expectedSecondMoverIndependent μWorse μWorse value =
+        d1 * rum3_uMinus1 ell1 x2 x3 +
+          d2 * rum3_uMinus2 ell2 x1 x3 +
+          d3 * rum3_uMinus3 ell3 x1 x2 := by
+    rw [AccuracyFamily.expectedSecondMoverIndependent_sub_eq_sum_firstChoiceProb_sub_mul_bestAfterRemoval]
+    change
+      (∑ c : Fin 3,
+        (firstChoiceProb μBetter c - firstChoiceProb μWorse c) *
+          AccuracyFamily.expectedBestAfterRemoval μWorse value c) =
+        d1 * rum3_uMinus1 ell1 x2 x3 +
+          d2 * rum3_uMinus2 ell2 x1 x3 +
+          d3 * rum3_uMinus3 ell3 x1 x2
+    rw [Fin.sum_univ_three]
+    simp [d1, d2, d3, hbest1, hbest2, hbest3]
+  unfold Model.PrefersWeakerCompetition
+  have hsub : expectedSecondMoverIndependent μWorse μBetter value -
+      expectedSecondMoverIndependent μWorse μWorse value < 0 := by
+    rw [hdiff]
+    exact hneg
+  linarith
 
 end Monoculture

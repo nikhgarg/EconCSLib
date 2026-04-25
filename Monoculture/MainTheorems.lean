@@ -101,6 +101,21 @@ theorem paper_lemma1_laplacian_not_strictlyWellOrdered
   laplacianNoiseKernel_not_strictlyWellOrdered lam
 
 /--
+Appendix C / Lemma 1, Laplacian strict overlap case.
+
+The Laplacian kernel does satisfy the strict product inequality on the region
+where the ordered realized interval and ordered true-value interval overlap:
+`a > b`, `c > d`, `b < c`, and `d < a`.
+-/
+theorem paper_lemma1_laplacian_strictlyWellOrdered_of_overlap
+    {lam a b c d : ℝ} (hlam : 0 < lam)
+    (hab : b < a) (hcd : d < c) (hbc : b < c) (hda : d < a) :
+    laplacianNoiseKernel lam (a - c) * laplacianNoiseKernel lam (b - d) >
+      laplacianNoiseKernel lam (a - d) * laplacianNoiseKernel lam (b - c) :=
+  laplacianNoiseKernel_strictlyWellOrdered_of_overlap
+    hlam hab hcd hbc hda
+
+/--
 Appendix C / Theorem 6, final three-candidate payoff algebra.
 
 Paper statement: for three candidates with values `x1 > x2 > x3`, once the RUM
@@ -127,6 +142,49 @@ theorem paper_theorem6_threeCandidate_payoff_algebra
   rum3_theorem6_payoff_algebra
     hx12 hx23 hell1_half hell1_lt_one hell12 hell2_le_one hell3_half
     hd1_pos hd12 hd3_nonpos hd_sum
+
+/--
+Appendix C / Theorem 6, model-level weaker-competition bridge.
+
+This is the same three-candidate RUM algebra connected to the paper's
+Definition 3 predicate.  Once the human best-after-removal values are identified
+with the three `u_-i` formulas and the first-choice probability deltas satisfy
+the Theorem 6 inequalities, Lean proves
+`Model.PrefersWeakerCompetition μBetter μWorse value`.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_payoff_algebra
+    (μBetter μWorse : PMF (Ranking 1)) (value : Candidate 1 → ℝ)
+    {x1 x2 x3 ell1 ell2 ell3 : ℝ}
+    (hbest1 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (0 : Candidate 1) =
+        rum3_uMinus1 ell1 x2 x3)
+    (hbest2 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (1 : Candidate 1) =
+        rum3_uMinus2 ell2 x1 x3)
+    (hbest3 :
+      AccuracyFamily.expectedBestAfterRemoval μWorse value (2 : Candidate 1) =
+        rum3_uMinus3 ell3 x1 x2)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hell1_half : (1 : ℝ) / 2 < ell1) (hell1_lt_one : ell1 < 1)
+    (hell12 : ell1 < ell2) (hell2_le_one : ell2 ≤ 1)
+    (hell3_half : (1 : ℝ) / 2 < ell3)
+    (hd1_pos :
+      0 <
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd12 :
+      firstChoiceProb μBetter (1 : Candidate 1) -
+          firstChoiceProb μWorse (1 : Candidate 1) ≤
+        firstChoiceProb μBetter (0 : Candidate 1) -
+          firstChoiceProb μWorse (0 : Candidate 1))
+    (hd3_nonpos :
+      firstChoiceProb μBetter (2 : Candidate 1) -
+          firstChoiceProb μWorse (2 : Candidate 1) ≤ 0) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  rum3_prefersWeakerCompetition_of_payoff_algebra
+    μBetter μWorse value hbest1 hbest2 hbest3 hx12 hx23
+    hell1_half hell1_lt_one hell12 hell2_le_one hell3_half
+    hd1_pos hd12 hd3_nonpos
 
 namespace MallowsComparison
 
