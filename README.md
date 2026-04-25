@@ -1,88 +1,47 @@
 # EconCSLib
 
-`EconCSLib` is a Lean 4 library for formalizing results that matter to the
-economics-and-computation community.
+`EconCSLib` is a Lean 4 library dedicated to formalizing results that matter to the Economics and Computation (EC) community. 
 
-The long-term project still has three linked goals:
+The project has three high-level goals:
+1. **Formalize canonical EC-style papers:** Systematically verify both foundational Test-of-Time papers and modern, active research.
+2. **Extract reusable library primitives:** Build a robust, shared foundation of discrete math, probability, game theory, and mechanism design concepts that the community can reuse.
+3. **Develop AI formalization skills:** Eventually turn this structured workflow into an agent skill for autonomously verifying new EC papers.
 
-1. formalize canonical EC-style papers,
-2. extract reusable library primitives for that community,
-3. eventually turn the workflow into an agent skill for new papers.
+## Repository Architecture: Textbook vs. Audit Trail
 
-## Current Imported Track
+This repository strictly separates generalized mathematical foundations from paper-specific proofs using a "Textbook vs. Audit Trail" model:
 
-This repository now includes an imported discrete formalization track covering
-three papers:
+### 1. The Core Library (`EconCSLib/`)
+This is the "Textbook." It contains highly abstracted, generic EC/CS/econ definitions and theorems stripped of paper-specific notation. If a concept is foundational enough that a graduate student should know it (e.g., Gale-Shapley, Nash equilibrium, LP duality, or generic choice models), it belongs here.
 
-- Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg,
-  *User-item fairness tradeoffs in recommendations*
-- Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg,
-  *Reconciling the diversity-aware recommendation trade-off in recommendations*
+The core library is organized around major EC domains:
+- `Foundations/`: Discrete math, probability, asymptotics, and econometrics.
+- `MechanismDesign/`: Auctions, contracts, and information design.
+- `SocialChoice/`: Fair division and voting.
+- `Markets/`: Matching and platform design.
+- `Learning/`: Bandits and learning in games.
+- `Algorithms/`: Online algorithms and complexity.
+- `Applications/`: Recommender systems and other applied models.
 
-That imported track is organized around one reusable finite/discrete core:
+### 2. Paper Formalizations (`papers/`)
+This is the "Audit Trail." Each paper formalized in this repository gets its own isolated folder named using the `[AuthorInitials][2DigitYear][Descriptor]` format (e.g., `MSVV07AdWords`).
 
-- `DecisionCore/*` for shared randomized-policy and allocation infrastructure
-- `UserItemFairness/*` for the fairness paper
-- `AccuracyDiversity/*` for the diversity-aware recommendation paper
+These folders serve to prove that the *specific claims in a specific PDF* are true. 
+Each paper folder strictly adheres to a standard template:
+- A downloaded `.pdf` of the source material (git-ignored to prevent repo bloat).
+- A `README.md` containing the citation, source URLs, and a theorem-status ledger.
+- A `DependencyDAG.tex` providing a visual proof roadmap of how definitions and lemmas connect.
+- A `MainTheorems.lean` file containing notation-exact wrappers around the core library's theorems, demonstrating fidelity to the original text.
 
-Each paper folder now follows the same audit pattern:
-
-- `README.md` records the exact paper source version and theorem-status table.
-- `MainTheorems.lean` is the central human-readable theorem interface.
-- Detailed proof files stay in the folder and are imported by the central file.
-
-The broader EC Test-of-Time track has also started:
-
-- `EconCSLib/Decision/*` for reusable finite decision-rule lemmas
-- `EconCSLib/Graph/*` for reusable finite directed-relation/cycle lemmas
-- `EconCSLib/Math/*` for reusable algebraic proof helpers
-- `EconCSLib/Statistics/*` for reusable finite/statistical algebra
-- `EconCSLib/FairDivision/*` for the 2025 Test-of-Time indivisible-goods paper
-- `EconCSLib/Auction/*` for the 2021 digital-goods auction paper and later
-  auction papers
-- `DiscretizationBias/*` for the current author-paper formalization pass
-- `ProducerFairness/*` for the current prior-weighted rating-system pass
-
-## Current Continuation Target
-
-The main active continuation target from the imported track is still the
-monoculture/Mallows branch through:
-
-```lean
-MallowsComparison.CenterMallowsCertificate
-MallowsComparison.CenterMallowsFiniteSumCertificate
-MallowsComparison.centerMallowsFiniteSumCertificate_of_candidateSumCertificate
-MallowsComparison.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
-MallowsComparison.CenterMallowsProductCrossWeightCertificate
-MallowsComparison.CenterMallowsReducedProductCrossWeightCertificate
-MallowsComparison.paperHypotheses_of_centerMallowsProductCrossWeightCertificate
-MallowsComparison.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate
-```
-
-The below-one center-probability obligations are now proved from Mallows support
-using the top-two-swapped ranking. The preferred continuation target is now the
-sum-level finite Mallows certificate, because non-center first-choice fibers can
-have negative gap mass and should not be forced into candidatewise
-nonnegativity assumptions.
-
-Other current theorem anchors:
-
-- `EconCSLib.FairDivision.lmms_theorem_2_1_finite_maxMarginal`
-- `ReductionWitness.symmetricOptimalItemFairness_eq_reduced`
-- `ReductionWitness.exists_reducedOptimalAtLevel_of_original_symmetric_optimal`
-- `ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum`
-- `BernoulliSatisfactionModel.forwardMarginal_le_backwardMarginal_of_optimum`
+## Upstreaming Workflow
+When formalizing a new paper, authors typically build everything locally in their `papers/` folder. Once a proof is stable, the generalized mathematical core is "upstreamed" to `EconCSLib`, leaving only the thin, paper-facing wrappers behind.
 
 ## Orientation
-
-If you are new to the imported code, start with:
-
-- [docs/START_HERE_FOR_HUMANS.md](docs/START_HERE_FOR_HUMANS.md)
-- [HumanStartHere.lean](HumanStartHere.lean)
+To get started or review the current formalization roadmap, see the documentation:
+- [docs/EC_TEST_OF_TIME_FORMALIZATION_PLAN.md](docs/EC_TEST_OF_TIME_FORMALIZATION_PLAN.md)
 - [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
 - [docs/PAPER_MAP.md](docs/PAPER_MAP.md)
-- [docs/DECISION_FAIRNESS_HANDOFF.md](docs/DECISION_FAIRNESS_HANDOFF.md)
-- [docs/EC_TEST_OF_TIME_FORMALIZATION_PLAN.md](docs/EC_TEST_OF_TIME_FORMALIZATION_PLAN.md)
+
 - [skills/econcs-formalizer/SKILL.md](skills/econcs-formalizer/SKILL.md)
 
 ## Build
