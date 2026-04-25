@@ -1,5 +1,6 @@
 import UserItemFairness.OpposingTypes
 
+open scoped BigOperators
 open DecisionCore
 
 namespace UserItemFairness
@@ -426,6 +427,620 @@ theorem theorem4EstimatedReducedModel_rowHasPositiveItem
   · simp [theorem4EstimatedReducedModel]
     nlinarith [hpos theorem4FirstItem,
       hpos (reverseItem theorem4FirstItem)]
+
+/-! ### Appendix E, Lemma 12: mirror symmetrization -/
+
+/-- Appendix E's averaged first known-type row. -/
+noncomputable def theorem4SymmetricX {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) : ℝ :=
+  ((ρ 0 j).toReal + (ρ 1 (reverseItem j)).toReal) / 2
+
+/-- Appendix E's averaged second known-type row. -/
+noncomputable def theorem4SymmetricY {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) : ℝ :=
+  ((ρ 1 j).toReal + (ρ 0 (reverseItem j)).toReal) / 2
+
+/-- Appendix E's averaged cold-start row. -/
+noncomputable def theorem4SymmetricZ {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) : ℝ :=
+  ((ρ 2 j).toReal + (ρ 2 (reverseItem j)).toReal) / 2
+
+theorem theorem4SymmetricX_nonneg {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    0 ≤ theorem4SymmetricX ρ j := by
+  unfold theorem4SymmetricX
+  have h0 : 0 ≤ (ρ 0 j).toReal := ENNReal.toReal_nonneg
+  have h1 : 0 ≤ (ρ 1 (reverseItem j)).toReal := ENNReal.toReal_nonneg
+  nlinarith
+
+theorem theorem4SymmetricY_nonneg {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    0 ≤ theorem4SymmetricY ρ j := by
+  unfold theorem4SymmetricY
+  have h0 : 0 ≤ (ρ 1 j).toReal := ENNReal.toReal_nonneg
+  have h1 : 0 ≤ (ρ 0 (reverseItem j)).toReal := ENNReal.toReal_nonneg
+  nlinarith
+
+theorem theorem4SymmetricZ_nonneg {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    0 ≤ theorem4SymmetricZ ρ j := by
+  unfold theorem4SymmetricZ
+  have h0 : 0 ≤ (ρ 2 j).toReal := ENNReal.toReal_nonneg
+  have h1 : 0 ≤ (ρ 2 (reverseItem j)).toReal := ENNReal.toReal_nonneg
+  nlinarith
+
+theorem theorem4SymmetricX_sum_eq_one {n : ℕ}
+    (ρ : TypePolicy 3 n) :
+    (∑ j : Item n, theorem4SymmetricX ρ j) = 1 := by
+  unfold theorem4SymmetricX
+  calc
+    (∑ j : Item n,
+        ((ρ 0 j).toReal + (ρ 1 (reverseItem j)).toReal) / 2)
+        =
+        ((∑ j : Item n, (ρ 0 j).toReal) +
+          (∑ j : Item n, (ρ 1 (reverseItem j)).toReal)) / 2 := by
+          rw [← Finset.sum_add_distrib, Finset.sum_div]
+    _ = ((∑ j : Item n, (ρ 0 j).toReal) +
+          (∑ j : Item n, (ρ 1 j).toReal)) / 2 := by
+          have hrev :
+              (∑ j : Item n, (ρ 1 (reverseItem j)).toReal) =
+                ∑ j : Item n, (ρ 1 j).toReal :=
+            sum_reverseItem (fun j : Item n => (ρ 1 j).toReal)
+          rw [hrev]
+    _ = 1 := by
+          rw [DecisionCore.pmfToRealSum (ρ 0),
+            DecisionCore.pmfToRealSum (ρ 1)]
+          norm_num
+
+theorem theorem4SymmetricY_sum_eq_one {n : ℕ}
+    (ρ : TypePolicy 3 n) :
+    (∑ j : Item n, theorem4SymmetricY ρ j) = 1 := by
+  unfold theorem4SymmetricY
+  calc
+    (∑ j : Item n,
+        ((ρ 1 j).toReal + (ρ 0 (reverseItem j)).toReal) / 2)
+        =
+        ((∑ j : Item n, (ρ 1 j).toReal) +
+          (∑ j : Item n, (ρ 0 (reverseItem j)).toReal)) / 2 := by
+          rw [← Finset.sum_add_distrib, Finset.sum_div]
+    _ = ((∑ j : Item n, (ρ 1 j).toReal) +
+          (∑ j : Item n, (ρ 0 j).toReal)) / 2 := by
+          have hrev :
+              (∑ j : Item n, (ρ 0 (reverseItem j)).toReal) =
+                ∑ j : Item n, (ρ 0 j).toReal :=
+            sum_reverseItem (fun j : Item n => (ρ 0 j).toReal)
+          rw [hrev]
+    _ = 1 := by
+          rw [DecisionCore.pmfToRealSum (ρ 0),
+            DecisionCore.pmfToRealSum (ρ 1)]
+          norm_num
+
+theorem theorem4SymmetricZ_sum_eq_one {n : ℕ}
+    (ρ : TypePolicy 3 n) :
+    (∑ j : Item n, theorem4SymmetricZ ρ j) = 1 := by
+  unfold theorem4SymmetricZ
+  calc
+    (∑ j : Item n,
+        ((ρ 2 j).toReal + (ρ 2 (reverseItem j)).toReal) / 2)
+        =
+        ((∑ j : Item n, (ρ 2 j).toReal) +
+          (∑ j : Item n, (ρ 2 (reverseItem j)).toReal)) / 2 := by
+          rw [← Finset.sum_add_distrib, Finset.sum_div]
+    _ = ((∑ j : Item n, (ρ 2 j).toReal) +
+          (∑ j : Item n, (ρ 2 j).toReal)) / 2 := by
+          have hrev :
+              (∑ j : Item n, (ρ 2 (reverseItem j)).toReal) =
+                ∑ j : Item n, (ρ 2 j).toReal :=
+            sum_reverseItem (fun j : Item n => (ρ 2 j).toReal)
+          rw [hrev]
+    _ = 1 := by
+          rw [DecisionCore.pmfToRealSum (ρ 2)]
+          norm_num
+
+/-- Appendix E Lemma 12's mirror-averaged policy. -/
+noncomputable def theorem4SymmetrizedPolicy {n : ℕ}
+    (ρ : TypePolicy 3 n) : TypePolicy 3 n :=
+  fun k =>
+    if k = (0 : UserType 3) then
+      pmfOfRealVector (theorem4SymmetricX ρ)
+        (theorem4SymmetricX_nonneg ρ)
+        (theorem4SymmetricX_sum_eq_one ρ)
+    else if k = (1 : UserType 3) then
+      pmfOfRealVector (theorem4SymmetricY ρ)
+        (theorem4SymmetricY_nonneg ρ)
+        (theorem4SymmetricY_sum_eq_one ρ)
+    else
+      pmfOfRealVector (theorem4SymmetricZ ρ)
+        (theorem4SymmetricZ_nonneg ρ)
+        (theorem4SymmetricZ_sum_eq_one ρ)
+
+@[simp] theorem theorem4SymmetrizedPolicy_zero_toReal {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    ((theorem4SymmetrizedPolicy ρ 0) j).toReal =
+      theorem4SymmetricX ρ j := by
+  simp [theorem4SymmetrizedPolicy]
+
+@[simp] theorem theorem4SymmetrizedPolicy_one_toReal {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    ((theorem4SymmetrizedPolicy ρ 1) j).toReal =
+      theorem4SymmetricY ρ j := by
+  simp [theorem4SymmetrizedPolicy]
+
+@[simp] theorem theorem4SymmetrizedPolicy_two_toReal {n : ℕ}
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    ((theorem4SymmetrizedPolicy ρ 2) j).toReal =
+      theorem4SymmetricZ ρ j := by
+  have h20 : (2 : UserType 3) ≠ 0 := by decide
+  have h21 : (2 : UserType 3) ≠ 1 := by decide
+  simp [theorem4SymmetrizedPolicy, h20, h21]
+
+/-- The mirror-symmetric subspace `S'` in Appendix E. -/
+def Theorem4MirrorSymmetricPolicy {n : ℕ} (ρ : TypePolicy 3 n) : Prop :=
+  (∀ j : Item n, ρ 1 (reverseItem j) = ρ 0 j) ∧
+    (∀ j : Item n, ρ 2 (reverseItem j) = ρ 2 j)
+
+theorem theorem4SymmetrizedPolicy_mirrorSymmetric {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 3 n) :
+    Theorem4MirrorSymmetricPolicy (theorem4SymmetrizedPolicy ρ) := by
+  constructor
+  · intro j
+    apply (ENNReal.toReal_eq_toReal_iff'
+      ((theorem4SymmetrizedPolicy ρ 1).apply_ne_top (reverseItem j))
+      ((theorem4SymmetrizedPolicy ρ 0).apply_ne_top j)).mp
+    simp [theorem4SymmetricX, theorem4SymmetricY,
+      reverseItem_reverseItem, add_comm]
+  · intro j
+    apply (ENNReal.toReal_eq_toReal_iff'
+      ((theorem4SymmetrizedPolicy ρ 2).apply_ne_top (reverseItem j))
+      ((theorem4SymmetrizedPolicy ρ 2).apply_ne_top j)).mp
+    simp [theorem4SymmetricZ, reverseItem_reverseItem, add_comm]
+
+theorem theorem4AverageUtility_pos {n : ℕ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j) (j : Item n) :
+    0 < theorem4AverageUtility v j := by
+  unfold theorem4AverageUtility
+  nlinarith [hpos j, hpos (reverseItem j)]
+
+theorem theorem4EstimatedReducedModel_itemNormalizer_eq_average
+    {n : ℕ} (beta : ℝ) (v : Item n → ℝ) (j : Item n) :
+    TypeWeightedRecommendationModel.itemNormalizer
+        (theorem4EstimatedReducedModel beta v) j =
+      theorem4AverageUtility v j := by
+  unfold TypeWeightedRecommendationModel.itemNormalizer
+    theorem4EstimatedReducedModel theorem4AverageUtility
+  have huniv : (Finset.univ : Finset (UserType 3)) = {0, 1, 2} := by
+    decide
+  rw [huniv]
+  simp
+  ring
+
+theorem theorem4EstimatedReducedModel_rawItemUtility_symmetrized_eq_average
+    {n : ℕ} [NeZero n] (beta : ℝ) (v : Item n → ℝ)
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    TypeWeightedRecommendationModel.rawItemUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) j =
+      (TypeWeightedRecommendationModel.rawItemUtility
+          (theorem4EstimatedReducedModel beta v) ρ j +
+        TypeWeightedRecommendationModel.rawItemUtility
+          (theorem4EstimatedReducedModel beta v) ρ (reverseItem j)) / 2 := by
+  unfold TypeWeightedRecommendationModel.rawItemUtility
+    theorem4EstimatedReducedModel
+  have huniv : (Finset.univ : Finset (UserType 3)) = {0, 1, 2} := by
+    decide
+  rw [huniv]
+  simp [theorem4SymmetrizedPolicy, theorem4SymmetricX, theorem4SymmetricY,
+    theorem4SymmetricZ, reverseItem_reverseItem]
+  ring
+
+theorem theorem4EstimatedReducedModel_normalizedItemUtility_symmetrized_eq_average
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) (j : Item n) :
+    TypeWeightedRecommendationModel.normalizedItemUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) j =
+      (TypeWeightedRecommendationModel.normalizedItemUtility
+          (theorem4EstimatedReducedModel beta v) ρ j +
+        TypeWeightedRecommendationModel.normalizedItemUtility
+          (theorem4EstimatedReducedModel beta v) ρ (reverseItem j)) / 2 := by
+  unfold TypeWeightedRecommendationModel.normalizedItemUtility
+  rw [theorem4EstimatedReducedModel_itemNormalizer_eq_average,
+    theorem4EstimatedReducedModel_itemNormalizer_eq_average,
+    theorem4EstimatedReducedModel_rawItemUtility_symmetrized_eq_average]
+  have hden_pos : 0 < theorem4AverageUtility v j :=
+    theorem4AverageUtility_pos hpos j
+  have hden_ne : theorem4AverageUtility v j ≠ 0 := ne_of_gt hden_pos
+  have hrev :
+      theorem4AverageUtility v (reverseItem j) =
+        theorem4AverageUtility v j := by
+    simp [theorem4AverageUtility_reverse]
+  simp [hden_ne, hrev]
+  field_simp [hden_ne]
+
+theorem theorem4EstimatedReducedModel_itemFairness_le_symmetrized
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v) ρ ≤
+      TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) := by
+  unfold TypeWeightedRecommendationModel.itemFairness
+  apply DecisionCore.le_finiteMin
+  intro j
+  rw [theorem4EstimatedReducedModel_normalizedItemUtility_symmetrized_eq_average
+    hpos ρ j]
+  have hj :
+      DecisionCore.finiteMin
+          (TypeWeightedRecommendationModel.normalizedItemUtility
+            (theorem4EstimatedReducedModel beta v) ρ) ≤
+        TypeWeightedRecommendationModel.normalizedItemUtility
+          (theorem4EstimatedReducedModel beta v) ρ j :=
+    DecisionCore.finiteMin_le
+      (TypeWeightedRecommendationModel.normalizedItemUtility
+        (theorem4EstimatedReducedModel beta v) ρ) j
+  have hrev :
+      DecisionCore.finiteMin
+          (TypeWeightedRecommendationModel.normalizedItemUtility
+            (theorem4EstimatedReducedModel beta v) ρ) ≤
+        TypeWeightedRecommendationModel.normalizedItemUtility
+          (theorem4EstimatedReducedModel beta v) ρ (reverseItem j) :=
+    DecisionCore.finiteMin_le
+      (TypeWeightedRecommendationModel.normalizedItemUtility
+        (theorem4EstimatedReducedModel beta v) ρ) (reverseItem j)
+  nlinarith
+
+theorem theorem4EstimatedReducedModel_feasibleAtLevel_symmetrized
+    {n : ℕ} [NeZero n] {beta gamma : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) gamma ρ) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) gamma
+        (theorem4SymmetrizedPolicy ρ) := by
+  exact hfeas.trans
+    (theorem4EstimatedReducedModel_itemFairness_le_symmetrized hpos ρ)
+
+theorem theorem4EstimatedReducedModel_rawTypeUtility_symmetrized_zero
+    {n : ℕ} [NeZero n] (beta : ℝ) (v : Item n → ℝ)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) 0 =
+      (TypeWeightedRecommendationModel.rawTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 0 +
+        TypeWeightedRecommendationModel.rawTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 1) / 2 := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    DecisionCore.Policy.agentScore DecisionCore.pmfExp
+  simp [theorem4EstimatedReducedModel, theorem4SymmetrizedPolicy,
+    theorem4SymmetricX]
+  have hrev :
+      (∑ j : Item n, (ρ 1 (reverseItem j)).toReal * v j) =
+        ∑ j : Item n, (ρ 1 j).toReal * v (reverseItem j) := by
+    calc
+      (∑ j : Item n, (ρ 1 (reverseItem j)).toReal * v j)
+          =
+          ∑ j : Item n,
+            (ρ 1 (reverseItem j)).toReal *
+              v (reverseItem (reverseItem j)) := by
+            simp [reverseItem_reverseItem]
+      _ = ∑ j : Item n, (ρ 1 j).toReal * v (reverseItem j) := by
+            simpa using
+              (sum_reverseItem
+                (fun j : Item n => (ρ 1 j).toReal * v (reverseItem j)))
+  calc
+    (∑ x : Item n,
+        (((ρ 0) x).toReal + ((ρ 1) (reverseItem x)).toReal) / 2 *
+          v x)
+        =
+        ∑ x : Item n,
+          (((ρ 0) x).toReal * v x +
+            ((ρ 1) (reverseItem x)).toReal * v x) / 2 := by
+          refine Finset.sum_congr rfl ?_
+          intro x _hx
+          ring
+    _ 
+        =
+        (∑ x : Item n,
+          (((ρ 0) x).toReal * v x +
+            ((ρ 1) (reverseItem x)).toReal * v x)) / 2 := by
+          rw [Finset.sum_div]
+    _ =
+        ((∑ x : Item n, ((ρ 0) x).toReal * v x) +
+          (∑ x : Item n, ((ρ 1) (reverseItem x)).toReal * v x)) / 2 := by
+          rw [Finset.sum_add_distrib]
+    _ =
+        ((∑ x : Item n, ((ρ 0) x).toReal * v x) +
+          (∑ x : Item n, ((ρ 1) x).toReal * v (reverseItem x))) / 2 := by
+          rw [hrev]
+
+theorem theorem4EstimatedReducedModel_rawTypeUtility_symmetrized_one
+    {n : ℕ} [NeZero n] (beta : ℝ) (v : Item n → ℝ)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) 1 =
+      (TypeWeightedRecommendationModel.rawTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 0 +
+        TypeWeightedRecommendationModel.rawTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 1) / 2 := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    DecisionCore.Policy.agentScore DecisionCore.pmfExp
+  simp [theorem4EstimatedReducedModel, theorem4SymmetrizedPolicy,
+    theorem4SymmetricY]
+  have hrev :
+      (∑ j : Item n,
+          (ρ 0 (reverseItem j)).toReal * v (reverseItem j)) =
+        ∑ j : Item n, (ρ 0 j).toReal * v j := by
+    simpa using
+      (sum_reverseItem (fun j : Item n => (ρ 0 j).toReal * v j))
+  calc
+    (∑ x : Item n,
+        (((ρ 1) x).toReal + ((ρ 0) (reverseItem x)).toReal) / 2 *
+          v (reverseItem x))
+        =
+        ∑ x : Item n,
+          (((ρ 1) x).toReal * v (reverseItem x) +
+            ((ρ 0) (reverseItem x)).toReal * v (reverseItem x)) / 2 := by
+          refine Finset.sum_congr rfl ?_
+          intro x _hx
+          ring
+    _ =
+        (∑ x : Item n,
+          (((ρ 1) x).toReal * v (reverseItem x) +
+            ((ρ 0) (reverseItem x)).toReal * v (reverseItem x))) / 2 := by
+          rw [Finset.sum_div]
+    _ =
+        ((∑ x : Item n, ((ρ 1) x).toReal * v (reverseItem x)) +
+          (∑ x : Item n,
+            ((ρ 0) (reverseItem x)).toReal * v (reverseItem x))) / 2 := by
+          rw [Finset.sum_add_distrib]
+    _ =
+        ((∑ x : Item n, ((ρ 0) x).toReal * v x) +
+          (∑ x : Item n, ((ρ 1) x).toReal * v (reverseItem x))) / 2 := by
+          rw [hrev]
+          ring
+
+theorem theorem4EstimatedReducedModel_rawTypeUtility_symmetrized_two
+    {n : ℕ} [NeZero n] (beta : ℝ) (v : Item n → ℝ)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) 2 =
+      TypeWeightedRecommendationModel.rawTypeUtility
+        (theorem4EstimatedReducedModel beta v) ρ 2 := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    DecisionCore.Policy.agentScore DecisionCore.pmfExp
+  simp [theorem4EstimatedReducedModel, theorem4SymmetrizedPolicy,
+    theorem4SymmetricZ]
+  have hrev :
+      (∑ j : Item n,
+          (ρ 2 (reverseItem j)).toReal *
+            ((v j + v (reverseItem j)) / 2)) =
+        ∑ j : Item n,
+          (ρ 2 j).toReal * ((v j + v (reverseItem j)) / 2) := by
+    calc
+      (∑ j : Item n,
+          (ρ 2 (reverseItem j)).toReal *
+            ((v j + v (reverseItem j)) / 2))
+          =
+          ∑ j : Item n,
+            (ρ 2 (reverseItem j)).toReal *
+              theorem4AverageUtility v (reverseItem j) := by
+            simp [theorem4AverageUtility, reverseItem_reverseItem,
+              add_comm]
+      _ = ∑ j : Item n,
+            (ρ 2 j).toReal * theorem4AverageUtility v j := by
+            simpa using
+              (sum_reverseItem
+                (fun j : Item n =>
+                  (ρ 2 j).toReal * theorem4AverageUtility v j))
+      _ = ∑ j : Item n,
+            (ρ 2 j).toReal * ((v j + v (reverseItem j)) / 2) := by
+            simp [theorem4AverageUtility]
+  calc
+    (∑ x : Item n,
+        (((ρ 2) x).toReal + ((ρ 2) (reverseItem x)).toReal) / 2 *
+          ((v x + v (reverseItem x)) / 2))
+        =
+        ∑ x : Item n,
+          (((ρ 2) x).toReal * ((v x + v (reverseItem x)) / 2) +
+            ((ρ 2) (reverseItem x)).toReal *
+              ((v x + v (reverseItem x)) / 2)) / 2 := by
+          refine Finset.sum_congr rfl ?_
+          intro x _hx
+          ring
+    _ =
+        (∑ x : Item n,
+          (((ρ 2) x).toReal * ((v x + v (reverseItem x)) / 2) +
+            ((ρ 2) (reverseItem x)).toReal *
+              ((v x + v (reverseItem x)) / 2))) / 2 := by
+          rw [Finset.sum_div]
+    _ =
+        ((∑ x : Item n,
+            ((ρ 2) x).toReal * ((v x + v (reverseItem x)) / 2)) +
+          (∑ x : Item n,
+            ((ρ 2) (reverseItem x)).toReal *
+              ((v x + v (reverseItem x)) / 2))) / 2 := by
+          rw [Finset.sum_add_distrib]
+    _ =
+        ∑ x : Item n,
+          ((ρ 2) x).toReal * ((v x + v (reverseItem x)) / 2) := by
+          rw [hrev]
+          ring
+
+theorem theorem4EstimatedReducedModel_bestItemUtility_one_eq_zero
+    {n : ℕ} [NeZero n] (beta : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4EstimatedReducedModel beta v) 1 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4EstimatedReducedModel beta v) 0 := by
+  unfold TypeWeightedRecommendationModel.bestItemUtility
+  change DecisionCore.finiteMax (fun j : Item n => v (reverseItem j)) =
+    DecisionCore.finiteMax v
+  exact finiteMax_reverseItem v
+
+theorem theorem4EstimatedReducedModel_normalizedTypeUtility_symmetrized_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) 0 =
+      (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 0 +
+        TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 1) / 2 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [theorem4EstimatedReducedModel_rawTypeUtility_symmetrized_zero]
+  rw [theorem4EstimatedReducedModel_bestItemUtility_one_eq_zero]
+  have hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+          (theorem4EstimatedReducedModel beta v) 0 :=
+    TypeWeightedRecommendationModel.bestItemUtility_pos_of_rowHasPositiveItem
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_rowHasPositiveItem hpos) 0
+  field_simp [ne_of_gt hbest_pos]
+
+theorem theorem4EstimatedReducedModel_normalizedTypeUtility_symmetrized_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) 1 =
+      (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 0 +
+        TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ 1) / 2 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [theorem4EstimatedReducedModel_rawTypeUtility_symmetrized_one]
+  rw [theorem4EstimatedReducedModel_bestItemUtility_one_eq_zero]
+  have hbest_pos :
+      0 < TypeWeightedRecommendationModel.bestItemUtility
+          (theorem4EstimatedReducedModel beta v) 0 :=
+    TypeWeightedRecommendationModel.bestItemUtility_pos_of_rowHasPositiveItem
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_rowHasPositiveItem hpos) 0
+  field_simp [ne_of_gt hbest_pos]
+
+theorem theorem4EstimatedReducedModel_normalizedTypeUtility_symmetrized_two
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) 2 =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v) ρ 2 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [theorem4EstimatedReducedModel_rawTypeUtility_symmetrized_two]
+
+theorem theorem4EstimatedReducedModel_typeFairness_le_symmetrized
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) :
+    TypeWeightedRecommendationModel.typeFairness
+        (theorem4EstimatedReducedModel beta v) ρ ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) := by
+  unfold TypeWeightedRecommendationModel.typeFairness
+  apply DecisionCore.le_finiteMin
+  intro k
+  fin_cases k
+  · change DecisionCore.finiteMin
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) (0 : UserType 3)
+    rw [theorem4EstimatedReducedModel_normalizedTypeUtility_symmetrized_zero
+      hpos ρ]
+    have h0 :=
+      DecisionCore.finiteMin_le
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) (0 : UserType 3)
+    have h1 :=
+      DecisionCore.finiteMin_le
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) (1 : UserType 3)
+    nlinarith
+  · change DecisionCore.finiteMin
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) (1 : UserType 3)
+    rw [theorem4EstimatedReducedModel_normalizedTypeUtility_symmetrized_one
+      hpos ρ]
+    have h0 :=
+      DecisionCore.finiteMin_le
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) (0 : UserType 3)
+    have h1 :=
+      DecisionCore.finiteMin_le
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) (1 : UserType 3)
+    nlinarith
+  · change DecisionCore.finiteMin
+        (TypeWeightedRecommendationModel.normalizedTypeUtility
+          (theorem4EstimatedReducedModel beta v) ρ) ≤
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ) (2 : UserType 3)
+    rw [theorem4EstimatedReducedModel_normalizedTypeUtility_symmetrized_two]
+    exact DecisionCore.finiteMin_le
+      (TypeWeightedRecommendationModel.normalizedTypeUtility
+        (theorem4EstimatedReducedModel beta v) ρ) (2 : UserType 3)
+
+/--
+Appendix E, Lemma 12: any policy solving the estimated maximal-item-fairness
+problem can be mirror-symmetrized into the subspace `S'` without losing
+estimated optimality.
+-/
+theorem theorem4_symmetrizedPolicy_isOptimalAtLevel
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hopt :
+      TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 1 ρ) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 1
+        (theorem4SymmetrizedPolicy ρ) ∧
+      Theorem4MirrorSymmetricPolicy (theorem4SymmetrizedPolicy ρ) := by
+  let T := theorem4EstimatedReducedModel beta v
+  have hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel T 1
+        (theorem4SymmetrizedPolicy ρ) :=
+    theorem4EstimatedReducedModel_feasibleAtLevel_symmetrized hpos hopt.1
+  have htype_lower :
+      TypeWeightedRecommendationModel.typeFairness T ρ ≤
+        TypeWeightedRecommendationModel.typeFairness T
+          (theorem4SymmetrizedPolicy ρ) :=
+    theorem4EstimatedReducedModel_typeFairness_le_symmetrized hpos ρ
+  have htype_upper :
+      TypeWeightedRecommendationModel.typeFairness T
+          (theorem4SymmetrizedPolicy ρ) ≤
+        TypeWeightedRecommendationModel.typeFairness T ρ :=
+    TypeWeightedRecommendationModel.typeFairness_le_of_isOptimalAtLevel
+      T (theorem4EstimatedReducedModel_rowHasPositiveItem hpos)
+      hopt hfeas
+  have htype_eq :
+      TypeWeightedRecommendationModel.typeFairness T
+          (theorem4SymmetrizedPolicy ρ) =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel T 1 := by
+    apply le_antisymm
+    · exact htype_upper.trans_eq hopt.2
+    · rw [← hopt.2]
+      exact htype_lower
+  exact ⟨⟨hfeas, htype_eq⟩,
+    theorem4SymmetrizedPolicy_mirrorSymmetric ρ⟩
 
 theorem theorem4NoFairnessPolicyTypeZero_estimated_typeFairness_eq_one
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}

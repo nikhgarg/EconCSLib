@@ -7430,6 +7430,24 @@ theorem paper_theorem4_trueModel_optimalTypeFairnessAtLevel_one_gt_inv_card_half
     hpos hdec hsucc
 
 /--
+Appendix E, Lemma 12: any estimated `γ = 1` optimum can be replaced by a
+mirror-symmetric optimum in the paper's subspace `S'`.
+-/
+theorem paper_lemma12_theorem4_symmetrizedPolicy_isOptimalAtLevel
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hopt :
+      TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 1 ρ) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 1
+        (theorem4SymmetrizedPolicy ρ) ∧
+      Theorem4MirrorSymmetricPolicy (theorem4SymmetrizedPolicy ρ) := by
+  exact OpposingTypes.theorem4_symmetrizedPolicy_isOptimalAtLevel
+    hpos hopt
+
+/--
 Appendix E, Theorem 4 no-item-fairness construction, first possible true
 cold-start type.
 
