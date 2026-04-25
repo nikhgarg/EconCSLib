@@ -13398,6 +13398,60 @@ theorem problem6FirstClosedPolicy_optimalTypeFairnessAtLevel_one_eq_firstHalf_su
       (problem6FirstClosedPivot_le_reverse_of_alpha_le_half_succ_center
         halpha0 halpha1 halpha_half hpos hsucc)
 
+theorem problem6FirstClosedPolicy_feasibleAtLevel_one
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (twoTypeReducedModel alpha v) 1
+      (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos) := by
+  let t : Item n :=
+    problem6FirstClosedPivot alpha v halpha0 halpha1 hpos
+  let cert : Problem6ClosedOptimalityCertificate alpha v t :=
+    problem6FirstClosedPivot_optimalityCertificate
+      halpha0 halpha1 hpos hdec
+  let hpivot : Problem6ClosedNonnegativePivots alpha v t :=
+    problem6ClosedNonnegativePivots_of_denominatorBounds
+      halpha0 halpha1 hpos cert.denominator_bounds
+  have hclosed :
+      Problem6EqualizedBasicOptimal alpha v
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot)
+        (problem6ClosedValue alpha v t) := by
+    dsimp [cert, hpivot]
+    exact problem6EqualizedBasicOptimal_of_closed_certificate
+      halpha0 halpha1 hpos cert
+  have hpolicy :
+      problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos =
+        problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot := by
+    dsimp [t, hpivot, cert]
+    exact
+      problem6FirstClosedPolicy_eq_closedPolicy_of_firstClosedPivot_eq
+        halpha0 halpha1 hpos (hpivot_eq := rfl)
+  have hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (twoTypeReducedModel alpha v) 1
+        (problem6ClosedPolicy alpha v t halpha0 halpha1 hpos hpivot) :=
+    problem6EqualizedBasicOptimal_feasibleAtLevel_one
+      halpha0 halpha1 hpos hclosed
+  simpa [hpolicy] using hfeas
+
+theorem twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ}
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+      (twoTypeReducedModel alpha v) 1).Nonempty := by
+  refine ⟨TypeWeightedRecommendationModel.typeFairness
+    (twoTypeReducedModel alpha v)
+    (problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos), ?_⟩
+  exact ⟨problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos,
+    problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0 halpha1 hpos hdec, rfl⟩
+
 /--
 Problem 6 canonical closed-policy optimality bridge, packaged as
 `IsOptimalAtLevel`.

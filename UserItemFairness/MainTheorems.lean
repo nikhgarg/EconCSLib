@@ -6142,6 +6142,160 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center
       halpha_half halpha_half' hpos hdec hsucc
 
 /--
+Theorem 3 paper-facing price monotonicity, odd-center first-half form.  The two
+original recommendation models are connected to the opposing two-type reduced
+models by reduction witnesses; original feasible-value nonemptiness at
+`γ = 1` is left explicit, while reduced nonemptiness is supplied by the
+first-closed policy.
+-/
+theorem paper_theorem3_price_decreases_firstHalf_center_of_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (R R' : ReductionWitness m n 2)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hred : R.reduced = twoTypeReducedModel alpha v)
+    (hred' : R'.reduced = twoTypeReducedModel alpha' v)
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter_c : c.val = (reverseItem c).val)
+    (hNonneg : R.data.model.Nonnegative)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (hNonneg' : R'.data.model.Nonnegative)
+    (hRow' : R'.data.model.RowHasPositiveItem)
+    (hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model 1).Nonempty)
+    (hOrigNonempty' :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R'.data.model 1).Nonempty) :
+    RecommendationModel.priceOfFairness R'.data.model ≤
+      RecommendationModel.priceOfFairness R.data.model := by
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced 1).Nonempty := by
+    rw [hred]
+    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
+      halpha0 halpha1 hpos hdec
+  have hRedNonempty' :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R'.reduced 1).Nonempty := by
+    rw [hred']
+    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
+      halpha0' halpha1' hpos hdec
+  have hUserEq :
+      RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R.reduced 1 :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow 1 hOrigNonempty hRedNonempty
+  have hUserEq' :
+      RecommendationModel.optimalUserFairnessAtLevel R'.data.model 1 =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R'.reduced 1 :=
+    R'.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps' hRow' 1 hOrigNonempty' hRedNonempty'
+  have hred_mono :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R.reduced 1 ≤
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R'.reduced 1 := by
+    rw [hred, hred']
+    exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hcenter_c
+  have huser_mono :
+      RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 ≤
+        RecommendationModel.optimalUserFairnessAtLevel R'.data.model 1 := by
+    rw [hUserEq, hUserEq']
+    exact hred_mono
+  exact R.data.model.priceOfFairness_le_of_optimalUserFairnessAtLevel_one_le
+    R'.data.model hNonneg hRow hNonneg' hRow' huser_mono
+
+/--
+Theorem 3 paper-facing price monotonicity, even-center first-half form.  The two
+original recommendation models are connected to the opposing two-type reduced
+models by reduction witnesses; original feasible-value nonemptiness at
+`γ = 1` is left explicit, while reduced nonemptiness is supplied by the
+first-closed policy.
+-/
+theorem paper_theorem3_price_decreases_firstHalf_succ_center_of_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (R R' : ReductionWitness m n 2)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)
+    {alpha alpha' : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hred : R.reduced = twoTypeReducedModel alpha v)
+    (hred' : R'.reduced = twoTypeReducedModel alpha' v)
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val)
+    (hNonneg : R.data.model.Nonnegative)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (hNonneg' : R'.data.model.Nonnegative)
+    (hRow' : R'.data.model.RowHasPositiveItem)
+    (hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model 1).Nonempty)
+    (hOrigNonempty' :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R'.data.model 1).Nonempty) :
+    RecommendationModel.priceOfFairness R'.data.model ≤
+      RecommendationModel.priceOfFairness R.data.model := by
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced 1).Nonempty := by
+    rw [hred]
+    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
+      halpha0 halpha1 hpos hdec
+  have hRedNonempty' :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R'.reduced 1).Nonempty := by
+    rw [hred']
+    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
+      halpha0' halpha1' hpos hdec
+  have hUserEq :
+      RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R.reduced 1 :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow 1 hOrigNonempty hRedNonempty
+  have hUserEq' :
+      RecommendationModel.optimalUserFairnessAtLevel R'.data.model 1 =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R'.reduced 1 :=
+    R'.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps' hRow' 1 hOrigNonempty' hRedNonempty'
+  have hred_mono :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R.reduced 1 ≤
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R'.reduced 1 := by
+    rw [hred, hred']
+    exact theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_alpha_le
+      hn halpha0 halpha1 halpha0' halpha1' halpha_le
+      halpha_half halpha_half' hpos hdec hsucc
+  have huser_mono :
+      RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 ≤
+        RecommendationModel.optimalUserFairnessAtLevel R'.data.model 1 := by
+    rw [hUserEq, hUserEq']
+    exact hred_mono
+  exact R.data.model.priceOfFairness_le_of_optimalUserFairnessAtLevel_one_le
+    R'.data.model hNonneg hRow hNonneg' hRow' huser_mono
+
+/--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
 normalized type-utility comparison when the two best-item denominators agree.
 -/
