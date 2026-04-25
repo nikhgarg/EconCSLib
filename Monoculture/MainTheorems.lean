@@ -31,6 +31,28 @@ theorem paper_definition1_concreteMallowsSpec_atom_continuity
       (fun θ' => (((concreteMallowsSpec center θ').law) π).toReal) θ :=
   concreteMallowsSpec_atom_continuity center hθ π
 
+/--
+Definition 1 / Mallows asymptotic first dominance.
+
+Paper statement: as the algorithmic Mallows accuracy tends to infinity
+(`q -> 0` in Lean's inverse parameterization), the all-algorithm payoff
+eventually exceeds the human-against-algorithm payoff used in Theorem 1.
+-/
+theorem paper_definition1_concreteMallowsSpec_asymptotic_first_dominance
+    {n : ℕ} (center : Ranking n) (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy center value) :
+    ∀ θH lower, 0 < θH → θH < lower →
+      ∃ hi, lower < hi ∧
+        AccuracyFamily.theorem1_g
+            ({ dist := fun θ => (concreteMallowsSpec center θ).law,
+                value := value } : AccuracyFamily n)
+            hi θH <
+          AccuracyFamily.theorem1_f
+            ({ dist := fun θ => (concreteMallowsSpec center θ).law,
+                value := value } : AccuracyFamily n)
+            hi θH :=
+  concreteMallowsSpec_asymptotic_first_dominance center value hvalue
+
 namespace MallowsComparison
 
 /--
@@ -501,9 +523,8 @@ Mallows family bridge to the paper-level Theorem 1 assumptions.
 The fixed-parameter Mallows finite-sum proof supplies Definition 2 for every
 positive parameter and Definition 3 for every `θA > θH > 0`.  The first-mover
 and singleton-removal parts of Definition 1 monotonicity are proved from
-Mallows rank-power MLR theorems. The remaining analytic fields of
-`MallowsAccuracyFamilySpec` are atomwise continuity and the asymptotic
-first-dominance condition used by the Theorem 1 crossing proof.
+Mallows rank-power MLR theorems. Concrete Mallows instantiates the analytic
+fields separately below.
 -/
 noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
@@ -515,9 +536,7 @@ noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
 Paper Theorem 1 for a parameterized Mallows family.
 
 Definitions 2 and 3 are discharged by the formalized Mallows Theorem 3 route,
-and Definition 1 monotonicity is discharged by the Mallows MLR route. The
-remaining family-level analytic fields are atomwise continuity and asymptotic
-first dominance.
+and Definition 1 finite monotonicity is discharged by the Mallows MLR route.
 -/
 theorem paper_theorem1_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
@@ -526,6 +545,23 @@ theorem paper_theorem1_mallows_family
   MF.theorem1Target hn θH hθH
 
 end MallowsAccuracyFamilySpec
+
+/--
+Paper Theorem 1 for the concrete Mallows family.
+
+Paper statement: under Definition 1's Mallows accuracy family, Definition 2,
+Definition 3, and strict center-ordered values, every positive human accuracy
+admits a more accurate algorithmic parameter witnessing the monoculture paradox.
+-/
+theorem paper_theorem1_concrete_mallows_family
+    {n : ℕ} (center : Ranking n) (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy center value)
+    (hn : 0 < n) (θH : ℝ) (hθH : 0 < θH) :
+    AccuracyFamily.Theorem1Target
+      (MallowsAccuracyFamilySpec.toAccuracyFamily
+        (concreteMallowsAccuracyFamilySpec center value hvalue))
+      θH :=
+  concreteMallows_theorem1Target center value hvalue hn θH hθH
 
 /--
 Theorem 1 proof notation: `h(θA)` is constant in `θA`.

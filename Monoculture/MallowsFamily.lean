@@ -539,6 +539,191 @@ theorem sharedRankPayoffAverage_continuousAt_zero
     (candidateRankSecondChoiceWeightedAverage_continuousAt_zero
       (n := n) (fun s : Candidate n => value (M.center s)))
 
+theorem secondChoiceProb_eq_sum_firstSecondWeight_div_partition
+    (d : Candidate n) :
+    secondChoiceProb M.law d =
+      (∑ c : Candidate n, M.firstSecondWeight c d) / M.partition := by
+  classical
+  unfold secondChoiceProb pmfProb pmfExp firstSecondWeight
+  calc
+    ∑ π : Ranking n, (M.law π).toReal *
+        (if d = secondChoice π then (1 : ℝ) else 0)
+        = ∑ π : Ranking n,
+            (mallowsWeight M.q M.center π / M.partition) *
+              (if d = secondChoice π then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          rw [M.law_apply_toReal]
+    _ = ∑ π : Ranking n,
+          (∑ c : Candidate n,
+            if c = firstChoice π ∧ d = secondChoice π
+            then mallowsWeight M.q M.center π
+            else 0) / M.partition := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          have hinner :
+              (∑ c : Candidate n,
+                if c = firstChoice π ∧ d = secondChoice π
+                then mallowsWeight M.q M.center π
+                else 0) =
+                if d = secondChoice π then
+                  mallowsWeight M.q M.center π
+                else 0 := by
+            by_cases hd : d = secondChoice π
+            · simpa [hd] using
+                (Finset.sum_ite_eq' Finset.univ (firstChoice π)
+                  (fun _ : Candidate n => mallowsWeight M.q M.center π))
+            · have hdraw : d ≠ π 1 := by simpa [secondChoice] using hd
+              simp [firstChoice, secondChoice, hdraw]
+          rw [hinner]
+          by_cases hd : d = secondChoice π
+          · have hdraw : d = π 1 := by simpa [secondChoice] using hd
+            simp [secondChoice, hdraw]
+          · have hdraw : d ≠ π 1 := by simpa [secondChoice] using hd
+            simp [secondChoice, hdraw]
+    _ = (∑ π : Ranking n, ∑ c : Candidate n,
+          if c = firstChoice π ∧ d = secondChoice π
+          then mallowsWeight M.q M.center π
+          else 0) / M.partition := by
+          rw [Finset.sum_div]
+    _ = (∑ c : Candidate n, ∑ π : Ranking n,
+          if c = firstChoice π ∧ d = secondChoice π
+          then mallowsWeight M.q M.center π
+          else 0) / M.partition := by
+          rw [Finset.sum_comm]
+
+theorem expectedSecondMoverShared_eq_rankSecondChoiceAverage
+    (fac : M.RankFactorization) (value : Candidate n → ℝ) :
+    expectedSecondMoverShared M.law value =
+      (∑ s : Candidate n,
+          candidateRankSecondChoiceWeight n M.q s * value (M.center s)) /
+        (candidateRankPowerSum n M.q *
+          candidateRankRemovalPowerSum n M.q (0 : Candidate n)) := by
+  classical
+  rw [expectedSecondMoverShared_eq_sum_secondChoiceProb]
+  have hprob :
+      ∀ d : Candidate n,
+        secondChoiceProb M.law d =
+          (∑ c : Candidate n, M.firstSecondWeight c d) / M.partition :=
+    fun d => M.secondChoiceProb_eq_sum_firstSecondWeight_div_partition d
+  calc
+    (∑ d : Candidate n, secondChoiceProb M.law d * value d)
+        = ∑ d : Candidate n,
+            ((∑ c : Candidate n, M.firstSecondWeight c d) / M.partition) *
+              value d := by
+          refine Finset.sum_congr rfl ?_
+          intro d _
+          rw [hprob d]
+    _ = (∑ d : Candidate n,
+          (∑ c : Candidate n, M.firstSecondWeight c d) * value d) /
+          M.partition := by
+          calc
+            (∑ d : Candidate n,
+              (∑ c : Candidate n, M.firstSecondWeight c d) / M.partition *
+                value d)
+                = ∑ d : Candidate n,
+                    ((∑ c : Candidate n, M.firstSecondWeight c d) *
+                      value d) / M.partition := by
+                    refine Finset.sum_congr rfl ?_
+                    intro d _
+                    ring
+            _ = (∑ d : Candidate n,
+                  (∑ c : Candidate n, M.firstSecondWeight c d) * value d) /
+                M.partition := by
+                  rw [Finset.sum_div]
+    _ = (∑ s : Candidate n,
+          (fac.firstSecondTail * candidateRankSecondChoiceWeight n M.q s) *
+            value (M.center s)) / M.partition := by
+          congr 1
+          calc
+            (∑ d : Candidate n,
+              (∑ c : Candidate n, M.firstSecondWeight c d) * value d)
+                = ∑ s : Candidate n,
+                    (∑ c : Candidate n, M.firstSecondWeight c (M.center s)) *
+                      value (M.center s) := by
+                    simpa using
+                      (Equiv.sum_comp M.center
+                        (fun d : Candidate n =>
+                          (∑ c : Candidate n, M.firstSecondWeight c d) *
+                            value d)).symm
+            _ = ∑ s : Candidate n,
+                (fac.firstSecondTail * candidateRankSecondChoiceWeight n M.q s) *
+                  value (M.center s) := by
+                refine Finset.sum_congr rfl ?_
+                intro s _
+                congr 1
+                unfold candidateRankSecondChoiceWeight
+                calc
+                  (∑ c : Candidate n, M.firstSecondWeight c (M.center s))
+                      = ∑ r : Candidate n,
+                          M.firstSecondWeight (M.center r) (M.center s) := by
+                          simpa using
+                            (Equiv.sum_comp M.center
+                              (fun c : Candidate n =>
+                                M.firstSecondWeight c (M.center s))).symm
+                  _ = ∑ r : Candidate n,
+                        fac.firstSecondTail *
+                          (if r < s then M.q ^ ((r : ℕ) + (s : ℕ) - 1)
+                          else if s < r then M.q ^ ((s : ℕ) + (r : ℕ))
+                          else 0) := by
+                        refine Finset.sum_congr rfl ?_
+                        intro r _
+                        by_cases hrs : r < s
+                        · have hlt : rankOf M.center (M.center r) <
+                              rankOf M.center (M.center s) := by
+                            simpa [rankOf] using hrs
+                          rw [fac.firstSecondWeight_eq_of_lt (M.center r) (M.center s) hlt]
+                          simp [rankOf, hrs]
+                          ring
+                        · by_cases hsr : s < r
+                          · have hlt : rankOf M.center (M.center s) <
+                                rankOf M.center (M.center r) := by
+                              simpa [rankOf] using hsr
+                            rw [fac.firstSecondWeight_swap_eq_of_lt
+                              (M.center s) (M.center r) hlt]
+                            simp [rankOf, hrs, hsr]
+                            have hsum :
+                                ((s : ℕ) + (r : ℕ) - 1) + 1 =
+                                  (s : ℕ) + (r : ℕ) := by
+                              have hlt_nat : (s : ℕ) < (r : ℕ) := hsr
+                              omega
+                            rw [← mul_assoc, ← pow_succ', hsum]
+                            ring
+                          · have hre : r = s := le_antisymm
+                              (le_of_not_gt hsr) (le_of_not_gt hrs)
+                            subst r
+                            rw [M.firstSecondWeight_self]
+                            simp
+                  _ = fac.firstSecondTail *
+                        (∑ r : Candidate n,
+                          if r < s then M.q ^ ((r : ℕ) + (s : ℕ) - 1)
+                          else if s < r then M.q ^ ((s : ℕ) + (r : ℕ))
+                          else 0) := by
+                        rw [Finset.mul_sum]
+    _ = (fac.firstSecondTail *
+          (∑ s : Candidate n,
+            candidateRankSecondChoiceWeight n M.q s * value (M.center s))) /
+          M.partition := by
+          congr 1
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl ?_
+          intro s _
+          ring
+    _ = (∑ s : Candidate n,
+          candidateRankSecondChoiceWeight n M.q s * value (M.center s)) /
+        (candidateRankPowerSum n M.q *
+          candidateRankRemovalPowerSum n M.q (0 : Candidate n)) := by
+          have hpart :
+              M.partition =
+                candidateRankPowerSum n M.q *
+                  (fac.firstSecondTail *
+                    candidateRankRemovalPowerSum n M.q (0 : Candidate n)) := by
+            rw [fac.partition_eq]
+            rw [M.firstTail_eq_firstSecondTail_mul_removalPowerSum fac M.centerFirst]
+            simp [centerFirst, rankOf]
+          rw [hpart]
+          field_simp [ne_of_gt fac.firstSecondTail_pos]
+
 /-- Unnormalised Mallows mass of rankings whose best candidate after removing
 `c` is `d`. -/
 noncomputable def bestAfterRemovalWeight (c d : Candidate n) : ℝ :=
@@ -604,6 +789,43 @@ theorem expectedFirstMoverUtility_eq_rankAverage
     _ = (∑ r : Candidate n, M.q ^ (r : ℕ) * value (M.center r)) /
           candidateRankPowerSum n M.q := by
             field_simp [ne_of_gt fac.firstTail_pos]
+
+theorem shared_payoff_eq_sharedRankPayoffAverage
+    (fac : M.RankFactorization) (value : Candidate n → ℝ) :
+    expectedFirstMoverUtility M.law value +
+        expectedSecondMoverShared M.law value =
+      M.sharedRankPayoffAverage value M.q := by
+  unfold sharedRankPayoffAverage
+  rw [M.expectedFirstMoverUtility_eq_rankAverage fac value]
+  rw [M.expectedSecondMoverShared_eq_rankSecondChoiceAverage fac value]
+
+theorem exists_pos_radius_humanAgainstRankAverage_lt_sharedRankPayoffAverage
+    (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy M.center value) :
+    ∃ δ : ℝ, 0 < δ ∧
+      ∀ q : ℝ, 0 < q → q < δ →
+        M.humanAgainstRankAverage value q <
+          M.sharedRankPayoffAverage value q := by
+  have hh_cont :
+      DecisionCore.EpsilonContinuousAt
+        (fun q => M.humanAgainstRankAverage value q) 0 :=
+    DecisionCore.epsilonContinuousAt_of_continuousAt
+      (M.humanAgainstRankAverage_continuousAt_zero value)
+  have hs_cont :
+      DecisionCore.EpsilonContinuousAt
+        (fun q => M.sharedRankPayoffAverage value q) 0 :=
+    DecisionCore.epsilonContinuousAt_of_continuousAt
+      (M.sharedRankPayoffAverage_continuousAt_zero value)
+  have hlt :
+      M.humanAgainstRankAverage value 0 <
+        M.sharedRankPayoffAverage value 0 := by
+    rw [M.sharedRankPayoffAverage_zero]
+    exact M.humanAgainstRankAverage_zero_lt_pureCenter_payoff value hvalue
+  rcases DecisionCore.exists_right_radius_lt_of_epsilonContinuousAt
+      hh_cont hs_cont hlt with ⟨δ, hδ_pos, hδ⟩
+  refine ⟨δ, hδ_pos, ?_⟩
+  intro q hq_pos hq_lt
+  exact hδ q hq_pos (by simpa using hq_lt)
 
 /--
 For a Mallows law, expected best-after-removal is the first-choice rank average
@@ -910,6 +1132,42 @@ theorem theorem1_g_eq_humanAgainstRankAverage
   rw [← C.same_center]
   simpa [expectedFirstMoverUtility, B] using h
 
+theorem first_dominance_of_algorithm_q_small
+    (facA : C.algorithm.RankFactorization)
+    (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy C.human.center value) :
+    ∃ δ : ℝ, 0 < δ ∧
+      (C.algorithm.q < δ →
+        expectedFirstMoverUtility C.human.law value +
+            expectedSecondMoverIndependent C.human.law C.algorithm.law value <
+          expectedFirstMoverUtility C.algorithm.law value +
+            expectedSecondMoverShared C.algorithm.law value) := by
+  rcases C.human.exists_pos_radius_humanAgainstRankAverage_lt_sharedRankPayoffAverage
+      value hvalue with ⟨δ, hδ_pos, hδ⟩
+  refine ⟨δ, hδ_pos, ?_⟩
+  intro hq_lt
+  have hrank :
+      C.human.humanAgainstRankAverage value C.algorithm.q <
+        C.human.sharedRankPayoffAverage value C.algorithm.q :=
+    hδ C.algorithm.q C.algorithm.q_pos hq_lt
+  have hg :=
+    C.theorem1_g_eq_humanAgainstRankAverage facA value
+  have hf :=
+    C.algorithm.shared_payoff_eq_sharedRankPayoffAverage
+      C.algorithm.rankFactorization value
+  have hshared :
+      C.algorithm.sharedRankPayoffAverage value C.algorithm.q =
+        C.human.sharedRankPayoffAverage value C.algorithm.q := by
+    simp [MallowsSpec.sharedRankPayoffAverage, C.same_center]
+  calc
+    expectedFirstMoverUtility C.human.law value +
+        expectedSecondMoverIndependent C.human.law C.algorithm.law value
+        = C.human.humanAgainstRankAverage value C.algorithm.q := hg
+    _ < C.human.sharedRankPayoffAverage value C.algorithm.q := hrank
+    _ = C.algorithm.sharedRankPayoffAverage value C.algorithm.q := hshared.symm
+    _ = expectedFirstMoverUtility C.algorithm.law value +
+        expectedSecondMoverShared C.algorithm.law value := hf.symm
+
 /--
 If the rank-only best-after-removal weights satisfy pairwise cross-ratio
 dominance, then the actual Mallows best-after-removal expectation is weakly
@@ -1086,6 +1344,66 @@ theorem firstMoverUtility_strict_of_rankFactorization
   simpa [halg_sum, hhuman_sum, SA, SH] using havg
 
 end MallowsComparison
+
+theorem concreteMallowsSpec_asymptotic_first_dominance
+    {n : ℕ} (center : Ranking n) (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy center value) :
+    ∀ θH lower, 0 < θH → θH < lower →
+      ∃ hi, lower < hi ∧
+        AccuracyFamily.theorem1_g
+            ({ dist := fun θ => (concreteMallowsSpec center θ).law,
+                value := value } : AccuracyFamily n)
+            hi θH <
+          AccuracyFamily.theorem1_f
+            ({ dist := fun θ => (concreteMallowsSpec center θ).law,
+                value := value } : AccuracyFamily n)
+            hi θH := by
+  intro θH lower hθH hθH_lower
+  let human : MallowsSpec n := concreteMallowsSpec center θH
+  let baseC : ℝ → MallowsComparison n := fun θA =>
+    { algorithm := concreteMallowsSpec center θA
+      human := human
+      same_center := by simp [human, concreteMallowsSpec, MallowsSpec.ofQ] }
+  have hhuman_value : StrictlyOrderedBy human.center value := by
+    intro a b hab
+    exact hvalue (by
+      simpa [human, concreteMallowsSpec, MallowsSpec.ofQ] using hab)
+  rcases human.exists_pos_radius_humanAgainstRankAverage_lt_sharedRankPayoffAverage
+      value hhuman_value with ⟨δ, hδ_pos, hδ⟩
+  rcases exists_gt_mallowsAccuracyQ_lt lower δ hδ_pos with ⟨hi, hhi_lower, hq_hi⟩
+  refine ⟨hi, hhi_lower, ?_⟩
+  let C := baseC hi
+  have hsmall : C.algorithm.q < δ := by
+    simpa [C, baseC, concreteMallowsSpec, MallowsSpec.ofQ] using hq_hi
+  have hrank :
+      C.human.humanAgainstRankAverage value C.algorithm.q <
+        C.human.sharedRankPayoffAverage value C.algorithm.q :=
+    hδ C.algorithm.q C.algorithm.q_pos hsmall
+  have hineq :
+      expectedFirstMoverUtility C.human.law value +
+          expectedSecondMoverIndependent C.human.law C.algorithm.law value <
+        expectedFirstMoverUtility C.algorithm.law value +
+          expectedSecondMoverShared C.algorithm.law value := by
+    have hg := C.theorem1_g_eq_humanAgainstRankAverage
+      C.algorithm.rankFactorization value
+    have hf := C.algorithm.shared_payoff_eq_sharedRankPayoffAverage
+      C.algorithm.rankFactorization value
+    have hshared :
+        C.algorithm.sharedRankPayoffAverage value C.algorithm.q =
+          C.human.sharedRankPayoffAverage value C.algorithm.q := by
+      simp [MallowsSpec.sharedRankPayoffAverage, C, baseC, human,
+        concreteMallowsSpec, MallowsSpec.ofQ]
+    calc
+      expectedFirstMoverUtility C.human.law value +
+          expectedSecondMoverIndependent C.human.law C.algorithm.law value
+          = C.human.humanAgainstRankAverage value C.algorithm.q := hg
+      _ < C.human.sharedRankPayoffAverage value C.algorithm.q := hrank
+      _ = C.algorithm.sharedRankPayoffAverage value C.algorithm.q := hshared.symm
+      _ = expectedFirstMoverUtility C.algorithm.law value +
+          expectedSecondMoverShared C.algorithm.law value := hf.symm
+  simpa [AccuracyFamily.theorem1_g, AccuracyFamily.theorem1_f,
+    AccuracyFamily.modelAt, Model.firstMoverEU, Model.secondMoverEU,
+    Model.rankingDist, C, baseC, human] using hineq
 
 /--
 A one-parameter Mallows accuracy family with a common center ranking and a fixed
@@ -1273,4 +1591,46 @@ theorem theorem1Target
     hθH (MF.theorem1PaperAssumptions hn)
 
 end MallowsAccuracyFamilySpec
+
+/--
+The concrete Mallows family for the paper's `θ = φ - 1` convention satisfies
+all finite Definition 1 fields used by Theorem 1.
+-/
+noncomputable def concreteMallowsAccuracyFamilySpec
+    {n : ℕ} (center : Ranking n) (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy center value) :
+    MallowsAccuracyFamilySpec n where
+  value := value
+  center := center
+  value_strict := hvalue
+  spec := concreteMallowsSpec center
+  same_center := by
+    intro θ
+    simp [concreteMallowsSpec, MallowsSpec.ofQ]
+  q_lt_one := by
+    intro θ hθ
+    simpa [concreteMallowsSpec, MallowsSpec.ofQ] using
+      mallowsAccuracyQ_lt_one hθ
+  q_strictAnti := by
+    intro θA θH hθH hθ
+    simpa [concreteMallowsSpec, MallowsSpec.ofQ] using
+      mallowsAccuracyQ_strictAnti hθH hθ
+  dist_atom_continuity := by
+    intro θ hθ π
+    simpa [concreteMallowsSpec] using
+      concreteMallowsSpec_atom_continuity center hθ π
+  asymptotic_first_dominance := by
+    exact concreteMallowsSpec_asymptotic_first_dominance center value hvalue
+
+theorem concreteMallows_theorem1Target
+    {n : ℕ} (center : Ranking n) (value : Candidate n → ℝ)
+    (hvalue : StrictlyOrderedBy center value)
+    (hn : 0 < n) (θH : ℝ) (hθH : 0 < θH) :
+    AccuracyFamily.Theorem1Target
+      (MallowsAccuracyFamilySpec.toAccuracyFamily
+        (concreteMallowsAccuracyFamilySpec center value hvalue))
+      θH :=
+  (concreteMallowsAccuracyFamilySpec center value hvalue).theorem1Target
+    hn θH hθH
+
 end Monoculture

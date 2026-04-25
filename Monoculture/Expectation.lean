@@ -16,6 +16,53 @@ noncomputable def expectedSecondMoverShared {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
   pmfExp μ (fun π => value (secondChoice π))
 
+/-- The real-valued probability that a draw from `μ` puts candidate `c` second. -/
+noncomputable def secondChoiceProb {n : ℕ}
+    (μ : PMF (Ranking n)) (c : Candidate n) : ℝ :=
+  pmfProb μ (fun π => c = secondChoice π)
+
+/-- Shared second-mover utility regrouped by the candidate in second position. -/
+theorem expectedSecondMoverShared_eq_sum_secondChoiceProb {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedSecondMoverShared μ value =
+      ∑ c : Candidate n, secondChoiceProb μ c * value c := by
+  classical
+  unfold expectedSecondMoverShared secondChoiceProb pmfProb pmfExp
+  calc
+    ∑ π : Ranking n, (μ π).toReal * value (secondChoice π)
+        = ∑ π : Ranking n, ∑ c : Candidate n,
+            if c = secondChoice π then (μ π).toReal * value c else 0 := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          have hsum :
+              (∑ c : Candidate n,
+                if c = secondChoice π then (μ π).toReal * value c else 0) =
+                (μ π).toReal * value (secondChoice π) := by
+            simpa using
+              (Finset.sum_ite_eq' Finset.univ (secondChoice π)
+                (fun c : Candidate n => (μ π).toReal * value c))
+          rw [hsum]
+    _ = ∑ c : Candidate n, ∑ π : Ranking n,
+            if c = secondChoice π then (μ π).toReal * value c else 0 := by
+          exact Finset.sum_comm
+    _ = ∑ c : Candidate n, ∑ π : Ranking n,
+            ((μ π).toReal *
+              (if c = secondChoice π then (1 : ℝ) else 0)) * value c := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          by_cases h : c = secondChoice π
+          · simp [h]
+          · simp
+    _ = ∑ c : Candidate n,
+          (∑ π : Ranking n,
+            (μ π).toReal *
+              (if c = secondChoice π then (1 : ℝ) else 0)) * value c := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          rw [Finset.sum_mul]
+
 /-- Pointwise utility to the second mover when the first mover uses `σ`
 and the second mover uses `π`. -/
 def secondMoverUtility {n : ℕ} (value : Candidate n → ℝ)

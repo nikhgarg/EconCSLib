@@ -398,6 +398,13 @@ and wasted proof search.
   conditionally from a named analytic certificate. Only then instantiate that
   certificate from topology/analysis assumptions. Keep continuity/limit imports
   local and narrow.
+  For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
+  function that is total at the limiting parameter (`q = 0`, infinite accuracy,
+  degenerate noise) over reasoning directly with a PMF constructor that only
+  exists for positive parameters. Prove the limiting strict payoff gap at the
+  degenerate model, prove finite rank/atom averages continuous at the limit,
+  then choose the concrete parameter using a small-parameter lemma such as
+  `∃ θ > lower, q θ < δ`. This avoids hiding asymptotic dominance as a field.
 - **Model-instantiation proofs.** Use when a theorem says a concrete model
   satisfies abstract assumptions. Preserve the abstract theorem as a thin
   wrapper, then instantiate each assumption in separate files. Do not hide
