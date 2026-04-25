@@ -402,6 +402,98 @@ theorem strictlyWellOrderedNoise_swap23_density3_lt
         exact mul_lt_mul_of_pos_left hpair hctx
     _ = f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := by ring
 
+/--
+Mass comparison for a finite sample law whose atoms are represented by the
+three-coordinate density product, under a top/middle coordinate swap.
+-/
+theorem rum3_swap12_mass_le_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω, p ω → 0 ≤ f (r3 ω - x3))
+    (hx12 : x2 < x1)
+    (hscore : ∀ ω, p ω → r1 ω < r2 ω) :
+    ∀ ω, p ω → (ν ω).toReal ≤ (ν (swap ω)).toReal := by
+  intro ω hp
+  rw [hdens ω, hdens (swap ω), hswap1 ω, hswap2 ω, hswap3 ω]
+  exact weaklyWellOrderedNoise_swap12_density3_le
+    hf (hctx ω hp) hx12 (hscore ω hp)
+
+/--
+Strict mass comparison for a finite sample law represented by the
+three-coordinate density product, under a top/middle coordinate swap.
+-/
+theorem rum3_swap12_mass_lt_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : StrictlyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω, p ω → 0 < f (r3 ω - x3))
+    (hx12 : x2 < x1)
+    (hscore : ∀ ω, p ω → r1 ω < r2 ω) :
+    ∀ ω, p ω → (ν ω).toReal < (ν (swap ω)).toReal := by
+  intro ω hp
+  rw [hdens ω, hdens (swap ω), hswap1 ω, hswap2 ω, hswap3 ω]
+  exact strictlyWellOrderedNoise_swap12_density3_lt
+    hf (hctx ω hp) hx12 (hscore ω hp)
+
+/--
+Mass comparison for a finite sample law whose atoms are represented by the
+three-coordinate density product, under a middle/bottom coordinate swap.
+-/
+theorem rum3_swap23_mass_le_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r1 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r3 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r2 ω)
+    (hctx : ∀ ω, p ω → 0 ≤ f (r1 ω - x1))
+    (hx23 : x3 < x2)
+    (hscore : ∀ ω, p ω → r2 ω < r3 ω) :
+    ∀ ω, p ω → (ν ω).toReal ≤ (ν (swap ω)).toReal := by
+  intro ω hp
+  rw [hdens ω, hdens (swap ω), hswap1 ω, hswap2 ω, hswap3 ω]
+  exact weaklyWellOrderedNoise_swap23_density3_le
+    hf (hctx ω hp) hx23 (hscore ω hp)
+
+/--
+Strict mass comparison for a finite sample law represented by the
+three-coordinate density product, under a middle/bottom coordinate swap.
+-/
+theorem rum3_swap23_mass_lt_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : StrictlyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r1 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r3 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r2 ω)
+    (hctx : ∀ ω, p ω → 0 < f (r1 ω - x1))
+    (hx23 : x3 < x2)
+    (hscore : ∀ ω, p ω → r2 ω < r3 ω) :
+    ∀ ω, p ω → (ν ω).toReal < (ν (swap ω)).toReal := by
+  intro ω hp
+  rw [hdens ω, hdens (swap ω), hswap1 ω, hswap2 ω, hswap3 ω]
+  exact strictlyWellOrderedNoise_swap23_density3_lt
+    hf (hctx ω hp) hx23 (hscore ω hp)
+
 /-! ## Three-candidate RUM payoff algebra -/
 
 /-- In the three-candidate RUM proof, utility after candidate `x₁` is unavailable. -/

@@ -482,7 +482,9 @@ and wasted proof search.
   density comparison, then multiply by the unaffected coordinate using an
   explicit nonnegativity/positivity hypothesis. Do not bury the context factor
   in a larger algebraic expression; expose a small three-coordinate density
-  lemma that future mass-formula rewrites can use directly.
+  lemma that future mass-formula rewrites can use directly. Then add a separate
+  finite mass-formula bridge (`mass atom = density product`) that rewrites the
+  source and swapped atoms and applies the pointwise density lemma.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only

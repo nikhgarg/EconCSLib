@@ -259,6 +259,82 @@ theorem paper_theorem6_lambda_swap23_density3_lt_of_strictlyWellOrdered
       f (r1 - x1) * f (r3 - x2) * f (r2 - x3) :=
   strictlyWellOrderedNoise_swap23_density3_lt hf hctx hx23 hr23
 
+/-- Appendix C / finite mass comparison from the `x₁`/`x₂` density formula. -/
+theorem paper_theorem6_lambda_swap12_mass_le_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω, p ω → 0 ≤ f (r3 ω - x3))
+    (hx12 : x2 < x1)
+    (hscore : ∀ ω, p ω → r1 ω < r2 ω) :
+    ∀ ω, p ω → (ν ω).toReal ≤ (ν (swap ω)).toReal :=
+  rum3_swap12_mass_le_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap p hf hdens
+    hswap1 hswap2 hswap3 hctx hx12 hscore
+
+/-- Appendix C / strict finite mass comparison from the `x₁`/`x₂` density formula. -/
+theorem paper_theorem6_lambda_swap12_mass_lt_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : StrictlyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω, p ω → 0 < f (r3 ω - x3))
+    (hx12 : x2 < x1)
+    (hscore : ∀ ω, p ω → r1 ω < r2 ω) :
+    ∀ ω, p ω → (ν ω).toReal < (ν (swap ω)).toReal :=
+  rum3_swap12_mass_lt_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap p hf hdens
+    hswap1 hswap2 hswap3 hctx hx12 hscore
+
+/-- Appendix C / finite mass comparison from the `x₂`/`x₃` density formula. -/
+theorem paper_theorem6_lambda_swap23_mass_le_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r1 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r3 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r2 ω)
+    (hctx : ∀ ω, p ω → 0 ≤ f (r1 ω - x1))
+    (hx23 : x3 < x2)
+    (hscore : ∀ ω, p ω → r2 ω < r3 ω) :
+    ∀ ω, p ω → (ν ω).toReal ≤ (ν (swap ω)).toReal :=
+  rum3_swap23_mass_le_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap p hf hdens
+    hswap1 hswap2 hswap3 hctx hx23 hscore
+
+/-- Appendix C / strict finite mass comparison from the `x₂`/`x₃` density formula. -/
+theorem paper_theorem6_lambda_swap23_mass_lt_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (p : Ω → Prop)
+    (hf : StrictlyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r1 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r3 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r2 ω)
+    (hctx : ∀ ω, p ω → 0 < f (r1 ω - x1))
+    (hx23 : x3 < x2)
+    (hscore : ∀ ω, p ω → r2 ω < r3 ω) :
+    ∀ ω, p ω → (ν ω).toReal < (ν (swap ω)).toReal :=
+  rum3_swap23_mass_lt_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap p hf hdens
+    hswap1 hswap2 hswap3 hctx hx23 hscore
+
 /--
 Appendix C / Theorem 6, final three-candidate payoff algebra.
 
