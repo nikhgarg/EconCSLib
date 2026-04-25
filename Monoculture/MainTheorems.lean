@@ -761,6 +761,72 @@ theorem paper_theorem6_lambdaCertificate_of_pairwise_wrong_facts_and_support
   rum3LambdaCertificate_of_pairwise_wrong_facts_and_support
     h13_gt_23 h23_wrong_lt_correct hchoose hmass h12_wrong_lt_correct
 
+/--
+Appendix C / Theorem 6 from the narrowed finite/pointwise RUM inputs.
+
+This is the strongest current paper-facing endpoint.  It replaces the raw lambda
+half-bounds with wrong-vs-correct pairwise comparisons, and replaces the raw
+Lemma 3 transition-mass premise with a finite `swapi` equivalence plus
+mass-dominance premise.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_pairwise_wrong_and_finite_swap_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1) (swap : Ω ≃ Ω)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_wrong_lt_correct :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μWorse)
+    {π₀ : Ranking 1}
+    (hchoose :
+      bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassLambda : 0 < (μWorse π₀).toReal)
+    (h12_wrong_lt_correct :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μWorse)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hmap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (swap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (swap ω)))
+    (hmassSwap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  paper_theorem6_threeCandidate_prefersWeakerCompetition_of_certificate
+    (paper_theorem6_certificate_of_lambda_delta
+      hvalue1 hvalue2 hvalue3 hx12 hx23
+      (paper_theorem6_lambdaCertificate_of_pairwise_wrong_facts_and_support
+        h13_gt_23 h23_wrong_lt_correct hchoose hmassLambda
+        h12_wrong_lt_correct)
+      (paper_theorem6_deltaCertificate_of_finite_contraction_swap_facts
+        μBetter μWorse ν better worse swap hbetter hworse hnoTopOut
+        hbetterTop hworseNotTop hmassTop hbottomImp hmap hmassSwap))
+
 namespace MallowsComparison
 
 /--
