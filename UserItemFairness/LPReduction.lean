@@ -425,6 +425,57 @@ noncomputable def defaultTypePolicy {K n : ℕ} [NeZero n] : TypePolicy K n :=
   DecisionCore.Policy.pure
     (fun _ : UserType K => Classical.choice (inferInstance : Nonempty (Item n)))
 
+/-- The deterministic reduced policy that recommends each type a row-maximizing item. -/
+noncomputable def bestItemTypePolicy {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) : TypePolicy K n :=
+  DecisionCore.Policy.pure
+    (fun k : UserType K =>
+      Classical.choose (DecisionCore.exists_finiteMax_eq (T.utility k)))
+
+theorem bestItemTypePolicy_utility_eq_bestItemUtility
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (k : UserType K) :
+    T.utility k
+        (Classical.choose (DecisionCore.exists_finiteMax_eq (T.utility k))) =
+      bestItemUtility T k := by
+  exact (Classical.choose_spec
+    (DecisionCore.exists_finiteMax_eq (T.utility k))).symm
+
+theorem rawTypeUtility_bestItemTypePolicy_eq_bestItemUtility
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (k : UserType K) :
+    rawTypeUtility T (bestItemTypePolicy T) k = bestItemUtility T k := by
+  unfold rawTypeUtility bestItemTypePolicy
+  rw [DecisionCore.Policy.agentScore_pure]
+  exact bestItemTypePolicy_utility_eq_bestItemUtility T k
+
+theorem rawTypeUtility_pure
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (choose : UserType K → Item n)
+    (k : UserType K) :
+    rawTypeUtility T (DecisionCore.Policy.pure choose) k =
+      T.utility k (choose k) := by
+  unfold rawTypeUtility
+  rw [DecisionCore.Policy.agentScore_pure]
+
+theorem normalizedTypeUtility_bestItemTypePolicy_eq_one
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem)
+    (k : UserType K) :
+    normalizedTypeUtility T (bestItemTypePolicy T) k = 1 := by
+  unfold normalizedTypeUtility
+  rw [rawTypeUtility_bestItemTypePolicy_eq_bestItemUtility]
+  exact div_self (ne_of_gt (bestItemUtility_pos_of_rowHasPositiveItem T hRow k))
+
+theorem typeFairness_bestItemTypePolicy_eq_one
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (hRow : T.RowHasPositiveItem) :
+    typeFairness T (bestItemTypePolicy T) = 1 := by
+  unfold typeFairness
+  exact DecisionCore.finiteMin_eq_of_forall
+    (normalizedTypeUtility T (bestItemTypePolicy T)) 1
+    (normalizedTypeUtility_bestItemTypePolicy_eq_one T hRow)
+
 /--
 At baseline `γ = 0`, every reduced policy is feasible under nonnegative
 weights and utilities.
@@ -479,6 +530,38 @@ theorem attainableTypeFairnessAtLevel_nonempty_of_gamma_lt_one
 noncomputable def optimalTypeFairnessAtLevel {K n : ℕ} [NeZero K] [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (γ : ℝ) : ℝ :=
   sSup (attainableTypeFairnessAtLevel T γ)
+
+/--
+The reduced unconstrained user-fairness optimum is `1`, matching the original
+model baseline after type aggregation.
+-/
+theorem optimalTypeFairnessAtLevel_zero_eq_one
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities)
+    (hRow : T.RowHasPositiveItem) :
+    optimalTypeFairnessAtLevel T 0 = 1 := by
+  have hset_nonempty :
+      (attainableTypeFairnessAtLevel T 0).Nonempty :=
+    attainableTypeFairnessAtLevel_zero_nonempty_of_nonnegative T hWeight hUtil
+  have hbdd :
+      BddAbove (attainableTypeFairnessAtLevel T 0) :=
+    attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem T hRow 0
+  have hbest_mem :
+      typeFairness T (bestItemTypePolicy T) ∈
+        attainableTypeFairnessAtLevel T 0 := by
+    exact ⟨bestItemTypePolicy T,
+      feasibleAtLevel_zero_of_nonnegative T hWeight hUtil _, rfl⟩
+  apply le_antisymm
+  · unfold optimalTypeFairnessAtLevel
+    refine csSup_le hset_nonempty ?_
+    intro r hr
+    obtain ⟨ρ, _hfeas, hr⟩ := hr
+    rw [hr]
+    exact typeFairness_le_one_of_rowHasPositiveItem T hRow ρ
+  · rw [← typeFairness_bestItemTypePolicy_eq_one T hRow]
+    unfold optimalTypeFairnessAtLevel
+    exact le_csSup hbdd hbest_mem
 
 /-- A type-level policy solves the reduced problem at item-fairness level `γ`. -/
 def IsOptimalAtLevel {K n : ℕ} [NeZero K] [NeZero n]

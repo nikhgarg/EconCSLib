@@ -42,6 +42,15 @@ theorem finiteMin_le {α : Type*} [Fintype α] [Nonempty α]
   unfold finiteMin
   exact Finset.inf'_le (s := (Finset.univ : Finset α)) (f := f) (by simp)
 
+/-- A finite minimum is at least any pointwise lower bound. -/
+theorem le_finiteMin {α : Type*} [Fintype α] [Nonempty α]
+    (f : α → ℝ) {c : ℝ} (h : ∀ a, c ≤ f a) :
+    c ≤ finiteMin f := by
+  unfold finiteMin
+  exact Finset.le_inf' (s := (Finset.univ : Finset α)) (f := f)
+    Finset.univ_nonempty
+    (by intro a _ha; exact h a)
+
 /-- A finite minimum of a constant-valued function equals that constant. -/
 theorem finiteMin_eq_of_forall {α : Type*} [Fintype α] [Nonempty α]
     (f : α → ℝ) (c : ℝ) (h : ∀ a, f a = c) :

@@ -163,6 +163,27 @@ noncomputable def theorem4TrueReducedModelTypeOne {n : ℕ}
   have h20 : (2 : UserType 3) ≠ 0 := by decide
   simp [theorem4TrueReducedModelTypeOne, h20]
 
+theorem theorem4TrueReducedModelTypeZero_bestItemUtility_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4TrueReducedModelTypeZero beta v) 0 =
+      v theorem4FirstItem := by
+  change DecisionCore.finiteMax (fun j : Item n => v j) =
+    v theorem4FirstItem
+  exact theorem4_finiteMax_eq_first hdec
+
+theorem theorem4TrueReducedModelTypeZero_bestItemUtility_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4TrueReducedModelTypeZero beta v) 1 =
+      v theorem4FirstItem := by
+  change DecisionCore.finiteMax (fun j : Item n => v (reverseItem j)) =
+    v theorem4FirstItem
+  rw [finiteMax_reverseItem]
+  exact theorem4_finiteMax_eq_first hdec
+
 theorem theorem4TrueReducedModelTypeZero_bestItemUtility_two
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
     (hdec : StrictlyDecreasingByIndex v) :
@@ -171,6 +192,27 @@ theorem theorem4TrueReducedModelTypeZero_bestItemUtility_two
       v theorem4FirstItem := by
   change DecisionCore.finiteMax (fun j : Item n => v j) =
     v theorem4FirstItem
+  exact theorem4_finiteMax_eq_first hdec
+
+theorem theorem4TrueReducedModelTypeOne_bestItemUtility_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4TrueReducedModelTypeOne beta v) 0 =
+      v theorem4FirstItem := by
+  change DecisionCore.finiteMax (fun j : Item n => v j) =
+    v theorem4FirstItem
+  exact theorem4_finiteMax_eq_first hdec
+
+theorem theorem4TrueReducedModelTypeOne_bestItemUtility_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4TrueReducedModelTypeOne beta v) 1 =
+      v theorem4FirstItem := by
+  change DecisionCore.finiteMax (fun j : Item n => v (reverseItem j)) =
+    v theorem4FirstItem
+  rw [finiteMax_reverseItem]
   exact theorem4_finiteMax_eq_first hdec
 
 theorem theorem4TrueReducedModelTypeOne_bestItemUtility_two
@@ -183,6 +225,419 @@ theorem theorem4TrueReducedModelTypeOne_bestItemUtility_two
     v theorem4FirstItem
   rw [finiteMax_reverseItem]
   exact theorem4_finiteMax_eq_first hdec
+
+/-- The estimated cold-start row's paper value `(v_j + v_{n-j+1}) / 2`. -/
+noncomputable def theorem4AverageUtility {n : ℕ} (v : Item n → ℝ)
+    (j : Item n) : ℝ :=
+  (v j + v (reverseItem j)) / 2
+
+@[simp] theorem theorem4AverageUtility_reverse {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) (j : Item n) :
+    theorem4AverageUtility v (reverseItem j) =
+      theorem4AverageUtility v j := by
+  unfold theorem4AverageUtility
+  rw [reverseItem_reverseItem]
+  ring
+
+/-- A pair attaining the cold-start estimated row maximum. -/
+noncomputable def theorem4BestAverageItem {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : Item n :=
+  Classical.choose
+    (DecisionCore.exists_finiteMax_eq (theorem4AverageUtility v))
+
+theorem theorem4BestAverageItem_spec {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) :
+    DecisionCore.finiteMax (theorem4AverageUtility v) =
+      theorem4AverageUtility v (theorem4BestAverageItem v) := by
+  exact Classical.choose_spec
+    (DecisionCore.exists_finiteMax_eq (theorem4AverageUtility v))
+
+/--
+For a cold-start user whose true row is the first opposing type, orient an
+estimated-best mirror pair toward the larger true utility.
+-/
+noncomputable def theorem4BestAverageItemTypeZero {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : Item n :=
+  let j := theorem4BestAverageItem v
+  if v j < v (reverseItem j) then reverseItem j else j
+
+/-- The mirror-oriented estimated-best item for the second true cold-start row. -/
+noncomputable def theorem4BestAverageItemTypeOne {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : Item n :=
+  reverseItem (theorem4BestAverageItemTypeZero v)
+
+theorem theorem4AverageUtility_bestAverageItemTypeZero
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    theorem4AverageUtility v (theorem4BestAverageItemTypeZero v) =
+      DecisionCore.finiteMax (theorem4AverageUtility v) := by
+  unfold theorem4BestAverageItemTypeZero
+  by_cases h :
+      v (theorem4BestAverageItem v) <
+        v (reverseItem (theorem4BestAverageItem v))
+  · simp [h, theorem4BestAverageItem_spec]
+  · simp [h, theorem4BestAverageItem_spec]
+
+theorem theorem4AverageUtility_le_value_bestAverageItemTypeZero
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    theorem4AverageUtility v (theorem4BestAverageItemTypeZero v) ≤
+      v (theorem4BestAverageItemTypeZero v) := by
+  unfold theorem4BestAverageItemTypeZero
+  by_cases h :
+      v (theorem4BestAverageItem v) <
+        v (reverseItem (theorem4BestAverageItem v))
+  · simp [h, theorem4AverageUtility, reverseItem_reverseItem]
+    linarith
+  · have hle :
+        v (reverseItem (theorem4BestAverageItem v)) ≤
+          v (theorem4BestAverageItem v) := le_of_not_gt h
+    simp [h, theorem4AverageUtility]
+    linarith
+
+theorem theorem4AverageUtility_bestAverageItemTypeOne
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    theorem4AverageUtility v (theorem4BestAverageItemTypeOne v) =
+      DecisionCore.finiteMax (theorem4AverageUtility v) := by
+  simp [theorem4BestAverageItemTypeOne,
+    theorem4AverageUtility_bestAverageItemTypeZero]
+
+theorem theorem4AverageUtility_le_reverse_value_bestAverageItemTypeOne
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    theorem4AverageUtility v (theorem4BestAverageItemTypeOne v) ≤
+      v (reverseItem (theorem4BestAverageItemTypeOne v)) := by
+  simpa [theorem4BestAverageItemTypeOne, reverseItem_reverseItem] using
+    theorem4AverageUtility_le_value_bestAverageItemTypeZero v
+
+theorem theorem4AverageUtility_finiteMax_pos
+    {n : ℕ} [NeZero n] {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) :
+    0 < DecisionCore.finiteMax (theorem4AverageUtility v) := by
+  have hfirst :
+      0 < theorem4AverageUtility v theorem4FirstItem := by
+    unfold theorem4AverageUtility
+    nlinarith [hpos theorem4FirstItem,
+      hpos (reverseItem theorem4FirstItem)]
+  exact lt_of_lt_of_le hfirst
+    (DecisionCore.le_finiteMax (theorem4AverageUtility v) theorem4FirstItem)
+
+theorem theorem4AverageUtility_endpoint_half_lt_finiteMax
+    {n : ℕ} [NeZero n] {v : Item n → ℝ}
+    (hfirst_pos : 0 < v theorem4FirstItem)
+    (hlast_pos : 0 < v theorem4LastItem) :
+    v theorem4FirstItem / 2 <
+      DecisionCore.finiteMax (theorem4AverageUtility v) := by
+  have havg :
+      v theorem4FirstItem / 2 <
+        theorem4AverageUtility v theorem4FirstItem := by
+    have hrev_pos : 0 < v (reverseItem theorem4FirstItem) := by
+      simpa [theorem4LastItem] using hlast_pos
+    unfold theorem4AverageUtility
+    nlinarith
+  exact lt_of_lt_of_le havg
+    (DecisionCore.le_finiteMax (theorem4AverageUtility v) theorem4FirstItem)
+
+theorem theorem4EstimatedReducedModel_bestItemUtility_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4EstimatedReducedModel beta v) 0 =
+      v theorem4FirstItem := by
+  change DecisionCore.finiteMax (fun j : Item n => v j) =
+    v theorem4FirstItem
+  exact theorem4_finiteMax_eq_first hdec
+
+theorem theorem4EstimatedReducedModel_bestItemUtility_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4EstimatedReducedModel beta v) 1 =
+      v theorem4FirstItem := by
+  change DecisionCore.finiteMax (fun j : Item n => v (reverseItem j)) =
+    v theorem4FirstItem
+  rw [finiteMax_reverseItem]
+  exact theorem4_finiteMax_eq_first hdec
+
+theorem theorem4EstimatedReducedModel_bestItemUtility_two
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ} :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (theorem4EstimatedReducedModel beta v) 2 =
+      DecisionCore.finiteMax (theorem4AverageUtility v) := by
+  change DecisionCore.finiteMax
+      (fun j : Item n => (v j + v (reverseItem j)) / 2) =
+    DecisionCore.finiteMax (theorem4AverageUtility v)
+  rfl
+
+noncomputable def theorem4NoFairnessChoiceTypeZero {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : UserType 3 → Item n :=
+  fun k =>
+    if k = (0 : UserType 3) then theorem4FirstItem
+    else if k = (1 : UserType 3) then theorem4LastItem
+    else theorem4BestAverageItemTypeZero v
+
+noncomputable def theorem4NoFairnessChoiceTypeOne {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : UserType 3 → Item n :=
+  fun k =>
+    if k = (0 : UserType 3) then theorem4FirstItem
+    else if k = (1 : UserType 3) then theorem4LastItem
+    else theorem4BestAverageItemTypeOne v
+
+/--
+The no-item-fairness policy from Theorem 4, oriented for a cold-start user whose
+true row is the first opposing type.
+-/
+noncomputable def theorem4NoFairnessPolicyTypeZero {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : TypePolicy 3 n :=
+  DecisionCore.Policy.pure (theorem4NoFairnessChoiceTypeZero v)
+
+/--
+The no-item-fairness policy from Theorem 4, oriented for a cold-start user whose
+true row is the second opposing type.
+-/
+noncomputable def theorem4NoFairnessPolicyTypeOne {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : TypePolicy 3 n :=
+  DecisionCore.Policy.pure (theorem4NoFairnessChoiceTypeOne v)
+
+theorem theorem4EstimatedReducedModel_nonnegativeWeights
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta) :
+    (theorem4EstimatedReducedModel beta v).NonnegativeWeights := by
+  intro k
+  fin_cases k <;> simp [theorem4EstimatedReducedModel, hbeta, hcold]
+
+theorem theorem4EstimatedReducedModel_nonnegativeUtilities
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) :
+    (theorem4EstimatedReducedModel beta v).NonnegativeUtilities := by
+  intro k j
+  fin_cases k
+  · simp [theorem4EstimatedReducedModel, (hpos j).le]
+  · simp [theorem4EstimatedReducedModel, (hpos (reverseItem j)).le]
+  · simp [theorem4EstimatedReducedModel]
+    nlinarith [hpos j, hpos (reverseItem j)]
+
+theorem theorem4EstimatedReducedModel_rowHasPositiveItem
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) :
+    (theorem4EstimatedReducedModel beta v).RowHasPositiveItem := by
+  intro k
+  refine ⟨theorem4FirstItem, ?_⟩
+  fin_cases k
+  · simp [theorem4EstimatedReducedModel, hpos theorem4FirstItem]
+  · simp [theorem4EstimatedReducedModel, hpos (reverseItem theorem4FirstItem)]
+  · simp [theorem4EstimatedReducedModel]
+    nlinarith [hpos theorem4FirstItem,
+      hpos (reverseItem theorem4FirstItem)]
+
+theorem theorem4NoFairnessPolicyTypeZero_estimated_typeFairness_eq_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.typeFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4NoFairnessPolicyTypeZero v) = 1 := by
+  unfold TypeWeightedRecommendationModel.typeFairness
+  apply DecisionCore.finiteMin_eq_of_forall
+  intro k
+  fin_cases k
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeZero, theorem4NoFairnessChoiceTypeZero,
+      theorem4EstimatedReducedModel_bestItemUtility_zero hdec]
+    exact ne_of_gt (hpos theorem4FirstItem)
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeZero, theorem4NoFairnessChoiceTypeZero,
+      theorem4EstimatedReducedModel_bestItemUtility_one hdec, theorem4LastItem]
+    rw [reverseItem_reverseItem]
+    exact div_self (ne_of_gt (hpos theorem4FirstItem))
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeZero, theorem4NoFairnessChoiceTypeZero,
+      theorem4EstimatedReducedModel_bestItemUtility_two]
+    change theorem4AverageUtility v (theorem4BestAverageItemTypeZero v) /
+        DecisionCore.finiteMax (theorem4AverageUtility v) = 1
+    rw [theorem4AverageUtility_bestAverageItemTypeZero]
+    exact div_self
+      (ne_of_gt (theorem4AverageUtility_finiteMax_pos hpos))
+
+theorem theorem4NoFairnessPolicyTypeOne_estimated_typeFairness_eq_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.typeFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4NoFairnessPolicyTypeOne v) = 1 := by
+  unfold TypeWeightedRecommendationModel.typeFairness
+  apply DecisionCore.finiteMin_eq_of_forall
+  intro k
+  fin_cases k
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeOne, theorem4NoFairnessChoiceTypeOne,
+      theorem4EstimatedReducedModel_bestItemUtility_zero hdec]
+    exact ne_of_gt (hpos theorem4FirstItem)
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeOne, theorem4NoFairnessChoiceTypeOne,
+      theorem4EstimatedReducedModel_bestItemUtility_one hdec, theorem4LastItem]
+    rw [reverseItem_reverseItem]
+    exact div_self (ne_of_gt (hpos theorem4FirstItem))
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeOne, theorem4NoFairnessChoiceTypeOne,
+      theorem4EstimatedReducedModel_bestItemUtility_two]
+    change theorem4AverageUtility v (theorem4BestAverageItemTypeOne v) /
+        DecisionCore.finiteMax (theorem4AverageUtility v) = 1
+    rw [theorem4AverageUtility_bestAverageItemTypeOne]
+    exact div_self
+      (ne_of_gt (theorem4AverageUtility_finiteMax_pos hpos))
+
+theorem theorem4NoFairnessPolicyTypeZero_estimated_optimalAtLevel_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 0
+        (theorem4NoFairnessPolicyTypeZero v) := by
+  refine ⟨?_, ?_⟩
+  · exact TypeWeightedRecommendationModel.feasibleAtLevel_zero_of_nonnegative
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+      (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+      (theorem4NoFairnessPolicyTypeZero v)
+  · rw [theorem4NoFairnessPolicyTypeZero_estimated_typeFairness_eq_one
+      hpos hdec]
+    rw [TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel_zero_eq_one
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+      (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+      (theorem4EstimatedReducedModel_rowHasPositiveItem hpos)]
+
+theorem theorem4NoFairnessPolicyTypeOne_estimated_optimalAtLevel_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 0
+        (theorem4NoFairnessPolicyTypeOne v) := by
+  refine ⟨?_, ?_⟩
+  · exact TypeWeightedRecommendationModel.feasibleAtLevel_zero_of_nonnegative
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+      (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+      (theorem4NoFairnessPolicyTypeOne v)
+  · rw [theorem4NoFairnessPolicyTypeOne_estimated_typeFairness_eq_one
+      hpos hdec]
+    rw [TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel_zero_eq_one
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+      (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+      (theorem4EstimatedReducedModel_rowHasPositiveItem hpos)]
+
+theorem theorem4NoFairnessPolicyTypeZero_true_typeFairness_ge_half
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    (1 / 2 : ℝ) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (theorem4TrueReducedModelTypeZero beta v)
+        (theorem4NoFairnessPolicyTypeZero v) := by
+  unfold TypeWeightedRecommendationModel.typeFairness
+  apply DecisionCore.le_finiteMin
+  intro k
+  fin_cases k
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeZero, theorem4NoFairnessChoiceTypeZero,
+      theorem4TrueReducedModelTypeZero]
+    unfold TypeWeightedRecommendationModel.bestItemUtility
+    simp
+    rw [theorem4_finiteMax_eq_first hdec]
+    rw [div_self (ne_of_gt (hpos theorem4FirstItem))]
+    norm_num
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeZero, theorem4NoFairnessChoiceTypeZero,
+      theorem4TrueReducedModelTypeZero, theorem4LastItem]
+    rw [reverseItem_reverseItem]
+    unfold TypeWeightedRecommendationModel.bestItemUtility
+    simp
+    rw [finiteMax_reverseItem, theorem4_finiteMax_eq_first hdec]
+    rw [div_self (ne_of_gt (hpos theorem4FirstItem))]
+    norm_num
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeZero, theorem4NoFairnessChoiceTypeZero,
+      theorem4TrueReducedModelTypeZero]
+    have hhalf :
+        v theorem4FirstItem / 2 <
+          DecisionCore.finiteMax (theorem4AverageUtility v) :=
+      theorem4AverageUtility_endpoint_half_lt_finiteMax
+        (hpos theorem4FirstItem) (hpos theorem4LastItem)
+    have hle_avg :
+        DecisionCore.finiteMax (theorem4AverageUtility v) ≤
+          v (theorem4BestAverageItemTypeZero v) := by
+      rw [← theorem4AverageUtility_bestAverageItemTypeZero v]
+      exact theorem4AverageUtility_le_value_bestAverageItemTypeZero v
+    have hhalf_value :
+        v theorem4FirstItem / 2 <
+          v (theorem4BestAverageItemTypeZero v) :=
+      lt_of_lt_of_le hhalf hle_avg
+    unfold TypeWeightedRecommendationModel.bestItemUtility
+    simp
+    rw [theorem4_finiteMax_eq_first hdec]
+    rw [le_div_iff₀ (hpos theorem4FirstItem)]
+    nlinarith
+
+theorem theorem4NoFairnessPolicyTypeOne_true_typeFairness_ge_half
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    (1 / 2 : ℝ) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (theorem4TrueReducedModelTypeOne beta v)
+        (theorem4NoFairnessPolicyTypeOne v) := by
+  unfold TypeWeightedRecommendationModel.typeFairness
+  apply DecisionCore.le_finiteMin
+  intro k
+  fin_cases k
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeOne, theorem4NoFairnessChoiceTypeOne,
+      theorem4TrueReducedModelTypeOne]
+    unfold TypeWeightedRecommendationModel.bestItemUtility
+    simp
+    rw [theorem4_finiteMax_eq_first hdec]
+    rw [div_self (ne_of_gt (hpos theorem4FirstItem))]
+    norm_num
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeOne, theorem4NoFairnessChoiceTypeOne,
+      theorem4TrueReducedModelTypeOne, theorem4LastItem]
+    rw [reverseItem_reverseItem]
+    unfold TypeWeightedRecommendationModel.bestItemUtility
+    simp
+    rw [finiteMax_reverseItem, theorem4_finiteMax_eq_first hdec]
+    rw [div_self (ne_of_gt (hpos theorem4FirstItem))]
+    norm_num
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+    simp [TypeWeightedRecommendationModel.rawTypeUtility_pure,
+      theorem4NoFairnessPolicyTypeOne, theorem4NoFairnessChoiceTypeOne,
+      theorem4TrueReducedModelTypeOne]
+    have hhalf :
+        v theorem4FirstItem / 2 <
+          DecisionCore.finiteMax (theorem4AverageUtility v) :=
+      theorem4AverageUtility_endpoint_half_lt_finiteMax
+        (hpos theorem4FirstItem) (hpos theorem4LastItem)
+    have hle_avg :
+        DecisionCore.finiteMax (theorem4AverageUtility v) ≤
+          v (reverseItem (theorem4BestAverageItemTypeOne v)) := by
+      rw [← theorem4AverageUtility_bestAverageItemTypeOne v]
+      exact theorem4AverageUtility_le_reverse_value_bestAverageItemTypeOne v
+    have hhalf_value :
+        v theorem4FirstItem / 2 <
+          v (reverseItem (theorem4BestAverageItemTypeOne v)) :=
+      lt_of_lt_of_le hhalf hle_avg
+    unfold TypeWeightedRecommendationModel.bestItemUtility
+    simp
+    rw [finiteMax_reverseItem, theorem4_finiteMax_eq_first hdec]
+    rw [le_div_iff₀ (hpos theorem4FirstItem)]
+    nlinarith
 
 /--
 Appendix E, Theorem 4 utility bound for a cold-start user of the first true

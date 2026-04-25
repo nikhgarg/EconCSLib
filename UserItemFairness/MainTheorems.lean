@@ -7397,6 +7397,66 @@ theorem paper_lemma10_closedPolicy_typeFairness_eq_one_half_succ_center
     hpos hdec hsucc
 
 /--
+Appendix E, Theorem 4 no-item-fairness construction, first possible true
+cold-start type.
+
+The policy chooses row maxima for the known types and an estimated-best mirror
+pair oriented toward the first true cold-start row. It solves the estimated
+`γ = 0` reduced problem.
+-/
+theorem paper_theorem4_noFairnessPolicy_typeZero_estimated_optimalAtLevel_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 0
+        (theorem4NoFairnessPolicyTypeZero v) := by
+  exact theorem4NoFairnessPolicyTypeZero_estimated_optimalAtLevel_zero
+    hbeta hcold hpos hdec
+
+/--
+Appendix E, Theorem 4 no-item-fairness true-utility bound, first possible true
+cold-start type.
+-/
+theorem paper_theorem4_noFairnessPolicy_typeZero_true_typeFairness_ge_half
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    (1 / 2 : ℝ) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (theorem4TrueReducedModelTypeZero beta v)
+        (theorem4NoFairnessPolicyTypeZero v) := by
+  exact theorem4NoFairnessPolicyTypeZero_true_typeFairness_ge_half
+    hpos hdec
+
+/--
+Appendix E, Theorem 4 no-item-fairness construction, second possible true
+cold-start type.
+-/
+theorem paper_theorem4_noFairnessPolicy_typeOne_estimated_optimalAtLevel_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 0
+        (theorem4NoFairnessPolicyTypeOne v) := by
+  exact theorem4NoFairnessPolicyTypeOne_estimated_optimalAtLevel_zero
+    hbeta hcold hpos hdec
+
+/--
+Appendix E, Theorem 4 no-item-fairness true-utility bound, second possible true
+cold-start type.
+-/
+theorem paper_theorem4_noFairnessPolicy_typeOne_true_typeFairness_ge_half
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    (1 / 2 : ℝ) ≤
+      TypeWeightedRecommendationModel.typeFairness
+        (theorem4TrueReducedModelTypeOne beta v)
+        (theorem4NoFairnessPolicyTypeOne v) := by
+  exact theorem4NoFairnessPolicyTypeOne_true_typeFairness_ge_half
+    hpos hdec
+
+/--
 Appendix E, Theorem 4 cold-start bound, first true type.
 
 If the estimated optimal policy gives the cold-start row no probability on the
