@@ -1159,6 +1159,19 @@ theorem rum3Lambda1_lt_one_of_full_support
     rum3_bestRemainingAfter_swap02_remove0
     (hfull (Equiv.swap (0 : Candidate 1) (2 : Candidate 1)))
 
+theorem rum3_fullSupport_of_sample_preimages
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF (Ranking 1)) (ν : PMF Ω) (rank : Ω → Ranking 1)
+    (hpreimage : ∀ π : Ranking 1,
+      (μ π).toReal = pmfProb ν (fun ω => rank ω = π))
+    (hsupport : ∀ π : Ranking 1,
+      ∃ ω : Ω, rank ω = π ∧ 0 < (ν ω).toReal) :
+    ∀ π : Ranking 1, 0 < (μ π).toReal := by
+  intro π
+  rcases hsupport π with ⟨ω, hω_rank, hω_mass⟩
+  exact pmf_apply_toReal_pos_of_pmfProb_preimage
+    μ ν rank hpreimage hω_rank hω_mass
+
 theorem rum3LambdaCertificate_of_pairwise_facts_and_support
     {μWorse : PMF (Ranking 1)} {π₀ : Ranking 1}
     (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)

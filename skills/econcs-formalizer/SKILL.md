@@ -461,7 +461,10 @@ and wasted proof search.
   a finite probability is not one, add a full-support finite wrapper
   (`∀ atom, 0 < mass atom`) and construct one concrete outside-event atom.
   This is clearer than carrying a hand-picked support witness through every
-  paper-facing theorem.
+  paper-facing theorem. If the finite law is induced from a realization space,
+  prove full support from preimage probabilities: identify each atom with the
+  probability of its realization preimage and provide one positive-mass
+  realization in each preimage.
   For coupling proofs, first formalize the finite probability skeleton: a common
   sample space, marginal-identification equalities, and an event implication
   proving `Pr[A] ≤ Pr[B]`. Keep the continuous map, Jacobian/pushforward, and

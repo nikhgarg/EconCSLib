@@ -328,6 +328,21 @@ theorem pmfProb_pos_of_mass {α : Type*} [Fintype α] [DecidableEq α]
   rw [hterm] at hle
   exact lt_of_lt_of_le hmass hle
 
+/--
+If a target atom is identified with the probability of a finite preimage event,
+then a positive-mass source point in that preimage makes the target atom
+positive.
+-/
+theorem pmf_apply_toReal_pos_of_pmfProb_preimage
+    {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF β) (ν : PMF α) (f : α → β)
+    (hpreimage : ∀ b, (μ b).toReal = pmfProb ν (fun a => f a = b))
+    {a₀ : α} {b : β}
+    (hf : f a₀ = b) (hmass : 0 < (ν a₀).toReal) :
+    0 < (μ b).toReal := by
+  rw [hpreimage b]
+  exact pmfProb_pos_of_mass ν (fun a => f a = b) a₀ hf hmass
+
 /-- Positive mass outside an event makes its finite PMF probability strictly below one. -/
 theorem pmfProb_lt_one_of_mass_not {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)

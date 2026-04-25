@@ -879,6 +879,19 @@ theorem paper_theorem6_lambda1_lt_one_of_full_support
   rum3Lambda1_lt_one_of_full_support μ hfull
 
 /--
+Appendix C / finite full-support bridge from realization preimages.
+-/
+theorem paper_theorem6_fullSupport_of_sample_preimages
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF (Ranking 1)) (ν : PMF Ω) (rank : Ω → Ranking 1)
+    (hpreimage : ∀ π : Ranking 1,
+      (μ π).toReal = DecisionCore.pmfProb ν (fun ω => rank ω = π))
+    (hsupport : ∀ π : Ranking 1,
+      ∃ ω : Ω, rank ω = π ∧ 0 < (ν ω).toReal) :
+    ∀ π : Ranking 1, 0 < (μ π).toReal :=
+  rum3_fullSupport_of_sample_preimages μ ν rank hpreimage hsupport
+
+/--
 Appendix C / lambda certificate from pairwise facts plus support.
 
 This version replaces the raw `λ₁ < 1` premise with a positive-mass witness that
