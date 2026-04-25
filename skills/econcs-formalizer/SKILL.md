@@ -368,7 +368,9 @@ and wasted proof search.
   For probability-delta comparisons, prove the tiny indicator inequality first
   over the finite outcome type, then lift it with a generic PMF lemma comparing
   indicator differences. This avoids brittle rewrites under dependent
-  `Decidable` instances inside large PMF goals.
+  `Decidable` instances inside large PMF goals. For strict event monotonicity,
+  split the larger event into the smaller event plus a residual event, then
+  prove positive residual mass from a single finite atom witness.
 - **Denominator-cleared finite sums.** Use when probabilities or PMFs introduce
   positive normalizers. Define the unnormalized numerator, prove denominator
   positivity once, and expose both normalized and cleared positivity

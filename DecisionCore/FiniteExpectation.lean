@@ -394,6 +394,41 @@ theorem pmfProb_sub_le_pmfProb_sub_of_forall_indicator_sub_le
       (if r a then (1 : ℝ) else 0) - (if s a then (1 : ℝ) else 0))
     h
 
+/--
+If `p` is included in `q`, then `q` splits into `p` plus the finite residual
+event `q ∧ ¬p`.
+-/
+theorem pmfProb_eq_add_diff_of_imp {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (himp : ∀ a, p a → q a) :
+    pmfProb μ q = pmfProb μ p + pmfProb μ (fun a => q a ∧ ¬p a) := by
+  classical
+  unfold pmfProb
+  rw [← pmfExp_add]
+  refine pmfExp_congr μ ?_
+  intro a
+  by_cases hp : p a
+  · have hq : q a := himp a hp
+    simp [hp, hq]
+  · by_cases hq : q a <;> simp [hp, hq]
+
+/--
+Strict finite probability monotonicity from event inclusion plus positive mass
+in the residual event.
+-/
+theorem pmfProb_lt_of_imp_of_mass {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (himp : ∀ a, p a → q a) (a₀ : α)
+    (hq : q a₀) (hp : ¬p a₀) (hmass : 0 < (μ a₀).toReal) :
+    pmfProb μ p < pmfProb μ q := by
+  classical
+  have hres :
+      0 < pmfProb μ (fun a => q a ∧ ¬p a) :=
+    pmfProb_pos_of_mass μ (fun a => q a ∧ ¬p a) a₀ ⟨hq, hp⟩ hmass
+  have hsplit := pmfProb_eq_add_diff_of_imp μ p q himp
+  rw [hsplit]
+  linarith
+
 /-- Finite sums commute with finite PMF expectation. -/
 theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (s : Finset ι) (f : ι → α → ℝ) :

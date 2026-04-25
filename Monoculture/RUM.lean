@@ -412,6 +412,89 @@ theorem rum3_lemma3_middle_of_transition_mass
   simp only [pmfProb_false, sub_zero] at hmid htop
   linarith
 
+/--
+Finite coupling form of the top-candidate monotonicity step used in Appendix C /
+Theorem 6.
+
+If every coupled realization that is top-first for the worse/human ranking is
+also top-first for the better/algorithmic ranking, and some positive-mass
+realization is corrected into top-first, then the top-first probability is
+strictly larger for the better ranking.
+-/
+theorem rum3_monotonicity_top_of_coupling
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmass : 0 < (ν ω₀).toReal) :
+    firstChoiceProb μWorse (0 : Candidate 1) <
+      firstChoiceProb μBetter (0 : Candidate 1) := by
+  rw [hworse (0 : Candidate 1), hbetter (0 : Candidate 1)]
+  exact pmfProb_lt_of_imp_of_mass ν
+    (fun ω => (0 : Candidate 1) = firstChoice (worse ω))
+    (fun ω => (0 : Candidate 1) = firstChoice (better ω))
+    hnoTopOut ω₀ hbetterTop hworseNotTop hmass
+
+/--
+Finite contraction/coupling certificate for the delta side of Appendix C /
+Theorem 6.
+
+This packages the finite monotonicity step, Lemma 2 bottom inequality, and
+Lemma 3 middle-vs-top inequality into the `RUM3DeltaCertificate` consumed by
+the final payoff algebra.  The continuous RUM proof still needs to construct the
+coupling and prove the listed event/transition facts from contraction and
+well-ordered noise.
+-/
+theorem rum3DeltaCertificate_of_finite_contraction_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmass : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hbottomMiddle_le_bottomTop :
+      pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (1 : Candidate 1) = firstChoice (better ω)) ≤
+        pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (0 : Candidate 1) = firstChoice (better ω))) :
+    RUM3DeltaCertificate μBetter μWorse :=
+  rum3DeltaCertificate_of_paper_lemmas
+    (rum3_monotonicity_top_of_coupling
+      μBetter μWorse ν better worse hbetter hworse hnoTopOut
+      hbetterTop hworseNotTop hmass)
+    (rum3_lemma3_middle_of_transition_mass
+      μBetter μWorse ν better worse hbetter hworse hnoTopOut
+      hbottomMiddle_le_bottomTop)
+    (rum3_lemma2_bottom_of_coupling
+      μBetter μWorse ν better worse
+      (hbetter (2 : Candidate 1)) (hworse (2 : Candidate 1)) hbottomImp)
+
 theorem rum3LambdaCertificate_of_pairwise_facts
     {μWorse : PMF (Ranking 1)}
     (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)

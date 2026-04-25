@@ -354,6 +354,77 @@ theorem paper_lemma3_middle_of_transition_mass
     hbottomMiddle_le_bottomTop
 
 /--
+Appendix C / top-candidate monotonicity, finite coupling form.
+
+The paper invokes monotonicity to get
+`Pr[π₁ = x₁] < Pr[τ₁ = x₁]`.  Lean states the finite coupling condition that
+proves this strict inequality: top-first human realizations remain top-first
+after contraction, and at least one positive-mass realization is corrected into
+top-first.
+-/
+theorem paper_monotonicity_top_of_coupling
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmass : 0 < (ν ω₀).toReal) :
+    firstChoiceProb μWorse (0 : Candidate 1) <
+      firstChoiceProb μBetter (0 : Candidate 1) :=
+  rum3_monotonicity_top_of_coupling
+    μBetter μWorse ν better worse hbetter hworse hnoTopOut
+    hbetterTop hworseNotTop hmass
+
+/--
+Appendix C / Theorem 6, finite delta certificate from contraction facts.
+
+This is the strongest finite endpoint for the first-choice-probability side of
+Theorem 6.  It combines top monotonicity, Lemma 2, and Lemma 3 into the
+`RUM3DeltaCertificate` required by the final payoff algebra.
+-/
+theorem paper_theorem6_deltaCertificate_of_finite_contraction_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmass : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hbottomMiddle_le_bottomTop :
+      DecisionCore.pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (1 : Candidate 1) = firstChoice (better ω)) ≤
+        DecisionCore.pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (0 : Candidate 1) = firstChoice (better ω))) :
+    RUM3DeltaCertificate μBetter μWorse :=
+  rum3DeltaCertificate_of_finite_contraction_facts
+    μBetter μWorse ν better worse hbetter hworse hnoTopOut
+    hbetterTop hworseNotTop hmass hbottomImp hbottomMiddle_le_bottomTop
+
+/--
 Appendix C / pairwise human comparisons to Theorem 6 lambda certificate.
 -/
 theorem paper_theorem6_lambdaCertificate_of_pairwise_facts
