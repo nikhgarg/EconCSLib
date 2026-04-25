@@ -61,31 +61,31 @@ def paper_truthful_for_men {M W : Type*} [DecidableEq M] [DecidableEq W]
 /-! ## 2) Main Theorems -/
 
 /-- Theorem 1: The Deferred Acceptance algorithm produces a stable matching. -/
-theorem paper_da_is_stable {M W : Type*} [Finite M] [Finite W] [DecidableEq M] [DecidableEq W]
+theorem paper_da_is_stable {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
     (val_m : M → W → ℝ) (val_w : W → M → ℝ)
     (hcert : DaProducesStableMatchingCertificate val_m val_w) :
     paper_is_stable val_m val_w (deferredAcceptance val_m val_w) := by
   rw [paper_is_stable_eq]
-  exact hcert
+  exact da_produces_stable_matching_of_certificate val_m val_w hcert
 
 /-- Theorem 2: The Men-Proposing Deferred Acceptance algorithm produces a men-optimal stable matching. -/
-theorem paper_da_is_men_optimal {M W : Type*} [Finite M] [Finite W] [DecidableEq M] [DecidableEq W]
+theorem paper_da_is_men_optimal {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
     (val_m : M → W → ℝ) (val_w : W → M → ℝ)
     (hcert1 : DaProducesStableMatchingCertificate val_m val_w)
     (hcert2 : DaIsMenOptimalCertificate val_m val_w) :
     paper_is_men_optimal val_m val_w (deferredAcceptance val_m val_w) := by
   unfold paper_is_men_optimal
   rw [paper_is_stable_eq]
-  refine ⟨hcert1, ?_⟩
+  refine ⟨da_produces_stable_matching_of_certificate val_m val_w hcert1, ?_⟩
   intro mu' hstable m
   rw [paper_is_stable_eq] at hstable
   exact hcert2 mu' hstable m
 
 /-- Theorem 3 (Roth 1982): Truth-telling is a dominant strategy for men under men-proposing DA. -/
-def DaTruthfulForMenCertificate {M W : Type*} [Finite M] [Finite W] [DecidableEq M] [DecidableEq W] : Prop :=
+def DaTruthfulForMenCertificate {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] : Prop :=
   paper_truthful_for_men (deferredAcceptance (M := M) (W := W))
 
-theorem paper_da_truthful_for_men {M W : Type*} [Finite M] [Finite W] [DecidableEq M] [DecidableEq W]
+theorem paper_da_truthful_for_men {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
     (hcert : @DaTruthfulForMenCertificate M W _ _ _ _) :
     paper_truthful_for_men (deferredAcceptance (M := M) (W := W)) := by
   exact hcert
