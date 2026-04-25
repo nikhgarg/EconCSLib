@@ -365,6 +365,10 @@ and wasted proof search.
   then finite PMF/pair-PMF sum identities, then the paper-facing equivalence.
   Group by the event/fiber that appears in the paper, not by whatever makes the
   immediate `simp` goal shortest.
+  For probability-delta comparisons, prove the tiny indicator inequality first
+  over the finite outcome type, then lift it with a generic PMF lemma comparing
+  indicator differences. This avoids brittle rewrites under dependent
+  `Decidable` instances inside large PMF goals.
 - **Denominator-cleared finite sums.** Use when probabilities or PMFs introduce
   positive normalizers. Define the unnormalized numerator, prove denominator
   positivity once, and expose both normalized and cleared positivity

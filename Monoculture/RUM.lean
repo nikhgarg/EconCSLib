@@ -320,6 +320,98 @@ theorem rum3_lemma2_bottom_of_coupling
     (fun ω => (2 : Candidate 1) = firstChoice (worse ω))
     himp
 
+theorem rum3_middle_delta_indicator_le_bottom_middle
+    (b w : Candidate 1)
+    (hnoTopOut : (0 : Candidate 1) = w → (0 : Candidate 1) = b) :
+    (if (1 : Candidate 1) = b then (1 : ℝ) else 0) -
+        (if (1 : Candidate 1) = w then (1 : ℝ) else 0) ≤
+      (if (2 : Candidate 1) = w ∧ (1 : Candidate 1) = b then (1 : ℝ) else 0) -
+        (if False then (1 : ℝ) else 0) := by
+  fin_cases b <;> fin_cases w <;> simp at *
+
+theorem rum3_bottom_top_indicator_le_top_delta
+    (b w : Candidate 1)
+    (hnoTopOut : (0 : Candidate 1) = w → (0 : Candidate 1) = b) :
+    (if (2 : Candidate 1) = w ∧ (0 : Candidate 1) = b then (1 : ℝ) else 0) -
+        (if False then (1 : ℝ) else 0) ≤
+      (if (0 : Candidate 1) = b then (1 : ℝ) else 0) -
+        (if (0 : Candidate 1) = w then (1 : ℝ) else 0) := by
+  fin_cases b <;> fin_cases w <;> simp at *
+
+/--
+Abstract finite transition-mass form of Appendix C / Lemma 3 for the middle
+candidate in the three-candidate case.
+
+The continuous paper proof shows that the human-realization mass moving from
+`x₃` to `x₂` under contraction is at most the mass moving from `x₃` to `x₁`,
+using the `swapi` bijection and well-ordered noise.  This lemma isolates the
+finite probability algebra around that step: if top-first realizations cannot
+leave the top under contraction, and `x₃ → x₂` mass is no larger than
+`x₃ → x₁` mass, then the paper's Lemma 3 delta inequality for `i = 2` follows.
+-/
+theorem rum3_lemma3_middle_of_transition_mass
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    (hbottomMiddle_le_bottomTop :
+      pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (1 : Candidate 1) = firstChoice (better ω)) ≤
+        pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (0 : Candidate 1) = firstChoice (better ω))) :
+    firstChoiceProb μBetter (1 : Candidate 1) -
+        firstChoiceProb μWorse (1 : Candidate 1) ≤
+      firstChoiceProb μBetter (0 : Candidate 1) -
+        firstChoiceProb μWorse (0 : Candidate 1) := by
+  rw [hbetter (1 : Candidate 1), hworse (1 : Candidate 1),
+    hbetter (0 : Candidate 1), hworse (0 : Candidate 1)]
+  have hmid :
+      pmfProb ν (fun ω => (1 : Candidate 1) = firstChoice (better ω)) -
+          pmfProb ν (fun ω => (1 : Candidate 1) = firstChoice (worse ω)) ≤
+        pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (1 : Candidate 1) = firstChoice (better ω)) -
+          pmfProb ν (fun _ => False) := by
+    refine pmfProb_sub_le_pmfProb_sub_of_forall_indicator_sub_le ν
+      (fun ω => (1 : Candidate 1) = firstChoice (better ω))
+      (fun ω => (1 : Candidate 1) = firstChoice (worse ω))
+      (fun ω =>
+        (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω))
+      (fun _ => False) ?_
+    intro ω
+    exact rum3_middle_delta_indicator_le_bottom_middle
+      (firstChoice (better ω)) (firstChoice (worse ω)) (hnoTopOut ω)
+  have htop :
+      pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (0 : Candidate 1) = firstChoice (better ω)) -
+          pmfProb ν (fun _ => False) ≤
+        pmfProb ν (fun ω => (0 : Candidate 1) = firstChoice (better ω)) -
+          pmfProb ν (fun ω => (0 : Candidate 1) = firstChoice (worse ω)) := by
+    refine pmfProb_sub_le_pmfProb_sub_of_forall_indicator_sub_le ν
+      (fun ω =>
+        (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (0 : Candidate 1) = firstChoice (better ω))
+      (fun _ => False)
+      (fun ω => (0 : Candidate 1) = firstChoice (better ω))
+      (fun ω => (0 : Candidate 1) = firstChoice (worse ω)) ?_
+    intro ω
+    exact rum3_bottom_top_indicator_le_top_delta
+      (firstChoice (better ω)) (firstChoice (worse ω)) (hnoTopOut ω)
+  simp only [pmfProb_false, sub_zero] at hmid htop
+  linarith
+
 theorem rum3LambdaCertificate_of_pairwise_facts
     {μWorse : PMF (Ranking 1)}
     (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)

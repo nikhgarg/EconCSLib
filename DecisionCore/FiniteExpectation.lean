@@ -366,6 +366,34 @@ theorem pmfProb_le_of_imp {α : Type*} [Fintype α] [DecidableEq α]
     simp [hp, hq]
   · by_cases hq : q a <;> simp [hp, hq]
 
+@[simp] theorem pmfProb_false {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) :
+    pmfProb μ (fun _ => False) = 0 := by
+  simp [pmfProb]
+
+/--
+Compare finite probability deltas from a pointwise comparison of indicator
+differences.
+-/
+theorem pmfProb_sub_le_pmfProb_sub_of_forall_indicator_sub_le
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α)
+    (p q r s : α → Prop)
+    [DecidablePred p] [DecidablePred q] [DecidablePred r] [DecidablePred s]
+    (h : ∀ a,
+      (if p a then (1 : ℝ) else 0) - (if q a then (1 : ℝ) else 0) ≤
+        (if r a then (1 : ℝ) else 0) - (if s a then (1 : ℝ) else 0)) :
+    pmfProb μ p - pmfProb μ q ≤ pmfProb μ r - pmfProb μ s := by
+  classical
+  unfold pmfProb
+  rw [← pmfExp_sub, ← pmfExp_sub]
+  exact pmfExp_le_pmfExp_of_forall_le μ
+    (fun a =>
+      (if p a then (1 : ℝ) else 0) - (if q a then (1 : ℝ) else 0))
+    (fun a =>
+      (if r a then (1 : ℝ) else 0) - (if s a then (1 : ℝ) else 0))
+    h
+
 /-- Finite sums commute with finite PMF expectation. -/
 theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (s : Finset ι) (f : ι → α → ℝ) :

@@ -313,6 +313,47 @@ theorem paper_lemma2_bottom_of_coupling
     μBetter μWorse ν better worse hbetter hworse himp
 
 /--
+Appendix C / Lemma 3, finite transition-mass form for `i = 2`.
+
+Paper statement specialized to three candidates: for `τ ∼ F_{θA}` and
+`π ∼ F_{θH}`, `Pr[τ₁ = x₁] - Pr[π₁ = x₁] ≥
+Pr[τ₁ = x₂] - Pr[π₁ = x₂]`.
+
+Lean exposes the finite probability algebra used after the continuous proof
+constructs the contraction map and the `swapi` comparison.  The remaining
+continuous inputs are: top-first realizations do not leave the top under
+contraction, and the `x₃ → x₂` transition mass is at most the `x₃ → x₁`
+transition mass.
+-/
+theorem paper_lemma3_middle_of_transition_mass
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    (hbottomMiddle_le_bottomTop :
+      DecisionCore.pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (1 : Candidate 1) = firstChoice (better ω)) ≤
+        DecisionCore.pmfProb ν (fun ω =>
+          (2 : Candidate 1) = firstChoice (worse ω) ∧
+            (0 : Candidate 1) = firstChoice (better ω))) :
+    firstChoiceProb μBetter (1 : Candidate 1) -
+        firstChoiceProb μWorse (1 : Candidate 1) ≤
+      firstChoiceProb μBetter (0 : Candidate 1) -
+        firstChoiceProb μWorse (0 : Candidate 1) :=
+  rum3_lemma3_middle_of_transition_mass
+    μBetter μWorse ν better worse hbetter hworse hnoTopOut
+    hbottomMiddle_le_bottomTop
+
+/--
 Appendix C / pairwise human comparisons to Theorem 6 lambda certificate.
 -/
 theorem paper_theorem6_lambdaCertificate_of_pairwise_facts
