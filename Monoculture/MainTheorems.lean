@@ -677,6 +677,15 @@ theorem paper_theorem6_lambda1_lt_one_of_mass_choose_third_after_first_removed
     μ π₀ hchoose hmass
 
 /--
+Appendix C / strict `λ₁ < 1` from full support of the finite human ranking law.
+-/
+theorem paper_theorem6_lambda1_lt_one_of_full_support
+    (μ : PMF (Ranking 1))
+    (hfull : ∀ π : Ranking 1, 0 < (μ π).toReal) :
+    rum3Lambda1 μ < 1 :=
+  rum3Lambda1_lt_one_of_full_support μ hfull
+
+/--
 Appendix C / lambda certificate from pairwise facts plus support.
 
 This version replaces the raw `λ₁ < 1` premise with a positive-mass witness that
@@ -762,6 +771,219 @@ theorem paper_theorem6_lambdaCertificate_of_pairwise_wrong_facts_and_support
     h13_gt_23 h23_wrong_lt_correct hchoose hmass h12_wrong_lt_correct
 
 /--
+Appendix C / lambda certificate from pairwise wrong-vs-correct comparisons and
+full support of the finite human ranking law.
+-/
+theorem paper_theorem6_lambdaCertificate_of_pairwise_wrong_facts_and_full_support
+    {μWorse : PMF (Ranking 1)}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_wrong_lt_correct :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μWorse)
+    (hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal)
+    (h12_wrong_lt_correct :
+      DecisionCore.pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_wrong_facts_and_full_support
+    h13_gt_23 h23_wrong_lt_correct hfull h12_wrong_lt_correct
+
+/--
+Appendix C / pairwise swap certificate for the `x₂` versus `x₃` comparison.
+
+This is the finite change-of-variables form of the paper's paired-density
+argument: a mass-improving swap from the wrong event to the correct event proves
+the strict lambda comparison.
+-/
+theorem paper_theorem6_lambda1_wrong_lt_correct_of_pairwise_equiv
+    (μ : PMF (Ranking 1)) (swap : Ranking 1 ≃ Ranking 1)
+    (hmap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μ π).toReal ≤ (μ (swap π)).toReal)
+    {π₀ : Ranking 1}
+    (hwrong : bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict : (μ π₀).toReal < (μ (swap π₀)).toReal) :
+    DecisionCore.pmfProb μ
+        (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+      rum3Lambda1 μ :=
+  rum3Lambda1_wrong_lt_correct_of_equiv
+    μ swap hmap hmass hwrong hstrict
+
+/--
+Appendix C / pairwise swap certificate for the `x₁` versus `x₂` comparison.
+-/
+theorem paper_theorem6_lambda3_wrong_lt_correct_of_pairwise_equiv
+    (μ : PMF (Ranking 1)) (swap : Ranking 1 ≃ Ranking 1)
+    (hmap : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μ π).toReal ≤ (μ (swap π)).toReal)
+    {π₀ : Ranking 1}
+    (hwrong : bestRemainingAfter π₀ (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict : (μ π₀).toReal < (μ (swap π₀)).toReal) :
+    DecisionCore.pmfProb μ
+        (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+      rum3Lambda3 μ :=
+  rum3Lambda3_wrong_lt_correct_of_equiv
+    μ swap hmap hmass hwrong hstrict
+
+/--
+Appendix C / pairwise swap certificate for the `λ₁ < λ₂` gap.
+-/
+theorem paper_theorem6_lambda1_lt_lambda2_of_pairwise_equiv
+    (μ : PMF (Ranking 1)) (swap : Ranking 1 ≃ Ranking 1)
+    (hmap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap π) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μ π).toReal ≤ (μ (swap π)).toReal)
+    {π₀ : Ranking 1}
+    (hsource : bestRemainingAfter π₀ (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict : (μ π₀).toReal < (μ (swap π₀)).toReal) :
+    rum3Lambda1 μ < rum3Lambda2 μ :=
+  rum3Lambda1_lt_lambda2_of_equiv
+    μ swap hmap hmass hsource hstrict
+
+/--
+Appendix C / lambda certificate from finite pairwise swap facts.
+
+This is the paper-facing package for the two strict pairwise comparisons plus
+the support witness used to prove `λ₁ < 1`.
+-/
+theorem paper_theorem6_lambdaCertificate_of_pairwise_swap_facts_and_support
+    {μWorse : PMF (Ranking 1)}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (swap23 : Ranking 1 ≃ Ranking 1)
+    (hmap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hwrong23 : bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (μWorse π23).toReal < (μWorse (swap23 π23)).toReal)
+    {πsupport : Ranking 1}
+    (hchooseSupport :
+      bestRemainingAfter πsupport (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassSupport : 0 < (μWorse πsupport).toReal)
+    (swap12 : Ranking 1 ≃ Ranking 1)
+    (hmap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hwrong12 : bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (μWorse π12).toReal < (μWorse (swap12 π12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_swap_facts_and_support
+    h13_gt_23 swap23 hmap23 hmass23 hwrong23 hstrict23
+    hchooseSupport hmassSupport swap12 hmap12 hmass12 hwrong12 hstrict12
+
+/--
+Appendix C / lambda certificate from finite pairwise swap facts, including the
+`λ₁ < λ₂` gap as a swap certificate.
+-/
+theorem paper_theorem6_lambdaCertificate_of_all_pairwise_swap_facts_and_support
+    {μWorse : PMF (Ranking 1)}
+    (swap13gap : Ranking 1 ≃ Ranking 1)
+    (hmap13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap13gap π) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap13gap π)).toReal)
+    {π13gap : Ranking 1}
+    (hsource13gap :
+      bestRemainingAfter π13gap (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict13gap :
+      (μWorse π13gap).toReal < (μWorse (swap13gap π13gap)).toReal)
+    (swap23 : Ranking 1 ≃ Ranking 1)
+    (hmap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hwrong23 : bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (μWorse π23).toReal < (μWorse (swap23 π23)).toReal)
+    {πsupport : Ranking 1}
+    (hchooseSupport :
+      bestRemainingAfter πsupport (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassSupport : 0 < (μWorse πsupport).toReal)
+    (swap12 : Ranking 1 ≃ Ranking 1)
+    (hmap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hwrong12 : bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (μWorse π12).toReal < (μWorse (swap12 π12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_all_pairwise_swap_facts_and_support
+    swap13gap hmap13gap hmass13gap hsource13gap hstrict13gap
+    swap23 hmap23 hmass23 hwrong23 hstrict23
+    hchooseSupport hmassSupport swap12 hmap12 hmass12 hwrong12 hstrict12
+
+/--
+Appendix C / lambda certificate from finite pairwise swap facts plus full
+support of the finite human ranking law.
+-/
+theorem paper_theorem6_lambdaCertificate_of_all_pairwise_swap_facts_and_full_support
+    {μWorse : PMF (Ranking 1)}
+    (hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal)
+    (swap13gap : Ranking 1 ≃ Ranking 1)
+    (hmap13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap13gap π) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap13gap π)).toReal)
+    {π13gap : Ranking 1}
+    (hsource13gap :
+      bestRemainingAfter π13gap (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict13gap :
+      (μWorse π13gap).toReal < (μWorse (swap13gap π13gap)).toReal)
+    (swap23 : Ranking 1 ≃ Ranking 1)
+    (hmap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hwrong23 : bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (μWorse π23).toReal < (μWorse (swap23 π23)).toReal)
+    (swap12 : Ranking 1 ≃ Ranking 1)
+    (hmap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hwrong12 : bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (μWorse π12).toReal < (μWorse (swap12 π12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_all_pairwise_swap_facts_and_full_support
+    hfull swap13gap hmap13gap hmass13gap hsource13gap hstrict13gap
+    swap23 hmap23 hmass23 hwrong23 hstrict23
+    swap12 hmap12 hmass12 hwrong12 hstrict12
+
+/--
 Appendix C / Theorem 6 from the narrowed finite/pointwise RUM inputs.
 
 This is the strongest current paper-facing endpoint.  It replaces the raw lambda
@@ -826,6 +1048,281 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_pairwise_wrong
       (paper_theorem6_deltaCertificate_of_finite_contraction_swap_facts
         μBetter μWorse ν better worse swap hbetter hworse hnoTopOut
         hbetterTop hworseNotTop hmassTop hbottomImp hmap hmassSwap))
+
+/--
+Appendix C / Theorem 6 from finite pairwise and delta swap certificates.
+
+This endpoint exposes the paired finite change-of-variables structure on both
+remaining sides of the RUM proof: pairwise swaps prove the lambda half-bounds,
+and the transition-region `swapi` proves Lemma 3's delta comparison.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_finite_pairwise_and_delta_swap_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1) (deltaSwap : Ω ≃ Ω)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (lambdaSwap23 : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaMass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hlambdaWrong23 :
+      bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hlambdaStrict23 :
+      (μWorse π23).toReal < (μWorse (lambdaSwap23 π23)).toReal)
+    {πsupport : Ranking 1}
+    (hchooseSupport :
+      bestRemainingAfter πsupport (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassLambda : 0 < (μWorse πsupport).toReal)
+    (lambdaSwap12 : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hlambdaMass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hlambdaWrong12 :
+      bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict12 :
+      (μWorse π12).toReal < (μWorse (lambdaSwap12 π12)).toReal)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hdeltaMap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (deltaSwap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (deltaSwap ω)))
+    (hdeltaMass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (deltaSwap ω)).toReal) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  paper_theorem6_threeCandidate_prefersWeakerCompetition_of_pairwise_wrong_and_finite_swap_facts
+    ν better worse deltaSwap hvalue1 hvalue2 hvalue3 hx12 hx23
+    h13_gt_23
+    (paper_theorem6_lambda1_wrong_lt_correct_of_pairwise_equiv
+      μWorse lambdaSwap23 hlambdaMap23 hlambdaMass23
+      hlambdaWrong23 hlambdaStrict23)
+    hchooseSupport hmassLambda
+    (paper_theorem6_lambda3_wrong_lt_correct_of_pairwise_equiv
+      μWorse lambdaSwap12 hlambdaMap12 hlambdaMass12
+      hlambdaWrong12 hlambdaStrict12)
+    hbetter hworse hnoTopOut hbetterTop hworseNotTop hmassTop
+    hbottomImp hdeltaMap hdeltaMass
+
+/--
+Appendix C / Theorem 6 from finite swap certificates only for the currently
+discrete parts of the RUM proof.
+
+All three lambda facts are supplied by finite pairwise change-of-variables
+certificates, and Lemma 3's delta comparison is supplied by the finite `swapi`
+certificate.  The remaining non-discrete work is to instantiate these finite
+certificates from the continuous RUM density model.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_all_finite_swap_facts
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1) (deltaSwap : Ω ≃ Ω)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (lambdaSwap13gap : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap13gap π) (1 : Candidate 1) =
+          (0 : Candidate 1))
+    (hlambdaMass13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap13gap π)).toReal)
+    {π13gap : Ranking 1}
+    (hlambdaSource13gap :
+      bestRemainingAfter π13gap (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict13gap :
+      (μWorse π13gap).toReal < (μWorse (lambdaSwap13gap π13gap)).toReal)
+    (lambdaSwap23 : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaMass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hlambdaWrong23 :
+      bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hlambdaStrict23 :
+      (μWorse π23).toReal < (μWorse (lambdaSwap23 π23)).toReal)
+    {πsupport : Ranking 1}
+    (hchooseSupport :
+      bestRemainingAfter πsupport (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassLambda : 0 < (μWorse πsupport).toReal)
+    (lambdaSwap12 : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hlambdaMass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hlambdaWrong12 :
+      bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict12 :
+      (μWorse π12).toReal < (μWorse (lambdaSwap12 π12)).toReal)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hdeltaMap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (deltaSwap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (deltaSwap ω)))
+    (hdeltaMass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (deltaSwap ω)).toReal) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  paper_theorem6_threeCandidate_prefersWeakerCompetition_of_finite_pairwise_and_delta_swap_facts
+    ν better worse deltaSwap hvalue1 hvalue2 hvalue3 hx12 hx23
+    (paper_theorem6_lambda1_lt_lambda2_of_pairwise_equiv
+      μWorse lambdaSwap13gap hlambdaMap13gap hlambdaMass13gap
+      hlambdaSource13gap hlambdaStrict13gap)
+    lambdaSwap23 hlambdaMap23 hlambdaMass23 hlambdaWrong23 hlambdaStrict23
+    hchooseSupport hmassLambda
+    lambdaSwap12 hlambdaMap12 hlambdaMass12 hlambdaWrong12 hlambdaStrict12
+    hbetter hworse hnoTopOut hbetterTop hworseNotTop hmassTop
+    hbottomImp hdeltaMap hdeltaMass
+
+/--
+Appendix C / Theorem 6 from finite swap certificates and full finite support.
+
+Compared with `paper_theorem6_threeCandidate_prefersWeakerCompetition_of_all_finite_swap_facts`,
+this endpoint replaces the explicit `λ₁ < 1` support witness with full support
+of the finite human ranking law, matching the paper's "support everywhere"
+premise at the ranking-law level.
+-/
+theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_all_finite_swap_facts_and_full_support
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
+    {x1 x2 x3 : ℝ}
+    (ν : PMF Ω) (better worse : Ω → Ranking 1) (deltaSwap : Ω ≃ Ω)
+    (hvalue1 : value (0 : Candidate 1) = x1)
+    (hvalue2 : value (1 : Candidate 1) = x2)
+    (hvalue3 : value (2 : Candidate 1) = x3)
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal)
+    (lambdaSwap13gap : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap13gap π) (1 : Candidate 1) =
+          (0 : Candidate 1))
+    (hlambdaMass13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap13gap π)).toReal)
+    {π13gap : Ranking 1}
+    (hlambdaSource13gap :
+      bestRemainingAfter π13gap (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict13gap :
+      (μWorse π13gap).toReal < (μWorse (lambdaSwap13gap π13gap)).toReal)
+    (lambdaSwap23 : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaMass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hlambdaWrong23 :
+      bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hlambdaStrict23 :
+      (μWorse π23).toReal < (μWorse (lambdaSwap23 π23)).toReal)
+    (lambdaSwap12 : Ranking 1 ≃ Ranking 1)
+    (hlambdaMap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (lambdaSwap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hlambdaMass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (lambdaSwap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hlambdaWrong12 :
+      bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hlambdaStrict12 :
+      (μWorse π12).toReal < (μWorse (lambdaSwap12 π12)).toReal)
+    (hbetter : ∀ c : Candidate 1,
+      firstChoiceProb μBetter c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (better ω)))
+    (hworse : ∀ c : Candidate 1,
+      firstChoiceProb μWorse c =
+        DecisionCore.pmfProb ν (fun ω => c = firstChoice (worse ω)))
+    (hnoTopOut : ∀ ω,
+      (0 : Candidate 1) = firstChoice (worse ω) →
+        (0 : Candidate 1) = firstChoice (better ω))
+    {ω₀ : Ω}
+    (hbetterTop : (0 : Candidate 1) = firstChoice (better ω₀))
+    (hworseNotTop : ¬ (0 : Candidate 1) = firstChoice (worse ω₀))
+    (hmassTop : 0 < (ν ω₀).toReal)
+    (hbottomImp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω))
+    (hdeltaMap : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse (deltaSwap ω)) ∧
+          (0 : Candidate 1) = firstChoice (better (deltaSwap ω)))
+    (hdeltaMass : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (deltaSwap ω)).toReal) :
+    Model.PrefersWeakerCompetition μBetter μWorse value :=
+  paper_theorem6_threeCandidate_prefersWeakerCompetition_of_certificate
+    (paper_theorem6_certificate_of_lambda_delta
+      hvalue1 hvalue2 hvalue3 hx12 hx23
+      (paper_theorem6_lambdaCertificate_of_all_pairwise_swap_facts_and_full_support
+        hfull lambdaSwap13gap hlambdaMap13gap hlambdaMass13gap
+        hlambdaSource13gap hlambdaStrict13gap
+        lambdaSwap23 hlambdaMap23 hlambdaMass23
+        hlambdaWrong23 hlambdaStrict23
+        lambdaSwap12 hlambdaMap12 hlambdaMass12
+        hlambdaWrong12 hlambdaStrict12)
+      (paper_theorem6_deltaCertificate_of_finite_contraction_swap_facts
+        μBetter μWorse ν better worse deltaSwap hbetter hworse hnoTopOut
+        hbetterTop hworseNotTop hmassTop hbottomImp hdeltaMap hdeltaMass))
 
 namespace MallowsComparison
 

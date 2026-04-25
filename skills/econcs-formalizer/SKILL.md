@@ -447,6 +447,16 @@ and wasted proof search.
   probability bound: if an equivalence maps event `A` into event `B` and target
   atoms have at least source mass, then `Pr[A] ≤ Pr[B]`. Reuse that for
   paper-specific swap maps instead of redoing finite sums.
+  For strict swap arguments, strengthen the generic lemma with one source-event
+  atom whose image has strictly larger mass; prove strictness with
+  `Finset.sum_lt_sum`, then compare the image event to the target event by
+  inclusion. This pattern cleanly turns paired-density strictness into finite
+  facts like `wrong < correct` or `λ₁ < λ₂`.
+  When a paper's continuous "support everywhere" premise is only needed to show
+  a finite probability is not one, add a full-support finite wrapper
+  (`∀ atom, 0 < mass atom`) and construct one concrete outside-event atom.
+  This is clearer than carrying a hand-picked support witness through every
+  paper-facing theorem.
   For coupling proofs, first formalize the finite probability skeleton: a common
   sample space, marginal-identification equalities, and an event implication
   proving `Pr[A] ≤ Pr[B]`. Keep the continuous map, Jacobian/pushforward, and

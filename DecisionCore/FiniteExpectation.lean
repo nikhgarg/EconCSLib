@@ -482,6 +482,60 @@ theorem pmfProb_le_of_equiv_event_mass_le
             · simp [hp, hq, ENNReal.toReal_nonneg]
             · simp [hp, hq]
 
+/--
+Strict finite change-of-variables bound for probabilities.
+
+If an equivalence maps every point of event `p` into event `q`, the target atom
+has at least as much mass as the source atom on `p`, and one source event atom
+has strictly smaller mass than its image, then `Pr[p] < Pr[q]`.
+-/
+theorem pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (e : α ≃ α)
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hmap : ∀ a, p a → q (e a))
+    (hmass : ∀ a, p a → (μ a).toReal ≤ (μ (e a)).toReal)
+    {a₀ : α} (hp₀ : p a₀)
+    (hstrict : (μ a₀).toReal < (μ (e a₀)).toReal) :
+    pmfProb μ p < pmfProb μ q := by
+  classical
+  have himage :
+      pmfProb μ (fun a => p (e.symm a)) ≤ pmfProb μ q := by
+    refine pmfProb_le_of_imp μ (fun a => p (e.symm a)) q ?_
+    intro a hp
+    simpa using hmap (e.symm a) hp
+  have hstrict_image :
+      pmfProb μ p < pmfProb μ (fun a => p (e.symm a)) := by
+    unfold pmfProb pmfExp
+    have hleft :
+        (∑ a : α, (μ a).toReal * if p a then (1 : ℝ) else 0) =
+          ∑ a : α, if p a then (μ a).toReal else 0 := by
+      refine Finset.sum_congr rfl ?_
+      intro a _
+      by_cases hp : p a <;> simp [hp]
+    have hright :
+        (∑ a : α, (μ a).toReal *
+            if p (e.symm a) then (1 : ℝ) else 0) =
+          ∑ a : α, if p (e.symm a) then (μ a).toReal else 0 := by
+      refine Finset.sum_congr rfl ?_
+      intro a _
+      by_cases hp : p (e.symm a) <;> simp [hp]
+    rw [hleft, hright]
+    calc
+      ∑ a : α, (if p a then (μ a).toReal else 0)
+          < ∑ a : α, (if p a then (μ (e a)).toReal else 0) := by
+            refine Finset.sum_lt_sum ?hle ?hlt
+            · intro a _
+              by_cases hp : p a
+              · exact by simpa [hp] using hmass a hp
+              · simp [hp]
+            · exact ⟨a₀, Finset.mem_univ a₀, by simpa [hp₀] using hstrict⟩
+      _ = ∑ a : α, (if p (e.symm a) then (μ a).toReal else 0) := by
+            simpa using
+              (Equiv.sum_comp e
+                (fun a : α => if p (e.symm a) then (μ a).toReal else 0))
+  exact lt_of_lt_of_le hstrict_image himage
+
 /-- Finite sums commute with finite PMF expectation. -/
 theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (s : Finset ι) (f : ι → α → ℝ) :

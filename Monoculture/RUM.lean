@@ -845,6 +845,21 @@ theorem rum3Lambda1_lt_one_of_mass_choose_third_after_first_removed
     simpa using congrArg Fin.val this
   norm_num at hval
 
+theorem rum3_bestRemainingAfter_swap02_remove0 :
+    bestRemainingAfter
+        (Equiv.swap (0 : Candidate 1) (2 : Candidate 1))
+        (0 : Candidate 1) = (2 : Candidate 1) := by
+  simp [bestRemainingAfter, firstChoice]
+
+theorem rum3Lambda1_lt_one_of_full_support
+    (μ : PMF (Ranking 1))
+    (hfull : ∀ π : Ranking 1, 0 < (μ π).toReal) :
+    rum3Lambda1 μ < 1 :=
+  rum3Lambda1_lt_one_of_mass_choose_third_after_first_removed
+    μ (Equiv.swap (0 : Candidate 1) (2 : Candidate 1))
+    rum3_bestRemainingAfter_swap02_remove0
+    (hfull (Equiv.swap (0 : Candidate 1) (2 : Candidate 1)))
+
 theorem rum3LambdaCertificate_of_pairwise_facts_and_support
     {μWorse : PMF (Ranking 1)} {π₀ : Ranking 1}
     (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
@@ -880,6 +895,251 @@ theorem rum3LambdaCertificate_of_pairwise_wrong_facts_and_support
     (rum3Lambda1_half_of_wrong_lt_correct h23_wrong_lt_correct)
     hchoose hmass
     (rum3Lambda3_half_of_wrong_lt_correct h12_wrong_lt_correct)
+
+theorem rum3LambdaCertificate_of_pairwise_wrong_facts_and_full_support
+    {μWorse : PMF (Ranking 1)}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_wrong_lt_correct :
+      pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+        rum3Lambda1 μWorse)
+    (hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal)
+    (h12_wrong_lt_correct :
+      pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+        rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_facts
+    h13_gt_23
+    (rum3Lambda1_half_of_wrong_lt_correct h23_wrong_lt_correct)
+    (rum3Lambda1_lt_one_of_full_support μWorse hfull)
+    (rum3Lambda3_half_of_wrong_lt_correct h12_wrong_lt_correct)
+
+/--
+Finite paired-density skeleton for the `x₂` versus `x₃` lambda comparison.
+
+If a finite equivalence sends each realization choosing `x₃` after `x₁` is
+removed to one choosing `x₂`, never decreases mass on that wrong-choice event,
+and strictly increases mass for one such realization, then the wrong-choice
+probability is strictly smaller than `λ₁`.
+-/
+theorem rum3Lambda1_wrong_lt_correct_of_equiv
+    (μ : PMF (Ranking 1)) (swap : Ranking 1 ≃ Ranking 1)
+    (hmap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μ π).toReal ≤ (μ (swap π)).toReal)
+    {π₀ : Ranking 1}
+    (hwrong : bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict : (μ π₀).toReal < (μ (swap π₀)).toReal) :
+    pmfProb μ
+        (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+      rum3Lambda1 μ := by
+  unfold rum3Lambda1
+  exact pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    μ swap
+    (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1))
+    (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+    hmap hmass hwrong hstrict
+
+/--
+Finite paired-density skeleton for the `x₁` versus `x₂` lambda comparison.
+
+If a finite equivalence sends each realization choosing `x₂` after `x₃` is
+removed to one choosing `x₁`, never decreases mass on that wrong-choice event,
+and strictly increases mass for one such realization, then the wrong-choice
+probability is strictly smaller than `λ₃`.
+-/
+theorem rum3Lambda3_wrong_lt_correct_of_equiv
+    (μ : PMF (Ranking 1)) (swap : Ranking 1 ≃ Ranking 1)
+    (hmap : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μ π).toReal ≤ (μ (swap π)).toReal)
+    {π₀ : Ranking 1}
+    (hwrong : bestRemainingAfter π₀ (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict : (μ π₀).toReal < (μ (swap π₀)).toReal) :
+    pmfProb μ
+        (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+      rum3Lambda3 μ := by
+  unfold rum3Lambda3
+  exact pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    μ swap
+    (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1))
+    (fun π => bestRemainingAfter π (2 : Candidate 1) = (0 : Candidate 1))
+    hmap hmass hwrong hstrict
+
+/--
+Finite paired-density skeleton for the `λ₁ < λ₂` gap in Theorem 6.
+
+If a finite equivalence sends each realization where `x₂` beats `x₃` after
+`x₁` is removed to one where `x₁` beats `x₃` after `x₂` is removed, never
+decreases mass on the source event, and strictly increases mass for one such
+realization, then `λ₁ < λ₂`.
+-/
+theorem rum3Lambda1_lt_lambda2_of_equiv
+    (μ : PMF (Ranking 1)) (swap : Ranking 1 ≃ Ranking 1)
+    (hmap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap π) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μ π).toReal ≤ (μ (swap π)).toReal)
+    {π₀ : Ranking 1}
+    (hsource : bestRemainingAfter π₀ (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict : (μ π₀).toReal < (μ (swap π₀)).toReal) :
+    rum3Lambda1 μ < rum3Lambda2 μ := by
+  unfold rum3Lambda1 rum3Lambda2
+  exact pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    μ swap
+    (fun π => bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1))
+    (fun π => bestRemainingAfter π (1 : Candidate 1) = (0 : Candidate 1))
+    hmap hmass hsource hstrict
+
+/--
+Lambda certificate from finite paired-density swap facts.
+
+This packages the two strict pairwise comparisons in the form produced by a
+finite change-of-variables argument, while keeping the separate support witness
+needed for `λ₁ < 1`.
+-/
+theorem rum3LambdaCertificate_of_pairwise_swap_facts_and_support
+    {μWorse : PMF (Ranking 1)}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (swap23 : Ranking 1 ≃ Ranking 1)
+    (hmap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hwrong23 : bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (μWorse π23).toReal < (μWorse (swap23 π23)).toReal)
+    {πsupport : Ranking 1}
+    (hchooseSupport :
+      bestRemainingAfter πsupport (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassSupport : 0 < (μWorse πsupport).toReal)
+    (swap12 : Ranking 1 ≃ Ranking 1)
+    (hmap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hwrong12 : bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (μWorse π12).toReal < (μWorse (swap12 π12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_wrong_facts_and_support
+    h13_gt_23
+    (rum3Lambda1_wrong_lt_correct_of_equiv
+      μWorse swap23 hmap23 hmass23 hwrong23 hstrict23)
+    hchooseSupport hmassSupport
+    (rum3Lambda3_wrong_lt_correct_of_equiv
+      μWorse swap12 hmap12 hmass12 hwrong12 hstrict12)
+
+/--
+Lambda certificate from finite paired-density swap facts, including the
+`λ₁ < λ₂` comparison as a swap certificate rather than a raw scalar premise.
+-/
+theorem rum3LambdaCertificate_of_all_pairwise_swap_facts_and_support
+    {μWorse : PMF (Ranking 1)}
+    (swap13gap : Ranking 1 ≃ Ranking 1)
+    (hmap13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap13gap π) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap13gap π)).toReal)
+    {π13gap : Ranking 1}
+    (hsource13gap :
+      bestRemainingAfter π13gap (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict13gap :
+      (μWorse π13gap).toReal < (μWorse (swap13gap π13gap)).toReal)
+    (swap23 : Ranking 1 ≃ Ranking 1)
+    (hmap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hwrong23 : bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (μWorse π23).toReal < (μWorse (swap23 π23)).toReal)
+    {πsupport : Ranking 1}
+    (hchooseSupport :
+      bestRemainingAfter πsupport (0 : Candidate 1) = (2 : Candidate 1))
+    (hmassSupport : 0 < (μWorse πsupport).toReal)
+    (swap12 : Ranking 1 ≃ Ranking 1)
+    (hmap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hwrong12 : bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (μWorse π12).toReal < (μWorse (swap12 π12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_swap_facts_and_support
+    (rum3Lambda1_lt_lambda2_of_equiv
+      μWorse swap13gap hmap13gap hmass13gap hsource13gap hstrict13gap)
+    swap23 hmap23 hmass23 hwrong23 hstrict23
+    hchooseSupport hmassSupport swap12 hmap12 hmass12 hwrong12 hstrict12
+
+/--
+Lambda certificate from finite paired-density swap facts plus full support of
+the finite human ranking law.
+-/
+theorem rum3LambdaCertificate_of_all_pairwise_swap_facts_and_full_support
+    {μWorse : PMF (Ranking 1)}
+    (hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal)
+    (swap13gap : Ranking 1 ≃ Ranking 1)
+    (hmap13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap13gap π) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass13gap : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap13gap π)).toReal)
+    {π13gap : Ranking 1}
+    (hsource13gap :
+      bestRemainingAfter π13gap (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict13gap :
+      (μWorse π13gap).toReal < (μWorse (swap13gap π13gap)).toReal)
+    (swap23 : Ranking 1 ≃ Ranking 1)
+    (hmap23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (swap23 π) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass23 : ∀ π,
+      bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap23 π)).toReal)
+    {π23 : Ranking 1}
+    (hwrong23 : bestRemainingAfter π23 (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (μWorse π23).toReal < (μWorse (swap23 π23)).toReal)
+    (swap12 : Ranking 1 ≃ Ranking 1)
+    (hmap12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (swap12 π) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass12 : ∀ π,
+      bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1) →
+        (μWorse π).toReal ≤ (μWorse (swap12 π)).toReal)
+    {π12 : Ranking 1}
+    (hwrong12 : bestRemainingAfter π12 (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (μWorse π12).toReal < (μWorse (swap12 π12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_wrong_facts_and_full_support
+    (rum3Lambda1_lt_lambda2_of_equiv
+      μWorse swap13gap hmap13gap hmass13gap hsource13gap hstrict13gap)
+    (rum3Lambda1_wrong_lt_correct_of_equiv
+      μWorse swap23 hmap23 hmass23 hwrong23 hstrict23)
+    hfull
+    (rum3Lambda3_wrong_lt_correct_of_equiv
+      μWorse swap12 hmap12 hmass12 hwrong12 hstrict12)
 
 theorem expectedBestAfterRemoval_rum3_remove0
     (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :
