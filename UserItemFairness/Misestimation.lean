@@ -1245,6 +1245,479 @@ structure Theorem4Problem11EqualizedBasicOptimal {n : ℕ} [NeZero n]
   optimal : Theorem4Problem11PolicyOptimal beta v ρ ell
   basic_feasible : TypePolicy.BasicFeasibleSupportCertificate ρ
 
+theorem theorem4UniformTypePolicy_mirrorSymmetric {n : ℕ} [NeZero n] :
+    Theorem4MirrorSymmetricPolicy
+      (TypeWeightedRecommendationModel.uniformTypePolicy (K := 3) (n := n)) := by
+  constructor
+  · intro j
+    simp [TypeWeightedRecommendationModel.uniformTypePolicy]
+  · intro j
+    simp [TypeWeightedRecommendationModel.uniformTypePolicy]
+
+theorem theorem4Problem11UniformPolicyItemValue_eq_inv_card
+    {n : ℕ} [NeZero n] (beta : ℝ) (v : Item n → ℝ) (j : Item n) :
+    theorem4Problem11PolicyItemValue beta v
+        (TypeWeightedRecommendationModel.uniformTypePolicy (K := 3) (n := n)) j =
+      (n : ℝ)⁻¹ := by
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  simp [TypeWeightedRecommendationModel.uniformTypePolicy_apply_toReal]
+  ring
+
+theorem theorem4Problem11PolicyOptimal_value_pos
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    0 < ell := by
+  let ρu : TypePolicy 3 n :=
+    TypeWeightedRecommendationModel.uniformTypePolicy (K := 3) (n := n)
+  have hinv_pos : 0 < (n : ℝ)⁻¹ := by
+    have hnpos_nat : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    exact inv_pos.mpr (by exact_mod_cast hnpos_nat)
+  have hsym : Theorem4MirrorSymmetricPolicy ρu :=
+    theorem4UniformTypePolicy_mirrorSymmetric
+  have hfeas : theorem4Problem11LPFeasible beta v ρu ((n : ℝ)⁻¹) := by
+    intro j
+    rw [theorem4Problem11UniformPolicyItemValue_eq_inv_card]
+  have hle : (n : ℝ)⁻¹ ≤ ell :=
+    hopt.2.2 ρu ((n : ℝ)⁻¹) hsym hfeas
+  exact lt_of_lt_of_le hinv_pos hle
+
+theorem theorem4Problem11_item_coverage_of_equalized_policyOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    ∀ j : Item n,
+      ρ 0 j ≠ 0 ∨ ρ 0 (reverseItem j) ≠ 0 ∨ ρ 2 j ≠ 0 := by
+  intro j
+  by_contra hnone
+  push Not at hnone
+  have hitem := h.item_eq j
+  have hzero :
+      theorem4Problem11PolicyItemValue beta v ρ j = 0 := by
+    unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+    simp [hnone.1, hnone.2.1, hnone.2.2]
+  have hell_pos : 0 < ell :=
+    theorem4Problem11PolicyOptimal_value_pos h.optimal
+  rw [hzero] at hitem
+  linarith
+
+theorem theorem4Problem11_type_item_coverage_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    ∀ j : Item n, ∃ k : UserType 3, ρ k j ≠ 0 := by
+  intro j
+  rcases theorem4Problem11_item_coverage_of_equalized_policyOptimal h j with
+    h0 | h0rev | h2
+  · exact ⟨0, h0⟩
+  · refine ⟨1, ?_⟩
+    have hmirror :
+        ρ 1 j = ρ 0 (reverseItem j) := by
+      simpa [reverseItem_reverseItem] using h.mirror.1 (reverseItem j)
+    rwa [hmirror]
+  · exact ⟨2, h2⟩
+
+theorem theorem4Problem11_sharedItemsBound_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    TypePolicy.SharedItemsBound ρ := by
+  have hactive : TypePolicy.ActivePairsBound ρ :=
+    TypePolicy.activePairsBound_of_basicFeasibleSupportCertificate
+      ρ h.basic_feasible
+  exact TypePolicy.sharedItemsBound_of_activePairsBound_of_item_coverage
+    ρ hactive
+    (theorem4Problem11_type_item_coverage_of_equalizedBasicOptimal h)
+
+def Theorem4Problem11PolicyNoStrictPointwiseImprovement {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n) : Prop :=
+  ¬ ∃ ρ' : TypePolicy 3 n,
+    Theorem4MirrorSymmetricPolicy ρ' ∧
+      ∀ j : Item n,
+        theorem4Problem11PolicyItemValue beta v ρ j <
+          theorem4Problem11PolicyItemValue beta v ρ' j
+
+theorem theorem4Problem11_noStrictPointwiseImprovement_of_policyOptimal_equalized
+    {n : ℕ} [NeZero n]
+    {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hitem_eq :
+      ∀ l : Item n, theorem4Problem11PolicyItemValue beta v ρ l = ell)
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ := by
+  intro himprove
+  rcases himprove with ⟨ρ', hsym', hstrict⟩
+  let gap : Item n → ℝ :=
+    fun j => theorem4Problem11PolicyItemValue beta v ρ' j - ell
+  let delta : ℝ := DecisionCore.finiteMin gap
+  have hgap_pos : ∀ j : Item n, 0 < gap j := by
+    intro j
+    dsimp [gap]
+    have hbase : theorem4Problem11PolicyItemValue beta v ρ j = ell :=
+      hitem_eq j
+    have hlt := hstrict j
+    rw [hbase] at hlt
+    linarith
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    exact DecisionCore.finiteMin_pos gap hgap_pos
+  have hfeas' :
+      theorem4Problem11LPFeasible beta v ρ' (ell + delta) := by
+    intro j
+    have hle := DecisionCore.finiteMin_le gap j
+    dsimp [delta, gap] at hle
+    linarith
+  have hle : ell + delta ≤ ell :=
+    hopt.2.2 ρ' (ell + delta) hsym' hfeas'
+  linarith
+
+theorem theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ := by
+  exact theorem4Problem11_noStrictPointwiseImprovement_of_policyOptimal_equalized
+    h.item_eq h.optimal
+
+/-! ### Appendix E, Lemma 17: no right-half `x` support -/
+
+/--
+Lemma 17 perturbation of the Problem 11 known-type row: remove the donor mass
+at `j`, move all but `eps` of it to the mirror item, and spread `eps` over the
+unaffected coordinates through `r`.
+-/
+noncomputable def theorem4Problem11RightHalfShiftX {n : ℕ}
+    (x r : Item n → ℝ) (j : Item n) (eps : ℝ) : Item n → ℝ :=
+  lemma4GapExchangeX x j (reverseItem j) (x j) eps r
+
+theorem theorem4Problem11RightHalfShiftX_donor_eq_zero
+    {n : ℕ} {x r : Item n → ℝ} {j : Item n} {eps : ℝ}
+    (hne : j ≠ reverseItem j) (hrj : r j = 0) :
+    theorem4Problem11RightHalfShiftX x r j eps j = 0 := by
+  unfold theorem4Problem11RightHalfShiftX lemma4GapExchangeX
+  simp [hne, hrj]
+
+theorem theorem4Problem11RightHalfShiftX_receiver_eq
+    {n : ℕ} {x r : Item n → ℝ} {j : Item n} {eps : ℝ}
+    (hne : j ≠ reverseItem j) (hrrev : r (reverseItem j) = 0) :
+    theorem4Problem11RightHalfShiftX x r j eps (reverseItem j) =
+      x (reverseItem j) + (x j - eps) := by
+  unfold theorem4Problem11RightHalfShiftX lemma4GapExchangeX
+  simp [hne.symm, hrrev]
+
+theorem theorem4Problem11RightHalfShiftX_other_eq
+    {n : ℕ} {x r : Item n → ℝ} {j l : Item n} {eps : ℝ}
+    (hlj : l ≠ j) (hlrev : l ≠ reverseItem j) :
+    theorem4Problem11RightHalfShiftX x r j eps l =
+      x l + eps * r l := by
+  unfold theorem4Problem11RightHalfShiftX lemma4GapExchangeX
+  simp [hlj, hlrev]
+
+theorem theorem4Problem11RightHalfShiftX_sum_eq
+    {n : ℕ} {x r : Item n → ℝ} {j : Item n} {eps : ℝ}
+    (hrsum : (∑ l : Item n, r l) = 1) :
+    (∑ l : Item n, theorem4Problem11RightHalfShiftX x r j eps l) =
+      ∑ l : Item n, x l := by
+  exact lemma4GapExchangeX_sum_eq x j (reverseItem j) (x j) eps r hrsum
+
+theorem theorem4Problem11RightHalfShiftX_nonneg
+    {n : ℕ} {x r : Item n → ℝ} {j : Item n} {eps : ℝ}
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hne : j ≠ reverseItem j)
+    (hr_nonneg : ∀ l : Item n, 0 ≤ r l)
+    (hrj : r j = 0) (hrrev : r (reverseItem j) = 0)
+    (heps_pos : 0 < eps) (heps_lt : eps < x j) :
+    ∀ l : Item n, 0 ≤ theorem4Problem11RightHalfShiftX x r j eps l := by
+  intro l
+  by_cases hlj : l = j
+  · subst l
+    rw [theorem4Problem11RightHalfShiftX_donor_eq_zero hne hrj]
+  · by_cases hlrev : l = reverseItem j
+    · subst l
+      rw [theorem4Problem11RightHalfShiftX_receiver_eq hne hrrev]
+      nlinarith [hx_nonneg (reverseItem j), heps_lt]
+    · rw [theorem4Problem11RightHalfShiftX_other_eq hlj hlrev]
+      exact add_nonneg (hx_nonneg l)
+        (mul_nonneg heps_pos.le (hr_nonneg l))
+
+/--
+Appendix E, Lemma 17 real-vector perturbation. If a Problem 11 solution gives
+positive known-type mass to an item strictly after its mirror, then shifting
+that mass left and spreading a tiny amount over the remaining coordinates
+strictly improves every Problem 11 item value.
+-/
+theorem theorem4Problem11_rightHalfShift_exists_strictlyImproves
+    {n : ℕ} {beta : ℝ} {v x z : Item n → ℝ} {j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hj_right : (reverseItem j).val < j.val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hxj_pos : 0 < x j) :
+    ∃ x' : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      ∀ l : Item n,
+        theorem4Problem11ItemValue beta v x z l <
+          theorem4Problem11ItemValue beta v x' z l := by
+  classical
+  let a : Item n := reverseItem j
+  have hne : j ≠ a := by
+    intro h
+    have hval := congrArg Fin.val h
+    dsimp [a] at hval
+    omega
+  have hane : a ≠ j := hne.symm
+  have ha_lt_rev : a.val < (reverseItem a).val := by
+    simpa [a, reverseItem_reverseItem] using hj_right
+  let qa : ℝ := pairShare (1 / 2) v a
+  have hqa_half : (1 / 2 : ℝ) < qa := by
+    dsimp [qa]
+    exact half_lt_pairShare_half_of_val_lt_reverse a hpos hdec ha_lt_rev
+  have hqa_lt_one : qa < 1 := by
+    dsimp [qa]
+    exact pairShare_lt_one a (by norm_num) (by norm_num) hpos
+  let cap : ℝ := (2 * qa - 1) * x j
+  have hcap_pos : 0 < cap := by
+    dsimp [cap]
+    nlinarith
+  let eps : ℝ := min (x j) cap / 2
+  have hmin_pos : 0 < min (x j) cap := lt_min hxj_pos hcap_pos
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_min : eps < min (x j) cap := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_xj : eps < x j :=
+    lt_of_lt_of_le heps_lt_min (min_le_left _ _)
+  have heps_lt_cap : eps < cap :=
+    lt_of_lt_of_le heps_lt_min (min_le_right _ _)
+  obtain ⟨r, hr_nonneg, hr_pos, hrj, hra, hrsum⟩ :=
+    lemma4_redistribution_exists_of_two_lt hn hne
+  let x' : Item n → ℝ := theorem4Problem11RightHalfShiftX x r j eps
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact theorem4Problem11RightHalfShiftX_nonneg
+      hx_nonneg hne hr_nonneg hrj hra heps_pos heps_lt_xj l
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [theorem4Problem11RightHalfShiftX_sum_eq hrsum, hsumx]
+  refine ⟨x', hx'_nonneg, hx'_sum, ?_⟩
+  intro l
+  have hq_pos : 0 < pairShare (1 / 2) v l :=
+    pairShare_pos l (by norm_num) (by norm_num) hpos
+  have hq_lt_one : pairShare (1 / 2) v l < 1 :=
+    pairShare_lt_one l (by norm_num) (by norm_num) hpos
+  unfold theorem4Problem11ItemValue
+  by_cases hlj : l = j
+  · subst l
+    have hxj' : x' j = 0 := by
+      dsimp [x']
+      exact theorem4Problem11RightHalfShiftX_donor_eq_zero hne hrj
+    have hxa' : x' a = x a + (x j - eps) := by
+      dsimp [x']
+      exact theorem4Problem11RightHalfShiftX_receiver_eq hne hra
+    have hshare :
+        pairShare (1 / 2) v j = 1 - qa := by
+      dsimp [qa, a]
+      rw [pairShare_half_eq_one_sub_reverse j hpos]
+    dsimp [a] at *
+    rw [hxj', hxa', hshare]
+    have heps_small : qa * eps < cap := by
+      have hqa_pos : 0 < qa := lt_trans (by norm_num) hqa_half
+      have hqa_le_one : qa ≤ 1 := hqa_lt_one.le
+      have hmul_le : qa * eps ≤ eps := by nlinarith
+      exact lt_of_le_of_lt hmul_le heps_lt_cap
+    dsimp [cap] at heps_small
+    nlinarith
+  · by_cases hla : l = a
+    · subst l
+      have hxj' : x' j = 0 := by
+        dsimp [x']
+        exact theorem4Problem11RightHalfShiftX_donor_eq_zero hne hrj
+      have hxa' : x' a = x a + (x j - eps) := by
+        dsimp [x']
+        exact theorem4Problem11RightHalfShiftX_receiver_eq hne hra
+      have hrev_a : reverseItem a = j := by
+        dsimp [a]
+        rw [reverseItem_reverseItem]
+      rw [hxa', hrev_a, hxj']
+      have heps_small : qa * eps < cap := by
+        have hqa_pos : 0 < qa := lt_trans (by norm_num) hqa_half
+        have hqa_le_one : qa ≤ 1 := hqa_lt_one.le
+        have hmul_le : qa * eps ≤ eps := by nlinarith
+        exact lt_of_le_of_lt hmul_le heps_lt_cap
+      dsimp [qa, cap] at *
+      nlinarith
+    · have hlrev_ne_j : reverseItem l ≠ j := by
+        intro h
+        apply hla
+        calc
+          l = reverseItem j := by
+            rw [← h, reverseItem_reverseItem]
+          _ = a := rfl
+      have hlrev_ne_a : reverseItem l ≠ a := by
+        intro h
+        apply hlj
+        calc
+          l = reverseItem a := by
+            rw [← h, reverseItem_reverseItem]
+          _ = j := by
+            dsimp [a]
+            rw [reverseItem_reverseItem]
+      have hxl' : x' l = x l + eps * r l := by
+        dsimp [x']
+        exact theorem4Problem11RightHalfShiftX_other_eq hlj hla
+      have hxrev' :
+          x' (reverseItem l) =
+            x (reverseItem l) + eps * r (reverseItem l) := by
+        dsimp [x']
+        exact theorem4Problem11RightHalfShiftX_other_eq hlrev_ne_j hlrev_ne_a
+      rw [hxl', hxrev']
+      have hrl_pos : 0 < r l := hr_pos hlj hla
+      have hrrev_pos : 0 < r (reverseItem l) :=
+        hr_pos hlrev_ne_j hlrev_ne_a
+      have hleft_pos :
+          0 < pairShare (1 / 2) v l * (eps * r l) :=
+        mul_pos hq_pos (mul_pos heps_pos hrl_pos)
+      have hright_pos :
+          0 < (1 - pairShare (1 / 2) v l) *
+            (eps * r (reverseItem l)) :=
+        mul_pos (sub_pos.mpr hq_lt_one) (mul_pos heps_pos hrrev_pos)
+      nlinarith
+
+theorem theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ) :
+    ∀ j : Item n, (reverseItem j).val < j.val → ρ 0 j = 0 := by
+  intro j hj_right
+  by_contra hρj_ne
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let z : Item n → ℝ := fun l => (ρ 2 l).toReal
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact DecisionCore.pmfToRealSum (ρ 0)
+  have hxj_pos : 0 < x j := by
+    have htoReal_ne : (ρ 0 j).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 0 j)).mp hzero with hzero_enn | htop
+      · exact hρj_ne hzero_enn
+      · exact (ρ 0).apply_ne_top j htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  obtain ⟨x', hx'_nonneg, hx'_sum, hstrict⟩ :=
+    theorem4Problem11_rightHalfShift_exists_strictlyImproves
+      hn hbeta_pos hpos hdec hj_right hx_nonneg hsumx hxj_pos
+      (z := z)
+  let y' : Item n → ℝ := fun l => x' (reverseItem l)
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact hx'_nonneg (reverseItem l)
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [sum_reverseItem x', hx'_sum]
+  let ρ' : TypePolicy 3 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else if k = 1 then
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+    else
+      ρ 2
+  have hsym' : Theorem4MirrorSymmetricPolicy ρ' := by
+    constructor
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 1).apply_ne_top (reverseItem l))
+        ((ρ' 0).apply_ne_top l)).mp
+      simp [ρ', y', reverseItem_reverseItem]
+    · intro l
+      have h := hsym.2 l
+      simpa [ρ'] using h
+  apply hno
+  refine ⟨ρ', hsym', ?_⟩
+  intro l
+  unfold theorem4Problem11PolicyItemValue
+  simpa [theorem4Problem11ItemValue, x, z, ρ'] using hstrict l
+
+/-- Problem 11 no-gap condition for the known-type row `x`. -/
+def Theorem4Problem11TypeZeroZeroClosed {n : ℕ}
+    (ρ : TypePolicy 3 n) : Prop :=
+  ∀ {j i : Item n}, j.val < i.val → ρ 0 j = 0 → ρ 0 i = 0
+
+/--
+Problem 11 no-gap condition for the cold-start row on the half-problem:
+once `z_i` is positive, all later half-side `z_j` are positive.
+-/
+def Theorem4Problem11ColdStartPositiveClosed {n : ℕ}
+    (ρ : TypePolicy 3 n) : Prop :=
+  ∀ {i j : Item n}, i.val < j.val → ρ 2 i ≠ 0 → ρ 2 j ≠ 0
+
+/-- Items used with positive probability by Problem 11's known-type row. -/
+noncomputable def theorem4Problem11TypeZeroActiveItems {n : ℕ}
+    (ρ : TypePolicy 3 n) : Finset (Item n) :=
+  Finset.univ.filter fun j => ρ 0 j ≠ 0
+
+theorem theorem4Problem11TypeZeroActiveItems_nonempty {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 3 n) :
+    (theorem4Problem11TypeZeroActiveItems ρ).Nonempty := by
+  rcases TypePolicy.exists_active_item_for_type ρ 0 with ⟨j, hj⟩
+  exact ⟨j, by simp [theorem4Problem11TypeZeroActiveItems, hj]⟩
+
+/-- Problem 11 pivot candidate: the last item with positive known-type mass. -/
+noncomputable def theorem4Problem11LastActiveTypeZero {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 3 n) : Item n :=
+  (theorem4Problem11TypeZeroActiveItems ρ).max'
+    (theorem4Problem11TypeZeroActiveItems_nonempty ρ)
+
+theorem theorem4Problem11LastActiveTypeZero_active {n : ℕ} [NeZero n]
+    (ρ : TypePolicy 3 n) :
+    ρ 0 (theorem4Problem11LastActiveTypeZero ρ) ≠ 0 := by
+  have hmem :=
+    Finset.max'_mem (theorem4Problem11TypeZeroActiveItems ρ)
+      (theorem4Problem11TypeZeroActiveItems_nonempty ρ)
+  simpa [theorem4Problem11LastActiveTypeZero,
+    theorem4Problem11TypeZeroActiveItems] using hmem
+
+theorem theorem4Problem11_typeZero_zero_after_lastActive {n : ℕ}
+    [NeZero n] (ρ : TypePolicy 3 n) {j : Item n}
+    (hj : (theorem4Problem11LastActiveTypeZero ρ).val < j.val) :
+    ρ 0 j = 0 := by
+  by_contra hne
+  have hmem : j ∈ theorem4Problem11TypeZeroActiveItems ρ := by
+    simp [theorem4Problem11TypeZeroActiveItems, hne]
+  have hle :
+      j ≤ theorem4Problem11LastActiveTypeZero ρ := by
+    simpa [theorem4Problem11LastActiveTypeZero] using
+      (theorem4Problem11TypeZeroActiveItems ρ).le_max' j hmem
+  have hle_val : j.val ≤ (theorem4Problem11LastActiveTypeZero ρ).val := hle
+  omega
+
+theorem theorem4Problem11_typeZero_active_before_lastActive_of_zeroClosed
+    {n : ℕ} [NeZero n] (ρ : TypePolicy 3 n)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ) {j : Item n}
+    (hj : j.val < (theorem4Problem11LastActiveTypeZero ρ).val) :
+    ρ 0 j ≠ 0 := by
+  by_contra hz
+  exact theorem4Problem11LastActiveTypeZero_active ρ (hx hj hz)
+
+theorem theorem4Problem11_sharedItems_of_active_types
+    {n : ℕ} (ρ : TypePolicy 3 n) {j : Item n}
+    {k k' : UserType 3}
+    (hne : k ≠ k') (hk : ρ k j ≠ 0) (hk' : ρ k' j ≠ 0) :
+    j ∈ TypePolicy.sharedItems ρ := by
+  simp [TypePolicy.sharedItems]
+  exact ⟨k, k', hne, hk, hk'⟩
+
 /-! ### Appendix E, Lemma 15: ruling out pivot `t = 1` -/
 
 /-- Lemma 15's closed-form `λ` when the Problem 11 pivot is item `1`. -/
@@ -1378,6 +1851,128 @@ def Theorem4Problem11PivotSupport {n : ℕ}
   (∀ j : Item n, t.val < j.val → ρ 0 j = 0) ∧
     (∀ j : Item n, j.val < t.val →
       ρ 2 j = 0 ∧ ρ 2 (reverseItem j) = 0)
+
+theorem theorem4Problem11PivotSupport_of_lastActive_noGap_of_sharedBound
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n}
+    (hmirror : Theorem4MirrorSymmetricPolicy ρ)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : Theorem4Problem11ColdStartPositiveClosed ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hleft :
+      (theorem4Problem11LastActiveTypeZero ρ).val ≤
+        (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  classical
+  let t : Item n := theorem4Problem11LastActiveTypeZero ρ
+  constructor
+  · intro j hj
+    exact theorem4Problem11_typeZero_zero_after_lastActive ρ hj
+  · intro j hjt
+    have hxt : ρ 0 t ≠ 0 := by
+      dsimp [t]
+      exact theorem4Problem11LastActiveTypeZero_active ρ
+    have hxj : ρ 0 j ≠ 0 := by
+      exact theorem4Problem11_typeZero_active_before_lastActive_of_zeroClosed
+        ρ hx (by simpa [t] using hjt)
+    have hrev_t_lt_rev_j :
+        (reverseItem t).val < (reverseItem j).val :=
+      reverseItem_val_lt_of_val_lt hjt
+    have ht_lt_rev_j : t.val < (reverseItem j).val :=
+      lt_of_le_of_lt (by simpa [t] using hleft) hrev_t_lt_rev_j
+    have hj_lt_rev_j : j.val < (reverseItem j).val := by
+      exact lt_trans hjt ht_lt_rev_j
+    have hj_ne_rev : j ≠ reverseItem j := by
+      intro h
+      have hval := congrArg Fin.val h
+      omega
+    have hj_ne_t : j ≠ t := by
+      intro h
+      subst h
+      omega
+    have hrevj_ne_t : reverseItem j ≠ t := by
+      intro h
+      have hval := congrArg Fin.val h
+      omega
+    have hcontradict_shared (hzj_ne : ρ 2 j ≠ 0) : False := by
+      have hzt : ρ 2 t ≠ 0 := hz hjt hzj_ne
+      have hzrevj : ρ 2 (reverseItem j) ≠ 0 := by
+        rw [hmirror.2 j]
+        exact hzj_ne
+      have hyrevj : ρ 1 (reverseItem j) ≠ 0 := by
+        rw [hmirror.1 j]
+        exact hxj
+      have hj_shared : j ∈ TypePolicy.sharedItems ρ :=
+        theorem4Problem11_sharedItems_of_active_types ρ
+          (by decide : (0 : UserType 3) ≠ 2) hxj hzj_ne
+      have hrevj_shared : reverseItem j ∈ TypePolicy.sharedItems ρ :=
+        theorem4Problem11_sharedItems_of_active_types ρ
+          (by decide : (1 : UserType 3) ≠ 2) hyrevj hzrevj
+      have ht_shared : t ∈ TypePolicy.sharedItems ρ :=
+        theorem4Problem11_sharedItems_of_active_types ρ
+          (by decide : (0 : UserType 3) ≠ 2) hxt hzt
+      have hsubset :
+          ({j, reverseItem j, t} : Finset (Item n)) ⊆
+            TypePolicy.sharedItems ρ := by
+        intro u hu
+        simp at hu
+        rcases hu with rfl | rfl | rfl
+        · exact hj_shared
+        · exact hrevj_shared
+        · exact ht_shared
+      have hcard_three :
+          ({j, reverseItem j, t} : Finset (Item n)).card = 3 := by
+        simp [hj_ne_rev, hj_ne_t, hrevj_ne_t]
+      have hthree : 3 ≤ (TypePolicy.sharedItems ρ).card := by
+        calc
+          3 = ({j, reverseItem j, t} : Finset (Item n)).card :=
+            hcard_three.symm
+          _ ≤ (TypePolicy.sharedItems ρ).card :=
+            Finset.card_le_card hsubset
+      have htwo : (TypePolicy.sharedItems ρ).card ≤ 2 := by
+        simpa [TypePolicy.SharedItemsBound] using hshared
+      omega
+    have hzj_zero : ρ 2 j = 0 := by
+      by_contra hzj_ne
+      exact hcontradict_shared hzj_ne
+    constructor
+    · exact hzj_zero
+    · rw [hmirror.2 j]
+      exact hzj_zero
+
+theorem theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : Theorem4Problem11ColdStartPositiveClosed ρ) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  have hshared : TypePolicy.SharedItemsBound ρ :=
+    theorem4Problem11_sharedItemsBound_of_equalizedBasicOptimal h
+  have hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ :=
+    theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
+  have hright_zero :
+      ∀ j : Item n, (reverseItem j).val < j.val → ρ 0 j = 0 :=
+    theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+      hn hbeta_pos hpos hdec h.mirror hno
+  have hleft :
+      (theorem4Problem11LastActiveTypeZero ρ).val ≤
+        (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val := by
+    by_contra hnot
+    have hrev_lt :
+        (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val <
+          (theorem4Problem11LastActiveTypeZero ρ).val := by
+      omega
+    have hz0 :=
+      hright_zero (theorem4Problem11LastActiveTypeZero ρ) hrev_lt
+    exact theorem4Problem11LastActiveTypeZero_active ρ hz0
+  exact theorem4Problem11PivotSupport_of_lastActive_noGap_of_sharedBound
+    h.mirror hx hz hshared hleft
 
 theorem theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
     {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t j : Item n}
@@ -1703,6 +2298,29 @@ theorem theorem4Problem11_no_extremes_of_equalized_pivotSupport
     (fun ht =>
       theorem4Problem11PivotOne_closedZ_of_equalized_pivotSupport
         (by omega : 1 < n) hbeta_half hpos h hpivot ht)
+
+theorem theorem4Problem11_no_extremes_of_equalized_noGap
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : Theorem4Problem11ColdStartPositiveClosed ρ) :
+    ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
+  have hnpos_nat : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnpos_nat
+  have hbeta_pos : 0 < beta := lt_trans (inv_pos.mpr hnpos) hbeta
+  have hpivot :
+      Theorem4Problem11PivotSupport ρ
+        (theorem4Problem11LastActiveTypeZero ρ) :=
+    theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
+      hn hbeta_pos hpos hdec h hx hz
+  exact theorem4Problem11_no_extremes_of_equalized_pivotSupport
+    hn hbeta hbeta_half hpos hdec h hpivot
 
 theorem theorem4NoFairnessPolicyTypeZero_estimated_typeFairness_eq_one
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
@@ -2304,6 +2922,82 @@ theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalized_proble
   have hno :=
     OpposingTypes.theorem4Problem11_no_extremes_of_equalized_pivotSupport
       hn hbeta hbeta_half hpos hdec heq hpivot
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, first true cold-start
+type, from the equality-form Problem 11 optimum plus the two no-gap
+conclusions that complete Appendix E Lemma 13.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_noGap
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : OpposingTypes.Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : OpposingTypes.Theorem4Problem11ColdStartPositiveClosed ρ) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_equalized_noGap
+      hn hbeta hbeta_half hpos hdec heq hx hz
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.1
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, second true cold-start
+type, from the equality-form Problem 11 optimum plus the two no-gap
+conclusions that complete Appendix E Lemma 13.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_noGap
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : OpposingTypes.Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : OpposingTypes.Theorem4Problem11ColdStartPositiveClosed ρ) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_equalized_noGap
+      hn hbeta hbeta_half hpos hdec heq hx hz
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
     R reps (by omega : 1 < n) htrue hred heps hbase hdec
     (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2

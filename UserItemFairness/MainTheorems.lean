@@ -7497,6 +7497,123 @@ theorem paper_problem11_policyOptimal_value_eq_finiteMin
   exact theorem4Problem11PolicyOptimal_value_eq_finiteMin hopt
 
 /--
+Appendix E, Lemma 13 proof component: every optimal Problem 11 epigraph value
+is strictly positive, witnessed by the uniform mirror-symmetric policy.
+-/
+theorem paper_problem11_policyOptimal_value_pos
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    0 < ell := by
+  exact theorem4Problem11PolicyOptimal_value_pos hopt
+
+/--
+Appendix E, Lemma 13 proof component: an equality-form Problem 11 optimum
+covers every item by one of the two known-type mirror rows or the cold-start
+row.
+-/
+theorem paper_problem11_type_item_coverage_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    ∀ j : Item n, ∃ k : UserType 3, ρ k j ≠ 0 := by
+  exact theorem4Problem11_type_item_coverage_of_equalizedBasicOptimal h
+
+/--
+Appendix E, Lemma 13 proof component: the equality-form Problem 11
+basic-feasible package has the Proposition 2 shared-item bound.
+-/
+theorem paper_problem11_sharedItemsBound_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    TypePolicy.SharedItemsBound ρ := by
+  exact theorem4Problem11_sharedItemsBound_of_equalizedBasicOptimal h
+
+/--
+Appendix E, Lemma 13 proof component: an equality-form optimal Problem 11
+policy admits no mirror-symmetric policy that strictly improves all item values.
+-/
+theorem paper_problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ := by
+  exact theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
+
+/--
+Appendix E, Lemma 17: in any locally optimal mirror-symmetric Problem 11
+policy, the known-type row has no positive support strictly after its mirror.
+-/
+theorem paper_lemma17_problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ) :
+    ∀ j : Item n, (reverseItem j).val < j.val → ρ 0 j = 0 := by
+  exact theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+    hn hbeta_pos hpos hdec hsym hno
+
+/--
+Appendix E, Lemma 17 for the equality-form optimal BFS package used in
+Problem 11.
+-/
+theorem paper_lemma17_problem11_typeZero_zero_after_mirror_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    ∀ j : Item n, (reverseItem j).val < j.val → ρ 0 j = 0 := by
+  exact theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+    hn hbeta_pos hpos hdec h.mirror
+    (theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h)
+
+/--
+Appendix E, Lemma 13 support-count bridge: once the paper's two no-gap
+perturbation conclusions are available, Proposition 2's shared-item bound
+forces the pivot-support form at the last active known-type item.
+-/
+theorem paper_lemma13_problem11_pivotSupport_of_lastActive_noGap_of_sharedBound
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n}
+    (hmirror : Theorem4MirrorSymmetricPolicy ρ)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : Theorem4Problem11ColdStartPositiveClosed ρ)
+    (hshared : TypePolicy.SharedItemsBound ρ)
+    (hleft :
+      (theorem4Problem11LastActiveTypeZero ρ).val ≤
+        (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  exact theorem4Problem11PivotSupport_of_lastActive_noGap_of_sharedBound
+    hmirror hx hz hshared hleft
+
+/--
+Appendix E, Lemma 13 for the equality-form optimal BFS package, conditional
+only on the two remaining no-gap perturbation conclusions from the paper.
+-/
+theorem paper_lemma13_problem11_pivotSupport_of_equalizedBasicOptimal_noGap
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : Theorem4Problem11ColdStartPositiveClosed ρ) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
+    hn hbeta_pos hpos hdec h hx hz
+
+/--
 Appendix E, Lemma 15 component: if the Problem 11 closed form is evaluated at
 pivot `t = 1`, then the resulting `z₁` is negative whenever `β > 1/n` and the
 cold-start type has positive mass.
@@ -7601,6 +7718,25 @@ theorem paper_theorem4_problem11_no_extremes_of_equalized_pivotSupport
     ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
   exact theorem4Problem11_no_extremes_of_equalized_pivotSupport
     hn hbeta hbeta_half hpos hdec h hpivot
+
+/--
+Appendix E Lemmas 13 and 15 combined for an equality-form Problem 11 optimum,
+with Lemma 13 reduced to the two no-gap perturbation conclusions.
+-/
+theorem paper_theorem4_problem11_no_extremes_of_equalized_noGap
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : Theorem4Problem11ColdStartPositiveClosed ρ) :
+    ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
+  exact theorem4Problem11_no_extremes_of_equalized_noGap
+    hn hbeta hbeta_half hpos hdec h hx hz
 
 /--
 Appendix E, Theorem 4 no-item-fairness construction, first possible true
@@ -8005,6 +8141,78 @@ theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalized_
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11
     R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall
     ρ ell t heq hpivot
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the first opposing row, stated with
+an equality-form Problem 11 optimum and the two no-gap conclusions completing
+Lemma 13.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_noGap
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : OpposingTypes.Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : OpposingTypes.Theorem4Problem11ColdStartPositiveClosed ρ) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_noGap
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall
+    ρ ell heq hx hz
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the second opposing row, stated with
+an equality-form Problem 11 optimum and the two no-gap conclusions completing
+Lemma 13.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_noGap
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hx : OpposingTypes.Theorem4Problem11TypeZeroZeroClosed ρ)
+    (hz : OpposingTypes.Theorem4Problem11ColdStartPositiveClosed ρ) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_noGap
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall
+    ρ ell heq hx hz
 
 end EstimatedRecommendationModel
 
