@@ -330,6 +330,25 @@ theorem rum3_swap_middle_transition_geometry
     rumContractScore_preserves_weak_order ht0 ht1 (le_of_lt hx12) le_rfl
   exact ⟨hr23, hr13, hswap12, le_trans hc32 hsameRealization⟩
 
+/--
+If the middle candidate beats the top candidate after contraction, then its
+original realization score is strictly higher than the top candidate's score.
+-/
+theorem rum3_swap_middle_source_score_lt
+    {t x1 x2 r1 r2 : ℝ}
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 < x1)
+    (hc12 :
+      rumContractScore t x1 r1 <
+        rumContractScore t x2 r2) :
+    r1 < r2 := by
+  by_contra hnot
+  have hr21 : r2 ≤ r1 := le_of_not_gt hnot
+  have hcontract :
+      rumContractScore t x2 r2 ≤ rumContractScore t x1 r1 :=
+    rumContractScore_preserves_weak_order ht0 ht1 (le_of_lt hx12) hr21
+  linarith
+
 theorem weaklyWellOrderedNoise_swap_middle_density_le
     {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
     {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
@@ -465,6 +484,50 @@ theorem rum3_swap12_mass_lt_of_density_formula
   rw [hdens ω, hdens (swap ω), hswap1 ω, hswap2 ω, hswap3 ω]
   exact strictlyWellOrderedNoise_swap12_density3_lt
     hf (hctx ω hp) hx12 (hscore ω hp)
+
+/--
+Finite mass comparison for the delta-side `swapi` map in Lemma 3.
+
+The transition event says the worse ranking puts `x₃` first and the contracted
+better ranking puts `x₂` first.  The better-first score interface gives the
+contracted inequality `c₁ < c₂`; contraction geometry turns it into the raw
+score inequality `r₁ < r₂`, which feeds the top/middle density swap formula.
+-/
+theorem rum3_deltaSwap_mass_le_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 t : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (better worse : Ω → Ranking 1)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        0 ≤ f (r3 ω - x3))
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 < x1)
+    (hbetterMiddle_scores_of_first : ∀ ω,
+      (1 : Candidate 1) = firstChoice (better ω) →
+        rum3MiddleBeatsTopByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω))) :
+    ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal := by
+  refine rum3_swap12_mass_le_of_density_formula
+    ν f x1 x2 x3 r1 r2 r3 swap
+    (fun ω =>
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+        (1 : Candidate 1) = firstChoice (better ω))
+    hf hdens hswap1 hswap2 hswap3 hctx hx12 ?_
+  intro ω hp
+  exact rum3_swap_middle_source_score_lt ht0 ht1 hx12
+    ((hbetterMiddle_scores_of_first ω hp.2).1)
 
 /--
 Mass comparison for a finite sample law whose atoms are represented by the

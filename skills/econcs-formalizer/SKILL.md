@@ -520,6 +520,12 @@ and wasted proof search.
   lemma that future mass-formula rewrites can use directly. Then add a separate
   finite mass-formula bridge (`mass atom = density product`) that rewrites the
   source and swapped atoms and applies the pointwise density lemma.
+  For contraction-based `swapi` mass comparisons, do not assume the raw score
+  order needed by the density swap if it follows from the contracted
+  middle-beats-top event. Prove the deterministic bridge first:
+  contracted `x₂` beating contracted `x₁`, together with `x₁ > x₂` and
+  `0 ≤ t ≤ 1`, implies raw `r₁ < r₂`; then feed that into the density
+  mass-formula theorem.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only

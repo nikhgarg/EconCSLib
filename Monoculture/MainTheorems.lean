@@ -307,6 +307,40 @@ theorem paper_theorem6_lambda_swap12_mass_lt_of_density_formula
     ν f x1 x2 x3 r1 r2 r3 swap p hf hdens
     hswap1 hswap2 hswap3 hctx hx12 hscore
 
+/--
+Appendix C / finite mass comparison for the delta-side `swapi` map from the
+density formula.
+-/
+theorem paper_theorem6_deltaSwap_mass_le_of_density_formula
+    {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
+    (x1 x2 x3 t : ℝ) (r1 r2 r3 : Ω → ℝ) (swap : Ω → Ω)
+    (better worse : Ω → Ranking 1)
+    (hf : WeaklyWellOrderedNoise f)
+    (hdens : ∀ ω,
+      (ν ω).toReal = f (r1 ω - x1) * f (r2 ω - x2) * f (r3 ω - x3))
+    (hswap1 : ∀ ω, r1 (swap ω) = r2 ω)
+    (hswap2 : ∀ ω, r2 (swap ω) = r1 ω)
+    (hswap3 : ∀ ω, r3 (swap ω) = r3 ω)
+    (hctx : ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        0 ≤ f (r3 ω - x3))
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx12 : x2 < x1)
+    (hbetterMiddle_scores_of_first : ∀ ω,
+      (1 : Candidate 1) = firstChoice (better ω) →
+        rum3MiddleBeatsTopByScores
+          (rumContractScore t x1 (r1 ω))
+          (rumContractScore t x2 (r2 ω))
+          (rumContractScore t x3 (r3 ω))) :
+    ∀ ω,
+      (2 : Candidate 1) = firstChoice (worse ω) ∧
+          (1 : Candidate 1) = firstChoice (better ω) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal :=
+  rum3_deltaSwap_mass_le_of_density_formula
+    ν f x1 x2 x3 t r1 r2 r3 swap better worse hf hdens
+    hswap1 hswap2 hswap3 hctx ht0 ht1 hx12 hbetterMiddle_scores_of_first
+
 /-- Appendix C / finite mass comparison from the `x₂`/`x₃` density formula. -/
 theorem paper_theorem6_lambda_swap23_mass_le_of_density_formula
     {Ω : Type*} (ν : PMF Ω) (f : ℝ → ℝ)
