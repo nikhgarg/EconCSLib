@@ -173,10 +173,11 @@ Imported next targets:
 - user-item fairness:
   item-side preservation lemmas, fairness-functional preservation, and the LP
   reduction path
-- accuracy-diversity (In Progress):
+- accuracy-diversity (Complete - finite track):
   two-type allocation expansions, exchange lemmas, and the Proposition 2
-  square-root homogeneity bridge. The finite Proposition 2 theorem for
-  uniform top-one models is now stated at the paper-facing level.
+  square-root homogeneity bridge. The finite Proposition 2 theorem and
+  all discrete bounding inequalities are now fully verified. The asymptotic
+  sequence topology limit structures remain.
 
 Exit criteria:
 
