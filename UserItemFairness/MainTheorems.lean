@@ -6142,11 +6142,10 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center
       halpha_half halpha_half' hpos hdec hsucc
 
 /--
-Theorem 3 paper-facing price monotonicity, odd-center first-half form.  The two
+Theorem 3 paper-facing price monotonicity, odd-center first-half form. The two
 original recommendation models are connected to the opposing two-type reduced
-models by reduction witnesses; original feasible-value nonemptiness at
-`γ = 1` is left explicit, while reduced nonemptiness is supplied by the
-first-closed policy.
+models by reduction witnesses; the first-closed reduced policy supplies the
+`γ = 1` feasible witnesses needed on both the original and reduced sides.
 -/
 theorem paper_theorem3_price_decreases_firstHalf_center_of_reduction
     {m n : ℕ} [NeZero m] [NeZero n]
@@ -6168,27 +6167,53 @@ theorem paper_theorem3_price_decreases_firstHalf_center_of_reduction
     (hNonneg : R.data.model.Nonnegative)
     (hRow : R.data.model.RowHasPositiveItem)
     (hNonneg' : R'.data.model.Nonnegative)
-    (hRow' : R'.data.model.RowHasPositiveItem)
-    (hOrigNonempty :
-      (RecommendationModel.attainableUserFairnessAtLevel
-        R.data.model 1).Nonempty)
-    (hOrigNonempty' :
-      (RecommendationModel.attainableUserFairnessAtLevel
-        R'.data.model 1).Nonempty) :
+    (hRow' : R'.data.model.RowHasPositiveItem) :
     RecommendationModel.priceOfFairness R'.data.model ≤
       RecommendationModel.priceOfFairness R.data.model := by
+  let ρred : TypePolicy 2 n :=
+    problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos
+  let ρred' : TypePolicy 2 n :=
+    problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos
+  have hReducedFeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel R.reduced 1 ρred := by
+    rw [hred]
+    exact problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0 halpha1 hpos hdec
+  have hReducedFeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel R'.reduced 1 ρred' := by
+    rw [hred']
+    exact problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0' halpha1' hpos hdec
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model 1).Nonempty := by
+    refine ⟨RecommendationModel.userFairness R.data.model
+      (R.liftedPolicy ρred), ?_⟩
+    refine ⟨R.liftedPolicy ρred, ?_, rfl⟩
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R.optimalItemFairness_eq_reduced reps]
+    rw [R.itemFairness_liftedPolicy_eq_itemFairness ρred]
+    exact hReducedFeas
+  have hOrigNonempty' :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R'.data.model 1).Nonempty := by
+    refine ⟨RecommendationModel.userFairness R'.data.model
+      (R'.liftedPolicy ρred'), ?_⟩
+    refine ⟨R'.liftedPolicy ρred', ?_, rfl⟩
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R'.optimalItemFairness_eq_reduced reps']
+    rw [R'.itemFairness_liftedPolicy_eq_itemFairness ρred']
+    exact hReducedFeas'
   have hRedNonempty :
       (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
         R.reduced 1).Nonempty := by
-    rw [hred]
-    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
-      halpha0 halpha1 hpos hdec
+    refine ⟨TypeWeightedRecommendationModel.typeFairness R.reduced ρred, ?_⟩
+    exact ⟨ρred, hReducedFeas, rfl⟩
   have hRedNonempty' :
       (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
         R'.reduced 1).Nonempty := by
-    rw [hred']
-    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
-      halpha0' halpha1' hpos hdec
+    refine ⟨TypeWeightedRecommendationModel.typeFairness R'.reduced ρred', ?_⟩
+    exact ⟨ρred', hReducedFeas', rfl⟩
   have hUserEq :
       RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
         TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
@@ -6219,11 +6244,10 @@ theorem paper_theorem3_price_decreases_firstHalf_center_of_reduction
     R'.data.model hNonneg hRow hNonneg' hRow' huser_mono
 
 /--
-Theorem 3 paper-facing price monotonicity, even-center first-half form.  The two
+Theorem 3 paper-facing price monotonicity, even-center first-half form. The two
 original recommendation models are connected to the opposing two-type reduced
-models by reduction witnesses; original feasible-value nonemptiness at
-`γ = 1` is left explicit, while reduced nonemptiness is supplied by the
-first-closed policy.
+models by reduction witnesses; the first-closed reduced policy supplies the
+`γ = 1` feasible witnesses needed on both the original and reduced sides.
 -/
 theorem paper_theorem3_price_decreases_firstHalf_succ_center_of_reduction
     {m n : ℕ} [NeZero m] [NeZero n]
@@ -6245,27 +6269,53 @@ theorem paper_theorem3_price_decreases_firstHalf_succ_center_of_reduction
     (hNonneg : R.data.model.Nonnegative)
     (hRow : R.data.model.RowHasPositiveItem)
     (hNonneg' : R'.data.model.Nonnegative)
-    (hRow' : R'.data.model.RowHasPositiveItem)
-    (hOrigNonempty :
-      (RecommendationModel.attainableUserFairnessAtLevel
-        R.data.model 1).Nonempty)
-    (hOrigNonempty' :
-      (RecommendationModel.attainableUserFairnessAtLevel
-        R'.data.model 1).Nonempty) :
+    (hRow' : R'.data.model.RowHasPositiveItem) :
     RecommendationModel.priceOfFairness R'.data.model ≤
       RecommendationModel.priceOfFairness R.data.model := by
+  let ρred : TypePolicy 2 n :=
+    problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos
+  let ρred' : TypePolicy 2 n :=
+    problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos
+  have hReducedFeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel R.reduced 1 ρred := by
+    rw [hred]
+    exact problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0 halpha1 hpos hdec
+  have hReducedFeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel R'.reduced 1 ρred' := by
+    rw [hred']
+    exact problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0' halpha1' hpos hdec
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model 1).Nonempty := by
+    refine ⟨RecommendationModel.userFairness R.data.model
+      (R.liftedPolicy ρred), ?_⟩
+    refine ⟨R.liftedPolicy ρred, ?_, rfl⟩
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R.optimalItemFairness_eq_reduced reps]
+    rw [R.itemFairness_liftedPolicy_eq_itemFairness ρred]
+    exact hReducedFeas
+  have hOrigNonempty' :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R'.data.model 1).Nonempty := by
+    refine ⟨RecommendationModel.userFairness R'.data.model
+      (R'.liftedPolicy ρred'), ?_⟩
+    refine ⟨R'.liftedPolicy ρred', ?_, rfl⟩
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R'.optimalItemFairness_eq_reduced reps']
+    rw [R'.itemFairness_liftedPolicy_eq_itemFairness ρred']
+    exact hReducedFeas'
   have hRedNonempty :
       (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
         R.reduced 1).Nonempty := by
-    rw [hred]
-    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
-      halpha0 halpha1 hpos hdec
+    refine ⟨TypeWeightedRecommendationModel.typeFairness R.reduced ρred, ?_⟩
+    exact ⟨ρred, hReducedFeas, rfl⟩
   have hRedNonempty' :
       (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
         R'.reduced 1).Nonempty := by
-    rw [hred']
-    exact twoTypeReducedModel_attainableTypeFairnessAtLevel_one_nonempty
-      halpha0' halpha1' hpos hdec
+    refine ⟨TypeWeightedRecommendationModel.typeFairness R'.reduced ρred', ?_⟩
+    exact ⟨ρred', hReducedFeas', rfl⟩
   have hUserEq :
       RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
         TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
