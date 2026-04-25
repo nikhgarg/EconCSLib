@@ -426,6 +426,11 @@ and wasted proof search.
   and ordering inequalities, then prove the density lemmas feed those scalar
   hypotheses separately. This prevents measure-theory proof search from
   blocking a purely algebraic theorem.
+  For coupling proofs, first formalize the finite probability skeleton: a common
+  sample space, marginal-identification equalities, and an event implication
+  proving `Pr[A] ≤ Pr[B]`. Keep the continuous map, Jacobian/pushforward, and
+  event-implication geometry as separate inputs. This usually yields a named
+  paper lemma checkpoint before the measure-theoretic construction is complete.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only

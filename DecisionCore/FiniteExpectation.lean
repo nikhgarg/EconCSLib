@@ -350,6 +350,22 @@ theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
     intro a _
     exact mul_le_mul_of_nonneg_left (h a) ENNReal.toReal_nonneg)
 
+/-- Monotonicity of finite PMF probabilities under event inclusion. -/
+theorem pmfProb_le_of_imp {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (himp : ∀ a, p a → q a) :
+    pmfProb μ p ≤ pmfProb μ q := by
+  classical
+  unfold pmfProb
+  refine pmfExp_le_pmfExp_of_forall_le μ
+    (fun a => if p a then (1 : ℝ) else 0)
+    (fun a => if q a then (1 : ℝ) else 0) ?_
+  intro a
+  by_cases hp : p a
+  · have hq : q a := himp a hp
+    simp [hp, hq]
+  · by_cases hq : q a <;> simp [hp, hq]
+
 /-- Finite sums commute with finite PMF expectation. -/
 theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (s : Finset ι) (f : ι → α → ℝ) :

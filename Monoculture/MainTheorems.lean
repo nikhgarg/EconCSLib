@@ -283,6 +283,36 @@ theorem paper_theorem6_deltaCertificate_of_lemmas2_3
     monotonicity_top lemma3_middle lemma2_bottom
 
 /--
+Appendix C / Lemma 2, finite coupling form.
+
+Paper statement: for `τ ∼ F_{θA}` and `π ∼ F_{θH}`,
+`Pr[τ₁ = x₃] ≤ Pr[π₁ = x₃]`.
+
+The continuous proof constructs a contraction coupling between the more accurate
+and less accurate RUM realizations.  Lean exposes the finite probability step:
+if the coupled better ranking putting `x₃` first implies the coupled worse
+ranking puts `x₃` first, then the same bottom-first probability inequality
+holds.
+-/
+theorem paper_lemma2_bottom_of_coupling
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μBetter μWorse : PMF (Ranking 1)) (ν : PMF Ω)
+    (better worse : Ω → Ranking 1)
+    (hbetter :
+      firstChoiceProb μBetter (2 : Candidate 1) =
+        DecisionCore.pmfProb ν (fun ω => (2 : Candidate 1) = firstChoice (better ω)))
+    (hworse :
+      firstChoiceProb μWorse (2 : Candidate 1) =
+        DecisionCore.pmfProb ν (fun ω => (2 : Candidate 1) = firstChoice (worse ω)))
+    (himp : ∀ ω,
+      (2 : Candidate 1) = firstChoice (better ω) →
+        (2 : Candidate 1) = firstChoice (worse ω)) :
+    firstChoiceProb μBetter (2 : Candidate 1) ≤
+      firstChoiceProb μWorse (2 : Candidate 1) :=
+  rum3_lemma2_bottom_of_coupling
+    μBetter μWorse ν better worse hbetter hworse himp
+
+/--
 Appendix C / pairwise human comparisons to Theorem 6 lambda certificate.
 -/
 theorem paper_theorem6_lambdaCertificate_of_pairwise_facts
@@ -314,6 +344,24 @@ theorem paper_theorem6_lambda1_lt_one_of_mass_choose_third_after_first_removed
     rum3Lambda1 μ < 1 :=
   rum3Lambda1_lt_one_of_mass_choose_third_after_first_removed
     μ π₀ hchoose hmass
+
+/--
+Appendix C / lambda certificate from pairwise facts plus support.
+
+This version replaces the raw `λ₁ < 1` premise with a positive-mass witness that
+the human law can choose `x₃` after `x₁` is removed.
+-/
+theorem paper_theorem6_lambdaCertificate_of_pairwise_facts_and_support
+    {μWorse : PMF (Ranking 1)} {π₀ : Ranking 1}
+    (h13_gt_23 : rum3Lambda1 μWorse < rum3Lambda2 μWorse)
+    (h23_correct : (1 : ℝ) / 2 < rum3Lambda1 μWorse)
+    (hchoose :
+      bestRemainingAfter π₀ (0 : Candidate 1) = (2 : Candidate 1))
+    (hmass : 0 < (μWorse π₀).toReal)
+    (h12_correct : (1 : ℝ) / 2 < rum3Lambda3 μWorse) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_facts_and_support
+    h13_gt_23 h23_correct hchoose hmass h12_correct
 
 namespace MallowsComparison
 
