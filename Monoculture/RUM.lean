@@ -1120,6 +1120,114 @@ theorem rum3Lambda1_lt_lambda2_of_equiv
     hmap hmass hsource hstrict
 
 /--
+Sample-space version of the `x₂` versus `x₃` lambda comparison.
+
+The strict change-of-variables argument runs on a finite realization space `Ω`;
+the two marginal-identification equalities connect it back to the ranking law.
+-/
+theorem rum3Lambda1_wrong_lt_correct_of_sample_equiv
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF (Ranking 1)) (ν : PMF Ω) (rank : Ω → Ranking 1) (swap : Ω ≃ Ω)
+    (hwrongμ :
+      pmfProb μ
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) =
+            (2 : Candidate 1)))
+    (hcorrectμ :
+      rum3Lambda1 μ =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) =
+            (1 : Candidate 1)))
+    (hmap : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (0 : Candidate 1) = (1 : Candidate 1))
+    (hmass : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal)
+    {ω₀ : Ω}
+    (hwrong : bestRemainingAfter (rank ω₀) (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict : (ν ω₀).toReal < (ν (swap ω₀)).toReal) :
+    pmfProb μ
+        (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
+      rum3Lambda1 μ := by
+  rw [hwrongμ, hcorrectμ]
+  exact pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    ν swap
+    (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1))
+    (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1))
+    hmap hmass hwrong hstrict
+
+/--
+Sample-space version of the `x₁` versus `x₂` lambda comparison.
+-/
+theorem rum3Lambda3_wrong_lt_correct_of_sample_equiv
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF (Ranking 1)) (ν : PMF Ω) (rank : Ω → Ranking 1) (swap : Ω ≃ Ω)
+    (hwrongμ :
+      pmfProb μ
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) =
+            (1 : Candidate 1)))
+    (hcorrectμ :
+      rum3Lambda3 μ =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) =
+            (0 : Candidate 1)))
+    (hmap : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (2 : Candidate 1) = (0 : Candidate 1))
+    (hmass : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal)
+    {ω₀ : Ω}
+    (hwrong : bestRemainingAfter (rank ω₀) (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict : (ν ω₀).toReal < (ν (swap ω₀)).toReal) :
+    pmfProb μ
+        (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
+      rum3Lambda3 μ := by
+  rw [hwrongμ, hcorrectμ]
+  exact pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    ν swap
+    (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1))
+    (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) = (0 : Candidate 1))
+    hmap hmass hwrong hstrict
+
+/--
+Sample-space version of the `λ₁ < λ₂` gap comparison.
+-/
+theorem rum3Lambda1_lt_lambda2_of_sample_equiv
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF (Ranking 1)) (ν : PMF Ω) (rank : Ω → Ranking 1) (swap : Ω ≃ Ω)
+    (hlambda1μ :
+      rum3Lambda1 μ =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) =
+            (1 : Candidate 1)))
+    (hlambda2μ :
+      rum3Lambda2 μ =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (1 : Candidate 1) =
+            (0 : Candidate 1)))
+    (hmap : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap ω)) (1 : Candidate 1) = (0 : Candidate 1))
+    (hmass : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap ω)).toReal)
+    {ω₀ : Ω}
+    (hsource : bestRemainingAfter (rank ω₀) (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict : (ν ω₀).toReal < (ν (swap ω₀)).toReal) :
+    rum3Lambda1 μ < rum3Lambda2 μ := by
+  rw [hlambda1μ, hlambda2μ]
+  exact pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
+    ν swap
+    (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1))
+    (fun ω => bestRemainingAfter (rank ω) (1 : Candidate 1) = (0 : Candidate 1))
+    hmap hmass hsource hstrict
+
+/--
 Lambda certificate from finite paired-density swap facts.
 
 This packages the two strict pairwise comparisons in the form produced by a
@@ -1259,6 +1367,96 @@ theorem rum3LambdaCertificate_of_all_pairwise_swap_facts_and_full_support
     hfull
     (rum3Lambda3_wrong_lt_correct_of_equiv
       μWorse swap12 hmap12 hmass12 hwrong12 hstrict12)
+
+/--
+Lambda certificate from finite sample-space swap facts plus full support of the
+human ranking law.
+
+This is the finite/discrete analogue closest to the continuous RUM density
+argument: the swaps act on realizations, and marginal equalities identify the
+realization events with the ranking-law lambda events.
+-/
+theorem rum3LambdaCertificate_of_sample_swap_facts_and_full_support
+    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {μWorse : PMF (Ranking 1)}
+    (ν : PMF Ω) (rank : Ω → Ranking 1)
+    (hfull : ∀ π : Ranking 1, 0 < (μWorse π).toReal)
+    (hlambda1μ :
+      rum3Lambda1 μWorse =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) =
+            (1 : Candidate 1)))
+    (hlambda2μ :
+      rum3Lambda2 μWorse =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (1 : Candidate 1) =
+            (0 : Candidate 1)))
+    (hwrong23μ :
+      pmfProb μWorse
+          (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) =
+            (2 : Candidate 1)))
+    (hlambda3μ :
+      rum3Lambda3 μWorse =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) =
+            (0 : Candidate 1)))
+    (hwrong12μ :
+      pmfProb μWorse
+          (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) =
+        pmfProb ν
+          (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) =
+            (1 : Candidate 1)))
+    (swap13gap : Ω ≃ Ω)
+    (hmap13gap : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap13gap ω)) (1 : Candidate 1) =
+          (0 : Candidate 1))
+    (hmass13gap : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap13gap ω)).toReal)
+    {ω13gap : Ω}
+    (hsource13gap :
+      bestRemainingAfter (rank ω13gap) (0 : Candidate 1) = (1 : Candidate 1))
+    (hstrict13gap :
+      (ν ω13gap).toReal < (ν (swap13gap ω13gap)).toReal)
+    (swap23 : Ω ≃ Ω)
+    (hmap23 : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        bestRemainingAfter (rank (swap23 ω)) (0 : Candidate 1) =
+          (1 : Candidate 1))
+    (hmass23 : ∀ ω,
+      bestRemainingAfter (rank ω) (0 : Candidate 1) = (2 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap23 ω)).toReal)
+    {ω23 : Ω}
+    (hwrong23 :
+      bestRemainingAfter (rank ω23) (0 : Candidate 1) = (2 : Candidate 1))
+    (hstrict23 : (ν ω23).toReal < (ν (swap23 ω23)).toReal)
+    (swap12 : Ω ≃ Ω)
+    (hmap12 : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        bestRemainingAfter (rank (swap12 ω)) (2 : Candidate 1) =
+          (0 : Candidate 1))
+    (hmass12 : ∀ ω,
+      bestRemainingAfter (rank ω) (2 : Candidate 1) = (1 : Candidate 1) →
+        (ν ω).toReal ≤ (ν (swap12 ω)).toReal)
+    {ω12 : Ω}
+    (hwrong12 :
+      bestRemainingAfter (rank ω12) (2 : Candidate 1) = (1 : Candidate 1))
+    (hstrict12 : (ν ω12).toReal < (ν (swap12 ω12)).toReal) :
+    RUM3LambdaCertificate μWorse :=
+  rum3LambdaCertificate_of_pairwise_wrong_facts_and_full_support
+    (rum3Lambda1_lt_lambda2_of_sample_equiv
+      μWorse ν rank swap13gap hlambda1μ hlambda2μ
+      hmap13gap hmass13gap hsource13gap hstrict13gap)
+    (rum3Lambda1_wrong_lt_correct_of_sample_equiv
+      μWorse ν rank swap23 hwrong23μ hlambda1μ
+      hmap23 hmass23 hwrong23 hstrict23)
+    hfull
+    (rum3Lambda3_wrong_lt_correct_of_sample_equiv
+      μWorse ν rank swap12 hwrong12μ hlambda3μ
+      hmap12 hmass12 hwrong12 hstrict12)
 
 theorem expectedBestAfterRemoval_rum3_remove0
     (μ : PMF (Ranking 1)) (value : Candidate 1 → ℝ) :

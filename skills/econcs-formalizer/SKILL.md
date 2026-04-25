@@ -452,6 +452,11 @@ and wasted proof search.
   `Finset.sum_lt_sum`, then compare the image event to the target event by
   inclusion. This pattern cleanly turns paired-density strictness into finite
   facts like `wrong < correct` or `λ₁ < λ₂`.
+  Prefer running these swap arguments on the realization/sample space when that
+  is how the paper proves them. Add marginal-identification equalities back to
+  the ranking law instead of forcing a swap equivalence directly on rankings.
+  This mirrors continuous change-of-variables proofs and keeps the future
+  measure-theory bridge local to pushforward/marginal facts.
   When a paper's continuous "support everywhere" premise is only needed to show
   a finite probability is not one, add a full-support finite wrapper
   (`∀ atom, 0 < mass atom`) and construct one concrete outside-event atom.
