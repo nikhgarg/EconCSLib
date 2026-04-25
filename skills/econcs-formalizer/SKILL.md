@@ -408,6 +408,12 @@ and wasted proof search.
   conditionally from a named analytic certificate. Only then instantiate that
   certificate from topology/analysis assumptions. Keep continuity/limit imports
   local and narrow.
+  For continuous RUM/noise-model proofs, split the final finite-dimensional
+  payoff algebra from the density/integration arguments immediately. State the
+  algebra theorem in terms of scalar probability deltas, conditional utilities,
+  and ordering inequalities, then prove the density lemmas feed those scalar
+  hypotheses separately. This prevents measure-theory proof search from
+  blocking a purely algebraic theorem.
   For finite noisy-ranking asymptotics, prefer a rank-weight or atom-weight
   function that is total at the limiting parameter (`q = 0`, infinite accuracy,
   degenerate noise) over reasoning directly with a PMF constructor that only

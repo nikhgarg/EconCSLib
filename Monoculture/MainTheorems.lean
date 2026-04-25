@@ -100,6 +100,34 @@ theorem paper_lemma1_laplacian_not_strictlyWellOrdered
     ¬ StrictlyWellOrderedNoise (laplacianNoiseKernel lam) :=
   laplacianNoiseKernel_not_strictlyWellOrdered lam
 
+/--
+Appendix C / Theorem 6, final three-candidate payoff algebra.
+
+Paper statement: for three candidates with values `x1 > x2 > x3`, once the RUM
+proof supplies `Δp1 > 0`, `Δp1 ≥ Δp2`, `Δp3 ≤ 0`, total first-choice mass
+conservation, and the lambda inequalities for the human two-candidate
+subproblems, the weaker-competition payoff difference satisfies
+`UAH(θA, θH) - UHH(θA, θH) < 0`.
+
+Lean exposes exactly that finite-dimensional final step.  The remaining
+continuous RUM work is to derive these lambda and delta hypotheses from the
+noise model.
+-/
+theorem paper_theorem6_threeCandidate_payoff_algebra
+    {x1 x2 x3 ell1 ell2 ell3 d1 d2 d3 : ℝ}
+    (hx12 : x2 < x1) (hx23 : x3 < x2)
+    (hell1_half : (1 : ℝ) / 2 < ell1) (hell1_lt_one : ell1 < 1)
+    (hell12 : ell1 < ell2) (hell2_le_one : ell2 ≤ 1)
+    (hell3_half : (1 : ℝ) / 2 < ell3)
+    (hd1_pos : 0 < d1) (hd12 : d2 ≤ d1) (hd3_nonpos : d3 ≤ 0)
+    (hd_sum : d1 + d2 + d3 = 0) :
+    d1 * rum3_uMinus1 ell1 x2 x3 +
+        d2 * rum3_uMinus2 ell2 x1 x3 +
+        d3 * rum3_uMinus3 ell3 x1 x2 < 0 :=
+  rum3_theorem6_payoff_algebra
+    hx12 hx23 hell1_half hell1_lt_one hell12 hell2_le_one hell3_half
+    hd1_pos hd12 hd3_nonpos hd_sum
+
 namespace MallowsComparison
 
 /--
