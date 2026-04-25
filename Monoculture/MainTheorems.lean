@@ -77,6 +77,11 @@ theorem paper_lemma1_gaussian_strictlyWellOrdered
     StrictlyWellOrderedNoise (gaussianNoiseKernel κ) :=
   gaussianNoiseKernel_strictlyWellOrdered hκ
 
+/-- Gaussian kernel positivity, used by density-product mass comparisons. -/
+theorem paper_lemma1_gaussianNoiseKernel_pos (κ x : ℝ) :
+    0 < gaussianNoiseKernel κ x :=
+  gaussianNoiseKernel_pos κ x
+
 /--
 Appendix C / Lemma 1, Laplacian weak form.
 
@@ -88,6 +93,11 @@ theorem paper_lemma1_laplacian_weaklyWellOrdered
     {lam : ℝ} (hlam : 0 ≤ lam) :
     WeaklyWellOrderedNoise (laplacianNoiseKernel lam) :=
   laplacianNoiseKernel_weaklyWellOrdered hlam
+
+/-- Laplacian kernel positivity, used by density-product mass comparisons. -/
+theorem paper_lemma1_laplacianNoiseKernel_pos (lam x : ℝ) :
+    0 < laplacianNoiseKernel lam x :=
+  laplacianNoiseKernel_pos lam x
 
 /--
 Appendix C / Lemma 1, Laplacian strict-form check.

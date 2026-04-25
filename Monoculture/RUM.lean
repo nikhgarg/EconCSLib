@@ -42,6 +42,24 @@ noncomputable def gaussianNoiseKernel (κ : ℝ) (x : ℝ) : ℝ :=
 noncomputable def laplacianNoiseKernel (lam : ℝ) (x : ℝ) : ℝ :=
   Real.exp (-lam * |x|)
 
+theorem gaussianNoiseKernel_pos (κ x : ℝ) :
+    0 < gaussianNoiseKernel κ x := by
+  unfold gaussianNoiseKernel
+  exact Real.exp_pos _
+
+theorem gaussianNoiseKernel_nonneg (κ x : ℝ) :
+    0 ≤ gaussianNoiseKernel κ x :=
+  le_of_lt (gaussianNoiseKernel_pos κ x)
+
+theorem laplacianNoiseKernel_pos (lam x : ℝ) :
+    0 < laplacianNoiseKernel lam x := by
+  unfold laplacianNoiseKernel
+  exact Real.exp_pos _
+
+theorem laplacianNoiseKernel_nonneg (lam x : ℝ) :
+    0 ≤ laplacianNoiseKernel lam x :=
+  le_of_lt (laplacianNoiseKernel_pos lam x)
+
 /--
 The algebraic core of the Gaussian well-ordering proof:
 swapping the larger realized value to the larger true value improves the
