@@ -266,6 +266,17 @@ search.
    normalization bridges, and finite-source-integral bridges. Align the product
    nesting with Mathlib's product measure conventions, e.g. `(ℝ × ℝ) × ℝ`, so
    later instantiations do not spend time on associativity rewrites.
+   When a finite certificate seems to require full support of all induced
+   rankings, inspect the downstream field actually using it before proving six
+   ranking fibers. Often only one strict inequality such as `λ₁ < 1` is needed;
+   for continuous RUMs this can be discharged faster by proving positive mass
+   of the exact wrong-choice event and using an identity like
+   `wrongProb = 1 - λ₁`.
+   For concrete continuous support obligations, use explicit open boxes inside
+   the target event rather than trying to characterize the whole event. Prove a
+   reusable "open box has nonzero volume, and subsets inherit nonzero measure"
+   lemma, then instantiate tiny boxes for each lambda source/corrected-top
+   region.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,
