@@ -39,9 +39,9 @@
 \node[dag_model, right=of Sampling, text width=3.8cm] (Weighted)
   {\textbf{Weighted Pairing (Section 7)}\\bid-independent randomized multi-price auction};
 \node[dag_conditional, below=of Weighted, text width=3.8cm] (Thm71)
-  {\textbf{Theorem 7.1 (Section 7)}\\finset-bin ranking bridge closed; needs dyadic active/singleton partition};
+  {\textbf{Theorem 7.1 (Section 7)}\\active/singleton bin split and ranking bridge closed; needs dyadic partition};
 \node[dag_conditional, below=of Thm71, text width=3.8cm] (Thm72)
-  {\textbf{Theorem 7.2 (Section 7)}\\first case and high-low finset certificate closed; needs largest-bucket split and tightness};
+  {\textbf{Theorem 7.2 (Section 7)}\\case split and largest-bucket tail certificate closed; needs dyadic instantiation and tightness};
 
 \node[dag_model, right=of Weighted, text width=3.8cm] (RandomTruthful)
   {\textbf{$p_i,c_i,g_i$ (Section 8)}\\win probabilities, expected costs, expected gains};
@@ -81,7 +81,7 @@
 
 \draw[dag_arrow] (Thresholds) -- (DetModel);
 \draw[dag_dashed_arrow] (DetModel) -- (Thm91);
-\draw[dag_dashed_arrow] (DetModel.west) |- (Lemma92.west);
+\draw[dag_dashed_arrow] (DetModel.east) to[out=-35,in=35,looseness=1.15] (Lemma92.east);
 \draw[dag_dashed_arrow] (Thm91) -| (Thm93);
 \draw[dag_dashed_arrow] (Lemma92) -- (Thm93);
 

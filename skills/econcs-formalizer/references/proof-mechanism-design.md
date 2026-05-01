@@ -38,6 +38,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   helper to derive value-sorted ranks, within-bin membership, image equality,
   and injectivity; use subtype/finset wrappers to derive high-low pair
   injections from disjoint bucket halves.
+- For dyadic largest-bucket arguments such as `|M| t = Ω(F)`, formalize the
+  proof as a finite geometric-tail recurrence (`tail_j <= mass_j + tail_{j+1}/2`)
+  plus a largest-total-bucket-to-floor-mass bridge. This is faster and more
+  auditable than repeatedly unfolding all powers-of-two buckets in the main
+  auction theorem.
 - Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.

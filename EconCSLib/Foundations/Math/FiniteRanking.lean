@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Sort
+import Mathlib.Data.Fintype.Fin
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Prod.Lex
 import Mathlib.Data.Real.Basic
@@ -169,6 +170,125 @@ theorem sum_rankValueByValue_eq_sum (s : Finset α) (value : α → ℝ)
               exact rankAgentByValue_injective s value hcard hij)
     _ = ∑ a ∈ s, value a := by
           rw [image_rankAgentByValue_univ s value hcard]
+
+/-- Elements whose sorted rank index lies strictly below `cut`. -/
+noncomputable def lowerRankFinset (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) : Finset α :=
+  ((Finset.univ : Finset (Fin k)).filter fun i => i.val < cut).image
+    (rankAgentByValue s value hcard)
+
+/-- Elements whose sorted rank index lies weakly above `cut`. -/
+noncomputable def upperRankFinset (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) : Finset α :=
+  ((Finset.univ : Finset (Fin k)).filter fun i => cut ≤ i.val).image
+    (rankAgentByValue s value hcard)
+
+theorem lowerRankFinset_subset (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    lowerRankFinset s value hcard cut ⊆ s := by
+  classical
+  intro a ha
+  rcases Finset.mem_image.mp ha with ⟨i, _hi, rfl⟩
+  exact rankAgentByValue_mem s value hcard i
+
+theorem upperRankFinset_subset (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    upperRankFinset s value hcard cut ⊆ s := by
+  classical
+  intro a ha
+  rcases Finset.mem_image.mp ha with ⟨i, _hi, rfl⟩
+  exact rankAgentByValue_mem s value hcard i
+
+theorem lowerRankFinset_disjoint_upperRankFinset
+    (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    ∀ a : α,
+      a ∈ lowerRankFinset s value hcard cut →
+      a ∈ upperRankFinset s value hcard cut → False := by
+  classical
+  intro a hlow hhigh
+  rcases Finset.mem_image.mp hlow with ⟨lo, hlo, hloeq⟩
+  rcases Finset.mem_image.mp hhigh with ⟨hi, hhi, hhieq⟩
+  have hagent_eq :
+      rankAgentByValue s value hcard lo =
+        rankAgentByValue s value hcard hi := by
+    rw [hloeq, hhieq]
+  have hidx : lo = hi :=
+    rankAgentByValue_injective s value hcard hagent_eq
+  subst hi
+  exact not_le_of_gt (Finset.mem_filter.mp hlo).2 (Finset.mem_filter.mp hhi).2
+
+theorem lowerRank_value_le_upperRank_value
+    (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    ∀ high : α, high ∈ upperRankFinset s value hcard cut →
+      ∀ low : α, low ∈ lowerRankFinset s value hcard cut →
+        value low ≤ value high := by
+  classical
+  intro high hhigh low hlow
+  rcases Finset.mem_image.mp hhigh with ⟨hi, hhi, rfl⟩
+  rcases Finset.mem_image.mp hlow with ⟨lo, hlo, rfl⟩
+  have hlo_lt_hi : lo.val < hi.val :=
+    Nat.lt_of_lt_of_le (Finset.mem_filter.mp hlo).2
+      (Finset.mem_filter.mp hhi).2
+  have hmono :=
+    rankValueByValue_mono s value hcard lo hi hlo_lt_hi
+  rw [rankValueByValue_eq_value s value hcard lo] at hmono
+  rw [rankValueByValue_eq_value s value hcard hi] at hmono
+  exact hmono
+
+theorem lowerRankFinset_card (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    (lowerRankFinset s value hcard cut).card = min k cut := by
+  classical
+  unfold lowerRankFinset
+  rw [Finset.card_image_of_injective _
+    (rankAgentByValue_injective s value hcard)]
+  exact Fin.card_filter_val_lt (n := k) (m := cut)
+
+theorem lowerRankFinset_card_add_upperRankFinset_card
+    (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    (lowerRankFinset s value hcard cut).card +
+      (upperRankFinset s value hcard cut).card = k := by
+  classical
+  unfold lowerRankFinset upperRankFinset
+  rw [Finset.card_image_of_injective _
+    (rankAgentByValue_injective s value hcard)]
+  rw [Finset.card_image_of_injective _
+    (rankAgentByValue_injective s value hcard)]
+  have hfilter :=
+    Finset.card_filter_add_card_filter_not
+      (s := (Finset.univ : Finset (Fin k)))
+      (p := fun i : Fin k => i.val < cut)
+  simpa [Nat.not_lt] using hfilter
+
+theorem upperRankFinset_card (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    (upperRankFinset s value hcard cut).card = k - min k cut := by
+  classical
+  have hsum :=
+    lowerRankFinset_card_add_upperRankFinset_card s value hcard cut
+  have hlow := lowerRankFinset_card s value hcard cut
+  calc
+    (upperRankFinset s value hcard cut).card
+        = min k cut + (upperRankFinset s value hcard cut).card -
+            min k cut := by
+          rw [Nat.add_sub_cancel_left]
+    _ = k - min k cut := by
+          rw [← hlow, hsum]
+
+theorem lowerRankFinset_card_half (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) :
+    (lowerRankFinset s value hcard (k / 2)).card = k / 2 := by
+  rw [lowerRankFinset_card]
+  exact min_eq_right (Nat.div_le_self k 2)
+
+theorem upperRankFinset_card_half (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) :
+    (upperRankFinset s value hcard (k / 2)).card = k - k / 2 := by
+  rw [upperRankFinset_card]
+  exact congrArg (fun x => k - x) (min_eq_right (Nat.div_le_self k 2))
 
 end FiniteRanking
 end EconCSLib
