@@ -2,20 +2,54 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}
-% --- Legend ---
-\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
-\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized Lemma};
-\node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
-\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not Formalized};
-\daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
+\begin{tikzpicture}[node distance=1.1cm and 2cm,
+  every node/.style={font=\sffamily\small}]
 
-% --- Graph ---
-\node[dag_model, below=2cm of Legend] (Primitives) {\textbf{Primitives} \\ Discretization Bias};
-\node[dag_unformalized, below=1.5cm of Primitives] (Thm1) {\textbf{Theorem 1} \\ Bias bounded by MAE};
-\node[dag_result, below=1.5cm of Thm1] (Thm2) {\textbf{Theorem 2} \\ Finite Optimizer};
+% Legend
+\node[dag_result, text width=3cm] (legRes) {\textbf{Closed}\\formalized};
+\node[dag_model, right=0.35cm of legRes, text width=3cm] (legDef) {\textbf{Definition}\\model/interface};
+\node[dag_conditional, right=0.35cm of legDef, text width=3cm] (legCond) {\textbf{Conditional}\\source-facing};
+\node[dag_unformalized, right=0.35cm of legCond, text width=3cm] (legOpen) {\textbf{Open}\\not formalized};
+\daglegend{(legRes)(legDef)(legCond)(legOpen)}{Legend}
 
-\draw[dag_arrow] (Primitives) -- (Thm1);
-\draw[dag_arrow] (Thm1) -- (Thm2);
+% Paper definitions and objectives
+\node[dag_model, below=1.6cm of legRes] (Scores)
+  {\textbf{Section 3.1}\\continuous classifier, argmax rule, bias, MAE};
+\node[dag_model, below=of Scores] (DecisionObj)
+  {\textbf{Eq. (3)}\\accuracy/fidelity objective $O_N^\gamma$};
+\node[dag_model, below=of DecisionObj] (Nontrivial)
+  {\textbf{Section 3.3}\\non-trivial reference distributions};
+
+% Current reusable expected-decision layer
+\node[dag_result, right=of DecisionObj] (Argmax)
+  {\textbf{Expected Decision Core}\\finite-linear expectation, pointwise optimizers, Bayes-score argmax};
+\node[dag_conditional, above=of Argmax] (Thm2i)
+  {\textbf{Theorem 2(i)}\\joint rule maximizes $O_N^\gamma$ assuming row Bayes identities};
+\node[dag_conditional, below=of Argmax] (Thm2ii)
+  {\textbf{Theorem 2(ii)}\\argmax maximizes expected accuracy assuming row Bayes identities};
+
+% Source theorems
+\node[dag_unformalized, right=of Scores] (Thm1)
+  {\textbf{Theorem 1 (Sec. 3.2)}\\argmax bias bounded by predictive MAE; tightness};
+\node[dag_unformalized, right=of Nontrivial] (Thm2iii)
+  {\textbf{Theorem 2(iii)}\\argmax only Pareto-optimal independent rule};
+\node[dag_conditional, right=of Argmax] (RowBayes)
+  {\textbf{Bayes Row Identities}\\$E[1\{Y_i=\hat y_i\}] = E[q_i(\hat y_i)]$ for each row rule};
+\node[dag_result, right=of Thm2ii] (BayesBridge)
+  {\textbf{Tower Bridge}\\row identities imply expected 0-1 accuracy equals expected posterior score};
+
+% Edges
+\draw[dag_arrow] (Scores) -- (Thm1);
+\draw[dag_arrow] (DecisionObj) -- (Argmax);
+\draw[dag_arrow] (Argmax) -- (Thm2i);
+\draw[dag_arrow] (Argmax) -- (Thm2ii);
+\draw[dag_arrow] (DecisionObj) -- (Thm2i);
+\draw[dag_arrow] (Scores) -- (RowBayes);
+\draw[dag_arrow] (RowBayes) |- (BayesBridge);
+\draw[dag_arrow] (BayesBridge) -- (Thm2ii);
+\draw[dag_arrow] (BayesBridge) -- (Thm2i);
+\draw[dag_dashed_arrow] (Nontrivial) -- (Thm2iii);
+\draw[dag_dashed_arrow] (BayesBridge) -- (Thm2iii);
+
 \end{tikzpicture}
 \end{document}
