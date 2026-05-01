@@ -1,8 +1,9 @@
 # Foundations: Probability
 
 Use for `EconCSLib/Foundations/Probability/*`, finite PMFs, expectations,
-conditional probability, finite variance, finite Markov kernels/chains,
-concentration, measure inequalities, continuous densities, and RUM/noise models.
+conditional probability, finite variance, finite Markov kernels/chains/MDPs,
+stochastic dominance/couplings, concentration, measure inequalities,
+continuous densities, and RUM/noise models.
 
 ## Finite PMF and Expectation Seams
 
@@ -41,13 +42,19 @@ concentration, measure inequalities, continuous densities, and RUM/noise models.
 
 ## Finite Markov Chains and Dynamic Models
 
-- For dynamic EC/platform papers, start with the finite kernel interface in
+- For dynamic EC/platform papers with controlled actions, start with
+  `EconCSLib.Foundations.Probability.MDP`: `FiniteMDP`, `FiniteMDP.Policy`,
+  `controlledKernel`, `actionValue`, `policyValueStep`, `horizonValue`,
+  `optimalStep`, `optimalValue`, and occupancy masses.
+- For passive dynamics, use the finite kernel interface in
   `EconCSLib.Foundations.Probability.MarkovChain`: `FiniteMarkovKernel`,
   `transitionProb`, `step`, `iterate`, `expectedNext`, `drift`, `Stationary`,
   `Absorbing`, `ExpectedLe`, and `StochasticallyMonotone`.
-- Model policy-induced dynamics as separate kernels over the same finite state
-  type. Compare policies with `ExpectedLe K L V` for the observable or
-  Lyapunov/potential function `V`, then lift to `drift_le_of_expectedLe`.
+- Model policy-induced dynamics with `controlledKernel` when actions matter, or
+  as separate kernels over the same finite state type when the paper already
+  fixes policies. Compare fixed kernels with `ExpectedLe K L V` for the
+  observable or Lyapunov/potential function `V`, then lift to
+  `drift_le_of_expectedLe`.
 - For queueing, surge, and imbalance papers, define the paper's state type
   first, then a potential such as queue length, imbalance, waiting cost, or
   welfare loss. Prove one-step drift bounds before attempting stationary or
@@ -59,6 +66,13 @@ concentration, measure inequalities, continuous densities, and RUM/noise models.
 - For monotone dynamics, use `StochasticallyMonotone` when the paper compares
   states under every monotone observable. Use `ExpectedLe` when the comparison
   is only for the paper's specific value function or welfare/potential metric.
+- For finite first-order stochastic dominance, use
+  `EconCSLib.Foundations.Probability.StochasticDominance`.
+  `PMF.FirstOrderLe μ ν` is the expectation order against every monotone
+  observable, and `PMF.MonotoneCoupling` is the certificate interface for a
+  joint distribution supported on ordered pairs. Use this for admissions,
+  recommendation, and platform-policy comparisons before introducing
+  paper-specific CDF algebra.
 - Keep finite Markov kernels in the probability foundations layer. Paper
   folders should contain only the concrete state encoding, transition law,
   policy parameters, and paper-facing wrappers.

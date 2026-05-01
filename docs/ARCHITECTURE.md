@@ -29,10 +29,14 @@ Current top-level areas:
 
 Probability foundations currently include finite PMFs and expectations,
 conditional probability, finite variance, measure inequalities, continuous
-probability support, and finite Markov kernel/chain primitives. Dynamic platform
-or surge-pricing papers should usually start with
-`EconCSLib.Foundations.Probability.MarkovChain` before introducing
-paper-specific states and policies.
+probability support, finite Markov kernel/chain primitives, and finite MDP
+primitives, plus finite stochastic-dominance/coupling certificates. Dynamic
+platform or surge-pricing papers should usually start with
+`EconCSLib.Foundations.Probability.MDP` for controlled dynamics,
+`EconCSLib.Foundations.Probability.MarkovChain` for passive dynamics, and
+`EconCSLib.Foundations.Probability.StochasticDominance` for monotone policy or
+state-distribution comparisons, before introducing paper-specific states and
+policies.
 
 ## Paper Folders
 

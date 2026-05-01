@@ -83,7 +83,7 @@ formalization, execute the standard intake before deep proof work:
   direct statement is too hard, create an explicit bridge theorem whose name and
   assumptions describe the remaining gap.
 - During intake, classify reusable primitives by library area. Upstream only
-  seams that pass the second-paper test, such as finite PMF/Markov kernels,
+  seams that pass the second-paper test, such as finite PMF/Markov kernels/MDPs,
   probability inequalities, monotonicity/comparison lemmas, allocation
   primitives, or mechanism interfaces.
 - Keep a live README status table from the first scaffold onward. Each row must
