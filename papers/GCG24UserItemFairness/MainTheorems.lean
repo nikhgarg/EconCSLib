@@ -8834,6 +8834,50 @@ theorem paper_theorem4_misestimation_without_fairness_le_half_from_userFairness
     ρhat hbase huser
 
 /--
+Appendix E, Theorem 4 no-fairness price bound, first true cold-start row:
+the reduced no-fairness policy lifted to the original model has price of
+misestimation at most `1/2` at `γ = 0`.
+-/
+theorem paper_theorem4_misestimation_without_fairness_le_half_typeZero_from_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta : ℝ} {v : Item n → ℝ}
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v) :
+    E.priceOfMisestimation 0
+      (R.liftedPolicy (OpposingTypes.theorem4NoFairnessPolicyTypeZero v)) ≤
+        (1 / 2 : ℝ) := by
+  exact E.theorem4_misestimation_without_fairness_le_half_typeZero_from_reduction
+    R reps htrue hred hpos hdec
+
+/--
+Appendix E, Theorem 4 no-fairness price bound, second true cold-start row:
+the reduced no-fairness policy lifted to the original model has price of
+misestimation at most `1/2` at `γ = 0`.
+-/
+theorem paper_theorem4_misestimation_without_fairness_le_half_typeOne_from_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta : ℝ} {v : Item n → ℝ}
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v) :
+    E.priceOfMisestimation 0
+      (R.liftedPolicy (OpposingTypes.theorem4NoFairnessPolicyTypeOne v)) ≤
+        (1 / 2 : ℝ) := by
+  exact E.theorem4_misestimation_without_fairness_le_half_typeOne_from_reduction
+    R reps htrue hred hpos hdec
+
+/--
 Appendix E, Theorem 4 final algebraic step.
 
 If the true maximal-fairness optimum is above `1/n` while the estimated
@@ -9316,6 +9360,247 @@ theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_closed_pro
       1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_closed_problem11_succ_center
     R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hsucc
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+odd-center closed Problem 11 construction with the paper's geometric value
+vector, first true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_smallValueVector_closed_problem11_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_smallValueVector_closed_problem11_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hcenter
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+odd-center closed Problem 11 construction with the paper's geometric value
+vector, second true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_smallValueVector_closed_problem11_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_smallValueVector_closed_problem11_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hcenter
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+even-center closed Problem 11 construction with the paper's geometric value
+vector, first true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_smallValueVector_closed_problem11_succ_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_smallValueVector_closed_problem11_succ_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hsucc
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+even-center closed Problem 11 construction with the paper's geometric value
+vector, second true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_smallValueVector_closed_problem11_succ_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_smallValueVector_closed_problem11_succ_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hsucc
+
+/--
+Appendix E, Theorem 4 two-bullet wrapper: for the constructed geometric value
+vector and odd midpoint, the no-fairness price is at most `1/2` while the
+fairness-constrained price can exceed `1 - eps`, first true cold-start row.
+-/
+theorem paper_theorem4_misestimation_tradeoff_typeZero_from_smallValueVector_closed_problem11_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
+    E.priceOfMisestimation 0
+        (R.liftedPolicy
+          (OpposingTypes.theorem4NoFairnessPolicyTypeZero
+            (OpposingTypes.theorem4SmallValueVector (n := n) eps))) ≤
+      (1 / 2 : ℝ) ∧
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_tradeoff_typeZero_from_smallValueVector_closed_problem11_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hcenter
+
+/--
+Appendix E, Theorem 4 two-bullet wrapper: constructed geometric value vector,
+odd midpoint, second true cold-start row.
+-/
+theorem paper_theorem4_misestimation_tradeoff_typeOne_from_smallValueVector_closed_problem11_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
+    E.priceOfMisestimation 0
+        (R.liftedPolicy
+          (OpposingTypes.theorem4NoFairnessPolicyTypeOne
+            (OpposingTypes.theorem4SmallValueVector (n := n) eps))) ≤
+      (1 / 2 : ℝ) ∧
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_tradeoff_typeOne_from_smallValueVector_closed_problem11_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hcenter
+
+/--
+Appendix E, Theorem 4 two-bullet wrapper: constructed geometric value vector,
+even midpoint, first true cold-start row.
+-/
+theorem paper_theorem4_misestimation_tradeoff_typeZero_from_smallValueVector_closed_problem11_succ_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
+    E.priceOfMisestimation 0
+        (R.liftedPolicy
+          (OpposingTypes.theorem4NoFairnessPolicyTypeZero
+            (OpposingTypes.theorem4SmallValueVector (n := n) eps))) ≤
+      (1 / 2 : ℝ) ∧
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_tradeoff_typeZero_from_smallValueVector_closed_problem11_succ_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hsucc
+
+/--
+Appendix E, Theorem 4 two-bullet wrapper: constructed geometric value vector,
+even midpoint, second true cold-start row.
+-/
+theorem paper_theorem4_misestimation_tradeoff_typeOne_from_smallValueVector_closed_problem11_succ_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta
+        (OpposingTypes.theorem4SmallValueVector (n := n) eps))
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
+    E.priceOfMisestimation 0
+        (R.liftedPolicy
+          (OpposingTypes.theorem4NoFairnessPolicyTypeOne
+            (OpposingTypes.theorem4SmallValueVector (n := n) eps))) ≤
+      (1 / 2 : ℝ) ∧
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_tradeoff_typeOne_from_smallValueVector_closed_problem11_succ_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hsucc
 
 /--
 Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a

@@ -66,11 +66,11 @@
 \node[dag_lemma, right=of ColdBounds] (TrueLower)
   {\textbf{True-Model Lower Bound} \\ $U^*_{\min}(1,w) > 1/n$};
 \node[dag_conditional, below=1.7cm of NoFairness, xshift=3.2cm] (Theorem4Conditional)
-  {\textbf{Theorem 4 Wrappers} \\ Closed Problem 11 odd/even large-misestimation};
+  {\textbf{Theorem 4 Wrappers} \\ Two-bullet small-value tradeoff; baseline side condition};
 \node[dag_lemma, below=of Theorem4Conditional] (VExist)
   {\textbf{Value-Vector Witness} \\ Geometric $v_j=r^j$ construction};
 \node[dag_unformalized, below=of VExist] (Theorem4Full)
-  {\textbf{Theorem 4 (App. E)} \\ Open: source-level packaging of $v$, reduction, and baseline};
+  {\textbf{Theorem 4 (App. E)} \\ Open: original baseline + estimated-optimal lift};
 
 % --- Edges: model/reduction path ---
 \draw[dag_arrow] (BaseDefs) -- (Lemma1);
