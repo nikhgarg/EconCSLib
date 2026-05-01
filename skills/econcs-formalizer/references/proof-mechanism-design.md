@@ -1,0 +1,52 @@
+# Mechanism Design and Auctions
+
+Use for `EconCSLib/MechanismDesign/Auctions/*`, digital goods, GSP/position
+auctions, combinatorial auctions, and generic mechanism-design wrappers.
+
+## Digital Goods and Posted Prices
+
+- Prove truthfulness at the threshold-rule level: if the threshold offered to
+  bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
+  threshold is DSIC.
+- Instantiate random-sampling or market-price auctions by proving the relevant
+  own-bid-independence lemma.
+- For fixed-price benchmarks, define a finite bidder-value candidate benchmark
+  early. Reduce arbitrary feasible prices to bidder-value prices using the
+  minimum accepted bidder value: raising to that value preserves the sale count
+  lower bound and weakly increases revenue.
+- For random-sampling digital-goods auctions, first prove the deterministic
+  cross-sample threshold mechanism truthful for an arbitrary fixed partition;
+  only after that add probability over partitions and revenue approximation.
+- Use a nonnegative offer-price wrapper around finite candidate prices so
+  no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
+  infeasible negative candidate values from empty samples.
+
+## GSP and Position Auctions
+
+- Start with `PositionOutcome`: per-click payments, utility, revenue, welfare,
+  and feasibility.
+- A concrete non-truthfulness witness is a good first theorem before building a
+  generic bid-sorting mechanism and equilibrium comparisons.
+- Use local envy-freeness as an outcome-level certificate for "no profitable
+  assigned-slot deviation" before proving full Nash equilibrium of a sorted GSP
+  mechanism.
+
+## Combinatorial Auctions
+
+- Reuse the fair-division bundle/allocation layer. Keep feasibility separate
+  from direct mechanisms because approximation algorithms may leave goods
+  unallocated.
+- For single-minded bidders, define bundle-containment valuations before proving
+  greedy allocation or critical-value payment theorems.
+- Prove pairwise-disjoint accepted-set feasibility separately from greedy
+  optimality; this lets the greedy algorithm theorem focus on acceptance
+  invariants and critical-price monotonicity.
+
+## General Mechanism Wrappers
+
+- Define the paper's scalar functions exactly (`f`, `g`, `h`, utilities,
+  welfare), prove algebraic equivalences to existing mechanism predicates, then
+  prove the theorem from a small payoff/crossing certificate.
+- When approximation proof is too large for the current pass, package it as a
+  named certificate whose statement is exactly the benchmark/revenue inequality
+  needed by the paper-facing theorem.

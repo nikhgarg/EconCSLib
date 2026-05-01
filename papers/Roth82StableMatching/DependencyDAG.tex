@@ -2,31 +2,62 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}
+\begin{tikzpicture}[node distance=1.05cm and 1.5cm,
+  every node/.style={font=\sffamily\small}]
 
-% --- Legend ---
-\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
-\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized Lemma};
-\node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
-\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not Formalized};
-\daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
+% Legend
+\node[dag_result, text width=2.9cm] (legRes) {\textbf{Closed}\\paper-facing};
+\node[dag_conditional, right=0.35cm of legRes, text width=2.9cm] (legCond) {\textbf{Conditional}\\certificate};
+\node[dag_model, right=0.35cm of legCond, text width=2.9cm] (legDef) {\textbf{Definition}\\model};
+\node[dag_unformalized, right=0.35cm of legDef, text width=2.9cm] (legOpen) {\textbf{Open}\\not formalized};
+\daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
 
-% --- Main proof chain ---
-\node[dag_model, below=2.5cm of legRes] (Primitives) {\textbf{Primitives} \\ Matching, Prefs., Stability};
-\node[dag_unformalized, below=2cm of Primitives] (DA_Step) {\textbf{DA Step} \\ Iterative Construction};
-\node[dag_unformalized, below=2cm of DA_Step] (DA_Term) {\textbf{DA Termination} \\ \& Fold Construction};
+% Core matching layer
+\node[dag_model, below=1.8cm of legRes] (Defs)
+  {\textbf{Sections 2--3}\\matching, preferences, feasible outcome, stability};
+\node[dag_conditional, below=of Defs] (DA)
+  {\textbf{Deferred Acceptance}\\stability and optimality certificate interfaces};
+\node[dag_conditional, below=of DA] (Thm1)
+  {\textbf{Theorem 1}\\stable outcomes are nonempty};
+\node[dag_conditional, below=of Thm1] (Thm2)
+  {\textbf{Theorem 2}\\men-optimal stable outcome; women side open};
 
-% --- Theorem Row ---
-\node[dag_unformalized, below=3cm of DA_Term] (Thm1) {\textbf{Theorem 1} \\ DA Stable Matching};
-\node[dag_unformalized, right=of Thm1] (Thm2) {\textbf{Theorem 2} \\ Men-Optimal Stable};
-\node[dag_unformalized, right=of Thm2] (Thm3) {\textbf{Theorem 3} \\ Truth-Telling Dominant};
+% Impossibility and efficient procedure path
+\node[dag_unformalized, right=of Thm1] (Thm3)
+  {\textbf{Theorem 3}\\no stable procedure is strategyproof for all agents};
+\node[dag_unformalized, below=of Thm3] (Thm4)
+  {\textbf{Theorem 4}\\efficient strategyproof procedures exist};
 
-% --- Edges ---
-\draw[dag_arrow] (Primitives) -- (DA_Step);
-\draw[dag_dashed_arrow] (DA_Step) -- (DA_Term);
-\draw[dag_dashed_arrow] (DA_Term) -- (Thm1);
-\draw[dag_dashed_arrow] (Thm1) -- (Thm2);
-\draw[dag_dashed_arrow] (Thm2) -- (Thm3);
+% One-sided incentives
+\node[dag_unformalized, right=of Thm3] (Lemma1)
+  {\textbf{Lemma 1}\\simple misrepresentation leaves same partner};
+\node[dag_unformalized, below=of Lemma1] (Lemma2)
+  {\textbf{Lemma 2}\\successful simple misrepresentation does not hurt men};
+\node[dag_conditional, below=of Lemma2] (Thm5)
+  {\textbf{Theorem 5}\\one-sided truthfulness of optimal stable procedure};
+\node[dag_unformalized, below=of Thm5] (Cor51)
+  {\textbf{Corollary 5.1}\\opposite side cannot profit by first-choice lie};
+
+% Pareto and limits
+\node[dag_unformalized, right=of Lemma2] (Thm6)
+  {\textbf{Theorem 6}\\men-optimal stable outcome is weakly Pareto optimal for men};
+\node[dag_unformalized, below=of Thm6] (Thm7)
+  {\textbf{Theorem 7}\\no stable procedure prevents all $k$th-choice manipulation};
+
+% Edges
+\draw[dag_arrow] (Defs) -- (DA);
+\draw[dag_arrow] (DA) -- (Thm1);
+\draw[dag_arrow] (Thm1) -- (Thm2);
+\draw[dag_dashed_arrow] (Defs) -- (Thm3);
+\draw[dag_dashed_arrow] (Defs) -- (Thm4);
+\draw[dag_dashed_arrow] (Thm2) -| (Lemma1);
+\draw[dag_dashed_arrow] (Lemma1) -- (Lemma2);
+\draw[dag_dashed_arrow] (Lemma2) -- (Thm5);
+\draw[dag_arrow] (DA.east) -| (Thm5);
+\draw[dag_dashed_arrow] (Thm5) -- (Cor51);
+\draw[dag_dashed_arrow] (Thm5) -| (Thm6);
+\draw[dag_dashed_arrow] (Thm3) |- (Thm7);
+\draw[dag_dashed_arrow] (Cor51) -| (Thm7);
 
 \end{tikzpicture}
 \end{document}

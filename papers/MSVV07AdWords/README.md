@@ -11,8 +11,11 @@
 - Public author PDF: https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf
 - Accessed: 2026-04-24
 
-The PDF is not committed to git. Use the ACM DOI/JACM version as the source
-version; the author PDF is listed only for easier access.
+The PDF is cached locally as `MSVV07AdWords.pdf` and ignored by the
+paper-folder `.gitignore`. The extracted text cache `MSVV07AdWords.txt` is used
+for named-statement searches; refresh it only if the source PDF changes. Use
+the ACM DOI/JACM version as the source version; the author PDF is listed only
+for easier access.
 
 ## Central Theorem File
 
@@ -85,6 +88,17 @@ Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
 | Approximate small-bids objective seam | `MsvvHistoryApproxAccountingCertificate`, `MsvvApproxObjectiveBoundCertificate`, `paper_adwords_balance_msvv_history_approx_accounting_with_explicit_error`, `paper_adwords_balance_msvv_approx_objective_bound_with_explicit_error`, `paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error`, `paper_adwords_balance_msvv_approx_competitive_with_error_bound`, `paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound`, `paper_adwords_balance_msvv_finRange_approx_competitive_with_query_sum_error_bound`, `paper_adwords_balance_msvv_approx_competitive_up_to_delta`, `paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta`, `paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta_of_small_bids_threshold`, `paper_adwords_balance_msvv_competitive_of_arbitrarily_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_competitive_of_arbitrarily_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta`, `paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta_of_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually_of_offline_opt_convergence`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold_of_offline_opt_convergence` | finite explicit-error theorem, algebraic/query-sum error bounds, canonical `Fin n` query-sum wrappers, delta-form theorem, explicit small-bids threshold, limit-style wrapper, family-level eventual additive-`δ` theorem, and sequence-limit theorem formalized | `EconCSLib/Online/MainTheorems.lean` | none beyond theorem hypotheses |
 | Small-bids limit family | `MsvvSmallBidsLimitFamily` | formalized | `EconCSLib/Online/AdWords.lean` | a user supplies the finite instance family, vanishing threshold, and convergence fields |
 | Full MSVV competitive theorem | `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family` | formalized family-level theorem | `EconCSLib/Online/MainTheorems.lean` | none beyond `MsvvSmallBidsLimitFamily` fields |
+
+## Source-Audit Notes
+
+The cached text contains the active-slab/query-type definitions, Lemmas 1--7,
+Theorem 8, and Theorem 9 as the named source statements. The current Lean
+development proves the reusable finite LP/dual, online-history, small-bids,
+extension, and lower-bound certificate layers. The exact factor-revealing LP
+proof steps in Lemmas 1--7 are not source-numbered Lean wrappers; Theorem 8 is
+covered by the family-level small-bids theorem surface, and Theorem 9 is covered
+through finite lower-bound certificate interfaces and concrete integral-prefix
+endpoints.
 
 ## Current Formalization Plan
 

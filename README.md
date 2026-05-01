@@ -7,6 +7,21 @@ The project has three high-level goals:
 2. **Extract reusable library primitives:** Build a robust, shared foundation of discrete math, probability, game theory, and mechanism design concepts that the community can reuse.
 3. **Develop AI formalization skills:** Eventually turn this structured workflow into an agent skill for autonomously verifying new EC papers.
 
+## Paper Formalization Status
+
+Current paper status is tracked in the table below and in each
+`papers/[Paper]/README.md`. PDFs are cached locally in each paper folder and
+ignored by Git; extracted `.txt` caches are kept beside them for source audits.
+
+| Paper folder | Paper | Overall status | Current Lean surface |
+|---|---|---|---|
+| `papers/MBJG25ProducerFairness` | *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design* | Formalized with caveat | Source Theorems 3.1--3.2 are covered, with the strict boundary issue documented. |
+| `papers/MSVV07AdWords` | *AdWords and Generalized Online Matching* | Partially formalized | Final finite/family theorem surfaces are strong; source Lemmas 1--7 are not one-for-one wrappers. |
+| `papers/DSWG24DiscretizationBias` | *Addressing Discretization-Induced Bias in Demographic Prediction* | Partially formalized | Source-facing expected-objective wrappers cover Theorem 2(i)--(ii); Theorem 1 and Theorem 2(iii) remain open. |
+| `papers/Roth82StableMatching` | *The Economics of Matching: Stability and Incentives* | Partially formalized | Conditional DA wrappers cover Theorems 1, 2, and 5 seams; impossibility and manipulation theorems remain open. |
+| `papers/GHW01DigitalGoods` | *Competitive Auctions and Digital Goods* | Partially formalized | Digital-goods primitives, fixed-price support, and RSOP skeleton are formalized; approximation/lower bounds are open. |
+| `papers/GCG24UserItemFairness` | *The User-Item Fairness Tradeoff in Recommender Systems* | Partially formalized | Active work by another agent; not audited in this cleanup pass. |
+
 ## Repository Architecture: Textbook vs. Audit Trail
 
 This repository strictly separates generalized mathematical foundations from paper-specific proofs using a "Textbook vs. Audit Trail" model:
@@ -29,6 +44,8 @@ This is the "Audit Trail." Each paper formalized in this repository gets its own
 These folders serve to prove that the *specific claims in a specific PDF* are true. 
 Each paper folder strictly adheres to a standard template:
 - A downloaded `.pdf` of the source material (git-ignored to prevent repo bloat).
+- A cached `.txt` extraction created once with `pdftotext` for named-statement
+  audits.
 - A `README.md` containing the citation, source URLs, and a theorem-status ledger.
 - A `DependencyDAG.tex` providing a visual proof roadmap of how definitions and lemmas connect.
 - A `MainTheorems.lean` file containing notation-exact wrappers around the core library's theorems, demonstrating fidelity to the original text.
@@ -37,12 +54,14 @@ Each paper folder strictly adheres to a standard template:
 When formalizing a new paper, authors typically build everything locally in their `papers/` folder. Once a proof is stable, the generalized mathematical core is "upstreamed" to `EconCSLib`, leaving only the thin, paper-facing wrappers behind.
 
 ## Orientation
-To get started or review the current formalization roadmap, see the documentation:
-- [docs/EC_TEST_OF_TIME_FORMALIZATION_PLAN.md](docs/EC_TEST_OF_TIME_FORMALIZATION_PLAN.md)
-- [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
-- [docs/PAPER_MAP.md](docs/PAPER_MAP.md)
+For current paper status, start with the table above and the relevant
+paper-folder `README.md`. For repository conventions, see:
 
+- [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [skills/econcs-formalizer/SKILL.md](skills/econcs-formalizer/SKILL.md)
+
+Historical plans and handoff reports live under `docs/` and `docs/archive/`.
 
 ## Build
 

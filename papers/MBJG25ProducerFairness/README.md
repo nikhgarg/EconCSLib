@@ -10,7 +10,10 @@
 - Official URL: https://ojs.aaai.org/index.php/ICWSM/article/view/35865
 - Accessed: 2026-04-24
 
-The PDF is not committed to git. Use the arXiv URL above as the source version
+The PDF is cached locally as `MBJG25ProducerFairness.pdf` and ignored by the
+paper-folder `.gitignore`. The extracted text cache
+`MBJG25ProducerFairness.txt` is used for named-statement searches; refresh it
+only if the source PDF changes. Use the arXiv URL above as the source version
 for theorem-number and definition comparisons.
 
 ## Central Theorem File
@@ -51,3 +54,11 @@ boundary qualities. The formalized corrected version assumes `0 < q_v < 1`.
 Alternatively, the paper could state weak decrease on `0 ≤ q_v ≤ 1` and reserve
 strict decrease for the interior case; the weak version is now formalized as
 `paper_theorem3_1_variance_weak_decrease`.
+
+## Source-Audit Notes
+
+The cached text contains Theorem 3.1 and Theorem 3.2 as the only numbered
+source theorems, repeated in the appendix proofs. The theorem table above
+covers both named source theorems. Section 4 and appendix entries are
+formalized as paper-facing definitions/results, but they are not source-numbered
+theorem wrappers.

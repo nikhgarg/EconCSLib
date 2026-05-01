@@ -66,9 +66,5 @@ srcDir = "papers"
 srcDir = "papers"
 
 [[lean_lib]]
-name = "AuctionTestOfTime"
-srcDir = "papers"
-
-[[lean_lib]]
 name = "MSVV07AdWords"
 srcDir = "papers"

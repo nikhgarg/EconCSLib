@@ -5,8 +5,10 @@ import EconCSLib.Markets.Matching.DeferredAcceptance
 /-!
 # Paper-Facing Theorems: The Economics of Matching: Stability and Incentives (Roth 1982)
 
-This file contains the foundational stable matching definitions and theorem wrappers
-for the 2023 EC Test-of-Time matching tracks.
+This file contains foundational stable matching definitions and conditional
+wrappers for the Roth 1982 paper. The source paper's Theorem 3 is an
+impossibility result; the DA truthfulness wrapper below corresponds to the
+one-sided incentive statement in Theorem 5, not to source Theorem 3.
 -/
 
 namespace Roth82StableMatching
@@ -69,6 +71,17 @@ theorem paper_da_is_stable {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M]
   rw [paper_is_stable_eq]
   exact da_produces_stable_matching_of_certificate val_m val_w hcert
 
+/--
+Theorem 1 (conditional wrapper): the set of stable outcomes is nonempty, using
+the deferred-acceptance output once its stability certificate is supplied.
+-/
+theorem paper_roth82_theorem1_stable_outcome_exists
+    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (hcert : DaProducesStableMatchingCertificate val_m val_w) :
+    ∃ mu : Assignment M W, paper_is_stable val_m val_w mu := by
+  exact ⟨deferredAcceptance val_m val_w, paper_da_is_stable val_m val_w hcert⟩
+
 /-- Theorem 2: The Men-Proposing Deferred Acceptance algorithm produces a men-optimal stable matching. -/
 theorem paper_da_is_men_optimal {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
     (val_m : M → W → ℝ) (val_w : W → M → ℝ)
@@ -82,14 +95,40 @@ theorem paper_da_is_men_optimal {M W : Type*} [Fintype M] [Fintype W] [Decidable
   rw [paper_is_stable_eq] at hstable
   exact hcert2 mu' hstable m
 
-/-- Theorem 3 (Roth 1982): Truth-telling is a dominant strategy for men under men-proposing DA. -/
+/--
+Theorem 2 (conditional men-side wrapper): the men-proposing deferred-acceptance
+outcome is the men-optimal stable outcome once the DA stability and men-optimality
+certificates are supplied. The source theorem also asserts the symmetric
+women-optimal outcome, which is not separately wrapped here.
+-/
+theorem paper_roth82_theorem2_men_optimal_stable_outcome
+    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (hcert1 : DaProducesStableMatchingCertificate val_m val_w)
+    (hcert2 : DaIsMenOptimalCertificate val_m val_w) :
+    ∃ mu : Assignment M W, paper_is_men_optimal val_m val_w mu := by
+  exact ⟨deferredAcceptance val_m val_w,
+    paper_da_is_men_optimal val_m val_w hcert1 hcert2⟩
+
+/-- Certificate for the one-sided DA truthfulness claim used in Roth 1982 Theorem 5. -/
 def DaTruthfulForMenCertificate {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] : Prop :=
   paper_truthful_for_men (deferredAcceptance (M := M) (W := W))
 
+/-- Auxiliary wrapper: truth-telling is dominant for men under men-proposing DA. -/
 theorem paper_da_truthful_for_men {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
     (hcert : @DaTruthfulForMenCertificate M W _ _ _ _) :
     paper_truthful_for_men (deferredAcceptance (M := M) (W := W)) := by
   exact hcert
+
+/--
+Theorem 5 (conditional men-side wrapper): in the procedure selecting the
+men-optimal stable outcome, truthful revelation is dominant for the men.
+-/
+theorem paper_roth82_theorem5_men_truthful
+    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    (hcert : @DaTruthfulForMenCertificate M W _ _ _ _) :
+    paper_truthful_for_men (deferredAcceptance (M := M) (W := W)) := by
+  exact paper_da_truthful_for_men hcert
 
 
 end Roth82StableMatching

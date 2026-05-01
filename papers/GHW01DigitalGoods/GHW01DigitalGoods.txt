@@ -1,0 +1,1816 @@
+8)',2-'%06)436878%686
+
+Competitive Auctions and
+Digital Goods
+ANDREW GOLDBERG, JASON HARTLINE, AND ANDREW
+WRIGHT
+September 1999 (Revised July and November 2000)
+
+InterTrust Technologies Corporation
+4750 Patrick Henry Drive
+Santa Clara, CA 95054
+Tel: +1.408.855.0100
+Fax: +1.408.855.0136
+Copyright ©2000 InterTrust Technologies Corporation. All rights reserved.
+
+Competitive Auctions and Digital Goods
+Andrew V. Goldberg∗
+
+Jason D. Hartline†
+
+Andrew Wright∗
+
+goldberg@intertrust.com
+
+hartline@cs.washington.edu
+
+wright@intertrust.com
+
+InterTrust Technical Report STAR-TR-99-01
+September 1999
+(Revised July 2000, November 2000)
+
+Abstract
+We study a class of single round, sealed bid auctions for items in unlimited supply such as digital
+goods. We focus on auctions that are truthful and competitive. Truthful auctions encourage bidders to
+bid their utility; competitive auctions yield revenue within a constant factor of the revenue for optimal
+fixed pricing. We show that for any truthful auction, even a multi-price auction, the expected revenue
+does not exceed that for optimal fixed pricing. We also give a bound on how far the revenue for optimal
+fixed pricing can be from the total market utility. We show that several randomized auctions are truthful
+and competitive under certain assumptions, and that no truthful deterministic auction is competitive. We
+present simulation results which confirm that our auctions compare favorably to fixed pricing. Some of our
+results extend to bounded supply markets, for which we also get truthful and competitive auctions.
+
+∗ STAR Lab., InterTrust Technologies Corp., 4750 Patrick Henry Dr., Santa Clara, CA 95054.
+† Computer Science Department, University of Washington. Work done while the author was employed by InterTrust.
+
+1
+
+1
+
+Introduction
+
+after knowing the bid values). As with fixed pricing,
+selling too few or too many items may not maximize
+revenue. Thus, the method for choosing how many
+bids to satisfy is an integral part of a truthful competitive auction.
+To our knowledge, auctions have never been studied in a competitive framework. Nor are any existing
+auctions competitive in the sense that we introduce
+here. As we explore in Sections 11 and 12, this competitive framework is useful in studying any kind of
+auction where identical goods are being sold, not just
+auctions for unlimited supply.
+Auctions are becoming a popular pricing mechanism in electronic commerce, both for human users
+and for trading agents (bots). In many cases, the use
+of auctions is complicated by the fact that a good bidding strategy for a buyer requires an understanding
+of strategies and utilities of other buyers. Truthful
+auction mechanisms may be attractive in this context because they avoid this complication.
+In this paper we study a class of truthful auctions for unlimited supply. We study both singleprice auctions, where every winning bidder pays the
+same price, and multi-price auctions, where the prices
+may differ. In addition to deterministic auctions, we
+study randomized auctions that use randomization to
+decide which bids to fill and at what price. We develop techniques for design and analysis of auctions
+for unlimited supply. Our approach is reminiscent
+of competitive analysis of on-line algorithms [1, 16],
+where performance of an on-line algorithm is gauged
+in terms of performance of an optimal off-line algorithm. Here the optimal off-line algorithm is analogous to the optimal fixed pricing mechanism.
+Although we develop our results for unlimited supply, some of the results extend to bounded supply,
+where the number of items for sale is bounded, but
+maximizing revenue might not result in all items being sold. We discuss bounded supply in Section 11.
+We view auctions as algorithms for deciding which
+input bids to fill, and at what price. As with any algorithm, one needs to address the issues of correctness,
+efficiency, and performance. In the context of this
+paper, an auction is correct if the auction is truthful
+and fills each winning bid at or below the bid value.
+Efficiency of an auction refers to the time needed to
+process bids. The auctions introduced in this paper
+are very fast; sorting of the input bids is the most
+expensive computational operation we perform. As
+
+Consider the problem of selling a number of identical
+items to consumers who each want a single item and
+the items are available in unlimited supply. By unlimited supply we mean that either the seller has at
+least as many items as there are consumers, or that
+the seller can reproduce items on demand at negligible marginal cost. Of particular interest are digital items such as downloadable audio files and payper-view movies. With unlimited supply, consumer
+utilities, the maximum amounts that consumers are
+willing to pay for the item, are the sole factor determining sale prices. The seller’s goal is to maximize
+their total revenue.
+One way to set prices for items in unlimited supply
+is to estimate consumer utility via market analysis
+and then set a fixed price. We refer to this method
+as fixed pricing. Pay-per-view movies are an example of fixed pricing for an unlimited supply market.
+With perfect knowledge of consumer utilities, optimal
+fixed pricing maximizes fixed-price revenue by selecting the optimal price at which to sell items. Fixed
+pricing generally cannot achieve this ideal due to the
+inherent inaccuracy of market analysis. If the price
+is set too high, not enough items may be sold; if the
+price is set too low, insufficient revenue may be collected per item.
+Auctions automatically adjust prices to market
+conditions. We study single round, sealed bid auctions. Such auctions have been studied for items
+available in scarce supply, where maximizing the revenue requires that all available items be sold. They
+are especially practical when the number of consumers is large. In particular, Vickrey [18] introduced
+a multi-item auction that is truthful. A truthful auction encourages bidders to bid their utility value. In
+an untruthful auction, bidders may bid significantly
+below their utility values, reducing auction revenue.
+In a truthful auction, rational bidders bid their
+utilities. In addition, we would like such an auction
+to be competitive: it must yield revenue within a constant factor of optimal fixed pricing. To be competitive, a truthful auction must vary how many items
+are sold depending on the bid values. For example, as
+we show in Section 3, the multi-item Vickrey auction
+is not competitive if the seller chooses the number
+of items to sell before knowing the bid values (and
+not truthful if the seller chooses the number of items
+1
+
+discussed above, we measure auction performance by
+its revenue relative to the fixed pricing revenue. This
+computer science approach allows us not only to design new truthful auctions, but also to give theoretical guarantees for their performance. Such provable
+performance guarantees are new to the area of auction mechanism design.
+To state our results more formally, we introduce
+the following notation. Let n denote the number of
+bidders. Without loss of generality, we assume that
+the lowest bid is one and denote the highest bid by
+h. Let the total utility T be the sum of all bidders’
+utilities. T is an obvious upper bound on the revenue
+that can be obtained from this set of bidders. Let F
+be the optimal fixed pricing revenue. Clearly F ≤
+T . F is an upper bound on the revenue that can be
+obtained by any fixed priced sale or any single-price
+auction. We want revenues of our truthful auctions
+to be competitive with F . We assume that h is small
+compared to F .1 This assumption prevents a trivial
+upper bound on the revenue; see Section 2.
+We state some of our results in terms of the total
+utility, T , and others in terms of the optimal fixed
+pricing revenue, F . We show that F compares favorably to T ; specifically, F = Ω(T / log h), and also
+F = Ω(T / log n). This result shows that the optimal
+fixed pricing revenue is within a min(log h, log n) factor of the revenue of any pricing scheme. We use this
+result to relate various bounds expressed in terms of
+T to those expressed in terms of F .
+We introduce a class of truthful single-price auctions and a class of truthful multi-price auctions.
+A randomized auction from the first class is competitive: it has an expected revenue of Ω(F ) =
+Ω(T / log h). A dual-price variant of this auction has
+revenue that is close to F if F /h is large enough. A
+randomized multi-price auction from the second class
+has an expected revenue of Ω(T / log h). Thus, both
+of these auctions have the same worst-case bound
+in terms of T . However, we show that the latter
+auction
+√ is not competitive. Its expected revenue is
+Ω(F / log h), and this bound is tight:
+√ on certain inputs, the expected revenue is O(F / log h).
+This provides support for using F , rather than T ,
+to define competitive auctions. Another result provides further support. We show that for any truthful
+auction, even a multi-price one, the expected revenue
+does not exceed F . This result is somewhat surpris-
+
+ing: using single-price auctions does not hurt revenue
+by more that a constant factor.
+A natural question to ask is if there is a truthful deterministic auction with an Ω(F ) revenue. We show
+that there is none: for any such auction, there is a set
+of bids that leads to an O(F /h) revenue, i.e., revenue
+that is a small fraction of F if h is large. Thus, for
+worst-case performance, randomized auctions yield
+better revenue than the deterministic ones.
+Our theoretical analyses are limited in that their
+performance metrics are accurate only up to a constant factor. As a result, the analyses do not reveal
+whether one of our auctions dominates the others, or
+which auction is better for a natural distribution. As
+a supplement to our theoretical results, we performed
+a number of simulations to compare our auctions with
+each other and to fixed pricing on a variety of input
+families. Our simulations suggest that, on natural inputs, some of our auctions attain revenue very close
+to F if the number of bids is large enough. Furthermore, our auctions can outperform fixed pricing
+with market analysis unless that analysis is fairly accurate. We also show a deterministic auction that,
+despite the worst-case result, does very well on natural inputs.
+We develop a framework for a theoretical and experimental analysis of revenue-maximizing truthful
+auctions and introduce auctions that perform well
+in this framework. We show how algorithm analysis techniques can be used within this framework to
+obtain results that are interesting and in some cases
+surprising.
+
+2
+
+Competitive Analysis
+
+We consider auctions with n bidders, each bidder i
+having a utility value ui and bidding bi . We also assume that the bids are ordered so that bi ≤ bi+1 . In
+auctions where ties need to be broken, we can assume an arbitrary total order on the bid values that
+respects the partial order. That is, we can assume
+that the order given by the indices is strict. We assume that there is no collusion among the bidders.
+Given a set of bids, the outcome of an auction is the
+subset of bids that are satisfied and a corresponding
+set of sale prices such that, for each winning bid bi ,
+the associated sale price is at most bi . A deterministic auction mechanism maps sets of bids to auction
+outcomes. A randomized auction mechanism maps
+
+1 Some of our results hold under weaker assumptions.
+
+2
+
+sets of bids to probability distributions on auction
+outcomes. We use R to denote the auction revenue
+for a particular auction mechanism and set of bids. R
+is the sum of all sale prices. For randomized auctions,
+R is a random variable.
+We say that an auction is truthful if bidding ui is
+a dominant strategy for bidder i. More specifically,
+let a bidder’s profit be the difference between the bidder’s utility value and the price the bidder pays if they
+win the auction, or zero if they lose. Then an auction
+is truthful if a bidder’s profit (or expected profit, for
+randomized auctions), as a function of the bidder’s
+bid, is maximized at the bidder’s utility value, for
+any fixed values of the other bidders’ bids. Truthful
+auctions encourage bidding at utility value if the bid
+value that maximizes the (expected) profit is unique.
+If the bid value is not unique, truthfulness at least
+does not discourage bidders from bidding their utility value. When considering truthful auctions, we
+assume that bi = ui .
+To enable analysis of auction revenue we define several properties of an input set of bids. As stated in
+the introduction, T is the sum of all of the bids. An
+equivalent definition of T is the revenue due to the
+optimal multi-price untruthful auction, the one that
+satisfies all bids at their value. The revenue for optimal fixed pricing is F . Note that F can also be
+interpreted as the revenue due to the optimal singleprice untruthful auction. More discussion of F and
+its relation to the optimal single-price untruthful auction is given in Section 4. Other properties that we
+use in analysis are ℓ, the smallest bid value, and h,
+the highest bid value. Because bids can be arbitrarily scaled, we assume, without loss of generality, that
+ℓ = 1, in which case h is really the ratio of the highest
+bid to the lowest bid.
+Analogous to on-line algorithm theory, we express
+auction performance relative to that for optimal untruthful auctions, as ratios R/T or R/F . However,
+we solve a maximization problem while on-line algorithms solve minimization problems. Thus, positive
+results, which are lower bounds on R/T or R/F , are
+expressed using “Ω”. Impossibility results, which are
+upper bounds on R/T or R/F for any auction in a
+certain class, are expressed using “O”.
+Note that h, F , and T are used only for analysis.
+Our auctions work without knowing their values in
+advance.
+If we do not impose any restrictions on h, we get
+
+the upper bound of R/T = O(1/h). To see this,
+imagine n − 1 bids at 1 and one bid, bn , at h. An
+auction that wishes to do better than O(1/h) must
+base the selling price on bidder n’s bid. However, this
+would encourage bidder n to bid below un .
+To prevent this upper bound on auction revenue we
+can make the assumption that the optimal revenue F
+is significantly larger than h, the highest bid. That
+is, for some constant α, we assume that αh ≤ F.
+With this assumption, optimal fixed pricing sells at
+least α items. In some cases α is a fixed constant. In
+other cases, success probability approaches 1 as α →
+∞. For some proofs, this assumption is stronger than
+what we need and we make the weaker assumption
+that αh ≤ T .
+We say that an auction is competitive under certain
+assumptions if when the assumptions hold, the auction’s revenue is Ω(F ), or equivalently R/F = Ω(1).
+
+3
+
+Prior Results
+
+Our results are related to the field of mechanism design that combines microeconomic motivation with
+game-theoretic tools and includes auction mechanisms. For introduction to the area, see for example [10, 13]. In particular, auctions for scarce supply
+markets have been extensively studied. See [14] for a
+survey. Some work in the Computer Science community combines economic or game-theoretic questions
+with computational questions. Earlier results are surveyed in [9]; for more recent results, see e.g. [4, 8, 12].
+Truthful auctions are an example of strategyproof
+mechanisms. Such mechanisms have been developed
+for several goals. For example, the Vickrey–Clarke–
+Groves mechanism [3, 6, 18] maximizes the general
+welfare of a system. The Shapley Value [15] mechanism shares costs among the participants. We address a less well-understood problem of maximizing
+the revenue of one of the parties (the seller).
+The k-item Vickrey auction [18] was a starting
+place for our work. The k-item Vickrey auction is a
+single-price auction that sells k items to the k highest bidders at the price equal to the k + 1 highest bid
+(bn−k−1 ). For generalizations of Vickrey auctions to
+the multiple resource case, see e.g. [3, 6, 17].
+In the unlimited supply case, taking k = f (n)
+yields a truthful auction for any function f with
+1 ≤ f (n) < n. This auction mechanism is not
+3
+
+competitive, however. To see this, consider a bipolar input that has k bids at h and n − k bids at
+1. In this case R = k and F ≥ hk. This gives an
+R/F = O(1/h) bound. As we show later no deterministic auction can do much better on worst-case
+distributions, but a randomized auction can.
+
+4
+
+Corollary 4.2 F ≥ T /(4 log n).
+Proof. Let p be the optimal price; clearly p ≥ h/n.
+If one drops all bids with values below p, F does not
+change and T decreases by at most a factor of two.
+After the bids are dropped, the ratio of the highest
+and the lowest bid values is at most n, yielding the
+desired result.
+
+Optimal Untruthful Auctions
+
+Now we turn our attention to truthful auctions.
+
+In this section we study the two untruthful auctions, the optimal multi-price auction and the optimal single-price auction, and establish the relationship between their revenues, T and F . We show that
+F ≥ T /(2 log h). This bounds the penalty for requiring auctions to be single-price and allows us to
+compare bounds expressed in terms of T with those
+expressed in terms of F .
+To get a better understanding of how the optimal single-price auction works, we define the optimal
+threshold function, opt(B). This function on a set of
+bids B returns the fixed price at which items should
+be sold to achieve revenue F . In the optimal singleprice auction, all bid values that are at least opt(B)
+will be satisfied at price opt(B). All other bids will
+be rejected. That is,
+
+5
+
+Generalized Truthful Auction Mechanisms
+
+By making observations about auctions that encourage utility value bids, in particular the Vickrey auction, we can design general auction mechanisms. We
+present two general auction mechanisms that facilitate the design of truthful auctions. The first, the bidindependent auction mechanism, is based on the observation that the price that a bid is satisfied at must
+be independent from that bid’s actual value. The
+second, the random sampling auction mechanism, is
+based on the observation that rejected bids can be
+used to set prices for bids that are to be satisfied.
+
+opt(B) = argmaxbi ∈B bi · (n − i + 1).
+Note that n − i + 1 is the number of bids that are at
+least bi . The main result of this section is as follows.
+
+5.1
+
+Bid-Independent Auctions
+
+The first general truthful auction mechanism that we
+discuss is one that is typically multi-price, although
+some variants are single-price. The motivation for
+this mechanism is the observation that bidder i’s bid
+value should only determine whether bidder i wins
+or loses the auction (as a threshold). The bid value
+should not determine bidder i’s price. As we will
+show in section 9.3, for deterministic auctions turthfulness is equivalent to being bid-independent.
+Let B be the set of all bids and let Bi be the set
+of bids without bidder i’s bid. A bid-independent
+auction uses a predetermined function, f , from sets
+of bid values to prices. The auction works as follows.
+Bidder i wins the auction at price f (Bi ) if bi ≥ f (Bi ).
+2
+Otherwise, the bidder loses.
+
+Theorem 4.1 F ≥ T /(2 log h).
+Proof. Divide the bids into log h bins by partitioning the bids at values of powers of two. Thus, each
+bid is less than a factor of two from any other bid
+in the same bin. Since the sum of the bids is T and
+there are log h bins, then some bin has a sum of at
+least T / log h. Note that the lowest bid in this bin is
+at least half of any other bid in the bin. If the optimal single-price auction chose, as its selling price, the
+price of the lowest bid in this bin, then the contribution of each bid in this bin to the revenue is at least
+half of the bid’s value. Since the bin sums to more
+than T / log h, this means that the revenue is greater
+than T /(2 log h). Thus the optimal fixed pricing can
+always achieve a revenue of at least T /(2 log h).
+
+2 For maximum generality, we allow f to also return whether
+to use ≥ or > in this comparison. For the perpose of maximizing revenue we can allways just use ≥; however, to prove
+Lemma 9.2 we need the full generality.
+
+One can make this bound strongly polynomial as suggested by Satish Rao and Eva Tardos.
+4
+
+Lemma 9.2 shows that this auction mechanism is
+quite general: any truthful deterministic auction is
+equivalent is bid-independent.
+We can immediately see how this generalizes the
+traditional Vickrey auction. The 1-item Vickrey auction fits into this general framework with f = max.
+Note that bidder n wins this auction and pays bn−1 .
+If f is the function that returns the kth highest element of the set of bids, we get the k-item Vickrey
+auction.
+
+5.2
+
+mer (this can easily be seen when the probabilistic
+bounds are discussed).
+In practice, for the single-price auction,
+√ we might
+want to set m = n/10 or even m = n. For the
+dual-price version of the auction, m = n/2 is a good
+choice.
+
+6.1
+
+In this section we show that, under certain assumptions, the expected revenue of the random sampling
+optimal threshold auction is within a constant factor
+of F . This result implies that restricting a singleprice auction to be truthful does not affect performance by more that a constant factor. As we have
+seen, restricting a multi-price auction to be truthful may affect its performance by roughly a factor of
+log h.
+Our analysis of the random sampling auction uses
+the following lemma, which is a variation of the Chernoff bound (see e.g. [2, 11]).
+
+Random Sampling Auctions
+
+Another general truthful auction mechanism is based
+on randomized sampling. We select a subset B ′ of B
+at random, independent of the bid values. Let m be
+the size of B ′ . We then compute a function on these
+sampled bids, f (B ′ ), and use this as a threshold value
+for the n−m bids in the non-sample, B\B ′ . Note that
+this auction mechanism is inherently single-price.
+If a multi-price auction is acceptable, then this auction can be modified to be dual-price with m ≈ n/2,
+by using f (B ′ ) to compute the threshold to use for
+bids in B \ B ′ and f (B \ B ′ ) as the threshold to use
+for bids in B ′ . This is a good way to avoid revenue
+loss due to the rejected bids in the sample; however,
+it is at the expense of making the auction dual-price.
+
+6
+
+Performance Analysis
+
+Lemma 6.1 Consider a set A and its subset B ⊂ A.
+Suppose we pick an integer k such that 0 < k < |A|
+and a random subset (sample) S ⊂ A of size k. Then
+for 0 < δ ≤ 1 we have
+Pr[|S ∩ B| < (1 − δ)|B| · k/|A|] < exp(−|B|·kδ 2 /(2|A|)).
+Proof. We refer to elements of A as points. Note
+
+Random Sampling Optimal that |S ∩ B| is the number of sample points in B,
+and its expected value is |B| · k/|A|. Let p = k/|A|.
+Threshold Auction
+
+If instead of selecting a sample of size exactly k we
+choose each point to be in the sample independently
+with probability p then the Chernoff bound would
+yield the lemma.
+Let A = {a1 , . . . , an } and without loss of generality assume that B = {a1 , . . . , ak }. We can view
+the process of selecting S as follows. Consider the
+elements of A in the order induced by the indices.
+For each element ai considered, select the element
+with probability pi , where pi depends on the selections made up to this point.
+Let t be the number of points already selected when
+ai+1 is considered. Then i − t is the number of points
+considered but not selected. Suppose that t/i < p.
+Then pi+1 > p.
+We conclude that when we select the sample as a
+random subset of size k, the probability that the number of sample points in B is less than the expected
+
+The random sampling optimal threshold auction
+takes f = opt, the optimal threshold function, in
+the random sampling auction. Intuitively we use the
+sample to get an idea for a good threshold value,
+then we apply that threshold to the remaining bids.
+The auction samples m = n/2 bids at random, computes opt of this sample, and uses this value as a
+threshold for the non-sample, accepting all bids above
+this threshold at the threshold value. In this section
+we show that the expected revenue of this auction is
+within a constant factor of F , assuming F /h is not
+too small.
+For the purpose of simplifying our analysis, we will
+be analyzing a different method of sampling, one that
+selects a bid to be in the sample independently at random with probability 1/2. This method of sampling
+is simpler to analyze, and it does worse than the for5
+
+value is smaller than in the case we select each point show that R ≥ F/(2+ǫ) with probability that goes to
+to be in the sample with probability p.
+1 as α goes to infinity, but the convergence is slower
+for smaller ǫ.
+Let R be the revenue of the random sampling optiBy symmetry, the expected revenue of the dualmal threshold auction. The following theorem shows price variant of the random sampling auction is twice
+that R = Ω(F ) with probability going to one as α the expected revenue of the original. One can show
+goes to ∞.
+that the expected revenue of the dual-price auction
+Theorem 6.2 Assume αh ≤ F. Then R ≥ F/6 is at least F /(1 + ǫ) if α is large enough.
+On the other hand, for may input distributions the
+with probability of at least 1 − e−α/36 − 40e−α/72 .
+threshold value of a sample has a non-zero probability
+Proof. Let k be the number of bids satisfied in of being non-optimal for the non-sample. If this is the
+the optimal single-price solution. Consider the opti- case, the expected value of the revenue in the random
+mal fixed pricing revenue of the sample, F ′ . Since sampling auction that samples half of the bids is less
+we expect k/2 of these bids to be in the sample, than F /2, and the expected value of the dual price
+E[F ′ ] ≥ F/2. Applying Lemma 6.1 with A the set auction is less than F .
+of all bids, B the set of bids in the optimal threshold solution on A, and δ = 1/3, we conclude that
+Weighted Pairing
+|S ∩ B| < |B|/3 = k/3 with probability at least 7
+−k/36
+. The assumption αh ≤ F implies k ≥ α.
+1−e
+Thus F ′ ≥ F/3 with probability at least 1 − e−α/36 . All truthful auctions we introduced so far are either
+Let ks be the number of bids satisfied by optimal single-price or dual-price. In this section we describe
+fixed pricing on the sample (i.e. the number of bids a multi-price auction. The weighted pairing auction
+in the sample that are at least opt(B ′ )) and let kn we present is in the bid-independent class with the
+be the number of bids in the non-sample that are at function f defined as follows:
+least opt(B ′ ). If F ′ ≥ F/3 then ks ≥ α/3.
+f (B) = b ∈ B w.p.  ′ b b′
+Now, assuming that ks ≥ α/3, we show that the
+b ∈B
+probability that kn < ks /2 is small. Note that kn <
+ks /2 implies that among the top (3/2)ks bids, at least Thus, to determine if bidder i wins the auction and
+ks are in the sample. Note that the sample and the at what price, pick a bid b ∈ Bi with probability pronon-sample are symmetric: taking a random subset portional to the value of b, i.e., b/(T − bi ). This pairs
+containing half of the elements in A is equivalent to bi with b. If b ≤ bi , bidder i wins at cost b, othertaking a complement of a random subset of half of wise i loses. Note that the result of this selection for
+the elements. We apply Lemma 6.1 with S being i does not affect the auction outcome for the bidder
+the non-sample, B being the top i = (3/2)ks bids, who bid b.
+To understand the intuition behind this auction,
+and δ = 1/3, and conclude that the probability that
+consider
+a related random pairing auction. Assume
+kn < ks /2 = i/3 is at most e−i/36 .
+that
+n
+is
+even and pair bidders at random, indepenIf R < F ′ /2 then kn < ks /2 and thus for some
+dent
+of
+their
+bid values. For each pair, conduct a 1i ≥ (3/2)α/3 = α/2 we have kn < i/3. Using the
+item
+Vickrey
+auction, that is, for a pair (bi , bj ) with
+union bound, the probability that this happens is at
+b
+<
+b
+,
+i
+loses
+and j wins at cost bi .
+i
+j
+most
+∞
+Compared
+to
+the random pairing auction, a bidder
+
+e−i/36 < 40e−α/72 .
+in the weighted pairing auction is less likely to win,
+i=α/2
+but when a bidder wins they are likely to pay more.
+Using the union bound for the probabilities that It turns out that high bidders are still likely to win
+R ≥ F ′ /2 and F ′ ≥ F/3, we conclude that R ≥ F/6 the auction, and the benefit of high bidders paying
+higher prices outweighs the benefit of more low bidwith probability at least 1 − e−α/36 − 40e−α/72 .
+ders winning the auction. In particular, Theorems 7.1
+Note that in the above theorem, we can trade off and 8.2 imply that for the weighed pairing auction,
+the bound on R and the probability that this bound in the worst case E[R] is proportional to T / log h in
+holds. In particular, for any constant ǫ > 0, we can worst case. For the (unweighted) pairing auction, we
+6
+
+have shown
+that the worst case E[R] is proportional Since k ≥ 2, we have (k − 1)/k ≥ 1/2 so
+√
+to T / h. We do not include the latter result because
+it is dominated by the former.
+Sj2
+E[Rj ] ≥
+Next we prove the following result.
+48T
+Theorem 7.1 If 4h ≤ T , then for the weighted pairing auction E[R] = Ω(T / log h).
+
+
+ Sj2
+We are interested in E[R] ≥
+E[Rj ] ≥
+48T .
+Since Sj ’s sum up to T ′ , the sum is minimized when
+′
+Proof. Partition the n bids into log h bins as be- all log h of the Sj ’s are equal to T / log h. In this
+fore such that bin j contains only bids in the interval case,
+[2j−1 , 2j ]. Recall that an important property of these
+T ′ 2 (log h)
+bins is that bids in the same bin are within factor
+E[R] ≥
+48T log2 h
+of two from each other. Let Sj be the sum of the
+bids in bin j. Note that the sum of the contents of
+′
+bins
+contain only one bid is upper bounded by Since T > T /2, we have
+log that
+h j
+j=1 2 = 2h − 1 < T /2. We will ignore such bins
+T
+in our analysis below. Consider all bins with two or
+E[R] ≥
+′
+192
+log h
+more bids, and let T be the sum of bids in these
+′
+bins. We have T > T /2.
+Thus, E[R] = Ω(T / log h).
+For each bin j, we look at pairings of bids that
+are both in j and we bound the expected revenue
+Note that the constant here is 1/192 which does
+due to such pairings. First, the probability that a
+not seem too good. However, the analysis was very
+bid i in bin j is paired with another bid in bin j is
+loose in contributions to R that it considered. In
+(Sj − bi )/(T − bi ) > Sj /(3T ), since bin j contains at
+practice, this auction has much better constants. See
+least two bids and Sj − bi ≥ Sj /3.
+Section 10 for details.
+Let b′1 , . . . , b′k be the values of bids in bin j in the
+Lower bounds on revenues of the weighted pairing
+increasing order. Given that a bid b′i from the bin is and the random sampling optimal threshold auctions,
+paired with another bid in the same bin, the proba- stated in terms of T , are the same, Ω(T / log h). The
+bility that the bid wins is at least
+next result shows that the latter auction has a better
+worst-case performance.
+We show that the expected
+revenue of the weighted
+√
+pairing auction is Ω(F / log h), and that this bound
+is tight in the worst case. This implies that the
+wighted pairing auction is not competitive.
+We use the following notation. We denote the expected revenue of the √
+wighted pairing auction by W ,
+let k = log h and s = log h First we give bound the
+revenue from below.
+√
+Theorem 7.2 If F ≥ 2h, then W = Ω(F / log h)
+and this bound is tight.
+
+i−1
+i−1
+>
+.
+2(k − i) + (i − 1)
+2k
+This comes from assuming that all bids below bid i
+are at value 2j−1 and all bids above bid i are at value
+2j . This is the worst it could possibly be. The expected number of bids in bin j that win when paired
+with other bids from the bin is at least
+k
+
+i−1
+i=1
+
+2k
+
+=
+
+k−1
+.
+4
+
+The smallest bid in bin j has the value of at least Proof. If F ≤ T /s, then since W = Ω(T /k) we have
+Sj /(2k). Let Rj be the revenue generated by bids in W = Ω(T /s).
+bin j being paired with other bids in bin j. We have:
+Assume F > T /s. Partition the bids over buckets,
+with bucket i containing bids in the range [2i , 2i+1 ).
+Sj Sj k − 1
+Let M be the set of bids in a bucket with the largest
+·
+·
+E[Rj ] ≥
+3T 2k
+4
+total bid value and assume that M is defined by the
+(k − 1)Sj2
+value range [t, 2t). We show that the revenue due
+≥
+24kT
+only to M is big. The assumption F ≥ 2h implies
+7
+
+8
+
+that |M | ≥ 2. (If |M | = 1 than M = {h} and the
+previous bucket contains a single bid; in this case
+F < 2h.) Recall that |M |t = Ω(F ). Let M ′ be the
+highest ⌊|M |/2⌋ elements of M and let M ′′ = M \M ′.
+The probability that an item in M ′ is paired up
+with an item in M ′′ is Ω(T /F ) = Ω(1/s), and the
+expected revenue is Ω(|M ′ |t/s) = Ω(F /s).
+The above argument considers only contributions
+of items in M . Somewhat surprisingly, the resulting
+bound is tight up to a constant factor. We give an example where the expected revenue W of the weighted
+pairing auction is O(T /s). The bid values are 2i for
+i = 1, . . . , k. For each i = 1, . . . , k − 1 the number
+of bids of this value is 2k−i and the total value of
+such bids is 2k . For the last value, 2k , there are s
+bids of this value for the total of s2k = F . Note that
+T = 2k (s + k − 1).
+We show that W = O(2k ) by first showing that the
+expected contribution of all bids of value less then 2k
+to W is O(2k ) and then showing that the contribution
+of all bids of value 2k is O(2k ).
+For i < k, the probability that a bid of value 2i
+wins is less than
+i
+i2k
+i2k − 2i
+≤ .
+≤
+i
+T −2
+T
+k
+The expected contribution of a winning bid is less
+than
+i
+1 j
+1
+2 < 2i+1 .
+i j=1
+i
+
+An Upper Bound
+
+A natural question to ask is if the bound of Theorem 7.1 can be improved upon. We already know
+that no single-price auction can do better than F .
+In this section we prove that no truthful multi-price
+auction can have an expected revenue greater than
+F . This result contrasts that of Section 6. In that
+section, we show that a truthful single-price auction
+performance is within a constant factor of the optimal single-price auction. Results of this section imply that no truthful multi-price auction performance
+is within a constant factor of the optimal multi-price
+auction.
+Consider a collection of bids B = {b1 , . . . , bn } with
+bi ≤ bi+1 . Note that b1 = 1 and bn = h. Define
+the following quantities, which are dependent on the
+auction mechanism:
+pi
+
+the probability a bid i is satisfied,
+
+ci
+gi
+
+expected cost to winning bidder i,
+expected profit (gain) for bidder i.
+
+With probability pi a bidder i wins. The bidder’s
+expected gain, having won, is their utility value minus
+the expected price they paid, i.e.
+gi = pi (ui − ci )
+
+(1)
+
+Now we show that in a truthful auction, probabilities of winning are monotone functions of bid values.
+Lemma 8.1 Suppose in a truthful auction bi < bj .
+Then pi ≤ pj .
+
+This all bids of value 2i contribute less than 2k+1 /k.
+Summing over i = 1, . . . , k − 1, we conclude that
+the expected contribution of the corresponding bids
+is less than 2 · 2k .
+Next we consider the bids of value 2k . The probability that such a bid wins is at least one and the
+expected revenue of a winning bid is at least
+
+Proof. Suppose that i and j have the same utility
+equal to bi . Since the auction is truthful, i’s gain is
+at least as big as j’s, thus
+pi (bi − ci ) ≥ pj (bi − cj ).
+Similarly, if both utilities are bj , we get
+
+k−1
+s
+s+1 k
+1  i
+2k
+k
+2 +
+2 =
+.
+2 <
+k+s
+k + s i=1
+k+s
+s
+
+pj (bj − cj ) ≥ pi (bj − ci ).
+
+Thus the total contribution of such bids is less than Adding the above inequalities and simplifying, we get
+2k .
+p b +p b ≥p b +p b .
+i i
+
+j j
+
+j i
+
+i j
+
+Although the weighted pairing auction is not√com- Rearranging, we get
+petitive in the worst case, it is only a factor of log h
+pj (bj − bi ) ≥ pi (bj − bi ).
+away from being competitive, is quite different from
+our random sampling auctions, and performs rela- Since bj > bi , we have pj ≥ pi .
+tively well on inputs that are bad for the latter. One
+The main result of this section is as follows.
+may be able to improve this auction; see Section 13.
+8
+
+By counting the number of times each pj (bj+1 − bj )
+occurs, we can rearrange the second summation to
+Proof. In a truthful auction, if a bidder i − 1 had get
+the utility value of bi but bids bi−1 , their gain would
+n−1
+n
+not exceed gi , thus
+
+
+pj (bj+1 − bj )(n − j)
+pi b i −
+E[R] ≤
+j=1
+i=1
+(2)
+gi ≥ pi−1 (bi − ci−1 ).
+n−1
+n−1
+
+
+pj (bj+1 − bj )(n − j).
+p
+b
+−
+E[R]
+≤
+p
+b
++
+i i
+n n
+So,
+Theorem 8.2 For any truthful auction, E[R] ≤ F.
+
+j=1
+
+j=1
+
+gi ≥ pi−1 (bi − bi−1 + bi−1 − ci−1 )
+
+= pn b n +
+
+= pi−1 (bi − bi−1 ) + pi−1 (bi−1 − ci−1 )
+= pi−1 (bi − bi−1 ) + gi−1 .
+
+gi ≥
+
+pj [bj − (bj+1 − bj )(n − j)] .
+
+n−1
+
+
+pj [bj (n − j + 1) − bj+1 (n − j)] .
+
+j=1
+
+Regrouping
+
+We can recursively expand gi−1 in the same way until
+we get to g1 which is 0 because all bids are satisfied
+at value at least 1, and get
+i−1
+
+
+n−1
+
+
+E[R] ≤ pn bn +
+
+j=1
+
+(3) Now, let Vj = bj (n − j + 1). Intuitively, this is the
+revenue attained by using bj as the sale price in fixed
+pricing. Note that Vj ≤ F.
+Now let Ri be the total expected revenue from bidder i. That is
+n−1
+
+E[R] ≤ pn Vn +
+pj (Vj − Vj+1 ) .
+Ri = pi ci .
+j=1
+j=1
+
+pj (bj+1 − bj ).
+
+We can rearrange equation (1) as pi ci = pi bi − gi and Rearrange this sum to sum over Vj instead of pj and
+get
+for symmetry, define p0 = 0.
+Ri = pi bi − gi .
+
+E[R] ≤
+
+Using equation (3) we get
+
+Ri ≤ pi bi −
+
+i−1
+
+j=1
+
+n
+
+i=1
+
+≤
+
+n
+
+
+pj (bj+1 − bj ).
+
+E[R] ≤ F
+
+i=1
+
+pi b i −
+
+i=1
+
+
+
+
+i−1
+
+j=1
+
+(pj − pj−1 ) Vj .
+
+n
+
+j=1
+
+(pj − pj−1 )
+
+This sum telescopes to pn − p0 , but since p0 = 0, we
+have
+
+Ri
+n
+
+
+j=1
+
+But, Vj ≤ F and by Lemma 8.1, pj − pj−1 is nonnegative.
+
+Looking at the sum of the Ri ’s, we see that the first
+term is mostly canceled by the summation term and
+we get a telescoping effect.
+E[R] =
+
+n
+
+
+E[R] ≤ pn F ≤ F.
+
+
+
+pj (bj+1 − bj ) .
+9
+
+9
+
+Deterministic Auctions
+
+optimal threshold auction on this input family has
+revenue of R = F /h.
+We have shown several randomized auctions with an
+Next we generalize this result.
+Ω(F ) expected performance under the assumption
+that αh ≤ F and α is big enough. In this section
+we study deterministic auctions.
+9.2 Upper Bound for Deterministic
+First we study the bid-independent version of the
+Bid-Independent Auctions
+optimal threshold auction, a natural auction that
+performs well on some input distributions. We show In this section we prove the following upper bound.
+that its worst case performance, however, is O(F /h).
+We extend this upper bound by showing that any
+truthful deterministic bid-independent auction has Theorem 9.1 For any truthful deterministic bidan O(F /h) worst-case performance even for αh ≤ F. independent auction and any constant α, there exists
+Then we show that any deterministic truthful auction an input for which R/F = O(1/h) and αh ≤ F.
+is bid-independent. This implies an upper bound on
+worst-case performance for all truthful deterministic Proof. Let f be the (deterministic) function that
+defines the auction. Consider an input with nh bids
+auctions.
+at value h and nℓ bids at value 1. Restricted to such
+inputs, f is a function of nh and nℓ . Note that we
+9.1 Deterministic Optimal Threshold can assume, without loss of generality, that f takes on
+Auction
+only two values: 1, in which case all bids are satisfied
+at the price of 1, and h, in which case the high bids
+The deterministic optimal threshold auction is the
+are satisfied at price h. Other values of f lead to
+bid-independent auction with f = opt, the optimal
+smaller revenues.
+threshold function defined in Section 4. The only difWe wish to find an input family such that the
+ference between the deterministic optimal threshold
+bid-independent
+auction with function f has revenue
+auction and the optimal fixed pricing mechanism is
+O(F
+/h).
+To
+obtain
+this family, we chose nh and nℓ in
+that the former uses threshold opt(Bi ) for bidder i
+such
+a
+way
+that
+f
+(n
+h − 1, nℓ ) = 1, f (nh , nℓ − 1) = h,
+and the latter uses opt(B). Recall that Bi and B
+>
+α
+(implying
+αh ≤ F). For such an input,
+and
+n
+h
+only differ in that bi is not in Bi . From this, we
+R
+=
+n
+and
+F
+≥
+hn
+so
+R/F ≤ 1/h. Our goal now
+h
+h
+might also expect that for large n with suitable conis,
+given
+a
+deterministic
+f
+, to find values of nh and
+straints on h, the the deterministic optimal threshold
+that
+have
+the
+above
+properties.
+n
+ℓ
+auction would perform to within a constant fraction
+Consider the nh , nℓ plane. For a fixed m look at
+of F . However, this is not the case as the following
+the line nh = k and nℓ = m − k, and consider the line
+example illustrates.
+The input that shows that the deterministic opti- segment connecting (0, m) and (m, 0). We need to
+mal threshold auction performance is O(F /h) is one find a value of k with k > α where, when k increases
+with r bids at value h and q = (h − 1)r − 1 bids by one, f changes from 1 to h.
+Set m = h2 α. Assume that f (α, m − α) = 1. As
+at value 1. On this input, the optimal single-price
+auction takes r high bids at price h for a revenue of we increase k from k = α the value of f (k, m − k)
+F = hr. Note that the second-best threshold would must change from 1 to h because for k = m we have
+take all n bids at price 1 for revenue of hr − 1. The f (k, m − k) = f (m, 0) = h. Thus it must be at some
+∗
+∗
+∗
+∗
+∗
+deterministic optimal threshold auction takes all the k that f (k , m−k ) = h and f (k −1, m−k +1) = 1.
+∗
+∗
+high bids at value 1 and none of the low bids. This If we now choose nh = k and nℓ = m − k + 1, we
+yields a revenue of R = r. None of the low bids are satisfy our criteria that nh > α and that f (nh −
+accepted because their threshold is still h (removing 1, nℓ ) = 1 and f (nh , nℓ − 1) = h. Thus, R/F =
+a low bid from the optimal threshold auction does O(1/h).
+not change the threshold). The high bids are taken
+Suppose now that our assumption that f (α, m −
+at value 1 because removing one h causes the opti- α) = 1 is false and instead it is h. Then for nh = k =
+mal threshold to switch to 1. Thus, the deterministic α and nℓ = m − k + 1 we have F = m + 1 = h2 α + 1
+10
+
+value b′ would be better off bidding b′′ and paying only v. Since the auction is truthful, it must
+be that g(b′ ) = v.
+
+and R ≤ hα so
+R/F ≤ h2hα
+α+1
+≤ hhα
+2α
+
+= h1
+
+Thus for any bid-independent auction with deterministic function f there exists an input family such
+that R = O(F /h).
+
+9.3
+
+The only loose end remaining is showing that g(b)
+is v or ∞. This is true because b = v and by definition
+either g(b) ≤ b or g(b) = ∞.
+Using Lemma 9.2, we generalize Theorem 9.1 as
+follows.
+
+Truthful Deterministic Auctions Theorem 9.3 For any truthful deterministic auction and any constant α, there exists an input for
+are Bid-Indepentent
+
+The following lemma allows us to extend the result
+of Theorem 9.1 to arbitrary deterministic auctions.
+Lemma 9.2 Any truthful deterministic auction is
+bid-independent.
+Proof. Let Bi = B \ {i} as before, and let Bix be
+the set of bids with bi replaced with value x. Let
+A be a truthful deterministic auction. Let A(B) denote the result of running A on set B and let Ai (B)
+denote the result for bidder i (∞ if i is rejected).
+Consider function g defined as g(x) = Ai (Bix ). Here
+g is clearly a function of A and Bi . We show that
+g is ∞ everywhere except for some region (v, ∞),
+[v, ∞), or {} where it has value v. This would imply that A is bid-independent. If g(x) = ∞ for all x
+then we have the empty interval, {}. Otherwise, let
+b = inf{x : g(x) = ∞} and let v = minx g(x). We
+now show that b = v and for all b′ > b, g(b′ ) = v.
+1. v = b
+First we show that v ≤ b. This is simple to see
+because g(x) is defined so that either g(x) is ∞
+(and a bid value of x will lose) or g(x) ≤ x (and
+a bid of value x will win at price g(x) which is
+necessarily at most x).
+Now we show that v ≥ b. Assume for a contradiction that there exists a b′ such that v < b′ < b.
+This auction is not truthful because a bidder
+with utility value b′ would be better off bidding
+greater than b, win the aucion and pay price v
+which is less than b′ . Thus, v = b.
+
+which R/F = O(1/h) and αh ≤ F.
+
+In terms of asymptotic worst-case performance, deterministic auctions are significantly worse than randomized auctions. This is not to say that deterministic auctions are bad to use for all input families.
+In fact our experimental results reveal that for many
+families, the deterministic optimal threshold auction
+works very well. Adequate knowledge of the bidding
+distribution may make it possible to use a deterministic auction.
+
+10
+
+Experimental Results
+
+Our theoretical analysis of auctions
+√ has limitations.
+The worst-case analysis leaves a log h gap for inputs
+which come from “typical” (as opposed to tailored to
+be hard) distributions. In addition, constant factors
+we obtain in our analysis are often too pessimistic.
+Theoretical analysis for specific distributions seems
+non-trivial even for simple distributions.
+In practice, constant factors of the auction revenue
+are important. We introduced several auction mechanisms that provably perform within a constant factor
+of each other in worst-case. However, we do not know
+which one is better. We would also like to know how
+these auctions compare to fixed pricing with imperfect market analysis.
+We turn to experiments to answer these questions.
+In our experiments, we simulate various auctions on
+several input families and see how they compare.
+
+10.1
+
+2. For all b′ > b, g(b′ ) = v.
+
+Experimental Setup
+
+Our experiments consist of picking a family of bidder
+Let b′′ be such that g(b′′ ) = v. Since b′ > v, utilities with a single parameter and a set of aucif g(b′ ) were not exactly v a bidder with utility tions and comparing resulting revenues for different
+11
+
+parameter values. If either the family is randomized
+or the auction mechanism is randomized then the revenue for the auction is average over a number of runs.
+The number of times we repeat the auction depends
+on the size of the set of bids. This is because standard
+deviations are bigger for small sets of bids.
+
+10.2
+
+Auction Mechanisms
+
+10.3
+
+Input Families
+
+high to low is an upper bound for h. In our experiments we tried various moderate and large
+values for this ratio as well as the extreme value
+for low = 0 and high = 1. The results were similar in all cases, so we present data for the latter
+distribution only. Note that for this distribution,
+E[ℓ] = 1/(n + 1) and E[h] = n/(n + 1).
+
+normal(mean,dev) Each bid is chosen independently from the normal distribution with mean
+We experimented with the following auctions: the
+mean and standard deviation dev. We have acdeterministic optimal threshold, the weighted pairtually skewed the normal distribution so as not
+ing, and variations on the randomized sampling opto allow negative bid values. If a negative bid
+timal threshold. We have limited our presentation
+is generated we discard it and pick another bid
+of the experimental results to the following specific
+from the normal distribution to replace it.
+auctions:
+DSO dual-price sampling optimal threshold.
+Zipf(theta,high) Each bid is chosen independently
+SSO single-price
+sampling optimal threshold,
+√
+from the Zipf distribution [19]. This is a genm = n. (We justify this choice of m
+eralization of the distribution with 80% of the
+later.)
+total bid value coming form 20% of the bidWP weighted pairing.
+ders. For i in the interval [1, high], we define
+DOT deterministic optimal threshold.
+Pr[X
+= i] = c/iθ , with c chosen so that the
+FP− fixed pricing with the price equal to opprobabilities integrate to one. We tried several
+timal − 25%.
+values of θ, and report the results for θ = 1/2;
+FP+ fixed pricing with the price equal to opaccording
+to G. K. Zipf, this distribution models
+timal + 25%.
+personal
+income.
+The revenue for fixed pricing is at most F , which
+can be achieved by an optimal price choice. If the bid equal-revenue(α) Inputs in this family have h =
+distribution is known in advance and well-behaved,
+n/α. These inputs have the property that for
+one can choose a near-optimal price. However, if the
+any bid except for the largest α bids, setting the
+distribution is not known or changes, the selling price
+selling price to that bid value and satisfying all
+might not be near optimal. FP− and FP+ simulate
+bids greater than or equal to this value yields
+fixed pricing with non-optimal selling price by setting
+the same revenue. Thus, bid bi = n/(n − i) if
+the selling price to the optimal price minus and plus
+n − i > α and n/α otherwise. This distribution
+25%, respectively. Note that the former’s revenue is
+is bad for several auctions.
+at least 75% of F while for the latter the revenue can
+bipolar(low,high,ratio) This is the bipolar family
+be zero, for example if all bids are the same.
+with bids at high or at low only. The ratio of
+The auctions we introduce adapt to the input bid
+the number of high bids to the total number of
+distribution. Comparing their revenue to that of
+bids is ratio. In the experiment we report on,
+FP− and FP+ allows us to see how well our auctions
+we keep high, low, and the total number of bids
+adapt.
+constant, and vary the ratio.
+
+10.4
+
+Size Simulations
+
+We found the following input families to be of interest because of their average-case or worst-case prop- For the all problem families we report on, except for
+the bipolar family, we ran a size test where we varied
+erties.
+the number of bidders between 10 and 100,000. The
+uniform(low,high) Each bid is chosen indepen- auctions tested behaved roughly in the same manner
+dently from the uniform distribution distributed on the uniform, normal, and Zipf families. These
+between high and low. Note that the ratio of “average-case” families have the property that any
+12
+
+Zipf Size Test
+1
+
+0.9
+
+0.9
+
+0.8
+
+0.8
+
+R/F
+
+R/F
+
+Uniform Size Test
+1
+
+0.7
+
+0.6
+
+0.7
+
+0.6
+
+DSO
+SSO
+WP
+DOT
+FPFP+
+
+0.5
+
+DSO
+SSO
+WP
+DOT
+FPFP+
+
+0.5
+
+0.4
+
+0.4
+10
+
+100
+
+1000
+Number of bids
+
+10000
+
+10
+
+Figure 1: Uniform(0,1) with n = [10, 100k]
+
+Figure 3:
+[10, 100k]
+
+100
+
+1000
+Number of bids
+
+10000
+
+Zipf(theta=0.5, high=n) with n
+
+=
+
+Normal Size Test
+1
+
+0.9
+
+R/F
+
+0.8
+
+0.7
+
+0.6
+
+DSO
+SSO
+WP
+DOT
+FPFP+
+
+0.5
+
+0.4
+10
+
+100
+
+1000
+Number of bids
+
+10000
+
+Figure 2: Normal(1,1) with n = [10, 100k]
+
+asymptotically approaches 2/3.
+Equal-revenue is a “worst-case” family for many
+auctions, as we see in Figures 4 and 5. Since this
+family is such that the fixed pricing with any price
+between 1 and h works well, we do not plot FP− and
+FP+.
+WP, the worst auction on the average-case families,
+is the best of our auctions on the equal-revenue families. On these families, the sampling optimal threshold mechanisms with larger sample sizes perform
+poorly in comparison to the ones with smaller sample sizes. This is why DSO performs worse than SSO
+(More experiments with sample size in the sampling
+optimal threshold mechanism are presented later).
+DOT performs poorly on the equal-revenue families
+because it satisfies only the highest bids at the price
+of the lowest bid.
+Recall that our theoretical bounds improve as α
+increases. Comparing the equal-revenue distributions
+with α equal to 1.0 (the lowest possible value for any
+input) and 10.0, we observe that auction performance
+is better for the higher value of α. However, even for
+α = 1.0 (in which case most of our theoretical lower
+bounds do not apply), our randomized auctions bring
+a revenue that is a substantial fraction of F .
+
+uniformly chosen random subset of the bids has the
+same distribution as the original. In particular, the
+random sample in a random sampling auction has
+the same distribution as the non-sample. Because of
+this property, the random sampling auctions perform
+very well these families.
+Figures 1, 2, and 3 show the results of simulation.
+For large n, DSO and DOT are the best auctions.
+As n increases, the ratio of their revenue to F approaches 1. This is also the case for SSO. As n
+increases, the ratios for FP− and FP+ approach a 10.5 Bipolar Family
+constant less than 1. As a result, even for moderately large n our best auctions perform better than For the bipolar family, we varied the ratio of high
+fixed pricing with a 25% price error. On average- bids to the total number of bids and computed the
+case distributions, WP is the worst auction; its ratio revenue for various auctions. The results appear in
+13
+
+Equal-Revenue Size Test (alpha=1.0)
+
+Equal-Revenue Size Test (alpha=10.0)
+
+1
+
+1.2
+
+0.9
+1
+0.8
+0.7
+0.8
+
+R/F
+
+R/F
+
+0.6
+0.5
+
+0.6
+
+0.4
+0.4
+0.3
+0.2
+0.2
+DSO
+SSO
+WP
+DOT
+
+0.1
+
+DSO
+SSO
+WP
+DOT
+
+0
+
+0
+10
+
+Figure 4:
+[10, 100k]
+
+100
+
+1000
+Number of bids
+
+10000
+
+10
+
+Equal-Revenue(α = 1.0) with n = Figure 5:
+[10, 100k]
+
+100
+
+1000
+Number of bids
+
+10000
+
+Equal-Revenue(α = 10.0) with n =
+
+Figure 6. We do not plot FP− and FP+ auction 10.6 Sample Size
+revenues.
+In this section we address the choice of the sample
+There are several key things to note about the bipo- size for the sampling optimal threshold auction. Figlar family. First, it demonstrates the problem with ures 7 and 8 show the revenue of the single-price samthe DOT auction. There is a sharp dip in the revenue pling optimal threshold auction as the sample size
+of DOT precisely when the number of high bids is 10 varies. One plot is for n = 100 and the other for
+and the number of low bids is 90. This is because n = 10, 000. We plot a curve for every input distriopt(B \ {h}) = 1 and opt(B \ {1}) = h in this sce- bution except for the equal-revenue with α = 10.0
+nario and thus 10 high bids get satisfied at price 1 (which is similar to that with α = 1.0) and the bipoand the 90 low bids get rejected3 . The optimal solu- lar distribution. We omit the latter because othertion in this case is to accept the 10 high bids at price wise we need to plot a curve for several values of the
+h = 10. Aside from this case, DOT performs well. high to low bid ratio.
+The randomized optimal threshold variants have deThese plots show that for the average-case distrigraded revenues for the number of high bids around butions, there is a tradeoff: a bigger sample allows to
+10. However, due to randomness, the revenue loss is choose a better threshold, but loses revenue due to
+significantly smaller, but spread over a wider region. the discarded sample. For the equal-revenue distriThe DSO auction outperforms WP and SSO for most bution, there is no tradeoff; smaller samples lead to
+ratios. The WP auction usually outperforms SSO.
+higher revenues as any threshold
+√ is a good threshold.
+Note that WP revenue actually spikes up in the The sample size of around n (10 for the first plot
+area where the optimal threshold auctions’ revenues and 100 for the second) is a good compromise, giving
+dip. This is more evidence to the notion that the WP near-maximum values for all our distributions.
+These plots help explain why DSO performs so
+seems to do well on worst-case families.
+poorly on the equal-revenue distribution. The best
+sample size for this distribution is one. If the value
+3 Note that in this scenario 1 and h produce the same revenue when used as a threshold for B \ {h}; however, f must of the single sampled bid is b, the auction revenue is
+deterministically break the tie one way or the other. We have F − b, and the expected value of b is small. If we
+chosen to break ties in favor of using a smaller threshold. Note sample more than one element then the we are likely
+that if we had made the opposite choice then we would have
+to select a threshold value that has more than its fair
+encountered the worst-case behavior on the distribution with
+with 9 bids at h and 91 bids at 1 which has the property that share of elements above it in the sample – and less
+1 and h yield equal revenues when used on B \ {1}.
+than its fair share of elements above that value in
+14
+
+Bipolar Ratio Test (n=100)
+
+Sampling Size Test, n = 100
+
+1
+
+1
+
+0.9
+
+0.9
+0.8
+
+0.8
+
+0.7
+0.7
+0.6
+R/F
+
+R/F
+
+0.6
+0.5
+
+0.5
+0.4
+0.4
+0.3
+0.3
+
+0.2
+DSO
+SSO
+WP
+DOT
+
+0.2
+
+0.1
+
+0.1
+
+Uniform
+Normal
+Zipf
+Equal-Revenue
+
+0
+0
+
+0.2
+
+0.4
+0.6
+Ratio: # highs / # total
+
+0.8
+
+1
+
+10
+Sample Size
+
+Figure 6: Bipolar(low=1,high=10,ratio=[0, 1]) with Figure 7: The effect of sample size on the sampling
+n = 100
+optimal threshold auction revenue.
+the non-sample. In this sense, the sampling optimal
+threshold auction mechanisms are poorly conditioned
+on the equal-revenue distribution.
+One question related to the sample size is whether
+the dual-price auction can do better with lopsided
+sample sizes. It does do slightly better in auctions
+with a small number of bids, but as the number of
+bids gets large the benefit of accepting bids from the
+sample becomes negligible. Note
+that a dual-price
+√
+auction with the sample size n will do better than
+the single-price sampling optimal threshold auction
+with the same sample size.
+
+10.7
+
+Experimental Conclusions
+
+11
+
+Bounded Supply
+
+Up to this point, we have studied the unlimited supply case which is motivated by the digital goods market where the cost of making a copy of an item is negligible. In this section we consider the case where the
+number of items available for sale is bounded. This
+case is typical of physical goods markets. We denote the number of items available by k. Here again,
+the seller wishes to maximize their revenue, possibly
+not selling all of the items. Note that the definitions of truthful and competitive auctions, which we
+stated for the unlimited supply case, also apply to the
+bounded supply case. We denote by Fk the revenue
+for optimal fixed pricing that sells at most k items,
+and it is this quantity that we wish to be competitive
+with.
+The bounded supply case is a generalization of the
+unlimited supply case as items are available in unlimited supply when the number of available items is the
+same as the number of bidders (i.e. k = n). Where
+unlimited supply is one extreme of the bounded supply case, scarce supply is another extreme. In the
+scarce supply case, the optimal fixed pricing revenue
+is maximized by selling all the items when the number of available items is around k.4 Previous work on
+auctions concentrated on the scarce supply case. The
+multi-item Vickrey auction is the best single-price
+
+Our experiments suggest that for well-behaved inputs, the random sampling auctions achieve a revenue
+ratio to F that approaches one as the number of bids
+increases. The weighted pairing auction, although
+not bad overall, does not perform as well as the randomized sampling mechanisms on such inputs. We
+also saw that even on contrived worst-case families,
+these auctions’ revenue is a large constant fraction
+of F . The deterministic optimal threshold, while exhibiting its F /h worst-case behavior on specific families, performs very well on the average-case families
+of inputs. Finally, sampling about a square root of
+the number of bids for the sampling auction mechanisms seems to balance out the loss due to rejecting
+4 Formally, items are in scarce supply if we have k items and
+all of the sample and the loss due to having a non- the optimal fixed pricing with k or k + 1 items would sell all
+of the items.
+representative sample.
+15
+
+to the optimal untruthful multi-price auction. Define
+Tk to be the revenue of the optimal multi-price auction restricted to only satisfying k bidders (i.e. the
+sum of the highest k bids) and Fk as above. Then
+the generalized result is Fk ≥ Tk /(2 log h).
+
+Sampling Size Test, n = 10,000
+1
+0.9
+0.8
+0.7
+
+R/F
+
+0.6
+
+One result we do not know how to extend to
+bounded supply is that for the weighted pairing auction.
+
+0.5
+0.4
+0.3
+0.2
+0.1
+
+Uniform
+Normal
+Zipf
+Equal-Revenue
+
+0
+10
+
+100
+Sample Size
+
+1000
+
+12
+
+Concluding Remarks
+
+Figure 8: The effect of sample size on the sampling We have demonstrated that there exist truthful auctions for unlimited supply markets. We have shown
+optimal threshold auction revenue.
+randomized auctions that are competitive in that
+they yield revenue that is within a constant factor of
+auction for the scarce supply case (and it is compet- optimal fixed pricing. We have shown that this result
+itive). Our results, extended to bounded supply, are is tight up to a constant factor, even for multi-price
+competitive in the full range of the supply-demand auctions. We have also shown that no deterministic
+spectrum with only the assumption that αh < Fk .
+auction is competitive in the worst-case. Finally, via
+We now show how to extend our optimal threshold simulations, we have argued that our auctions comsampling auctions to the k-item bounded supply case. pare favorably to fixed pricing with market analysis.
+Let optk be the function that, given a set of bids,
+For unlimited supply markets, our analysis asreturns the optimal threshold that sells k items or sumes that there is no cost for producing the items
+less. This function, on the entire set of bids, gives being auctioned. With the following modification we
+the threshold to use for Fk . The single-price sampling can also accommodate non-zero marginal costs. If
+optimal threshold mechanisms can now be modified the marginal cost is v per item, then first subtract v
+to use threshold function optmk/(n−m) on sample of from each bid and reject all negative value bids. After
+size m. If this results in too many bids being satisfied, running the auction, add v back to the selling price
+arbitrarily (e.g. at random) reject bids until there are of all winning bids. If the marginal cost of producing
+only k left. One can show that with high probability, k items is a more complicated function of k, we can
+the number of bids rejected this way will be small modify the opt function used in the sampling optimal
+and that this auction is competitive.
+threshold auction to take into account these marginal
+In the dual-price auction with the sample size of costs. In this case the opt function would, as above
+m = n/2, use optk/2 so that about k/2 bids are se- for bounded supply, need to be parameterized by the
+lected from each of the sample and the non-sample. ratio of the sample size and the non-sample size so as
+Once can show that the resulting auction is also to correctly use marginal cost information.
+truthful and competitive.
+To prevent cheating by the auctioneer or the bidWe have shown that in a relatively straight-forward
+ders,
+one may need a trusted third party or a special
+way, our sampling auctions extend from the unlimited
+cryptographic
+protocol. Note that cheating prevento the bounded supply case. One can extend the
+tion
+is
+a
+problem
+shared by all on-line auctions. Redeterministic optimal threshold auction to bounded
+lated
+results
+appear
+in [5].
+supply as well. Also, all of our upper bounds apply
+to bounded supply because it generalizes unlimited
+Recently we have shown that the deterministic opsupply.
+timal threshold auction is single-price. This fact leads
+To generalize Theorem 4.1 for the k-item case, re- to interesting results. We will report on these results
+call the alternative definition of T as the revenue due in a future paper.
+16
+
+13
+
+Open Problems
+
+[3] E. H. Clarke. Multipart Pricing of Public Goods.
+Public Choice, 11:17–33, 1971.
+
+We proved that the weighted pairing auction is not
+competitive. It is possible, however, that a variant of
+this auction that uses different weighting is competitive.
+The weighted pairing auction can have revenue
+greater than F for some random pairings. It seems
+like this might not be the case for the dual-price sampling optimal threshold auction. Can one prove that
+it is always the case that for any randomly chosen
+sample, the auction revenue does not exceed F ?
+We have not considered issues such as the extent
+to which bidders can remain anonymous or bid values
+can remain secret. See [7] for ways to maintain bid
+secrecy in an on-line Vickrey auction.
+A significant issue in auctions like ours is resistance
+to adversarial attacks. How resistant are our auctions
+to bidder collusion, and can collusion resistance be
+improved? How well do our auctions resist attacks
+such as a competitor attempting to reduce the revenue of an auction by submitting a large number of
+low bids?
+Repeated auctions for the same item may be of
+interest in some applications. In this case, the challenge is to design an auction mechanism that encourages consumers to bid their utilities in every auction
+(I.e. they are truthful).
+
+Acknowledgements
+
+[4] J. Feigenbaum, C. Papadimitriou, and
+S. Shenker. Sharing the Cost of Multicast
+Transmissions. In Proc. of 32nd Symposium
+Theory of Computing, pages 218–226. ACM
+Press, New York, 2000.
+[5] M. K. Franklin and M. K. Reiter. The design
+and implementation of a secure auction service.
+IEEE Trans. on Sftware Eng., 22:302–312, 1996.
+[6] T. Groves. Incentives in Teams. Econometrica,
+41:617–631, 1973.
+[7] M. Harkaby, J. D. Tygar, and H. Kikuchi. Electronic Auctions with Private Bids. In Proc.
+of the 3rd USENIX Workshop on Electr. Commerce, pages 61–73. USENIX Assoc., Berkeley,
+CA, 1998.
+[8] D. Lehmann, L. I. O’Callaghan, and Y. Shoham.
+Truth Revelation in Approximately Efficient
+Combinatorial Auctions. In Proc. of 1st ACM
+Conf. on E-Commerce, pages 96–102. ACM
+Press, New York, 1999.
+[9] N. Lineal. Game Theoretic Aspects of Computing. In Handbook of Game Theory, volume 2, pages 1339–1395. Elseveir Science Publishers B.V., 1994.
+[10] A. Mas-Colell, M.D. Whinston, and J. R.
+Green. Microeconomic Theory. Oxford University Press, New York, Oxford, 1995.
+
+We would like to thank the following people for their
+contributions and useful discussions relating to this
+work: Stuart Haber, Jim Horning, Anna Karlin, [11] R. Motwani and P. Raghavan. Randomized AlUmesh Maheshwari, Satish Rao, Eva Tardos, Bob
+gorithms. Cambridge University Press, 1995.
+Tarjan, Radek Vingralek, and Stephen Weeks.
+[12] N. Nisan and A. Ronen. Algorithmic Mechanism
+Design. In Proc. of 31st Symposium on Theory
+of Computing, pages 129–140. ACM Press, New
+References
+York, 1999.
+[1] A. Borodin and R. El-Yaniv. Online Computation and Competitive Analysis. Cambridge University Press, 1998.
+
+[13] M. J. Osborne and A. Rubinstein. A Course
+in Game Theory. MIT Press, Cambridge, MA,
+1994.
+
+[2] H. Chernoff. A Measure of Asymptotic Effi- [14] A. E. Roth and M. A. Oliveira Sotomayor. Twociency for Test of a Hypothesis Based on the Sum
+Sided Matching: A Study in Game-Theoretic
+of Observations. Anals of Math. Stat., 23:493–
+Modeling and Analysis. Cambridge University
+509, 1952.
+Press, 1990.
+17
+
+[15] L. S. Shapley. A Value of n-Person Games. In
+H. Kuhn and W. Tucker, editors, Contributions
+to the Theory of Games, pages 31–40. Princeton
+University Press, 1953.
+[16] D. D. Sleator and R. E. Tarjan. Amortized Efficiency of List Update and Paging Rules. Communications of the ACM, 28:202–208, 1985.
+[17] M. R. Varian. Economic Mechanism Design
+for Computerized Agents.
+In Proc. of the
+1st USENIX Workshop on Electr. Commerce.
+USENIX Assoc., Berkeley, CA, 1995.
+[18] W. Vickrey. Counterspeculation, Auctions, and
+Competitive Sealed Tenders. J. of Finance,
+16:8–37, 1961.
+[19] G. K. Zipf. Human Behavior and the Principle of
+Least Effort, an Introduciton to Human Ecology.
+Addison-Wesley, 1949.
+
+18
+
+
