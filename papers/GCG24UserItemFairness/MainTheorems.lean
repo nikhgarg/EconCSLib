@@ -8958,6 +8958,64 @@ theorem paper_theorem4_problem11EqualityFormOptimalBFS_solvesEstimatedProblem_on
     R reps hn hestimated hred hbeta_pos hbeta_half hpos hdec h hselection
 
 /--
+Appendix E Problem 11 estimated-problem packaging in Lemma 14 form: uniqueness
+of the epigraph-optimal mirror-symmetric policy is enough to lift the selected
+equality-form optimum to an original estimated-problem solution.
+-/
+theorem paper_theorem4_problem11EqualizedBasicOptimal_solvesEstimatedProblem_one_from_reduction_of_policyOptimal_unique
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hestimated : E.estimatedModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4EstimatedReducedModel beta v)
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hunique :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        OpposingTypes.Theorem4Problem11PolicyOptimal beta v ρ' ell' →
+          ρ' = ρ) :
+    E.SolvesEstimatedProblem 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_problem11EqualizedBasicOptimal_solvesEstimatedProblem_one_from_reduction_of_policyOptimal_unique
+    R reps hestimated hred hbeta hcold hpos h hunique
+
+/--
+Appendix E Problem 11 estimated-problem packaging in Lemma 14 form, after
+rebuilding the policy from real equality-form BFS data.
+-/
+theorem paper_theorem4_problem11EqualityFormOptimalBFS_solvesEstimatedProblem_one_from_reduction_of_policyOptimal_unique
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hestimated : E.estimatedModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4EstimatedReducedModel beta v)
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h :
+      OpposingTypes.Theorem4Problem11EqualityFormOptimalBFS beta v x z ell)
+    (hunique :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        OpposingTypes.Theorem4Problem11PolicyOptimal beta v ρ' ell' →
+          ρ' =
+            OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+              h.feasible.x_nonneg h.feasible.z_nonneg
+              h.feasible.sum_x h.feasible.sum_z) :
+    E.SolvesEstimatedProblem 1
+      (R.liftedPolicy
+        (OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+          h.feasible.x_nonneg h.feasible.z_nonneg
+          h.feasible.sum_x h.feasible.sum_z)) := by
+  exact E.theorem4_problem11EqualityFormOptimalBFS_solvesEstimatedProblem_one_from_reduction_of_policyOptimal_unique
+    R reps hestimated hred hbeta hcold hpos h hunique
+
+/--
 Appendix E / Theorem 4 true-model baseline, odd midpoint case: the two-type
 half-population reduced lower bound lifts to the original true model.
 -/
@@ -9139,19 +9197,13 @@ theorem paper_theorem4_misestimation_with_fairness_large_from_smallValueVector_c
     (heps : 0 < eps)
     (hbeta : (n : ℝ)⁻¹ < beta)
     (hbeta_half : beta < 1 / 2)
-    (hcenter : c.val = (OpposingTypes.reverseItem c).val)
-    (hselection :
-      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
-        OpposingTypes.Theorem4Problem11PolicyOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell' →
-          OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell') :
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
     ∃ ρ : TypePolicy 3 n,
       E.SolvesEstimatedProblem 1 (Rest.liftedPolicy ρ) ∧
         1 - eps < E.priceOfMisestimation 1 (Rest.liftedPolicy ρ) := by
   exact E.theorem4_misestimation_with_fairness_large_from_smallValueVector_closed_problem11_trueHalf_coldUser_typeZero_center
     Rtrue Rest repsTrue repsEst u hn htrue hestimated hredTrue hredEst
-    htrueType hestimatedType heps hbeta hbeta_half hcenter hselection
+    htrueType hestimatedType heps hbeta hbeta_half hcenter
 
 /--
 Appendix E / Theorem 4 strongest current fairness-side wrapper, odd midpoint
@@ -9180,19 +9232,13 @@ theorem paper_theorem4_misestimation_with_fairness_large_from_smallValueVector_c
     (heps : 0 < eps)
     (hbeta : (n : ℝ)⁻¹ < beta)
     (hbeta_half : beta < 1 / 2)
-    (hcenter : c.val = (OpposingTypes.reverseItem c).val)
-    (hselection :
-      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
-        OpposingTypes.Theorem4Problem11PolicyOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell' →
-          OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell') :
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
     ∃ ρ : TypePolicy 3 n,
       E.SolvesEstimatedProblem 1 (Rest.liftedPolicy ρ) ∧
         1 - eps < E.priceOfMisestimation 1 (Rest.liftedPolicy ρ) := by
   exact E.theorem4_misestimation_with_fairness_large_from_smallValueVector_closed_problem11_trueHalf_coldUser_typeOne_center
     Rtrue Rest repsTrue repsEst u hn htrue hestimated hredTrue hredEst
-    htrueType hestimatedType heps hbeta hbeta_half hcenter hselection
+    htrueType hestimatedType heps hbeta hbeta_half hcenter
 
 /--
 Appendix E / Theorem 4 strongest current fairness-side wrapper, even midpoint
@@ -9221,19 +9267,13 @@ theorem paper_theorem4_misestimation_with_fairness_large_from_smallValueVector_c
     (heps : 0 < eps)
     (hbeta : (n : ℝ)⁻¹ < beta)
     (hbeta_half : beta < 1 / 2)
-    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val)
-    (hselection :
-      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
-        OpposingTypes.Theorem4Problem11PolicyOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell' →
-          OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell') :
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
     ∃ ρ : TypePolicy 3 n,
       E.SolvesEstimatedProblem 1 (Rest.liftedPolicy ρ) ∧
         1 - eps < E.priceOfMisestimation 1 (Rest.liftedPolicy ρ) := by
   exact E.theorem4_misestimation_with_fairness_large_from_smallValueVector_closed_problem11_trueHalf_coldUser_typeZero_succ_center
     Rtrue Rest repsTrue repsEst u hn htrue hestimated hredTrue hredEst
-    htrueType hestimatedType heps hbeta hbeta_half hsucc hselection
+    htrueType hestimatedType heps hbeta hbeta_half hsucc
 
 /--
 Appendix E / Theorem 4 strongest current fairness-side wrapper, even midpoint
@@ -9262,19 +9302,13 @@ theorem paper_theorem4_misestimation_with_fairness_large_from_smallValueVector_c
     (heps : 0 < eps)
     (hbeta : (n : ℝ)⁻¹ < beta)
     (hbeta_half : beta < 1 / 2)
-    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val)
-    (hselection :
-      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
-        OpposingTypes.Theorem4Problem11PolicyOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell' →
-          OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta
-            (OpposingTypes.theorem4SmallValueVector (n := n) eps) ρ' ell') :
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
     ∃ ρ : TypePolicy 3 n,
       E.SolvesEstimatedProblem 1 (Rest.liftedPolicy ρ) ∧
         1 - eps < E.priceOfMisestimation 1 (Rest.liftedPolicy ρ) := by
   exact E.theorem4_misestimation_with_fairness_large_from_smallValueVector_closed_problem11_trueHalf_coldUser_typeOne_succ_center
     Rtrue Rest repsTrue repsEst u hn htrue hestimated hredTrue hredEst
-    htrueType hestimatedType heps hbeta hbeta_half hsucc hselection
+    htrueType hestimatedType heps hbeta hbeta_half hsucc
 
 /--
 Appendix E, Theorem 4 first-bullet algebra.

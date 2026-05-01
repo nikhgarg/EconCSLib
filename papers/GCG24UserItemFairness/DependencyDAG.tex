@@ -65,12 +65,12 @@
   {\textbf{No-Fairness Side} \\ Estimated $\gamma=0$ benchmark};
 \node[dag_result, right=of ColdBounds] (TrueLower)
   {\textbf{True-Model Lower Bound} \\ Original two-type half model gives $U^*_{\min}(1,w) > 1/n$};
-\node[dag_conditional, below=1.7cm of NoFairness, xshift=3.2cm] (Theorem4Conditional)
-  {\textbf{Theorem 4 Fairness Wrappers} \\ Source cold-user policy; estimated lift; needs Problem 11 LP-selection};
+\node[dag_result, below=1.7cm of NoFairness, xshift=3.2cm] (Theorem4Conditional)
+  {\textbf{Theorem 4 Fairness Wrappers} \\ Source cold-user policy; estimated lift; Problem 11 uniqueness closed};
 \node[dag_lemma, below=of Theorem4Conditional] (VExist)
   {\textbf{Value-Vector Witness} \\ Geometric $v_j=r^j$ construction};
 \node[dag_unformalized, below=of VExist] (Theorem4Full)
-  {\textbf{Theorem 4 (App. E)} \\ Open: LP-selection/unique optimum + source no-fairness wrapper};
+  {\textbf{Theorem 4 (App. E)} \\ Open: source no-fairness wrapper for two-type true / collapsed estimated model};
 
 % --- Edges: model/reduction path ---
 \draw[dag_arrow] (BaseDefs) -- (Lemma1);
@@ -106,9 +106,9 @@
 \draw[dag_arrow] (NoFairness) -- (Theorem4Conditional);
 \draw[dag_arrow] (TrueLower) -- (Theorem4Conditional);
 \draw[dag_arrow] (Problem11Dual.south) |- (Theorem4Conditional.east);
+\draw[dag_arrow] (Lemma14.east) -| (Theorem4Conditional.east);
 \draw[dag_arrow] (Theorem4Conditional) -- (Theorem4Full);
 \draw[dag_arrow] (VExist) -- (Theorem4Full);
-\draw[dag_arrow] (Lemma14.east) -| (Theorem4Full.east);
 
 \end{tikzpicture}
 \end{document}
