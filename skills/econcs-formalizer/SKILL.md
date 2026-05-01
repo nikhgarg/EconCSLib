@@ -42,6 +42,14 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - If two papers could use a lemma after renaming variables, it belongs in the generic library.
 - If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
 - For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
+- For finite LP-heavy recommendation/allocation papers, a fast complete route is
+  often: define the exact paper-local equality-form/epigraph LP; prove a weak
+  duality lemma for the exact variables; construct the closed-form primal
+  witness; construct the matching dual/certificate; prove feasibility,
+  complementary slackness/tightness, and uniqueness; then wrap this as the
+  paper theorem. This can fully verify a paper result without a generic LP
+  solver, as long as the final source wrapper constructs or discharges every
+  certificate internally.
 
 ### 1.3 Paper Folder Contract
 
@@ -139,6 +147,15 @@ the Lean statements against the paper.
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
   "technical details".
+- Distinguish certificate interfaces from certificate assumptions. A
+  paper-local certificate/interface structure is just a formal proof boundary:
+  it is an **assumption** only when the paper-facing theorem still takes an
+  inhabitant or hypothesis as an explicit input. It is **discharged** when the
+  paper folder constructs the witness/certificate and the final paper-facing
+  wrapper applies it internally. README/DAG status must say which case holds.
+  Auxiliary explicit-input variants are fine, but they must not make the source
+  theorem look closed unless there is also a closed wrapper that no longer
+  exposes those inputs.
 - Use source-numbered paper declaration names only for statements that are
   source-faithful. If Lean proves an auxiliary finite analogue, certificate
   interface, or deliberately weakened bridge, name it as an auxiliary
@@ -152,6 +169,11 @@ the Lean statements against the paper.
   verified, what additional assumptions were needed, whether mistakes were
   found, and whether the Lean proof followed the paper strategy or used a
   different route.
+- For paper-specific status questions, the paper folder `README.md`,
+  `DependencyDAG.tex`, paper-facing theorem files, and current targeted Lean
+  build are the source of truth. Older author-wide notes or campaign reports
+  are historical/secondary and may be stale; never use them to override a
+  paper-local README/DAG plus successful build.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -200,6 +222,15 @@ search.
   the three cheap checks: worktree status, targeted declaration search, and a
   targeted `lake build <active-module>`. Do not replay old proof search unless
   those checks reveal a real gap.
+- Before saying a paper is "done" or "fully verified," perform a paper-local
+  validation pass: read the paper README theorem-status rows, inspect the DAG
+  status for the named main results, check the paper-facing theorem file for
+  the strongest closed wrappers, run the targeted `lake build <module>`, and
+  search only Lean files for real proof placeholders such as `sorry`, `admit`,
+  or `axiom`. Ignore cached PDF text and comment prose for placeholder searches.
+  If auxiliary certificate/BFS/interface theorems still take explicit inputs,
+  verify that the final source wrapper does not expose them before calling the
+  source theorem closed.
 - Before editing, state the one active seam in local notes or the handoff doc:
   public theorem wrapper, internal lemma/certificate being attacked, exact
   remaining assumption, and the build command that validates the slice.
@@ -307,6 +338,22 @@ search.
    reusable "open box has nonzero volume, and subsets inherit nonzero measure"
    lemma, then instantiate tiny boxes for each lambda source/corrected-top
    region.
+   For finite symmetric recommendation papers, avoid spending time proving a
+   generic "selected BFS" theorem if the source result can be closed by a
+   canonical closed-form construction. Prove the canonical first-crossing or
+   first-closed pivot exists, prove its denominator/nonnegativity bounds, and
+   use that pivot to build the closed policy/certificate. Keep selected-BFS
+   statements as auxiliary explicit-input variants unless the source theorem
+   genuinely needs arbitrary selected optima.
+   When the paper has mirror symmetry, prove the first half directly and derive
+   the second half by an explicit mirror-equivalence theorem preserving the
+   objective, constraints, and optimal values. This is usually faster and less
+   brittle than duplicating the first-half algebra.
+   If a displayed paper formula depends on an implicit modeling convention
+   (for example a center item counted once in a half-LP versus twice in a full
+   mirrored policy), split the theorem names by convention and prove an explicit
+   bridge or explanation. Do not force the executable model to match a displayed
+   formula by hiding the convention difference.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,
