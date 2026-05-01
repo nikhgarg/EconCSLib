@@ -66,6 +66,12 @@ allocation.
   `(ε_N N - 1) q_N → ∞` for `0 < α < 1`, so it eventually dominates all finite
   log-likelihood ratios and closes the subunit branch under the explicit
   probability-validity assumptions.
+- For the `α = 1` top-one product estimate, do not rely on the paper's displayed
+  finite telescope unless `c` has actually been specialized to an integer. For
+  real `c`, prove the finite harmonic-log route instead: show
+  `log((x+1)/x) ≤ 1/x`, telescope the interval log sum, derive the
+  survival-product ratio bound `P_r/P_q ≤ ((q+1+d)/(r+1+d))^c`, and then combine
+  it with the source/destination success ratio and weights `p_t^(1/(1+c))`.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
