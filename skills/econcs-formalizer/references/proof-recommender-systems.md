@@ -62,8 +62,10 @@ allocation.
   `∏(1-q_i)` by `exp(-∑ q_i)`, lower-bound the interval sum by gap length
   times the right-end success probability, and use a log-likelihood-ratio
   inequality to turn the scalar exponential bound into marginal dominance.
-  The final scalar growth condition can be stated as eventual domination of
-  all finite log-likelihood ratios by `(ε_N N - 1) q_N`.
+  Use the concrete schedule `ε_N = (N+1)^((α-1)/2)`: it tends to zero, while
+  `(ε_N N - 1) q_N → ∞` for `0 < α < 1`, so it eventually dominates all finite
+  log-likelihood ratios and closes the subunit branch under the explicit
+  probability-validity assumptions.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
