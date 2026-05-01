@@ -564,6 +564,29 @@ theorem paper_proposition2_symmetric_optimum_exists
   exact S.exists_typeSymmetric_isOptimalAtLevel_of_isOptimalAtLevel
     reps hRow hopt
 
+/--
+Proposition 2, part 1 with optimum existence discharged.
+
+Under the paper's strictly positive utilities, compactness gives an optimum for
+the maximal item-fairness problem at `γ = 1`; symmetrization then preserves
+optimality.
+-/
+theorem paper_proposition2_symmetric_optimum_exists_of_positive
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (S : RecommendationModel.SymmetricData m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives S.types)
+    (hPos : S.model.Positive) :
+    ∃ ρsym : Policy m n,
+      UserTypeAssignment.IsTypeSymmetric S.types ρsym ∧
+        RecommendationModel.IsOptimalAtLevel S.model 1 ρsym := by
+  have hRow : S.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive S.model hPos
+  obtain ⟨ρ, hopt⟩ :=
+    RecommendationModel.exists_isOptimalAtLevel_one_of_nonnegative
+      S.model (RecommendationModel.nonnegative_of_positive S.model hPos)
+  exact S.exists_typeSymmetric_isOptimalAtLevel_of_isOptimalAtLevel
+    reps hRow hopt
+
 end RecommendationModel.SymmetricData
 
 namespace OpposingTypes

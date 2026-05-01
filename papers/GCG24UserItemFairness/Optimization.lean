@@ -443,6 +443,110 @@ theorem itemFairnessVector_continuous {m n : ℕ} [NeZero n]
   unfold itemFairnessVector EconCSLib.finiteMin
   fun_prop
 
+/-- Raw user utility evaluated on the real simplex-vector presentation. -/
+noncomputable def rawUserUtilityVector {m n : ℕ}
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (u : User m) : ℝ :=
+  ∑ j : Item n,
+    ((x u : stdSimplex ℝ (Item n)) : Item n → ℝ) j * W.utility u j
+
+/-- Normalized user utility evaluated on the real simplex-vector presentation. -/
+noncomputable def normalizedUserUtilityVector {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (u : User m) : ℝ :=
+  rawUserUtilityVector W x u / bestItemUtility W u
+
+/-- Minimum user fairness evaluated on the real simplex-vector presentation. -/
+noncomputable def userFairnessVector {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n) : ℝ :=
+  EconCSLib.finiteMin (normalizedUserUtilityVector W x)
+
+theorem rawUserUtility_policyOfSimplexVector_eq {m n : ℕ}
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (u : User m) :
+    rawUserUtility W (policyOfSimplexVector x) u =
+      rawUserUtilityVector W x u := by
+  unfold rawUserUtility rawUserUtilityVector EconCSLib.Policy.agentScore
+    EconCSLib.pmfExp
+  simp [mul_comm]
+
+theorem normalizedUserUtility_policyOfSimplexVector_eq {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (u : User m) :
+    normalizedUserUtility W (policyOfSimplexVector x) u =
+      normalizedUserUtilityVector W x u := by
+  unfold normalizedUserUtility normalizedUserUtilityVector
+  rw [rawUserUtility_policyOfSimplexVector_eq]
+
+theorem userFairness_policyOfSimplexVector_eq {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n) :
+    userFairness W (policyOfSimplexVector x) =
+      userFairnessVector W x := by
+  unfold userFairness userFairnessVector
+  apply congrArg
+  funext u
+  exact normalizedUserUtility_policyOfSimplexVector_eq W x u
+
+theorem rawUserUtilityVector_simplexVectorOfPolicy_eq {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) :
+    rawUserUtilityVector W (simplexVectorOfPolicy ρ) u =
+      rawUserUtility W ρ u := by
+  unfold rawUserUtilityVector rawUserUtility simplexVectorOfPolicy
+    EconCSLib.Policy.agentScore EconCSLib.pmfExp
+  change (∑ x : Item n, ((ρ u) x).toReal * W.utility u x) =
+    ∑ x : Item n, ((ρ u) x).toReal * W.utility u x
+  rfl
+
+theorem normalizedUserUtilityVector_simplexVectorOfPolicy_eq
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) :
+    normalizedUserUtilityVector W (simplexVectorOfPolicy ρ) u =
+      normalizedUserUtility W ρ u := by
+  unfold normalizedUserUtilityVector normalizedUserUtility
+  rw [rawUserUtilityVector_simplexVectorOfPolicy_eq]
+
+theorem userFairnessVector_simplexVectorOfPolicy_eq
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) :
+    userFairnessVector W (simplexVectorOfPolicy ρ) =
+      userFairness W ρ := by
+  unfold userFairnessVector userFairness
+  apply congrArg
+  funext u
+  exact normalizedUserUtilityVector_simplexVectorOfPolicy_eq W ρ u
+
+theorem rawUserUtilityVector_continuous {m n : ℕ}
+    (W : RecommendationModel m n) (u : User m) :
+    Continuous (fun x : PolicySimplexVector m n =>
+      rawUserUtilityVector W x u) := by
+  unfold rawUserUtilityVector
+  apply continuous_finset_sum
+  intro j _hj
+  have hrow : Continuous (fun x : PolicySimplexVector m n => x u) :=
+    continuous_apply u
+  have hcoord : Continuous (fun x : PolicySimplexVector m n =>
+      ((x u : stdSimplex ℝ (Item n)) : Item n → ℝ) j) :=
+    (continuous_apply j).comp (continuous_subtype_val.comp hrow)
+  exact hcoord.mul continuous_const
+
+theorem normalizedUserUtilityVector_continuous {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (u : User m) :
+    Continuous (fun x : PolicySimplexVector m n =>
+      normalizedUserUtilityVector W x u) := by
+  unfold normalizedUserUtilityVector
+  exact (rawUserUtilityVector_continuous W u).div_const _
+
+theorem userFairnessVector_continuous {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) :
+    Continuous (fun x : PolicySimplexVector m n =>
+      userFairnessVector W x) := by
+  have hcont : ∀ u : User m,
+      Continuous (fun x : PolicySimplexVector m n =>
+        normalizedUserUtilityVector W x u) :=
+    fun u => normalizedUserUtilityVector_continuous W u
+  unfold userFairnessVector EconCSLib.finiteMin
+  fun_prop
+
 /--
 The finite policy simplex is compact, so the original item-fairness objective
 attains its supremum. This supplies the optimum-existence step used implicitly
@@ -1204,6 +1308,21 @@ theorem attainableUserFairnessAtLevel_nonempty_of_gamma_lt_one
   rw [← hr]
   exact le_of_lt hrgt
 
+/--
+At the maximal boundary `γ = 1`, compactness of the item-fairness simplex
+supplies a policy attaining `I^*_{\min}(w)`, hence a feasible user-fairness
+value.
+-/
+theorem attainableUserFairnessAtLevel_one_nonempty_of_nonnegative
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    (attainableUserFairnessAtLevel W 1).Nonempty := by
+  obtain ⟨ρ, hρ⟩ := optimalItemFairness_attained_of_nonnegative W hNonneg
+  refine ⟨userFairness W ρ, ?_⟩
+  refine ⟨ρ, ?_, rfl⟩
+  unfold feasibleAtLevel
+  rw [one_mul, hρ]
+
 /-- `U^*_min(γ, w)` in the paper. -/
 noncomputable def optimalUserFairnessAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) : ℝ :=
@@ -1244,6 +1363,93 @@ theorem optimalUserFairnessAtLevel_zero_eq_one
 def IsOptimalAtLevel {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (γ : ℝ) (ρ : Policy m n) : Prop :=
   feasibleAtLevel W γ ρ ∧ userFairness W ρ = optimalUserFairnessAtLevel W γ
+
+/-- The vector-domain feasible set for the paper's `γ`-constrained problem. -/
+def feasibleSimplexVectorAtLevel {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (γ : ℝ) :
+    Set (PolicySimplexVector m n) :=
+  {x | γ * optimalItemFairness W ≤ itemFairnessVector W x}
+
+/--
+Whenever the `γ`-constrained feasible-value set is nonempty, compactness of the
+finite policy simplex gives an actual policy attaining
+`U^*_{\min}(γ,w)`.
+-/
+theorem exists_isOptimalAtLevel_of_attainableUserFairnessAtLevel_nonempty
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (γ : ℝ)
+    (hFeasNonempty : (attainableUserFairnessAtLevel W γ).Nonempty) :
+    ∃ ρ : Policy m n, IsOptimalAtLevel W γ ρ := by
+  classical
+  let S : Set (PolicySimplexVector m n) :=
+    feasibleSimplexVectorAtLevel W γ
+  have hS_closed : IsClosed S := by
+    dsimp [S, feasibleSimplexVectorAtLevel]
+    exact isClosed_le continuous_const (itemFairnessVector_continuous W)
+  have hS_compact : IsCompact S :=
+    isCompact_univ.of_isClosed_subset hS_closed (Set.subset_univ _)
+  have hS_nonempty : S.Nonempty := by
+    obtain ⟨_r, ρ, hfeas, _hr⟩ := hFeasNonempty
+    refine ⟨simplexVectorOfPolicy ρ, ?_⟩
+    dsimp [S, feasibleSimplexVectorAtLevel]
+    rw [itemFairnessVector_simplexVectorOfPolicy_eq]
+    exact hfeas
+  rcases hS_compact.exists_isMaxOn hS_nonempty
+      ((userFairnessVector_continuous W).continuousOn) with
+    ⟨xopt, hxoptS, hxmax⟩
+  let ρopt : Policy m n := policyOfSimplexVector xopt
+  have hρopt_item :
+      itemFairness W ρopt = itemFairnessVector W xopt := by
+    dsimp [ρopt]
+    exact itemFairness_policyOfSimplexVector_eq W xopt
+  have hρopt_user :
+      userFairness W ρopt = userFairnessVector W xopt := by
+    dsimp [ρopt]
+    exact userFairness_policyOfSimplexVector_eq W xopt
+  have hρopt_feas : feasibleAtLevel W γ ρopt := by
+    unfold feasibleAtLevel
+    dsimp [S, feasibleSimplexVectorAtLevel] at hxoptS
+    rw [hρopt_item]
+    exact hxoptS
+  have hρopt_mem :
+      userFairness W ρopt ∈ attainableUserFairnessAtLevel W γ := by
+    exact ⟨ρopt, hρopt_feas, rfl⟩
+  have hupper :
+      ∀ r ∈ attainableUserFairnessAtLevel W γ,
+        r ≤ userFairness W ρopt := by
+    intro r hr
+    obtain ⟨ρ, hfeas, hr⟩ := hr
+    have hxρS : simplexVectorOfPolicy ρ ∈ S := by
+      dsimp [S, feasibleSimplexVectorAtLevel]
+      rw [itemFairnessVector_simplexVectorOfPolicy_eq]
+      exact hfeas
+    have hxle :
+        userFairnessVector W (simplexVectorOfPolicy ρ) ≤
+          userFairnessVector W xopt :=
+      (isMaxOn_iff.mp hxmax) (simplexVectorOfPolicy ρ) hxρS
+    rw [userFairnessVector_simplexVectorOfPolicy_eq] at hxle
+    rw [← hρopt_user] at hxle
+    rw [hr]
+    exact hxle
+  have hbdd : BddAbove (attainableUserFairnessAtLevel W γ) :=
+    ⟨userFairness W ρopt, hupper⟩
+  have hopt_le :
+      optimalUserFairnessAtLevel W γ ≤ userFairness W ρopt := by
+    unfold optimalUserFairnessAtLevel
+    exact csSup_le hFeasNonempty hupper
+  have hle_opt :
+      userFairness W ρopt ≤ optimalUserFairnessAtLevel W γ := by
+    unfold optimalUserFairnessAtLevel
+    exact le_csSup hbdd hρopt_mem
+  exact ⟨ρopt, hρopt_feas, le_antisymm hle_opt hopt_le⟩
+
+/-- The maximal-boundary user-fairness problem has an optimal policy. -/
+theorem exists_isOptimalAtLevel_one_of_nonnegative
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    ∃ ρ : Policy m n, IsOptimalAtLevel W 1 ρ :=
+  exists_isOptimalAtLevel_of_attainableUserFairnessAtLevel_nonempty
+    W 1 (attainableUserFairnessAtLevel_one_nonempty_of_nonnegative W hNonneg)
 
 /-- The paper's price of fairness, generalized to an arbitrary `γ`. -/
 noncomputable def priceOfFairnessAt {m n : ℕ} [NeZero m] [NeZero n]
