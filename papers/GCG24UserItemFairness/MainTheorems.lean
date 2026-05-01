@@ -259,6 +259,27 @@ theorem paper_reduced_optimum_lifts_to_original_auto_nonempty
     reps hRow γ ρ hopt
 
 /--
+Reduced-to-original optimum existence at the maximal item-fairness boundary:
+compactness gives a reduced optimum, and the reduction bridge lifts it to an
+original optimum.
+-/
+theorem paper_exists_lifted_reduced_optimum_at_level_one_of_nonnegative
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hNonneg : R.data.model.Nonnegative)
+    (hRow : R.data.model.RowHasPositiveItem) :
+    ∃ ρ : TypePolicy K n,
+      RecommendationModel.IsOptimalAtLevel
+        R.data.model 1 (R.liftedPolicy ρ) := by
+  obtain ⟨ρ, hopt⟩ :=
+    TypeWeightedRecommendationModel.exists_isOptimalAtLevel_one_of_nonnegative
+      R.reduced R.reduced_nonnegativeWeights
+      (R.reduced_nonnegativeUtilities_of_nonnegative reps hNonneg)
+  exact ⟨ρ, paper_reduced_optimum_lifts_to_original_auto_nonempty
+    R reps hRow 1 ρ hopt⟩
+
+/--
 Reduced-to-original optimum theorem for strict item-fairness fractions.
 
 For `γ < 1`, positive utilities discharge the feasible-value nonemptiness
@@ -357,6 +378,31 @@ theorem paper_symmetric_original_optimum_descends_to_reduced_auto_nonempty
         TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced γ ρK := by
   exact R.exists_reducedOptimalAtLevel_of_original_symmetric_optimal_auto_nonempty
     reps hRow γ hρ hopt
+
+/--
+Symmetric original-to-reduced optimum existence at the maximal item-fairness
+boundary: Proposition 2 supplies a type-symmetric original optimum, and the
+reduction bridge descends it to a reduced optimum.
+-/
+theorem paper_exists_reduced_optimum_from_symmetric_original_at_level_one_of_positive
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive) :
+    ∃ ρK : TypePolicy K n,
+      TypeWeightedRecommendationModel.IsOptimalAtLevel R.reduced 1 ρK := by
+  have hRow : R.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos
+  obtain ⟨ρ, hopt⟩ :=
+    RecommendationModel.exists_isOptimalAtLevel_one_of_nonnegative
+      R.data.model (RecommendationModel.nonnegative_of_positive R.data.model hPos)
+  obtain ⟨ρsym, hsym, hoptSym⟩ :=
+    R.data.exists_typeSymmetric_isOptimalAtLevel_of_isOptimalAtLevel
+      reps hRow hopt
+  obtain ⟨ρK, _hlift, hoptK⟩ :=
+    paper_symmetric_original_optimum_descends_to_reduced_auto_nonempty
+      R reps hRow 1 hsym hoptSym
+  exact ⟨ρK, hoptK⟩
 
 /--
 Symmetric original-to-reduced optimum theorem for strict item-fairness
@@ -1953,6 +1999,56 @@ theorem paper_problem6_equalizedBasicOptimal_of_equalityFormOptimalBFS
         h.feasible.x_nonneg h.feasible.y_nonneg
         h.feasible.sum_x h.feasible.sum_y) ell := by
   exact problem6EqualizedBasicOptimal_of_equalityFormOptimalBFS h
+
+/--
+Problem 6 equality-form extraction: the paper's real optimal BFS carries the
+basic-feasible support-count certificate for its rebuilt policy.
+-/
+theorem paper_problem6_basicFeasibleSupportCertificate_of_equalityFormOptimalBFS
+    {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ}
+    {x y : Item n → ℝ} {ell : ℝ}
+    (h : Problem6EqualityFormOptimalBFS alpha v x y ell) :
+    TypePolicy.BasicFeasibleSupportCertificate
+      (problem6PolicyOfRealVectors x y
+        h.feasible.x_nonneg h.feasible.y_nonneg
+        h.feasible.sum_x h.feasible.sum_y) := by
+  exact h.basic_feasible
+
+/--
+Problem 6 optimal-BFS package: expose the basic-feasible support-count
+certificate used by Appendix D, Lemma 4.
+-/
+theorem paper_problem6_equalizedBasicOptimal_basicFeasibleSupportCertificate
+    {n : ℕ}
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypePolicy.BasicFeasibleSupportCertificate ρ := by
+  exact h.basic_feasible
+
+/--
+Appendix D, Lemma 4, Part 1 directly from the paper's Problem 6
+equalized optimal BFS package: at most `n + 1` positive `x_j,y_j` variables.
+-/
+theorem paper_lemma4_problem6_active_pairs_le_n_add_one_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    TypePolicy.activeTypeItemPairsCard ρ ≤ n + 1 := by
+  exact TypePolicy.activePairsCard_le_n_add_one_of_basicFeasibleSupportCertificate_two
+    ρ h.basic_feasible
+
+/--
+Appendix D, Lemma 4, Part 1 directly from the paper's Problem 6
+equalized optimal BFS package: at least `n - 1` zero `x_j,y_j` variables.
+-/
+theorem paper_lemma4_problem6_inactive_pairs_ge_n_sub_one_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n]
+    {alpha : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 2 n} {ell : ℝ}
+    (h : Problem6EqualizedBasicOptimal alpha v ρ ell) :
+    n - 1 ≤ TypePolicy.inactiveTypeItemPairsCard ρ := by
+  exact TypePolicy.inactivePairsCard_ge_n_sub_one_of_basicFeasibleSupportCertificate_two
+    ρ h.basic_feasible
 
 /--
 Problem 6 optimality certificate wrapper for the paper's eventual closed-form
@@ -6478,6 +6574,48 @@ theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_of_alpha_le
         halpha_half halpha_half' hpos hdec hsucc
 
 /--
+Theorem 3 reduced-optimum monotonicity, second-half endpoint form.  The paper
+derives the second half by reflecting `α` around `1 / 2`; here that reflection
+is the mirror-policy equivalence for the two-type reduced model.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_antitone_secondHalf_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : 1 / 2 ≤ alpha)
+    (halpha_half' : 1 / 2 ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 := by
+  have hbeta0 : 0 < 1 - alpha' := by linarith
+  have hbeta1 : 1 - alpha' < 1 := by linarith
+  have hbeta0' : 0 < 1 - alpha := by linarith
+  have hbeta1' : 1 - alpha < 1 := by linarith
+  have hbeta_le : 1 - alpha' ≤ 1 - alpha := by linarith
+  have hbeta_half : 1 - alpha' ≤ 1 / 2 := by linarith
+  have hbeta_half' : 1 - alpha ≤ 1 / 2 := by linarith
+  have hmono :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel (1 - alpha') v) 1 ≤
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          (twoTypeReducedModel (1 - alpha) v) 1 :=
+    paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_of_alpha_le
+      (alpha := 1 - alpha') (alpha' := 1 - alpha) (v := v)
+      hn hbeta0 hbeta1 hbeta0' hbeta1' hbeta_le
+      hbeta_half hbeta_half' hpos hdec
+  rw [twoTypeReducedModel_optimalTypeFairnessAtLevel_one_mirror_eq
+        (alpha := alpha') (v := v),
+      twoTypeReducedModel_optimalTypeFairnessAtLevel_one_mirror_eq
+        (alpha := alpha) (v := v)] at hmono
+  exact hmono
+
+/--
 Theorem 3 paper-facing price monotonicity, first-half form.  The two original
 recommendation models are connected to the opposing two-type reduced models by
 reduction witnesses, and the odd/even midpoint split is discharged internally.
@@ -6517,6 +6655,107 @@ theorem paper_theorem3_price_decreases_firstHalf_of_reduction
         R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'
         halpha_le halpha_half halpha_half' hpos hdec hsucc hNonneg hRow
         hNonneg' hRow'
+
+/--
+Theorem 3 paper-facing price monotonicity, second-half form.  On the far side
+of the symmetry point the constrained user optimum moves in the opposite
+direction, so the price of fairness weakly increases with `α`.
+-/
+theorem paper_theorem3_price_increases_secondHalf_of_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (R R' : ReductionWitness m n 2)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (hred : R.reduced = twoTypeReducedModel alpha v)
+    (hred' : R'.reduced = twoTypeReducedModel alpha' v)
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : 1 / 2 ≤ alpha)
+    (halpha_half' : 1 / 2 ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hNonneg : R.data.model.Nonnegative)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (hNonneg' : R'.data.model.Nonnegative)
+    (hRow' : R'.data.model.RowHasPositiveItem) :
+    RecommendationModel.priceOfFairness R.data.model ≤
+      RecommendationModel.priceOfFairness R'.data.model := by
+  let ρred : TypePolicy 2 n :=
+    problem6FirstClosedPolicy alpha v halpha0 halpha1 hpos
+  let ρred' : TypePolicy 2 n :=
+    problem6FirstClosedPolicy alpha' v halpha0' halpha1' hpos
+  have hReducedFeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel R.reduced 1 ρred := by
+    rw [hred]
+    exact problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0 halpha1 hpos hdec
+  have hReducedFeas' :
+      TypeWeightedRecommendationModel.feasibleAtLevel R'.reduced 1 ρred' := by
+    rw [hred']
+    exact problem6FirstClosedPolicy_feasibleAtLevel_one
+      halpha0' halpha1' hpos hdec
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model 1).Nonempty := by
+    refine ⟨RecommendationModel.userFairness R.data.model
+      (R.liftedPolicy ρred), ?_⟩
+    refine ⟨R.liftedPolicy ρred, ?_, rfl⟩
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R.optimalItemFairness_eq_reduced reps]
+    rw [R.itemFairness_liftedPolicy_eq_itemFairness ρred]
+    exact hReducedFeas
+  have hOrigNonempty' :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R'.data.model 1).Nonempty := by
+    refine ⟨RecommendationModel.userFairness R'.data.model
+      (R'.liftedPolicy ρred'), ?_⟩
+    refine ⟨R'.liftedPolicy ρred', ?_, rfl⟩
+    unfold RecommendationModel.feasibleAtLevel
+    rw [R'.optimalItemFairness_eq_reduced reps']
+    rw [R'.itemFairness_liftedPolicy_eq_itemFairness ρred']
+    exact hReducedFeas'
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced 1).Nonempty := by
+    refine ⟨TypeWeightedRecommendationModel.typeFairness R.reduced ρred, ?_⟩
+    exact ⟨ρred, hReducedFeas, rfl⟩
+  have hRedNonempty' :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R'.reduced 1).Nonempty := by
+    refine ⟨TypeWeightedRecommendationModel.typeFairness R'.reduced ρred', ?_⟩
+    exact ⟨ρred', hReducedFeas', rfl⟩
+  have hUserEq :
+      RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R.reduced 1 :=
+    R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps hRow 1 hOrigNonempty hRedNonempty
+  have hUserEq' :
+      RecommendationModel.optimalUserFairnessAtLevel R'.data.model 1 =
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R'.reduced 1 :=
+    R'.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+      reps' hRow' 1 hOrigNonempty' hRedNonempty'
+  have hred_mono :
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R'.reduced 1 ≤
+        TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+          R.reduced 1 := by
+    rw [hred, hred']
+    exact
+      paper_theorem3_optimalTypeFairnessAtLevel_one_antitone_secondHalf_of_alpha_le
+        hn halpha0 halpha1 halpha0' halpha1' halpha_le
+        halpha_half halpha_half' hpos hdec
+  have huser_mono :
+      RecommendationModel.optimalUserFairnessAtLevel R'.data.model 1 ≤
+        RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 := by
+    rw [hUserEq, hUserEq']
+    exact hred_mono
+  exact R'.data.model.priceOfFairness_le_of_optimalUserFairnessAtLevel_one_le
+    R.data.model hNonneg' hRow' hNonneg hRow huser_mono
 
 /--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies

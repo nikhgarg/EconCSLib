@@ -355,6 +355,21 @@ theorem finiteMax_reverseItem {n : ℕ} [NeZero n] (v : Item n → ℝ) :
         (fun j : Item n => v (reverseItem j)) (reverseItem j)
     simpa [reverseItem_reverseItem] using hle
 
+/-- Reindexing by item reversal preserves finite minima. -/
+theorem finiteMin_reverseItem {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    EconCSLib.finiteMin (fun j : Item n => v (reverseItem j)) =
+      EconCSLib.finiteMin v := by
+  apply le_antisymm
+  · refine EconCSLib.le_finiteMin v ?_
+    intro j
+    have hle :=
+      EconCSLib.finiteMin_le
+        (fun j : Item n => v (reverseItem j)) (reverseItem j)
+    simpa [reverseItem_reverseItem] using hle
+  · refine EconCSLib.le_finiteMin (fun j : Item n => v (reverseItem j)) ?_
+    intro j
+    exact EconCSLib.finiteMin_le v (reverseItem j)
+
 /-- The indexed `q_j(α)` used in the opposing-preference proofs. -/
 noncomputable def pairShare {n : ℕ}
     (alpha : ℝ) (v : Item n → ℝ) (j : Item n) : ℝ :=
@@ -2062,6 +2077,57 @@ theorem twoTypeReducedModel_rowHasPositiveItem {n : ℕ} [NeZero n]
   let j0 : Item n := Classical.choice inferInstance
   exact ⟨j0, twoTypeReducedModel_positiveUtilities alpha v hpos k j0⟩
 
+/--
+Mirror a two-type policy by swapping the two opposing types and reversing item
+indices. This is the policy-level symmetry behind the second half of Theorem 3.
+-/
+noncomputable def mirrorTypePolicy {n : ℕ} (ρ : TypePolicy 2 n) :
+    TypePolicy 2 n :=
+  TypeWeightedRecommendationModel.typePolicyOfSimplexVector (fun k : UserType 2 =>
+    ⟨fun j : Item n =>
+        if k = 0 then (ρ 1 (reverseItem j)).toReal
+        else (ρ 0 (reverseItem j)).toReal,
+      ⟨by
+        intro j
+        by_cases hk : k = 0 <;> simp [hk, ENNReal.toReal_nonneg],
+      by
+        by_cases hk : k = 0
+        · simp only [hk, ↓reduceIte]
+          calc
+            ∑ x : Item n, ((ρ 1) (reverseItem x)).toReal =
+                ∑ x : Item n, ((ρ 1) x).toReal := by
+                  simpa using
+                    (sum_reverseItem (fun x : Item n => ((ρ 1) x).toReal))
+            _ = 1 := EconCSLib.pmfToRealSum (ρ 1)
+        · have hk1 : k = 1 := by
+            fin_cases k
+            · exact (hk rfl).elim
+            · rfl
+          have hne : ¬ (1 : UserType 2) = 0 := by decide
+          simp only [hk1, hne, ↓reduceIte]
+          calc
+            ∑ x : Item n, ((ρ 0) (reverseItem x)).toReal =
+                ∑ x : Item n, ((ρ 0) x).toReal := by
+                  simpa using
+                    (sum_reverseItem (fun x : Item n => ((ρ 0) x).toReal))
+            _ = 1 := EconCSLib.pmfToRealSum (ρ 0)⟩⟩)
+
+@[simp] theorem mirrorTypePolicy_zero_toReal {n : ℕ}
+    (ρ : TypePolicy 2 n) (j : Item n) :
+    ((mirrorTypePolicy ρ 0) j).toReal =
+      (ρ 1 (reverseItem j)).toReal := by
+  simp only [mirrorTypePolicy,
+    TypeWeightedRecommendationModel.typePolicyOfSimplexVector_apply_toReal]
+  rfl
+
+@[simp] theorem mirrorTypePolicy_one_toReal {n : ℕ}
+    (ρ : TypePolicy 2 n) (j : Item n) :
+    ((mirrorTypePolicy ρ 1) j).toReal =
+      (ρ 0 (reverseItem j)).toReal := by
+  simp only [mirrorTypePolicy,
+    TypeWeightedRecommendationModel.typePolicyOfSimplexVector_apply_toReal]
+  rfl
+
 /-- The two opposing types have the same best-item utility. -/
 theorem twoTypeReducedModel_bestItemUtility_one_eq_zero {n : ℕ} [NeZero n]
     (alpha : ℝ) (v : Item n → ℝ) :
@@ -2073,6 +2139,154 @@ theorem twoTypeReducedModel_bestItemUtility_one_eq_zero {n : ℕ} [NeZero n]
   change EconCSLib.finiteMax (fun j : Item n => v (reverseItem j)) =
     EconCSLib.finiteMax v
   exact finiteMax_reverseItem v
+
+/-- Mirroring swaps type `0` raw utility with type `1` raw utility. -/
+theorem twoTypeReducedModel_rawTypeUtility_mirror_zero_eq_one {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) 0 =
+      TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    EconCSLib.Policy.agentScore EconCSLib.pmfExp
+  change
+    (∑ j : Item n, ((mirrorTypePolicy ρ 0) j).toReal * v j) =
+      ∑ j : Item n, ((ρ 1) j).toReal * v (reverseItem j)
+  simp
+  simpa [reverseItem_reverseItem] using
+    (sum_reverseItem (fun j : Item n =>
+      ((ρ 1) j).toReal * v (reverseItem j)))
+
+/-- Mirroring swaps type `1` raw utility with type `0` raw utility. -/
+theorem twoTypeReducedModel_rawTypeUtility_mirror_one_eq_zero {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) 1 =
+      TypeWeightedRecommendationModel.rawTypeUtility
+        (twoTypeReducedModel alpha v) ρ 0 := by
+  unfold TypeWeightedRecommendationModel.rawTypeUtility
+    EconCSLib.Policy.agentScore EconCSLib.pmfExp
+  change
+    (∑ j : Item n,
+      ((mirrorTypePolicy ρ 1) j).toReal * v (reverseItem j)) =
+      ∑ j : Item n, ((ρ 0) j).toReal * v j
+  simp
+  simpa [reverseItem_reverseItem] using
+    (sum_reverseItem (fun j : Item n => ((ρ 0) j).toReal * v j))
+
+/-- Mirroring swaps the type `0` best-item denominator with type `1`. -/
+theorem twoTypeReducedModel_bestItemUtility_mirror_zero_eq_one
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel (1 - alpha) v) 0 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 1 := by
+  unfold TypeWeightedRecommendationModel.bestItemUtility
+  change EconCSLib.finiteMax v =
+    EconCSLib.finiteMax (fun j : Item n => v (reverseItem j))
+  rw [finiteMax_reverseItem]
+
+/-- Mirroring swaps the type `1` best-item denominator with type `0`. -/
+theorem twoTypeReducedModel_bestItemUtility_mirror_one_eq_zero
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel (1 - alpha) v) 1 =
+      TypeWeightedRecommendationModel.bestItemUtility
+        (twoTypeReducedModel alpha v) 0 := by
+  unfold TypeWeightedRecommendationModel.bestItemUtility
+  change EconCSLib.finiteMax (fun j : Item n => v (reverseItem j)) =
+    EconCSLib.finiteMax v
+  exact finiteMax_reverseItem v
+
+/-- Mirroring swaps normalized type utility from type `0` to type `1`. -/
+theorem twoTypeReducedModel_normalizedTypeUtility_mirror_zero_eq_one
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) 0 =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 1 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [twoTypeReducedModel_rawTypeUtility_mirror_zero_eq_one,
+    twoTypeReducedModel_bestItemUtility_mirror_zero_eq_one]
+
+/-- Mirroring swaps normalized type utility from type `1` to type `0`. -/
+theorem twoTypeReducedModel_normalizedTypeUtility_mirror_one_eq_zero
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) 1 =
+      TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ 0 := by
+  unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+  rw [twoTypeReducedModel_rawTypeUtility_mirror_one_eq_zero,
+    twoTypeReducedModel_bestItemUtility_mirror_one_eq_zero]
+
+/-- Mirroring preserves the minimum normalized type utility. -/
+theorem twoTypeReducedModel_typeFairness_mirror_eq
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  apply le_antisymm
+  · unfold TypeWeightedRecommendationModel.typeFairness
+    refine EconCSLib.le_finiteMin
+      (TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel alpha v) ρ) ?_
+    intro k
+    fin_cases k
+    · have hle :=
+        EconCSLib.finiteMin_le
+          (TypeWeightedRecommendationModel.normalizedTypeUtility
+            (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ))
+          (1 : UserType 2)
+      simpa [twoTypeReducedModel_normalizedTypeUtility_mirror_one_eq_zero]
+        using hle
+    · have hle :=
+        EconCSLib.finiteMin_le
+          (TypeWeightedRecommendationModel.normalizedTypeUtility
+            (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ))
+          (0 : UserType 2)
+      simpa [twoTypeReducedModel_normalizedTypeUtility_mirror_zero_eq_one]
+        using hle
+  · unfold TypeWeightedRecommendationModel.typeFairness
+    refine EconCSLib.le_finiteMin
+      (TypeWeightedRecommendationModel.normalizedTypeUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ)) ?_
+    intro k
+    fin_cases k
+    · have hle :=
+        EconCSLib.finiteMin_le
+          (TypeWeightedRecommendationModel.normalizedTypeUtility
+            (twoTypeReducedModel alpha v) ρ)
+          (1 : UserType 2)
+      simpa [twoTypeReducedModel_normalizedTypeUtility_mirror_zero_eq_one]
+        using hle
+    · have hle :=
+        EconCSLib.finiteMin_le
+          (TypeWeightedRecommendationModel.normalizedTypeUtility
+            (twoTypeReducedModel alpha v) ρ)
+          (0 : UserType 2)
+      simpa [twoTypeReducedModel_normalizedTypeUtility_mirror_one_eq_zero]
+        using hle
+
+/--
+The inverse direction of mirror preservation for type fairness, useful when a
+policy starts in the `1 - α` model and is mirrored back to the `α` model.
+-/
+theorem twoTypeReducedModel_typeFairness_mirror_eq_symm
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel alpha v) (mirrorTypePolicy ρ) =
+      TypeWeightedRecommendationModel.typeFairness
+        (twoTypeReducedModel (1 - alpha) v) ρ := by
+  have h :=
+    twoTypeReducedModel_typeFairness_mirror_eq (1 - alpha) v ρ
+  have hsub : 1 - (1 - alpha) = alpha := by ring
+  simpa [hsub] using h
 
 /-- Positive base values give a positive common best-item denominator. -/
 theorem twoTypeReducedModel_bestItemUtility_zero_pos {n : ℕ} [NeZero n]
@@ -2109,6 +2323,133 @@ theorem twoTypeReducedModel_rawItemUtility_eq {n : ℕ}
     decide
   rw [huniv]
   simp
+
+/-- Mirroring sends the item normalizer at `j` to the original one at `n-j+1`. -/
+theorem twoTypeReducedModel_itemNormalizer_mirror_eq_reverse {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (j : Item n) :
+    TypeWeightedRecommendationModel.itemNormalizer
+        (twoTypeReducedModel (1 - alpha) v) j =
+      TypeWeightedRecommendationModel.itemNormalizer
+        (twoTypeReducedModel alpha v) (reverseItem j) := by
+  rw [twoTypeReducedModel_itemNormalizer_eq,
+    twoTypeReducedModel_itemNormalizer_eq, reverseItem_reverseItem]
+  ring
+
+/-- Mirroring sends raw item utility at `j` to the original one at `n-j+1`. -/
+theorem twoTypeReducedModel_rawItemUtility_mirror_eq_reverse {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (j : Item n) :
+    TypeWeightedRecommendationModel.rawItemUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) j =
+      TypeWeightedRecommendationModel.rawItemUtility
+        (twoTypeReducedModel alpha v) ρ (reverseItem j) := by
+  rw [twoTypeReducedModel_rawItemUtility_eq,
+    twoTypeReducedModel_rawItemUtility_eq, reverseItem_reverseItem]
+  simp
+  ring
+
+/-- Mirroring sends normalized item utility at `j` to the original one at `n-j+1`. -/
+theorem twoTypeReducedModel_normalizedItemUtility_mirror_eq_reverse {n : ℕ}
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) (j : Item n) :
+    TypeWeightedRecommendationModel.normalizedItemUtility
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) j =
+      TypeWeightedRecommendationModel.normalizedItemUtility
+        (twoTypeReducedModel alpha v) ρ (reverseItem j) := by
+  unfold TypeWeightedRecommendationModel.normalizedItemUtility
+  rw [twoTypeReducedModel_itemNormalizer_mirror_eq_reverse,
+    twoTypeReducedModel_rawItemUtility_mirror_eq_reverse]
+
+/-- Mirroring preserves item fairness. -/
+theorem twoTypeReducedModel_itemFairness_mirror_eq {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel (1 - alpha) v) (mirrorTypePolicy ρ) =
+      TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) ρ := by
+  unfold TypeWeightedRecommendationModel.itemFairness
+  rw [← finiteMin_reverseItem
+    (fun j : Item n =>
+      TypeWeightedRecommendationModel.normalizedItemUtility
+        (twoTypeReducedModel alpha v) ρ j)]
+  apply congrArg EconCSLib.finiteMin
+  funext j
+  exact twoTypeReducedModel_normalizedItemUtility_mirror_eq_reverse
+    alpha v ρ j
+
+/--
+The inverse direction of mirror preservation for item fairness, useful when a
+policy starts in the `1 - α` model and is mirrored back to the `α` model.
+-/
+theorem twoTypeReducedModel_itemFairness_mirror_eq_symm
+    {n : ℕ} [NeZero n]
+    (alpha : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 2 n) :
+    TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel alpha v) (mirrorTypePolicy ρ) =
+      TypeWeightedRecommendationModel.itemFairness
+        (twoTypeReducedModel (1 - alpha) v) ρ := by
+  have h :=
+    twoTypeReducedModel_itemFairness_mirror_eq (1 - alpha) v ρ
+  have hsub : 1 - (1 - alpha) = alpha := by ring
+  simpa [hsub] using h
+
+/-- Mirroring preserves the attainable item-fairness set. -/
+theorem twoTypeReducedModel_attainableItemFairnessSet_mirror_eq
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.attainableItemFairnessSet
+        (twoTypeReducedModel (1 - alpha) v) =
+      TypeWeightedRecommendationModel.attainableItemFairnessSet
+        (twoTypeReducedModel alpha v) := by
+  ext r
+  constructor
+  · rintro ⟨ρ, rfl⟩
+    exact ⟨mirrorTypePolicy ρ,
+      (twoTypeReducedModel_itemFairness_mirror_eq_symm alpha v ρ).symm⟩
+  · rintro ⟨ρ, rfl⟩
+    exact ⟨mirrorTypePolicy ρ,
+      (twoTypeReducedModel_itemFairness_mirror_eq alpha v ρ).symm⟩
+
+/-- Mirroring preserves the optimal item-fairness value. -/
+theorem twoTypeReducedModel_optimalItemFairness_mirror_eq
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel (1 - alpha) v) =
+      TypeWeightedRecommendationModel.optimalItemFairness
+        (twoTypeReducedModel alpha v) := by
+  unfold TypeWeightedRecommendationModel.optimalItemFairness
+  rw [twoTypeReducedModel_attainableItemFairnessSet_mirror_eq]
+
+/-- Mirroring preserves the attainable type-fairness set at `γ = 1`. -/
+theorem twoTypeReducedModel_attainableTypeFairnessAtLevel_one_mirror_eq
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        (twoTypeReducedModel (1 - alpha) v) 1 =
+      TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 := by
+  ext r
+  constructor
+  · rintro ⟨ρ, hfeas, rfl⟩
+    refine ⟨mirrorTypePolicy ρ, ?_, ?_⟩
+    · unfold TypeWeightedRecommendationModel.feasibleAtLevel at hfeas ⊢
+      rw [← twoTypeReducedModel_optimalItemFairness_mirror_eq alpha v,
+        twoTypeReducedModel_itemFairness_mirror_eq_symm]
+      exact hfeas
+    · exact (twoTypeReducedModel_typeFairness_mirror_eq_symm alpha v ρ).symm
+  · rintro ⟨ρ, hfeas, rfl⟩
+    refine ⟨mirrorTypePolicy ρ, ?_, ?_⟩
+    · unfold TypeWeightedRecommendationModel.feasibleAtLevel at hfeas ⊢
+      rw [twoTypeReducedModel_optimalItemFairness_mirror_eq alpha v,
+        twoTypeReducedModel_itemFairness_mirror_eq]
+      exact hfeas
+    · exact (twoTypeReducedModel_typeFairness_mirror_eq alpha v ρ).symm
+
+/-- Mirroring preserves the optimal type-fairness value at `γ = 1`. -/
+theorem twoTypeReducedModel_optimalTypeFairnessAtLevel_one_mirror_eq
+    {n : ℕ} [NeZero n] (alpha : ℝ) (v : Item n → ℝ) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel (1 - alpha) v) 1 =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 := by
+  unfold TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+  rw [twoTypeReducedModel_attainableTypeFairnessAtLevel_one_mirror_eq]
 
 /--
 Problem 6 item-utility expansion: normalized item utility is the convex
