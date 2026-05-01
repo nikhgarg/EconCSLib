@@ -38,6 +38,15 @@ def theorem4LastItem {n : ℕ} [NeZero n] : Item n :=
     reverseItem (theorem4LastItem : Item n) = theorem4FirstItem := by
   simp [theorem4LastItem, reverseItem_reverseItem]
 
+theorem reverseItem_ne_of_ne_reverse {n : ℕ} {i j : Item n}
+    (h : i ≠ reverseItem j) :
+    reverseItem i ≠ j := by
+  intro hrev
+  apply h
+  calc
+    i = reverseItem (reverseItem i) := (reverseItem_reverseItem i).symm
+    _ = reverseItem j := by rw [hrev]
+
 theorem eq_theorem4FirstItem_of_val_eq_zero {n : ℕ} [NeZero n]
     {j : Item n} (hj : j.val = 0) :
     j = theorem4FirstItem := by
@@ -1063,6 +1072,37 @@ noncomputable def theorem4Problem11ItemValue {n : ℕ}
         (1 - pairShare (1 / 2) v j) * x (reverseItem j)) +
     (1 - 2 * beta) * z j
 
+theorem theorem4Problem11ItemValue_reverse_eq
+    {n : ℕ} {beta : ℝ} {v x z : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hzmirror : ∀ j : Item n, z (reverseItem j) = z j)
+    (j : Item n) :
+    theorem4Problem11ItemValue beta v x z (reverseItem j) =
+      theorem4Problem11ItemValue beta v x z j := by
+  have hq :
+      pairShare (1 / 2) v (reverseItem j) =
+        1 - pairShare (1 / 2) v j := by
+    simpa [reverseItem_reverseItem] using
+      pairShare_half_eq_one_sub_reverse (reverseItem j) hpos
+  unfold theorem4Problem11ItemValue
+  rw [hq, hzmirror j, reverseItem_reverseItem]
+  ring
+
+theorem theorem4Problem11ItemValue_lt_of_same_x_strict_z
+    {n : ℕ} {beta : ℝ} {v x x' z z' : Item n → ℝ} {j : Item n}
+    (hcold_pos : 0 < 1 - 2 * beta)
+    (hxj : x' j = x j)
+    (hxrevj : x' (reverseItem j) = x (reverseItem j))
+    (hzlt : z j < z' j) :
+    theorem4Problem11ItemValue beta v x z j <
+      theorem4Problem11ItemValue beta v x' z' j := by
+  unfold theorem4Problem11ItemValue
+  rw [hxj, hxrevj]
+  have hzterm :
+      (1 - 2 * beta) * z j < (1 - 2 * beta) * z' j :=
+    mul_lt_mul_of_pos_left hzlt hcold_pos
+  linarith only [hzterm]
+
 /-- Problem 11's item value for a type policy in `S'`. -/
 noncomputable def theorem4Problem11PolicyItemValue {n : ℕ}
     (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n)
@@ -1660,7 +1700,8 @@ once `z_i` is positive, all later half-side `z_j` are positive.
 -/
 def Theorem4Problem11ColdStartPositiveClosed {n : ℕ}
     (ρ : TypePolicy 3 n) : Prop :=
-  ∀ {i j : Item n}, i.val < j.val → ρ 2 i ≠ 0 → ρ 2 j ≠ 0
+  ∀ {i j : Item n}, i.val < j.val → j.val ≤ (reverseItem j).val →
+    ρ 2 i ≠ 0 → ρ 2 j ≠ 0
 
 /--
 Exact Appendix E Lemma 13 perturbation certificate for an `x` support gap:
@@ -1683,12 +1724,2287 @@ mirror-symmetric policy that strictly improves every Problem 11 item value.
 -/
 def Theorem4Problem11ColdStartGapStrictImprovement {n : ℕ}
     (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n) : Prop :=
-  ∀ {i j : Item n}, i.val < j.val → ρ 2 i ≠ 0 → ρ 2 j = 0 →
+  ∀ {i j : Item n}, i.val < j.val → j.val ≤ (reverseItem j).val →
+    ρ 2 i ≠ 0 → ρ 2 j = 0 →
     ∃ ρ' : TypePolicy 3 n,
       Theorem4MirrorSymmetricPolicy ρ' ∧
         ∀ l : Item n,
           theorem4Problem11PolicyItemValue beta v ρ l <
             theorem4Problem11PolicyItemValue beta v ρ' l
+
+/--
+The mirror-pair swap used in Appendix E, Lemma 13 perturbations.  It exchanges
+the half-side coordinates `i` and `j` and simultaneously exchanges their mirror
+coordinates, preserving the cold-start row sum by reindexing.
+-/
+noncomputable def theorem4Problem11MirrorPairSwap {n : ℕ}
+    (i j : Item n) : Equiv.Perm (Item n) :=
+  (Equiv.swap i j).trans (Equiv.swap (reverseItem i) (reverseItem j))
+
+theorem theorem4Problem11MirrorPairSwap_sum_eq {n : ℕ}
+    (z : Item n → ℝ) (i j : Item n) :
+    (∑ l : Item n, z (theorem4Problem11MirrorPairSwap i j l)) =
+      ∑ l : Item n, z l := by
+  exact Equiv.sum_comp (theorem4Problem11MirrorPairSwap i j) z
+
+theorem theorem4Problem11MirrorPairSwap_apply_left
+    {n : ℕ} {i j : Item n}
+    (hj_revi : j ≠ reverseItem i)
+    (hj_revj : j ≠ reverseItem j) :
+    theorem4Problem11MirrorPairSwap i j i = j := by
+  unfold theorem4Problem11MirrorPairSwap
+  rw [Equiv.trans_apply, Equiv.swap_apply_left]
+  exact Equiv.swap_apply_of_ne_of_ne hj_revi hj_revj
+
+theorem theorem4Problem11MirrorPairSwap_apply_right
+    {n : ℕ} {i j : Item n}
+    (hij : i ≠ j)
+    (hi_revi : i ≠ reverseItem i)
+    (hi_revj : i ≠ reverseItem j) :
+    theorem4Problem11MirrorPairSwap i j j = i := by
+  unfold theorem4Problem11MirrorPairSwap
+  rw [Equiv.trans_apply, Equiv.swap_apply_right]
+  exact Equiv.swap_apply_of_ne_of_ne hi_revi hi_revj
+
+theorem theorem4Problem11MirrorPairSwap_apply_reverse_left
+    {n : ℕ} {i j : Item n}
+    (hrevi_i : reverseItem i ≠ i)
+    (hrevi_j : reverseItem i ≠ j) :
+    theorem4Problem11MirrorPairSwap i j (reverseItem i) = reverseItem j := by
+  unfold theorem4Problem11MirrorPairSwap
+  rw [Equiv.trans_apply]
+  rw [Equiv.swap_apply_of_ne_of_ne hrevi_i hrevi_j]
+  exact Equiv.swap_apply_left (reverseItem i) (reverseItem j)
+
+theorem theorem4Problem11MirrorPairSwap_apply_reverse_right
+    {n : ℕ} {i j : Item n}
+    (hrevj_i : reverseItem j ≠ i)
+    (hrevj_j : reverseItem j ≠ j) :
+    theorem4Problem11MirrorPairSwap i j (reverseItem j) = reverseItem i := by
+  unfold theorem4Problem11MirrorPairSwap
+  rw [Equiv.trans_apply]
+  rw [Equiv.swap_apply_of_ne_of_ne hrevj_i hrevj_j]
+  exact Equiv.swap_apply_right (reverseItem i) (reverseItem j)
+
+theorem theorem4Problem11MirrorPairSwap_apply_of_distinct
+    {n : ℕ} {i j l : Item n}
+    (hli : l ≠ i) (hlj : l ≠ j)
+    (hlrevi : l ≠ reverseItem i) (hlrevj : l ≠ reverseItem j) :
+    theorem4Problem11MirrorPairSwap i j l = l := by
+  unfold theorem4Problem11MirrorPairSwap
+  rw [Equiv.trans_apply]
+  rw [Equiv.swap_apply_of_ne_of_ne hli hlj]
+  exact Equiv.swap_apply_of_ne_of_ne hlrevi hlrevj
+
+theorem theorem4Problem11MirrorPairSwap_preserves_mirror_value
+    {n : ℕ} {z : Item n → ℝ} {i j l : Item n}
+    (hzmirror : ∀ u : Item n, z (reverseItem u) = z u)
+    (hij : i ≠ j)
+    (hi_revi : i ≠ reverseItem i)
+    (hj_revj : j ≠ reverseItem j)
+    (hi_revj : i ≠ reverseItem j)
+    (hj_revi : j ≠ reverseItem i) :
+    z (theorem4Problem11MirrorPairSwap i j (reverseItem l)) =
+      z (theorem4Problem11MirrorPairSwap i j l) := by
+  classical
+  by_cases hli : l = i
+  · subst l
+    rw [theorem4Problem11MirrorPairSwap_apply_reverse_left
+      hi_revi.symm hj_revi.symm]
+    rw [theorem4Problem11MirrorPairSwap_apply_left hj_revi hj_revj]
+    exact hzmirror j
+  · by_cases hlj : l = j
+    · subst l
+      rw [theorem4Problem11MirrorPairSwap_apply_reverse_right
+        hi_revj.symm hj_revj.symm]
+      rw [theorem4Problem11MirrorPairSwap_apply_right hij hi_revi hi_revj]
+      exact hzmirror i
+    · by_cases hlrevi : l = reverseItem i
+      · subst l
+        rw [reverseItem_reverseItem]
+        rw [theorem4Problem11MirrorPairSwap_apply_left hj_revi hj_revj]
+        rw [theorem4Problem11MirrorPairSwap_apply_reverse_left
+          hi_revi.symm hj_revi.symm]
+        exact (hzmirror j).symm
+      · by_cases hlrevj : l = reverseItem j
+        · subst l
+          rw [reverseItem_reverseItem]
+          rw [theorem4Problem11MirrorPairSwap_apply_right hij hi_revi hi_revj]
+          rw [theorem4Problem11MirrorPairSwap_apply_reverse_right
+            hi_revj.symm hj_revj.symm]
+          exact (hzmirror i).symm
+        · have hrev_li : reverseItem l ≠ i := by
+            intro h
+            apply hlrevi
+            calc
+              l = reverseItem i := by
+                rw [← h, reverseItem_reverseItem]
+              _ = reverseItem i := rfl
+          have hrev_lj : reverseItem l ≠ j := by
+            intro h
+            apply hlrevj
+            calc
+              l = reverseItem j := by
+                rw [← h, reverseItem_reverseItem]
+              _ = reverseItem j := rfl
+          have hrev_lrevi : reverseItem l ≠ reverseItem i := by
+            intro h
+            apply hli
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem (reverseItem i) := by
+                rw [h]
+              _ = i := by
+                rw [reverseItem_reverseItem]
+              _ = i := rfl
+          have hrev_lrevj : reverseItem l ≠ reverseItem j := by
+            intro h
+            apply hlj
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem (reverseItem j) := by
+                rw [h]
+              _ = j := by
+                rw [reverseItem_reverseItem]
+              _ = j := rfl
+          rw [theorem4Problem11MirrorPairSwap_apply_of_distinct
+            hrev_li hrev_lj hrev_lrevi hrev_lrevj]
+          rw [theorem4Problem11MirrorPairSwap_apply_of_distinct
+            hli hlj hlrevi hlrevj]
+          exact hzmirror l
+
+/-- Cold-start row after the Lemma 13 mirror-pair swap. -/
+noncomputable def theorem4Problem11MirrorPairSwapVector {n : ℕ}
+    (z : Item n → ℝ) (i j : Item n) : Item n → ℝ :=
+  fun l => z (theorem4Problem11MirrorPairSwap i j l)
+
+theorem theorem4Problem11MirrorPairSwapVector_nonneg {n : ℕ}
+    {z : Item n → ℝ} {i j : Item n}
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l) :
+    ∀ l : Item n, 0 ≤ theorem4Problem11MirrorPairSwapVector z i j l := by
+  intro l
+  exact hz_nonneg (theorem4Problem11MirrorPairSwap i j l)
+
+theorem theorem4Problem11MirrorPairSwapVector_sum_eq {n : ℕ}
+    (z : Item n → ℝ) (i j : Item n) :
+    (∑ l : Item n, theorem4Problem11MirrorPairSwapVector z i j l) =
+      ∑ l : Item n, z l := by
+  unfold theorem4Problem11MirrorPairSwapVector
+  exact theorem4Problem11MirrorPairSwap_sum_eq z i j
+
+theorem theorem4Problem11MirrorPairSwapVector_mirror
+    {n : ℕ} {z : Item n → ℝ} {i j : Item n}
+    (hzmirror : ∀ u : Item n, z (reverseItem u) = z u)
+    (hij : i ≠ j)
+    (hi_revi : i ≠ reverseItem i)
+    (hj_revj : j ≠ reverseItem j)
+    (hi_revj : i ≠ reverseItem j)
+    (hj_revi : j ≠ reverseItem i) :
+    ∀ l : Item n,
+      theorem4Problem11MirrorPairSwapVector z i j (reverseItem l) =
+        theorem4Problem11MirrorPairSwapVector z i j l := by
+  intro l
+  unfold theorem4Problem11MirrorPairSwapVector
+  exact theorem4Problem11MirrorPairSwap_preserves_mirror_value
+    hzmirror hij hi_revi hj_revj hi_revj hj_revi
+
+/-- Transfer `delta` of known-type mass from `j` to `i`. -/
+noncomputable def theorem4Problem11TwoPointXTransfer {n : ℕ}
+    (x : Item n → ℝ) (i j : Item n) (delta : ℝ) : Item n → ℝ :=
+  fun l => x l + (if l = i then delta else 0) +
+    (if l = j then -delta else 0)
+
+theorem theorem4Problem11TwoPointXTransfer_sum_eq {n : ℕ}
+    (x : Item n → ℝ) (i j : Item n) (delta : ℝ) :
+    (∑ l : Item n, theorem4Problem11TwoPointXTransfer x i j delta l) =
+      ∑ l : Item n, x l := by
+  unfold theorem4Problem11TwoPointXTransfer
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
+  simp
+
+theorem theorem4Problem11TwoPointXTransfer_nonneg {n : ℕ}
+    {x : Item n → ℝ} {i j : Item n} {delta : ℝ}
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hij : i ≠ j)
+    (hdelta_nonneg : 0 ≤ delta)
+    (hdelta_le : delta ≤ x j) :
+    ∀ l : Item n, 0 ≤ theorem4Problem11TwoPointXTransfer x i j delta l := by
+  intro l
+  unfold theorem4Problem11TwoPointXTransfer
+  by_cases hli : l = i
+  · subst l
+    simp [hij, add_nonneg (hx_nonneg i) hdelta_nonneg]
+  · by_cases hlj : l = j
+    · subst l
+      simp [hij.symm, hdelta_le]
+    · simpa [hli, hlj] using hx_nonneg l
+
+theorem theorem4Problem11TwoPointXTransfer_apply_of_ne {n : ℕ}
+    {x : Item n → ℝ} {i j l : Item n} {delta : ℝ}
+    (hli : l ≠ i)
+    (hlj : l ≠ j) :
+    theorem4Problem11TwoPointXTransfer x i j delta l = x l := by
+  unfold theorem4Problem11TwoPointXTransfer
+  rw [if_neg hli, if_neg hlj]
+  ring
+
+theorem theorem4Problem11_symmetricRedistribution_pos {n : ℕ}
+    {r : Item n → ℝ} {eps : ℝ} {l : Item n}
+    (heps_pos : 0 < eps)
+    (hrl_pos : 0 < r l)
+    (hrrev_nonneg : 0 ≤ r (reverseItem l)) :
+    0 < eps * r l + eps * r (reverseItem l) := by
+  have hleft_pos : 0 < eps * r l := mul_pos heps_pos hrl_pos
+  have hright_nonneg : 0 ≤ eps * r (reverseItem l) :=
+    mul_nonneg heps_pos.le hrrev_nonneg
+  exact add_pos_of_pos_of_nonneg hleft_pos hright_nonneg
+
+/--
+Cold-start-row transfer for the non-center part of Appendix E, Lemma 13:
+move `d` symmetrically from the earlier mirror pair to the later mirror pair,
+then reserve `eps` of that moved mass for a symmetric redistribution `r`.
+-/
+noncomputable def theorem4Problem11ColdStartPairZTransfer {n : ℕ}
+    (z r : Item n → ℝ) (i j : Item n) (d eps : ℝ) : Item n → ℝ :=
+  fun l =>
+    z l +
+      (if l = i then -d else 0) +
+      (if l = reverseItem i then -d else 0) +
+      (if l = j then d - eps else 0) +
+      (if l = reverseItem j then d - eps else 0) +
+      eps * r l + eps * r (reverseItem l)
+
+theorem theorem4Problem11ColdStartPairZTransfer_apply_of_ne {n : ℕ}
+    {z r : Item n → ℝ} {i j l : Item n} {d eps : ℝ}
+    (hli : l ≠ i)
+    (hlrevi : l ≠ reverseItem i)
+    (hlj : l ≠ j)
+    (hlrevj : l ≠ reverseItem j) :
+    theorem4Problem11ColdStartPairZTransfer z r i j d eps l =
+      z l + eps * r l + eps * r (reverseItem l) := by
+  unfold theorem4Problem11ColdStartPairZTransfer
+  rw [if_neg hli, if_neg hlrevi, if_neg hlj, if_neg hlrevj]
+  ring
+
+theorem theorem4Problem11ColdStartPairZTransfer_sum_eq {n : ℕ}
+    (z r : Item n → ℝ) (i j : Item n) (d eps : ℝ)
+    (hrsum : (∑ l : Item n, r l) = 1) :
+    (∑ l : Item n,
+        theorem4Problem11ColdStartPairZTransfer z r i j d eps l) =
+      ∑ l : Item n, z l := by
+  unfold theorem4Problem11ColdStartPairZTransfer
+  repeat rw [Finset.sum_add_distrib]
+  rw [← Finset.mul_sum, ← Finset.mul_sum, sum_reverseItem r, hrsum]
+  simp
+  ring
+
+set_option linter.unusedSimpArgs false in
+theorem theorem4Problem11ColdStartPairZTransfer_mirror {n : ℕ}
+    {z r : Item n → ℝ} {i j : Item n} {d eps : ℝ}
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hi_revi : i ≠ reverseItem i)
+    (hj_revj : j ≠ reverseItem j)
+    (hij : i ≠ j)
+    (hi_revj : i ≠ reverseItem j)
+    (hj_revi : j ≠ reverseItem i) :
+    ∀ l : Item n,
+      theorem4Problem11ColdStartPairZTransfer z r i j d eps
+          (reverseItem l) =
+        theorem4Problem11ColdStartPairZTransfer z r i j d eps l := by
+  intro l
+  unfold theorem4Problem11ColdStartPairZTransfer
+  have hrevi_revj : reverseItem i ≠ reverseItem j := by
+    intro h
+    apply hij
+    calc
+      i = reverseItem (reverseItem i) := by rw [reverseItem_reverseItem]
+      _ = reverseItem (reverseItem j) := by rw [h]
+      _ = j := by rw [reverseItem_reverseItem]
+  have hrevj_revi : reverseItem j ≠ reverseItem i := hrevi_revj.symm
+  by_cases hli : l = i
+  · subst l
+    simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hij, hij.symm,
+      hi_revj, hi_revj.symm, hj_revi, hj_revi.symm, hj_revj,
+      hj_revj.symm, hrevi_revj, hrevj_revi, hzmirror i]
+    ring_nf
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hij, hij.symm,
+        hi_revj, hi_revj.symm, hj_revi, hj_revi.symm, hj_revj,
+        hj_revj.symm, hrevi_revj, hrevj_revi, hzmirror i]
+      ring_nf
+    · by_cases hlj : l = j
+      · subst l
+        simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hij,
+          hij.symm, hi_revj, hi_revj.symm, hj_revi, hj_revi.symm,
+          hj_revj, hj_revj.symm, hrevi_revj, hrevj_revi, hzmirror j]
+        ring_nf
+      · by_cases hlrevj : l = reverseItem j
+        · subst l
+          simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hij,
+            hij.symm, hi_revj, hi_revj.symm, hj_revi, hj_revi.symm,
+            hj_revj, hj_revj.symm, hrevi_revj, hrevj_revi, hzmirror j]
+          ring_nf
+        · have hrev_li : reverseItem l ≠ i := by
+            intro h
+            apply hlrevi
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem i := by rw [h]
+          have hrev_lrevi : reverseItem l ≠ reverseItem i := by
+            intro h
+            apply hli
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem (reverseItem i) := by rw [h]
+              _ = i := by rw [reverseItem_reverseItem]
+          have hrev_lj : reverseItem l ≠ j := by
+            intro h
+            apply hlrevj
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem j := by rw [h]
+          have hrev_lrevj : reverseItem l ≠ reverseItem j := by
+            intro h
+            apply hlj
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem (reverseItem j) := by rw [h]
+              _ = j := by rw [reverseItem_reverseItem]
+          simp [reverseItem_reverseItem, hli, hlrevi, hlj, hlrevj, hrev_li,
+            hrev_lrevi, hrev_lj, hrev_lrevj, hzmirror l]
+          ring_nf
+
+set_option maxHeartbeats 800000 in
+-- This certificate has a large case split over the four touched mirror coordinates.
+theorem theorem4Problem11_coldStartGap_pairTransfer_exists_strictlyImproves
+    {n : ℕ} {beta : ℝ} {v x z : Item n → ℝ} {i j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val < j.val)
+    (hj_left : j.val < (reverseItem j).val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumz : (∑ l : Item n, z l) = 1)
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hzi_pos : 0 < z i)
+    (hzj : z j = 0)
+    (hxj_pos : 0 < x j)
+    (hxrevi : x (reverseItem i) = 0)
+    (hxrevj : x (reverseItem j) = 0) :
+    ∃ x' z' : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ z' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, z' l) = 1 ∧
+      (∀ l : Item n, z' (reverseItem l) = z' l) ∧
+      ∀ l : Item n,
+        theorem4Problem11ItemValue beta v x z l <
+          theorem4Problem11ItemValue beta v x' z' l := by
+  classical
+  let cold : ℝ := 1 - 2 * beta
+  have hcold_pos : 0 < cold := by
+    dsimp [cold]
+    nlinarith
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : (reverseItem j).val < (reverseItem i).val :=
+      reverseItem_val_lt_of_val_lt hij
+    exact lt_trans (lt_trans hij hj_left) hrev_lt
+  have hji_ne : j ≠ i := by
+    intro h
+    subst j
+    omega
+  have hij_ne : i ≠ j := hji_ne.symm
+  have hi_revi : i ≠ reverseItem i := by
+    intro h
+    have hval := congrArg Fin.val h
+    omega
+  have hj_revj : j ≠ reverseItem j := by
+    intro h
+    have hval := congrArg Fin.val h
+    omega
+  have hi_revj : i ≠ reverseItem j := by
+    intro h
+    have hji : j.val < i.val := by
+      calc
+        j.val < (reverseItem j).val := hj_left
+        _ = i.val := by exact congrArg Fin.val h.symm
+    omega
+  have hj_revi : j ≠ reverseItem i := by
+    intro h
+    have hji : j.val < i.val := by
+      calc
+        j.val < (reverseItem j).val := hj_left
+        _ = i.val := by
+          rw [h, reverseItem_reverseItem]
+    omega
+  have hrevi_j : reverseItem i ≠ j := hj_revi.symm
+  have hrevj_i : reverseItem j ≠ i := hi_revj.symm
+  have hrevi_revj : reverseItem i ≠ reverseItem j := by
+    intro h
+    apply hij_ne
+    calc
+      i = reverseItem (reverseItem i) := by rw [reverseItem_reverseItem]
+      _ = reverseItem (reverseItem j) := by rw [h]
+      _ = j := by rw [reverseItem_reverseItem]
+  have hrevj_revi : reverseItem j ≠ reverseItem i := hrevi_revj.symm
+  let qi : ℝ := pairShare (1 / 2) v i
+  let qj : ℝ := pairShare (1 / 2) v j
+  have hqj_lt_qi : qj < qi := by
+    dsimp [qi, qj]
+    exact pairShare_strictAnti_index (by norm_num) (by norm_num)
+      hpos hdec hij
+  have hqi_pos : 0 < qi := by
+    dsimp [qi]
+    exact pairShare_pos i (by norm_num) (by norm_num) hpos
+  have hqj_pos : 0 < qj := by
+    dsimp [qj]
+    exact pairShare_pos j (by norm_num) (by norm_num) hpos
+  have hqj_lt_one : qj < 1 := by
+    dsimp [qj]
+    exact pairShare_lt_one j (by norm_num) (by norm_num) hpos
+  let deltaBound : ℝ := cold * z i / (4 * beta * qi)
+  have hdeltaDen_pos : 0 < 4 * beta * qi := by
+    nlinarith
+  have hdeltaBound_pos : 0 < deltaBound := by
+    dsimp [deltaBound]
+    exact div_pos (mul_pos hcold_pos hzi_pos) hdeltaDen_pos
+  let delta : ℝ := min (x j) deltaBound / 2
+  have hmin_delta_pos : 0 < min (x j) deltaBound :=
+    lt_min hxj_pos hdeltaBound_pos
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    nlinarith
+  have hdelta_lt_min : delta < min (x j) deltaBound := by
+    dsimp [delta]
+    nlinarith
+  have hdelta_lt_xj : delta < x j :=
+    lt_of_lt_of_le hdelta_lt_min (min_le_left _ _)
+  have hdelta_lt_bound : delta < deltaBound :=
+    lt_of_lt_of_le hdelta_lt_min (min_le_right _ _)
+  have hupper_lt_zi :
+      2 * beta * qi * delta / cold < z i := by
+    have hmul : 2 * beta * qi * delta < cold * z i := by
+      have := hdelta_lt_bound
+      dsimp [deltaBound] at this
+      rw [lt_div_iff₀ hdeltaDen_pos] at this
+      nlinarith
+    rw [div_lt_iff₀ hcold_pos]
+    simpa [mul_comm, mul_left_comm, mul_assoc] using hmul
+  let lower : ℝ := 2 * beta * qj * delta / cold
+  let upper : ℝ := 2 * beta * qi * delta / cold
+  have hlower_lt_upper : lower < upper := by
+    have hfactor_pos : 0 < 2 * beta * delta / cold := by
+      exact div_pos (by nlinarith) hcold_pos
+    calc
+      lower = qj * (2 * beta * delta / cold) := by
+        dsimp [lower]
+        ring
+      _ < qi * (2 * beta * delta / cold) :=
+        mul_lt_mul_of_pos_right hqj_lt_qi hfactor_pos
+      _ = upper := by
+        dsimp [upper]
+        ring
+  obtain ⟨d, hd_lower, hd_upper⟩ := exists_between hlower_lt_upper
+  have hlower_pos : 0 < lower := by
+    dsimp [lower]
+    have htwo_beta_pos : 0 < 2 * beta := by nlinarith
+    exact div_pos
+      (mul_pos (mul_pos htwo_beta_pos hqj_pos) hdelta_pos) hcold_pos
+  have hd_pos : 0 < d := lt_trans hlower_pos hd_lower
+  have hd_nonneg : 0 ≤ d := hd_pos.le
+  have hd_lt_zi : d < z i := lt_trans hd_upper hupper_lt_zi
+  let slack : ℝ := d - lower
+  have hslack_pos : 0 < slack := by
+    dsimp [slack]
+    linarith
+  let eps : ℝ := min d slack / 2
+  have hmin_eps_pos : 0 < min d slack := lt_min hd_pos hslack_pos
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_min : eps < min d slack := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_d : eps < d :=
+    lt_of_lt_of_le heps_lt_min (min_le_left _ _)
+  have heps_lt_slack : eps < slack :=
+    lt_of_lt_of_le heps_lt_min (min_le_right _ _)
+  obtain ⟨r, hr_nonneg, hr_pos, hrj, hrrevj, hrsum⟩ :=
+    lemma4_redistribution_exists_of_two_lt hn hj_revj
+  let x' : Item n → ℝ :=
+    theorem4Problem11TwoPointXTransfer x i j delta
+  let z' : Item n → ℝ :=
+    theorem4Problem11ColdStartPairZTransfer z r i j d eps
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact theorem4Problem11TwoPointXTransfer_nonneg
+      hx_nonneg hij_ne hdelta_pos.le hdelta_lt_xj.le l
+  have hz'_sum : (∑ l : Item n, z' l) = 1 := by
+    dsimp [z']
+    rw [theorem4Problem11ColdStartPairZTransfer_sum_eq
+      z r i j d eps hrsum, hsumz]
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [theorem4Problem11TwoPointXTransfer_sum_eq x i j delta, hsumx]
+  have hz'_mirror : ∀ l : Item n, z' (reverseItem l) = z' l := by
+    dsimp [z']
+    exact theorem4Problem11ColdStartPairZTransfer_mirror
+      hzmirror hi_revi hj_revj hij_ne hi_revj hj_revi
+  have hzrevj : z (reverseItem j) = 0 := by
+    rw [hzmirror j, hzj]
+  have hz'_nonneg : ∀ l : Item n, 0 ≤ z' l := by
+    intro l
+    dsimp [z']
+    unfold theorem4Problem11ColdStartPairZTransfer
+    by_cases hli : l = i
+    · subst l
+      have hredistrib_nonneg :
+          0 ≤ eps * r i + eps * r (reverseItem i) := by
+        exact add_nonneg
+          (mul_nonneg heps_pos.le (hr_nonneg i))
+          (mul_nonneg heps_pos.le (hr_nonneg (reverseItem i)))
+      simp [hi_revi, hij_ne, hi_revj]
+      nlinarith [hd_lt_zi.le, hredistrib_nonneg]
+    · by_cases hlrevi : l = reverseItem i
+      · subst l
+        have hredistrib_nonneg :
+            0 ≤ eps * r (reverseItem i) + eps * r i := by
+          exact add_nonneg
+            (mul_nonneg heps_pos.le (hr_nonneg (reverseItem i)))
+            (mul_nonneg heps_pos.le (hr_nonneg i))
+        simp [reverseItem_reverseItem, hi_revi.symm, hrevi_j,
+          hrevi_revj]
+        rw [hzmirror i]
+        nlinarith [hd_lt_zi.le, hredistrib_nonneg]
+      · by_cases hlj : l = j
+        · subst l
+          simp [hzj, hj_revj, hij_ne.symm, hj_revi, hrj, hrrevj]
+          exact heps_lt_d.le
+        · by_cases hlrevj : l = reverseItem j
+          · subst l
+            simp [reverseItem_reverseItem, hzrevj, hj_revj.symm,
+              hrevj_i, hrevj_revi, hrj, hrrevj]
+            exact heps_lt_d.le
+          · have hredistrib_nonneg :
+                0 ≤ eps * r l + eps * r (reverseItem l) := by
+              exact add_nonneg
+                (mul_nonneg heps_pos.le (hr_nonneg l))
+                (mul_nonneg heps_pos.le (hr_nonneg (reverseItem l)))
+            simpa [hli, hlrevi, hlj, hlrevj, add_assoc] using
+              add_nonneg (hz_nonneg l) hredistrib_nonneg
+  have hx'i : x' i = x i + delta := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hij_ne]
+  have hx'j : x' j = x j - delta := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hij_ne.symm]
+    ring
+  have hx'revi : x' (reverseItem i) = 0 := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hxrevi, hi_revi.symm, hrevi_j]
+  have hx'revj : x' (reverseItem j) = 0 := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hxrevj, hrevj_i, hj_revj.symm]
+  have hz'i :
+      z' i = z i - d + eps * r i + eps * r (reverseItem i) := by
+    dsimp [z']
+    unfold theorem4Problem11ColdStartPairZTransfer
+    simp [hi_revi, hij_ne, hi_revj]
+    ring
+  have hz'j : z' j = d - eps := by
+    dsimp [z']
+    unfold theorem4Problem11ColdStartPairZTransfer
+    simp [hzj, hj_revj, hij_ne.symm, hj_revi, hrj, hrrevj]
+  have hstrict_i :
+      theorem4Problem11ItemValue beta v x z i <
+        theorem4Problem11ItemValue beta v x' z' i := by
+    unfold theorem4Problem11ItemValue
+    dsimp [qi, cold] at *
+    rw [hxrevi, hx'i, hx'revi, hz'i]
+    have hmain_gain : 0 < 2 * beta * qi * delta - cold * d := by
+      have hlt := hd_upper
+      dsimp [upper] at hlt
+      rw [lt_div_iff₀ hcold_pos] at hlt
+      have hlt' : cold * d < 2 * beta * qi * delta := by
+        nlinarith [hlt]
+      exact sub_pos.mpr hlt'
+    have hredistrib_nonneg :
+        0 ≤ cold * (eps * r i + eps * r (reverseItem i)) := by
+      exact mul_nonneg hcold_pos.le
+        (add_nonneg
+          (mul_nonneg heps_pos.le (hr_nonneg i))
+          (mul_nonneg heps_pos.le (hr_nonneg (reverseItem i))))
+    linarith only [hmain_gain, hredistrib_nonneg]
+  have hstrict_j :
+      theorem4Problem11ItemValue beta v x z j <
+        theorem4Problem11ItemValue beta v x' z' j := by
+    unfold theorem4Problem11ItemValue
+    change
+      2 * beta * (qj * x j + (1 - qj) * x (reverseItem j)) +
+          cold * z j <
+        2 * beta * (qj * x' j + (1 - qj) * x' (reverseItem j)) +
+          cold * z' j
+    rw [hzj, hxrevj, hx'j, hx'revj, hz'j]
+    have hmain_gain : 0 < cold * (d - eps) - 2 * beta * qj * delta := by
+      have heps_small := heps_lt_slack
+      dsimp [slack, lower] at heps_small
+      have hlt :
+          cold * eps <
+            cold * (d - 2 * beta * qj * delta / cold) :=
+        mul_lt_mul_of_pos_left heps_small hcold_pos
+      rw [mul_sub, mul_div_cancel₀ _ (ne_of_gt hcold_pos)] at hlt
+      nlinarith only [hlt]
+    nlinarith only [hmain_gain]
+  refine ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+    hz'_mirror, ?_⟩
+  intro l
+  by_cases hli : l = i
+  · subst l
+    exact hstrict_i
+  · by_cases hlj : l = j
+    · subst l
+      exact hstrict_j
+    · by_cases hlrevi : l = reverseItem i
+      · subst l
+        have horig :=
+          theorem4Problem11ItemValue_reverse_eq
+            (beta := beta) (v := v) (x := x) (z := z) hpos hzmirror i
+        have hnew :=
+          theorem4Problem11ItemValue_reverse_eq
+            (beta := beta) (v := v) (x := x') (z := z') hpos hz'_mirror i
+        rw [horig, hnew]
+        exact hstrict_i
+      · by_cases hlrevj : l = reverseItem j
+        · subst l
+          have horig :=
+            theorem4Problem11ItemValue_reverse_eq
+              (beta := beta) (v := v) (x := x) (z := z) hpos hzmirror j
+          have hnew :=
+            theorem4Problem11ItemValue_reverse_eq
+              (beta := beta) (v := v) (x := x') (z := z') hpos hz'_mirror j
+          rw [horig, hnew]
+          exact hstrict_j
+        · have hrev_li : reverseItem l ≠ i := by
+            exact reverseItem_ne_of_ne_reverse hlrevi
+          have hrev_lj : reverseItem l ≠ j := by
+            exact reverseItem_ne_of_ne_reverse hlrevj
+          have hxl' : x' l = x l := by
+            dsimp [x']
+            exact theorem4Problem11TwoPointXTransfer_apply_of_ne hli hlj
+          have hxrev' : x' (reverseItem l) = x (reverseItem l) := by
+            dsimp [x']
+            exact theorem4Problem11TwoPointXTransfer_apply_of_ne hrev_li hrev_lj
+          have hzl' :
+              z' l = z l + eps * r l + eps * r (reverseItem l) := by
+            dsimp [z']
+            exact theorem4Problem11ColdStartPairZTransfer_apply_of_ne
+              hli hlrevi hlj hlrevj
+          have hrl_pos : 0 < r l := hr_pos hlj hlrevj
+          have hredistrib_pos :
+              0 < eps * r l + eps * r (reverseItem l) := by
+            exact theorem4Problem11_symmetricRedistribution_pos
+              (n := n) (r := r) (eps := eps) (l := l)
+              heps_pos hrl_pos (hr_nonneg (reverseItem l))
+          have hzlt : z l < z' l := by
+            rw [hzl']
+            calc
+              z l < z l + (eps * r l + eps * r (reverseItem l)) :=
+                lt_add_of_pos_right (z l) hredistrib_pos
+              _ = z l + eps * r l + eps * r (reverseItem l) := by ring
+          exact theorem4Problem11ItemValue_lt_of_same_x_strict_z
+            (n := n) (beta := beta) (v := v) (x := x) (x' := x')
+            (z := z) (z' := z') (j := l) hcold_pos hxl' hxrev' hzlt
+
+theorem theorem4Problem11_typeZeroGap_pairSwap_exists_strictlyImproves
+    {n : ℕ} {beta ell : ℝ} {v x z : Item n → ℝ} {i j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hij : i.val < j.val)
+    (hi_left : i.val < (reverseItem i).val)
+    (hj_left : j.val < (reverseItem j).val)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumz : (∑ l : Item n, z l) = 1)
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hxi : x i = 0)
+    (hxj_pos : 0 < x j)
+    (hxrevi : x (reverseItem i) = 0)
+    (hxrevj : x (reverseItem j) = 0)
+    (hi_eq : theorem4Problem11ItemValue beta v x z i = ell)
+    (hj_eq : theorem4Problem11ItemValue beta v x z j = ell) :
+    ∃ x' z' : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ z' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, z' l) = 1 ∧
+      (∀ l : Item n, z' (reverseItem l) = z' l) ∧
+      ∀ l : Item n,
+        theorem4Problem11ItemValue beta v x z l <
+          theorem4Problem11ItemValue beta v x' z' l := by
+  classical
+  have hji_ne : j ≠ i := by
+    intro h
+    subst j
+    omega
+  have hij_ne : i ≠ j := hji_ne.symm
+  have hi_revi : i ≠ reverseItem i := by
+    intro h
+    have hval := congrArg Fin.val h
+    omega
+  have hj_revj : j ≠ reverseItem j := by
+    intro h
+    have hval := congrArg Fin.val h
+    omega
+  have hi_revj : i ≠ reverseItem j := by
+    intro h
+    have hji : j.val < i.val := by
+      calc
+        j.val < (reverseItem j).val := hj_left
+        _ = i.val := by
+          exact congrArg Fin.val h.symm
+    omega
+  have hj_revi : j ≠ reverseItem i := by
+    intro h
+    have hji : j.val < i.val := by
+      calc
+        j.val < (reverseItem j).val := hj_left
+        _ = i.val := by
+          rw [h, reverseItem_reverseItem]
+    omega
+  have hrevi_j : reverseItem i ≠ j := hj_revi.symm
+  have hrevj_i : reverseItem j ≠ i := hi_revj.symm
+  have hrevj_j : reverseItem j ≠ j := hj_revj.symm
+  have hrevi_i : reverseItem i ≠ i := hi_revi.symm
+  let qi : ℝ := pairShare (1 / 2) v i
+  let qj : ℝ := pairShare (1 / 2) v j
+  have hqj_lt_qi : qj < qi := by
+    dsimp [qi, qj]
+    exact pairShare_strictAnti_index (by norm_num) (by norm_num)
+      hpos hdec hij
+  have hqi_pos : 0 < qi := by
+    dsimp [qi]
+    exact pairShare_pos i (by norm_num) (by norm_num) hpos
+  have hqi_lt_one : qi < 1 := by
+    dsimp [qi]
+    exact pairShare_lt_one i (by norm_num) (by norm_num) hpos
+  have hqj_lt_one : qj < 1 := by
+    dsimp [qj]
+    exact pairShare_lt_one j (by norm_num) (by norm_num) hpos
+  let cap : ℝ := (qi - qj) * x j
+  have hcap_pos : 0 < cap := by
+    dsimp [cap]
+    nlinarith
+  let eps : ℝ := min (x j) cap / 2
+  have hmin_pos : 0 < min (x j) cap := lt_min hxj_pos hcap_pos
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_min : eps < min (x j) cap := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_xj : eps < x j :=
+    lt_of_lt_of_le heps_lt_min (min_le_left _ _)
+  have heps_lt_cap : eps < cap :=
+    lt_of_lt_of_le heps_lt_min (min_le_right _ _)
+  have hqi_eps_lt_cap : qi * eps < cap := by
+    have hmul_le : qi * eps ≤ eps := by nlinarith
+    exact lt_of_le_of_lt hmul_le heps_lt_cap
+  obtain ⟨r, hr_nonneg, hr_pos, hrj, hri, hrsum⟩ :=
+    lemma4_redistribution_exists_of_two_lt hn hji_ne
+  let x' : Item n → ℝ := lemma4GapExchangeX x j i (x j) eps r
+  let z' : Item n → ℝ := theorem4Problem11MirrorPairSwapVector z i j
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact lemma4GapExchangeX_nonneg hx_nonneg rfl hxi hji_ne
+      hr_nonneg hrj hri heps_pos heps_lt_xj l
+  have hz'_nonneg : ∀ l : Item n, 0 ≤ z' l :=
+    theorem4Problem11MirrorPairSwapVector_nonneg hz_nonneg
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [lemma4GapExchangeX_sum_eq x j i (x j) eps r hrsum, hsumx]
+  have hz'_sum : (∑ l : Item n, z' l) = 1 := by
+    dsimp [z']
+    rw [theorem4Problem11MirrorPairSwapVector_sum_eq z i j, hsumz]
+  have hz'_mirror : ∀ l : Item n, z' (reverseItem l) = z' l := by
+    dsimp [z']
+    exact theorem4Problem11MirrorPairSwapVector_mirror
+      hzmirror hij_ne hi_revi hj_revj hi_revj hj_revi
+  have hx'i : x' i = x j - eps := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hxi, hji_ne.symm, hri]
+  have hx'j : x' j = 0 := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hrj, hji_ne]
+  have hx'revi :
+      x' (reverseItem i) = eps * r (reverseItem i) := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hxrevi, hrevi_j, hrevi_i]
+  have hx'revj :
+      x' (reverseItem j) = eps * r (reverseItem j) := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hxrevj, hrevj_j, hrevj_i]
+  have hz'i : z' i = z j := by
+    dsimp [z']
+    unfold theorem4Problem11MirrorPairSwapVector
+    rw [theorem4Problem11MirrorPairSwap_apply_left hj_revi hj_revj]
+  have hz'j : z' j = z i := by
+    dsimp [z']
+    unfold theorem4Problem11MirrorPairSwapVector
+    rw [theorem4Problem11MirrorPairSwap_apply_right hij_ne hi_revi hi_revj]
+  have hitem_ij :
+      (1 - 2 * beta) * z i =
+        2 * beta * (qj * x j) + (1 - 2 * beta) * z j := by
+    have hi_s : (1 - 2 * beta) * z i = ell := by
+      unfold theorem4Problem11ItemValue at hi_eq
+      rw [hxi, hxrevi] at hi_eq
+      linarith
+    have hj_s :
+        2 * beta * (qj * x j) + (1 - 2 * beta) * z j = ell := by
+      unfold theorem4Problem11ItemValue at hj_eq
+      rw [hxrevj] at hj_eq
+      linarith
+    exact hi_s.trans hj_s.symm
+  have hstrict_i :
+      theorem4Problem11ItemValue beta v x z i <
+        theorem4Problem11ItemValue beta v x' z' i := by
+    unfold theorem4Problem11ItemValue
+    dsimp [qi, qj] at *
+    rw [hxi, hxrevi, hx'i, hx'revi, hz'i]
+    have hnonneg_extra :
+        0 ≤ (1 - qi) * (eps * r (reverseItem i)) := by
+      exact mul_nonneg (sub_nonneg.mpr hqi_lt_one.le)
+        (mul_nonneg heps_pos.le (hr_nonneg (reverseItem i)))
+    rw [hitem_ij]
+    nlinarith [hqi_eps_lt_cap, hnonneg_extra]
+  have hstrict_j :
+      theorem4Problem11ItemValue beta v x z j <
+        theorem4Problem11ItemValue beta v x' z' j := by
+    unfold theorem4Problem11ItemValue
+    dsimp [qi, qj] at *
+    rw [hxrevj, hx'j, hx'revj, hz'j]
+    rw [hitem_ij]
+    have hrrevj_pos : 0 < r (reverseItem j) :=
+      hr_pos hrevj_j hrevj_i
+    have hgain_pos :
+        0 < (1 - qj) * (eps * r (reverseItem j)) := by
+      exact mul_pos (sub_pos.mpr hqj_lt_one)
+        (mul_pos heps_pos hrrevj_pos)
+    nlinarith
+  refine ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+    hz'_mirror, ?_⟩
+  intro l
+  by_cases hli : l = i
+  · subst l
+    exact hstrict_i
+  · by_cases hlj : l = j
+    · subst l
+      exact hstrict_j
+    · by_cases hlrevi : l = reverseItem i
+      · subst l
+        have horig :=
+          theorem4Problem11ItemValue_reverse_eq
+            (beta := beta) (v := v) (x := x) (z := z) hpos hzmirror i
+        have hnew :=
+          theorem4Problem11ItemValue_reverse_eq
+            (beta := beta) (v := v) (x := x') (z := z') hpos hz'_mirror i
+        rw [horig, hnew]
+        exact hstrict_i
+      · by_cases hlrevj : l = reverseItem j
+        · subst l
+          have horig :=
+            theorem4Problem11ItemValue_reverse_eq
+              (beta := beta) (v := v) (x := x) (z := z) hpos hzmirror j
+          have hnew :=
+            theorem4Problem11ItemValue_reverse_eq
+              (beta := beta) (v := v) (x := x') (z := z') hpos hz'_mirror j
+          rw [horig, hnew]
+          exact hstrict_j
+        · have hrev_li : reverseItem l ≠ i := by
+            intro h
+            apply hlrevi
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem i := by
+                rw [h]
+          have hrev_lj : reverseItem l ≠ j := by
+            intro h
+            apply hlrevj
+            calc
+              l = reverseItem (reverseItem l) := by
+                rw [reverseItem_reverseItem]
+              _ = reverseItem j := by
+                rw [h]
+          have hzl' : z' l = z l := by
+            dsimp [z']
+            unfold theorem4Problem11MirrorPairSwapVector
+            rw [theorem4Problem11MirrorPairSwap_apply_of_distinct
+              hli hlj hlrevi hlrevj]
+          have hxl' : x' l = x l + eps * r l := by
+            dsimp [x']
+            simp [lemma4GapExchangeX, hlj, hli]
+          have hxrev' :
+              x' (reverseItem l) =
+                x (reverseItem l) + eps * r (reverseItem l) := by
+            dsimp [x']
+            simp [lemma4GapExchangeX, hrev_lj, hrev_li]
+          unfold theorem4Problem11ItemValue
+          rw [hzl', hxl', hxrev']
+          have hq_pos : 0 < pairShare (1 / 2) v l :=
+            pairShare_pos l (by norm_num) (by norm_num) hpos
+          have hq_lt_one : pairShare (1 / 2) v l < 1 :=
+            pairShare_lt_one l (by norm_num) (by norm_num) hpos
+          have hrl_pos : 0 < r l := hr_pos hlj hli
+          have hrrev_pos : 0 < r (reverseItem l) :=
+            hr_pos hrev_lj hrev_li
+          have hleft_pos :
+              0 < pairShare (1 / 2) v l * (eps * r l) :=
+            mul_pos hq_pos (mul_pos heps_pos hrl_pos)
+          have hright_pos :
+              0 < (1 - pairShare (1 / 2) v l) *
+                (eps * r (reverseItem l)) :=
+            mul_pos (sub_pos.mpr hq_lt_one)
+              (mul_pos heps_pos hrrev_pos)
+          have hsum_pos :
+              0 <
+                pairShare (1 / 2) v l * (eps * r l) +
+                  (1 - pairShare (1 / 2) v l) *
+                    (eps * r (reverseItem l)) :=
+            add_pos hleft_pos hright_pos
+          nlinarith only [hbeta_pos, hsum_pos]
+
+theorem theorem4Problem11_typeZeroGapStrictImprovement_left_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0)
+    {i j : Item n}
+    (hij : i.val < j.val)
+    (hxi_zero : ρ 0 i = 0)
+    (hxj_ne : ρ 0 j ≠ 0)
+    (hj_left : j.val < (reverseItem j).val) :
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l := by
+  classical
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let z : Item n → ℝ := fun l => (ρ 2 l).toReal
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : (reverseItem j).val < (reverseItem i).val :=
+      reverseItem_val_lt_of_val_lt hij
+    exact lt_trans (lt_trans hij hj_left) hrev_lt
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hz_nonneg : ∀ l : Item n, 0 ≤ z l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact EconCSLib.pmfToRealSum (ρ 0)
+  have hsumz : (∑ l : Item n, z l) = 1 := by
+    dsimp [z]
+    exact EconCSLib.pmfToRealSum (ρ 2)
+  have hzmirror : ∀ l : Item n, z (reverseItem l) = z l := by
+    intro l
+    dsimp [z]
+    exact congrArg ENNReal.toReal (h.mirror.2 l)
+  have hxi : x i = 0 := by
+    dsimp [x]
+    simp [hxi_zero]
+  have hxj_pos : 0 < x j := by
+    have htoReal_ne : (ρ 0 j).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 0 j)).mp hzero with hzero_enn | htop
+      · exact hxj_ne hzero_enn
+      · exact (ρ 0).apply_ne_top j htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  have hxrevi_policy : ρ 0 (reverseItem i) = 0 := by
+    apply hright_zero
+    simpa [reverseItem_reverseItem] using hi_left
+  have hxrevj_policy : ρ 0 (reverseItem j) = 0 := by
+    apply hright_zero
+    simpa [reverseItem_reverseItem] using hj_left
+  have hxrevi : x (reverseItem i) = 0 := by
+    dsimp [x]
+    simp [hxrevi_policy]
+  have hxrevj : x (reverseItem j) = 0 := by
+    dsimp [x]
+    simp [hxrevj_policy]
+  have hi_eq : theorem4Problem11ItemValue beta v x z i = ell := by
+    simpa [theorem4Problem11PolicyItemValue, x, z] using h.item_eq i
+  have hj_eq : theorem4Problem11ItemValue beta v x z j = ell := by
+    simpa [theorem4Problem11PolicyItemValue, x, z] using h.item_eq j
+  obtain ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+      hz'_mirror, hstrict⟩ :=
+    theorem4Problem11_typeZeroGap_pairSwap_exists_strictlyImproves
+      hn hbeta_pos hpos hdec hij hi_left hj_left hx_nonneg hz_nonneg
+      hsumx hsumz hzmirror hxi hxj_pos hxrevi hxrevj hi_eq hj_eq
+  let y' : Item n → ℝ := fun l => x' (reverseItem l)
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact hx'_nonneg (reverseItem l)
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [sum_reverseItem x', hx'_sum]
+  let ρ' : TypePolicy 3 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else if k = 1 then
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+    else
+      pmfOfRealVector z' hz'_nonneg hz'_sum
+  have hsym' : Theorem4MirrorSymmetricPolicy ρ' := by
+    constructor
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 1).apply_ne_top (reverseItem l))
+        ((ρ' 0).apply_ne_top l)).mp
+      simp [ρ', y', reverseItem_reverseItem]
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 2).apply_ne_top (reverseItem l))
+        ((ρ' 2).apply_ne_top l)).mp
+      simp [ρ', hz'_mirror l]
+  refine ⟨ρ', hsym', ?_⟩
+  intro l
+  unfold theorem4Problem11PolicyItemValue
+  simpa [ρ', x, z] using hstrict l
+
+theorem theorem4Problem11_typeZeroGapStrictImprovement_noncenter_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0)
+    {i j : Item n}
+    (hij : i.val < j.val)
+    (hxi_zero : ρ 0 i = 0)
+    (hxj_ne : ρ 0 j ≠ 0)
+    (hj_noncenter : j ≠ reverseItem j) :
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l := by
+  by_cases hj_left : j.val < (reverseItem j).val
+  · exact theorem4Problem11_typeZeroGapStrictImprovement_left_of_equalizedBasicOptimal
+      hn hbeta_pos hpos hdec h hright_zero hij hxi_zero hxj_ne hj_left
+  · have hj_right : (reverseItem j).val < j.val := by
+      have hne_val : j.val ≠ (reverseItem j).val := by
+        intro hval
+        apply hj_noncenter
+        ext
+        exact hval
+      omega
+    have hzj : ρ 0 j = 0 := hright_zero j hj_right
+    exact False.elim (hxj_ne hzj)
+
+/--
+Center-case cold-start transfer for Appendix E, Lemma 13.  When the donor
+`j` is its own mirror, the `z`-row cannot be handled by a mirror-pair swap; we
+instead move equal mass `d` away from `i` and its mirror and put `2d` on the
+center item.
+-/
+noncomputable def theorem4Problem11CenterZTransfer {n : ℕ}
+    (z : Item n → ℝ) (i c : Item n) (d : ℝ) : Item n → ℝ :=
+  fun l =>
+    z l +
+      (if l = i then -d else 0) +
+      (if l = reverseItem i then -d else 0) +
+      (if l = c then 2 * d else 0)
+
+theorem theorem4Problem11CenterZTransfer_sum_eq {n : ℕ}
+    (z : Item n → ℝ) (i c : Item n) (d : ℝ) :
+    (∑ l : Item n, theorem4Problem11CenterZTransfer z i c d l) =
+      ∑ l : Item n, z l := by
+  unfold theorem4Problem11CenterZTransfer
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib,
+    Finset.sum_add_distrib]
+  simp
+  ring
+
+theorem theorem4Problem11CenterZTransfer_nonneg {n : ℕ}
+    {z : Item n → ℝ} {i c : Item n} {d : ℝ}
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l)
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hi_revi : i ≠ reverseItem i)
+    (hi_c : i ≠ c)
+    (hrevi_c : reverseItem i ≠ c)
+    (hd_nonneg : 0 ≤ d)
+    (hd_le : d ≤ z i) :
+    ∀ l : Item n, 0 ≤ theorem4Problem11CenterZTransfer z i c d l := by
+  intro l
+  unfold theorem4Problem11CenterZTransfer
+  by_cases hli : l = i
+  · subst l
+    simp [hi_revi, hi_c, hd_le]
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      simp [hi_revi.symm, hrevi_c, hzmirror i, hd_le]
+    · by_cases hlc : l = c
+      · subst l
+        have htwo_nonneg : 0 ≤ 2 * d := by nlinarith
+        simp [hi_c.symm, hrevi_c.symm, add_nonneg (hz_nonneg c) htwo_nonneg]
+      · simpa [hli, hlrevi, hlc] using hz_nonneg l
+
+theorem theorem4Problem11CenterZTransfer_mirror {n : ℕ}
+    {z : Item n → ℝ} {i c : Item n} {d : ℝ}
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hc : reverseItem c = c)
+    (hi_revi : i ≠ reverseItem i)
+    (hi_c : i ≠ c)
+    (hrevi_c : reverseItem i ≠ c) :
+    ∀ l : Item n,
+      theorem4Problem11CenterZTransfer z i c d (reverseItem l) =
+        theorem4Problem11CenterZTransfer z i c d l := by
+  intro l
+  unfold theorem4Problem11CenterZTransfer
+  by_cases hli : l = i
+  · subst l
+    simp [hi_revi, hi_revi.symm, hi_c, hrevi_c, hzmirror i]
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hi_c,
+        hrevi_c, hzmirror i]
+    · by_cases hlc : l = c
+      · subst l
+        simp [hc, hi_c.symm, hrevi_c.symm]
+      · have hrev_ne_i : reverseItem l ≠ i := by
+          intro h
+          apply hlrevi
+          calc
+            l = reverseItem (reverseItem l) := by
+              rw [reverseItem_reverseItem]
+            _ = reverseItem i := by
+              rw [h]
+        have hrev_ne_revi : reverseItem l ≠ reverseItem i := by
+          intro h
+          apply hli
+          calc
+            l = reverseItem (reverseItem l) := by
+              rw [reverseItem_reverseItem]
+            _ = reverseItem (reverseItem i) := by
+              rw [h]
+            _ = i := by
+              rw [reverseItem_reverseItem]
+        have hrev_ne_c : reverseItem l ≠ c := by
+          intro h
+          apply hlc
+          calc
+            l = reverseItem (reverseItem l) := by
+              rw [reverseItem_reverseItem]
+            _ = reverseItem c := by
+              rw [h]
+            _ = c := hc
+        simp [hli, hlrevi, hlc, hrev_ne_i, hrev_ne_revi, hrev_ne_c,
+          hzmirror l]
+
+noncomputable def theorem4Problem11ColdStartCenterZTransfer {n : ℕ}
+    (z r : Item n → ℝ) (i c : Item n) (d eps : ℝ) : Item n → ℝ :=
+  fun l =>
+    z l +
+      (if l = i then -d else 0) +
+      (if l = reverseItem i then -d else 0) +
+      (if l = c then 2 * d - 2 * eps else 0) +
+      eps * r l + eps * r (reverseItem l)
+
+theorem theorem4Problem11ColdStartCenterZTransfer_sum_eq {n : ℕ}
+    (z r : Item n → ℝ) (i c : Item n) (d eps : ℝ)
+    (hrsum : (∑ l : Item n, r l) = 1) :
+    (∑ l : Item n,
+        theorem4Problem11ColdStartCenterZTransfer z r i c d eps l) =
+      ∑ l : Item n, z l := by
+  unfold theorem4Problem11ColdStartCenterZTransfer
+  repeat rw [Finset.sum_add_distrib]
+  rw [← Finset.mul_sum, ← Finset.mul_sum, sum_reverseItem r, hrsum]
+  simp
+  ring
+
+set_option linter.unusedSimpArgs false in
+theorem theorem4Problem11ColdStartCenterZTransfer_mirror {n : ℕ}
+    {z r : Item n → ℝ} {i c : Item n} {d eps : ℝ}
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hc : reverseItem c = c)
+    (hi_revi : i ≠ reverseItem i)
+    (hi_c : i ≠ c)
+    (hrevi_c : reverseItem i ≠ c) :
+    ∀ l : Item n,
+      theorem4Problem11ColdStartCenterZTransfer z r i c d eps
+          (reverseItem l) =
+        theorem4Problem11ColdStartCenterZTransfer z r i c d eps l := by
+  intro l
+  unfold theorem4Problem11ColdStartCenterZTransfer
+  by_cases hli : l = i
+  · subst l
+    simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hi_c, hrevi_c,
+      hzmirror i]
+    ring
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      simp [reverseItem_reverseItem, hi_revi, hi_revi.symm, hi_c,
+        hrevi_c, hzmirror i]
+      ring
+    · by_cases hlc : l = c
+      · subst l
+        simp [hc, hi_c.symm, hrevi_c.symm]
+      · have hrev_ne_i : reverseItem l ≠ i :=
+          reverseItem_ne_of_ne_reverse hlrevi
+        have hrev_ne_revi : reverseItem l ≠ reverseItem i := by
+          intro h
+          apply hli
+          calc
+            l = reverseItem (reverseItem l) := (reverseItem_reverseItem l).symm
+            _ = reverseItem (reverseItem i) := by rw [h]
+            _ = i := reverseItem_reverseItem i
+        have hrev_ne_c : reverseItem l ≠ c := by
+          intro h
+          apply hlc
+          calc
+            l = reverseItem (reverseItem l) := (reverseItem_reverseItem l).symm
+            _ = reverseItem c := by rw [h]
+            _ = c := hc
+        simp [reverseItem_reverseItem, hli, hlrevi, hlc, hrev_ne_i,
+          hrev_ne_revi, hrev_ne_c, hzmirror l]
+        ring
+
+theorem theorem4Problem11ColdStartCenterZTransfer_nonneg {n : ℕ}
+    {z r : Item n → ℝ} {i c : Item n} {d eps : ℝ}
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l)
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hc : reverseItem c = c)
+    (hi_revi : i ≠ reverseItem i)
+    (hi_c : i ≠ c)
+    (hrevi_c : reverseItem i ≠ c)
+    (hr_nonneg : ∀ l : Item n, 0 ≤ r l)
+    (hrc : r c = 0)
+    (hd_nonneg : 0 ≤ d)
+    (heps_nonneg : 0 ≤ eps)
+    (heps_le_d : eps ≤ d)
+    (hd_le : d ≤ z i) :
+    ∀ l : Item n,
+      0 ≤ theorem4Problem11ColdStartCenterZTransfer z r i c d eps l := by
+  intro l
+  unfold theorem4Problem11ColdStartCenterZTransfer
+  by_cases hli : l = i
+  · subst l
+    have hredistrib_nonneg :
+        0 ≤ eps * r i + eps * r (reverseItem i) := by
+      exact add_nonneg
+        (mul_nonneg heps_nonneg (hr_nonneg i))
+        (mul_nonneg heps_nonneg (hr_nonneg (reverseItem i)))
+    simp [hi_revi, hi_c]
+    nlinarith [hd_le, hredistrib_nonneg]
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      have hredistrib_nonneg :
+          0 ≤ eps * r (reverseItem i) + eps * r i := by
+        exact add_nonneg
+          (mul_nonneg heps_nonneg (hr_nonneg (reverseItem i)))
+          (mul_nonneg heps_nonneg (hr_nonneg i))
+      simp [reverseItem_reverseItem, hi_revi.symm, hrevi_c]
+      rw [hzmirror i]
+      nlinarith [hd_le, hredistrib_nonneg]
+    · by_cases hlc : l = c
+      · subst l
+        simp [hc, hi_c.symm, hrevi_c.symm, hrc]
+        nlinarith [hz_nonneg c, heps_le_d]
+      · have hredistrib_nonneg :
+            0 ≤ eps * r l + eps * r (reverseItem l) := by
+          exact add_nonneg
+            (mul_nonneg heps_nonneg (hr_nonneg l))
+            (mul_nonneg heps_nonneg (hr_nonneg (reverseItem l)))
+        simpa [hli, hlrevi, hlc, add_assoc] using
+          add_nonneg (hz_nonneg l) hredistrib_nonneg
+
+theorem theorem4Problem11ColdStartCenterZTransfer_apply_center {n : ℕ}
+    {z r : Item n → ℝ} {i c : Item n} {d eps : ℝ}
+    (hc : reverseItem c = c)
+    (hi_c : i ≠ c)
+    (hrevi_c : reverseItem i ≠ c)
+    (hrc : r c = 0) :
+    theorem4Problem11ColdStartCenterZTransfer z r i c d eps c =
+      z c + (2 * d - 2 * eps) := by
+  unfold theorem4Problem11ColdStartCenterZTransfer
+  simp [hc, hi_c.symm, hrevi_c.symm, hrc]
+
+theorem theorem4Problem11ColdStartCenterZTransfer_apply_of_ne {n : ℕ}
+    {z r : Item n → ℝ} {i c l : Item n} {d eps : ℝ}
+    (hli : l ≠ i)
+    (hlrevi : l ≠ reverseItem i)
+    (hlc : l ≠ c) :
+    theorem4Problem11ColdStartCenterZTransfer z r i c d eps l =
+      z l + eps * r l + eps * r (reverseItem l) := by
+  unfold theorem4Problem11ColdStartCenterZTransfer
+  rw [if_neg hli, if_neg hlrevi, if_neg hlc]
+  ring
+
+theorem theorem4Problem11_typeZeroGap_centerTransfer_exists_strictlyImproves
+    {n : ℕ} {beta ell : ℝ} {v x z : Item n → ℝ} {i c : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hic : i.val < c.val)
+    (hc_center : reverseItem c = c)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumz : (∑ l : Item n, z l) = 1)
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hxi : x i = 0)
+    (hxc_pos : 0 < x c)
+    (hxrevi : x (reverseItem i) = 0)
+    (hi_eq : theorem4Problem11ItemValue beta v x z i = ell)
+    (hc_eq : theorem4Problem11ItemValue beta v x z c = ell) :
+    ∃ x' z' : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ z' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, z' l) = 1 ∧
+      (∀ l : Item n, z' (reverseItem l) = z' l) ∧
+      ∀ l : Item n,
+        theorem4Problem11ItemValue beta v x z l <
+          theorem4Problem11ItemValue beta v x' z' l := by
+  classical
+  let cold : ℝ := 1 - 2 * beta
+  have hcold_pos : 0 < cold := by
+    dsimp [cold]
+    nlinarith
+  have hci_ne : c ≠ i := by
+    intro h
+    subst c
+    omega
+  have hic_ne : i ≠ c := hci_ne.symm
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : c.val < (reverseItem i).val := by
+      simpa [hc_center] using reverseItem_val_lt_of_val_lt hic
+    exact lt_trans hic hrev_lt
+  have hi_revi : i ≠ reverseItem i := by
+    intro h
+    have hval := congrArg Fin.val h
+    omega
+  have hrevi_c : reverseItem i ≠ c := by
+    intro h
+    have hrev_lt : c.val < (reverseItem i).val := by
+      simpa [hc_center] using reverseItem_val_lt_of_val_lt hic
+    have hval := congrArg Fin.val h
+    omega
+  let qi : ℝ := pairShare (1 / 2) v i
+  have hqi_half : (1 / 2 : ℝ) < qi := by
+    dsimp [qi]
+    exact half_lt_pairShare_half_of_val_lt_reverse i hpos hdec hi_left
+  have hqi_pos : 0 < qi := lt_trans (by norm_num) hqi_half
+  have hqi_lt_one : qi < 1 := by
+    dsimp [qi]
+    exact pairShare_lt_one i (by norm_num) (by norm_num) hpos
+  have hitem_ic : cold * z i = 2 * beta * x c + cold * z c := by
+    have hi_s : cold * z i = ell := by
+      unfold theorem4Problem11ItemValue at hi_eq
+      rw [hxi, hxrevi] at hi_eq
+      linarith
+    have hc_s : 2 * beta * x c + cold * z c = ell := by
+      unfold theorem4Problem11ItemValue at hc_eq
+      rw [hc_center] at hc_eq
+      ring_nf at hc_eq ⊢
+      linarith
+    exact hi_s.trans hc_s.symm
+  let lower : ℝ := beta * x c / cold
+  let upper : ℝ := 2 * beta * qi * x c / cold
+  have hlower_lt_upper : lower < upper := by
+    dsimp [lower, upper]
+    rw [div_lt_div_iff₀ hcold_pos hcold_pos]
+    have hmul : beta * x c < 2 * beta * qi * x c := by
+      have htwo_qi : (1 : ℝ) < 2 * qi := by
+        nlinarith
+      have hbxc_pos : 0 < beta * x c :=
+        mul_pos hbeta_pos hxc_pos
+      calc
+        beta * x c = 1 * (beta * x c) := by ring
+        _ < (2 * qi) * (beta * x c) :=
+          mul_lt_mul_of_pos_right htwo_qi hbxc_pos
+        _ = 2 * beta * qi * x c := by ring
+    exact mul_lt_mul_of_pos_right hmul hcold_pos
+  obtain ⟨d, hd_lower, hd_upper⟩ := exists_between hlower_lt_upper
+  have hlower_pos : 0 < lower := by
+    dsimp [lower]
+    exact div_pos (mul_pos hbeta_pos hxc_pos) hcold_pos
+  have hd_pos : 0 < d := lt_trans hlower_pos hd_lower
+  have hd_nonneg : 0 ≤ d := hd_pos.le
+  have hcenter_gain : 2 * beta * x c < 2 * cold * d := by
+    have htmp : beta * x c < cold * d := by
+      have := hd_lower
+      dsimp [lower] at this
+      rw [div_lt_iff₀ hcold_pos] at this
+      simpa [mul_comm, mul_left_comm, mul_assoc] using this
+    nlinarith
+  have hcold_d_lt : cold * d < 2 * beta * qi * x c := by
+    have := hd_upper
+    dsimp [upper] at this
+    rw [lt_div_iff₀ hcold_pos] at this
+    simpa [mul_comm, mul_left_comm, mul_assoc] using this
+  have hd_lt_zi : d < z i := by
+    have hcold_d_lt_z : cold * d < cold * z i := by
+      calc
+        cold * d < 2 * beta * qi * x c := hcold_d_lt
+        _ < 2 * beta * x c := by nlinarith
+        _ ≤ 2 * beta * x c + cold * z c := by
+          nlinarith [hz_nonneg c, hcold_pos]
+        _ = cold * z i := hitem_ic.symm
+    nlinarith [hcold_pos, hcold_d_lt_z]
+  let slack : ℝ := 2 * beta * qi * x c - cold * d
+  have hslack_pos : 0 < slack := by
+    dsimp [slack]
+    linarith
+  let epsBound : ℝ := slack / (2 * beta * qi)
+  have hden_pos : 0 < 2 * beta * qi := by
+    nlinarith
+  have hepsBound_pos : 0 < epsBound := by
+    dsimp [epsBound]
+    exact div_pos hslack_pos hden_pos
+  let eps : ℝ := min (x c) epsBound / 2
+  have hmin_pos : 0 < min (x c) epsBound :=
+    lt_min hxc_pos hepsBound_pos
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_min : eps < min (x c) epsBound := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_xc : eps < x c :=
+    lt_of_lt_of_le heps_lt_min (min_le_left _ _)
+  have heps_lt_bound : eps < epsBound :=
+    lt_of_lt_of_le heps_lt_min (min_le_right _ _)
+  have hqi_eps_slack : 2 * beta * qi * eps < slack := by
+    have := heps_lt_bound
+    dsimp [epsBound] at this
+    rw [lt_div_iff₀ hden_pos] at this
+    simpa [mul_comm, mul_left_comm, mul_assoc] using this
+  obtain ⟨r, hr_nonneg, hr_pos, hrc, hri, hrsum⟩ :=
+    lemma4_redistribution_exists_of_two_lt hn hci_ne
+  let x' : Item n → ℝ := lemma4GapExchangeX x c i (x c) eps r
+  let z' : Item n → ℝ := theorem4Problem11CenterZTransfer z i c d
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact lemma4GapExchangeX_nonneg hx_nonneg rfl hxi hci_ne
+      hr_nonneg hrc hri heps_pos heps_lt_xc l
+  have hz'_nonneg : ∀ l : Item n, 0 ≤ z' l :=
+    theorem4Problem11CenterZTransfer_nonneg hz_nonneg hzmirror
+      hi_revi hic_ne hrevi_c hd_nonneg hd_lt_zi.le
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [lemma4GapExchangeX_sum_eq x c i (x c) eps r hrsum, hsumx]
+  have hz'_sum : (∑ l : Item n, z' l) = 1 := by
+    dsimp [z']
+    rw [theorem4Problem11CenterZTransfer_sum_eq z i c d, hsumz]
+  have hz'_mirror : ∀ l : Item n, z' (reverseItem l) = z' l := by
+    dsimp [z']
+    exact theorem4Problem11CenterZTransfer_mirror
+      hzmirror hc_center hi_revi hic_ne hrevi_c
+  have hx'i : x' i = x c - eps := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hxi, hci_ne.symm, hri]
+  have hx'c : x' c = 0 := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hrc, hci_ne]
+  have hx'revi :
+      x' (reverseItem i) = eps * r (reverseItem i) := by
+    dsimp [x']
+    simp [lemma4GapExchangeX, hxrevi, hrevi_c, hi_revi.symm]
+  have hz'i : z' i = z i - d := by
+    dsimp [z']
+    unfold theorem4Problem11CenterZTransfer
+    simp [hi_revi, hic_ne]
+    ring
+  have hz'c : z' c = z c + 2 * d := by
+    dsimp [z']
+    unfold theorem4Problem11CenterZTransfer
+    simp [hic_ne.symm, hrevi_c.symm]
+  have hstrict_i :
+      theorem4Problem11ItemValue beta v x z i <
+        theorem4Problem11ItemValue beta v x' z' i := by
+    unfold theorem4Problem11ItemValue
+    dsimp [qi, cold] at *
+    rw [hxi, hxrevi, hx'i, hx'revi, hz'i]
+    have hnonneg_extra :
+        0 ≤ (1 - pairShare (1 / 2) v i) *
+          (eps * r (reverseItem i)) := by
+      exact mul_nonneg (sub_nonneg.mpr hqi_lt_one.le)
+        (mul_nonneg heps_pos.le (hr_nonneg (reverseItem i)))
+    have hscaled_extra :
+        0 ≤ 2 * beta *
+          ((1 - pairShare (1 / 2) v i) *
+            (eps * r (reverseItem i))) := by
+      nlinarith only [hbeta_pos, hnonneg_extra]
+    dsimp [slack, qi, cold] at hqi_eps_slack
+    have hgain_pos :
+        0 <
+          2 * beta *
+              (pairShare (1 / 2) v i * (x c - eps) +
+                (1 - pairShare (1 / 2) v i) *
+                  (eps * r (reverseItem i))) -
+            (1 - 2 * beta) * d := by
+      nlinarith only [hqi_eps_slack, hscaled_extra]
+    nlinarith only [hgain_pos]
+  have hstrict_c :
+      theorem4Problem11ItemValue beta v x z c <
+        theorem4Problem11ItemValue beta v x' z' c := by
+    unfold theorem4Problem11ItemValue
+    rw [hc_center, hx'c, hz'c]
+    dsimp [cold] at *
+    nlinarith only [hcenter_gain]
+  refine ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+    hz'_mirror, ?_⟩
+  intro l
+  by_cases hli : l = i
+  · subst l
+    exact hstrict_i
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      have horig :=
+        theorem4Problem11ItemValue_reverse_eq
+          (beta := beta) (v := v) (x := x) (z := z) hpos hzmirror i
+      have hnew :=
+        theorem4Problem11ItemValue_reverse_eq
+          (beta := beta) (v := v) (x := x') (z := z') hpos hz'_mirror i
+      rw [horig, hnew]
+      exact hstrict_i
+    · by_cases hlc : l = c
+      · subst l
+        exact hstrict_c
+      · have hrev_li : reverseItem l ≠ i := by
+          intro h
+          apply hlrevi
+          calc
+            l = reverseItem (reverseItem l) := by
+              rw [reverseItem_reverseItem]
+            _ = reverseItem i := by
+              rw [h]
+        have hrev_lc : reverseItem l ≠ c := by
+          intro h
+          apply hlc
+          calc
+            l = reverseItem (reverseItem l) := by
+              rw [reverseItem_reverseItem]
+            _ = reverseItem c := by
+              rw [h]
+            _ = c := hc_center
+        have hzl' : z' l = z l := by
+          dsimp [z']
+          unfold theorem4Problem11CenterZTransfer
+          simp [hli, hlrevi, hlc]
+        have hxl' : x' l = x l + eps * r l := by
+          dsimp [x']
+          simp [lemma4GapExchangeX, hlc, hli]
+        have hxrev' :
+            x' (reverseItem l) =
+              x (reverseItem l) + eps * r (reverseItem l) := by
+          dsimp [x']
+          simp [lemma4GapExchangeX, hrev_lc, hrev_li]
+        unfold theorem4Problem11ItemValue
+        rw [hzl', hxl', hxrev']
+        have hq_pos : 0 < pairShare (1 / 2) v l :=
+          pairShare_pos l (by norm_num) (by norm_num) hpos
+        have hq_lt_one : pairShare (1 / 2) v l < 1 :=
+          pairShare_lt_one l (by norm_num) (by norm_num) hpos
+        have hrl_pos : 0 < r l := hr_pos hlc hli
+        have hrrev_pos : 0 < r (reverseItem l) :=
+          hr_pos hrev_lc hrev_li
+        have hleft_pos :
+            0 < pairShare (1 / 2) v l * (eps * r l) :=
+          mul_pos hq_pos (mul_pos heps_pos hrl_pos)
+        have hright_pos :
+            0 < (1 - pairShare (1 / 2) v l) *
+              (eps * r (reverseItem l)) :=
+          mul_pos (sub_pos.mpr hq_lt_one)
+            (mul_pos heps_pos hrrev_pos)
+        have hsum_pos :
+            0 <
+              pairShare (1 / 2) v l * (eps * r l) +
+                (1 - pairShare (1 / 2) v l) *
+                  (eps * r (reverseItem l)) :=
+          add_pos hleft_pos hright_pos
+        nlinarith only [hbeta_pos, hsum_pos]
+
+theorem theorem4Problem11_typeZeroGapStrictImprovement_center_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0)
+    {i j : Item n}
+    (hij : i.val < j.val)
+    (hxi_zero : ρ 0 i = 0)
+    (hxj_ne : ρ 0 j ≠ 0)
+    (hj_center : reverseItem j = j) :
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l := by
+  classical
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let z : Item n → ℝ := fun l => (ρ 2 l).toReal
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : j.val < (reverseItem i).val := by
+      simpa [hj_center] using reverseItem_val_lt_of_val_lt hij
+    exact lt_trans hij hrev_lt
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hz_nonneg : ∀ l : Item n, 0 ≤ z l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact EconCSLib.pmfToRealSum (ρ 0)
+  have hsumz : (∑ l : Item n, z l) = 1 := by
+    dsimp [z]
+    exact EconCSLib.pmfToRealSum (ρ 2)
+  have hzmirror : ∀ l : Item n, z (reverseItem l) = z l := by
+    intro l
+    dsimp [z]
+    exact congrArg ENNReal.toReal (h.mirror.2 l)
+  have hxi : x i = 0 := by
+    dsimp [x]
+    simp [hxi_zero]
+  have hxj_pos : 0 < x j := by
+    have htoReal_ne : (ρ 0 j).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 0 j)).mp hzero with hzero_enn | htop
+      · exact hxj_ne hzero_enn
+      · exact (ρ 0).apply_ne_top j htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  have hxrevi_policy : ρ 0 (reverseItem i) = 0 := by
+    apply hright_zero
+    simpa [reverseItem_reverseItem] using hi_left
+  have hxrevi : x (reverseItem i) = 0 := by
+    dsimp [x]
+    simp [hxrevi_policy]
+  have hi_eq : theorem4Problem11ItemValue beta v x z i = ell := by
+    simpa [theorem4Problem11PolicyItemValue, x, z] using h.item_eq i
+  have hj_eq : theorem4Problem11ItemValue beta v x z j = ell := by
+    simpa [theorem4Problem11PolicyItemValue, x, z] using h.item_eq j
+  obtain ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+      hz'_mirror, hstrict⟩ :=
+    theorem4Problem11_typeZeroGap_centerTransfer_exists_strictlyImproves
+      hn hbeta_pos hbeta_half hpos hdec hij hj_center hx_nonneg hz_nonneg
+      hsumx hsumz hzmirror hxi hxj_pos hxrevi hi_eq hj_eq
+  let y' : Item n → ℝ := fun l => x' (reverseItem l)
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact hx'_nonneg (reverseItem l)
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [sum_reverseItem x', hx'_sum]
+  let ρ' : TypePolicy 3 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else if k = 1 then
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+    else
+      pmfOfRealVector z' hz'_nonneg hz'_sum
+  have hsym' : Theorem4MirrorSymmetricPolicy ρ' := by
+    constructor
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 1).apply_ne_top (reverseItem l))
+        ((ρ' 0).apply_ne_top l)).mp
+      simp [ρ', y', reverseItem_reverseItem]
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 2).apply_ne_top (reverseItem l))
+        ((ρ' 2).apply_ne_top l)).mp
+      simp [ρ', hz'_mirror l]
+  refine ⟨ρ', hsym', ?_⟩
+  intro l
+  unfold theorem4Problem11PolicyItemValue
+  simpa [ρ', x, z] using hstrict l
+
+theorem theorem4Problem11_typeZeroGapStrictImprovement_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    Theorem4Problem11TypeZeroGapStrictImprovement beta v ρ := by
+  have hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ :=
+    theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
+  have hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0 :=
+    theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+      hn hbeta_pos hpos hdec h.mirror hno
+  intro i j hij hxi_zero hxj_ne
+  by_cases hj_center' : j = reverseItem j
+  · exact theorem4Problem11_typeZeroGapStrictImprovement_center_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h hright_zero hij hxi_zero hxj_ne
+      hj_center'.symm
+  · exact theorem4Problem11_typeZeroGapStrictImprovement_noncenter_of_equalizedBasicOptimal
+      hn hbeta_pos hpos hdec h hright_zero hij hxi_zero hxj_ne hj_center'
+
+theorem theorem4Problem11_coldStartGapStrictImprovement_noncenter_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0)
+    {i j : Item n}
+    (hij : i.val < j.val)
+    (hj_half : j.val ≤ (reverseItem j).val)
+    (hzi_ne : ρ 2 i ≠ 0)
+    (hzj_zero : ρ 2 j = 0)
+    (hj_noncenter : j ≠ reverseItem j) :
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l := by
+  classical
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let z : Item n → ℝ := fun l => (ρ 2 l).toReal
+  have hj_left : j.val < (reverseItem j).val := by
+    have hne_val : j.val ≠ (reverseItem j).val := by
+      intro hval
+      apply hj_noncenter
+      ext
+      exact hval
+    omega
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : (reverseItem j).val < (reverseItem i).val :=
+      reverseItem_val_lt_of_val_lt hij
+    exact lt_trans (lt_trans hij hj_left) hrev_lt
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hz_nonneg : ∀ l : Item n, 0 ≤ z l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact EconCSLib.pmfToRealSum (ρ 0)
+  have hsumz : (∑ l : Item n, z l) = 1 := by
+    dsimp [z]
+    exact EconCSLib.pmfToRealSum (ρ 2)
+  have hzmirror : ∀ l : Item n, z (reverseItem l) = z l := by
+    intro l
+    dsimp [z]
+    exact congrArg ENNReal.toReal (h.mirror.2 l)
+  have hzi_pos : 0 < z i := by
+    dsimp [z]
+    have htoReal_ne : (ρ 2 i).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 2 i)).mp hzero with hzero_enn | htop
+      · exact hzi_ne hzero_enn
+      · exact (ρ 2).apply_ne_top i htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  have hzj : z j = 0 := by
+    dsimp [z]
+    simp [hzj_zero]
+  have hxrevi_policy : ρ 0 (reverseItem i) = 0 := by
+    apply hright_zero
+    simpa [reverseItem_reverseItem] using hi_left
+  have hxrevj_policy : ρ 0 (reverseItem j) = 0 := by
+    apply hright_zero
+    simpa [reverseItem_reverseItem] using hj_left
+  have hxrevi : x (reverseItem i) = 0 := by
+    dsimp [x]
+    simp [hxrevi_policy]
+  have hxrevj : x (reverseItem j) = 0 := by
+    dsimp [x]
+    simp [hxrevj_policy]
+  have hxj_ne_policy : ρ 0 j ≠ 0 := by
+    rcases theorem4Problem11_item_coverage_of_equalized_policyOptimal h j with
+      hxj_ne | hxrevj_ne | hzj_ne
+    · exact hxj_ne
+    · exact False.elim (hxrevj_ne hxrevj_policy)
+    · exact False.elim (hzj_ne hzj_zero)
+  have hxj_pos : 0 < x j := by
+    dsimp [x]
+    have htoReal_ne : (ρ 0 j).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 0 j)).mp hzero with hzero_enn | htop
+      · exact hxj_ne_policy hzero_enn
+      · exact (ρ 0).apply_ne_top j htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  obtain ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+      hz'_mirror, hstrict⟩ :=
+    theorem4Problem11_coldStartGap_pairTransfer_exists_strictlyImproves
+      hn hbeta_pos hbeta_half hpos hdec hij hj_left hx_nonneg hz_nonneg
+      hsumx hsumz hzmirror hzi_pos hzj hxj_pos hxrevi hxrevj
+  let y' : Item n → ℝ := fun l => x' (reverseItem l)
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact hx'_nonneg (reverseItem l)
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [sum_reverseItem x', hx'_sum]
+  let ρ' : TypePolicy 3 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else if k = 1 then
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+    else
+      pmfOfRealVector z' hz'_nonneg hz'_sum
+  have hsym' : Theorem4MirrorSymmetricPolicy ρ' := by
+    constructor
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 1).apply_ne_top (reverseItem l))
+        ((ρ' 0).apply_ne_top l)).mp
+      simp [ρ', y', reverseItem_reverseItem]
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 2).apply_ne_top (reverseItem l))
+        ((ρ' 2).apply_ne_top l)).mp
+      simp [ρ', hz'_mirror l]
+  refine ⟨ρ', hsym', ?_⟩
+  intro l
+  unfold theorem4Problem11PolicyItemValue
+  simpa [ρ', x, z] using hstrict l
+
+set_option maxHeartbeats 800000 in
+-- The center cold-start certificate combines a center-specific z-transfer with a full item split.
+theorem theorem4Problem11_coldStartGap_centerTransfer_exists_strictlyImproves
+    {n : ℕ} {beta : ℝ} {v x z : Item n → ℝ} {i c : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hic : i.val < c.val)
+    (hc_center : reverseItem c = c)
+    (hx_nonneg : ∀ l : Item n, 0 ≤ x l)
+    (hz_nonneg : ∀ l : Item n, 0 ≤ z l)
+    (hsumx : (∑ l : Item n, x l) = 1)
+    (hsumz : (∑ l : Item n, z l) = 1)
+    (hzmirror : ∀ l : Item n, z (reverseItem l) = z l)
+    (hzi_pos : 0 < z i)
+    (hzc : z c = 0)
+    (hxc_pos : 0 < x c)
+    (hxrevi : x (reverseItem i) = 0) :
+    ∃ x' z' : Item n → ℝ,
+      (∀ l : Item n, 0 ≤ x' l) ∧
+      (∀ l : Item n, 0 ≤ z' l) ∧
+      (∑ l : Item n, x' l) = 1 ∧
+      (∑ l : Item n, z' l) = 1 ∧
+      (∀ l : Item n, z' (reverseItem l) = z' l) ∧
+      ∀ l : Item n,
+        theorem4Problem11ItemValue beta v x z l <
+          theorem4Problem11ItemValue beta v x' z' l := by
+  classical
+  let cold : ℝ := 1 - 2 * beta
+  have hcold_pos : 0 < cold := by
+    dsimp [cold]
+    nlinarith
+  have hci_ne : c ≠ i := by
+    intro h
+    subst c
+    omega
+  have hic_ne : i ≠ c := hci_ne.symm
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : c.val < (reverseItem i).val := by
+      simpa [hc_center] using reverseItem_val_lt_of_val_lt hic
+    exact lt_trans hic hrev_lt
+  have hi_revi : i ≠ reverseItem i := by
+    intro h
+    have hval := congrArg Fin.val h
+    omega
+  have hrevi_c : reverseItem i ≠ c := by
+    intro h
+    have hrev_lt : c.val < (reverseItem i).val := by
+      simpa [hc_center] using reverseItem_val_lt_of_val_lt hic
+    have hval := congrArg Fin.val h
+    omega
+  let qi : ℝ := pairShare (1 / 2) v i
+  have hqi_half : (1 / 2 : ℝ) < qi := by
+    dsimp [qi]
+    exact half_lt_pairShare_half_of_val_lt_reverse i hpos hdec hi_left
+  have hqi_pos : 0 < qi := lt_trans (by norm_num) hqi_half
+  let deltaBound : ℝ := cold * z i / (4 * beta * qi)
+  have hdeltaDen_pos : 0 < 4 * beta * qi := by
+    nlinarith
+  have hdeltaBound_pos : 0 < deltaBound := by
+    dsimp [deltaBound]
+    exact div_pos (mul_pos hcold_pos hzi_pos) hdeltaDen_pos
+  let delta : ℝ := min (x c) deltaBound / 2
+  have hmin_delta_pos : 0 < min (x c) deltaBound :=
+    lt_min hxc_pos hdeltaBound_pos
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    nlinarith
+  have hdelta_lt_min : delta < min (x c) deltaBound := by
+    dsimp [delta]
+    nlinarith
+  have hdelta_lt_xc : delta < x c :=
+    lt_of_lt_of_le hdelta_lt_min (min_le_left _ _)
+  have hdelta_lt_bound : delta < deltaBound :=
+    lt_of_lt_of_le hdelta_lt_min (min_le_right _ _)
+  have hupper_lt_zi :
+      2 * beta * qi * delta / cold < z i := by
+    have hmul : 2 * beta * qi * delta < cold * z i := by
+      have := hdelta_lt_bound
+      dsimp [deltaBound] at this
+      rw [lt_div_iff₀ hdeltaDen_pos] at this
+      nlinarith
+    rw [div_lt_iff₀ hcold_pos]
+    simpa [mul_comm, mul_left_comm, mul_assoc] using hmul
+  let lower : ℝ := beta * delta / cold
+  let upper : ℝ := 2 * beta * qi * delta / cold
+  have hlower_lt_upper : lower < upper := by
+    have hfactor_pos : 0 < beta * delta / cold :=
+      div_pos (mul_pos hbeta_pos hdelta_pos) hcold_pos
+    have htwo_qi : (1 : ℝ) < 2 * qi := by nlinarith
+    calc
+      lower = 1 * (beta * delta / cold) := by
+        dsimp [lower]
+        ring
+      _ < (2 * qi) * (beta * delta / cold) :=
+        mul_lt_mul_of_pos_right htwo_qi hfactor_pos
+      _ = upper := by
+        dsimp [upper]
+        ring
+  obtain ⟨d, hd_lower, hd_upper⟩ := exists_between hlower_lt_upper
+  have hlower_pos : 0 < lower := by
+    dsimp [lower]
+    exact div_pos (mul_pos hbeta_pos hdelta_pos) hcold_pos
+  have hd_pos : 0 < d := lt_trans hlower_pos hd_lower
+  have hd_nonneg : 0 ≤ d := hd_pos.le
+  have hd_lt_zi : d < z i := lt_trans hd_upper hupper_lt_zi
+  let slack : ℝ := d - lower
+  have hslack_pos : 0 < slack := by
+    dsimp [slack]
+    linarith
+  let eps : ℝ := min d slack / 2
+  have hmin_eps_pos : 0 < min d slack := lt_min hd_pos hslack_pos
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_min : eps < min d slack := by
+    dsimp [eps]
+    nlinarith
+  have heps_lt_d : eps < d :=
+    lt_of_lt_of_le heps_lt_min (min_le_left _ _)
+  have heps_lt_slack : eps < slack :=
+    lt_of_lt_of_le heps_lt_min (min_le_right _ _)
+  obtain ⟨r, hr_nonneg, hr_pos, hrc, hri, hrsum⟩ :=
+    lemma4_redistribution_exists_of_two_lt hn hci_ne
+  let x' : Item n → ℝ := theorem4Problem11TwoPointXTransfer x i c delta
+  let z' : Item n → ℝ :=
+    theorem4Problem11ColdStartCenterZTransfer z r i c d eps
+  have hx'_nonneg : ∀ l : Item n, 0 ≤ x' l := by
+    intro l
+    exact theorem4Problem11TwoPointXTransfer_nonneg
+      hx_nonneg hic_ne hdelta_pos.le hdelta_lt_xc.le l
+  have hz'_nonneg : ∀ l : Item n, 0 ≤ z' l := by
+    intro l
+    dsimp [z']
+    exact theorem4Problem11ColdStartCenterZTransfer_nonneg
+      hz_nonneg hzmirror hc_center hi_revi hic_ne hrevi_c hr_nonneg hrc
+      hd_nonneg heps_pos.le heps_lt_d.le hd_lt_zi.le l
+  have hx'_sum : (∑ l : Item n, x' l) = 1 := by
+    dsimp [x']
+    rw [theorem4Problem11TwoPointXTransfer_sum_eq x i c delta, hsumx]
+  have hz'_sum : (∑ l : Item n, z' l) = 1 := by
+    dsimp [z']
+    rw [theorem4Problem11ColdStartCenterZTransfer_sum_eq z r i c d eps hrsum,
+      hsumz]
+  have hz'_mirror : ∀ l : Item n, z' (reverseItem l) = z' l := by
+    dsimp [z']
+    exact theorem4Problem11ColdStartCenterZTransfer_mirror
+      hzmirror hc_center hi_revi hic_ne hrevi_c
+  have hx'i : x' i = x i + delta := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hic_ne]
+  have hx'c : x' c = x c - delta := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hic_ne.symm]
+    ring
+  have hx'revi : x' (reverseItem i) = 0 := by
+    dsimp [x']
+    unfold theorem4Problem11TwoPointXTransfer
+    simp [hxrevi, hi_revi.symm, hrevi_c]
+  have hz'i :
+      z' i = z i - d + eps * r i + eps * r (reverseItem i) := by
+    dsimp [z']
+    unfold theorem4Problem11ColdStartCenterZTransfer
+    simp [hi_revi, hic_ne]
+    ring
+  have hz'c : z' c = z c + (2 * d - 2 * eps) := by
+    dsimp [z']
+    exact theorem4Problem11ColdStartCenterZTransfer_apply_center
+      hc_center hic_ne hrevi_c hrc
+  have hstrict_i :
+      theorem4Problem11ItemValue beta v x z i <
+        theorem4Problem11ItemValue beta v x' z' i := by
+    unfold theorem4Problem11ItemValue
+    change
+      2 * beta * (qi * x i + (1 - qi) * x (reverseItem i)) +
+          cold * z i <
+        2 * beta * (qi * x' i + (1 - qi) * x' (reverseItem i)) +
+          cold * z' i
+    rw [hxrevi, hx'i, hx'revi, hz'i]
+    have hmain_gain : 0 < 2 * beta * qi * delta - cold * d := by
+      have hlt := hd_upper
+      dsimp [upper] at hlt
+      rw [lt_div_iff₀ hcold_pos] at hlt
+      have hlt' : cold * d < 2 * beta * qi * delta := by
+        nlinarith [hlt]
+      exact sub_pos.mpr hlt'
+    have hredistrib_nonneg :
+        0 ≤ cold * (eps * r i + eps * r (reverseItem i)) := by
+      exact mul_nonneg hcold_pos.le
+        (add_nonneg
+          (mul_nonneg heps_pos.le (hr_nonneg i))
+          (mul_nonneg heps_pos.le (hr_nonneg (reverseItem i))))
+    nlinarith only [hmain_gain, hredistrib_nonneg]
+  have hstrict_c :
+      theorem4Problem11ItemValue beta v x z c <
+        theorem4Problem11ItemValue beta v x' z' c := by
+    unfold theorem4Problem11ItemValue
+    rw [hc_center, hx'c, hz'c, hzc]
+    have hcenter_gain : 0 < cold * (2 * d - 2 * eps) - 2 * beta * delta := by
+      have heps_small := heps_lt_slack
+      dsimp [slack, lower] at heps_small
+      have hlt :
+          cold * eps < cold * (d - beta * delta / cold) :=
+        mul_lt_mul_of_pos_left heps_small hcold_pos
+      rw [mul_sub, mul_div_cancel₀ _ (ne_of_gt hcold_pos)] at hlt
+      nlinarith only [hlt]
+    ring_nf at hcenter_gain ⊢
+    linarith
+  refine ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+    hz'_mirror, ?_⟩
+  intro l
+  by_cases hli : l = i
+  · subst l
+    exact hstrict_i
+  · by_cases hlrevi : l = reverseItem i
+    · subst l
+      have horig :=
+        theorem4Problem11ItemValue_reverse_eq
+          (beta := beta) (v := v) (x := x) (z := z) hpos hzmirror i
+      have hnew :=
+        theorem4Problem11ItemValue_reverse_eq
+          (beta := beta) (v := v) (x := x') (z := z') hpos hz'_mirror i
+      rw [horig, hnew]
+      exact hstrict_i
+    · by_cases hlc : l = c
+      · subst l
+        exact hstrict_c
+      · have hrev_li : reverseItem l ≠ i :=
+          reverseItem_ne_of_ne_reverse hlrevi
+        have hrev_lc : reverseItem l ≠ c := by
+          have hl_rev_c : l ≠ reverseItem c := by
+            simpa [hc_center] using hlc
+          exact reverseItem_ne_of_ne_reverse hl_rev_c
+        have hxl' : x' l = x l := by
+          dsimp [x']
+          exact theorem4Problem11TwoPointXTransfer_apply_of_ne hli hlc
+        have hxrev' : x' (reverseItem l) = x (reverseItem l) := by
+          dsimp [x']
+          exact theorem4Problem11TwoPointXTransfer_apply_of_ne hrev_li hrev_lc
+        have hzl' :
+            z' l = z l + eps * r l + eps * r (reverseItem l) := by
+          dsimp [z']
+          exact theorem4Problem11ColdStartCenterZTransfer_apply_of_ne
+            hli hlrevi hlc
+        have hrl_pos : 0 < r l := hr_pos hlc hli
+        have hredistrib_pos :
+            0 < eps * r l + eps * r (reverseItem l) := by
+          exact theorem4Problem11_symmetricRedistribution_pos
+            (n := n) (r := r) (eps := eps) (l := l)
+            heps_pos hrl_pos (hr_nonneg (reverseItem l))
+        have hzlt : z l < z' l := by
+          rw [hzl']
+          calc
+            z l < z l + (eps * r l + eps * r (reverseItem l)) :=
+              lt_add_of_pos_right (z l) hredistrib_pos
+            _ = z l + eps * r l + eps * r (reverseItem l) := by ring
+        exact theorem4Problem11ItemValue_lt_of_same_x_strict_z
+          (n := n) (beta := beta) (v := v) (x := x) (x' := x')
+          (z := z) (z' := z') (j := l) hcold_pos hxl' hxrev' hzlt
+
+theorem theorem4Problem11_coldStartGapStrictImprovement_center_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0)
+    {i j : Item n}
+    (hij : i.val < j.val)
+    (hzi_ne : ρ 2 i ≠ 0)
+    (hzj_zero : ρ 2 j = 0)
+    (hj_center : reverseItem j = j) :
+    ∃ ρ' : TypePolicy 3 n,
+      Theorem4MirrorSymmetricPolicy ρ' ∧
+        ∀ l : Item n,
+          theorem4Problem11PolicyItemValue beta v ρ l <
+            theorem4Problem11PolicyItemValue beta v ρ' l := by
+  classical
+  let x : Item n → ℝ := fun l => (ρ 0 l).toReal
+  let z : Item n → ℝ := fun l => (ρ 2 l).toReal
+  have hi_left : i.val < (reverseItem i).val := by
+    have hrev_lt : j.val < (reverseItem i).val := by
+      simpa [hj_center] using reverseItem_val_lt_of_val_lt hij
+    exact lt_trans hij hrev_lt
+  have hx_nonneg : ∀ l : Item n, 0 ≤ x l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hz_nonneg : ∀ l : Item n, 0 ≤ z l := by
+    intro l
+    exact ENNReal.toReal_nonneg
+  have hsumx : (∑ l : Item n, x l) = 1 := by
+    dsimp [x]
+    exact EconCSLib.pmfToRealSum (ρ 0)
+  have hsumz : (∑ l : Item n, z l) = 1 := by
+    dsimp [z]
+    exact EconCSLib.pmfToRealSum (ρ 2)
+  have hzmirror : ∀ l : Item n, z (reverseItem l) = z l := by
+    intro l
+    dsimp [z]
+    exact congrArg ENNReal.toReal (h.mirror.2 l)
+  have hzi_pos : 0 < z i := by
+    dsimp [z]
+    have htoReal_ne : (ρ 2 i).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 2 i)).mp hzero with hzero_enn | htop
+      · exact hzi_ne hzero_enn
+      · exact (ρ 2).apply_ne_top i htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  have hzj : z j = 0 := by
+    dsimp [z]
+    simp [hzj_zero]
+  have hxrevi_policy : ρ 0 (reverseItem i) = 0 := by
+    apply hright_zero
+    simpa [reverseItem_reverseItem] using hi_left
+  have hxrevi : x (reverseItem i) = 0 := by
+    dsimp [x]
+    simp [hxrevi_policy]
+  have hxj_ne_policy : ρ 0 j ≠ 0 := by
+    rcases theorem4Problem11_item_coverage_of_equalized_policyOptimal h j with
+      hxj_ne | hxrevj_ne | hzj_ne
+    · exact hxj_ne
+    · rw [hj_center] at hxrevj_ne
+      exact hxrevj_ne
+    · exact False.elim (hzj_ne hzj_zero)
+  have hxj_pos : 0 < x j := by
+    dsimp [x]
+    have htoReal_ne : (ρ 0 j).toReal ≠ 0 := by
+      intro hzero
+      rcases (ENNReal.toReal_eq_zero_iff (ρ 0 j)).mp hzero with hzero_enn | htop
+      · exact hxj_ne_policy hzero_enn
+      · exact (ρ 0).apply_ne_top j htop
+    exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+  obtain ⟨x', z', hx'_nonneg, hz'_nonneg, hx'_sum, hz'_sum,
+      hz'_mirror, hstrict⟩ :=
+    theorem4Problem11_coldStartGap_centerTransfer_exists_strictlyImproves
+      hn hbeta_pos hbeta_half hpos hdec hij hj_center hx_nonneg hz_nonneg
+      hsumx hsumz hzmirror hzi_pos hzj hxj_pos hxrevi
+  let y' : Item n → ℝ := fun l => x' (reverseItem l)
+  have hy'_nonneg : ∀ l : Item n, 0 ≤ y' l := by
+    intro l
+    exact hx'_nonneg (reverseItem l)
+  have hy'_sum : (∑ l : Item n, y' l) = 1 := by
+    dsimp [y']
+    rw [sum_reverseItem x', hx'_sum]
+  let ρ' : TypePolicy 3 n := fun k =>
+    if k = 0 then
+      pmfOfRealVector x' hx'_nonneg hx'_sum
+    else if k = 1 then
+      pmfOfRealVector y' hy'_nonneg hy'_sum
+    else
+      pmfOfRealVector z' hz'_nonneg hz'_sum
+  have hsym' : Theorem4MirrorSymmetricPolicy ρ' := by
+    constructor
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 1).apply_ne_top (reverseItem l))
+        ((ρ' 0).apply_ne_top l)).mp
+      simp [ρ', y', reverseItem_reverseItem]
+    · intro l
+      apply (ENNReal.toReal_eq_toReal_iff'
+        ((ρ' 2).apply_ne_top (reverseItem l))
+        ((ρ' 2).apply_ne_top l)).mp
+      simp [ρ', hz'_mirror l]
+  refine ⟨ρ', hsym', ?_⟩
+  intro l
+  unfold theorem4Problem11PolicyItemValue
+  simpa [ρ', x, z] using hstrict l
+
+theorem theorem4Problem11_coldStartGapStrictImprovement_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta ell : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    Theorem4Problem11ColdStartGapStrictImprovement beta v ρ := by
+  have hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ :=
+    theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
+  have hright_zero :
+      ∀ u : Item n, (reverseItem u).val < u.val → ρ 0 u = 0 :=
+    theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+      hn hbeta_pos hpos hdec h.mirror hno
+  intro i j hij hj_half hzi_ne hzj_zero
+  by_cases hj_center : j = reverseItem j
+  · exact theorem4Problem11_coldStartGapStrictImprovement_center_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h hright_zero hij hzi_ne hzj_zero
+      hj_center.symm
+  · exact theorem4Problem11_coldStartGapStrictImprovement_noncenter_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h hright_zero hij hj_half hzi_ne
+      hzj_zero hj_center
 
 theorem theorem4Problem11_typeZeroZeroClosed_of_gapStrictImprovement
     {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n}
@@ -1704,8 +4020,8 @@ theorem theorem4Problem11_coldStartPositiveClosed_of_gapStrictImprovement
     (hgap : Theorem4Problem11ColdStartGapStrictImprovement beta v ρ)
     (hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ) :
     Theorem4Problem11ColdStartPositiveClosed ρ := by
-  intro i j hij hi_pos hj_zero
-  exact hno (hgap hij hi_pos hj_zero)
+  intro i j hij hj_half hi_pos hj_zero
+  exact hno (hgap hij hj_half hi_pos hj_zero)
 
 /-- Items used with positive probability by Problem 11's known-type row. -/
 noncomputable def theorem4Problem11TypeZeroActiveItems {n : ℕ}
@@ -1940,7 +4256,7 @@ theorem theorem4Problem11PivotSupport_of_lastActive_noGap_of_sharedBound
       have hval := congrArg Fin.val h
       omega
     have hcontradict_shared (hzj_ne : ρ 2 j ≠ 0) : False := by
-      have hzt : ρ 2 t ≠ 0 := hz hjt hzj_ne
+      have hzt : ρ 2 t ≠ 0 := hz hjt (by simpa [t] using hleft) hzj_ne
       have hzrevj : ρ 2 (reverseItem j) ≠ 0 := by
         rw [hmirror.2 j]
         exact hzj_ne
@@ -2039,6 +4355,24 @@ theorem theorem4Problem11PivotSupport_of_equalizedBasicOptimal_gapStrictImprovem
     theorem4Problem11_coldStartPositiveClosed_of_gapStrictImprovement hzgap hno
   exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
     hn hbeta_pos hpos hdec h hx hz
+
+theorem theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    Theorem4Problem11PivotSupport ρ
+      (theorem4Problem11LastActiveTypeZero ρ) := by
+  exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal_gapStrictImprovements
+    hn hbeta_pos hpos hdec h
+    (theorem4Problem11_typeZeroGapStrictImprovement_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h)
+    (theorem4Problem11_coldStartGapStrictImprovement_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h)
 
 theorem theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
     {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t j : Item n}
@@ -2385,6 +4719,27 @@ theorem theorem4Problem11_no_extremes_of_equalized_noGap
         (theorem4Problem11LastActiveTypeZero ρ) :=
     theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
       hn hbeta_pos hpos hdec h hx hz
+  exact theorem4Problem11_no_extremes_of_equalized_pivotSupport
+    hn hbeta hbeta_half hpos hdec h hpivot
+
+theorem theorem4Problem11_no_extremes_of_equalized
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
+  have hnpos_nat : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnpos_nat
+  have hbeta_pos : 0 < beta := lt_trans (inv_pos.mpr hnpos) hbeta
+  have hpivot :
+      Theorem4Problem11PivotSupport ρ
+        (theorem4Problem11LastActiveTypeZero ρ) :=
+    theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h
   exact theorem4Problem11_no_extremes_of_equalized_pivotSupport
     hn hbeta hbeta_half hpos hdec h hpivot
 
@@ -2988,6 +5343,78 @@ theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalized_proble
   have hno :=
     OpposingTypes.theorem4Problem11_no_extremes_of_equalized_pivotSupport
       hn hbeta hbeta_half hpos hdec heq hpivot
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, first true cold-start
+type, from an equality-form Problem 11 optimum.  Lemma 13 pivot support and the
+Lemma 15 pivot-one coordinate contradiction are discharged internally.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_auto
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_equalized
+      hn hbeta hbeta_half hpos hdec heq
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_reduction
+    R reps (by omega : 1 < n) htrue hred heps hbase hdec
+    (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.1
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, second true cold-start
+type, from an equality-form Problem 11 optimum.  Lemma 13 pivot support and the
+Lemma 15 pivot-one coordinate contradiction are discharged internally.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_auto
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  have hno :=
+    OpposingTypes.theorem4Problem11_no_extremes_of_equalized
+      hn hbeta hbeta_half hpos hdec heq
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
     R reps (by omega : 1 < n) htrue hred heps hbase hdec
     (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2

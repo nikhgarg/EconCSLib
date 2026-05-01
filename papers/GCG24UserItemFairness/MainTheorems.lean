@@ -8165,6 +8165,74 @@ theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalized_
 /--
 Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
 cold-start user whose true preferences are the first opposing row, stated with
+an equality-form Problem 11 optimum.  The Lemma 13 pivot-support certificate is
+derived internally.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_auto
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_auto
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall
+    ρ ell heq
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the second opposing row, stated with
+an equality-form Problem 11 optimum.  The Lemma 13 pivot-support certificate is
+derived internally.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_auto
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (ρ : TypePolicy 3 n) (ell : ℝ)
+    (heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_auto
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall
+    ρ ell heq
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the first opposing row, stated with
 an equality-form Problem 11 optimum and the two no-gap conclusions completing
 Lemma 13.
 -/
