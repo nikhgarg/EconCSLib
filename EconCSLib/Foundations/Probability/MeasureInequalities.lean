@@ -108,7 +108,7 @@ theorem measure_sum_centered_bounded_ge_le_exp_of_iIndepFun
           ∑ i ∈ s, (X i ω - ∫ x, X i x ∂μ)} ≤
       Real.exp
         (-ε ^ 2 /
-          (2 * ((∑ i ∈ s, ((‖b - a‖₊ / 2) ^ 2 : NNReal)) : ℝ))) := by
+          (2 * ((∑ _ ∈ s, ((‖b - a‖₊ / 2) ^ 2 : NNReal)) : ℝ))) := by
   classical
   let centered : ι → α → ℝ :=
     fun i ω => X i ω - ∫ x, X i x ∂μ
@@ -147,7 +147,7 @@ theorem measure_sum_half_mean_indicator_le_third_le_exp
         {ω | (∑ i ∈ s, X i ω) ≤ (s.card : ℝ) / 3} ≤
       Real.exp
         (-((s.card : ℝ) / 6) ^ 2 /
-          (2 * ((∑ i ∈ s, ((‖(0 : ℝ) - (-1)‖₊ / 2) ^ 2 : NNReal)) : ℝ))) := by
+          (2 * ((∑ _ ∈ s, ((‖(0 : ℝ) - (-1)‖₊ / 2) ^ 2 : NNReal)) : ℝ))) := by
   classical
   let Y : ι → α → ℝ := fun i ω => -X i ω
   have hY_indep : iIndepFun Y μ := by
@@ -253,7 +253,7 @@ theorem fairBoolProduct_indicator_integral
           (f := f) (measurable_pi_apply i).aemeasurable hf).symm
     _ = ∫ b : Bool, f b ∂Measure.map
           (fun side : ι → Bool => side i) (Measure.infinitePi P) := by
-        simpa [fairBoolProductMeasure, P]
+      simp [fairBoolProductMeasure, P]
     _ = ∫ b : Bool, f b ∂fairBoolMeasure := by
         rw [show
             (Measure.map (fun side : ι → Bool => side i) (Measure.infinitePi P))
@@ -273,7 +273,7 @@ theorem fairBoolProduct_indicator_lower_tail_le_exp
           (s.card : ℝ) / 3} ≤
     Real.exp
         (-((s.card : ℝ) / 6) ^ 2 /
-          (2 * ((∑ i ∈ s, ((‖(0 : ℝ) - (-1)‖₊ / 2) ^ 2 : NNReal)) : ℝ))) := by
+          (2 * ((∑ _ ∈ s, ((‖(0 : ℝ) - (-1)‖₊ / 2) ^ 2 : NNReal)) : ℝ))) := by
   let P : ι → Measure Bool := fun _ => fairBoolMeasure
   letI hμ : ∀ i : ι, IsProbabilityMeasure (P i) := by
     intro i
