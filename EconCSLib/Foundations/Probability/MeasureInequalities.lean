@@ -635,4 +635,638 @@ theorem withDensity_measure_lt_of_measurableEquiv_image_subset_density_lt_on
     _ ≤ ∫⁻ b in t, D b ∂μ := by
       exact lintegral_mono_set (Set.image_subset_iff.mpr hmap)
 
+
+--  Bonferroni inequalities
+
+/-- First-order union bound for finite families. -/
+theorem measureProb_biUnion_finset_le
+    {α ι : Type*} [MeasurableSpace α]
+    (μ : Measure α) (s : Finset ι) (p : ι → α → Prop) :
+    measureProb μ (fun a => ∃ i ∈ s, p i a) ≤
+      ∑ i ∈ s, measureProb μ (fun a => p i a) := by
+  let U : Set α := {a : α | ∃ i ∈ s, p i a}
+  have hset : U = ⋃ i ∈ s, {a : α | p i a} := by
+    ext a
+    simp [U]
+  change (μ U).toReal ≤ ∑ i ∈ s, measureProb μ (fun a => p i a)
+  rw [hset]
+  simpa [measureProb] using
+    (measureReal_biUnion_finset_le (μ := μ) (s := s) (f := fun i => {a : α | p i a}))
+
+/-- First-order complement lower bound for finite intersections. -/
+theorem measureProb_inter_ge_one_sub_sum_compl
+    {α ι : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ] (s : Finset ι) (p : ι → α → Prop)
+    (hm : ∀ i ∈ s, MeasurableSet {a : α | p i a}) :
+    1 - ∑ i ∈ s, measureProb μ (fun a => ¬ p i a) ≤
+      measureProb μ (fun a => ∀ i ∈ s, p i a) := by
+  classical
+  let U : Set α := {a : α | ∀ i ∈ s, p i a}
+  let C : Set α := ⋃ i ∈ s, {a : α | ¬ p i a}
+  have hU : MeasurableSet U := by
+    have hU' : U = ⋂ i ∈ s, {a : α | p i a} := by
+      ext a
+      simp [U]
+    rw [hU']
+    exact Finset.measurableSet_biInter (s := s)
+      (f := fun i : ι => {a : α | p i a}) hm
+  have hC : MeasurableSet C := by
+    simpa [C] using Finset.measurableSet_biUnion (s := s)
+      (f := fun i : ι => {a : α | ¬ p i a})
+      (fun i hi => (hm i hi).compl)
+  have hdeMorgan : Uᶜ = C := by
+    ext a
+    constructor
+    · intro ha
+      by_cases hC : a ∈ C
+      · exact hC
+      · exfalso
+        apply ha
+        simp [U]
+        intro i hi
+        by_contra hpi
+        apply hC
+        change a ∈ ⋃ i ∈ s, {a : α | ¬ p i a}
+        exact Set.mem_iUnion.mpr
+          ⟨i, Set.mem_iUnion.mpr ⟨hi, by simpa using hpi⟩⟩
+    · intro hC
+      change a ∈ ⋃ i ∈ s, {a : α | ¬ p i a} at hC
+      rcases Set.mem_iUnion.mp hC with ⟨i, hCi⟩
+      rcases Set.mem_iUnion.mp hCi with ⟨hi, hpi⟩
+      intro hUA
+      exact hpi (hUA i hi)
+  have hcomp : μ.real C ≤ ∑ i ∈ s, measureProb μ (fun a => ¬ p i a) := by
+    have hCset : C = ⋃ i ∈ s, {a : α | ¬ p i a} := by
+      ext a
+      simp [C]
+    rw [hCset]
+    simpa [measureProb, Measure.real] using
+      (measureReal_biUnion_finset_le (μ := μ) (s := s)
+        (f := fun i => {a : α | ¬ p i a}))
+  have hprob : 1 - ∑ i ∈ s, measureProb μ (fun a => ¬ p i a) ≤ μ.real U := by
+    have hCeq : μ.real C = 1 - μ.real U := by
+      have hcompl := probReal_compl_eq_one_sub (μ := μ) hU
+      simpa [hdeMorgan] using hcompl
+    calc
+      1 - ∑ i ∈ s, measureProb μ (fun a => ¬ p i a) ≤ 1 - μ.real C := by
+        nlinarith [hcomp]
+      _ = μ.real U := by linarith [hCeq]
+  simpa [measureProb, U] using hprob
+
+private theorem sum_filter_choose_eq
+    {ι α : Type*} (s : Finset ι) (p : ι → α → Prop) (ω : α) (k : ℕ)
+    [DecidablePred (fun i => p i ω)] :
+    (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) =
+      ((s.filter (fun i => p i ω)).card.choose k : ℝ) := by
+  have hfilter :
+      (s.powersetCard k).filter (fun t => ∀ i ∈ t, p i ω) =
+        (s.filter (fun i => p i ω)).powersetCard k := by
+    ext t
+    constructor
+    · intro ht
+      rcases Finset.mem_filter.mp ht with ⟨ht, hpt⟩
+      rcases Finset.mem_powersetCard.mp ht with ⟨hts, htk⟩
+      exact Finset.mem_powersetCard.mpr
+        ⟨fun i hi => Finset.mem_filter.mpr ⟨hts hi, hpt i hi⟩, htk⟩
+    · intro ht
+      rcases Finset.mem_powersetCard.mp ht with ⟨hts, htk⟩
+      refine Finset.mem_filter.mpr ?_
+      refine ⟨Finset.mem_powersetCard.mpr
+        ⟨fun i hi => (Finset.mem_filter.mp (hts hi)).1, htk⟩, ?_⟩
+      intro i hi
+      exact (Finset.mem_filter.mp (hts hi)).2
+  calc
+    (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+        = ∑ t ∈ (s.powersetCard k).filter (fun t => ∀ i ∈ t, p i ω), (1 : ℝ) := by
+          simpa [Finset.sum_filter]
+    _ = (((s.powersetCard k).filter (fun t => ∀ i ∈ t, p i ω)).card : ℝ) := by simp
+    _ = (((s.filter (fun i => p i ω)).powersetCard k).card : ℝ) := by rw [hfilter]
+    _ = ((s.filter (fun i => p i ω)).card.choose k : ℝ) := by
+      simp [Finset.card_powersetCard]
+
+private theorem sum_choose_zero_eq_one (m : ℕ) :
+    (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * ((0 : ℕ).choose k : ℝ)) = 1 := by
+  induction m with
+  | zero => simp
+  | succ m ih =>
+      simp [Finset.sum_range_succ, ih, Nat.choose_eq_zero_of_lt (Nat.succ_pos m)]
+
+private theorem alternating_sum_choose_real_eq_odd
+    {n m : ℕ} (hn : 0 < n) (hm : Odd m) :
+    (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * (n.choose k : ℝ))
+      = -((n - 1).choose m : ℝ) := by
+  have hcast :
+      (∑ k ∈ Finset.range (m + 1), ((-1 : ℤ)^k * (n.choose k : ℤ) : ℤ))
+          = (-1 : ℤ)^m * (n - 1).choose m := by
+    simpa [Nat.sub_add_cancel hn] using
+      (Int.alternating_sum_range_choose_eq_choose (n := n - 1) (m := m))
+  have hcast' :
+      (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * (n.choose k : ℝ))
+      = (∑ k ∈ Finset.range (m + 1), (((-1 : ℤ)^k * (n.choose k : ℤ) : ℤ) : ℝ)) := by
+    refine Finset.sum_congr rfl ?_
+    intro k hk
+    norm_num [Int.cast_mul, Int.cast_pow]
+  calc
+    (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * (n.choose k : ℝ))
+        = (∑ k ∈ Finset.range (m + 1),
+            (((-1 : ℤ)^k * (n.choose k : ℤ) : ℤ) : ℝ)) := hcast'
+    _ = ((-1 : ℝ)^m) * (n - 1).choose m := by
+      exact_mod_cast hcast
+    _ = -((n - 1).choose m : ℝ) := by simpa [hm.neg_one_pow]
+
+private theorem alternating_sum_choose_real_eq_even
+    {n m : ℕ} (hn : 0 < n) (hm : Even m) :
+    (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * (n.choose k : ℝ))
+      = ((n - 1).choose m : ℝ) := by
+  have hcast :
+      (∑ k ∈ Finset.range (m + 1), ((-1 : ℤ)^k * (n.choose k : ℤ) : ℤ))
+          = (-1 : ℤ)^m * (n - 1).choose m := by
+    simpa [Nat.sub_add_cancel hn] using
+      (Int.alternating_sum_range_choose_eq_choose (n := n - 1) (m := m))
+  have hcast' :
+      (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * (n.choose k : ℝ))
+      = (∑ k ∈ Finset.range (m + 1), (((-1 : ℤ)^k * (n.choose k : ℤ) : ℤ) : ℝ)) := by
+    refine Finset.sum_congr rfl ?_
+    intro k hk
+    norm_num [Int.cast_mul, Int.cast_pow]
+  calc
+    (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) * (n.choose k : ℝ))
+        = (∑ k ∈ Finset.range (m + 1),
+            (((-1 : ℤ)^k * (n.choose k : ℤ) : ℤ) : ℝ)) := hcast'
+    _ = ((-1 : ℝ)^m) * (n - 1).choose m := by
+      exact_mod_cast hcast
+    _ = ((n - 1).choose m : ℝ) := by simpa [hm.neg_one_pow]
+
+--  Bonferroni (finite odd-order truncation upper bound)
+theorem measureProb_biUnion_finset_bonferroni_odd
+    {α ι : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ] (s : Finset ι) (p : ι → α → Prop)
+    (m : ℕ) (hm : ∀ i ∈ s, MeasurableSet {a : α | p i a}) (hodd : Odd m) :
+    measureProb μ (fun a => ∃ i ∈ s, p i a) ≤
+      1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+      ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+  classical
+  let U : Set α := {a : α | ∃ i ∈ s, p i a}
+  have hU : MeasurableSet U := by
+    have hU' : U = ⋃ i ∈ s, {a : α | p i a} := by
+      ext a
+      simp [U]
+    rw [hU']
+    exact Finset.measurableSet_biUnion (s := s)
+      (f := fun i : ι => {a : α | p i a}) hm
+  let LHS : α → ℝ := U.indicator (fun _ : α => (1 : ℝ))
+  let RHS : α → ℝ :=
+    fun ω =>
+      1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+        ∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+  have hpoint :
+      ∀ ω, LHS ω ≤ RHS ω := by
+    intro ω
+    by_cases hUω : ω ∈ U
+    · have hnzero : 0 < (s.filter (fun i => p i ω)).card := by
+        rcases hUω with ⟨i, his, hp⟩
+        exact Finset.card_pos.mpr ⟨i, by simp [his, hp]⟩
+      have hsum :
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+            ) ) = -((s.filter (fun i => p i ω)).card - 1).choose m := by
+        calc
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+              )
+              = (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+                  ((s.filter (fun i => p i ω)).card.choose k : ℝ)) := by
+                  refine Finset.sum_congr rfl ?_
+                  intro k hk
+                  rw [sum_filter_choose_eq (s := s) (p := p) (ω := ω) (k := k)]
+          _ = -((s.filter (fun i => p i ω)).card - 1).choose m := by
+                exact alternating_sum_choose_real_eq_odd
+                  (hm := hodd) (n := (s.filter (fun i => p i ω)).card) hnzero
+      have hchoose_nonneg : 0 ≤ (((s.filter (fun i => p i ω)).card - 1).choose m : ℝ) := by
+        exact_mod_cast (Nat.zero_le (((s.filter (fun i => p i ω)).card - 1).choose m))
+      have hrhs :
+          RHS ω = 1 + (((s.filter (fun i => p i ω)).card - 1).choose m : ℝ) := by
+        dsimp [RHS]
+        nlinarith [hsum]
+      have hLHS : LHS ω = (1 : ℝ) := by simp [LHS, hUω]
+      rw [hLHS, hrhs]
+      exact le_add_of_nonneg_right hchoose_nonneg
+    · have hcard : (s.filter (fun i => p i ω)).card = 0 := by
+        by_contra hcard
+        rcases Finset.card_pos.mp (Nat.pos_of_ne_zero hcard) with ⟨i, hi⟩
+        exact hUω ⟨i, (Finset.mem_filter.mp hi).1, (Finset.mem_filter.mp hi).2⟩
+      have hsum :
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+            ) ) = 1 := by
+        calc
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+              )
+              )
+              = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+                  ((s.filter (fun i => p i ω)).card.choose k : ℝ) := by
+                    refine Finset.sum_congr rfl ?_
+                    intro k hk
+                    rw [sum_filter_choose_eq (s := s) (p := p) (ω := ω) (k := k)]
+              _ = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+                    ((0 : ℕ).choose k : ℝ) := by simp [hcard]
+              _ = 1 := sum_choose_zero_eq_one m
+      have hrhs : RHS ω = 0 := by
+        dsimp [RHS]
+        nlinarith [hsum]
+      have hLHS : LHS ω = 0 := by simp [LHS, hUω]
+      simpa [hLHS, hrhs]
+  have hLInt : Integrable LHS μ := by
+    refine (MeasureTheory.integrable_indicator_iff hU).2 ?_
+    exact MeasureTheory.integrableOn_const (μ := μ) (s := U)
+      (hs := measure_ne_top_of_subset (by simp) (measure_ne_top μ Set.univ))
+  have hindicator_eq :
+      ∀ (t : Finset ι), ∀ (ω : α),
+        (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) =
+          (⋂ i ∈ t, {a : α | p i a}).indicator (fun _ : α => (1 : ℝ)) ω := by
+    intro t ω
+    by_cases hforall : ∀ i ∈ t, p i ω
+    · have hmem : ω ∈ ⋂ i ∈ t, {a : α | p i a} := by
+        simpa [Set.mem_iInter] using hforall
+      rw [if_pos hforall]
+      simp [hmem]
+    · have hnotmem : ω ∉ ⋂ i ∈ t, {a : α | p i a} := by
+        intro hmem
+        exact hforall (by simpa [Set.mem_iInter] using hmem)
+      rw [if_neg hforall]
+      simp [hnotmem]
+  have hInnerInt :
+      ∀ k, ∀ t ∈ s.powersetCard k,
+      Integrable (fun ω => (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) μ := by
+    intro k t ht
+    let A : Set α := ⋂ i ∈ t, {a : α | p i a}
+    have hA : MeasurableSet A := by
+      refine t.measurableSet_biInter ?_
+      intro i hi
+      exact hm i ((Finset.mem_powersetCard.mp ht).1 hi)
+    have hAint : Integrable (A.indicator (fun _ : α => (1 : ℝ))) μ := by
+      refine (MeasureTheory.integrable_indicator_iff hA).2 ?_
+      exact MeasureTheory.integrableOn_const (μ := μ) (s := A)
+        (hs := measure_ne_top_of_subset (by simp) (measure_ne_top μ Set.univ))
+    have hEq :
+        (fun ω => (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+          = (fun ω => A.indicator (fun _ : α => (1 : ℝ)) ω) := by
+      funext ω
+      simpa [A] using hindicator_eq t ω
+    exact hEq ▸ hAint
+  have hInnerSumInt :
+      ∀ k, Integrable (fun ω =>
+        ∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) μ := by
+    intro k
+    refine MeasureTheory.integrable_finset_sum (s := s.powersetCard k) ?_
+    intro t ht
+    exact hInnerInt k t ht
+  have hInnerMeasure :
+      ∀ k,
+      (∫ ω, (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ) =
+        ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+    intro k
+    calc
+      (∫ ω, (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ)
+          = ∑ t ∈ s.powersetCard k, ∫ ω, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) ∂μ := by
+            refine MeasureTheory.integral_finset_sum (s := s.powersetCard k) ?_
+            intro t ht
+            exact hInnerInt k t ht
+      _ = ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+            refine Finset.sum_congr rfl ?_
+            intro t ht
+            let A : Set α := ⋂ i ∈ t, {a : α | p i a}
+            have hA : MeasurableSet A := by
+              refine t.measurableSet_biInter ?_
+              intro i hi
+              exact hm i ((Finset.mem_powersetCard.mp ht).1 hi)
+            have hAeq : A = {a : α | ∀ i ∈ t, p i a} := by
+              ext a
+              simp [A, Set.mem_iInter]
+            have hEq :
+                (fun ω => (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+                  = (fun ω => A.indicator (fun _ : α => (1 : ℝ)) ω) := by
+              funext ω
+              simpa [A] using hindicator_eq t ω
+            calc
+              ∫ ω, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) ∂μ
+                  = ∫ ω, A.indicator (fun _ : α => (1 : ℝ)) ω ∂μ := by
+                    exact congrArg (fun g => ∫ ω, g ω ∂μ) hEq
+              _ = ∫ ω in A, (1 : ℝ) ∂μ := by
+                    rw [MeasureTheory.integral_indicator hA]
+              _ = μ.real A := by
+                    simpa using (MeasureTheory.setIntegral_one_eq_measureReal (μ := μ) (s := A))
+              _ = measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+                    have hAeq' : μ.real A = μ.real {a : α | ∀ i ∈ t, p i a} := by
+                      simpa [hAeq]
+                    simpa [measureProb, Measure.real] using hAeq'
+  have hOuterInt :
+      Integrable (fun ω =>
+        ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+          (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ) μ := by
+    refine MeasureTheory.integrable_finset_sum (s := Finset.range (m + 1)) ?_
+    intro k hk
+    exact (hInnerSumInt k).const_mul ((-1 : ℝ)^k)
+  have hRHSInt : Integrable RHS μ := by
+    have hconstInt : Integrable (fun _ : α => (1 : ℝ)) μ := by
+      simpa using (MeasureTheory.integrable_const (μ := μ) (c := (1 : ℝ)))
+    exact (hconstInt.sub hOuterInt)
+  have hOuterSum :
+      (∫ ω, ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+        (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ)
+          = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+    calc
+      ∫ ω, ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+          (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ
+          = ∑ k ∈ Finset.range (m + 1), ∫ ω, ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k,
+                (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ := by
+                exact MeasureTheory.integral_finset_sum (s := Finset.range (m + 1))
+                  (f := fun k ω => ((-1 : ℝ)^k) *
+                    (∑ t ∈ s.powersetCard k,
+                      (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+                  ) (fun k hk => (hInnerSumInt k).const_mul ((-1 : ℝ)^k))
+      _ = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+        ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+          refine Finset.sum_congr rfl ?_
+          intro k hk
+          calc
+            ∫ ω, ((-1 : ℝ)^k) *
+                (∑ t ∈ s.powersetCard k,
+                  (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ
+                = ((-1 : ℝ)^k) * ∫ ω, (∑ t ∈ s.powersetCard k,
+                    (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ := by
+                      simpa using (MeasureTheory.integral_const_mul ((-1 : ℝ)^k)
+                        (fun ω => ∑ t ∈ s.powersetCard k,
+                          (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) )
+              _ = ((-1 : ℝ)^k) * (∑ t ∈ s.powersetCard k,
+                    measureProb μ (fun a => ∀ i ∈ t, p i a)) := by
+                    rw [hInnerMeasure k]
+  have hRHSIntEq :
+      ∫ ω, RHS ω ∂μ =
+        1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+          ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+    have hconstInt : Integrable (fun _ : α => (1 : ℝ)) μ := by
+      simpa using (MeasureTheory.integrable_const (μ := μ) (c := (1 : ℝ)))
+    calc
+      (∫ ω, RHS ω ∂μ)
+          = (∫ ω, (1 : ℝ) ∂μ) - ∫ ω, (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) ) ) ∂μ := by
+                simpa [RHS] using (MeasureTheory.integral_sub hconstInt hOuterInt)
+      _ = 1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+              rw [hOuterSum]
+              simp [MeasureTheory.integral_const]
+  have hLHSInt :
+      (∫ ω, LHS ω ∂μ) = measureProb μ (fun a => ∃ i ∈ s, p i a) := by
+    calc
+      (∫ ω, LHS ω ∂μ) = ∫ ω, U.indicator (fun _ : α => (1 : ℝ)) ω ∂μ := by
+        simp [LHS]
+      _ = ∫ ω in U, (1 : ℝ) ∂μ := by
+        simpa using (MeasureTheory.integral_indicator (s := U) (f := fun _ : α => (1 : ℝ)) hU)
+      _ = μ.real U := by
+        simpa using (MeasureTheory.setIntegral_one_eq_measureReal (μ := μ) (s := U))
+      _ = measureProb μ (fun a => ∃ i ∈ s, p i a) := by
+        simp [measureProb, Measure.real, U]
+  have hInt := MeasureTheory.integral_mono hLInt hRHSInt hpoint
+  simpa [hLHSInt, hRHSIntEq] using hInt
+
+--  Bonferroni (finite even-order truncation lower bound)
+theorem measureProb_biUnion_finset_bonferroni_even
+    {α ι : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ] (s : Finset ι) (p : ι → α → Prop)
+    (m : ℕ) (hm : ∀ i ∈ s, MeasurableSet {a : α | p i a}) (hme : Even m) :
+    1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+      ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) ≤
+      measureProb μ (fun a => ∃ i ∈ s, p i a) := by
+  classical
+  let U : Set α := {a : α | ∃ i ∈ s, p i a}
+  have hU : MeasurableSet U := by
+    have hU' : U = ⋃ i ∈ s, {a : α | p i a} := by
+      ext a
+      simp [U]
+    rw [hU']
+    exact Finset.measurableSet_biUnion (s := s) (f := fun i : ι => {a : α | p i a}) hm
+  let LHS : α → ℝ := U.indicator (fun _ : α => (1 : ℝ))
+  let RHS : α → ℝ :=
+    fun ω =>
+      1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+        ∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+  have hpoint :
+      ∀ ω, RHS ω ≤ LHS ω := by
+    intro ω
+    by_cases hUω : ω ∈ U
+    · have hnzero : 0 < (s.filter (fun i => p i ω)).card := by
+        rcases hUω with ⟨i, his, hp⟩
+        exact Finset.card_pos.mpr ⟨i, by simp [his, hp]⟩
+      have hsum :
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+            ) ) = ((s.filter (fun i => p i ω)).card - 1).choose m := by
+        calc
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+              )
+              )
+              = (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+                  ((s.filter (fun i => p i ω)).card.choose k : ℝ)) := by
+                    refine Finset.sum_congr rfl ?_
+                    intro k hk
+                    rw [sum_filter_choose_eq (s := s) (p := p) (ω := ω) (k := k)]
+          _ = ((s.filter (fun i => p i ω)).card - 1).choose m := by
+                exact alternating_sum_choose_real_eq_even
+                  (hm := hme) (n := (s.filter (fun i => p i ω)).card) hnzero
+      have hchoose_nonneg : 0 ≤ (((s.filter (fun i => p i ω)).card - 1).choose m : ℝ) := by
+        exact_mod_cast (Nat.zero_le (((s.filter (fun i => p i ω)).card - 1).choose m))
+      have hrhs :
+          RHS ω = 1 - (((s.filter (fun i => p i ω)).card - 1).choose m : ℝ) := by
+        dsimp [RHS]
+        nlinarith [hsum]
+      have hLHS : LHS ω = (1 : ℝ) := by simp [LHS, hUω]
+      rw [hrhs, hLHS]
+      nlinarith
+    · have hcard : (s.filter (fun i => p i ω)).card = 0 := by
+        by_contra hcard
+        rcases Finset.card_pos.mp (Nat.pos_of_ne_zero hcard) with ⟨i, hi⟩
+        exact hUω ⟨i, (Finset.mem_filter.mp hi).1, (Finset.mem_filter.mp hi).2⟩
+      have hsum :
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+            ) ) = 1 := by
+        calc
+          (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)
+              )
+              )
+              = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+                  ((s.filter (fun i => p i ω)).card.choose k : ℝ) := by
+                    refine Finset.sum_congr rfl ?_
+                    intro k hk
+                    rw [sum_filter_choose_eq (s := s) (p := p) (ω := ω) (k := k)]
+              _ = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+                    ((0 : ℕ).choose k : ℝ) := by simp [hcard]
+              _ = 1 := sum_choose_zero_eq_one m
+      have hrhs : RHS ω = 0 := by
+        dsimp [RHS]
+        nlinarith [hsum]
+      have hLHS : LHS ω = 0 := by simp [LHS, hUω]
+      simpa [hLHS, hrhs]
+  have hLInt : Integrable LHS μ := by
+    refine (MeasureTheory.integrable_indicator_iff hU).2 ?_
+    exact MeasureTheory.integrableOn_const (μ := μ) (s := U)
+      (hs := measure_ne_top_of_subset (by simp) (measure_ne_top μ Set.univ))
+  have hindicator_eq :
+      ∀ (t : Finset ι), ∀ (ω : α),
+        (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) =
+          (⋂ i ∈ t, {a : α | p i a}).indicator (fun _ : α => (1 : ℝ)) ω := by
+    intro t ω
+    by_cases hforall : ∀ i ∈ t, p i ω
+    · have hmem : ω ∈ ⋂ i ∈ t, {a : α | p i a} := by
+        simpa [Set.mem_iInter] using hforall
+      rw [if_pos hforall]
+      simp [hmem]
+    · have hnotmem : ω ∉ ⋂ i ∈ t, {a : α | p i a} := by
+        intro hmem
+        exact hforall (by simpa [Set.mem_iInter] using hmem)
+      rw [if_neg hforall]
+      simp [hnotmem]
+  have hInnerInt :
+      ∀ k, ∀ t ∈ s.powersetCard k,
+      Integrable (fun ω => (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) μ := by
+    intro k t ht
+    let A : Set α := ⋂ i ∈ t, {a : α | p i a}
+    have hA : MeasurableSet A := by
+      refine t.measurableSet_biInter ?_
+      intro i hi
+      exact hm i ((Finset.mem_powersetCard.mp ht).1 hi)
+    have hAint : Integrable (A.indicator (fun _ : α => (1 : ℝ))) μ := by
+      refine (MeasureTheory.integrable_indicator_iff hA).2 ?_
+      exact MeasureTheory.integrableOn_const (μ := μ) (s := A)
+        (hs := measure_ne_top_of_subset (by simp) (measure_ne_top μ Set.univ))
+    have hEq :
+        (fun ω => (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+          = (fun ω => A.indicator (fun _ : α => (1 : ℝ)) ω) := by
+      funext ω
+      simpa [A] using hindicator_eq t ω
+    exact hEq ▸ hAint
+  have hInnerSumInt :
+      ∀ k, Integrable (fun ω =>
+        ∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) μ := by
+    intro k
+    refine MeasureTheory.integrable_finset_sum (s := s.powersetCard k) ?_
+    intro t ht
+    exact hInnerInt k t ht
+  have hInnerMeasure :
+      ∀ k,
+      (∫ ω, (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ) =
+        ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+    intro k
+    calc
+      (∫ ω, (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ)
+          = ∑ t ∈ s.powersetCard k, ∫ ω, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) ∂μ := by
+            refine MeasureTheory.integral_finset_sum (s := s.powersetCard k) ?_
+            intro t ht
+            exact hInnerInt k t ht
+      _ = ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+            refine Finset.sum_congr rfl ?_
+            intro t ht
+            let A : Set α := ⋂ i ∈ t, {a : α | p i a}
+            have hA : MeasurableSet A := by
+              refine t.measurableSet_biInter ?_
+              intro i hi
+              exact hm i ((Finset.mem_powersetCard.mp ht).1 hi)
+            have hAeq : A = {a : α | ∀ i ∈ t, p i a} := by
+              ext a
+              simp [A, Set.mem_iInter]
+            have hEq :
+                (fun ω => (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+                  = (fun ω => A.indicator (fun _ : α => (1 : ℝ)) ω) := by
+              funext ω
+              simpa [A] using hindicator_eq t ω
+            calc
+              ∫ ω, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) ∂μ
+                  = ∫ ω, A.indicator (fun _ : α => (1 : ℝ)) ω ∂μ := by
+                    exact congrArg (fun g => ∫ ω, g ω ∂μ) hEq
+              _ = ∫ ω in A, (1 : ℝ) ∂μ := by
+                    rw [MeasureTheory.integral_indicator hA]
+              _ = μ.real A := by
+                    simpa using (MeasureTheory.setIntegral_one_eq_measureReal (μ := μ) (s := A))
+              _ = measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+                    have hAeq' : μ.real A = μ.real {a : α | ∀ i ∈ t, p i a} := by
+                      simpa [hAeq]
+                    simpa [measureProb, Measure.real] using hAeq'
+  have hOuterInt :
+      Integrable (fun ω =>
+        ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+          (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ) μ := by
+    refine MeasureTheory.integrable_finset_sum (s := Finset.range (m + 1)) ?_
+    intro k hk
+    exact (hInnerSumInt k).const_mul ((-1 : ℝ)^k)
+  have hRHSInt : Integrable RHS μ := by
+    have hconstInt : Integrable (fun _ : α => (1 : ℝ)) μ := by
+      simpa using (MeasureTheory.integrable_const (μ := μ) (c := (1 : ℝ)))
+    exact (hconstInt.sub hOuterInt)
+  have hOuterSum :
+      (∫ ω, ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+        (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ)
+          = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+    calc
+      ∫ ω, ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+          (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ
+          = ∑ k ∈ Finset.range (m + 1), ∫ ω, ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k,
+                (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ := by
+                exact MeasureTheory.integral_finset_sum (s := Finset.range (m + 1))
+                  (f := fun k ω => ((-1 : ℝ)^k) *
+                    (∑ t ∈ s.powersetCard k,
+                      (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0))
+                  ) (fun k hk => (hInnerSumInt k).const_mul ((-1 : ℝ)^k))
+      _ = ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+        ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+          refine Finset.sum_congr rfl ?_
+          intro k hk
+          calc
+            ∫ ω, ((-1 : ℝ)^k) *
+                (∑ t ∈ s.powersetCard k,
+                  (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ
+                = ((-1 : ℝ)^k) * ∫ ω, (∑ t ∈ s.powersetCard k,
+                    (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) ∂μ := by
+                      simpa using (MeasureTheory.integral_const_mul ((-1 : ℝ)^k)
+                        (fun ω => ∑ t ∈ s.powersetCard k,
+                          (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0)) )
+              _ = ((-1 : ℝ)^k) * (∑ t ∈ s.powersetCard k,
+                    measureProb μ (fun a => ∀ i ∈ t, p i a)) := by
+                    rw [hInnerMeasure k]
+  have hRHSIntEq :
+      ∫ ω, RHS ω ∂μ =
+        1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+          ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+    have hconstInt : Integrable (fun _ : α => (1 : ℝ)) μ := by
+      simpa using (MeasureTheory.integrable_const (μ := μ) (c := (1 : ℝ)))
+    calc
+      (∫ ω, RHS ω ∂μ)
+          = (∫ ω, (1 : ℝ) ∂μ) - ∫ ω, (∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+              (∑ t ∈ s.powersetCard k, (if ∀ i ∈ t, p i ω then (1 : ℝ) else 0) ) ) ∂μ := by
+                simpa [RHS] using (MeasureTheory.integral_sub hconstInt hOuterInt)
+      _ = 1 - ∑ k ∈ Finset.range (m + 1), ((-1 : ℝ)^k) *
+            ∑ t ∈ s.powersetCard k, measureProb μ (fun a => ∀ i ∈ t, p i a) := by
+              rw [hOuterSum]
+              simp [MeasureTheory.integral_const]
+  have hLHSInt :
+      (∫ ω, LHS ω ∂μ) = measureProb μ (fun a => ∃ i ∈ s, p i a) := by
+    calc
+      (∫ ω, LHS ω ∂μ) = ∫ ω, U.indicator (fun _ : α => (1 : ℝ)) ω ∂μ := by
+        simp [LHS]
+      _ = ∫ ω in U, (1 : ℝ) ∂μ := by
+        simpa using (MeasureTheory.integral_indicator (s := U) (f := fun _ : α => (1 : ℝ)) hU)
+      _ = μ.real U := by
+        simpa using (MeasureTheory.setIntegral_one_eq_measureReal (μ := μ) (s := U))
+      _ = measureProb μ (fun a => ∃ i ∈ s, p i a) := by
+        simp [measureProb, Measure.real, U]
+  have hInt := MeasureTheory.integral_mono hRHSInt hLInt hpoint
+  simpa [hLHSInt, hRHSIntEq] using hInt
+
 end EconCSLib

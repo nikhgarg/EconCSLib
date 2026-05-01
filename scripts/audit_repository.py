@@ -37,9 +37,26 @@ REQUIRED_GITIGNORE_PATTERNS = {
 ROOT_STATUS_VALUES = {
     "Formalized",
     "Formalized with caveat",
+    "Formalized with documented caveat",
+    "Main endpoints formalized with documented deviations",
     "Partially formalized",
     "Not formalized",
+    "Verified in Lean",
 }
+PAPER_STATUS_VALUES = {
+    "formalized",
+    "formalized with caveat",
+    "partially formalized",
+    "conditional",
+    "scaffold",
+    "not started",
+    "not formalized",
+}
+PAPER_FOLDER_NAME_RE = re.compile(r"^[A-Z][A-Za-z0-9]*\d{2}[A-Z][A-Za-z0-9]*$")
+LEAN_DECL_RE = re.compile(r"^\s*(?:theorem|lemma|def|abbrev|structure|class|inductive|export)\s+", re.M)
+LEDGER_PLACEHOLDER_RE = re.compile(
+    r"\[Paper Title\]|\bnamespace TEMPLATE\b|\bpaperDefinition1\b|\bpaper_theorem_1\b|Replace before claiming progress",
+)
 
 
 @dataclass(frozen=True)
@@ -155,6 +172,15 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
         if active and not include_active:
             continue
 
+        if not PAPER_FOLDER_NAME_RE.fullmatch(folder.name):
+            findings.append(
+                Finding(
+                    "ERROR",
+                    folder,
+                    "paper folder name should match `[AuthorInitials][2DigitYear][Descriptor]`",
+                )
+            )
+
         aggregator = PAPERS / f"{folder.name}.lean"
         if not aggregator.exists():
             findings.append(Finding("ERROR", folder, f"missing paper import file `{aggregator.name}`"))
@@ -183,6 +209,34 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
     for folder in paper_dirs(include_template=True):
         if aggregate_names.search(folder.name):
             findings.append(Finding("ERROR", folder, "top-level aggregate paper folder should not exist"))
+    return findings
+
+
+def check_paper_facing_ledgers(include_active: bool) -> list[Finding]:
+    findings: list[Finding] = []
+    for folder in paper_dirs():
+        if folder.name in ACTIVE_PAPERS and not include_active:
+            continue
+
+        ledger_candidates = [folder / "MainTheorems.lean", folder / "PaperFacingTheorems.lean"]
+        existing = [path for path in ledger_candidates if path.exists()]
+        if not existing:
+            continue
+
+        for ledger in existing:
+            text = ledger.read_text(encoding="utf-8")
+            if LEDGER_PLACEHOLDER_RE.search(text):
+                findings.append(
+                    Finding("ERROR", ledger, "paper-facing ledger still contains template placeholders")
+                )
+            if not LEAN_DECL_RE.search(text):
+                findings.append(
+                    Finding("WARN", ledger, "paper-facing ledger has no theorem/lemma/def/abbrev declarations")
+                )
+            if "#check" in text and "#guard_msgs(drop info) in" not in text:
+                findings.append(
+                    Finding("ERROR", ledger, "paper-facing ledger contains unguarded `#check`")
+                )
     return findings
 
 
@@ -263,10 +317,20 @@ def check_readme_status_tables(include_active: bool) -> list[Finding]:
             for row in rows:
                 if len(row) <= status_idx:
                     continue
-                status = row[status_idx].lower()
+                status_raw = row[status_idx].strip()
+                status = status_raw.lower()
                 decl = row[decl_idx].lower() if decl_idx is not None and len(row) > decl_idx else ""
                 file_cell = row[file_idx].lower() if file_idx is not None and len(row) > file_idx else ""
                 remaining = row[rem_idx] if rem_idx is not None and len(row) > rem_idx else ""
+
+                if status not in PAPER_STATUS_VALUES:
+                    findings.append(
+                        Finding(
+                            "ERROR",
+                            readme,
+                            f"unexpected paper status `{status_raw}` for `{row[0]}`; see docs/STATUS.md",
+                        )
+                    )
 
                 has_none_decl = decl in {"none", "`none`"} or "none matching" in decl
                 has_none_file = file_cell in {"none", "`none`"}
@@ -278,6 +342,15 @@ def check_readme_status_tables(include_active: bool) -> list[Finding]:
                 if exact_formalized and has_none_file:
                     findings.append(
                         Finding("ERROR", readme, f"formalized row points to file `none`: `{row[0]}`")
+                    )
+                remaining_normalized = remaining.strip().strip("`").lower()
+                if exact_formalized and not remaining_normalized.startswith("none"):
+                    findings.append(
+                        Finding(
+                            "WARN",
+                            readme,
+                            f"`formalized` row should use remaining assumptions `None`: `{row[0]}`",
+                        )
                     )
                 if exact_formalized and suspicious_caveat.search(remaining):
                     findings.append(
@@ -313,8 +386,34 @@ def check_tracked_artifacts(include_active: bool) -> list[Finding]:
             continue
         if artifact_re.search(path.name):
             findings.append(Finding("ERROR", ROOT / path, "tracked LaTeX build artifact"))
-        if path.suffix == ".pdf":
+        if path.suffix == ".pdf" and path.name != "DependencyDAG.pdf":
             findings.append(Finding("ERROR", ROOT / path, "tracked PDF artifact; source PDFs should stay ignored"))
+    return findings
+
+
+def check_stale_architecture_terms() -> list[Finding]:
+    findings: list[Finding] = []
+    stale_re = re.compile(r"\bDecisionCore\b")
+    paths = [
+        ROOT / "README.md",
+        ROOT / "docs" / "ARCHITECTURE.md",
+        ROOT / "docs" / "ECONCSLEAN_CURRENT_STATUS.md",
+        ROOT / "skills" / "econcs-formalizer" / "SKILL.md",
+    ]
+    paths.extend(sorted((ROOT / "skills" / "econcs-formalizer" / "references").glob("*.md")))
+    for path in paths:
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for line_no, line in enumerate(text.splitlines(), start=1):
+            if stale_re.search(line):
+                findings.append(
+                    Finding(
+                        "WARN",
+                        path,
+                        f"stale architecture term `DecisionCore` at line {line_no}; use current `EconCSLib` layering",
+                    )
+                )
     return findings
 
 
@@ -323,8 +422,10 @@ def run(include_active: bool) -> list[Finding]:
     findings.extend(check_sorries(include_active))
     findings.extend(check_guarded_checks(include_active))
     findings.extend(check_paper_contract(include_active))
+    findings.extend(check_paper_facing_ledgers(include_active))
     findings.extend(check_readme_status_tables(include_active))
     findings.extend(check_tracked_artifacts(include_active))
+    findings.extend(check_stale_architecture_terms())
     return findings
 
 

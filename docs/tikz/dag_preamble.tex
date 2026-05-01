@@ -1,4 +1,4 @@
-\usetikzlibrary{arrows.meta, positioning, shapes.geometric, shapes.misc, fit, backgrounds, calc}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, shapes.misc, fit, backgrounds, calc, matrix}
 
 \tikzset{
     >=Latex,
@@ -56,6 +56,29 @@
         text width=5cm,
         align=center
     },
+    dag_partial/.style={
+        rectangle,
+        rounded corners,
+        draw=yellow!55!black,
+        fill=yellow!10,
+        very thick,
+        dashed,
+        minimum width=4.5cm,
+        minimum height=1.5cm,
+        text width=5cm,
+        align=center
+    },
+    dag_scaffold/.style={
+        rectangle,
+        draw=gray!55!black,
+        fill=white,
+        very thick,
+        dotted,
+        minimum width=4.5cm,
+        minimum height=1.5cm,
+        text width=5cm,
+        align=center
+    },
     dag_caveat/.style={
         diamond, 
         draw=red!70!black, 
@@ -77,6 +100,24 @@
         dashed,
         shorten >=1.5pt,
         shorten <=1.5pt
+    },
+    dag_template_legend/.style={
+        minimum width=2.6cm,
+        minimum height=0.8cm,
+        text width=2.45cm,
+        inner sep=3pt,
+        font=\sffamily\small,
+        align=center
+    },
+    dag_template_note/.style={
+        rectangle,
+        draw=gray!50,
+        fill=gray!5,
+        rounded corners,
+        text width=13cm,
+        align=left,
+        font=\sffamily\small,
+        inner sep=6pt
     }
 }
 

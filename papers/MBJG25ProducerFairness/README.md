@@ -27,25 +27,25 @@ algebra lives in `EconCSLib/Statistics/BinaryRating.lean`.
 
 ## Theorem Status
 
-| Paper item | Lean declaration | Status | File | Remaining assumptions |
+| Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
-| Theorem 3.1, variance weakly decreases in prior strength | `paper_theorem3_1_variance_weak_decrease` | formalized with corrected weak statement | `MBJG25ProducerFairness/MainTheorems.lean` | assumes `0 ≤ q_v ≤ 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
-| Theorem 3.1, variance strictly decreases in prior strength | `paper_theorem3_1_variance_strict_decrease_interior`; boundary checks `paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero`, `paper_theorem3_1_variance_strict_decrease_counterexample_quality_one` | formalized with corrected interior assumption; boundary bug found | `MBJG25ProducerFairness/MainTheorems.lean` | The corrected strict theorem assumes `0 < q_v < 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow < etaHigh`. |
-| Theorem 3.1, squared bias nondecreases in prior strength | `paper_theorem3_1_squared_bias_nondecreasing` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | assumes `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
-| Theorem 3.2, squared bias convex in true quality | `paper_theorem3_2_squared_bias_convex_in_quality` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | denominator nonzero |
-| Theorem 3.2, squared bias minimized at prior mean | `paper_theorem3_2_squared_bias_global_min_at_prior_mean` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | assumes `0 < alpha + beta`, `0 ≤ eta`, and `0 < t` |
-| Theorem 3.2, variance concave in true quality | `paper_theorem3_2_variance_concave_in_quality` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | assumes `0 ≤ t` |
-| Theorem 3.2, variance maximized at `1/2` | `paper_theorem3_2_variance_global_max_at_half` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | assumes `0 ≤ t` |
+| Theorem 3.1, variance weakly decreases in prior strength | `paper_theorem3_1_variance_weak_decrease` | formalized with caveat | `MBJG25ProducerFairness/MainTheorems.lean` | Previous status: formalized with corrected weak statement; assumes `0 ≤ q_v ≤ 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow ≤ etaHigh` |
+| Theorem 3.1, variance strictly decreases in prior strength | `paper_theorem3_1_variance_strict_decrease_interior`; boundary checks `paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero`, `paper_theorem3_1_variance_strict_decrease_counterexample_quality_one` | formalized with caveat | `MBJG25ProducerFairness/MainTheorems.lean` | Previous status: formalized with corrected interior assumption; boundary bug found; The corrected strict theorem assumes `0 < q_v < 1`, `0 < t`, `0 < alpha + beta`, `0 ≤ etaLow`, and `etaLow < etaHigh`. |
+| Theorem 3.1, squared bias nondecreases in prior strength | `paper_theorem3_1_squared_bias_nondecreasing` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
+| Theorem 3.2, squared bias convex in true quality | `paper_theorem3_2_squared_bias_convex_in_quality` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
+| Theorem 3.2, squared bias minimized at prior mean | `paper_theorem3_2_squared_bias_global_min_at_prior_mean` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
+| Theorem 3.2, variance concave in true quality | `paper_theorem3_2_variance_concave_in_quality` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
+| Theorem 3.2, variance maximized at `1/2` | `paper_theorem3_2_variance_global_max_at_half` | formalized | `MBJG25ProducerFairness/MainTheorems.lean` | None |
 
 ### Dynamic and Responsive Extensions
 
-| Paper item | Lean declaration | Status | File | Remaining assumptions |
+| Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
-| Section 4, Individual Producer Unfairness | `paper_facing_individual_producer_unfairness` | formalized | `MBJG25ProducerFairness/ResponsiveMarket.lean` | - |
-| Section 4, Thompson Sampling | `paper_facing_thompson_sampling_mechanism` | formalized | `EconCSLib/Decision/ThompsonSampling.lean` | - |
-| Section 4, Expected Regret | `paper_facing_expected_regret` | formalized | `EconCSLib/Online/Regret.lean` | - |
-| Appendix C, MSE Decomposition | `paper_facing_responsive_mse_decomposition` | formalized | `MBJG25ProducerFairness/ResponsiveMarket.lean` | - |
-| Appendix E, Ordinal Rating | `EconCSLib.Statistics.dirichletCategoricalPosteriorMean_eq_weighted_sum` | formalized | `EconCSLib/Statistics/OrdinalRating.lean` | `∑ (alpha + N) ≠ 0` |
+| Section 4, Individual Producer Unfairness | `paper_facing_individual_producer_unfairness` | formalized | `MBJG25ProducerFairness/ResponsiveMarket.lean` | None |
+| Section 4, Thompson Sampling | `paper_facing_thompson_sampling_mechanism` | formalized | `EconCSLib/Decision/ThompsonSampling.lean` | None |
+| Section 4, Expected Regret | `paper_facing_expected_regret` | formalized | `EconCSLib/Online/Regret.lean` | None |
+| Appendix C, MSE Decomposition | `paper_facing_responsive_mse_decomposition` | formalized | `MBJG25ProducerFairness/ResponsiveMarket.lean` | None |
+| Appendix E, Ordinal Rating | `EconCSLib.Statistics.dirichletCategoricalPosteriorMean_eq_weighted_sum` | formalized | `EconCSLib/Statistics/OrdinalRating.lean` | None |
 
 ## Fix Needed In Paper Statement
 

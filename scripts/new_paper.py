@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+"""Create the standard EconCSLib paper-formalization scaffold.
+
+The script performs the deterministic intake step for a new source paper:
+create the citation-specific folder, cache the source PDF when possible,
+extract a text cache with `pdftotext` when available, and write the required
+README/DAG/MainTheorems/.gitignore files.
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import subprocess
+import sys
+import urllib.parse
+import urllib.request
+from datetime import date
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PAPERS = ROOT / "papers"
+FOLDER_RE = re.compile(r"^[A-Z][A-Za-z0-9]*\d{2}[A-Z][A-Za-z0-9]*$")
+
+
+def title_case_slug(text: str) -> str:
+    parts = [part for part in re.split(r"[^A-Za-z0-9]+", text) if part]
+    if not parts:
+        return "Paper"
+    return "".join(part[:1].upper() + part[1:] for part in parts)
+
+
+def derive_folder(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    stem = Path(parsed.path).stem or parsed.netloc or "paper"
+    stem = re.sub(r"^abs$", "", stem)
+    slug = title_case_slug(stem)
+    return f"Draft{date.today().year % 100:02d}{slug}"
+
+
+def lean_namespace(folder: str) -> str:
+    namespace = re.sub(r"[^A-Za-z0-9_]", "", folder)
+    if not namespace or namespace[0].isdigit():
+        namespace = f"Paper{namespace}"
+    return namespace
+
+
+def normalize_pdf_url(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    if parsed.netloc.endswith("arxiv.org"):
+        if parsed.path.startswith("/abs/"):
+            arxiv_id = parsed.path.removeprefix("/abs/")
+            return urllib.parse.urlunparse(parsed._replace(path=f"/pdf/{arxiv_id}.pdf", query=""))
+        if parsed.path.startswith("/pdf/") and not parsed.path.endswith(".pdf"):
+            return urllib.parse.urlunparse(parsed._replace(path=f"{parsed.path}.pdf", query=""))
+    return url
+
+
+def write_file(path: Path, contents: str, force: bool) -> None:
+    if path.exists() and not force:
+        print(f"skip existing {path.relative_to(ROOT)}")
+        return
+    path.write_text(contents, encoding="utf-8")
+    print(f"wrote {path.relative_to(ROOT)}")
+
+
+def download_pdf(url: str, target: Path, force: bool) -> bool:
+    if target.exists() and not force:
+        print(f"skip existing {target.relative_to(ROOT)}")
+        return True
+    try:
+        request = urllib.request.Request(
+            normalize_pdf_url(url),
+            headers={"User-Agent": "EconCSLib paper intake"},
+        )
+        with urllib.request.urlopen(request, timeout=60) as response:
+            data = response.read()
+        target.write_bytes(data)
+        print(f"downloaded {target.relative_to(ROOT)}")
+        return True
+    except Exception as exc:  # noqa: BLE001 - intake should report and continue
+        print(f"warning: could not download PDF from {url}: {exc}", file=sys.stderr)
+        return False
+
+
+def extract_text(pdf: Path, txt: Path, force: bool) -> None:
+    if txt.exists() and not force:
+        print(f"skip existing {txt.relative_to(ROOT)}")
+        return
+    if not pdf.exists():
+        print(f"warning: no PDF at {pdf.relative_to(ROOT)}; skipping text extraction", file=sys.stderr)
+        return
+    if shutil.which("pdftotext") is None:
+        print("warning: `pdftotext` not found; skipping text extraction", file=sys.stderr)
+        return
+    subprocess.run(["pdftotext", str(pdf), str(txt)], cwd=ROOT, check=True)
+    print(f"extracted {txt.relative_to(ROOT)}")
+
+
+def readme_text(args: argparse.Namespace, folder: str) -> str:
+    title = args.title or "[Paper Title]"
+    authors = args.authors or "[Authors]"
+    version = args.version or "[Conference/Journal/arXiv version]"
+    official_url = args.official_url or args.url
+    pdf_url = normalize_pdf_url(args.pdf_url or args.url)
+    return f"""# {title}
+
+## Source Version
+
+- Paper: *{title}*
+- Authors: {authors}
+- Version formalized: {version}
+- Official URL: {official_url}
+- Public PDF: {pdf_url}
+
+The PDF is cached locally as `source.pdf` and ignored by Git. The extracted text
+cache is `source.txt` when `pdftotext` succeeds and licensing permits tracking
+the text.
+
+## Paper-Facing Ledger
+
+- Human-facing theorem file: `{folder}/MainTheorems.lean`
+- Dependency DAG: `{folder}/DependencyDAG.tex`
+- Rendered DAG: `{folder}/DependencyDAG.pdf` when generated locally
+
+`MainTheorems.lean` should expose source formulas and theorem wrappers directly.
+Do not mark a row `formalized` unless the Lean declaration is closed and the
+remaining assumptions cell is `None`.
+
+Use the controlled status vocabulary from `../../docs/STATUS.md`:
+`formalized`, `formalized with caveat`, `partially formalized`, `conditional`,
+`scaffold`, `not started`, and `not formalized`. Keep detailed caveats,
+remaining certificates, or proof-route notes in the final column rather than in
+the status cell.
+
+## Theorem Status
+
+| Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
+|---|---|---|---|---|
+| Main theorem(s) | `none` | not started | `none` | Extract named results from `source.txt` |
+"""
+
+
+def dag_text() -> str:
+    return r"""\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+
+% Agent visual validation loop:
+% 1. Compile this file to PDF after every substantive DAG edit.
+% 2. Inspect the PDF or a rendered PNG, not just the TeX source.
+% 3. Increase spacing or reroute arrows until no box, legend, note, edge, or label overlaps.
+%
+% Intended lifecycle:
+% - During paper intake, replace the scaffold below with every named result in the
+%   paper and the dependency arrows between them.
+% - After intake, treat this as a stable topology: update node styles/status/text
+%   as proofs close, but avoid adding boxes or arrows unless the original named
+%   result inventory or dependency map was actually incomplete.
+
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+% --- Legend: README status vocabulary plus formalized node-type styles. ---
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_caveat, dag_template_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
+
+% --- Layout guidance for future agents. ---
+\node[dag_template_note, below=1.1cm of Legend] (Guide) {
+  Replace these scaffold nodes with the paper's named definitions, lemmas,
+  propositions, theorems, and corollaries. Keep nodes on the grid below:
+  columns are spaced by 6.4cm and rows by 3.2cm, which is wide enough for the
+  default 5cm node text widths. Prefer straight or orthogonal arrows (`--`,
+  `|-`, `-|`) and route through empty grid cells when a dependency skips a row.
+  After every layout change, render and inspect the PDF; if anything overlaps,
+  increase row or column spacing before adding complicated curves. Once the
+  initial named-result map is complete, prefer README-status style updates over
+  adding new boxes or arrows.
+};
+
+% --- Non-overlapping proof graph scaffold. ---
+% Status update pattern:
+% - Change the leading style only, e.g. dag_unformalized -> dag_conditional ->
+%   dag_lemma/dag_result, and update the short text if the remaining assumption changed.
+% - Keep node names and arrows stable after the initial intake map is complete.
+\node[dag_model] (Model) at (0,-10.2) {
+  \textbf{Definitions / Model} \\
+  Source primitives
+};
+\node[dag_lemma] (LemmaA) at (6.4,-10.2) {
+  \textbf{Lemma A} \\
+  First reusable step
+};
+\node[dag_lemma] (LemmaB) at (12.8,-10.2) {
+  \textbf{Lemma B} \\
+  Second reusable step
+};
+
+\node[dag_conditional] (Bridge) at (6.4,-13.4) {
+  \textbf{Bridge Theorem} \\
+  Conditional paper-facing reduction
+};
+\node[dag_unformalized] (Open) at (12.8,-13.4) {
+  \textbf{Open Source Result} \\
+  Name exact remaining gap
+};
+
+\node[dag_result] (Main) at (6.4,-16.6) {
+  \textbf{Main Theorem} \\
+  Closed paper-facing endpoint
+};
+
+\draw[dag_arrow] (Model) -- (LemmaA);
+\draw[dag_arrow] (LemmaA) -- (LemmaB);
+\draw[dag_arrow] (LemmaA) -- (Bridge);
+\draw[dag_dashed_arrow] (LemmaB) -- (Open);
+\draw[dag_arrow] (Bridge) -- (Main);
+\draw[dag_dashed_arrow] (Open) |- (Main);
+\end{tikzpicture}
+\end{document}
+"""
+
+
+def main_theorems_text(title: str, namespace: str) -> str:
+    display_title = title or "[Paper Title]"
+    return f"""/-!
+# Paper-Facing Theorems: {display_title}
+
+This file is the human-facing Lean ledger for the source paper. Keep
+source-faithful definitions and theorem wrappers here, in paper order.
+-/
+
+namespace {namespace}
+
+/-- Placeholder for the first exact source definition. Replace before claiming progress. -/
+abbrev paperDefinition1 : Prop := True
+
+/-- Placeholder for the first exact source theorem. Replace before claiming progress. -/
+theorem paper_theorem_1 : paperDefinition1 := by
+  trivial
+
+end {namespace}
+"""
+
+
+def gitignore_text() -> str:
+    return """*.pdf
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+"""
+
+
+def root_import_text(folder: str) -> str:
+    return f"""import {folder}.MainTheorems
+"""
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("url", help="paper URL; arXiv abs URLs are converted to PDF URLs")
+    parser.add_argument("--folder", help="citation-style folder name, e.g. DSWG24DiscretizationBias")
+    parser.add_argument("--title", help="paper title for README and theorem ledger")
+    parser.add_argument("--authors", help="paper authors for README")
+    parser.add_argument("--version", help="source version, conference, journal, or arXiv version")
+    parser.add_argument("--official-url", help="canonical paper URL if different from input URL")
+    parser.add_argument("--pdf-url", help="direct PDF URL if different from input URL")
+    parser.add_argument("--namespace", help="Lean namespace; defaults to sanitized folder name")
+    parser.add_argument("--no-download", action="store_true", help="scaffold files without downloading the PDF")
+    parser.add_argument("--force", action="store_true", help="overwrite existing scaffold files")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    folder = args.folder or derive_folder(args.url)
+    namespace = args.namespace or lean_namespace(folder)
+
+    if not FOLDER_RE.fullmatch(folder):
+        print(
+            f"warning: `{folder}` does not match [AuthorInitials][2DigitYear][Descriptor]; "
+            "rename after citation intake",
+            file=sys.stderr,
+        )
+
+    paper_dir = PAPERS / folder
+    paper_dir.mkdir(parents=True, exist_ok=True)
+
+    pdf = paper_dir / "source.pdf"
+    txt = paper_dir / "source.txt"
+
+    write_file(paper_dir / ".gitignore", gitignore_text(), args.force)
+    write_file(paper_dir / "README.md", readme_text(args, folder), args.force)
+    write_file(paper_dir / "DependencyDAG.tex", dag_text(), args.force)
+    write_file(paper_dir / "MainTheorems.lean", main_theorems_text(args.title or "", namespace), args.force)
+    write_file(PAPERS / f"{folder}.lean", root_import_text(folder), args.force)
+
+    if not args.no_download:
+        downloaded = download_pdf(args.pdf_url or args.url, pdf, args.force)
+        if downloaded:
+            extract_text(pdf, txt, args.force)
+    else:
+        print("skipped PDF download")
+
+    print(f"paper scaffold ready: {paper_dir.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

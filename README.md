@@ -18,6 +18,7 @@ ignored by Git; extracted `.txt` caches are kept beside them for source audits.
 | `papers/MBJG25ProducerFairness` | *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design* | Formalized with documented caveat | Source Theorems 3.1--3.2 and the main Section 4 / appendix support are formalized. Lean found and documents the boundary correction needed for the paper's strict variance-decrease clause. |
 | `papers/MSVV07AdWords` | *AdWords and Generalized Online Matching* | Main endpoints formalized with documented deviations | `PaperFacingTheorems.lean` exposes the paper formulas and closes Theorem 8 plus the finite integral-prefix Theorem 9 endpoint. Source Lemmas 1--7 are documented as not one-for-one wrappers. |
 | `papers/DSWG24DiscretizationBias` | *Addressing Discretization-Induced Bias in Demographic Prediction* | Partially formalized | Source-facing expected-objective wrappers cover Theorem 2(i)--(ii); Theorem 1 and Theorem 2(iii) remain open. |
+| `papers/ZL21TestOptionalPolicies` | *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps* | Partially formalized | Finite base/test decomposition identities and nonnegativity monotonicity lemmas are formalized; broader paper theorems remain open. |
 | `papers/Roth82StableMatching` | *The Economics of Matching: Stability and Incentives* | Partially formalized | Conditional DA wrappers cover Theorems 1, 2, and 5 seams; impossibility and manipulation theorems remain open. |
 | `papers/GHW01DigitalGoods` | *Competitive Auctions and Digital Goods* | Partially formalized | Digital-goods primitives, fixed-price support, and RSOP skeleton are formalized; approximation/lower bounds are open. |
 | `papers/GCG24UserItemFairness` | *User-item fairness tradeoffs in recommendations* | Verified in Lean | Paper-local validation reports Theorem 3 price-of-fairness monotonicity and Theorem 4 misestimation tradeoff closed, with Proposition 1, Proposition 2, and appendix lemmas tracked in the paper README/DAG. |
@@ -59,6 +60,7 @@ paper-folder `README.md`. For repository conventions, see:
 
 - [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/STATUS.md](docs/STATUS.md)
 - [skills/econcs-formalizer/SKILL.md](skills/econcs-formalizer/SKILL.md)
 
 Historical plans and handoff reports live under `docs/` and `docs/archive/`.

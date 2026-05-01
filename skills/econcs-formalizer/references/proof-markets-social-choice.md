@@ -57,6 +57,15 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   both actual weights are the same positive scale times the reduced
   endpoint-position weights. The final paper wrapper should consume this bridge
   internally; an explicit-input reduction theorem is only conditional progress.
+- For sequential best-of-remaining Mallows claims, do not treat pairwise
+  correct-ranking monotonicity as automatically proving expected top-of-set
+  utility dominance. State the exact remaining-set dominance theorem needed:
+  for every feasible hired set, the more accurate ranking law gives weakly or
+  strictly higher `expectedBestInSet` on the remaining candidates. Pairwise
+  Lemma-8-style declarations are useful inputs, but the source theorem remains
+  conditional until the top-of-remaining-set lift is formalized (often via
+  subset/restriction rank-factorization or another explicit stochastic
+  dominance bridge).
 - For ranking fibers over `Fin`, normalize first-choice rank `r` with
   `Fin.cycleRange r`; normalize ordered top-two ranks `r < s` with
   `cycleRange r` followed by `cycleIcc 1 s`; normalize swapped top-two ranks

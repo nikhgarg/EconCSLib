@@ -21,11 +21,11 @@ Detailed reusable matching and deferred-acceptance primitives live in
 
 ## Theorem Status
 
-| Paper item | Lean declaration | Status | File | Remaining assumptions |
+| Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
-| Paper definitions: matching utilities, stability, men-optimality, one-sided truthfulness | `paper_matching_valM`, `paper_matching_valW`, `paper_is_stable`, `paper_is_men_optimal`, `paper_truthful_for_men` | formalized definitions | `Roth82StableMatching/MainTheorems.lean` | finite two-sided matching model |
+| Paper definitions: matching utilities, stability, men-optimality, one-sided truthfulness | `paper_matching_valM`, `paper_matching_valW`, `paper_is_stable`, `paper_is_men_optimal`, `paper_truthful_for_men` | formalized | `Roth82StableMatching/MainTheorems.lean` | None; status note: formalized definitions; finite two-sided matching model |
 | Theorem 1, stable outcomes are nonempty | `paper_roth82_theorem1_stable_outcome_exists` | conditional | `Roth82StableMatching/MainTheorems.lean` | requires `DaProducesStableMatchingCertificate` for the deferred-acceptance output |
-| Theorem 2, men- and women-optimal stable outcomes exist | `paper_roth82_theorem2_men_optimal_stable_outcome` | partial conditional | `Roth82StableMatching/MainTheorems.lean` | men side requires `DaProducesStableMatchingCertificate` and `DaIsMenOptimalCertificate`; symmetric women side not wrapped |
+| Theorem 2, men- and women-optimal stable outcomes exist | `paper_roth82_theorem2_men_optimal_stable_outcome` | conditional | `Roth82StableMatching/MainTheorems.lean` | Previous status: partial conditional; men side requires `DaProducesStableMatchingCertificate` and `DaIsMenOptimalCertificate`; symmetric women side not wrapped |
 | Theorem 3, no stable procedure is strategyproof for all agents | none | not started | none | requires finite counterexample and arbitrary stable-procedure model |
 | Theorem 4, efficient strategyproof procedures exist | none | not started | none | requires Pareto-efficiency procedure model |
 | Theorem 5, one-sided truthfulness of optimal stable procedure | `paper_roth82_theorem5_men_truthful` | conditional | `Roth82StableMatching/MainTheorems.lean` | requires `DaTruthfulForMenCertificate` |

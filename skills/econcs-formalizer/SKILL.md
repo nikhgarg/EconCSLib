@@ -49,6 +49,42 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
 - It is fine, and often faster overall, to create reusable library material while proving a paper when the abstraction directly closes the active paper seam and is likely to serve the broader EC community. Avoid speculative polish, but do not avoid general infrastructure just because the current paper could be hacked locally.
 - For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
+- Keep paper-module imports as narrow as practical. Avoid importing aggregate
+  roots such as `EconCSLib` from paper-local proof files when a leaf module like
+  `EconCSLib.Foundations.Probability.FiniteExpectation` or
+  `EconCSLib.Foundations.Math.FiniteSigns` suffices; aggregate imports can make
+  targeted paper builds depend on unrelated dirty library areas such as auctions.
+  When narrowing imports, add the exact missing leaf import at the file that uses
+  the declaration rather than restoring a broad root import.
+- Treat a focused paper build that unexpectedly compiles unrelated library
+  areas as an import-hygiene signal before debugging those unrelated files.
+  Identify the declaration owner with `rg`, import that leaf module directly,
+  and re-run the targeted `lake build Paper.Module`; do not broaden imports just
+  to make the immediate elaboration error disappear.
+
+### 1.2.1 Paper Link Intake Protocol
+
+When the user provides only a paper link and asks for autonomous
+formalization, execute the standard intake before deep proof work:
+
+- Download/cache the exact source PDF in a new or existing
+  `papers/[AuthorInitials][2DigitYear][Descriptor]/` folder, then create the
+  adjacent `.txt` extraction with `pdftotext`.
+- Read the abstract, introduction, model section, and theorem statements first;
+  then search the cached text for every named `Definition`, `Lemma`,
+  `Proposition`, `Theorem`, `Corollary`, and appendix result.
+- Create the paper folder contract artifacts immediately: `README.md`,
+  `DependencyDAG.tex`, `MainTheorems.lean`, and local `.gitignore`.
+- Draft paper-facing theorem signatures before building a helper tower. If the
+  direct statement is too hard, create an explicit bridge theorem whose name and
+  assumptions describe the remaining gap.
+- During intake, classify reusable primitives by library area. Upstream only
+  seams that pass the second-paper test, such as finite PMF/Markov kernels,
+  probability inequalities, monotonicity/comparison lemmas, allocation
+  primitives, or mechanism interfaces.
+- Keep a live README status table from the first scaffold onward. Each row must
+  distinguish source-faithful wrappers, auxiliary analogues, conditional
+  wrappers, and unstarted paper results.
 
 ### 1.3 Paper Folder Contract
 
@@ -87,23 +123,35 @@ the Lean statements against the paper.
   A completed index should show the full paper-facing sequence and the final
   paper-level theorem explicitly.
 - Add a structured folder `README.md` theorem-status table with columns like:
-  paper theorem/definition, Lean declaration, status (`formalized`,
-  `conditional`, `scaffold`, `not started`), file, and remaining assumptions.
+  paper theorem/definition, Lean declaration, status, file, and remaining
+  assumptions/notes. Status cells MUST use the controlled vocabulary from
+  `docs/STATUS.md`: `formalized`, `formalized with caveat`,
+  `partially formalized`, `conditional`, `scaffold`, `not started`, or
+  `not formalized`.
 - **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (e.g., `MSVV07AdWords`, `LMMS04FairDivision`, `KR21Monoculture`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
 - **One citation per paper folder:** Do not use aggregate folders for award lists, reading lists, or multi-paper campaigns. Split them into one `[AuthorInitials][2DigitYear][Descriptor]` folder per source paper, each with its own source PDF/text cache, README, DAG, and `MainTheorems.lean`. If an aggregate module already exists, keep it only as a compatibility import or handoff note and move paper-facing status into the citation-specific folders.
 - **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as a dependency DAG in a TikZ source file (with a rendered image) in the paper folder. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
   - **Project pattern in this repo:** for Monoculture, keep the active artifact at
     `papers/KR21Monoculture/DependencyDAG.tex` and a rendered image alongside it.
   - All paper DAGs MUST `\input` the shared preamble located at `docs/tikz/dag_preamble.tex`.
-  - Use the exact node styles defined in the preamble: `dag_result` (green), `dag_lemma` (yellow rounded), `dag_model` (blue ellipse), `dag_unformalized` (dashed gray), `dag_conditional` (orange rounded), and `dag_caveat` (red diamond).
+  - Use the exact node styles defined in the preamble and status vocabulary:
+    `formalized` uses `dag_result` (green theorem/result), `dag_lemma`
+    (yellow lemma/support), or `dag_model` (blue definition/model) depending
+    on node type; `formalized with caveat` uses `dag_caveat` (red diamond);
+    `partially formalized` uses `dag_partial` (yellow dashed); `conditional`
+    uses `dag_conditional` (orange rounded); `scaffold` uses `dag_scaffold`
+    (gray dotted); and `not started`/`not formalized` use
+    `dag_unformalized` (gray dashed).
 - **DAG Formatting and Clarity Mandates:**
+  - **Visual Iteration Requirement:** After every substantive DAG edit, render the DAG, inspect the visual output, and keep adjusting layout until you can explicitly confirm that it looks clean with no box, legend, note, edge, or label overlap. Do not claim the DAG is done if you have not visually checked it or if any overlap remains.
+  - **Stable Topology Requirement:** The initial DAG should contain the paper's full named-result structure: all named Definitions, Lemmas, Propositions, Theorems, Corollaries, and appendix results, with dependency arrows reflecting the paper proof architecture. After that initial roadmap is created, routine progress updates should normally change only node status/style/text, not add new boxes or arrows. Add or remove boxes/arrows only when the initial named-result inventory was incomplete or a genuine paper dependency was discovered to be missing/wrong; if topology changes, rerender and re-check for overlap.
   - The DAG must encode formalization status and node type explicitly by using the preamble styles.
   - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
   - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top.
   - **Edge Routing (No Overlaps):** Use explicit positioning (`node distance`, `below=of`, `right=of`, `xshift`, `yshift`) carefully. **Prefer straight paths or simple orthogonal routing (`|-`, `-|`) whenever possible without overlap.** Use a column-based layout (the preamble standardizes horizontal spacing at `3cm` or `4cm` depending on the specific diagram needs) to ensure paths are clear and text boxes do not collide. Only use complex curves (`to[out=..., in=...]`) or bends when absolutely necessary to route around an immediate obstacle. Use `dag_arrow` and `dag_dashed_arrow` from the preamble for styling.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
-  a status transition between scaffold/conditional/formalized).
+  a status transition in the controlled README/DAG vocabulary).
 - Keep the paper DAG paper-facing. Its primary nodes should be the source's
   named definitions, lemmas, propositions, theorems, and corollaries. Do not
   replace a source theorem with internal implementation layers such as finite
@@ -502,7 +550,7 @@ reference.
 | Touched code | Read |
 |---|---|
 | `EconCSLib/Foundations/Math/*`, graph/counting/rounding/sign lemmas | `references/proof-foundations-math.md` |
-| `EconCSLib/Foundations/Probability/*`, finite PMFs, continuous densities, RUM/noise laws | `references/proof-foundations-probability.md` |
+| `EconCSLib/Foundations/Probability/*`, finite PMFs, Markov kernels/chains, concentration, measure inequalities, continuous densities, RUM/noise laws | `references/proof-foundations-probability.md` |
 | `EconCSLib/Foundations/Optimization/*`, argmax/existence/objective wrappers | `references/proof-foundations-optimization.md` |
 | `EconCSLib/Applications/RecommenderSystems/*`, accuracy/diversity, producer fairness, count allocation | `references/proof-recommender-systems.md` |
 | `EconCSLib/Algorithms/Online/*`, AdWords/MSVV, online matching, regret/Yao | `references/proof-algorithms-online.md` |

@@ -25,12 +25,12 @@ lemmas live in `EconCSLib/Foundations/Optimization/Argmax.lean`.
 
 ## Theorem Status
 
-| Paper item | Lean declaration | Status | File | Remaining assumptions |
+| Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
 | Theorem 1, argmax bias bounded by MAE and tight | none | not formalized | none | requires calibrated continuous predictors, MAE, bias metrics, and the paper's measure-theoretic transformation argument |
-| Theorem 2(i), joint rule maximizes `O_N^γ` | `paper_theorem2i_joint_optimization_rule_exists`, `paperExpectedONObjective`, `paperONObjective` | conditional source-facing statement | `DSWG24DiscretizationBias/MainTheorems.lean`, `EconCSLib/Foundations/Optimization/Argmax.lean` | assumes `FiniteLinearExpectation` for the outer dataset expectation and row-wise Bayes identities `hbayesRow`; fidelity/reference distribution is supplied as the paper's per-dataset fidelity term |
-| Theorem 2(ii), argmax is accuracy-maximizing for Bayes-optimal scores | `paper_theorem2ii_argmax_expected_accuracy_maximizing` | conditional source-facing statement | `DSWG24DiscretizationBias/MainTheorems.lean`, `EconCSLib/Foundations/Optimization/Argmax.lean` | assumes `FiniteLinearExpectation` and row-wise Bayes identities `hbayesRow`; `expectedDecisionAccuracy_eq_expectedDecisionScore_of_row_bayes` proves these imply the full tower-property bridge for every joint rule |
-| Theorem 2(ii), deterministic Bayes-score core | `paper_theorem2ii_argmax_accuracy_maximizing` | auxiliary lemma | `DSWG24DiscretizationBias/MainTheorems.lean` | fixed observed dataset; retained only as a local support wrapper |
+| Theorem 2(i), joint rule maximizes `O_N^γ` | `paper_theorem2i_joint_optimization_rule_exists`, `paperExpectedONObjective`, `paperONObjective` | conditional | `DSWG24DiscretizationBias/MainTheorems.lean`, `EconCSLib/Foundations/Optimization/Argmax.lean` | Previous status: conditional source-facing statement; assumes `FiniteLinearExpectation` for the outer dataset expectation and row-wise Bayes identities `hbayesRow`; fidelity/reference distribution is supplied as the paper's per-dataset fidelity term |
+| Theorem 2(ii), argmax is accuracy-maximizing for Bayes-optimal scores | `paper_theorem2ii_argmax_expected_accuracy_maximizing` | conditional | `DSWG24DiscretizationBias/MainTheorems.lean`, `EconCSLib/Foundations/Optimization/Argmax.lean` | Previous status: conditional source-facing statement; assumes `FiniteLinearExpectation` and row-wise Bayes identities `hbayesRow`; `expectedDecisionAccuracy_eq_expectedDecisionScore_of_row_bayes` proves these imply the full tower-property bridge for every joint rule |
+| Theorem 2(ii), deterministic Bayes-score core | `paper_theorem2ii_argmax_accuracy_maximizing` | partially formalized | `DSWG24DiscretizationBias/MainTheorems.lean` | Previous status: auxiliary lemma; fixed observed dataset; retained only as a local support wrapper |
 | Theorem 2(iii), uniqueness/Pareto optimality of argmax among independent rules | none | not formalized | none | requires randomized independent decision rules, non-trivial reference distributions, and Pareto-frontier definitions |
 
 ## Source-Audit Notes

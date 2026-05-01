@@ -18,6 +18,8 @@
 .env.*
 !.env.example
 *.log
+__pycache__/
+*.pyc
 
 # LaTeX auxiliary files
 *.aux
