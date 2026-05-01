@@ -17,6 +17,12 @@ Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
 
+When starting a new paper, briefly inspect the repository's already-formalized
+papers in the same EC area and ask which proof moves should become general
+library tools. Do not force a detached library project before proving the paper,
+but if a lemma, interface, or theorem is likely to be useful to another EC paper,
+build it in `EconCSLib` while formalizing the current result.
+
 Follow the original paper's proof structure as closely as is practical. Preserve
 named definitions, lemmas, propositions, and theorem numbers in Lean declaration
 names, docstrings, and README status rows. When deviating from the paper proof
@@ -38,9 +44,10 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   - **Local Ledger:** Keep the paper's specific narrative flow in `MainTheorems.lean`, `README.md`, and `DependencyDAG.tex`.
   - **Upstreaming Workflow:** It is normal to build everything inside a `papers/` folder initially. Once a proof is stable, **upstream** the generalized math into `EconCSLib`, leaving only the thin wrappers and paper-specific stepping stones behind.
 
-- **Standard for Upstreaming:** To prevent "upstream bloat," use the "Second Paper" test: **Only move a result to `EconCSLib` if a second paper would likely need it.** Foundationally reusable math (like Gale-Shapley, Nash equilibrium, or LP duality) passes this test; hyper-specific algebraic lemmas or messy intermediate steps used only for one paper's specific narrative should remain in that paper's folder.
+- **Standard for Upstreaming:** To prevent "upstream bloat," use the "Second Paper" test: **Move a result to `EconCSLib` if a second paper or another likely EC formalization would plausibly need it.** Foundationally reusable math (like Gale-Shapley, Nash equilibrium, LP duality, threshold mechanisms, monotone single-parameter allocation consequences, or finite-expectation/probability interfaces) passes this test; hyper-specific algebraic lemmas or messy intermediate steps used only for one paper's specific narrative should remain in that paper's folder.
 - If two papers could use a lemma after renaming variables, it belongs in the generic library.
 - If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
+- It is fine, and often faster overall, to create reusable library material while proving a paper when the abstraction directly closes the active paper seam and is likely to serve the broader EC community. Avoid speculative polish, but do not avoid general infrastructure just because the current paper could be hacked locally.
 - For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
 
 ### 1.3 Paper Folder Contract
@@ -160,7 +167,10 @@ the Lean statements against the paper.
   about a paper or completed proof phase. It must answer whether the paper is
   verified, what additional assumptions were needed, whether mistakes were
   found, and whether the Lean proof followed the paper strategy or used a
-  different route.
+  different route. When creating or updating a final validation report, also
+  update the front repository `README.md` paper-status table and
+  `docs/ECONCSLEAN_CURRENT_STATUS.md` so the public entry points match the
+  paper-local verdict.
 - For paper-specific status questions, the paper folder `README.md`,
   `DependencyDAG.tex`, paper-facing theorem files, and current targeted Lean
   build are the source of truth. Older author-wide notes or campaign reports
@@ -266,12 +276,19 @@ search.
    symmetric recommendation pivots, or ranking/Mallows algebra, load the
    relevant reference in Component 2 instead of putting those techniques in this
    main workflow file.
+   The priority order is: close the paper-facing theorem faithfully, choose the
+   quickest model level that makes the proof work, and extract reusable tools
+   only when they clearly help this proof or a near-term second paper. A finite
+   scaffold is a tool, not a required first phase.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,
    rankings, conditional expectations, graph lemmas, and sign lemmas should live
    in main library modules, not buried in one paper folder. Keep only
    paper-specific definitions and wrappers in paper namespaces.
+   Build the reusable abstraction at the point it accelerates the active paper:
+   do not spend a session polishing general infrastructure whose first real use
+   is still speculative.
 
 5. Make every paper pay library rent.
    When a proof needs a reusable object, add the general version once and reuse
@@ -427,6 +444,11 @@ validation pass:
   artifacts (TikZ source and rendered image). This report is not for routine
   handoff; it is the concise final assessment a human should read to decide what
   was actually verified.
+- Update the front repository `README.md` paper-status table and
+  `docs/ECONCSLEAN_CURRENT_STATUS.md` at the same time, using the exact caveats
+  from the final report. Do not let the front README keep stale "partial" or
+  "active" wording after a paper-local validation report says a paper is
+  verified.
 - **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
 - The report must summarize: source version checked, theorem-by-theorem completion status (including unformalized items), additional assumptions introduced beyond the paper, proof-strategy deviations from the paper, and any suspected paper errors or inconsistencies found during formalization.
 - If no extra assumptions, deviations, or errors were needed/found, state that explicitly in the report rather than leaving sections implicit.

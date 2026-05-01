@@ -33,6 +33,10 @@ export EconCSLib.Auction (
   paper_two_winner_fixed_price_benchmark
   paper_threshold_price_individually_rational
   paper_threshold_price_no_positive_transfers
+  paper_lemma8_1_truthful_win_probability_monotone
+  paper_lemma8_1_allocation_mono_own_bid_of_truthful
+  paper_theorem8_2_expected_revenue_le_fixed_price_benchmark_of_certificate
+  paper_theorem8_2_expected_revenue_le_fixed_price_benchmark_of_monotone_probabilities
 )
 
 end GHW01DigitalGoods

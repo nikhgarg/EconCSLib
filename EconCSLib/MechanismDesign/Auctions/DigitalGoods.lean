@@ -1,3 +1,4 @@
+import EconCSLib.Foundations.Math.FiniteSum
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Pi
@@ -40,6 +41,84 @@ def TruthfulDominantStrategy [DecidableEq Agent]
   ∀ (values : Agent → ℝ) (i : Agent) (report : ℝ),
     M.utility values i (Function.update values i report) ≤
       M.utility values i values
+
+/--
+Truthfulness forces the allocation probability/quantity offered to a bidder to
+be monotone in that bidder's own bid. This is the reusable single-parameter
+mechanism fact behind GHW Lemma 8.1.
+-/
+theorem allocation_mono_own_bid_of_truthful [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent) (hM : M.TruthfulDominantStrategy)
+    (bids : Agent → ℝ) (i : Agent) {low high : ℝ} (hlt : low < high) :
+    M.allocation (Function.update bids i low) i ≤
+      M.allocation (Function.update bids i high) i := by
+  classical
+  let lowProfile : Agent → ℝ := Function.update bids i low
+  let highProfile : Agent → ℝ := Function.update bids i high
+  have h_update_high_low :
+      Function.update highProfile i low = lowProfile := by
+    funext j
+    by_cases hji : j = i
+    · subst j
+      simp [lowProfile, highProfile]
+    · simp [lowProfile, highProfile, Function.update, hji]
+  have h_update_low_high :
+      Function.update lowProfile i high = highProfile := by
+    funext j
+    by_cases hji : j = i
+    · subst j
+      simp [lowProfile, highProfile]
+    · simp [lowProfile, highProfile, Function.update, hji]
+  have hhigh :
+      high * M.allocation lowProfile i - M.payment lowProfile i ≤
+        high * M.allocation highProfile i - M.payment highProfile i := by
+    simpa [DigitalGoodsAuction.utility, highProfile, h_update_high_low]
+      using hM highProfile i low
+  have hlow :
+      low * M.allocation highProfile i - M.payment highProfile i ≤
+        low * M.allocation lowProfile i - M.payment lowProfile i := by
+    simpa [DigitalGoodsAuction.utility, lowProfile, h_update_low_high]
+      using hM lowProfile i high
+  by_contra hnot
+  have hgt :
+      M.allocation highProfile i < M.allocation lowProfile i :=
+    lt_of_not_ge hnot
+  nlinarith
+
+/--
+Algebraic form of the GHW Lemma 8.1 proof. If the two truthfulness comparisons
+hold for values `bᵢ < bⱼ`, win probabilities `pᵢ,pⱼ`, and conditional expected
+costs `cᵢ,cⱼ`, then the lower-value bid cannot have larger win probability.
+-/
+theorem winProbability_mono_of_truthful_utility_inequalities
+    {bi bj pi pj ci cj : ℝ} (hbid : bi < bj)
+    (hlow : pj * (bi - cj) ≤ pi * (bi - ci))
+    (hhigh : pi * (bj - ci) ≤ pj * (bj - cj)) :
+    pi ≤ pj := by
+  nlinarith
+
+/--
+Certificate form of the final algebra in GHW Theorem 8.2. After the paper's
+truthfulness and telescoping argument rewrites expected revenue as a weighted
+sum of fixed-price revenues, nonnegative weights of total mass at most one and
+the benchmark bound `fixedPriceRevenue i <= fixedPriceBenchmark` imply
+`expectedRevenue <= fixedPriceBenchmark`.
+-/
+theorem expectedRevenue_le_fixedPriceBenchmark_of_weighted_certificate
+    {Index : Type*} [Fintype Index]
+    {expectedRevenue fixedPriceBenchmark : ℝ}
+    (weight fixedPriceRevenue : Index → ℝ)
+    (hrevenue :
+      expectedRevenue ≤ ∑ i : Index, weight i * fixedPriceRevenue i)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_sum : (∑ i : Index, weight i) ≤ 1)
+    (hfixed : ∀ i, fixedPriceRevenue i ≤ fixedPriceBenchmark)
+    (hbenchmark_nonneg : 0 ≤ fixedPriceBenchmark) :
+    expectedRevenue ≤ fixedPriceBenchmark := by
+  exact le_trans hrevenue
+    (FiniteSum.weighted_sum_le_bound_of_nonneg_sum_le_one
+      weight fixedPriceRevenue hweight_nonneg hweight_sum hfixed
+      hbenchmark_nonneg)
 
 /-- Truthful utility is always nonnegative. -/
 def IndividuallyRational (M : DigitalGoodsAuction Agent) : Prop :=

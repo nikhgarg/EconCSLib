@@ -5,6 +5,16 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 
 ## Digital Goods and Posted Prices
 
+- When starting a mechanism-design or auction paper, first look at nearby
+  formalized papers and `EconCSLib/MechanismDesign` for proof moves that should
+  become reusable EC infrastructure. Build the reusable layer during the paper
+  proof when it directly helps the active theorem and is likely useful for
+  another auction/mechanism paper.
+- For auction papers, attack the named theorem through the shortest faithful
+  model level. Finite bidder models are often right for digital goods, but do
+  not build a finite analogue as ritual if the paper statement or proof closes
+  more directly through a certificate, threshold characterization, or
+  expectation interface.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
