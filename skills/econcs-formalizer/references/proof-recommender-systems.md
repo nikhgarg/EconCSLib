@@ -83,11 +83,12 @@ allocation.
   correction term by `c * (1 + 2 * c) / x^2`, sum over an interval by its length
   times the left-endpoint inverse-square term, and feed the resulting
   nonnegative correction through the shift
-  `1 + d + B * (exp(E / (1 + c)) - 1)`. With those wrappers in place, finish
-  the branch by instantiating a concrete eventual certificate. The PRPKG
-  alpha-one seam now separates raw-order shift growth from reverse-order
-  corrected-shift growth; use a slower schedule such as `(N+1)^(-1/4)` so
-  `ε_N N → ∞` and `ε_N^3 N → ∞`.
+  `1 + d + B * (exp(E / (1 + c)) - 1)`. The PRPKG alpha-one seam separates
+  raw-order shift growth from reverse-order corrected-shift growth, and the
+  concrete quarter-error certificate closes the branch: use
+  `ε_N = (N+1)^(-1/4)` so both `ε_N N → ∞` and `ε_N^3 N → ∞`; the cube growth
+  dominates the correction-sum bound after scaling by the finite target-weight
+  sum.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
