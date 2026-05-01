@@ -33,6 +33,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   selected pair index type and embed it injectively into the full pair index;
   then compare sums with `FiniteSum.sum_le_sum_of_injective_nonneg`. This is
   faster and more auditable than repeatedly expanding the full auction sum.
+- For bucket/bin auction proofs, prefer actual `Finset` buckets over abstract
+  pre-ranked arrays once the algebraic bridge is stable. Use a finite-ranking
+  helper to derive value-sorted ranks, within-bin membership, image equality,
+  and injectivity; use subtype/finset wrappers to derive high-low pair
+  injections from disjoint bucket halves.
 - Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.

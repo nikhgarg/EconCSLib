@@ -21,6 +21,12 @@ finite signs, asymptotics, and interval-crossing arguments.
   the selected index type into the full index type and use
   `FiniteSum.sum_le_sum_of_injective_nonneg`, with nonnegativity of the full
   summands, to compare the selected sum to the full sum.
+- When a proof needs "sort these finitely many objects by score, with ties
+  broken arbitrarily", do not leave ranking/injectivity/monotonicity as paper
+  assumptions. Build or reuse a finite-ranking helper that maps each object to
+  a lexicographic `(score, tie-breaker)` key, enumerates the finite key set with
+  `Finset.orderEmbOfFin`, and proves membership, image equality, injectivity,
+  and score monotonicity once.
 - For finite rounding, split into a reusable no-crossing combinatorial theorem,
   a paper-specific exchange certificate ruling out crossings at optima, and the
   final triangle-inequality or share-error bound.
