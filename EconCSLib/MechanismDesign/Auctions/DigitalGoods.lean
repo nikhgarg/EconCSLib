@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Math.FiniteSum
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.List.Count
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Finset.Max
@@ -1216,6 +1217,35 @@ theorem weightedPairingExpectedRevenue_eq_sum_payments
     weightedPairingExpectedRevenue values =
       ∑ i : Agent, weightedPairingExpectedPayment values i := by
   rfl
+
+theorem weightedPairingExpectedPayment_eq_filtered_square_sum_div
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (i : Agent) :
+    weightedPairingExpectedPayment values i =
+      (∑ j ∈ (Finset.univ : Finset Agent).filter
+          (fun j => j ≠ i ∧ values j ≤ values i),
+        (values j) ^ 2) /
+        (totalBidValue values - values i) := by
+  rw [weightedPairingExpectedPayment]
+  rw [Finset.sum_filter]
+  conv_rhs => rw [div_eq_mul_inv]
+  rw [Finset.sum_mul]
+  exact Finset.sum_congr rfl fun j _ => by
+    by_cases h : j ≠ i ∧ values j ≤ values i <;>
+      simp [h, div_eq_mul_inv]
+
+theorem weightedPairingExpectedPayment_le_div_of_filtered_square_sum_le
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (i : Agent) {numeratorBound : ℝ}
+    (hnum :
+      (∑ j ∈ (Finset.univ : Finset Agent).filter
+          (fun j => j ≠ i ∧ values j ≤ values i),
+        (values j) ^ 2) ≤ numeratorBound)
+    (hden_nonneg : 0 ≤ totalBidValue values - values i) :
+    weightedPairingExpectedPayment values i ≤
+      numeratorBound / (totalBidValue values - values i) := by
+  rw [weightedPairingExpectedPayment_eq_filtered_square_sum_div]
+  exact div_le_div_of_nonneg_right hnum hden_nonneg
 
 theorem weightedPairingExpectedRevenue_nonneg_of_den_nonneg
     [Fintype Agent] [DecidableEq Agent]

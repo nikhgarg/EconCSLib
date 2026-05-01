@@ -71,6 +71,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   the bucket containing the price (`p <= 2 * baseFloor`) to count winners, while
   the high/low rank split uses the selected bucket floor `t`; forcing these to
   be the same creates unnecessary and non-paper assumptions.
+- For repeated-bid tightness examples, model the actual population with
+  dependent finite types such as `Sigma fun level => Fin (count level)` plus a
+  separate `Fin s` top block. Prove the source's bookkeeping facts first
+  (per-level total mass, total bid value, top-price fixed-price revenue, and
+  classifier revenue split) before attacking the raw expected-payment
+  inequalities.
 - When a theorem's proof only needs a size/value precondition in one case split,
   derive it inside that branch instead of assuming it globally. For GHW-style
   arguments, `F <= T/s`, `F >= 2h`, and `2 <= s` give the `4h <= T` precondition
