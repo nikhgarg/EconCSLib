@@ -79,10 +79,13 @@ allocation.
   product layer there. The reverse layer bounds the inverse interval product by
   the same endpoint ratio times an explicit log-correction sum from
   `-log(1-c/x) - c log((x+1)/x)`, and an exponential scalar bridge turns the
-  corrected shifted-count inequality into marginal dominance. Finish the branch
-  by proving the large scaled-count gap implies that corrected shifted
-  inequality; a slower schedule than `1/sqrt(N)` may be needed so both
-  `ε_N N → ∞` and `ε_N^2 N → ∞`.
+  corrected shifted-count inequality into marginal dominance. Bound each
+  correction term by `c * (1 + 2 * c) / x^2`, sum over an interval by its length
+  times the left-endpoint inverse-square term, and feed the resulting
+  nonnegative correction through the shift
+  `1 + d + B * (exp(E / (1 + c)) - 1)`. With those wrappers in place, finish
+  the branch by instantiating a concrete eventual certificate; a slower schedule
+  than `1/sqrt(N)` may be needed so both `ε_N N → ∞` and `ε_N^2 N → ∞`.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
