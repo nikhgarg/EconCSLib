@@ -1080,6 +1080,21 @@ noncomputable def totalBidValue [Fintype Agent] (values : Agent → ℝ) : ℝ :
   ∑ i : Agent, values i
 
 /--
+For nonnegative bid profiles, revenue from any anonymous fixed price is bounded
+by the total bid value.
+-/
+theorem singlePriceRevenue_le_totalBidValue_of_nonneg
+    [Fintype Agent] (values : Agent → ℝ) (p : ℝ)
+    (hvalues_nonneg : ∀ i : Agent, 0 ≤ values i) :
+    singlePriceRevenue values p ≤ totalBidValue values := by
+  classical
+  unfold singlePriceRevenue totalBidValue
+  exact Finset.sum_le_sum fun i _hi => by
+    by_cases hwin : p ≤ values i
+    · simpa [hwin] using hwin
+    · simp [hwin, hvalues_nonneg i]
+
+/--
 Expected payment of bidder `i` in the GHW weighted-pairing auction. Bidder `i`
 draws another bidder `j` with probability proportional to `values j`; if
 `values j <= values i`, bidder `i` wins and pays `values j`.

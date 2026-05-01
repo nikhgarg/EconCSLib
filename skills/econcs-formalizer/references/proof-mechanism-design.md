@@ -47,6 +47,22 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   plus a largest-total-bucket-to-floor-mass bridge. This is faster and more
   auditable than repeatedly unfolding all powers-of-two buckets in the main
   auction theorem.
+- For paper statements involving `log h` dyadic bins, avoid fighting
+  `Real.log` until the analytic endpoint truly needs it. A faster faithful
+  route is often to take a natural-number log certificate such as
+  `values i <= 2^(m+1)`, construct the `m+1` factor-two bins by induction on
+  powers of two, and state the theorem with the explicit hypothesis
+  `(m+1 : ℝ) <= s^2` or the relevant log-bound certificate.
+- In weighted-pairing Theorem 7.2-style proofs, keep the fixed-price tail base
+  separate from the selected largest bucket's floor. The fixed-price bound uses
+  the bucket containing the price (`p <= 2 * baseFloor`) to count winners, while
+  the high/low rank split uses the selected bucket floor `t`; forcing these to
+  be the same creates unnecessary and non-paper assumptions.
+- When a theorem's proof only needs a size/value precondition in one case split,
+  derive it inside that branch instead of assuming it globally. For GHW-style
+  arguments, `F <= T/s`, `F >= 2h`, and `2 <= s` give the `4h <= T` precondition
+  for the Theorem 7.1 branch, while the largest-bucket branch should not inherit
+  that extra assumption.
 - Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.
