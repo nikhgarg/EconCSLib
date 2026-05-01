@@ -535,6 +535,21 @@ noncomputable def finiteCandidateOfferPrice [Fintype Agent]
   else
     0
 
+/-- Candidate offer prices are either zero or one of the submitted bidder values. -/
+noncomputable def finiteCandidatePriceSet [Fintype Agent]
+    (values : Agent → ℝ) : Finset ℝ :=
+  insert 0 ((Finset.univ : Finset Agent).image values)
+
+theorem finiteCandidateOfferPrice_mem_priceSet [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    finiteCandidateOfferPrice values minWinners ∈
+      finiteCandidatePriceSet values := by
+  classical
+  let i := finiteCandidateBenchmarkBidder values minWinners
+  by_cases hsel : 0 ≤ values i ∧ minWinners ≤ saleCount values (values i)
+  · simp [finiteCandidateOfferPrice, finiteCandidatePriceSet, i, hsel]
+  · simp [finiteCandidateOfferPrice, finiteCandidatePriceSet, i, hsel]
+
 theorem finiteCandidateOfferPrice_nonneg [Fintype Agent] [Nonempty Agent]
     (values : Agent → ℝ) (minWinners : ℕ) :
     0 ≤ finiteCandidateOfferPrice values minWinners := by
@@ -676,12 +691,102 @@ def restrictBidsBySide (side : Agent → Bool) (keep : Bool)
     (bids : Agent → ℝ) : Agent → ℝ :=
   fun j => if side j = keep then bids j else 0
 
+theorem finiteCandidateOfferPrice_restrictBidsBySide_mem_priceSet
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    finiteCandidateOfferPrice
+        (restrictBidsBySide side keep values) minWinners ∈
+      finiteCandidatePriceSet values := by
+  classical
+  let restricted := restrictBidsBySide side keep values
+  let i := finiteCandidateBenchmarkBidder restricted minWinners
+  by_cases hsel : 0 ≤ restricted i ∧ minWinners ≤ saleCount restricted (restricted i)
+  · by_cases hkeep : side i = keep
+    · have hprice :
+          finiteCandidateOfferPrice restricted minWinners = values i := by
+        have hsel' :
+            0 ≤ values i ∧ minWinners ≤ saleCount restricted (values i) := by
+          simpa [restricted, restrictBidsBySide, hkeep] using hsel
+        simp [finiteCandidateOfferPrice, restricted, restrictBidsBySide, i, hsel', hkeep]
+      rw [hprice]
+      simp [finiteCandidatePriceSet]
+    · have hprice :
+          finiteCandidateOfferPrice restricted minWinners = 0 := by
+        have hprice_restricted :
+            finiteCandidateOfferPrice restricted minWinners = restricted i := by
+          simp [finiteCandidateOfferPrice, i, hsel]
+        have hrestricted_zero : restricted i = 0 := by
+          simp [restricted, restrictBidsBySide, hkeep]
+        rw [hprice_restricted, hrestricted_zero]
+      rw [hprice]
+      simp [finiteCandidatePriceSet]
+  · have hprice :
+        finiteCandidateOfferPrice restricted minWinners = 0 := by
+      simp [finiteCandidateOfferPrice, restricted, i, hsel]
+    rw [hprice]
+    simp [finiteCandidatePriceSet]
+
 /-- Number of bidders on a chosen sample side who accept price `p` in the
 original bid profile. -/
 noncomputable def sideSaleCount [Fintype Agent]
     (side : Agent → Bool) (keep : Bool)
     (values : Agent → ℝ) (p : ℝ) : ℕ :=
   ((Finset.univ : Finset Agent).filter fun i => side i = keep ∧ p ≤ values i).card
+
+theorem sideSaleCount_eq_sum_indicator_winners [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) :
+    (sideSaleCount side keep values p : ℝ) =
+      ∑ i ∈ ((Finset.univ : Finset Agent).filter fun i => p ≤ values i),
+        if side i = keep then (1 : ℝ) else 0 := by
+  classical
+  have hfilter :
+      ((Finset.univ : Finset Agent).filter fun i =>
+          side i = keep ∧ p ≤ values i) =
+        (((Finset.univ : Finset Agent).filter fun i => p ≤ values i).filter
+          fun i => side i = keep) := by
+    ext i
+    simp [and_comm]
+  rw [sideSaleCount, hfilter, ← Finset.sum_filter]
+  simp
+
+theorem sideSaleCount_add_not_eq_saleCount [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) :
+    sideSaleCount side keep values p +
+        sideSaleCount side (!keep) values p =
+      saleCount values p := by
+  classical
+  let winners : Finset Agent :=
+    (Finset.univ : Finset Agent).filter fun i => p ≤ values i
+  have hbool : ∀ b : Bool, (b = !keep) ↔ ¬ b = keep := by
+    intro b
+    cases keep <;> cases b <;> simp
+  have hkeep :
+      ((Finset.univ : Finset Agent).filter fun i =>
+          side i = keep ∧ p ≤ values i) =
+        winners.filter fun i => side i = keep := by
+    ext i
+    simp [winners, and_comm]
+  have hnot :
+      ((Finset.univ : Finset Agent).filter fun i =>
+          side i = !keep ∧ p ≤ values i) =
+        winners.filter fun i => ¬ side i = keep := by
+    ext i
+    simp [winners, hbool (side i), and_comm]
+  unfold sideSaleCount saleCount
+  rw [hkeep, hnot, Finset.card_filter_add_card_filter_not]
+
+theorem sideSaleCount_le_two_not_of_saleCount_le_three_not [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ)
+    (hcount :
+      saleCount values p ≤ 3 * sideSaleCount side (!keep) values p) :
+    sideSaleCount side keep values p ≤
+      2 * sideSaleCount side (!keep) values p := by
+  have hsum := sideSaleCount_add_not_eq_saleCount side keep values p
+  omega
 
 theorem sideSaleCount_le_saleCount_restrictBidsBySide [Fintype Agent]
     (side : Agent → Bool) (keep : Bool)

@@ -33,9 +33,10 @@ Reusable auction definitions and theorem bodies live in
    between the multi-price benchmark `T` and fixed-price benchmark `F`, then
    discharge Corollary 4.2.
 4. Return to Sections 6--7 once the generic probability layer is strong enough:
-   prove the fixed-size sample bound for Lemma 6.1, remove the explicit
-   `CrossSampleOfferApproximationCertificate` assumption from Theorem 6.2, and
-   then build the weighted-pairing expectation model for Theorems 7.1--7.2.
+   sharpen the selected-price revenue-good estimate in Theorem 6.2 from the
+   closed candidate-price union bound to the paper's top-prefix
+   `40 * exp(-alpha/72)` bound, then build the weighted-pairing expectation
+   model for Theorems 7.1--7.2.
 
 ## Theorem Status
 
@@ -46,7 +47,7 @@ Reusable auction definitions and theorem bodies live in
 | Fixed-price benchmark and two-winner benchmark | `paper_two_winner_benchmark`, `paper_two_winner_fixed_price_benchmark`, `paper_single_price_revenue_le_candidate_benchmark_of_feasible` | formalized finite support | `GHW01DigitalGoods/MainTheorems.lean` | assumes a feasible nonnegative two-winner price where needed |
 | Theorem 4.1 and Corollary 4.2, fixed-price revenue lower bounds | `paper_theorem4_1_fixed_price_lower_bound_of_factor_two_bin`, `paper_theorem4_1_fixed_price_lower_bound_of_factor_two_partition`, `paper_corollary4_2_fixed_price_lower_bound_from_truncation` | conditional scaffold | `GHW01DigitalGoods/MainTheorems.lean` | factor-two bin, finite averaging, and truncation-loss algebra formalized; needs construction of the paper's log-h/log-n dyadic partitions |
 | Lemma 6.1, random subset revenue split | none | not started | none | probabilistic subset lemma |
-| Theorem 6.2, random sampling auction guarantee | `paper_cross_sample_offer_competitive_of_certificate`, `paper_theorem6_2_random_sampling_union_bound`, `paper_theorem6_2_original_revenue_le_three_sample_benchmark`, `paper_theorem6_2_sample_benchmark_le_two_cross_sample_revenue` | conditional scaffold | `GHW01DigitalGoods/MainTheorems.lean` | deterministic sample-good and revenue-good implications plus union-bound endpoint formalized; needs Lemma 6.1/sample-split estimates and `CrossSampleOfferApproximationCertificate` with concrete ratio |
+| Theorem 6.2, random sampling auction guarantee | `paper_theorem6_2_deterministic_six_revenue_bound_of_large_sale_count`, `paper_aux_theorem6_2_side_sale_sample_good_probability`, `paper_aux_theorem6_2_revenue_good_probability_by_candidate_union`, `paper_theorem6_2_fair_coin_revenue_bound_candidate_union`, `paper_theorem6_2_random_sampling_measure_union_bound` | partially formalized with closed independent-sampling bound | `GHW01DigitalGoods/MainTheorems.lean` | deterministic `F <= 6R` endpoint, fair-coin sample-good probability, selected-price revenue-good finite candidate union, and product-measure union bound are formalized; remaining paper gap is replacing the finite candidate-price sum by the sharper top-prefix `40 * exp(-alpha/72)` estimate and packaging the exact `alpha h <= F` statement |
 | Theorem 7.1, weighted pairing auction revenue | `paper_theorem7_1_weighted_pairing_square_sum_endpoint` | conditional scaffold | `GHW01DigitalGoods/MainTheorems.lean` | square-sum endpoint and constants formalized; needs weighted-pairing auction model and per-bin revenue lower bound |
 | Theorem 7.2, weighted auction benchmark bound | none | not started | none | weighted auction model and logarithmic guarantee |
 | Lemma 8.1, monotone win probabilities in truthful auctions | `paper_lemma8_1_truthful_win_probability_monotone`, `paper_lemma8_1_allocation_mono_own_bid_of_truthful` | formalized | `GHW01DigitalGoods/MainTheorems.lean` | algebraic paper proof plus direct DSIC own-bid monotonicity form |
@@ -61,6 +62,7 @@ The cached text contains Theorem 4.1, Corollary 4.2, Lemma 6.1, Theorem 6.2,
 Theorems 7.1--7.2, Lemma 8.1, Theorem 8.2, Theorem 9.1, Lemma 9.2, and Theorem
 9.3. Current Lean coverage includes the reusable digital-goods mechanism layer,
 fixed-price benchmark support, deterministic RSOP-style truthfulness skeleton,
-Section 6 deterministic sample/revenue bridges, Lemma 8.1, and Lemma 9.2. The
-source approximation and lower-bound endpoints remain open except for the
-conditional theorem wrappers and deterministic reductions listed above.
+Section 6 deterministic/probabilistic independent-sampling bridges, Lemma 8.1,
+and Lemma 9.2. The source approximation and lower-bound endpoints remain open
+except for the conditional theorem wrappers and deterministic reductions listed
+above.

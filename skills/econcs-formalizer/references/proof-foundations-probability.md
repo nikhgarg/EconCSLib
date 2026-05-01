@@ -12,6 +12,16 @@ models.
 - For probability-delta comparisons, prove the tiny indicator inequality over
   the finite outcome type, then lift it with a generic PMF lemma comparing
   indicator differences.
+- For finite independent-sampling concentration, check Mathlib's
+  `Probability.Moments.SubGaussian` before proving Chernoff/Hoeffding from
+  scratch. A fast reusable seam is: compose independent variables with a
+  centering map, use `hasSubgaussianMGF_of_mem_Icc` for bounded variables, and
+  expose a paper-facing wrapper over `measure_sum_ge_le_of_iIndepFun`.
+- If a broad shared probability file is dirty or being edited by another
+  formalization thread, do not spend proof time repairing unrelated theorem
+  experiments. Put the needed stable seam in a focused module with distinct
+  names, import that module in the paper-facing file, and leave the shared file
+  unstaged unless you intentionally own its changes.
 - For strict event monotonicity, split the larger event into the smaller event
   plus a residual event and prove positive residual mass from a finite atom
   witness.
