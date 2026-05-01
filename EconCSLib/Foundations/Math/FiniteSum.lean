@@ -465,5 +465,115 @@ theorem revenue_le_bound_of_adjacent_truthful_cost_comparisons
     n p b revenueAtRank gain hp0 (by simpa [revenueAtRank] using hR)
     hrevenueAtRank hgain0 hgain_step hmono hendpoint hvalue hB
 
+/--
+Bounded version of `sum_range_gap_le_gain_of_adjacent`: adjacent utility-gap
+steps are needed only inside the finite rank range.
+-/
+theorem sum_range_gap_le_gain_of_adjacent_bounded
+    (n : ℕ) (p b gain : ℕ → ℝ)
+    (hgain0 : 0 ≤ gain 0)
+    (hstep :
+      ∀ i, i + 1 < n →
+        gain i + p (i + 1) * (b (i + 1) - b i) ≤ gain (i + 1)) :
+    ∀ i, i < n →
+      (∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j)) ≤
+        gain i := by
+  intro i hi
+  induction i with
+  | zero =>
+      simpa using hgain0
+  | succ i ih =>
+      rw [Finset.sum_range_succ]
+      have hi_prev : i < n := Nat.lt_trans (Nat.lt_succ_self i) hi
+      have hle :=
+        add_le_add_right (ih hi_prev) (p (i + 1) * (b (i + 1) - b i))
+      have hnext := hstep i hi
+      linarith
+
+/--
+Bounded adjacent-gain version of the GHW Theorem 8.2 algebra. The recursion
+only needs adjacent steps `i -> i+1` when `i+1 < n`.
+-/
+theorem revenue_le_bound_of_adjacent_gain_recursion_bounded
+    (n : ℕ) (p b revenueAtRank gain : ℕ → ℝ) {R B : ℝ}
+    (hp0 : p 0 = 0)
+    (hR : R ≤ ∑ i ∈ Finset.range n, revenueAtRank i)
+    (hrevenueAtRank :
+      ∀ i, i < n → revenueAtRank i = p (i + 1) * b i - gain i)
+    (hgain0 : 0 ≤ gain 0)
+    (hgain_step :
+      ∀ i, i + 1 < n →
+        gain i + p (i + 1) * (b (i + 1) - b i) ≤ gain (i + 1))
+    (hmono : ∀ j, j < n → p j ≤ p (j + 1))
+    (hendpoint : p n - p 0 ≤ 1)
+    (hvalue :
+      ∀ j, j < n → rankedFixedPriceRevenue n b j ≤ B)
+    (hB : 0 ≤ B) :
+    R ≤ B := by
+  have hgap_le :
+      ∀ i, i < n →
+        (∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j)) ≤
+          gain i :=
+    sum_range_gap_le_gain_of_adjacent_bounded n p b gain hgain0 hgain_step
+  have hranked :
+      ∀ i, i < n →
+        revenueAtRank i ≤ p (i + 1) * b i -
+          ∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j) := by
+    intro i hi
+    rw [hrevenueAtRank i hi]
+    linarith [hgap_le i hi]
+  have hrearranged :
+      R ≤ ∑ j ∈ Finset.range n,
+        (p (j + 1) - p j) * rankedFixedPriceRevenue n b j := by
+    exact le_trans hR
+      (sum_range_revenue_le_probabilityIncrement_rankedFixedPriceRevenue
+        n p b revenueAtRank hp0 hranked)
+  exact le_bound_of_le_range_probabilityIncrement_weighted_sum
+    n p (rankedFixedPriceRevenue n b) hrearranged hmono hendpoint hvalue hB
+
+/--
+Bounded version of the paper's `p_i`, `c_i`, `g_i` Theorem 8.2 algebra. The
+truthfulness comparison is required only for adjacent ranked bidders inside the
+finite profile.
+-/
+theorem revenue_le_bound_of_adjacent_truthful_cost_comparisons_bounded
+    (n : ℕ) (p b cost gain : ℕ → ℝ) {R B : ℝ}
+    (hp0 : p 0 = 0)
+    (hR : R ≤ ∑ i ∈ Finset.range n, p (i + 1) * cost i)
+    (hgain :
+      ∀ i, gain i = p (i + 1) * (b i - cost i))
+    (hgain0 : 0 ≤ gain 0)
+    (htruth_adjacent :
+      ∀ i, i + 1 < n →
+        p (i + 1) * (b (i + 1) - cost i) ≤ gain (i + 1))
+    (hmono : ∀ j, j < n → p j ≤ p (j + 1))
+    (hendpoint : p n - p 0 ≤ 1)
+    (hvalue :
+      ∀ j, j < n → rankedFixedPriceRevenue n b j ≤ B)
+    (hB : 0 ≤ B) :
+    R ≤ B := by
+  let revenueAtRank : ℕ → ℝ := fun i => p (i + 1) * cost i
+  have hrevenueAtRank :
+      ∀ i, i < n → revenueAtRank i = p (i + 1) * b i - gain i := by
+    intro i hi
+    dsimp [revenueAtRank]
+    rw [hgain i]
+    ring
+  have hgain_step :
+      ∀ i, i + 1 < n →
+        gain i + p (i + 1) * (b (i + 1) - b i) ≤ gain (i + 1) := by
+    intro i hi
+    have hg := hgain i
+    have ht := htruth_adjacent i hi
+    calc
+      gain i + p (i + 1) * (b (i + 1) - b i)
+          = p (i + 1) * (b (i + 1) - cost i) := by
+            rw [hg]
+            ring
+      _ ≤ gain (i + 1) := ht
+  exact revenue_le_bound_of_adjacent_gain_recursion_bounded
+    n p b revenueAtRank gain hp0 (by simpa [revenueAtRank] using hR)
+    hrevenueAtRank hgain0 hgain_step hmono hendpoint hvalue hB
+
 end FiniteSum
 end EconCSLib

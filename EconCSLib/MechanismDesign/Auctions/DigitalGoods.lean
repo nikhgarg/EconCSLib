@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Math.FiniteSum
+import Mathlib.Data.List.Count
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.BigOperators
@@ -1864,6 +1865,65 @@ def twoValueListBidIndependentThresholdPrice
     (priceRule : List ℝ → ℝ) (H : ℕ) : ℕ → ℕ → ℝ :=
   fun highCount lowCount =>
     priceRule (twoValueErasedBidList H highCount lowCount)
+
+/-- Count high-value bids in an anonymous binary erased-bid list. -/
+noncomputable def twoValueHighCountInList (H : ℕ) (bids : List ℝ) : ℕ :=
+  bids.countP fun x => decide (x = (H : ℝ))
+
+/-- Count low-value `1` bids in an anonymous binary erased-bid list. -/
+noncomputable def twoValueLowCountInList (_H : ℕ) (bids : List ℝ) : ℕ :=
+  bids.countP fun x => decide (x = (1 : ℝ))
+
+/--
+Convert a count-threshold binary price rule into the paper's anonymous
+erased-bid-list form by counting high and low values in the list.
+-/
+noncomputable def twoValueCountListPriceRule
+    (thresholdPrice : ℕ → ℕ → ℝ) (H : ℕ) : List ℝ → ℝ :=
+  fun bids =>
+    thresholdPrice (twoValueHighCountInList H bids)
+      (twoValueLowCountInList H bids)
+
+theorem list_countP_replicate_eq {α : Type*} (p : α → Bool) (a : α) :
+    ∀ n : ℕ, (List.replicate n a).countP p =
+      if p a = true then n else 0
+  | 0 => by simp [List.countP_nil]
+  | n + 1 => by
+      rw [List.replicate_succ, List.countP_cons,
+        list_countP_replicate_eq p a n]
+      by_cases h : p a = true <;> simp [h]
+
+theorem twoValueErasedBidList_highCount
+    {H highCount lowCount : ℕ} (hH_ne_one : (H : ℝ) ≠ 1) :
+    twoValueHighCountInList H
+        (twoValueErasedBidList H highCount lowCount) =
+      highCount := by
+  classical
+  rw [twoValueHighCountInList, twoValueErasedBidList, List.countP_append,
+    list_countP_replicate_eq, list_countP_replicate_eq]
+  have hne : (1 : ℝ) ≠ H := hH_ne_one.symm
+  simp [hne]
+
+theorem twoValueErasedBidList_lowCount
+    {H highCount lowCount : ℕ} (hH_ne_one : (H : ℝ) ≠ 1) :
+    twoValueLowCountInList H
+        (twoValueErasedBidList H highCount lowCount) =
+      lowCount := by
+  classical
+  rw [twoValueLowCountInList, twoValueErasedBidList, List.countP_append,
+    list_countP_replicate_eq, list_countP_replicate_eq]
+  simp [hH_ne_one]
+
+theorem twoValueListBidIndependentThresholdPrice_countListPriceRule
+    (thresholdPrice : ℕ → ℕ → ℝ) {H : ℕ}
+    (hH_ne_one : (H : ℝ) ≠ 1) :
+    twoValueListBidIndependentThresholdPrice
+        (twoValueCountListPriceRule thresholdPrice H) H =
+      thresholdPrice := by
+  funext highCount lowCount
+  rw [twoValueListBidIndependentThresholdPrice, twoValueCountListPriceRule,
+    twoValueErasedBidList_highCount hH_ne_one,
+    twoValueErasedBidList_lowCount hH_ne_one]
 
 theorem finiteCandidateFixedPriceBenchmark_twoValue_one_price_ge_total
     {H highCount lowCount : ℕ}
