@@ -1,4 +1,5 @@
 import GCG24UserItemFairness.Basic
+import Mathlib.Analysis.Convex.StdSimplex
 
 open scoped BigOperators
 open EconCSLib
@@ -38,15 +39,33 @@ def itemFairnessLPFeasible {m n : ℕ}
     (W : RecommendationModel m n) (ρ : Policy m n) (ell : ℝ) : Prop :=
   ∀ j : Item n, ell ≤ normalizedItemUtility W ρ j
 
+/--
+The equality-form item-fairness LP used in Appendix C, Lemma 2 of the paper:
+all normalized item utilities are exactly the objective variable `ell`.
+-/
+def itemFairnessEqualityLPFeasible {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) (ell : ℝ) : Prop :=
+  ∀ j : Item n, normalizedItemUtility W ρ j = ell
+
 /-- Feasible objective values in the LP epigraph form of item-fairness maximization. -/
 def itemFairnessLPValueSet {m n : ℕ}
     (W : RecommendationModel m n) : Set ℝ :=
   {ell | ∃ ρ : Policy m n, itemFairnessLPFeasible W ρ ell}
 
+/-- Feasible objective values in the paper's equality-form item-fairness LP. -/
+def itemFairnessEqualityLPValueSet {m n : ℕ}
+    (W : RecommendationModel m n) : Set ℝ :=
+  {ell | ∃ ρ : Policy m n, itemFairnessEqualityLPFeasible W ρ ell}
+
 /-- The optimal value of the LP epigraph form of item-fairness maximization. -/
 noncomputable def optimalItemFairnessLPValue {m n : ℕ}
     (W : RecommendationModel m n) : ℝ :=
   sSup (itemFairnessLPValueSet W)
+
+/-- The optimal value of the paper's equality-form item-fairness LP. -/
+noncomputable def optimalItemFairnessEqualityLPValue {m n : ℕ}
+    (W : RecommendationModel m n) : ℝ :=
+  sSup (itemFairnessEqualityLPValueSet W)
 
 /-- The LP epigraph constraints are equivalent to `λ ≤ I_min(ρ,w)`. -/
 theorem itemFairnessLPFeasible_iff_le_itemFairness
@@ -61,6 +80,25 @@ theorem itemFairnessLPFeasible_iff_le_itemFairness
     exact h j
   · intro h j
     exact h.trans (EconCSLib.finiteMin_le (normalizedItemUtility W ρ) j)
+
+/-- Equality-form LP feasibility pins `ell` to the policy's item-fairness value. -/
+theorem itemFairness_eq_of_itemFairnessEqualityLPFeasible
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) (ell : ℝ)
+    (h : itemFairnessEqualityLPFeasible W ρ ell) :
+    itemFairness W ρ = ell := by
+  unfold itemFairness
+  exact EconCSLib.finiteMin_eq_of_forall
+    (normalizedItemUtility W ρ) ell h
+
+/-- Equality-form LP feasibility implies the epigraph LP constraints. -/
+theorem itemFairnessLPFeasible_of_itemFairnessEqualityLPFeasible
+    {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) (ell : ℝ)
+    (h : itemFairnessEqualityLPFeasible W ρ ell) :
+    itemFairnessLPFeasible W ρ ell := by
+  intro j
+  exact le_of_eq (h j).symm
 
 /-- Nonnegative utilities bound every attainable original item-fairness value above by one. -/
 theorem attainableItemFairnessSet_bddAbove_of_nonnegative {m n : ℕ} [NeZero n]
@@ -94,6 +132,19 @@ theorem itemFairnessLPValueSet_bddAbove_of_nonnegative
       ell ≤ itemFairness W ρ :=
     (itemFairnessLPFeasible_iff_le_itemFairness W ρ ell).mp hρ
   exact hle_item.trans (itemFairness_le_one_of_nonnegative W hNonneg ρ)
+
+/-- Nonnegative utilities bound equality-form LP objective values above by one. -/
+theorem itemFairnessEqualityLPValueSet_bddAbove_of_nonnegative
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    BddAbove (itemFairnessEqualityLPValueSet W) := by
+  refine ⟨1, ?_⟩
+  intro ell hell
+  obtain ⟨ρ, hρ⟩ := hell
+  have hitem : itemFairness W ρ = ell :=
+    itemFairness_eq_of_itemFairnessEqualityLPFeasible W ρ ell hρ
+  rw [← hitem]
+  exact itemFairness_le_one_of_nonnegative W hNonneg ρ
 
 /--
 Appendix C, Lemma 2 in max-min LP epigraph form: maximizing `λ` subject to
@@ -132,6 +183,887 @@ theorem optimalItemFairnessLPValue_eq_optimalItemFairness_of_nonnegative
         (itemFairnessLPFeasible_iff_le_itemFairness
           W ρ (itemFairness W ρ)).mpr le_rfl⟩
     exact le_csSup hLPBdd hlp_mem
+
+/--
+The paper's local optimality condition for Appendix C, Lemma 2: there is no
+policy that strictly improves every normalized item utility.
+-/
+def ItemFairnessNoStrictPointwiseImprovement {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) : Prop :=
+  ¬ ∃ ρ' : Policy m n,
+    ∀ j : Item n,
+      normalizedItemUtility W ρ j < normalizedItemUtility W ρ' j
+
+/--
+The remaining constructive step in Appendix C, Lemma 2's source proof: if an
+optimal policy has a slack item, one can perturb probability mass away from
+that slack item and strictly improve the minimum item-fairness objective. The
+slack item's own value may decrease; the paper only needs it to stay above the
+old minimum.
+-/
+def ItemFairnessSlackImprovementProperty {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) : Prop :=
+  ∀ j : Item n,
+    itemFairness W ρ < normalizedItemUtility W ρ j →
+      ∃ ρ' : Policy m n,
+        itemFairness W ρ < itemFairness W ρ'
+
+/-- A nonzero policy coordinate has strictly positive real probability. -/
+theorem policy_toReal_pos_of_ne_zero {m n : ℕ}
+    (ρ : Policy m n) {u : User m} {j : Item n}
+    (h : ρ u j ≠ 0) :
+    0 < (ρ u j).toReal := by
+  have htoReal_ne : (ρ u j).toReal ≠ 0 := by
+    intro hzero
+    have hzero_or_top :=
+      (ENNReal.toReal_eq_zero_iff (ρ u j)).mp hzero
+    rcases hzero_or_top with hzero_enn | htop
+    · exact h hzero_enn
+    · exact (ρ u).apply_ne_top j htop
+  exact lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm htoReal_ne)
+
+/-- Positive item fairness implies every item is recommended by some user. -/
+theorem item_coverage_of_itemFairness_pos {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n)
+    (hpos : 0 < itemFairness W ρ) :
+    ∀ j : Item n, ∃ u : User m, ρ u j ≠ 0 := by
+  classical
+  intro j
+  by_contra hnone
+  have hall_zero : ∀ u : User m, ρ u j = 0 := by
+    intro u
+    exact Classical.byContradiction (by
+      intro hu
+      exact hnone ⟨u, hu⟩)
+  have hraw_zero : rawItemUtility W ρ j = 0 := by
+    unfold rawItemUtility
+    simp [hall_zero]
+  have hnorm_zero : normalizedItemUtility W ρ j = 0 := by
+    unfold normalizedItemUtility
+    rw [hraw_zero]
+    by_cases hden : itemNormalizer W j = 0
+    · simp [hden]
+    · simp [hden]
+  have hle := EconCSLib.finiteMin_le (normalizedItemUtility W ρ) j
+  have hnorm_pos : 0 < normalizedItemUtility W ρ j := lt_of_lt_of_le hpos hle
+  rw [hnorm_zero] at hnorm_pos
+  exact (lt_irrefl (0 : ℝ)) hnorm_pos
+
+/-- Items attaining the current minimum normalized item utility. -/
+noncomputable def itemFairnessMinimizerSet {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) : Finset (Item n) :=
+  Finset.univ.filter
+    (fun j : Item n => normalizedItemUtility W ρ j = itemFairness W ρ)
+
+theorem mem_itemFairnessMinimizerSet_iff {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) :
+    j ∈ itemFairnessMinimizerSet W ρ ↔
+      normalizedItemUtility W ρ j = itemFairness W ρ := by
+  classical
+  simp [itemFairnessMinimizerSet]
+
+/-- The finite minimum is attained by at least one item. -/
+theorem itemFairnessMinimizerSet_nonempty {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) :
+    (itemFairnessMinimizerSet W ρ).Nonempty := by
+  classical
+  obtain ⟨j, hj⟩ : ∃ j : Item n,
+      itemFairness W ρ = normalizedItemUtility W ρ j := by
+    unfold itemFairness EconCSLib.finiteMin
+    obtain ⟨j, _hjmem, hj⟩ :=
+      Finset.exists_mem_eq_inf'
+        (s := (Finset.univ : Finset (Item n)))
+        (H := Finset.univ_nonempty)
+        (f := normalizedItemUtility W ρ)
+    exact ⟨j, hj⟩
+  exact ⟨j, (mem_itemFairnessMinimizerSet_iff W ρ j).mpr hj.symm⟩
+
+theorem not_mem_itemFairnessMinimizerSet_of_itemFairness_lt
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) {j : Item n}
+    (h : itemFairness W ρ < normalizedItemUtility W ρ j) :
+    j ∉ itemFairnessMinimizerSet W ρ := by
+  classical
+  intro hj
+  have heq :=
+    (mem_itemFairnessMinimizerSet_iff W ρ j).mp hj
+  linarith
+
+/-- Build a finite item PMF from a nonnegative real vector with total mass one. -/
+noncomputable def pmfOfRealItemVector {n : ℕ}
+    (x : Item n → ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ x j)
+    (hsum : (∑ j : Item n, x j) = 1) : PMF (Item n) :=
+  PMF.ofFintype (fun j : Item n => ENNReal.ofReal (x j)) (by
+    calc
+      (∑ j : Item n, ENNReal.ofReal (x j))
+          = ENNReal.ofReal (∑ j : Item n, x j) := by
+            rw [← ENNReal.ofReal_sum_of_nonneg
+              (s := Finset.univ) (f := x)]
+            simp [hnonneg]
+      _ = 1 := by
+            simp [hsum])
+
+@[simp] theorem pmfOfRealItemVector_apply_toReal {n : ℕ}
+    (x : Item n → ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ x j)
+    (hsum : (∑ j : Item n, x j) = 1)
+    (j : Item n) :
+    ((pmfOfRealItemVector x hnonneg hsum) j).toReal = x j := by
+  unfold pmfOfRealItemVector
+  rw [PMF.ofFintype_apply]
+  exact ENNReal.toReal_ofReal (hnonneg j)
+
+/--
+A real-vector presentation of policies as one standard simplex row per user.
+This is only used to prove finite-dimensional optimum attainment for Lemma 2.
+-/
+abbrev PolicySimplexVector (m n : ℕ) :=
+  User m → stdSimplex ℝ (Item n)
+
+/-- Convert a real simplex vector back to the paper's `PMF`-valued policy type. -/
+noncomputable def policyOfSimplexVector {m n : ℕ}
+    (x : PolicySimplexVector m n) : Policy m n :=
+  fun u =>
+    pmfOfRealItemVector
+      ((x u : stdSimplex ℝ (Item n)) : Item n → ℝ)
+      (x u).2.1
+      (x u).2.2
+
+@[simp] theorem policyOfSimplexVector_apply_toReal {m n : ℕ}
+    (x : PolicySimplexVector m n) (u : User m) (j : Item n) :
+    ((policyOfSimplexVector x u) j).toReal =
+      ((x u : stdSimplex ℝ (Item n)) : Item n → ℝ) j := by
+  simp [policyOfSimplexVector]
+
+/-- Convert a `PMF`-valued policy into its real simplex-vector presentation. -/
+noncomputable def simplexVectorOfPolicy {m n : ℕ}
+    (ρ : Policy m n) : PolicySimplexVector m n :=
+  fun u =>
+    ⟨fun j => (ρ u j).toReal,
+      ⟨fun j => ENNReal.toReal_nonneg,
+        EconCSLib.pmfToRealSum (ρ u)⟩⟩
+
+/-- Raw item utility evaluated on the real simplex-vector presentation. -/
+noncomputable def rawItemUtilityVector {m n : ℕ}
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (j : Item n) : ℝ :=
+  ∑ u : User m,
+    W.utility u j * ((x u : stdSimplex ℝ (Item n)) : Item n → ℝ) j
+
+/-- Normalized item utility evaluated on the real simplex-vector presentation. -/
+noncomputable def normalizedItemUtilityVector {m n : ℕ}
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (j : Item n) : ℝ :=
+  let denom := itemNormalizer W j
+  if h : denom = 0 then 0 else rawItemUtilityVector W x j / denom
+
+/-- Minimum item fairness evaluated on the real simplex-vector presentation. -/
+noncomputable def itemFairnessVector {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n) : ℝ :=
+  EconCSLib.finiteMin (normalizedItemUtilityVector W x)
+
+theorem rawItemUtility_policyOfSimplexVector_eq {m n : ℕ}
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (j : Item n) :
+    rawItemUtility W (policyOfSimplexVector x) j =
+      rawItemUtilityVector W x j := by
+  simp [rawItemUtility, rawItemUtilityVector]
+
+theorem normalizedItemUtility_policyOfSimplexVector_eq {m n : ℕ}
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n)
+    (j : Item n) :
+    normalizedItemUtility W (policyOfSimplexVector x) j =
+      normalizedItemUtilityVector W x j := by
+  unfold normalizedItemUtility normalizedItemUtilityVector
+  rw [rawItemUtility_policyOfSimplexVector_eq]
+
+theorem itemFairness_policyOfSimplexVector_eq {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (x : PolicySimplexVector m n) :
+    itemFairness W (policyOfSimplexVector x) =
+      itemFairnessVector W x := by
+  unfold itemFairness itemFairnessVector
+  apply congrArg
+  funext j
+  exact normalizedItemUtility_policyOfSimplexVector_eq W x j
+
+theorem rawItemUtilityVector_simplexVectorOfPolicy_eq {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) :
+    rawItemUtilityVector W (simplexVectorOfPolicy ρ) j =
+      rawItemUtility W ρ j := by
+  unfold rawItemUtilityVector rawItemUtility simplexVectorOfPolicy
+  rfl
+
+theorem normalizedItemUtilityVector_simplexVectorOfPolicy_eq {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) :
+    normalizedItemUtilityVector W (simplexVectorOfPolicy ρ) j =
+      normalizedItemUtility W ρ j := by
+  unfold normalizedItemUtilityVector normalizedItemUtility
+  rw [rawItemUtilityVector_simplexVectorOfPolicy_eq]
+
+theorem itemFairnessVector_simplexVectorOfPolicy_eq {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (ρ : Policy m n) :
+    itemFairnessVector W (simplexVectorOfPolicy ρ) =
+      itemFairness W ρ := by
+  unfold itemFairnessVector itemFairness
+  apply congrArg
+  funext j
+  exact normalizedItemUtilityVector_simplexVectorOfPolicy_eq W ρ j
+
+theorem rawItemUtilityVector_continuous {m n : ℕ}
+    (W : RecommendationModel m n) (j : Item n) :
+    Continuous (fun x : PolicySimplexVector m n =>
+      rawItemUtilityVector W x j) := by
+  unfold rawItemUtilityVector
+  apply continuous_finset_sum
+  intro u _hu
+  exact continuous_const.mul
+    ((continuous_apply j).comp
+      (continuous_subtype_val.comp (continuous_apply u)))
+
+theorem normalizedItemUtilityVector_continuous {m n : ℕ}
+    (W : RecommendationModel m n) (j : Item n) :
+    Continuous (fun x : PolicySimplexVector m n =>
+      normalizedItemUtilityVector W x j) := by
+  unfold normalizedItemUtilityVector
+  by_cases hden : itemNormalizer W j = 0
+  · simpa [hden] using (continuous_const : Continuous
+      (fun _ : PolicySimplexVector m n => (0 : ℝ)))
+  · simpa [hden] using
+      (rawItemUtilityVector_continuous W j).div_const (itemNormalizer W j)
+
+theorem itemFairnessVector_continuous {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) :
+    Continuous (fun x : PolicySimplexVector m n =>
+      itemFairnessVector W x) := by
+  have hcont : ∀ j : Item n,
+      Continuous (fun x : PolicySimplexVector m n =>
+        normalizedItemUtilityVector W x j) :=
+    fun j => normalizedItemUtilityVector_continuous W j
+  unfold itemFairnessVector EconCSLib.finiteMin
+  fun_prop
+
+/--
+The finite policy simplex is compact, so the original item-fairness objective
+attains its supremum. This supplies the optimum-existence step used implicitly
+in Appendix C, Lemma 2.
+-/
+theorem optimalItemFairness_attained_of_nonnegative
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative) :
+    ∃ ρ : Policy m n, itemFairness W ρ = optimalItemFairness W := by
+  classical
+  let X := PolicySimplexVector m n
+  have hcompact : IsCompact (Set.univ : Set X) := isCompact_univ
+  have hnonempty : (Set.univ : Set X).Nonempty := Set.univ_nonempty
+  have hcont : ContinuousOn (fun x : X => itemFairnessVector W x) Set.univ :=
+    (itemFairnessVector_continuous W).continuousOn
+  rcases hcompact.exists_isMaxOn hnonempty hcont with
+    ⟨xopt, _hxmem, hxmax⟩
+  let ρopt : Policy m n := policyOfSimplexVector xopt
+  refine ⟨ρopt, ?_⟩
+  have hρopt_eq :
+      itemFairness W ρopt = itemFairnessVector W xopt := by
+    dsimp [ρopt]
+    exact itemFairness_policyOfSimplexVector_eq W xopt
+  have hset_nonempty : (attainableItemFairnessSet W).Nonempty := by
+    exact ⟨itemFairness W ρopt, ⟨ρopt, rfl⟩⟩
+  have hopt_le : optimalItemFairness W ≤ itemFairness W ρopt := by
+    unfold optimalItemFairness
+    refine csSup_le hset_nonempty ?_
+    intro r hr
+    obtain ⟨ρ, rfl⟩ := hr
+    have hxle :
+        itemFairnessVector W (simplexVectorOfPolicy ρ) ≤
+          itemFairnessVector W xopt :=
+      (isMaxOn_iff.mp hxmax) (simplexVectorOfPolicy ρ) (Set.mem_univ _)
+    rw [itemFairnessVector_simplexVectorOfPolicy_eq] at hxle
+    rw [← hρopt_eq] at hxle
+    exact hxle
+  have hle_opt : itemFairness W ρopt ≤ optimalItemFairness W := by
+    exact le_csSup
+      (attainableItemFairnessSet_bddAbove_of_nonnegative W hNonneg)
+      ⟨ρopt, rfl⟩
+  exact le_antisymm hle_opt hopt_le
+
+/--
+The single-row vector used in Appendix C, Lemma 2's perturbation: subtract
+`eps * targets.card` from the slack source item and add `eps` to each target.
+-/
+noncomputable def shiftedRowVector {m n : ℕ}
+    (ρ : Policy m n) (u : User m) (source : Item n)
+    (targets : Finset (Item n)) (eps : ℝ) : Item n → ℝ :=
+  fun j =>
+    (ρ u j).toReal -
+      (if j = source then eps * (targets.card : ℝ) else 0) +
+      (if j ∈ targets then eps else 0)
+
+/-- The row perturbation preserves total probability mass. -/
+theorem shiftedRowVector_sum_eq_one {m n : ℕ}
+    (ρ : Policy m n) (u : User m) (source : Item n)
+    (targets : Finset (Item n)) (eps : ℝ) :
+    (∑ j : Item n, shiftedRowVector ρ u source targets eps j) = 1 := by
+  classical
+  unfold shiftedRowVector
+  have hpmf : (∑ j : Item n, (ρ u j).toReal) = 1 :=
+    EconCSLib.pmfToRealSum (ρ u)
+  have hsource :
+      (∑ j : Item n, (if j = source then eps * (targets.card : ℝ) else 0)) =
+        eps * (targets.card : ℝ) := by
+    simpa using
+      (Finset.sum_ite_eq' source
+        (fun _ : Item n => eps * (targets.card : ℝ)))
+  have htargets :
+      (∑ j : Item n, (if j ∈ targets then eps else 0)) =
+        (targets.card : ℝ) * eps := by
+    calc
+      (∑ j : Item n, (if j ∈ targets then eps else 0))
+          = ∑ j ∈ targets, eps := by
+              simp [Finset.sum_ite_mem]
+      _ = (targets.card : ℝ) * eps := by
+              simp [Finset.sum_const, nsmul_eq_mul]
+  calc
+    (∑ j : Item n,
+        ((ρ u j).toReal -
+          (if j = source then eps * (targets.card : ℝ) else 0) +
+          (if j ∈ targets then eps else 0)))
+        =
+          (∑ j : Item n, (ρ u j).toReal) -
+            (∑ j : Item n,
+              (if j = source then eps * (targets.card : ℝ) else 0)) +
+            (∑ j : Item n, (if j ∈ targets then eps else 0)) := by
+            rw [Finset.sum_add_distrib, Finset.sum_sub_distrib]
+    _ = 1 := by
+          rw [hpmf, hsource, htargets]
+          ring
+
+/-- The row perturbation is coordinatewise nonnegative when epsilon is small enough. -/
+theorem shiftedRowVector_nonneg {m n : ℕ}
+    (ρ : Policy m n) (u : User m) (source : Item n)
+    (targets : Finset (Item n)) {eps : ℝ}
+    (hsource_not_targets : source ∉ targets)
+    (heps_nonneg : 0 ≤ eps)
+    (hsource_mass : eps * (targets.card : ℝ) ≤ (ρ u source).toReal) :
+    ∀ j : Item n, 0 ≤ shiftedRowVector ρ u source targets eps j := by
+  classical
+  intro j
+  by_cases hjs : j = source
+  · subst j
+    simp [shiftedRowVector, hsource_not_targets]
+    linarith
+  · by_cases hjt : j ∈ targets
+    · have hbase : 0 ≤ (ρ u j).toReal := ENNReal.toReal_nonneg
+      simp [shiftedRowVector, hjs, hjt]
+      linarith
+    · simp [shiftedRowVector, hjs, hjt, ENNReal.toReal_nonneg]
+
+/-- Apply the Appendix C Lemma 2 row perturbation to a single user row. -/
+noncomputable def policyShiftRowToTargets {m n : ℕ}
+    (ρ : Policy m n) (u : User m) (source : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ shiftedRowVector ρ u source targets eps j)
+    (hsum : (∑ j : Item n, shiftedRowVector ρ u source targets eps j) = 1) :
+    Policy m n :=
+  fun u' =>
+    if u' = u then
+      pmfOfRealItemVector (shiftedRowVector ρ u source targets eps) hnonneg hsum
+    else
+      ρ u'
+
+@[simp] theorem policyShiftRowToTargets_self_toReal {m n : ℕ}
+    (ρ : Policy m n) (u : User m) (source : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ shiftedRowVector ρ u source targets eps j)
+    (hsum : (∑ j : Item n, shiftedRowVector ρ u source targets eps j) = 1)
+    (j : Item n) :
+    ((policyShiftRowToTargets ρ u source targets eps hnonneg hsum u) j).toReal =
+      shiftedRowVector ρ u source targets eps j := by
+  simp [policyShiftRowToTargets]
+
+@[simp] theorem policyShiftRowToTargets_other_toReal {m n : ℕ}
+    (ρ : Policy m n) {u u' : User m} (source : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ j : Item n, 0 ≤ shiftedRowVector ρ u source targets eps j)
+    (hsum : (∑ j : Item n, shiftedRowVector ρ u source targets eps j) = 1)
+    (hne : u' ≠ u) (j : Item n) :
+    ((policyShiftRowToTargets ρ u source targets eps hnonneg hsum u') j).toReal =
+      (ρ u' j).toReal := by
+  simp [policyShiftRowToTargets, hne]
+
+/-- Raw item utility after a single-row perturbation changes only by that row's delta. -/
+theorem rawItemUtility_policyShiftRowToTargets_eq {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n)
+    (u : User m) (source j : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ l : Item n, 0 ≤ shiftedRowVector ρ u source targets eps l)
+    (hsum : (∑ l : Item n, shiftedRowVector ρ u source targets eps l) = 1) :
+    rawItemUtility W
+        (policyShiftRowToTargets ρ u source targets eps hnonneg hsum) j =
+      rawItemUtility W ρ j +
+        W.utility u j *
+          (shiftedRowVector ρ u source targets eps j - (ρ u j).toReal) := by
+  classical
+  unfold rawItemUtility
+  calc
+    (∑ u' : User m,
+        W.utility u' j *
+          ((policyShiftRowToTargets ρ u source targets eps hnonneg hsum u') j).toReal)
+        =
+      ∑ u' : User m,
+        (W.utility u' j * (ρ u' j).toReal +
+          if u' = u then
+            W.utility u j *
+              (shiftedRowVector ρ u source targets eps j - (ρ u j).toReal)
+          else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro u' _hu'
+          by_cases hu' : u' = u
+          · subst u'
+            simp
+            ring
+          · simp [policyShiftRowToTargets, hu']
+    _ =
+      (∑ u' : User m, W.utility u' j * (ρ u' j).toReal) +
+        ∑ u' : User m,
+          (if u' = u then
+            W.utility u j *
+              (shiftedRowVector ρ u source targets eps j - (ρ u j).toReal)
+          else 0) := by
+          rw [Finset.sum_add_distrib]
+    _ =
+      (∑ u' : User m, W.utility u' j * (ρ u' j).toReal) +
+        W.utility u j *
+          (shiftedRowVector ρ u source targets eps j - (ρ u j).toReal) := by
+          rw [Finset.sum_ite_eq']
+          simp
+
+/--
+The normalized value of the source item after the Appendix C Lemma 2 row
+perturbation. The source item can go down, but by an explicitly controlled
+amount.
+-/
+theorem normalizedItemUtility_policyShiftRowToTargets_source_eq {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n)
+    (u : User m) (source : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ l : Item n, 0 ≤ shiftedRowVector ρ u source targets eps l)
+    (hsum : (∑ l : Item n, shiftedRowVector ρ u source targets eps l) = 1)
+    (hsource_not_targets : source ∉ targets)
+    (hden : 0 < itemNormalizer W source) :
+    normalizedItemUtility W
+        (policyShiftRowToTargets ρ u source targets eps hnonneg hsum) source =
+      normalizedItemUtility W ρ source -
+        W.utility u source * eps * (targets.card : ℝ) /
+          itemNormalizer W source := by
+  classical
+  have hraw :=
+    rawItemUtility_policyShiftRowToTargets_eq
+      W ρ u source source targets eps hnonneg hsum
+  unfold normalizedItemUtility
+  simp [hden.ne', hraw, shiftedRowVector, hsource_not_targets]
+  ring
+
+/--
+Each target minimizer's normalized value increases by the transferred row mass
+weighted by that user's value for the target item.
+-/
+theorem normalizedItemUtility_policyShiftRowToTargets_target_eq {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n)
+    (u : User m) (source j : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ l : Item n, 0 ≤ shiftedRowVector ρ u source targets eps l)
+    (hsum : (∑ l : Item n, shiftedRowVector ρ u source targets eps l) = 1)
+    (hsource_not_targets : source ∉ targets)
+    (hj : j ∈ targets)
+    (hden : 0 < itemNormalizer W j) :
+    normalizedItemUtility W
+        (policyShiftRowToTargets ρ u source targets eps hnonneg hsum) j =
+      normalizedItemUtility W ρ j +
+        W.utility u j * eps / itemNormalizer W j := by
+  classical
+  have hjs : j ≠ source := by
+    intro h
+    subst j
+    exact hsource_not_targets hj
+  have hraw :=
+    rawItemUtility_policyShiftRowToTargets_eq
+      W ρ u source j targets eps hnonneg hsum
+  unfold normalizedItemUtility
+  simp [hden.ne', hraw, shiftedRowVector, hjs, hj]
+  ring
+
+/--
+Items that are neither the source nor a target minimizer keep the same
+normalized value under the one-row perturbation.
+-/
+theorem normalizedItemUtility_policyShiftRowToTargets_unchanged {m n : ℕ}
+    (W : RecommendationModel m n) (ρ : Policy m n)
+    (u : User m) (source j : Item n)
+    (targets : Finset (Item n)) (eps : ℝ)
+    (hnonneg : ∀ l : Item n, 0 ≤ shiftedRowVector ρ u source targets eps l)
+    (hsum : (∑ l : Item n, shiftedRowVector ρ u source targets eps l) = 1)
+    (hjs : j ≠ source)
+    (hj : j ∉ targets)
+    (hden : 0 < itemNormalizer W j) :
+    normalizedItemUtility W
+        (policyShiftRowToTargets ρ u source targets eps hnonneg hsum) j =
+      normalizedItemUtility W ρ j := by
+  classical
+  have hraw :=
+    rawItemUtility_policyShiftRowToTargets_eq
+      W ρ u source j targets eps hnonneg hsum
+  unfold normalizedItemUtility
+  simp [hden.ne', hraw, shiftedRowVector, hjs, hj]
+
+/--
+If `eps` is small enough that the source item remains above the old minimum,
+then transferring `eps` from a slack source item to every current minimizer
+strictly improves the item-fairness objective.
+-/
+theorem itemFairness_lt_policyShiftRowToTargets_of_eps
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive)
+    (ρ : Policy m n) (u : User m) (source : Item n)
+    {eps : ℝ}
+    (heps_pos : 0 < eps)
+    (hsource_mass :
+      eps * ((itemFairnessMinimizerSet W ρ).card : ℝ) ≤
+        (ρ u source).toReal)
+    (hsource_slack :
+      itemFairness W ρ < normalizedItemUtility W ρ source)
+    (hsource_after :
+      itemFairness W ρ <
+        normalizedItemUtility W ρ source -
+          W.utility u source * eps *
+            ((itemFairnessMinimizerSet W ρ).card : ℝ) /
+            itemNormalizer W source) :
+    ∃ ρ' : Policy m n, itemFairness W ρ < itemFairness W ρ' := by
+  classical
+  let targets := itemFairnessMinimizerSet W ρ
+  have hsource_not_targets : source ∉ targets := by
+    dsimp [targets]
+    exact not_mem_itemFairnessMinimizerSet_of_itemFairness_lt
+      W ρ hsource_slack
+  have hnonneg : ∀ l : Item n,
+      0 ≤ shiftedRowVector ρ u source targets eps l := by
+    exact shiftedRowVector_nonneg ρ u source targets hsource_not_targets
+      heps_pos.le hsource_mass
+  have hsum :
+      (∑ l : Item n, shiftedRowVector ρ u source targets eps l) = 1 :=
+    shiftedRowVector_sum_eq_one ρ u source targets eps
+  let ρ' : Policy m n :=
+    policyShiftRowToTargets ρ u source targets eps hnonneg hsum
+  refine ⟨ρ', ?_⟩
+  change itemFairness W ρ <
+    EconCSLib.finiteMin (normalizedItemUtility W ρ')
+  unfold EconCSLib.finiteMin
+  rw [Finset.lt_inf'_iff]
+  intro j _hj
+  have hden : 0 < itemNormalizer W j :=
+    W.columnHasPositiveDemand_of_positive hPos j
+  by_cases hjs : j = source
+  · subst j
+    dsimp [ρ', targets] at hsource_after ⊢
+    rw [normalizedItemUtility_policyShiftRowToTargets_source_eq
+      W ρ u source (itemFairnessMinimizerSet W ρ) eps
+      hnonneg hsum hsource_not_targets
+      (W.columnHasPositiveDemand_of_positive hPos source)]
+    exact hsource_after
+  · by_cases hjt : j ∈ targets
+    · have hj_min :
+        normalizedItemUtility W ρ j = itemFairness W ρ := by
+          dsimp [targets] at hjt
+          exact (mem_itemFairnessMinimizerSet_iff W ρ j).mp hjt
+      have hinc_pos :
+          0 < W.utility u j * eps / itemNormalizer W j := by
+        exact div_pos (mul_pos (hPos u j) heps_pos) hden
+      dsimp [ρ', targets]
+      rw [normalizedItemUtility_policyShiftRowToTargets_target_eq
+        W ρ u source j (itemFairnessMinimizerSet W ρ) eps
+        hnonneg hsum hsource_not_targets hjt hden]
+      rw [hj_min]
+      linarith
+    · have hj_not_min :
+        normalizedItemUtility W ρ j ≠ itemFairness W ρ := by
+          intro hmin
+          exact hjt ((mem_itemFairnessMinimizerSet_iff W ρ j).mpr hmin)
+      have hj_strict :
+          itemFairness W ρ < normalizedItemUtility W ρ j := by
+        have hle :
+            itemFairness W ρ ≤ normalizedItemUtility W ρ j :=
+          EconCSLib.finiteMin_le (normalizedItemUtility W ρ) j
+        exact lt_of_le_of_ne hle (Ne.symm hj_not_min)
+      dsimp [ρ', targets]
+      rw [normalizedItemUtility_policyShiftRowToTargets_unchanged
+        W ρ u source j (itemFairnessMinimizerSet W ρ) eps
+        hnonneg hsum hjs hjt hden]
+      exact hj_strict
+
+/--
+The constructive perturbation step in Appendix C, Lemma 2: under strictly
+positive utilities, any attained optimal policy with a slack item can transfer
+a sufficiently small amount of probability mass from that slack item to all
+currently worst-off items and strictly raise `I_min`.
+-/
+theorem itemFairnessSlackImprovementProperty_of_positive_of_optimal
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive)
+    {ρ : Policy m n}
+    (hopt : itemFairness W ρ = optimalItemFairness W) :
+    ItemFairnessSlackImprovementProperty W ρ := by
+  classical
+  intro source hsource_slack
+  let targets := itemFairnessMinimizerSet W ρ
+  have htargets_nonempty : targets.Nonempty := by
+    dsimp [targets]
+    exact itemFairnessMinimizerSet_nonempty W ρ
+  have hcard_pos_nat : 0 < targets.card :=
+    Finset.card_pos.mpr htargets_nonempty
+  let C : ℝ := (targets.card : ℝ)
+  have hC_pos : 0 < C := by
+    dsimp [C]
+    exact_mod_cast hcard_pos_nat
+  have hC_nonneg : 0 ≤ C := hC_pos.le
+  have hopt_pos : 0 < optimalItemFairness W := by
+    have hbdd :=
+      attainableItemFairnessSet_bddAbove_of_nonnegative W
+        (W.nonnegative_of_positive hPos)
+    have hmem :
+        itemFairness W (uniformPolicy (m := m) (n := n)) ∈
+          attainableItemFairnessSet W := by
+      exact ⟨uniformPolicy (m := m) (n := n), rfl⟩
+    exact lt_of_lt_of_le
+      (itemFairness_uniformPolicy_pos_of_columnHasPositiveDemand W
+        (W.columnHasPositiveDemand_of_positive hPos))
+      (le_csSup hbdd hmem)
+  have hρ_pos : 0 < itemFairness W ρ := by
+    rw [hopt]
+    exact hopt_pos
+  obtain ⟨u, hu_ne⟩ :=
+    item_coverage_of_itemFairness_pos W ρ hρ_pos source
+  have hmass_pos : 0 < (ρ u source).toReal :=
+    policy_toReal_pos_of_ne_zero ρ hu_ne
+  let gap : ℝ := normalizedItemUtility W ρ source - itemFairness W ρ
+  have hgap_pos : 0 < gap := by
+    dsimp [gap]
+    exact sub_pos.mpr hsource_slack
+  let denom : ℝ := itemNormalizer W source
+  have hden_pos : 0 < denom := by
+    dsimp [denom]
+    exact W.columnHasPositiveDemand_of_positive hPos source
+  let coeff : ℝ := W.utility u source * C / denom
+  have hcoeff_nonneg : 0 ≤ coeff := by
+    dsimp [coeff]
+    exact div_nonneg (mul_nonneg (hPos u source).le hC_nonneg) hden_pos.le
+  let eps : ℝ :=
+    min ((ρ u source).toReal / (2 * C))
+      (gap / (2 * (coeff + 1)))
+  have htwoC_pos : 0 < 2 * C := by nlinarith
+  have hcoeffD_pos : 0 < 2 * (coeff + 1) := by nlinarith
+  have heps_pos : 0 < eps := by
+    dsimp [eps]
+    exact lt_min (div_pos hmass_pos htwoC_pos)
+      (div_pos hgap_pos hcoeffD_pos)
+  have heps_le_mass_div :
+      eps ≤ (ρ u source).toReal / (2 * C) := by
+    dsimp [eps]
+    exact min_le_left _ _
+  have heps_twoC_le_mass :
+      eps * (2 * C) ≤ (ρ u source).toReal := by
+    exact (le_div_iff₀ htwoC_pos).mp heps_le_mass_div
+  have hsource_mass :
+      eps * ((itemFairnessMinimizerSet W ρ).card : ℝ) ≤
+        (ρ u source).toReal := by
+    have hC_le_twoC : C ≤ 2 * C := by nlinarith
+    have hepsC_le_epsTwoC : eps * C ≤ eps * (2 * C) :=
+      mul_le_mul_of_nonneg_left hC_le_twoC heps_pos.le
+    have hepsC_le_mass : eps * C ≤ (ρ u source).toReal :=
+      hepsC_le_epsTwoC.trans heps_twoC_le_mass
+    simpa [C, targets] using hepsC_le_mass
+  have heps_le_gap_div :
+      eps ≤ gap / (2 * (coeff + 1)) := by
+    dsimp [eps]
+    exact min_le_right _ _
+  have heps_D_le_gap :
+      eps * (2 * (coeff + 1)) ≤ gap := by
+    exact (le_div_iff₀ hcoeffD_pos).mp heps_le_gap_div
+  have hcoeff_lt_D : coeff < 2 * (coeff + 1) := by
+    nlinarith
+  have hloss_lt_gap : coeff * eps < gap := by
+    have hlt_big : coeff * eps < (2 * (coeff + 1)) * eps :=
+      mul_lt_mul_of_pos_right hcoeff_lt_D heps_pos
+    have hbig_le_gap : (2 * (coeff + 1)) * eps ≤ gap := by
+      simpa [mul_comm, mul_left_comm, mul_assoc] using heps_D_le_gap
+    exact hlt_big.trans_le hbig_le_gap
+  have hloss_expr :
+      W.utility u source * eps * C / denom = coeff * eps := by
+    dsimp [coeff]
+    ring
+  have hsource_after :
+      itemFairness W ρ <
+        normalizedItemUtility W ρ source -
+          W.utility u source * eps *
+            ((itemFairnessMinimizerSet W ρ).card : ℝ) /
+            itemNormalizer W source := by
+    have hloss_lt_gap' :
+        W.utility u source * eps * C / denom < gap := by
+      rw [hloss_expr]
+      exact hloss_lt_gap
+    dsimp [gap, denom] at hloss_lt_gap'
+    simpa [C, targets] using (by linarith : itemFairness W ρ <
+      normalizedItemUtility W ρ source -
+        W.utility u source * eps *
+          ((itemFairnessMinimizerSet W ρ).card : ℝ) /
+          itemNormalizer W source)
+  exact itemFairness_lt_policyShiftRowToTargets_of_eps
+    W hPos ρ u source heps_pos hsource_mass hsource_slack hsource_after
+
+/--
+An attained item-fairness optimum admits no policy that strictly improves every
+item value. This is the generic optimality half of Appendix C, Lemma 2's
+contradiction argument.
+-/
+theorem itemFairness_noStrictPointwiseImprovement_of_optimal
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    {ρ : Policy m n}
+    (hopt : itemFairness W ρ = optimalItemFairness W) :
+    ItemFairnessNoStrictPointwiseImprovement W ρ := by
+  classical
+  intro hbad
+  obtain ⟨ρ', hstrict⟩ := hbad
+  let delta : ℝ :=
+    EconCSLib.finiteMin (fun j : Item n =>
+      normalizedItemUtility W ρ' j - normalizedItemUtility W ρ j)
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    apply EconCSLib.finiteMin_pos
+    intro j
+    exact sub_pos.mpr (hstrict j)
+  have hle_all :
+      itemFairness W ρ + delta ≤ itemFairness W ρ' := by
+    unfold itemFairness
+    apply EconCSLib.le_finiteMin
+    intro j
+    have hdelta_le :
+        delta ≤ normalizedItemUtility W ρ' j -
+          normalizedItemUtility W ρ j := by
+      dsimp [delta]
+      exact EconCSLib.finiteMin_le
+        (fun l : Item n =>
+          normalizedItemUtility W ρ' l - normalizedItemUtility W ρ l) j
+    have hmin_le :
+        EconCSLib.finiteMin (normalizedItemUtility W ρ) ≤
+          normalizedItemUtility W ρ j :=
+      EconCSLib.finiteMin_le (normalizedItemUtility W ρ) j
+    linarith
+  have hbdd := attainableItemFairnessSet_bddAbove_of_nonnegative W hNonneg
+  have hρ'_mem :
+      itemFairness W ρ' ∈ attainableItemFairnessSet W := by
+    exact ⟨ρ', rfl⟩
+  have hρ'_le_opt : itemFairness W ρ' ≤ optimalItemFairness W := by
+    exact le_csSup hbdd hρ'_mem
+  rw [hopt] at hle_all
+  linarith
+
+/--
+If every slack item admits the paper's objective-improving perturbation, then an
+attained optimum equalizes all normalized item utilities.
+-/
+theorem itemFairnessEqualityLPFeasible_of_optimal_of_slackImprovement
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    {ρ : Policy m n}
+    (hopt : itemFairness W ρ = optimalItemFairness W)
+    (hslack : ItemFairnessSlackImprovementProperty W ρ) :
+    itemFairnessEqualityLPFeasible W ρ (itemFairness W ρ) := by
+  classical
+  intro j
+  apply le_antisymm
+  · by_contra hnot
+    have hmin_le :
+        itemFairness W ρ ≤ normalizedItemUtility W ρ j :=
+      EconCSLib.finiteMin_le (normalizedItemUtility W ρ) j
+    have hlt : itemFairness W ρ < normalizedItemUtility W ρ j :=
+      lt_of_le_not_ge hmin_le hnot
+    obtain ⟨ρ', himprove⟩ := hslack j hlt
+    have hbdd := attainableItemFairnessSet_bddAbove_of_nonnegative W hNonneg
+    have hρ'_le_opt : itemFairness W ρ' ≤ optimalItemFairness W := by
+      exact le_csSup hbdd ⟨ρ', rfl⟩
+    rw [hopt] at himprove
+    exact not_lt_of_ge hρ'_le_opt himprove
+  · exact EconCSLib.finiteMin_le (normalizedItemUtility W ρ) j
+
+/--
+Appendix C, Lemma 2 in the paper's equality-form LP interface, conditional
+only on the source proof's perturbation step for attained optima.
+-/
+theorem optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_nonnegative_of_attained_of_slackImprovement
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    (hatt : ∃ ρ : Policy m n, itemFairness W ρ = optimalItemFairness W)
+    (hslack :
+      ∀ ρ : Policy m n,
+        itemFairness W ρ = optimalItemFairness W →
+          ItemFairnessSlackImprovementProperty W ρ) :
+    optimalItemFairnessEqualityLPValue W = optimalItemFairness W := by
+  obtain ⟨ρopt, hρopt⟩ := hatt
+  have heq :
+      itemFairnessEqualityLPFeasible W ρopt
+        (itemFairness W ρopt) :=
+    itemFairnessEqualityLPFeasible_of_optimal_of_slackImprovement
+      W hNonneg hρopt (hslack ρopt hρopt)
+  have hEqNonempty :
+      (itemFairnessEqualityLPValueSet W).Nonempty := by
+    exact ⟨itemFairness W ρopt, ⟨ρopt, heq⟩⟩
+  have hEqBdd :=
+    itemFairnessEqualityLPValueSet_bddAbove_of_nonnegative W hNonneg
+  have hItemBdd := attainableItemFairnessSet_bddAbove_of_nonnegative W hNonneg
+  apply le_antisymm
+  · unfold optimalItemFairnessEqualityLPValue
+    refine csSup_le hEqNonempty ?_
+    intro ell hell
+    obtain ⟨ρ, hρ⟩ := hell
+    have hitem_eq :
+        itemFairness W ρ = ell :=
+      itemFairness_eq_of_itemFairnessEqualityLPFeasible W ρ ell hρ
+    rw [← hitem_eq]
+    exact le_csSup hItemBdd ⟨ρ, rfl⟩
+  · rw [← hρopt]
+    unfold optimalItemFairnessEqualityLPValue
+    exact le_csSup hEqBdd ⟨ρopt, heq⟩
+
+/--
+Appendix C, Lemma 2 in the paper's equality-form LP interface, with the
+paper's slack-transfer perturbation discharged under strictly positive
+utilities. The only remaining analytic side condition is attainment of the
+finite-dimensional item-fairness optimum.
+-/
+theorem optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_positive_of_attained
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive)
+    (hatt : ∃ ρ : Policy m n, itemFairness W ρ = optimalItemFairness W) :
+    optimalItemFairnessEqualityLPValue W = optimalItemFairness W := by
+  exact
+    optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_nonnegative_of_attained_of_slackImprovement
+      W (W.nonnegative_of_positive hPos) hatt
+      (fun ρ hρ =>
+        itemFairnessSlackImprovementProperty_of_positive_of_optimal W hPos hρ)
+
+/--
+Appendix C, Lemma 2 in the paper's equality-form LP interface under strictly
+positive utilities, with both finite optimum attainment and the source
+slack-transfer perturbation discharged.
+-/
+theorem optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_positive
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive) :
+    optimalItemFairnessEqualityLPValue W = optimalItemFairness W := by
+  exact
+    optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_positive_of_attained
+      W hPos
+      (optimalItemFairness_attained_of_nonnegative W
+        (W.nonnegative_of_positive hPos))
 
 /--
 Positive item demand and nonnegative utilities make the original optimal

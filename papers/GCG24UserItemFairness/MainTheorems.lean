@@ -396,6 +396,68 @@ theorem paper_lemma2_item_fairness_lp_value_eq
     hNonneg
 
 /--
+Appendix C, Lemma 2 proof component: an attained item-fairness optimum admits
+no alternative policy that strictly improves every normalized item utility.
+-/
+theorem paper_lemma2_noStrictPointwiseImprovement_of_optimal
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    {ρ : Policy m n}
+    (hopt : W.itemFairness ρ = W.optimalItemFairness) :
+    W.ItemFairnessNoStrictPointwiseImprovement ρ := by
+  exact W.itemFairness_noStrictPointwiseImprovement_of_optimal hNonneg hopt
+
+/--
+Appendix C, Lemma 2 equality-form LP interface.
+
+This is the source proof's exact remaining seam: once the paper's slack-item
+perturbation is available for every attained optimum, the equality-form LP
+`I_j(ρ) = ell` has optimal value `I^*_min(w)`.
+-/
+theorem paper_lemma2_item_fairness_equality_lp_value_eq_of_attained_of_slackImprovement
+    {m n : ℕ} [NeZero n]
+    (W : RecommendationModel m n) (hNonneg : W.Nonnegative)
+    (hatt : ∃ ρ : Policy m n, W.itemFairness ρ = W.optimalItemFairness)
+    (hslack :
+      ∀ ρ : Policy m n,
+        W.itemFairness ρ = W.optimalItemFairness →
+          W.ItemFairnessSlackImprovementProperty ρ) :
+    W.optimalItemFairnessEqualityLPValue = W.optimalItemFairness := by
+  exact
+    W.optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_nonnegative_of_attained_of_slackImprovement
+      hNonneg hatt hslack
+
+/--
+Appendix C, Lemma 2 equality-form LP interface under the paper's strictly
+positive utility assumption.
+
+The source slack-item probability-transfer proof is formalized; this wrapper
+now only keeps the finite-dimensional optimum-attainment condition explicit.
+-/
+theorem paper_lemma2_item_fairness_equality_lp_value_eq_of_positive_of_attained
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive)
+    (hatt : ∃ ρ : Policy m n, W.itemFairness ρ = W.optimalItemFairness) :
+    W.optimalItemFairnessEqualityLPValue = W.optimalItemFairness := by
+  exact
+    W.optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_positive_of_attained
+      hPos hatt
+
+/--
+Appendix C, Lemma 2 equality-form LP interface under the paper's strictly
+positive utility assumption.
+
+The finite-dimensional item-fairness optimum is attained, and the paper's
+slack-item probability-transfer proof equalizes every attained optimum.
+-/
+theorem paper_lemma2_item_fairness_equality_lp_value_eq_of_positive
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (W : RecommendationModel m n) (hPos : W.Positive) :
+    W.optimalItemFairnessEqualityLPValue = W.optimalItemFairness := by
+  exact W.optimalItemFairnessEqualityLPValue_eq_optimalItemFairness_of_positive
+    hPos
+
+/--
 Problem 1 baseline theorem.
 
 With nonnegative utilities and a positive row normalizer for every user, the
