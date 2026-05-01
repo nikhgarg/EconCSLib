@@ -30,6 +30,10 @@ allocation.
   generic pairwise-scaled count bridge for exact `C/N` homogeneity. Treat
   `α = 0` and `c = 0` explicitly; the paper-style `1/α` target and objective
   can degenerate there.
+- For decaying Bernoulli top-one objectives, check `α = 0` before doing product
+  asymptotics: rank success probabilities become constant, so the model should
+  reduce to the existing i.i.d. Bernoulli satisfaction model and reuse its
+  uniform-homogeneity theorem.
 - For finite fixed-total count-allocation optimization, encode allocations as
   functions into `Fin (N + 1)` plus a total-sum proof, optimize over that finite
   code space, then decode to the paper allocation type.
