@@ -1,0 +1,19 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}
+% --- Legend ---
+\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
+\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized Lemma};
+\node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
+\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not Formalized};
+\daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
+
+% --- Graph ---
+\node[dag_model, below=2cm of Legend] (Primitives) {\textbf{Model} \\ Test-optional admission features};
+\node[dag_result, below=2cm of Primitives] (Thm1) {\textbf{Test Optional Baseline} \\ Statements to be added};
+
+\draw[dag_arrow] (Primitives) -- (Thm1);
+\end{tikzpicture}
+\end{document}
