@@ -34,10 +34,20 @@ allocation.
   bound is stronger than necessary. If finite FOCs plus tail/product
   asymptotics give `|a_i/w_i - a_j/w_j| ≤ ε_N N` with `ε_N → 0`, use a
   sublinear pairwise-scaled bridge to get the γ-profile limit.
+- When the product/tail estimate is naturally one-sided, use the FOC-to-
+  sublinear bridge: prove that any scaled-count gap larger than `ε_N N` makes
+  the source backward marginal strictly smaller than the destination forward
+  marginal. The finite FOC rules out the gap, and the sublinear scaled-count
+  bridge gives the sequence limit.
 - For decaying Bernoulli top-one objectives, check `α = 0` before doing product
   asymptotics: rank success probabilities become constant, so the model should
   reduce to the existing i.i.d. Bernoulli satisfaction model and reuse its
   uniform-homogeneity theorem.
+- Generic ranked-Bernoulli value and marginal lemmas are reusable across
+  recommender papers, but keep them local while only one paper uses them or
+  while the exact import topology is still changing. Move them into the shared
+  recommender/probability library once a second paper needs them or the proof
+  shape has stabilized.
 - For finite fixed-total count-allocation optimization, encode allocations as
   functions into `Fin (N + 1)` plus a total-sum proof, optimize over that finite
   code space, then decode to the paper allocation type.
