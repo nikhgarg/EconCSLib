@@ -75,8 +75,12 @@ allocation.
   The large scaled-gap-to-shifted-scalar bridge closes the raw-ordered case
   once the error schedule dominates the fixed shift
   `(1+d) * ∑_t 1 / p_t^(1/(1+c))`. Nonuniform target weights can still make a
-  large scaled-count gap occur with the opposite raw order, so finish this
-  branch with either a case split or an absolute two-sided product bound.
+  large scaled-count gap occur with the opposite raw order; use the reverse
+  product layer there. The reverse layer bounds the inverse interval product by
+  the same endpoint ratio times an explicit log-correction sum from
+  `-log(1-c/x) - c log((x+1)/x)`. Finish the branch by proving the scaled gap
+  dominates that correction; a slower schedule than `1/sqrt(N)` may be needed
+  so both `ε_N N → ∞` and `ε_N^2 N → ∞`.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
