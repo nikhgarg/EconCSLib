@@ -36,3 +36,7 @@ The dependency DAG legend should expose this same vocabulary. For a formalized
 node, the color additionally records the paper-object type: green for
 theorems/results, yellow for lemmas/support, and blue for definitions/models.
 For non-fully-closed statuses, the style records the status directly.
+
+The default repository audit enforces this status vocabulary, checks that DAGs
+input the shared TikZ preamble, and checks that the template legend mentions all
+allowed statuses.

@@ -16,6 +16,10 @@ formalization library.
 - Paper-facing ledgers should also have a module docstring, but the content
   should describe the source paper interface rather than internal helper code.
 
+Run `python3 scripts/audit_repository.py --strict-style` when doing an
+organization pass. The default audit stays conservative so active paper work is
+not blocked by legacy modules that predate these conventions.
+
 ## Declaration names
 
 - Structures, classes, inductive types, and named predicates use

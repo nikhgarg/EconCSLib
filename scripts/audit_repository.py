@@ -52,6 +52,17 @@ PAPER_STATUS_VALUES = {
     "not started",
     "not formalized",
 }
+DAG_REQUIRED_PREAMBLE = "docs/tikz/dag_preamble.tex"
+DAG_STATUS_STYLES = {
+    "dag_result",
+    "dag_lemma",
+    "dag_model",
+    "dag_caveat",
+    "dag_partial",
+    "dag_conditional",
+    "dag_scaffold",
+    "dag_unformalized",
+}
 PAPER_FOLDER_NAME_RE = re.compile(r"^[A-Z][A-Za-z0-9]*\d{2}[A-Z][A-Za-z0-9]*$")
 LEAN_DECL_RE = re.compile(r"^\s*(?:theorem|lemma|def|abbrev|structure|class|inductive|export)\s+", re.M)
 LEDGER_PLACEHOLDER_RE = re.compile(
@@ -192,6 +203,17 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
         dag_pdf = folder / "DependencyDAG.pdf"
         if not dag_pdf.exists():
             findings.append(Finding("WARN", folder, "rendered `DependencyDAG.pdf` is absent locally"))
+        dag_tex = folder / "DependencyDAG.tex"
+        if dag_tex.exists():
+            dag_text = dag_tex.read_text(encoding="utf-8")
+            if DAG_REQUIRED_PREAMBLE not in dag_text:
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        dag_tex,
+                        f"DAG should input shared preamble `{DAG_REQUIRED_PREAMBLE}`",
+                    )
+                )
 
         if not has_source_pdf(folder):
             findings.append(Finding("ERROR", folder, "no cached source PDF found"))
@@ -209,6 +231,25 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
     for folder in paper_dirs(include_template=True):
         if aggregate_names.search(folder.name):
             findings.append(Finding("ERROR", folder, "top-level aggregate paper folder should not exist"))
+    return findings
+
+
+def check_dag_status_styles() -> list[Finding]:
+    findings: list[Finding] = []
+    preamble = ROOT / "docs" / "tikz" / "dag_preamble.tex"
+    template = PAPERS / "TEMPLATE" / "DependencyDAG.tex"
+    if preamble.exists():
+        text = preamble.read_text(encoding="utf-8")
+        for style in sorted(DAG_STATUS_STYLES):
+            if f"{style}/.style" not in text:
+                findings.append(Finding("ERROR", preamble, f"missing DAG status style `{style}`"))
+    if template.exists():
+        text = template.read_text(encoding="utf-8")
+        normalized_text = re.sub(r"\\+", " ", text)
+        normalized_text = re.sub(r"\s+", " ", normalized_text)
+        for status in sorted(PAPER_STATUS_VALUES):
+            if status not in normalized_text:
+                findings.append(Finding("ERROR", template, f"template legend should mention status `{status}`"))
     return findings
 
 
@@ -417,15 +458,38 @@ def check_stale_architecture_terms() -> list[Finding]:
     return findings
 
 
-def run(include_active: bool) -> list[Finding]:
+def has_module_docstring_with_main_declarations(path: Path) -> bool:
+    text = path.read_text(encoding="utf-8")
+    match = re.search(r"/-!.*?-/", text, re.S)
+    return bool(match and "## Main declarations" in match.group(0))
+
+
+def check_strict_lean_style() -> list[Finding]:
+    findings: list[Finding] = []
+    for path in sorted((ROOT / "EconCSLib").rglob("*.lean")):
+        if not has_module_docstring_with_main_declarations(path):
+            findings.append(
+                Finding(
+                    "WARN",
+                    path,
+                    "new reusable modules should have a module docstring with `## Main declarations`",
+                )
+            )
+    return findings
+
+
+def run(include_active: bool, strict_style: bool) -> list[Finding]:
     findings: list[Finding] = []
     findings.extend(check_sorries(include_active))
     findings.extend(check_guarded_checks(include_active))
     findings.extend(check_paper_contract(include_active))
+    findings.extend(check_dag_status_styles())
     findings.extend(check_paper_facing_ledgers(include_active))
     findings.extend(check_readme_status_tables(include_active))
     findings.extend(check_tracked_artifacts(include_active))
     findings.extend(check_stale_architecture_terms())
+    if strict_style:
+        findings.extend(check_strict_lean_style())
     return findings
 
 
@@ -436,9 +500,14 @@ def main() -> int:
         action="store_true",
         help="also audit active fairness/monoculture folders that may be dirty under other agents",
     )
+    parser.add_argument(
+        "--strict-style",
+        action="store_true",
+        help="also report Mathlib-style module-docstring guidance for reusable EconCSLib modules",
+    )
     args = parser.parse_args()
 
-    findings = run(include_active=args.include_active)
+    findings = run(include_active=args.include_active, strict_style=args.strict_style)
     for finding in findings:
         print(finding.format())
 
@@ -447,6 +516,7 @@ def main() -> int:
     print(
         f"Audit complete: {len(errors)} error(s), {len(warnings)} warning(s)"
         + ("; active paper folders included" if args.include_active else "; active paper folders skipped")
+        + ("; strict style included" if args.strict_style else "")
     )
     return 1 if errors else 0
 
