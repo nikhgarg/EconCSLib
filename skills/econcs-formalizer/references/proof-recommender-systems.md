@@ -24,10 +24,12 @@ allocation.
   bracket those targets.
 - For decaying Bernoulli all-consumed objectives, keep the generic ranked
   Bernoulli value/marginal layer separate from the paper-specific decay
-  sequence. The `α = 1` branch is often the cheapest closed case: the FOC
-  reduces to bounded scaled counts `a_t / p_t`, and a generic pairwise-scaled
-  count bridge gives exact `C/N` homogeneity. Treat `α = 0` and `c = 0`
-  explicitly; the paper-style `1/α` target and objective can degenerate there.
+  sequence. For every positive `α`, the FOC can be stronger than the paper's
+  scalar sum-asymptotic route: cancel the positive scale, convert inverse-power
+  marginal comparisons into bounded scaled counts `a_t / p_t^(1/α)`, then use a
+  generic pairwise-scaled count bridge for exact `C/N` homogeneity. Treat
+  `α = 0` and `c = 0` explicitly; the paper-style `1/α` target and objective
+  can degenerate there.
 - For finite fixed-total count-allocation optimization, encode allocations as
   functions into `Fin (N + 1)` plus a total-sum proof, optimize over that finite
   code space, then decode to the paper allocation type.
