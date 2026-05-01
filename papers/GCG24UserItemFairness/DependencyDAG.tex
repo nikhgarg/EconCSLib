@@ -35,10 +35,10 @@
   user-item fairness tradeoff \\
   model formalized
 };
-\node[dag_unformalized] (Example1) at (-5.6,-10.1) {
+\node[dag_result] (Example1) at (-5.6,-10.1) {
   \textbf{Example 1 (Sec. 4)} \\
   two-item intuition \\
-  not formalized
+  formalized
 };
 \node[dag_lemma] (Lemma1) at (0,-13.8) {
   \textbf{Lemma 1 (App. C)} \\
@@ -55,10 +55,10 @@
   LP-reduction framework \\
   formalized
 };
-\node[dag_caveat] (Prop2) at (0,-25.1) {
+\node[dag_result] (Prop2) at (0,-25.1) {
   \textbf{Proposition 2 (Sec. 3)} \\
   symmetric sparse optimum \\
-  BFS caveat explicit
+  formalized
 };
 \node[dag_lemma] (Lemma3) at (0,-29.2) {
   \textbf{Lemma 3 (App. D)} \\
@@ -67,20 +67,20 @@
 };
 
 % --- Theorem 3: two opposing types. ---
-\node[dag_conditional] (Problem6) at (7.4,-8.3) {
+\node[dag_model] (Problem6) at (7.4,-8.3) {
   \textbf{Problem 6 (App. D)} \\
   opposing-type LP \\
-  conditional package
+  formalized
 };
-\node[dag_caveat] (Lemma4) at (7.4,-12.2) {
+\node[dag_lemma] (Lemma4) at (7.4,-12.2) {
   \textbf{Lemma 4 (App. D)} \\
   unique sparse solution \\
-  support caveat
+  formalized
 };
-\node[dag_conditional] (Lemma5) at (7.4,-16.1) {
+\node[dag_lemma] (Lemma5) at (7.4,-16.1) {
   \textbf{Lemma 5 (App. D)} \\
   closed-form policy \\
-  pivot package
+  formalized
 };
 \node[dag_lemma] (Lemma6) at (7.4,-20.0) {
   \textbf{Lemma 6 (App. D)} \\
@@ -97,10 +97,10 @@
   interval stitching \\
   formalized
 };
-\node[dag_partial] (Theorem3) at (7.4,-31.7) {
+\node[dag_result] (Theorem3) at (7.4,-31.7) {
   \textbf{Theorem 3 (Sec. 4)} \\
   two-sided price monotonicity \\
-  source wrappers partial
+  source wrappers closed
 };
 
 % --- Shared scalar and midpoint algebra. ---
@@ -175,10 +175,10 @@
 \draw[dag_arrow] (Prop2) -- (Lemma3);
 
 % --- Theorem 3 proof-roadmap edges. ---
-\draw[dag_dashed_arrow] (Prop2.east) -- ++(1.2,0) |- (Problem6.west);
-\draw[dag_dashed_arrow] (Problem6) -- (Lemma4);
-\draw[dag_dashed_arrow] (Lemma4) -- (Lemma5);
-\draw[dag_dashed_arrow] (Lemma5) -- (Lemma6);
+\draw[dag_arrow] (Prop2.east) -- ++(1.2,0) |- (Problem6.west);
+\draw[dag_arrow] (Problem6) -- (Lemma4);
+\draw[dag_arrow] (Lemma4) -- (Lemma5);
+\draw[dag_arrow] (Lemma5) -- (Lemma6);
 \draw[dag_arrow] (Lemma6) -- (Lemma7);
 \draw[dag_arrow] (Lemma7) -- (Lemma8);
 \draw[dag_arrow] (Lemma8) -- (Theorem3);

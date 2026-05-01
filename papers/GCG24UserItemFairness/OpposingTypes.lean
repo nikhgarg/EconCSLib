@@ -8459,6 +8459,9 @@ theorem problem6SparseEqualizedActive_value_pos
     exact lt_of_lt_of_le hleft (by nlinarith)
   simpa [q, h.sparse.item_eq t] using hmain
 
+set_option maxHeartbeats 800000 in
+-- This large paper proof compares two finite equalized policies and otherwise
+-- times out in the final contradiction branch under the default budget.
 /--
 Appendix D, Lemma 7 in sparse-solution form: as `α` increases, the active
 pivot `t = max {j : x_j > 0}` cannot move left.
@@ -8798,21 +8801,27 @@ theorem lemma7_sparseActive_pivot_mono_of_alpha_lt
           simpa [leftX, rightX] using hsplit_x
         linarith [h.sparse.sum_x, hsum, hleftX_nonneg, hrightX_nonneg]
       have hell_le_q : ell ≤ q := by
-        have hmul_le : q * x t' ≤ q * 1 :=
-          mul_le_mul_of_nonneg_left hx_t'_le_one hqpos.le
+        have hmul_le : q * x t' ≤ q :=
+          calc
+            q * x t' ≤ q * 1 :=
+              mul_le_mul_of_nonneg_left hx_t'_le_one hqpos.le
+            _ = q := by norm_num
         calc
           ell = q * x t' := hitem_t'.symm
-          _ ≤ q * 1 := hmul_le
-          _ = q := by ring
+          _ ≤ q := hmul_le
       have hell'_ge_q' : q' ≤ ell' := by
         have hright_nonneg : 0 ≤ (1 - q') * y' t' :=
           mul_nonneg hq'comp_nonneg (h'.y_nonneg t')
-        calc
-          q' = q' * x' t' := by rw [hx'_t_eq]; ring
-          _ ≤ q' * x' t' + (1 - q') * y' t' :=
-            le_add_of_nonneg_right hright_nonneg
-          _ = ell' := hitem_t''
-      linarith
+        have hq'_eq_mul : q' = q' * x' t' := by
+          rw [hx'_t_eq]
+          norm_num
+        have hmul_le_ell : q' * x' t' ≤ ell' := by
+          rw [← hitem_t'']
+          exact le_add_of_nonneg_right hright_nonneg
+        exact hq'_eq_mul.le.trans hmul_le_ell
+      have hq'_le_q : q' ≤ q := by
+        exact hell'_ge_q'.trans (hell_ge.trans hell_le_q)
+      exact (not_lt_of_ge hq'_le_q) hq_lt
 
 /--
 Appendix D, Lemma 7 for the paper's selected optimal Problem 6 policies:

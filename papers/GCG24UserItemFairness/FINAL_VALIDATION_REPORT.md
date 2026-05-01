@@ -40,6 +40,8 @@ including:
 
 - recommendation-model user/item fairness definitions and optimization
   predicates;
+- Example 1's two-item diverse-preferences toy instance and homogeneous
+  tradeoff algebra;
 - Proposition 1's symmetric LP-reduction instantiation used downstream;
 - Proposition 2's symmetric optimum and sparse-support bridge;
 - Appendix C Lemmas 1--2 and Appendix D Lemmas 3--11;
