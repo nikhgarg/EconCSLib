@@ -89,6 +89,20 @@ allocation.
   `ε_N = (N+1)^(-1/4)` so both `ε_N N → ∞` and `ε_N^3 N → ∞`; the cube growth
   dominates the correction-sum bound after scaling by the finite target-weight
   sum.
+- For the `α > 1` top-one product estimate, use target weights
+  `w_t = p_t^(1/α)` and keep the proof in the same raw/reverse split as the
+  `α = 1` branch. The raw-order bridge only needs the shifted-count term to be
+  dominated by `ε_N N`. In the reverse-order bridge, bound the interval success
+  sum by its left endpoint:
+  `2 * ∑_{i=qsrc-1}^{qdst-1} q_i ≤
+  (2*c*∑_t w_t^(-α)) * N * (ε_N N)^(-α)`, feed this through
+  `exp(E/α)-1 ≤ exp(1)*(E/α)` once the scaled argument is below one, and bound
+  the correction by a constant times `N^2 * (ε_N N)^(-α)`. The concrete
+  schedule `ε_N = (N+1)^(-(α-1)/(2*(α+1)))` closes the branch because
+  `ε_N → 0`, `ε_N N → ∞`, `N*(ε_N N)^(-α) → 0`, and
+  `N^2*(ε_N N)^(-(α+1)) → 0`. These two limit lemmas are generic continuous
+  asymptotic tools and should be reused for similar superunit inverse-power
+  correction arguments before inventing a new schedule.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
