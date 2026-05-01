@@ -27,6 +27,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 - For random-sampling digital-goods auctions, first prove the deterministic
   cross-sample threshold mechanism truthful for an arbitrary fixed partition;
   only after that add probability over partitions and revenue approximation.
+- For weighted-pairing or selected-pair auction lower bounds, write the
+  expected-payment/revenue formula as a concrete finite double sum first. When
+  the proof keeps only same-bin or otherwise selected ordered pairs, define the
+  selected pair index type and embed it injectively into the full pair index;
+  then compare sums with `FiniteSum.sum_le_sum_of_injective_nonneg`. This is
+  faster and more auditable than repeatedly expanding the full auction sum.
 - Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.

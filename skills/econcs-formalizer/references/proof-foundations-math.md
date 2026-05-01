@@ -16,6 +16,11 @@ finite signs, asymptotics, and interval-crossing arguments.
   lemma: if two functions differ only at `src` and `dst`, the total sum changes
   by the two pointwise deltas. Then derive first-order inequalities from no
   profitable exchange.
+- For finite expectation or revenue lower bounds that keep a disjoint subfamily
+  of summands, avoid bespoke nested-sum rewrites. Define an injective map from
+  the selected index type into the full index type and use
+  `FiniteSum.sum_le_sum_of_injective_nonneg`, with nonnegativity of the full
+  summands, to compare the selected sum to the full sum.
 - For finite rounding, split into a reusable no-crossing combinatorial theorem,
   a paper-specific exchange certificate ruling out crossings at optima, and the
   final triangle-inequality or share-error bound.
