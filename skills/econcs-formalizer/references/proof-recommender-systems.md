@@ -52,15 +52,18 @@ allocation.
   optimization. Use a floor-aware eventual product certificate: prove that
   beyond a fixed count floor and eventually in `N`, any scaled-count gap larger
   than `ε_N N` makes the top-one source backward marginal strictly smaller
-  than the destination forward marginal. Then use a finite-protected error
+  than the destination forward marginal, assuming the source and destination
+  counts are bounded by the finite total `N`. Then use a finite-protected error
   schedule for the finitely many small totals, the count-divergence theorem to
-  supply the floor, and the FOC-to-sublinear bridge to obtain the paper's
-  sequence-limit theorem.
+  supply the floor, count-total bounds from feasibility, and the
+  FOC-to-sublinear bridge to obtain the paper's sequence-limit theorem.
 - For the `0 < α < 1` top-one product estimate, factor the survival-product
   ratio over the interval between destination and source counts. Bound
   `∏(1-q_i)` by `exp(-∑ q_i)`, lower-bound the interval sum by gap length
   times the right-end success probability, and use a log-likelihood-ratio
   inequality to turn the scalar exponential bound into marginal dominance.
+  The final scalar growth condition can be stated as eventual domination of
+  all finite log-likelihood ratios by `(ε_N N - 1) q_N`.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
