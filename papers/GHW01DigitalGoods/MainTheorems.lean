@@ -29,6 +29,10 @@ export EconCSLib.Auction (
   paper_average_cross_sample_candidate_offer_revenue_nonneg
   paper_cross_sample_offer_competitive_of_certificate
   paper_theorem6_2_random_sampling_union_bound
+  paper_theorem6_2_sample_benchmark_from_sampled_winners
+  paper_theorem6_2_original_revenue_le_three_sample_benchmark
+  paper_theorem6_2_cross_sample_revenue_from_opposite_side
+  paper_theorem6_2_sample_benchmark_le_two_cross_sample_revenue
   paper_finite_candidate_fixed_price_benchmark_nonneg
   paper_single_price_revenue_le_candidate_benchmark_of_feasible
   paper_two_winner_fixed_price_benchmark
@@ -57,6 +61,7 @@ export EconCSLib.Auction (
   paper_lemma9_2_deterministic_offer_winning_monotone
   paper_lemma9_2_deterministic_offer_losing_prefix
   paper_lemma9_2_deterministic_offer_bid_independent
+  paper_lemma9_2_deterministic_truthful_auction_bid_independent_slices
   paper_theorem9_3_deterministic_truthful_lower_bound_of_count_threshold
 )
 

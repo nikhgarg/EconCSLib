@@ -676,6 +676,132 @@ def restrictBidsBySide (side : Agent → Bool) (keep : Bool)
     (bids : Agent → ℝ) : Agent → ℝ :=
   fun j => if side j = keep then bids j else 0
 
+/-- Number of bidders on a chosen sample side who accept price `p` in the
+original bid profile. -/
+noncomputable def sideSaleCount [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) : ℕ :=
+  ((Finset.univ : Finset Agent).filter fun i => side i = keep ∧ p ≤ values i).card
+
+theorem sideSaleCount_le_saleCount_restrictBidsBySide [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) :
+    sideSaleCount side keep values p ≤
+      saleCount (restrictBidsBySide side keep values) p := by
+  classical
+  unfold sideSaleCount saleCount
+  apply Finset.card_le_card
+  intro i hi
+  rcases Finset.mem_filter.mp hi with ⟨hi_univ, hside, hp⟩
+  exact Finset.mem_filter.mpr
+    ⟨hi_univ, by simpa [restrictBidsBySide, hside] using hp⟩
+
+/--
+If `m` bidders on a sample side accept price `p`, then the restricted profile's
+single-price revenue at `p` is at least `m*p`.
+-/
+theorem sideSaleCount_mul_price_le_singlePriceRevenue_restrictBidsBySide
+    [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) {p : ℝ} (hp : 0 ≤ p) :
+    (sideSaleCount side keep values p : ℝ) * p ≤
+      singlePriceRevenue (restrictBidsBySide side keep values) p := by
+  rw [singlePriceRevenue_eq_saleCount_mul]
+  exact mul_le_mul_of_nonneg_right
+    (by
+      exact_mod_cast
+        sideSaleCount_le_saleCount_restrictBidsBySide side keep values p)
+    hp
+
+/--
+Section 6 deterministic bridge: if enough optimal-price winners fall on a
+sample side, the finite candidate benchmark of the restricted profile is at
+least the revenue from those sampled winners at that price.
+-/
+theorem sideSaleCount_mul_price_le_finiteCandidateBenchmark_restrictBidsBySide
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) {minWinners : ℕ} {p : ℝ}
+    (hmin : 1 ≤ minWinners)
+    (hp : 0 ≤ p)
+    (hcount : minWinners ≤ sideSaleCount side keep values p) :
+    (sideSaleCount side keep values p : ℝ) * p ≤
+      finiteCandidateFixedPriceBenchmark
+        (restrictBidsBySide side keep values) minWinners := by
+  have hside_le_sale :
+      sideSaleCount side keep values p ≤
+        saleCount (restrictBidsBySide side keep values) p :=
+    sideSaleCount_le_saleCount_restrictBidsBySide side keep values p
+  have hfeasible :
+      minWinners ≤ saleCount (restrictBidsBySide side keep values) p :=
+    le_trans hcount hside_le_sale
+  have hsingle_le :
+      singlePriceRevenue (restrictBidsBySide side keep values) p ≤
+        finiteCandidateFixedPriceBenchmark
+          (restrictBidsBySide side keep values) minWinners :=
+    singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+      (restrictBidsBySide side keep values) hmin hp hfeasible
+  exact le_trans
+    (sideSaleCount_mul_price_le_singlePriceRevenue_restrictBidsBySide
+      side keep values hp)
+    hsingle_le
+
+/--
+Section 6 deterministic sample-good bridge. If a chosen sample side contains
+at least a third of the original winners at price `p`, then the original
+single-price revenue at `p` is at most three times the restricted sample
+benchmark.
+-/
+theorem singlePriceRevenue_le_three_finiteCandidateBenchmark_restrictBidsBySide
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) {minWinners : ℕ} {p : ℝ}
+    (hmin : 1 ≤ minWinners)
+    (hp : 0 ≤ p)
+    (hcount_min : minWinners ≤ sideSaleCount side keep values p)
+    (hthird :
+      saleCount values p ≤ 3 * sideSaleCount side keep values p) :
+    singlePriceRevenue values p ≤
+      3 * finiteCandidateFixedPriceBenchmark
+        (restrictBidsBySide side keep values) minWinners := by
+  rw [singlePriceRevenue_eq_saleCount_mul]
+  have hcount_cast :
+      (saleCount values p : ℝ) ≤
+        3 * (sideSaleCount side keep values p : ℝ) := by
+    exact_mod_cast hthird
+  have hrev_count :
+      (saleCount values p : ℝ) * p ≤
+        (3 * (sideSaleCount side keep values p : ℝ)) * p :=
+    mul_le_mul_of_nonneg_right hcount_cast hp
+  have hsample :
+      (sideSaleCount side keep values p : ℝ) * p ≤
+        finiteCandidateFixedPriceBenchmark
+          (restrictBidsBySide side keep values) minWinners :=
+    sideSaleCount_mul_price_le_finiteCandidateBenchmark_restrictBidsBySide
+      side keep values hmin hp hcount_min
+  calc
+    (saleCount values p : ℝ) * p
+        ≤ (3 * (sideSaleCount side keep values p : ℝ)) * p := hrev_count
+    _ = 3 * ((sideSaleCount side keep values p : ℝ) * p) := by ring
+    _ ≤ 3 * finiteCandidateFixedPriceBenchmark
+          (restrictBidsBySide side keep values) minWinners := by
+        exact mul_le_mul_of_nonneg_left hsample (by norm_num)
+
+/-- Revenue from a single posted price restricted to one side of a partition. -/
+noncomputable def sidePriceRevenue [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) : ℝ :=
+  ∑ i : Agent, if side i = keep ∧ p ≤ values i then p else 0
+
+theorem sidePriceRevenue_eq_sideSaleCount_mul [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) :
+    sidePriceRevenue side keep values p =
+      (sideSaleCount side keep values p : ℝ) * p := by
+  classical
+  rw [sidePriceRevenue, sideSaleCount, ← Finset.sum_filter]
+  simp
+
 theorem restrictBidsBySide_update_of_not_kept [DecidableEq Agent]
     (side : Agent → Bool) (keep : Bool)
     (bids : Agent → ℝ) (i : Agent) (report : ℝ)
@@ -841,6 +967,154 @@ theorem crossSampleCandidateOfferThresholdPriceAuction_noPositiveTransfers
       (crossSampleCandidateOfferThreshold side minWinners)).NoPositiveTransfers := by
   exact thresholdPriceAuction_noPositiveTransfers _
     (crossSampleCandidateOfferThreshold_nonneg side minWinners)
+
+/--
+For a fixed sample side, the cross-sample offer auction earns at least the
+posted-price revenue from the opposite side at the price selected from that
+sample.
+-/
+theorem sidePriceRevenue_opposite_finiteCandidateOfferPrice_le_crossSampleRevenue
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (minWinners : ℕ) :
+    sidePriceRevenue side (!keep) values
+        (finiteCandidateOfferPrice
+          (restrictBidsBySide side keep values) minWinners) ≤
+      (thresholdPriceAuction
+        (crossSampleCandidateOfferThreshold side minWinners)).revenue values := by
+  classical
+  let p :=
+    finiteCandidateOfferPrice
+      (restrictBidsBySide side keep values) minWinners
+  unfold DigitalGoodsAuction.revenue sidePriceRevenue
+  refine Finset.sum_le_sum ?_
+  intro i _hi
+  by_cases hwin : side i = !keep ∧ p ≤ values i
+  · have hp_accept : p ≤ values i := hwin.2
+    have hthreshold :
+        crossSampleCandidateOfferThreshold side minWinners values i = p := by
+      cases keep <;> cases hside : side i <;>
+        simp [crossSampleCandidateOfferThreshold, p, hside] at hwin ⊢
+    have hleft :
+        (if side i = !keep ∧ p ≤ values i then p else 0) = p := by
+      simp [hwin]
+    have hright :
+        (thresholdPriceAuction
+          (crossSampleCandidateOfferThreshold side minWinners)).payment values i = p := by
+      simp [thresholdPriceAuction, hthreshold, hp_accept]
+    rw [hleft, hright]
+  · have hnpt :
+        0 ≤
+          (thresholdPriceAuction
+            (crossSampleCandidateOfferThreshold side minWinners)).payment values i :=
+      crossSampleCandidateOfferThresholdPriceAuction_noPositiveTransfers
+        side minWinners values i
+    have hleft :
+        (if side i = !keep ∧ p ≤ values i then p else 0) = 0 := by
+      simp [hwin]
+    rw [hleft]
+    exact hnpt
+
+/--
+Section 6 deterministic revenue-good bridge. If the non-sample side has at
+least half as many acceptors as the sample side at the sample-selected offer
+price, the cross-sample auction revenue is at least half of the sample
+benchmark.
+-/
+theorem finiteCandidateBenchmark_restrictBidsBySide_le_two_crossSampleRevenue
+    [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (minWinners : ℕ)
+    (hhalf :
+      sideSaleCount side keep values
+          (finiteCandidateOfferPrice
+            (restrictBidsBySide side keep values) minWinners) ≤
+        2 * sideSaleCount side (!keep) values
+          (finiteCandidateOfferPrice
+            (restrictBidsBySide side keep values) minWinners)) :
+    finiteCandidateFixedPriceBenchmark
+        (restrictBidsBySide side keep values) minWinners ≤
+      2 *
+        (thresholdPriceAuction
+          (crossSampleCandidateOfferThreshold side minWinners)).revenue values := by
+  classical
+  let p :=
+    finiteCandidateOfferPrice
+      (restrictBidsBySide side keep values) minWinners
+  have hsample_revenue :
+      finiteCandidateFixedPriceBenchmark
+          (restrictBidsBySide side keep values) minWinners =
+        singlePriceRevenue (restrictBidsBySide side keep values) p := by
+    rw [singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark]
+  have hsample_count :
+      singlePriceRevenue (restrictBidsBySide side keep values) p =
+        (saleCount (restrictBidsBySide side keep values) p : ℝ) * p := by
+    exact singlePriceRevenue_eq_saleCount_mul
+      (restrictBidsBySide side keep values) p
+  have hp_nonneg :
+      0 ≤ p := by
+    exact finiteCandidateOfferPrice_nonneg
+      (restrictBidsBySide side keep values) minWinners
+  rcases hp_nonneg.eq_or_lt with hp_zero | hp_pos
+  · have hbench_zero :
+        finiteCandidateFixedPriceBenchmark
+            (restrictBidsBySide side keep values) minWinners = 0 := by
+      rw [hsample_revenue, ← hp_zero]
+      simp [singlePriceRevenue]
+    have hrevenue_nonneg :
+        0 ≤
+          (thresholdPriceAuction
+            (crossSampleCandidateOfferThreshold side minWinners)).revenue values :=
+      DigitalGoodsAuction.revenue_nonneg_of_noPositiveTransfers
+        (thresholdPriceAuction
+          (crossSampleCandidateOfferThreshold side minWinners))
+        (crossSampleCandidateOfferThresholdPriceAuction_noPositiveTransfers
+          side minWinners)
+        values
+    rw [hbench_zero]
+    nlinarith
+  have hcount_cast :
+      (saleCount (restrictBidsBySide side keep values) p : ℝ) ≤
+        2 * (sideSaleCount side (!keep) values p : ℝ) := by
+    have hside_count :
+        sideSaleCount side keep values p =
+          saleCount (restrictBidsBySide side keep values) p := by
+      classical
+      unfold sideSaleCount saleCount restrictBidsBySide
+      congr 1
+      ext i
+      by_cases hkeep : side i = keep
+      · simp [hkeep]
+      · have hp_not_zero : ¬ p ≤ (0 : ℝ) := not_le_of_gt hp_pos
+        simp [hkeep, hp_not_zero]
+    rw [← hside_count]
+    exact_mod_cast hhalf
+  have hsample_le_opposite :
+      singlePriceRevenue (restrictBidsBySide side keep values) p ≤
+        2 * sidePriceRevenue side (!keep) values p := by
+    rw [hsample_count, sidePriceRevenue_eq_sideSaleCount_mul]
+    calc
+      (saleCount (restrictBidsBySide side keep values) p : ℝ) * p
+          ≤ (2 * (sideSaleCount side (!keep) values p : ℝ)) * p :=
+            mul_le_mul_of_nonneg_right hcount_cast hp_nonneg
+      _ = 2 * ((sideSaleCount side (!keep) values p : ℝ) * p) := by ring
+  have hopp :
+      sidePriceRevenue side (!keep) values p ≤
+        (thresholdPriceAuction
+          (crossSampleCandidateOfferThreshold side minWinners)).revenue values := by
+    simpa [p] using
+      sidePriceRevenue_opposite_finiteCandidateOfferPrice_le_crossSampleRevenue
+        side keep values minWinners
+  calc
+    finiteCandidateFixedPriceBenchmark
+        (restrictBidsBySide side keep values) minWinners
+        = singlePriceRevenue (restrictBidsBySide side keep values) p :=
+          hsample_revenue
+    _ ≤ 2 * sidePriceRevenue side (!keep) values p := hsample_le_opposite
+    _ ≤ 2 *
+          (thresholdPriceAuction
+            (crossSampleCandidateOfferThreshold side minWinners)).revenue values :=
+        mul_le_mul_of_nonneg_left hopp (by norm_num)
 
 /--
 Uniform average revenue of the deterministic cross-sample offer auction over
@@ -1399,6 +1673,131 @@ theorem deterministicOffer_bidIndependent_of_truthful
       | none => rfl
       | some price =>
           exact False.elim (hwin ⟨report, price, hreport⟩))
+
+namespace DigitalGoodsAuction
+
+/-- A deterministic digital-goods auction has binary allocation outcomes. -/
+def BinaryAllocation (M : DigitalGoodsAuction Agent) : Prop :=
+  ∀ bids i, M.allocation bids i = 0 ∨ M.allocation bids i = 1
+
+/-- A digital-goods auction charges rejected bidders zero. -/
+def LosersPayZero (M : DigitalGoodsAuction Agent) : Prop :=
+  ∀ bids i, M.allocation bids i = 0 → M.payment bids i = 0
+
+theorem losersPayZero_of_individuallyRational_noPositiveTransfers
+    (M : DigitalGoodsAuction Agent)
+    (hIR : M.IndividuallyRational)
+    (hNPT : M.NoPositiveTransfers) :
+    M.LosersPayZero := by
+  intro bids i halloc
+  have hir := hIR bids i
+  have hnpt := hNPT bids i
+  simp [DigitalGoodsAuction.utility, halloc] at hir
+  exact le_antisymm (by linarith) hnpt
+
+end DigitalGoodsAuction
+
+/--
+The single-bidder deterministic offer slice induced by a full digital-goods
+auction after fixing the other bids.
+-/
+noncomputable def deterministicAuctionOffer [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent) (bids : Agent → ℝ) (i : Agent) :
+    ℝ → Option ℝ :=
+  fun report =>
+    let profile := Function.update bids i report
+    if M.allocation profile i = 1 then
+      some (M.payment profile i)
+    else
+      none
+
+theorem deterministicAuctionOfferUtility_eq_auctionUtility
+    [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent)
+    (hbinary : M.BinaryAllocation)
+    (hloser : M.LosersPayZero)
+    (bids : Agent → ℝ) (i : Agent) (value report : ℝ) :
+    deterministicOfferUtility
+        (deterministicAuctionOffer M bids i) value report =
+      M.utility (Function.update bids i value) i
+        (Function.update bids i report) := by
+  classical
+  unfold deterministicOfferUtility deterministicAuctionOffer
+  unfold DigitalGoodsAuction.utility
+  by_cases halloc : M.allocation (Function.update bids i report) i = 1
+  · simp [halloc]
+  · have halloc_zero :
+        M.allocation (Function.update bids i report) i = 0 := by
+      rcases hbinary (Function.update bids i report) i with hzero | hone
+      · exact hzero
+      · exact False.elim (halloc hone)
+    have hpay_zero :
+        M.payment (Function.update bids i report) i = 0 :=
+      hloser (Function.update bids i report) i halloc_zero
+    simp [halloc_zero, hpay_zero]
+
+theorem deterministicAuctionOffer_truthful_of_auction_truthful
+    [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent)
+    (htruth : M.TruthfulDominantStrategy)
+    (hbinary : M.BinaryAllocation)
+    (hloser : M.LosersPayZero)
+    (bids : Agent → ℝ) (i : Agent) :
+    DeterministicOfferTruthful (deterministicAuctionOffer M bids i) := by
+  intro value report
+  let values := Function.update bids i value
+  have hprofile :
+      Function.update values i report = Function.update bids i report := by
+    funext j
+    by_cases hji : j = i
+    · subst j
+      simp [values]
+    · simp [values, Function.update, hji]
+  have hdsic := htruth values i report
+  rw [deterministicAuctionOfferUtility_eq_auctionUtility
+      M hbinary hloser bids i value report]
+  rw [deterministicAuctionOfferUtility_eq_auctionUtility
+      M hbinary hloser bids i value value]
+  simpa [values, hprofile] using hdsic
+
+theorem deterministicAuctionOffer_feasible_of_individuallyRational
+    [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent)
+    (hIR : M.IndividuallyRational)
+    (bids : Agent → ℝ) (i : Agent) :
+    DeterministicOfferFeasible (deterministicAuctionOffer M bids i) := by
+  intro report price hoff
+  unfold deterministicAuctionOffer at hoff
+  by_cases halloc : M.allocation (Function.update bids i report) i = 1
+  · simp [halloc] at hoff
+    subst price
+    have hir := hIR (Function.update bids i report) i
+    simp [DigitalGoodsAuction.utility, halloc] at hir
+    linarith
+  · simp [halloc] at hoff
+
+/--
+Auction-level form of GHW Lemma 9.2. Every fixed-other-bids slice of a
+truthful, individually rational, no-positive-transfers deterministic
+digital-goods auction is bid-independent in the critical-price sense.
+-/
+theorem deterministicAuctionOffer_bidIndependent_of_truthful
+    [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent)
+    (htruth : M.TruthfulDominantStrategy)
+    (hIR : M.IndividuallyRational)
+    (hNPT : M.NoPositiveTransfers)
+    (hbinary : M.BinaryAllocation)
+    (bids : Agent → ℝ) (i : Agent) :
+    DeterministicOfferBidIndependent (deterministicAuctionOffer M bids i) := by
+  have hloser : M.LosersPayZero :=
+    DigitalGoodsAuction.losersPayZero_of_individuallyRational_noPositiveTransfers
+      M hIR hNPT
+  exact deterministicOffer_bidIndependent_of_truthful
+    (deterministicAuctionOffer_truthful_of_auction_truthful
+      M htruth hbinary hloser bids i)
+    (deterministicAuctionOffer_feasible_of_individuallyRational
+      M hIR bids i)
 
 end Auction
 end EconCSLib

@@ -37,6 +37,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   then lower reports lose. When a winning report exists, the common winning
   payment itself is the critical price: reports below it lose by feasibility,
   reports above it win by truthfulness, and the boundary may be open or closed.
+- When lifting a deterministic offer-slice characterization back to a full
+  digital-goods auction, define the induced fixed-other-bids offer once. Prove
+  `LosersPayZero` from IR plus no-positive-transfers, use binary allocation to
+  identify offer utility with the original auction utility, and then apply the
+  offer-slice theorem. This is faster and cleaner than re-proving the critical
+  price argument inside the full auction model.
 - For binary deterministic bid-independent lower bounds, formalize arbitrary
   threshold prices directly before specializing to the paper's two-price WLOG.
   Classifying an offer as "high" when it is above the low value `1` proves the
