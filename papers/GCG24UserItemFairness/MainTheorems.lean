@@ -8529,6 +8529,40 @@ theorem paper_aux_lemma15_problem11_lambda_eq_of_center_fullPolicy
     hbeta_pos hpos h hpivot hcenter
 
 /--
+Appendix E, Lemma 15 center convention: the paper's displayed center case
+uses a half-LP item equation where the known-type contribution is
+`2β q_t x_t`.
+-/
+def paper_lemma15_problem11_centerHalfLPItemEquation {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n)
+    (ell : ℝ) (t : Item n) : Prop :=
+  Theorem4Problem11CenterHalfLPItemEquation beta v ρ ell t
+
+/--
+Appendix E, Lemma 15 center closed `λ` formula in the paper's half-LP
+convention:
+`λ = (2β q_t + (1 - 2β)) / (1 + q_t L_t)`.
+
+The full mirrored-policy formula used by the verified Problem 11 interface is
+recorded separately in `paper_aux_lemma15_problem11_lambda_eq_of_center_fullPolicy`.
+-/
+theorem paper_lemma15_problem11_lambda_eq_of_center_halfLPConvention
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hcenter : t.val = (reverseItem t).val)
+    (hhalf :
+      paper_lemma15_problem11_centerHalfLPItemEquation beta v ρ ell t) :
+    ell =
+      (2 * beta * pairShare (1 / 2) v t + (1 - 2 * beta)) /
+        (1 + pairShare (1 / 2) v t * paper_lemma15_problem11_leftSum v t) := by
+  exact theorem4Problem11Lemma15_lambda_eq_of_center_halfLPConvention
+    hbeta_pos hpos h hpivot hcenter hhalf
+
+/--
 Appendix E, Lemma 15 consequence: a pivot-one closed-form coordinate cannot
 be the cold-start row's PMF mass under the Theorem 4 assumptions.
 -/

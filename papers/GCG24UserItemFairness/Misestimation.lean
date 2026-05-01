@@ -9462,6 +9462,69 @@ theorem theorem4Problem11Lemma15_lambda_eq_of_center_fullPolicy
   rw [eq_div_iff (ne_of_gt hden_pos)]
   exact hmul_one
 
+/--
+The center-item equation used by the paper's half-LP display in Appendix E,
+Lemma 15.  For an exact center pivot the paper writes the known-type
+contribution as `2β q_t x_t`; the full mirrored-policy encoding has the
+separate mirror term as well.
+-/
+def Theorem4Problem11CenterHalfLPItemEquation {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (ρ : TypePolicy 3 n)
+    (ell : ℝ) (t : Item n) : Prop :=
+  ell =
+    2 * beta * pairShare (1 / 2) v t * (ρ 0 t).toReal +
+      (1 - 2 * beta) * (ρ 2 t).toReal
+
+/--
+Appendix E, Lemma 15 center `λ` formula in the paper's half-LP convention.
+
+This proves the displayed source formula exactly once the center item equation
+is read in the half-LP convention above.  The full mirrored-policy Problem 11
+interface instead uses `theorem4Problem11Lemma15_lambda_eq_of_center_fullPolicy`.
+-/
+theorem theorem4Problem11Lemma15_lambda_eq_of_center_halfLPConvention
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hcenter : t.val = (reverseItem t).val)
+    (hhalf :
+      Theorem4Problem11CenterHalfLPItemEquation beta v ρ ell t) :
+    ell =
+      (2 * beta * pairShare (1 / 2) v t + (1 - 2 * beta)) /
+        (1 + pairShare (1 / 2) v t * theorem4Problem11LeftSum v t) := by
+  let q : ℝ := pairShare (1 / 2) v t
+  let L : ℝ := theorem4Problem11LeftSum v t
+  have hx :=
+    theorem4Problem11Lemma15_typeZero_pivot_eq_one_sub_leftSum
+      hbeta_pos hpos h hpivot (le_of_eq hcenter)
+  have hz :=
+    theorem4Problem11Lemma15_cold_center_eq_one hpivot hcenter.symm
+  have hbeta_ne : beta ≠ 0 := ne_of_gt hbeta_pos
+  have hitem := hhalf
+  dsimp [Theorem4Problem11CenterHalfLPItemEquation] at hitem
+  rw [hx, hz] at hitem
+  have hmul :
+      ell * (1 + q * L) =
+        2 * beta * q + (1 - 2 * beta) := by
+    dsimp [q, L] at hitem ⊢
+    field_simp [hbeta_ne] at hitem
+    ring_nf at hitem ⊢
+    nlinarith
+  have hden_pos : 0 < 1 + q * L := by
+    have hq_nonneg : 0 ≤ q := by
+      dsimp [q]
+      exact (pairShare_pos t (by norm_num) (by norm_num) hpos).le
+    have hL_nonneg : 0 ≤ L := by
+      dsimp [L]
+      exact theorem4Problem11LeftSum_nonneg hpos t
+    nlinarith [mul_nonneg hq_nonneg hL_nonneg]
+  change ell = (2 * beta * q + (1 - 2 * beta)) / (1 + q * L)
+  rw [eq_div_iff (ne_of_gt hden_pos)]
+  exact hmul
+
 theorem theorem4Problem11EqualizedBasicOptimal_not_lastActive_lt
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
     {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
