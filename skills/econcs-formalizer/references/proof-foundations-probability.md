@@ -17,6 +17,12 @@ models.
   witness.
 - For two-outcome probabilities, first prove `wrong = 1 - correct`, then turn
   `wrong < correct` into `1 / 2 < correct` when that matches the paper proof.
+- For pairwise probability monotonicity, define unnormalized `correctWeight`
+  and `wrongWeight`, prove their sum is the partition/mass of the relevant
+  sample space, and only then normalize. If the paper proof cancels common
+  factors to a reduced finite sum, expose a named reduction bridge from actual
+  weights to reduced weights; keep the source theorem conditional until that
+  bridge is discharged.
 - For finite analytic PMF families, prove continuity at the atom level
   `fun theta => ((mu theta) a).toReal`, then lift through finite expectation
   lemmas such as `epsilonContinuousAt_pmfExp_of_atom`.

@@ -35,6 +35,28 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 - For weaker-competition Mallows totals, use the paper's conditional-gap route:
   rank-only conditional gap, adjacent-rank antitonicity, finite MLR
   weighted-average inequality, and the positive same-human square-weighted gap.
+- For Mallows "first mover beats second mover" lemmas, first prove the generic
+  collision-loss identity
+  `firstMover - independentSecond = sum firstChoiceProb * firstChoiceGapMass`.
+  Then use the rank-factorized first-choice and first-choice-gap weights to
+  reduce the sum to a positive scalar times the same-human square-weighted
+  conditional-gap sum. This is usually faster than expanding the full
+  two-ranking expectation directly.
+- For Mallows pairwise-correctness monotonicity, separate the paper's
+  cancellation-reduced endpoint-position inequality from the later permutation
+  bridge. With inverse parameter `q = phi^-1`, correct endpoint placements have
+  lower Kendall exponents than incorrect placements, so prove a strict
+  cross-product inequality for the reduced weights and then translate the final
+  statement as "probability decreases in `q`" rather than "increases in
+  `phi`". Keep this rank-only core as a helper, not as a replacement DAG node
+  for the paper's full Lemma 8.
+- For the full Mallows pairwise-correctness theorem, introduce actual
+  `pairCorrectWeight`, `pairWrongWeight`, and `pairCorrectProb` first, with a
+  theorem that correct+wrong weights equal the Mallows partition for a
+  center-ordered pair. Then prove a `PairPositionReduction`-style bridge saying
+  both actual weights are the same positive scale times the reduced
+  endpoint-position weights. The final paper wrapper should consume this bridge
+  internally; an explicit-input reduction theorem is only conditional progress.
 - For ranking fibers over `Fin`, normalize first-choice rank `r` with
   `Fin.cycleRange r`; normalize ordered top-two ranks `r < s` with
   `cycleRange r` followed by `cycleIcc 1 s`; normalize swapped top-two ranks

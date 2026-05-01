@@ -50,3 +50,10 @@ simpa using
 - If a Lean goal is not moving after a few local attempts, extract the exact
   algebraic, finite-sum, relabeling, or monotonicity fact as a named helper
   lemma before returning to the main theorem.
+- After `field_simp`, `ring_nf`, or `simp` changes an inequality goal, inspect
+  the new target before adding another tactic. These tactics often close the
+  goal or convert `0 ≤ a - b` into `b ≤ a`; use `sub_nonneg.mp` /
+  `sub_pos.mp` deliberately instead of pushing another algebra tactic by habit.
+- For strict finite-sum positivity, name the witness term and prove all other
+  terms nonnegative before expanding the whole sum. This avoids broad
+  pointwise algebra in the final theorem.
