@@ -28,6 +28,10 @@ export EconCSLib.Auction (
   paper_cross_sample_candidate_offer_no_positive_transfers
   paper_average_cross_sample_candidate_offer_revenue_nonneg
   paper_cross_sample_offer_competitive_of_certificate
+  totalBidValue
+  weightedPairingExpectedPayment
+  weightedPairingExpectedRevenue
+  weightedPairingExpectedRevenue_eq_sum_payments
   paper_theorem6_2_random_sampling_union_bound
   paper_theorem6_2_random_sampling_measure_union_bound
   paper_theorem6_2_sample_benchmark_from_sampled_winners
@@ -61,6 +65,10 @@ export EconCSLib.Auction (
   paper_theorem4_1_fixed_price_lower_bound_of_factor_two_partition
   paper_corollary4_2_fixed_price_lower_bound_from_truncation
   paper_theorem7_1_weighted_pairing_square_sum_endpoint
+  paper_theorem7_1_active_total_from_singleton_loss
+  paper_theorem7_1_weighted_pairing_from_bin_square_revenue
+  paper_theorem7_1_bin_revenue_lower_bound_algebra
+  paper_theorem7_1_weighted_pairing_from_active_bin_certificates
   paper_threshold_price_individually_rational
   paper_threshold_price_no_positive_transfers
   paper_lemma8_1_truthful_win_probability_monotone

@@ -1073,6 +1073,39 @@ theorem sidePriceRevenue_eq_sideSaleCount_mul [Fintype Agent]
   rw [sidePriceRevenue, sideSaleCount, ← Finset.sum_filter]
   simp
 
+/-! ## Weighted Pairing Auction -/
+
+/-- Total bid value `T` used by the weighted-pairing auction. -/
+noncomputable def totalBidValue [Fintype Agent] (values : Agent → ℝ) : ℝ :=
+  ∑ i : Agent, values i
+
+/--
+Expected payment of bidder `i` in the GHW weighted-pairing auction. Bidder `i`
+draws another bidder `j` with probability proportional to `values j`; if
+`values j <= values i`, bidder `i` wins and pays `values j`.
+-/
+noncomputable def weightedPairingExpectedPayment
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) (i : Agent) : ℝ :=
+  ∑ j : Agent,
+    if j ≠ i ∧ values j ≤ values i then
+      (values j) ^ 2 / (totalBidValue values - values i)
+    else
+      0
+
+/-- Expected revenue of the GHW weighted-pairing auction. -/
+noncomputable def weightedPairingExpectedRevenue
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) : ℝ :=
+  ∑ i : Agent, weightedPairingExpectedPayment values i
+
+theorem weightedPairingExpectedRevenue_eq_sum_payments
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) :
+    weightedPairingExpectedRevenue values =
+      ∑ i : Agent, weightedPairingExpectedPayment values i := by
+  rfl
+
 theorem finiteCandidateFixedPriceBenchmark_restrictBidsBySide_le_sideSaleCount_mul_bound
     [Fintype Agent] [Nonempty Agent]
     (side : Agent → Bool) (keep : Bool)

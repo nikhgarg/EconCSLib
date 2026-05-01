@@ -96,6 +96,13 @@ concentration, measure inequalities, continuous densities, and RUM/noise models.
   model is a sorted `Fin n → ℝ` bid vector with a monotonicity assumption. Define
   the prefix as indices `< i`, prove its cardinality by an equivalence with
   `Fin i`, and prove threshold closure by contradiction using `i + 1` winners.
+- For randomized mechanisms whose expectation has a simple finite formula,
+  write the expected-payment/revenue double sum directly before introducing
+  probability objects. For weighted-pairing-style auctions, the random draw
+  "choose `j` with probability proportional to `v_j` and charge `v_j` if
+  accepted" becomes a deterministic sum of terms like
+  `v_j^2 / (total - v_i)`, which is faster to bound than modeling the sampling
+  kernel first.
 
 ## Continuous Probability and RUM
 

@@ -1,6 +1,7 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
@@ -141,6 +142,16 @@ theorem exists_total_le_card_mul_of_le_sum
       exact (div_mul_cancel₀ total hcard_ne).symm
     _ ≤ cardR * mass k := hmul
     _ = (Fintype.card κ : ℝ) * mass k := by rfl
+
+/-- Cauchy-Schwarz for a finite real sum against the all-ones vector. -/
+theorem sq_sum_le_card_mul_sum_sq
+    {α : Type*} (s : Finset α) (f : α → ℝ) :
+    (∑ i ∈ s, f i) ^ 2 ≤
+      (s.card : ℝ) * ∑ i ∈ s, (f i) ^ 2 := by
+  have h :=
+    Finset.sum_mul_sq_le_sq_mul_sq
+      (s := s) (f := f) (g := fun _ => (1 : ℝ))
+  simpa [pow_two, mul_assoc, mul_left_comm, mul_comm] using h
 
 /--
 Discrete crossing for Boolean predicates on a finite integer interval. If a
