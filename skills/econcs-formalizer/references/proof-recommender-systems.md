@@ -43,6 +43,11 @@ allocation.
   asymptotics: rank success probabilities become constant, so the model should
   reduce to the existing i.i.d. Bernoulli satisfaction model and reuse its
   uniform-homogeneity theorem.
+- For positive-`α` decaying Bernoulli top-one objectives, first prove eventual
+  interiority of finite optima. The decay probability tends to zero, so a large
+  source count has last-item marginal below any destination's first marginal;
+  a finite pairwise threshold plus the FOC rules out zero-count destinations at
+  large totals.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
