@@ -49,6 +49,42 @@ theorem measureProb_pos_of_measure_ne_zero
     0 < measureProb μ p := by
   exact ENNReal.toReal_pos h (measure_ne_top μ {a | p a})
 
+theorem measureReal_inter_ge_one_sub_add
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ]
+    {P Q : Set α}
+    (hP : MeasurableSet P) (hQ : MeasurableSet Q)
+    {epsP epsQ : ℝ}
+    (hprobP : 1 - epsP ≤ μ.real P)
+    (hprobQ : 1 - epsQ ≤ μ.real Q) :
+    1 - epsP - epsQ ≤ μ.real (P ∩ Q) := by
+  have hPcompl :
+      μ.real Pᶜ ≤ epsP := by
+    have hcompl :
+        μ.real Pᶜ = 1 - μ.real P :=
+      probReal_compl_eq_one_sub (μ := μ) hP
+    linarith
+  have hQcompl :
+      μ.real Qᶜ ≤ epsQ := by
+    have hcompl :
+        μ.real Qᶜ = 1 - μ.real Q :=
+      probReal_compl_eq_one_sub (μ := μ) hQ
+    linarith
+  have hbad :
+      μ.real (Pᶜ ∪ Qᶜ) ≤ epsP + epsQ := by
+    exact (measureReal_union_le (μ := μ) Pᶜ Qᶜ).trans
+      (add_le_add hPcompl hQcompl)
+  have hcompl_inter :
+      μ.real (P ∩ Q)ᶜ = 1 - μ.real (P ∩ Q) :=
+    probReal_compl_eq_one_sub (μ := μ) (hP.inter hQ)
+  have hdeMorgan : (P ∩ Q)ᶜ = Pᶜ ∪ Qᶜ := by
+    ext a
+    by_cases hpa : a ∈ P <;> by_cases hqa : a ∈ Q <;> simp [hpa, hqa]
+  have hbad_inter :
+      μ.real (P ∩ Q)ᶜ ≤ epsP + epsQ := by
+    rwa [hdeMorgan]
+  linarith
+
 theorem isProbabilityMeasure_withDensity_of_lintegral_eq_one
     {α : Type*} [MeasurableSpace α] (μ : Measure α) (D : α → ENNReal)
     (hD : ∫⁻ a, D a ∂μ = 1) :
@@ -199,6 +235,17 @@ theorem fairBoolMeasure_isProbabilityMeasure : IsProbabilityMeasure fairBoolMeas
   simpa [fairBoolMeasure] using
     (inferInstance : IsProbabilityMeasure (PMF.bernoulli (1 / 2 : NNReal) (by norm_num)).toMeasure)
 
+theorem fairBoolProductMeasure_isProbabilityMeasure (ι : Type*) :
+    IsProbabilityMeasure (fairBoolProductMeasure ι) := by
+  let P : ι → Measure Bool := fun _ => fairBoolMeasure
+  let hμ : ∀ i : ι, IsProbabilityMeasure (P i) := by
+    intro i
+    simpa [P] using fairBoolMeasure_isProbabilityMeasure
+  simpa [fairBoolProductMeasure, P] using
+    @MeasureTheory.Measure.instIsProbabilityMeasureForallInfinitePi
+      (ι := ι) (X := fun _ : ι => Bool)
+      (mX := fun _ => by infer_instance) (μ := P) hμ
+
 theorem fairBoolProduct_indicator_iIndepFun
     {ι : Type*} (keep : Bool) :
     iIndepFun
@@ -302,6 +349,42 @@ theorem fairBoolProduct_indicator_lower_tail_le_exp
   · intro i _hi
     rw [integral_neg]
     simp [fairBoolProduct_indicator_integral i keep]
+
+theorem fairBoolProduct_indicator_lower_tail_le_exp_card
+    {ι : Type*} (s : Finset ι) (keep : Bool) :
+    (fairBoolProductMeasure ι).real
+        {side | (∑ i ∈ s, if side i = keep then (1 : ℝ) else 0) ≤
+          (s.card : ℝ) / 3} ≤
+    Real.exp (-(s.card : ℝ) / 18) := by
+  have hraw := fairBoolProduct_indicator_lower_tail_le_exp s keep
+  have hsum :
+      ((∑ _i ∈ s, ((‖(0 : ℝ) - (-1)‖₊ / 2) ^ 2 : NNReal)) : ℝ) =
+        (s.card : ℝ) / 4 := by
+    simp
+    ring
+  have hexp :
+      -((s.card : ℝ) / 6) ^ 2 / (2 * ((s.card : ℝ) / 4)) =
+        -(s.card : ℝ) / 18 := by
+    by_cases hcard : s.card = 0
+    · simp [hcard]
+    · have hcard_ne : (s.card : ℝ) ≠ 0 := by
+        exact_mod_cast hcard
+      field_simp [hcard_ne]
+      ring
+  rw [hsum] at hraw
+  simpa [hexp]
+    using hraw
+
+theorem fairBoolProduct_indicator_lower_tail_le_exp_card_relaxed
+    {ι : Type*} (s : Finset ι) (keep : Bool) :
+    (fairBoolProductMeasure ι).real
+        {side | (∑ i ∈ s, if side i = keep then (1 : ℝ) else 0) ≤
+          (s.card : ℝ) / 3} ≤
+    Real.exp (-(s.card : ℝ) / 36) := by
+  exact le_trans (fairBoolProduct_indicator_lower_tail_le_exp_card s keep)
+    (Real.exp_le_exp.mpr (by
+      have hnonneg : 0 ≤ (s.card : ℝ) := by exact_mod_cast Nat.zero_le s.card
+      nlinarith))
 
 @[simp] theorem measureProb_false
     {α : Type*} [MeasurableSpace α] (μ : Measure α) :

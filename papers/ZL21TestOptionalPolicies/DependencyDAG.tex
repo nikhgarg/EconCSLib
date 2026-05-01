@@ -2,18 +2,126 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}
+\begin{tikzpicture}[node distance=0.9cm and 2.4cm,
+  every node/.style={font=\sffamily\small}]
+
 % --- Legend ---
-\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
-\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized Lemma};
+\node[dag_result, text width=2.5cm] (legRes) {Formalized\ result};
+\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized\ lemma};
 \node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
-\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not Formalized};
+\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not formalized};
 \daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
 
-% --- Graph ---
-\node[dag_model, below=2cm of Legend] (Primitives) {\textbf{Model} \\ Test-optional admission features};
-\node[dag_result, below=2cm of Primitives] (Thm1) {\textbf{Test Optional Baseline} \\ Statements to be added};
+% Core primitives
+\node[dag_model, below=1.8cm of Legend, text width=5cm]
+  (ModelDef) {
+    \textbf{Model}\
+    \(\texttt{ZL21Model}\), base and test signal kernels\
+    definitions
+  };
 
-\draw[dag_arrow] (Primitives) -- (Thm1);
+\node[dag_model, below=of ModelDef, text width=4.7cm]
+  (ModelBase) {
+    \textbf{Base model wrappers}\
+    \(zl21BaseModel\), mass/select defs
+  };
+\node[dag_model, right=of ModelBase, text width=4.7cm]
+  (ModelTest) {
+    \textbf{Test model wrappers}\
+    \(zl21TestModel\), mass/select defs
+  };
+
+% Base model theorem chain
+\node[dag_result, below=of ModelBase, text width=4.7cm]
+  (Base1) {\textbf{Base universal accept}\\mass on \(\top\)};
+\node[dag_result, below=0.7cm of Base1, text width=4.7cm]
+  (Base2) {\textbf{Base no accept}\\mass on \(\bot\)};
+\node[dag_result, below=0.7cm of Base2, text width=4.7cm]
+  (Base3) {\textbf{Base complement mass}\\mass/quality decomposition};
+\node[dag_result, below=0.7cm of Base3, text width=4.7cm]
+  (Base4) {\textbf{Base mass upper bound}\\nonnegative total};
+\node[dag_result, below=0.7cm of Base4, text width=4.7cm]
+  (Base5) {\textbf{Base zero-selection conditional}\\conditional mass = 0};
+\node[dag_result, below=0.7cm of Base5, text width=4.7cm]
+  (Base6) {\textbf{Base zero-selection mass}\\mass = 0};
+\node[dag_result, below=0.7cm of Base6, text width=4.7cm]
+  (Base7) {\textbf{Base product decomposition}\\mass = Pr\(S\)×E[quality|S]};
+\node[dag_result, below=0.7cm of Base7, text width=4.7cm]
+  (Base8) {\textbf{Base mass nonneg}\\under nonnegative quality};
+\node[dag_result, below=0.7cm of Base8, text width=4.7cm]
+  (Base9) {\textbf{Base conditional nonneg}\\under nonnegative quality};
+\node[dag_result, below=0.7cm of Base9, text width=4.7cm]
+  (Base10) {\textbf{Base monotonicity}\\mass monotone in predicate inclusion};
+\node[dag_result, below=0.7cm of Base10, text width=4.7cm]
+  (Base11) {\textbf{Base universal conditional}\
+    \(E[quality\mid True] = E[quality]\)};
+\node[dag_result, below=0.7cm of Base11, text width=4.7cm]
+  (Base12) {\textbf{Base conditional complement}\\finite complement formula};
+\node[dag_result, below=0.7cm of Base12, text width=4.7cm]
+  (Base13) {\textbf{Base complement decomposition}\\total expectation split by\
+    \(p\) and \(\neg p\)};
+
+% Test model theorem chain
+\node[dag_result, below=of ModelTest, text width=4.7cm]
+  (Test1) {\textbf{Test universal accept}\\mass on \(\top\)};
+\node[dag_result, below=0.7cm of Test1, text width=4.7cm]
+  (Test2) {\textbf{Test no accept}\\mass on \(\bot\)};
+\node[dag_result, below=0.7cm of Test2, text width=4.7cm]
+  (Test3) {\textbf{Test complement mass}\\mass/quality decomposition};
+\node[dag_result, below=0.7cm of Test3, text width=4.7cm]
+  (Test4) {\textbf{Test mass upper bound}\\nonnegative total};
+\node[dag_result, below=0.7cm of Test4, text width=4.7cm]
+  (Test5) {\textbf{Test zero-selection conditional}\\conditional mass = 0};
+\node[dag_result, below=0.7cm of Test5, text width=4.7cm]
+  (Test6) {\textbf{Test zero-selection mass}\\mass = 0};
+\node[dag_result, below=0.7cm of Test6, text width=4.7cm]
+  (Test7) {\textbf{Test product decomposition}\\mass = Pr\(S\)×E[quality|S]};
+\node[dag_result, below=0.7cm of Test7, text width=4.7cm]
+  (Test8) {\textbf{Test mass nonneg}\\under nonnegative quality};
+\node[dag_result, below=0.7cm of Test8, text width=4.7cm]
+  (Test9) {\textbf{Test conditional nonneg}\\under nonnegative quality};
+\node[dag_result, below=0.7cm of Test9, text width=4.7cm]
+  (Test10) {\textbf{Test monotonicity}\\mass monotone in predicate inclusion};
+\node[dag_result, below=0.7cm of Test10, text width=4.7cm]
+  (Test11) {\textbf{Test universal conditional}\
+    \(E[quality\mid True] = E[quality]\)};
+\node[dag_result, below=0.7cm of Test11, text width=4.7cm]
+  (Test12) {\textbf{Test conditional complement}\\finite complement formula};
+\node[dag_result, below=0.7cm of Test12, text width=4.7cm]
+  (Test13) {\textbf{Test complement decomposition}\\total expectation split by\
+    \(p\) and \(\neg p\)};
+
+% Edges
+\draw[dag_arrow] (ModelDef) -- (ModelBase);
+\draw[dag_arrow] (ModelDef) -- (ModelTest);
+\draw[dag_arrow] (ModelBase) -- (Base1);
+\draw[dag_arrow] (ModelTest) -- (Test1);
+
+\draw[dag_arrow] (Base1) -- (Base2);
+\draw[dag_arrow] (Base2) -- (Base3);
+\draw[dag_arrow] (Base3) -- (Base4);
+\draw[dag_arrow] (Base4) -- (Base5);
+\draw[dag_arrow] (Base5) -- (Base6);
+\draw[dag_arrow] (Base6) -- (Base7);
+\draw[dag_arrow] (Base7) -- (Base8);
+\draw[dag_arrow] (Base8) -- (Base9);
+\draw[dag_arrow] (Base9) -- (Base10);
+\draw[dag_arrow] (Base10) -- (Base11);
+\draw[dag_arrow] (Base11) -- (Base12);
+\draw[dag_arrow] (Base12) -- (Base13);
+
+\draw[dag_arrow] (Test1) -- (Test2);
+\draw[dag_arrow] (Test2) -- (Test3);
+\draw[dag_arrow] (Test3) -- (Test4);
+\draw[dag_arrow] (Test4) -- (Test5);
+\draw[dag_arrow] (Test5) -- (Test6);
+\draw[dag_arrow] (Test6) -- (Test7);
+\draw[dag_arrow] (Test7) -- (Test8);
+\draw[dag_arrow] (Test8) -- (Test9);
+\draw[dag_arrow] (Test9) -- (Test10);
+\draw[dag_arrow] (Test10) -- (Test11);
+\draw[dag_arrow] (Test11) -- (Test12);
+\draw[dag_arrow] (Test12) -- (Test13);
+
 \end{tikzpicture}
 \end{document}
