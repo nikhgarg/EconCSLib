@@ -678,6 +678,42 @@ theorem optimalUserFairnessAtLevel_eq_reduced_of_gamma_lt_one
     reps hRow γ hOrigNonempty hRedNonempty
 
 /--
+At the maximal item-fairness boundary `γ = 1`, compactness supplies feasible
+and optimal policies on both the original and reduced finite policy simplexes.
+-/
+theorem optimalUserFairnessAtLevel_eq_reduced_one_of_positive
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced 1 := by
+  have hRow : R.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos
+  have hNonneg : R.data.model.Nonnegative :=
+    RecommendationModel.nonnegative_of_positive R.data.model hPos
+  have hOrigNonempty :
+      (RecommendationModel.attainableUserFairnessAtLevel
+        R.data.model 1).Nonempty :=
+    RecommendationModel.attainableUserFairnessAtLevel_one_nonempty_of_nonnegative
+      R.data.model hNonneg
+  have hRedWeight : R.reduced.PositiveWeights :=
+    R.reduced_positiveWeights_of_representatives reps
+  have hRedUtil : R.reduced.PositiveUtilities :=
+    R.reduced_positiveUtilities_of_positive reps hPos
+  have hRedNonempty :
+      (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel
+        R.reduced 1).Nonempty :=
+    TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel_one_nonempty_of_nonnegative
+      R.reduced
+      (TypeWeightedRecommendationModel.nonnegativeWeights_of_positiveWeights
+        R.reduced hRedWeight)
+      (TypeWeightedRecommendationModel.nonnegativeUtilities_of_positiveUtilities
+        R.reduced hRedUtil)
+  exact R.optimalUserFairnessAtLevel_eq_reduced_of_nonempty
+    reps hRow 1 hOrigNonempty hRedNonempty
+
+/--
 If a reduced optimum is supplied, its lifted policy witnesses original
 feasibility. Hence reduced-to-original optimality needs no separate feasible-set
 nonemptiness assumptions.

@@ -158,6 +158,252 @@ theorem uniformTypePolicy_apply_toReal_pos {K n : ℕ} [NeZero n]
   simpa [uniformTypePolicy] using
     (EconCSLib.uniformPMF_apply_toReal_pos (α := Item n) j)
 
+/--
+A real-vector presentation of reduced policies as one standard simplex row per
+user type. This mirrors the original-model compactness layer.
+-/
+abbrev TypePolicySimplexVector (K n : ℕ) :=
+  UserType K → stdSimplex ℝ (Item n)
+
+/-- Convert a reduced real simplex vector back to the `PMF`-valued type policy. -/
+noncomputable def typePolicyOfSimplexVector {K n : ℕ}
+    (x : TypePolicySimplexVector K n) : TypePolicy K n :=
+  fun k =>
+    RecommendationModel.pmfOfRealItemVector
+      ((x k : stdSimplex ℝ (Item n)) : Item n → ℝ)
+      (x k).2.1
+      (x k).2.2
+
+@[simp] theorem typePolicyOfSimplexVector_apply_toReal {K n : ℕ}
+    (x : TypePolicySimplexVector K n) (k : UserType K) (j : Item n) :
+    ((typePolicyOfSimplexVector x k) j).toReal =
+      ((x k : stdSimplex ℝ (Item n)) : Item n → ℝ) j := by
+  simp [typePolicyOfSimplexVector]
+
+/-- Convert a reduced `PMF`-valued type policy into its real simplex-vector presentation. -/
+noncomputable def simplexVectorOfTypePolicy {K n : ℕ}
+    (ρ : TypePolicy K n) : TypePolicySimplexVector K n :=
+  fun k =>
+    ⟨fun j => (ρ k j).toReal,
+      ⟨fun j => ENNReal.toReal_nonneg,
+        EconCSLib.pmfToRealSum (ρ k)⟩⟩
+
+/-- Weighted raw item utility evaluated on the reduced simplex-vector presentation. -/
+noncomputable def rawItemUtilityVector {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (j : Item n) : ℝ :=
+  ∑ k : UserType K,
+    (T.weight k * T.utility k j) *
+      ((x k : stdSimplex ℝ (Item n)) : Item n → ℝ) j
+
+/-- Normalized item utility evaluated on the reduced simplex-vector presentation. -/
+noncomputable def normalizedItemUtilityVector {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (j : Item n) : ℝ :=
+  let denom := itemNormalizer T j
+  if h : denom = 0 then 0 else rawItemUtilityVector T x j / denom
+
+/-- Minimum item fairness evaluated on the reduced simplex-vector presentation. -/
+noncomputable def itemFairnessVector {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) : ℝ :=
+  EconCSLib.finiteMin (normalizedItemUtilityVector T x)
+
+theorem rawItemUtility_typePolicyOfSimplexVector_eq {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (j : Item n) :
+    rawItemUtility T (typePolicyOfSimplexVector x) j =
+      rawItemUtilityVector T x j := by
+  simp [rawItemUtility, rawItemUtilityVector]
+
+theorem normalizedItemUtility_typePolicyOfSimplexVector_eq {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (j : Item n) :
+    normalizedItemUtility T (typePolicyOfSimplexVector x) j =
+      normalizedItemUtilityVector T x j := by
+  unfold normalizedItemUtility normalizedItemUtilityVector
+  rw [rawItemUtility_typePolicyOfSimplexVector_eq]
+
+theorem itemFairness_typePolicyOfSimplexVector_eq {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) :
+    itemFairness T (typePolicyOfSimplexVector x) =
+      itemFairnessVector T x := by
+  unfold itemFairness itemFairnessVector
+  apply congrArg
+  funext j
+  exact normalizedItemUtility_typePolicyOfSimplexVector_eq T x j
+
+theorem rawItemUtilityVector_simplexVectorOfTypePolicy_eq {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (ρ : TypePolicy K n) (j : Item n) :
+    rawItemUtilityVector T (simplexVectorOfTypePolicy ρ) j =
+      rawItemUtility T ρ j := by
+  unfold rawItemUtilityVector rawItemUtility simplexVectorOfTypePolicy
+  rfl
+
+theorem normalizedItemUtilityVector_simplexVectorOfTypePolicy_eq {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (ρ : TypePolicy K n) (j : Item n) :
+    normalizedItemUtilityVector T (simplexVectorOfTypePolicy ρ) j =
+      normalizedItemUtility T ρ j := by
+  unfold normalizedItemUtilityVector normalizedItemUtility
+  rw [rawItemUtilityVector_simplexVectorOfTypePolicy_eq]
+
+theorem itemFairnessVector_simplexVectorOfTypePolicy_eq {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (ρ : TypePolicy K n) :
+    itemFairnessVector T (simplexVectorOfTypePolicy ρ) =
+      itemFairness T ρ := by
+  unfold itemFairnessVector itemFairness
+  apply congrArg
+  funext j
+  exact normalizedItemUtilityVector_simplexVectorOfTypePolicy_eq T ρ j
+
+theorem rawItemUtilityVector_continuous {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n) (j : Item n) :
+    Continuous (fun x : TypePolicySimplexVector K n =>
+      rawItemUtilityVector T x j) := by
+  unfold rawItemUtilityVector
+  apply continuous_finset_sum
+  intro k _hk
+  have hrow : Continuous (fun x : TypePolicySimplexVector K n => x k) :=
+    continuous_apply k
+  have hcoord : Continuous (fun x : TypePolicySimplexVector K n =>
+      ((x k : stdSimplex ℝ (Item n)) : Item n → ℝ) j) :=
+    (continuous_apply j).comp (continuous_subtype_val.comp hrow)
+  exact continuous_const.mul hcoord
+
+theorem normalizedItemUtilityVector_continuous {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n) (j : Item n) :
+    Continuous (fun x : TypePolicySimplexVector K n =>
+      normalizedItemUtilityVector T x j) := by
+  unfold normalizedItemUtilityVector
+  by_cases hden : itemNormalizer T j = 0
+  · simpa [hden] using (continuous_const : Continuous
+      (fun _ : TypePolicySimplexVector K n => (0 : ℝ)))
+  · simpa [hden] using
+      (rawItemUtilityVector_continuous T j).div_const (itemNormalizer T j)
+
+theorem itemFairnessVector_continuous {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) :
+    Continuous (fun x : TypePolicySimplexVector K n =>
+      itemFairnessVector T x) := by
+  have hcont : ∀ j : Item n,
+      Continuous (fun x : TypePolicySimplexVector K n =>
+        normalizedItemUtilityVector T x j) :=
+    fun j => normalizedItemUtilityVector_continuous T j
+  unfold itemFairnessVector EconCSLib.finiteMin
+  fun_prop
+
+/-- Raw type utility evaluated on the reduced simplex-vector presentation. -/
+noncomputable def rawTypeUtilityVector {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (k : UserType K) : ℝ :=
+  ∑ j : Item n,
+    ((x k : stdSimplex ℝ (Item n)) : Item n → ℝ) j * T.utility k j
+
+/-- Normalized type utility evaluated on the reduced simplex-vector presentation. -/
+noncomputable def normalizedTypeUtilityVector {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (k : UserType K) : ℝ :=
+  rawTypeUtilityVector T x k / bestItemUtility T k
+
+/-- Minimum type fairness evaluated on the reduced simplex-vector presentation. -/
+noncomputable def typeFairnessVector {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) : ℝ :=
+  EconCSLib.finiteMin (normalizedTypeUtilityVector T x)
+
+theorem rawTypeUtility_typePolicyOfSimplexVector_eq {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (k : UserType K) :
+    rawTypeUtility T (typePolicyOfSimplexVector x) k =
+      rawTypeUtilityVector T x k := by
+  unfold rawTypeUtility rawTypeUtilityVector EconCSLib.Policy.agentScore
+    EconCSLib.pmfExp
+  simp [mul_comm]
+
+theorem normalizedTypeUtility_typePolicyOfSimplexVector_eq {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) (k : UserType K) :
+    normalizedTypeUtility T (typePolicyOfSimplexVector x) k =
+      normalizedTypeUtilityVector T x k := by
+  unfold normalizedTypeUtility normalizedTypeUtilityVector
+  rw [rawTypeUtility_typePolicyOfSimplexVector_eq]
+
+theorem typeFairness_typePolicyOfSimplexVector_eq {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (x : TypePolicySimplexVector K n) :
+    typeFairness T (typePolicyOfSimplexVector x) =
+      typeFairnessVector T x := by
+  unfold typeFairness typeFairnessVector
+  apply congrArg
+  funext k
+  exact normalizedTypeUtility_typePolicyOfSimplexVector_eq T x k
+
+theorem rawTypeUtilityVector_simplexVectorOfTypePolicy_eq {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n)
+    (ρ : TypePolicy K n) (k : UserType K) :
+    rawTypeUtilityVector T (simplexVectorOfTypePolicy ρ) k =
+      rawTypeUtility T ρ k := by
+  unfold rawTypeUtilityVector rawTypeUtility simplexVectorOfTypePolicy
+    EconCSLib.Policy.agentScore EconCSLib.pmfExp
+  change (∑ x : Item n, ((ρ k) x).toReal * T.utility k x) =
+    ∑ x : Item n, ((ρ k) x).toReal * T.utility k x
+  rfl
+
+theorem normalizedTypeUtilityVector_simplexVectorOfTypePolicy_eq
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (ρ : TypePolicy K n) (k : UserType K) :
+    normalizedTypeUtilityVector T (simplexVectorOfTypePolicy ρ) k =
+      normalizedTypeUtility T ρ k := by
+  unfold normalizedTypeUtilityVector normalizedTypeUtility
+  rw [rawTypeUtilityVector_simplexVectorOfTypePolicy_eq]
+
+theorem typeFairnessVector_simplexVectorOfTypePolicy_eq
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n) :
+    typeFairnessVector T (simplexVectorOfTypePolicy ρ) =
+      typeFairness T ρ := by
+  unfold typeFairnessVector typeFairness
+  apply congrArg
+  funext k
+  exact normalizedTypeUtilityVector_simplexVectorOfTypePolicy_eq T ρ k
+
+theorem rawTypeUtilityVector_continuous {K n : ℕ}
+    (T : TypeWeightedRecommendationModel K n) (k : UserType K) :
+    Continuous (fun x : TypePolicySimplexVector K n =>
+      rawTypeUtilityVector T x k) := by
+  unfold rawTypeUtilityVector
+  apply continuous_finset_sum
+  intro j _hj
+  have hrow : Continuous (fun x : TypePolicySimplexVector K n => x k) :=
+    continuous_apply k
+  have hcoord : Continuous (fun x : TypePolicySimplexVector K n =>
+      ((x k : stdSimplex ℝ (Item n)) : Item n → ℝ) j) :=
+    (continuous_apply j).comp (continuous_subtype_val.comp hrow)
+  exact hcoord.mul continuous_const
+
+theorem normalizedTypeUtilityVector_continuous {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (k : UserType K) :
+    Continuous (fun x : TypePolicySimplexVector K n =>
+      normalizedTypeUtilityVector T x k) := by
+  unfold normalizedTypeUtilityVector
+  exact (rawTypeUtilityVector_continuous T k).div_const _
+
+theorem typeFairnessVector_continuous {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) :
+    Continuous (fun x : TypePolicySimplexVector K n =>
+      typeFairnessVector T x) := by
+  have hcont : ∀ k : UserType K,
+      Continuous (fun x : TypePolicySimplexVector K n =>
+        normalizedTypeUtilityVector T x k) :=
+    fun k => normalizedTypeUtilityVector_continuous T k
+  unfold typeFairnessVector EconCSLib.finiteMin
+  fun_prop
+
 /-- Positive reduced item fairness implies every item is used by some type. -/
 theorem item_coverage_of_itemFairness_pos {K n : ℕ} [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (ρ : TypePolicy K n)
@@ -334,6 +580,46 @@ theorem attainableItemFairnessSet_bddAbove_of_nonnegative {K n : ℕ} [NeZero n]
   let j0 : Item n := Classical.choice inferInstance
   exact (EconCSLib.finiteMin_le (normalizedItemUtility T ρ) j0).trans
     (normalizedItemUtility_le_one_of_nonnegative T hWeight hUtil ρ j0)
+
+/-- Compactness of the reduced finite policy simplex gives an item-fairness maximizer. -/
+theorem optimalItemFairness_attained_of_nonnegative
+    {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities) :
+    ∃ ρ : TypePolicy K n, itemFairness T ρ = optimalItemFairness T := by
+  classical
+  let X := TypePolicySimplexVector K n
+  have hcompact : IsCompact (Set.univ : Set X) := isCompact_univ
+  have hnonempty : (Set.univ : Set X).Nonempty := Set.univ_nonempty
+  have hcont : ContinuousOn (fun x : X => itemFairnessVector T x) Set.univ :=
+    (itemFairnessVector_continuous T).continuousOn
+  rcases hcompact.exists_isMaxOn hnonempty hcont with
+    ⟨xopt, _hxmem, hxmax⟩
+  let ρopt : TypePolicy K n := typePolicyOfSimplexVector xopt
+  refine ⟨ρopt, ?_⟩
+  have hρopt_eq :
+      itemFairness T ρopt = itemFairnessVector T xopt := by
+    dsimp [ρopt]
+    exact itemFairness_typePolicyOfSimplexVector_eq T xopt
+  have hset_nonempty : (attainableItemFairnessSet T).Nonempty := by
+    exact ⟨itemFairness T ρopt, ⟨ρopt, rfl⟩⟩
+  have hopt_le : optimalItemFairness T ≤ itemFairness T ρopt := by
+    unfold optimalItemFairness
+    refine csSup_le hset_nonempty ?_
+    intro r hr
+    obtain ⟨ρ, rfl⟩ := hr
+    have hxle :
+        itemFairnessVector T (simplexVectorOfTypePolicy ρ) ≤
+          itemFairnessVector T xopt :=
+      (isMaxOn_iff.mp hxmax) (simplexVectorOfTypePolicy ρ) (Set.mem_univ _)
+    rw [itemFairnessVector_simplexVectorOfTypePolicy_eq] at hxle
+    rw [← hρopt_eq] at hxle
+    exact hxle
+  have hle_opt : itemFairness T ρopt ≤ optimalItemFairness T := by
+    exact le_csSup
+      (attainableItemFairnessSet_bddAbove_of_nonnegative T hWeight hUtil)
+      ⟨ρopt, rfl⟩
+  exact le_antisymm hle_opt hopt_le
 
 /--
 Strictly positive weights and utilities make the reduced optimal item-fairness
@@ -526,6 +812,22 @@ theorem attainableTypeFairnessAtLevel_nonempty_of_gamma_lt_one
   rw [← hr]
   exact le_of_lt hrgt
 
+/--
+At the maximal reduced boundary `γ = 1`, compactness supplies a type policy
+attaining the reduced item-fairness optimum.
+-/
+theorem attainableTypeFairnessAtLevel_one_nonempty_of_nonnegative
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities) :
+    (attainableTypeFairnessAtLevel T 1).Nonempty := by
+  obtain ⟨ρ, hρ⟩ :=
+    optimalItemFairness_attained_of_nonnegative T hWeight hUtil
+  refine ⟨typeFairness T ρ, ?_⟩
+  refine ⟨ρ, ?_, rfl⟩
+  unfold feasibleAtLevel
+  rw [one_mul, hρ]
+
 /-- The reduced analogue of `U^*_min(γ, w)`. -/
 noncomputable def optimalTypeFairnessAtLevel {K n : ℕ} [NeZero K] [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (γ : ℝ) : ℝ :=
@@ -567,6 +869,96 @@ theorem optimalTypeFairnessAtLevel_zero_eq_one
 def IsOptimalAtLevel {K n : ℕ} [NeZero K] [NeZero n]
     (T : TypeWeightedRecommendationModel K n) (γ : ℝ) (ρ : TypePolicy K n) : Prop :=
   feasibleAtLevel T γ ρ ∧ typeFairness T ρ = optimalTypeFairnessAtLevel T γ
+
+/-- The reduced vector-domain feasible set for the `γ`-constrained problem. -/
+def feasibleTypeSimplexVectorAtLevel {K n : ℕ} [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (γ : ℝ) :
+    Set (TypePolicySimplexVector K n) :=
+  {x | γ * optimalItemFairness T ≤ itemFairnessVector T x}
+
+/--
+Whenever the reduced `γ`-constrained feasible-value set is nonempty, compactness
+of the finite type-policy simplex gives an actual type policy attaining
+`U^*_{\min}(γ)`.
+-/
+theorem exists_isOptimalAtLevel_of_attainableTypeFairnessAtLevel_nonempty
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n) (γ : ℝ)
+    (hFeasNonempty : (attainableTypeFairnessAtLevel T γ).Nonempty) :
+    ∃ ρ : TypePolicy K n, IsOptimalAtLevel T γ ρ := by
+  classical
+  let S : Set (TypePolicySimplexVector K n) :=
+    feasibleTypeSimplexVectorAtLevel T γ
+  have hS_closed : IsClosed S := by
+    dsimp [S, feasibleTypeSimplexVectorAtLevel]
+    exact isClosed_le continuous_const (itemFairnessVector_continuous T)
+  have hS_compact : IsCompact S :=
+    isCompact_univ.of_isClosed_subset hS_closed (Set.subset_univ _)
+  have hS_nonempty : S.Nonempty := by
+    obtain ⟨_r, ρ, hfeas, _hr⟩ := hFeasNonempty
+    refine ⟨simplexVectorOfTypePolicy ρ, ?_⟩
+    dsimp [S, feasibleTypeSimplexVectorAtLevel]
+    rw [itemFairnessVector_simplexVectorOfTypePolicy_eq]
+    exact hfeas
+  rcases hS_compact.exists_isMaxOn hS_nonempty
+      ((typeFairnessVector_continuous T).continuousOn) with
+    ⟨xopt, hxoptS, hxmax⟩
+  let ρopt : TypePolicy K n := typePolicyOfSimplexVector xopt
+  have hρopt_item :
+      itemFairness T ρopt = itemFairnessVector T xopt := by
+    dsimp [ρopt]
+    exact itemFairness_typePolicyOfSimplexVector_eq T xopt
+  have hρopt_type :
+      typeFairness T ρopt = typeFairnessVector T xopt := by
+    dsimp [ρopt]
+    exact typeFairness_typePolicyOfSimplexVector_eq T xopt
+  have hρopt_feas : feasibleAtLevel T γ ρopt := by
+    unfold feasibleAtLevel
+    dsimp [S, feasibleTypeSimplexVectorAtLevel] at hxoptS
+    rw [hρopt_item]
+    exact hxoptS
+  have hρopt_mem :
+      typeFairness T ρopt ∈ attainableTypeFairnessAtLevel T γ := by
+    exact ⟨ρopt, hρopt_feas, rfl⟩
+  have hupper :
+      ∀ r ∈ attainableTypeFairnessAtLevel T γ,
+        r ≤ typeFairness T ρopt := by
+    intro r hr
+    obtain ⟨ρ, hfeas, hr⟩ := hr
+    have hxρS : simplexVectorOfTypePolicy ρ ∈ S := by
+      dsimp [S, feasibleTypeSimplexVectorAtLevel]
+      rw [itemFairnessVector_simplexVectorOfTypePolicy_eq]
+      exact hfeas
+    have hxle :
+        typeFairnessVector T (simplexVectorOfTypePolicy ρ) ≤
+          typeFairnessVector T xopt :=
+      (isMaxOn_iff.mp hxmax) (simplexVectorOfTypePolicy ρ) hxρS
+    rw [typeFairnessVector_simplexVectorOfTypePolicy_eq] at hxle
+    rw [← hρopt_type] at hxle
+    rw [hr]
+    exact hxle
+  have hbdd : BddAbove (attainableTypeFairnessAtLevel T γ) :=
+    ⟨typeFairness T ρopt, hupper⟩
+  have hopt_le :
+      optimalTypeFairnessAtLevel T γ ≤ typeFairness T ρopt := by
+    unfold optimalTypeFairnessAtLevel
+    exact csSup_le hFeasNonempty hupper
+  have hle_opt :
+      typeFairness T ρopt ≤ optimalTypeFairnessAtLevel T γ := by
+    unfold optimalTypeFairnessAtLevel
+    exact le_csSup hbdd hρopt_mem
+  exact ⟨ρopt, hρopt_feas, le_antisymm hle_opt hopt_le⟩
+
+/-- The maximal-boundary reduced type-fairness problem has an optimal policy. -/
+theorem exists_isOptimalAtLevel_one_of_nonnegative
+    {K n : ℕ} [NeZero K] [NeZero n]
+    (T : TypeWeightedRecommendationModel K n)
+    (hWeight : T.NonnegativeWeights) (hUtil : T.NonnegativeUtilities) :
+    ∃ ρ : TypePolicy K n, IsOptimalAtLevel T 1 ρ :=
+  exists_isOptimalAtLevel_of_attainableTypeFairnessAtLevel_nonempty
+    T 1
+    (attainableTypeFairnessAtLevel_one_nonempty_of_nonnegative
+      T hWeight hUtil)
 
 /--
 An optimal reduced policy upper-bounds the type fairness of every feasible

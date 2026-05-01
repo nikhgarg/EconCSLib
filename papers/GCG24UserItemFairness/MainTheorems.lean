@@ -142,6 +142,22 @@ theorem paper_original_reduced_user_optimal_value_reduction_of_gamma_lt_one
     reps hPos γ hγ
 
 /--
+Original/reduced optimal user-fairness value reduction at the maximal
+item-fairness boundary.
+
+The previous nonemptiness side conditions are discharged by compactness of the
+original and reduced finite policy simplexes.
+-/
+theorem paper_original_reduced_user_optimal_value_reduction_one_of_positive
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (hPos : R.data.model.Positive) :
+    RecommendationModel.optimalUserFairnessAtLevel R.data.model 1 =
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel R.reduced 1 := by
+  exact R.optimalUserFairnessAtLevel_eq_reduced_one_of_positive reps hPos
+
+/--
 Baseline original/reduced optimal user-fairness value reduction.
 
 For `γ = 0`, nonnegative utilities automatically make both original and
