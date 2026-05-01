@@ -38,6 +38,10 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   helper to derive value-sorted ranks, within-bin membership, image equality,
   and injectivity; use subtype/finset wrappers to derive high-low pair
   injections from disjoint bucket halves.
+- When a binning proof naturally has a classifier `bucketOf : Agent -> Bucket`,
+  define buckets as classifier fibers. Then prove coverage by swapping sums over
+  agents and buckets and using a singleton indicator sum; this avoids carrying
+  manual disjointness and partition assumptions through every theorem.
 - For dyadic largest-bucket arguments such as `|M| t = Ω(F)`, formalize the
   proof as a finite geometric-tail recurrence (`tail_j <= mass_j + tail_{j+1}/2`)
   plus a largest-total-bucket-to-floor-mass bridge. This is faster and more
