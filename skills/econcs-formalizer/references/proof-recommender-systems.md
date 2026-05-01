@@ -72,10 +72,11 @@ allocation.
   `log((x+1)/x) ≤ 1/x`, telescope the interval log sum, derive the
   survival-product ratio bound `P_r/P_q ≤ ((q+1+d)/(r+1+d))^c`, and then combine
   it with the source/destination success ratio and weights `p_t^(1/(1+c))`.
-  The interval-ratio bridge only handles the raw-ordered case
-  `q_dst ≤ q_src - 1`; nonuniform target weights can make a large scaled-count
-  gap occur with the opposite raw order, so finish this branch with either a
-  case split or an absolute two-sided product bound.
+  The large scaled-gap-to-shifted-scalar bridge closes the raw-ordered case
+  once the error schedule dominates the fixed shift
+  `(1+d) * ∑_t 1 / p_t^(1/(1+c))`. Nonuniform target weights can still make a
+  large scaled-count gap occur with the opposite raw order, so finish this
+  branch with either a case split or an absolute two-sided product bound.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
