@@ -7546,6 +7546,227 @@ theorem paper_problem11_closedDual_upper_bound
     hbeta hcold hpos hdec hleft hfeas
 
 /--
+Appendix E, Problem 11 closed-dual denominator identity in the paper's
+full mirrored-policy convention.
+-/
+theorem paper_problem11_closedDualDenominator_eq
+    {n : ℕ} {v : Item n → ℝ} {t : Item n}
+    (hleft : t.val ≤ (reverseItem t).val) :
+    theorem4Problem11ClosedDualDenominator v t =
+      2 * pairShare (1 / 2) v t * theorem4Problem11LeftSum v t +
+        ((n : ℝ) - 2 * (t.val : ℝ)) := by
+  exact theorem4Problem11ClosedDualDenominator_eq hleft
+
+/--
+Appendix E, Problem 11 closed-dual value identity matching Lemma 15's
+full-policy denominator.
+-/
+theorem paper_problem11_closedDualValue_eq_fullPolicy_formula
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hleft : t.val ≤ (reverseItem t).val) :
+    theorem4Problem11ClosedDualValue beta v t =
+      (4 * beta * pairShare (1 / 2) v t + (1 - 2 * beta)) /
+        (2 * pairShare (1 / 2) v t * theorem4Problem11LeftSum v t +
+          ((n : ℝ) - 2 * (t.val : ℝ))) := by
+  exact theorem4Problem11ClosedDualValue_eq_fullPolicy_formula hleft
+
+/--
+Appendix E, Problem 11 closed primal witness: the closed `x,z` coordinates
+equalize every item at the closed dual value.
+-/
+theorem paper_problem11_closed_item_eq
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    ∀ j : Item n,
+      theorem4Problem11ItemValue beta v
+        (theorem4Problem11ClosedX beta v t)
+        (theorem4Problem11ClosedZ beta v t) j =
+          theorem4Problem11ClosedDualValue beta v t := by
+  exact theorem4Problem11Closed_item_eq
+    hbeta_pos hbeta_half hpos hleft
+
+/--
+Appendix E, Problem 11 closed primal witness feasibility, conditional only on
+the two pivot nonnegativity inequalities.
+-/
+theorem paper_problem11_closed_realLPFeasible
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hpivot : 0 ≤ theorem4Problem11ClosedX beta v t t)
+    (hendpoint : 0 ≤ theorem4Problem11ClosedZEndpointMass beta v t) :
+    Theorem4Problem11RealLPFeasible beta v
+      (theorem4Problem11ClosedX beta v t)
+      (theorem4Problem11ClosedZ beta v t)
+      (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11Closed_realLPFeasible
+    hbeta_pos hbeta_half hpos hleft hpivot hendpoint
+
+/--
+Appendix E, Problem 11 closed policy pivot-support shape.
+-/
+theorem paper_problem11_closedPolicy_pivotSupport
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hpivot : 0 ≤ theorem4Problem11ClosedX beta v t t)
+    (hendpoint : 0 ≤ theorem4Problem11ClosedZEndpointMass beta v t) :
+    Theorem4Problem11PivotSupport
+      (theorem4Problem11ClosedPolicy beta v t
+        hbeta_pos hbeta_half hpos hleft hpivot hendpoint) t := by
+  exact theorem4Problem11ClosedPolicy_pivotSupport
+    hbeta_pos hbeta_half hpos hleft hpivot hendpoint
+
+/--
+Appendix E, Problem 11 denominator-style pivot bounds imply the two
+nonnegativity facts needed by the closed primal witness.
+-/
+theorem paper_problem11_closed_nonnegativePivots_of_bounds
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hbounds : Theorem4Problem11ClosedPivotBounds beta v t) :
+    0 ≤ theorem4Problem11ClosedX beta v t t ∧
+      0 ≤ theorem4Problem11ClosedZEndpointMass beta v t := by
+  exact theorem4Problem11Closed_nonnegativePivots_of_bounds
+    hbeta_pos hbeta_half hpos hleft hbounds
+
+/--
+Appendix E, Problem 11 closed-policy support count: the explicit closed
+policy is a basic-feasible support witness.
+-/
+theorem paper_problem11_closedPolicy_basicFeasibleSupportCertificate
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hpivot : 0 ≤ theorem4Problem11ClosedX beta v t t)
+    (hendpoint : 0 ≤ theorem4Problem11ClosedZEndpointMass beta v t) :
+    TypePolicy.BasicFeasibleSupportCertificate
+      (theorem4Problem11ClosedPolicy beta v t
+        hbeta_pos hbeta_half hpos hleft hpivot hendpoint) := by
+  exact theorem4Problem11ClosedPolicy_basicFeasibleSupportCertificate
+    hbeta_pos hbeta_half hpos hleft hpivot hendpoint
+
+/--
+Appendix E, Problem 11 closed primal/dual tightness bridge from a bounded
+pivot.  The closed policy supplies its own basic-support certificate.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_of_closed_bounds
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hbounds : Theorem4Problem11ClosedPivotBounds beta v t) :
+    Theorem4Problem11EqualityFormOptimalBFS beta v
+      (theorem4Problem11ClosedX beta v t)
+      (theorem4Problem11ClosedZ beta v t)
+      (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_of_closed_bounds
+    hbeta_pos hbeta_half hpos hdec hleft hbounds
+
+/--
+Appendix E, Problem 11 finite crossing: in the odd-center case there exists a
+closed-form equality-form optimal BFS witness.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_exists_closed_of_center
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hcenter : c.val = (reverseItem c).val) :
+    ∃ t : Item n,
+      Theorem4Problem11EqualityFormOptimalBFS beta v
+        (theorem4Problem11ClosedX beta v t)
+        (theorem4Problem11ClosedZ beta v t)
+        (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_exists_closed_of_center
+    hbeta_pos hbeta_half hpos hdec hcenter
+
+/--
+Appendix E, Problem 11 finite crossing: in the even-center case there exists a
+closed-form equality-form optimal BFS witness.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_exists_closed_of_succ_center
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hsucc : c.val + 1 = (reverseItem c).val) :
+    ∃ t : Item n,
+      Theorem4Problem11EqualityFormOptimalBFS beta v
+        (theorem4Problem11ClosedX beta v t)
+        (theorem4Problem11ClosedZ beta v t)
+        (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_exists_closed_of_succ_center
+    hbeta_pos hbeta_half hpos hdec hsucc
+
+/--
+Appendix E, Problem 11 closed primal/dual tightness bridge from a bounded
+pivot and a basic-support certificate.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_of_closed_witness
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hpivot : 0 ≤ theorem4Problem11ClosedX beta v t t)
+    (hendpoint : 0 ≤ theorem4Problem11ClosedZEndpointMass beta v t)
+    (hbasic :
+      TypePolicy.BasicFeasibleSupportCertificate
+        (theorem4Problem11ClosedPolicy beta v t
+          hbeta_pos hbeta_half hpos hleft hpivot hendpoint)) :
+    Theorem4Problem11EqualityFormOptimalBFS beta v
+      (theorem4Problem11ClosedX beta v t)
+      (theorem4Problem11ClosedZ beta v t)
+      (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_of_closed_witness
+    hbeta_pos hbeta_half hpos hdec hleft hpivot hendpoint hbasic
+
+/--
+Appendix E, Problem 11 closed-dual tightness bridge: a real feasible solution
+that equalizes all items at the closed dual value supplies the paper's
+equality-form optimal BFS package.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_of_closedDual_tight
+    {n : ℕ} {beta : ℝ} {v x z : Item n → ℝ} {t : Item n}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hfeas :
+      Theorem4Problem11RealLPFeasible beta v x z
+        (theorem4Problem11ClosedDualValue beta v t))
+    (hitem_eq :
+      ∀ j : Item n,
+        theorem4Problem11ItemValue beta v x z j =
+          theorem4Problem11ClosedDualValue beta v t)
+    (hbasic :
+      TypePolicy.BasicFeasibleSupportCertificate
+        (theorem4Problem11PolicyOfRealVectors x z
+          hfeas.x_nonneg hfeas.z_nonneg hfeas.sum_x hfeas.sum_z)) :
+    Theorem4Problem11EqualityFormOptimalBFS beta v x z
+      (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_of_closedDual_tight
+    hbeta hcold hpos hdec hleft hfeas hitem_eq hbasic
+
+/--
 Appendix E, Problem 11 bridge: an epigraph-optimal mirror-symmetric policy has
 objective value equal to its reduced estimated item-fairness.
 -/
@@ -8975,6 +9196,126 @@ theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalityFo
             hbfs.feasible.sum_x hbfs.feasible.sum_z)) := by
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalityFormOptimalBFS
     R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hbfs
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+odd-center closed Problem 11 construction, first true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_closed_problem11_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_closed_problem11_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hcenter
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+odd-center closed Problem 11 construction, second true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_closed_problem11_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hcenter : c.val = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_closed_problem11_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hcenter
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+even-center closed Problem 11 construction, first true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_closed_problem11_succ_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_closed_problem11_succ_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hsucc
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper:
+even-center closed Problem 11 construction, second true cold-start row.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_closed_problem11_succ_center
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v : Item n → ℝ} {c : Item n}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hsucc : c.val + 1 = (OpposingTypes.reverseItem c).val) :
+    ∃ ρ : TypePolicy 3 n,
+      1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_closed_problem11_succ_center
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hsucc
 
 /--
 Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
