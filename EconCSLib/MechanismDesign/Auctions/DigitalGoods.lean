@@ -223,6 +223,14 @@ noncomputable def singlePriceRevenue [Fintype Agent]
 noncomputable def saleCount [Fintype Agent] (values : Agent → ℝ) (p : ℝ) : ℕ :=
   ((Finset.univ : Finset Agent).filter fun i => p ≤ values i).card
 
+theorem saleCount_le_card [Fintype Agent] (values : Agent → ℝ) (p : ℝ) :
+    saleCount values p ≤ Fintype.card Agent := by
+  classical
+  unfold saleCount
+  simpa using
+    Finset.card_filter_le (s := (Finset.univ : Finset Agent))
+      (p := fun i => p ≤ values i)
+
 theorem singlePriceRevenue_eq_saleCount_mul [Fintype Agent]
     (values : Agent → ℝ) (p : ℝ) :
     singlePriceRevenue values p = (saleCount values p : ℝ) * p := by
@@ -236,6 +244,25 @@ theorem singlePriceRevenue_nonneg [Fintype Agent]
   classical
   rw [singlePriceRevenue_eq_saleCount_mul]
   exact mul_nonneg (Nat.cast_nonneg _) hp
+
+theorem singlePriceRevenue_le_saleCount_mul_bound [Fintype Agent]
+    (values : Agent → ℝ) {p h : ℝ}
+    (hp : 0 ≤ p)
+    (hbound : ∀ i, values i ≤ h) :
+    singlePriceRevenue values p ≤ (saleCount values p : ℝ) * h := by
+  classical
+  rw [singlePriceRevenue_eq_saleCount_mul]
+  by_cases hcount_zero : saleCount values p = 0
+  · simp [hcount_zero]
+  · have hcount_pos : 0 < saleCount values p := Nat.pos_of_ne_zero hcount_zero
+    have hwinners_nonempty :
+        ((Finset.univ : Finset Agent).filter fun i => p ≤ values i).Nonempty := by
+      apply Finset.card_pos.mp
+      simpa [saleCount] using hcount_pos
+    obtain ⟨i, hi⟩ := hwinners_nonempty
+    have hp_le_value : p ≤ values i := (Finset.mem_filter.mp hi).2
+    have hp_le_h : p ≤ h := le_trans hp_le_value (hbound i)
+    exact mul_le_mul_of_nonneg_left hp_le_h (Nat.cast_nonneg _)
 
 theorem postedPrice_const_revenue_eq_singlePriceRevenue [Fintype Agent]
     (values : Agent → ℝ) (p : ℝ) :
@@ -559,6 +586,18 @@ theorem finiteCandidateOfferPrice_nonneg [Fintype Agent] [Nonempty Agent]
   · simp [finiteCandidateOfferPrice, i, h]
   · simp [finiteCandidateOfferPrice, i, h]
 
+theorem finiteCandidateOfferPrice_le_of_values_le
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ) {h : ℝ}
+    (hh_nonneg : 0 ≤ h)
+    (hbound : ∀ i, values i ≤ h) :
+    finiteCandidateOfferPrice values minWinners ≤ h := by
+  classical
+  let i := finiteCandidateBenchmarkBidder values minWinners
+  by_cases hsel : 0 ≤ values i ∧ minWinners ≤ saleCount values (values i)
+  · simpa [finiteCandidateOfferPrice, i, hsel] using hbound i
+  · simpa [finiteCandidateOfferPrice, i, hsel] using hh_nonneg
+
 theorem finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
     [Fintype Agent] [Nonempty Agent]
     (values : Agent → ℝ) (minWinners : ℕ) :
@@ -727,6 +766,118 @@ theorem finiteCandidateOfferPrice_restrictBidsBySide_mem_priceSet
     rw [hprice]
     simp [finiteCandidatePriceSet]
 
+/-- Number of members of a finite set that lie on a chosen sample side. -/
+noncomputable def sideCountInSet
+    (side : Agent → Bool) (keep : Bool) (s : Finset Agent) : ℕ :=
+  (s.filter fun i => side i = keep).card
+
+theorem sideCountInSet_eq_sum_indicator
+    (side : Agent → Bool) (keep : Bool) (s : Finset Agent) :
+    (sideCountInSet side keep s : ℝ) =
+      ∑ i ∈ s, if side i = keep then (1 : ℝ) else 0 := by
+  classical
+  rw [sideCountInSet, ← Finset.sum_filter]
+  simp
+
+theorem sideCountInSet_add_not_eq_card
+    (side : Agent → Bool) (keep : Bool) (s : Finset Agent) :
+    sideCountInSet side keep s + sideCountInSet side (!keep) s = s.card := by
+  classical
+  have hbool : ∀ b : Bool, (b = !keep) ↔ ¬ b = keep := by
+    intro b
+    cases keep <;> cases b <;> simp
+  unfold sideCountInSet
+  rw [show s.filter (fun i => side i = !keep) =
+      s.filter (fun i => ¬ side i = keep) by
+        ext i
+        simp [hbool (side i)]]
+  exact Finset.card_filter_add_card_filter_not
+    (s := s) (p := fun i => side i = keep)
+
+/--
+Paper-style top-prefix interface for finite digital-goods bid profiles.  The
+set `top m` represents the `m` highest bids.  The only property Section 6
+needs is threshold closure: if at most `m` agents accept price `p`, then all
+agents accepting `p` lie in the top `m` prefix.
+-/
+structure TopPrefixFamily [Fintype Agent] (values : Agent → ℝ) where
+  top : ℕ → Finset Agent
+  card_top : ∀ {m : ℕ}, m ≤ Fintype.card Agent → (top m).card = m
+  threshold_subset :
+    ∀ {p : ℝ} {m : ℕ},
+      saleCount values p ≤ m →
+      m ≤ Fintype.card Agent →
+        ((Finset.univ : Finset Agent).filter fun i => p ≤ values i) ⊆ top m
+
+/-- The first `m` indices of `Fin n`, used as the concrete sorted top prefix. -/
+def finPrefixByIndex (n m : ℕ) : Finset (Fin n) :=
+  (Finset.univ : Finset (Fin n)).filter fun i : Fin n => i.val < m
+
+theorem finPrefixByIndex_card {n m : ℕ} (hm : m ≤ n) :
+    (finPrefixByIndex n m).card = m := by
+  rw [finPrefixByIndex, ← Fintype.card_coe]
+  let e : {i : Fin n // i.val < m} ≃ Fin m :=
+    { toFun := fun x => ⟨x.1.val, x.2⟩
+      invFun := fun j => ⟨⟨j.val, lt_of_lt_of_le j.2 hm⟩, j.2⟩
+      left_inv := by
+        intro x
+        cases x with
+        | mk i hi => simp
+      right_inv := by
+        intro j
+        cases j with
+        | mk j hj => simp }
+  simpa using Fintype.card_congr e
+
+/--
+Concrete top-prefix family for a finite bid vector indexed in nonincreasing
+order.  The top `m` bids are simply indices `< m`.
+-/
+def finSortedTopPrefixFamily {n : ℕ} (values : Fin n → ℝ)
+    (hmono : ∀ i j : Fin n, i.val ≤ j.val → values j ≤ values i) :
+    TopPrefixFamily values where
+  top m := finPrefixByIndex n m
+  card_top := by
+    intro m hm
+    exact finPrefixByIndex_card
+      (n := n) (m := m) (by simpa [Fintype.card_fin] using hm)
+  threshold_subset := by
+    intro p m hsale hm i hi
+    have hi_win : p ≤ values i := (Finset.mem_filter.mp hi).2
+    refine Finset.mem_filter.mpr ⟨by simp, ?_⟩
+    by_contra hnot
+    have hmi : m ≤ i.val := Nat.le_of_not_gt hnot
+    let pref : Finset (Fin n) := finPrefixByIndex n m
+    let winners : Finset (Fin n) :=
+      (Finset.univ : Finset (Fin n)).filter fun j => p ≤ values j
+    have hprefix_card : pref.card = m := by
+      simpa [pref, Fintype.card_fin] using
+        finPrefixByIndex_card
+          (n := n) (m := m) (by simpa [Fintype.card_fin] using hm)
+    have hi_not_prefix : i ∉ pref := by
+      simp [pref, finPrefixByIndex, hnot]
+    have hprefix_subset : pref ⊆ winners := by
+      intro j hj
+      have hj_lt : j.val < m := by
+        simpa [pref, finPrefixByIndex] using hj
+      have hji : j.val ≤ i.val := le_trans (Nat.le_of_lt hj_lt) hmi
+      have hv : values i ≤ values j := hmono j i hji
+      exact Finset.mem_filter.mpr ⟨by simp, le_trans hi_win hv⟩
+    have hi_winner : i ∈ winners :=
+      Finset.mem_filter.mpr ⟨by simp, hi_win⟩
+    have hinsert_subset : insert i pref ⊆ winners := by
+      intro j hj
+      rcases Finset.mem_insert.mp hj with rfl | hjp
+      · exact hi_winner
+      · exact hprefix_subset hjp
+    have hcard_insert : (insert i pref).card = m + 1 := by
+      rw [Finset.card_insert_of_notMem hi_not_prefix, hprefix_card]
+    have hcard_le : m + 1 ≤ saleCount values p := by
+      have h := Finset.card_le_card hinsert_subset
+      rw [hcard_insert] at h
+      simpa [winners, saleCount] using h
+    omega
+
 /-- Number of bidders on a chosen sample side who accept price `p` in the
 original bid profile. -/
 noncomputable def sideSaleCount [Fintype Agent]
@@ -750,6 +901,21 @@ theorem sideSaleCount_eq_sum_indicator_winners [Fintype Agent]
     simp [and_comm]
   rw [sideSaleCount, hfilter, ← Finset.sum_filter]
   simp
+
+theorem sideSaleCount_le_sideCountInSet_of_winner_subset
+    [Fintype Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (p : ℝ) {s : Finset Agent}
+    (hsubset :
+      ((Finset.univ : Finset Agent).filter fun i => p ≤ values i) ⊆ s) :
+    sideSaleCount side keep values p ≤ sideCountInSet side keep s := by
+  classical
+  unfold sideSaleCount sideCountInSet
+  apply Finset.card_le_card
+  intro i hi
+  rcases Finset.mem_filter.mp hi with ⟨_hi_univ, hside, hp⟩
+  exact Finset.mem_filter.mpr
+    ⟨hsubset (Finset.mem_filter.mpr ⟨by simp, hp⟩), hside⟩
 
 theorem sideSaleCount_add_not_eq_saleCount [Fintype Agent]
     (side : Agent → Bool) (keep : Bool)
@@ -906,6 +1072,60 @@ theorem sidePriceRevenue_eq_sideSaleCount_mul [Fintype Agent]
   classical
   rw [sidePriceRevenue, sideSaleCount, ← Finset.sum_filter]
   simp
+
+theorem finiteCandidateFixedPriceBenchmark_restrictBidsBySide_le_sideSaleCount_mul_bound
+    [Fintype Agent] [Nonempty Agent]
+    (side : Agent → Bool) (keep : Bool)
+    (values : Agent → ℝ) (minWinners : ℕ) {h : ℝ}
+    (hh_nonneg : 0 ≤ h)
+    (hbound : ∀ i, values i ≤ h) :
+    finiteCandidateFixedPriceBenchmark
+        (restrictBidsBySide side keep values) minWinners ≤
+      (sideSaleCount side keep values
+        (finiteCandidateOfferPrice
+          (restrictBidsBySide side keep values) minWinners) : ℝ) * h := by
+  classical
+  let restricted := restrictBidsBySide side keep values
+  let q := finiteCandidateOfferPrice restricted minWinners
+  have hp_nonneg : 0 ≤ q :=
+    finiteCandidateOfferPrice_nonneg restricted minWinners
+  have hrestricted_bound : ∀ i, restricted i ≤ h := by
+    intro i
+    by_cases hkeep : side i = keep
+    · simpa [restricted, restrictBidsBySide, hkeep] using hbound i
+    · simpa [restricted, restrictBidsBySide, hkeep] using hh_nonneg
+  have hq_le_h : q ≤ h := by
+    simpa [restricted, q] using
+      finiteCandidateOfferPrice_le_of_values_le
+        restricted minWinners hh_nonneg hrestricted_bound
+  have hbench_eq :
+      finiteCandidateFixedPriceBenchmark restricted minWinners =
+        singlePriceRevenue restricted q := by
+    rw [singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark]
+  rcases hp_nonneg.eq_or_lt with hp_zero | hp_pos
+  · have hbench_zero :
+        finiteCandidateFixedPriceBenchmark restricted minWinners = 0 := by
+      rw [hbench_eq, ← hp_zero]
+      simp [singlePriceRevenue]
+    rw [hbench_zero]
+    exact mul_nonneg (Nat.cast_nonneg _) hh_nonneg
+  have hside_count :
+      sideSaleCount side keep values q =
+        saleCount restricted q := by
+    unfold sideSaleCount saleCount restricted restrictBidsBySide
+    congr 1
+    ext i
+    by_cases hkeep : side i = keep
+    · simp [hkeep]
+    · have hp_not_zero : ¬ q ≤ (0 : ℝ) := not_le_of_gt hp_pos
+      simp [hkeep, hp_not_zero]
+  have hsingle_eq :
+      singlePriceRevenue restricted q =
+        (sideSaleCount side keep values q : ℝ) * q := by
+    rw [singlePriceRevenue_eq_saleCount_mul]
+    rw [← hside_count]
+  rw [hbench_eq, hsingle_eq]
+  exact mul_le_mul_of_nonneg_left hq_le_h (Nat.cast_nonneg _)
 
 theorem restrictBidsBySide_update_of_not_kept [DecidableEq Agent]
     (side : Agent → Bool) (keep : Bool)

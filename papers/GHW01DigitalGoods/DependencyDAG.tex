@@ -31,10 +31,10 @@
 
 \node[dag_model, right=of Opt, text width=3.8cm] (Sampling)
   {\textbf{Random Sampling (Section 5.2)}\\sample-independent threshold auction};
-\node[dag_unformalized, below=of Sampling, text width=3.8cm] (Lemma61)
-  {\textbf{Lemma 6.1 (Section 6)}\\fixed-size sample lower-tail bound};
-\node[dag_conditional, below=of Lemma61, text width=3.8cm] (Thm62)
-  {\textbf{Theorem 6.2 (Section 6)}\\$F \le 6R$ deterministic endpoint and independent fair-coin candidate-union bound closed; needs top-prefix tail sharpening};
+\node[dag_conditional, below=of Sampling, text width=3.8cm] (Lemma61)
+  {\textbf{Lemma 6.1 (Section 6)}\\independent half-sampling lower-tail analogue closed; fixed-size statement not separately proved};
+\node[dag_result, below=of Lemma61, text width=3.8cm] (Thm62)
+  {\textbf{Theorem 6.2 (Section 6)}\\sorted-bid fair-coin form with constants $1-e^{-\alpha/36}-40e^{-\alpha/72}$ closed};
 
 \node[dag_model, right=of Sampling, text width=3.8cm] (Weighted)
   {\textbf{Weighted Pairing (Section 7)}\\bid-independent randomized multi-price auction};

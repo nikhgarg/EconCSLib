@@ -1,8 +1,8 @@
 # Foundations: Probability
 
 Use for `EconCSLib/Foundations/Probability/*`, finite PMFs, expectations,
-conditional probability, finite variance, continuous densities, and RUM/noise
-models.
+conditional probability, finite variance, finite Markov kernels/chains,
+concentration, measure inequalities, continuous densities, and RUM/noise models.
 
 ## Finite PMF and Expectation Seams
 
@@ -38,6 +38,64 @@ models.
   lemmas such as `epsilonContinuousAt_pmfExp_of_atom`.
 - For pure PMFs, use lemmas such as `pmfExp_pure`,
   `pmfPairExp_pure_left`, and `pmfPairExp_pure_right` when available.
+
+## Finite Markov Chains and Dynamic Models
+
+- For dynamic EC/platform papers, start with the finite kernel interface in
+  `EconCSLib.Foundations.Probability.MarkovChain`: `FiniteMarkovKernel`,
+  `transitionProb`, `step`, `iterate`, `expectedNext`, `drift`, `Stationary`,
+  `Absorbing`, `ExpectedLe`, and `StochasticallyMonotone`.
+- Model policy-induced dynamics as separate kernels over the same finite state
+  type. Compare policies with `ExpectedLe K L V` for the observable or
+  Lyapunov/potential function `V`, then lift to `drift_le_of_expectedLe`.
+- For queueing, surge, and imbalance papers, define the paper's state type
+  first, then a potential such as queue length, imbalance, waiting cost, or
+  welfare loss. Prove one-step drift bounds before attempting stationary or
+  long-run claims.
+- Use `Stationary` only for true steady-state claims. If the paper only needs
+  one-step improvement, monotonicity, or a Foster-style drift condition, keep
+  the theorem at the `expectedNext`/`drift` layer and record the stationary
+  bridge as a separate named assumption or future library seam.
+- For monotone dynamics, use `StochasticallyMonotone` when the paper compares
+  states under every monotone observable. Use `ExpectedLe` when the comparison
+  is only for the paper's specific value function or welfare/potential metric.
+- Keep finite Markov kernels in the probability foundations layer. Paper
+  folders should contain only the concrete state encoding, transition law,
+  policy parameters, and paper-facing wrappers.
+
+## Measure Inequalities and Bonferroni
+
+- For textbook probability inequalities that appear in a paper, upstream a
+  generic statement in `MeasureInequalities.lean` and leave paper wrappers thin.
+  Finite union bounds, complement/intersection bounds, and Bonferroni
+  truncations are reusable enough for `EconCSLib`.
+- For finite Bonferroni proofs, prove the pointwise counting identity first:
+  the sum over `powersetCard k` of event indicators equals
+  `(activeEvents.card.choose k : ℝ)`. Then use alternating binomial-sum lemmas
+  and integrate the pointwise inequality.
+- When converting indicator functions to set integrals, introduce explicit set
+  names and local equalities for unions/intersections. Avoid relying on one
+  large `simp` after unfolding all set notation; prove membership/indicator
+  equivalences with `if_pos`/`if_neg` or explicit `Set.mem_iUnion` /
+  `Set.mem_iInter` bridges.
+- For probability/complement lower bounds, prove the de Morgan set equality
+  explicitly, then use `probReal_compl_eq_one_sub` and the finite union bound.
+- Keep real-valued probability goals consistently in either `measureProb` or
+  `μ.real`; when crossing between them, unfold `Measure.real` locally rather
+  than rewriting through large expressions.
+- For random-sampling auction proofs where the bad event depends on a
+  sample-selected threshold, avoid stopping at a loose union over candidate
+  prices if the paper uses a top-prefix argument. Split the proof into:
+  deterministic selected-large bridge (often from `alpha * h <= F` plus
+  `singlePriceRevenue <= saleCount * h`), selected-bad subset of a fixed
+  top-prefix underrepresentation event, finite prefix union bound, and a
+  separate geometric-tail lemma. Keep the top-prefix interface explicit until
+  its construction is proved, so the remaining paper assumption is auditable.
+- When a paper says "top `i` bids" and the rest of the proof only needs that
+  threshold winner sets of size at most `i` lie in the prefix, a fast concrete
+  model is a sorted `Fin n → ℝ` bid vector with a monotonicity assumption. Define
+  the prefix as indices `< i`, prove its cardinality by an equivalence with
+  `Fin i`, and prove threshold closure by contradiction using `i + 1` winners.
 
 ## Continuous Probability and RUM
 
