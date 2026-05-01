@@ -111,6 +111,13 @@ allocation.
 - For finite fixed-total count-allocation optimization, encode allocations as
   functions into `Fin (N + 1)` plus a total-sum proof, optimize over that finite
   code space, then decode to the paper allocation type.
+- For all-consumed linear recommendation objectives, prove both directions when
+  the paper says recommendations contain only the argmax type: first show an
+  all-on-argmax allocation is optimal by comparing per-item scores, then use
+  the one-step FOC to show any type with strictly lower per-item score must have
+  zero count in every optimum. The second direction needs strict score
+  inequality and positive common mean; weak argmax assumptions only prove an
+  optimal witness, not uniqueness of support.
 
 ## Policy and Fairness Layers
 
