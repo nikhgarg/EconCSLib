@@ -71,6 +71,20 @@ This code is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
 lake build EconCSLib
 ```
 
+## Audits
+
+Use the repository audit before status-table or handoff cleanup:
+
+```bash
+python3 scripts/audit_repository.py
+```
+
+It checks for Lean `sorry`s, unguarded `#check` ledgers, missing paper-folder
+contract files, missing cached PDFs/text extractions, obvious status-table
+overclaims, and tracked generated artifacts. By default it skips the active
+fairness and monoculture paper folders; pass `--include-active` when those are
+ready for a full-tree audit.
+
 ## GitHub Automation
 
 The repository keeps CI and manual dependency-update workflows under

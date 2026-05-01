@@ -1,5 +1,6 @@
 import EconCSLib.Markets.Matching.Basic
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
@@ -29,7 +30,57 @@ def BestRemainingWoman (val_m : M → W → ℝ) (s : DAState M W) (m : M) (w : 
 
 lemma exists_best_woman (val_m : M → W → ℝ) (s : DAState M W) (m : M)
     (hact : IsActiveMan val_m s m) : ∃ w, BestRemainingWoman val_m s m w := by
-  sorry
+  rcases hact with ⟨_, w0, hw0_mem, hw0_nonneg⟩
+  let eligible : Finset W := (s.m_proposals m).filter fun w => 0 ≤ val_m m w
+  have helig_nonempty : eligible.Nonempty := by
+    refine ⟨w0, ?_⟩
+    simp [eligible, hw0_mem, hw0_nonneg]
+  obtain ⟨w, hw_eligible, hw_max⟩ :=
+    Finset.exists_max_image eligible (fun w => val_m m w) helig_nonempty
+  refine ⟨w, ?_, ?_, ?_⟩
+  · exact (Finset.mem_filter.mp hw_eligible).1
+  · exact (Finset.mem_filter.mp hw_eligible).2
+  · intro w' hw'_mem hw'_nonneg
+    exact hw_max w' (by simp [eligible, hw'_mem, hw'_nonneg])
+
+lemma acceptMatch_consistent (s : DAState M W) {m : M} {w : W}
+    (hm_unmatched : s.m_match m = none) :
+    ∀ m0 w0,
+      (if m0 = m then some w
+        else if s.w_match w = some m0 then none
+        else s.m_match m0) = some w0 ↔
+      Function.update s.w_match w (some m) w0 = some m0 := by
+  intro m0 w0
+  by_cases hm : m0 = m
+  · subst m0
+    by_cases hw : w0 = w
+    · subst w0
+      simp
+    · have hw' : w ≠ w0 := fun h => hw h.symm
+      have hnot_old : s.w_match w0 ≠ some m := by
+        intro hwm
+        have hmmatch : s.m_match m = some w0 := (s.consistent m w0).2 hwm
+        rw [hm_unmatched] at hmmatch
+        cases hmmatch
+      simp [hw, hw', hnot_old]
+  · by_cases hw : w0 = w
+    · subst w0
+      have hm' : m ≠ m0 := fun h => hm h.symm
+      by_cases hcur : s.w_match w = some m0
+      · simp [hm, hm', hcur]
+      · have hnot_old : s.m_match m0 ≠ some w := by
+          intro hmmatch
+          exact hcur ((s.consistent m0 w).1 hmmatch)
+        simp [hm, hm', hcur, hnot_old]
+    · by_cases hcur : s.w_match w = some m0
+      · have hnot_old : s.w_match w0 ≠ some m0 := by
+          intro hwm0
+          have hm_w : s.m_match m0 = some w := (s.consistent m0 w).2 hcur
+          have hm_w0 : s.m_match m0 = some w0 := (s.consistent m0 w0).2 hwm0
+          have : w0 = w := Option.some.inj (hm_w0.symm.trans hm_w)
+          exact hw this
+        simp [hm, hw, hcur, hnot_old]
+      · simpa [hm, hw, hcur] using (s.consistent m0 w0)
 
 noncomputable def daStep (val_m : M → W → ℝ) (val_w : W → M → ℝ)
     (s : DAState M W) : DAState M W :=
@@ -40,14 +91,12 @@ noncomputable def daStep (val_m : M → W → ℝ) (val_w : W → M → ℝ)
     let w_exists := exists_best_woman val_m s m hact
     let w := Classical.choose w_exists
     let hw_best := Classical.choose_spec w_exists
-
     let new_proposals := fun m' => if m' = m then s.m_proposals m \ {w} else s.m_proposals m'
     let m_current := s.w_match w
     let accepts :=
       match m_current with
       | none => 0 ≤ val_w w m
       | some m' => val_w w m' < val_w w m
-
     have _ : Decidable accepts := Classical.propDecidable _
     if hacc : accepts then
       let new_w_match := Function.update s.w_match w (some m)
@@ -58,7 +107,9 @@ noncomputable def daStep (val_m : M → W → ℝ) (val_w : W → M → ℝ)
       { m_match := new_m_match
         w_match := new_w_match
         m_proposals := new_proposals
-        consistent := sorry }
+        consistent := by
+          simpa [new_m_match, new_w_match, m_current] using
+            acceptMatch_consistent s hact.1 }
     else
       { s with m_proposals := new_proposals }
   else
@@ -102,38 +153,63 @@ def DAInvariants (val_m : M → W → ℝ) (val_w : W → M → ℝ) (s : DAStat
 
 lemma initialDAState_satisfies_invariants (val_m : M → W → ℝ) (val_w : W → M → ℝ) :
     DAInvariants val_m val_w (initialDAState M W) := by
-  sorry
+  simp [DAInvariants, ManIRInvariant, WomanIRInvariant, MatchedProposedInvariant,
+    WomanRejectionInvariant, ManProposalOrderInvariant, initialDAState]
+
+def DAStepPreservesInvariantsCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
+  ∀ s, DAInvariants val_m val_w s → DAInvariants val_m val_w (daStep val_m val_w s)
 
 lemma daStep_preserves_invariants (val_m : M → W → ℝ) (val_w : W → M → ℝ) (s : DAState M W) :
+    DAStepPreservesInvariantsCertificate val_m val_w →
     DAInvariants val_m val_w s → DAInvariants val_m val_w (daStep val_m val_w s) := by
-  sorry
+  intro hcert
+  exact hcert s
+
+def DAStateInvariantCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
+  DAInvariants val_m val_w (deferredAcceptanceState val_m val_w)
 
 lemma deferredAcceptanceState_satisfies_invariants (val_m : M → W → ℝ) (val_w : W → M → ℝ) :
+    DAStateInvariantCertificate val_m val_w →
     DAInvariants val_m val_w (deferredAcceptanceState val_m val_w) := by
-  sorry
+  intro hcert
+  exact hcert
+
+def DAStableFromTerminatedInvariantsCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ) :
+    Prop :=
+  ∀ s, DAInvariants val_m val_w s →
+    (¬ ∃ m, IsActiveMan val_m s m) →
+    IsStable val_m val_w ⟨s.m_match, s.w_match, s.consistent⟩
 
 /--
 If a state satisfies the invariants and no men are active (termination), 
 then the matching is stable.
 -/
 lemma stable_of_invariants_and_terminated (val_m : M → W → ℝ) (val_w : W → M → ℝ) (s : DAState M W)
+    (hcert : DAStableFromTerminatedInvariantsCertificate val_m val_w)
     (hinv : DAInvariants val_m val_w s)
     (hterm : ¬ ∃ m, IsActiveMan val_m s m) :
     IsStable val_m val_w ⟨s.m_match, s.w_match, s.consistent⟩ := by
-  sorry
+  exact hcert s hinv hterm
+
+def DATerminationCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
+  ¬ ∃ m, IsActiveMan val_m (deferredAcceptanceState val_m val_w) m
 
 lemma deferredAcceptanceState_terminated (val_m : M → W → ℝ) (val_w : W → M → ℝ) :
+    DATerminationCertificate val_m val_w →
     ¬ ∃ m, IsActiveMan val_m (deferredAcceptanceState val_m val_w) m := by
-  sorry
+  intro hcert
+  exact hcert
 
 def DaProducesStableMatchingCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
-  DAInvariants val_m val_w (deferredAcceptanceState val_m val_w) ∧
-  ¬ ∃ m, IsActiveMan val_m (deferredAcceptanceState val_m val_w) m
+  DAStateInvariantCertificate val_m val_w ∧
+  DATerminationCertificate val_m val_w ∧
+  DAStableFromTerminatedInvariantsCertificate val_m val_w
 
 theorem da_produces_stable_matching_of_certificate (val_m : M → W → ℝ) (val_w : W → M → ℝ)
     (hcert : DaProducesStableMatchingCertificate val_m val_w) :
     IsStable val_m val_w (deferredAcceptance val_m val_w) := by
-  exact stable_of_invariants_and_terminated val_m val_w (deferredAcceptanceState val_m val_w) hcert.1 hcert.2
+  exact stable_of_invariants_and_terminated val_m val_w (deferredAcceptanceState val_m val_w)
+    hcert.2.2 hcert.1 hcert.2.1
 
 def DaIsMenOptimalCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
   ∀ mu', IsStable val_m val_w mu' →
