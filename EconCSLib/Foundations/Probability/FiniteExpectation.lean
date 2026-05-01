@@ -559,6 +559,31 @@ theorem pmfProb_eq_inter_add_inter_not
   · simp [hp]
 
 /--
+Finite union-bound lower-tail form: if two events each hold with probability at
+least `1 - eps`, then their intersection holds with probability at least
+`1 - epsP - epsQ`.
+-/
+theorem pmfProb_inter_ge_one_sub_add
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    {epsP epsQ : ℝ}
+    (hp : 1 - epsP ≤ pmfProb μ p)
+    (hq : 1 - epsQ ≤ pmfProb μ q) :
+    1 - epsP - epsQ ≤ pmfProb μ (fun a => p a ∧ q a) := by
+  classical
+  have hsplit := pmfProb_eq_inter_add_inter_not μ p q
+  have hres_le_notq :
+      pmfProb μ (fun a => p a ∧ ¬ q a) ≤ pmfProb μ (fun a => ¬ q a) :=
+    pmfProb_le_of_imp μ (fun a => p a ∧ ¬ q a) (fun a => ¬ q a)
+      (by intro a ha; exact ha.2)
+  have hnotq_eq := pmfProb_compl μ q
+  have hnotq_le : pmfProb μ (fun a => ¬ q a) ≤ epsQ := by
+    linarith
+  have hres_le : pmfProb μ (fun a => p a ∧ ¬ q a) ≤ epsQ :=
+    le_trans hres_le_notq hnotq_le
+  linarith
+
+/--
 Finite change-of-variables bound for probabilities.
 
 If an equivalence maps every point of event `p` into event `q`, and the target

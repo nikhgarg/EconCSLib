@@ -261,6 +261,92 @@ def IsTwoWinnerFixedPriceBenchmark [Fintype Agent]
   IsFixedPriceBenchmark values 2 benchmark
 
 /--
+Dyadic-bin certificate behind GHW Theorem 4.1. If a bin has at least a `1/m`
+share of total multi-price value `T`, and all values in the bin lie between
+`low` and `2 * low`, then the fixed-price benchmark is large enough to satisfy
+`T <= (2*m) * benchmark`.
+-/
+theorem fixedPriceBenchmark_totalValue_le_of_factor_two_bin
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) {benchmark T m low : ℝ} {bin : Finset Agent}
+    (hbenchmark : IsFixedPriceBenchmark values 1 benchmark)
+    (hbin_nonempty : bin.Nonempty)
+    (hm_nonneg : 0 ≤ m)
+    (hlow_nonneg : 0 ≤ low)
+    (hT : T ≤ m * (∑ i ∈ bin, values i))
+    (hbin_accept : ∀ i, i ∈ bin → low ≤ values i)
+    (hbin_factor_two : ∀ i, i ∈ bin → values i ≤ 2 * low) :
+    T ≤ (2 * m) * benchmark := by
+  classical
+  have hbin_subset_winners :
+      bin ⊆ ((Finset.univ : Finset Agent).filter fun i => low ≤ values i) := by
+    intro i hi
+    exact Finset.mem_filter.mpr ⟨by simp, hbin_accept i hi⟩
+  have hbin_card_le_sale :
+      bin.card ≤ saleCount values low := by
+    unfold saleCount
+    exact Finset.card_le_card hbin_subset_winners
+  have hbin_card_pos : 0 < bin.card :=
+    Finset.card_pos.mpr hbin_nonempty
+  have hfeasible : 1 ≤ saleCount values low := by
+    exact le_trans (Nat.succ_le_of_lt hbin_card_pos) hbin_card_le_sale
+  have hrev_le_benchmark :
+      singlePriceRevenue values low ≤ benchmark :=
+    hbenchmark.2 low hlow_nonneg hfeasible
+  have hbin_revenue_le_single :
+      (bin.card : ℝ) * low ≤ singlePriceRevenue values low := by
+    rw [singlePriceRevenue_eq_saleCount_mul]
+    exact mul_le_mul_of_nonneg_right
+      (by exact_mod_cast hbin_card_le_sale) hlow_nonneg
+  have hbin_sum_upper :
+      (∑ i ∈ bin, values i) ≤ (∑ _i ∈ bin, 2 * low) := by
+    exact Finset.sum_le_sum fun i hi => hbin_factor_two i hi
+  have hbin_sum_le_two_single :
+      (∑ i ∈ bin, values i) ≤ 2 * singlePriceRevenue values low := by
+    calc
+      (∑ i ∈ bin, values i)
+          ≤ (∑ _i ∈ bin, 2 * low) := hbin_sum_upper
+      _ = (bin.card : ℝ) * (2 * low) := by simp
+      _ = 2 * ((bin.card : ℝ) * low) := by ring
+      _ ≤ 2 * singlePriceRevenue values low := by
+        nlinarith [hbin_revenue_le_single]
+  have hbin_sum_le_two_benchmark :
+      (∑ i ∈ bin, values i) ≤ 2 * benchmark := by
+    nlinarith [hbin_sum_le_two_single, hrev_le_benchmark]
+  have hm_bound :
+      m * (∑ i ∈ bin, values i) ≤ m * (2 * benchmark) :=
+    mul_le_mul_of_nonneg_left hbin_sum_le_two_benchmark hm_nonneg
+  nlinarith
+
+/--
+Partition/candidate-bin version of the GHW Theorem 4.1 certificate. If a
+finite family of factor-two bins accounts for total value `T`, then averaging
+selects a bin carrying at least a `1 / card` share, and the fixed-price
+benchmark satisfies the corresponding `2 * card` bound.
+-/
+theorem fixedPriceBenchmark_totalValue_le_of_factor_two_partition
+    [Fintype Agent] [DecidableEq Agent]
+    {Bin : Type*} [Fintype Bin] [Nonempty Bin]
+    (values : Agent → ℝ) {benchmark T : ℝ}
+    (bins : Bin → Finset Agent) (low : Bin → ℝ)
+    (hbenchmark : IsFixedPriceBenchmark values 1 benchmark)
+    (hbins_nonempty : ∀ k, (bins k).Nonempty)
+    (hlow_nonneg : ∀ k, 0 ≤ low k)
+    (hT : T ≤ ∑ k : Bin, ∑ i ∈ bins k, values i)
+    (hbin_accept : ∀ k i, i ∈ bins k → low k ≤ values i)
+    (hbin_factor_two : ∀ k i, i ∈ bins k → values i ≤ 2 * low k) :
+    T ≤ (2 * (Fintype.card Bin : ℝ)) * benchmark := by
+  classical
+  obtain ⟨k, hkshare⟩ :=
+    FiniteSum.exists_total_le_card_mul_of_le_sum
+      (fun k : Bin => ∑ i ∈ bins k, values i) hT
+  exact fixedPriceBenchmark_totalValue_le_of_factor_two_bin
+    values hbenchmark (hbins_nonempty k)
+    (by exact_mod_cast (Nat.zero_le (Fintype.card Bin)))
+    (hlow_nonneg k) hkshare
+    (hbin_accept k) (hbin_factor_two k)
+
+/--
 Revenue from using bidder `i`'s value as the candidate single price, with
 infeasible prices assigned value `0`.
 -/
@@ -807,6 +893,336 @@ theorem crossSampleOffer_competitive_of_certificate
     twoWinnerFixedPriceBenchmarkValue values ≤
       ratio * averageCrossSampleCandidateOfferRevenue values 2 := by
   exact hcert
+
+/-! ### Two-value deterministic bid-independent lower-bound model -/
+
+/--
+Revenue of a deterministic bid-independent threshold rule on a two-value input.
+`usesHighPrice nh nl = true` means that a bidder whose own bid is erased is
+offered the high price `H`; `false` means the bidder is offered price `1`.
+The arguments `nh,nl` are the numbers of high- and low-valued bidders visible
+after erasing the bidder being priced.
+-/
+def twoValueBidIndependentThresholdRevenue
+    (usesHighPrice : ℕ → ℕ → Bool) (H highCount lowCount : ℕ) : ℝ :=
+  (highCount : ℝ) *
+      (if usesHighPrice (highCount - 1) lowCount then (H : ℝ) else 1) +
+    (lowCount : ℝ) *
+      (if usesHighPrice highCount (lowCount - 1) then 0 else 1)
+
+/--
+At a low-to-high threshold transition, all high bidders pay `1` and all low
+bidders are rejected, so revenue is at most the high-bid count.
+-/
+theorem twoValueBidIndependentThresholdRevenue_transition_bound
+    (usesHighPrice : ℕ → ℕ → Bool) (H highCount lowCount : ℕ)
+    (hhigh : usesHighPrice (highCount - 1) lowCount = false)
+    (hlow : usesHighPrice highCount (lowCount - 1) = true) :
+    twoValueBidIndependentThresholdRevenue usesHighPrice H highCount lowCount ≤
+      (highCount : ℝ) := by
+  simp [twoValueBidIndependentThresholdRevenue, hhigh, hlow]
+
+/--
+If low bidders are offered the high price, then the two-value auction revenue
+is at most `H * highCount`: low bidders are rejected and each high bidder pays
+at most the high price.
+-/
+theorem twoValueBidIndependentThresholdRevenue_start_high_bound
+    (usesHighPrice : ℕ → ℕ → Bool) (H highCount lowCount : ℕ)
+    (hH_ge_one : 1 ≤ (H : ℝ))
+    (hlow : usesHighPrice highCount (lowCount - 1) = true) :
+    twoValueBidIndependentThresholdRevenue usesHighPrice H highCount lowCount ≤
+      (H : ℝ) * (highCount : ℝ) := by
+  by_cases hhigh : usesHighPrice (highCount - 1) lowCount = true
+  · simp [twoValueBidIndependentThresholdRevenue, hhigh, hlow, mul_comm]
+  · have hhigh_false : usesHighPrice (highCount - 1) lowCount = false := by
+      cases h : usesHighPrice (highCount - 1) lowCount
+      · rfl
+      · exact False.elim (hhigh h)
+    simp [twoValueBidIndependentThresholdRevenue, hhigh_false, hlow]
+    have hcount_nonneg : 0 ≤ (highCount : ℝ) := by exact_mod_cast Nat.zero_le highCount
+    nlinarith
+
+/--
+GHW Theorem 9.1 finite construction for binary values. For any deterministic
+bid-independent two-price rule that uses the high price on the all-high endpoint,
+there is a two-value input whose revenue is an `O(1/H)` fraction of the fixed
+price benchmark lower bound, while the side condition `alpha * H <= F` holds.
+
+The paper sets `m = h^2 alpha`; this theorem keeps the exact lower-bound
+condition on `m` explicit so it can be reused with any integer scale.
+-/
+theorem twoValueBidIndependent_exists_low_revenue_witness
+    (usesHighPrice : ℕ → ℕ → Bool) {H alpha m : ℕ}
+    (hH_ge_one : 1 ≤ (H : ℝ))
+    (halpha_lt_m : alpha < m)
+    (hm_large : (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) ≤ (m + 1 : ℝ))
+    (hend : usesHighPrice m 0 = true) :
+    ∃ highCount lowCount : ℕ, ∃ fixedPriceLowerBound : ℝ,
+      (H : ℝ) *
+          twoValueBidIndependentThresholdRevenue usesHighPrice H highCount lowCount ≤
+        fixedPriceLowerBound ∧
+      (H : ℝ) * (alpha : ℝ) ≤ fixedPriceLowerBound := by
+  have hH_nonneg : 0 ≤ (H : ℝ) := le_trans zero_le_one hH_ge_one
+  by_cases hstart : usesHighPrice alpha (m - alpha) = true
+  · refine ⟨alpha, m - alpha + 1, (m + 1 : ℝ), ?_, ?_⟩
+    · have hlow :
+          usesHighPrice alpha ((m - alpha + 1) - 1) = true := by
+        simpa using hstart
+      have hrev :=
+        twoValueBidIndependentThresholdRevenue_start_high_bound
+          usesHighPrice H alpha (m - alpha + 1) hH_ge_one hlow
+      have hmul :
+          (H : ℝ) *
+              twoValueBidIndependentThresholdRevenue
+                usesHighPrice H alpha (m - alpha + 1) ≤
+            (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) :=
+        mul_le_mul_of_nonneg_left hrev hH_nonneg
+      exact le_trans hmul hm_large
+    · have halpha_nonneg : 0 ≤ (alpha : ℝ) := by exact_mod_cast Nat.zero_le alpha
+      have hside_to_square :
+          (H : ℝ) * (alpha : ℝ) ≤
+            (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) := by
+        calc
+          (H : ℝ) * (alpha : ℝ) =
+              1 * ((H : ℝ) * (alpha : ℝ)) := by ring
+          _ ≤ (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) := by
+              exact mul_le_mul_of_nonneg_right hH_ge_one
+                (mul_nonneg hH_nonneg halpha_nonneg)
+      exact le_trans hside_to_square hm_large
+  · have hstart_false : usesHighPrice alpha (m - alpha) = false := by
+      cases h : usesHighPrice alpha (m - alpha)
+      · rfl
+      · exact False.elim (hstart h)
+    obtain ⟨k, halpha_lt_k, hk_le_m, hkprev, hkcurr⟩ :=
+      FiniteSum.exists_bool_transition
+        (fun k => usesHighPrice k (m - k))
+        halpha_lt_m hstart_false (by simpa using hend)
+    refine ⟨k, m - k + 1, (H : ℝ) * (k : ℝ), ?_, ?_⟩
+    · have hprev :
+          usesHighPrice (k - 1) (m - k + 1) = false := by
+        have hk_pos : 0 < k :=
+          lt_of_le_of_lt (Nat.zero_le alpha) halpha_lt_k
+        have hlow_eq : m - (k - 1) = m - k + 1 :=
+          FiniteSum.nat_sub_pred_eq_sub_add_one_of_pos_le hk_pos hk_le_m
+        simpa [hlow_eq] using hkprev
+      have hcurr :
+          usesHighPrice k ((m - k + 1) - 1) = true := by
+        simpa using hkcurr
+      have hrev :=
+        twoValueBidIndependentThresholdRevenue_transition_bound
+          usesHighPrice H k (m - k + 1) hprev hcurr
+      exact le_trans
+        (mul_le_mul_of_nonneg_left hrev hH_nonneg)
+        (le_refl ((H : ℝ) * (k : ℝ)))
+    · have halpha_le_k : alpha ≤ k := le_of_lt halpha_lt_k
+      have halpha_cast : (alpha : ℝ) ≤ (k : ℝ) := by exact_mod_cast halpha_le_k
+      exact mul_le_mul_of_nonneg_left halpha_cast hH_nonneg
+
+/--
+Revenue of an arbitrary deterministic bid-independent threshold price rule on
+a two-value input with high value `H` and low value `1`.
+
+The price offered to a high bidder sees one fewer high bidder; the price offered
+to a low bidder sees one fewer low bidder. A bidder pays the threshold exactly
+when her value meets it.
+-/
+noncomputable def twoValueBidIndependentPriceRevenue
+    (price : ℕ → ℕ → ℝ) (H highCount lowCount : ℕ) : ℝ :=
+  (highCount : ℝ) *
+      (if price (highCount - 1) lowCount ≤ (H : ℝ) then
+        price (highCount - 1) lowCount else 0) +
+    (lowCount : ℝ) *
+      (if price highCount (lowCount - 1) ≤ 1 then
+        price highCount (lowCount - 1) else 0)
+
+/--
+For arbitrary threshold prices, a low-to-high transition still forces revenue
+at most the number of high bidders: high bidders are offered price at most `1`,
+while low bidders are offered price above `1` and reject.
+-/
+theorem twoValueBidIndependentPriceRevenue_transition_bound
+    (price : ℕ → ℕ → ℝ) (H highCount lowCount : ℕ)
+    (hH_ge_one : 1 ≤ (H : ℝ))
+    (hhigh : price (highCount - 1) lowCount ≤ 1)
+    (hlow : 1 < price highCount (lowCount - 1)) :
+    twoValueBidIndependentPriceRevenue price H highCount lowCount ≤
+      (highCount : ℝ) := by
+  have hH_nonneg : 0 ≤ (H : ℝ) := le_trans zero_le_one hH_ge_one
+  have hhigh_le_H : price (highCount - 1) lowCount ≤ (H : ℝ) :=
+    le_trans hhigh hH_ge_one
+  have hlow_not_le : ¬ price highCount (lowCount - 1) ≤ 1 :=
+    not_le_of_gt hlow
+  simp [twoValueBidIndependentPriceRevenue, hhigh_le_H, hlow_not_le]
+  have hcount_nonneg : 0 ≤ (highCount : ℝ) := by exact_mod_cast Nat.zero_le highCount
+  nlinarith
+
+/--
+If low bidders are offered a price above `1`, arbitrary threshold-price revenue
+is at most `H * highCount`.
+-/
+theorem twoValueBidIndependentPriceRevenue_start_high_bound
+    (price : ℕ → ℕ → ℝ) (H highCount lowCount : ℕ)
+    (hH_ge_one : 1 ≤ (H : ℝ))
+    (hlow : 1 < price highCount (lowCount - 1)) :
+    twoValueBidIndependentPriceRevenue price H highCount lowCount ≤
+      (H : ℝ) * (highCount : ℝ) := by
+  have hH_nonneg : 0 ≤ (H : ℝ) := le_trans zero_le_one hH_ge_one
+  have hlow_not_le : ¬ price highCount (lowCount - 1) ≤ 1 :=
+    not_le_of_gt hlow
+  by_cases hhigh : price (highCount - 1) lowCount ≤ (H : ℝ)
+  · simp [twoValueBidIndependentPriceRevenue, hhigh, hlow_not_le]
+    have hcount_nonneg : 0 ≤ (highCount : ℝ) := by exact_mod_cast Nat.zero_le highCount
+    calc
+      (highCount : ℝ) * price (highCount - 1) lowCount
+          ≤ (highCount : ℝ) * (H : ℝ) :=
+            mul_le_mul_of_nonneg_left hhigh hcount_nonneg
+      _ = (H : ℝ) * (highCount : ℝ) := by ring
+  · simp [twoValueBidIndependentPriceRevenue, hhigh, hlow_not_le]
+    have hcount_nonneg : 0 ≤ (highCount : ℝ) := by exact_mod_cast Nat.zero_le highCount
+    exact mul_nonneg hH_nonneg hcount_nonneg
+
+/--
+If the all-high erased profile is offered price at most `1`, the all-high input
+with one additional bidder already gives the `1/H` revenue-ratio witness.
+-/
+theorem twoValueBidIndependentPriceRevenue_all_high_low_offer_bound
+    (price : ℕ → ℕ → ℝ) (H m : ℕ)
+    (hH_ge_one : 1 ≤ (H : ℝ))
+    (hend_low : price m 0 ≤ 1) :
+    twoValueBidIndependentPriceRevenue price H (m + 1) 0 ≤
+      (m + 1 : ℝ) := by
+  have hend_le_H : price m 0 ≤ (H : ℝ) :=
+    le_trans hend_low hH_ge_one
+  simp [twoValueBidIndependentPriceRevenue, hend_le_H]
+  have hm_nonneg : 0 ≤ (m + 1 : ℝ) := by exact_mod_cast Nat.zero_le (m + 1)
+  nlinarith
+
+/--
+GHW Theorem 9.1 for arbitrary deterministic bid-independent threshold prices
+on binary values. There is a two-value input whose revenue is at most a `1/H`
+fraction of a feasible fixed-price benchmark lower bound, while
+`alpha * H <= F` holds.
+-/
+theorem twoValueBidIndependentPrice_exists_low_revenue_witness
+    (price : ℕ → ℕ → ℝ) {H alpha m : ℕ}
+    (hH_ge_one : 1 ≤ (H : ℝ))
+    (halpha_lt_m : alpha < m)
+    (hm_large : (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) ≤ (m + 1 : ℝ)) :
+    ∃ highCount lowCount : ℕ, ∃ fixedPriceLowerBound : ℝ,
+      (H : ℝ) *
+          twoValueBidIndependentPriceRevenue price H highCount lowCount ≤
+        fixedPriceLowerBound ∧
+      (H : ℝ) * (alpha : ℝ) ≤ fixedPriceLowerBound := by
+  classical
+  have hH_nonneg : 0 ≤ (H : ℝ) := le_trans zero_le_one hH_ge_one
+  by_cases hend_low : price m 0 ≤ 1
+  · refine ⟨m + 1, 0, (H : ℝ) * (m + 1 : ℝ), ?_, ?_⟩
+    · have hrev :=
+        twoValueBidIndependentPriceRevenue_all_high_low_offer_bound
+          price H m hH_ge_one hend_low
+      exact mul_le_mul_of_nonneg_left hrev hH_nonneg
+    · have halpha_le_m_succ : alpha ≤ m + 1 :=
+        Nat.le_trans (le_of_lt halpha_lt_m) (Nat.le_succ m)
+      have halpha_cast : (alpha : ℝ) ≤ (m + 1 : ℝ) := by
+        exact_mod_cast halpha_le_m_succ
+      exact mul_le_mul_of_nonneg_left halpha_cast hH_nonneg
+  · have hend_high : 1 < price m 0 := lt_of_not_ge hend_low
+    let highOffer : ℕ → Bool := fun k => decide (1 < price k (m - k))
+    by_cases hstart : 1 < price alpha (m - alpha)
+    · refine ⟨alpha, m - alpha + 1, (m + 1 : ℝ), ?_, ?_⟩
+      · have hlow :
+            1 < price alpha ((m - alpha + 1) - 1) := by
+          simpa using hstart
+        have hrev :=
+          twoValueBidIndependentPriceRevenue_start_high_bound
+            price H alpha (m - alpha + 1) hH_ge_one hlow
+        have hmul :
+            (H : ℝ) *
+                twoValueBidIndependentPriceRevenue
+                  price H alpha (m - alpha + 1) ≤
+              (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) :=
+          mul_le_mul_of_nonneg_left hrev hH_nonneg
+        exact le_trans hmul hm_large
+      · have halpha_nonneg : 0 ≤ (alpha : ℝ) := by exact_mod_cast Nat.zero_le alpha
+        have hside_to_square :
+            (H : ℝ) * (alpha : ℝ) ≤
+              (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) := by
+          calc
+            (H : ℝ) * (alpha : ℝ) =
+                1 * ((H : ℝ) * (alpha : ℝ)) := by ring
+            _ ≤ (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) := by
+                exact mul_le_mul_of_nonneg_right hH_ge_one
+                  (mul_nonneg hH_nonneg halpha_nonneg)
+        exact le_trans hside_to_square hm_large
+    · have hstart_false : highOffer alpha = false := by
+        dsimp [highOffer]
+        simp [hstart]
+      have hend_true : highOffer m = true := by
+        dsimp [highOffer]
+        simpa using hend_high
+      obtain ⟨k, halpha_lt_k, hk_le_m, hkprev, hkcurr⟩ :=
+        FiniteSum.exists_bool_transition highOffer halpha_lt_m
+          hstart_false hend_true
+      refine ⟨k, m - k + 1, (H : ℝ) * (k : ℝ), ?_, ?_⟩
+      · have hk_pos : 0 < k :=
+          lt_of_le_of_lt (Nat.zero_le alpha) halpha_lt_k
+        have hlow_eq : m - (k - 1) = m - k + 1 :=
+          FiniteSum.nat_sub_pred_eq_sub_add_one_of_pos_le hk_pos hk_le_m
+        have hprev_not : ¬ 1 < price (k - 1) (m - (k - 1)) := by
+          dsimp [highOffer] at hkprev
+          by_contra hgt
+          simp [hgt] at hkprev
+        have hprev_le : price (k - 1) (m - k + 1) ≤ 1 := by
+          simpa [hlow_eq] using le_of_not_gt hprev_not
+        have hcurr_gt_old : 1 < price k (m - k) := by
+          dsimp [highOffer] at hkcurr
+          by_contra hnot
+          simp [hnot] at hkcurr
+        have hcurr_gt :
+            1 < price k ((m - k + 1) - 1) := by
+          simpa using hcurr_gt_old
+        have hrev :=
+          twoValueBidIndependentPriceRevenue_transition_bound
+            price H k (m - k + 1) hH_ge_one hprev_le hcurr_gt
+        exact le_trans
+          (mul_le_mul_of_nonneg_left hrev hH_nonneg)
+          (le_refl ((H : ℝ) * (k : ℝ)))
+      · have halpha_le_k : alpha ≤ k := le_of_lt halpha_lt_k
+        have halpha_cast : (alpha : ℝ) ≤ (k : ℝ) := by exact_mod_cast halpha_le_k
+        exact mul_le_mul_of_nonneg_left halpha_cast hH_nonneg
+
+/--
+The paper's parameter choice `m = H^2 * alpha` for the arbitrary-threshold
+Theorem 9.1 construction.
+-/
+theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled
+    (price : ℕ → ℕ → ℝ) {H alpha : ℕ}
+    (hH_ge_two : 2 ≤ H) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ, ∃ fixedPriceLowerBound : ℝ,
+      (H : ℝ) *
+          twoValueBidIndependentPriceRevenue price H highCount lowCount ≤
+        fixedPriceLowerBound ∧
+      (H : ℝ) * (alpha : ℝ) ≤ fixedPriceLowerBound := by
+  let m : ℕ := H * H * alpha
+  have hH_ge_one_nat : 1 ≤ H := le_trans (by decide : 1 ≤ 2) hH_ge_two
+  have hH_ge_one_real : 1 ≤ (H : ℝ) := by exact_mod_cast hH_ge_one_nat
+  have hfactor_ge_four : 4 ≤ H * H :=
+    Nat.mul_le_mul hH_ge_two hH_ge_two
+  have hfactor_gt_one : 1 < H * H :=
+    lt_of_lt_of_le (by decide : 1 < 4) hfactor_ge_four
+  have halpha_lt_m : alpha < m := by
+    dsimp [m]
+    exact (Nat.lt_mul_iff_one_lt_left halpha_pos).2 hfactor_gt_one
+  have hm_large :
+      (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) ≤
+        (m + 1 : ℝ) := by
+    dsimp [m]
+    simp
+    nlinarith
+  exact twoValueBidIndependentPrice_exists_low_revenue_witness
+    (price := price) (H := H) (alpha := alpha) (m := m)
+    hH_ge_one_real halpha_lt_m hm_large
 
 end Auction
 end EconCSLib

@@ -1,6 +1,7 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -99,6 +100,212 @@ theorem sum_range_probabilityIncrements
       ring
 
 /--
+Finite averaging: if `total` is at most the sum of finitely many bin masses,
+then some bin has at least a `1/card` share of `total`.
+-/
+theorem exists_total_le_card_mul_of_le_sum
+    {κ : Type*} [Fintype κ] [Nonempty κ]
+    (mass : κ → ℝ) {total : ℝ}
+    (htotal : total ≤ ∑ k : κ, mass k) :
+    ∃ k : κ, total ≤ (Fintype.card κ : ℝ) * mass k := by
+  classical
+  let cardR : ℝ := Fintype.card κ
+  have hcard_pos : 0 < cardR := by
+    dsimp [cardR]
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card κ)
+  have hcard_ne : cardR ≠ 0 := ne_of_gt hcard_pos
+  have huniv_nonempty : (Finset.univ : Finset κ).Nonempty := by
+    obtain ⟨k⟩ := (inferInstance : Nonempty κ)
+    exact ⟨k, by simp⟩
+  have havg_sum :
+      (∑ k : κ, total / cardR) ≤ ∑ k : κ, mass k := by
+    have hsum_const :
+        (∑ _k : κ, total / cardR) = total := by
+      rw [Finset.sum_const, Finset.card_univ]
+      rw [nsmul_eq_mul]
+      change (Fintype.card κ : ℝ) * (total / cardR) = total
+      dsimp [cardR]
+      rw [mul_comm]
+      exact div_mul_cancel₀ total (by exact_mod_cast (ne_of_gt (Fintype.card_pos : 0 < Fintype.card κ)))
+    rw [hsum_const]
+    exact htotal
+  obtain ⟨k, _hk, hkavg⟩ :=
+    Finset.exists_le_of_sum_le (s := (Finset.univ : Finset κ))
+      (f := fun _ : κ => total / cardR) (g := mass)
+      huniv_nonempty (by simpa using havg_sum)
+  refine ⟨k, ?_⟩
+  have hmul := mul_le_mul_of_nonneg_left hkavg (le_of_lt hcard_pos)
+  calc
+    total = cardR * (total / cardR) := by
+      rw [mul_comm]
+      exact (div_mul_cancel₀ total hcard_ne).symm
+    _ ≤ cardR * mass k := hmul
+    _ = (Fintype.card κ : ℝ) * mass k := by rfl
+
+/--
+Discrete crossing for Boolean predicates on a finite integer interval. If a
+predicate is false at `lo` and true at `hi`, then it switches from false to true
+across some adjacent pair.
+-/
+theorem exists_bool_transition
+    (f : ℕ → Bool) :
+    ∀ {lo hi : ℕ}, lo < hi → f lo = false → f hi = true →
+      ∃ k : ℕ, lo < k ∧ k ≤ hi ∧ f (k - 1) = false ∧ f k = true
+  | lo, 0, hlohi, _, _ => by
+      exact False.elim (Nat.not_lt_zero lo hlohi)
+  | lo, Nat.succ hi, hlohi, hlo_false, hhi_true => by
+      by_cases hlo_eq_hi : lo = hi
+      · refine ⟨hi + 1, ?_, le_rfl, ?_, hhi_true⟩
+        · subst lo
+          exact Nat.lt_succ_self hi
+        · simpa [hlo_eq_hi] using hlo_false
+      · have hlo_lt_hi : lo < hi := by
+          have hlo_le_hi : lo ≤ hi := Nat.lt_succ_iff.mp hlohi
+          exact lt_of_le_of_ne hlo_le_hi hlo_eq_hi
+        by_cases hmid_true : f hi = true
+        · obtain ⟨k, hklo, hkhi, hkprev, hktrue⟩ :=
+            exists_bool_transition f hlo_lt_hi hlo_false hmid_true
+          exact ⟨k, hklo, Nat.le_trans hkhi (Nat.le_succ hi), hkprev, hktrue⟩
+        · have hmid_false : f hi = false := by
+            cases h : f hi
+            · rfl
+            · exact False.elim (hmid_true h)
+          refine ⟨hi + 1, hlohi, le_rfl, ?_, hhi_true⟩
+          simpa using hmid_false
+
+/--
+If `0 < k <= m`, then subtracting the predecessor of `k` leaves one more than
+subtracting `k`.
+-/
+theorem nat_sub_pred_eq_sub_add_one_of_pos_le
+    {m k : ℕ} (hk_pos : 0 < k) (hk_le_m : k ≤ m) :
+    m - (k - 1) = m - k + 1 := by
+  have hk_pred_succ : k - 1 + 1 = k :=
+    Nat.sub_one_add_one_eq_of_pos hk_pos
+  have hk_pred_lt_m : k - 1 < m := by
+    exact lt_of_lt_of_le (Nat.sub_lt hk_pos zero_lt_one) hk_le_m
+  have hdiff_pos : 0 < m - (k - 1) :=
+    Nat.sub_pos_of_lt hk_pred_lt_m
+  have hsub_one :
+      (m - (k - 1)) - 1 = m - k := by
+    rw [Nat.sub_sub, hk_pred_succ]
+  calc
+    m - (k - 1) = (m - (k - 1)) - 1 + 1 :=
+      (Nat.sub_one_add_one_eq_of_pos hdiff_pos).symm
+    _ = m - k + 1 := by rw [hsub_one]
+
+/--
+Telescoping identity used in the GHW Theorem 8.2 revenue rearrangement.
+The dummy probability `p 0` is zero, so adjacent probability increments against
+the bid levels combine with the utility-gap correction terms to leave only the
+last endpoint term.
+-/
+theorem sum_range_gap_add_probabilityIncrement_mul
+    (p b : ℕ → ℝ) (hp0 : p 0 = 0) (n : ℕ) :
+    (∑ j ∈ Finset.range n, p (j + 1) * (b (j + 1) - b j)) +
+        (∑ j ∈ Finset.range n, (p (j + 1) - p j) * b j) =
+      p n * b n := by
+  induction n with
+  | zero =>
+      simp [hp0]
+  | succ n ih =>
+      rw [Finset.sum_range_succ, Finset.sum_range_succ]
+      nlinarith [ih]
+
+/--
+Adjacent truthful-gain inequalities imply the accumulated utility-gap lower
+bound used in GHW Theorem 8.2.
+-/
+theorem sum_range_gap_le_gain_of_adjacent
+    (p b gain : ℕ → ℝ)
+    (hgain0 : 0 ≤ gain 0)
+    (hstep :
+      ∀ i,
+        gain i + p (i + 1) * (b (i + 1) - b i) ≤ gain (i + 1)) :
+    ∀ i,
+      (∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j)) ≤
+        gain i := by
+  intro i
+  induction i with
+  | zero =>
+      simpa using hgain0
+  | succ i ih =>
+      rw [Finset.sum_range_succ]
+      have hle :=
+        add_le_add_right ih (p (i + 1) * (b (i + 1) - b i))
+      have hnext := hstep i
+      linarith
+
+/-- Fixed-price revenue for the bidder value at rank `j` among `n` sorted bids. -/
+noncomputable def rankedFixedPriceRevenue (n : ℕ) (b : ℕ → ℝ) (j : ℕ) : ℝ :=
+  ((n : ℝ) - j) * b j
+
+/--
+If each ranked bidder's expected payment is bounded by the paper's truthful-gain
+upper bound, then total revenue is bounded by the telescoping weighted sum of
+ranked fixed-price revenues.
+
+This is the algebraic heart of GHW Theorem 8.2 before applying Lemma 8.1 and
+the benchmark bound `V_j <= F`.
+-/
+theorem sum_range_revenue_le_probabilityIncrement_rankedFixedPriceRevenue
+    (n : ℕ) (p b r : ℕ → ℝ) (hp0 : p 0 = 0)
+    (hr :
+      ∀ i, i < n →
+        r i ≤ p (i + 1) * b i -
+          ∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j)) :
+    (∑ i ∈ Finset.range n, r i) ≤
+      ∑ j ∈ Finset.range n,
+        (p (j + 1) - p j) * rankedFixedPriceRevenue n b j := by
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      have ih' :
+          (∑ i ∈ Finset.range n, r i) ≤
+            ∑ j ∈ Finset.range n,
+              (p (j + 1) - p j) * rankedFixedPriceRevenue n b j := by
+        exact ih (by
+          intro i hi
+          exact hr i (Nat.lt_trans hi (Nat.lt_succ_self n)))
+      let gapSum : ℝ :=
+        ∑ j ∈ Finset.range n, p (j + 1) * (b (j + 1) - b j)
+      let incBidSum : ℝ :=
+        ∑ j ∈ Finset.range n, (p (j + 1) - p j) * b j
+      have hnew :
+          r n ≤ p (n + 1) * b n - gapSum := by
+        simpa [gapSum] using hr n (Nat.lt_succ_self n)
+      have htarget_succ :
+          (∑ j ∈ Finset.range (n + 1),
+              (p (j + 1) - p j) *
+                rankedFixedPriceRevenue (n + 1) b j) =
+            (∑ j ∈ Finset.range n,
+              (p (j + 1) - p j) * rankedFixedPriceRevenue n b j) +
+              incBidSum + (p (n + 1) - p n) * b n := by
+        rw [Finset.sum_range_succ]
+        have hprefix :
+            (∑ j ∈ Finset.range n,
+                (p (j + 1) - p j) *
+                  rankedFixedPriceRevenue (n + 1) b j) =
+              (∑ j ∈ Finset.range n,
+                (p (j + 1) - p j) *
+                  rankedFixedPriceRevenue n b j) +
+                incBidSum := by
+          rw [← Finset.sum_add_distrib]
+          refine Finset.sum_congr rfl ?_
+          intro j hj
+          simp [rankedFixedPriceRevenue]
+          ring
+        rw [hprefix]
+        simp [rankedFixedPriceRevenue]
+      have hgap_inc :
+          gapSum + incBidSum = p n * b n := by
+        simpa [gapSum, incBidSum]
+          using sum_range_gap_add_probabilityIncrement_mul p b hp0 n
+      rw [Finset.sum_range_succ, htarget_succ]
+      linarith
+
+/--
 Paper-style weighted benchmark bound for monotone probability increments.
 If expected revenue is bounded by a weighted sum whose weights are adjacent
 increments of a monotone probability sequence and whose endpoint mass is at
@@ -128,6 +335,90 @@ theorem le_bound_of_le_range_probabilityIncrement_weighted_sum
       hweight_nonneg hweight_sum
       (by intro j hj; exact hvalue j (Finset.mem_range.mp hj)) hB
   exact le_trans hR hweighted
+
+/--
+GHW Theorem 8.2 algebra from the adjacent truthful-gain recursion all the way
+to the benchmark bound.
+-/
+theorem revenue_le_bound_of_adjacent_gain_recursion
+    (n : ℕ) (p b revenueAtRank gain : ℕ → ℝ) {R B : ℝ}
+    (hp0 : p 0 = 0)
+    (hR : R ≤ ∑ i ∈ Finset.range n, revenueAtRank i)
+    (hrevenueAtRank :
+      ∀ i, i < n → revenueAtRank i = p (i + 1) * b i - gain i)
+    (hgain0 : 0 ≤ gain 0)
+    (hgain_step :
+      ∀ i,
+        gain i + p (i + 1) * (b (i + 1) - b i) ≤ gain (i + 1))
+    (hmono : ∀ j, j < n → p j ≤ p (j + 1))
+    (hendpoint : p n - p 0 ≤ 1)
+    (hvalue :
+      ∀ j, j < n → rankedFixedPriceRevenue n b j ≤ B)
+    (hB : 0 ≤ B) :
+    R ≤ B := by
+  have hgap_le :
+      ∀ i,
+        (∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j)) ≤
+          gain i :=
+    sum_range_gap_le_gain_of_adjacent p b gain hgain0 hgain_step
+  have hranked :
+      ∀ i, i < n →
+        revenueAtRank i ≤ p (i + 1) * b i -
+          ∑ j ∈ Finset.range i, p (j + 1) * (b (j + 1) - b j) := by
+    intro i hi
+    rw [hrevenueAtRank i hi]
+    linarith [hgap_le i]
+  have hrearranged :
+      R ≤ ∑ j ∈ Finset.range n,
+        (p (j + 1) - p j) * rankedFixedPriceRevenue n b j := by
+    exact le_trans hR
+      (sum_range_revenue_le_probabilityIncrement_rankedFixedPriceRevenue
+        n p b revenueAtRank hp0 hranked)
+  exact le_bound_of_le_range_probabilityIncrement_weighted_sum
+    n p (rankedFixedPriceRevenue n b) hrearranged hmono hendpoint hvalue hB
+
+/--
+GHW Theorem 8.2 algebra in the paper's `p_i`, `c_i`, `g_i` notation. The
+truthfulness comparison for adjacent bids is supplied as
+`p_i * (b_{i+1} - c_i) <= g_{i+1}`.
+-/
+theorem revenue_le_bound_of_adjacent_truthful_cost_comparisons
+    (n : ℕ) (p b cost gain : ℕ → ℝ) {R B : ℝ}
+    (hp0 : p 0 = 0)
+    (hR : R ≤ ∑ i ∈ Finset.range n, p (i + 1) * cost i)
+    (hgain :
+      ∀ i, gain i = p (i + 1) * (b i - cost i))
+    (hgain0 : 0 ≤ gain 0)
+    (htruth_adjacent :
+      ∀ i, p (i + 1) * (b (i + 1) - cost i) ≤ gain (i + 1))
+    (hmono : ∀ j, j < n → p j ≤ p (j + 1))
+    (hendpoint : p n - p 0 ≤ 1)
+    (hvalue :
+      ∀ j, j < n → rankedFixedPriceRevenue n b j ≤ B)
+    (hB : 0 ≤ B) :
+    R ≤ B := by
+  let revenueAtRank : ℕ → ℝ := fun i => p (i + 1) * cost i
+  have hrevenueAtRank :
+      ∀ i, i < n → revenueAtRank i = p (i + 1) * b i - gain i := by
+    intro i hi
+    dsimp [revenueAtRank]
+    rw [hgain i]
+    ring
+  have hgain_step :
+      ∀ i,
+        gain i + p (i + 1) * (b (i + 1) - b i) ≤ gain (i + 1) := by
+    intro i
+    have hg := hgain i
+    have ht := htruth_adjacent i
+    calc
+      gain i + p (i + 1) * (b (i + 1) - b i)
+          = p (i + 1) * (b (i + 1) - cost i) := by
+            rw [hg]
+            ring
+      _ ≤ gain (i + 1) := ht
+  exact revenue_le_bound_of_adjacent_gain_recursion
+    n p b revenueAtRank gain hp0 (by simpa [revenueAtRank] using hR)
+    hrevenueAtRank hgain0 hgain_step hmono hendpoint hvalue hB
 
 end FiniteSum
 end EconCSLib
