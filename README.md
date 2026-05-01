@@ -15,12 +15,12 @@ ignored by Git; extracted `.txt` caches are kept beside them for source audits.
 
 | Paper folder | Paper | Overall status | Current Lean surface |
 |---|---|---|---|
-| `papers/MBJG25ProducerFairness` | *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design* | Formalized with caveat | Source Theorems 3.1--3.2 are covered, with the strict boundary issue documented. |
-| `papers/MSVV07AdWords` | *AdWords and Generalized Online Matching* | Partially formalized | Final finite/family theorem surfaces are strong; source Lemmas 1--7 are not one-for-one wrappers. |
+| `papers/MBJG25ProducerFairness` | *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design* | Formalized with documented caveat | Source Theorems 3.1--3.2 and the main Section 4 / appendix support are formalized. Lean found and documents the boundary correction needed for the paper's strict variance-decrease clause. |
+| `papers/MSVV07AdWords` | *AdWords and Generalized Online Matching* | Main endpoints formalized with documented deviations | `PaperFacingTheorems.lean` exposes the paper formulas and closes Theorem 8 plus the finite integral-prefix Theorem 9 endpoint. Source Lemmas 1--7 are documented as not one-for-one wrappers. |
 | `papers/DSWG24DiscretizationBias` | *Addressing Discretization-Induced Bias in Demographic Prediction* | Partially formalized | Source-facing expected-objective wrappers cover Theorem 2(i)--(ii); Theorem 1 and Theorem 2(iii) remain open. |
 | `papers/Roth82StableMatching` | *The Economics of Matching: Stability and Incentives* | Partially formalized | Conditional DA wrappers cover Theorems 1, 2, and 5 seams; impossibility and manipulation theorems remain open. |
 | `papers/GHW01DigitalGoods` | *Competitive Auctions and Digital Goods* | Partially formalized | Digital-goods primitives, fixed-price support, and RSOP skeleton are formalized; approximation/lower bounds are open. |
-| `papers/GCG24UserItemFairness` | *The User-Item Fairness Tradeoff in Recommender Systems* | Partially formalized | Active work by another agent; not audited in this cleanup pass. |
+| `papers/GCG24UserItemFairness` | *User-item fairness tradeoffs in recommendations* | Verified in Lean | Paper-local validation reports Theorem 3 price-of-fairness monotonicity and Theorem 4 misestimation tradeoff closed, with Proposition 1, Proposition 2, and appendix lemmas tracked in the paper README/DAG. |
 
 ## Repository Architecture: Textbook vs. Audit Trail
 
