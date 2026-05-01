@@ -68,7 +68,9 @@ models.
 - After an abstract `withDensity` theorem compiles, add concrete score-space
   utilities for the intended product shape: coordinate projections, measurable
   coordinate swaps, measure-preserving swap lemmas, normalization bridges, and
-  finite-source-integral bridges.
+  finite-source-integral bridges. Align product nesting with Mathlib's product
+  measure conventions, for example `(ℝ × ℝ) × ℝ`, so later instantiations do
+  not waste time on associativity rewrites.
 
 ## Lean Patterns
 

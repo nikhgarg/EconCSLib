@@ -20,6 +20,13 @@ statements.
 - For LP sparsity or BFS-style results, separate the linear-programming theorem
   from finite counting consequences. Encode the active-support bound first,
   then prove reusable counting lemmas over finite supports.
+- For finite LP-heavy papers where a full solver would be overkill, define the
+  exact paper-local equality-form or epigraph LP; prove weak duality for the
+  exact variables; construct the closed-form primal witness; construct the
+  matching dual/certificate; prove feasibility, tightness/complementary
+  slackness, and uniqueness; then wrap this as the paper theorem. This can
+  fully verify a source result without a generic LP solver when the final
+  wrapper constructs or discharges every certificate internally.
 - For normalized objective values, prove boundedness before compactness or
   supremum reasoning. Finite PMF expectations are often bounded by row maxima,
   giving immediate `BddAbove` side conditions.

@@ -42,14 +42,6 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - If two papers could use a lemma after renaming variables, it belongs in the generic library.
 - If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
 - For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
-- For finite LP-heavy recommendation/allocation papers, a fast complete route is
-  often: define the exact paper-local equality-form/epigraph LP; prove a weak
-  duality lemma for the exact variables; construct the closed-form primal
-  witness; construct the matching dual/certificate; prove feasibility,
-  complementary slackness/tightness, and uniqueness; then wrap this as the
-  paper theorem. This can fully verify a paper result without a generic LP
-  solver, as long as the final source wrapper constructs or discharges every
-  certificate internally.
 
 ### 1.3 Paper Folder Contract
 
@@ -234,6 +226,11 @@ search.
 - Before editing, state the one active seam in local notes or the handoff doc:
   public theorem wrapper, internal lemma/certificate being attacked, exact
   remaining assumption, and the build command that validates the slice.
+- Before building a large helper tower, write or locate the paper-facing wrapper
+  and the exact bridge theorem that would close it. If the bridge is too hard,
+  make the helper an explicitly named auxiliary result and record the bridge as
+  the remaining seam; do not let a reduced analogue masquerade as the source
+  theorem.
 - Do not revisit closed layers first. Search for the strongest current endpoint
   and the precise "remaining" text, then work on that next bridge. In this repo,
   paper README rows and `docs/ECONCSLEAN_CURRENT_STATUS.md` should say which
@@ -264,96 +261,11 @@ search.
    actions, rankings, allocations, mechanisms, PMFs, and finite sums. Use those
    when they expose the key combinatorics cleanly. But do not force a finite
    analogue first if the paper theorem is genuinely continuous and the direct
-   continuous statement is shorter or more faithful. For density, RUM,
-   distributional, or integral inequalities, formalize the continuous version
-   directly when that avoids a long detour through artificial finite scaffolding.
-   When the paper proof is a change-of-variables argument over densities,
-   consider adding a reusable library-level measure lemma first, e.g. a
-   `withDensity` mass comparison under a measure-preserving measurable
-   equivalence. This can be faster and closer to the paper than reifying the
-   same argument through artificial finite PMFs, especially for continuous RUM
-   proofs.
-   For strict continuous analogues of finite atom-witness arguments, use a
-   positive-measure source subset plus a finite source integral. In Lean this
-   often means a reusable `withDensity` strict comparison lemma with assumptions
-   like `Measurable D`, `∫⁻ x in source, D x ∂μ ≠ ∞`, and `μ source ≠ 0`.
-   Remember to `open scoped ENNReal` in files that state `ℝ≥0∞` or `∫⁻`
-   expressions; otherwise parser errors around `∂`/`∞` can waste time.
-   When a continuous distribution ultimately feeds a finite theorem over
-   rankings, push the continuous measure through the ranking map and convert the
-   finite pushed-forward measure to a `PMF`. Then prove a small bridge saying
-   `pmfProb` equals the continuous preimage mass. This lets existing finite
-   payoff algebra consume actual continuous ranking laws while the analytic
-   density comparisons stay in the continuous measure layer.
-   For continuous delta inequalities that compare differences of event
-   probabilities, avoid hand-proving signed measure decompositions when the
-   relevant events depend on a finite summary. Push the measure through the
-   finite image of that summary, apply the finite indicator-difference lemma
-   there, and pull the result back with a `measureProb` bridge. The pointwise
-   comparison then only needs to hold on source realizations, not on every value
-   of the finite codomain.
-   For continuous `swapi`/change-of-variables arguments, split the proof into
-   two layers: first a reusable `withDensity` mass comparison under a
-   measure-preserving measurable equivalence and density monotonicity, then a
-   paper-local score-geometry wrapper proving that the source transition region
-   maps into the target transition region and supplies the coordinate-order
-   inequality used by the density lemma.
-   For normalized continuous score laws, expose the probability-measure
-   assumption through the natural integral equation `∫⁻ x, D x ∂μ = 1` and a
-   small `IsProbabilityMeasure (μ.withDensity D)` bridge. This keeps final
-   theorem statements closer to the paper's "density integrates to one" premise
-   and avoids hiding normalization as an opaque typeclass-only requirement.
-   The same normalization equation should also discharge any strict-swap
-   side condition requiring a source-set integral to be finite, since
-   `∫⁻ x in s, D x ∂μ ≤ ∫⁻ x, D x ∂μ = 1`.
-   Separate continuous RUM proofs into explicit layers before calling a paper
-   done: (i) payoff/certificate algebra over rankings, (ii) continuous
-   density/change-of-variables inequalities over scores, and (iii) concrete
-   model instantiation proving support, positive source regions, normalization,
-   and score-to-ranking interface facts. A closed theorem at layer (i) or (ii)
-   is valuable progress, but it is not a fully concrete paper theorem until
-   layer (iii) has no remaining assumptions or the README/DAG say exactly which
-   assumptions remain.
-   Treat ties in real-valued score RUMs as a theorem-design issue, not a detail
-   to patch later. Pointwise "top score iff top-ranked" interfaces can be false
-   or inconsistent on tie points. Either work on a no-tie/full-measure subtype,
-   state and prove almost-everywhere interface lemmas, or make the tie-breaking
-   convention explicit and prove the score/ranking facts for that convention.
-   Do not silently derive pointwise ranking-event implications from weak score
-   inequalities.
-   After an abstract `withDensity` proof compiles, immediately add concrete
-   score-space utilities for the intended product space: coordinate projection
-   abbreviations, measurable coordinate swaps, measure-preserving swap lemmas,
-   normalization bridges, and finite-source-integral bridges. Align the product
-   nesting with Mathlib's product measure conventions, e.g. `(ℝ × ℝ) × ℝ`, so
-   later instantiations do not spend time on associativity rewrites.
-   When a finite certificate seems to require full support of all induced
-   rankings, inspect the downstream field actually using it before proving six
-   ranking fibers. Often only one strict inequality such as `λ₁ < 1` is needed;
-   for continuous RUMs this can be discharged faster by proving positive mass
-   of the exact wrong-choice event and using an identity like
-   `wrongProb = 1 - λ₁`.
-   For concrete continuous support obligations, use explicit open boxes inside
-   the target event rather than trying to characterize the whole event. Prove a
-   reusable "open box has nonzero volume, and subsets inherit nonzero measure"
-   lemma, then instantiate tiny boxes for each lambda source/corrected-top
-   region.
-   For finite symmetric recommendation papers, avoid spending time proving a
-   generic "selected BFS" theorem if the source result can be closed by a
-   canonical closed-form construction. Prove the canonical first-crossing or
-   first-closed pivot exists, prove its denominator/nonnegativity bounds, and
-   use that pivot to build the closed policy/certificate. Keep selected-BFS
-   statements as auxiliary explicit-input variants unless the source theorem
-   genuinely needs arbitrary selected optima.
-   When the paper has mirror symmetry, prove the first half directly and derive
-   the second half by an explicit mirror-equivalence theorem preserving the
-   objective, constraints, and optimal values. This is usually faster and less
-   brittle than duplicating the first-half algebra.
-   If a displayed paper formula depends on an implicit modeling convention
-   (for example a center item counted once in a half-LP versus twice in a full
-   mirrored policy), split the theorem names by convention and prove an explicit
-   bridge or explanation. Do not force the executable model to match a displayed
-   formula by hiding the convention difference.
+   continuous statement is shorter or more faithful. For proof-specific tactics
+   such as LP certificates, continuous-density bridges, RUM support witnesses,
+   symmetric recommendation pivots, or ranking/Mallows algebra, load the
+   relevant reference in Component 2 instead of putting those techniques in this
+   main workflow file.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,
@@ -427,6 +339,9 @@ search.
   invalidate other agents' caches.
 - If a long build is interrupted, already-finished modules usually remain
   cached; rerunning resumes from remaining work.
+- Do not start a long build of a downstream module when you are about to edit
+  one of its dependencies. Build the touched dependency first, then the paper
+  root after the dependency is stable.
 - Do not infer that downstream files are broken until the direct imported module
   builds.
 - Existing warnings are not build failures unless the user asks for lint cleanup
@@ -575,3 +490,7 @@ reference.
 `references/proof-strategies.md` is only a short router/index for these files.
 Do not load detailed proof references for routine README/DAG/status edits or
 simple wrapper repairs.
+When updating this skill from a proof session, put proof tactics and theorem
+patterns in the relevant `references/proof-*.md` file. Keep `SKILL.md` limited
+to workflow, routing, folder contracts, validation, and context/source-control
+rules.

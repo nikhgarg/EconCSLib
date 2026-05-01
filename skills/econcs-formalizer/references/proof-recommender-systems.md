@@ -38,6 +38,20 @@ allocation.
 - For baseline constrained problems at `gamma = 0`, reduce the constraint to
   nonnegativity when objectives are normalized nonnegative utilities. Witness
   nonemptiness with an arbitrary default policy.
+- For finite symmetric recommendation LPs, avoid proving a generic "selected
+  BFS" theorem if the paper result can be closed by a canonical closed-form
+  construction. Prove the canonical first-crossing or first-closed pivot exists,
+  prove its denominator/nonnegativity bounds, and use that pivot to build the
+  closed policy/certificate. Keep selected-BFS statements as auxiliary
+  explicit-input variants unless the source theorem genuinely needs arbitrary
+  selected optima.
+- When the recommendation model has mirror symmetry, prove the first half
+  directly and derive the second half by a mirror-equivalence theorem preserving
+  the objective, constraints, and optimal values.
+- If a displayed paper formula depends on an implicit modeling convention, such
+  as a center item counted once in a half-LP but twice in a full mirrored
+  policy, split the theorem names by convention and prove an explicit bridge or
+  explanation. Do not hide convention differences inside the executable model.
 
 ## Discretization Bias
 
