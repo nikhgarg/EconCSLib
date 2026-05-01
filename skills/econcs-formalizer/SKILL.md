@@ -97,12 +97,42 @@ the Lean statements against the paper.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
   a status transition between scaffold/conditional/formalized).
+- Keep the paper DAG paper-facing. Its primary nodes should be the source's
+  named definitions, lemmas, propositions, theorems, and corollaries. Do not
+  replace a source theorem with internal implementation layers such as finite
+  analogues, certificate packages, or continuous instantiation steps unless the
+  source itself is organized that way. Put those engineering layers in the
+  README status table or proof comments, and use the DAG to show how the
+  paper's named results relate and which of them are formalized, conditional,
+  caveated, or open.
+  Even when the working proof closes a finite analogue first, the DAG should
+  still show the corresponding source theorem node with the honest paper-level
+  status; finite versions belong in Lean helper names, README rows, or proof
+  comments, not as replacement DAG nodes.
 - A downstream theorem node may use the green `dag_result` style only when its
   paper-facing statement is closed without remaining paper assumptions. If Lean
   currently proves only wrappers conditional on certificates, no-gap hypotheses,
   selected-BFS assumptions, or witness existence, use `dag_conditional` for the
   wrapper and add a separate `dag_unformalized` node for the full paper theorem.
   The node text must name the exact open certificates or witnesses.
+- For probabilistic papers, distinguish the source's random-variable/probability
+  statement from any density, CDF, or integral representation used in the proof.
+  If Lean closes the integral or closed-form layer but has not yet proved the
+  measure-theoretic bridge from `Pr[...]` to that integral (for example, an
+  independence/Fubini/density derivation), keep the theorem conditional in the
+  README/DAG and explicitly name the probability-to-integral bridge that remains.
+- When a proof step invokes an external cited analytic theorem that is not in
+  Mathlib, encode that input as a named paper-local hypothesis or definition
+  (for example, a `Sampford...Bound` assumption), prove the source's downstream
+  reduction from that exact hypothesis, and keep the README/DAG conditional
+  until the cited theorem itself or an acceptable imported library theorem is
+  formalized.
+- When such a cited theorem is later formalized locally, immediately update the
+  paper README/DAG to remove that exact assumption while preserving any broader
+  remaining bridge. For example, if a scalar density/integral layer is now
+  unconditional but the source theorem is still a probability statement, mark
+  the scalar layer as closed and keep only the probability-to-integral bridge as
+  the theorem-level blocker.
 - In this repository's `papers/[Paper]/DependencyDAG.tex` layout, the shared
   preamble input is `\input{../../docs/tikz/dag_preamble.tex}`. Verify the DAG
   renders after changing the preamble path or moving a paper folder.
