@@ -2,117 +2,201 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=1.3cm and 3.2cm]
 
-% --- Legend ---
-\node[dag_result, text width=2.6cm] (legRes) {Formalized Result};
-\node[dag_lemma, right=0.35cm of legRes, text width=2.6cm] (legLem) {Formalized Lemma};
-\node[dag_conditional, right=0.35cm of legLem, text width=2.8cm] (legCond) {Conditional Bridge};
-\node[dag_model, right=0.35cm of legCond, text width=2.5cm] (legDef) {Definition};
-\node[dag_unformalized, right=0.35cm of legDef, text width=2.7cm] (legOpen) {Open / Pending};
-\daglegend{(legRes)(legLem)(legCond)(legDef)(legOpen)}{Legend}
+% Visual validation loop:
+% 1. Compile this file after every substantive DAG edit.
+% 2. Inspect the rendered PDF/PNG, not just the TeX source.
+% 3. Increase spacing or reroute arrows until no box, legend, edge, or label overlaps.
+%
+% This DAG is paper-facing: nodes are source examples, problems, lemmas,
+% propositions, and theorems. Implementation helpers and selected-BFS variants
+% are tracked in the README rather than as graph nodes.
 
-% --- Core model, reduction, and Theorem 3 ---
-\node[dag_model, below=2.3cm of Legend, xshift=-9.8cm] (BaseDefs)
-  {\textbf{Model Definitions} \\ Utilities, policies, fairness};
-\node[dag_lemma, below=of BaseDefs] (Lemma1)
-  {\textbf{Lemma 1 (App. C)} \\ $I^*_{\min} > 0$};
-\node[dag_lemma, below=of Lemma1] (Lemma2)
-  {\textbf{Lemma 2 (App. C)} \\ Epigraph and equality-form LP values closed};
-\node[dag_lemma, below=of Lemma2] (Prop2)
-  {\textbf{Proposition 2} \\ Symmetric optimum exists};
-\node[dag_lemma, below=of Prop2] (Reduction)
-  {\textbf{Reduction Bridges} \\ Original $\leftrightarrow$ reduced model};
-\node[dag_result, below=of Reduction] (Theorem3)
-  {\textbf{Theorem 3} \\ Parity-free two-sided price monotonicity};
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={font=\sffamily\small, outer sep=4pt}
+]
 
-% --- Problem 6 / Appendix D structure ---
-\node[dag_lemma, right=of Lemma2] (Problem6)
-  {\textbf{Problem 6} \\ Opposing-type LP translation};
-\node[dag_lemma, below=of Problem6] (Lemma4)
-  {\textbf{Lemma 4 (App. D)} \\ Basic support + no-gap structure};
-\node[dag_lemma, below=of Lemma4] (Lemma5)
-  {\textbf{Lemma 5 (App. D)} \\ Closed-form policy family};
-\node[dag_lemma, below=of Lemma5] (Lemmas6to11)
-  {\textbf{Lemmas 6--11 (App. D)} \\ Pivot, monotonicity, stitching};
-\node[dag_lemma, right=of Problem6] (Lemma16)
-  {\textbf{Lemma 16 (App. E)} \\ $q_j$ / midpoint algebra};
+% --- Legend: README status vocabulary plus formalized node-type styles. ---
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_caveat, dag_template_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
 
-% --- Problem 11 and Theorem 4 support structure ---
-\node[dag_model, right=of Lemma4] (Problem11)
-  {\textbf{Problem 11 (App. E)} \\ Three-type LP, $\gamma=1$ bridge, real-BFS interface};
-\node[dag_lemma, right=of Problem11] (Problem11Dual)
-  {\textbf{Problem 11 Closed Witness} \\ Dual bound, tight primal, pivot existence, basic support};
-\node[dag_lemma, below=of Problem11] (Lemma12)
-  {\textbf{Lemma 12 (App. E)} \\ Symmetric reduction into $S'$};
-\node[dag_lemma, below=of Lemma12] (Lemma17)
-  {\textbf{Lemma 17 (App. E)} \\ No right-half type-zero mass};
-\node[dag_lemma, below=of Lemma17] (NoGap)
-  {\textbf{Lemma 13 Perturbations} \\ $x$-gap and $z$-gap certificates};
-\node[dag_lemma, below=of NoGap] (Lemma13)
-  {\textbf{Lemma 13 (App. E)} \\ Pivot support from equalized optimum};
-\node[dag_lemma, below=of Lemma13] (Lemma15)
-  {\textbf{Lemma 15 (App. E)} \\ Coordinates + center-convention bridge};
+% --- Core model and reduction framework. ---
+\node[dag_model] (Problem1) at (0,-6.4) {
+  \textbf{Problem 1 (Sec. 3)} \\
+  user-item fairness tradeoff \\
+  model formalized
+};
+\node[dag_unformalized] (Example1) at (-5.6,-10.1) {
+  \textbf{Example 1 (Sec. 4)} \\
+  two-item intuition \\
+  not formalized
+};
+\node[dag_lemma] (Lemma1) at (0,-13.8) {
+  \textbf{Lemma 1 (App. C)} \\
+  $I^*_{\min} > 0$ \\
+  formalized
+};
+\node[dag_lemma] (Lemma2) at (0,-17.5) {
+  \textbf{Lemma 2 (App. C)} \\
+  LP value reduction \\
+  formalized
+};
+\node[dag_result] (Prop1) at (0,-21.2) {
+  \textbf{Proposition 1 (Sec. 3)} \\
+  LP-reduction framework \\
+  formalized
+};
+\node[dag_caveat] (Prop2) at (0,-25.1) {
+  \textbf{Proposition 2 (Sec. 3)} \\
+  symmetric sparse optimum \\
+  BFS caveat explicit
+};
+\node[dag_lemma] (Lemma3) at (0,-29.2) {
+  \textbf{Lemma 3 (App. D)} \\
+  unconstrained baseline \\
+  formalized
+};
 
-% --- Theorem 4 downstream wrappers and open paper theorem ---
-\node[dag_lemma, right=of NoGap] (Lemma14)
-  {\textbf{Lemma 14 (App. E)} \\ Equality-form optimum uniqueness};
-\node[dag_lemma, right=of Lemma13] (NoExtremes)
-  {\textbf{Theorem 4 No-Extremes} \\ Equality-form Problem 11 bridge};
-\node[dag_lemma, below=of NoExtremes] (ColdBounds)
-  {\textbf{Cold-Start Bounds} \\ No-extreme $\Rightarrow$ low utility};
-\node[dag_result, below=of ColdBounds] (NoFairness)
-  {\textbf{No-Fairness Side} \\ Source mixed cold-start $\gamma=0$ benchmark};
-\node[dag_result, right=of ColdBounds] (TrueLower)
-  {\textbf{True-Model Lower Bound} \\ Original two-type half model gives $U^*_{\min}(1,w) > 1/n$};
-\node[dag_result, below=1.7cm of NoFairness, xshift=3.2cm] (Theorem4Conditional)
-  {\textbf{Theorem 4 Fairness Wrappers} \\ Source cold-user policy; estimated lift; Problem 11 uniqueness closed};
-\node[dag_lemma, below=of Theorem4Conditional] (VExist)
-  {\textbf{Value-Vector Witness} \\ Geometric $v_j=r^j$ construction};
-\node[dag_lemma, right=of VExist] (Midpoint)
-  {\textbf{Midpoint Split} \\ Exact center or adjacent mirror pair};
-\node[dag_result, below=of VExist] (Theorem4Full)
-  {\textbf{Theorem 4 (App. E)} \\ Parity-free source two-bullet wrappers closed for both cold-start rows};
+% --- Theorem 3: two opposing types. ---
+\node[dag_conditional] (Problem6) at (7.4,-8.3) {
+  \textbf{Problem 6 (App. D)} \\
+  opposing-type LP \\
+  conditional package
+};
+\node[dag_caveat] (Lemma4) at (7.4,-12.2) {
+  \textbf{Lemma 4 (App. D)} \\
+  unique sparse solution \\
+  support caveat
+};
+\node[dag_conditional] (Lemma5) at (7.4,-16.1) {
+  \textbf{Lemma 5 (App. D)} \\
+  closed-form policy \\
+  pivot package
+};
+\node[dag_lemma] (Lemma6) at (7.4,-20.0) {
+  \textbf{Lemma 6 (App. D)} \\
+  first-half type fairness \\
+  formalized
+};
+\node[dag_lemma] (Lemma7) at (7.4,-23.9) {
+  \textbf{Lemma 7 (App. D)} \\
+  pivot monotonicity \\
+  formalized
+};
+\node[dag_lemma] (Lemma8) at (7.4,-27.8) {
+  \textbf{Lemma 8 (App. D)} \\
+  interval stitching \\
+  formalized
+};
+\node[dag_partial] (Theorem3) at (7.4,-31.7) {
+  \textbf{Theorem 3 (Sec. 4)} \\
+  two-sided price monotonicity \\
+  source wrappers partial
+};
 
-% --- Edges: model/reduction path ---
-\draw[dag_arrow] (BaseDefs) -- (Lemma1);
+% --- Shared scalar and midpoint algebra. ---
+\node[dag_lemma] (Lemma9) at (14.8,-12.2) {
+  \textbf{Lemma 9 (App. D)} \\
+  $q_j(\alpha)$ monotonicity \\
+  formalized
+};
+\node[dag_lemma] (Lemma10) at (14.8,-20.0) {
+  \textbf{Lemma 10 (App. D)} \\
+  midpoint pivot bound \\
+  formalized
+};
+\node[dag_lemma] (Lemma11) at (14.8,-23.9) {
+  \textbf{Lemma 11 (App. D)} \\
+  fixed-pivot monotonicity \\
+  formalized
+};
+\node[dag_lemma] (Lemma16) at (14.8,-27.8) {
+  \textbf{Lemma 16 (App. E)} \\
+  midpoint $q_j$ algebra \\
+  formalized
+};
+
+% --- Theorem 4: misestimation construction. ---
+\node[dag_model] (Problem11) at (22.2,-8.3) {
+  \textbf{Problem 11 (App. E)} \\
+  three-type fairness LP \\
+  model formalized
+};
+\node[dag_lemma] (Lemma12) at (22.2,-12.2) {
+  \textbf{Lemma 12 (App. E)} \\
+  symmetric reduction to $S'$ \\
+  formalized
+};
+\node[dag_lemma] (Lemma17) at (22.2,-16.1) {
+  \textbf{Lemma 17 (App. E)} \\
+  right-half zero mass \\
+  formalized
+};
+\node[dag_lemma] (Lemma13) at (22.2,-20.0) {
+  \textbf{Lemma 13 (App. E)} \\
+  pivot support \\
+  formalized
+};
+\node[dag_model] (Problem12) at (22.2,-23.9) {
+  \textbf{Problem 12 (App. E)} \\
+  truncated LP \\
+  model formalized
+};
+\node[dag_lemma] (Lemma14) at (22.2,-27.8) {
+  \textbf{Lemma 14 (App. E)} \\
+  unique optimum \\
+  formalized
+};
+\node[dag_lemma] (Lemma15) at (22.2,-31.7) {
+  \textbf{Lemma 15 (App. E)} \\
+  closed coordinates \\
+  center convention explicit
+};
+\node[dag_result] (Theorem4) at (22.2,-35.6) {
+  \textbf{Theorem 4 (Sec. 5/App. E)} \\
+  misestimation tradeoff \\
+  source wrappers closed
+};
+
+% --- Framework edges. ---
+\draw[dag_arrow] (Problem1) -- (Lemma1);
 \draw[dag_arrow] (Lemma1) -- (Lemma2);
-\draw[dag_arrow] (Lemma2) -- (Prop2);
-\draw[dag_arrow] (Prop2) -- (Reduction);
-\draw[dag_arrow] (Reduction) -- (Theorem3);
+\draw[dag_arrow] (Lemma2) -- (Prop1);
+\draw[dag_arrow] (Prop1) -- (Prop2);
+\draw[dag_arrow] (Prop2) -- (Lemma3);
 
-% --- Edges: Problem 6 / Theorem 3 path ---
-\draw[dag_arrow] (Lemma2) -- (Problem6);
-\draw[dag_arrow] (Problem6) -- (Lemma4);
-\draw[dag_arrow] (Lemma4) -- (Lemma5);
-\draw[dag_arrow] (Lemma5) -- (Lemmas6to11);
-\draw[dag_arrow] (Lemmas6to11.west) -- (Theorem3.east);
-\draw[dag_arrow] (Problem6) -- (Lemma16);
+% --- Theorem 3 proof-roadmap edges. ---
+\draw[dag_dashed_arrow] (Prop2.east) -- ++(1.2,0) |- (Problem6.west);
+\draw[dag_dashed_arrow] (Problem6) -- (Lemma4);
+\draw[dag_dashed_arrow] (Lemma4) -- (Lemma5);
+\draw[dag_dashed_arrow] (Lemma5) -- (Lemma6);
+\draw[dag_arrow] (Lemma6) -- (Lemma7);
+\draw[dag_arrow] (Lemma7) -- (Lemma8);
+\draw[dag_arrow] (Lemma8) -- (Theorem3);
+\draw[dag_arrow] (Lemma3.east) -- ++(1.2,0) |- (Theorem3.west);
+\draw[dag_arrow] (Lemma9.west) -- (Lemma5.east);
+\draw[dag_arrow] (Lemma9) -- (Lemma10);
+\draw[dag_arrow] (Lemma10) -- (Lemma11);
+\draw[dag_arrow] (Lemma11.west) -- (Lemma8.east);
 
-% --- Edges: Problem 11 / Lemma 13 path ---
-\draw[dag_arrow] (Problem6) -- (Problem11);
-\draw[dag_arrow] (Lemma16.south) |- (Problem11.north);
-\draw[dag_arrow] (Reduction.east) -| (Lemma12.west);
+% --- Theorem 4 proof-roadmap edges. ---
 \draw[dag_arrow] (Problem11) -- (Lemma12);
-\draw[dag_arrow] (Problem11) -- (Problem11Dual);
-\draw[dag_arrow] (Problem11Dual.south) |- (Lemma15.east);
 \draw[dag_arrow] (Lemma12) -- (Lemma17);
-\draw[dag_arrow] (Lemma17) -- (NoGap);
-\draw[dag_arrow] (NoGap) -- (Lemma13);
-\draw[dag_arrow] (Lemma13) -- (Lemma15);
-\draw[dag_arrow] (Lemma15.east) -- (NoExtremes.west);
-
-% --- Edges: Theorem 4 path ---
-\draw[dag_arrow] (NoExtremes) -- (ColdBounds);
-\draw[dag_arrow] (ColdBounds) -- (Theorem4Conditional);
-\draw[dag_arrow] (NoFairness) |- (Theorem4Full.west);
-\draw[dag_arrow] (TrueLower) -- (Theorem4Conditional);
-\draw[dag_arrow] (Problem11Dual.south) |- (Theorem4Conditional.east);
-\draw[dag_arrow] (Lemma14.east) -| (Theorem4Conditional.east);
-\draw[dag_arrow] (Theorem4Conditional) -- (Theorem4Full);
-\draw[dag_arrow] (VExist) -- (Theorem4Full);
-\draw[dag_arrow] (Midpoint.west) |- (Theorem3.east);
-\draw[dag_arrow] (Midpoint) |- (Theorem4Full);
+\draw[dag_arrow] (Lemma17) -- (Lemma13);
+\draw[dag_arrow] (Lemma13) -- (Problem12);
+\draw[dag_arrow] (Problem12) -- (Lemma14);
+\draw[dag_arrow] (Lemma14) -- (Lemma15);
+\draw[dag_arrow] (Lemma15) -- (Theorem4);
+\draw[dag_arrow] (Lemma16.east) -- ++(1.2,0) |- (Lemma15.west);
 
 \end{tikzpicture}
 \end{document}
