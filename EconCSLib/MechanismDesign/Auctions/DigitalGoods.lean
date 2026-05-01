@@ -1848,6 +1848,23 @@ noncomputable def twoValueFixedPriceBenchmark
           exact ⟨Sum.inr ⟨0, hlow_pos⟩⟩)
       (twoValueBidProfile H highCount lowCount) 1
 
+/--
+Canonical erased-bid list for a binary input: `highCount` copies of the high
+value followed by `lowCount` copies of the low value `1`.
+-/
+def twoValueErasedBidList (H highCount lowCount : ℕ) : List ℝ :=
+  List.replicate highCount (H : ℝ) ++ List.replicate lowCount 1
+
+/--
+Restrict a paper-style anonymous bid-independent price rule on erased bid
+lists to binary inputs. On binary inputs the canonical list is determined by
+the high/low counts, which is the count-threshold model used in Theorem 9.1.
+-/
+def twoValueListBidIndependentThresholdPrice
+    (priceRule : List ℝ → ℝ) (H : ℕ) : ℕ → ℕ → ℝ :=
+  fun highCount lowCount =>
+    priceRule (twoValueErasedBidList H highCount lowCount)
+
 theorem finiteCandidateFixedPriceBenchmark_twoValue_one_price_ge_total
     {H highCount lowCount : ℕ}
     [Nonempty (TwoValueAgent highCount lowCount)]
@@ -2308,6 +2325,27 @@ theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled_benchmark
           exact_mod_cast halpha_le_k
         exact le_trans
           (mul_le_mul_of_nonneg_left halpha_cast hH_nonneg) hbench
+
+/--
+GHW Theorem 9.1 for a paper-style anonymous bid-independent price rule `f` on
+erased bid lists. Its binary restriction is exactly the count-threshold rule
+above, so the adversarial two-value input is obtained from the count-threshold
+theorem.
+-/
+theorem twoValueListBidIndependentPrice_exists_low_revenue_witness_scaled_benchmark
+    (priceRule : List ℝ → ℝ) {H alpha : ℕ}
+    (hH_ge_two : 2 ≤ H) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (H : ℝ) *
+          twoValueBidIndependentPriceRevenue
+            (twoValueListBidIndependentThresholdPrice priceRule H)
+            H highCount lowCount ≤
+        twoValueFixedPriceBenchmark H highCount lowCount ∧
+      (H : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark H highCount lowCount := by
+  exact twoValueBidIndependentPrice_exists_low_revenue_witness_scaled_benchmark
+    (twoValueListBidIndependentThresholdPrice priceRule H)
+    hH_ge_two halpha_pos
 
 /-! ### Deterministic single-parameter offer slices -/
 

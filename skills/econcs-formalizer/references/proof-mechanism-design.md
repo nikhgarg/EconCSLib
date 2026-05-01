@@ -102,6 +102,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   Classifying an offer as "high" when it is above the low value `1` proves the
   same adversarial transition and avoids spending proof effort on a separate
   normalization argument.
+- When a paper's bid-independent auction is anonymous and takes a set/multiset
+  of other bid values, bridge it to a count-threshold theorem by defining a
+  canonical erased-bid representation for the restricted input family (for
+  example, a list with all high values followed by all low values). This closes
+  the paper's anonymous binary restriction without pretending it covers a
+  stronger identity-aware threshold model.
 - When a lower-bound construction returns a feasible benchmark lower bound,
   strengthen it to the actual benchmark before declaring the paper endpoint
   closed. For finite candidate fixed-price benchmarks this usually means
