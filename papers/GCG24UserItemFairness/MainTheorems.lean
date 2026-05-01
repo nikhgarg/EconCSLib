@@ -7508,6 +7508,30 @@ theorem paper_problem11_policyOptimal_value_pos
   exact theorem4Problem11PolicyOptimal_value_pos hopt
 
 /--
+Appendix E, Lemma 14 value-uniqueness component: two Problem 11 epigraph
+optima have the same `λ`.
+-/
+theorem paper_lemma14_problem11_policyOptimal_value_unique
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell)
+    (hopt' : Theorem4Problem11PolicyOptimal beta v ρ' ell') :
+    ell = ell' := by
+  exact theorem4Problem11PolicyOptimal_value_unique hopt hopt'
+
+/--
+Appendix E, Lemma 14 value-uniqueness component for the equality-form
+basic-optimum packages used in Lemmas 13--15.
+-/
+theorem paper_lemma14_problem11_equalizedBasicOptimal_value_unique
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    ell = ell' := by
+  exact theorem4Problem11EqualizedBasicOptimal_value_unique h h'
+
+/--
 Appendix E, Lemma 13 proof component: an equality-form Problem 11 optimum
 covers every item by one of the two known-type mirror rows or the cold-start
 row.
@@ -7574,6 +7598,143 @@ theorem paper_lemma17_problem11_typeZero_zero_after_mirror_of_equalizedBasicOpti
   exact theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
     hn hbeta_pos hpos hdec h.mirror
     (theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h)
+
+/--
+Appendix E, Lemma 13/14 support component: the selected last active
+known-type coordinate of an equality-form Problem 11 optimum is in the left
+half of the mirror order.
+-/
+theorem paper_lemma14_problem11_lastActive_le_reverse_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    (theorem4Problem11LastActiveTypeZero ρ).val ≤
+      (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val := by
+  exact theorem4Problem11LastActiveTypeZero_le_reverse_of_equalizedBasicOptimal
+    hn hbeta_pos hpos hdec h
+
+/--
+Appendix E, Lemma 14 pivot-uniqueness component: two equality-form Problem 11
+optima select the same last active known-type coordinate.
+-/
+theorem paper_lemma14_problem11_lastActive_eq_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    theorem4Problem11LastActiveTypeZero ρ =
+      theorem4Problem11LastActiveTypeZero ρ' := by
+  exact theorem4Problem11EqualizedBasicOptimal_lastActive_eq
+    hn hbeta_pos hbeta_half hpos hdec h h'
+
+/--
+Appendix E, Lemma 14 sparse comparison component: before the last active
+known-type coordinates of two equality-form Problem 11 optima, the known-row
+coordinates agree.
+-/
+theorem paper_lemma14_problem11_typeZero_toReal_eq_of_before_both_lastActive
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ} {j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (hj : j.val < (theorem4Problem11LastActiveTypeZero ρ).val)
+    (hj' : j.val < (theorem4Problem11LastActiveTypeZero ρ').val) :
+    (ρ 0 j).toReal = (ρ' 0 j).toReal := by
+  exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq_of_before_both_lastActive
+    hn hbeta_pos hbeta_half hpos hdec h h' hj hj'
+
+/--
+Appendix E, Lemma 14 sparse comparison component: after the last active
+known-type coordinates of two equality-form Problem 11 optima, on the left half
+of the mirror order, the cold-start coordinates agree.
+-/
+theorem paper_lemma14_problem11_cold_toReal_eq_of_both_lastActive_before_left
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ} {j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (hj : (theorem4Problem11LastActiveTypeZero ρ).val < j.val)
+    (hj' : (theorem4Problem11LastActiveTypeZero ρ').val < j.val)
+    (hjleft : j.val ≤ (reverseItem j).val) :
+    (ρ 2 j).toReal = (ρ' 2 j).toReal := by
+  exact theorem4Problem11EqualizedBasicOptimal_cold_toReal_eq_of_both_lastActive_before_left
+    hn hbeta_pos hbeta_half hpos hdec h h' hj hj' hjleft
+
+/--
+Appendix E, Lemma 14 coordinate-uniqueness component: after pivot uniqueness,
+the known-type coordinates of two equality-form Problem 11 optima agree at
+every item.
+-/
+theorem paper_lemma14_problem11_typeZero_toReal_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (j : Item n) :
+    (ρ 0 j).toReal = (ρ' 0 j).toReal := by
+  exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq
+    hn hbeta_pos hbeta_half hpos hdec h h' j
+
+/--
+Appendix E, Lemma 14 coordinate-uniqueness component: item equalization and
+known-row equality force the cold-start coordinates to agree.
+-/
+theorem paper_lemma14_problem11_cold_toReal_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (j : Item n) :
+    (ρ 2 j).toReal = (ρ' 2 j).toReal := by
+  exact theorem4Problem11EqualizedBasicOptimal_cold_toReal_eq
+    hn hbeta_pos hbeta_half hpos hdec h h' j
+
+/--
+Appendix E, Lemma 14: the equality-form Problem 11 optimum is unique inside
+the mirror-symmetric basic-feasible package.
+-/
+theorem paper_lemma14_problem11_equalizedBasicOptimal_policy_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    ρ = ρ' := by
+  exact theorem4Problem11EqualizedBasicOptimal_policy_eq
+    hn hbeta_pos hbeta_half hpos hdec h h'
 
 /--
 Appendix E, Lemma 13 support-count bridge: once the paper's two no-gap
@@ -7757,6 +7918,22 @@ theorem paper_theorem4_problem11_no_extremes_of_equalized_noGap
     ρ 2 theorem4FirstItem = 0 ∧ ρ 2 theorem4LastItem = 0 := by
   exact theorem4Problem11_no_extremes_of_equalized_noGap
     hn hbeta hbeta_half hpos hdec h hx hz
+
+/--
+Appendix E, Theorem 4 value-vector witness.
+
+For every `eps > 0`, there is a positive strictly decreasing value vector whose
+second item is small enough relative to the first item for the final
+cold-start utility bound.
+-/
+theorem paper_theorem4_valueVector_exists_small_second
+    {n : ℕ} [NeZero n] (hn : 1 < n) {eps : ℝ} (heps : 0 < eps) :
+    ∃ v : Item n → ℝ,
+      (∀ j : Item n, 0 < v j) ∧
+      StrictlyDecreasingByIndex v ∧
+      v (theorem4SecondItem hn) <
+        eps / (n : ℝ) * v theorem4FirstItem := by
+  exact theorem4_valueVector_exists_small_second hn heps
 
 /--
 Appendix E, Theorem 4 no-item-fairness construction, first possible true

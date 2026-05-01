@@ -53,8 +53,8 @@
   {\textbf{Lemma 15 (App. E)} \\ Pivot-one coordinates; full formula open};
 
 % --- Theorem 4 downstream wrappers and open paper theorem ---
-\node[dag_unformalized, right=of NoGap] (Lemma14)
-  {\textbf{Lemma 14 (App. E)} \\ Uniqueness of optimum};
+\node[dag_lemma, right=of NoGap] (Lemma14)
+  {\textbf{Lemma 14 (App. E)} \\ Equality-form optimum uniqueness};
 \node[dag_lemma, right=of Lemma13] (NoExtremes)
   {\textbf{Theorem 4 No-Extremes} \\ Equality-form Problem 11 bridge};
 \node[dag_lemma, below=of NoExtremes] (ColdBounds)
@@ -65,10 +65,10 @@
   {\textbf{True-Model Lower Bound} \\ $U^*_{\min}(1,w) > 1/n$};
 \node[dag_conditional, below=1.7cm of NoFairness, xshift=3.2cm] (Theorem4Conditional)
   {\textbf{Theorem 4 Wrappers} \\ Formalized from equality-form Problem 11};
-\node[dag_unformalized, below=of Theorem4Conditional] (VExist)
-  {\textbf{Value-Vector Witness} \\ Open $v_2 < \varepsilon v_1 / n$ construction};
+\node[dag_lemma, below=of Theorem4Conditional] (VExist)
+  {\textbf{Value-Vector Witness} \\ Geometric $v_j=r^j$ construction};
 \node[dag_unformalized, below=of VExist] (Theorem4Full)
-  {\textbf{Theorem 4 (App. E)} \\ Full paper theorem not closed yet};
+  {\textbf{Theorem 4 (App. E)} \\ Open: selected Problem 11 optimum};
 
 % --- Edges: model/reduction path ---
 \draw[dag_arrow] (BaseDefs) -- (Lemma1);
@@ -101,9 +101,9 @@
 \draw[dag_arrow] (ColdBounds) -- (Theorem4Conditional);
 \draw[dag_arrow] (NoFairness) -- (Theorem4Conditional);
 \draw[dag_arrow] (TrueLower) -- (Theorem4Conditional);
-\draw[dag_arrow] (Theorem4Conditional) -- (VExist);
+\draw[dag_arrow] (Theorem4Conditional) -- (Theorem4Full);
 \draw[dag_arrow] (VExist) -- (Theorem4Full);
-\draw[dag_dashed_arrow] (Lemma14.east) -| (Theorem4Full.east);
+\draw[dag_arrow] (Lemma14.east) -| (Theorem4Full.east);
 
 \end{tikzpicture}
 \end{document}

@@ -86,6 +86,85 @@ theorem theorem4_value_le_second_of_ne_first
     simpa using hjpos
   exact value_antitone_of_val_le hdec hle
 
+/--
+The geometric value vector used for the small-`v₂` witness in Theorem 4.
+The first item has value `1`; each later item is smaller by the ratio
+`min (1/2) (eps / (2n))`.
+-/
+noncomputable def theorem4SmallValueVector {n : ℕ} (eps : ℝ) : Item n → ℝ :=
+  fun j => (min (1 / 2 : ℝ) (eps / (2 * (n : ℝ)))) ^ j.val
+
+theorem theorem4SmallValueVector_ratio_pos
+    {n : ℕ} [NeZero n] {eps : ℝ} (heps : 0 < eps) :
+    0 < min (1 / 2 : ℝ) (eps / (2 * (n : ℝ))) := by
+  have hnpos : 0 < (n : ℝ) := by
+    exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne n)
+  have hden_pos : 0 < 2 * (n : ℝ) := mul_pos (by norm_num) hnpos
+  exact lt_min (by norm_num) (div_pos heps hden_pos)
+
+theorem theorem4SmallValueVector_ratio_lt_one
+    {n : ℕ} {eps : ℝ} :
+    min (1 / 2 : ℝ) (eps / (2 * (n : ℝ))) < 1 := by
+  exact lt_of_le_of_lt (min_le_left _ _) (by norm_num)
+
+theorem theorem4SmallValueVector_ratio_lt_eps_div_card
+    {n : ℕ} [NeZero n] {eps : ℝ} (heps : 0 < eps) :
+    min (1 / 2 : ℝ) (eps / (2 * (n : ℝ))) < eps / (n : ℝ) := by
+  have hnpos : 0 < (n : ℝ) := by
+    exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne n)
+  have hdiv_pos : 0 < eps / (n : ℝ) := div_pos heps hnpos
+  have hhalf :
+      eps / (2 * (n : ℝ)) = eps / (n : ℝ) / 2 := by
+    ring
+  have hhalf_lt : eps / (2 * (n : ℝ)) < eps / (n : ℝ) := by
+    rw [hhalf]
+    linarith
+  exact lt_of_le_of_lt (min_le_right _ _) hhalf_lt
+
+theorem theorem4SmallValueVector_pos
+    {n : ℕ} [NeZero n] {eps : ℝ} (heps : 0 < eps) :
+    ∀ j : Item n, 0 < theorem4SmallValueVector eps j := by
+  intro j
+  exact pow_pos (theorem4SmallValueVector_ratio_pos heps) j.val
+
+theorem theorem4SmallValueVector_strictlyDecreasing
+    {n : ℕ} [NeZero n] {eps : ℝ} (heps : 0 < eps) :
+    StrictlyDecreasingByIndex (theorem4SmallValueVector (n := n) eps) := by
+  intro i j hij
+  exact (pow_right_strictAnti₀
+    (theorem4SmallValueVector_ratio_pos (n := n) heps)
+    (theorem4SmallValueVector_ratio_lt_one (n := n) (eps := eps))) hij
+
+theorem theorem4SmallValueVector_first_eq_one
+    {n : ℕ} [NeZero n] {eps : ℝ} :
+    theorem4SmallValueVector (n := n) eps theorem4FirstItem = 1 := by
+  simp [theorem4SmallValueVector]
+
+theorem theorem4SmallValueVector_second_eq_ratio
+    {n : ℕ} [NeZero n] {eps : ℝ} (hn : 1 < n) :
+    theorem4SmallValueVector (n := n) eps (theorem4SecondItem hn) =
+      min (1 / 2 : ℝ) (eps / (2 * (n : ℝ))) := by
+  simp [theorem4SmallValueVector]
+
+/--
+Appendix E, Theorem 4 value-vector witness: for any `eps > 0`, there is a
+positive strictly decreasing value vector whose second value is below
+`eps * v₁ / n`.
+-/
+theorem theorem4_valueVector_exists_small_second
+    {n : ℕ} [NeZero n] (hn : 1 < n) {eps : ℝ} (heps : 0 < eps) :
+    ∃ v : Item n → ℝ,
+      (∀ j : Item n, 0 < v j) ∧
+      StrictlyDecreasingByIndex v ∧
+      v (theorem4SecondItem hn) <
+        eps / (n : ℝ) * v theorem4FirstItem := by
+  refine ⟨theorem4SmallValueVector (n := n) eps,
+    theorem4SmallValueVector_pos heps,
+    theorem4SmallValueVector_strictlyDecreasing heps, ?_⟩
+  rw [theorem4SmallValueVector_first_eq_one,
+    theorem4SmallValueVector_second_eq_ratio hn, mul_one]
+  exact theorem4SmallValueVector_ratio_lt_eps_div_card heps
+
 /-- The first item attains the finite maximum of a strictly decreasing vector. -/
 theorem theorem4_finiteMax_eq_first
     {n : ℕ} [NeZero n] {v : Item n → ℝ}
@@ -1321,6 +1400,31 @@ theorem theorem4Problem11PolicyOptimal_value_pos
   have hle : (n : ℝ)⁻¹ ≤ ell :=
     hopt.2.2 ρu ((n : ℝ)⁻¹) hsym hfeas
   exact lt_of_lt_of_le hinv_pos hle
+
+/--
+Appendix E, Lemma 14 value-uniqueness component: any two Problem 11 epigraph
+optima have the same objective value. The remaining policy-uniqueness part is
+the sparse pivot comparison.
+-/
+theorem theorem4Problem11PolicyOptimal_value_unique
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell)
+    (hopt' : Theorem4Problem11PolicyOptimal beta v ρ' ell') :
+    ell = ell' := by
+  have hle : ell' ≤ ell :=
+    hopt.2.2 ρ' ell' hopt'.1 hopt'.2.1
+  have hge : ell ≤ ell' :=
+    hopt'.2.2 ρ ell hopt.1 hopt.2.1
+  exact le_antisymm hge hle
+
+theorem theorem4Problem11EqualizedBasicOptimal_value_unique
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    ell = ell' := by
+  exact theorem4Problem11PolicyOptimal_value_unique h.optimal h'.optimal
 
 theorem theorem4Problem11_item_coverage_of_equalized_policyOptimal
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
@@ -4071,6 +4175,31 @@ theorem theorem4Problem11_typeZero_active_before_lastActive_of_zeroClosed
   by_contra hz
   exact theorem4Problem11LastActiveTypeZero_active ρ (hx hj hz)
 
+theorem theorem4Problem11LastActiveTypeZero_le_reverse_of_equalizedBasicOptimal
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    (theorem4Problem11LastActiveTypeZero ρ).val ≤
+      (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val := by
+  have hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ :=
+    theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
+  have hright_zero :
+      ∀ j : Item n, (reverseItem j).val < j.val → ρ 0 j = 0 :=
+    theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
+      hn hbeta_pos hpos hdec h.mirror hno
+  by_contra hnot
+  have hrev_lt :
+      (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val <
+        (theorem4Problem11LastActiveTypeZero ρ).val := by
+    omega
+  have hz0 :=
+    hright_zero (theorem4Problem11LastActiveTypeZero ρ) hrev_lt
+  exact theorem4Problem11LastActiveTypeZero_active ρ hz0
+
 theorem theorem4Problem11_sharedItems_of_active_types
     {n : ℕ} (ρ : TypePolicy 3 n) {j : Item n}
     {k k' : UserType 3}
@@ -4315,23 +4444,11 @@ theorem theorem4Problem11PivotSupport_of_equalizedBasicOptimal_noGap
       (theorem4Problem11LastActiveTypeZero ρ) := by
   have hshared : TypePolicy.SharedItemsBound ρ :=
     theorem4Problem11_sharedItemsBound_of_equalizedBasicOptimal h
-  have hno : Theorem4Problem11PolicyNoStrictPointwiseImprovement beta v ρ :=
-    theorem4Problem11_noStrictPointwiseImprovement_of_equalizedBasicOptimal h
-  have hright_zero :
-      ∀ j : Item n, (reverseItem j).val < j.val → ρ 0 j = 0 :=
-    theorem4Problem11_typeZero_zero_after_mirror_of_noStrictPointwiseImprovement
-      hn hbeta_pos hpos hdec h.mirror hno
   have hleft :
       (theorem4Problem11LastActiveTypeZero ρ).val ≤
         (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val := by
-    by_contra hnot
-    have hrev_lt :
-        (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val <
-          (theorem4Problem11LastActiveTypeZero ρ).val := by
-      omega
-    have hz0 :=
-      hright_zero (theorem4Problem11LastActiveTypeZero ρ) hrev_lt
-    exact theorem4Problem11LastActiveTypeZero_active ρ hz0
+    exact theorem4Problem11LastActiveTypeZero_le_reverse_of_equalizedBasicOptimal
+      hn hbeta_pos hpos hdec h
   exact theorem4Problem11PivotSupport_of_lastActive_noGap_of_sharedBound
     h.mirror hx hz hshared hleft
 
@@ -4383,6 +4500,612 @@ theorem theorem4Problem11PivotSupport_typeZero_zero_of_pivot_first
   have hlt : t.val < j.val := by
     simpa [ht] using theorem4FirstItem_val_lt_of_ne hj
   exact hpivot.1 j hlt
+
+theorem theorem4Problem11PivotSupport_typeZero_reverse_zero_of_lt_pivot
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hj : j.val < t.val) :
+    ρ 0 (reverseItem j) = 0 := by
+  have hrev_t_lt_rev_j :
+      (reverseItem t).val < (reverseItem j).val :=
+    reverseItem_val_lt_of_val_lt hj
+  have ht_lt_rev_j : t.val < (reverseItem j).val :=
+    lt_of_le_of_lt hleft hrev_t_lt_rev_j
+  exact hpivot.1 (reverseItem j) ht_lt_rev_j
+
+theorem theorem4Problem11PivotSupport_typeZero_reverse_zero_of_pivot_lt_left
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : t.val < j.val)
+    (hjleft : j.val ≤ (reverseItem j).val) :
+    ρ 0 (reverseItem j) = 0 := by
+  have ht_lt_rev_j : t.val < (reverseItem j).val :=
+    lt_of_lt_of_le hj hjleft
+  exact hpivot.1 (reverseItem j) ht_lt_rev_j
+
+theorem theorem4Problem11PolicyItemValue_eq_known_of_lt_pivot
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hj : j.val < t.val) :
+    theorem4Problem11PolicyItemValue beta v ρ j =
+      2 * beta * pairShare (1 / 2) v j * (ρ 0 j).toReal := by
+  have hz : ρ 2 j = 0 := (hpivot.2 j hj).1
+  have hxrev :
+      ρ 0 (reverseItem j) = 0 :=
+    theorem4Problem11PivotSupport_typeZero_reverse_zero_of_lt_pivot
+      hpivot hleft hj
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  simp [hz, hxrev]
+  ring
+
+theorem theorem4Problem11PolicyItemValue_eq_cold_of_pivot_lt_left
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : t.val < j.val)
+    (hjleft : j.val ≤ (reverseItem j).val) :
+    theorem4Problem11PolicyItemValue beta v ρ j =
+      (1 - 2 * beta) * (ρ 2 j).toReal := by
+  have hx : ρ 0 j = 0 := hpivot.1 j hj
+  have hxrev :
+      ρ 0 (reverseItem j) = 0 :=
+    theorem4Problem11PivotSupport_typeZero_reverse_zero_of_pivot_lt_left
+      hpivot hj hjleft
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  simp [hx, hxrev]
+
+theorem theorem4Problem11PivotSupport_typeZero_toReal_eq_of_lt_pivots
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {t t' j : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hpivot' : Theorem4Problem11PivotSupport ρ' t')
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hleft' : t'.val ≤ (reverseItem t').val)
+    (hitem :
+      theorem4Problem11PolicyItemValue beta v ρ j =
+        theorem4Problem11PolicyItemValue beta v ρ' j)
+    (hj : j.val < t.val)
+    (hj' : j.val < t'.val) :
+    (ρ 0 j).toReal = (ρ' 0 j).toReal := by
+  have hknown :=
+    theorem4Problem11PolicyItemValue_eq_known_of_lt_pivot
+      (beta := beta) (v := v) (ρ := ρ) hpivot hleft hj
+  have hknown' :=
+    theorem4Problem11PolicyItemValue_eq_known_of_lt_pivot
+      (beta := beta) (v := v) (ρ := ρ') hpivot' hleft' hj'
+  have hcoef_pos :
+      0 < 2 * beta * pairShare (1 / 2) v j := by
+    have hq_pos : 0 < pairShare (1 / 2) v j :=
+      pairShare_pos j (by norm_num) (by norm_num) hpos
+    positivity
+  have hmul :
+      (2 * beta * pairShare (1 / 2) v j) * (ρ 0 j).toReal =
+        (2 * beta * pairShare (1 / 2) v j) * (ρ' 0 j).toReal := by
+    rw [← hknown, hitem, hknown']
+  exact mul_left_cancel₀ (ne_of_gt hcoef_pos) hmul
+
+theorem theorem4Problem11PivotSupport_cold_toReal_eq_of_pivots_lt_left
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {t t' j : Item n}
+    (hbeta_half : beta < 1 / 2)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hpivot' : Theorem4Problem11PivotSupport ρ' t')
+    (hitem :
+      theorem4Problem11PolicyItemValue beta v ρ j =
+        theorem4Problem11PolicyItemValue beta v ρ' j)
+    (hj : t.val < j.val)
+    (hj' : t'.val < j.val)
+    (hjleft : j.val ≤ (reverseItem j).val) :
+    (ρ 2 j).toReal = (ρ' 2 j).toReal := by
+  have hcold :=
+    theorem4Problem11PolicyItemValue_eq_cold_of_pivot_lt_left
+      (beta := beta) (v := v) (ρ := ρ) hpivot hj hjleft
+  have hcold' :=
+    theorem4Problem11PolicyItemValue_eq_cold_of_pivot_lt_left
+      (beta := beta) (v := v) (ρ := ρ') hpivot' hj' hjleft
+  have hcoef_pos : 0 < 1 - 2 * beta := by
+    nlinarith
+  have hmul :
+      (1 - 2 * beta) * (ρ 2 j).toReal =
+        (1 - 2 * beta) * (ρ' 2 j).toReal := by
+    rw [← hcold, hitem, hcold']
+  exact mul_left_cancel₀ (ne_of_gt hcoef_pos) hmul
+
+theorem theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq_of_before_both_lastActive
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ} {j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (hj : j.val < (theorem4Problem11LastActiveTypeZero ρ).val)
+    (hj' : j.val < (theorem4Problem11LastActiveTypeZero ρ').val) :
+    (ρ 0 j).toReal = (ρ' 0 j).toReal := by
+  have hpivot :
+      Theorem4Problem11PivotSupport ρ
+        (theorem4Problem11LastActiveTypeZero ρ) :=
+    theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h
+  have hpivot' :
+      Theorem4Problem11PivotSupport ρ'
+        (theorem4Problem11LastActiveTypeZero ρ') :=
+    theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h'
+  have hleft :
+      (theorem4Problem11LastActiveTypeZero ρ).val ≤
+        (reverseItem (theorem4Problem11LastActiveTypeZero ρ)).val :=
+    theorem4Problem11LastActiveTypeZero_le_reverse_of_equalizedBasicOptimal
+      hn hbeta_pos hpos hdec h
+  have hleft' :
+      (theorem4Problem11LastActiveTypeZero ρ').val ≤
+        (reverseItem (theorem4Problem11LastActiveTypeZero ρ')).val :=
+    theorem4Problem11LastActiveTypeZero_le_reverse_of_equalizedBasicOptimal
+      hn hbeta_pos hpos hdec h'
+  have hell : ell = ell' :=
+    theorem4Problem11EqualizedBasicOptimal_value_unique h h'
+  have hitem :
+      theorem4Problem11PolicyItemValue beta v ρ j =
+        theorem4Problem11PolicyItemValue beta v ρ' j := by
+    calc
+      theorem4Problem11PolicyItemValue beta v ρ j = ell := h.item_eq j
+      _ = ell' := hell
+      _ = theorem4Problem11PolicyItemValue beta v ρ' j := (h'.item_eq j).symm
+  exact theorem4Problem11PivotSupport_typeZero_toReal_eq_of_lt_pivots
+    hbeta_pos hpos hpivot hpivot' hleft hleft' hitem hj hj'
+
+theorem theorem4Problem11EqualizedBasicOptimal_cold_toReal_eq_of_both_lastActive_before_left
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ} {j : Item n}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (hj : (theorem4Problem11LastActiveTypeZero ρ).val < j.val)
+    (hj' : (theorem4Problem11LastActiveTypeZero ρ').val < j.val)
+    (hjleft : j.val ≤ (reverseItem j).val) :
+    (ρ 2 j).toReal = (ρ' 2 j).toReal := by
+  have hpivot :
+      Theorem4Problem11PivotSupport ρ
+        (theorem4Problem11LastActiveTypeZero ρ) :=
+    theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h
+  have hpivot' :
+      Theorem4Problem11PivotSupport ρ'
+        (theorem4Problem11LastActiveTypeZero ρ') :=
+    theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h'
+  have hell : ell = ell' :=
+    theorem4Problem11EqualizedBasicOptimal_value_unique h h'
+  have hitem :
+      theorem4Problem11PolicyItemValue beta v ρ j =
+        theorem4Problem11PolicyItemValue beta v ρ' j := by
+    calc
+      theorem4Problem11PolicyItemValue beta v ρ j = ell := h.item_eq j
+      _ = ell' := hell
+      _ = theorem4Problem11PolicyItemValue beta v ρ' j := (h'.item_eq j).symm
+  exact theorem4Problem11PivotSupport_cold_toReal_eq_of_pivots_lt_left
+    hbeta_half hpivot hpivot' hitem hj hj' hjleft
+
+private theorem theorem4_sum_eq_left_part_add_pivot_of_after_zero {n : ℕ}
+    (x : Item n → ℝ) (t : Item n)
+    (hzero : ∀ {j : Item n}, t.val < j.val → x j = 0) :
+    (∑ j : Item n, x j) =
+      (∑ j : Item n, if j.val < t.val then x j else 0) + x t := by
+  classical
+  calc
+    (∑ j : Item n, x j)
+        = ∑ j : Item n,
+            ((if j.val < t.val then x j else 0) +
+              (if j = t then x t else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          by_cases hlt : j.val < t.val
+          · have hne : j ≠ t := by
+              intro h
+              subst h
+              omega
+            simp [hlt, hne]
+          · by_cases heq : j = t
+            · subst heq
+              simp
+            · have hgt : t.val < j.val := by
+                have hne_val : j.val ≠ t.val := by
+                  intro hval
+                  exact heq (Fin.ext hval)
+                omega
+              simp [hlt, heq, hzero hgt]
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) +
+          (∑ j : Item n, if j = t then x t else 0) := by
+          rw [Finset.sum_add_distrib]
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) + x t := by
+          simp
+
+private theorem theorem4_sum_eq_left_part_add_pivot_add_right_part {n : ℕ}
+    (x : Item n → ℝ) (t : Item n) :
+    (∑ j : Item n, x j) =
+      (∑ j : Item n, if j.val < t.val then x j else 0) + x t +
+        (∑ j : Item n, if t.val < j.val then x j else 0) := by
+  classical
+  calc
+    (∑ j : Item n, x j)
+        = ∑ j : Item n,
+            ((if j.val < t.val then x j else 0) +
+              (if j = t then x t else 0) +
+              (if t.val < j.val then x j else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          by_cases hlt : j.val < t.val
+          · have hne : j ≠ t := by
+              intro h
+              subst h
+              omega
+            have hnlt : ¬ t.val < j.val := by omega
+            simp [hlt, hne, hnlt]
+          · by_cases heq : j = t
+            · subst heq
+              simp
+            · have hgt : t.val < j.val := by
+                have hne_val : j.val ≠ t.val := by
+                  intro hval
+                  exact heq (Fin.ext hval)
+                omega
+              simp [hlt, heq, hgt]
+    _ =
+        ((∑ j : Item n, if j.val < t.val then x j else 0) +
+          (∑ j : Item n, if j = t then x t else 0)) +
+          (∑ j : Item n, if t.val < j.val then x j else 0) := by
+          rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
+    _ = (∑ j : Item n, if j.val < t.val then x j else 0) + x t +
+        (∑ j : Item n, if t.val < j.val then x j else 0) := by
+          simp
+
+theorem theorem4Problem11PivotSupport_typeZero_pivot_toReal_eq_one_sub_leftSum
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t) :
+    (ρ 0 t).toReal =
+      1 - (∑ j : Item n, if j.val < t.val then (ρ 0 j).toReal else 0) := by
+  have hsplit :=
+    theorem4_sum_eq_left_part_add_pivot_of_after_zero
+      (fun j : Item n => (ρ 0 j).toReal) t
+      (fun {j} hj => by simp [hpivot.1 j hj])
+  have hsum : (∑ j : Item n, (ρ 0 j).toReal) = 1 :=
+    EconCSLib.pmfToRealSum (ρ 0)
+  nlinarith
+
+theorem theorem4Problem11PivotSupport_policyItemValue_eq_at_left_pivot
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    theorem4Problem11PolicyItemValue beta v ρ t =
+      2 * beta * pairShare (1 / 2) v t * (ρ 0 t).toReal +
+        (1 - 2 * beta) * (ρ 2 t).toReal := by
+  have hxrev : ρ 0 (reverseItem t) = 0 :=
+    hpivot.1 (reverseItem t) ht_left
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  simp [hxrev]
+  ring
+
+theorem theorem4Problem11EqualizedBasicOptimal_not_lastActive_lt
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    ¬ (theorem4Problem11LastActiveTypeZero ρ).val <
+      (theorem4Problem11LastActiveTypeZero ρ').val := by
+  intro htt'
+  let t : Item n := theorem4Problem11LastActiveTypeZero ρ
+  let t' : Item n := theorem4Problem11LastActiveTypeZero ρ'
+  have hpivot :
+      Theorem4Problem11PivotSupport ρ t := by
+    dsimp [t]
+    exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h
+  have hpivot' :
+      Theorem4Problem11PivotSupport ρ' t' := by
+    dsimp [t']
+    exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h'
+  have hleft' : t'.val ≤ (reverseItem t').val := by
+    dsimp [t']
+    exact theorem4Problem11LastActiveTypeZero_le_reverse_of_equalizedBasicOptimal
+      hn hbeta_pos hpos hdec h'
+  have hrev_t'_lt_rev_t :
+      (reverseItem t').val < (reverseItem t).val := by
+    exact reverseItem_val_lt_of_val_lt htt'
+  have ht_left : t.val < (reverseItem t).val := by
+    have ht'_lt_rev_t : t'.val < (reverseItem t).val :=
+      lt_of_le_of_lt hleft' hrev_t'_lt_rev_t
+    exact lt_trans htt' ht'_lt_rev_t
+  have ht'_lt_rev_t : t'.val < (reverseItem t).val :=
+    lt_of_le_of_lt hleft' hrev_t'_lt_rev_t
+  let q : ℝ := pairShare (1 / 2) v t
+  let a : ℝ := 2 * beta * q
+  let c : ℝ := 1 - 2 * beta
+  let leftx : ℝ :=
+    ∑ j : Item n, if j.val < t.val then (ρ 0 j).toReal else 0
+  let leftx' : ℝ :=
+    ∑ j : Item n, if j.val < t.val then (ρ' 0 j).toReal else 0
+  let rightx' : ℝ :=
+    ∑ j : Item n, if t.val < j.val then (ρ' 0 j).toReal else 0
+  have hq_pos : 0 < q := by
+    dsimp [q]
+    exact pairShare_pos t (by norm_num) (by norm_num) hpos
+  have ha_pos : 0 < a := by
+    dsimp [a]
+    positivity
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    nlinarith
+  have hleft_eq : leftx = leftx' := by
+    unfold leftx leftx'
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    by_cases hjt : j.val < t.val
+    · have hjt' : j.val < t'.val := lt_trans hjt htt'
+      have hx_eq :
+          (ρ 0 j).toReal = (ρ' 0 j).toReal := by
+        dsimp [t, t'] at hjt hjt'
+        exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq_of_before_both_lastActive
+          hn hbeta_pos hbeta_half hpos hdec h h' hjt hjt'
+      simp [hjt, hx_eq]
+    · simp [hjt]
+  have hx_t_eq :
+      (ρ 0 t).toReal = 1 - leftx := by
+    dsimp [leftx]
+    exact theorem4Problem11PivotSupport_typeZero_pivot_toReal_eq_one_sub_leftSum
+      hpivot
+  have hitem_t :
+      theorem4Problem11PolicyItemValue beta v ρ t =
+        a * (ρ 0 t).toReal + c * (ρ 2 t).toReal := by
+    dsimp [a, c, q]
+    exact theorem4Problem11PivotSupport_policyItemValue_eq_at_left_pivot
+      hpivot ht_left
+  have hitem_t' :
+      theorem4Problem11PolicyItemValue beta v ρ' t =
+        a * (ρ' 0 t).toReal := by
+    have hknown :=
+      theorem4Problem11PolicyItemValue_eq_known_of_lt_pivot
+        (beta := beta) (v := v) (ρ := ρ') hpivot' hleft' htt'
+    dsimp [a, q]
+    simpa [t] using hknown
+  have hell : ell = ell' :=
+    theorem4Problem11EqualizedBasicOptimal_value_unique h h'
+  have hmain :
+      a * (1 - leftx) + c * (ρ 2 t).toReal =
+        a * (ρ' 0 t).toReal := by
+    nlinarith [hitem_t, hitem_t', h.item_eq t, h'.item_eq t, hell, hx_t_eq]
+  have hz_nonneg : 0 ≤ (ρ 2 t).toReal := ENNReal.toReal_nonneg
+  have hprefix_ge : 1 ≤ leftx' + (ρ' 0 t).toReal := by
+    nlinarith [hmain, hleft_eq, ha_pos, mul_nonneg hc_pos.le hz_nonneg]
+  have hx'_pivot_pos : 0 < (ρ' 0 t').toReal := by
+    dsimp [t']
+    exact typePolicy_toReal_pos_of_ne_zero ρ'
+      (theorem4Problem11LastActiveTypeZero_active ρ')
+  have hrightx'_pos : 0 < rightx' := by
+    have hle : (ρ' 0 t').toReal ≤ rightx' := by
+      have htt_fin : t < t' := by exact htt'
+      unfold rightx'
+      simpa [htt_fin] using
+        Finset.single_le_sum
+          (s := (Finset.univ : Finset (Item n)))
+          (f := fun j : Item n => if t.val < j.val then (ρ' 0 j).toReal else 0)
+          (fun j _hj => by
+            by_cases hj : t.val < j.val
+            · simp [hj, ENNReal.toReal_nonneg]
+            · simp [hj])
+          (by simp : t' ∈ (Finset.univ : Finset (Item n)))
+    exact lt_of_lt_of_le hx'_pivot_pos hle
+  have hsplit' :=
+    theorem4_sum_eq_left_part_add_pivot_add_right_part
+      (fun j : Item n => (ρ' 0 j).toReal) t
+  have hsum' : (∑ j : Item n, (ρ' 0 j).toReal) = 1 :=
+    EconCSLib.pmfToRealSum (ρ' 0)
+  have hprefix_lt : leftx' + (ρ' 0 t).toReal < 1 := by
+    have hsum_split :
+        (∑ j : Item n, (ρ' 0 j).toReal) =
+          leftx' + (ρ' 0 t).toReal + rightx' := by
+      simpa [leftx', rightx'] using hsplit'
+    nlinarith
+  linarith
+
+theorem theorem4Problem11EqualizedBasicOptimal_lastActive_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    theorem4Problem11LastActiveTypeZero ρ =
+      theorem4Problem11LastActiveTypeZero ρ' := by
+  have hnot_lt :
+      ¬ (theorem4Problem11LastActiveTypeZero ρ).val <
+        (theorem4Problem11LastActiveTypeZero ρ').val :=
+    theorem4Problem11EqualizedBasicOptimal_not_lastActive_lt
+      hn hbeta_pos hbeta_half hpos hdec h h'
+  have hnot_gt :
+      ¬ (theorem4Problem11LastActiveTypeZero ρ').val <
+        (theorem4Problem11LastActiveTypeZero ρ).val :=
+    theorem4Problem11EqualizedBasicOptimal_not_lastActive_lt
+      hn hbeta_pos hbeta_half hpos hdec h' h
+  apply Fin.ext
+  omega
+
+theorem theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (j : Item n) :
+    (ρ 0 j).toReal = (ρ' 0 j).toReal := by
+  let t : Item n := theorem4Problem11LastActiveTypeZero ρ
+  let t' : Item n := theorem4Problem11LastActiveTypeZero ρ'
+  have ht_eq : t = t' := by
+    dsimp [t, t']
+    exact theorem4Problem11EqualizedBasicOptimal_lastActive_eq
+      hn hbeta_pos hbeta_half hpos hdec h h'
+  have hpivot :
+      Theorem4Problem11PivotSupport ρ t := by
+    dsimp [t]
+    exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h
+  have hpivot' :
+      Theorem4Problem11PivotSupport ρ' t' := by
+    dsimp [t']
+    exact theorem4Problem11PivotSupport_of_equalizedBasicOptimal
+      hn hbeta_pos hbeta_half hpos hdec h'
+  by_cases hjlt : j.val < t.val
+  · have hjlt' : j.val < t'.val := by simpa [← ht_eq] using hjlt
+    dsimp [t, t'] at hjlt hjlt'
+    exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq_of_before_both_lastActive
+      hn hbeta_pos hbeta_half hpos hdec h h' hjlt hjlt'
+  · by_cases hjeq : j = t
+    · subst j
+      let leftx : ℝ :=
+        ∑ l : Item n, if l.val < t.val then (ρ 0 l).toReal else 0
+      let leftx' : ℝ :=
+        ∑ l : Item n, if l.val < t.val then (ρ' 0 l).toReal else 0
+      have hleft_eq : leftx = leftx' := by
+        unfold leftx leftx'
+        refine Finset.sum_congr rfl ?_
+        intro l _hl
+        by_cases hlt : l.val < t.val
+        · have hlt' : l.val < t'.val := by simpa [← ht_eq] using hlt
+          have hx_eq :
+              (ρ 0 l).toReal = (ρ' 0 l).toReal := by
+            dsimp [t, t'] at hlt hlt'
+            exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq_of_before_both_lastActive
+              hn hbeta_pos hbeta_half hpos hdec h h' hlt hlt'
+          simp [hlt, hx_eq]
+        · simp [hlt]
+      have hx_t :
+          (ρ 0 t).toReal = 1 - leftx := by
+        dsimp [leftx]
+        exact theorem4Problem11PivotSupport_typeZero_pivot_toReal_eq_one_sub_leftSum
+          hpivot
+      have hx_t' :
+          (ρ' 0 t).toReal = 1 - leftx' := by
+        have hx_raw :=
+          theorem4Problem11PivotSupport_typeZero_pivot_toReal_eq_one_sub_leftSum
+            hpivot'
+        dsimp [leftx']
+        simpa [ht_eq] using hx_raw
+      nlinarith
+    · have hjgt : t.val < j.val := by
+        have hne_val : j.val ≠ t.val := by
+          intro hval
+          exact hjeq (Fin.ext hval)
+        omega
+      have hx : ρ 0 j = 0 := hpivot.1 j hjgt
+      have hjgt' : t'.val < j.val := by simpa [← ht_eq] using hjgt
+      have hx' : ρ' 0 j = 0 := hpivot'.1 j hjgt'
+      simp [hx, hx']
+
+theorem theorem4Problem11EqualizedBasicOptimal_cold_toReal_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell')
+    (j : Item n) :
+    (ρ 2 j).toReal = (ρ' 2 j).toReal := by
+  have hell : ell = ell' :=
+    theorem4Problem11EqualizedBasicOptimal_value_unique h h'
+  have hxj :
+      (ρ 0 j).toReal = (ρ' 0 j).toReal :=
+    theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq
+      hn hbeta_pos hbeta_half hpos hdec h h' j
+  have hxrev :
+      (ρ 0 (reverseItem j)).toReal =
+        (ρ' 0 (reverseItem j)).toReal :=
+    theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq
+      hn hbeta_pos hbeta_half hpos hdec h h' (reverseItem j)
+  have hitem :
+      theorem4Problem11PolicyItemValue beta v ρ j =
+        theorem4Problem11PolicyItemValue beta v ρ' j := by
+    calc
+      theorem4Problem11PolicyItemValue beta v ρ j = ell := h.item_eq j
+      _ = ell' := hell
+      _ = theorem4Problem11PolicyItemValue beta v ρ' j := (h'.item_eq j).symm
+  have hc_pos : 0 < 1 - 2 * beta := by nlinarith
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue at hitem
+  change
+    2 * beta *
+          (pairShare (1 / 2) v j * (ρ 0 j).toReal +
+            (1 - pairShare (1 / 2) v j) *
+              (ρ 0 (reverseItem j)).toReal) +
+        (1 - 2 * beta) * (ρ 2 j).toReal =
+      2 * beta *
+          (pairShare (1 / 2) v j * (ρ' 0 j).toReal +
+            (1 - pairShare (1 / 2) v j) *
+              (ρ' 0 (reverseItem j)).toReal) +
+        (1 - 2 * beta) * (ρ' 2 j).toReal at hitem
+  rw [hxj, hxrev] at hitem
+  nlinarith
+
+theorem theorem4Problem11EqualizedBasicOptimal_policy_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ ρ' : TypePolicy 3 n} {ell ell' : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    ρ = ρ' := by
+  funext k
+  fin_cases k
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    change ((ρ 0) j).toReal = ((ρ' 0) j).toReal
+    exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq
+      hn hbeta_pos hbeta_half hpos hdec h h' j
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    change ((ρ 1) j).toReal = ((ρ' 1) j).toReal
+    have hmirror :
+        ρ 1 j = ρ 0 (reverseItem j) := by
+      simpa [reverseItem_reverseItem] using h.mirror.1 (reverseItem j)
+    have hmirror' :
+        ρ' 1 j = ρ' 0 (reverseItem j) := by
+      simpa [reverseItem_reverseItem] using h'.mirror.1 (reverseItem j)
+    rw [hmirror, hmirror']
+    exact theorem4Problem11EqualizedBasicOptimal_typeZero_toReal_eq
+      hn hbeta_pos hbeta_half hpos hdec h h' (reverseItem j)
+  · apply pmf_eq_of_forall_toReal_eq
+    intro j
+    change ((ρ 2) j).toReal = ((ρ' 2) j).toReal
+    exact theorem4Problem11EqualizedBasicOptimal_cold_toReal_eq
+      hn hbeta_pos hbeta_half hpos hdec h h' j
 
 theorem theorem4Problem11PivotSupport_typeZero_first_toReal_eq_one
     {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
