@@ -47,6 +47,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   plus a largest-total-bucket-to-floor-mass bridge. This is faster and more
   auditable than repeatedly unfolding all powers-of-two buckets in the main
   auction theorem.
+- When the paper's dyadic tail starts at the fixed price, set the tail base to
+  the price itself if that is faithful. This can remove factor-two slack from
+  the winner-count bridge and make the "largest bucket has at least two
+  bidders" contradiction close cleanly.
+- For GHW-style `F >= 2h` largest-bucket size claims, prove the contrapositive
+  with a strict finite geometric-tail lemma: if the largest dyadic bucket has
+  at most one bidder, every bucket mass is at most `h`, so the finite dyadic
+  tail is strictly below `2h`, contradicting `F >= 2h`.
 - For paper statements involving `log h` dyadic bins, avoid fighting
   `Real.log` until the analytic endpoint truly needs it. A faster faithful
   route is often to take a natural-number log certificate such as
@@ -66,6 +74,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 - Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.
+- When a finite candidate benchmark is positive and all bidder values are at
+  least one, prove the selected candidate offer price is at least one before
+  entering dyadic-bucket arguments. This avoids carrying an arbitrary
+  benchmark-attaining price and ties the paper-facing `F^(2)` theorem directly
+  to the reusable finite-candidate benchmark API.
 - For deterministic single-parameter lower bounds, avoid starting with a real
   infimum unless the theorem truly needs it. In a fixed-other-bids offer slice,
   prove the fast DSIC atoms first: any two winning reports pay the same price;

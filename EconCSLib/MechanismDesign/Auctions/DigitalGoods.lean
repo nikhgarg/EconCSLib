@@ -638,6 +638,33 @@ theorem singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark
     rw [hprice, hbench_zero]
     simp [singlePriceRevenue]
 
+/--
+If all bidder values are at least one and the finite candidate benchmark is
+positive, then the selected nonnegative candidate offer price is also at least
+one. The only alternative in `finiteCandidateOfferPrice` is the fallback price
+`0`, which would make the selected benchmark revenue zero.
+-/
+theorem finiteCandidateOfferPrice_ge_one_of_benchmark_pos
+    [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) (minWinners : ℕ)
+    (hvalue_ge_one : ∀ i : Agent, 1 ≤ values i)
+    (hbenchmark_pos :
+      0 < finiteCandidateFixedPriceBenchmark values minWinners) :
+    1 ≤ finiteCandidateOfferPrice values minWinners := by
+  classical
+  let i := finiteCandidateBenchmarkBidder values minWinners
+  by_cases h : 0 ≤ values i ∧ minWinners ≤ saleCount values (values i)
+  · simpa [finiteCandidateOfferPrice, i, h] using hvalue_ge_one i
+  · have hprice_zero :
+        finiteCandidateOfferPrice values minWinners = 0 := by
+      simp [finiteCandidateOfferPrice, i, h]
+    have hbenchmark_zero :
+        finiteCandidateFixedPriceBenchmark values minWinners = 0 := by
+      rw [← singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark
+        values minWinners, hprice_zero]
+      simp [singlePriceRevenue]
+    nlinarith
+
 theorem finiteCandidateFixedPriceBenchmark_isFixedPriceBenchmark_of_feasible
     [Fintype Agent] [Nonempty Agent]
     (values : Agent → ℝ) {minWinners : ℕ}
