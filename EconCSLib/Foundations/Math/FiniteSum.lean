@@ -154,6 +154,40 @@ theorem sq_sum_le_card_mul_sum_sq
   simpa [pow_two, mul_assoc, mul_left_comm, mul_comm] using h
 
 /--
+Compare a finite sum over an injectively indexed subfamily to a larger
+nonnegative finite sum. This is useful when a proof lower-bounds an expectation
+by keeping only a disjoint set of summands.
+-/
+theorem sum_le_sum_of_injective_nonneg
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
+    (φ : α → β) (hφ : Function.Injective φ)
+    {f : α → ℝ} {g : β → ℝ}
+    (hfg : ∀ a, f a ≤ g (φ a))
+    (hg_nonneg : ∀ b, 0 ≤ g b) :
+    (∑ a : α, f a) ≤ ∑ b : β, g b := by
+  classical
+  let e : α ↪ β := ⟨φ, hφ⟩
+  have hpoint :
+      (∑ a : α, f a) ≤ ∑ a : α, g (φ a) :=
+    Finset.sum_le_sum fun a _ => hfg a
+  have hmap :
+      (∑ a : α, g (φ a)) =
+        ∑ b ∈ (Finset.univ : Finset α).map e, g b := by
+    symm
+    simpa [e] using
+      (Finset.sum_map (s := (Finset.univ : Finset α)) (f := g) (e := e))
+  have hsubset :
+      (Finset.univ : Finset α).map e ⊆ (Finset.univ : Finset β) := by
+    intro b _hb
+    simp
+  have hlarge :
+      (∑ b ∈ (Finset.univ : Finset α).map e, g b) ≤
+        ∑ b : β, g b := by
+    exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+      (by intro b _hb _hnot; exact hg_nonneg b)
+  exact le_trans hpoint (by simpa [hmap] using hlarge)
+
+/--
 Discrete crossing for Boolean predicates on a finite integer interval. If a
 predicate is false at `lo` and true at `hi`, then it switches from false to true
 across some adjacent pair.

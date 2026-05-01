@@ -39,7 +39,7 @@
 \node[dag_model, right=of Sampling, text width=3.8cm] (Weighted)
   {\textbf{Weighted Pairing (Section 7)}\\bid-independent randomized multi-price auction};
 \node[dag_conditional, below=of Weighted, text width=3.8cm] (Thm71)
-  {\textbf{Theorem 7.1 (Section 7)}\\weighted-pairing formula and active-bin certificate closed; needs per-bin double-sum lower bound};
+  {\textbf{Theorem 7.1 (Section 7)}\\factor-two ranked-bin revenue bridge closed; needs dyadic active-bin certificate};
 \node[dag_unformalized, below=of Thm71, text width=3.8cm] (Thm72)
   {\textbf{Theorem 7.2 (Section 7)}\\if $F \ge 2h$, then $W=\Omega(F/\sqrt{\log h})$ and tight};
 
@@ -65,20 +65,19 @@
 \draw[dag_dashed_arrow] (Opt) -- (Thm41);
 \draw[dag_dashed_arrow] (Thm41) -- (Cor42);
 
-\draw[dag_arrow] (Thresholds) -| (Sampling);
+\draw[dag_arrow] (Thresholds.north east) to[out=35,in=210,looseness=0.85] (Sampling.south west);
 \draw[dag_dashed_arrow] (Sampling) -- (Lemma61);
 \draw[dag_dashed_arrow] (Lemma61) -- (Thm62);
-\draw[dag_arrow] (Benchmark) -| (Thm62);
+\draw[dag_arrow] (Benchmark.south east) to[out=-15,in=205,looseness=0.9] (Thm62.south west);
 
-\draw[dag_arrow] (Thresholds) -| (Weighted);
+\draw[dag_arrow] (Thresholds.north east) to[out=25,in=210,looseness=0.75] (Weighted.south west);
 \draw[dag_dashed_arrow] (Weighted) -- (Thm71);
 \draw[dag_dashed_arrow] (Thm71) -- (Thm72);
 \draw[dag_dashed_arrow] (Thm82) |- (Thm72);
 
-\draw[dag_arrow] (Core.north east) to[out=70,in=110,looseness=0.8] (RandomTruthful.north west);
 \draw[dag_dashed_arrow] (RandomTruthful) -- (Lemma81);
 \draw[dag_dashed_arrow] (Lemma81) -- (Thm82);
-\draw[dag_dashed_arrow] (Benchmark) -| (Thm82);
+\draw[dag_dashed_arrow] (Benchmark.south east) to[out=-20,in=210,looseness=0.65] (Thm82.south west);
 
 \draw[dag_arrow] (Thresholds) -- (DetModel);
 \draw[dag_dashed_arrow] (DetModel) -- (Thm91);
