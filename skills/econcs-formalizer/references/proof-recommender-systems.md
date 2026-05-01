@@ -84,8 +84,10 @@ allocation.
   times the left-endpoint inverse-square term, and feed the resulting
   nonnegative correction through the shift
   `1 + d + B * (exp(E / (1 + c)) - 1)`. With those wrappers in place, finish
-  the branch by instantiating a concrete eventual certificate; a slower schedule
-  than `1/sqrt(N)` may be needed so both `ε_N N → ∞` and `ε_N^2 N → ∞`.
+  the branch by instantiating a concrete eventual certificate. The PRPKG
+  alpha-one seam now separates raw-order shift growth from reverse-order
+  corrected-shift growth; use a slower schedule such as `(N+1)^(-1/4)` so
+  `ε_N N → ∞` and `ε_N^3 N → ∞`.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
