@@ -1457,6 +1457,34 @@ theorem theorem4Problem11PolicyOptimal_of_feasibleAtLevel_one
       simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using hfeas
     exact hell'_le_item.trans (hitem_le_opt.trans hopt_le_item)
 
+/--
+Problem 11 / Lemma 12 bridge: any reduced estimated policy feasible at maximal
+item fairness has a mirror-symmetrization that solves the Problem 11 epigraph
+LP.
+-/
+theorem theorem4Problem11PolicyOptimal_symmetrized_of_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) 1 ρ) :
+    Theorem4Problem11PolicyOptimal beta v (theorem4SymmetrizedPolicy ρ)
+      (TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ)) := by
+  have hsym :
+      Theorem4MirrorSymmetricPolicy (theorem4SymmetrizedPolicy ρ) :=
+    theorem4SymmetrizedPolicy_mirrorSymmetric ρ
+  have hfeas_sym :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) 1
+        (theorem4SymmetrizedPolicy ρ) :=
+    theorem4EstimatedReducedModel_feasibleAtLevel_symmetrized hpos hfeas
+  exact theorem4Problem11PolicyOptimal_of_feasibleAtLevel_one
+    hbeta hcold hpos hsym hfeas_sym
+
 /-- An optimal Problem 11 epigraph value is the minimum item value of its policy. -/
 theorem theorem4Problem11PolicyOptimal_value_eq_finiteMin
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
@@ -1616,6 +1644,610 @@ theorem theorem4Problem11RealLPFeasible_of_policy {n : ℕ} [NeZero n]
       item_le := hfeas }
 
 /--
+Paper-local weak-duality certificate for Problem 11. The weights are finite
+dual multipliers for the item epigraph constraints. Symmetry of `w` makes the
+two known-type rows combine into coefficients `4β w_j q_j`; `A` and `B` are
+the resulting row-budget upper bounds for the known-type and cold-start rows.
+-/
+structure Theorem4Problem11DualCertificate {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ)
+    (w : Item n → ℝ) (A B ell : ℝ) : Prop where
+  weight_nonneg : ∀ j : Item n, 0 ≤ w j
+  weight_mirror : ∀ j : Item n, w (reverseItem j) = w j
+  weight_sum : (∑ j : Item n, w j) = 1
+  x_coeff_le :
+    ∀ j : Item n, 4 * beta * w j * pairShare (1 / 2) v j ≤ A
+  z_coeff_le :
+    ∀ j : Item n, (1 - 2 * beta) * w j ≤ B
+  objective : A + B = ell
+
+/--
+Problem 11 weak duality in the paper's `x,z,λ` variables: any finite dual
+certificate upper-bounds every real feasible solution.
+-/
+theorem theorem4Problem11DualCertificate_upper_bound {n : ℕ}
+    {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {w : Item n → ℝ} {A B ell : ℝ}
+    (cert : Theorem4Problem11DualCertificate beta v w A B ell)
+    {x z : Item n → ℝ} {ell' : ℝ}
+    (hfeas : Theorem4Problem11RealLPFeasible beta v x z ell') :
+    ell' ≤ ell := by
+  have hweighted :
+      (∑ j : Item n, w j * ell') ≤
+        ∑ j : Item n, w j * theorem4Problem11ItemValue beta v x z j := by
+    refine Finset.sum_le_sum ?_
+    intro j _hj
+    exact mul_le_mul_of_nonneg_left (hfeas.item_le j)
+      (cert.weight_nonneg j)
+  have hleft :
+      (∑ j : Item n, w j * ell') = ell' := by
+    calc
+      (∑ j : Item n, w j * ell') = (∑ j : Item n, w j) * ell' := by
+        rw [Finset.sum_mul]
+      _ = ell' := by
+        rw [cert.weight_sum]
+        ring
+  have hmirror_known :
+      (∑ j : Item n,
+          w j * (2 * beta *
+            ((1 - pairShare (1 / 2) v j) * x (reverseItem j)))) =
+        ∑ j : Item n,
+          w j * (2 * beta * (pairShare (1 / 2) v j * x j)) := by
+    let f : Item n → ℝ :=
+      fun j => w j * (2 * beta *
+        ((1 - pairShare (1 / 2) v j) * x (reverseItem j)))
+    have hrev := (sum_reverseItem f).symm
+    dsimp [f] at hrev
+    calc
+      (∑ j : Item n,
+          w j * (2 * beta *
+            ((1 - pairShare (1 / 2) v j) * x (reverseItem j))))
+          =
+        ∑ j : Item n,
+          w (reverseItem j) *
+            (2 * beta *
+              ((1 - pairShare (1 / 2) v (reverseItem j)) *
+                x (reverseItem (reverseItem j)))) := hrev
+      _ =
+        ∑ j : Item n,
+          w j * (2 * beta * (pairShare (1 / 2) v j * x j)) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          rw [cert.weight_mirror j, reverseItem_reverseItem]
+          have hq :
+              1 - pairShare (1 / 2) v (reverseItem j) =
+                pairShare (1 / 2) v j := by
+            exact (pairShare_half_eq_one_sub_reverse j hpos).symm
+          rw [hq]
+  have hright_split :
+      (∑ j : Item n, w j * theorem4Problem11ItemValue beta v x z j) =
+        (∑ j : Item n,
+          (4 * beta * w j * pairShare (1 / 2) v j) * x j) +
+        (∑ j : Item n,
+          ((1 - 2 * beta) * w j) * z j) := by
+    unfold theorem4Problem11ItemValue
+    have hknown :
+        (∑ j : Item n,
+            w j *
+              (2 * beta *
+                (pairShare (1 / 2) v j * x j +
+                  (1 - pairShare (1 / 2) v j) * x (reverseItem j)))) =
+          ∑ j : Item n,
+            (4 * beta * w j * pairShare (1 / 2) v j) * x j := by
+      calc
+        (∑ j : Item n,
+            w j *
+              (2 * beta *
+                (pairShare (1 / 2) v j * x j +
+                  (1 - pairShare (1 / 2) v j) * x (reverseItem j))))
+            =
+          (∑ j : Item n,
+            w j * (2 * beta * (pairShare (1 / 2) v j * x j))) +
+          (∑ j : Item n,
+            w j * (2 * beta *
+              ((1 - pairShare (1 / 2) v j) * x (reverseItem j)))) := by
+            rw [← Finset.sum_add_distrib]
+            refine Finset.sum_congr rfl ?_
+            intro j _hj
+            ring
+        _ =
+          (∑ j : Item n,
+            w j * (2 * beta * (pairShare (1 / 2) v j * x j))) +
+          (∑ j : Item n,
+            w j * (2 * beta * (pairShare (1 / 2) v j * x j))) := by
+            rw [hmirror_known]
+        _ =
+          ∑ j : Item n,
+            (4 * beta * w j * pairShare (1 / 2) v j) * x j := by
+            rw [← Finset.sum_add_distrib]
+            refine Finset.sum_congr rfl ?_
+            intro j _hj
+            ring
+    have hcold :
+        (∑ j : Item n, w j * ((1 - 2 * beta) * z j)) =
+          ∑ j : Item n, ((1 - 2 * beta) * w j) * z j := by
+      refine Finset.sum_congr rfl ?_
+      intro j _hj
+      ring
+    calc
+      (∑ j : Item n,
+          w j *
+            (2 * beta *
+                (pairShare (1 / 2) v j * x j +
+                  (1 - pairShare (1 / 2) v j) * x (reverseItem j)) +
+              (1 - 2 * beta) * z j))
+          =
+        (∑ j : Item n,
+            w j *
+              (2 * beta *
+                (pairShare (1 / 2) v j * x j +
+                  (1 - pairShare (1 / 2) v j) * x (reverseItem j)))) +
+        (∑ j : Item n, w j * ((1 - 2 * beta) * z j)) := by
+          rw [← Finset.sum_add_distrib]
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          ring
+      _ =
+        (∑ j : Item n,
+          (4 * beta * w j * pairShare (1 / 2) v j) * x j) +
+        (∑ j : Item n,
+          ((1 - 2 * beta) * w j) * z j) := by
+          rw [hknown, hcold]
+  have hx_budget :
+      (∑ j : Item n,
+          (4 * beta * w j * pairShare (1 / 2) v j) * x j) ≤ A := by
+    calc
+      (∑ j : Item n,
+          (4 * beta * w j * pairShare (1 / 2) v j) * x j)
+          ≤ ∑ j : Item n, A * x j := by
+            refine Finset.sum_le_sum ?_
+            intro j _hj
+            exact mul_le_mul_of_nonneg_right (cert.x_coeff_le j)
+              (hfeas.x_nonneg j)
+      _ = A := by
+            rw [← Finset.mul_sum, hfeas.sum_x]
+            ring
+  have hz_budget :
+      (∑ j : Item n, ((1 - 2 * beta) * w j) * z j) ≤ B := by
+    calc
+      (∑ j : Item n, ((1 - 2 * beta) * w j) * z j)
+          ≤ ∑ j : Item n, B * z j := by
+            refine Finset.sum_le_sum ?_
+            intro j _hj
+            exact mul_le_mul_of_nonneg_right (cert.z_coeff_le j)
+              (hfeas.z_nonneg j)
+      _ = B := by
+            rw [← Finset.mul_sum, hfeas.sum_z]
+            ring
+  calc
+    ell' = ∑ j : Item n, w j * ell' := hleft.symm
+    _ ≤ ∑ j : Item n, w j * theorem4Problem11ItemValue beta v x z j :=
+      hweighted
+    _ = (∑ j : Item n,
+          (4 * beta * w j * pairShare (1 / 2) v j) * x j) +
+        (∑ j : Item n,
+          ((1 - 2 * beta) * w j) * z j) := hright_split
+    _ ≤ A + B := add_le_add hx_budget hz_budget
+    _ = ell := cert.objective
+
+/-- Raw symmetric dual weight used by the closed-form Problem 11 certificate. -/
+noncomputable def theorem4Problem11ClosedDualRawWeight {n : ℕ}
+    (v : Item n → ℝ) (t j : Item n) : ℝ :=
+  if j.val < t.val then
+    pairShare (1 / 2) v t / pairShare (1 / 2) v j
+  else if (reverseItem t).val < j.val then
+    pairShare (1 / 2) v t / pairShare (1 / 2) v (reverseItem j)
+  else
+    1
+
+/--
+Closed-form Problem 11 dual denominator. This is defined as the finite raw
+weight sum; later coordinate lemmas identify it with the paper's displayed
+`2 + 2 q_t L_t + tail` denominator.
+-/
+noncomputable def theorem4Problem11ClosedDualDenominator {n : ℕ}
+    (v : Item n → ℝ) (t : Item n) : ℝ :=
+  ∑ j : Item n, theorem4Problem11ClosedDualRawWeight v t j
+
+/-- Normalized closed-form Problem 11 dual weights. -/
+noncomputable def theorem4Problem11ClosedDualWeight {n : ℕ}
+    (v : Item n → ℝ) (t j : Item n) : ℝ :=
+  theorem4Problem11ClosedDualRawWeight v t j /
+    theorem4Problem11ClosedDualDenominator v t
+
+/-- Known-type row budget in the closed Problem 11 dual certificate. -/
+noncomputable def theorem4Problem11ClosedKnownBudget {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  4 * beta * pairShare (1 / 2) v t /
+    theorem4Problem11ClosedDualDenominator v t
+
+/-- Cold-start row budget in the closed Problem 11 dual certificate. -/
+noncomputable def theorem4Problem11ClosedColdBudget {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  (1 - 2 * beta) / theorem4Problem11ClosedDualDenominator v t
+
+/-- Closed-form Problem 11 value supplied by the finite dual certificate. -/
+noncomputable def theorem4Problem11ClosedDualValue {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ) (t : Item n) : ℝ :=
+  theorem4Problem11ClosedKnownBudget beta v t +
+    theorem4Problem11ClosedColdBudget beta v t
+
+theorem theorem4Problem11ClosedDualRawWeight_pos {n : ℕ}
+    {v : Item n → ℝ} {t j : Item n}
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 < theorem4Problem11ClosedDualRawWeight v t j := by
+  unfold theorem4Problem11ClosedDualRawWeight
+  by_cases hjt : j.val < t.val
+  · rw [if_pos hjt]
+    exact div_pos
+      (pairShare_pos t (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+      (pairShare_pos j (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+  · by_cases htj : (reverseItem t).val < j.val
+    · rw [if_neg hjt, if_pos htj]
+      exact div_pos
+        (pairShare_pos t (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+        (pairShare_pos (reverseItem j)
+          (by norm_num : (0 : ℝ) < 1 / 2)
+          (by norm_num : (1 / 2 : ℝ) < 1) hpos)
+    · simp [hjt, htj]
+
+theorem theorem4Problem11ClosedDualRawWeight_nonneg {n : ℕ}
+    {v : Item n → ℝ} {t j : Item n}
+    (hpos : ∀ j : Item n, 0 < v j) :
+    0 ≤ theorem4Problem11ClosedDualRawWeight v t j :=
+  (theorem4Problem11ClosedDualRawWeight_pos (v := v) (t := t) (j := j)
+    hpos).le
+
+theorem theorem4Problem11ClosedDualDenominator_pos {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    0 < theorem4Problem11ClosedDualDenominator v t := by
+  have hnonneg :
+      ∀ j : Item n, 0 ≤ theorem4Problem11ClosedDualRawWeight v t j :=
+    fun j => theorem4Problem11ClosedDualRawWeight_nonneg
+      (v := v) (t := t) (j := j) hpos
+  have ht_weight :
+      theorem4Problem11ClosedDualRawWeight v t t = 1 := by
+    unfold theorem4Problem11ClosedDualRawWeight
+    have hnot_after : ¬ (reverseItem t).val < t.val := by omega
+    simp [hnot_after]
+  have hle :
+      theorem4Problem11ClosedDualRawWeight v t t ≤
+        ∑ j : Item n, theorem4Problem11ClosedDualRawWeight v t j :=
+    Finset.single_le_sum (fun j _hj => hnonneg j) (Finset.mem_univ t)
+  unfold theorem4Problem11ClosedDualDenominator
+  linarith
+
+theorem theorem4Problem11ClosedDualRawWeight_mirror {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hleft : t.val ≤ (reverseItem t).val) (j : Item n) :
+    theorem4Problem11ClosedDualRawWeight v t (reverseItem j) =
+      theorem4Problem11ClosedDualRawWeight v t j := by
+  unfold theorem4Problem11ClosedDualRawWeight
+  by_cases hj_left : j.val < t.val
+  · have hrev_after :
+        (reverseItem t).val < (reverseItem j).val :=
+      reverseItem_val_lt_of_val_lt hj_left
+    have hrev_not_left : ¬ (reverseItem j).val < t.val := by omega
+    simp [hj_left, hrev_not_left, hrev_after, reverseItem_reverseItem]
+  · by_cases hj_after : (reverseItem t).val < j.val
+    · have hrev_left :
+          (reverseItem j).val < t.val := by
+        simpa [reverseItem_reverseItem] using
+          (reverseItem_val_lt_of_val_lt hj_after)
+      have hj_not_left : ¬ j.val < t.val := by omega
+      simp [hrev_left, hj_not_left, hj_after]
+    · have hrev_not_left : ¬ (reverseItem j).val < t.val := by
+        simp [reverseItem] at hj_left hj_after hleft ⊢
+        omega
+      have hrev_not_after :
+          ¬ (reverseItem t).val < (reverseItem j).val := by
+        simp [reverseItem] at hj_left hj_after hleft ⊢
+        omega
+      simp [hj_left, hj_after, hrev_not_left, hrev_not_after]
+
+theorem theorem4Problem11ClosedDualWeight_nonneg {n : ℕ}
+    {v : Item n → ℝ} {t j : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    0 ≤ theorem4Problem11ClosedDualWeight v t j := by
+  unfold theorem4Problem11ClosedDualWeight
+  exact div_nonneg
+    (theorem4Problem11ClosedDualRawWeight_nonneg
+      (v := v) (t := t) (j := j) hpos)
+    (theorem4Problem11ClosedDualDenominator_pos
+      (v := v) (t := t) hpos hleft).le
+
+theorem theorem4Problem11ClosedDualWeight_mirror {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hleft : t.val ≤ (reverseItem t).val) (j : Item n) :
+    theorem4Problem11ClosedDualWeight v t (reverseItem j) =
+      theorem4Problem11ClosedDualWeight v t j := by
+  unfold theorem4Problem11ClosedDualWeight
+  rw [theorem4Problem11ClosedDualRawWeight_mirror hleft j]
+
+theorem theorem4Problem11ClosedDualWeight_sum_eq_one {n : ℕ}
+    {v : Item n → ℝ} {t : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    (∑ j : Item n, theorem4Problem11ClosedDualWeight v t j) = 1 := by
+  have hDpos :
+      0 < theorem4Problem11ClosedDualDenominator v t :=
+    theorem4Problem11ClosedDualDenominator_pos
+      (v := v) (t := t) hpos hleft
+  unfold theorem4Problem11ClosedDualWeight
+    theorem4Problem11ClosedDualDenominator
+  rw [← Finset.sum_div]
+  exact div_self (ne_of_gt hDpos)
+
+theorem theorem4Problem11ClosedDualRawWeight_mul_pairShare_le {n : ℕ}
+    {v : Item n → ℝ} {t j : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    theorem4Problem11ClosedDualRawWeight v t j *
+        pairShare (1 / 2) v j ≤
+      pairShare (1 / 2) v t := by
+  by_cases hj_left : j.val < t.val
+  · unfold theorem4Problem11ClosedDualRawWeight
+    have hqj_pos : 0 < pairShare (2 : ℝ)⁻¹ v j :=
+      pairShare_pos j
+        (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+        (by norm_num : ((2 : ℝ)⁻¹) < 1) hpos
+    simp [hj_left]
+    change pairShare (2 : ℝ)⁻¹ v t / pairShare (2 : ℝ)⁻¹ v j *
+        pairShare (2 : ℝ)⁻¹ v j ≤ pairShare (2 : ℝ)⁻¹ v t
+    field_simp [ne_of_gt hqj_pos]
+    exact le_rfl
+  · by_cases hj_after : (reverseItem t).val < j.val
+    · unfold theorem4Problem11ClosedDualRawWeight
+      have hrev_left :
+          (reverseItem j).val < t.val := by
+        simpa [reverseItem_reverseItem] using
+          (reverseItem_val_lt_of_val_lt hj_after)
+      have hqrev_pos : 0 < pairShare (2 : ℝ)⁻¹ v (reverseItem j) :=
+        pairShare_pos (reverseItem j)
+          (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+          (by norm_num : ((2 : ℝ)⁻¹) < 1) hpos
+      have hqj_le_qrev :
+          pairShare (2 : ℝ)⁻¹ v j ≤
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j) := by
+        have hrev_lt_j : (reverseItem j).val < j.val := by
+          omega
+        exact (pairShare_strictAnti_index
+          (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+          (by norm_num : ((2 : ℝ)⁻¹) < 1)
+          hpos hdec hrev_lt_j).le
+      simp [hj_left, hj_after]
+      change pairShare (2 : ℝ)⁻¹ v t /
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j) *
+          pairShare (2 : ℝ)⁻¹ v j ≤
+        pairShare (2 : ℝ)⁻¹ v t
+      calc
+        pairShare (2 : ℝ)⁻¹ v t /
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j) *
+            pairShare (2 : ℝ)⁻¹ v j
+            ≤
+          pairShare (2 : ℝ)⁻¹ v t /
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j) *
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j) := by
+            exact mul_le_mul_of_nonneg_left hqj_le_qrev
+              (div_nonneg
+                (pairShare_pos t
+                  (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+                  (by norm_num : ((2 : ℝ)⁻¹) < 1) hpos).le
+                hqrev_pos.le)
+        _ = pairShare (2 : ℝ)⁻¹ v t := by
+            field_simp [ne_of_gt hqrev_pos]
+    · unfold theorem4Problem11ClosedDualRawWeight
+      have ht_le_j : t.val ≤ j.val := by omega
+      have hqj_le_qt :
+          pairShare (2 : ℝ)⁻¹ v j ≤ pairShare (2 : ℝ)⁻¹ v t := by
+        rcases lt_or_eq_of_le ht_le_j with htj | htj
+        · exact (pairShare_strictAnti_index
+            (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+            (by norm_num : ((2 : ℝ)⁻¹) < 1)
+            hpos hdec htj).le
+        · have hj_eq : j = t := Fin.ext htj.symm
+          subst j
+          exact le_rfl
+      simpa [hj_left, hj_after] using hqj_le_qt
+
+theorem theorem4Problem11ClosedDualRawWeight_le_one {n : ℕ}
+    {v : Item n → ℝ} {t j : Item n}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    theorem4Problem11ClosedDualRawWeight v t j ≤ 1 := by
+  by_cases hj_left : j.val < t.val
+  · unfold theorem4Problem11ClosedDualRawWeight
+    have hqj_pos : 0 < pairShare (2 : ℝ)⁻¹ v j :=
+      pairShare_pos j
+        (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+        (by norm_num : ((2 : ℝ)⁻¹) < 1) hpos
+    have hqt_le_qj :
+        pairShare (2 : ℝ)⁻¹ v t ≤ pairShare (2 : ℝ)⁻¹ v j :=
+      (pairShare_strictAnti_index
+        (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+        (by norm_num : ((2 : ℝ)⁻¹) < 1)
+        hpos hdec hj_left).le
+    simp [hj_left]
+    change pairShare (2 : ℝ)⁻¹ v t / pairShare (2 : ℝ)⁻¹ v j ≤ 1
+    calc
+      pairShare (2 : ℝ)⁻¹ v t / pairShare (2 : ℝ)⁻¹ v j
+          = pairShare (2 : ℝ)⁻¹ v t *
+              (pairShare (2 : ℝ)⁻¹ v j)⁻¹ := by
+            ring
+      _ ≤ pairShare (2 : ℝ)⁻¹ v j *
+            (pairShare (2 : ℝ)⁻¹ v j)⁻¹ := by
+            exact mul_le_mul_of_nonneg_right hqt_le_qj
+              (inv_nonneg.mpr hqj_pos.le)
+      _ = 1 := by
+            field_simp [ne_of_gt hqj_pos]
+  · by_cases hj_after : (reverseItem t).val < j.val
+    · unfold theorem4Problem11ClosedDualRawWeight
+      have hrev_left :
+          (reverseItem j).val < t.val := by
+        simpa [reverseItem_reverseItem] using
+          (reverseItem_val_lt_of_val_lt hj_after)
+      have hqrev_pos : 0 < pairShare (2 : ℝ)⁻¹ v (reverseItem j) :=
+        pairShare_pos (reverseItem j)
+          (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+          (by norm_num : ((2 : ℝ)⁻¹) < 1) hpos
+      have hqt_le_qrev :
+          pairShare (2 : ℝ)⁻¹ v t ≤
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j) :=
+        (pairShare_strictAnti_index
+          (by norm_num : (0 : ℝ) < (2 : ℝ)⁻¹)
+          (by norm_num : ((2 : ℝ)⁻¹) < 1)
+          hpos hdec hrev_left).le
+      simp [hj_left, hj_after]
+      change pairShare (2 : ℝ)⁻¹ v t /
+          pairShare (2 : ℝ)⁻¹ v (reverseItem j) ≤ 1
+      calc
+        pairShare (2 : ℝ)⁻¹ v t /
+            pairShare (2 : ℝ)⁻¹ v (reverseItem j)
+            =
+          pairShare (2 : ℝ)⁻¹ v t *
+            (pairShare (2 : ℝ)⁻¹ v (reverseItem j))⁻¹ := by
+            ring
+        _ ≤
+          pairShare (2 : ℝ)⁻¹ v (reverseItem j) *
+            (pairShare (2 : ℝ)⁻¹ v (reverseItem j))⁻¹ := by
+            exact mul_le_mul_of_nonneg_right hqt_le_qrev
+              (inv_nonneg.mpr hqrev_pos.le)
+        _ = 1 := by
+            field_simp [ne_of_gt hqrev_pos]
+    · unfold theorem4Problem11ClosedDualRawWeight
+      simp [hj_left, hj_after]
+
+theorem theorem4Problem11ClosedDualWeight_x_coeff_le {n : ℕ}
+    {beta : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (hbeta : 0 ≤ beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    4 * beta * theorem4Problem11ClosedDualWeight v t j *
+        pairShare (1 / 2) v j ≤
+      theorem4Problem11ClosedKnownBudget beta v t := by
+  have hDpos :
+      0 < theorem4Problem11ClosedDualDenominator v t :=
+    theorem4Problem11ClosedDualDenominator_pos
+      (v := v) (t := t) hpos hleft
+  have hraw :
+      theorem4Problem11ClosedDualRawWeight v t j *
+          pairShare (1 / 2) v j ≤
+        pairShare (1 / 2) v t :=
+    theorem4Problem11ClosedDualRawWeight_mul_pairShare_le
+      hpos hdec hleft
+  unfold theorem4Problem11ClosedDualWeight
+    theorem4Problem11ClosedKnownBudget
+  calc
+    4 * beta *
+          (theorem4Problem11ClosedDualRawWeight v t j /
+            theorem4Problem11ClosedDualDenominator v t) *
+          pairShare (1 / 2) v j
+        =
+      (4 * beta / theorem4Problem11ClosedDualDenominator v t) *
+        (theorem4Problem11ClosedDualRawWeight v t j *
+          pairShare (1 / 2) v j) := by
+        ring
+    _ ≤
+      (4 * beta / theorem4Problem11ClosedDualDenominator v t) *
+        pairShare (1 / 2) v t := by
+        exact mul_le_mul_of_nonneg_left hraw
+          (div_nonneg (mul_nonneg (by norm_num) hbeta) hDpos.le)
+    _ = 4 * beta * pairShare (1 / 2) v t /
+          theorem4Problem11ClosedDualDenominator v t := by
+        ring
+
+theorem theorem4Problem11ClosedDualWeight_z_coeff_le {n : ℕ}
+    {beta : ℝ} {v : Item n → ℝ} {t j : Item n}
+    (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    (1 - 2 * beta) * theorem4Problem11ClosedDualWeight v t j ≤
+      theorem4Problem11ClosedColdBudget beta v t := by
+  have hDpos :
+      0 < theorem4Problem11ClosedDualDenominator v t :=
+    theorem4Problem11ClosedDualDenominator_pos
+      (v := v) (t := t) hpos hleft
+  have hraw :
+      theorem4Problem11ClosedDualRawWeight v t j ≤ 1 :=
+    theorem4Problem11ClosedDualRawWeight_le_one hpos hdec hleft
+  unfold theorem4Problem11ClosedDualWeight
+    theorem4Problem11ClosedColdBudget
+  calc
+    (1 - 2 * beta) *
+        (theorem4Problem11ClosedDualRawWeight v t j /
+          theorem4Problem11ClosedDualDenominator v t)
+        =
+      ((1 - 2 * beta) / theorem4Problem11ClosedDualDenominator v t) *
+        theorem4Problem11ClosedDualRawWeight v t j := by
+        ring
+    _ ≤ ((1 - 2 * beta) /
+          theorem4Problem11ClosedDualDenominator v t) * 1 := by
+        exact mul_le_mul_of_nonneg_left hraw
+          (div_nonneg hcold hDpos.le)
+    _ = (1 - 2 * beta) /
+          theorem4Problem11ClosedDualDenominator v t := by
+        ring
+
+/--
+Closed-form finite dual certificate for Problem 11 at any pivot on the left
+half of the item line.
+-/
+theorem theorem4Problem11ClosedDualCertificate {n : ℕ}
+    {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    Theorem4Problem11DualCertificate beta v
+      (theorem4Problem11ClosedDualWeight v t)
+      (theorem4Problem11ClosedKnownBudget beta v t)
+      (theorem4Problem11ClosedColdBudget beta v t)
+      (theorem4Problem11ClosedDualValue beta v t) where
+  weight_nonneg := fun j =>
+    theorem4Problem11ClosedDualWeight_nonneg hpos hleft
+  weight_mirror := fun j =>
+    theorem4Problem11ClosedDualWeight_mirror hleft j
+  weight_sum :=
+    theorem4Problem11ClosedDualWeight_sum_eq_one hpos hleft
+  x_coeff_le := fun j =>
+    theorem4Problem11ClosedDualWeight_x_coeff_le
+      hbeta hpos hdec hleft
+  z_coeff_le := fun j =>
+    theorem4Problem11ClosedDualWeight_z_coeff_le
+      hcold hpos hdec hleft
+  objective := by
+    unfold theorem4Problem11ClosedDualValue
+    rfl
+
+/--
+Closed-form Problem 11 dual upper bound for every real feasible solution.
+-/
+theorem theorem4Problem11ClosedDual_upper_bound {n : ℕ}
+    {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val)
+    {x z : Item n → ℝ} {ell : ℝ}
+    (hfeas : Theorem4Problem11RealLPFeasible beta v x z ell) :
+    ell ≤ theorem4Problem11ClosedDualValue beta v t := by
+  exact theorem4Problem11DualCertificate_upper_bound hpos
+    (theorem4Problem11ClosedDualCertificate
+      hbeta hcold hpos hdec hleft)
+    hfeas
+
+/--
 The paper's equality-form optimal basic feasible solution data for Problem 11,
 before rebuilding the PMF policy.
 -/
@@ -1671,6 +2303,39 @@ theorem theorem4Problem11EqualizedBasicOptimal_of_equalityFormOptimalBFS
   · intro j
     rw [theorem4Problem11PolicyOfRealVectors_itemValue_eq]
     exact h.item_eq j
+
+/--
+Problem 11 / Problem 1 bridge for the equality-form package consumed by
+Lemmas 13--15.
+-/
+theorem theorem4Problem11EqualizedBasicOptimal_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  exact theorem4Problem11PolicyOptimal_feasibleAtLevel_one
+    hbeta hcold hpos h.optimal
+
+/--
+Problem 11 / Problem 1 bridge for the paper's real equality-form optimal BFS
+data after rebuilding the three-type policy.
+-/
+theorem theorem4Problem11EqualityFormOptimalBFS_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (theorem4EstimatedReducedModel beta v) 1
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) := by
+  exact theorem4Problem11PolicyOptimal_feasibleAtLevel_one
+    hbeta hcold hpos
+    (theorem4Problem11PolicyOptimal_of_equalityFormOptimalBFS h)
 
 theorem theorem4UniformTypePolicy_mirrorSymmetric {n : ℕ} [NeZero n] :
     Theorem4MirrorSymmetricPolicy
@@ -5978,6 +6643,120 @@ theorem theorem4Problem11EqualizedBasicOptimal_policy_eq
     change ((ρ 2) j).toReal = ((ρ' 2) j).toReal
     exact theorem4Problem11EqualizedBasicOptimal_cold_toReal_eq
       hn hbeta_pos hbeta_half hpos hdec h h' j
+
+/--
+Problem 11 / estimated Problem 1 bridge: if the selected equality-form
+Problem 11 optimum is the unique epigraph-optimal mirror-symmetric policy,
+then it solves the reduced estimated `γ = 1` user-fairness problem.
+
+The uniqueness hypothesis is the exact LP-selection seam left by the paper's
+basic-feasible-solution argument.
+-/
+theorem theorem4Problem11EqualizedBasicOptimal_isOptimalAtLevel_of_policyOptimal_unique
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hunique :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        Theorem4Problem11PolicyOptimal beta v ρ' ell' → ρ' = ρ) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  let T := theorem4EstimatedReducedModel beta v
+  have hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel T 1 ρ :=
+    theorem4Problem11EqualizedBasicOptimal_feasibleAtLevel_one
+      hbeta hcold hpos h
+  refine ⟨hfeas, ?_⟩
+  apply le_antisymm
+  · have hbdd :
+        BddAbove (TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel T 1) :=
+      TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel_bddAbove_of_rowHasPositiveItem
+        T (theorem4EstimatedReducedModel_rowHasPositiveItem hpos) 1
+    have hmem :
+        TypeWeightedRecommendationModel.typeFairness T ρ ∈
+          TypeWeightedRecommendationModel.attainableTypeFairnessAtLevel T 1 := by
+      exact ⟨ρ, hfeas, rfl⟩
+    exact le_csSup hbdd hmem
+  · unfold TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+    refine csSup_le ?_ ?_
+    · exact ⟨TypeWeightedRecommendationModel.typeFairness T ρ,
+        ⟨ρ, hfeas, rfl⟩⟩
+    · intro r hr
+      rcases hr with ⟨ρ', hfeas', rfl⟩
+      let ρsym : TypePolicy 3 n := theorem4SymmetrizedPolicy ρ'
+      have hopt_sym :
+          Theorem4Problem11PolicyOptimal beta v ρsym
+            (TypeWeightedRecommendationModel.itemFairness T ρsym) := by
+        dsimp [ρsym, T]
+        exact theorem4Problem11PolicyOptimal_symmetrized_of_feasibleAtLevel_one
+          hbeta hcold hpos hfeas'
+      have hρsym_eq : ρsym = ρ :=
+        hunique ρsym (TypeWeightedRecommendationModel.itemFairness T ρsym)
+          hopt_sym
+      have htype_le_sym :
+          TypeWeightedRecommendationModel.typeFairness T ρ' ≤
+            TypeWeightedRecommendationModel.typeFairness T ρsym := by
+        dsimp [T, ρsym]
+        exact theorem4EstimatedReducedModel_typeFairness_le_symmetrized
+          hpos ρ'
+      simpa [hρsym_eq] using htype_le_sym
+
+/--
+Problem 11 / estimated Problem 1 bridge using the paper's Lemma 14 uniqueness:
+if every epigraph-optimal mirror-symmetric policy is supplied as an
+equality-form basic optimum, then the selected equality-form optimum solves the
+reduced estimated `γ = 1` user-fairness problem.
+-/
+theorem theorem4Problem11EqualizedBasicOptimal_isOptimalAtLevel_of_equalized_selection
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta) (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hselection :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        Theorem4Problem11PolicyOptimal beta v ρ' ell' →
+          Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  have hbeta_nonneg : 0 ≤ beta := hbeta_pos.le
+  have hcold : 0 ≤ 1 - 2 * beta := by nlinarith
+  refine theorem4Problem11EqualizedBasicOptimal_isOptimalAtLevel_of_policyOptimal_unique
+    hbeta_nonneg hcold hpos h ?_
+  intro ρ' ell' hopt'
+  have h' : Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell' :=
+    hselection ρ' ell' hopt'
+  exact theorem4Problem11EqualizedBasicOptimal_policy_eq
+    hn hbeta_pos hbeta_half hpos hdec h' h
+
+/--
+The same estimated-optimality bridge after rebuilding a policy from the
+paper's real equality-form Problem 11 BFS data.
+-/
+theorem theorem4Problem11EqualityFormOptimalBFS_isOptimalAtLevel_of_equalized_selection
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta) (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell)
+    (hselection :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        Theorem4Problem11PolicyOptimal beta v ρ' ell' →
+          Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (theorem4EstimatedReducedModel beta v) 1
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) := by
+  exact theorem4Problem11EqualizedBasicOptimal_isOptimalAtLevel_of_equalized_selection
+    hn hbeta_pos hbeta_half hpos hdec
+    (theorem4Problem11EqualizedBasicOptimal_of_equalityFormOptimalBFS h)
+    hselection
 
 theorem theorem4Problem11PivotSupport_typeZero_first_toReal_eq_one
     {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}

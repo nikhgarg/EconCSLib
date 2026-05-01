@@ -41,6 +41,8 @@
 % --- Problem 11 and Theorem 4 support structure ---
 \node[dag_model, right=of Lemma4] (Problem11)
   {\textbf{Problem 11 (App. E)} \\ Three-type LP, $\gamma=1$ bridge, real-BFS interface};
+\node[dag_lemma, right=of Problem11] (Problem11Dual)
+  {\textbf{Problem 11 Dual} \\ Formal weak duality and closed left-pivot upper bound};
 \node[dag_lemma, below=of Problem11] (Lemma12)
   {\textbf{Lemma 12 (App. E)} \\ Symmetric reduction into $S'$};
 \node[dag_lemma, below=of Lemma12] (Lemma17)
@@ -90,6 +92,7 @@
 \draw[dag_arrow] (Lemma16.south) |- (Problem11.north);
 \draw[dag_arrow] (Reduction.east) -| (Lemma12.west);
 \draw[dag_arrow] (Problem11) -- (Lemma12);
+\draw[dag_arrow] (Problem11) -- (Problem11Dual);
 \draw[dag_arrow] (Lemma12) -- (Lemma17);
 \draw[dag_arrow] (Lemma17) -- (NoGap);
 \draw[dag_arrow] (NoGap) -- (Lemma13);
@@ -104,6 +107,7 @@
 \draw[dag_arrow] (Theorem4Conditional) -- (Theorem4Full);
 \draw[dag_arrow] (VExist) -- (Theorem4Full);
 \draw[dag_arrow] (Lemma14.east) -| (Theorem4Full.east);
+\draw[dag_dashed_arrow] (Problem11Dual.south) |- (Theorem4Full.east);
 
 \end{tikzpicture}
 \end{document}

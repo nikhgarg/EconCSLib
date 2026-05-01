@@ -7498,6 +7498,54 @@ theorem paper_problem11_realLPFeasible_of_policy
   exact theorem4Problem11RealLPFeasible_of_policy hsym hfeas
 
 /--
+Appendix E, Problem 11 weak-duality interface: finite symmetric item
+multipliers upper-bound every feasible real `x,z,λ` solution.
+-/
+theorem paper_problem11_dualCertificate_upper_bound
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {w : Item n → ℝ} {A B ell : ℝ}
+    (cert : Theorem4Problem11DualCertificate beta v w A B ell)
+    {x z : Item n → ℝ} {ell' : ℝ}
+    (hfeas : Theorem4Problem11RealLPFeasible beta v x z ell') :
+    ell' ≤ ell := by
+  exact theorem4Problem11DualCertificate_upper_bound hpos cert hfeas
+
+/--
+Appendix E, Problem 11 closed-form dual certificate for any pivot on the
+left half of the item line.
+-/
+theorem paper_problem11_closedDualCertificate
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    Theorem4Problem11DualCertificate beta v
+      (theorem4Problem11ClosedDualWeight v t)
+      (theorem4Problem11ClosedKnownBudget beta v t)
+      (theorem4Problem11ClosedColdBudget beta v t)
+      (theorem4Problem11ClosedDualValue beta v t) := by
+  exact theorem4Problem11ClosedDualCertificate
+    hbeta hcold hpos hdec hleft
+
+/--
+Appendix E, Problem 11 closed-form dual upper bound: every feasible real
+solution has `λ` at most the closed dual value for any left-half pivot.
+-/
+theorem paper_problem11_closedDual_upper_bound
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ} {t : Item n}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hleft : t.val ≤ (reverseItem t).val)
+    {x z : Item n → ℝ} {ell : ℝ}
+    (hfeas : Theorem4Problem11RealLPFeasible beta v x z ell) :
+    ell ≤ theorem4Problem11ClosedDualValue beta v t := by
+  exact theorem4Problem11ClosedDual_upper_bound
+    hbeta hcold hpos hdec hleft hfeas
+
+/--
 Appendix E, Problem 11 bridge: an epigraph-optimal mirror-symmetric policy has
 objective value equal to its reduced estimated item-fairness.
 -/
@@ -7545,6 +7593,124 @@ theorem paper_problem11_policyOptimal_of_feasibleAtLevel_one
         (theorem4EstimatedReducedModel beta v) ρ) := by
   exact theorem4Problem11PolicyOptimal_of_feasibleAtLevel_one
     hbeta hcold hpos hsym hfeas
+
+/--
+Appendix E, Lemma 12 / Problem 11 bridge: any reduced estimated policy
+feasible at maximal item fairness has a mirror-symmetrization that solves
+Problem 11.
+-/
+theorem paper_problem11_policyOptimal_symmetrized_of_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) 1 ρ) :
+    Theorem4Problem11PolicyOptimal beta v (theorem4SymmetrizedPolicy ρ)
+      (TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4SymmetrizedPolicy ρ)) := by
+  exact theorem4Problem11PolicyOptimal_symmetrized_of_feasibleAtLevel_one
+    hbeta hcold hpos hfeas
+
+/--
+Appendix E, Problem 11 / Problem 1 bridge for the equality-form package used
+by Lemmas 13--15.
+-/
+theorem paper_problem11_equalizedBasicOptimal_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  exact theorem4Problem11EqualizedBasicOptimal_feasibleAtLevel_one
+    hbeta hcold hpos h
+
+/--
+Appendix E, Problem 11 / Problem 1 bridge for the paper's real equality-form
+optimal BFS data after rebuilding the three-type policy.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (theorem4EstimatedReducedModel beta v) 1
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_feasibleAtLevel_one
+    hbeta hcold hpos h
+
+/--
+Appendix E, Problem 11 / estimated Problem 1 bridge: if the selected
+equality-form Problem 11 optimum is the unique epigraph-optimal
+mirror-symmetric policy, then it solves the reduced estimated `γ = 1`
+user-fairness problem.
+-/
+theorem paper_problem11_equalizedBasicOptimal_isOptimalAtLevel_of_policyOptimal_unique
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hunique :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        Theorem4Problem11PolicyOptimal beta v ρ' ell' → ρ' = ρ) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  exact theorem4Problem11EqualizedBasicOptimal_isOptimalAtLevel_of_policyOptimal_unique
+    hbeta hcold hpos h hunique
+
+/--
+Appendix E, Problem 11 / estimated Problem 1 bridge using Lemma 14: if every
+epigraph-optimal mirror-symmetric policy is represented by an equality-form
+basic optimum, then the selected equality-form optimum solves the reduced
+estimated `γ = 1` user-fairness problem.
+-/
+theorem paper_problem11_equalizedBasicOptimal_isOptimalAtLevel_of_equalized_selection
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta) (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hselection :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        Theorem4Problem11PolicyOptimal beta v ρ' ell' →
+          Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  exact theorem4Problem11EqualizedBasicOptimal_isOptimalAtLevel_of_equalized_selection
+    hn hbeta_pos hbeta_half hpos hdec h hselection
+
+/--
+Appendix E, Problem 11 / estimated Problem 1 bridge after rebuilding a policy
+from the paper's real equality-form optimal BFS data.
+-/
+theorem paper_problem11_equalityFormOptimalBFS_isOptimalAtLevel_of_equalized_selection
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hn : 2 < n)
+    (hbeta_pos : 0 < beta) (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell)
+    (hselection :
+      ∀ (ρ' : TypePolicy 3 n) (ell' : ℝ),
+        Theorem4Problem11PolicyOptimal beta v ρ' ell' →
+          Theorem4Problem11EqualizedBasicOptimal beta v ρ' ell') :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+      (theorem4EstimatedReducedModel beta v) 1
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) := by
+  exact theorem4Problem11EqualityFormOptimalBFS_isOptimalAtLevel_of_equalized_selection
+    hn hbeta_pos hbeta_half hpos hdec h hselection
 
 /--
 Appendix E, Problem 11 equality-form extraction: the paper's real optimal BFS
