@@ -55,6 +55,18 @@ theorem paper_symmetric_lp_reduction_target
   exact lpReductionTarget_of_representatives R reps γ
 
 /--
+Proposition 1, paper-named wrapper for the symmetric LP-reduction target used
+by Theorems 3 and 4.
+-/
+theorem paper_proposition1_symmetric_lp_reduction_target
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (γ : ℝ) :
+    LPReductionTarget R γ := by
+  exact paper_symmetric_lp_reduction_target R reps γ
+
+/--
 Pointwise form of the symmetric LP-reduction target.
 
 If a user-level optimum is already type-symmetric, then it is exactly the lift
@@ -69,6 +81,21 @@ theorem paper_symmetric_original_optimum_has_type_representative
     (hopt : RecommendationModel.IsOptimalAtLevel R.data.model γ ρ) :
     ∃ ρK : TypePolicy K n, R.liftedPolicy ρK = ρ := by
   exact lpReductionTarget_of_representatives R reps γ ρ ⟨hρ, hopt⟩
+
+/--
+Proposition 1, pointwise paper-named wrapper: a symmetric user-level optimum
+has a reduced type-policy representative.
+-/
+theorem paper_proposition1_symmetric_original_optimum_has_type_representative
+    {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
+    (R : ReductionWitness m n K)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (γ : ℝ) {ρ : Policy m n}
+    (hρ : UserTypeAssignment.IsTypeSymmetric R.data.types ρ)
+    (hopt : RecommendationModel.IsOptimalAtLevel R.data.model γ ρ) :
+    ∃ ρK : TypePolicy K n, R.liftedPolicy ρK = ρ := by
+  exact paper_symmetric_original_optimum_has_type_representative
+    R reps γ hρ hopt
 
 /--
 Original/reduced optimal user-fairness value reduction.
@@ -11084,7 +11111,7 @@ theorem paper_lemma4_problem6_thresholdSupport_of_zeroClosed_of_sharedBound
     ρ hx hy hshared
 
 /--
-Proposition 1 sparse shared-item consequence.
+Proposition 2 sparse shared-item consequence.
 
 If a reduced type-level policy has at most `n + K - 1` active type-item pairs
 and every item is recommended by at least one type, then at most `K - 1` items
@@ -11101,7 +11128,7 @@ theorem paper_sparse_shared_items_of_active_pairs_bound
   exact sharedItemsBound_of_activePairsBound_of_item_coverage ρ hactive hcover
 
 /--
-Proposition 1 sparse-shape consequence from active-pair sparsity and item
+Proposition 2 sparse-shape consequence from active-pair sparsity and item
 coverage.
 -/
 theorem paper_sparse_shape_of_active_pairs_bound
@@ -11113,7 +11140,7 @@ theorem paper_sparse_shape_of_active_pairs_bound
   exact sparseShape_of_activePairsBound_of_item_coverage ρ hactive hcover
 
 /--
-Proposition 1 sparse shared-item consequence with item coverage discharged from
+Proposition 2 sparse shared-item consequence with item coverage discharged from
 positive reduced item fairness.
 
 If the reduced type policy has positive minimum normalized item utility, then
@@ -11131,7 +11158,7 @@ theorem paper_sparse_shared_items_of_active_pairs_bound_of_positive_item_fairnes
     (TypeWeightedRecommendationModel.item_coverage_of_itemFairness_pos T ρ hitem_pos)
 
 /--
-Proposition 1 sparse-shape consequence with item coverage discharged from
+Proposition 2 sparse-shape consequence with item coverage discharged from
 positive reduced item fairness.
 -/
 theorem paper_sparse_shape_of_active_pairs_bound_of_positive_item_fairness
@@ -11159,7 +11186,7 @@ theorem paper_reduced_optimal_item_fairness_positive
     T hWeight hUtil
 
 /--
-Proposition 1 active-support bound from the LP basic-feasible-solution support
+Proposition 2 active-support bound from the LP basic-feasible-solution support
 count.
 
 This is the finite arithmetic part of the paper's BFS sparsity proof:
@@ -11175,7 +11202,7 @@ theorem paper_active_pairs_bound_of_basic_feasible_support
   exact activePairsBound_of_basicFeasibleSupportCertificate ρ hcert
 
 /--
-Proposition 1 sparse shared-item consequence for a maximal-item-fairness
+Proposition 2 sparse shared-item consequence for a maximal-item-fairness
 reduced optimum.
 
 The only remaining hypothesis is the paper's basic-feasible-solution
@@ -11201,7 +11228,7 @@ theorem paper_sparse_shared_items_of_active_pairs_bound_of_maximal_optimum
     (TypeWeightedRecommendationModel.item_coverage_of_itemFairness_pos T ρ hitem_pos)
 
 /--
-Proposition 1 sparse-shape consequence for a maximal-item-fairness reduced
+Proposition 2 sparse-shape consequence for a maximal-item-fairness reduced
 optimum, with positivity discharged from strictly positive data.
 -/
 theorem paper_sparse_shape_of_active_pairs_bound_of_maximal_optimum
@@ -11216,7 +11243,7 @@ theorem paper_sparse_shape_of_active_pairs_bound_of_maximal_optimum
       T ρ hWeight hUtil hactive hopt⟩
 
 /--
-Proposition 1 sparse shared-item consequence for a maximal-item-fairness
+Proposition 2 sparse shared-item consequence for a maximal-item-fairness
 reduced optimum, using the paper's basic-feasible-solution support count
 directly.
 -/
@@ -11232,7 +11259,7 @@ theorem paper_sparse_shared_items_of_basic_feasible_maximal_optimum
     (activePairsBound_of_basicFeasibleSupportCertificate ρ hcert) hopt
 
 /--
-Proposition 1 sparse-shape consequence for a maximal-item-fairness reduced
+Proposition 2 sparse-shape consequence for a maximal-item-fairness reduced
 optimum, using the paper's basic-feasible-solution support count directly.
 -/
 theorem paper_sparse_shape_of_basic_feasible_maximal_optimum
