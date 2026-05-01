@@ -441,6 +441,47 @@ theorem pmf_map_apply_toReal_eq_pmfProb_preimage
   rw [← hsingleton, hmap]
   rfl
 
+theorem pmfExp_map {α β : Type*}
+    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    (μ : PMF α) (g : α → β) (f : β → ℝ) :
+    pmfExp (μ.map g) f = pmfExp μ (fun a => f (g a)) := by
+  classical
+  calc
+    pmfExp (μ.map g) f =
+        ∑ b : β, (pmfProb μ (fun a => g a = b)) * f b := by
+          unfold pmfExp
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          rw [pmf_map_apply_toReal_eq_pmfProb_preimage]
+    _ = ∑ b : β, (∑ a : α, (μ a).toReal *
+          (if g a = b then (1 : ℝ) else 0)) * f b := by
+          unfold pmfProb pmfExp
+          rfl
+    _ = ∑ b : β, ∑ a : α, ((μ a).toReal *
+          (if g a = b then (1 : ℝ) else 0)) * f b := by
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          rw [Finset.sum_mul]
+    _ = ∑ a : α, ∑ b : β, ((μ a).toReal *
+          (if g a = b then (1 : ℝ) else 0)) * f b := by
+          rw [Finset.sum_comm]
+    _ = ∑ a : α, (μ a).toReal * f (g a) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          calc
+            ∑ b : β, ((μ a).toReal *
+                (if g a = b then (1 : ℝ) else 0)) * f b =
+                (μ a).toReal *
+                  ∑ b : β, (if g a = b then (1 : ℝ) else 0) * f b := by
+                  rw [Finset.mul_sum]
+                  refine Finset.sum_congr rfl ?_
+                  intro b _
+                  ring
+            _ = (μ a).toReal * f (g a) := by
+                  simp [eq_comm]
+    _ = pmfExp μ (fun a => f (g a)) := by
+          rfl
+
 /-- Positive mass outside an event makes its finite PMF probability strictly below one. -/
 theorem pmfProb_lt_one_of_mass_not {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)

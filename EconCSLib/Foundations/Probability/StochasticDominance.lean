@@ -1,4 +1,4 @@
-import EconCSLib.Foundations.Probability.MarkovChain
+import EconCSLib.Foundations.Probability.MDP
 import Mathlib.Tactic.Linarith
 
 open scoped BigOperators
@@ -18,6 +18,7 @@ can instantiate from explicit constructions.
 - `PMF.FirstOrderLe`: expectation order against every monotone observable.
 - `PMF.MonotoneCoupling`: joint-distribution certificate for stochastic
   dominance.
+- `PMF.FirstOrderLe.map`: first-order dominance is preserved by monotone maps.
 - `PMF.firstOrderLe_of_monotoneCoupling`: monotone coupling implies first-order
   stochastic dominance.
 - `FiniteMarkovKernel.FirstOrderLe`: pointwise stochastic dominance of kernels.
@@ -49,6 +50,26 @@ theorem FirstOrderLe.expectation_le {μ ν : PMF α}
     (hμν : FirstOrderLe μ ν) {f : α → ℝ} (hf : Monotone f) :
     pmfExp μ f ≤ pmfExp ν f :=
   hμν f hf
+
+theorem firstOrderLe_pure_of_le {x y : α} (hxy : x ≤ y) :
+    FirstOrderLe (PMF.pure x) (PMF.pure y) := by
+  intro f hf
+  simpa using hf hxy
+
+theorem FirstOrderLe.exp_le_of_le {μ ν : PMF α}
+    (hμν : FirstOrderLe μ ν) {f g : α → ℝ}
+    (hfg : ∀ x, f x ≤ g x) (hg : Monotone g) :
+    pmfExp μ f ≤ pmfExp ν g := by
+  exact le_trans (FiniteMarkovKernel.pmfExp_mono μ hfg) (hμν g hg)
+
+theorem FirstOrderLe.map
+    {β : Type*} [Fintype β] [DecidableEq β] [Preorder β]
+    {μ ν : PMF α} (hμν : FirstOrderLe μ ν)
+    {g : α → β} (hg : Monotone g) :
+    FirstOrderLe (μ.map g) (ν.map g) := by
+  intro f hf
+  rw [pmfExp_map μ g f, pmfExp_map ν g f]
+  exact hμν (fun a => f (g a)) (hf.comp hg)
 
 /-- Left-coordinate expectation under a joint distribution on ordered pairs. -/
 noncomputable def pairLeftExp (γ : PMF (α × α)) (f : α → ℝ) : ℝ :=
@@ -120,6 +141,44 @@ theorem firstOrderLe_of_stochasticallyMonotone
   intro f hf
   exact hK hxy f hf
 
+theorem FirstOrderLe.refl (K : FiniteMarkovKernel α) : FirstOrderLe K K := by
+  intro x
+  exact PMF.FirstOrderLe.refl (K x)
+
+theorem FirstOrderLe.trans {K L H : FiniteMarkovKernel α}
+    (hKL : FirstOrderLe K L) (hLH : FirstOrderLe L H) :
+    FirstOrderLe K H := by
+  intro x
+  exact PMF.FirstOrderLe.trans (hKL x) (hLH x)
+
+theorem expectedLe_of_firstOrderLe
+    {K L : FiniteMarkovKernel α} (hKL : FirstOrderLe K L)
+    {f : α → ℝ} (hf : Monotone f) :
+    ExpectedLe K L f := by
+  intro x
+  exact expectedNext_le_of_firstOrderLe hKL x hf
+
 end FiniteMarkovKernel
+
+namespace FiniteMDP
+
+variable {σ α : Type*}
+variable [Fintype σ] [DecidableEq σ] [Preorder σ]
+variable [Fintype α] [DecidableEq α]
+
+/--
+If action `b` induces a stochastically larger next-state distribution than
+action `a`, and the `b` continuation payoff is monotone and pointwise dominates
+the `a` continuation payoff, then `b` has weakly larger action value.
+-/
+theorem actionValue_le_of_firstOrderLe
+    (M : FiniteMDP σ α) {V : σ → ℝ} {x : σ} {a b : α}
+    (htrans : PMF.FirstOrderLe (M.transition x a) (M.transition x b))
+    (hpayoff : ∀ y, M.reward x a y + V y ≤ M.reward x b y + V y)
+    (hmono : Monotone (fun y => M.reward x b y + V y)) :
+    actionValue M V x a ≤ actionValue M V x b := by
+  exact htrans.exp_le_of_le hpayoff hmono
+
+end FiniteMDP
 
 end EconCSLib
