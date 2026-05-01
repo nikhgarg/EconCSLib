@@ -30,6 +30,10 @@ allocation.
   generic pairwise-scaled count bridge for exact `C/N` homogeneity. Treat
   `α = 0` and `c = 0` explicitly; the paper-style `1/α` target and objective
   can degenerate there.
+- For asymptotic recommendation homogeneity, an `O(1)` pairwise scaled-count
+  bound is stronger than necessary. If finite FOCs plus tail/product
+  asymptotics give `|a_i/w_i - a_j/w_j| ≤ ε_N N` with `ε_N → 0`, use a
+  sublinear pairwise-scaled bridge to get the γ-profile limit.
 - For decaying Bernoulli top-one objectives, check `α = 0` before doing product
   asymptotics: rank success probabilities become constant, so the model should
   reduce to the existing i.i.d. Bernoulli satisfaction model and reuse its
