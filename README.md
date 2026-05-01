@@ -60,6 +60,7 @@ paper-folder `README.md`. For repository conventions, see:
 
 - [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/LEAN_STYLE.md](docs/LEAN_STYLE.md)
 - [docs/STATUS.md](docs/STATUS.md)
 - [skills/econcs-formalizer/SKILL.md](skills/econcs-formalizer/SKILL.md)
 

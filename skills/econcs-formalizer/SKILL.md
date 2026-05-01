@@ -36,6 +36,10 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 
 - **`EconCSLib/` (The Textbook):** Put generic, abstracted EC/CS/econ results here. If a definition, algorithm, or theorem is foundational enough that a graduate student should know it, or if a second paper might build on it (e.g., Gale-Shapley, Nash equilibrium, LP duality), it belongs in the core library.
   - **Abstraction:** Code here should be highly abstracted and stripped of paper-specific notation. Use generic types (`α`, `β`) and naming conventions consistent with `Mathlib`.
+  - **Lean Style:** Follow `docs/LEAN_STYLE.md`: `UpperCamelCase.lean` module
+    names, narrow leaf imports, module docstrings with `## Main declarations`
+    for new reusable modules, `UpperCamelCase` structures/predicates,
+    `lowerCamelCase` definitions/data, and `snake_case` theorem names.
   - **Ownership:** Main library modules own reusable primitives: allocations, valuations, mechanisms, rankings, PMFs, finite expectations, graph/path lemmas, and generic algorithm correctness patterns.
 
 - **`papers/` (The Audit Trail):** Each paper-specific folder is a formalization artifact proving that the specific claims in a specific PDF are true.

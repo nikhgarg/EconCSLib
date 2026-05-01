@@ -54,6 +54,14 @@ The paper folder should expose the source's definitions, theorem numbers, and
 assumptions clearly enough that a human can compare Lean against the PDF without
 reading the entire implementation stack.
 
+## Lean Style
+
+Follow the Mathlib-derived conventions in `docs/LEAN_STYLE.md`: narrow imports,
+`UpperCamelCase.lean` module names, module docstrings with main declarations
+for reusable library files, and Mathlib-style declaration names. Paper-facing
+wrappers may preserve source theorem numbers for auditability, but generic
+`EconCSLib` APIs should use paper-independent names.
+
 ## Paper-Facing Ledgers
 
 `MainTheorems.lean` is the stable human-facing interface for a paper. Large

@@ -3,6 +3,11 @@
 
 This file is the human-facing Lean ledger for the source paper. Keep
 source-faithful definitions and theorem wrappers here, in paper order.
+
+## Main declarations
+
+- `paperDefinition1`: placeholder for the first exact source definition.
+- `paper_theorem_1`: placeholder for the first exact source theorem.
 -/
 
 namespace TEMPLATE
