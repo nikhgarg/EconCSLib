@@ -7484,6 +7484,97 @@ theorem paper_problem11_policyOptimal_of_isOptimalAtLevel
     hbeta hcold hpos hsym hopt
 
 /--
+Appendix E, Problem 11 real-vector feasibility extracted from a
+mirror-symmetric policy satisfying the paper's epigraph constraints.
+-/
+theorem paper_problem11_realLPFeasible_of_policy
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (hfeas : theorem4Problem11LPFeasible beta v ρ ell) :
+    Theorem4Problem11RealLPFeasible beta v
+      (fun j : Item n => (ρ 0 j).toReal)
+      (fun j : Item n => (ρ 2 j).toReal) ell := by
+  exact theorem4Problem11RealLPFeasible_of_policy hsym hfeas
+
+/--
+Appendix E, Problem 11 bridge: an epigraph-optimal mirror-symmetric policy has
+objective value equal to its reduced estimated item-fairness.
+-/
+theorem paper_problem11_policyOptimal_itemFairness_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v) ρ = ell := by
+  exact theorem4Problem11PolicyOptimal_itemFairness_eq hpos hopt
+
+/--
+Appendix E, Problem 11 / Problem 1 bridge: every Problem 11 epigraph optimum
+is feasible for the reduced estimated model at maximal item-fairness level
+`γ = 1`.
+-/
+theorem paper_problem11_policyOptimal_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  exact theorem4Problem11PolicyOptimal_feasibleAtLevel_one
+    hbeta hcold hpos hopt
+
+/--
+Appendix E, Problem 11 / Problem 1 bridge in the other direction: a
+mirror-symmetric policy feasible at maximal estimated item fairness solves
+Problem 11 with objective equal to its item-fairness value.
+-/
+theorem paper_problem11_policyOptimal_of_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) 1 ρ) :
+    Theorem4Problem11PolicyOptimal beta v ρ
+      (TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v) ρ) := by
+  exact theorem4Problem11PolicyOptimal_of_feasibleAtLevel_one
+    hbeta hcold hpos hsym hfeas
+
+/--
+Appendix E, Problem 11 equality-form extraction: the paper's real optimal BFS
+data rebuilds an optimal mirror-symmetric three-type policy for the epigraph
+LP.
+-/
+theorem paper_problem11_policyOptimal_of_equalityFormOptimalBFS
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    Theorem4Problem11PolicyOptimal beta v
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) ell := by
+  exact theorem4Problem11PolicyOptimal_of_equalityFormOptimalBFS h
+
+/--
+Appendix E, Problem 11 equality-form extraction: the paper's real optimal BFS
+supplies the `Theorem4Problem11EqualizedBasicOptimal` package consumed by
+Lemmas 13--15 and Theorem 4.
+-/
+theorem paper_problem11_equalizedBasicOptimal_of_equalityFormOptimalBFS
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    Theorem4Problem11EqualizedBasicOptimal beta v
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) ell := by
+  exact theorem4Problem11EqualizedBasicOptimal_of_equalityFormOptimalBFS h
+
+/--
 Appendix E, Problem 11 epigraph fact: an optimal `λ` equals the minimum of the
 paper's item-value expressions.
 -/
@@ -7809,6 +7900,246 @@ theorem paper_lemma15_problem11_pivotOneZ_neg
     theorem4Problem11PivotOneZ beta v < 0 := by
   exact theorem4Problem11PivotOneZ_neg
     hn hbeta hbeta_half hpos hdec
+
+/--
+Appendix E, Lemma 15 notation: `L_t = ∑_{j<t} 1/q_j` for Problem 11.
+-/
+noncomputable def paper_lemma15_problem11_leftSum {n : ℕ}
+    (v : Item n → ℝ) (t : Item n) : ℝ :=
+  theorem4Problem11LeftSum v t
+
+/-- Appendix E, Lemma 15 positivity side fact: `L_t` is nonnegative. -/
+theorem paper_lemma15_problem11_leftSum_nonneg {n : ℕ}
+    {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j) (t : Item n) :
+    0 ≤ paper_lemma15_problem11_leftSum v t := by
+  exact theorem4Problem11LeftSum_nonneg hpos t
+
+/--
+Appendix E, Lemma 15 coordinate formula: before the pivot,
+`x_j = λ / (2β q_j)`.
+-/
+theorem paper_lemma15_problem11_typeZero_before_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t j : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hj : j.val < t.val) :
+    (ρ 0 j).toReal = ell / (2 * beta * pairShare (1 / 2) v j) := by
+  exact theorem4Problem11Lemma15_typeZero_before_eq
+    hbeta_pos hpos h hpivot hleft hj
+
+/--
+Appendix E, Lemma 15 coordinate formula: after the pivot, `x_j = 0`.
+-/
+theorem paper_lemma15_problem11_typeZero_after_eq_zero
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : t.val < j.val) :
+    (ρ 0 j).toReal = 0 := by
+  exact theorem4Problem11Lemma15_typeZero_after_eq_zero hpivot hj
+
+/--
+Appendix E, Lemma 15 coordinate formula at the pivot:
+`x_t = 1 - (λ / (2β)) L_t`.
+-/
+theorem paper_lemma15_problem11_typeZero_pivot_eq_one_sub_leftSum
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    (ρ 0 t).toReal =
+      1 - (ell / (2 * beta)) * paper_lemma15_problem11_leftSum v t := by
+  exact theorem4Problem11Lemma15_typeZero_pivot_eq_one_sub_leftSum
+    hbeta_pos hpos h hpivot hleft
+
+/--
+Appendix E, Lemma 15 coordinate formula: before the pivot, `z_j = 0`.
+-/
+theorem paper_lemma15_problem11_cold_before_eq_zero
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : j.val < t.val) :
+    (ρ 2 j).toReal = 0 := by
+  exact theorem4Problem11Lemma15_cold_before_eq_zero hpivot hj
+
+/--
+Appendix E, Lemma 15 coordinate formula: before the pivot, the mirrored
+cold-start coordinate is also zero.
+-/
+theorem paper_lemma15_problem11_cold_reverse_before_eq_zero
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : j.val < t.val) :
+    (ρ 2 (reverseItem j)).toReal = 0 := by
+  exact theorem4Problem11Lemma15_cold_reverse_before_eq_zero hpivot hj
+
+/--
+Appendix E, Lemma 15 coordinate formula: strictly between the pivot and its
+mirror, `z_j = λ / (1 - 2β)`.
+-/
+theorem paper_lemma15_problem11_cold_between_pivot_and_mirror_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t j : Item n}
+    (hbeta_half : beta < 1 / 2)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hjt : t.val < j.val)
+    (hjrev_t : j.val < (reverseItem t).val) :
+    (ρ 2 j).toReal = ell / (1 - 2 * beta) := by
+  exact theorem4Problem11Lemma15_cold_between_pivot_and_mirror_eq
+    hbeta_half h hpivot hjt hjrev_t
+
+/--
+Appendix E, Lemma 15 sum identity: summing all Problem 11 item values leaves
+only the weighted known-type row plus the cold-start row sum.
+-/
+theorem paper_lemma15_problem11_sum_policyItemValue_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) :
+    (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j) =
+      4 * beta *
+          (∑ j : Item n,
+            pairShare (1 / 2) v j * (ρ 0 j).toReal) +
+        (1 - 2 * beta) := by
+  exact theorem4Problem11_sum_policyItemValue_eq hpos ρ
+
+/--
+Appendix E, Lemma 15 sum identity under pivot support.
+-/
+theorem paper_lemma15_problem11_sum_typeZero_q_of_pivot
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    (∑ j : Item n, pairShare (1 / 2) v j * (ρ 0 j).toReal) =
+      (t.val : ℝ) * (ell / (2 * beta)) +
+        pairShare (1 / 2) v t *
+          (1 - (ell / (2 * beta)) * paper_lemma15_problem11_leftSum v t) := by
+  exact theorem4Problem11Lemma15_sum_typeZero_q_of_pivot
+    hbeta_pos hpos h hpivot hleft
+
+/--
+Appendix E, Lemma 15 closed-value algebra: the equality-form `λ` satisfies the
+paper's denominator equation.
+-/
+theorem paper_lemma15_problem11_lambda_mul_denominator_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    ell *
+        ((n : ℝ) - 2 * (t.val : ℝ) +
+          2 * pairShare (1 / 2) v t * paper_lemma15_problem11_leftSum v t) =
+      4 * beta * pairShare (1 / 2) v t + (1 - 2 * beta) := by
+  exact theorem4Problem11Lemma15_lambda_mul_denominator_eq
+    hbeta_pos hpos h hpivot hleft
+
+/--
+Appendix E, Lemma 15 non-center closed `λ` formula. Lean uses zero-based item
+indices, so the paper's `n - 2t` appears as
+`n - 2 * (t.val + 1)`.
+-/
+theorem paper_lemma15_problem11_lambda_eq_of_pivot_lt_mirror
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    ell =
+      (2 * beta * pairShare (1 / 2) v t + (1 / 2) * (1 - 2 * beta)) /
+        (1 + pairShare (1 / 2) v t * paper_lemma15_problem11_leftSum v t +
+          (1 / 2) * ((n : ℝ) - 2 * ((t.val : ℝ) + 1))) := by
+  exact theorem4Problem11Lemma15_lambda_eq_of_pivot_lt_mirror
+    hbeta_pos hpos h hpivot ht_left
+
+/--
+Appendix E, Lemma 15 non-center coordinate formula at the pivot:
+`z_t = (1/2) * (1 - (n - 2t)λ/(1 - 2β))`, with Lean's zero-based
+`n - 2t` term written as `n - 2 * (t.val + 1)`.
+-/
+theorem paper_lemma15_problem11_cold_pivot_eq_of_pivot_lt_mirror
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    (ρ 2 t).toReal =
+      (1 / 2) *
+        (1 -
+          (((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell /
+            (1 - 2 * beta))) := by
+  exact theorem4Problem11Lemma15_cold_pivot_eq_of_pivot_lt_mirror
+    hbeta_pos hbeta_half hpos h hpivot ht_left
+
+/--
+Appendix E, Lemma 15 non-center coordinate formula at the mirror pivot.
+-/
+theorem paper_lemma15_problem11_cold_mirror_pivot_eq_of_pivot_lt_mirror
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    (ρ 2 (reverseItem t)).toReal =
+      (1 / 2) *
+        (1 -
+          (((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell /
+            (1 - 2 * beta))) := by
+  exact theorem4Problem11Lemma15_cold_mirror_pivot_eq_of_pivot_lt_mirror
+    hbeta_pos hbeta_half hpos h hpivot ht_left
+
+/--
+Appendix E, Lemma 15 center-case cold-start coordinate: if the pivot is its
+own mirror, `z_t = 1`.
+-/
+theorem paper_lemma15_problem11_cold_center_eq_one
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_center : (reverseItem t).val = t.val) :
+    (ρ 2 t).toReal = 1 := by
+  exact theorem4Problem11Lemma15_cold_center_eq_one hpivot ht_center
+
+/--
+Auxiliary full-policy center-case value identity for Appendix E, Lemma 15.
+
+This is intentionally not named as the verbatim paper formula: the paper writes
+the center case in its half-LP convention, while the Lean equality-form Problem
+11 interface uses the full mirrored policy. Under the full-policy convention the
+center denominator equation simplifies to `λ = 1 / (1 + L_t)`.
+-/
+theorem paper_aux_lemma15_problem11_lambda_eq_of_center_fullPolicy
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hcenter : t.val = (reverseItem t).val) :
+    ell = 1 / (1 + paper_lemma15_problem11_leftSum v t) := by
+  exact theorem4Problem11Lemma15_lambda_eq_of_center_fullPolicy
+    hbeta_pos hpos h hpivot hcenter
 
 /--
 Appendix E, Lemma 15 consequence: a pivot-one closed-form coordinate cannot
@@ -8406,6 +8737,78 @@ theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalized_
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_auto
     R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall
     ρ ell heq
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the first opposing row, stated with
+the paper's real equality-form Problem 11 optimal BFS data.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeZero_from_equalityFormOptimalBFS
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hbfs :
+      OpposingTypes.Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    1 - eps <
+      E.priceOfMisestimation 1
+        (R.liftedPolicy
+          (OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+            hbfs.feasible.x_nonneg hbfs.feasible.z_nonneg
+            hbfs.feasible.sum_x hbfs.feasible.sum_z)) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_equalityFormOptimalBFS
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hbfs
+
+/--
+Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a
+cold-start user whose true preferences are the second opposing row, stated with
+the paper's real equality-form Problem 11 optimal BFS data.
+-/
+theorem paper_theorem4_misestimation_with_fairness_large_typeOne_from_equalityFormOptimalBFS
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hbfs :
+      OpposingTypes.Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    1 - eps <
+      E.priceOfMisestimation 1
+        (R.liftedPolicy
+          (OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+            hbfs.feasible.x_nonneg hbfs.feasible.z_nonneg
+            hbfs.feasible.sum_x hbfs.feasible.sum_z)) := by
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalityFormOptimalBFS
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall hbfs
 
 /--
 Appendix E, Theorem 4 fairness-constrained large-misestimation wrapper for a

@@ -40,7 +40,7 @@
 
 % --- Problem 11 and Theorem 4 support structure ---
 \node[dag_model, right=of Lemma4] (Problem11)
-  {\textbf{Problem 11 (App. E)} \\ Three-type LP and equality form};
+  {\textbf{Problem 11 (App. E)} \\ Three-type LP, $\gamma=1$ bridge, real-BFS interface};
 \node[dag_lemma, below=of Problem11] (Lemma12)
   {\textbf{Lemma 12 (App. E)} \\ Symmetric reduction into $S'$};
 \node[dag_lemma, below=of Lemma12] (Lemma17)
@@ -50,7 +50,7 @@
 \node[dag_lemma, below=of NoGap] (Lemma13)
   {\textbf{Lemma 13 (App. E)} \\ Pivot support from equalized optimum};
 \node[dag_conditional, below=of Lemma13] (Lemma15)
-  {\textbf{Lemma 15 (App. E)} \\ Pivot-one coordinates; full formula open};
+  {\textbf{Lemma 15 (App. E)} \\ Coordinates; half-LP center $\lambda$ caveat};
 
 % --- Theorem 4 downstream wrappers and open paper theorem ---
 \node[dag_lemma, right=of NoGap] (Lemma14)
@@ -68,7 +68,7 @@
 \node[dag_lemma, below=of Theorem4Conditional] (VExist)
   {\textbf{Value-Vector Witness} \\ Geometric $v_j=r^j$ construction};
 \node[dag_unformalized, below=of VExist] (Theorem4Full)
-  {\textbf{Theorem 4 (App. E)} \\ Open: selected Problem 11 optimum};
+  {\textbf{Theorem 4 (App. E)} \\ Open: real equality-form BFS existence};
 
 % --- Edges: model/reduction path ---
 \draw[dag_arrow] (BaseDefs) -- (Lemma1);

@@ -1327,6 +1327,136 @@ theorem theorem4Problem11PolicyOptimal_of_isOptimalAtLevel
       simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using hopt.1
     exact hell_le_item.trans (hitem_le_opt.trans hopt_le_item)
 
+/--
+Problem 11 optimality bridge: an epigraph-optimal mirror-symmetric policy has
+objective value exactly equal to its reduced estimated item-fairness.
+-/
+theorem theorem4Problem11PolicyOptimal_itemFairness_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v) ρ = ell := by
+  let T := theorem4EstimatedReducedModel beta v
+  have hell_le_item :
+      ell ≤ TypeWeightedRecommendationModel.itemFairness T ρ :=
+    (theorem4Problem11LPFeasible_iff_le_itemFairness
+      hpos hopt.1).mp hopt.2.1
+  have hfeas_item :
+      theorem4Problem11LPFeasible beta v ρ
+        (TypeWeightedRecommendationModel.itemFairness T ρ) :=
+    (theorem4Problem11LPFeasible_iff_le_itemFairness
+      hpos hopt.1).mpr le_rfl
+  have hitem_le_ell :
+      TypeWeightedRecommendationModel.itemFairness T ρ ≤ ell :=
+    hopt.2.2 ρ (TypeWeightedRecommendationModel.itemFairness T ρ)
+      hopt.1 hfeas_item
+  exact le_antisymm hitem_le_ell hell_le_item
+
+/--
+Problem 11 / Problem 1 bridge: every Problem 11 epigraph optimum is feasible
+for the reduced estimated model at maximal item-fairness level `γ = 1`.
+
+The proof uses Lemma 12's symmetrization dominance: arbitrary policies cannot
+attain larger item fairness than their mirror-symmetrizations, and Problem 11
+is optimal over that mirror-symmetric subspace.
+-/
+theorem theorem4Problem11PolicyOptimal_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hopt : Theorem4Problem11PolicyOptimal beta v ρ ell) :
+    TypeWeightedRecommendationModel.feasibleAtLevel
+      (theorem4EstimatedReducedModel beta v) 1 ρ := by
+  let T := theorem4EstimatedReducedModel beta v
+  have hitem_eq :
+      TypeWeightedRecommendationModel.itemFairness T ρ = ell :=
+    theorem4Problem11PolicyOptimal_itemFairness_eq hpos hopt
+  have hItemNonempty :
+      (TypeWeightedRecommendationModel.attainableItemFairnessSet T).Nonempty := by
+    refine ⟨TypeWeightedRecommendationModel.itemFairness T
+      (TypeWeightedRecommendationModel.uniformTypePolicy (K := 3) (n := n)), ?_⟩
+    exact ⟨TypeWeightedRecommendationModel.uniformTypePolicy (K := 3) (n := n), rfl⟩
+  have hoptItem_le_ell :
+      TypeWeightedRecommendationModel.optimalItemFairness T ≤ ell := by
+    unfold TypeWeightedRecommendationModel.optimalItemFairness
+    refine csSup_le hItemNonempty ?_
+    intro r hr
+    obtain ⟨ρ', rfl⟩ := hr
+    let ρsym : TypePolicy 3 n := theorem4SymmetrizedPolicy ρ'
+    have hsym : Theorem4MirrorSymmetricPolicy ρsym := by
+      dsimp [ρsym]
+      exact theorem4SymmetrizedPolicy_mirrorSymmetric ρ'
+    have hfeas_sym :
+        theorem4Problem11LPFeasible beta v ρsym
+          (TypeWeightedRecommendationModel.itemFairness T ρsym) :=
+      (theorem4Problem11LPFeasible_iff_le_itemFairness
+        hpos hsym).mpr le_rfl
+    have hsym_le_ell :
+        TypeWeightedRecommendationModel.itemFairness T ρsym ≤ ell :=
+      hopt.2.2 ρsym (TypeWeightedRecommendationModel.itemFairness T ρsym)
+        hsym hfeas_sym
+    have hle_sym :
+        TypeWeightedRecommendationModel.itemFairness T ρ' ≤
+          TypeWeightedRecommendationModel.itemFairness T ρsym := by
+      dsimp [T, ρsym]
+      exact theorem4EstimatedReducedModel_itemFairness_le_symmetrized hpos ρ'
+    exact hle_sym.trans hsym_le_ell
+  have hoptItem_le_item :
+      TypeWeightedRecommendationModel.optimalItemFairness T ≤
+        TypeWeightedRecommendationModel.itemFairness T ρ := by
+    rw [hitem_eq]
+    exact hoptItem_le_ell
+  simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using hoptItem_le_item
+
+/--
+Problem 11 / Problem 1 bridge in the other direction: a mirror-symmetric policy
+that is feasible at maximal estimated item fairness solves the Problem 11
+epigraph LP with objective equal to its item-fairness value.
+-/
+theorem theorem4Problem11PolicyOptimal_of_feasibleAtLevel_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    {ρ : TypePolicy 3 n}
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (hfeas :
+      TypeWeightedRecommendationModel.feasibleAtLevel
+        (theorem4EstimatedReducedModel beta v) 1 ρ) :
+    Theorem4Problem11PolicyOptimal beta v ρ
+      (TypeWeightedRecommendationModel.itemFairness
+        (theorem4EstimatedReducedModel beta v) ρ) := by
+  let T := theorem4EstimatedReducedModel beta v
+  refine ⟨hsym, ?_, ?_⟩
+  · exact (theorem4Problem11LPFeasible_iff_le_itemFairness
+      hpos hsym).mpr le_rfl
+  · intro ρ' ell' hsym' hfeas'
+    have hell'_le_item :
+        ell' ≤ TypeWeightedRecommendationModel.itemFairness T ρ' :=
+      (theorem4Problem11LPFeasible_iff_le_itemFairness
+        hpos hsym').mp hfeas'
+    have hbdd :
+        BddAbove (TypeWeightedRecommendationModel.attainableItemFairnessSet T) :=
+      TypeWeightedRecommendationModel.attainableItemFairnessSet_bddAbove_of_nonnegative
+        T
+        (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+        (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+    have hmem :
+        TypeWeightedRecommendationModel.itemFairness T ρ' ∈
+          TypeWeightedRecommendationModel.attainableItemFairnessSet T := by
+      exact ⟨ρ', rfl⟩
+    have hitem_le_opt :
+        TypeWeightedRecommendationModel.itemFairness T ρ' ≤
+          TypeWeightedRecommendationModel.optimalItemFairness T :=
+      le_csSup hbdd hmem
+    have hopt_le_item :
+        TypeWeightedRecommendationModel.optimalItemFairness T ≤
+          TypeWeightedRecommendationModel.itemFairness T ρ := by
+      simpa [TypeWeightedRecommendationModel.feasibleAtLevel] using hfeas
+    exact hell'_le_item.trans (hitem_le_opt.trans hopt_le_item)
+
 /-- An optimal Problem 11 epigraph value is the minimum item value of its policy. -/
 theorem theorem4Problem11PolicyOptimal_value_eq_finiteMin
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
@@ -1363,6 +1493,184 @@ structure Theorem4Problem11EqualizedBasicOptimal {n : ℕ} [NeZero n]
     ∀ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j = ell
   optimal : Theorem4Problem11PolicyOptimal beta v ρ ell
   basic_feasible : TypePolicy.BasicFeasibleSupportCertificate ρ
+
+/-- Problem 11's real-vector epigraph feasibility in the paper's `x,z,λ` variables. -/
+structure Theorem4Problem11RealLPFeasible {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ)
+    (x z : Item n → ℝ) (ell : ℝ) : Prop where
+  x_nonneg : ∀ j : Item n, 0 ≤ x j
+  z_nonneg : ∀ j : Item n, 0 ≤ z j
+  sum_x : (∑ j : Item n, x j) = 1
+  sum_z : (∑ j : Item n, z j) = 1
+  z_mirror : ∀ j : Item n, z (reverseItem j) = z j
+  item_le :
+    ∀ j : Item n, ell ≤ theorem4Problem11ItemValue beta v x z j
+
+/--
+Rebuild the three estimated Problem 11 rows from real `x` and mirror-symmetric
+`z` coordinates. Row `1` is the mirror of row `0`; row `2` is the cold-start
+row.
+-/
+noncomputable def theorem4Problem11PolicyOfRealVectors {n : ℕ}
+    (x z : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hz : ∀ j : Item n, 0 ≤ z j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsz : (∑ j : Item n, z j) = 1) :
+    TypePolicy 3 n :=
+  fun k =>
+    if k = 0 then
+      pmfOfRealVector x hx hsx
+    else if k = 1 then
+      pmfOfRealVector (fun j : Item n => x (reverseItem j))
+        (fun j => hx (reverseItem j))
+        (by rw [sum_reverseItem, hsx])
+    else
+      pmfOfRealVector z hz hsz
+
+@[simp] theorem theorem4Problem11PolicyOfRealVectors_zero_toReal {n : ℕ}
+    (x z : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hz : ∀ j : Item n, 0 ≤ z j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsz : (∑ j : Item n, z j) = 1)
+    (j : Item n) :
+    ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 0) j).toReal =
+      x j := by
+  simp [theorem4Problem11PolicyOfRealVectors]
+
+@[simp] theorem theorem4Problem11PolicyOfRealVectors_one_toReal {n : ℕ}
+    (x z : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hz : ∀ j : Item n, 0 ≤ z j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsz : (∑ j : Item n, z j) = 1)
+    (j : Item n) :
+    ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 1) j).toReal =
+      x (reverseItem j) := by
+  simp [theorem4Problem11PolicyOfRealVectors]
+
+@[simp] theorem theorem4Problem11PolicyOfRealVectors_two_toReal {n : ℕ}
+    (x z : Item n → ℝ)
+    (hx : ∀ j : Item n, 0 ≤ x j)
+    (hz : ∀ j : Item n, 0 ≤ z j)
+    (hsx : (∑ j : Item n, x j) = 1)
+    (hsz : (∑ j : Item n, z j) = 1)
+    (j : Item n) :
+    ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 2) j).toReal =
+      z j := by
+  simp [theorem4Problem11PolicyOfRealVectors]
+
+theorem theorem4Problem11PolicyOfRealVectors_mirrorSymmetric {n : ℕ}
+    {x z : Item n → ℝ}
+    {hx : ∀ j : Item n, 0 ≤ x j}
+    {hz : ∀ j : Item n, 0 ≤ z j}
+    {hsx : (∑ j : Item n, x j) = 1}
+    {hsz : (∑ j : Item n, z j) = 1}
+    (hzmirror : ∀ j : Item n, z (reverseItem j) = z j) :
+    Theorem4MirrorSymmetricPolicy
+      (theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz) := by
+  constructor
+  · intro j
+    apply (ENNReal.toReal_eq_toReal_iff'
+      ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 1).apply_ne_top
+        (reverseItem j))
+      ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 0).apply_ne_top
+        j)).mp
+    simp [reverseItem_reverseItem]
+  · intro j
+    apply (ENNReal.toReal_eq_toReal_iff'
+      ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 2).apply_ne_top
+        (reverseItem j))
+      ((theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz 2).apply_ne_top
+        j)).mp
+    simpa using hzmirror j
+
+theorem theorem4Problem11PolicyOfRealVectors_itemValue_eq {n : ℕ}
+    {beta : ℝ} {v x z : Item n → ℝ}
+    {hx : ∀ j : Item n, 0 ≤ x j}
+    {hz : ∀ j : Item n, 0 ≤ z j}
+    {hsx : (∑ j : Item n, x j) = 1}
+    {hsz : (∑ j : Item n, z j) = 1}
+    (j : Item n) :
+    theorem4Problem11PolicyItemValue beta v
+        (theorem4Problem11PolicyOfRealVectors x z hx hz hsx hsz) j =
+      theorem4Problem11ItemValue beta v x z j := by
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  simp
+
+theorem theorem4Problem11RealLPFeasible_of_policy {n : ℕ} [NeZero n]
+    {beta : ℝ} {v : Item n → ℝ} {ρ : TypePolicy 3 n} {ell : ℝ}
+    (hsym : Theorem4MirrorSymmetricPolicy ρ)
+    (hfeas : theorem4Problem11LPFeasible beta v ρ ell) :
+    Theorem4Problem11RealLPFeasible beta v
+      (fun j : Item n => (ρ 0 j).toReal)
+      (fun j : Item n => (ρ 2 j).toReal) ell := by
+  exact
+    { x_nonneg := fun j => ENNReal.toReal_nonneg
+      z_nonneg := fun j => ENNReal.toReal_nonneg
+      sum_x := EconCSLib.pmfToRealSum (ρ 0)
+      sum_z := EconCSLib.pmfToRealSum (ρ 2)
+      z_mirror := fun j => by
+        exact congrArg ENNReal.toReal (hsym.2 j)
+      item_le := hfeas }
+
+/--
+The paper's equality-form optimal basic feasible solution data for Problem 11,
+before rebuilding the PMF policy.
+-/
+structure Theorem4Problem11EqualityFormOptimalBFS {n : ℕ}
+    (beta : ℝ) (v : Item n → ℝ)
+    (x z : Item n → ℝ) (ell : ℝ) : Prop where
+  feasible : Theorem4Problem11RealLPFeasible beta v x z ell
+  item_eq :
+    ∀ j : Item n, theorem4Problem11ItemValue beta v x z j = ell
+  optimal :
+    ∀ {x' z' : Item n → ℝ} {ell' : ℝ},
+      Theorem4Problem11RealLPFeasible beta v x' z' ell' → ell' ≤ ell
+  basic_feasible :
+    TypePolicy.BasicFeasibleSupportCertificate
+      (theorem4Problem11PolicyOfRealVectors x z
+        feasible.x_nonneg feasible.z_nonneg feasible.sum_x feasible.sum_z)
+
+theorem theorem4Problem11PolicyOptimal_of_equalityFormOptimalBFS {n : ℕ}
+    [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    Theorem4Problem11PolicyOptimal beta v
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) ell := by
+  let ρ : TypePolicy 3 n :=
+    theorem4Problem11PolicyOfRealVectors x z
+      h.feasible.x_nonneg h.feasible.z_nonneg
+      h.feasible.sum_x h.feasible.sum_z
+  refine ⟨?_, ?_, ?_⟩
+  · dsimp [ρ]
+    exact theorem4Problem11PolicyOfRealVectors_mirrorSymmetric
+      h.feasible.z_mirror
+  · intro j
+    rw [theorem4Problem11PolicyOfRealVectors_itemValue_eq]
+    exact le_of_eq (h.item_eq j).symm
+  · intro ρ' ell' hsym' hfeas'
+    exact h.optimal (theorem4Problem11RealLPFeasible_of_policy hsym' hfeas')
+
+theorem theorem4Problem11EqualizedBasicOptimal_of_equalityFormOptimalBFS
+    {n : ℕ} [NeZero n] {beta : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (h : Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    Theorem4Problem11EqualizedBasicOptimal beta v
+      (theorem4Problem11PolicyOfRealVectors x z
+        h.feasible.x_nonneg h.feasible.z_nonneg
+        h.feasible.sum_x h.feasible.sum_z) ell := by
+  refine
+    { mirror := ?_
+      item_eq := ?_
+      optimal := theorem4Problem11PolicyOptimal_of_equalityFormOptimalBFS h
+      basic_feasible := h.basic_feasible }
+  · exact theorem4Problem11PolicyOfRealVectors_mirrorSymmetric
+      h.feasible.z_mirror
+  · intro j
+    rw [theorem4Problem11PolicyOfRealVectors_itemValue_eq]
+    exact h.item_eq j
 
 theorem theorem4UniformTypePolicy_mirrorSymmetric {n : ℕ} [NeZero n] :
     Theorem4MirrorSymmetricPolicy
@@ -4557,6 +4865,20 @@ theorem theorem4Problem11PolicyItemValue_eq_cold_of_pivot_lt_left
   unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
   simp [hx, hxrev]
 
+theorem theorem4Problem11PolicyItemValue_eq_cold_of_pivot_lt_and_pivot_lt_reverse
+    {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : t.val < j.val)
+    (hjrev : t.val < (reverseItem j).val) :
+    theorem4Problem11PolicyItemValue beta v ρ j =
+      (1 - 2 * beta) * (ρ 2 j).toReal := by
+  have hx : ρ 0 j = 0 := hpivot.1 j hj
+  have hxrev : ρ 0 (reverseItem j) = 0 :=
+    hpivot.1 (reverseItem j) hjrev
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  simp [hx, hxrev]
+
 theorem theorem4Problem11PivotSupport_typeZero_toReal_eq_of_lt_pivots
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
     {ρ ρ' : TypePolicy 3 n} {t t' j : Item n}
@@ -4796,6 +5118,556 @@ theorem theorem4Problem11PivotSupport_policyItemValue_eq_at_left_pivot
   unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
   simp [hxrev]
   ring
+
+/-- Appendix E, Lemma 15's `L_t = ∑_{j<t} 1/q_j`. -/
+noncomputable def theorem4Problem11LeftSum {n : ℕ}
+    (v : Item n → ℝ) (t : Item n) : ℝ :=
+  ∑ j : Item n,
+    if j.val < t.val then (pairShare (1 / 2) v j)⁻¹ else 0
+
+theorem theorem4Problem11LeftSum_nonneg {n : ℕ}
+    {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j) (t : Item n) :
+    0 ≤ theorem4Problem11LeftSum v t := by
+  unfold theorem4Problem11LeftSum
+  refine Finset.sum_nonneg ?_
+  intro j _hj
+  by_cases hjt : j.val < t.val
+  · have hq_nonneg : 0 ≤ pairShare (1 / 2) v j :=
+      (pairShare_pos j
+        (by norm_num : (0 : ℝ) < 1 / 2)
+        (by norm_num : (1 / 2 : ℝ) < 1) hpos).le
+    simpa [hjt] using hq_nonneg
+  · simp [hjt]
+
+/-- Lemma 15: before the pivot, `x_j = λ / (2β q_j)`. -/
+theorem theorem4Problem11Lemma15_typeZero_before_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t j : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val)
+    (hj : j.val < t.val) :
+    (ρ 0 j).toReal = ell / (2 * beta * pairShare (1 / 2) v j) := by
+  have hknown :=
+    theorem4Problem11PolicyItemValue_eq_known_of_lt_pivot
+      (beta := beta) (v := v) (ρ := ρ) hpivot hleft hj
+  have hmul :
+      2 * beta * pairShare (1 / 2) v j * (ρ 0 j).toReal = ell := by
+    rw [← hknown]
+    exact h.item_eq j
+  have hcoef_ne : 2 * beta * pairShare (1 / 2) v j ≠ 0 := by
+    have hq_pos : 0 < pairShare (1 / 2) v j :=
+      pairShare_pos j (by norm_num) (by norm_num) hpos
+    exact ne_of_gt (by positivity : 0 < 2 * beta * pairShare (1 / 2) v j)
+  rw [eq_div_iff hcoef_ne]
+  nlinarith [hmul]
+
+/-- Lemma 15: after the pivot, the known-type coordinate is zero. -/
+theorem theorem4Problem11Lemma15_typeZero_after_eq_zero
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : t.val < j.val) :
+    (ρ 0 j).toReal = 0 := by
+  simp [hpivot.1 j hj]
+
+/--
+Lemma 15: the pivot known-type coordinate is
+`1 - (λ / (2β)) L_t`.
+-/
+theorem theorem4Problem11Lemma15_typeZero_pivot_eq_one_sub_leftSum
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    (ρ 0 t).toReal =
+      1 - (ell / (2 * beta)) * theorem4Problem11LeftSum v t := by
+  have hx_t :=
+    theorem4Problem11PivotSupport_typeZero_pivot_toReal_eq_one_sub_leftSum
+      hpivot
+  have hsum :
+      (∑ j : Item n, if j.val < t.val then (ρ 0 j).toReal else 0) =
+        (ell / (2 * beta)) * theorem4Problem11LeftSum v t := by
+    unfold theorem4Problem11LeftSum
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    by_cases hjt : j.val < t.val
+    · have hq_ne : pairShare (1 / 2) v j ≠ 0 :=
+        ne_of_gt (pairShare_pos j (by norm_num) (by norm_num) hpos)
+      have hbeta_ne : beta ≠ 0 := ne_of_gt hbeta_pos
+      rw [if_pos hjt, if_pos hjt,
+        theorem4Problem11Lemma15_typeZero_before_eq
+          hbeta_pos hpos h hpivot hleft hjt]
+      field_simp [hbeta_ne, hq_ne]
+    · simp [hjt]
+  rw [hx_t, hsum]
+
+/-- Lemma 15: before the pivot, `z_j = 0`. -/
+theorem theorem4Problem11Lemma15_cold_before_eq_zero
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : j.val < t.val) :
+    (ρ 2 j).toReal = 0 := by
+  simp [(hpivot.2 j hj).1]
+
+/-- Lemma 15: before the pivot, the mirrored cold-start coordinate is zero. -/
+theorem theorem4Problem11Lemma15_cold_reverse_before_eq_zero
+    {n : ℕ} {ρ : TypePolicy 3 n} {t j : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hj : j.val < t.val) :
+    (ρ 2 (reverseItem j)).toReal = 0 := by
+  simp [(hpivot.2 j hj).2]
+
+/--
+Lemma 15: strictly between the pivot and its mirror, the cold-start coordinate
+is `λ / (1 - 2β)`.
+-/
+theorem theorem4Problem11Lemma15_cold_between_pivot_and_mirror_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t j : Item n}
+    (hbeta_half : beta < 1 / 2)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hjt : t.val < j.val)
+    (hjrev_t : j.val < (reverseItem t).val) :
+    (ρ 2 j).toReal = ell / (1 - 2 * beta) := by
+  have ht_rev_j : t.val < (reverseItem j).val := by
+    have h :=
+      reverseItem_val_lt_of_val_lt hjrev_t
+    simpa [reverseItem_reverseItem] using h
+  have hcold :=
+    theorem4Problem11PolicyItemValue_eq_cold_of_pivot_lt_and_pivot_lt_reverse
+      (beta := beta) (v := v) (ρ := ρ) hpivot hjt ht_rev_j
+  have hmul : (1 - 2 * beta) * (ρ 2 j).toReal = ell := by
+    rw [← hcold]
+    exact h.item_eq j
+  have hc_ne : 1 - 2 * beta ≠ 0 := by nlinarith
+  calc
+    (ρ 2 j).toReal =
+        ((1 - 2 * beta) * (ρ 2 j).toReal) / (1 - 2 * beta) := by
+          field_simp [hc_ne]
+    _ = ell / (1 - 2 * beta) := by
+          rw [hmul]
+
+/--
+Summing the Problem 11 item values collapses the mirrored known-type row into
+the same `q_j x_j` sum.
+-/
+theorem theorem4Problem11_sum_policyItemValue_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j : Item n, 0 < v j)
+    (ρ : TypePolicy 3 n) :
+    (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j) =
+      4 * beta *
+          (∑ j : Item n,
+            pairShare (1 / 2) v j * (ρ 0 j).toReal) +
+        (1 - 2 * beta) := by
+  have hsum_z : (∑ j : Item n, (ρ 2 j).toReal) = 1 :=
+    EconCSLib.pmfToRealSum (ρ 2)
+  have hsum_rev :
+      (∑ j : Item n,
+          (1 - pairShare (1 / 2) v j) *
+            (ρ 0 (reverseItem j)).toReal) =
+        ∑ j : Item n,
+          pairShare (1 / 2) v j * (ρ 0 j).toReal := by
+    have hreindex :
+        (∑ j : Item n,
+            (1 - pairShare (1 / 2) v j) *
+              (ρ 0 (reverseItem j)).toReal) =
+          ∑ j : Item n,
+            (1 - pairShare (1 / 2) v (reverseItem j)) *
+              (ρ 0 j).toReal := by
+      simpa [reverseItem_reverseItem] using
+        (sum_reverseItem
+          (fun j : Item n =>
+            (1 - pairShare (1 / 2) v (reverseItem j)) *
+              (ρ 0 j).toReal))
+    rw [hreindex]
+    refine Finset.sum_congr rfl ?_
+    intro j _hj
+    have hq :
+        1 - pairShare (1 / 2) v (reverseItem j) =
+          pairShare (1 / 2) v j :=
+      (pairShare_half_eq_one_sub_reverse j hpos).symm
+    rw [hq]
+  unfold theorem4Problem11PolicyItemValue theorem4Problem11ItemValue
+  have hknown :
+      (∑ j : Item n,
+        2 * beta *
+            (pairShare (1 / 2) v j * (ρ 0 j).toReal +
+              (1 - pairShare (1 / 2) v j) *
+                (ρ 0 (reverseItem j)).toReal)) =
+        2 * beta *
+          ((∑ j : Item n,
+              pairShare (1 / 2) v j * (ρ 0 j).toReal) +
+            (∑ j : Item n,
+              (1 - pairShare (1 / 2) v j) *
+                (ρ 0 (reverseItem j)).toReal)) := by
+    rw [← Finset.mul_sum, Finset.sum_add_distrib]
+  have hcold :
+      (∑ j : Item n, (1 - 2 * beta) * (ρ 2 j).toReal) =
+        (1 - 2 * beta) * (∑ j : Item n, (ρ 2 j).toReal) := by
+    rw [← Finset.mul_sum]
+  rw [Finset.sum_add_distrib, hknown, hcold, hsum_rev, hsum_z]
+  ring
+
+/--
+Lemma 15 sum identity: under pivot support, the weighted known-type mass is
+`t * λ/(2β) + q_t (1 - (λ/(2β))L_t)`.
+-/
+theorem theorem4Problem11Lemma15_sum_typeZero_q_of_pivot
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    (∑ j : Item n, pairShare (1 / 2) v j * (ρ 0 j).toReal) =
+      (t.val : ℝ) * (ell / (2 * beta)) +
+        pairShare (1 / 2) v t *
+          (1 - (ell / (2 * beta)) * theorem4Problem11LeftSum v t) := by
+  have hsplit :=
+    theorem4_sum_eq_left_part_add_pivot_of_after_zero
+      (fun j : Item n =>
+        pairShare (1 / 2) v j * (ρ 0 j).toReal) t
+      (fun {j} hj => by
+        change pairShare (1 / 2) v j * (ρ 0 j).toReal = 0
+        rw [theorem4Problem11Lemma15_typeZero_after_eq_zero hpivot hj]
+        ring)
+  have hleft_sum :
+      (∑ j : Item n,
+        if j.val < t.val then
+          pairShare (1 / 2) v j * (ρ 0 j).toReal else 0) =
+        (t.val : ℝ) * (ell / (2 * beta)) := by
+    calc
+      (∑ j : Item n,
+        if j.val < t.val then
+          pairShare (1 / 2) v j * (ρ 0 j).toReal else 0)
+          = ∑ j : Item n,
+              if j.val < t.val then ell / (2 * beta) else 0 := by
+              refine Finset.sum_congr rfl ?_
+              intro j _hj
+              by_cases hjt : j.val < t.val
+              · have hq_ne : pairShare (1 / 2) v j ≠ 0 :=
+                  ne_of_gt (pairShare_pos j (by norm_num) (by norm_num) hpos)
+                have hbeta_ne : beta ≠ 0 := ne_of_gt hbeta_pos
+                rw [if_pos hjt, if_pos hjt,
+                  theorem4Problem11Lemma15_typeZero_before_eq
+                    hbeta_pos hpos h hpivot hleft hjt]
+                field_simp [hbeta_ne, hq_ne]
+              · simp [hjt]
+      _ = (t.val : ℝ) * (ell / (2 * beta)) := by
+              exact problem6_sum_left_const_eq t (ell / (2 * beta))
+  have hpivot_x :=
+    theorem4Problem11Lemma15_typeZero_pivot_eq_one_sub_leftSum
+      hbeta_pos hpos h hpivot hleft
+  rw [hsplit, hleft_sum]
+  change
+    (t.val : ℝ) * (ell / (2 * beta)) +
+        pairShare (1 / 2) v t * (ρ 0 t).toReal =
+      (t.val : ℝ) * (ell / (2 * beta)) +
+        pairShare (1 / 2) v t *
+          (1 - ell / (2 * beta) * theorem4Problem11LeftSum v t)
+  rw [hpivot_x]
+
+/--
+Lemma 15 closed-value algebra: summing all equality-form item constraints gives
+the paper's denominator equation for `λ`.
+-/
+theorem theorem4Problem11Lemma15_lambda_mul_denominator_eq
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hleft : t.val ≤ (reverseItem t).val) :
+    ell *
+        ((n : ℝ) - 2 * (t.val : ℝ) +
+          2 * pairShare (1 / 2) v t * theorem4Problem11LeftSum v t) =
+      4 * beta * pairShare (1 / 2) v t + (1 - 2 * beta) := by
+  let q : ℝ := pairShare (1 / 2) v t
+  let L : ℝ := theorem4Problem11LeftSum v t
+  have hsum_values :=
+    theorem4Problem11_sum_policyItemValue_eq
+      (beta := beta) (v := v) hpos ρ
+  have hsum_eq :
+      (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j) =
+        (n : ℝ) * ell := by
+    calc
+      (∑ j : Item n, theorem4Problem11PolicyItemValue beta v ρ j)
+          = ∑ _j : Item n, ell := by
+            apply Finset.sum_congr rfl
+            intro j _hj
+            exact h.item_eq j
+      _ = (n : ℝ) * ell := by
+            simp [Item]
+  have hsum_q :=
+    theorem4Problem11Lemma15_sum_typeZero_q_of_pivot
+      hbeta_pos hpos h hpivot hleft
+  have heq :
+      (n : ℝ) * ell =
+        4 * beta *
+            ((t.val : ℝ) * (ell / (2 * beta)) +
+              pairShare (1 / 2) v t *
+                (1 - (ell / (2 * beta)) * theorem4Problem11LeftSum v t)) +
+          (1 - 2 * beta) := by
+    rw [← hsum_eq, hsum_values, hsum_q]
+  have hbeta_ne : beta ≠ 0 := ne_of_gt hbeta_pos
+  field_simp [hbeta_ne] at heq ⊢
+  ring_nf at heq ⊢
+  nlinarith
+
+/--
+Lemma 15 closed `λ` formula in the non-center case, using Lean's zero-based
+item index: the paper's `n - 2t` is
+`n - 2 * (t.val + 1)`.
+-/
+theorem theorem4Problem11Lemma15_lambda_eq_of_pivot_lt_mirror
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    ell =
+      (2 * beta * pairShare (1 / 2) v t + (1 / 2) * (1 - 2 * beta)) /
+        (1 + pairShare (1 / 2) v t * theorem4Problem11LeftSum v t +
+          (1 / 2) * ((n : ℝ) - 2 * ((t.val : ℝ) + 1))) := by
+  let q : ℝ := pairShare (1 / 2) v t
+  let L : ℝ := theorem4Problem11LeftSum v t
+  let D : ℝ :=
+    1 + q * L + (1 / 2) * ((n : ℝ) - 2 * ((t.val : ℝ) + 1))
+  let N : ℝ := 2 * beta * q + (1 / 2) * (1 - 2 * beta)
+  have hmul :=
+    theorem4Problem11Lemma15_lambda_mul_denominator_eq
+      hbeta_pos hpos h hpivot (le_of_lt ht_left)
+  have hA :
+      (n : ℝ) - 2 * (t.val : ℝ) +
+          2 * pairShare (1 / 2) v t * theorem4Problem11LeftSum v t =
+        2 * D := by
+    dsimp [D, q, L]
+    ring
+  have hB :
+      4 * beta * pairShare (1 / 2) v t + (1 - 2 * beta) =
+        2 * N := by
+    dsimp [N, q]
+    ring
+  have hD_pos : 0 < D := by
+    have hq_nonneg : 0 ≤ q := by
+      dsimp [q]
+      exact (pairShare_pos t (by norm_num) (by norm_num) hpos).le
+    have hL_nonneg : 0 ≤ L := by
+      dsimp [L]
+      exact theorem4Problem11LeftSum_nonneg hpos t
+    have htail_nat : 2 * (t.val + 1) ≤ n := by
+      simp [reverseItem] at ht_left
+      omega
+    have htail_real :
+        0 ≤ (n : ℝ) - 2 * ((t.val : ℝ) + 1) := by
+      have hcast : (2 * (t.val + 1) : ℝ) ≤ (n : ℝ) := by
+        exact_mod_cast htail_nat
+      nlinarith
+    dsimp [D]
+    nlinarith [mul_nonneg hq_nonneg hL_nonneg]
+  change ell = N / D
+  rw [eq_div_iff (ne_of_gt hD_pos)]
+  have hmulD : ell * (2 * D) = 2 * N := by
+    rw [← hA, ← hB]
+    exact hmul
+  nlinarith
+
+/--
+Lemma 15 non-center pivot coordinate: at the pivot, the cold-start mass is the
+paper's closed `z_t` formula. Lean's zero-based index turns the paper's
+`n - 2t` tail term into `n - 2 * (t.val + 1)`.
+-/
+theorem theorem4Problem11Lemma15_cold_pivot_eq_of_pivot_lt_mirror
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    (ρ 2 t).toReal =
+      (1 / 2) *
+        (1 -
+          (((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell /
+            (1 - 2 * beta))) := by
+  have hx :=
+    theorem4Problem11Lemma15_typeZero_pivot_eq_one_sub_leftSum
+      hbeta_pos hpos h hpivot (le_of_lt ht_left)
+  have hitem_pivot :=
+    theorem4Problem11PivotSupport_policyItemValue_eq_at_left_pivot
+      (beta := beta) (v := v) (ρ := ρ) hpivot ht_left
+  have hitem_linear :
+      2 * beta * pairShare (1 / 2) v t * (ρ 0 t).toReal +
+          (1 - 2 * beta) * (ρ 2 t).toReal = ell := by
+    rw [← hitem_pivot]
+    exact h.item_eq t
+  have hbeta_ne : beta ≠ 0 := ne_of_gt hbeta_pos
+  have hzt_linear :
+      (1 - 2 * beta) * (ρ 2 t).toReal =
+        ell - 2 * beta * pairShare (1 / 2) v t +
+          pairShare (1 / 2) v t * ell * theorem4Problem11LeftSum v t := by
+    rw [hx] at hitem_linear
+    field_simp [hbeta_ne] at hitem_linear
+    ring_nf at hitem_linear ⊢
+    nlinarith
+  have hden :=
+    theorem4Problem11Lemma15_lambda_mul_denominator_eq
+      hbeta_pos hpos h hpivot (le_of_lt ht_left)
+  have htarget_mul :
+      2 * (1 - 2 * beta) * (ρ 2 t).toReal =
+        (1 - 2 * beta) -
+          ((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell := by
+    ring_nf at hden hzt_linear ⊢
+    nlinarith
+  have hc_pos : 0 < 1 - 2 * beta := by nlinarith
+  have hdenom_ne : 2 * (1 - 2 * beta) ≠ 0 := by positivity
+  calc
+    (ρ 2 t).toReal =
+        (2 * (1 - 2 * beta) * (ρ 2 t).toReal) /
+          (2 * (1 - 2 * beta)) := by
+          field_simp [hdenom_ne]
+    _ =
+        ((1 - 2 * beta) -
+          ((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell) /
+          (2 * (1 - 2 * beta)) := by
+          rw [htarget_mul]
+    _ =
+        (1 / 2) *
+          (1 -
+            (((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell /
+              (1 - 2 * beta))) := by
+          field_simp [ne_of_gt hc_pos]
+
+/--
+Lemma 15 non-center mirror-pivot coordinate: mirror symmetry gives the same
+closed `z_t` formula at `\bar t`.
+-/
+theorem theorem4Problem11Lemma15_cold_mirror_pivot_eq_of_pivot_lt_mirror
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_left : t.val < (reverseItem t).val) :
+    (ρ 2 (reverseItem t)).toReal =
+      (1 / 2) *
+        (1 -
+          (((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell /
+            (1 - 2 * beta))) := by
+  calc
+    (ρ 2 (reverseItem t)).toReal = (ρ 2 t).toReal := by
+      exact congrArg ENNReal.toReal (h.mirror.2 t)
+    _ =
+        (1 / 2) *
+          (1 -
+            (((n : ℝ) - 2 * ((t.val : ℝ) + 1)) * ell /
+              (1 - 2 * beta))) := by
+          exact theorem4Problem11Lemma15_cold_pivot_eq_of_pivot_lt_mirror
+            hbeta_pos hbeta_half hpos h hpivot ht_left
+
+/--
+Lemma 15 center case, cold-start coordinate: if the pivot is its own mirror,
+then all non-pivot cold-start coordinates are zero by pivot support, so
+`z_t = 1`.
+-/
+theorem theorem4Problem11Lemma15_cold_center_eq_one
+    {n : ℕ} [NeZero n] {ρ : TypePolicy 3 n} {t : Item n}
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (ht_center : (reverseItem t).val = t.val) :
+    (ρ 2 t).toReal = 1 := by
+  have hzero : ∀ j : Item n, j ≠ t → (ρ 2 j).toReal = 0 := by
+    intro j hj_ne
+    have hval_ne : j.val ≠ t.val := by
+      intro hval
+      exact hj_ne (Fin.ext hval)
+    rcases lt_or_gt_of_ne hval_ne with hjt | htj
+    · have hz : ρ 2 j = 0 := (hpivot.2 j hjt).1
+      simp [hz]
+    · have hrev_lt : (reverseItem j).val < t.val := by
+        have hrev : (reverseItem j).val < (reverseItem t).val :=
+          reverseItem_val_lt_of_val_lt htj
+        simpa [ht_center] using hrev
+      have hz_rev : ρ 2 (reverseItem (reverseItem j)) = 0 :=
+        (hpivot.2 (reverseItem j) hrev_lt).2
+      have hz : ρ 2 j = 0 := by
+        simpa [reverseItem_reverseItem] using hz_rev
+      simp [hz]
+  have hsum_single :
+      (∑ j : Item n, (ρ 2 j).toReal) = (ρ 2 t).toReal := by
+    apply Finset.sum_eq_single t
+    · intro j _hj hj_ne
+      exact hzero j hj_ne
+    · intro hnot
+      simp at hnot
+  have hsum : (∑ j : Item n, (ρ 2 j).toReal) = 1 :=
+    EconCSLib.pmfToRealSum (ρ 2)
+  rw [hsum] at hsum_single
+  exact hsum_single.symm
+
+/--
+Auxiliary full-policy center-case value identity corresponding to Lemma 15.
+
+The paper's displayed center `λ` formula is written for its half-LP convention.
+In the full mirrored-policy Problem 11 encoding used here, an exact center pivot
+has `q_t = 1/2`, `n - 2*t.val = 1`, and the denominator equation simplifies to
+`λ = 1 / (1 + L_t)`.
+-/
+theorem theorem4Problem11Lemma15_lambda_eq_of_center_fullPolicy
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    {ρ : TypePolicy 3 n} {ell : ℝ} {t : Item n}
+    (hbeta_pos : 0 < beta)
+    (hpos : ∀ l : Item n, 0 < v l)
+    (h : Theorem4Problem11EqualizedBasicOptimal beta v ρ ell)
+    (hpivot : Theorem4Problem11PivotSupport ρ t)
+    (hcenter : t.val = (reverseItem t).val) :
+    ell = 1 / (1 + theorem4Problem11LeftSum v t) := by
+  let L : ℝ := theorem4Problem11LeftSum v t
+  have hmul :=
+    theorem4Problem11Lemma15_lambda_mul_denominator_eq
+      hbeta_pos hpos h hpivot (le_of_eq hcenter)
+  have hq : pairShare (1 / 2) v t = (1 / 2 : ℝ) :=
+    pairShare_half_eq_half_of_val_eq_reverse t hpos hcenter
+  have hcenter_nat : 2 * t.val + 1 = n :=
+    (val_eq_reverseItem_iff t).mp hcenter
+  have hcenter_real : (2 : ℝ) * (t.val : ℝ) + 1 = (n : ℝ) := by
+    exact_mod_cast hcenter_nat
+  have hden_eq :
+      (n : ℝ) - 2 * (t.val : ℝ) +
+          2 * pairShare (1 / 2) v t * theorem4Problem11LeftSum v t =
+        1 + L := by
+    dsimp [L]
+    rw [hq]
+    nlinarith
+  have hnum_eq :
+      4 * beta * pairShare (1 / 2) v t + (1 - 2 * beta) = 1 := by
+    rw [hq]
+    ring
+  have hmul_one : ell * (1 + L) = 1 := by
+    rw [hden_eq, hnum_eq] at hmul
+    exact hmul
+  have hden_pos : 0 < 1 + L := by
+    have hL_nonneg : 0 ≤ L := by
+      dsimp [L]
+      exact theorem4Problem11LeftSum_nonneg hpos t
+    nlinarith
+  rw [eq_div_iff (ne_of_gt hden_pos)]
+  exact hmul_one
 
 theorem theorem4Problem11EqualizedBasicOptimal_not_lastActive_lt
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
@@ -6141,6 +7013,96 @@ theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalized_proble
   exact E.theorem4_misestimation_with_fairness_large_typeOne_from_reduction
     R reps (by omega : 1 < n) htrue hred heps hbase hdec
     (hpos OpposingTypes.theorem4FirstItem) hsmall ρ hno.2
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, first true cold-start
+type, from the paper's real equality-form Problem 11 optimal BFS data.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeZero_from_equalityFormOptimalBFS
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeZero beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hbfs :
+      OpposingTypes.Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    1 - eps <
+      E.priceOfMisestimation 1
+        (R.liftedPolicy
+          (OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+            hbfs.feasible.x_nonneg hbfs.feasible.z_nonneg
+            hbfs.feasible.sum_x hbfs.feasible.sum_z)) := by
+  let ρ : TypePolicy 3 n :=
+    OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+      hbfs.feasible.x_nonneg hbfs.feasible.z_nonneg
+      hbfs.feasible.sum_x hbfs.feasible.sum_z
+  have heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell := by
+    dsimp [ρ]
+    exact OpposingTypes.theorem4Problem11EqualizedBasicOptimal_of_equalityFormOptimalBFS
+      hbfs
+  change 1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ)
+  exact E.theorem4_misestimation_with_fairness_large_typeZero_from_equalized_problem11_auto
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall ρ ell heq
+
+/--
+Theorem 4 fairness-constrained misestimation bridge, second true cold-start
+type, from the paper's real equality-form Problem 11 optimal BFS data.
+-/
+theorem theorem4_misestimation_with_fairness_large_typeOne_from_equalityFormOptimalBFS
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (R : ReductionWitness m n 3)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    {beta eps : ℝ} {v x z : Item n → ℝ} {ell : ℝ}
+    (hn : 2 < n)
+    (htrue : E.trueModel = R.data.model)
+    (hred :
+      R.reduced = OpposingTypes.theorem4TrueReducedModelTypeOne beta v)
+    (heps : 0 < eps)
+    (hbase :
+      (n : ℝ)⁻¹ <
+        RecommendationModel.optimalUserFairnessAtLevel E.trueModel 1)
+    (hbeta : (n : ℝ)⁻¹ < beta)
+    (hbeta_half : beta < 1 / 2)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hsmall : v (OpposingTypes.theorem4SecondItem (by omega : 1 < n)) <
+      eps / (n : ℝ) * v OpposingTypes.theorem4FirstItem)
+    (hbfs :
+      OpposingTypes.Theorem4Problem11EqualityFormOptimalBFS beta v x z ell) :
+    1 - eps <
+      E.priceOfMisestimation 1
+        (R.liftedPolicy
+          (OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+            hbfs.feasible.x_nonneg hbfs.feasible.z_nonneg
+            hbfs.feasible.sum_x hbfs.feasible.sum_z)) := by
+  let ρ : TypePolicy 3 n :=
+    OpposingTypes.theorem4Problem11PolicyOfRealVectors x z
+      hbfs.feasible.x_nonneg hbfs.feasible.z_nonneg
+      hbfs.feasible.sum_x hbfs.feasible.sum_z
+  have heq :
+      OpposingTypes.Theorem4Problem11EqualizedBasicOptimal beta v ρ ell := by
+    dsimp [ρ]
+    exact OpposingTypes.theorem4Problem11EqualizedBasicOptimal_of_equalityFormOptimalBFS
+      hbfs
+  change 1 - eps < E.priceOfMisestimation 1 (R.liftedPolicy ρ)
+  exact E.theorem4_misestimation_with_fairness_large_typeOne_from_equalized_problem11_auto
+    R reps hn htrue hred heps hbase hbeta hbeta_half hdec hpos hsmall ρ ell heq
 
 /--
 Theorem 4 fairness-constrained misestimation bridge, first true cold-start

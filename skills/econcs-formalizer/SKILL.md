@@ -41,6 +41,7 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - **Standard for Upstreaming:** To prevent "upstream bloat," use the "Second Paper" test: **Only move a result to `EconCSLib` if a second paper would likely need it.** Foundationally reusable math (like Gale-Shapley, Nash equilibrium, or LP duality) passes this test; hyper-specific algebraic lemmas or messy intermediate steps used only for one paper's specific narrative should remain in that paper's folder.
 - If two papers could use a lemma after renaming variables, it belongs in the generic library.
 - If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
+- For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
 
 ### 1.3 Paper Folder Contract
 
@@ -114,10 +115,13 @@ the Lean statements against the paper.
   declaration (for example `paper_aux_*` or a name that explicitly says
   `finite_analogue`) and mark the source theorem as partial/open in the README
   and DAG.
-- The paper `README.md` is the live status ledger. A final validation report or
-  proof-completion report is a separate handoff artifact produced when a proof
-  phase/paper is completed, paused, or moved on from; do not treat such reports
-  as stale duplicates of the README.
+- The paper `README.md` is the live status ledger and handoff document for
+  partial progress. A `FINAL_VALIDATION_REPORT.md` is not a handoff note; it is
+  the final one-page human assessment created only when making a final claim
+  about a paper or completed proof phase. It must answer whether the paper is
+  verified, what additional assumptions were needed, whether mistakes were
+  found, and whether the Lean proof followed the paper strategy or used a
+  different route.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -241,6 +245,27 @@ search.
    The same normalization equation should also discharge any strict-swap
    side condition requiring a source-set integral to be finite, since
    `∫⁻ x in s, D x ∂μ ≤ ∫⁻ x, D x ∂μ = 1`.
+   Separate continuous RUM proofs into explicit layers before calling a paper
+   done: (i) payoff/certificate algebra over rankings, (ii) continuous
+   density/change-of-variables inequalities over scores, and (iii) concrete
+   model instantiation proving support, positive source regions, normalization,
+   and score-to-ranking interface facts. A closed theorem at layer (i) or (ii)
+   is valuable progress, but it is not a fully concrete paper theorem until
+   layer (iii) has no remaining assumptions or the README/DAG say exactly which
+   assumptions remain.
+   Treat ties in real-valued score RUMs as a theorem-design issue, not a detail
+   to patch later. Pointwise "top score iff top-ranked" interfaces can be false
+   or inconsistent on tie points. Either work on a no-tie/full-measure subtype,
+   state and prove almost-everywhere interface lemmas, or make the tie-breaking
+   convention explicit and prove the score/ranking facts for that convention.
+   Do not silently derive pointwise ranking-event implications from weak score
+   inequalities.
+   After an abstract `withDensity` proof compiles, immediately add concrete
+   score-space utilities for the intended product space: coordinate projection
+   abbreviations, measurable coordinate swaps, measure-preserving swap lemmas,
+   normalization bridges, and finite-source-integral bridges. Align the product
+   nesting with Mathlib's product measure conventions, e.g. `(ℝ × ℝ) × ℝ`, so
+   later instantiations do not spend time on associativity rewrites.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,
@@ -369,7 +394,8 @@ Instead:
 
 Never enter a cycle of modifying a single line in a shell command just to test slightly different lemma names. Stop, use `exact?`, and proceed efficiently.
 
-Before declaring a paper "done," run a final human-facing validation pass:
+Before declaring a paper or proof phase "done," run a final human-facing
+validation pass:
 
 - Re-read the paper-facing theorem ledger file (for example,
   `PaperFacingTheorems.lean` or the named human-facing theorem file) and check
@@ -381,7 +407,9 @@ Before declaring a paper "done," run a final human-facing validation pass:
   in both the theorem statement and the paper README status table, with exact
   declaration names and no vague wording.
 - Produce a final human-facing report in the paper folder alongside the DAG
-  artifacts (TikZ source and rendered image). 
+  artifacts (TikZ source and rendered image). This report is not for routine
+  handoff; it is the concise final assessment a human should read to decide what
+  was actually verified.
 - **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
 - The report must summarize: source version checked, theorem-by-theorem completion status (including unformalized items), additional assumptions introduced beyond the paper, proof-strategy deviations from the paper, and any suspected paper errors or inconsistencies found during formalization.
 - If no extra assumptions, deviations, or errors were needed/found, state that explicitly in the report rather than leaving sections implicit.
