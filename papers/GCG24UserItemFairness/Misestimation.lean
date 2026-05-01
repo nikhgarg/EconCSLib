@@ -494,6 +494,83 @@ noncomputable def theorem4NoFairnessPolicyTypeOne {n : ℕ} [NeZero n]
     (v : Item n → ℝ) : TypePolicy 3 n :=
   EconCSLib.Policy.pure (theorem4NoFairnessChoiceTypeOne v)
 
+/--
+The source-faithful no-item-fairness cold-start row: split evenly across the
+estimated-best mirror pair.  This tie-break keeps the row estimated-optimal
+while giving either possible true cold-start type the pair average.
+-/
+noncomputable def theorem4NoFairnessColdStartMixedPolicy {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : PMF (Item n) :=
+  EconCSLib.Policy.averageOn
+    (fun b : Bool =>
+      PMF.pure
+        (if b then theorem4BestAverageItemTypeZero v
+         else theorem4BestAverageItemTypeOne v))
+    (Finset.univ : Finset Bool)
+    (by simp)
+
+/--
+The no-item-fairness policy for the paper's actual two-type true population
+and three-type estimated population.  The known estimated rows choose their
+best endpoints, and the collapsed cold-start row mixes over an estimated-best
+mirror pair.
+-/
+noncomputable def theorem4NoFairnessPolicyCollapsed {n : ℕ} [NeZero n]
+    (v : Item n → ℝ) : TypePolicy 3 n :=
+  fun k =>
+    if k = (0 : UserType 3) then PMF.pure theorem4FirstItem
+    else if k = (1 : UserType 3) then PMF.pure theorem4LastItem
+    else theorem4NoFairnessColdStartMixedPolicy v
+
+theorem theorem4NoFairnessColdStartMixedPolicy_agentScore
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) (score : Item n → ℝ) :
+    EconCSLib.pmfExp (theorem4NoFairnessColdStartMixedPolicy v) score =
+      (score (theorem4BestAverageItemTypeZero v) +
+        score (theorem4BestAverageItemTypeOne v)) / 2 := by
+  classical
+  have hsum_pure :
+      ∀ a : Item n, ∀ c : ℝ,
+        (∑ x : Item n,
+            ((if x = a then (1 : ENNReal) else 0).toReal) * score x * c) =
+          score a * c := by
+    intro a c
+    calc
+      (∑ x : Item n,
+          ((if x = a then (1 : ENNReal) else 0).toReal) * score x * c)
+          = ∑ x : Item n, if x = a then score a * c else 0 := by
+              refine Finset.sum_congr rfl ?_
+              intro x _
+              by_cases hx : x = a
+              · subst x
+                simp
+              · simp [hx]
+      _ = score a * c := by
+            simp
+  unfold theorem4NoFairnessColdStartMixedPolicy EconCSLib.pmfExp
+  simp [EconCSLib.Policy.averageOn_apply_toReal]
+  calc
+    (∑ x : Item n,
+        ((if x = theorem4BestAverageItemTypeZero v then (1 : ENNReal) else 0).toReal +
+              (if x = theorem4BestAverageItemTypeOne v then (1 : ENNReal) else 0).toReal) /
+            2 * score x)
+        =
+          ∑ x : Item n,
+            ((if x = theorem4BestAverageItemTypeZero v then (1 : ENNReal) else 0).toReal *
+                score x * (1 / 2 : ℝ) +
+              (if x = theorem4BestAverageItemTypeOne v then (1 : ENNReal) else 0).toReal *
+                score x * (1 / 2 : ℝ)) := by
+            refine Finset.sum_congr rfl ?_
+            intro x _
+            ring
+    _ = score (theorem4BestAverageItemTypeZero v) * (1 / 2 : ℝ) +
+          score (theorem4BestAverageItemTypeOne v) * (1 / 2 : ℝ) := by
+            rw [Finset.sum_add_distrib,
+              hsum_pure (theorem4BestAverageItemTypeZero v) (1 / 2 : ℝ),
+              hsum_pure (theorem4BestAverageItemTypeOne v) (1 / 2 : ℝ)]
+    _ = (score (theorem4BestAverageItemTypeZero v) +
+          score (theorem4BestAverageItemTypeOne v)) / 2 := by
+            ring
+
 theorem theorem4EstimatedReducedModel_nonnegativeWeights
     {n : ℕ} {beta : ℝ} {v : Item n → ℝ}
     (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta) :
@@ -10350,6 +10427,163 @@ theorem theorem4NoFairnessPolicyTypeOne_estimated_optimalAtLevel_zero
       (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
       (theorem4EstimatedReducedModel_rowHasPositiveItem hpos)]
 
+theorem theorem4NoFairnessPolicyCollapsed_estimated_typeFairness_eq_one
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.typeFairness
+        (theorem4EstimatedReducedModel beta v)
+        (theorem4NoFairnessPolicyCollapsed v) = 1 := by
+  unfold TypeWeightedRecommendationModel.typeFairness
+  apply EconCSLib.finiteMin_eq_of_forall
+  intro k
+  fin_cases k
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+      TypeWeightedRecommendationModel.rawTypeUtility EconCSLib.Policy.agentScore
+    simp [theorem4NoFairnessPolicyCollapsed,
+      theorem4EstimatedReducedModel_bestItemUtility_zero hdec]
+    exact ne_of_gt (hpos theorem4FirstItem)
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+      TypeWeightedRecommendationModel.rawTypeUtility EconCSLib.Policy.agentScore
+    simp [theorem4NoFairnessPolicyCollapsed,
+      theorem4EstimatedReducedModel_bestItemUtility_one hdec, theorem4LastItem]
+    rw [reverseItem_reverseItem]
+    exact div_self (ne_of_gt (hpos theorem4FirstItem))
+  · unfold TypeWeightedRecommendationModel.normalizedTypeUtility
+      TypeWeightedRecommendationModel.rawTypeUtility EconCSLib.Policy.agentScore
+    have h20 : (2 : UserType 3) ≠ 0 := by decide
+    have h21 : (2 : UserType 3) ≠ 1 := by decide
+    simp [theorem4NoFairnessPolicyCollapsed, h20, h21,
+      theorem4EstimatedReducedModel_bestItemUtility_two]
+    rw [theorem4NoFairnessColdStartMixedPolicy_agentScore]
+    change
+      ((theorem4AverageUtility v (theorem4BestAverageItemTypeZero v) +
+            theorem4AverageUtility v (theorem4BestAverageItemTypeOne v)) /
+          2) /
+        EconCSLib.finiteMax (theorem4AverageUtility v) = 1
+    rw [theorem4AverageUtility_bestAverageItemTypeZero,
+      theorem4AverageUtility_bestAverageItemTypeOne]
+    rw [show (EconCSLib.finiteMax (theorem4AverageUtility v) +
+          EconCSLib.finiteMax (theorem4AverageUtility v)) / 2 =
+        EconCSLib.finiteMax (theorem4AverageUtility v) by ring]
+    exact div_self
+      (ne_of_gt (theorem4AverageUtility_finiteMax_pos hpos))
+
+theorem theorem4NoFairnessPolicyCollapsed_estimated_optimalAtLevel_zero
+    {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.IsOptimalAtLevel
+        (theorem4EstimatedReducedModel beta v) 0
+        (theorem4NoFairnessPolicyCollapsed v) := by
+  refine ⟨?_, ?_⟩
+  · exact TypeWeightedRecommendationModel.feasibleAtLevel_zero_of_nonnegative
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+      (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+      (theorem4NoFairnessPolicyCollapsed v)
+  · rw [theorem4NoFairnessPolicyCollapsed_estimated_typeFairness_eq_one
+      hpos hdec]
+    rw [TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel_zero_eq_one
+      (theorem4EstimatedReducedModel beta v)
+      (theorem4EstimatedReducedModel_nonnegativeWeights hbeta hcold)
+      (theorem4EstimatedReducedModel_nonnegativeUtilities hpos)
+      (theorem4EstimatedReducedModel_rowHasPositiveItem hpos)]
+
+theorem theorem4NoFairnessColdStartMixedPolicy_trueTypeZero_rawUtility_eq
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    EconCSLib.pmfExp (theorem4NoFairnessColdStartMixedPolicy v) v =
+      EconCSLib.finiteMax (theorem4AverageUtility v) := by
+  rw [theorem4NoFairnessColdStartMixedPolicy_agentScore]
+  simpa [theorem4BestAverageItemTypeOne, theorem4AverageUtility] using
+    theorem4AverageUtility_bestAverageItemTypeZero v
+
+theorem theorem4NoFairnessColdStartMixedPolicy_trueTypeOne_rawUtility_eq
+    {n : ℕ} [NeZero n] (v : Item n → ℝ) :
+    EconCSLib.pmfExp (theorem4NoFairnessColdStartMixedPolicy v)
+        (fun j : Item n => v (reverseItem j)) =
+      EconCSLib.finiteMax (theorem4AverageUtility v) := by
+  rw [theorem4NoFairnessColdStartMixedPolicy_agentScore]
+  unfold theorem4BestAverageItemTypeOne
+  rw [reverseItem_reverseItem]
+  rw [add_comm]
+  simpa [theorem4AverageUtility] using
+    theorem4AverageUtility_bestAverageItemTypeZero v
+
+theorem theorem4NoFairnessPolicyCollapsed_trueHalf_normalizedRowUtility_ge_half
+    {n : ℕ} [NeZero n] {v : Item n → ℝ}
+    (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v)
+    (kTrue : UserType 2) (kEst : UserType 3)
+    (hknown0 : kEst = 0 → kTrue = 0)
+    (hknown1 : kEst = 1 → kTrue = 1) :
+    (1 / 2 : ℝ) ≤
+      EconCSLib.pmfExp ((theorem4NoFairnessPolicyCollapsed v) kEst)
+          ((twoTypeReducedModel (1 / 2 : ℝ) v).utility kTrue) /
+        TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel (1 / 2 : ℝ) v) kTrue := by
+  have hbest0 :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel (1 / 2 : ℝ) v) 0 =
+        v theorem4FirstItem := by
+    simpa [TypeWeightedRecommendationModel.bestItemUtility, twoTypeReducedModel]
+      using theorem4_finiteMax_eq_first (n := n) (v := v) hdec
+  have hbest1 :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel (1 / 2 : ℝ) v) 1 =
+        v theorem4FirstItem := by
+    rw [twoTypeReducedModel_bestItemUtility_one_eq_zero
+      (alpha := (1 / 2 : ℝ)) (v := v)]
+    exact hbest0
+  have hbest0_inv :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel ((2 : ℝ)⁻¹) v) 0 =
+        v theorem4FirstItem := by
+    simpa using hbest0
+  have hbest1_inv :
+      TypeWeightedRecommendationModel.bestItemUtility
+          (twoTypeReducedModel ((2 : ℝ)⁻¹) v) 1 =
+        v theorem4FirstItem := by
+    simpa using hbest1
+  have hraw_cold0 :
+      EconCSLib.pmfExp (theorem4NoFairnessColdStartMixedPolicy v)
+          ((twoTypeReducedModel ((2 : ℝ)⁻¹) v).utility 0) =
+        EconCSLib.finiteMax (theorem4AverageUtility v) := by
+    simpa [twoTypeReducedModel] using
+      theorem4NoFairnessColdStartMixedPolicy_trueTypeZero_rawUtility_eq v
+  have hraw_cold1 :
+      EconCSLib.pmfExp (theorem4NoFairnessColdStartMixedPolicy v)
+          ((twoTypeReducedModel ((2 : ℝ)⁻¹) v).utility 1) =
+        EconCSLib.finiteMax (theorem4AverageUtility v) := by
+    simpa [twoTypeReducedModel] using
+      theorem4NoFairnessColdStartMixedPolicy_trueTypeOne_rawUtility_eq v
+  have hhalf :
+      v theorem4FirstItem / 2 <
+        EconCSLib.finiteMax (theorem4AverageUtility v) :=
+    theorem4AverageUtility_endpoint_half_lt_finiteMax
+      (hpos theorem4FirstItem) (hpos theorem4LastItem)
+  fin_cases kEst
+  · have hkTrue : kTrue = 0 := hknown0 rfl
+    subst kTrue
+    simp [theorem4NoFairnessPolicyCollapsed]
+    rw [hbest0_inv, div_self (ne_of_gt (hpos theorem4FirstItem))]
+    norm_num
+  · have hkTrue : kTrue = 1 := hknown1 rfl
+    subst kTrue
+    simp [theorem4NoFairnessPolicyCollapsed, theorem4LastItem]
+    rw [reverseItem_reverseItem]
+    rw [hbest1_inv, div_self (ne_of_gt (hpos theorem4FirstItem))]
+    norm_num
+  · have h20 : (2 : UserType 3) ≠ 0 := by decide
+    have h21 : (2 : UserType 3) ≠ 1 := by decide
+    fin_cases kTrue
+    · simp [theorem4NoFairnessPolicyCollapsed, h20, h21]
+      rw [hraw_cold0, hbest0_inv]
+      rw [le_div_iff₀ (hpos theorem4FirstItem)]
+      nlinarith
+    · simp [theorem4NoFairnessPolicyCollapsed, h20, h21]
+      rw [hraw_cold1, hbest1_inv]
+      rw [le_div_iff₀ (hpos theorem4FirstItem)]
+      nlinarith
+
 theorem theorem4NoFairnessPolicyTypeZero_true_typeFairness_ge_half
     {n : ℕ} [NeZero n] {beta : ℝ} {v : Item n → ℝ}
     (hpos : ∀ j, 0 < v j) (hdec : StrictlyDecreasingByIndex v) :
@@ -11016,6 +11250,23 @@ private theorem theorem4_trueHalf_original_rowHasPositiveItem_of_reduction
       hpos OpposingTypes.theorem4FirstItem]
   · simp [OpposingTypes.twoTypeReducedModel, hk0,
       hpos (OpposingTypes.reverseItem OpposingTypes.theorem4FirstItem)]
+
+private theorem theorem4_trueHalf_original_nonnegative_of_reduction
+    {m n : ℕ} [NeZero n]
+    (R : ReductionWitness m n 2)
+    {v : Item n → ℝ}
+    (hred :
+      R.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ) v)
+    (hpos : ∀ j : Item n, 0 < v j) :
+    R.data.model.Nonnegative := by
+  intro u j
+  rw [R.utility_agrees u j, hred]
+  let k : UserType 2 := R.data.types.toType u
+  change 0 ≤ (OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ) v).utility k j
+  by_cases hk0 : k = 0
+  · simp [OpposingTypes.twoTypeReducedModel, hk0, (hpos j).le]
+  · simp [OpposingTypes.twoTypeReducedModel, hk0,
+      (hpos (OpposingTypes.reverseItem j)).le]
 
 /--
 Theorem 4 true-model baseline, odd midpoint case, lifted from the two-type
@@ -11961,6 +12212,101 @@ theorem theorem4_misestimation_without_fairness_le_half_typeOne_from_reduction
     exact huserR
   exact E.priceOfMisestimation_at_zero_le_half_of_userFairness_ge_half
     (R.liftedPolicy ρ) hbaseE huserE
+
+/--
+Theorem 4 no-fairness price bound for the source model: the true population has
+the two opposing rows, while the estimated model collapses cold-start users
+into the averaged third row.  The displayed no-fairness policy is pure on the
+known estimated rows and splits the cold-start row evenly across an
+estimated-best mirror pair.
+-/
+theorem theorem4_misestimation_without_fairness_le_half_trueHalf_collapsed_from_reductions
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (E : EstimatedRecommendationModel m n)
+    (Rtrue : ReductionWitness m n 2)
+    (Rest : ReductionWitness m n 3)
+    (repsEst : UserTypeAssignment.TypeRepresentatives Rest.data.types)
+    {beta : ℝ} {v : Item n → ℝ}
+    (htrue : E.trueModel = Rtrue.data.model)
+    (hestimated : E.estimatedModel = Rest.data.model)
+    (hredTrue :
+      Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ) v)
+    (hredEst :
+      Rest.reduced = OpposingTypes.theorem4EstimatedReducedModel beta v)
+    (hknown0 :
+      ∀ u : User m, Rest.data.types.toType u = 0 →
+        Rtrue.data.types.toType u = 0)
+    (hknown1 :
+      ∀ u : User m, Rest.data.types.toType u = 1 →
+        Rtrue.data.types.toType u = 1)
+    (hbeta : 0 ≤ beta) (hcold : 0 ≤ 1 - 2 * beta)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v) :
+    let ρ : TypePolicy 3 n :=
+      OpposingTypes.theorem4NoFairnessPolicyCollapsed v
+    E.SolvesEstimatedProblem 0 (Rest.liftedPolicy ρ) ∧
+      E.priceOfMisestimation 0 (Rest.liftedPolicy ρ) ≤ (1 / 2 : ℝ) := by
+  let ρ : TypePolicy 3 n :=
+    OpposingTypes.theorem4NoFairnessPolicyCollapsed v
+  have hsolve :
+      E.SolvesEstimatedProblem 0 (Rest.liftedPolicy ρ) := by
+    dsimp [ρ]
+    exact E.theorem4_solvesEstimatedProblem_from_estimated_reduction
+      Rest repsEst hestimated hredEst hpos
+      (OpposingTypes.theorem4NoFairnessPolicyCollapsed_estimated_optimalAtLevel_zero
+        hbeta hcold hpos hdec)
+  have hbaseR :
+      RecommendationModel.optimalUserFairnessAtLevel Rtrue.data.model 0 = 1 := by
+    exact Rtrue.data.model.optimalUserFairnessAtLevel_zero_eq_one
+      (theorem4_trueHalf_original_nonnegative_of_reduction
+        Rtrue hredTrue hpos)
+      (theorem4_trueHalf_original_rowHasPositiveItem_of_reduction
+        Rtrue hredTrue hpos)
+  have hbaseE :
+      RecommendationModel.optimalUserFairnessAtLevel E.trueModel 0 = 1 := by
+    rw [htrue]
+    exact hbaseR
+  have huserR :
+      (1 / 2 : ℝ) ≤
+        RecommendationModel.userFairness Rtrue.data.model
+          (Rest.liftedPolicy ρ) := by
+    unfold RecommendationModel.userFairness
+    apply EconCSLib.le_finiteMin
+    intro u
+    have hraw :
+        RecommendationModel.rawUserUtility Rtrue.data.model
+            (Rest.liftedPolicy ρ) u =
+          EconCSLib.pmfExp (ρ (Rest.data.types.toType u))
+            ((OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ) v).utility
+              (Rtrue.data.types.toType u)) := by
+      unfold RecommendationModel.rawUserUtility EconCSLib.Policy.agentScore
+        EconCSLib.pmfExp ReductionWitness.liftedPolicy
+        UserTypeAssignment.liftTypePolicy EconCSLib.Policy.liftAlong
+      refine Finset.sum_congr rfl ?_
+      intro j _
+      rw [Rtrue.utility_agrees u j, hredTrue]
+    have hbest :
+        RecommendationModel.bestItemUtility Rtrue.data.model u =
+          TypeWeightedRecommendationModel.bestItemUtility
+            (OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ) v)
+            (Rtrue.data.types.toType u) := by
+      rw [Rtrue.bestItemUtility_eq_bestTypeUtility u, hredTrue]
+    unfold RecommendationModel.normalizedUserUtility
+    rw [hraw, hbest]
+    exact
+      OpposingTypes.theorem4NoFairnessPolicyCollapsed_trueHalf_normalizedRowUtility_ge_half
+        hpos hdec (Rtrue.data.types.toType u) (Rest.data.types.toType u)
+        (fun h0 => hknown0 u h0)
+        (fun h1 => hknown1 u h1)
+  have huserE :
+      (1 / 2 : ℝ) ≤
+        RecommendationModel.userFairness E.trueModel
+          (Rest.liftedPolicy ρ) := by
+    rw [htrue]
+    exact huserR
+  refine ⟨hsolve, ?_⟩
+  exact E.priceOfMisestimation_at_zero_le_half_of_userFairness_ge_half
+    (Rest.liftedPolicy ρ) hbaseE huserE
 
 /--
 Theorem 4 fairness-constrained misestimation bridge, first true cold-start type.
