@@ -6447,6 +6447,78 @@ theorem paper_theorem3_price_decreases_firstHalf_succ_center_of_reduction
     R'.data.model hNonneg hRow hNonneg' hRow' huser_mono
 
 /--
+Theorem 3 reduced-optimum monotonicity, first-half endpoint form.  The
+odd/even midpoint split is discharged internally.
+-/
+theorem paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_of_alpha_le
+    {n : ℕ} [NeZero n]
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v) :
+    TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha v) 1 ≤
+      TypeWeightedRecommendationModel.optimalTypeFairnessAtLevel
+        (twoTypeReducedModel alpha' v) 1 := by
+  rcases midpoint_center_or_succ_center (n := n) hn with hcenter | hsucc
+  · rcases hcenter with ⟨c, hcenter⟩
+    exact
+      paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_center_of_alpha_le
+        hn halpha0 halpha1 halpha0' halpha1' halpha_le
+        halpha_half halpha_half' hpos hdec hcenter
+  · rcases hsucc with ⟨c, hsucc⟩
+    exact
+      paper_theorem3_optimalTypeFairnessAtLevel_one_mono_firstHalf_succ_center_of_alpha_le
+        hn halpha0 halpha1 halpha0' halpha1' halpha_le
+        halpha_half halpha_half' hpos hdec hsucc
+
+/--
+Theorem 3 paper-facing price monotonicity, first-half form.  The two original
+recommendation models are connected to the opposing two-type reduced models by
+reduction witnesses, and the odd/even midpoint split is discharged internally.
+-/
+theorem paper_theorem3_price_decreases_firstHalf_of_reduction
+    {m n : ℕ} [NeZero m] [NeZero n]
+    (R R' : ReductionWitness m n 2)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (hred : R.reduced = twoTypeReducedModel alpha v)
+    (hred' : R'.reduced = twoTypeReducedModel alpha' v)
+    (hn : 2 < n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : StrictlyDecreasingByIndex v)
+    (hNonneg : R.data.model.Nonnegative)
+    (hRow : R.data.model.RowHasPositiveItem)
+    (hNonneg' : R'.data.model.Nonnegative)
+    (hRow' : R'.data.model.RowHasPositiveItem) :
+    RecommendationModel.priceOfFairness R'.data.model ≤
+      RecommendationModel.priceOfFairness R.data.model := by
+  rcases midpoint_center_or_succ_center (n := n) hn with hcenter | hsucc
+  · rcases hcenter with ⟨c, hcenter⟩
+    exact
+      paper_theorem3_price_decreases_firstHalf_center_of_reduction
+        R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'
+        halpha_le halpha_half halpha_half' hpos hdec hcenter hNonneg hRow
+        hNonneg' hRow'
+  · rcases hsucc with ⟨c, hsucc⟩
+    exact
+      paper_theorem3_price_decreases_firstHalf_succ_center_of_reduction
+        R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'
+        halpha_le halpha_half halpha_half' hpos hdec hsucc hNonneg hRow
+        hNonneg' hRow'
+
+/--
 Appendix D, Lemma 6 normalization bridge: raw closed-form comparison implies
 normalized type-utility comparison when the two best-item denominators agree.
 -/

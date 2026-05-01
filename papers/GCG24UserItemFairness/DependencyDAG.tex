@@ -24,7 +24,7 @@
 \node[dag_lemma, below=of Prop2] (Reduction)
   {\textbf{Reduction Bridges} \\ Original $\leftrightarrow$ reduced model};
 \node[dag_result, below=of Reduction] (Theorem3)
-  {\textbf{Theorem 3} \\ First-half price monotonicity};
+  {\textbf{Theorem 3} \\ Parity-free first-half price monotonicity};
 
 % --- Problem 6 / Appendix D structure ---
 \node[dag_lemma, right=of Lemma2] (Problem6)
@@ -111,6 +111,7 @@
 \draw[dag_arrow] (Lemma14.east) -| (Theorem4Conditional.east);
 \draw[dag_arrow] (Theorem4Conditional) -- (Theorem4Full);
 \draw[dag_arrow] (VExist) -- (Theorem4Full);
+\draw[dag_arrow] (Midpoint.west) |- (Theorem3.east);
 \draw[dag_arrow] (Midpoint) |- (Theorem4Full);
 
 \end{tikzpicture}
