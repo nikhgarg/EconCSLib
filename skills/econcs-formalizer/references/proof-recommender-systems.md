@@ -145,6 +145,24 @@ allocation.
   as a center item counted once in a half-LP but twice in a full mirrored
   policy, split the theorem names by convention and prove an explicit bridge or
   explanation. Do not hide convention differences inside the executable model.
+- For user-item fairness paper examples, do not leave source examples as bare
+  definitions if they appear in the DAG. Formalize the small checked claims
+  that make the example auditable, or mark the example honestly as not
+  formalized. For finite two-item smoke examples over `Real`, avoid
+  `native_decide`; use `finiteMin_eq_of_forall`, `Finset.sup'_le`,
+  `EconCSLib.le_finiteMax`, `EconCSLib.Policy.agentScore_pure`, and, for raw
+  item probabilities under deterministic policies, unfold `EconCSLib.Policy.pure`
+  and simplify with `PMF.pure_apply`.
+- In opposing-type LP/pivot proofs, large contexts can make a final solver call
+  more expensive than the math. Before using `linarith` at the end of a long
+  branch, name the scalar bounds you need (for example `ell ≤ q`, `q' ≤ ell'`,
+  then `q' ≤ q`) and close by contradiction against the strict monotonicity
+  fact. This is usually faster and gives better failure locations.
+- If a canonical closed-form/certificate construction now discharges a previous
+  selected-BFS or denominator assumption, immediately update README/DAG wording
+  from `conditional` or `formalized with caveat` to `formalized`. Keep auxiliary
+  explicit-input selected-BFS lemmas, but do not let their older status text
+  make the final source wrapper look conditional.
 
 ## Discretization Bias
 

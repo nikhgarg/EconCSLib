@@ -146,6 +146,35 @@ the Lean statements against the paper.
     uses `dag_conditional` (orange rounded); `scaffold` uses `dag_scaffold`
     (gray dotted); and `not started`/`not formalized` use
     `dag_unformalized` (gray dashed).
+  - **Green-node semantics:** A green result means the displayed paper-facing
+    theorem/lemma/definition has been fully formalized under its stated Lean
+    assumptions. It does not mean every lemma used in the paper's prose proof
+    is independently closed. If the formal proof reaches the result by a
+    different verified path and does not need a paper lemma that remains
+    partial/open, the result may be green, but the DAG must not show that
+    partial/open lemma as a required solid input. Either omit that non-used
+    dependency, mark it as a dashed paper-route/caveat edge, or say in the node
+    or README that the paper proof input was bypassed by an alternate formal
+    route.
+  - If a theorem still requires an unproved assumption, certificate, or earlier
+    paper lemma to obtain the paper-level statement, it is **not green**. Use
+    `dag_conditional`, `dag_partial`, or `dag_caveat` as appropriate, and make
+    the remaining assumption explicit in the node text and README row.
+  - **Edge semantics:** Solid `dag_arrow` edges are verified dependencies in the
+    formalized proof path. Dashed `dag_dashed_arrow` edges are for paper-roadmap
+    dependencies, unresolved/conditional inputs, caveat links, or dependency
+    paths that are not yet fully discharged. A dashed edge into a green result
+    is allowed only when it is clearly non-required for the formal proof or
+    explicitly documented as a bypassed paper route; otherwise the target node
+    should not be green.
+  - **Paper-route vs formal-route discipline:** If formalization discovers that
+    a paper lemma is misstated, too strong, or unnecessary for a later theorem,
+    do not silently collapse the distinction. Record the source issue in the
+    README/validation report, keep the affected paper lemma partial/caveated,
+    and mark any later theorem green only if Lean proves that theorem through a
+    fully verified alternate route or through weaker assumptions already
+    discharged. If the later theorem merely assumes the problematic lemma, it is
+    conditional/caveated, not green.
 - **DAG Formatting and Clarity Mandates:**
   - **Visual Iteration Requirement:** After every substantive DAG edit, render the DAG, inspect the visual output, and keep adjusting layout until you can explicitly confirm that it looks clean with no box, legend, note, edge, or label overlap. Do not claim the DAG is done if you have not visually checked it or if any overlap remains.
   - **Stable Topology Requirement:** The initial DAG should contain the paper's full named-result structure: all named Definitions, Lemmas, Propositions, Theorems, Corollaries, and appendix results, with dependency arrows reflecting the paper proof architecture. After that initial roadmap is created, routine progress updates should normally change only node status/style/text, not add new boxes or arrows. Add or remove boxes/arrows only when the initial named-result inventory was incomplete or a genuine paper dependency was discovered to be missing/wrong; if topology changes, rerender and re-check for overlap.
@@ -291,6 +320,12 @@ search.
   If auxiliary certificate/BFS/interface theorems still take explicit inputs,
   verify that the final source wrapper does not expose them before calling the
   source theorem closed.
+- After closing a paper seam, run a stale-status grep over the paper README,
+  DAG, and final report before committing, for example:
+  `rg "Previous status|not formalized|partially formalized|conditional|none for|source wrappers partial" papers/<Paper>`.
+  Stale ledger wording is often the only remaining "gap" after Lean is green.
+  Keep legend entries if the template includes them, but no actual paper node
+  should advertise an obsolete status.
 - Before editing, state the one active seam in local notes or the handoff doc:
   public theorem wrapper, internal lemma/certificate being attacked, exact
   remaining assumption, and the build command that validates the slice.
@@ -419,6 +454,12 @@ search.
   root after the dependency is stable.
 - Do not infer that downstream files are broken until the direct imported module
   builds.
+- For deterministic heartbeat failures in one large proof, first replace heavy
+  terminal `linarith`/`nlinarith`/`ring` calls with explicit named inequalities
+  and a short contradiction chain. If the proof is still too large, use
+  `set_option maxHeartbeats <n> in` scoped to that single declaration with a
+  one-line comment explaining why. Do not raise repository-wide heartbeat
+  limits or linter settings to mask one theorem.
 - Existing warnings are not build failures unless the user asks for lint cleanup
   or the project enforces warning-free builds.
 - `declaration uses sorry` messages are proof-debt warnings, not style-linter
