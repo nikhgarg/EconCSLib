@@ -78,9 +78,11 @@ allocation.
   large scaled-count gap occur with the opposite raw order; use the reverse
   product layer there. The reverse layer bounds the inverse interval product by
   the same endpoint ratio times an explicit log-correction sum from
-  `-log(1-c/x) - c log((x+1)/x)`. Finish the branch by proving the scaled gap
-  dominates that correction; a slower schedule than `1/sqrt(N)` may be needed
-  so both `ε_N N → ∞` and `ε_N^2 N → ∞`.
+  `-log(1-c/x) - c log((x+1)/x)`, and an exponential scalar bridge turns the
+  corrected shifted-count inequality into marginal dominance. Finish the branch
+  by proving the large scaled-count gap implies that corrected shifted
+  inequality; a slower schedule than `1/sqrt(N)` may be needed so both
+  `ε_N N → ∞` and `ε_N^2 N → ∞`.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
