@@ -38,6 +38,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   helper to derive value-sorted ranks, within-bin membership, image equality,
   and injectivity; use subtype/finset wrappers to derive high-low pair
   injections from disjoint bucket halves.
+- For dyadic partition arguments, make the partition theorem tolerate empty
+  bins. Canonical power-of-two ranges often include empty buckets, and requiring
+  every bin to be nonempty forces irrelevant side proofs. Bound each empty bin
+  by benchmark nonnegativity and each nonempty bin by the usual fixed-price
+  floor argument.
 - When a binning proof naturally has a classifier `bucketOf : Agent -> Bucket`,
   define buckets as classifier fibers. Then prove coverage by swapping sums over
   agents and buckets and using a singleton indicator sum; this avoids carrying

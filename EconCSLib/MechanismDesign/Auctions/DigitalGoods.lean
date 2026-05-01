@@ -289,6 +289,15 @@ def IsTwoWinnerFixedPriceBenchmark [Fintype Agent]
     (values : Agent → ℝ) (benchmark : ℝ) : Prop :=
   IsFixedPriceBenchmark values 2 benchmark
 
+/-- Any fixed-price benchmark certificate has nonnegative value. -/
+theorem fixedPriceBenchmark_nonneg [Fintype Agent]
+    (values : Agent → ℝ) {minWinners : ℕ} {benchmark : ℝ}
+    (hbenchmark : IsFixedPriceBenchmark values minWinners benchmark) :
+    0 ≤ benchmark := by
+  rcases hbenchmark.1 with ⟨p, hp_nonneg, _hfeasible, hbench⟩
+  rw [hbench]
+  exact singlePriceRevenue_nonneg values hp_nonneg
+
 /--
 Dyadic-bin certificate behind GHW Theorem 4.1. If a bin has at least a `1/m`
 share of total multi-price value `T`, and all values in the bin lie between
@@ -374,6 +383,65 @@ theorem fixedPriceBenchmark_totalValue_le_of_factor_two_partition
     (by exact_mod_cast (Nat.zero_le (Fintype.card Bin)))
     (hlow_nonneg k) hkshare
     (hbin_accept k) (hbin_factor_two k)
+
+/--
+Empty-bin-safe factor-two bin bound. A nonempty bin is bounded by the
+fixed-price benchmark via the posted price at its floor; an empty bin has zero
+mass and is bounded by benchmark nonnegativity.
+-/
+theorem fixedPriceBenchmark_bin_value_le_two_benchmark_of_factor_two
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) {benchmark low : ℝ} {bin : Finset Agent}
+    (hbenchmark : IsFixedPriceBenchmark values 1 benchmark)
+    (hlow_nonneg : 0 ≤ low)
+    (hbin_accept : ∀ i, i ∈ bin → low ≤ values i)
+    (hbin_factor_two : ∀ i, i ∈ bin → values i ≤ 2 * low) :
+    (∑ i ∈ bin, values i) ≤ 2 * benchmark := by
+  by_cases hnonempty : bin.Nonempty
+  · have hbin_bound :
+        (∑ i ∈ bin, values i) ≤ (2 * 1) * benchmark :=
+      fixedPriceBenchmark_totalValue_le_of_factor_two_bin
+        (values := values) (benchmark := benchmark)
+        (T := ∑ i ∈ bin, values i) (m := 1) (low := low) (bin := bin)
+        hbenchmark hnonempty (by norm_num) hlow_nonneg
+        (by simp) hbin_accept hbin_factor_two
+    simpa using hbin_bound
+  · have hbin_empty : bin = ∅ :=
+      Finset.not_nonempty_iff_eq_empty.mp hnonempty
+    have hbenchmark_nonneg : 0 ≤ benchmark :=
+      fixedPriceBenchmark_nonneg values hbenchmark
+    simp [hbin_empty]
+    nlinarith
+
+/--
+Factor-two partition certificate allowing empty bins. This is the version used
+by canonical dyadic partitions, where some power-of-two ranges may contain no
+bidders.
+-/
+theorem fixedPriceBenchmark_totalValue_le_of_factor_two_partition_allow_empty
+    [Fintype Agent] [DecidableEq Agent]
+    {Bin : Type*} [Fintype Bin]
+    (values : Agent → ℝ) {benchmark T : ℝ}
+    (bins : Bin → Finset Agent) (low : Bin → ℝ)
+    (hbenchmark : IsFixedPriceBenchmark values 1 benchmark)
+    (hlow_nonneg : ∀ k, 0 ≤ low k)
+    (hT : T ≤ ∑ k : Bin, ∑ i ∈ bins k, values i)
+    (hbin_accept : ∀ k i, i ∈ bins k → low k ≤ values i)
+    (hbin_factor_two : ∀ k i, i ∈ bins k → values i ≤ 2 * low k) :
+    T ≤ (2 * (Fintype.card Bin : ℝ)) * benchmark := by
+  have hsum_le :
+      (∑ k : Bin, ∑ i ∈ bins k, values i) ≤
+        ∑ _k : Bin, 2 * benchmark := by
+    exact Finset.sum_le_sum fun k _hk =>
+      fixedPriceBenchmark_bin_value_le_two_benchmark_of_factor_two
+        values hbenchmark (hlow_nonneg k) (hbin_accept k)
+        (hbin_factor_two k)
+  calc
+    T ≤ ∑ k : Bin, ∑ i ∈ bins k, values i := hT
+    _ ≤ ∑ _k : Bin, 2 * benchmark := hsum_le
+    _ = (2 * (Fintype.card Bin : ℝ)) * benchmark := by
+      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+      ring
 
 /--
 Revenue from using bidder `i`'s value as the candidate single price, with
