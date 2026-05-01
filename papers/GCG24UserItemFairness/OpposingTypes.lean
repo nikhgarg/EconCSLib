@@ -1777,6 +1777,32 @@ theorem val_le_reverseItem_iff {n : ℕ} (j : Item n) :
   simp [reverseItem]
   omega
 
+/--
+Every item line has either an exact middle item or an item immediately before
+the middle mirror pair.  This removes the odd/even midpoint case split from
+paper-level theorem statements.
+-/
+theorem midpoint_center_or_succ_center {n : ℕ} [NeZero n] (hn : 2 < n) :
+    (∃ c : Item n, c.val = (reverseItem c).val) ∨
+      (∃ c : Item n, c.val + 1 = (reverseItem c).val) := by
+  rcases Nat.mod_two_eq_zero_or_one n with hmod | hmod
+  · right
+    let c : Item n := ⟨n / 2 - 1, by omega⟩
+    refine ⟨c, ?_⟩
+    have hdiv : 2 * (n / 2) = n := by
+      have h := Nat.div_add_mod n 2
+      omega
+    simp [c, reverseItem]
+    omega
+  · left
+    let c : Item n := ⟨n / 2, by omega⟩
+    refine ⟨c, ?_⟩
+    have hdiv : 2 * (n / 2) + 1 = n := by
+      have h := Nat.div_add_mod n 2
+      omega
+    simp [c, reverseItem]
+    omega
+
 /-- Any item weakly before an exact center is weakly before its own mirror. -/
 theorem val_le_reverseItem_of_val_le_center_eq_reverse
     {n : ℕ} {j c : Item n}

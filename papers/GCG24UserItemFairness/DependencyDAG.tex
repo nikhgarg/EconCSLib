@@ -69,8 +69,10 @@
   {\textbf{Theorem 4 Fairness Wrappers} \\ Source cold-user policy; estimated lift; Problem 11 uniqueness closed};
 \node[dag_lemma, below=of Theorem4Conditional] (VExist)
   {\textbf{Value-Vector Witness} \\ Geometric $v_j=r^j$ construction};
+\node[dag_lemma, right=of VExist] (Midpoint)
+  {\textbf{Midpoint Split} \\ Exact center or adjacent mirror pair};
 \node[dag_result, below=of VExist] (Theorem4Full)
-  {\textbf{Theorem 4 (App. E)} \\ Source two-bullet wrappers closed for both midpoint parities and cold-start rows};
+  {\textbf{Theorem 4 (App. E)} \\ Parity-free source two-bullet wrappers closed for both cold-start rows};
 
 % --- Edges: model/reduction path ---
 \draw[dag_arrow] (BaseDefs) -- (Lemma1);
@@ -109,6 +111,7 @@
 \draw[dag_arrow] (Lemma14.east) -| (Theorem4Conditional.east);
 \draw[dag_arrow] (Theorem4Conditional) -- (Theorem4Full);
 \draw[dag_arrow] (VExist) -- (Theorem4Full);
+\draw[dag_arrow] (Midpoint) |- (Theorem4Full);
 
 \end{tikzpicture}
 \end{document}
