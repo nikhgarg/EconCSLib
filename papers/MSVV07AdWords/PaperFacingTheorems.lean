@@ -1,298 +1,502 @@
 import MSVV07AdWords.MainTheorems
 
 /-!
-# Quiet Paper-Facing Theorem Ledger
+# Paper-Facing Theorem Ledger: MSVV07 AdWords
 
-This file is the Lean-oriented declaration index for the AdWords paper
-formalization. It intentionally avoids top-level `#check` commands because this
-module is imported by `MSVV07AdWords` and bare `#check` commands print every
-theorem type during aggregate builds. Each check is wrapped in
-`#guard_msgs(drop info)`, so missing or renamed declarations still fail the
-build, while successful builds produce no declaration-ledger spam.
+This file is the single Lean file intended for human audit of the formalized
+surface of Mehta, Saberi, Vazirani, and Vazirani, *AdWords and Generalized
+Online Matching* (JACM 2007).
+
+The declarations below deliberately expose the paper-facing formulas for the
+finite AdWords model, Balance/MSVV rule, small-bids limit, and Section 7
+b-matching lower bound. The proofs are thin wrappers around the detailed
+formalization in `MainTheorems.lean`, `AdWords.lean`, `AdWordsExtensions.lean`,
+and `AdWordsLowerBound.lean`.
 -/
+
+open scoped BigOperators
 
 namespace EconCSLib
 namespace Online
+namespace MSVV07PaperFacing
 
--- 1) Core model and LP primitives
+/-! ## Sections 2--3: finite AdWords model and Balance/MSVV rule -/
 
--- Finite AdWords instance with advertiser budgets and query bids.
-#guard_msgs(drop info) in
-#check AdWordsInstance
+/--
+Paper model. An AdWords instance consists of advertiser budgets `budget a` and
+query bids `bid a q`, where assigning query `q` to advertiser `a` earns
+`bid a q` and charges the same amount to `a`.
+-/
+abbrev PaperInstance (Advertiser Query : Type*) :=
+  AdWordsInstance Advertiser Query
 
--- A concrete integral assignment map `Query → Option Advertiser` (`none` means no assignment).
-#guard_msgs(drop info) in
-#check AdWordsInstance.Assignment
+/-- Paper assignment: every query is assigned to one advertiser or left unmatched. -/
+abbrev PaperAssignment (Advertiser Query : Type*) :=
+  Query → Option Advertiser
 
--- A fractional LP assignment `Advertiser → Query → ℝ`.
-#guard_msgs(drop info) in
-#check AdWordsInstance.FractionalAssignment
+/-- Paper spend formula for advertiser `a` under assignment `A`. -/
+noncomputable abbrev paperSpend
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (a : Advertiser) : ℝ :=
+  ∑ q : Query,
+    match A q with
+    | none => 0
+    | some a' => if a' = a then I.bid a q else 0
 
--- Budget feasibility and related LP predicates used throughout the paper.
-#guard_msgs(drop info) in
-#check AdWordsInstance.Feasible
-#guard_msgs(drop info) in
-#check AdWordsInstance.FractionalFeasible
-#guard_msgs(drop info) in
-#check AdWordsInstance.ChoiceRuleFeasible
-#guard_msgs(drop info) in
-#check AdWordsInstance.StateInvariant
+/-- Paper revenue formula for an assignment. -/
+noncomputable abbrev paperRevenue
+    {Advertiser Query : Type*} [Fintype Query]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) : ℝ :=
+  ∑ q : Query,
+    match A q with
+    | none => 0
+    | some a => I.bid a q
 
--- The finite offline benchmark: integral and fractional value terms.
-#guard_msgs(drop info) in
-#check AdWordsInstance.offlineOptimumAssignment
-#guard_msgs(drop info) in
-#check AdWordsInstance.offlineOptimumValue
-#guard_msgs(drop info) in
-#check AdWordsInstance.revenue
-#guard_msgs(drop info) in
-#check AdWordsInstance.fractionalRevenue
+/-- Paper budget feasibility: no advertiser spends more than her budget. -/
+abbrev paperFeasible
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) : Prop :=
+  ∀ a, paperSpend I A a ≤ I.budget a
 
--- Dual LP side: `dualObjective α β` and `DualFeasible α β`.
-#guard_msgs(drop info) in
-#check AdWordsInstance.DualFeasible
-#guard_msgs(drop info) in
-#check AdWordsInstance.dualObjective
+/-- Paper small-bids condition: every bid is at most an `epsilon` budget fraction. -/
+abbrev paperSmallBids
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query) (epsilon : ℝ) : Prop :=
+  ∀ a q, I.bid a q ≤ epsilon * I.budget a
 
--- LP setup and weak duality wrappers.
-#guard_msgs(drop info) in
-#check paper_adwords_empty_assignment_feasible
-#guard_msgs(drop info) in
-#check paper_adwords_offline_optimum_exists
-#guard_msgs(drop info) in
-#check paper_adwords_revenue_le_total_budget_of_feasible
-#guard_msgs(drop info) in
-#check paper_adwords_lp_weak_duality
-#guard_msgs(drop info) in
-#check paper_adwords_integral_assignment_fractional_feasible
-#guard_msgs(drop info) in
-#check paper_adwords_fractional_lp_weak_duality
+/--
+Paper fractional LP value: the relaxed assignment variable `x a q` contributes
+`bid a q * x a q`.
+-/
+noncomputable abbrev paperFractionalRevenue
+    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
+    (I : PaperInstance Advertiser Query)
+    (x : Advertiser → Query → ℝ) : ℝ :=
+  ∑ q : Query, ∑ a : Advertiser, I.bid a q * x a q
 
--- Slack and max-slack dual constructors used in the Balance/MSVV reduction.
-#guard_msgs(drop info) in
-#check paper_adwords_dual_feasible_of_slack_score_bound
-#guard_msgs(drop info) in
-#check paper_adwords_dual_feasible_max_slack_beta
-#guard_msgs(drop info) in
-#check paper_adwords_dual_feasible_msvv_assignment
-#guard_msgs(drop info) in
-#check paper_adwords_dual_feasible_msvv_normalized_assignment
+/--
+Paper fractional LP feasibility: nonnegative assignment, at most one unit per
+query, and budget feasibility for every advertiser.
+-/
+structure PaperFractionalFeasible
+    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
+    (I : PaperInstance Advertiser Query)
+    (x : Advertiser → Query → ℝ) : Prop where
+  nonneg : ∀ a q, 0 ≤ x a q
+  query : ∀ q, (∑ a : Advertiser, x a q) ≤ 1
+  budget : ∀ a, (∑ q : Query, I.bid a q * x a q) ≤ I.budget a
 
--- Choice rule existence and basic online run feasibility.
-#guard_msgs(drop info) in
-#check paper_adwords_balance_choice_exists
-#guard_msgs(drop info) in
-#check paper_adwords_run_assignment_feasible
-#guard_msgs(drop info) in
-#check paper_adwords_balance_run_assignment_feasible
+/-- The paper's MSVV/Balance tradeoff function at spent fraction `s`. -/
+noncomputable abbrev paperTradeoff (s : ℝ) : ℝ :=
+  1 - Real.exp (s - 1)
 
--- 2) Online semantics and history accounting
+/-- The paper's competitive ratio `1 - 1/e`. -/
+noncomputable abbrev paperMsvvRatio : ℝ :=
+  1 - 1 / Real.exp 1
 
--- The online run history state and assignment unfold.
-#guard_msgs(drop info) in
-#check AdWordsInstance.HistoryState
-#guard_msgs(drop info) in
-#check AdWordsInstance.historyFinset
-#guard_msgs(drop info) in
-#check AdWordsInstance.initialHistoryState
-#guard_msgs(drop info) in
-#check AdWordsInstance.stepHistoryState
-#guard_msgs(drop info) in
-#check AdWordsInstance.runHistoryState
-#guard_msgs(drop info) in
-#check AdWordsInstance.runHistoryStateFrom
-#guard_msgs(drop info) in
-#check AdWordsInstance.runAssignment
+/-- Paper Balance/MSVV scaled bid. -/
+noncomputable abbrev paperBalanceScore
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) : ℝ :=
+  I.bid a q * paperTradeoff (paperSpend I A a / I.budget a)
 
--- History-local properties used by the proof.
-#guard_msgs(drop info) in
-#check paper_adwords_balance_assignment_assigned_only_from_history
-#guard_msgs(drop info) in
-#check paper_adwords_spend_monotone_over_history
-#guard_msgs(drop info) in
-#check paper_adwords_run_revenue_eq_history_revenue_charge
-#guard_msgs(drop info) in
-#check paper_adwords_balance_charge_le_run_revenue
+/-- Paper feasibility for assigning query `q` next to advertiser `a`. -/
+abbrev paperCanAssign
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) : Prop :=
+  paperSpend I A a + I.bid a q ≤ I.budget a
 
--- 3) Per-query dual charge lemmas
+/--
+Paper Balance/MSVV choice rule: assign the query to a feasible advertiser with
+maximum scaled bid.
+-/
+abbrev paperIsBalanceChoice
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) : Prop :=
+  paperCanAssign I A q a ∧
+    ∀ b, paperCanAssign I A q b →
+      paperBalanceScore I A b q ≤ paperBalanceScore I A a q
 
--- Final slack-score and beta bound lemmas for admissible/exhausted advertisers.
-#guard_msgs(drop info) in
-#check paper_adwords_final_slack_score_le_initial_balance_score
-#guard_msgs(drop info) in
-#check paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign
-#guard_msgs(drop info) in
-#check paper_adwords_msvv_ratio_mul_normalized_max_slack_beta_le_balance_score_of_all_can_assign
-#guard_msgs(drop info) in
-#check paper_adwords_blocked_advertiser_final_alpha_ge_exp_neg_epsilon
-#guard_msgs(drop info) in
-#check paper_adwords_blocked_advertiser_final_slack_score_le_error
-#guard_msgs(drop info) in
-#check paper_adwords_msvv_ratio_mul_blocked_advertiser_normalized_final_slack_score_le_error
-#guard_msgs(drop info) in
-#check paper_adwords_msvv_ratio_mul_normalized_max_slack_beta_le_balance_score_add_max_bid_error
-#guard_msgs(drop info) in
-#check paper_adwords_max_slack_beta_le_balance_score_or_max_bid_error
-#guard_msgs(drop info) in
-#check paper_adwords_max_slack_beta_le_balance_score_add_max_bid_error
+theorem paperSpend_eq_library
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (a : Advertiser) :
+    paperSpend I A a = I.spend A a := by
+  rfl
 
--- Summed and normalized query-dual bounds over histories.
-#guard_msgs(drop info) in
-#check paper_adwords_balance_history_max_slack_beta_sum_le_charge_add_error
-#guard_msgs(drop info) in
-#check paper_adwords_balance_query_dual_sum_le_charge_add_error_of_history_cover
-#guard_msgs(drop info) in
-#check paper_adwords_msvv_ratio_mul_normalized_query_dual_sum_le_charge_add_error_of_history_cover
+theorem paperRevenue_eq_library
+    {Advertiser Query : Type*} [Fintype Query]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) :
+    paperRevenue I A = I.revenue A := by
+  rfl
 
--- 4) Small-bids bridge and section-6/8 reductions
+theorem paperFeasible_eq_library
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) :
+    paperFeasible I A = I.Feasible A := by
+  rfl
 
--- Blocking-advertiser spent-fraction bound under ε-small bids.
-#guard_msgs(drop info) in
-#check paper_adwords_small_bids_blocked_advertiser_spent_fraction
+theorem paperSmallBids_eq_library
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query) (epsilon : ℝ) :
+    paperSmallBids I epsilon = I.SmallBids epsilon := by
+  rfl
 
--- Effective-bid transformation wrappers: small-bids preserved by each mapping.
-#guard_msgs(drop info) in
-#check paper_adwords_effective_bids_small_bids
-#guard_msgs(drop info) in
-#check paper_adwords_click_through_rates_small_bids
-#guard_msgs(drop info) in
-#check paper_adwords_weighted_bids_small_bids
-#guard_msgs(drop info) in
-#check paper_adwords_availability_small_bids
-#guard_msgs(drop info) in
-#check paper_adwords_multiple_slots_small_bids
-#guard_msgs(drop info) in
-#check AdWordsInstance.withEffectiveBids
-#guard_msgs(drop info) in
-#check AdWordsInstance.withClickThroughRates
-#guard_msgs(drop info) in
-#check AdWordsInstance.withAdvertiserWeights
-#guard_msgs(drop info) in
-#check AdWordsInstance.withAvailability
-#guard_msgs(drop info) in
-#check AdWordsInstance.withSlots
-#guard_msgs(drop info) in
-#check AdWordsInstance.withSlotsPerPageDistinct
-#guard_msgs(drop info) in
-#check AdWordsInstance.withSlotsDistinctChoice
+theorem paperFractionalRevenue_eq_library
+    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
+    (I : PaperInstance Advertiser Query)
+    (x : Advertiser → Query → ℝ) :
+    paperFractionalRevenue I x = I.fractionalRevenue x := by
+  rfl
 
--- 5) Section-7 lower-bound reductions
+theorem paperTradeoff_eq_library (s : ℝ) :
+    paperTradeoff s = AdWordsInstance.balanceDiscount s := by
+  rfl
 
--- Primitive reduction chain from paper certificates to lower-bound claim.
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_msvv_ratio_of_permutation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_revenue_bound_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_round_allocation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_pointwise_allocation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_symmetric_pointwise_allocation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_relabel_symmetric_pointwise_allocation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_observed_prefix_allocation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_no_randomized_algorithm_beats_ratio_of_feasible_observed_prefix_allocation_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_harmonic_layer_count_bound_of_log_spend_cap
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_bidder_spend_upper_bound_le_log_tail
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_harmonic_layer_count_bound
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_normalized_revenue_upper_bound_le_msvv_ratio_add_grid_errors
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta_of_layer_count_bound
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_pointwise_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_symmetric_pointwise_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_relabel_symmetric_pointwise_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_observed_prefix_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_feasible_observed_prefix_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_feasible_prefix_rule_family
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family_of_realized_revenue
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_layer_count_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_pointwise_layer_count_family_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_symmetric_pointwise_layer_count_family_certificate
+theorem paperMsvvRatio_eq_library :
+    paperMsvvRatio = AdWordsInstance.msvvRatio := by
+  rfl
 
--- 6) Main Balance/MSVV primal-dual and approximation chain
+theorem paperBalanceScore_eq_library
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) :
+    paperBalanceScore I A a q = I.balanceScore A a q := by
+  rfl
 
--- Primal-dual template wrappers used by the finite and asymptotic analyses.
-#guard_msgs(drop info) in
-#check paper_adwords_competitive_of_primal_dual_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_competitive_of_primal_dual_certificate
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_objective_bound_of_history_accounting
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_competitive_of_objective_bound
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_objective_bound_of_history_accounting
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_competitive_of_approx_objective_bound
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_history_approx_accounting_with_explicit_error
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_objective_bound_with_explicit_error
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_competitive_with_error_bound
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_approx_competitive_with_query_sum_error_bound
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_competitive_up_to_delta
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_threshold
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta_of_small_bids_threshold
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_competitive_of_arbitrarily_small_bids_threshold
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_competitive_of_arbitrarily_small_bids_threshold
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta_of_small_bids_threshold
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually_of_offline_opt_convergence
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold_of_offline_opt_convergence
-#guard_msgs(drop info) in
-#check paper_adwords_balance_msvv_competitive_of_small_bids_limit_family
+theorem paperCanAssign_eq_library
+    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :
+    paperCanAssign I A q a = I.CanAssign A q a := by
+  rfl
 
+theorem paperIsBalanceChoice_eq_library
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :
+    paperIsBalanceChoice I A q a = I.IsBalanceChoice A q a := by
+  rfl
+
+/-! ## Core LP and online-run support used by the paper proof -/
+
+/-- Empty assignments are feasible under nonnegative budgets. -/
+theorem section2_empty_assignment_feasible
+    {Advertiser Query : Type*}
+    [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (hbudget : ∀ a, 0 ≤ I.budget a) :
+    paperFeasible I
+      (AdWordsInstance.emptyAssignment :
+        PaperAssignment Advertiser Query) := by
+  simpa [paperFeasible_eq_library] using
+    paper_adwords_empty_assignment_feasible I hbudget
+
+/-- Finite instances have an offline optimum assignment. -/
+theorem section2_offline_optimum_exists
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (hbudget : ∀ a, 0 ≤ I.budget a) :
+    ∃ A : PaperAssignment Advertiser Query,
+      I.IsOptimalAssignment A := by
+  exact paper_adwords_offline_optimum_exists I hbudget
+
+/-- Paper LP weak duality for the fractional AdWords relaxation. -/
+theorem section2_fractional_lp_weak_duality
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query]
+    (I : PaperInstance Advertiser Query)
+    (x : Advertiser → Query → ℝ)
+    (alpha : Advertiser → ℝ) (beta : Query → ℝ)
+    (hfeasible : I.FractionalFeasible x)
+    (hdual : I.DualFeasible alpha beta) :
+    paperFractionalRevenue I x ≤ I.dualObjective alpha beta := by
+  simpa [paperFractionalRevenue_eq_library] using
+    paper_adwords_fractional_lp_weak_duality I x alpha beta hfeasible hdual
+
+/-- A Balance/MSVV maximizer exists whenever some advertiser can accept the query. -/
+theorem section3_balance_choice_exists
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query)
+    (A : PaperAssignment Advertiser Query) (q : Query)
+    (h : ∃ a, paperCanAssign I A q a) :
+    ∃ a, paperIsBalanceChoice I A q a := by
+  simpa [paperCanAssign_eq_library, paperIsBalanceChoice_eq_library] using
+    paper_adwords_balance_choice_exists I A q h
+
+/-- The canonical Balance/MSVV online run is budget-feasible. -/
+theorem section3_balance_run_assignment_feasible
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
+    [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (hbudget : ∀ a, 0 ≤ I.budget a)
+    (history : List Query) :
+    paperFeasible I (I.runAssignment I.balanceChoiceRule history) := by
+  simpa [paperFeasible_eq_library] using
+    paper_adwords_balance_run_assignment_feasible I hbudget history
+
+/-! ## Section 5 / Theorem 8: Balance/MSVV is `1 - 1/e` competitive -/
+
+/--
+Paper-facing small-bids limiting family. The paper's limiting theorem is about
+a sequence of finite instances whose bids become small relative to budgets;
+these fields spell out that limiting model.
+-/
+structure PaperSmallBidsLimitFamily
+    (Advertiser : Type*) [Fintype Advertiser] [Nonempty Advertiser]
+    [DecidableEq Advertiser] where
+  queryCount : ℕ → ℕ
+  instanceAt : (k : ℕ) → PaperInstance Advertiser (Fin (queryCount k))
+  optLimit : ℝ
+  revenueLimit : ℝ
+  nonnegative_bids : ∀ k, (instanceAt k).NonnegativeBids
+  positive_budgets : ∀ k, (instanceAt k).PositiveBudgets
+  maxBidSum_pos :
+    ∀ k, 0 < ∑ q : Fin (queryCount k), (instanceAt k).maxBidForQuery q
+  small_bids_eventually :
+    ∀ delta : ℝ, 0 < delta →
+      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
+        paperSmallBids (instanceAt k)
+          (min 1
+            (delta / ((Real.exp 1 + 1) *
+              (∑ q : Fin (queryCount k), (instanceAt k).maxBidForQuery q))))
+  offlineOptimum_tendsTo :
+    Sequence.SeqTendsTo
+      (fun k =>
+        (instanceAt k).offlineOptimumValue
+          (fun a => (positive_budgets k a).le))
+      optLimit
+  revenue_tendsTo :
+    Sequence.SeqTendsTo
+      (fun k =>
+        (instanceAt k).revenue
+          ((instanceAt k).runAssignment (instanceAt k).balanceChoiceRule
+            (List.finRange (queryCount k))))
+      revenueLimit
+
+namespace PaperSmallBidsLimitFamily
+
+noncomputable def toLibrary
+    {Advertiser : Type*} [Fintype Advertiser] [Nonempty Advertiser]
+    [DecidableEq Advertiser]
+    (F : PaperSmallBidsLimitFamily Advertiser) :
+    AdWordsInstance.MsvvSmallBidsLimitFamily Advertiser where
+  queryCount := F.queryCount
+  instanceAt := F.instanceAt
+  optLimit := F.optLimit
+  revenueLimit := F.revenueLimit
+  nonnegative_bids := F.nonnegative_bids
+  positive_budgets := F.positive_budgets
+  maxBidSum_pos := F.maxBidSum_pos
+  small_bids_eventually := by
+    intro delta hdelta
+    obtain ⟨N, hN⟩ := F.small_bids_eventually delta hdelta
+    exact ⟨N, fun k hk => by
+      simpa [paperSmallBids_eq_library] using hN k hk⟩
+  offlineOptimum_tendsTo := F.offlineOptimum_tendsTo
+  revenue_tendsTo := F.revenue_tendsTo
+
+end PaperSmallBidsLimitFamily
+
+/--
+Theorem 8, finite explicit-error form. For a complete finite query history,
+Balance/MSVV gets the `1 - 1/e` scaled offline optimum up to the explicit
+small-bids error.
+-/
+theorem theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperMsvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      paperRevenue I (I.runAssignment I.balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, I.maxBidForQuery q) := by
+  rw [paperMsvvRatio_eq_library, paperRevenue_eq_library]
+  exact
+    paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound
+      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one
+      (by simpa [paperSmallBids_eq_library] using hsmall)
+
+/--
+Theorem 8, paper-level limiting endpoint. Any finite-query small-bids family
+satisfying the explicit threshold eventually has limiting competitive ratio
+`1 - 1/e`.
+-/
+theorem theorem8_balance_msvv_competitive_of_small_bids_limit_family
+    {Advertiser : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
+    (F : PaperSmallBidsLimitFamily Advertiser) :
+    paperMsvvRatio * F.optLimit ≤ F.revenueLimit := by
+  rw [paperMsvvRatio_eq_library]
+  exact
+    paper_adwords_balance_msvv_competitive_of_small_bids_limit_family
+      F.toLibrary
+
+/-! ## Section 6 and Section 8: model extensions by effective bids -/
+
+/-- Section 6: arbitrary effective charges preserve the paper small-bids condition. -/
+theorem section6_effective_bids_small_bids
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query)
+    (effectiveBid : Advertiser → Query → ℝ) {epsilon : ℝ}
+    (hsmall : ∀ a q, effectiveBid a q ≤ epsilon * I.budget a) :
+    paperSmallBids (I.withEffectiveBids effectiveBid) epsilon := by
+  simpa [paperSmallBids_eq_library] using
+    paper_adwords_effective_bids_small_bids I effectiveBid hsmall
+
+/-- Section 6: click-through-rate effective bids preserve small bids when CTRs are at most one. -/
+theorem section6_click_through_rates_small_bids
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query)
+    (ctr : Advertiser → Query → ℝ) {epsilon : ℝ}
+    (hbid : I.NonnegativeBids)
+    (hctr_le_one : ∀ a q, ctr a q ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperSmallBids (I.withClickThroughRates ctr) epsilon := by
+  simpa [paperSmallBids_eq_library] using
+    paper_adwords_click_through_rates_small_bids I ctr hctr_le_one hbid
+      (by simpa [paperSmallBids_eq_library] using hsmall)
+
+/-- Section 6: delayed-entry availability masks preserve small bids. -/
+theorem section6_availability_small_bids
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query)
+    (available : Advertiser → Query → Prop) {epsilon : ℝ}
+    [∀ a q, Decidable (available a q)]
+    (hepsilon : 0 ≤ epsilon)
+    (hbudget : I.PositiveBudgets)
+    (hsmall : paperSmallBids I epsilon) :
+    paperSmallBids (I.withAvailability available) epsilon := by
+  simpa [paperSmallBids_eq_library] using
+    paper_adwords_availability_small_bids I available hepsilon hbudget
+      (by simpa [paperSmallBids_eq_library] using hsmall)
+
+/-- Section 6: multiple slots per query reduce to distinct slot-query IDs. -/
+theorem section6_multiple_slots_small_bids
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query) {epsilon : ℝ}
+    (Slot : Query → Type*)
+    (hsmall : paperSmallBids I epsilon) :
+    paperSmallBids (I.withSlots Slot) epsilon := by
+  simpa [paperSmallBids_eq_library] using
+    paper_adwords_multiple_slots_small_bids I Slot
+      (by simpa [paperSmallBids_eq_library] using hsmall)
+
+/-- Section 8: advertiser-weighted effective bids preserve small bids for weights in `[0,1]`. -/
+theorem section8_weighted_bids_small_bids
+    {Advertiser Query : Type*}
+    (I : PaperInstance Advertiser Query)
+    (weight : Advertiser → ℝ) {epsilon : ℝ}
+    (hbid : I.NonnegativeBids)
+    (hweight_le_one : ∀ a, weight a ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperSmallBids (I.withAdvertiserWeights weight) epsilon := by
+  simpa [paperSmallBids_eq_library] using
+    paper_adwords_weighted_bids_small_bids I weight hweight_le_one hbid
+      (by simpa [paperSmallBids_eq_library] using hsmall)
+
+/-! ## Section 7 / Theorem 9: b-matching randomized lower bound -/
+
+/-- The hard distribution in Theorem 9 is uniform over bidder permutations. -/
+noncomputable abbrev theorem9HardDistribution (N : ℕ) :
+    PMF (Equiv.Perm (Fin N)) :=
+  uniformPermutationDistribution N
+
+/--
+Theorem 9 deterministic algorithms in this formalization: a finite integral
+prefix algorithm sees only the observed prefix and chooses at most one visible
+eligible bidder each round.
+-/
+abbrev theorem9IntegralPrefixAlgorithm (N : ℕ) :=
+  BMatchingIntegralPrefixAlgorithm N
+
+/-- The capped normalized revenue expression used in the Section 7 proof. -/
+noncomputable abbrev theorem9CappedNormalizedRevenue
+    (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N)
+    (permutation : Equiv.Perm (Fin N)) : ℝ :=
+  paper_adwords_theorem9_integral_prefix_algorithm_family.normalizedRevenue
+    N algorithm permutation
+
+/--
+Theorem 9 harmonic-cap lemma: the finite normalized hard-instance revenue cap
+is eventually within every positive additive error of `1 - 1/e`.
+-/
+theorem theorem9_harmonic_eventually_le_msvv_ratio_add_delta :
+    ∀ delta : ℝ, 0 < delta →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        theorem9NormalizedRevenueUpperBound N ≤
+          paperMsvvRatio + delta := by
+  rw [paperMsvvRatio_eq_library]
+  exact paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta
+
+/--
+Theorem 9, concrete integral-prefix endpoint. No randomized distribution over
+finite prefix algorithms can beat `1 - 1/e + delta` on every sufficiently large
+permutation instance of the hard b-matching family.
+-/
+theorem theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio
+    :
+    ∀ delta : ℝ, 0 < delta →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (theorem9IntegralPrefixAlgorithm N),
+          ¬ ∀ permutation,
+            paperMsvvRatio + delta <
+              EconCSLib.pmfExp randomizedAlgorithm
+                (fun algorithm =>
+                  theorem9CappedNormalizedRevenue N algorithm permutation) := by
+  rw [paperMsvvRatio_eq_library]
+  exact
+    paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms
+
+/--
+Theorem 9, realized-revenue endpoint. The same lower bound applies to any
+richer realized-revenue model bounded pointwise by the capped prefix payoff.
+-/
+theorem theorem9_no_randomized_realized_revenue_algorithm_beats_msvv_ratio
+    (normalizedRevenue :
+      (N : ℕ) → theorem9IntegralPrefixAlgorithm N →
+        Equiv.Perm (Fin N) → ℝ)
+    (hrealized_le_capped :
+      ∀ N algorithm permutation,
+        normalizedRevenue N algorithm permutation ≤
+          theorem9CappedNormalizedRevenue N algorithm permutation) :
+    ∀ delta : ℝ, 0 < delta →
+      ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
+        ∀ randomizedAlgorithm : PMF (theorem9IntegralPrefixAlgorithm N),
+          ¬ ∀ permutation,
+            paperMsvvRatio + delta <
+              EconCSLib.pmfExp randomizedAlgorithm
+                (fun algorithm =>
+                  normalizedRevenue N algorithm permutation) := by
+  rw [paperMsvvRatio_eq_library]
+  exact
+    paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue
+      normalizedRevenue hrealized_le_capped
+
+end MSVV07PaperFacing
 end Online
 end EconCSLib

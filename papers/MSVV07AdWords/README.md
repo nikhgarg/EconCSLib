@@ -13,156 +13,59 @@
 
 The PDF is cached locally as `MSVV07AdWords.pdf` and ignored by the
 paper-folder `.gitignore`. The extracted text cache `MSVV07AdWords.txt` is used
-for named-statement searches; refresh it only if the source PDF changes. Use
-the ACM DOI/JACM version as the source version; the author PDF is listed only
-for easier access.
+for named-statement searches; refresh it only if the source PDF changes.
 
-## Central Theorem File
+## Central Theorem Files
 
-- `EconCSLib/Online/MainTheorems.lean`
-- `EconCSLib/Online/PaperFacingTheorems.lean` (Lean-only paper-facing
-  declaration ledger, declaration-checked and ordered by paper section)
-
-`PaperFacingTheorems.lean` is the single file a human can check to see the
-paper-facing theorem surface in Lean order; it imports `MainTheorems.lean` and
-acts as a declaration-level audit target.
-Detailed finite assignment, Balance/MSVV choice, and LP-duality lemmas live in
-`AdWords.lean`. Section 6 effective-bid reductions live in
-`AdWordsExtensions.lean`.
+- `papers/MSVV07AdWords/PaperFacingTheorems.lean`: human-facing Lean ledger.
+  It exposes the paper formulas for budgets, bids, revenue, feasibility,
+  small bids, Balance/MSVV scaled bids, Theorem 8's small-bids limit family,
+  and Theorem 9's finite hard distribution endpoint.
+- `papers/MSVV07AdWords/MainTheorems.lean`: detailed paper-facing wrappers.
+- `EconCSLib/Algorithms/Online/AdWords.lean`: reusable finite AdWords model,
+  LP weak duality, online history, Balance/MSVV accounting, and small-bids
+  limiting theorem.
+- `papers/MSVV07AdWords/AdWordsExtensions.lean`: Section 6 and Section 8
+  effective-bid reductions.
+- `papers/MSVV07AdWords/AdWordsLowerBound.lean`: Section 7 Yao/permutation
+  lower-bound interface and concrete integral-prefix endpoint.
 
 ## Theorem Status
 
 | Paper item | Lean declaration | Status | File | Remaining assumptions |
 |---|---|---|---|---|
-| Finite AdWords instance | `AdWordsInstance` | formalized | `EconCSLib/Online/AdWords.lean` | none |
-| Offline assignment, spend, revenue, budget feasibility | `Assignment`, `spend`, `revenue`, `Feasible` | formalized | `EconCSLib/Online/AdWords.lean` | finite query type for sums |
-| Empty feasible assignment | `paper_adwords_empty_assignment_feasible` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative budgets |
-| Revenue equals sum of advertiser spends | `revenue_eq_sum_spend` | formalized | `EconCSLib/Online/AdWords.lean` | finite advertisers and queries |
-| Feasible revenue bounded by total budget | `paper_adwords_revenue_le_total_budget_of_feasible` | formalized | `EconCSLib/Online/MainTheorems.lean` | assignment must be feasible |
-| Finite offline optimum exists | `paper_adwords_offline_optimum_exists` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative budgets; finite advertisers and queries |
-| Residual budget and feasible next-query assignment | `residualBudget`, `CanAssign`, `canAssign_iff_bid_le_residualBudget` | formalized | `EconCSLib/Online/AdWords.lean` | finite query type |
-| Small-bids condition | `SmallBids`, `paper_adwords_small_bids_blocked_advertiser_spent_fraction` | formalized boundary lemma | `EconCSLib/Online/MainTheorems.lean` | positive budget for blocked advertiser |
-| Section 6 arbitrary effective charges | `withEffectiveBids`, `paper_adwords_effective_bids_small_bids` | formalized reduction | `EconCSLib/Online/AdWordsExtensions.lean`, `EconCSLib/Online/MainTheorems.lean` | effective charges must satisfy the target small-bids bound |
-| Section 6 click-through rates | `withClickThroughRates`, `paper_adwords_click_through_rates_small_bids` | formalized reduction | `EconCSLib/Online/AdWordsExtensions.lean`, `EconCSLib/Online/MainTheorems.lean` | CTRs at most one; original bids nonnegative and small |
-| Section 8 advertiser-weighted effective bids | `withAdvertiserWeights`, `paper_adwords_weighted_bids_small_bids` | formalized reduction | `EconCSLib/Online/AdWordsExtensions.lean`, `EconCSLib/Online/MainTheorems.lean` | weights at most one; original bids nonnegative and small |
-| Section 6 advertiser availability / delayed entry | `withAvailability`, `paper_adwords_availability_small_bids` | formalized reduction | `EconCSLib/Online/AdWordsExtensions.lean`, `EconCSLib/Online/MainTheorems.lean` | nonnegative `ε`, positive budgets, original small-bids condition |
-| Section 6 slot-query expansion | `withSlots`, `withSlotsPerPageDistinct`, `withSlotsDistinctChoice`, `paper_adwords_multiple_slots_small_bids` | formalized reduction and feasibility-layer helpers | `EconCSLib/Online/AdWordsExtensions.lean`, `EconCSLib/Online/MainTheorems.lean` | none |
-| Section 7 finite Yao lower-bound lemma | `Decision.exists_input_randomized_payoff_le_of_forall_deterministic_average_le` | formalized generic lemma | `EconCSLib/Decision/Yao.lean` | finite deterministic algorithm and input types |
-| Theorem 9 randomized b-matching lower bound | `theorem9BidderSpendUpperBound`, `theorem9BidderHarmonicPrefixNat`, `theorem9BidderSpendUpperBound_le_log_tail`, `theorem9NormalizedRevenueUpperBound`, `theorem9HarmonicLayerCountBound_of_pos`, `theorem9NormalizedRevenueUpperBound_le_msvvRatio_add_gridErrors`, `theorem9_harmonic_eventually_le_msvvRatio_add`, `theorem9_eventually_no_randomized_algorithm_beats_msvvRatio_add_delta`, `theorem9ActualEligibleBidders`, `theorem9ObservedPrefix`, `theorem9ActualEligibleBidders_sum_eq`, `theorem9ObservedPrefix_mul_swap_eq`, `uniformPermutationExpectation_eq_of_relabel`, `BMatchingYaoLowerBoundCertificate`, `BMatchingPermutationLowerBoundCertificate`, `BMatchingRoundAllocationRevenueCertificate`, `BMatchingPointwiseAllocationRevenueCertificate`, `BMatchingSymmetricPointwiseAllocationRevenueCertificate`, `BMatchingRelabelSymmetricPointwiseAllocationRevenueCertificate`, `BMatchingObservedPrefixAllocationRevenueCertificate`, `BMatchingFeasibleObservedPrefixAllocationRevenueCertificate`, `BMatchingTheorem9FamilyCertificate`, `BMatchingTheorem9PointwiseFamilyCertificate`, `BMatchingTheorem9SymmetricPointwiseFamilyCertificate`, `BMatchingTheorem9RelabelSymmetricPointwiseFamilyCertificate`, `BMatchingTheorem9ObservedPrefixFamilyCertificate`, `BMatchingTheorem9FeasibleObservedPrefixFamilyCertificate`, `BMatchingTheorem9FeasiblePrefixRuleFamily`, `BMatchingTheorem9IntegralPrefixChoiceFamily`, `eventually_no_randomized_algorithm_beats_msvvRatio_add_delta_of_realized_revenue`, `paper_adwords_theorem9_bidder_spend_upper_bound_le_log_tail`, `paper_adwords_theorem9_harmonic_layer_count_bound`, `paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family_of_realized_revenue` | harmonic cap and finite integral prefix-choice endpoint formalized for capped normalized spend | `EconCSLib/Online/AdWordsLowerBound.lean`, `EconCSLib/Online/MainTheorems.lean` | none |
-| Concrete integral-prefix algorithm endpoint | `BMatchingIntegralPrefixAlgorithm`, `paper_adwords_theorem9_integral_prefix_algorithm_family`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue` | formalized | `EconCSLib/Online/AdWordsLowerBound.lean`, `EconCSLib/Online/MainTheorems.lean` | uses the capped normalized spend bridge for concrete finite subtype families |
-| Balance/MSVV discount, dual-alpha, and scaled bid | `balanceDiscount`, `msvvDualAlpha`, `msvvNormalizedDualAlpha`, `balanceScore`, `slackScore` | formalized | `EconCSLib/Online/AdWords.lean` | none |
-| Slack-score dual-feasibility builder | `paper_adwords_dual_feasible_of_slack_score_bound` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative alpha/beta and pointwise slack-score cover |
-| Max-slack query duals | `maxSlackBeta`, `paper_adwords_dual_feasible_max_slack_beta` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonempty finite advertiser type |
-| Assignment-induced MSVV duals | `msvvAlphaFromAssignment`, `paper_adwords_dual_feasible_msvv_assignment` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonempty finite advertiser type |
-| Normalized assignment-induced MSVV duals | `msvvNormalizedAlphaFromAssignment`, `paper_adwords_dual_feasible_msvv_normalized_assignment` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonempty finite advertiser type, nonnegative bids, positive budgets |
-| MSVV ratio | `msvvRatio`, `msvvRatio_pos`, `msvvRatio_lt_one` | formalized | `EconCSLib/Online/AdWords.lean` | none |
-| Balance/MSVV next-query choice exists | `paper_adwords_balance_choice_exists` | formalized | `EconCSLib/Online/MainTheorems.lean` | at least one advertiser can accept the query |
-| Online history state and run fold | `HistoryState`, `stepHistoryState`, `runHistoryState`, `runAssignment` | formalized | `EconCSLib/Online/AdWords.lean` | repeated query IDs are skipped after first sighting |
-| Canonical finite query history | `historyFinset_finRange`, `finRange_history_nodup` | formalized | `EconCSLib/Online/AdWords.lean` | query type is `Fin n`; history is `List.finRange n` |
-| Feasible choice rules preserve feasibility | `paper_adwords_run_assignment_feasible` | formalized | `EconCSLib/Online/MainTheorems.lean` | choice rule must satisfy `ChoiceRuleFeasible` |
-| Balance/MSVV run is feasible | `paper_adwords_balance_run_assignment_feasible` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative budgets |
-| Balance/MSVV assigns only seen query IDs | `paper_adwords_balance_assignment_assigned_only_from_history` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative budgets |
-| Spend monotone over online histories | `paper_adwords_spend_monotone_over_history` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids and feasible choice rule |
-| Online revenue trace | `paper_adwords_run_revenue_eq_history_revenue_charge` | formalized | `EconCSLib/Online/MainTheorems.lean` | feasible choice rule and nonnegative budgets |
-| Balance charge bounded by revenue | `paper_adwords_balance_charge_le_run_revenue` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids and budgets |
-| Final MSVV slack bounded by earlier Balance score | `paper_adwords_final_slack_score_le_initial_balance_score` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids, feasible choice rule, positive advertiser budget |
-| Non-exhausted-query beta charge | `paper_adwords_max_slack_beta_le_balance_score_of_all_can_assign` | formalized | `EconCSLib/Online/MainTheorems.lean` | all advertisers can still accept the query |
-| Normalized non-exhausted-query beta charge | `paper_adwords_msvv_ratio_mul_normalized_max_slack_beta_le_balance_score_of_all_can_assign` | formalized | `EconCSLib/Online/MainTheorems.lean` | all advertisers can still accept the query |
-| Exhausted-advertiser alpha/slack charge | `paper_adwords_blocked_advertiser_final_alpha_ge_exp_neg_epsilon`, `paper_adwords_blocked_advertiser_final_slack_score_le_error` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids, positive blocked-advertiser budget, `ε`-small bids |
-| Normalized exhausted-advertiser slack charge | `paper_adwords_msvv_ratio_mul_blocked_advertiser_normalized_final_slack_score_le_error` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids, positive blocked-advertiser budget, `ε`-small bids |
-| Mixed query beta charge | `paper_adwords_max_slack_beta_le_balance_score_or_max_bid_error`, `paper_adwords_max_slack_beta_le_balance_score_add_max_bid_error` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids, positive budgets, `0 ≤ ε`, `ε`-small bids, Balance choice at the query state |
-| Normalized mixed query beta charge | `paper_adwords_msvv_ratio_mul_normalized_max_slack_beta_le_balance_score_add_max_bid_error` | formalized | `EconCSLib/Online/MainTheorems.lean` | nonnegative bids, positive budgets, `0 ≤ ε`, `ε`-small bids, Balance choice at the query state |
-| History-summed beta charge | `paper_adwords_balance_history_max_slack_beta_sum_le_charge_add_error` | formalized | `EconCSLib/Online/MainTheorems.lean` | nodup history; positive budgets; nonnegative bids; `0 ≤ ε`; `ε`-small bids |
-| Query-dual sum charge | `paper_adwords_balance_query_dual_sum_le_charge_add_error_of_history_cover` | formalized | `EconCSLib/Online/MainTheorems.lean` | nodup history that covers the finite query type; positive budgets; nonnegative bids; `0 ≤ ε`; `ε`-small bids |
-| Normalized query-dual sum charge | `paper_adwords_msvv_ratio_mul_normalized_query_dual_sum_le_charge_add_error_of_history_cover` | formalized | `EconCSLib/Online/MainTheorems.lean` | nodup history that covers the finite query type; positive budgets; nonnegative bids; `0 ≤ ε`; `ε`-small bids |
-| Standard AdWords LP dual feasibility | `DualFeasible`, `dualObjective` | formalized | `EconCSLib/Online/AdWords.lean` | none |
-| AdWords LP weak duality | `paper_adwords_lp_weak_duality` | formalized | `EconCSLib/Online/MainTheorems.lean` | feasible assignment and dual-feasible variables |
-| Fractional AdWords LP primal | `FractionalAssignment`, `FractionalFeasible`, `fractionalRevenue` | formalized | `EconCSLib/Online/AdWords.lean` | finite advertisers and queries |
-| Integral-to-fractional embedding | `paper_adwords_integral_assignment_fractional_feasible` | formalized | `EconCSLib/Online/MainTheorems.lean` | integral assignment must be feasible |
-| Fractional AdWords LP weak duality | `paper_adwords_fractional_lp_weak_duality` | formalized | `EconCSLib/Online/MainTheorems.lean` | fractional feasible assignment and dual-feasible variables |
-| Competitive-ratio certificate | `CompetitiveRatioCertificate` | formalized certificate interface | `EconCSLib/Online/AdWords.lean` | supply a certificate only when using this reusable exact interface |
-| Primal-dual competitive certificate | `paper_adwords_competitive_of_primal_dual_certificate` | auxiliary exact wrapper formalized | `EconCSLib/Online/MainTheorems.lean` | not needed for the final small-bids limiting theorem |
-| Balance/MSVV exact finite certificate form | `paper_adwords_balance_msvv_competitive_of_primal_dual_certificate` | auxiliary exact wrapper formalized | `EconCSLib/Online/MainTheorems.lean` | not needed for the final small-bids limiting theorem |
-| History-accounting objective seam | `MsvvHistoryAccountingCertificate`, `paper_adwords_balance_msvv_objective_bound_of_history_accounting` | auxiliary exact wrapper formalized | `EconCSLib/Online/MainTheorems.lean` | zero-error idealization; approximate accounting theorem below is proved |
-| Balance/MSVV objective-bound seam | `MsvvObjectiveBoundCertificate`, `paper_adwords_balance_msvv_competitive_of_objective_bound` | auxiliary exact wrapper formalized | `EconCSLib/Online/MainTheorems.lean` | zero-error idealization; finite small-bids theorem below is proved |
-| Approximate small-bids objective seam | `MsvvHistoryApproxAccountingCertificate`, `MsvvApproxObjectiveBoundCertificate`, `paper_adwords_balance_msvv_history_approx_accounting_with_explicit_error`, `paper_adwords_balance_msvv_approx_objective_bound_with_explicit_error`, `paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error`, `paper_adwords_balance_msvv_approx_competitive_with_error_bound`, `paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound`, `paper_adwords_balance_msvv_finRange_approx_competitive_with_query_sum_error_bound`, `paper_adwords_balance_msvv_approx_competitive_up_to_delta`, `paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta`, `paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_approx_competitive_up_to_delta_of_small_bids_threshold`, `paper_adwords_balance_msvv_competitive_of_arbitrarily_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_competitive_of_arbitrarily_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta`, `paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta_of_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually_of_offline_opt_convergence`, `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold_of_offline_opt_convergence` | finite explicit-error theorem, algebraic/query-sum error bounds, canonical `Fin n` query-sum wrappers, delta-form theorem, explicit small-bids threshold, limit-style wrapper, family-level eventual additive-`δ` theorem, and sequence-limit theorem formalized | `EconCSLib/Online/MainTheorems.lean` | none beyond theorem hypotheses |
-| Small-bids limit family | `MsvvSmallBidsLimitFamily` | formalized | `EconCSLib/Online/AdWords.lean` | a user supplies the finite instance family, vanishing threshold, and convergence fields |
-| Full MSVV competitive theorem | `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family` | formalized family-level theorem | `EconCSLib/Online/MainTheorems.lean` | none beyond `MsvvSmallBidsLimitFamily` fields |
+| Sections 2--3 finite AdWords model | `MSVV07PaperFacing.PaperInstance`, `MSVV07PaperFacing.paperSpend`, `MSVV07PaperFacing.paperRevenue`, `MSVV07PaperFacing.paperFeasible`, `AdWordsInstance` | formalized | `PaperFacingTheorems.lean`, `AdWords.lean` | finite advertiser/query types for sums |
+| Small-bids condition | `MSVV07PaperFacing.paperSmallBids`, `AdWordsInstance.SmallBids`, `paper_adwords_small_bids_blocked_advertiser_spent_fraction` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | positive budget when using the blocked-advertiser boundary lemma |
+| Balance/MSVV tradeoff and scaled bid | `MSVV07PaperFacing.paperTradeoff`, `MSVV07PaperFacing.paperBalanceScore`, `MSVV07PaperFacing.paperIsBalanceChoice`, `AdWordsInstance.balanceDiscount`, `AdWordsInstance.balanceScore`, `AdWordsInstance.IsBalanceChoice` | formalized | `PaperFacingTheorems.lean`, `AdWords.lean` | none |
+| Offline optimum and LP weak duality | `section2_offline_optimum_exists`, `section2_fractional_lp_weak_duality`, `paper_adwords_lp_weak_duality`, `paper_adwords_fractional_lp_weak_duality` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | standard finite LP hypotheses |
+| Balance/MSVV online feasibility and revenue accounting | `section3_balance_run_assignment_feasible`, `paper_adwords_balance_run_assignment_feasible`, `paper_adwords_run_revenue_eq_history_revenue_charge`, `paper_adwords_balance_charge_le_run_revenue` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | nonnegative budgets/bids as stated |
+| Section 4 Lemmas 1--3, equal-bids factor-revealing LP route | none source-numbered | not formalized one-for-one | none | bypassed by the finite LP/dual-fitting route |
+| Section 5 Lemmas 4--7, source tradeoff-revealing LP route | none source-numbered | not formalized one-for-one | none | bypassed by the finite LP/dual-fitting route |
+| Theorem 8, Balance/MSVV competitive ratio | `MSVV07PaperFacing.theorem8_finite_explicit_error`, `MSVV07PaperFacing.PaperSmallBidsLimitFamily`, `MSVV07PaperFacing.theorem8_balance_msvv_competitive_of_small_bids_limit_family`, `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family` | formalized with proof-strategy deviation | `PaperFacingTheorems.lean`, `MainTheorems.lean`, `AdWords.lean` | no extra certificate; theorem assumes the paper-level finite small-bids limiting family fields |
+| Section 6 arbitrary effective charges | `section6_effective_bids_small_bids`, `paper_adwords_effective_bids_small_bids` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | effective charges satisfy the target small-bids bound |
+| Section 6 click-through rates | `section6_click_through_rates_small_bids`, `paper_adwords_click_through_rates_small_bids` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | CTRs at most one; original bids nonnegative and small |
+| Section 6 advertiser availability / delayed entry | `section6_availability_small_bids`, `paper_adwords_availability_small_bids` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | nonnegative epsilon, positive budgets, original small-bids condition |
+| Section 6 multiple slots | `section6_multiple_slots_small_bids`, `paper_adwords_multiple_slots_small_bids`, `AdWordsInstance.withSlotsDistinctChoice` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean`, `AdWordsExtensions.lean` | none for small-bids preservation; distinct-choice helper supplies per-page feasibility |
+| Section 8 advertiser weights | `section8_weighted_bids_small_bids`, `paper_adwords_weighted_bids_small_bids` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean` | weights at most one; original bids nonnegative and small |
+| Section 7 Yao/permutation hard distribution | `theorem9HardDistribution`, `uniformPermutationDistribution`, `uniformPermutationExpectation_eq_of_relabel`, `theorem9ActualEligibleBidders`, `theorem9ObservedPrefix` | formalized | `PaperFacingTheorems.lean`, `AdWordsLowerBound.lean` | finite algorithm/input types |
+| Theorem 9 harmonic cap | `theorem9_harmonic_eventually_le_msvv_ratio_add_delta`, `paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta` | formalized | `PaperFacingTheorems.lean`, `MainTheorems.lean`, `AdWordsLowerBound.lean` | none |
+| Theorem 9 lower bound | `theorem9IntegralPrefixAlgorithm`, `theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms` | formalized for the finite integral-prefix model and capped normalized spend | `PaperFacingTheorems.lean`, `MainTheorems.lean`, `AdWordsLowerBound.lean` | source's broad "no randomized online algorithm" is represented by the finite prefix-algorithm model; richer realized revenue uses the explicit pointwise bound below |
+| Theorem 9 realized-revenue bridge | `theorem9_no_randomized_realized_revenue_algorithm_beats_msvv_ratio`, `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue` | conditional | `PaperFacingTheorems.lean`, `MainTheorems.lean` | requires pointwise `normalizedRevenue ≤ theorem9CappedNormalizedRevenue` |
 
 ## Source-Audit Notes
 
 The cached text contains the active-slab/query-type definitions, Lemmas 1--7,
-Theorem 8, and Theorem 9 as the named source statements. The current Lean
-development proves the reusable finite LP/dual, online-history, small-bids,
-extension, and lower-bound certificate layers. The exact factor-revealing LP
-proof steps in Lemmas 1--7 are not source-numbered Lean wrappers; Theorem 8 is
-covered by the family-level small-bids theorem surface, and Theorem 9 is covered
-through finite lower-bound certificate interfaces and concrete integral-prefix
-endpoints.
+Theorem 8, Section 6 extensions, Theorem 9, and Section 8 weighted-bid
+extension. The formalization closes the main theorem surfaces through a direct
+finite LP/dual-fitting and history-accounting route rather than reproducing the
+paper's factor-revealing and tradeoff-revealing LP derivation line-by-line.
 
-## Current Formalization Plan
+`PaperFacingTheorems.lean` is now the single-file human audit target. A reviewer
+can inspect that file to see the concrete formulas used in the Lean statements
+and the exact assumptions on the final Theorem 8 and Theorem 9 endpoints.
 
-1. Keep the finite LP and offline benchmark layer stable: `offlineOptimumValue`,
-   `FractionalFeasible`, `DualFeasible`, and
-   `paper_adwords_fractional_lp_weak_duality` are the reusable core.
-2. The online history/fold for feasible choice rules and the canonical
-   Balance/MSVV choice rule is formalized. Next connect per-query choices to
-   primal and dual variable updates.
-3. The stepwise/primal-dual charging argument is formalized for the finite
-   small-bids statement. The non-exhausted and exhausted query-dual charges,
-   history/query-dual summation, revenue trace, normalized advertiser-alpha
-   increment bound, and explicit history error are packaged as
-   `MsvvHistoryApproxAccountingCertificate` and derive
-   `paper_adwords_balance_msvv_approx_competitive_with_explicit_history_error`.
-   The combined explicit error is bounded by
-   `ε * (Real.exp 1 + 1) * historyMaxBidSum`, exposed through
-   `paper_adwords_balance_msvv_approx_competitive_with_error_bound` and
-   reindexed as a finite query sum in
-   `paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound`;
-   the delta-form wrapper is
-   `paper_adwords_balance_msvv_approx_competitive_up_to_delta`, and the
-   explicit-threshold wrapper is
-   `paper_adwords_balance_msvv_approx_competitive_up_to_delta_of_small_bids_threshold`.
-   The limit-style wrapper
-   `paper_adwords_balance_msvv_competitive_of_arbitrarily_small_bids_threshold`
-   removes the additive term under an arbitrarily-small-threshold assumption.
-   Canonical `Fin n` wrappers now use `List.finRange n` to discharge nodup and
-   coverage assumptions and state the error directly as
-   `ε * (Real.exp 1 + 1) * ∑ q, maxBidForQuery q`.
-   The family-level wrappers
-   `paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta` and
-   `paper_adwords_balance_msvv_finRange_family_eventually_up_to_delta_of_small_bids_threshold`
-   state the small-bids limiting seam over dependent finite query types
-   `Fin (n k)`.
-   The sequence-limit wrappers
-   `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_error_eventually`
-   and
-   `paper_adwords_balance_msvv_finRange_family_limit_competitive_of_small_bids_threshold`
-   use `Sequence.SeqTendsTo` to convert eventual additive guarantees and
-   convergence of the two real sides into a limiting inequality.
-   The ordinary-offline-optimum wrappers use
-   `Sequence.SeqTendsTo.const_mul_of_nonneg` to state the conclusion in the
-   paper-facing form `msvvRatio * optLimit ≤ revenueLimit`.
-   The ideal exact seam `MsvvHistoryAccountingCertificate` remains available for
-   a zero-error limiting theorem.
-4. The paper-facing limiting theorem is
-   `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family`: any
-   `MsvvSmallBidsLimitFamily` has limiting guarantee
-   `msvvRatio * optLimit ≤ revenueLimit`.
-5. Section 6 and Section 8 extension reductions are now formalized as
-   effective-bid transformations: arbitrary effective charges, click-through
-   rates, advertiser weights, delayed-entry/availability masks, and slot-query
-   expansion. The slot-expansion reduction now includes an explicit
-   per-page distinct-advertiser feasibility predicate `withSlotsPerPageDistinct`
-   and a corresponding filtered choice rule `withSlotsDistinctChoice`.
-6. Section 7 now has the finite Yao/minimax expectation lemma, the uniform
-   permutation distribution over bidders, a uniform-permutation relabeling
-   theorem, an observed-prefix suffix-swap invariance theorem, the paper's
-   explicit finite harmonic revenue-bound expression, the logarithmic
-   tail-spend proof, the finite layer-count estimate, and the eventual
-   harmonic-cap theorem
-   `theorem9_harmonic_eventually_le_msvvRatio_add`. The public wrapper
-   `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta`
-   now needs only the deterministic round-allocation inequalities. The concrete
-   endpoint for realized-payoff models is now formalized via
-   `paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_choice_family_of_realized_revenue`.
+## Validation
+
+- Last targeted build: `lake build MSVV07AdWords`
+- Last placeholder audit: `rg -n "\\bsorry\\b|\\badmit\\b|axiom" papers/MSVV07AdWords EconCSLib/Algorithms/Online --glob '*.lean'`
+- Final report: `FINAL_VALIDATION_REPORT.md`

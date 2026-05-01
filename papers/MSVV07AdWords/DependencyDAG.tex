@@ -2,85 +2,98 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=1.05cm and 1.35cm,
+\begin{tikzpicture}[node distance=1.0cm and 1.1cm,
   every node/.style={font=\sffamily\small}]
 
 % Legend
-\node[dag_result, text width=2.9cm] (legRes) {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, text width=2.9cm] (legCond) {\textbf{Conditional}\\certificate/family};
-\node[dag_model, right=0.35cm of legCond, text width=2.9cm] (legDef) {\textbf{Definition}\\model};
-\node[dag_unformalized, right=0.35cm of legDef, text width=2.9cm] (legOpen) {\textbf{Open}\\source proof step};
+\node[dag_result, text width=2.8cm] (legRes)
+  {\textbf{Closed}\\paper-facing};
+\node[dag_conditional, right=0.35cm of legRes, text width=2.9cm] (legCond)
+  {\textbf{Conditional}\\explicit bridge};
+\node[dag_model, right=0.35cm of legCond, text width=2.8cm] (legDef)
+  {\textbf{Definition}\\model};
+\node[dag_unformalized, right=0.35cm of legDef, text width=2.9cm] (legOpen)
+  {\textbf{Not one-for-one}\\source proof step};
 \daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
 
-% Model and algorithm surface
-\node[dag_model, below=1.8cm of legRes] (AdWordsModel)
-  {\textbf{Sections 2--3}\\finite AdWords instance, budgets, bids, assignments};
-\node[dag_model, below=of AdWordsModel] (SlabDef)
-  {\textbf{Definition (Section 3)}\\active slab, tradeoff function, Balance/MSVV choice};
-\node[dag_result, below=of SlabDef] (LPDual)
-  {\textbf{LP/Dual Surface}\\offline optimum, weak duality, max-slack duals};
-\node[dag_result, below=of LPDual] (History)
-  {\textbf{Online History}\\run fold, feasibility, revenue accounting};
+% Core model and Balance surface
+\node[dag_model, below=1.8cm of legRes, text width=3.5cm] (Model)
+  {\textbf{Sections 2--3}\\AdWords instance, budgets, bids, assignments};
+\node[dag_model, below=of Model, text width=3.5cm] (SmallBids)
+  {\textbf{Assumption}\\small bids relative to budgets};
+\node[dag_model, below=of SmallBids, text width=3.5cm] (Balance)
+  {\textbf{Algorithm (Sec. 3)}\\Balance/MSVV scaled bid rule};
+\node[dag_result, below=of Balance, text width=3.5cm] (LP)
+  {\textbf{LP/Dual Surface}\\offline optimum and weak duality};
+\node[dag_result, below=of LP, text width=3.5cm] (History)
+  {\textbf{Online History}\\run feasibility and revenue accounting};
 
-% Source equal-bids factor-revealing LP path
-\node[dag_unformalized, right=of SlabDef] (Lemma1)
-  {\textbf{Lemma 1 (Sec. 4)}\\OPT type implies Balance pays from no later slab};
-\node[dag_unformalized, below=of Lemma1] (Lemma2)
-  {\textbf{Lemma 2 (Sec. 4)}\\factor-revealing LP constraints for bidder types};
-\node[dag_unformalized, below=of Lemma2] (Lemma3)
-  {\textbf{Lemma 3 (Sec. 4)}\\LP optimum tends to $Ne$};
-
-% General-bids source path
-\node[dag_unformalized, right=of Lemma1] (Lemma4)
-  {\textbf{Lemma 4 (Sec. 5)}\\dual solution $y^*$ optimal for perturbed LP};
-\node[dag_unformalized, below=of Lemma4] (Lemma5)
-  {\textbf{Lemma 5 (Sec. 5)}\\right-hand side perturbation $l=b+\Delta$};
-\node[dag_unformalized, below=of Lemma5] (QueryDef)
-  {\textbf{Definition (Sec. 5)}\\ALG/OPT query revenue, query type, query slab};
-\node[dag_unformalized, below=of QueryDef] (Lemma6)
-  {\textbf{Lemma 6 (Sec. 5)}\\per-query weighted ALG/OPT comparison};
-\node[dag_unformalized, below=of Lemma6] (Lemma7)
+% Source LP proof route, recorded honestly as not one-for-one formalized.
+\node[dag_unformalized, right=of SmallBids, text width=3.7cm] (L1)
+  {\textbf{Lemma 1 (Sec. 4)}\\OPT type implies Balance pays no later slab};
+\node[dag_unformalized, below=of L1, text width=3.7cm] (L2)
+  {\textbf{Lemma 2 (Sec. 4)}\\equal-bids factor-revealing LP constraints};
+\node[dag_unformalized, below=of L2, text width=3.7cm] (L3)
+  {\textbf{Lemma 3 (Sec. 4)}\\LP value tends to $Ne$};
+\node[dag_unformalized, below=of L3, text width=3.7cm] (L4)
+  {\textbf{Lemma 4 (Sec. 5)}\\dual $y^*$ optimal for $D(\pi,\psi)$};
+\node[dag_unformalized, below=of L4, text width=3.7cm] (L5)
+  {\textbf{Lemma 5 (Sec. 5)}\\right side $l=b+\Delta(\pi,\psi)$};
+\node[dag_unformalized, below=of L5, text width=3.7cm] (L6)
+  {\textbf{Lemma 6 (Sec. 5)}\\per-query ALG/OPT tradeoff inequality};
+\node[dag_unformalized, below=of L6, text width=3.7cm] (L7)
   {\textbf{Lemma 7 (Sec. 5)}\\weighted perturbation bounded by $N/k$};
 
-% Lean route to theorem 8
-\node[dag_result, left=of History] (Charge)
-  {\textbf{Finite Charge Lemmas}\\query-dual summation and explicit error};
-\node[dag_result, below=of Charge] (SmallBids)
-  {\textbf{Small-Bids Limit}\\finite $\delta$ and sequence-limit wrappers};
-\node[dag_conditional, below=of SmallBids] (Theorem8)
-  {\textbf{Theorem 8 (Sec. 5)}\\$1-1/e$ competitive ratio via explicit family fields};
+% Lean route to Theorem 8
+\node[dag_result, left=of History, text width=3.5cm] (Charge)
+  {\textbf{Finite Charge Lemmas}\\query-dual summation plus explicit error};
+\node[dag_result, below=of Charge, text width=3.5cm] (Delta)
+  {\textbf{Finite $\delta$ Theorem}\\explicit small-bids error bound};
+\node[dag_result, below=of Delta, text width=3.5cm] (T8)
+  {\textbf{Theorem 8 (Sec. 5)}\\$1-1/e$ small-bids limiting theorem};
+
+% Extensions
+\node[dag_result, below=of T8, text width=3.5cm] (Sec6)
+  {\textbf{Section 6}\\effective bids, CTRs, availability, slots};
+\node[dag_result, below=of Sec6, text width=3.5cm] (Sec8)
+  {\textbf{Section 8}\\advertiser-weighted bids};
 
 % Lower bound
-\node[dag_model, right=of Lemma5] (Yao)
-  {\textbf{Section 7}\\Yao finite expectation and permutation family};
-\node[dag_result, below=of Yao] (Harmonic)
-  {\textbf{Harmonic Bounds}\\layer count and normalized revenue cap};
-\node[dag_conditional, below=of Harmonic] (Theorem9)
-  {\textbf{Theorem 9 (Sec. 7)}\\no randomized algorithm beats $1-1/e$ under finite certificates};
+\node[dag_model, right=of L4, text width=3.7cm] (Yao)
+  {\textbf{Theorem 9 Setup}\\Yao distribution over bidder permutations};
+\node[dag_result, below=of Yao, text width=3.7cm] (Harmonic)
+  {\textbf{Harmonic Cap}\\finite layer count and asymptotic bound};
+\node[dag_result, below=of Harmonic, text width=3.7cm] (T9)
+  {\textbf{Theorem 9 (Sec. 7)}\\integral-prefix randomized lower bound};
+\node[dag_conditional, below=of T9, text width=3.7cm] (T9Realized)
+  {\textbf{Theorem 9 Bridge}\\richer realized revenue if bounded by capped spend};
 
 % Edges
-\draw[dag_arrow] (AdWordsModel) -- (SlabDef);
-\draw[dag_arrow] (AdWordsModel) -- (LPDual);
-\draw[dag_arrow] (AdWordsModel) -- (History);
-\draw[dag_arrow] (LPDual) -- (Charge);
+\draw[dag_arrow] (Model) -- (SmallBids);
+\draw[dag_arrow] (Model) -- (Balance);
+\draw[dag_arrow] (Model) -- (LP);
+\draw[dag_arrow] (Balance) -- (History);
+\draw[dag_arrow] (LP) -- (Charge);
 \draw[dag_arrow] (History) -- (Charge);
-\draw[dag_arrow] (Charge) -- (SmallBids);
-\draw[dag_arrow] (SmallBids) -- (Theorem8);
+\draw[dag_arrow] (SmallBids.west) -| (Charge);
+\draw[dag_arrow] (Charge) -- (Delta);
+\draw[dag_arrow] (Delta) -- (T8);
+\draw[dag_arrow] (T8) -- (Sec6);
+\draw[dag_arrow] (Sec6) -- (Sec8);
 
-\draw[dag_dashed_arrow] (SlabDef) -- (Lemma1);
-\draw[dag_dashed_arrow] (Lemma1) -- (Lemma2);
-\draw[dag_dashed_arrow] (Lemma2) -- (Lemma3);
-\draw[dag_dashed_arrow] (Lemma3) -- (Theorem8);
-\draw[dag_dashed_arrow] (SlabDef) -- (Lemma4);
-\draw[dag_dashed_arrow] (Lemma4) -- (Lemma5);
-\draw[dag_dashed_arrow] (Lemma5) -- (QueryDef);
-\draw[dag_dashed_arrow] (QueryDef) -- (Lemma6);
-\draw[dag_dashed_arrow] (Lemma6) -- (Lemma7);
-\draw[dag_dashed_arrow] (Lemma7) -- (Theorem8);
+\draw[dag_dashed_arrow] (Balance) -- (L1);
+\draw[dag_dashed_arrow] (L1) -- (L2);
+\draw[dag_dashed_arrow] (L2) -- (L3);
+\draw[dag_dashed_arrow] (L3) -- (L4);
+\draw[dag_dashed_arrow] (L4) -- (L5);
+\draw[dag_dashed_arrow] (L5) -- (L6);
+\draw[dag_dashed_arrow] (L6) -- (L7);
+\draw[dag_dashed_arrow] (L7.west) -| (T8.east);
 
-\draw[dag_arrow] (AdWordsModel.east) -| (Yao);
+\draw[dag_arrow] (Model.east) -| (Yao.north);
 \draw[dag_arrow] (Yao) -- (Harmonic);
-\draw[dag_arrow] (Harmonic) -- (Theorem9);
+\draw[dag_arrow] (Harmonic) -- (T9);
+\draw[dag_arrow] (T9) -- (T9Realized);
 
 \end{tikzpicture}
 \end{document}
