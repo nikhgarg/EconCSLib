@@ -102,6 +102,17 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   Classifying an offer as "high" when it is above the low value `1` proves the
   same adversarial transition and avoids spending proof effort on a separate
   normalization argument.
+- When a lower-bound construction returns a feasible benchmark lower bound,
+  strengthen it to the actual benchmark before declaring the paper endpoint
+  closed. For finite candidate fixed-price benchmarks this usually means
+  proving the constructed prices (`1` and the high value `H` in two-value GHW
+  inputs) are feasible and then replacing the abstract certificate by the
+  benchmark itself.
+- If a finite benchmark API requires `[Nonempty Agent]` but a theorem quantifies
+  over counts that may be zero, introduce a small paper-specific benchmark
+  wrapper with an explicit empty case. Then prove all constructed witnesses are
+  nonempty locally. This avoids leaking typeclass witnesses into the
+  paper-facing statement.
 
 ## GSP and Position Auctions
 

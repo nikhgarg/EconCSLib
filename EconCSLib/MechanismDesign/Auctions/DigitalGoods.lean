@@ -1804,6 +1804,130 @@ def twoValueBidProfile (H highCount lowCount : ℕ) :
   | Sum.inl _ => (H : ℝ)
   | Sum.inr _ => 1
 
+theorem singlePriceRevenue_twoValueBidProfile_one
+    {H highCount lowCount : ℕ}
+    (hH_ge_one : 1 ≤ (H : ℝ)) :
+    singlePriceRevenue (twoValueBidProfile H highCount lowCount) 1 =
+      (highCount + lowCount : ℝ) := by
+  classical
+  unfold singlePriceRevenue
+  simp [twoValueBidProfile, hH_ge_one, Finset.sum_const, nsmul_eq_mul]
+
+theorem singlePriceRevenue_twoValueBidProfile_high
+    {H highCount lowCount : ℕ}
+    (hH_gt_one : 1 < (H : ℝ)) :
+    singlePriceRevenue (twoValueBidProfile H highCount lowCount) (H : ℝ) =
+      (H : ℝ) * (highCount : ℝ) := by
+  classical
+  have hlow : ¬ (H : ℝ) ≤ 1 := not_le_of_gt hH_gt_one
+  unfold singlePriceRevenue
+  simp [twoValueBidProfile, hlow, Finset.sum_const, nsmul_eq_mul]
+  ring
+
+/--
+The one-winner finite fixed-price benchmark on a binary two-value input. The
+empty-profile fallback is zero; all Section 9 witnesses below are nonempty.
+-/
+noncomputable def twoValueFixedPriceBenchmark
+    (H highCount lowCount : ℕ) : ℝ :=
+  if hzero : highCount + lowCount = 0 then 0 else
+    @finiteCandidateFixedPriceBenchmark
+      (TwoValueAgent highCount lowCount) inferInstance
+      (by
+        have hsum_pos : 0 < highCount + lowCount :=
+          Nat.pos_of_ne_zero hzero
+        by_cases hhigh_pos : 0 < highCount
+        · exact ⟨Sum.inl ⟨0, hhigh_pos⟩⟩
+        · have hhigh_zero : highCount = 0 :=
+            Nat.eq_zero_of_not_pos hhigh_pos
+          have hlow_pos : 0 < lowCount := by
+            by_contra hlow_not
+            have hlow_zero : lowCount = 0 :=
+              Nat.eq_zero_of_not_pos hlow_not
+            simp [hhigh_zero, hlow_zero] at hsum_pos
+          exact ⟨Sum.inr ⟨0, hlow_pos⟩⟩)
+      (twoValueBidProfile H highCount lowCount) 1
+
+theorem finiteCandidateFixedPriceBenchmark_twoValue_one_price_ge_total
+    {H highCount lowCount : ℕ}
+    [Nonempty (TwoValueAgent highCount lowCount)]
+    (hH_ge_one : 1 ≤ (H : ℝ)) :
+    (highCount + lowCount : ℝ) ≤
+      twoValueFixedPriceBenchmark H highCount lowCount := by
+  classical
+  obtain ⟨i⟩ := (inferInstance : Nonempty (TwoValueAgent highCount lowCount))
+  have hsum_pos : 0 < highCount + lowCount := by
+    cases i with
+    | inl hi =>
+        have hhigh_pos : 0 < highCount :=
+          lt_of_le_of_lt (Nat.zero_le hi.val) hi.2
+        exact lt_of_lt_of_le hhigh_pos (Nat.le_add_right highCount lowCount)
+    | inr lo =>
+        have hlow_pos : 0 < lowCount :=
+          lt_of_le_of_lt (Nat.zero_le lo.val) lo.2
+        have hlow_le_sum : lowCount ≤ highCount + lowCount := by
+          rw [Nat.add_comm]
+          exact Nat.le_add_right lowCount highCount
+        exact lt_of_lt_of_le hlow_pos hlow_le_sum
+  have hsum_ne : highCount + lowCount ≠ 0 := ne_of_gt hsum_pos
+  have hi_accept : 1 ≤ twoValueBidProfile H highCount lowCount i := by
+    cases i <;> simp [twoValueBidProfile, hH_ge_one]
+  have hfilter_nonempty :
+      ((Finset.univ : Finset (TwoValueAgent highCount lowCount)).filter
+          fun i => 1 ≤ twoValueBidProfile H highCount lowCount i).Nonempty :=
+    ⟨i, Finset.mem_filter.mpr ⟨by simp, hi_accept⟩⟩
+  have hfeasible :
+      1 ≤ saleCount (twoValueBidProfile H highCount lowCount) 1 := by
+    unfold saleCount
+    exact Finset.card_pos.mpr hfilter_nonempty
+  have hrev_le :
+      singlePriceRevenue
+          (twoValueBidProfile H highCount lowCount) 1 ≤
+        finiteCandidateFixedPriceBenchmark
+          (twoValueBidProfile H highCount lowCount) 1 :=
+    singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+      (twoValueBidProfile H highCount lowCount)
+      (minWinners := 1) (by decide) (by norm_num) hfeasible
+  rw [twoValueFixedPriceBenchmark, dif_neg hsum_ne]
+  simpa [singlePriceRevenue_twoValueBidProfile_one hH_ge_one] using hrev_le
+
+theorem finiteCandidateFixedPriceBenchmark_twoValue_high_price_ge
+    {H highCount lowCount : ℕ}
+    [Nonempty (TwoValueAgent highCount lowCount)]
+    (hH_ge_two : 2 ≤ H) (hhigh_pos : 0 < highCount) :
+    (H : ℝ) * (highCount : ℝ) ≤
+      twoValueFixedPriceBenchmark H highCount lowCount := by
+  classical
+  have hsum_pos : 0 < highCount + lowCount :=
+    lt_of_lt_of_le hhigh_pos (Nat.le_add_right highCount lowCount)
+  have hsum_ne : highCount + lowCount ≠ 0 := ne_of_gt hsum_pos
+  have hH_gt_one : 1 < (H : ℝ) := by
+    exact_mod_cast (lt_of_lt_of_le (by decide : 1 < 2) hH_ge_two)
+  have hfeasible :
+      1 ≤ saleCount
+        (twoValueBidProfile H highCount lowCount) (H : ℝ) := by
+    let i : TwoValueAgent highCount lowCount := Sum.inl ⟨0, hhigh_pos⟩
+    have hi_accept : (H : ℝ) ≤ twoValueBidProfile H highCount lowCount i := by
+      simp [i, twoValueBidProfile]
+    have hfilter_nonempty :
+        ((Finset.univ : Finset (TwoValueAgent highCount lowCount)).filter
+            fun i => (H : ℝ) ≤
+              twoValueBidProfile H highCount lowCount i).Nonempty :=
+      ⟨i, Finset.mem_filter.mpr ⟨by simp, hi_accept⟩⟩
+    unfold saleCount
+    exact Finset.card_pos.mpr hfilter_nonempty
+  have hrev_le :
+      singlePriceRevenue
+          (twoValueBidProfile H highCount lowCount) (H : ℝ) ≤
+        finiteCandidateFixedPriceBenchmark
+          (twoValueBidProfile H highCount lowCount) 1 :=
+    singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+      (twoValueBidProfile H highCount lowCount)
+      (minWinners := 1) (by decide)
+      (by exact_mod_cast (Nat.zero_le H : 0 ≤ H)) hfeasible
+  rw [twoValueFixedPriceBenchmark, dif_neg hsum_ne]
+  simpa [singlePriceRevenue_twoValueBidProfile_high hH_gt_one] using hrev_le
+
 /--
 Threshold rule induced by a count-based bid-independent price function on the
 concrete binary-valued bidder type.
@@ -2021,6 +2145,169 @@ theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled
   exact twoValueBidIndependentPrice_exists_low_revenue_witness
     (price := price) (H := H) (alpha := alpha) (m := m)
     hH_ge_one_real halpha_lt_m hm_large
+
+/--
+GHW Theorem 9.1 with the paper's scale choice and the actual finite
+fixed-price benchmark on the constructed two-value input. This strengthens the
+certificate-valued witness above by proving the witness lower bound is feasible
+for the one-winner fixed-price benchmark `F`.
+-/
+theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled_benchmark
+    (price : ℕ → ℕ → ℝ) {H alpha : ℕ}
+    (hH_ge_two : 2 ≤ H) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (H : ℝ) *
+          twoValueBidIndependentPriceRevenue price H highCount lowCount ≤
+        twoValueFixedPriceBenchmark H highCount lowCount ∧
+      (H : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark H highCount lowCount := by
+  classical
+  let m : ℕ := H * H * alpha
+  have hH_ge_one_nat : 1 ≤ H := le_trans (by decide : 1 ≤ 2) hH_ge_two
+  have hH_ge_one_real : 1 ≤ (H : ℝ) := by exact_mod_cast hH_ge_one_nat
+  have hH_nonneg : 0 ≤ (H : ℝ) := by
+    exact_mod_cast (Nat.zero_le H : 0 ≤ H)
+  have hfactor_ge_four : 4 ≤ H * H :=
+    Nat.mul_le_mul hH_ge_two hH_ge_two
+  have hfactor_gt_one : 1 < H * H :=
+    lt_of_lt_of_le (by decide : 1 < 4) hfactor_ge_four
+  have halpha_lt_m : alpha < m := by
+    dsimp [m]
+    exact (Nat.lt_mul_iff_one_lt_left halpha_pos).2 hfactor_gt_one
+  have hm_large :
+      (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) ≤
+        (m + 1 : ℝ) := by
+    dsimp [m]
+    simp
+    nlinarith
+  by_cases hend_low : price m 0 ≤ 1
+  · refine ⟨m + 1, 0, ?_⟩
+    haveI : Nonempty (TwoValueAgent (m + 1) 0) :=
+      ⟨Sum.inl ⟨0, Nat.succ_pos m⟩⟩
+    have hrev :=
+      twoValueBidIndependentPriceRevenue_all_high_low_offer_bound
+        price H m hH_ge_one_real hend_low
+    have hbench :
+        (H : ℝ) * (m + 1 : ℝ) ≤
+          twoValueFixedPriceBenchmark H (m + 1) 0 := by
+      simpa [Nat.cast_add] using
+        (finiteCandidateFixedPriceBenchmark_twoValue_high_price_ge
+          (H := H) (highCount := m + 1) (lowCount := 0)
+          hH_ge_two (Nat.succ_pos m))
+    constructor
+    · exact le_trans (mul_le_mul_of_nonneg_left hrev hH_nonneg) hbench
+    · have halpha_le_m_succ : alpha ≤ m + 1 :=
+        Nat.le_trans (le_of_lt halpha_lt_m) (Nat.le_succ m)
+      have halpha_cast : (alpha : ℝ) ≤ (m + 1 : ℝ) := by
+        exact_mod_cast halpha_le_m_succ
+      exact le_trans
+        (mul_le_mul_of_nonneg_left halpha_cast hH_nonneg) hbench
+  · have hend_high : 1 < price m 0 := lt_of_not_ge hend_low
+    let highOffer : ℕ → Bool := fun k => decide (1 < price k (m - k))
+    by_cases hstart : 1 < price alpha (m - alpha)
+    · refine ⟨alpha, m - alpha + 1, ?_⟩
+      haveI : Nonempty (TwoValueAgent alpha (m - alpha + 1)) :=
+        ⟨Sum.inr ⟨0, Nat.succ_pos (m - alpha)⟩⟩
+      have hlow :
+          1 < price alpha ((m - alpha + 1) - 1) := by
+        simpa using hstart
+      have hrev :=
+        twoValueBidIndependentPriceRevenue_start_high_bound
+          price H alpha (m - alpha + 1) hH_ge_one_real hlow
+      have hmul :
+          (H : ℝ) *
+              twoValueBidIndependentPriceRevenue
+                price H alpha (m - alpha + 1) ≤
+            (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) :=
+        mul_le_mul_of_nonneg_left hrev hH_nonneg
+      have htotal_eq : alpha + (m - alpha + 1) = m + 1 := by
+        calc
+          alpha + (m - alpha + 1) = alpha + (m - alpha) + 1 := by
+            rw [← Nat.add_assoc]
+          _ = m + 1 := by
+            rw [Nat.add_sub_of_le (le_of_lt halpha_lt_m)]
+      have hbench_total :
+          ((alpha : ℕ) : ℝ) + ((m - alpha + 1 : ℕ) : ℝ) ≤
+            twoValueFixedPriceBenchmark H alpha (m - alpha + 1) :=
+        finiteCandidateFixedPriceBenchmark_twoValue_one_price_ge_total
+          (H := H) (highCount := alpha) (lowCount := m - alpha + 1)
+          hH_ge_one_real
+      have hbench :
+          (m + 1 : ℝ) ≤
+            twoValueFixedPriceBenchmark H alpha (m - alpha + 1) := by
+        have hcast :
+            ((alpha : ℕ) : ℝ) + ((m - alpha + 1 : ℕ) : ℝ) =
+              (m + 1 : ℝ) := by
+          exact_mod_cast htotal_eq
+        calc
+          (m + 1 : ℝ) =
+              ((alpha : ℕ) : ℝ) + ((m - alpha + 1 : ℕ) : ℝ) := hcast.symm
+          _ ≤ twoValueFixedPriceBenchmark H alpha (m - alpha + 1) :=
+              hbench_total
+      constructor
+      · exact le_trans (le_trans hmul hm_large) hbench
+      · have halpha_nonneg : 0 ≤ (alpha : ℝ) := by
+          exact_mod_cast Nat.zero_le alpha
+        have hside_to_square :
+            (H : ℝ) * (alpha : ℝ) ≤
+              (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) := by
+          calc
+            (H : ℝ) * (alpha : ℝ) =
+                1 * ((H : ℝ) * (alpha : ℝ)) := by ring
+            _ ≤ (H : ℝ) * ((H : ℝ) * (alpha : ℝ)) := by
+                exact mul_le_mul_of_nonneg_right hH_ge_one_real
+                  (mul_nonneg hH_nonneg halpha_nonneg)
+        exact le_trans (le_trans hside_to_square hm_large) hbench
+    · have hstart_false : highOffer alpha = false := by
+        dsimp [highOffer]
+        simp [hstart]
+      have hend_true : highOffer m = true := by
+        dsimp [highOffer]
+        simpa using hend_high
+      obtain ⟨k, halpha_lt_k, hk_le_m, hkprev, hkcurr⟩ :=
+        FiniteSum.exists_bool_transition highOffer halpha_lt_m
+          hstart_false hend_true
+      refine ⟨k, m - k + 1, ?_⟩
+      have hk_pos : 0 < k :=
+        lt_of_lt_of_le halpha_pos (le_of_lt halpha_lt_k)
+      haveI : Nonempty (TwoValueAgent k (m - k + 1)) :=
+        ⟨Sum.inl ⟨0, hk_pos⟩⟩
+      have hbench :
+          (H : ℝ) * (k : ℝ) ≤
+            twoValueFixedPriceBenchmark H k (m - k + 1) :=
+        finiteCandidateFixedPriceBenchmark_twoValue_high_price_ge
+          (H := H) (highCount := k) (lowCount := m - k + 1)
+          hH_ge_two hk_pos
+      have hk_pos_for_sub : 0 < k :=
+        lt_of_le_of_lt (Nat.zero_le alpha) halpha_lt_k
+      have hlow_eq : m - (k - 1) = m - k + 1 :=
+        FiniteSum.nat_sub_pred_eq_sub_add_one_of_pos_le
+          hk_pos_for_sub hk_le_m
+      have hprev_not : ¬ 1 < price (k - 1) (m - (k - 1)) := by
+        dsimp [highOffer] at hkprev
+        by_contra hgt
+        simp [hgt] at hkprev
+      have hprev_le : price (k - 1) (m - k + 1) ≤ 1 := by
+        simpa [hlow_eq] using le_of_not_gt hprev_not
+      have hcurr_gt_old : 1 < price k (m - k) := by
+        dsimp [highOffer] at hkcurr
+        by_contra hnot
+        simp [hnot] at hkcurr
+      have hcurr_gt :
+          1 < price k ((m - k + 1) - 1) := by
+        simpa using hcurr_gt_old
+      have hrev :=
+        twoValueBidIndependentPriceRevenue_transition_bound
+          price H k (m - k + 1) hH_ge_one_real hprev_le hcurr_gt
+      constructor
+      · exact le_trans
+          (le_trans (mul_le_mul_of_nonneg_left hrev hH_nonneg)
+            (le_refl ((H : ℝ) * (k : ℝ)))) hbench
+      · have halpha_le_k : alpha ≤ k := le_of_lt halpha_lt_k
+        have halpha_cast : (alpha : ℝ) ≤ (k : ℝ) := by
+          exact_mod_cast halpha_le_k
+        exact le_trans
+          (mul_le_mul_of_nonneg_left halpha_cast hH_nonneg) hbench
 
 /-! ### Deterministic single-parameter offer slices -/
 
