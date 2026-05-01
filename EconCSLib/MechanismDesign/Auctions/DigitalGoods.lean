@@ -1106,6 +1106,19 @@ theorem weightedPairingExpectedRevenue_eq_sum_payments
       ∑ i : Agent, weightedPairingExpectedPayment values i := by
   rfl
 
+theorem weightedPairingExpectedRevenue_nonneg_of_den_nonneg
+    [Fintype Agent] [DecidableEq Agent]
+    (values : Agent → ℝ)
+    (hden : ∀ i : Agent, 0 ≤ totalBidValue values - values i) :
+    0 ≤ weightedPairingExpectedRevenue values := by
+  classical
+  unfold weightedPairingExpectedRevenue weightedPairingExpectedPayment
+  exact Finset.sum_nonneg fun i _ =>
+    Finset.sum_nonneg fun j _ => by
+      by_cases hpair : j ≠ i ∧ values j ≤ values i
+      · simp [hpair, div_nonneg (sq_nonneg (values j)) (hden i)]
+      · simp [hpair]
+
 theorem finiteCandidateFixedPriceBenchmark_restrictBidsBySide_le_sideSaleCount_mul_bound
     [Fintype Agent] [Nonempty Agent]
     (side : Agent → Bool) (keep : Bool)
