@@ -108,6 +108,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   example, a list with all high values followed by all low values). This closes
   the paper's anonymous binary restriction without pretending it covers a
   stronger identity-aware threshold model.
+- For ranked-auction telescoping proofs with terms like `V_j = b_j * (n-j)`,
+  prove `V_j <= F` once from the actual sorted bid profile and fixed-price
+  benchmark. Use the upper-rank finset of bidders with rank at least `j` to
+  show price `b_j` has at least `n-j` winners, then feed that feasible price to
+  the benchmark API. This removes a repetitive certificate hypothesis from the
+  main revenue theorem.
 - When a lower-bound construction returns a feasible benchmark lower bound,
   strengthen it to the actual benchmark before declaring the paper endpoint
   closed. For finite candidate fixed-price benchmarks this usually means
