@@ -114,6 +114,10 @@ the Lean statements against the paper.
   declaration (for example `paper_aux_*` or a name that explicitly says
   `finite_analogue`) and mark the source theorem as partial/open in the README
   and DAG.
+- The paper `README.md` is the live status ledger. A final validation report or
+  proof-completion report is a separate handoff artifact produced when a proof
+  phase/paper is completed, paused, or moved on from; do not treat such reports
+  as stale duplicates of the README.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -229,6 +233,14 @@ search.
    paper-local score-geometry wrapper proving that the source transition region
    maps into the target transition region and supplies the coordinate-order
    inequality used by the density lemma.
+   For normalized continuous score laws, expose the probability-measure
+   assumption through the natural integral equation `∫⁻ x, D x ∂μ = 1` and a
+   small `IsProbabilityMeasure (μ.withDensity D)` bridge. This keeps final
+   theorem statements closer to the paper's "density integrates to one" premise
+   and avoids hiding normalization as an opaque typeclass-only requirement.
+   The same normalization equation should also discharge any strict-swap
+   side condition requiring a source-set integral to be finite, since
+   `∫⁻ x in s, D x ∂μ ≤ ∫⁻ x, D x ∂μ = 1`.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,

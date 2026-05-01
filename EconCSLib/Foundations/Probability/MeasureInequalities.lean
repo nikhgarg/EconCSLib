@@ -44,6 +44,42 @@ theorem measureProb_pos_of_measure_ne_zero
     0 < measureProb μ p := by
   exact ENNReal.toReal_pos h (measure_ne_top μ {a | p a})
 
+theorem isProbabilityMeasure_withDensity_of_lintegral_eq_one
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) (D : α → ENNReal)
+    (hD : ∫⁻ a, D a ∂μ = 1) :
+    IsProbabilityMeasure (μ.withDensity D) := by
+  refine ⟨?_⟩
+  rw [withDensity_apply D MeasurableSet.univ]
+  simpa using hD
+
+theorem setLIntegral_ne_top_of_lintegral_eq_one
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) (D : α → ENNReal)
+    (hD : ∫⁻ a, D a ∂μ = 1) (s : Set α) :
+    (∫⁻ a in s, D a ∂μ) ≠ ∞ := by
+  refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
+  rw [← hD]
+  exact setLIntegral_le_lintegral s D
+
+theorem withDensity_measure_ne_zero_of_pos_on
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) (D : α → ENNReal)
+    {s : Set α} (hD : Measurable D) (hs : MeasurableSet s)
+    (hμ : μ s ≠ 0) (hpos : ∀ a, a ∈ s → D a ≠ 0) :
+    μ.withDensity D s ≠ 0 := by
+  have hsupport_inter : Function.support D ∩ s = s := by
+    ext a
+    constructor
+    · intro ha
+      exact ha.2
+    · intro ha
+      exact ⟨hpos a ha, ha⟩
+  have hμpos : 0 < μ s := by
+    rwa [pos_iff_ne_zero]
+  have hlin : 0 < ∫⁻ a in s, D a ∂μ := by
+    rw [setLIntegral_pos_iff hD, hsupport_inter]
+    exact hμpos
+  rw [withDensity_apply D hs]
+  exact ne_of_gt hlin
+
 @[simp] theorem measureProb_false
     {α : Type*} [MeasurableSpace α] (μ : Measure α) :
     measureProb μ (fun _ => False) = 0 := by
