@@ -48,6 +48,14 @@ allocation.
   source count has last-item marginal below any fixed destination-count
   marginal; a finite pairwise/fixed-floor threshold plus the FOC rules out
   destinations at or below that floor for large totals.
+- After count divergence, separate the raw product estimate from finite
+  optimization. Use a floor-aware eventual product certificate: prove that
+  beyond a fixed count floor and eventually in `N`, any scaled-count gap larger
+  than `ε_N N` makes the top-one source backward marginal strictly smaller
+  than the destination forward marginal. Then use a finite-protected error
+  schedule for the finitely many small totals, the count-divergence theorem to
+  supply the floor, and the FOC-to-sublinear bridge to obtain the paper's
+  sequence-limit theorem.
 - Generic ranked-Bernoulli value and marginal lemmas are reusable across
   recommender papers, but keep them local while only one paper uses them or
   while the exact import topology is still changing. Move them into the shared
