@@ -1,7 +1,9 @@
 import EconCSLib.Foundations.Math.FiniteSum
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Finset.Max
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.Sum
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Linarith
 
@@ -1036,6 +1038,47 @@ noncomputable def twoValueBidIndependentPriceRevenue
       (if price highCount (lowCount - 1) ≤ 1 then
         price highCount (lowCount - 1) else 0)
 
+/-- Concrete bidder type for a binary-valued input with `highCount` high bids
+and `lowCount` low bids. -/
+abbrev TwoValueAgent (highCount lowCount : ℕ) :=
+  Fin highCount ⊕ Fin lowCount
+
+/-- Binary-valued bid profile with high value `H` and low value `1`. -/
+def twoValueBidProfile (H highCount lowCount : ℕ) :
+    TwoValueAgent highCount lowCount → ℝ
+  | Sum.inl _ => (H : ℝ)
+  | Sum.inr _ => 1
+
+/--
+Threshold rule induced by a count-based bid-independent price function on the
+concrete binary-valued bidder type.
+-/
+def twoValueCountThresholdPrice
+    (price : ℕ → ℕ → ℝ) (highCount lowCount : ℕ) :
+    (TwoValueAgent highCount lowCount → ℝ) →
+      TwoValueAgent highCount lowCount → ℝ :=
+  fun _ i =>
+    match i with
+    | Sum.inl _ => price (highCount - 1) lowCount
+    | Sum.inr _ => price highCount (lowCount - 1)
+
+/--
+The count-threshold revenue formula is exactly the concrete threshold-auction
+revenue on the binary-valued bidder type.
+-/
+theorem thresholdPriceAuction_twoValueCountThreshold_revenue_eq
+    (price : ℕ → ℕ → ℝ) (H highCount lowCount : ℕ) :
+    (thresholdPriceAuction
+      (twoValueCountThresholdPrice price highCount lowCount)).revenue
+        (twoValueBidProfile H highCount lowCount) =
+      twoValueBidIndependentPriceRevenue price H highCount lowCount := by
+  classical
+  rw [DigitalGoodsAuction.revenue]
+  rw [Fintype.sum_sum_type]
+  simp [thresholdPriceAuction, twoValueCountThresholdPrice,
+    twoValueBidProfile, twoValueBidIndependentPriceRevenue, Finset.sum_const,
+    nsmul_eq_mul]
+
 /--
 For arbitrary threshold prices, a low-to-high transition still forces revenue
 at most the number of high bidders: high bidders are offered price at most `1`,
@@ -1223,6 +1266,139 @@ theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled
   exact twoValueBidIndependentPrice_exists_low_revenue_witness
     (price := price) (H := H) (alpha := alpha) (m := m)
     hH_ge_one_real halpha_lt_m hm_large
+
+/-! ### Deterministic single-parameter offer slices -/
+
+/--
+Utility from reporting `report` in a deterministic single-parameter offer
+slice. `none` means rejection; `some p` means winning and paying `p`.
+-/
+def deterministicOfferUtility (offer : ℝ → Option ℝ)
+    (value report : ℝ) : ℝ :=
+  match offer report with
+  | some price => value - price
+  | none => 0
+
+/-- Dominant-strategy truthfulness for a fixed-other-bids deterministic offer. -/
+def DeterministicOfferTruthful (offer : ℝ → Option ℝ) : Prop :=
+  ∀ value report,
+    deterministicOfferUtility offer value report ≤
+      deterministicOfferUtility offer value value
+
+/-- A winning bidder is never charged above her own report. -/
+def DeterministicOfferFeasible (offer : ℝ → Option ℝ) : Prop :=
+  ∀ report price, offer report = some price → price ≤ report
+
+/--
+Bid-independence/critical-price shape for a deterministic offer slice: either
+the bidder is always rejected, or there is a critical price `v` such that bids
+below `v` lose and bids above `v` win at price `v`. The boundary bid `v` may
+either win or lose, matching the open/closed interval alternatives in GHW
+Lemma 9.2.
+-/
+def DeterministicOfferBidIndependent (offer : ℝ → Option ℝ) : Prop :=
+  (∀ report, offer report = none) ∨
+    ∃ criticalPrice,
+      (∀ report price, offer report = some price → price = criticalPrice) ∧
+      (∀ report, report < criticalPrice → offer report = none) ∧
+      (∀ report, criticalPrice < report → offer report = some criticalPrice)
+
+/--
+GHW Lemma 9.2 payment-constancy step: in a truthful deterministic offer slice,
+any two winning reports must be charged the same price.
+-/
+theorem deterministicOffer_payment_eq_of_truthful_wins
+    {offer : ℝ → Option ℝ} (htruth : DeterministicOfferTruthful offer)
+    {x y px py : ℝ}
+    (hx : offer x = some px) (hy : offer y = some py) :
+    px = py := by
+  have hxy := htruth x y
+  have hyx := htruth y x
+  simp [deterministicOfferUtility, hx, hy] at hxy hyx
+  linarith
+
+/--
+GHW Lemma 9.2 monotonicity step: if a lower report wins in a truthful
+deterministic offer slice, then every higher report also wins.
+-/
+theorem deterministicOffer_winning_mono_of_truthful
+    {offer : ℝ → Option ℝ}
+    (htruth : DeterministicOfferTruthful offer)
+    (hfeasible : DeterministicOfferFeasible offer)
+    {x y px : ℝ} (hxy : x < y)
+    (hx : offer x = some px) :
+    ∃ py, offer y = some py := by
+  cases hy : offer y with
+  | some py => exact ⟨py, rfl⟩
+  | none =>
+      have hreport := htruth y x
+      have hpx_le_x : px ≤ x := hfeasible x px hx
+      simp [deterministicOfferUtility, hx, hy] at hreport
+      nlinarith
+
+/--
+GHW Lemma 9.2 losing-prefix step: if a higher report loses in a truthful
+feasible deterministic offer slice, then every lower report also loses.
+-/
+theorem deterministicOffer_losing_anti_mono_of_truthful
+    {offer : ℝ → Option ℝ}
+    (htruth : DeterministicOfferTruthful offer)
+    (hfeasible : DeterministicOfferFeasible offer)
+    {x y : ℝ} (hxy : x < y)
+    (hy : offer y = none) :
+    offer x = none := by
+  cases hx : offer x with
+  | none => rfl
+  | some px =>
+      obtain ⟨py, hpy⟩ :=
+        deterministicOffer_winning_mono_of_truthful htruth hfeasible hxy hx
+      rw [hy] at hpy
+      contradiction
+
+/--
+GHW Lemma 9.2 offer-slice characterization. A truthful feasible deterministic
+single-parameter offer is bid-independent: it is either always rejecting, or it
+has a critical price with losing reports below it and winning reports above it.
+-/
+theorem deterministicOffer_bidIndependent_of_truthful
+    {offer : ℝ → Option ℝ}
+    (htruth : DeterministicOfferTruthful offer)
+    (hfeasible : DeterministicOfferFeasible offer) :
+    DeterministicOfferBidIndependent offer := by
+  classical
+  by_cases hwin : ∃ report price, offer report = some price
+  · rcases hwin with ⟨w, criticalPrice, hw⟩
+    refine Or.inr ⟨criticalPrice, ?_, ?_, ?_⟩
+    · intro report price hreport
+      exact deterministicOffer_payment_eq_of_truthful_wins htruth hreport hw
+    · intro report hlt
+      cases hreport : offer report with
+      | none => rfl
+      | some price =>
+          have hprice_eq :
+              price = criticalPrice :=
+            deterministicOffer_payment_eq_of_truthful_wins htruth hreport hw
+          have hcrit_le_report : criticalPrice ≤ report := by
+            rw [← hprice_eq]
+            exact hfeasible report price hreport
+          nlinarith
+    · intro report hlt
+      cases hreport : offer report with
+      | some price =>
+          have hprice_eq :
+              price = criticalPrice :=
+            deterministicOffer_payment_eq_of_truthful_wins htruth hreport hw
+          simpa [hprice_eq] using hreport
+      | none =>
+          have hdsic := htruth report w
+          simp [deterministicOfferUtility, hw, hreport] at hdsic
+          nlinarith
+  · exact Or.inl (by
+      intro report
+      cases hreport : offer report with
+      | none => rfl
+      | some price =>
+          exact False.elim (hwin ⟨report, price, hreport⟩))
 
 end Auction
 end EconCSLib

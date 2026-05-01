@@ -30,6 +30,18 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 - Use a nonnegative offer-price wrapper around finite candidate prices so
   no-positive-transfer and expected-revenue nonnegativity proofs do not inherit
   infeasible negative candidate values from empty samples.
+- For deterministic single-parameter lower bounds, avoid starting with a real
+  infimum unless the theorem truly needs it. In a fixed-other-bids offer slice,
+  prove the fast DSIC atoms first: any two winning reports pay the same price;
+  if a lower report wins then higher reports win; and if a higher report loses
+  then lower reports lose. When a winning report exists, the common winning
+  payment itself is the critical price: reports below it lose by feasibility,
+  reports above it win by truthfulness, and the boundary may be open or closed.
+- For binary deterministic bid-independent lower bounds, formalize arbitrary
+  threshold prices directly before specializing to the paper's two-price WLOG.
+  Classifying an offer as "high" when it is above the low value `1` proves the
+  same adversarial transition and avoids spending proof effort on a separate
+  normalization argument.
 
 ## GSP and Position Auctions
 
