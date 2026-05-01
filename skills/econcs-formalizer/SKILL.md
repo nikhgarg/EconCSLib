@@ -153,6 +153,12 @@ the Lean statements against the paper.
   - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
   - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top.
   - **Edge Routing (No Overlaps):** Use explicit positioning (`node distance`, `below=of`, `right=of`, `xshift`, `yshift`) carefully. **Prefer straight paths or simple orthogonal routing (`|-`, `-|`) whenever possible without overlap.** Use a column-based layout (the preamble standardizes horizontal spacing at `3cm` or `4cm` depending on the specific diagram needs) to ensure paths are clear and text boxes do not collide. Only use complex curves (`to[out=..., in=...]`) or bends when absolutely necessary to route around an immediate obstacle. Use `dag_arrow` and `dag_dashed_arrow` from the preamble for styling.
+  - For dense paper DAGs, prioritize a visually auditable named-result topology
+    over drawing every redundant instantiation arrow. If a theorem node already
+    states that it satisfies particular definitions or conditions, it is
+    acceptable to omit duplicate long cross-edges when those edges would create
+    text or box overlap; keep the exact status and remaining assumptions in the
+    node text and README row.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
   a status transition in the controlled README/DAG vocabulary).
