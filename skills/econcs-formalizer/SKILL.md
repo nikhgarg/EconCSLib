@@ -52,8 +52,8 @@ the Lean statements against the paper.
   2. A `DependencyDAG.tex` providing the proof roadmap.
   3. A `MainTheorems.lean` file holding the paper-facing wrappers.
   4. A local `.gitignore` file.
-- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. **The overall repo `.gitignore` should not contain paper-specific exclusions.**
-- **Reproducible PDF:** A copy of the source PDF must be downloaded and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Because of the local `.gitignore`, this PDF will not be committed to Git, preventing repository bloat. Work from this local file; do not repeatedly search the web for it.
+- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but should not contain paper-specific PDF exclusions or paths.
+- **Reproducible PDF and text cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF changes.
 - **README Requirements:** The `README.md` must clearly identify the exact
   source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
 - Add one central Lean file for paper-facing theorem statements, conventionally
@@ -82,6 +82,7 @@ the Lean statements against the paper.
   paper theorem/definition, Lean declaration, status (`formalized`,
   `conditional`, `scaffold`, `not started`), file, and remaining assumptions.
 - **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (e.g., `MSVV07AdWords`, `LMMS04FairDivision`, `KR21Monoculture`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
+- **One citation per paper folder:** Do not use aggregate folders for award lists, reading lists, or multi-paper campaigns. Split them into one `[AuthorInitials][2DigitYear][Descriptor]` folder per source paper, each with its own source PDF/text cache, README, DAG, and `MainTheorems.lean`. If an aggregate module already exists, keep it only as a compatibility import or handoff note and move paper-facing status into the citation-specific folders.
 - **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as a dependency DAG in a TikZ source file (with a rendered image) in the paper folder. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
   - **Project pattern in this repo:** for Monoculture, keep the active artifact at
     `papers/KR21Monoculture/DependencyDAG.tex` and a rendered image alongside it.
@@ -95,9 +96,24 @@ the Lean statements against the paper.
 - Keep the DAG updated after every major paper update (for example: a named
   paper theorem/lemma closed, a dependency refactor that changes proof flow, or
   a status transition between scaffold/conditional/formalized).
+- A downstream theorem node may use the green `dag_result` style only when its
+  paper-facing statement is closed without remaining paper assumptions. If Lean
+  currently proves only wrappers conditional on certificates, no-gap hypotheses,
+  selected-BFS assumptions, or witness existence, use `dag_conditional` for the
+  wrapper and add a separate `dag_unformalized` node for the full paper theorem.
+  The node text must name the exact open certificates or witnesses.
+- In this repository's `papers/[Paper]/DependencyDAG.tex` layout, the shared
+  preamble input is `\input{../../docs/tikz/dag_preamble.tex}`. Verify the DAG
+  renders after changing the preamble path or moving a paper folder.
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
   "technical details".
+- Use source-numbered paper declaration names only for statements that are
+  source-faithful. If Lean proves an auxiliary finite analogue, certificate
+  interface, or deliberately weakened bridge, name it as an auxiliary
+  declaration (for example `paper_aux_*` or a name that explicitly says
+  `finite_analogue`) and mark the source theorem as partial/open in the README
+  and DAG.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -113,6 +129,11 @@ the Lean statements against the paper.
   when a named theorem/proposition/lemma from the paper is proven or when
   moving on from a paper; otherwise keep related intermediate proof work
   together in the working tree.
+- Prioritize finishing the theorem over creating frequent checkpoints. Once the
+  finite scaffold is stable, spend effort on the hard remaining bridge rather
+  than packaging every helper lemma as a separate commit or documentation pass.
+  Commit only when a substantial named result is genuinely closed, when moving
+  papers, or when the user explicitly asks for a checkpoint.
 - Detailed lemmas may live in many files, but the central theorem file should be
   the stable public interface for that paper.
 
@@ -169,11 +190,45 @@ search.
    dependency, import, or cache problems before interpreting downstream proof
    errors.
 
-3. Choose finite/discrete models first.
+3. Choose the model level that closes the theorem fastest.
    EC papers often have useful finite entry points: finite agents, items,
-   actions, rankings, allocations, mechanisms, PMFs, and finite sums. Formalize
-   those before attempting asymptotic, measure-theoretic, or complexity-heavy
-   layers.
+   actions, rankings, allocations, mechanisms, PMFs, and finite sums. Use those
+   when they expose the key combinatorics cleanly. But do not force a finite
+   analogue first if the paper theorem is genuinely continuous and the direct
+   continuous statement is shorter or more faithful. For density, RUM,
+   distributional, or integral inequalities, formalize the continuous version
+   directly when that avoids a long detour through artificial finite scaffolding.
+   When the paper proof is a change-of-variables argument over densities,
+   consider adding a reusable library-level measure lemma first, e.g. a
+   `withDensity` mass comparison under a measure-preserving measurable
+   equivalence. This can be faster and closer to the paper than reifying the
+   same argument through artificial finite PMFs, especially for continuous RUM
+   proofs.
+   For strict continuous analogues of finite atom-witness arguments, use a
+   positive-measure source subset plus a finite source integral. In Lean this
+   often means a reusable `withDensity` strict comparison lemma with assumptions
+   like `Measurable D`, `∫⁻ x in source, D x ∂μ ≠ ∞`, and `μ source ≠ 0`.
+   Remember to `open scoped ENNReal` in files that state `ℝ≥0∞` or `∫⁻`
+   expressions; otherwise parser errors around `∂`/`∞` can waste time.
+   When a continuous distribution ultimately feeds a finite theorem over
+   rankings, push the continuous measure through the ranking map and convert the
+   finite pushed-forward measure to a `PMF`. Then prove a small bridge saying
+   `pmfProb` equals the continuous preimage mass. This lets existing finite
+   payoff algebra consume actual continuous ranking laws while the analytic
+   density comparisons stay in the continuous measure layer.
+   For continuous delta inequalities that compare differences of event
+   probabilities, avoid hand-proving signed measure decompositions when the
+   relevant events depend on a finite summary. Push the measure through the
+   finite image of that summary, apply the finite indicator-difference lemma
+   there, and pull the result back with a `measureProb` bridge. The pointwise
+   comparison then only needs to hold on source realizations, not on every value
+   of the finite codomain.
+   For continuous `swapi`/change-of-variables arguments, split the proof into
+   two layers: first a reusable `withDensity` mass comparison under a
+   measure-preserving measurable equivalence and density monotonicity, then a
+   paper-local score-geometry wrapper proving that the source transition region
+   maps into the target transition region and supplies the coordinate-order
+   inequality used by the density lemma.
 
 4. Extract shared primitives into the main library.
    Reusable finite expectations, policies, allocations, valuations, mechanisms,

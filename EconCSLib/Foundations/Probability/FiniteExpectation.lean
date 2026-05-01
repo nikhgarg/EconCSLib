@@ -542,6 +542,22 @@ theorem pmfProb_lt_of_imp_of_mass {α : Type*} [Fintype α] [DecidableEq α]
   rw [hsplit]
   linarith
 
+/-- Split an event by whether a second event also holds. -/
+theorem pmfProb_eq_inter_add_inter_not
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q] :
+    pmfProb μ p =
+      pmfProb μ (fun a => p a ∧ q a) +
+        pmfProb μ (fun a => p a ∧ ¬ q a) := by
+  classical
+  unfold pmfProb
+  rw [← pmfExp_add]
+  refine pmfExp_congr μ ?_
+  intro a
+  by_cases hp : p a
+  · by_cases hq : q a <;> simp [hp, hq]
+  · simp [hp]
+
 /--
 Finite change-of-variables bound for probabilities.
 
@@ -646,8 +662,68 @@ theorem pmfProb_lt_of_equiv_event_mass_le_of_exists_strict
       _ = ∑ a : α, (if p (e.symm a) then (μ a).toReal else 0) := by
             simpa using
               (Equiv.sum_comp e
-                (fun a : α => if p (e.symm a) then (μ a).toReal else 0))
+              (fun a : α => if p (e.symm a) then (μ a).toReal else 0))
   exact lt_of_lt_of_le hstrict_image himage
+
+/--
+Finite cross-event change-of-variables bound.
+
+To prove `Pr[p] ≤ Pr[q]`, it is enough to map only the asymmetric part
+`p ∧ ¬q` into `q ∧ ¬p` with nondecreasing mass.  The common part
+`p ∧ q` cancels on both sides.
+-/
+theorem pmfProb_le_of_cross_event_equiv_mass_le
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (e : α ≃ α)
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hmap : ∀ a, p a ∧ ¬ q a → q (e a) ∧ ¬ p (e a))
+    (hmass : ∀ a, p a ∧ ¬ q a → (μ a).toReal ≤ (μ (e a)).toReal) :
+    pmfProb μ p ≤ pmfProb μ q := by
+  classical
+  have hle := pmfProb_le_of_equiv_event_mass_le μ e
+    (fun a => p a ∧ ¬ q a) (fun a => q a ∧ ¬ p a) hmap hmass
+  have hp := pmfProb_eq_inter_add_inter_not μ p q
+  have hq := pmfProb_eq_inter_add_inter_not μ q p
+  have hpq_comm :
+      pmfProb μ (fun a => q a ∧ p a) =
+        pmfProb μ (fun a => p a ∧ q a) := by
+    unfold pmfProb
+    refine pmfExp_congr μ ?_
+    intro a
+    by_cases hp' : p a <;> by_cases hq' : q a <;> simp [hp', hq']
+  rw [hp, hq, hpq_comm]
+  linarith
+
+/--
+Strict finite cross-event change-of-variables bound.
+
+If the asymmetric part `p ∧ ¬q` maps into `q ∧ ¬p`, mass never decreases there,
+and one source atom strictly increases, then `Pr[p] < Pr[q]`.
+-/
+theorem pmfProb_lt_of_cross_event_equiv_mass_le_of_exists_strict
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (e : α ≃ α)
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hmap : ∀ a, p a ∧ ¬ q a → q (e a) ∧ ¬ p (e a))
+    (hmass : ∀ a, p a ∧ ¬ q a → (μ a).toReal ≤ (μ (e a)).toReal)
+    {a₀ : α} (hpq₀ : p a₀ ∧ ¬ q a₀)
+    (hstrict : (μ a₀).toReal < (μ (e a₀)).toReal) :
+    pmfProb μ p < pmfProb μ q := by
+  classical
+  have hlt := pmfProb_lt_of_equiv_event_mass_le_of_exists_strict μ e
+    (fun a => p a ∧ ¬ q a) (fun a => q a ∧ ¬ p a)
+    hmap hmass hpq₀ hstrict
+  have hp := pmfProb_eq_inter_add_inter_not μ p q
+  have hq := pmfProb_eq_inter_add_inter_not μ q p
+  have hpq_comm :
+      pmfProb μ (fun a => q a ∧ p a) =
+        pmfProb μ (fun a => p a ∧ q a) := by
+    unfold pmfProb
+    refine pmfExp_congr μ ?_
+    intro a
+    by_cases hp' : p a <;> by_cases hq' : q a <;> simp [hp', hq']
+  rw [hp, hq, hpq_comm]
+  linarith
 
 /-- Finite sums commute with finite PMF expectation. -/
 theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
