@@ -98,10 +98,30 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   The wrapper
   `reflMallowsBestInSetPrefixCutSum_cross_of_firstChoice_tail_pair_bracket_sum`
   packages the diagonal terms from smaller tail prefix-cut dominance, leaving
-  the aggregate bracket sum as the main new arbitrary induction target. This
-  keeps the induction target arbitrary-size while allowing negative
-  first-choice pair brackets to cancel in the total recurrence, instead of
-  adding more finite candidate classifications.
+  the aggregate bracket sum as the main new arbitrary induction target. Use the
+  recursive interface `ReflMallowsBestInSetPrefixCutDominance`,
+  `ReflMallowsBestInSetPrefixCutFirstChoiceBracketSum`,
+  `ReflMallowsBestInSetPrefixCutDominance.succ`,
+  `ReflMallowsBestInSetPrefixCutDominance.zero`, and
+  `ReflMallowsBestInSetPrefixCutDominance.of_firstChoiceBracketSums`, then
+  bridge to expected utility with
+  `reflMallowsBestInSetPrefixSum_cross_of_firstChoiceBracketSums` and
+  `expectedBestInSet_le_of_mallows_firstChoiceBracketSums`. This keeps the
+  induction target arbitrary-size while allowing negative first-choice pair
+  brackets to cancel in the total recurrence, instead of adding more finite
+  candidate classifications.
+- For KR21 aggregate first-choice brackets, prefer the diagonal-plus-weighted
+  regrouping before trying more raw pair algebra. Use
+  `firstChoiceBranchBracketSum_eq_complementPower` to collapse the unordered
+  pair sum, then `firstChoiceBranchBracketSum_eq_diag_add_weighted` and
+  `firstChoiceBranchBracketSum_nonneg_of_diag_weighted` to split the proof into
+  smaller tail prefix-cut dominance plus the weighted first-choice target
+  `ReflMallowsBestInSetPrefixCutFirstChoiceWeighted`. The bridge
+  `ReflMallowsBestInSetPrefixCutFirstChoiceBracketSum.of_dominance_weighted`
+  and induction wrapper
+  `ReflMallowsBestInSetPrefixCutDominance.of_firstChoiceWeighted` are the
+  current narrowest arbitrary route; the full-remaining-set bracket case is
+  already closed by `firstChoiceBranchBracketSum_univ_cut_nonneg`.
 - For KR21 arbitrary remaining-set Mallows dominance, keep the exact
   best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
   dominance targets. Define an identity-center unnormalised fiber such as
