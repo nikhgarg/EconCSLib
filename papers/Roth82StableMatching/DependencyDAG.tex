@@ -6,14 +6,21 @@
   every node/.style={font=\sffamily\small}]
 
 % Legend
-\node[dag_result, text width=2.9cm] (legRes) {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, text width=2.9cm] (legCond) {\textbf{Conditional}\\certificate};
-\node[dag_model, right=0.35cm of legCond, text width=2.9cm] (legDef) {\textbf{Definition}\\model};
-\node[dag_unformalized, right=0.35cm of legDef, text width=2.9cm] (legOpen) {\textbf{Open}\\not formalized};
+  \dagPaperMetadata{The Economics of Matching: Stability and Incentives}{Alvin E. Roth}{Mathematics of Operations Research}{1982}{https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\paper-facing};
+\node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond) {\textbf{Conditional}\\certificate};
+\node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef) {\textbf{Definition}\\model};
+\node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen) {\textbf{Open}\\not formalized};
+
+
+}
 \daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
 
+\begin{dagPaperBody}
+
 % Core matching layer
-\node[dag_model, below=1.8cm of legRes] (Defs)
+\node[dag_model] (Defs)
   {\textbf{Sections 2--3}\\matching, preferences, feasible outcome, stability};
 \node[dag_conditional, below=of Defs] (DA)
   {\textbf{Deferred Acceptance}\\stability and optimality certificate interfaces};
@@ -58,6 +65,6 @@
 \draw[dag_dashed_arrow] (Thm5) -| (Thm6);
 \draw[dag_dashed_arrow] (Thm3) |- (Thm7);
 \draw[dag_dashed_arrow] (Cor51) -| (Thm7);
-
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

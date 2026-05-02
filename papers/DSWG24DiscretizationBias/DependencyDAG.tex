@@ -6,14 +6,19 @@
   every node/.style={font=\sffamily\small}]
 
 % Legend
-\node[dag_result, text width=3cm] (legRes) {\textbf{Closed}\\formalized};
-\node[dag_model, right=0.35cm of legRes, text width=3cm] (legDef) {\textbf{Definition}\\model/interface};
-\node[dag_conditional, right=0.35cm of legDef, text width=3cm] (legCond) {\textbf{Conditional}\\source-facing};
-\node[dag_unformalized, right=0.35cm of legCond, text width=3cm] (legOpen) {\textbf{Open}\\not formalized};
+\dagPaperMetadata{Addressing Discretization-Induced Bias in Demographic Prediction}{Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg}{ACM FAccT 2024}{2024}{https://arxiv.org/pdf/2405.16762}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\formalized};
+\node[dag_model, right=0.35cm of legRes, dag_template_legend] (legDef) {\textbf{Definition}\\model/interface};
+\node[dag_conditional, right=0.35cm of legDef, dag_template_legend] (legCond) {\textbf{Conditional}\\source-facing};
+\node[dag_unformalized, right=0.35cm of legCond, dag_template_legend] (legOpen) {\textbf{Open}\\not formalized};
+}
 \daglegend{(legRes)(legDef)(legCond)(legOpen)}{Legend}
 
+\begin{dagPaperBody}
+
 % Paper definitions and objectives
-\node[dag_model, below=1.6cm of legRes] (Scores)
+\node[dag_model] (Scores)
   {\textbf{Section 3.1}\\continuous classifier, argmax rule, bias, MAE};
 \node[dag_model, below=of Scores] (DecisionObj)
   {\textbf{Eq. (3)}\\accuracy/fidelity objective $O_N^\gamma$};
@@ -50,6 +55,6 @@
 \draw[dag_arrow] (BayesBridge) -- (Thm2i);
 \draw[dag_dashed_arrow] (Nontrivial) -- (Thm2iii);
 \draw[dag_dashed_arrow] (BayesBridge) -- (Thm2iii);
-
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

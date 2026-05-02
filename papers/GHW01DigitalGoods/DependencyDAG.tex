@@ -6,7 +6,7 @@
   every node/.style={font=\sffamily\small}]
 
   \dagPaperMetadata{Competitive Auctions and Digital Goods}{Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright}{SODA 2001 / STAR-TR-99-01}{2000}{https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf}
-  \begin{scope}[shift={($(dagPaperMetadata.north east -| 0,0) + (0.4cm,0cm)$)}]
+\dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes)
   {\textbf{Closed}\\paper-facing};
 \node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond)
@@ -15,12 +15,12 @@
   {\textbf{Definition}\\model layer};
 \node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen)
   {\textbf{Open}\\not formalized};
-
-
-  \end{scope}
+}
 \daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
 
-\node[dag_model, below=1.85cm of legRes, text width=3.8cm] (Core)
+\begin{dagPaperBody}
+
+\node[dag_model, text width=3.8cm] (Core)
   {\textbf{Definitions (Sections 2--3)}\\digital goods, revenue, DSIC, IR, NPT};
 \node[dag_result, below=of Core, text width=3.8cm] (Thresholds)
   {\textbf{Threshold Mechanisms (Section 5)}\\posted prices and own-bid-independent thresholds are truthful};
@@ -89,5 +89,6 @@
 \draw[dag_dashed_arrow] (DetModel.east) to[out=-35,in=35,looseness=1.15] (Lemma92.east);
 \draw[dag_dashed_arrow] (Thm91) -| (Thm93);
 \draw[dag_dashed_arrow] (Lemma92) -- (Thm93);
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

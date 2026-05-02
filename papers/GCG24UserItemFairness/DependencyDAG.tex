@@ -19,15 +19,22 @@
 ]
 
 % --- Legend: README status vocabulary plus formalized node-type styles. ---
+  \dagPaperMetadata{User-item fairness tradeoffs in recommendations}{Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg}{NeurIPS 2024}{2024}{https://openreview.net/pdf?id=ZOZjMs3JTs}
+\dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
 \node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
 \node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
-\node[dag_caveat, dag_template_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
 \node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
 \node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
 \node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
 \node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+
+
+}
 \daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
+
+\begin{scope}[xshift=8.2cm]
 
 % --- Core model and reduction framework. ---
 \node[dag_model] (Problem1) at (0,-6.4) {
@@ -197,6 +204,6 @@
 \draw[dag_arrow] (Lemma14) -- (Lemma15);
 \draw[dag_arrow] (Lemma15) -- (Theorem4);
 \draw[dag_arrow] (Lemma16.east) -- ++(1.2,0) |- (Lemma15.west);
-
+\end{scope}
 \end{tikzpicture}
 \end{document}

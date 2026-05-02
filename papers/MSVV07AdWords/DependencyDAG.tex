@@ -6,18 +6,26 @@
   every node/.style={font=\sffamily\small}]
 
 % Legend
-\node[dag_result, text width=2.8cm] (legRes)
+  \dagPaperMetadata{AdWords and Generalized Online Matching}{Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani}{Journal of the ACM 54(5), 2007, Article 22}{2007}{https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes)
   {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, text width=2.9cm] (legCond)
+\node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond)
   {\textbf{Conditional}\\explicit bridge};
-\node[dag_model, right=0.35cm of legCond, text width=2.8cm] (legDef)
+\node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef)
   {\textbf{Definition}\\model};
-\node[dag_unformalized, right=0.35cm of legDef, text width=2.9cm] (legOpen)
+\node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen)
   {\textbf{Not one-for-one}\\source proof step};
+
+
+}
 \daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
 
+\begin{dagPaperBody}
+\begin{scope}[xshift=5.6cm]
+
 % Core model and Balance surface
-\node[dag_model, below=1.8cm of legRes, text width=3.5cm] (Model)
+\node[dag_model, text width=3.5cm] (Model)
   {\textbf{Sections 2--3}\\AdWords instance, budgets, bids, assignments};
 \node[dag_model, below=of Model, text width=3.5cm] (SmallBids)
   {\textbf{Assumption}\\small bids relative to budgets};
@@ -94,6 +102,7 @@
 \draw[dag_arrow] (Yao) -- (Harmonic);
 \draw[dag_arrow] (Harmonic) -- (T9);
 \draw[dag_arrow] (T9) -- (T9Realized);
-
+\end{scope}
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

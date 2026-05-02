@@ -184,7 +184,7 @@ the Lean statements against the paper.
   - **Stable Topology Requirement:** The initial DAG should contain the paper's full named-result structure: all named Definitions, Lemmas, Propositions, Theorems, Corollaries, and appendix results, with dependency arrows reflecting the paper proof architecture. After that initial roadmap is created, routine progress updates should normally change only node status/style/text, not add new boxes or arrows. Add or remove boxes/arrows only when the initial named-result inventory was incomplete or a genuine paper dependency was discovered to be missing/wrong; if topology changes, rerender and re-check for overlap.
   - The DAG must encode formalization status and node type explicitly by using the preamble styles.
   - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
-  - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top.
+  - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top. For caveat entries inside the legend, use `dag_caveat_legend` rather than combining `dag_caveat` with `dag_template_legend`; the full-size red diamond is for graph nodes and makes the legend oversized.
   - **Edge Routing (No Overlaps):** Use explicit positioning (`node distance`, `below=of`, `right=of`, `xshift`, `yshift`) carefully. **Prefer straight paths or simple orthogonal routing (`|-`, `-|`) whenever possible without overlap.** Use a column-based layout (the preamble standardizes horizontal spacing at `3cm` or `4cm` depending on the specific diagram needs) to ensure paths are clear and text boxes do not collide. Only use complex curves (`to[out=..., in=...]`) or bends when absolutely necessary to route around an immediate obstacle. Use `dag_arrow` and `dag_dashed_arrow` from the preamble for styling.
   - For dense paper DAGs, prioritize a visually auditable named-result topology
     over drawing every redundant instantiation arrow. If a theorem node already
@@ -238,6 +238,16 @@ the Lean statements against the paper.
   papers/<Paper>/DependencyDAG.tex` from the repo root resolves the preamble
   relative to the wrong directory and wastes a build cycle. Verify the DAG
   renders after changing the preamble path or moving a paper folder.
+- Use the shared DAG header helpers instead of manual coordinate shifts:
+  `\dagPaperMetadata` for the top-left source block,
+  `\dagPaperLegendRightOfMetadata{...}` for the legend row to its right, and
+  `\begin{dagPaperBody}...\end{dagPaperBody}` for relative-positioned graph
+  nodes below the header. Avoid the old
+  `dagPaperMetadata.north east -| 0,0` pattern; it places the legend back at
+  the page origin and causes overlap. After rendering, check the standalone
+  crop: if graph nodes extend left of the metadata block, add a local
+  `xshift` inside `dagPaperBody`; the metadata should remain the visual
+  top-left anchor, with the legend to its right and the graph below.
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
   "technical details".

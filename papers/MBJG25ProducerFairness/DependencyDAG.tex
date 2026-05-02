@@ -5,14 +5,21 @@
 \begin{tikzpicture}
 
 % --- Legend ---
-\node[dag_result, text width=2.5cm] (legRes) {Formalized Result};
-\node[dag_model, right=0.5cm of legRes, text width=2.5cm] (legDef) {Definitions};
-\node[dag_caveat, right=0.5cm of legDef, text width=2.5cm] (legCav) {Caveats};
-\node[dag_unformalized, right=0.5cm of legCav, text width=2.5cm] (legNot) {Not Formalized};
+  \dagPaperMetadata{Balancing Producer Fairness and Efficiency via Bayesian Rating System Design}{Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg}{ICWSM 2025 version}{2025}{https://arxiv.org/pdf/2207.04369}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {Formalized Result};
+\node[dag_model, right=0.5cm of legRes, dag_template_legend] (legDef) {Definitions};
+\node[dag_caveat_legend, right=0.5cm of legDef] (legCav) {Caveats};
+\node[dag_unformalized, right=0.5cm of legCav, dag_template_legend] (legNot) {Not Formalized};
+
+
+}
 \daglegend{(legRes)(legDef)(legCav)(legNot)}{Legend}
 
+\begin{dagPaperBody}
+
 % --- Column 1 (Fixed Model) ---
-\node[dag_model, below=2.5cm of legRes] (ModelDefs) {\textbf{Binary Rating} \\ Model Primitives};
+\node[dag_model] (ModelDefs) {\textbf{Binary Rating} \\ Model Primitives};
 \node[dag_result, below=2cm of ModelDefs] (Thm3_1_Var_Weak) {\textbf{Theorem 3.1} \\ Variance Weak Decr.};
 \node[dag_result, below=1cm of Thm3_1_Var_Weak] (Thm3_1_Var_Strict) {\textbf{Theorem 3.1} \\ Variance Strict Int.};
 \node[dag_result, below=1cm of Thm3_1_Var_Strict] (Thm3_1_Bias) {\textbf{Theorem 3.1} \\ Sq. Bias Nondecr.};
@@ -49,6 +56,6 @@
 \draw[dag_arrow] (DynamicDefs.east) to[out=0, in=180] (MSE_Decomp.west);
 \draw[dag_arrow] (Unfairness) -- (Dirichlet);
 \draw[dag_arrow] (ModelDefs.north east) to[out=45, in=135] (MSE_Decomp.north west);
-
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

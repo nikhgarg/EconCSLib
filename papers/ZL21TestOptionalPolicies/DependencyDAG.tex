@@ -6,14 +6,21 @@
   every node/.style={font=\sffamily\small}]
 
 % --- Legend ---
-\node[dag_result, text width=2.5cm] (legRes) {Formalized\ result};
-\node[dag_lemma, right=0.5cm of legRes, text width=2.5cm] (legLem) {Formalized\ lemma};
-\node[dag_model, right=0.5cm of legLem, text width=2.5cm] (legDef) {Definitions};
-\node[dag_unformalized, right=0.5cm of legDef, text width=2.5cm] (legNot) {Not formalized};
+  \dagPaperMetadata{Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps}{Zhi Liu and Nikhil Garg}{EAAMO 2021 version}{2021}{https://arxiv.org/pdf/2107.08922}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {Formalized\ result};
+\node[dag_lemma, right=0.5cm of legRes, dag_template_legend] (legLem) {Formalized\ lemma};
+\node[dag_model, right=0.5cm of legLem, dag_template_legend] (legDef) {Definitions};
+\node[dag_unformalized, right=0.5cm of legDef, dag_template_legend] (legNot) {Not formalized};
+
+
+}
 \daglegend{(legRes)(legLem)(legDef)(legNot)}{Legend}
 
+\begin{dagPaperBody}
+
 % Core primitives
-\node[dag_model, below=1.8cm of Legend, text width=5cm]
+\node[dag_model, text width=5cm]
   (ModelDef) {
     \textbf{Model}\
     \(\texttt{ZL21Model}\), base and test signal kernels\
@@ -122,6 +129,6 @@
 \draw[dag_arrow] (Test10) -- (Test11);
 \draw[dag_arrow] (Test11) -- (Test12);
 \draw[dag_arrow] (Test12) -- (Test13);
-
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

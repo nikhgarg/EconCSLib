@@ -14,6 +14,11 @@
 % - After intake, treat this as a stable topology: update node styles/status/text
 %   as proofs close, but avoid adding boxes or arrows unless the original named
 %   result inventory or dependency map was actually incomplete.
+%
+% Layout reminder:
+% Use `\dagPaperMetadata`, `\dagPaperLegendRightOfMetadata`, and
+% `\begin{dagPaperBody}` so metadata stays top-left, the legend sits to its
+% right, and the graph starts below them from the diagram left edge.
 
 \begin{tikzpicture}[
   x=1cm,
@@ -21,18 +26,24 @@
   every node/.append style={outer sep=4pt}
 ]
 % --- Legend: README status vocabulary plus formalized node-type styles. ---
+\dagPaperMetadata{[Paper Title]}{[Authors]}{[Publication Venue]}{[Year]}{[Formalized PDF link]}
+\dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
 \node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
 \node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
-\node[dag_caveat, dag_template_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
 \node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
 \node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
 \node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
 \node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+
+}
 \daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
 
+\begin{dagPaperBody}
+
 % --- Layout guidance for future agents. ---
-\node[dag_template_note, below=1.1cm of Legend] (Guide) {
+\node[dag_template_note] (Guide) {
   Replace these scaffold nodes with the paper's named definitions, lemmas,
   propositions, theorems, and corollaries. Keep nodes on the grid below:
   columns are spaced by 6.4cm and rows by 3.2cm, which is wide enough for the
@@ -49,6 +60,18 @@
 % - Change the leading style only, e.g. dag_unformalized -> dag_conditional ->
 %   dag_lemma/dag_result, and update the short text if the remaining assumption changed.
 % - Keep node names and arrows stable after the initial intake map is complete.
+%
+% Node/edge status semantics:
+% - Green nodes (`dag_result`) mean the displayed theorem/result is fully
+%   formalized under its stated Lean assumptions. A green theorem may bypass an
+%   incomplete paper-route lemma, but then that incomplete lemma must not be
+%   shown as a required solid input.
+% - Solid arrows (`dag_arrow`) are verified dependencies in the formalized proof
+%   path.
+% - Dashed arrows (`dag_dashed_arrow`) are for unresolved, conditional, caveat,
+%   paper-roadmap, or bypassed-paper-route dependencies. If a dashed edge points
+%   into a green node, document in the node/README that the edge is not required
+%   by the formal proof; otherwise the target should be conditional/caveated.
 \node[dag_model] (Model) at (0,-10.2) {
   \textbf{Definitions / Model} \\
   Source primitives
@@ -82,5 +105,6 @@
 \draw[dag_dashed_arrow] (LemmaB) -- (Open);
 \draw[dag_arrow] (Bridge) -- (Main);
 \draw[dag_dashed_arrow] (Open) |- (Main);
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}
