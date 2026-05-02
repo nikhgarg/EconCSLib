@@ -266,6 +266,15 @@ theorem pmfExp_le_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
                     rw [pmfToRealSum μ]
                     ring
 
+/-- Finite PMF expectation is monotone under pointwise comparison. -/
+theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f g : α → ℝ) (h : ∀ a, f a ≤ g a) :
+    pmfExp μ f ≤ pmfExp μ g := by
+  unfold pmfExp
+  exact Finset.sum_le_sum (by
+    intro a _
+    exact mul_le_mul_of_nonneg_left (h a) ENNReal.toReal_nonneg)
+
 /-- Finite PMF probabilities are nonnegative. -/
 theorem pmfProb_nonneg {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (p : α → Prop) [DecidablePred p] :
@@ -276,6 +285,54 @@ theorem pmfProb_nonneg {α : Type*} [Fintype α] [DecidableEq α]
   intro a _
   refine mul_nonneg ENNReal.toReal_nonneg ?_
   by_cases hp : p a <;> simp [hp]
+
+/-- Finite PMF event probability is zero iff the event has no positive-mass witness. -/
+theorem pmfProb_eq_zero_of_no_mass
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p]
+    (hzero : ∀ a, p a → (μ a).toReal = 0) :
+    pmfProb μ p = 0 := by
+  unfold pmfProb pmfExp
+  exact Finset.sum_eq_zero (by
+    intro a _
+    by_cases hp : p a
+    · simp [hp, hzero a hp]
+    · simp [hp])
+
+/-- Finite PMF event probability is positive iff some positive-mass atom satisfies it. -/
+theorem pmfProb_pos_iff_exists_pos_mass
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    0 < pmfProb μ p ↔ ∃ a, p a ∧ 0 < (μ a).toReal := by
+  constructor
+  · intro hpos
+    by_contra hno
+    have hzero : ∀ a, p a → (μ a).toReal = 0 := by
+      intro a ha
+      have hnot : ¬ 0 < (μ a).toReal := by
+        intro hmass
+        exact hno ⟨a, ha, hmass⟩
+      exact le_antisymm (le_of_not_gt hnot) ENNReal.toReal_nonneg
+    rw [pmfProb_eq_zero_of_no_mass μ p hzero] at hpos
+    exact (lt_irrefl 0 hpos)
+  · rintro ⟨a, ha, hmass⟩
+    have hnonneg : ∀ b : α, 0 ≤ (μ b).toReal * (if p b then (1 : ℝ) else 0) := by
+      intro b
+      by_cases hp : p b <;> simp [hp, ENNReal.toReal_nonneg]
+    have hsingle_pos : 0 < (μ a).toReal * (if p a then (1 : ℝ) else 0) := by
+      simpa [ha] using hmass
+    have hsingle_le :
+        (μ a).toReal * (if p a then (1 : ℝ) else 0) ≤
+          ∑ b : α, (μ b).toReal * (if p b then (1 : ℝ) else 0) :=
+      Finset.single_le_sum
+        (s := (Finset.univ : Finset α))
+        (f := fun b : α => (μ b).toReal * (if p b then (1 : ℝ) else 0))
+        (by intro b _; exact hnonneg b)
+        (Finset.mem_univ a)
+    have hsum_pos : 0 < ∑ b : α, (μ b).toReal * (if p b then (1 : ℝ) else 0) :=
+      lt_of_lt_of_le hsingle_pos hsingle_le
+    unfold pmfProb pmfExp
+    exact hsum_pos
 
 /-- Finite PMF probabilities are at most one. -/
 theorem pmfProb_le_one {α : Type*} [Fintype α] [DecidableEq α]
@@ -493,16 +550,6 @@ theorem pmfProb_lt_one_of_mass_not {α : Type*} [Fintype α] [DecidableEq α]
     pmfProb_pos_of_mass μ (fun a => ¬p a) a₀ hp hmass
   rw [pmfProb_compl μ p] at hcompl
   linarith
-
-/-- Monotonicity of finite PMF expectation. -/
-theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
-    (μ : PMF α) (f g : α → ℝ)
-    (h : ∀ a, f a ≤ g a) :
-    pmfExp μ f ≤ pmfExp μ g := by
-  unfold pmfExp
-  exact Finset.sum_le_sum (by
-    intro a _
-    exact mul_le_mul_of_nonneg_left (h a) ENNReal.toReal_nonneg)
 
 /-- Monotonicity of finite PMF probabilities under event inclusion. -/
 theorem pmfProb_le_of_imp {α : Type*} [Fintype α] [DecidableEq α]
@@ -823,6 +870,77 @@ theorem pmfExp_min_one_le_min_one_pmfExp {α : Type*}
       intro a _
       exact mul_le_mul_of_nonneg_left (min_le_right 1 (f a))
         ENNReal.toReal_nonneg)
+
+/-- Finite PMF expectation bounded by a tail decomposition of a `[0,1]`-valued
+function. -/
+theorem pmfExp_le_of_nonneg_le_one_of_tail
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (t : ℝ)
+    (h_nonneg : ∀ a, 0 ≤ f a) (h_le_one : ∀ a, f a ≤ 1) (ht : 0 ≤ t) :
+    pmfExp μ f ≤ t + pmfProb μ (fun a => t < f a) := by
+  have hpoint : ∀ a, f a ≤ (if t < f a then (1 : ℝ) else 0) + t := by
+    intro a
+    by_cases hlt : t < f a
+    · have hle : f a ≤ t + 1 := by
+        nlinarith [h_le_one a, ht]
+      have hle' : f a ≤ 1 + t := by
+        simpa [add_comm] using hle
+      simpa [hlt] using hle'
+    · have hle : f a ≤ t := le_of_not_gt hlt
+      simpa [hlt] using hle
+  have hbound :
+      pmfExp μ f ≤ pmfExp μ (fun a => (if t < f a then (1 : ℝ) else 0) + t) :=
+    pmfExp_le_pmfExp_of_forall_le μ f
+      (fun a => (if t < f a then (1 : ℝ) else 0) + t) hpoint
+  calc
+    pmfExp μ f ≤ pmfExp μ (fun a => (if t < f a then (1 : ℝ) else 0) + t) := hbound
+    _ = pmfExp μ (fun a => if t < f a then (1 : ℝ) else 0) +
+          pmfExp μ (fun _ : α => t) := by
+        simpa using
+          (pmfExp_add (μ := μ) (f := fun a => if t < f a then (1 : ℝ) else 0)
+            (g := fun _ : α => t))
+    _ = t + pmfProb μ (fun a => t < f a) := by
+        simp [pmfProb, add_comm]
+
+/-- Finite PMF expectation lower bound from upper-tail mass for nonnegative
+functions. -/
+theorem pmfExp_ge_of_nonneg_of_tail
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (t : ℝ)
+    (h_nonneg : ∀ a, 0 ≤ f a) (ht : 0 ≤ t) :
+    t * pmfProb μ (fun a => t < f a) ≤ pmfExp μ f := by
+  have hpoint : ∀ a, t * (if t < f a then (1 : ℝ) else 0) ≤ f a := by
+    intro a
+    by_cases hlt : t < f a
+    · have hle : t ≤ f a := le_of_lt hlt
+      simpa [hlt] using hle
+    · have hzero : (if t < f a then (1 : ℝ) else 0) = 0 := by simp [hlt]
+      simp [hzero, h_nonneg a]
+  have hbound : pmfExp μ (fun a => t * (if t < f a then (1 : ℝ) else 0)) ≤ pmfExp μ f :=
+    pmfExp_le_pmfExp_of_forall_le μ
+      (fun a => t * (if t < f a then (1 : ℝ) else 0)) f hpoint
+  have hleft :
+      pmfExp μ (fun a => t * (if t < f a then (1 : ℝ) else 0)) =
+        t * pmfProb μ (fun a => t < f a) := by
+    rw [pmfExp_const_mul, pmfProb]
+  calc
+    t * pmfProb μ (fun a => t < f a) = pmfExp μ (fun a => t * (if t < f a then (1 : ℝ) else 0)) := hleft.symm
+    _ ≤ pmfExp μ f := hbound
+
+/-- Direct concentration-style upper bound for finite expectations. -/
+theorem pmfExp_le_of_tail_prob_le
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (t : ℝ) (eps : ℝ)
+    (h_nonneg : ∀ a, 0 ≤ f a) (h_le_one : ∀ a, f a ≤ 1) (ht : 0 ≤ t)
+    (h_tail : pmfProb μ (fun a => t < f a) ≤ eps) :
+    pmfExp μ f ≤ t + eps := by
+  calc
+    pmfExp μ f ≤ t + pmfProb μ (fun a => t < f a) :=
+      pmfExp_le_of_nonneg_le_one_of_tail μ f t h_nonneg h_le_one ht
+    _ ≤ t + eps := by
+      have htail' : pmfProb μ (fun a => t < f a) + t ≤ eps + t := by
+        exact add_le_add_left h_tail t
+      simpa [add_comm] using htail'
 
 /-- A finite PMF expectation is strictly above a constant if every value is. -/
 theorem pmfExp_lt_of_forall_lt {α : Type*}

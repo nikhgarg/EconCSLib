@@ -58,6 +58,9 @@ The paper folder should expose the source's definitions, theorem numbers, and
 assumptions clearly enough that a human can compare Lean against the PDF without
 reading the entire implementation stack.
 
+For a concise domain-by-domain index of reusable modules and entrypoints, use
+[`docs/ECONCSLIB_DOMAIN_INDEX.md`](ECONCSLIB_DOMAIN_INDEX.md).
+
 ## Lean Style
 
 Follow the Mathlib-derived conventions in `docs/LEAN_STYLE.md`: narrow imports,

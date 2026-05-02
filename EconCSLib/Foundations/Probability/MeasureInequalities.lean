@@ -398,6 +398,14 @@ theorem measure_le_of_imp
     μ {a | p a} ≤ μ {a | q a} :=
   measure_mono (by intro a ha; exact h a ha)
 
+/-- Direct monotonicity lemma for `measureProb` under predicate implication. -/
+theorem measureProb_mono
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (himp : ∀ a, p a → q a) :
+    measureProb μ p ≤ measureProb μ q :=
+  measureProb_le_of_measure_le μ p q (measure_le_of_imp μ p q himp)
+
 theorem measure_lt_of_imp_of_diff_ne_zero
     {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]
     (p q : α → Prop)
@@ -479,6 +487,29 @@ theorem measureProb_lt_of_cross_event_measure_lt
     measureProb μ p < measureProb μ q :=
   measureProb_lt_of_measure_lt μ p q
     (measure_lt_of_cross_event_measure_lt μ p q hp hq hcross)
+
+/-- Strict monotonicity for `measureProb` from a nonzero residual. -/
+theorem measureProb_lt_of_imp_of_residual_ne_zero
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsFiniteMeasure μ]
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hp : MeasurableSet {a | p a}) (hq : MeasurableSet {a | q a})
+    (himp : ∀ a, p a → q a) (hres : μ ({a | q a} \ {a | p a}) ≠ 0) :
+    measureProb μ p < measureProb μ q := by
+  refine measureProb_lt_of_cross_event_measure_lt μ p q hp hq ?_
+  have hleft : μ ({a | p a} ∩ {a | q a}ᶜ) = 0 := by
+    apply measure_mono_null
+      (s := ({a | p a} ∩ {a | q a}ᶜ : Set α))
+      (t := (∅ : Set α))
+    · intro a ha
+      exact False.elim (ha.2 (himp a ha.1))
+    · simp
+  have hright : μ ({a | q a} ∩ {a | p a}ᶜ) ≠ 0 := by
+    have hres' : ({a | q a} \ {a | p a}) = ({a | q a} ∩ {a | p a}ᶜ) := by
+      ext a
+      simp
+    simpa [hres'] using hres
+  rw [hleft]
+  exact lt_of_le_of_ne (bot_le) hright.symm
 
 /--
 If a probability measure is pushed forward to a countable measurable space and

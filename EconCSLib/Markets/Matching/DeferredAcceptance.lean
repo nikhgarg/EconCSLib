@@ -215,5 +215,35 @@ def DaIsMenOptimalCertificate (val_m : M → W → ℝ) (val_w : W → M → ℝ
   ∀ mu', IsStable val_m val_w mu' →
     ∀ m, valM val_m m (mu'.m_match m) ≤ valM val_m m ((deferredAcceptance val_m val_w).m_match m)
 
+/-- A DA state with invariants and no active man is stable. -/
+theorem daState_stable_of_invariants_and_termination (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (s : DAState M W) (hinv : DAInvariants val_m val_w s)
+    (hterm : ¬ ∃ m, IsActiveMan val_m s m)
+    (hstable : DAStableFromTerminatedInvariantsCertificate val_m val_w) :
+    IsStable val_m val_w ⟨s.m_match, s.w_match, s.consistent⟩ :=
+  stable_of_invariants_and_terminated val_m val_w s hstable hinv hterm
+
+/-- Stable matching from separated DA certificate components.
+
+This gives a direct API that avoids unpacking `DaProducesStableMatchingCertificate`.
+-/
+theorem deferredAcceptance_stable_of_certificate
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (hstate : DAStateInvariantCertificate val_m val_w)
+    (hterm : DATerminationCertificate val_m val_w)
+    (hstable : DAStableFromTerminatedInvariantsCertificate val_m val_w) :
+    IsStable val_m val_w (deferredAcceptance val_m val_w) :=
+  stable_of_invariants_and_terminated
+    val_m val_w
+    (deferredAcceptanceState val_m val_w)
+    hstable hstate hterm
+
+/-- Alias with the existing full DA certificate term. -/
+theorem deferredAcceptance_stable_of_certificate'
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (hcert : DaProducesStableMatchingCertificate val_m val_w) :
+    IsStable val_m val_w (deferredAcceptance val_m val_w) :=
+  da_produces_stable_matching_of_certificate val_m val_w hcert
+
 end Matching
 end EconCSLib

@@ -60,7 +60,9 @@ paper-folder `README.md`. For repository conventions, see:
 
 - [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/ECONCSLIB_DOMAIN_INDEX.md](docs/ECONCSLIB_DOMAIN_INDEX.md)
 - [docs/LEAN_STYLE.md](docs/LEAN_STYLE.md)
+- [docs/THEOREM_ERGONOMICS.md](docs/THEOREM_ERGONOMICS.md)
 - [docs/STATUS.md](docs/STATUS.md)
 - [skills/econcs-formalizer/SKILL.md](skills/econcs-formalizer/SKILL.md)
 
@@ -80,6 +82,7 @@ Use the repository audit before status-table or handoff cleanup:
 
 ```bash
 python3 scripts/audit_repository.py
+python3 scripts/check_smoke.py
 ```
 
 It checks for Lean `sorry`s, unguarded `#check` ledgers, missing paper-folder

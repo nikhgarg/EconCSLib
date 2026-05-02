@@ -20,6 +20,10 @@ Run `python3 scripts/audit_repository.py --strict-style` when doing an
 organization pass. The default audit stays conservative so active paper work is
 not blocked by legacy modules that predate these conventions.
 
+For theorem ergonomics and human-facing ledgers, use
+[`THEOREM_ERGONOMICS.md`](THEOREM_ERGONOMICS.md) as the working
+checklist before any status updates.
+
 ## Declaration names
 
 - Structures, classes, inductive types, and named predicates use

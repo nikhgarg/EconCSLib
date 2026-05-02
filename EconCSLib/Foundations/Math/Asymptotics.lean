@@ -102,5 +102,44 @@ theorem ExactInvSqrtRate_implies_TendsToZero (ε : ℕ → ℝ) :
   exact TendsToZeroInvSqrt_implies_TendsToZero ε
     (ExactInvSqrtRate_implies_TendsToZeroInvSqrt ε hε)
 
+/-- A sequence tends to zero if it is eventually dominated by `C / N`. -/
+theorem TendsToZero_of_eventually_abs_le_inv (ε : ℕ → ℝ) {C : ℝ}
+    (_hC : 0 < C) (hbound : ∀ᶠ N in atTop, |ε N| ≤ C / (N : ℝ)) :
+    TendsToZero ε := by
+  rw [TendsToZero]
+  have h_zero : Tendsto (fun N : ℕ => C / (N : ℝ)) atTop (nhds 0) :=
+    tendsto_const_div_atTop_nhds_zero_nat C
+  have h_neg_zero : Tendsto (fun N : ℕ => -(C / (N : ℝ))) atTop (nhds 0) := by
+    have h := h_zero.neg
+    rwa [neg_zero] at h
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' h_neg_zero h_zero
+  · filter_upwards [hbound, eventually_gt_atTop 0] with N hN hNpos
+    rw [abs_le] at hN
+    exact hN.1
+  · filter_upwards [hbound, eventually_gt_atTop 0] with N hN hNpos
+    rw [abs_le] at hN
+    exact hN.2
+
+/-- A sequence tends to zero if it is eventually dominated by `C / √N`. -/
+theorem TendsToZero_of_eventually_abs_le_inv_sqrt (ε : ℕ → ℝ) {C : ℝ}
+    (_hC : 0 < C) (hbound : ∀ᶠ N in atTop, |ε N| ≤ C / Real.sqrt (N : ℝ)) :
+    TendsToZero ε := by
+  rw [TendsToZero]
+  have h_sqrt_atTop :
+      Tendsto (fun N : ℕ => Real.sqrt (N : ℝ)) atTop atTop :=
+    Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop
+  have h_zero : Tendsto (fun N : ℕ => C / Real.sqrt (N : ℝ)) atTop (nhds 0) :=
+    Filter.Tendsto.const_div_atTop h_sqrt_atTop C
+  have h_neg_zero : Tendsto (fun N : ℕ => -(C / Real.sqrt (N : ℝ))) atTop (nhds 0) := by
+    have h := h_zero.neg
+    rwa [neg_zero] at h
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' h_neg_zero h_zero
+  · filter_upwards [hbound, eventually_gt_atTop 0] with N hN hNpos
+    rw [abs_le] at hN
+    exact hN.1
+  · filter_upwards [hbound, eventually_gt_atTop 0] with N hN hNpos
+    rw [abs_le] at hN
+    exact hN.2
+
 end Math
 end EconCSLib

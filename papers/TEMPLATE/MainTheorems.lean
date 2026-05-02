@@ -15,6 +15,10 @@ namespace TEMPLATE
 /-- Paper Definition 1. Replace this with the exact source formula. -/
 abbrev paperDefinition1 : Prop := True
 
+/-- Placeholder for the first exact source theorem. Replace with source statement first. -/
+theorem paperTheoremPlaceholder : paperDefinition1 := by
+  trivial
+
 /-- Paper Theorem 1. Replace with the exact source statement. -/
 theorem paper_theorem_1 : paperDefinition1 := by
   trivial

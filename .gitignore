@@ -18,8 +18,15 @@
 .env.*
 !.env.example
 *.log
+
+# Python cache and local tool output
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # LaTeX auxiliary files
 *.aux

@@ -134,12 +134,22 @@ Use the controlled status vocabulary from `../../docs/STATUS.md`:
 `scaffold`, `not started`, and `not formalized`. Keep detailed caveats,
 remaining certificates, or proof-route notes in the final column rather than in
 the status cell.
+Keep theorem/table content synchronized with `DependencyDAG.tex` node styles and
+`MainTheorems.lean` declarations before marking a row `formalized`.
 
 ## Theorem Status
 
 | Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
 | Main theorem(s) | `none` | not started | `none` | Extract named results from `source.txt` |
+
+## Intake Checklist
+
+- [ ] Confirm the official PDF URL, version, and bibliographic fields.
+- [ ] Extract/confirm all named definitions, lemmas, and theorems in source order.
+- [ ] Populate `DependencyDAG.tex` with the same named-result inventory.
+- [ ] Replace placeholders in `MainTheorems.lean` before updating any status row.
+- [ ] Rebuild `DependencyDAG.pdf` and verify visually after each significant edit.
 """
 
 
@@ -166,19 +176,26 @@ def dag_text() -> str:
   y=1cm,
   every node/.append style={outer sep=4pt}
 ]
+
+\dagPaperMetadata{[Paper Title]}{[Authors]}{[Publication Venue]}{[Year]}{[Formalized PDF link]}
+
 % --- Legend: README status vocabulary plus formalized node-type styles. ---
+\dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
 \node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
 \node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
-\node[dag_caveat, dag_template_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
 \node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
 \node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
 \node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
 \node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+}
 \daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
 
+\begin{dagPaperBody}
+
 % --- Layout guidance for future agents. ---
-\node[dag_template_note, below=1.1cm of Legend] (Guide) {
+\node[dag_template_note] (Guide) at (6.4,0) {
   Replace these scaffold nodes with the paper's named definitions, lemmas,
   propositions, theorems, and corollaries. Keep nodes on the grid below:
   columns are spaced by 6.4cm and rows by 3.2cm, which is wide enough for the
@@ -195,29 +212,29 @@ def dag_text() -> str:
 % - Change the leading style only, e.g. dag_unformalized -> dag_conditional ->
 %   dag_lemma/dag_result, and update the short text if the remaining assumption changed.
 % - Keep node names and arrows stable after the initial intake map is complete.
-\node[dag_model] (Model) at (0,-10.2) {
+\node[dag_model] (Model) at (0,-4.2) {
   \textbf{Definitions / Model} \\
   Source primitives
 };
-\node[dag_lemma] (LemmaA) at (6.4,-10.2) {
+\node[dag_lemma] (LemmaA) at (6.4,-4.2) {
   \textbf{Lemma A} \\
   First reusable step
 };
-\node[dag_lemma] (LemmaB) at (12.8,-10.2) {
+\node[dag_lemma] (LemmaB) at (12.8,-4.2) {
   \textbf{Lemma B} \\
   Second reusable step
 };
 
-\node[dag_conditional] (Bridge) at (6.4,-13.4) {
+\node[dag_conditional] (Bridge) at (6.4,-7.4) {
   \textbf{Bridge Theorem} \\
   Conditional paper-facing reduction
 };
-\node[dag_unformalized] (Open) at (12.8,-13.4) {
+\node[dag_unformalized] (Open) at (12.8,-7.4) {
   \textbf{Open Source Result} \\
   Name exact remaining gap
 };
 
-\node[dag_result] (Main) at (6.4,-16.6) {
+\node[dag_result] (Main) at (6.4,-10.6) {
   \textbf{Main Theorem} \\
   Closed paper-facing endpoint
 };
@@ -228,6 +245,7 @@ def dag_text() -> str:
 \draw[dag_dashed_arrow] (LemmaB) -- (Open);
 \draw[dag_arrow] (Bridge) -- (Main);
 \draw[dag_dashed_arrow] (Open) |- (Main);
+\end{dagPaperBody}
 \end{tikzpicture}
 \end{document}
 """
@@ -252,6 +270,10 @@ namespace {namespace}
 /-- Placeholder for the first exact source definition. Replace before claiming progress. -/
 abbrev paperDefinition1 : Prop := True
 
+/-- Replace before claiming progress: explicit source formula wrapper. -/
+theorem paperTheoremPlaceholder : paperDefinition1 := by
+  trivial
+
 /-- Placeholder for the first exact source theorem. Replace before claiming progress. -/
 theorem paper_theorem_1 : paperDefinition1 := by
   trivial
@@ -275,6 +297,34 @@ def root_import_text(folder: str) -> str:
 """
 
 
+def notes_text(title: str, namespace: str, args: argparse.Namespace) -> str:
+    official_url = args.official_url or args.url
+    title_text = title or "[Paper Title]"
+    return f"""# {title_text} Verification Notes
+
+This is a lightweight handoff document for source-to-Lean mapping.
+
+- Namespace: `{namespace}`
+- Official URL: {official_url}
+- Source PDF: `source.pdf`
+- Source text cache: `source.txt`
+
+## Verification checklist
+
+- [ ] Full named-result inventory copied to the README theorem table.
+- [ ] DAG graph includes all required paper-stage nodes and dependencies.
+- [ ] README status and remaining-assumption notes match proof artifacts.
+- [ ] Final status review completed before publishing.
+
+## Notes
+
+- Date reviewed:
+- Last theorem row verified:
+- Outstanding assumptions / caveats:
+
+"""
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("url", help="paper URL; arXiv abs URLs are converted to PDF URLs")
@@ -287,6 +337,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--namespace", help="Lean namespace; defaults to sanitized folder name")
     parser.add_argument("--no-download", action="store_true", help="scaffold files without downloading the PDF")
     parser.add_argument("--force", action="store_true", help="overwrite existing scaffold files")
+    parser.add_argument("--with-notes", action="store_true", help="generate PAPER_NOTES.md handoff checklist")
     return parser.parse_args()
 
 
@@ -313,6 +364,12 @@ def main() -> int:
     write_file(paper_dir / "DependencyDAG.tex", dag_text(), args.force)
     write_file(paper_dir / "MainTheorems.lean", main_theorems_text(args.title or "", namespace), args.force)
     write_file(PAPERS / f"{folder}.lean", root_import_text(folder), args.force)
+    if args.with_notes:
+        write_file(
+            paper_dir / "PAPER_NOTES.md",
+            notes_text(args.title or "", namespace, args),
+            args.force,
+        )
 
     if not args.no_download:
         downloaded = download_pdf(args.pdf_url or args.url, pdf, args.force)

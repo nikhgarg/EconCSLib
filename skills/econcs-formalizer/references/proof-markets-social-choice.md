@@ -66,6 +66,68 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   conditional until the top-of-remaining-set lift is formalized (often via
   subset/restriction rank-factorization or another explicit stochastic
   dominance bridge).
+- For KR21-style nonconvex remaining-set lifts, prefer the prefix first-hit
+  layer-cake target over broad "all monotone payoff" Kendall-layer averages.
+  Broad uniform Kendall-layer average antitonicity is only a sufficient
+  condition and can be too strong for arbitrary weak-Bruhat monotone payoffs;
+  the narrower active target is the prefix-event condition
+  `ReflKendallPrefixLayerAverageAnti` or its consecutive-layer form
+  `ReflKendallAdjacentPrefixLayerAverageAnti`.
+- In KR21 prefix-event peel-best recurrences, do not require each fixed
+  before-insert branch to satisfy Mallows dominance. That branchwise statement
+  is false in small cases, e.g. a worse first choice can increase a
+  `cut = 0` before-insert event. Sum over insertion positions first, using an
+  aggregate payoff such as `bestInSetPrefixCutTailInsertPositionValue`, then
+  split the proof into the geometric insertion-prefix comparison and the
+  remaining fixed-tail-payoff dominance obligation.
+- For KR21 arbitrary first-choice decompositions, do not assume the branch sums
+  are antitone in the first-choice rank; arbitrary nonconvex prefix events can
+  violate that monotonicity. Use the explicit branch-bracket layer instead:
+  `firstChoiceBranchPayoffSum`, `firstChoiceBranchBracket`,
+  `candidateRankBranchCross_nonneg_of_diag_pair`, and
+  `reflMallowsPayoffSum_cross_of_firstChoice_pair_brackets`. This keeps the
+  induction target arbitrary-size and shifts the work to two-branch brackets
+  rather than more finite candidate classifications.
+- For KR21 arbitrary remaining-set Mallows dominance, keep the exact
+  best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
+  dominance targets. Define an identity-center unnormalised fiber such as
+  `reflMallowsBestInSetWeight`, prove its center-relabeling bridge to
+  `MallowsSpec.bestInSetWeight`, and use the candidatewise weighted-average
+  bridge before attempting the stronger all-payoff adjacent stochastic
+  dominance theorem. The two-candidate base case and full-remaining-set case
+  reduce to first-choice weights; arbitrary nonconvex sets need the dedicated
+  fiber recurrence/MLR proof.
+- For the two-candidate part of that KR21 fiber route, do not reprove Mallows
+  pairwise monotonicity from scratch. First prove that `bestInSetWeight {c,d} c`
+  and `bestInSetWeight {c,d} d` are exactly `pairCorrectWeight` and
+  `pairWrongWeight` for the center-ordered pair, then call the existing
+  `PairPositionReduction` / `pairWeight_cross_pos_of_pairPositionReduction`
+  machinery. This gives a clean `card <= 2` fiber-MLR milestone while leaving
+  only arbitrary-size nonconvex remaining sets open. In a three-candidate
+  universe, combine this pair case with the full-set first-choice cross theorem
+  to close the whole fiber-MLR target, since every nonempty remaining set has
+  cardinality one, two, or all three candidates.
+- For KR21 center-convex remaining sets, the stronger fiber-MLR theorem can be
+  proved by deleting absent extremes, not by opening ranking sums. Prove exact
+  common-scale deletion formulas for `reflMallowsBestInSetWeight` when `0` or
+  the last center candidate is not remaining; lift a single tail/initial cross
+  inequality through those common positive scales; then induct until the
+  interval is the full set and use first-choice fiber MLR.
+- For KR21 co-singleton remaining sets, do not develop a new best-in-set
+  recurrence. Rewrite `bestInSetWeight (univ \ {removed})` to the existing
+  `bestAfterRemovalWeight` fiber using `bestInSet_univ_sdiff_singleton`, then
+  call the rank-factorized `candidateRankBestAfterRemovalWeight` MLR theorem.
+  Preserve the theorem's geometric side condition (`qLess < 1`) in
+  paper-facing wrappers unless a separate proof removes it.
+- In a four-candidate KR21 wrapper, classify a nonempty remaining finset by
+  cardinality: `card <= 2` uses pairwise dominance, `card = 4` is the full
+  center-convex case, and `card = 3` is a co-singleton by taking the singleton
+  complement `univ \ remaining`. This can close the full finite universe from
+  existing local routes without proving arbitrary-size dominance.
+- When using loose Kendall-layer index bounds, prove and reuse no-gap support
+  lemmas before chaining adjacent layer inequalities: if a higher identity
+  Kendall layer is nonempty, every lower layer is nonempty. This lets adjacent
+  cleared-average inequalities telescope without division-by-zero side cases.
 - For ranking fibers over `Fin`, normalize first-choice rank `r` with
   `Fin.cycleRange r`; normalize ordered top-two ranks `r < s` with
   `cycleRange r` followed by `cycleIcc 1 s`; normalize swapped top-two ranks
