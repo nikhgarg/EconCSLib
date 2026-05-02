@@ -32,6 +32,13 @@ finite signs, asymptotics, and interval-crossing arguments.
   final triangle-inequality or share-error bound.
 - For floor/ceiling thresholds around a real optimum, use separate lower and
   upper integer anchors when one anchor cannot serve both roles.
+- For real-log or ceiling wrappers around a finite theorem, prove the finite
+  theorem first and add the analytic wrapper as a thin layer. Put the
+  `Nat.ceil`, `Real.logb`, `rpow_natCast`, and coefficient-rounding facts in
+  the wrapper; do not thread analytic side conditions through the combinatorial
+  proof. Check exact theorem signatures with `#check`/`exact?` in `/tmp`
+  before editing the main file, especially for power monotonicity lemmas whose
+  base hypothesis may be `1 <= b` rather than `0 <= b`.
 - For analytic crossing proofs, first prove the finite algebra conditionally
   from a named crossing certificate. Then instantiate continuity/limit facts in
   small generic interval modules.
@@ -58,6 +65,10 @@ simpa using
   generic interval/analysis modules.
 - Keep imports narrow. Prefer specific Mathlib modules over `import Mathlib` in
   new or actively repaired files.
+- If adding one analytic lemma to an otherwise combinatorial file, try the
+  narrow leaf import in a scratch file first. For example, base-log wrappers
+  should import `Mathlib.Analysis.SpecialFunctions.Log.Base`, not all of
+  Mathlib.
 - If a Lean goal is not moving after a few local attempts, extract the exact
   algebraic, finite-sum, relabeling, or monotonicity fact as a named helper
   lemma before returning to the main theorem.

@@ -74,6 +74,10 @@ formalization, execute the standard intake before deep proof work:
 - Download/cache the exact source PDF in a new or existing
   `papers/[AuthorInitials][2DigitYear][Descriptor]/` folder, then create the
   adjacent `.txt` extraction with `pdftotext`.
+- If the PDF/text cache already exists in the paper folder, use those local
+  files. Do not search the web again, re-download the paper, or re-run
+  extraction unless the cached source version is missing, corrupted, or known
+  to be the wrong version.
 - Read the abstract, introduction, model section, and theorem statements first;
   then search the cached text for every named `Definition`, `Lemma`,
   `Proposition`, `Theorem`, `Corollary`, and appendix result.
@@ -228,7 +232,11 @@ the Lean statements against the paper.
   the scalar layer as closed and keep only the probability-to-integral bridge as
   the theorem-level blocker.
 - In this repository's `papers/[Paper]/DependencyDAG.tex` layout, the shared
-  preamble input is `\input{../../docs/tikz/dag_preamble.tex}`. Verify the DAG
+  preamble input is `\input{../../docs/tikz/dag_preamble.tex}`. Render from the
+  paper folder (`cd papers/<Paper> && latexmk -pdf DependencyDAG.tex`) or use a
+  LaTeX invocation that preserves that relative path; running `latexmk
+  papers/<Paper>/DependencyDAG.tex` from the repo root resolves the preamble
+  relative to the wrong directory and wastes a build cycle. Verify the DAG
   renders after changing the preamble path or moving a paper folder.
 - If a theorem is only conditional, the README must name the exact certificate
   or assumption declaration that remains. Do not describe it vaguely as
@@ -315,8 +323,11 @@ search.
   validation pass: read the paper README theorem-status rows, inspect the DAG
   status for the named main results, check the paper-facing theorem file for
   the strongest closed wrappers, run the targeted `lake build <module>`, and
-  search only Lean files for real proof placeholders such as `sorry`, `admit`,
-  or `axiom`. Ignore cached PDF text and comment prose for placeholder searches.
+  search only the target Lean files for real proof placeholders such as
+  `sorry`, `admit`, or `axiom`, for example
+  `rg -n "sorry|admit|axiom" papers/<Paper> --glob '*.lean'`. Ignore cached
+  PDF text, README prose, skill files, and comments when doing placeholder
+  searches; otherwise ordinary instructional text creates false positives.
   If auxiliary certificate/BFS/interface theorems still take explicit inputs,
   verify that the final source wrapper does not expose them before calling the
   source theorem closed.
@@ -342,6 +353,10 @@ search.
   theorem layers, the current endpoint, the next bridge, known traps, and the
   last passing build command. This prevents future agents from spending tokens
   re-deriving the same orientation.
+- If the user asks to stop soon, first pick a named theorem/lemma endpoint that
+  can be made green quickly, finish that wrapper, and run the targeted module
+  plus paper-root builds. Only then update the README/DAG/skill handoff. Do not
+  start a fresh hard proof branch just before documenting a handoff.
 
 ### 1.5 Workflow
 
@@ -430,6 +445,15 @@ search.
 - Assume there could be other agents or human users simultaneously working on different files within the same repository.
 - **NEVER** use aggressive global resets like `git reset --hard`, `git clean -fd`, or `git checkout .` unless explicitly instructed to do so by the user. These commands will permanently destroy work being done by other concurrent agents.
 - Always scope your git operations (e.g., `git checkout <specific_file>`, `git restore <specific_file>`) strictly to the files you are actively modifying.
+- Use the native `apply_patch` editing tool for manual source edits. Do not
+  invoke `apply_patch` through a shell command, and do not use heredoc/sed/perl
+  write tricks for ordinary Lean, README, or skill edits; those paths obscure
+  exactly what changed and are easy to misapply in a dirty multi-agent tree.
+- Before committing, inspect `git status --short` and `git diff --name-only`.
+  Stage explicit paths only, normally the active paper files plus any intended
+  skill/docs updates. Do not stage unrelated dirty dependency repairs made only
+  to let a local build proceed unless you intentionally take ownership of that
+  library change.
 
 - Lake reuses `.olean` artifacts when sources, imports, Lean version, and
   dependency artifacts are unchanged.
@@ -454,6 +478,11 @@ search.
   root after the dependency is stable.
 - Do not infer that downstream files are broken until the direct imported module
   builds.
+- If a focused paper build fails because an unrelated imported module is dirty,
+  first ask whether a narrower import would avoid that dependency. If a small
+  local repair to the unrelated file is unavoidable to continue the build,
+  document it in the handoff and leave it unstaged unless the active paper
+  truly depends on that repaired theorem.
 - For deterministic heartbeat failures in one large proof, first replace heavy
   terminal `linarith`/`nlinarith`/`ring` calls with explicit named inequalities
   and a short contradiction chain. If the proof is still too large, use
@@ -519,11 +548,16 @@ Before ending work, update a repo note or paper handoff with:
 **CRITICAL MANDATE - DO NOT GUESS MATHLIB LEMMAS:**
 When you need a Mathlib lemma (e.g., for `Filter.Tendsto`, `Finset.sum`, or topological limits), **DO NOT guess its exact camelCase or snake_case name in a loop.** This wastes massive amounts of tokens and context window.
 Instead:
-1. Create a minimal `/tmp/test.lean` file.
+1. Create a minimal `/tmp/test.lean` file that imports only the touched module
+   or the narrow Mathlib leaf you are testing.
 2. State the exact theorem you want to prove.
 3. Use the `exact?` or `apply?` tactics inside the proof.
 4. Run `lake env lean /tmp/test.lean` to let Lean's internal search engine give you the exact lemma name.
-5. If `exact?` fails, search the local `.lake/packages/mathlib` repository using `grep` or `rg` for keywords, or use `Moogle` / LeanSearchClient if configured.
+5. If `exact?` fails, search the local `.lake/packages/mathlib` repository
+   using `rg` for keywords, or use `Moogle` / LeanSearchClient if configured.
+6. If the scratch proof requires a new import, add the narrow leaf import at
+   the file that uses the declaration; do not recover by importing aggregate
+   roots such as `Mathlib` or `EconCSLib`.
 
 Never enter a cycle of modifying a single line in a shell command just to test slightly different lemma names. Stop, use `exact?`, and proceed efficiently.
 

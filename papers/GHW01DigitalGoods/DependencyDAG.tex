@@ -5,14 +5,19 @@
 \begin{tikzpicture}[node distance=1.15cm and 1.55cm,
   every node/.style={font=\sffamily\small}]
 
-\node[dag_result, text width=2.9cm] (legRes)
+  \dagPaperMetadata{Competitive Auctions and Digital Goods}{Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright}{SODA 2001 / STAR-TR-99-01}{2000}{https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf}
+  \begin{scope}[shift={($(dagPaperMetadata.north east -| 0,0) + (0.4cm,0cm)$)}]
+\node[dag_result, dag_template_legend] (legRes)
   {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, text width=2.9cm] (legCond)
+\node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond)
   {\textbf{Conditional}\\explicit certificate};
-\node[dag_model, right=0.35cm of legCond, text width=2.9cm] (legDef)
+\node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef)
   {\textbf{Definition}\\model layer};
-\node[dag_unformalized, right=0.35cm of legDef, text width=2.9cm] (legOpen)
+\node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen)
   {\textbf{Open}\\not formalized};
+
+
+  \end{scope}
 \daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
 
 \node[dag_model, below=1.85cm of legRes, text width=3.8cm] (Core)
@@ -25,7 +30,7 @@
 \node[dag_model, right=of Core, text width=3.8cm] (Opt)
   {\textbf{opt(B), $F$, $T$ (Section 4)}\\optimal fixed-price and multi-price benchmarks};
 \node[dag_conditional, below=of Opt, text width=3.8cm] (Thm41)
-  {\textbf{Theorem 4.1 (Section 4)}\\power-of-two dyadic partition closed; needs exact log-$h$ notation bridge};
+  {\textbf{Theorem 4.1 (Section 4)}\\dyadic partition and $\log_2 h+2$ bridge closed; exact unrounded log notation remains caveated};
 \node[dag_conditional, below=of Thm41, text width=3.8cm] (Cor42)
   {\textbf{Corollary 4.2 (Section 4)}\\truncation algebra closed; needs log-$n$ partition};
 
@@ -41,14 +46,14 @@
 \node[dag_conditional, below=of Weighted, text width=3.8cm] (Thm71)
   {\textbf{Theorem 7.1 (Section 7)}\\power-of-two dyadic bins, classifier split, and ranking bridge closed; needs arbitrary log-$h$ bridge};
 \node[dag_conditional, below=of Thm71, text width=3.8cm] (Thm72)
-  {\textbf{Theorem 7.2 (Section 7)}\\$F^{(2)} \le 576sW$ closed with canonical dyadic tail; tightness ratio certificate needs concrete family};
+  {\textbf{Theorem 7.2 (Section 7)}\\$F^{(2)} \le 576sW$ dyadic form and repeated-bid tightness family closed; exact log packaging remains caveated};
 
 \node[dag_model, right=of Weighted, text width=3.8cm] (RandomTruthful)
   {\textbf{$p_i,c_i,g_i$ (Section 8)}\\win probabilities, expected costs, expected gains};
 \node[dag_result, below=of RandomTruthful, text width=3.8cm] (Lemma81)
   {\textbf{Lemma 8.1 (Section 8)}\\truthfulness implies monotone win probabilities};
 \node[dag_conditional, below=of Lemma81, text width=3.8cm] (Thm82)
-  {\textbf{Theorem 8.2 (Section 8)}\\payoff-recursion algebra proves $E[R] \le F$; needs DSIC instantiation};
+  {\textbf{Theorem 8.2 (Section 8)}\\payment-form ranked telescoping proves $E[R] \le F$; needs concrete randomized DSIC instantiation};
 
 \node[dag_model, below=of Benchmark, text width=3.8cm] (DetModel)
   {\textbf{Deterministic Models (Section 9)}\\optimal threshold and deterministic bid-independent auctions};
@@ -84,6 +89,5 @@
 \draw[dag_dashed_arrow] (DetModel.east) to[out=-35,in=35,looseness=1.15] (Lemma92.east);
 \draw[dag_dashed_arrow] (Thm91) -| (Thm93);
 \draw[dag_dashed_arrow] (Lemma92) -- (Thm93);
-
 \end{tikzpicture}
 \end{document}

@@ -66,6 +66,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `values i <= 2^(m+1)`, construct the `m+1` factor-two bins by induction on
   powers of two, and state the theorem with the explicit hypothesis
   `(m+1 : ℝ) <= s^2` or the relevant log-bound certificate.
+- Once the natural-number dyadic certificate is closed, add the paper-facing
+  real-log wrapper as a thin theorem rather than refactoring the bin proof.
+  For base-two logs over normalized bids, set `m = Nat.ceil (Real.logb 2 h)`,
+  use `Real.logb_le_iff_le_rpow` and `Real.rpow_natCast` to get
+  `h <= 2^m <= 2^(m+1)`, then use `Nat.ceil_lt_add_one` to bound
+  `m+1 <= Real.logb 2 h + 2`. This keeps analytic imports narrow
+  (`Mathlib.Analysis.SpecialFunctions.Log.Base`) and preserves a green
+  dyadic theorem if exact paper log constants are still caveated.
 - In weighted-pairing Theorem 7.2-style proofs, keep the fixed-price tail base
   separate from the selected largest bucket's floor. The fixed-price bound uses
   the bucket containing the price (`p <= 2 * baseFloor`) to count winners, while
@@ -134,6 +142,20 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   these adjacent assumptions bounded to `j+1 < n`; if a helper asks for all
   natural indices, add the bounded finite-sum variant instead of fabricating
   out-of-range comparisons.
+- Prefer payment-form ranked revenue wrappers before introducing conditional
+  expected costs. Define `gain i = p_{i+1} * b_i - payment_i`; the high-value
+  adjacent truthfulness inequality gives the recursion
+  `gain_i + p_{i+1}(b_{i+1}-b_i) <= gain_{i+1}`, while the low/high adjacent
+  payment inequalities and strict adjacent ranked bids give monotone win
+  probabilities. This usually removes an artificial `expectedCost` variable
+  from the paper-facing Theorem 8.2 seam and leaves only the concrete
+  randomized-auction DSIC-to-ranked-payment bridge.
+- Once a ranked-payment wrapper is green, stop adding more conditional algebra
+  variants. The next useful proof work is the model bridge: define the concrete
+  anonymous/sorted-bid randomized auction interface, prove its expected revenue
+  decomposes as the ranked payment sum, and derive the adjacent payment-form
+  truthfulness inequalities from DSIC. Record that exact bridge in the README
+  if stopping before it is proved.
 - When a lower-bound construction returns a feasible benchmark lower bound,
   strengthen it to the actual benchmark before declaring the paper endpoint
   closed. For finite candidate fixed-price benchmarks this usually means

@@ -16,3 +16,9 @@ library layer touched by the current proof.
 General rule: classify the proof type first, then open the smallest relevant
 reference. Move sideways to a smaller seam of the same type when proof search
 starts looping; do not compensate by loading every reference file.
+
+When updating the skill after a long session, write the lesson where the next
+agent will look first: workflow/context/validation guidance belongs in
+`SKILL.md`, while proof moves belong in the relevant domain reference. Prefer
+one concrete reusable pattern, failed approach, or exact build/search command
+over a broad reminder that duplicates existing guidance.
