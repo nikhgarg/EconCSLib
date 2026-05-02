@@ -85,9 +85,23 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   violate that monotonicity. Use the explicit branch-bracket layer instead:
   `firstChoiceBranchPayoffSum`, `firstChoiceBranchBracket`,
   `candidateRankBranchCross_nonneg_of_diag_pair`, and
-  `reflMallowsPayoffSum_cross_of_firstChoice_pair_brackets`. This keeps the
-  induction target arbitrary-size and shifts the work to two-branch brackets
-  rather than more finite candidate classifications.
+  `reflMallowsPayoffSum_cross_of_firstChoice_pair_brackets`. For arbitrary
+  prefix first-hit events, do not insist that every individual two-branch
+  bracket is nonnegative; that pairwise sufficient condition can be too strong.
+  Prefer the aggregate off-diagonal target
+  `candidateRankBranchCross_nonneg_of_diag_pair_sum` and its wrappers
+  `firstChoiceBranchPayoffSum_prefixCut`,
+  `firstChoiceBranchPayoffSum_prefixCut_diag_nonneg_of_tail`,
+  `firstChoiceBranchBracketSum`,
+  `reflMallowsPayoffSum_cross_of_firstChoice_pair_bracket_sum`, and
+  `reflMallowsBestInSetPrefixCutSum_cross_of_firstChoice_pair_bracket_sum`.
+  The wrapper
+  `reflMallowsBestInSetPrefixCutSum_cross_of_firstChoice_tail_pair_bracket_sum`
+  packages the diagonal terms from smaller tail prefix-cut dominance, leaving
+  the aggregate bracket sum as the main new arbitrary induction target. This
+  keeps the induction target arbitrary-size while allowing negative
+  first-choice pair brackets to cancel in the total recurrence, instead of
+  adding more finite candidate classifications.
 - For KR21 arbitrary remaining-set Mallows dominance, keep the exact
   best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
   dominance targets. Define an identity-center unnormalised fiber such as
