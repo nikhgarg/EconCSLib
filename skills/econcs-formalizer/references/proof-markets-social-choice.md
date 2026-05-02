@@ -121,7 +121,15 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   and induction wrapper
   `ReflMallowsBestInSetPrefixCutDominance.of_firstChoiceWeighted` are the
   current narrowest arbitrary route; the full-remaining-set bracket case is
-  already closed by `firstChoiceBranchBracketSum_univ_cut_nonneg`.
+  already closed by `firstChoiceBranchBracketSum_univ_cut_nonneg`, and the
+  corresponding full-remaining weighted target by
+  `firstChoiceBranchWeighted_univ_cut_nonneg`. Boundary weighted targets are
+  zero by `firstChoiceBranchWeighted_prefixCut_eq_zero_of_forall_remaining_lt`
+  and `firstChoiceBranchWeighted_prefixCut_eq_zero_of_forall_remaining_ge`.
+  For the remaining nonconvex weighted target, use
+  `candidateRankWeightedAverage_cross_eq_pair_sum` /
+  `firstChoiceBranchWeighted_eq_pair_sum` to expose aggregate cancellation over
+  first-choice pairs.
 - For KR21 arbitrary remaining-set Mallows dominance, keep the exact
   best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
   dominance targets. Define an identity-center unnormalised fiber such as
