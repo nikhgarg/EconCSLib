@@ -130,6 +130,14 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   `candidateRankWeightedAverage_cross_eq_pair_sum` /
   `firstChoiceBranchWeighted_eq_pair_sum` to expose aggregate cancellation over
   first-choice pairs.
+- For the KR21 weighted first-choice recursion, remember the indexing
+  convention: `ReflMallowsBestInSetPrefixCutFirstChoiceWeighted 0` is already
+  the three-candidate first-choice universe (`Candidate 1`), not a two-candidate
+  problem. Close that base by classifying cuts `0`, `1`, `2`, and `>2`,
+  dispatching boundary/singleton/full cases with the existing zero/full
+  weighted lemmas, and proving the three nontrivial two-element remaining-set
+  branch patterns as small algebra facts (`Z01`, `Z10`, `1Z0`) before doing the
+  finite case split.
 - For KR21 arbitrary remaining-set Mallows dominance, keep the exact
   best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
   dominance targets. Define an identity-center unnormalised fiber such as
