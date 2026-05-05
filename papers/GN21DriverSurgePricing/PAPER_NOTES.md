@@ -25,8 +25,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   positivity wrappers, Lemma 9/10 endpoint bridges, Theorem 4 paper-ordered
   shape-derivation routes, raw statewise improvement adapters, shape-level
   with-density bridges for all four Theorem 4 shape cases, the accept-all-bound
-  reject-long shape wrapper, the packaged source-facing statewise-improvement
-  certificate for Theorem 4/Theorem 3, Theorem 3 CTMC structured price form,
+  reject-long and accept-middle shape wrappers, the packaged source-facing
+  statewise-improvement certificate for Theorem 4/Theorem 3, Theorem 3 CTMC
+  structured price form,
   ratio-to-IC endpoints, and accept-all-primitive statewise-certificate
   endpoint, and auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
