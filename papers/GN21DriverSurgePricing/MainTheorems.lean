@@ -330,6 +330,33 @@ def acceptsAllTrips (σ : TripPolicy) : Prop :=
 def acceptAllPolicy : TripPolicy :=
   positiveTripLengths
 
+/-- The canonical accept-all policy accepts every feasible positive trip. -/
+theorem acceptsAllTrips_acceptAllPolicy :
+    acceptsAllTrips acceptAllPolicy := by
+  intro τ hτ
+  exact hτ
+
+/-- A policy fails to accept all feasible trips iff it misses some positive trip length. -/
+theorem not_acceptsAllTrips_iff_exists_pos_not_mem
+    {σ : TripPolicy} :
+    ¬ acceptsAllTrips σ ↔ ∃ τ : TripLength, 0 < τ ∧ τ ∉ σ := by
+  constructor
+  · intro hnot
+    by_contra hno
+    apply hnot
+    intro τ hτ
+    by_contra hτ_not
+    exact hno ⟨τ, hτ, hτ_not⟩
+  · rintro ⟨τ, hτ_pos, hτ_not⟩ hall
+    exact hτ_not (hall hτ_pos)
+
+/-- If a policy does not accept all feasible trips, choose a missing positive trip. -/
+theorem exists_pos_not_mem_of_not_acceptsAll
+    {σ : TripPolicy}
+    (hnot : ¬ acceptsAllTrips σ) :
+    ∃ τ : TripLength, 0 < τ ∧ τ ∉ σ :=
+  not_acceptsAllTrips_iff_exists_pos_not_mem.mp hnot
+
 /-- A feasible policy that accepts all positive trips is exactly accept-all. -/
 theorem eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
     {σ : TripPolicy}
@@ -6811,6 +6838,55 @@ theorem rejectsMiddleTrips_rejectMiddleTripsPolicy (lo hi : ℝ) :
   intro τ hτ
   simp [rejectMiddleTripsPolicy, hτ]
 
+/-- Any finite long-trip cutoff misses some positive trip. -/
+theorem not_acceptsAllTrips_rejectLongTripsPolicy (t : ℝ) :
+    ¬ acceptsAllTrips (rejectLongTripsPolicy t) := by
+  refine not_acceptsAllTrips_iff_exists_pos_not_mem.mpr ?_
+  refine ⟨max t 0 + 1, ?_, ?_⟩
+  · have hnonneg : 0 ≤ max t 0 := le_max_right t 0
+    linarith
+  · have ht_le : t ≤ max t 0 + 1 := by
+      have hle : t ≤ max t 0 := le_max_left t 0
+      linarith
+    simp [rejectLongTripsPolicy, not_lt_of_ge ht_le]
+
+/-- A positive short-trip cutoff misses sufficiently short positive trips. -/
+theorem not_acceptsAllTrips_rejectShortTripsPolicy_of_pos
+    {t : ℝ} (ht : 0 < t) :
+    ¬ acceptsAllTrips (rejectShortTripsPolicy t) := by
+  refine not_acceptsAllTrips_iff_exists_pos_not_mem.mpr ?_
+  refine ⟨t / 2, by positivity, ?_⟩
+  have hhalf_lt : t / 2 < t := by linarith
+  simp [rejectShortTripsPolicy, not_lt_of_ge (le_of_lt hhalf_lt)]
+
+/-- Any finite middle-acceptance interval misses large positive trips. -/
+theorem not_acceptsAllTrips_acceptMiddleTripsPolicy (lo hi : ℝ) :
+    ¬ acceptsAllTrips (acceptMiddleTripsPolicy lo hi) := by
+  refine not_acceptsAllTrips_iff_exists_pos_not_mem.mpr ?_
+  refine ⟨max hi 0 + 1, ?_, ?_⟩
+  · have hnonneg : 0 ≤ max hi 0 := le_max_right hi 0
+    linarith
+  · have hhi_le : hi ≤ max hi 0 + 1 := by
+      have hle : hi ≤ max hi 0 := le_max_left hi 0
+      linarith
+    simp [acceptMiddleTripsPolicy, not_lt_of_ge hhi_le]
+
+/-- A nontrivial positive middle-rejection gap misses a positive trip. -/
+theorem not_acceptsAllTrips_rejectMiddleTripsPolicy_of_pos_lt
+    {lo hi : ℝ} (hlo_pos : 0 < lo) (hlohi : lo < hi) :
+    ¬ acceptsAllTrips (rejectMiddleTripsPolicy lo hi) := by
+  refine not_acceptsAllTrips_iff_exists_pos_not_mem.mpr ?_
+  let mid := (lo + hi) / 2
+  have hlo_mid : lo < mid := by
+    dsimp [mid]
+    linarith
+  have hmid_hi : mid < hi := by
+    dsimp [mid]
+    linarith
+  refine ⟨mid, lt_trans hlo_pos hlo_mid, ?_⟩
+  simp [rejectMiddleTripsPolicy, not_lt_of_ge (le_of_lt hlo_mid),
+    not_lt_of_ge (le_of_lt hmid_hi)]
+
 /--
 A feasible policy with the long-trip-rejection shape is exactly the canonical
 long-trip-rejection set.
@@ -6879,6 +6955,49 @@ theorem eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
     exact ⟨hpos, (hshape hpos).mp hτ⟩
   · intro hτ
     exact (hshape hτ.1).mpr hτ.2
+
+/-- A feasible long-trip-rejection shape cannot be accept-all for finite cutoff. -/
+theorem not_acceptsAllTrips_of_rejectsLongTrips_of_subset_acceptAll
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsLongTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    ¬ acceptsAllTrips σ := by
+  rw [eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+    hshape hsub]
+  exact not_acceptsAllTrips_rejectLongTripsPolicy t
+
+/-- A feasible positive-cutoff short-trip-rejection shape is not accept-all. -/
+theorem not_acceptsAllTrips_of_rejectsShortTrips_of_subset_acceptAll_of_pos
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsShortTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht : 0 < t) :
+    ¬ acceptsAllTrips σ := by
+  rw [eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+    hshape hsub]
+  exact not_acceptsAllTrips_rejectShortTripsPolicy_of_pos ht
+
+/-- A feasible middle-acceptance shape cannot be accept-all for finite endpoints. -/
+theorem not_acceptsAllTrips_of_acceptsMiddleTrips_of_subset_acceptAll
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : acceptsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    ¬ acceptsAllTrips σ := by
+  rw [eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact not_acceptsAllTrips_acceptMiddleTripsPolicy lo hi
+
+/-- A feasible middle-rejection shape with a positive gap is not accept-all. -/
+theorem not_acceptsAllTrips_of_rejectsMiddleTrips_of_subset_acceptAll_of_pos_lt
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hlo_pos : 0 < lo)
+    (hlohi : lo < hi) :
+    ¬ acceptsAllTrips σ := by
+  rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact not_acceptsAllTrips_rejectMiddleTripsPolicy_of_pos_lt hlo_pos hlohi
 
 /-- Canonical long-trip-rejection policies are measurable. -/
 theorem measurableSet_rejectLongTripsPolicy (t : ℝ) :

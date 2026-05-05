@@ -50,7 +50,8 @@ cache is `source.txt`.
   interval nondegeneracy and canonical long-/short-trip-rejection primitive
   realizations, feasible shape-to-canonical-policy equalities, and arbitrary
   feasible reject-long/reject-short/accept-middle/reject-middle primitive
-  realizations, including the two-piece reject-middle endpoint paths and both
+  realizations, canonical non-accept-all witnesses for finite interval policy
+  shapes, including the two-piece reject-middle endpoint paths and both
   reject-middle cutoff derivative bridges, concrete with-density
   reject-middle cutoff and unbounded-tail replacement policies, and statewise
   wrappers that feed those replacements into the Lemma 9/10 strict-local

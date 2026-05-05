@@ -39,6 +39,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
   data, packaged allowed-replacement Theorem 4/Theorem 3 boundary routes, and
   the accept-all-primitive packaged allowed-replacement Theorem 3 route, the
   endpoint-bridge-to-allowed-replacement certificate conversion,
+  canonical non-accept-all finite-interval shape witnesses,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   endpoint-bridge source wrapper
