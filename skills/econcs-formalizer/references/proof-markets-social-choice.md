@@ -138,6 +138,26 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   weighted lemmas, and proving the three nontrivial two-element remaining-set
   branch patterns as small algebra facts (`Z01`, `Z10`, `1Z0`) before doing the
   finite case split.
+- For KR21 weighted first-choice successor work, keep both equivalent
+  decompositions available. The pair-sum identity is best for membership-class
+  cancellation, while `candidateRankWeightedAverage_cross_eq_adjacent_gap_sum`
+  / `firstChoiceBranchWeighted_eq_adjacent_gap_sum` is best when adjacent branch
+  differences telescope. The adjacent-gap coefficients are the existing
+  nonnegative prefix-power crosses, so the hard part is only the signed branch
+  gap/cancellation structure. In this layer, "prefix cut" means the center rank
+  of `bestInSet`, not the position of that candidate in the sampled ranking.
+  Adjacent outside/outside first-choice branches can be made literally equal by
+  proving the corresponding deleted tail remaining sets and adjacent cuts are
+  equal. Keep the boundary normal form: outside/outside adjacent gaps are zero,
+  left-good and right-bad adjacent terms are nonnegative, and only
+  outside-before-good / bad-before-outside boundary orientations need aggregate
+  cancellation. For those hard orientations, first rewrite the term exactly to
+  a tail prefix sum minus the tail partition, respectively the negative tail
+  prefix sum (`firstChoiceBranchWeighted_adjacentGapTerm_eq_tail_sub_partition`
+  and `firstChoiceBranchWeighted_adjacentGapTerm_eq_neg_tail`), before looking
+  for the aggregate cancellation. Also expose
+  `reflMallowsBestInSetPrefixCutSum_eq_sum_bestInSetWeight` so prefix-cut
+  statements can be translated back to best-in-set fiber weights when useful.
 - For KR21 arbitrary remaining-set Mallows dominance, keep the exact
   best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
   dominance targets. Define an identity-center unnormalised fiber such as
@@ -147,6 +167,13 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   dominance theorem. The two-candidate base case and full-remaining-set case
   reduce to first-choice weights; arbitrary nonconvex sets need the dedicated
   fiber recurrence/MLR proof.
+- For KR21 arbitrary remaining sets, do not shortcut by assuming the Kendall
+  Mallows marginal on an arbitrary nonconsecutive subset is the same-q Mallows
+  law on that subset. Direct checks show the relative-order weights acquire
+  gap-dependent factors. The existing common-scale deletion formulas are valid
+  for absent center extremes (`0` or the last candidate), but arbitrary absent
+  candidates require an explicit tilted/deletion or weighted first-choice
+  argument.
 - For the two-candidate part of that KR21 fiber route, do not reprove Mallows
   pairwise monotonicity from scratch. First prove that `bestInSetWeight {c,d} c`
   and `bestInSetWeight {c,d} d` are exactly `pairCorrectWeight` and
