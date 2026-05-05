@@ -2742,6 +2742,78 @@ theorem gn21AggregateDynamicReward_swap
   unfold gn21AggregateDynamicReward
   ring
 
+/--
+Aggregate quotient monotonicity for adding accepted trips to the left state.
+The sufficient condition is exactly the integrated Lemma 6 derivative kernel
+for the added primitive increments `(dQ,dT,dW)`.
+-/
+theorem gn21AggregateDynamicReward_le_add_left_of_kernel_nonneg
+    (Qi Qj Ti Tj Wi Wj dQ dT dW : ℝ)
+    (hden_pos : 0 < Qi * Tj + Qj * Ti)
+    (hden_add_pos : 0 < (Qi + dQ) * Tj + Qj * (Ti + dT))
+    (hQj_nonneg : 0 ≤ Qj)
+    (hkernel_nonneg :
+      0 ≤
+        dQ * (Wj * Ti - Tj * Wi) +
+          dW * (Qi * Tj + Qj * Ti) -
+            dT * (Qi * Wj + Qj * Wi)) :
+    gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj ≤
+      gn21AggregateDynamicReward
+        (Qi + dQ) Qj (Ti + dT) Tj (Wi + dW) Wj := by
+  unfold gn21AggregateDynamicReward
+  rw [div_le_div_iff₀ hden_pos hden_add_pos]
+  have hidentity :
+      ((Qi + dQ) * Wj + Qj * (Wi + dW)) * (Qi * Tj + Qj * Ti) -
+          (Qi * Wj + Qj * Wi) * ((Qi + dQ) * Tj + Qj * (Ti + dT)) =
+        Qj *
+          (dQ * (Wj * Ti - Tj * Wi) +
+            dW * (Qi * Tj + Qj * Ti) -
+              dT * (Qi * Wj + Qj * Wi)) := by
+    ring
+  have hdiff_nonneg :
+      0 ≤
+        ((Qi + dQ) * Wj + Qj * (Wi + dW)) * (Qi * Tj + Qj * Ti) -
+          (Qi * Wj + Qj * Wi) * ((Qi + dQ) * Tj + Qj * (Ti + dT)) := by
+    rw [hidentity]
+    exact mul_nonneg hQj_nonneg hkernel_nonneg
+  linarith
+
+/--
+Aggregate quotient monotonicity for adding accepted trips to the right state.
+This is the state-swapped counterpart of
+`gn21AggregateDynamicReward_le_add_left_of_kernel_nonneg`.
+-/
+theorem gn21AggregateDynamicReward_le_add_right_of_kernel_nonneg
+    (Qi Qj Ti Tj Wi Wj dQ dT dW : ℝ)
+    (hden_pos : 0 < Qi * Tj + Qj * Ti)
+    (hden_add_pos : 0 < Qi * (Tj + dT) + (Qj + dQ) * Ti)
+    (hQi_nonneg : 0 ≤ Qi)
+    (hkernel_nonneg :
+      0 ≤
+        dQ * (Wi * Tj - Ti * Wj) +
+          dW * (Qj * Ti + Qi * Tj) -
+            dT * (Qj * Wi + Qi * Wj)) :
+    gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj ≤
+      gn21AggregateDynamicReward
+        Qi (Qj + dQ) Ti (Tj + dT) Wi (Wj + dW) := by
+  unfold gn21AggregateDynamicReward
+  rw [div_le_div_iff₀ hden_pos hden_add_pos]
+  have hidentity :
+      (Qi * (Wj + dW) + (Qj + dQ) * Wi) * (Qi * Tj + Qj * Ti) -
+          (Qi * Wj + Qj * Wi) * (Qi * (Tj + dT) + (Qj + dQ) * Ti) =
+        Qi *
+          (dQ * (Wi * Tj - Ti * Wj) +
+            dW * (Qj * Ti + Qi * Tj) -
+              dT * (Qj * Wi + Qi * Wj)) := by
+    ring
+  have hdiff_nonneg :
+      0 ≤
+        (Qi * (Wj + dW) + (Qj + dQ) * Wi) * (Qi * Tj + Qj * Ti) -
+          (Qi * Wj + Qj * Wi) * (Qi * (Tj + dT) + (Qj + dQ) * Ti) := by
+    rw [hidentity]
+    exact mul_nonneg hQi_nonneg hkernel_nonneg
+  linarith
+
 /-- Endpoint path for `Q_i = lambda_{i→j} + lambda_i ∫ q_{i→j}(τ) f_i(τ)dτ`. -/
 def gn21EndpointQiPath
     (arrivalRate switchRate lowerEndpoint : ℝ)

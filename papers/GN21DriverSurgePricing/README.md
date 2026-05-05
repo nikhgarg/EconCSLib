@@ -65,8 +65,10 @@ cache is `source.txt`.
   discharge `lambda*T-Q` nonnegativity and `lambda<Q`, plus primitive-equality
   variants matching the endpoint bridge signatures and named-primitive Remark
   4 positivity wrappers,
-  aggregate quotient-calculus derivative bridge, endpoint-data-to-Lemma-6
-  derivative certificate bridge,
+  aggregate quotient-calculus derivative bridge, aggregate quotient
+  monotonicity for left/right accepted-trip additions from nonnegative
+  integrated Lemma 6 kernels, endpoint-data-to-Lemma-6 derivative certificate
+  bridge,
   structured-kernel-to-Lemma-6 derivative certificate bridge, structured-price
   derivative algebra, small-time switch derivative, the Lemma 7
   canonical derivative-numerator calculation,
