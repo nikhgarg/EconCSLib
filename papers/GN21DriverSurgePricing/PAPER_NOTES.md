@@ -37,6 +37,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
   constructors for all five shape cases, state-specific Theorem 4
   allowed-replacement constructors, source-facing all-optimal replacement case
   data, packaged allowed-replacement Theorem 4/Theorem 3 boundary routes, and
+  the accept-all-primitive packaged allowed-replacement Theorem 3 route, and
   auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
   global Theorem 1 threshold-existence compactness/continuity argument, the
