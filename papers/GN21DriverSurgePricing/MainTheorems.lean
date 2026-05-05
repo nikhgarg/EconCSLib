@@ -11618,6 +11618,23 @@ structure Theorem4StatewiseAcceptAllRewardCertificate
           dynamicStateReward R ρ 1 acceptAllPolicy
 
 /--
+Weak statewise accept-all reward certificate: replacing either state's policy
+by accept-all weakly improves every dynamic policy.  This is enough for
+Theorem 3's IC conclusion, without requiring exact-set uniqueness of optimal
+policies under nonatomic measures.
+-/
+structure Theorem4StatewiseAcceptAllWeakRewardCertificate
+    (R : DynamicReward) where
+  nonsurge_accept_all_reward_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicStateReward R ρ 0 (ρ 0) ≤
+        dynamicStateReward R ρ 0 acceptAllPolicy
+  surge_accept_all_reward_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicStateReward R ρ 1 (ρ 1) ≤
+        dynamicStateReward R ρ 1 acceptAllPolicy
+
+/--
 Global statewise accept-all reward certificate: replacing either state's policy
 by accept-all weakly improves every dynamic policy, and strictly improves
 optimal policies unless the relevant state already accepts all positive trips.
@@ -11646,6 +11663,22 @@ structure Theorem4GlobalStatewiseAcceptAllRewardCertificate
       ¬ acceptsAllTrips (ρ 1) →
         dynamicStateReward R ρ 1 (ρ 1) <
           dynamicStateReward R ρ 1 acceptAllPolicy
+
+/-- The global statewise reward interface contains the weak IC interface. -/
+def theorem4StatewiseAcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward
+    (R : DynamicReward)
+    (C : Theorem4GlobalStatewiseAcceptAllRewardCertificate R) :
+    Theorem4StatewiseAcceptAllWeakRewardCertificate R where
+  nonsurge_accept_all_reward_ge := C.nonsurge_accept_all_reward_ge
+  surge_accept_all_reward_ge := C.surge_accept_all_reward_ge
+
+/-- Weak statewise accept-all reward comparisons imply accept-all optimality. -/
+theorem paper_theorem4_accept_all_optimal_of_statewise_accept_all_weak_reward
+    (R : DynamicReward)
+    (C : Theorem4StatewiseAcceptAllWeakRewardCertificate R) :
+    dynamicOptimal R acceptAllDynamicPolicy := by
+  exact dynamicOptimal_acceptAll_of_statewise_acceptAll_improvements R
+    C.nonsurge_accept_all_reward_ge C.surge_accept_all_reward_ge
 
 /-- Global statewise reward improvements instantiate the statewise reward interface. -/
 def theorem4StatewiseAcceptAllRewardCertificate_of_global_statewise_accept_all_reward
@@ -20458,6 +20491,50 @@ theorem paper_theorem3_ctmc_structured_prices_ic_of_accept_all_unique_optimal
       haccept_all_unique_optimal)
 
 /--
+Theorem 3 endpoint specialized to the concrete two-state CTMC structured price
+family, requiring only accept-all optimality.  This is the IC-only endpoint;
+uniqueness is useful for Theorem 4 structure, but not needed for Theorem 3's
+dynamic IC conclusion.
+-/
+theorem paper_theorem3_ctmc_structured_prices_ic_of_accept_all_optimal
+    (R : DynamicReward)
+    (m z : Fin 2 → ℝ) (switch12 switch21 : ℝ)
+    (hm0_nonneg : 0 ≤ m 0)
+    (hm1_nonneg : 0 ≤ m 1)
+    (hz1_nonneg : 0 ≤ z 1)
+    (haccept_all_optimal : dynamicOptimal R acceptAllDynamicPolicy) :
+    dynamicIncentiveCompatible R ∧
+      ∃ m' z' : Fin 2 → ℝ, ∃ q : Fin 2 → TripLength → ℝ,
+        (0 ≤ m' 0 ∧ 0 ≤ m' 1 ∧ 0 ≤ z' 1) ∧
+          (∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m' i) (z' i) (q i) τ) := by
+  exact ⟨haccept_all_optimal, m, z, ctmcDynamicSwitchProb switch12 switch21,
+    ⟨hm0_nonneg, hm1_nonneg, hz1_nonneg⟩, by intro i τ; rfl⟩
+
+/--
+Theorem 3 endpoint from weak statewise accept-all reward comparisons.  This
+avoids imposing exact-set uniqueness on optimal policies when IC alone is the
+paper-level target.
+-/
+theorem paper_theorem3_ctmc_structured_prices_ic_of_statewise_accept_all_weak_reward
+    (R : DynamicReward)
+    (m z : Fin 2 → ℝ) (switch12 switch21 : ℝ)
+    (hm0_nonneg : 0 ≤ m 0)
+    (hm1_nonneg : 0 ≤ m 1)
+    (hz1_nonneg : 0 ≤ z 1)
+    (C : Theorem4StatewiseAcceptAllWeakRewardCertificate R) :
+    dynamicIncentiveCompatible R ∧
+      ∃ m' z' : Fin 2 → ℝ, ∃ q : Fin 2 → TripLength → ℝ,
+        (0 ≤ m' 0 ∧ 0 ≤ m' 1 ∧ 0 ≤ z' 1) ∧
+          (∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m' i) (z' i) (q i) τ) := by
+  exact paper_theorem3_ctmc_structured_prices_ic_of_accept_all_optimal
+    R m z switch12 switch21 hm0_nonneg hm1_nonneg hz1_nonneg
+    (paper_theorem4_accept_all_optimal_of_statewise_accept_all_weak_reward R C)
+
+/--
 Theorem 3 endpoint from the statewise accept-all conclusion produced by the
 continuous structural proof: once every optimal policy is feasible and accepts
 all positive trips in both states, the CTMC structured price family is IC.
@@ -24002,6 +24079,270 @@ def theorem3MeasuredStructuredICConclusion
             structuredSurgePrice (m i) (z i) (q i) τ) ∧
       theorem3AcceptAllStructuredParameterEvidence
         μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Measured Theorem 3 endpoint from weak statewise accept-all reward comparisons,
+using the direct Lemma 9 primitive-positivity feasibility route.  This proves
+the IC conclusion without asking for exact-set uniqueness of all optima.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_statewise_accept_all_weak_reward_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hweak :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4StatewiseAcceptAllWeakRewardCertificate
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives
+      rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq hR1_pos
+      hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos hQ1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos hgap2_nonneg
+      hT2_ge_one hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hnBounds, hsBounds, hm0_eq, hz0_eq,
+      hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hweakC : Theorem4StatewiseAcceptAllWeakRewardCertificate R := by
+    simpa [R] using hweak m z hnonneg hparams
+  have hIC : dynamicIncentiveCompatible R :=
+    (paper_theorem3_ctmc_structured_prices_ic_of_statewise_accept_all_weak_reward
+      R m z switch12 switch21 hnonneg.1 hnonneg.2.1 hnonneg.2.2
+      hweakC).1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
+Weak statewise accept-all boundary for the accept-all measured Theorem 3
+route.  It asks only for weak accept-all improvements for the prices actually
+constructed by Theorem 3.
+-/
+def theorem3AcceptAllWeakRewardCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4StatewiseAcceptAllWeakRewardCertificate
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)
+
+/-- Global statewise reward comparisons instantiate the weak Theorem 3 boundary. -/
+def theorem3AcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4GlobalStatewiseAcceptAllRewardCertificate
+            (gn21MeasuredCTMCStructuredDynamicReward
+              μ arrival switch12 switch21 m z)) :
+    theorem3AcceptAllWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  exact
+    theorem4StatewiseAcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward
+      (gn21MeasuredCTMCStructuredDynamicReward
+        μ arrival switch12 switch21 m z)
+      (C m z hnonneg hparams)
+
+/--
+Accept-all-primitive Theorem 3 endpoint from weak statewise accept-all reward
+comparisons and direct Lemma 9 primitive feasibility.
+-/
+theorem paper_theorem3_measured_structured_ic_prices_of_weak_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hweak :
+      theorem3AcceptAllWeakRewardCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  simpa [theorem3MeasuredStructuredICConclusion,
+    theorem3AcceptAllStructuredParameterEvidence,
+    theorem3AcceptAllWeakRewardCertificate] using
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_statewise_accept_all_weak_reward_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+      hswitch21_lt_Q2 hweak
+
+/--
+Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is
+the lightest IC-only boundary: all scalar CTMC/measure obligations are proved,
+and the remaining field is just weak accept-all improvement for constructed
+prices.
+-/
+structure Theorem3AcceptAllWeakRewardSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  weak_reward :
+    theorem3AcceptAllWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper at the weak-reward IC boundary.
+-/
+theorem paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllWeakRewardSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_ic_prices_of_weak_reward
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      A.weak_reward
 
 /--
 Measured Theorem 3 endpoint from statewise positive Lemma 5 replacement

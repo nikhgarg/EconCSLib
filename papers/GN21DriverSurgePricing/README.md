@@ -88,7 +88,12 @@ cache is `source.txt`.
   discharge scalar positivity and, with state-2 accept-all time integrability,
   the direct Lemma 9 feasibility side conditions from measure/CTMC assumptions
   for both the strict-local and packaged statewise-certificate routes.  The
-  lightest current source boundary is now exposed as
+  lightest current IC-only source boundary is now exposed as
+  `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
+  `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
+  whose final field is just weak statewise accept-all reward improvement for
+  the constructed prices and does not require exact-set uniqueness of all
+  optima. The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
   whose final field is exactly the Lemma 9/10 positive-replacement proof for
@@ -181,6 +186,17 @@ and
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_allowed_replacement_data_of_lemma9_positive_primitives`,
 `theorem3AcceptAllStructuredParameterEvidence`,
 `theorem3MeasuredStructuredICConclusion`,
+`Theorem4StatewiseAcceptAllWeakRewardCertificate`,
+`theorem4StatewiseAcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward`,
+`paper_theorem4_accept_all_optimal_of_statewise_accept_all_weak_reward`,
+`paper_theorem3_ctmc_structured_prices_ic_of_accept_all_optimal`,
+`paper_theorem3_ctmc_structured_prices_ic_of_statewise_accept_all_weak_reward`,
+`paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_statewise_accept_all_weak_reward_of_lemma9_positive_primitives`,
+`theorem3AcceptAllWeakRewardCertificate`,
+`theorem3AcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward`,
+`paper_theorem3_measured_structured_ic_prices_of_weak_reward`,
+`Theorem3AcceptAllWeakRewardSourceAssumptions`,
+`paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_positive_replacement_of_lemma9_positive_primitives`,
 `theorem3AcceptAllPositiveReplacementCertificate`,
 `theorem3AcceptAllPositiveReplacementCertificate_of_statewise_accept_all_reward`,
@@ -287,8 +303,10 @@ the measured CTMC structured reward, and the measured accept-all primitives
 with scalar positivity and direct Lemma 9 primitive-feasibility side
 conditions derived for the global, strict-local, and packaged
 statewise-certificate routes, plus a
-direct positive-replacement source wrapper whose final obligation is the
-Lemma 9/10 positive Lemma 5 replacement proof for the constructed prices, plus
+direct weak-reward IC wrapper whose final obligation is only weak statewise
+accept-all improvement for the constructed prices, a positive-replacement
+source wrapper whose final obligation is the Lemma 9/10 positive Lemma 5
+replacement proof for the constructed prices, plus
 a direct ratio-to-IC route from the four-case Theorem 4 shape-endpoint-selection
 certificate and the paper-ordered shape-derivation endpoint-bridge
 certificate, plus a route that accepts the raw statewise improvement

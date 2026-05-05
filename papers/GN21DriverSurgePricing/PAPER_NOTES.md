@@ -40,6 +40,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   the accept-all-primitive packaged allowed-replacement Theorem 3 route, the
   endpoint-bridge-to-allowed-replacement certificate conversion,
   canonical non-accept-all finite-interval shape witnesses,
+  weak-reward IC source wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper
