@@ -4954,6 +4954,94 @@ theorem rejectLongTripsPolicy_subset_acceptAll (t : ℝ) :
   intro τ hτ
   exact hτ.1
 
+/--
+Canonical long-trip-rejection policy realizes the endpoint `Q_i` path with
+lower endpoint `0`; the open/closed endpoint difference is null for Lebesgue
+`withDensity` primitives.
+-/
+theorem gn21ExitWeightIntegral_rejectLongTripsPolicy_withDensity_eq_endpointQiPath
+    (arrivalRate switchIJ switchJI t : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (rejectLongTripsPolicy t) =
+      gn21EndpointQiPath arrivalRate switchIJ 0
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) t := by
+  unfold gn21ExitWeightIntegral gn21EndpointQiPath rejectLongTripsPolicy
+  rw [intervalIntegral.integral_of_le ht_nonneg]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density)
+    hdensity_meas
+    (fun τ => gn21SwitchProb switchIJ switchJI τ)
+    ((measurableSet_Ioi (a := (0 : ℝ))).inter
+      (measurableSet_Iio (a := t)))]
+  apply congrArg (fun y => switchIJ + arrivalRate * y)
+  rw [integral_Ioc_eq_integral_Ioo]
+  apply setIntegral_congr_fun measurableSet_Ioo
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Canonical long-trip-rejection policy realizes the endpoint `T_i` path with
+lower endpoint `0`.
+-/
+theorem gn21ScaledStateTime_rejectLongTripsPolicy_withDensity_eq_endpointTiPath
+    (arrivalRate t : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (rejectLongTripsPolicy t) =
+      gn21EndpointTiPath arrivalRate 0
+        (fun τ => (density τ : ℝ)) t := by
+  unfold gn21ScaledStateTime singleStateTripTime gn21EndpointTiPath
+    rejectLongTripsPolicy
+  rw [intervalIntegral.integral_of_le ht_nonneg]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas (fun τ => τ)
+    ((measurableSet_Ioi (a := (0 : ℝ))).inter
+      (measurableSet_Iio (a := t)))]
+  apply congrArg (fun y => 1 + arrivalRate * y)
+  rw [integral_Ioc_eq_integral_Ioo]
+  apply setIntegral_congr_fun measurableSet_Ioo
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Canonical long-trip-rejection policy realizes the endpoint `W_i` path with
+lower endpoint `0`.
+-/
+theorem gn21ScaledStateEarning_rejectLongTripsPolicy_withDensity_eq_endpointWiPath
+    (arrivalRate t : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (rejectLongTripsPolicy t) =
+      gn21EndpointWiPath arrivalRate 0
+        (fun τ => (density τ : ℝ)) payment t := by
+  unfold gn21ScaledStateEarning singleStateTripPayment gn21EndpointWiPath
+    rejectLongTripsPolicy
+  rw [intervalIntegral.integral_of_le ht_nonneg]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas payment
+    ((measurableSet_Ioi (a := (0 : ℝ))).inter
+      (measurableSet_Iio (a := t)))]
+  apply congrArg (fun y => arrivalRate * y)
+  rw [integral_Ioc_eq_integral_Ioo]
+  apply setIntegral_congr_fun measurableSet_Ioo
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
 /-- Canonical short-trip-rejection policies only accept positive trips. -/
 theorem rejectShortTripsPolicy_subset_acceptAll (t : ℝ) :
     rejectShortTripsPolicy t ⊆ acceptAllPolicy := by
