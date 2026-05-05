@@ -107,6 +107,11 @@ the continuous CTMC source theorems.
 - `theorem4NonsurgeShape_of_lemma5_strictlyDecreasing`,
   `theorem4SurgeShape_of_lemma5_strictlyQuasiConvex`, and paired helpers:
   pure routing from Lemma 5 policy forms to Theorem 4's structural alternatives.
+- `theorem4NonsurgeAllowedReplacement_rejectLong`,
+  `theorem4NonsurgeAllowedReplacement_acceptMiddle`,
+  `theorem4SurgeAllowedReplacement_rejectShort`, and
+  `theorem4SurgeAllowedReplacement_rejectMiddle`: state-specific constructors
+  packaging canonical Lemma 5 replacements as allowed Theorem 4 shape data.
 - `paper_theorem4_dynamic_structural_policy_of_shape_derivation`: Theorem 4
   assembly from a Lemma 5-style shape derivation certificate.
 - `Theorem4ShapeReplacementDerivationCertificate`,
@@ -10738,6 +10743,113 @@ theorem theorem4SurgeAllowedLemma5Shape_strictlyIncreasing :
 theorem theorem4SurgeAllowedLemma5Shape_strictlyQuasiConvex :
     theorem4SurgeAllowedLemma5Shape .strictlyQuasiConvex := by
   trivial
+
+/--
+Package a positive Lemma 5 replacement as an allowed non-surge state
+replacement for Theorem 4.
+-/
+def theorem4NonsurgeAllowedReplacement_positive_acceptAll
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (hreward_ge : Rhat σ0 ≤ Rhat acceptAllPolicy)
+    (hstrict_unless_accepts_all :
+      ¬ acceptsAllTrips σ0 → Rhat σ0 < Rhat acceptAllPolicy) :
+    Σ shape :
+      {shape : Lemma5DerivativeShape //
+        theorem4NonsurgeAllowedLemma5Shape shape},
+        Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1 :=
+  ⟨⟨.positive, theorem4NonsurgeAllowedLemma5Shape_positive⟩,
+    lemma5PositiveOptimizerReplacementCertificate_acceptAll
+      Rhat σ0 hreward_ge hstrict_unless_accepts_all⟩
+
+/--
+Package a long-trip-rejection Lemma 5 replacement as an allowed non-surge
+state replacement for Theorem 4.
+-/
+def theorem4NonsurgeAllowedReplacement_rejectLong
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (t : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (rejectLongTripsPolicy t))
+    (hstrict_unless_rejects_long :
+      ¬ lemma5PolicyForm .strictlyDecreasing σ0 →
+        Rhat σ0 < Rhat (rejectLongTripsPolicy t)) :
+    Σ shape :
+      {shape : Lemma5DerivativeShape //
+        theorem4NonsurgeAllowedLemma5Shape shape},
+        Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1 :=
+  ⟨⟨.strictlyDecreasing, theorem4NonsurgeAllowedLemma5Shape_strictlyDecreasing⟩,
+    lemma5StrictlyDecreasingOptimizerReplacementCertificate_rejectLong
+      Rhat σ0 t hreward_ge hstrict_unless_rejects_long⟩
+
+/--
+Package a middle-acceptance Lemma 5 replacement as an allowed non-surge state
+replacement for Theorem 4.
+-/
+def theorem4NonsurgeAllowedReplacement_acceptMiddle
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (lo hi : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (acceptMiddleTripsPolicy lo hi))
+    (hstrict_unless_accepts_middle :
+      ¬ lemma5PolicyForm .strictlyQuasiConcave σ0 →
+        Rhat σ0 < Rhat (acceptMiddleTripsPolicy lo hi)) :
+    Σ shape :
+      {shape : Lemma5DerivativeShape //
+        theorem4NonsurgeAllowedLemma5Shape shape},
+        Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1 :=
+  ⟨⟨.strictlyQuasiConcave,
+      theorem4NonsurgeAllowedLemma5Shape_strictlyQuasiConcave⟩,
+    lemma5StrictlyQuasiConcaveOptimizerReplacementCertificate_acceptMiddle
+      Rhat σ0 lo hi hreward_ge hstrict_unless_accepts_middle⟩
+
+/--
+Package a positive Lemma 5 replacement as an allowed surge state replacement
+for Theorem 4.
+-/
+def theorem4SurgeAllowedReplacement_positive_acceptAll
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (hreward_ge : Rhat σ0 ≤ Rhat acceptAllPolicy)
+    (hstrict_unless_accepts_all :
+      ¬ acceptsAllTrips σ0 → Rhat σ0 < Rhat acceptAllPolicy) :
+    Σ shape :
+      {shape : Lemma5DerivativeShape //
+        theorem4SurgeAllowedLemma5Shape shape},
+        Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1 :=
+  ⟨⟨.positive, theorem4SurgeAllowedLemma5Shape_positive⟩,
+    lemma5PositiveOptimizerReplacementCertificate_acceptAll
+      Rhat σ0 hreward_ge hstrict_unless_accepts_all⟩
+
+/--
+Package a short-trip-rejection Lemma 5 replacement as an allowed surge state
+replacement for Theorem 4.
+-/
+def theorem4SurgeAllowedReplacement_rejectShort
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (t : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (rejectShortTripsPolicy t))
+    (hstrict_unless_rejects_short :
+      ¬ lemma5PolicyForm .strictlyIncreasing σ0 →
+        Rhat σ0 < Rhat (rejectShortTripsPolicy t)) :
+    Σ shape :
+      {shape : Lemma5DerivativeShape //
+        theorem4SurgeAllowedLemma5Shape shape},
+        Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1 :=
+  ⟨⟨.strictlyIncreasing, theorem4SurgeAllowedLemma5Shape_strictlyIncreasing⟩,
+    lemma5StrictlyIncreasingOptimizerReplacementCertificate_rejectShort
+      Rhat σ0 t hreward_ge hstrict_unless_rejects_short⟩
+
+/--
+Package a middle-rejection Lemma 5 replacement as an allowed surge state
+replacement for Theorem 4.
+-/
+def theorem4SurgeAllowedReplacement_rejectMiddle
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (lo hi : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (rejectMiddleTripsPolicy lo hi))
+    (hstrict_unless_rejects_middle :
+      ¬ lemma5PolicyForm .strictlyQuasiConvex σ0 →
+        Rhat σ0 < Rhat (rejectMiddleTripsPolicy lo hi)) :
+    Σ shape :
+      {shape : Lemma5DerivativeShape //
+        theorem4SurgeAllowedLemma5Shape shape},
+        Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1 :=
+  ⟨⟨.strictlyQuasiConvex, theorem4SurgeAllowedLemma5Shape_strictlyQuasiConvex⟩,
+    lemma5StrictlyQuasiConvexOptimizerReplacementCertificate_rejectMiddle
+      Rhat σ0 lo hi hreward_ge hstrict_unless_rejects_middle⟩
 
 /-- Lemma 5's accept-all form is admissible for Theorem 4 non-surge states. -/
 theorem theorem4NonsurgeShape_of_lemma5_positive
