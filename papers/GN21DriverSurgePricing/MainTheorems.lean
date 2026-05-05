@@ -136,6 +136,9 @@ the continuous CTMC source theorems.
 - `paper_theorem4_accept_all_unique_optimal_of_shape_endpoint_selection`:
   measured Theorem 4 endpoint that turns the four-shape endpoint-selection
   certificate directly into accept-all unique optimality.
+- `Theorem4ShapeEndpointSelectionCertificate.of_shape_derivation`:
+  constructor deriving the endpoint-selection shape field from the Lemma
+  5-style structural shape derivation certificate.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -14958,6 +14961,83 @@ structure Theorem4ShapeEndpointSelectionCertificate
         rejectsMiddleTrips lo hi (ρ 1) →
           GN21SurgeEndpointBridgeData
             μ arrival m z switch12 switch21 ρ
+
+/--
+Constructor for the four-case endpoint-selection certificate from the
+Lemma 5-style structural shape derivation.  The caller supplies feasibility
+and the four endpoint bridges; the structural shape field is derived
+mechanically.
+-/
+def Theorem4ShapeEndpointSelectionCertificate.of_shape_derivation
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (Cshape :
+      Theorem4ShapeDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            GN21NonsurgeEndpointBridgeData
+              μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            GN21NonsurgeEndpointBridgeData
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            GN21SurgeEndpointBridgeData
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            GN21SurgeEndpointBridgeData
+              μ arrival m z switch12 switch21 ρ) :
+    Theorem4ShapeEndpointSelectionCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := ⟨Cshape.policy, Cshape.optimal⟩
+  feasible_optimal := hfeasible
+  shape_optimal := by
+    intro ρ hρ
+    exact
+      (theorem4StructuralPolicyCertificate_of_shape_derivation
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        Cshape).only_policy_forms ρ hρ
+  nonsurge_reject_long_bridge := hnonsurge_reject_long
+  nonsurge_accept_middle_bridge := hnonsurge_accept_middle
+  surge_reject_short_bridge := hsurge_reject_short
+  surge_reject_middle_bridge := hsurge_reject_middle
 
 /--
 Shape-case endpoint selection is exactly the data needed by the generalized
