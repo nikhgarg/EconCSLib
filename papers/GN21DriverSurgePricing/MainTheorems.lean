@@ -7581,6 +7581,109 @@ theorem paper_theorem4_accept_all_unique_optimal_of_measured_aggregate_strict_lo
     (theorem4StrictLocalImprovementCertificate_of_measured_aggregate_strict_improvements
       μ arrival switch12 switch21 w C)
 
+/-- Replace one component of a two-state dynamic trip policy. -/
+def replaceDynamicPolicyState
+    (ρ : Fin 2 → TripPolicy) (i : Fin 2) (τ : TripPolicy) : Fin 2 → TripPolicy :=
+  fun j => if j = i then τ else ρ j
+
+@[simp] theorem replaceDynamicPolicyState_same
+    (ρ : Fin 2 → TripPolicy) (i : Fin 2) (τ : TripPolicy) :
+    replaceDynamicPolicyState ρ i τ i = τ := by
+  simp [replaceDynamicPolicyState]
+
+@[simp] theorem replaceDynamicPolicyState_ne
+    (ρ : Fin 2 → TripPolicy) (i j : Fin 2) (τ : TripPolicy)
+    (hji : j ≠ i) :
+    replaceDynamicPolicyState ρ i τ j = ρ j := by
+  simp [replaceDynamicPolicyState, hji]
+
+/--
+Aggregate reward after replacing one component of a dynamic policy.  This is
+the measured aggregate analogue of `dynamicStateReward`, useful for feeding
+one-state endpoint moves into the two-state reward certificate.
+-/
+def gn21MeasuredAggregateDynamicStateReward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy) (i : Fin 2) (τ : TripPolicy) : ℝ :=
+  gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+    (arrival 1) switch12 switch21 (w 0) (w 1)
+    ((replaceDynamicPolicyState ρ i τ) 0)
+    ((replaceDynamicPolicyState ρ i τ) 1)
+
+/--
+Uniform statewise strict-local aggregate certificate.  Endpoint arguments can
+target this interface without duplicating the state-0/state-1 bookkeeping.
+-/
+structure Theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  feasible_optimal :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy
+  statewise_strict_aggregate_improvement_unless :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      ∀ i : Fin 2,
+        ¬ acceptsAllTrips (ρ i) →
+          ∃ τ : TripPolicy,
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) (ρ 1) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 ((replaceDynamicPolicyState ρ i τ) 0)
+              ((replaceDynamicPolicyState ρ i τ) 1) ∧
+            gn21MeasuredAggregateDynamicStateReward
+                μ arrival switch12 switch21 w ρ i (ρ i) <
+              gn21MeasuredAggregateDynamicStateReward
+                μ arrival switch12 switch21 w ρ i τ
+
+/--
+Uniform statewise strict aggregate improvements instantiate the two-field
+measured aggregate strict-local certificate used by Theorem 4.
+-/
+def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_statewise_strict_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C : Theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w) :
+    Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w where
+  exists_optimal := C.exists_optimal
+  feasible_optimal := C.feasible_optimal
+  nonsurge_strict_aggregate_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.statewise_strict_aggregate_improvement_unless ρ hρ 0 hnot with
+      ⟨τ, Hcur, Hrep, hagg⟩
+    refine ⟨τ, Hcur, ?_, ?_⟩
+    · simpa [replaceDynamicPolicyState] using Hrep
+    · simpa [gn21MeasuredAggregateDynamicStateReward,
+        replaceDynamicPolicyState] using hagg
+  surge_strict_aggregate_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.statewise_strict_aggregate_improvement_unless ρ hρ 1 hnot with
+      ⟨τ, Hcur, Hrep, hagg⟩
+    refine ⟨τ, Hcur, ?_, ?_⟩
+    · simpa [replaceDynamicPolicyState] using Hrep
+    · simpa [gn21MeasuredAggregateDynamicStateReward,
+        replaceDynamicPolicyState] using hagg
+
 /--
 Lemma 1 algebra: if subcycle earning and length share the same nonzero cycle
 factor, their ratio is the paper's one-state reward rate.
