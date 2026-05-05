@@ -127,7 +127,11 @@ with the corresponding accept-middle bridge
 `paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_accept_middle_withDensity_of_shape`;
 the surge reject-short bridge
 `paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_tail_withDensity_of_shape`
-does the same for the tail case.
+does the same for the tail case, and
+`paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity_of_shape`
+plus
+`paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity_of_shape`
+cover the two reject-middle endpoint moves.
 
 ## Remaining Work
 
@@ -190,9 +194,10 @@ choosing the relevant upper, lower, tail, or middle-rejection endpoint move and
 discharging statewise feasibility/nondegeneracy; concrete with-density
 replacement policies, primitive equalities, and finite positive-density
 current/replacement nondegeneracy are now available for the four Theorem 4
-shape cases; both non-surge shape cases and the surge reject-short case now have shape-level wrappers that
-discharge current primitive identities and nondegeneracy from the
-canonicalization and density assumptions. Then finish Theorem 1's
+shape cases; all four Theorem 4 shape cases now have shape-level wrappers
+that discharge current primitive identities and nondegeneracy from the
+canonicalization and density assumptions, with reject-middle split into
+lower- and upper-cutoff endpoint variants. Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers
 bridge.

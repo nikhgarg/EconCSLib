@@ -155,6 +155,10 @@ the continuous CTMC source theorems.
 - `paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_tail_withDensity_of_shape`:
   surge reject-short shape bridge deriving tail primitives and nondegeneracy
   from the short-trip-rejection shape.
+- `paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity_of_shape`,
+  `paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity_of_shape`:
+  surge reject-middle shape bridges for the lower- and upper-cutoff endpoint
+  moves.
 - `paper_theorem4_accept_all_unique_optimal_of_shape_endpoint_selection`:
   measured Theorem 4 endpoint that turns the four-shape endpoint-selection
   certificate directly into accept-all unique optimality.
@@ -14502,6 +14506,200 @@ theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_re
         (hw_short_replacement_int ε hε_pos hε_lt) hw_tail_int
 
 /--
+Surge reject-middle lower-cutoff bridge with current-policy primitive
+equalities and nondegeneracy discharged from the reject-middle shape and
+density assumptions.
+-/
+theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity_of_shape
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi T1 Q1 T2 Q2 R1 ratio δ : ℝ)
+    (densityNN : ℝ → NNReal)
+    (hμ_surge :
+      μ 1 = volume.withDensity fun τ => (densityNN τ : ℝ≥0∞))
+    (hdensity_meas : Measurable densityNN)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1))
+    (hsub_current : ρ 1 ⊆ acceptAllPolicy)
+    (harrival_other_pos : 0 < arrival 0)
+    (harrival_pos : 0 < arrival 1)
+    (hdensity_pos : 0 < (densityNN lo : ℝ))
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21RejectMiddleQiPath (arrival 1) switch21
+          (fun τ => (densityNN τ : ℝ)) (gn21SwitchProb switch21 switch12)
+          lo hi * T1 +
+        Q1 *
+          gn21RejectMiddleTiPath (arrival 1)
+            (fun τ => (densityNN τ : ℝ)) lo hi ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) volume 0 lo)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (𝓝 lo))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) lo)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (densityNN τ : ℝ)) volume 0 lo)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (densityNN τ : ℝ)) (𝓝 lo))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (densityNN τ : ℝ)) lo)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * (densityNN τ : ℝ)) volume 0 lo)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (densityNN τ : ℝ)) (𝓝 lo))
+    (ht_cont : ContinuousAt (fun τ => τ * (densityNN τ : ℝ)) lo)
+    (hQ2 :
+      gn21RejectMiddleQiPath (arrival 1) switch21
+        (fun τ => (densityNN τ : ℝ)) (gn21SwitchProb switch21 switch12)
+        lo hi = Q2)
+    (hT2 :
+      gn21RejectMiddleTiPath (arrival 1) (fun τ => (densityNN τ : ℝ))
+        lo hi = T2)
+    (hW2 :
+      gn21RejectMiddleWiPath (arrival 1) (fun τ => (densityNN τ : ℝ))
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) lo hi =
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z 1 = ratio * (m 1 - R1))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hlo_pos : 0 < lo)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hδ : 0 < δ)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hfinite_current :
+      (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)) (ρ 1) ≠ ∞)
+    (hpos_current : ∀ τ, τ ∈ ρ 1 → densityNN τ ≠ 0)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hother_measurable : MeasurableSet (ρ 0))
+    (hother_positive : ρ 0 ⊆ acceptAllPolicy)
+    (hfinite_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞))
+          (gn21RejectMiddleLoReplacement lo hi ε) ≠ ∞)
+    (hpos_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        ∀ τ, τ ∈ gn21RejectMiddleLoReplacement lo hi ε →
+          densityNN τ ≠ 0)
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) = Q1)
+    (hT_other :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) = T1)
+    (hW_other :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+          R1 * T1)
+    (hq_short_current_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (ht_short_current_int :
+      IntegrableOn (fun τ => τ * (densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) lo) volume)
+    (hw_short_current_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (hq_tail_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (ht_tail_int :
+      IntegrableOn (fun τ => τ * (densityNN τ : ℝ)) (Set.Ioi hi)
+        volume)
+    (hw_tail_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (hq_short_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ => gn21SwitchProb switch21 switch12 τ *
+            (densityNN τ : ℝ))
+          (Set.Ioo (0 : ℝ) (lo + ε)) volume)
+    (ht_short_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn (fun τ => τ * (densityNN τ : ℝ))
+          (Set.Ioo (0 : ℝ) (lo + ε)) volume)
+    (hw_short_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ =>
+            ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+              (densityNN τ : ℝ))
+          (Set.Ioo (0 : ℝ) (lo + ε)) volume) :
+    gn21SurgeStatewiseStrictAggregateImprovement
+      μ arrival m z switch12 switch21 ρ := by
+  refine
+    paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity
+      μ arrival m z switch12 switch21 ρ lo hi T1 Q1 T2 Q2 R1 ratio δ
+      densityNN hμ_surge hdensity_meas harrival_pos hdensity_pos hQ1_pos
+      hden hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+      ht_cont hQ2 hT2 hW2 hbounds hz hmR_pos hR1_nonneg hT1_nonneg
+      hswitch21_pos hsum hlo_pos hswitch_lt_Q2 hgap_nonneg hδ
+      hloδ_le_hi ?_ ?_ hQ_other hT_other hW_other ?_ ?_ ?_
+      hq_short_replacement_int hq_tail_int ht_short_replacement_int
+      ht_tail_int hw_short_replacement_int hw_tail_int
+  · rw [hμ_surge]
+    exact
+      gn21MeasuredPairNondegenerate_of_rejectsMiddleTrips_withDensity_right
+        (μ 0) densityNN (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) (ρ 1) lo hi hshape hsub_current hmass_other_pos
+        hdensity_meas hfinite_current hpos_current harrival_other_pos
+        harrival_pos hswitch12_pos hswitch21_pos hother_measurable
+        hother_positive
+  · intro ε hε_pos hε_lt
+    rw [hμ_surge]
+    exact
+      gn21MeasuredPairNondegenerate_rejectMiddleLoReplacement_withDensity_right_forall
+        (μ 0) densityNN (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) lo hi δ hmass_other_pos hdensity_meas hfinite_replacement
+        hpos_replacement harrival_other_pos harrival_pos hswitch12_pos
+        hswitch21_pos hother_measurable hother_positive ε hε_pos hε_lt
+  · rw [hμ_surge]
+    exact
+      gn21ExitWeightIntegral_rejectsMiddleTrips_withDensity_eq_rejectMiddleQiPath
+        (arrival 1) switch21 switch12 lo hi (ρ 1) densityNN
+        hdensity_meas hshape hsub_current (le_of_lt hlo_pos)
+        (by linarith) hq_short_current_int hq_tail_int
+  · rw [hμ_surge]
+    exact
+      gn21ScaledStateTime_rejectsMiddleTrips_withDensity_eq_rejectMiddleTiPath
+        (arrival 1) lo hi (ρ 1) densityNN hdensity_meas hshape
+        hsub_current (le_of_lt hlo_pos) (by linarith)
+        ht_short_current_int ht_tail_int
+  · rw [hμ_surge]
+    simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+      ctmcStructuredSurgePrice] using
+      gn21ScaledStateEarning_rejectsMiddleTrips_withDensity_eq_rejectMiddleWiPath
+        (arrival 1) lo hi (ρ 1) densityNN
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+        hdensity_meas hshape hsub_current (le_of_lt hlo_pos) (by linarith)
+        hw_short_current_int hw_tail_int
+
+/--
 Surge-state reject-middle upper-cutoff bridge specialized to the concrete
 with-density replacement policy `rejectMiddleTripsPolicy lo (hi-ε)`.
 -/
@@ -14705,6 +14903,202 @@ theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_re
           have hhi_delta_le : hi - δ ≤ hi - ε := by linarith
           exact le_trans hlo_le_hiδ hhi_delta_le)
         hw_short_int (hw_tail_replacement_int ε hε_pos hε_lt)
+
+/--
+Surge reject-middle upper-cutoff bridge with current-policy primitive
+equalities and nondegeneracy discharged from the reject-middle shape and
+density assumptions.
+-/
+theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity_of_shape
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi T1 Q1 T2 Q2 R1 ratio δ : ℝ)
+    (densityNN : ℝ → NNReal)
+    (hμ_surge :
+      μ 1 = volume.withDensity fun τ => (densityNN τ : ℝ≥0∞))
+    (hdensity_meas : Measurable densityNN)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1))
+    (hsub_current : ρ 1 ⊆ acceptAllPolicy)
+    (harrival_other_pos : 0 < arrival 0)
+    (harrival_pos : 0 < arrival 1)
+    (hdensity_pos : 0 < (densityNN hi : ℝ))
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21RejectMiddleQiPath (arrival 1) switch21
+          (fun τ => (densityNN τ : ℝ)) (gn21SwitchProb switch21 switch12)
+          lo hi * T1 +
+        Q1 *
+          gn21RejectMiddleTiPath (arrival 1)
+            (fun τ => (densityNN τ : ℝ)) lo hi ≠ 0)
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (𝓝 hi))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) hi)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (densityNN τ : ℝ)) (𝓝 hi))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (densityNN τ : ℝ)) hi)
+    (ht_int :
+      IntegrableOn (fun τ => τ * (densityNN τ : ℝ))
+        (Set.Ioi (hi - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (densityNN τ : ℝ)) (𝓝 hi))
+    (ht_cont : ContinuousAt (fun τ => τ * (densityNN τ : ℝ)) hi)
+    (hQ2 :
+      gn21RejectMiddleQiPath (arrival 1) switch21
+        (fun τ => (densityNN τ : ℝ)) (gn21SwitchProb switch21 switch12)
+        lo hi = Q2)
+    (hT2 :
+      gn21RejectMiddleTiPath (arrival 1) (fun τ => (densityNN τ : ℝ))
+        lo hi = T2)
+    (hW2 :
+      gn21RejectMiddleWiPath (arrival 1) (fun τ => (densityNN τ : ℝ))
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) lo hi =
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z 1 = ratio * (m 1 - R1))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hhi_pos : 0 < hi)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (hfinite_current :
+      (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)) (ρ 1) ≠ ∞)
+    (hpos_current : ∀ τ, τ ∈ ρ 1 → densityNN τ ≠ 0)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hother_measurable : MeasurableSet (ρ 0))
+    (hother_positive : ρ 0 ⊆ acceptAllPolicy)
+    (hfinite_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞))
+          (gn21RejectMiddleHiReplacement lo hi ε) ≠ ∞)
+    (hpos_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        ∀ τ, τ ∈ gn21RejectMiddleHiReplacement lo hi ε →
+          densityNN τ ≠ 0)
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) = Q1)
+    (hT_other :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) = T1)
+    (hW_other :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+          R1 * T1)
+    (hq_short_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (ht_short_int :
+      IntegrableOn (fun τ => τ * (densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) lo) volume)
+    (hw_short_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (hq_tail_current_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (ht_tail_current_int :
+      IntegrableOn (fun τ => τ * (densityNN τ : ℝ)) (Set.Ioi hi)
+        volume)
+    (hw_tail_current_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (hq_tail_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ => gn21SwitchProb switch21 switch12 τ *
+            (densityNN τ : ℝ))
+          (Set.Ioi (hi - ε)) volume)
+    (ht_tail_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn (fun τ => τ * (densityNN τ : ℝ))
+          (Set.Ioi (hi - ε)) volume)
+    (hw_tail_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ =>
+            ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+              (densityNN τ : ℝ))
+          (Set.Ioi (hi - ε)) volume) :
+    gn21SurgeStatewiseStrictAggregateImprovement
+      μ arrival m z switch12 switch21 ρ := by
+  refine
+    paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity
+      μ arrival m z switch12 switch21 ρ lo hi T1 Q1 T2 Q2 R1 ratio δ
+      densityNN hμ_surge hdensity_meas harrival_pos hdensity_pos hQ1_pos
+      hden hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+      ht_cont hQ2 hT2 hW2 hbounds hz hmR_pos hR1_nonneg hT1_nonneg
+      hswitch21_pos hsum hhi_pos hswitch_lt_Q2 hgap_nonneg hδ
+      hlo_nonneg hlo_le_hiδ ?_ ?_ hQ_other hT_other hW_other ?_ ?_ ?_
+      hq_short_int hq_tail_replacement_int ht_short_int
+      ht_tail_replacement_int hw_short_int hw_tail_replacement_int
+  · rw [hμ_surge]
+    exact
+      gn21MeasuredPairNondegenerate_of_rejectsMiddleTrips_withDensity_right
+        (μ 0) densityNN (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) (ρ 1) lo hi hshape hsub_current hmass_other_pos
+        hdensity_meas hfinite_current hpos_current harrival_other_pos
+        harrival_pos hswitch12_pos hswitch21_pos hother_measurable
+        hother_positive
+  · intro ε hε_pos hε_lt
+    rw [hμ_surge]
+    exact
+      gn21MeasuredPairNondegenerate_rejectMiddleHiReplacement_withDensity_right_forall
+        (μ 0) densityNN (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) lo hi δ hmass_other_pos hdensity_meas hfinite_replacement
+        hpos_replacement harrival_other_pos harrival_pos hswitch12_pos
+        hswitch21_pos hother_measurable hother_positive ε hε_pos hε_lt
+  · rw [hμ_surge]
+    exact
+      gn21ExitWeightIntegral_rejectsMiddleTrips_withDensity_eq_rejectMiddleQiPath
+        (arrival 1) switch21 switch12 lo hi (ρ 1) densityNN
+        hdensity_meas hshape hsub_current hlo_nonneg (by linarith)
+        hq_short_int hq_tail_current_int
+  · rw [hμ_surge]
+    exact
+      gn21ScaledStateTime_rejectsMiddleTrips_withDensity_eq_rejectMiddleTiPath
+        (arrival 1) lo hi (ρ 1) densityNN hdensity_meas hshape
+        hsub_current hlo_nonneg (by linarith)
+        ht_short_int ht_tail_current_int
+  · rw [hμ_surge]
+    simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+      ctmcStructuredSurgePrice] using
+      gn21ScaledStateEarning_rejectsMiddleTrips_withDensity_eq_rejectMiddleWiPath
+        (arrival 1) lo hi (ρ 1) densityNN
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+        hdensity_meas hshape hsub_current hlo_nonneg (by linarith)
+        hw_short_int hw_tail_current_int
 
 /--
 Non-surge unbounded-tail counterpart of the Lemma 10 bridge.
