@@ -65,6 +65,14 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_complement_pointwise_kernel_nonneg`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_pointwise_kernel_nonneg`,
+  Lemma 9/10 measured pointwise kernel wrappers
+  `paper_lemma9_measured_derivative_sign_kernel_pos_of_current_bounds`
+  and
+  `paper_lemma10_measured_derivative_sign_kernel_pos_of_current_bounds`,
+  and direct Lemma 9/10 accept-all aggregate bridges
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_current_bounds`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

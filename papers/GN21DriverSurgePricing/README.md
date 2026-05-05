@@ -80,6 +80,9 @@ cache is `source.txt`.
   canonical CTMC quasi-convex/quasi-concave response shape, and
   `lambda*t - q(t)` / `lambda T - Q` monotonicity plus nonnegativity and
   strict measured positivity bridges used by Lemmas 6 and 9-10.
+  Lemma 9/10 current-bound positivity now also has measured pointwise
+  derivative-kernel wrappers and direct accept-all-complement aggregate
+  improvement bridges for the surge and non-surge states.
 - Theorem 3 now has the `C` numerator-bound factorization, a measured
   accept-all `C ∈ [0,1)` theorem with that bound discharged, the non-surge
   `C < R1/R2 < 1` to Lemma 10 bounds bridge, direct Lemma 9 primitive

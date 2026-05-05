@@ -9197,6 +9197,105 @@ theorem paper_lemma9_structured_derivative_kernel_pos_of_current_bounds
     htail_pos hlinear_pos
 
 /--
+Lemma 9 pointwise Lemma 6 kernel positivity for the structured CTMC surge
+price, after expanding the current surge-state earning primitive.
+-/
+theorem paper_lemma9_derivative_sign_kernel_pos_of_current_bounds
+    (ratio u T1 Q1 T2 Q2 switch21 switch12 m R1 z : ℝ)
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2) :
+    0 <
+      gn21DerivativeSignKernel (gn21SwitchProb switch21 switch12 u) u
+        (ctmcStructuredSurgePrice m z switch21 switch12 u)
+        Q2 Q1 T2 T1
+        (m * (T2 - 1) + z * (Q2 - switch21))
+        (R1 * T1) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch21 switch12 u) u m z switch21 Q2 Q1 T2 T1 R1 :=
+    paper_lemma9_structured_derivative_kernel_pos_of_current_bounds
+      ratio u T1 Q1 T2 Q2 switch21 switch12 m R1 z hbounds hz
+      hmR_pos hR1_nonneg hT1_nonneg hQ1_pos hswitch21_pos hsum hu
+      hswitch_lt_Q2 hgap_nonneg
+  simpa [ctmcStructuredSurgePrice, structuredSurgePrice,
+    paper_remark2_structured_derivative_kernel_algebra] using hstructured
+
+/--
+Measured-current Lemma 9 pointwise kernel positivity.  The moving surge-state
+earning primitive is expanded from the structured price, while the fixed
+non-surge state is supplied through its current reward-rate identity.
+-/
+theorem paper_lemma9_measured_derivative_sign_kernel_pos_of_current_bounds
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 m R1 z ratio u : ℝ)
+    (wI : PricingFunction) (σI σJ : TripPolicy)
+    (hbounds :
+      lemma9StructuredBounds ratio
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ gn21ScaledStateTime μI arrivalI σI)
+    (hQ1_pos :
+      0 < gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 :
+      switch21 <
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hgap_nonneg :
+      0 ≤
+        switch21 * gn21ScaledStateTime μJ arrivalJ σJ -
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (htime_integrable_σJ :
+      IntegrableOn (fun τ : TripLength => τ) σJ μJ)
+    (hq_integrable_σJ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        σJ μJ)
+    (hW_fixed :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        R1 * gn21ScaledStateTime μI arrivalI σI) :
+    0 <
+      gn21DerivativeSignKernel (gn21SwitchProb switch21 switch12 u) u
+        (ctmcStructuredSurgePrice m z switch21 switch12 u)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ScaledStateEarning μJ arrivalJ
+          (ctmcStructuredSurgePrice m z switch21 switch12) σJ)
+        (gn21ScaledStateEarning μI arrivalI wI σI) := by
+  rw [paper_remark2_structured_scaled_earning_algebra
+      μJ arrivalJ m z switch21 switch12 σJ htime_integrable_σJ
+      hq_integrable_σJ,
+    hW_fixed]
+  exact
+    paper_lemma9_derivative_sign_kernel_pos_of_current_bounds
+      ratio u
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      switch21 switch12 m R1 z hbounds hz hmR_pos hR1_nonneg
+      hT1_nonneg hQ1_pos hswitch21_pos hsum hu hswitch_lt_Q2
+      hgap_nonneg
+
+/--
 Lemma 9 analytic endpoint derivative, using the current structured ratio
 bounds and the Lemma 6 endpoint-derivative certificate.
 -/
@@ -10509,6 +10608,104 @@ theorem paper_lemma10_structured_derivative_kernel_pos_of_current_bounds
   exact paper_remark2_structured_derivative_kernel_pos_of_ctmc_switch_and_tail
     u R2 z switch12 switch21 Q1 Q2 T1 T2 R2 hswitch12_pos hsum hu
     htail_pos hlinear_pos
+
+/--
+Lemma 10 pointwise Lemma 6 kernel positivity for the structured CTMC
+non-surge price, after expanding the current non-surge earning primitive.
+-/
+theorem paper_lemma10_derivative_sign_kernel_pos_of_current_bounds
+    (ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z : ℝ)
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hQ2_pos : 0 < Q2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2) :
+    0 <
+      gn21DerivativeSignKernel (gn21SwitchProb switch12 switch21 u) u
+        (ctmcStructuredSurgePrice R2 z switch12 switch21 u)
+        Q1 Q2 T1 T2
+        (R2 * (T1 - 1) + z * (Q1 - switch12))
+        (R2 * T2) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch12 switch21 u) u R2 z switch12 Q1 Q2 T1 T2 R2 :=
+    paper_lemma10_structured_derivative_kernel_pos_of_current_bounds
+      ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z hbounds hz hR2_pos
+      hQ2_pos hswitch12_pos hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
+  simpa [ctmcStructuredSurgePrice, structuredSurgePrice,
+    paper_remark2_structured_derivative_kernel_algebra] using hstructured
+
+/--
+Measured-current Lemma 10 pointwise kernel positivity.  The moving non-surge
+earning primitive is expanded from the structured price, while the fixed surge
+state is supplied through its current reward-rate identity.
+-/
+theorem paper_lemma10_measured_derivative_sign_kernel_pos_of_current_bounds
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 R2 z ratio u : ℝ)
+    (wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hbounds :
+      lemma10StructuredBounds ratio
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hQ2_pos :
+      0 < gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 :
+      switch12 <
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hgap_nonneg :
+      0 ≤
+        switch12 * gn21ScaledStateTime μI arrivalI σI -
+          gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hA_pos :
+      0 <
+        gn21ScaledStateTime μJ arrivalJ σJ * switch12 +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (htime_integrable_σI :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (hq_integrable_σI :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        σI μI)
+    (hW_fixed :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        R2 * gn21ScaledStateTime μJ arrivalJ σJ) :
+    0 <
+      gn21DerivativeSignKernel (gn21SwitchProb switch12 switch21 u) u
+        (ctmcStructuredSurgePrice R2 z switch12 switch21 u)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ScaledStateEarning μI arrivalI
+          (ctmcStructuredSurgePrice R2 z switch12 switch21) σI)
+        (gn21ScaledStateEarning μJ arrivalJ wJ σJ) := by
+  rw [paper_remark2_structured_scaled_earning_algebra
+      μI arrivalI R2 z switch12 switch21 σI htime_integrable_σI
+      hq_integrable_σI,
+    hW_fixed]
+  exact
+    paper_lemma10_derivative_sign_kernel_pos_of_current_bounds
+      ratio u
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      switch12 switch21 R2 z hbounds hz hR2_pos hQ2_pos hswitch12_pos
+      hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
 
 /--
 Lemma 10 analytic endpoint derivative, using the current structured ratio
@@ -13006,6 +13203,198 @@ theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_p
       harrivalJ_nonneg hq_integrable_σ hq_integrable_rejected
       htime_integrable_σ htime_integrable_rejected hw_integrable_σ
       hw_integrable_rejected hden_pos hden_add_pos hQi_nonneg hpointwise
+
+/--
+Non-surge accept-all aggregate improvement from Lemma 10 current bounds.  This
+combines the pointwise Lemma 10 derivative-kernel positivity theorem with the
+rejected-complement aggregate add bridge.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ)
+    (wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (harrivalI_nonneg : 0 ≤ arrivalI)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σI μI)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        (acceptAllPolicy \ σI) μI)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σI) μI)
+    (hw_integrable_σ :
+      IntegrableOn (ctmcStructuredSurgePrice R2 z switch12 switch21) σI μI)
+    (hw_integrable_rejected :
+      IntegrableOn (ctmcStructuredSurgePrice R2 z switch12 switch21)
+        (acceptAllPolicy \ σI) μI)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI +
+            arrivalI *
+              ∫ τ in acceptAllPolicy \ σI,
+                gn21SwitchProb switch12 switch21 τ ∂μI) *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+            (gn21ScaledStateTime μI arrivalI σI +
+              arrivalI * ∫ τ in acceptAllPolicy \ σI, τ ∂μI))
+    (hQj_nonneg :
+      0 ≤ gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hbounds :
+      lemma10StructuredBounds ratio
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hQ2_pos :
+      0 < gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hswitch_lt_Q1 :
+      switch12 <
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hgap_nonneg :
+      0 ≤
+        switch12 * gn21ScaledStateTime μI arrivalI σI -
+          gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hA_pos :
+      0 <
+        gn21ScaledStateTime μJ arrivalJ σJ * switch12 +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hW_fixed :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        R2 * gn21ScaledStateTime μJ arrivalJ σJ) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ
+        acceptAllPolicy σJ := by
+  exact
+    gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_complement_pointwise_kernel_nonneg
+      μI μJ arrivalI arrivalJ switch12 switch21
+      (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ σI σJ
+      hσI_subset hσI_measurable harrivalI_nonneg hq_integrable_σ
+      hq_integrable_rejected htime_integrable_σ htime_integrable_rejected
+      hw_integrable_σ hw_integrable_rejected hden_pos hden_add_pos
+      hQj_nonneg
+      (by
+        intro τ hτ
+        exact le_of_lt
+          (paper_lemma10_measured_derivative_sign_kernel_pos_of_current_bounds
+            μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio τ wJ
+            σI σJ hbounds hz hR2_pos hQ2_pos hswitch12_pos hsum hτ.1
+            hswitch_lt_Q1 hgap_nonneg hA_pos htime_integrable_σ
+            hq_integrable_σ hW_fixed))
+
+/--
+Surge accept-all aggregate improvement from Lemma 9 current bounds.  This is
+the state-swapped counterpart of
+`gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds`.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_current_bounds
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 m R1 z ratio : ℝ)
+    (wI : PricingFunction) (σI σJ : TripPolicy)
+    (hσJ_subset : σJ ⊆ acceptAllPolicy)
+    (hσJ_measurable : MeasurableSet σJ)
+    (harrivalJ_nonneg : 0 ≤ arrivalJ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ) σJ μJ)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        (acceptAllPolicy \ σJ) μJ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σJ μJ)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σJ) μJ)
+    (hw_integrable_σ :
+      IntegrableOn (ctmcStructuredSurgePrice m z switch21 switch12) σJ μJ)
+    (hw_integrable_rejected :
+      IntegrableOn (ctmcStructuredSurgePrice m z switch21 switch12)
+        (acceptAllPolicy \ σJ) μJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+            (gn21ScaledStateTime μJ arrivalJ σJ +
+              arrivalJ * ∫ τ in acceptAllPolicy \ σJ, τ ∂μJ) +
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ +
+            arrivalJ *
+              ∫ τ in acceptAllPolicy \ σJ,
+                gn21SwitchProb switch21 switch12 τ ∂μJ) *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hQi_nonneg :
+      0 ≤ gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hbounds :
+      lemma9StructuredBounds ratio
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ gn21ScaledStateTime μI arrivalI σI)
+    (hQ1_pos :
+      0 < gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hswitch_lt_Q2 :
+      switch21 <
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hgap_nonneg :
+      0 ≤
+        switch21 * gn21ScaledStateTime μJ arrivalJ σJ -
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hW_fixed :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        R1 * gn21ScaledStateTime μI arrivalI σI) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21 wI
+        (ctmcStructuredSurgePrice m z switch21 switch12) σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21 wI
+        (ctmcStructuredSurgePrice m z switch21 switch12) σI
+        acceptAllPolicy := by
+  exact
+    gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_pointwise_kernel_nonneg
+      μI μJ arrivalI arrivalJ switch12 switch21 wI
+      (ctmcStructuredSurgePrice m z switch21 switch12) σI σJ
+      hσJ_subset hσJ_measurable harrivalJ_nonneg hq_integrable_σ
+      hq_integrable_rejected htime_integrable_σ htime_integrable_rejected
+      hw_integrable_σ hw_integrable_rejected hden_pos hden_add_pos
+      hQi_nonneg
+      (by
+        intro τ hτ
+        exact le_of_lt
+          (paper_lemma9_measured_derivative_sign_kernel_pos_of_current_bounds
+            μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio τ wI
+            σI σJ hbounds hz hmR_pos hR1_nonneg hT1_nonneg hQ1_pos
+            hswitch21_pos hsum hτ.1 hswitch_lt_Q2 hgap_nonneg
+            htime_integrable_σ hq_integrable_σ hW_fixed))
 
 /--
 Nondegeneracy side conditions needed to identify measured dynamic reward with
