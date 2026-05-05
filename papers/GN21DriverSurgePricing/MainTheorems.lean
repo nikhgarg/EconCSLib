@@ -2122,6 +2122,23 @@ def ctmcStructuredSurgePrice
   structuredSurgePrice m z (gn21SwitchProb lambdaIJ lambdaJI)
 
 /--
+Structured CTMC prices are integrable on a policy set whenever trip time and
+the CTMC switch probability are integrable there.
+-/
+theorem integrableOn_ctmcStructuredSurgePrice
+    (μ : Measure TripLength)
+    (m z switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ) :
+    IntegrableOn (ctmcStructuredSurgePrice m z switchIJ switchJI) σ μ := by
+  unfold ctmcStructuredSurgePrice structuredSurgePrice
+  exact (htime_integrable.const_mul m).add (hq_integrable.const_mul z)
+
+/--
 Theorem 3 state-indexed CTMC switch probabilities.  State `0` is the
 non-surge state and state `1` is the surge state.
 -/
@@ -13418,11 +13435,6 @@ structure GN21NonsurgeLemma10AcceptAllAggregateData
     IntegrableOn (fun τ : TripLength => τ) σI μI
   time_integrable_rejected :
     IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σI) μI
-  earning_integrable_current :
-    IntegrableOn (ctmcStructuredSurgePrice R2 z switch12 switch21) σI μI
-  earning_integrable_rejected :
-    IntegrableOn (ctmcStructuredSurgePrice R2 z switch12 switch21)
-      (acceptAllPolicy \ σI) μI
   denominator_pos :
     0 <
       gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
@@ -13488,7 +13500,11 @@ theorem GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_le_acceptAll
     D.policy_subset D.policy_measurable D.arrival_nonneg
     D.q_integrable_current D.q_integrable_rejected
     D.time_integrable_current D.time_integrable_rejected
-    D.earning_integrable_current D.earning_integrable_rejected
+    (integrableOn_ctmcStructuredSurgePrice μI R2 z switch12 switch21 σI
+      D.time_integrable_current D.q_integrable_current)
+    (integrableOn_ctmcStructuredSurgePrice μI R2 z switch12 switch21
+      (acceptAllPolicy \ σI) D.time_integrable_rejected
+      D.q_integrable_rejected)
     D.denominator_pos D.acceptAll_denominator_pos D.fixed_exit_nonneg
     D.bounds D.z_eq D.R2_pos D.fixed_exit_pos D.switch_pos
     D.switch_sum_pos D.switch_lt_current_exit D.current_gap_nonneg
@@ -13516,11 +13532,6 @@ structure GN21SurgeLemma9AcceptAllAggregateData
     IntegrableOn (fun τ : TripLength => τ) σJ μJ
   time_integrable_rejected :
     IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σJ) μJ
-  earning_integrable_current :
-    IntegrableOn (ctmcStructuredSurgePrice m z switch21 switch12) σJ μJ
-  earning_integrable_rejected :
-    IntegrableOn (ctmcStructuredSurgePrice m z switch21 switch12)
-      (acceptAllPolicy \ σJ) μJ
   denominator_pos :
     0 <
       gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
@@ -13584,7 +13595,11 @@ theorem GN21SurgeLemma9AcceptAllAggregateData.aggregate_le_acceptAll
     D.policy_subset D.policy_measurable D.arrival_nonneg
     D.q_integrable_current D.q_integrable_rejected
     D.time_integrable_current D.time_integrable_rejected
-    D.earning_integrable_current D.earning_integrable_rejected
+    (integrableOn_ctmcStructuredSurgePrice μJ m z switch21 switch12 σJ
+      D.time_integrable_current D.q_integrable_current)
+    (integrableOn_ctmcStructuredSurgePrice μJ m z switch21 switch12
+      (acceptAllPolicy \ σJ) D.time_integrable_rejected
+      D.q_integrable_rejected)
     D.denominator_pos D.acceptAll_denominator_pos D.fixed_exit_nonneg
     D.bounds D.z_eq D.m_sub_R1_pos D.R1_nonneg D.fixed_time_nonneg
     D.fixed_exit_pos D.switch_pos D.switch_sum_pos D.switch_lt_current_exit

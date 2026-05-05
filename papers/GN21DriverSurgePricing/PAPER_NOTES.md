@@ -73,6 +73,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_current_bounds`,
+  structured-price integrability helper
+  `integrableOn_ctmcStructuredSurgePrice`,
   structured current-bounds weak aggregate package
   `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`,
   its adapter
