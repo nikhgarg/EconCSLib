@@ -85,12 +85,18 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21SurgeLemma9AcceptAllAggregatePrimitiveData`,
   primitive structured current-bounds certificate
   `Theorem4MeasuredAggregateStructuredCurrentBoundsPrimitiveCertificate`,
+  feasible-measurable dynamic IC interface
+  `dynamicMeasurableIncentiveCompatible`,
+  feasible primitive current-bounds certificate
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   source-facing current-bounds wrapper
   `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_source_assumptions`,
   primitive source-facing current-bounds wrapper
   `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_primitive_source_assumptions`,
+  feasible primitive measurable-IC source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

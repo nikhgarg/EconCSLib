@@ -121,6 +121,11 @@ cache is `source.txt`.
   from feasible measurable policies, nonnegative arrivals, and positive switch
   rates, with source wrapper
   `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_primitive_source_assumptions`.
+  The source-domain variant now exposes
+  `dynamicMeasurableIncentiveCompatible` and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
+  whose remaining current-bounds proof ranges only over feasible measurable
+  dynamic policies.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
