@@ -7441,6 +7441,40 @@ theorem singleStateTripMass_rejectMiddleHiReplacement_withDensity_pos_of_pos_on
   simpa using hpos τ hτ
 
 /--
+Positive NNReal density on any feasible middle-rejection-shaped policy gives
+positive real trip mass under a finite `withDensity` measure.
+-/
+theorem singleStateTripMass_rejectsMiddleTrips_withDensity_pos_of_pos_on
+    (density : TripLength → NNReal)
+    (hdensity_meas : Measurable density)
+    (lo hi : ℝ)
+    (σ : TripPolicy)
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞)) σ ≠ ∞)
+    (hpos : ∀ τ, τ ∈ σ → density τ ≠ 0) :
+    0 <
+      singleStateTripMass
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞)) σ := by
+  have hσ_eq : σ = rejectMiddleTripsPolicy lo hi :=
+    eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+      hshape hsub
+  have hσ_meas : MeasurableSet σ := by
+    rw [hσ_eq]
+    exact measurableSet_rejectMiddleTripsPolicy lo hi
+  have hvolume_ne_zero : volume σ ≠ 0 := by
+    rw [hσ_eq]
+    exact volume_rejectMiddleTripsPolicy_ne_zero lo hi
+  refine
+    singleStateTripMass_withDensity_pos_of_pos_on
+      (fun τ => (density τ : ℝ≥0∞))
+      (measurable_coe_nnreal_ennreal.comp hdensity_meas)
+      hσ_meas hvolume_ne_zero hfinite ?_
+  intro τ hτ
+  simpa using hpos τ hτ
+
+/--
 `Q_i` realization along a lower-cutoff movement of a middle-rejection policy.
 -/
 theorem gn21ExitWeightIntegral_rejectMiddleLoReplacement_withDensity_eq_rejectMiddleQiPath
@@ -10925,6 +10959,45 @@ theorem gn21MeasuredPairNondegenerate_rejectMiddleHiReplacement_withDensity_righ
       hmassI_pos hdensity_meas (hfinite ε hε_pos hε_lt)
       (hpos ε hε_pos hε_lt) harrivalI_pos harrivalJ_pos hswitchIJ_pos
       hswitchJI_pos hσI_measurable hσI_positive
+
+/--
+Measured pair nondegeneracy when the right/state-`J` current policy has the
+middle-rejection shape under a positive NNReal density.
+-/
+theorem gn21MeasuredPairNondegenerate_of_rejectsMiddleTrips_withDensity_right
+    (μI : Measure TripLength)
+    (density : TripLength → NNReal)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy)
+    (lo hi : ℝ)
+    (hshape : rejectsMiddleTrips lo hi σJ)
+    (hsub : σJ ⊆ acceptAllPolicy)
+    (hmassI_pos : 0 < singleStateTripMass μI σI)
+    (hdensity_meas : Measurable density)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞)) σJ ≠ ∞)
+    (hpos : ∀ τ, τ ∈ σJ → density τ ≠ 0)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσI_measurable : MeasurableSet σI)
+    (hσI_positive : σI ⊆ acceptAllPolicy) :
+    GN21MeasuredPairNondegenerate μI
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI σI σJ := by
+  have hσJ_measurable : MeasurableSet σJ := by
+    rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+      hshape hsub]
+    exact measurableSet_rejectMiddleTripsPolicy lo hi
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure
+      μI (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI σI σJ hmassI_pos
+      (singleStateTripMass_rejectsMiddleTrips_withDensity_pos_of_pos_on
+        density hdensity_meas lo hi σJ hshape hsub hfinite hpos)
+      harrivalI_pos harrivalJ_pos hswitchIJ_pos hswitchJI_pos
+      hσI_measurable hσJ_measurable hσI_positive hsub
 
 /--
 Named wrapper for Lemma 1/3's measured reward-to-aggregate reduction.
