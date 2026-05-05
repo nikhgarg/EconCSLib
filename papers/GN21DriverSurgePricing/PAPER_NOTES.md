@@ -40,7 +40,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   the accept-all-primitive packaged allowed-replacement Theorem 3 route, the
   endpoint-bridge-to-allowed-replacement certificate conversion,
   bundled source-assumption wrapper
-  `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, and
+  `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
+  endpoint-bridge source wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions`,
+  and
   auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
   global Theorem 1 threshold-existence compactness/continuity argument, the

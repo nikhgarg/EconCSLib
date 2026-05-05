@@ -94,7 +94,9 @@ cache is `source.txt`.
   certificate for the constructed prices; endpoint-bridge data can now be
   converted directly into that boundary via
   `Theorem4AllowedReplacementEndpointBridgeCertificate` and
-  `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`.
+  `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`, with a
+  direct source wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions`.
 - The finite MDP declarations are marked auxiliary support only. They are not
   used to claim the paper's continuous CTMC theorems.
 - The DAG uses the shared TikZ preamble and separates solid verified support
@@ -178,6 +180,8 @@ and
 `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`,
 `Theorem3AcceptAllAllowedReplacementSourceAssumptions`,
 `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
+`Theorem3AcceptAllAllowedReplacementEndpointBridgeSourceAssumptions`,
+`paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions`,
 with the unbundled raw-argument variant
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvements`
 and its positive-primitives counterpart
