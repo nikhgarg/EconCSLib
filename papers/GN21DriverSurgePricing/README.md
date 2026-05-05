@@ -115,6 +115,12 @@ cache is `source.txt`.
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`; the
   direct source wrapper is
   `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_source_assumptions`.
+  A lighter primitive current-bounds boundary,
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsPrimitiveCertificate`, now
+  derives aggregate denominator and fixed-state positivity side conditions
+  from feasible measurable policies, nonnegative arrivals, and positive switch
+  rates, with source wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_primitive_source_assumptions`.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,

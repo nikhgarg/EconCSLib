@@ -73,16 +73,24 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_current_bounds`,
+  aggregate denominator positivity helpers,
   structured-price integrability helper
   `integrableOn_ctmcStructuredSurgePrice`,
   structured current-bounds weak aggregate package
   `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`,
   its adapter
   `theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_structured_current_bounds`,
+  primitive current-bounds packages
+  `GN21NonsurgeLemma10AcceptAllAggregatePrimitiveData` and
+  `GN21SurgeLemma9AcceptAllAggregatePrimitiveData`,
+  primitive structured current-bounds certificate
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsPrimitiveCertificate`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   source-facing current-bounds wrapper
   `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_source_assumptions`,
+  primitive source-facing current-bounds wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_primitive_source_assumptions`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper
