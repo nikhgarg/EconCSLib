@@ -112,7 +112,9 @@ cache is `source.txt`.
   The current-bounds route is now packaged as
   `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`, which
   feeds the weak Theorem 3 boundary through
-  `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`.
+  `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`; the
+  direct source wrapper is
+  `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_source_assumptions`.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,

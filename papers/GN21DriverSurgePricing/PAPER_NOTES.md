@@ -79,6 +79,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_structured_current_bounds`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
+  source-facing current-bounds wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_source_assumptions`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

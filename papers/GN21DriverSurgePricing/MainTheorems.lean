@@ -26044,6 +26044,79 @@ theorem paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assum
       A.weak_reward
 
 /--
+Bundled source-level assumptions for the structured current-bounds Theorem 3
+route.  This refines the weak-reward boundary by asking for the per-policy
+Lemma 9/10 current-bound packages that mechanically imply weak accept-all
+aggregate improvements for the constructed prices.
+-/
+structure Theorem3AcceptAllStructuredCurrentBoundsSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  current_bounds :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate
+          μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper at the structured current-bounds IC boundary.
+-/
+theorem paper_theorem3_measured_structured_ic_prices_of_structured_current_bounds_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  have hweak :
+      theorem3AcceptAllWeakRewardCertificate
+        μ arrival R1 R2 switch12 switch21 :=
+    theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds
+      μ arrival R1 R2 switch12 switch21 A.current_bounds
+  exact
+    paper_theorem3_measured_structured_ic_prices_of_weak_reward
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos hweak
+
+/--
 Measured Theorem 3 endpoint from statewise positive Lemma 5 replacement
 certificates, using the direct Lemma 9 primitive-positivity feasibility route.
 This matches the paper's accept-all proof shape: Lemmas 9 and 10 make the
