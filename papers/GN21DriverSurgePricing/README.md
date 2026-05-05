@@ -91,7 +91,10 @@ cache is `source.txt`.
   `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
   only proof boundary is the continuous allowed-replacement Theorem 4
-  certificate for the constructed prices.
+  certificate for the constructed prices; endpoint-bridge data can now be
+  converted directly into that boundary via
+  `Theorem4AllowedReplacementEndpointBridgeCertificate` and
+  `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`.
 - The finite MDP declarations are marked auxiliary support only. They are not
   used to claim the paper's continuous CTMC theorems.
 - The DAG uses the shared TikZ preamble and separates solid verified support
@@ -144,8 +147,11 @@ calculus to the top-level routes without extra structure plumbing:
 `theorem4ShapeDerivationCertificate_of_all_shape_replacements`,
 `paper_theorem4_dynamic_structural_policy_of_all_shape_replacements`,
 `Theorem4AllowedReplacementStatewiseImprovementCertificate`,
+`Theorem4AllowedReplacementEndpointBridgeCertificate`,
+`Theorem4AllowedReplacementStatewiseImprovementCertificate.of_endpoint_bridges`,
 `Theorem4ShapeDerivationStatewiseImprovementCertificate.of_allowed_replacement_data`,
 `paper_theorem4_accept_all_unique_optimal_of_allowed_replacement_data`,
+`paper_theorem4_accept_all_unique_optimal_of_allowed_replacement_endpoint_bridges`,
 `Theorem4ShapeDerivationStatewiseImprovementCertificate.of_shape_replacement`,
 `Theorem4ShapeDerivationStatewiseImprovementCertificate.of_all_shape_replacements`,
 `paper_theorem4_accept_all_unique_optimal_of_shape_replacement_statewise_improvements`,
@@ -169,6 +175,7 @@ and
 `theorem3AcceptAllStructuredParameterEvidence`,
 `theorem3MeasuredStructuredICConclusion`,
 `theorem3AcceptAllAllowedReplacementCertificate`,
+`theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`,
 `Theorem3AcceptAllAllowedReplacementSourceAssumptions`,
 `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
 with the unbundled raw-argument variant

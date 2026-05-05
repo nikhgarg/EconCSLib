@@ -18399,6 +18399,130 @@ structure Theorem4AllowedReplacementStatewiseImprovementCertificate
             μ arrival m z switch12 switch21 ρ
 
 /--
+Allowed-replacement Theorem 4 certificate in the paper's endpoint-bridge
+language.  This is closer to the continuous source proof than raw statewise
+improvement fields: Lemma 5 supplies the allowed replacement cases, while
+Lemmas 9-10 supply endpoint bridge data for each non-accept-all shape.
+-/
+structure Theorem4AllowedReplacementEndpointBridgeCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  feasible_optimal :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy
+  nonsurge_replacement_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+        Theorem4NonsurgeAllowedReplacementData
+          (dynamicStateReward
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ 0)
+          (ρ 0)
+  surge_replacement_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+        Theorem4SurgeAllowedReplacementData
+          (dynamicStateReward
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ 1)
+          (ρ 1)
+  nonsurge_reject_long_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          GN21NonsurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          GN21SurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+
+/--
+Endpoint-bridge data instantiate the raw statewise-improvement allowed
+replacement certificate by taking the bridge's stored strict aggregate
+improvement in each shape case.
+-/
+def Theorem4AllowedReplacementStatewiseImprovementCertificate.of_endpoint_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4AllowedReplacementEndpointBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4AllowedReplacementStatewiseImprovementCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := C.exists_optimal
+  feasible_optimal := C.feasible_optimal
+  nonsurge_replacement_data := C.nonsurge_replacement_data
+  surge_replacement_data := C.surge_replacement_data
+  nonsurge_reject_long_improvement := by
+    intro ρ hρ t ht
+    exact
+      (C.nonsurge_reject_long_bridge ρ hρ t ht).statewise_strict_aggregate_improvement
+  nonsurge_accept_middle_improvement := by
+    intro ρ hρ lo hi hmid
+    exact
+      (C.nonsurge_accept_middle_bridge ρ hρ lo hi hmid).statewise_strict_aggregate_improvement
+  surge_reject_short_improvement := by
+    intro ρ hρ t ht
+    exact
+      (C.surge_reject_short_bridge ρ hρ t ht).statewise_strict_aggregate_improvement
+  surge_reject_middle_improvement := by
+    intro ρ hρ lo hi hmid
+    exact
+      (C.surge_reject_middle_bridge ρ hρ lo hi hmid).statewise_strict_aggregate_improvement
+
+/--
 The allowed-replacement source-boundary certificate instantiates the older
 shape-derivation statewise-improvement certificate.
 -/
@@ -22396,6 +22520,34 @@ theorem paper_theorem4_accept_all_unique_optimal_of_allowed_replacement_data
         μ arrival m z switch12 switch21 C)
 
 /--
+Theorem 4 accept-all uniqueness from allowed Lemma 5 replacement data plus
+endpoint bridge data.  This is the same source boundary as the proof text:
+replacement cases classify optimal policies, and the endpoint bridges rule out
+each non-accept-all shape.
+-/
+theorem paper_theorem4_accept_all_unique_optimal_of_allowed_replacement_endpoint_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4AllowedReplacementEndpointBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_accept_all_unique_optimal_of_allowed_replacement_data
+      μ arrival m z switch12 switch21
+      (Theorem4AllowedReplacementStatewiseImprovementCertificate.of_endpoint_bridges
+        μ arrival m z switch12 switch21 C)
+
+/--
 Accept-all measured primitives discharge the scalar positivity conditions used
 by the integrated Theorem 3 endpoints.  This isolates the CTMC/measure facts so
 global-comparison and strict-local Theorem 3 wrappers can share them.
@@ -23747,6 +23899,28 @@ def theorem3AcceptAllAllowedReplacementCertificate
         μ arrival R1 R2 switch12 switch21 m z →
         Theorem4AllowedReplacementStatewiseImprovementCertificate
           μ arrival m z switch12 switch21
+
+/--
+Build the Theorem 3 allowed-replacement boundary from endpoint bridge
+certificates for the constructed prices.
+-/
+def theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+            Theorem4AllowedReplacementEndpointBridgeCertificate
+              μ arrival m z switch12 switch21) :
+    theorem3AcceptAllAllowedReplacementCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  exact
+    Theorem4AllowedReplacementStatewiseImprovementCertificate.of_endpoint_bridges
+      μ arrival m z switch12 switch21 (C m z hnonneg hparams)
 
 /--
 Bundled source-level assumptions for the current strongest formal Theorem 3
