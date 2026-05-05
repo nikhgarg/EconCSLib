@@ -21,13 +21,13 @@ This is a lightweight handoff document for source-to-Lean mapping.
   Proposition 3.1 measured affine reward step, Lemma 2 CTMC closed form,
   Lemma 1/Lemma 3 measured algebra support, Appendix D derivative-kernel
   algebra, measured Lemma 9/10 accept-all-to-current tightening including
-  positive-measure variants, Lemma 9/10 endpoint bridges, Theorem 4
-  paper-ordered shape-derivation routes, raw statewise improvement adapters,
-  shape-level with-density bridges for all four Theorem 4 shape cases, the
-  packaged source-facing statewise-improvement certificate for Theorem
-  4/Theorem 3, Theorem 3 CTMC structured price form, ratio-to-IC endpoints,
-  and accept-all-primitive statewise-certificate endpoint, and auxiliary
-  finite dynamic policy support.
+  positive-measure and primitive-equality variants, Lemma 9/10 endpoint
+  bridges, Theorem 4 paper-ordered shape-derivation routes, raw statewise
+  improvement adapters, shape-level with-density bridges for all four Theorem
+  4 shape cases, the packaged source-facing statewise-improvement certificate
+  for Theorem 4/Theorem 3, Theorem 3 CTMC structured price form, ratio-to-IC
+  endpoints, and accept-all-primitive statewise-certificate endpoint, and
+  auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
   global Theorem 1 threshold-existence compactness/continuity argument, the
   continuous renewal-reward cycle construction, CTMC stochastic-process bridge,

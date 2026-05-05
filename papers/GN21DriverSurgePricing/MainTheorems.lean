@@ -188,8 +188,8 @@ the continuous CTMC source theorems.
   `paper_remark4_exit_weight_integral_le_acceptAll`,
   `lemma9StructuredBounds_of_acceptAll_measured_tightening`, and
   `lemma10StructuredBounds_of_acceptAll_measured_tightening`, with
-  positive-measure variants: measured monotone-tightening bridges deriving
-  current-policy Lemma 9/10 bounds from accept-all bounds.
+  positive-measure and primitive-equality variants: measured monotone-tightening
+  bridges deriving current-policy Lemma 9/10 bounds from accept-all bounds.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -8458,6 +8458,51 @@ theorem lemma9StructuredBounds_of_acceptAll_measured_tightening_of_positive_meas
         hσ_measurable hσ_subset hq_integrable hmeasure_pos)
 
 /--
+Measured Lemma 9 tightening rewritten through explicit current-policy
+primitive equalities.
+-/
+theorem lemma9StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure_eq
+    (μ : Measure TripLength) (arrivalRate switch21 switch12 : ℝ)
+    (σ : TripPolicy)
+    (ratio T1 Q1 T2 Q2 : ℝ)
+    (hbounds_bar :
+      lemma9StructuredBounds ratio T1 Q1
+        (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+        (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 acceptAllPolicy)
+        switch21)
+    (hT2 :
+      gn21ScaledStateTime μ arrivalRate σ = T2)
+    (hQ2 :
+      gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ = Q2)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (harrival_pos : 0 < arrivalRate)
+    (hswitch_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ) σ μ)
+    (htime_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy μ)
+    (hmeasure_pos : 0 < μ σ) :
+    lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21 := by
+  have h :=
+    lemma9StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure
+      μ arrivalRate switch21 switch12 σ ratio T1 Q1 hbounds_bar
+      hT1_nonneg hQ1_pos harrival_pos hswitch_pos hsum hσ_measurable
+      hσ_subset htime_integrable hq_integrable htime_acceptAll_integrable
+      hq_acceptAll_integrable hmeasure_pos
+  simpa [hT2, hQ2] using h
+
+/--
 Lemma 9 upper-bound algebra: the current upper ratio bound implies positivity
 of the structured derivative static term.
 -/
@@ -9672,6 +9717,51 @@ theorem lemma10StructuredBounds_of_acceptAll_measured_tightening_of_positive_mea
       (paper_remark4_exit_weight_gt_switch_of_positive_measure
         μ arrivalRate switch12 switch21 σ harrival_pos hswitch_pos hsum
         hσ_measurable hσ_subset hq_integrable hmeasure_pos)
+
+/--
+Measured Lemma 10 tightening rewritten through explicit current-policy
+primitive equalities.
+-/
+theorem lemma10StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure_eq
+    (μ : Measure TripLength) (arrivalRate switch12 switch21 : ℝ)
+    (σ : TripPolicy)
+    (ratio T2 Q2 T1 Q1 : ℝ)
+    (hbounds_bar :
+      lemma10StructuredBounds ratio T2 Q2
+        (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+        (gn21ExitWeightIntegral μ arrivalRate switch12 switch21 acceptAllPolicy)
+        switch12)
+    (hT1 :
+      gn21ScaledStateTime μ arrivalRate σ = T1)
+    (hQ1 :
+      gn21ExitWeightIntegral μ arrivalRate switch12 switch21 σ = Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hQ2_nonneg : 0 ≤ Q2)
+    (harrival_pos : 0 < arrivalRate)
+    (hswitch_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σ μ)
+    (htime_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy μ)
+    (hmeasure_pos : 0 < μ σ) :
+    lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12 := by
+  have h :=
+    lemma10StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure
+      μ arrivalRate switch12 switch21 σ ratio T2 Q2 hbounds_bar
+      hA_pos hQ2_nonneg harrival_pos hswitch_pos hsum hσ_measurable
+      hσ_subset htime_integrable hq_integrable htime_acceptAll_integrable
+      hq_acceptAll_integrable hmeasure_pos
+  simpa [hT1, hQ1] using h
 
 /--
 Lemma 10 upper-bound algebra: the current upper ratio bound implies positivity
