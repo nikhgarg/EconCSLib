@@ -2429,6 +2429,14 @@ def gn21AggregateDynamicReward
     (Qi Qj Ti Tj Wi Wj : ℝ) : ℝ :=
   (Qi * Wj + Qj * Wi) / (Qi * Tj + Qj * Ti)
 
+/-- The aggregate two-state quotient is symmetric in the order of the states. -/
+theorem gn21AggregateDynamicReward_swap
+    (Qi Qj Ti Tj Wi Wj : ℝ) :
+    gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj =
+      gn21AggregateDynamicReward Qj Qi Tj Ti Wj Wi := by
+  unfold gn21AggregateDynamicReward
+  ring
+
 /-- Endpoint path for `Q_i = lambda_{i→j} + lambda_i ∫ q_{i→j}(τ) f_i(τ)dτ`. -/
 def gn21EndpointQiPath
     (arrivalRate switchRate lowerEndpoint : ℝ)
@@ -7612,6 +7620,32 @@ def gn21MeasuredAggregateDynamicStateReward
     (arrival 1) switch12 switch21 (w 0) (w 1)
     ((replaceDynamicPolicyState ρ i τ) 0)
     ((replaceDynamicPolicyState ρ i τ) 1)
+
+/-- State-0 replacement unfolds to replacing the non-surge policy. -/
+theorem gn21MeasuredAggregateDynamicStateReward_zero
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy) (τ : TripPolicy) :
+    gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21 w ρ 0 τ =
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+        (arrival 1) switch12 switch21 (w 0) (w 1) τ (ρ 1) := by
+  simp [gn21MeasuredAggregateDynamicStateReward, replaceDynamicPolicyState]
+
+/-- State-1 replacement unfolds to replacing the surge policy. -/
+theorem gn21MeasuredAggregateDynamicStateReward_one
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy) (τ : TripPolicy) :
+    gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21 w ρ 1 τ =
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+        (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) τ := by
+  simp [gn21MeasuredAggregateDynamicStateReward, replaceDynamicPolicyState]
 
 /--
 Uniform statewise strict-local aggregate certificate.  Endpoint arguments can
