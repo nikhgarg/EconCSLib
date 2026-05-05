@@ -30,8 +30,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   structured price form, direct Lemma 9 primitive-feasibility bridge,
   ratio-to-IC endpoints, and accept-all-primitive statewise-certificate
   endpoint, accept-all-primitive positive-primitives strict-local and
-  statewise-certificate endpoints, and auxiliary finite dynamic policy
-  support.
+  statewise-certificate endpoints, raw statewise-improvement positive-primitives
+  route, and auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
   global Theorem 1 threshold-existence compactness/continuity argument, the
   continuous renewal-reward cycle construction, CTMC stochastic-process bridge,
