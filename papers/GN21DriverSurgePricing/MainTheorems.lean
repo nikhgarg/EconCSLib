@@ -6070,6 +6070,77 @@ theorem gn21ScaledStateEarning_rejectLongTripsPolicy_withDensity_eq_endpointWiPa
   simp [Algebra.smul_def, mul_comm]
 
 /--
+Any feasible long-trip-rejection-shaped policy realizes the endpoint `Q_i`
+path after canonicalizing the policy.
+-/
+theorem gn21ExitWeightIntegral_rejectsLongTrips_withDensity_eq_endpointQiPath
+    (arrivalRate switchIJ switchJI t : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hshape : rejectsLongTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI σ =
+      gn21EndpointQiPath arrivalRate switchIJ 0
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) t := by
+  rw [eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ExitWeightIntegral_rejectLongTripsPolicy_withDensity_eq_endpointQiPath
+      arrivalRate switchIJ switchJI t density hdensity_meas ht_nonneg
+
+/--
+Any feasible long-trip-rejection-shaped policy realizes the endpoint `T_i`
+path after canonicalizing the policy.
+-/
+theorem gn21ScaledStateTime_rejectsLongTrips_withDensity_eq_endpointTiPath
+    (arrivalRate t : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hshape : rejectsLongTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate σ =
+      gn21EndpointTiPath arrivalRate 0
+        (fun τ => (density τ : ℝ)) t := by
+  rw [eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateTime_rejectLongTripsPolicy_withDensity_eq_endpointTiPath
+      arrivalRate t density hdensity_meas ht_nonneg
+
+/--
+Any feasible long-trip-rejection-shaped policy realizes the endpoint `W_i`
+path after canonicalizing the policy.
+-/
+theorem gn21ScaledStateEarning_rejectsLongTrips_withDensity_eq_endpointWiPath
+    (arrivalRate t : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hshape : rejectsLongTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment σ =
+      gn21EndpointWiPath arrivalRate 0
+        (fun τ => (density τ : ℝ)) payment t := by
+  rw [eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateEarning_rejectLongTripsPolicy_withDensity_eq_endpointWiPath
+      arrivalRate t density payment hdensity_meas ht_nonneg
+
+/--
 Canonical short-trip-rejection policy realizes the unbounded tail `Q_i` path
 when the cutoff is nonnegative.
 -/
@@ -6146,6 +6217,76 @@ theorem gn21ScaledStateEarning_rejectShortTripsPolicy_withDensity_eq_tailWiPath
   rw [hpolicy]
   exact gn21ScaledStateEarning_tail_withDensity_eq_tailWiPath
     arrivalRate t density payment hdensity_meas
+
+/--
+Any feasible short-trip-rejection-shaped policy realizes the tail `Q_i` path
+after canonicalizing the policy.
+-/
+theorem gn21ExitWeightIntegral_rejectsShortTrips_withDensity_eq_tailQiPath
+    (arrivalRate switchIJ switchJI t : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hshape : rejectsShortTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI σ =
+      gn21TailQiPath arrivalRate switchIJ
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) t := by
+  rw [eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ExitWeightIntegral_rejectShortTripsPolicy_withDensity_eq_tailQiPath
+      arrivalRate switchIJ switchJI t density hdensity_meas ht_nonneg
+
+/--
+Any feasible short-trip-rejection-shaped policy realizes the tail `T_i` path
+after canonicalizing the policy.
+-/
+theorem gn21ScaledStateTime_rejectsShortTrips_withDensity_eq_tailTiPath
+    (arrivalRate t : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hshape : rejectsShortTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate σ =
+      gn21TailTiPath arrivalRate (fun τ => (density τ : ℝ)) t := by
+  rw [eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateTime_rejectShortTripsPolicy_withDensity_eq_tailTiPath
+      arrivalRate t density hdensity_meas ht_nonneg
+
+/--
+Any feasible short-trip-rejection-shaped policy realizes the tail `W_i` path
+after canonicalizing the policy.
+-/
+theorem gn21ScaledStateEarning_rejectsShortTrips_withDensity_eq_tailWiPath
+    (arrivalRate t : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hshape : rejectsShortTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment σ =
+      gn21TailWiPath arrivalRate
+        (fun τ => (density τ : ℝ)) payment t := by
+  rw [eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateEarning_rejectShortTripsPolicy_withDensity_eq_tailWiPath
+      arrivalRate t density payment hdensity_meas ht_nonneg
 
 /-- Canonical short-trip-rejection policies only accept positive trips. -/
 theorem rejectShortTripsPolicy_subset_acceptAll (t : ℝ) :
