@@ -98,6 +98,12 @@ the continuous CTMC source theorems.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
+- `lemma5StrictlyIncreasingOptimizerReplacementCertificate_rejectShort`,
+  `lemma5StrictlyDecreasingOptimizerReplacementCertificate_rejectLong`,
+  `lemma5StrictlyQuasiConvexOptimizerReplacementCertificate_rejectMiddle`, and
+  `lemma5StrictlyQuasiConcaveOptimizerReplacementCertificate_acceptMiddle`:
+  canonical Lemma 5 replacement constructors for the four non-positive shape
+  cases.
 - `theorem4NonsurgeShape_of_lemma5_strictlyDecreasing`,
   `theorem4SurgeShape_of_lemma5_strictlyQuasiConvex`, and paired helpers:
   pure routing from Lemma 5 policy forms to Theorem 4's structural alternatives.
@@ -108,11 +114,21 @@ the continuous CTMC source theorems.
   `paper_theorem4_dynamic_structural_policy_of_shape_replacement`: bridge
   from Lemma 5 optimizer-replacement certificates to the Theorem 4 structural
   shape endpoint.
+- `Theorem4AllOptimalShapeReplacementDerivationCertificate`,
+  `theorem4ShapeReplacementDerivationCertificate_of_all_shape_replacements`,
+  `theorem4ShapeDerivationCertificate_of_all_shape_replacements`, and
+  `paper_theorem4_dynamic_structural_policy_of_all_shape_replacements`:
+  selection-free Theorem 4 route from existence of an optimum plus Lemma 5
+  replacements for every optimum.
 - `Theorem4ShapeDerivationStatewiseImprovementCertificate.of_shape_replacement`
   and
   `paper_theorem4_accept_all_unique_optimal_of_shape_replacement_statewise_improvements`:
   source-facing Theorem 4 route from Lemma 5 optimizer-replacement data plus
   the four statewise endpoint improvements.
+- `Theorem4ShapeDerivationStatewiseImprovementCertificate.of_all_shape_replacements`
+  and
+  `paper_theorem4_accept_all_unique_optimal_of_all_shape_replacements_statewise_improvements`:
+  statewise-improvement route from all-optimal Lemma 5 replacements.
 - `paper_proposition3_1_affine_accept_all_ge_complement_reward_of_rejected_set`:
   direct measure/integral affine-pricing reward step from Proposition 3.1.
 - `paper_proposition3_1_affine_accept_all_ge_rejecting_measurable_set`:
@@ -234,6 +250,9 @@ the continuous CTMC source theorems.
   primitive feasibility bridge.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_replacement_statewise_improvements_of_lemma9_positive_primitives`:
   Theorem 3 route from Lemma 5 optimizer-replacement data plus raw statewise
+  endpoint improvements.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_all_shape_replacements_statewise_improvements_of_lemma9_positive_primitives`:
+  Theorem 3 route from all-optimal Lemma 5 replacement data plus raw statewise
   endpoint improvements.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
@@ -8242,6 +8261,70 @@ def lemma5PositiveOptimizerReplacementCertificate_acceptAll
     intro hnot
     exact hstrict_unless_accepts_all hnot
 
+/--
+Increasing-derivative Lemma 5 replacement constructor using the canonical
+short-trip-rejection policy.
+-/
+def lemma5StrictlyIncreasingOptimizerReplacementCertificate_rejectShort
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (t : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (rejectShortTripsPolicy t))
+    (hstrict_unless_rejects_short :
+      ¬ lemma5PolicyForm .strictlyIncreasing σ0 →
+        Rhat σ0 < Rhat (rejectShortTripsPolicy t)) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 .strictlyIncreasing where
+  policy := rejectShortTripsPolicy t
+  policy_form := lemma5PolicyForm_strictlyIncreasing_rejectShortTripsPolicy t
+  reward_ge := hreward_ge
+  strict_unless_initial_form := hstrict_unless_rejects_short
+
+/--
+Decreasing-derivative Lemma 5 replacement constructor using the canonical
+long-trip-rejection policy.
+-/
+def lemma5StrictlyDecreasingOptimizerReplacementCertificate_rejectLong
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (t : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (rejectLongTripsPolicy t))
+    (hstrict_unless_rejects_long :
+      ¬ lemma5PolicyForm .strictlyDecreasing σ0 →
+        Rhat σ0 < Rhat (rejectLongTripsPolicy t)) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 .strictlyDecreasing where
+  policy := rejectLongTripsPolicy t
+  policy_form := lemma5PolicyForm_strictlyDecreasing_rejectLongTripsPolicy t
+  reward_ge := hreward_ge
+  strict_unless_initial_form := hstrict_unless_rejects_long
+
+/--
+Strictly quasi-convex Lemma 5 replacement constructor using the canonical
+middle-trip-rejection policy.
+-/
+def lemma5StrictlyQuasiConvexOptimizerReplacementCertificate_rejectMiddle
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (lo hi : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (rejectMiddleTripsPolicy lo hi))
+    (hstrict_unless_rejects_middle :
+      ¬ lemma5PolicyForm .strictlyQuasiConvex σ0 →
+        Rhat σ0 < Rhat (rejectMiddleTripsPolicy lo hi)) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 .strictlyQuasiConvex where
+  policy := rejectMiddleTripsPolicy lo hi
+  policy_form := lemma5PolicyForm_strictlyQuasiConvex_rejectMiddleTripsPolicy lo hi
+  reward_ge := hreward_ge
+  strict_unless_initial_form := hstrict_unless_rejects_middle
+
+/--
+Strictly quasi-concave Lemma 5 replacement constructor using the canonical
+middle-trip-acceptance policy.
+-/
+def lemma5StrictlyQuasiConcaveOptimizerReplacementCertificate_acceptMiddle
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) (lo hi : ℝ)
+    (hreward_ge : Rhat σ0 ≤ Rhat (acceptMiddleTripsPolicy lo hi))
+    (hstrict_unless_accepts_middle :
+      ¬ lemma5PolicyForm .strictlyQuasiConcave σ0 →
+        Rhat σ0 < Rhat (acceptMiddleTripsPolicy lo hi)) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 .strictlyQuasiConcave where
+  policy := acceptMiddleTripsPolicy lo hi
+  policy_form := lemma5PolicyForm_strictlyQuasiConcave_acceptMiddleTripsPolicy lo hi
+  reward_ge := hreward_ge
+  strict_unless_initial_form := hstrict_unless_accepts_middle
+
 /-- Lemma 5 endpoint, conditional on the endpoint-derivative shape certificate. -/
 theorem paper_lemma5_optimizer_replacement_of_certificate
     (Rhat : SingleStateReward) (σ0 : TripPolicy)
@@ -10881,6 +10964,100 @@ def theorem4ShapeDerivationCertificate_of_shape_replacement
             (dynamicStateReward_optimal_of_dynamicOptimal R hρ 1)⟩⟩
 
 /--
+Theorem 4 all-optimal replacement certificate: the analytic Lemma 5 step is
+available for every dynamic optimum, but the caller does not need to choose a
+distinguished optimal policy.  Existence of any optimum plus statewise
+replacement certificates is enough to derive the structural shapes.
+-/
+structure Theorem4AllOptimalShapeReplacementDerivationCertificate
+    (R : DynamicReward) where
+  exists_optimal : ∃ ρ : Fin 2 → TripPolicy, dynamicOptimal R ρ
+  replacements :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicOptimal R ρ →
+      (Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+          Lemma5OptimizerReplacementCertificate
+            (dynamicStateReward R ρ 0) (ρ 0) shape.1) ×
+      (Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+          Lemma5OptimizerReplacementCertificate
+            (dynamicStateReward R ρ 1) (ρ 1) shape.1)
+
+/--
+Select an optimal policy from the all-optimal replacement interface and package
+it in the older shape-replacement certificate.  This lets downstream routes
+reuse the existing replacement-based Theorem 4 and Theorem 3 endpoints.
+-/
+noncomputable def theorem4ShapeReplacementDerivationCertificate_of_all_shape_replacements
+    (R : DynamicReward)
+    (C : Theorem4AllOptimalShapeReplacementDerivationCertificate R) :
+    Theorem4ShapeReplacementDerivationCertificate R := by
+  classical
+  let ρstar := Classical.choose C.exists_optimal
+  have hρstar : dynamicOptimal R ρstar :=
+    Classical.choose_spec C.exists_optimal
+  let ndata := (C.replacements ρstar hρstar).1
+  let sdata := (C.replacements ρstar hρstar).2
+  exact
+    { policy := ρstar
+      optimal := hρstar
+      nonsurge_shape := ndata.1.1
+      surge_shape := sdata.1.1
+      nonsurge_allowed := ndata.1.2
+      surge_allowed := sdata.1.2
+      nonsurge_replacement := ndata.2
+      surge_replacement := sdata.2
+      only_replacements := C.replacements }
+
+/--
+Choose one optimal policy and convert all-optimal Lemma 5 replacement data into
+the shape-derivation certificate used by the existing Theorem 4 route.
+-/
+noncomputable def theorem4ShapeDerivationCertificate_of_all_shape_replacements
+    (R : DynamicReward)
+    (C : Theorem4AllOptimalShapeReplacementDerivationCertificate R) :
+    Theorem4ShapeDerivationCertificate R := by
+  classical
+  let ρstar := Classical.choose C.exists_optimal
+  have hρstar : dynamicOptimal R ρstar :=
+    Classical.choose_spec C.exists_optimal
+  let ndata := (C.replacements ρstar hρstar).1
+  let sdata := (C.replacements ρstar hρstar).2
+  exact
+    { policy := ρstar
+      optimal := hρstar
+      nonsurge_shape := ndata.1.1
+      surge_shape := sdata.1.1
+      nonsurge_allowed := ndata.1.2
+      surge_allowed := sdata.1.2
+      nonsurge_form :=
+        lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+          (dynamicStateReward R ρstar 0) (ρstar 0) ndata.1.1
+          ndata.2
+          (dynamicStateReward_optimal_of_dynamicOptimal R hρstar 0)
+      surge_form :=
+        lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+          (dynamicStateReward R ρstar 1) (ρstar 1) sdata.1.1
+          sdata.2
+          (dynamicStateReward_optimal_of_dynamicOptimal R hρstar 1)
+      only_policy_forms := by
+        intro ρ hρ
+        rcases C.replacements ρ hρ with
+          ⟨⟨⟨nshape, hnallowed⟩, hnreplacement⟩,
+            ⟨⟨sshape, hsallowed⟩, hsreplacement⟩⟩
+        exact
+          ⟨⟨nshape, hnallowed,
+              lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+                (dynamicStateReward R ρ 0) (ρ 0) nshape hnreplacement
+                (dynamicStateReward_optimal_of_dynamicOptimal R hρ 0)⟩,
+            ⟨sshape, hsallowed,
+              lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+                (dynamicStateReward R ρ 1) (ρ 1) sshape hsreplacement
+                (dynamicStateReward_optimal_of_dynamicOptimal R hρ 1)⟩⟩ }
+
+/--
 Theorem 4 assembly from Lemma 5-style shape derivation. This removes one layer
 of opaque structural certification: once Lemma 5 and Lemmas 7-10 deliver
 allowed per-state forms, the paper's structural conclusion is pure logic.
@@ -10933,6 +11110,27 @@ theorem paper_theorem4_dynamic_structural_policy_of_shape_replacement
   simpa using
     paper_theorem4_dynamic_structural_policy_of_shape_derivation R
       (theorem4ShapeDerivationCertificate_of_shape_replacement R C)
+
+/--
+Theorem 4 endpoint from all-optimal Lemma 5 replacement data.  This is the
+selection-free version of the replacement route: the caller proves that an
+optimum exists and that every optimum has the relevant statewise replacement
+certificates.
+-/
+theorem paper_theorem4_dynamic_structural_policy_of_all_shape_replacements
+    (R : DynamicReward)
+    (C : Theorem4AllOptimalShapeReplacementDerivationCertificate R) :
+    dynamicOptimal R
+        (theorem4ShapeDerivationCertificate_of_all_shape_replacements R C).policy ∧
+      theorem4NonsurgeShape
+        ((theorem4ShapeDerivationCertificate_of_all_shape_replacements R C).policy 0) ∧
+      theorem4SurgeShape
+        ((theorem4ShapeDerivationCertificate_of_all_shape_replacements R C).policy 1) ∧
+      ∀ ρ : Fin 2 → TripPolicy, dynamicOptimal R ρ →
+        theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) := by
+  simpa using
+    paper_theorem4_dynamic_structural_policy_of_shape_derivation R
+      (theorem4ShapeDerivationCertificate_of_all_shape_replacements R C)
 
 /-- Theorem 4 endpoint, conditional on the derivative-shape and replacement certificates. -/
 theorem paper_theorem4_dynamic_structural_policy_of_certificate
@@ -17806,6 +18004,77 @@ def Theorem4ShapeDerivationStatewiseImprovementCertificate.of_shape_replacement
     hsurge_reject_short hsurge_reject_middle
 
 /--
+Build the source-facing statewise-improvement certificate when Lemma 5
+optimizer-replacement data are supplied uniformly for every optimal policy, so
+the caller does not need to exhibit the structural optimum separately.
+-/
+noncomputable def Theorem4ShapeDerivationStatewiseImprovementCertificate.of_all_shape_replacements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (Creplacement :
+      Theorem4AllOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    Theorem4ShapeDerivationStatewiseImprovementCertificate
+      μ arrival m z switch12 switch21 :=
+  Theorem4ShapeDerivationStatewiseImprovementCertificate.of_statewise_improvements
+    μ arrival m z switch12 switch21
+    (theorem4ShapeDerivationCertificate_of_all_shape_replacements
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      Creplacement)
+    hfeasible hnonsurge_reject_long hnonsurge_accept_middle
+    hsurge_reject_short hsurge_reject_middle
+
+/--
 Build the paper-ordered Theorem 4 certificate from raw statewise strict
 aggregate improvement statements, the form produced by the endpoint-calculus
 and with-density bridge theorems.
@@ -18486,6 +18755,88 @@ theorem paper_theorem4_accept_all_unique_optimal_of_shape_replacement_statewise_
     paper_theorem4_accept_all_unique_optimal_of_shape_derivation_statewise_improvements
       μ arrival m z switch12 switch21
       (theorem4ShapeDerivationCertificate_of_shape_replacement
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        Creplacement)
+      hfeasible hnonsurge_reject_long hnonsurge_accept_middle
+      hsurge_reject_short hsurge_reject_middle
+
+/--
+Theorem 4 accept-all uniqueness from all-optimal Lemma 5 replacement data plus
+raw statewise strict improvements for the four shape cases.  Compared with the
+single-certificate replacement route, this matches the source proof pattern:
+prove every optimal policy admits the Lemma 5 replacement, then rule out each
+non-accept-all shape by a strict endpoint improvement.
+-/
+theorem paper_theorem4_accept_all_unique_optimal_of_all_shape_replacements_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (Creplacement :
+      Theorem4AllOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_accept_all_unique_optimal_of_shape_derivation_statewise_improvements
+      μ arrival m z switch12 switch21
+      (theorem4ShapeDerivationCertificate_of_all_shape_replacements
         (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
         Creplacement)
@@ -21178,6 +21529,196 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
             (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
               (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
             (hreplacement m z hnonneg hparams))
+      hfeasible hnonsurge_reject_long hnonsurge_accept_middle
+      hsurge_reject_short hsurge_reject_middle
+
+/--
+Measured Theorem 3 endpoint from all-optimal Lemma 5 replacement data plus raw
+statewise strict improvements in the four shape cases, using the direct Lemma 9
+primitive-positivity feasibility bridge.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_all_shape_replacements_statewise_improvements_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hall_replacements :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4AllOptimalShapeReplacementDerivationCertificate
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ t : ℝ,
+            rejectsLongTrips t (ρ 0) →
+              gn21NonsurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ lo hi : ℝ,
+            acceptsMiddleTrips lo hi (ρ 0) →
+              gn21NonsurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ t : ℝ,
+            rejectsShortTrips t (ρ 1) →
+              gn21SurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ lo hi : ℝ,
+            rejectsMiddleTrips lo hi (ρ 1) →
+              gn21SurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_replacement_statewise_improvements_of_lemma9_positive_primitives
+      μ arrival rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_pos hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos
+      hgap2_nonneg hT2_ge_one hswitch21_lt_Q2
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4ShapeReplacementDerivationCertificate_of_all_shape_replacements
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            (hall_replacements m z hnonneg hparams))
       hfeasible hnonsurge_reject_long hnonsurge_accept_middle
       hsurge_reject_short hsurge_reject_middle
 
