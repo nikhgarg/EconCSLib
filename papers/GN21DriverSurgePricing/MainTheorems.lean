@@ -182,6 +182,12 @@ the continuous CTMC source theorems.
 - `paper_theorem4_accept_all_unique_optimal_of_shape_derivation_statewise_improvement_certificate`:
   measured Theorem 4 endpoint from the packaged source-facing
   statewise-improvement certificate.
+- `paper_remark4_scaled_time_minus_exit_weight_measured_le_acceptAll`,
+  `paper_remark4_exit_weight_integral_le_acceptAll`,
+  `lemma9StructuredBounds_of_acceptAll_measured_tightening`, and
+  `lemma10StructuredBounds_of_acceptAll_measured_tightening`: measured
+  monotone-tightening bridges deriving current-policy Lemma 9/10 bounds from
+  accept-all bounds.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -2338,6 +2344,43 @@ theorem paper_remark4_scaled_time_minus_exit_weight_le_acceptAll
           simpa [acceptAllPolicy, positiveTripLengths] using hτ))))
   · exact Filter.Eventually.of_forall (fun _ hτ => hσ_subset hτ)
 
+/--
+Measured Remark 4 tightening: the current-policy gap
+`lambda*T_i(sigma)-Q_i(sigma)` is at most its accept-all value.
+-/
+theorem paper_remark4_scaled_time_minus_exit_weight_measured_le_acceptAll
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hswitch_nonneg : 0 ≤ switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (htime_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        acceptAllPolicy μ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    switchIJ * gn21ScaledStateTime μ arrivalRate σ -
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ ≤
+      switchIJ * gn21ScaledStateTime μ arrivalRate acceptAllPolicy -
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI acceptAllPolicy := by
+  rw [paper_remark4_scaled_time_minus_exit_weight_eq_integral
+      μ arrivalRate switchIJ switchJI σ htime_integrable hq_integrable,
+    paper_remark4_scaled_time_minus_exit_weight_eq_integral
+      μ arrivalRate switchIJ switchJI acceptAllPolicy
+        htime_acceptAll_integrable hq_acceptAll_integrable]
+  exact
+    paper_remark4_scaled_time_minus_exit_weight_le_acceptAll
+      μ arrivalRate switchIJ switchJI σ harrival_nonneg hswitch_nonneg
+      hsum ((htime_acceptAll_integrable.const_mul switchIJ).sub
+        hq_acceptAll_integrable) hσ_subset
+
 /-- Remark 4 nonnegativity of the CTMC exit-weight integral component. -/
 theorem paper_remark4_exit_weight_integral_component_nonneg
     (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
@@ -2454,6 +2497,27 @@ theorem paper_remark4_exit_weight_integral_component_le_acceptAll
         (le_of_lt (by
           simpa [acceptAllPolicy, positiveTripLengths] using hτ))))
   · exact Filter.Eventually.of_forall (fun _ hτ => hσ_subset hτ)
+
+/-- Measured Remark 4 tightening: `Q_i(sigma)` is at most its accept-all value. -/
+theorem paper_remark4_exit_weight_integral_le_acceptAll
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hswitch_nonneg : 0 ≤ switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        acceptAllPolicy μ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ ≤
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI acceptAllPolicy := by
+  have hcomponent :=
+    paper_remark4_exit_weight_integral_component_le_acceptAll
+      μ arrivalRate switchIJ switchJI σ harrival_nonneg hswitch_nonneg hsum
+      hq_acceptAll_integrable hσ_subset
+  unfold gn21ExitWeightIntegral
+  linarith
 
 /-!
 Appendix D.3 works with a derivative-sign expression.  The declarations below
@@ -8277,6 +8341,63 @@ theorem lemma9StructuredBounds_of_acceptAll_tightening
     exact lt_of_lt_of_le hbounds_bar.2 hmono'
 
 /--
+Measured Lemma 9 tightening bridge: accept-all structured bounds imply the
+current-policy bounds for a feasible surge-state policy once the current
+`lambda*T-Q` gap is nonnegative and `Q` exceeds the switch rate.
+-/
+theorem lemma9StructuredBounds_of_acceptAll_measured_tightening
+    (μ : Measure TripLength) (arrivalRate switch21 switch12 : ℝ)
+    (σ : TripPolicy)
+    (ratio T1 Q1 : ℝ)
+    (hbounds_bar :
+      lemma9StructuredBounds ratio T1 Q1
+        (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+        (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 acceptAllPolicy)
+        switch21)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hswitch_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ) σ μ)
+    (htime_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy μ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hgap_nonneg :
+      0 ≤ switch21 * gn21ScaledStateTime μ arrivalRate σ -
+        gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ)
+    (hswitch_lt_Q :
+      switch21 < gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ) :
+    lemma9StructuredBounds ratio T1 Q1
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ)
+      switch21 := by
+  exact
+    lemma9StructuredBounds_of_acceptAll_tightening
+      ratio T1 Q1
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ)
+      (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+      (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 acceptAllPolicy)
+      switch21 hbounds_bar hT1_nonneg hQ1_pos hswitch_pos hgap_nonneg
+      (paper_remark4_scaled_time_minus_exit_weight_measured_le_acceptAll
+        μ arrivalRate switch21 switch12 σ harrival_nonneg
+        (le_of_lt hswitch_pos) hsum htime_integrable hq_integrable
+        htime_acceptAll_integrable hq_acceptAll_integrable hσ_subset)
+      hswitch_lt_Q
+      (paper_remark4_exit_weight_integral_le_acceptAll
+        μ arrivalRate switch21 switch12 σ harrival_nonneg
+        (le_of_lt hswitch_pos) hsum hq_acceptAll_integrable hσ_subset)
+
+/--
 Lemma 9 upper-bound algebra: the current upper ratio bound implies positivity
 of the structured derivative static term.
 -/
@@ -9383,6 +9504,63 @@ theorem lemma10StructuredBounds_of_acceptAll_tightening
           lemma10StructuredUpper T2 Q2 T1 Q1 switch12 := by
       simpa [lemma10StructuredUpper_eq_upperFromExitWeight] using hmono
     exact lt_of_lt_of_le hbounds_bar.2 hmono'
+
+/--
+Measured Lemma 10 tightening bridge: accept-all structured bounds imply the
+current-policy bounds for a feasible non-surge policy once the current
+`lambda*T-Q` gap is nonnegative and `Q` exceeds the switch rate.
+-/
+theorem lemma10StructuredBounds_of_acceptAll_measured_tightening
+    (μ : Measure TripLength) (arrivalRate switch12 switch21 : ℝ)
+    (σ : TripPolicy)
+    (ratio T2 Q2 : ℝ)
+    (hbounds_bar :
+      lemma10StructuredBounds ratio T2 Q2
+        (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+        (gn21ExitWeightIntegral μ arrivalRate switch12 switch21 acceptAllPolicy)
+        switch12)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hQ2_nonneg : 0 ≤ Q2)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hswitch_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σ μ)
+    (htime_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy μ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hgap_nonneg :
+      0 ≤ switch12 * gn21ScaledStateTime μ arrivalRate σ -
+        gn21ExitWeightIntegral μ arrivalRate switch12 switch21 σ)
+    (hswitch_lt_Q :
+      switch12 < gn21ExitWeightIntegral μ arrivalRate switch12 switch21 σ) :
+    lemma10StructuredBounds ratio T2 Q2
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switch12 switch21 σ)
+      switch12 := by
+  exact
+    lemma10StructuredBounds_of_acceptAll_tightening
+      ratio T2 Q2
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switch12 switch21 σ)
+      (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+      (gn21ExitWeightIntegral μ arrivalRate switch12 switch21 acceptAllPolicy)
+      switch12 hbounds_bar hA_pos hQ2_nonneg hswitch_pos hgap_nonneg
+      (paper_remark4_scaled_time_minus_exit_weight_measured_le_acceptAll
+        μ arrivalRate switch12 switch21 σ harrival_nonneg
+        (le_of_lt hswitch_pos) hsum htime_integrable hq_integrable
+        htime_acceptAll_integrable hq_acceptAll_integrable hσ_subset)
+      hswitch_lt_Q
+      (paper_remark4_exit_weight_integral_le_acceptAll
+        μ arrivalRate switch12 switch21 σ harrival_nonneg
+        (le_of_lt hswitch_pos) hsum hq_acceptAll_integrable hσ_subset)
 
 /--
 Lemma 10 upper-bound algebra: the current upper ratio bound implies positivity
