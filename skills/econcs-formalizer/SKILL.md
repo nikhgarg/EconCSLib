@@ -36,6 +36,36 @@ because Lean needs a reusable intermediate lemma or a cleaner finite/discrete
 interface, make the deviation explicit and keep the paper-facing wrapper close
 to the original named result.
 
+When a source proof explicitly routes a theorem through named paper lemmas or a
+named proof-line corollary, prefer formalizing that named route even if it is
+hard. Do not replace a difficult named-lemma path with a looser certificate,
+alternate theorem, or broad abstraction just because it is faster, unless the
+source route is false or genuinely inapplicable. If an auxiliary certificate is
+temporarily useful, keep it as a clearly marked staging device and continue
+toward the paper's named proof chain until the named theorem itself is proved.
+
+For stable-matching/deferred-acceptance papers, check the paper's model section
+before calling strictness, completeness, or no-outside-option assumptions
+caveats. Older matching papers often encode strict preferences in notation and
+then state that only strict preferences are considered. In Lean, represent the
+marriage-market source domain explicitly: strict scores on each side, positive
+value for every potential pair when unmatched agents are not allowed, and equal
+cardinality when completeness is part of the source conclusion. Useful DA proof
+infrastructure usually belongs in `EconCSLib.Markets.Matching`: run-prefix
+states, proposal-removal/monotonicity lemmas, termination/stability invariants,
+side-swap lemmas, rejected-pair impossibility, men/women role reversal, and
+finite-cardinality completeness bridges. Keep paper-specific counterexample
+profiles, named proof wrappers, and source-language predicates in the paper
+folder unless they pass the second-paper reuse test.
+
+For manipulation-rank or "no need to misrepresent" statements, formalize the
+source wording rather than a nearby stronger or weaker slogan. "No need to
+misrepresent the first choice" may mean every arbitrary report is weakly
+dominated by a first-choice-preserving report, not that every false-top report
+is unprofitable. If a theorem quantifies over every rank `k > 1`, finite `k = 2`
+or `k = 3` witnesses are not enough; build the parameterized family, padding, or
+scaling construction that the paper claims.
+
 ### 1.2 Library Layering Rule: Textbook vs. Audit Trail
 
 Think of the repository as having two distinct roles: **`EconCSLib` is the textbook. The `papers/` directory is the audit trail.**
@@ -288,12 +318,16 @@ the Lean statements against the paper.
   are historical/secondary and may be stale; never use them to override a
   paper-local README/DAG plus successful build.
 - **Post-paper audit protocol:** Before claiming that a paper is done, create
-  or update a paper-local final audit. The audit must check all four artifacts:
+  or update a paper-local final audit. Do this even if a README, DAG, report,
+  or successful build already exists; those artifacts are not a substitute for
+  the importable audit ledger. The audit must check all four artifacts:
   the cached paper text/PDF, `README.md`, `DependencyDAG.tex`, and the
   paper-facing Lean file(s).
   - Source check: search the cached text for every named paper `Definition`,
-    `Lemma`, `Proposition`, `Theorem`, and `Corollary`; list the source line or
-    section in the audit report.
+    `Lemma`, `Proposition`, `Theorem`, and `Corollary` using a concrete search
+    such as `rg -n "THEOREM|Theorem|LEMMA|Lemma|COROLLARY|Corollary|PROPOSITION|Proposition|DEFINITION|Definition" <cached-text>`.
+    List the source line or section in the audit report, and say explicitly if
+    no numbered definitions/propositions were found.
   - README check: every named source item must have a row using the controlled
     status vocabulary from `docs/STATUS.md`, and every non-`formalized` row must
     name the exact remaining declaration, certificate, or reason for deferral.
@@ -309,14 +343,25 @@ the Lean statements against the paper.
     structure is used, the docstring must state the exact paper convention that
     the structure packages. The theorem body should be a thin call to the
     paper-facing declaration, so a human can verify the endpoint in one file.
+    Do not mark the paper complete until the root module imports this ledger.
   - Report check: create or update `FINAL_VALIDATION_REPORT.md` in the paper
     folder. It must state whether the paper is verified, the exact source
     version, the named-result inventory, any deliberate model conventions or
     proof-route deviations, the commands run, and links to the README, DAG, and
     audit ledger.
   - Build check: after updating the audit, run the targeted paper build and
-    render the DAG from the paper folder. Do not mark the audit complete until
-    both commands succeed.
+    render the DAG from the paper folder. Also run a placeholder grep over the
+    claimed paper and library files, a stale-status grep over the README/DAG/
+    final report, and `git diff --check`. Do not mark the audit complete until
+    all required commands succeed.
+- **Post-verification library extraction pass:** Once a paper theorem closes,
+  scan the proof for reusable primitives that belong in `EconCSLib` rather than
+  the paper namespace. Good candidates include model-neutral definitions,
+  algorithm trace APIs, invariants, side-symmetry lemmas, finite-cardinality
+  bridges, and monotonicity/termination facts. Move stable reusable APIs before
+  final validation when the extraction is local and low-risk. If the extraction
+  would require a broader naming/API design pass, leave the paper-facing wrapper
+  in place and record concrete migration candidates in the final report.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -632,6 +677,9 @@ validation pass:
   artifacts (TikZ source and rendered image). This report is not for routine
   handoff; it is the concise final assessment a human should read to decide what
   was actually verified.
+- Confirm the paper root module imports the post-paper audit ledger and that the
+  audit ledger has one source-numbered theorem alias or wrapper for each final
+  named endpoint.
 - Update the front repository `README.md` paper-status table and
   `docs/ECONCSLEAN_CURRENT_STATUS.md` at the same time, using the exact caveats
   from the final report. Do not let the front README keep stale "partial" or

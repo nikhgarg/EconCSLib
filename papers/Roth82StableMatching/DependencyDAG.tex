@@ -10,61 +10,75 @@
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\paper-facing};
 \node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond) {\textbf{Conditional}\\certificate};
-\node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef) {\textbf{Definition}\\model};
+\node[dag_partial, right=0.35cm of legCond, dag_template_legend] (legPart) {\textbf{Partial}\\incomplete};
+\node[dag_model, right=0.35cm of legPart, dag_template_legend] (legDef) {\textbf{Definition}\\model};
 \node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen) {\textbf{Open}\\not formalized};
 
 
 }
-\daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
+\daglegend{(legRes)(legCond)(legPart)(legDef)(legOpen)}{Legend}
 
 \begin{dagPaperBody}
 
 % Core matching layer
-\node[dag_model] (Defs)
-  {\textbf{Sections 2--3}\\matching, preferences, feasible outcome, stability};
-\node[dag_conditional, below=of Defs] (DA)
-  {\textbf{Deferred Acceptance}\\stability and optimality certificate interfaces};
-\node[dag_conditional, below=of DA] (Thm1)
-  {\textbf{Theorem 1}\\stable outcomes are nonempty};
-\node[dag_conditional, below=of Thm1] (Thm2)
-  {\textbf{Theorem 2}\\men-optimal stable outcome; women side open};
+\node[dag_model] (Defs) at (0,0)
+  {\textbf{Sections 2--3}\\matching, preferences, feasible outcome, stability, Pareto};
+\node[dag_result] (DA) at (0,-3)
+  {\textbf{Deferred Acceptance}\\step, rejection, termination, and stability invariants closed};
+\node[dag_result] (Thm1) at (0,-6)
+  {\textbf{Theorem 1}\\stable complete\\outcomes exist};
+\node[dag_result, text width=3.7cm] (Thm2) at (0,-9)
+  {\textbf{Theorem 2}\\optimal stable outcomes\\on source strict domain};
 
 % Impossibility and efficient procedure path
-\node[dag_unformalized, right=of Thm1] (Thm3)
-  {\textbf{Theorem 3}\\no stable procedure is strategyproof for all agents};
-\node[dag_unformalized, below=of Thm3] (Thm4)
-  {\textbf{Theorem 4}\\efficient strategyproof procedures exist};
+\node[dag_result] (Thm3) at (7,-6)
+  {\textbf{Theorem 3}\\finite stable-set counterexample blocks two-sided truthfulness};
+\node[dag_result, text width=3.7cm] (Thm4) at (7,-9)
+  {\textbf{Theorem 4}\\serial dictatorship\\on indexed finite domain};
 
 % One-sided incentives
-\node[dag_unformalized, right=of Thm3] (Lemma1)
-  {\textbf{Lemma 1}\\simple misrepresentation leaves same partner};
-\node[dag_unformalized, below=of Lemma1] (Lemma2)
-  {\textbf{Lemma 2}\\successful simple misrepresentation does not hurt men};
-\node[dag_conditional, below=of Lemma2] (Thm5)
-  {\textbf{Theorem 5}\\one-sided truthfulness of optimal stable procedure};
-\node[dag_unformalized, below=of Thm5] (Cor51)
-  {\textbf{Corollary 5.1}\\opposite side cannot profit by first-choice lie};
+\node[dag_result, minimum width=3.2cm, text width=2.8cm] (Lemma1) at (14,-2.35)
+  {\textbf{Lemma 1}\\strict simple report\\same partner};
+\node[dag_result] (Lemma2) at (14,-6)
+  {\textbf{Lemma 2}\\strict simple report\\no men harmed};
+\node[dag_result] (Thm5) at (14,-9)
+  {\textbf{Theorem 5}\\one-sided truthfulness\\on source strict domain};
+\node[dag_result] (Cor51) at (14,-12)
+  {\textbf{Corollary 5.1}\\source no-need first-choice\\strict-domain endpoint};
 
 % Pareto and limits
-\node[dag_unformalized, right=of Lemma2] (Thm6)
-  {\textbf{Theorem 6}\\men-optimal stable outcome is weakly Pareto optimal for men};
-\node[dag_unformalized, below=of Thm6] (Thm7)
-  {\textbf{Theorem 7}\\no stable procedure prevents all $k$th-choice manipulation};
+\node[dag_result] (Thm6) at (21,-8)
+  {\textbf{Theorem 6}\\weak Pareto from complete DA\\and final active step};
+\node[dag_result] (Thm7) at (21,-12)
+  {\textbf{Theorem 7}\\arbitrary $k>1$ padded Theorem 3 family closed};
 
 % Edges
+\coordinate (DAtoThm5Top) at (11.1,-1.5);
+\coordinate (DAtoThm5Drop) at (11.1,-7.6);
+\coordinate (Thm2toLemma1A) at (4,-11);
+\coordinate (Thm2toLemma1B) at (10.5,-11);
+\coordinate (Thm2toLemma1C) at (10.5,-3);
+\coordinate (Thm3toThm7Side) at (10,-6);
+\coordinate (Thm3toThm7BottomA) at (10,-14.2);
+\coordinate (Thm3toThm7BottomB) at (21,-14.2);
+\coordinate (DefsToThm4A) at (5,-0.6);
+
 \draw[dag_arrow] (Defs) -- (DA);
 \draw[dag_arrow] (DA) -- (Thm1);
 \draw[dag_arrow] (Thm1) -- (Thm2);
-\draw[dag_dashed_arrow] (Defs) -- (Thm3);
-\draw[dag_dashed_arrow] (Defs) -- (Thm4);
-\draw[dag_dashed_arrow] (Thm2) -| (Lemma1);
+\draw[dag_arrow] (Defs.east) -- ++(1.2,0) |- (Thm3.north);
+\draw[dag_arrow] (Defs.east) -- (DefsToThm4A) |- (Thm4.west);
+\draw[dag_arrow] (Thm2.east) -- (Thm2toLemma1A) --
+  (Thm2toLemma1B) -- (Thm2toLemma1C) -- (Lemma1.west);
 \draw[dag_dashed_arrow] (Lemma1) -- (Lemma2);
-\draw[dag_dashed_arrow] (Lemma2) -- (Thm5);
-\draw[dag_arrow] (DA.east) -| (Thm5);
+\draw[dag_arrow] (Lemma2) -- (Thm5);
+\draw[dag_arrow] (DA.east) |- (DAtoThm5Top) -- (DAtoThm5Drop) -| (Thm5.north);
 \draw[dag_dashed_arrow] (Thm5) -- (Cor51);
-\draw[dag_dashed_arrow] (Thm5) -| (Thm6);
-\draw[dag_dashed_arrow] (Thm3) |- (Thm7);
-\draw[dag_dashed_arrow] (Cor51) -| (Thm7);
+\draw[dag_arrow] (DA.east) -- ++(1.2,0) |- (Thm6.west);
+\draw[dag_arrow] (Thm3.east) -- (Thm3toThm7Side) --
+  (Thm3toThm7BottomA) --
+  (Thm3toThm7BottomB) -- (Thm7.south);
+\draw[dag_dashed_arrow] (Cor51.east) -- (Thm7.west);
 \end{dagPaperBody}
 \end{tikzpicture}
 \end{document}
