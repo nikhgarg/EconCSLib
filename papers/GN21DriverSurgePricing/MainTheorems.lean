@@ -103,6 +103,11 @@ the continuous CTMC source theorems.
   pure routing from Lemma 5 policy forms to Theorem 4's structural alternatives.
 - `paper_theorem4_dynamic_structural_policy_of_shape_derivation`: Theorem 4
   assembly from a Lemma 5-style shape derivation certificate.
+- `Theorem4ShapeReplacementDerivationCertificate`,
+  `theorem4ShapeDerivationCertificate_of_shape_replacement`, and
+  `paper_theorem4_dynamic_structural_policy_of_shape_replacement`: bridge
+  from Lemma 5 optimizer-replacement certificates to the Theorem 4 structural
+  shape endpoint.
 - `paper_proposition3_1_affine_accept_all_ge_complement_reward_of_rejected_set`:
   direct measure/integral affine-pricing reward step from Proposition 3.1.
 - `paper_proposition3_1_affine_accept_all_ge_rejecting_measurable_set`:
@@ -10795,6 +10800,79 @@ structure Theorem4ShapeDerivationCertificate (R : DynamicReward) where
           lemma5PolicyForm shape (ρ 1))
 
 /--
+Theorem 4 shape-replacement certificate: the analytic Lemma 5 step supplies
+strict replacement certificates for the local continuation problem in each
+state. Since the policies under consideration are dynamic optima, local
+optimality converts those replacement certificates into the Lemma 5 policy
+forms required by `Theorem4ShapeDerivationCertificate`.
+-/
+structure Theorem4ShapeReplacementDerivationCertificate
+    (R : DynamicReward) where
+  policy : Fin 2 → TripPolicy
+  optimal : dynamicOptimal R policy
+  nonsurge_shape : Lemma5DerivativeShape
+  surge_shape : Lemma5DerivativeShape
+  nonsurge_allowed : theorem4NonsurgeAllowedLemma5Shape nonsurge_shape
+  surge_allowed : theorem4SurgeAllowedLemma5Shape surge_shape
+  nonsurge_replacement :
+    Lemma5OptimizerReplacementCertificate
+      (dynamicStateReward R policy 0) (policy 0) nonsurge_shape
+  surge_replacement :
+    Lemma5OptimizerReplacementCertificate
+      (dynamicStateReward R policy 1) (policy 1) surge_shape
+  only_replacements :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicOptimal R ρ →
+      (Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+          Lemma5OptimizerReplacementCertificate
+            (dynamicStateReward R ρ 0) (ρ 0) shape.1) ×
+      (Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+          Lemma5OptimizerReplacementCertificate
+            (dynamicStateReward R ρ 1) (ρ 1) shape.1)
+
+/--
+Convert Lemma 5 replacement data into the shape-derivation certificate by
+applying local optimality of dynamic optima state by state.
+-/
+def theorem4ShapeDerivationCertificate_of_shape_replacement
+    (R : DynamicReward)
+    (C : Theorem4ShapeReplacementDerivationCertificate R) :
+    Theorem4ShapeDerivationCertificate R where
+  policy := C.policy
+  optimal := C.optimal
+  nonsurge_shape := C.nonsurge_shape
+  surge_shape := C.surge_shape
+  nonsurge_allowed := C.nonsurge_allowed
+  surge_allowed := C.surge_allowed
+  nonsurge_form :=
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+      (dynamicStateReward R C.policy 0) (C.policy 0) C.nonsurge_shape
+      C.nonsurge_replacement
+      (dynamicStateReward_optimal_of_dynamicOptimal R C.optimal 0)
+  surge_form :=
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+      (dynamicStateReward R C.policy 1) (C.policy 1) C.surge_shape
+      C.surge_replacement
+      (dynamicStateReward_optimal_of_dynamicOptimal R C.optimal 1)
+  only_policy_forms := by
+    intro ρ hρ
+    rcases C.only_replacements ρ hρ with
+      ⟨⟨⟨nshape, hnallowed⟩, hnreplacement⟩,
+        ⟨⟨sshape, hsallowed⟩, hsreplacement⟩⟩
+    exact
+      ⟨⟨nshape, hnallowed,
+          lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+            (dynamicStateReward R ρ 0) (ρ 0) nshape hnreplacement
+            (dynamicStateReward_optimal_of_dynamicOptimal R hρ 0)⟩,
+        ⟨sshape, hsallowed,
+          lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+            (dynamicStateReward R ρ 1) (ρ 1) sshape hsreplacement
+            (dynamicStateReward_optimal_of_dynamicOptimal R hρ 1)⟩⟩
+
+/--
 Theorem 4 assembly from Lemma 5-style shape derivation. This removes one layer
 of opaque structural certification: once Lemma 5 and Lemmas 7-10 deliver
 allowed per-state forms, the paper's structural conclusion is pure logic.
@@ -10829,6 +10907,24 @@ theorem paper_theorem4_dynamic_structural_policy_of_shape_derivation
         theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) := by
   let D := theorem4StructuralPolicyCertificate_of_shape_derivation R C
   exact ⟨D.optimal, D.nonsurge_shape, D.surge_shape, D.only_policy_forms⟩
+
+/--
+Theorem 4 endpoint from Lemma 5 replacement certificates in each state.
+This is the closest current interface to the analytic optimizer-replacement
+proof: local optimality turns strict replacement certificates into the
+policy-form classification.
+-/
+theorem paper_theorem4_dynamic_structural_policy_of_shape_replacement
+    (R : DynamicReward)
+    (C : Theorem4ShapeReplacementDerivationCertificate R) :
+    dynamicOptimal R C.policy ∧
+      theorem4NonsurgeShape (C.policy 0) ∧
+      theorem4SurgeShape (C.policy 1) ∧
+      ∀ ρ : Fin 2 → TripPolicy, dynamicOptimal R ρ →
+        theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) := by
+  simpa using
+    paper_theorem4_dynamic_structural_policy_of_shape_derivation R
+      (theorem4ShapeDerivationCertificate_of_shape_replacement R C)
 
 /-- Theorem 4 endpoint, conditional on the derivative-shape and replacement certificates. -/
 theorem paper_theorem4_dynamic_structural_policy_of_certificate

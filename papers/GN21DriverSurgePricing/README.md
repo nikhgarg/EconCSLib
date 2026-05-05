@@ -122,6 +122,9 @@ Status cells use the controlled vocabulary from `../../docs/STATUS.md`.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:
+`Theorem4ShapeReplacementDerivationCertificate`,
+`theorem4ShapeDerivationCertificate_of_shape_replacement`,
+`paper_theorem4_dynamic_structural_policy_of_shape_replacement`,
 `gn21SurgeStatewiseStrictAggregateImprovement`,
 `gn21NonsurgeStatewiseStrictAggregateImprovement`,
 `GN21SurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement`,
