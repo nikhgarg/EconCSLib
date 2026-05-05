@@ -36,7 +36,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   replacement-data Theorem 4/Theorem 3 routes, canonical Lemma 5 replacement
   constructors for all five shape cases, state-specific Theorem 4
   allowed-replacement constructors, source-facing all-optimal replacement case
-  data, and auxiliary finite dynamic policy support.
+  data, packaged allowed-replacement Theorem 4/Theorem 3 boundary routes, and
+  auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
   global Theorem 1 threshold-existence compactness/continuity argument, the
   continuous renewal-reward cycle construction, CTMC stochastic-process bridge,
