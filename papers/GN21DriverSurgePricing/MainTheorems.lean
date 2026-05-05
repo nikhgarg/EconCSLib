@@ -2575,6 +2575,96 @@ theorem gn21ScaledStateEarning_upperEndpoint_withDensity_eq_endpointWiPath
   intro τ _hτ
   simp [Algebra.smul_def, mul_comm]
 
+/-- Right-endpoint replacement path based at `(lowerEndpoint, u]`. -/
+def gn21UpperEndpointReplacement
+    (lowerEndpoint u : ℝ) (ε : ℝ) : TripPolicy :=
+  gn21UpperEndpointPolicy lowerEndpoint (u + ε)
+
+/-- Measurability of the right-endpoint replacement path. -/
+theorem measurableSet_gn21UpperEndpointReplacement
+    (lowerEndpoint u ε : ℝ) :
+    MeasurableSet (gn21UpperEndpointReplacement lowerEndpoint u ε) := by
+  simpa [gn21UpperEndpointReplacement] using
+    measurableSet_gn21UpperEndpointPolicy lowerEndpoint (u + ε)
+
+/--
+An upper-endpoint interval is feasible whenever its lower endpoint is
+nonnegative.
+-/
+theorem gn21UpperEndpointPolicy_subset_acceptAllPolicy
+    (lowerEndpoint x : ℝ)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    gn21UpperEndpointPolicy lowerEndpoint x ⊆ acceptAllPolicy := by
+  intro τ hτ
+  exact lt_of_le_of_lt hlower_nonneg hτ.1
+
+/--
+Right-endpoint replacements stay feasible whenever the base lower endpoint is
+nonnegative.
+-/
+theorem gn21UpperEndpointReplacement_subset_acceptAllPolicy
+    (lowerEndpoint u ε : ℝ)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    gn21UpperEndpointReplacement lowerEndpoint u ε ⊆ acceptAllPolicy := by
+  simpa [gn21UpperEndpointReplacement] using
+    gn21UpperEndpointPolicy_subset_acceptAllPolicy lowerEndpoint (u + ε)
+      hlower_nonneg
+
+/-- `Q_i` primitive realization along the positive right-endpoint replacement path. -/
+theorem gn21ExitWeightIntegral_upperEndpointReplacement_withDensity_eq_endpointQiPath
+    (arrivalRate switchIJ switchJI lowerEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : lowerEndpoint ≤ u)
+    (hε_pos : 0 < ε) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21UpperEndpointReplacement lowerEndpoint u ε) =
+      gn21EndpointQiPath arrivalRate switchIJ lowerEndpoint
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) (u + ε) := by
+  simpa [gn21UpperEndpointReplacement] using
+    gn21ExitWeightIntegral_upperEndpoint_withDensity_eq_endpointQiPath
+      arrivalRate switchIJ switchJI lowerEndpoint (u + ε)
+      density hdensity_meas (by linarith)
+
+/-- `T_i` primitive realization along the positive right-endpoint replacement path. -/
+theorem gn21ScaledStateTime_upperEndpointReplacement_withDensity_eq_endpointTiPath
+    (arrivalRate lowerEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : lowerEndpoint ≤ u)
+    (hε_pos : 0 < ε) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21UpperEndpointReplacement lowerEndpoint u ε) =
+      gn21EndpointTiPath arrivalRate lowerEndpoint
+        (fun τ => (density τ : ℝ)) (u + ε) := by
+  simpa [gn21UpperEndpointReplacement] using
+    gn21ScaledStateTime_upperEndpoint_withDensity_eq_endpointTiPath
+      arrivalRate lowerEndpoint (u + ε) density hdensity_meas (by linarith)
+
+/-- `W_i` primitive realization along the positive right-endpoint replacement path. -/
+theorem gn21ScaledStateEarning_upperEndpointReplacement_withDensity_eq_endpointWiPath
+    (arrivalRate lowerEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hle : lowerEndpoint ≤ u)
+    (hε_pos : 0 < ε) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21UpperEndpointReplacement lowerEndpoint u ε) =
+      gn21EndpointWiPath arrivalRate lowerEndpoint
+        (fun τ => (density τ : ℝ)) payment (u + ε) := by
+  simpa [gn21UpperEndpointReplacement] using
+    gn21ScaledStateEarning_upperEndpoint_withDensity_eq_endpointWiPath
+      arrivalRate lowerEndpoint (u + ε) density payment hdensity_meas
+      (by linarith)
+
 /-- Fundamental-theorem bridge for the endpoint `Q_i` path. -/
 theorem gn21EndpointQiPath_hasDerivAt
     (arrivalRate switchRate lowerEndpoint u : ℝ)
@@ -7115,6 +7205,74 @@ theorem gn21MeasuredPairNondegenerate_of_positive_measure
       hσJ_positive)
 
 /--
+Measured pair nondegeneracy when the right/state-`J` policy is an upper-endpoint
+interval.  This discharges the interval measurability and positive-trip
+feasibility side conditions, leaving only positive mass and rate assumptions.
+-/
+theorem gn21MeasuredPairNondegenerate_of_positive_measure_upperEndpoint_right
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI : TripPolicy)
+    (lowerEndpoint x : ℝ)
+    (hmassI_pos : 0 < singleStateTripMass μI σI)
+    (hmassJ_pos :
+      0 < singleStateTripMass μJ
+        (gn21UpperEndpointPolicy lowerEndpoint x))
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσI_measurable : MeasurableSet σI)
+    (hσI_positive : σI ⊆ acceptAllPolicy)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    GN21MeasuredPairNondegenerate μI μJ arrivalI arrivalJ switchIJ switchJI
+      σI (gn21UpperEndpointPolicy lowerEndpoint x) := by
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure
+      μI μJ arrivalI arrivalJ switchIJ switchJI
+      σI (gn21UpperEndpointPolicy lowerEndpoint x)
+      hmassI_pos hmassJ_pos harrivalI_pos harrivalJ_pos
+      hswitchIJ_pos hswitchJI_pos hσI_measurable
+      (measurableSet_gn21UpperEndpointPolicy lowerEndpoint x)
+      hσI_positive
+      (gn21UpperEndpointPolicy_subset_acceptAllPolicy lowerEndpoint x
+        hlower_nonneg)
+
+/--
+Measured pair nondegeneracy when the left/state-`I` policy is an upper-endpoint
+interval.
+-/
+theorem gn21MeasuredPairNondegenerate_of_positive_measure_upperEndpoint_left
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (lowerEndpoint x : ℝ)
+    (σJ : TripPolicy)
+    (hmassI_pos :
+      0 < singleStateTripMass μI
+        (gn21UpperEndpointPolicy lowerEndpoint x))
+    (hmassJ_pos : 0 < singleStateTripMass μJ σJ)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσJ_measurable : MeasurableSet σJ)
+    (hσJ_positive : σJ ⊆ acceptAllPolicy)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    GN21MeasuredPairNondegenerate μI μJ arrivalI arrivalJ switchIJ switchJI
+      (gn21UpperEndpointPolicy lowerEndpoint x) σJ := by
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure
+      μI μJ arrivalI arrivalJ switchIJ switchJI
+      (gn21UpperEndpointPolicy lowerEndpoint x) σJ
+      hmassI_pos hmassJ_pos harrivalI_pos harrivalJ_pos
+      hswitchIJ_pos hswitchJI_pos
+      (measurableSet_gn21UpperEndpointPolicy lowerEndpoint x)
+      hσJ_measurable
+      (gn21UpperEndpointPolicy_subset_acceptAllPolicy lowerEndpoint x
+        hlower_nonneg)
+      hσJ_positive
+
+/--
 Named wrapper for Lemma 1/3's measured reward-to-aggregate reduction.
 -/
 theorem paper_lemma1_measured_dynamic_reward_eq_aggregate_primitives
@@ -7843,17 +8001,17 @@ theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_in
         gn21EndpointWiPath (arrival 1) lowerEndpoint density
           (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u)
     (hQ_replacement :
-      ∀ ε : ℝ,
+      ∀ ε : ℝ, 0 < ε →
         gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
             (replacement ε) =
           gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
             (gn21SwitchProb switch21 switch12) (u + ε))
     (hT_replacement :
-      ∀ ε : ℝ,
+      ∀ ε : ℝ, 0 < ε →
         gn21ScaledStateTime (μ 1) (arrival 1) (replacement ε) =
           gn21EndpointTiPath (arrival 1) lowerEndpoint density (u + ε))
     (hW_replacement :
-      ∀ ε : ℝ,
+      ∀ ε : ℝ, 0 < ε →
         gn21ScaledStateEarning (μ 1) (arrival 1)
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
             (replacement ε) =
@@ -7885,8 +8043,9 @@ theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_in
   · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos
   · simpa [gn21MeasuredAggregateDynamicStateReward_one,
       gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
-      hQ_current, hT_current, hW_current, hQ_replacement ε,
-      hT_replacement ε, hW_replacement ε, gn21AggregateDynamicReward_swap]
+      hQ_current, hT_current, hW_current, hQ_replacement ε hε_pos,
+      hT_replacement ε hε_pos, hW_replacement ε hε_pos,
+      gn21AggregateDynamicReward_swap]
       using hlt
 
 /--
@@ -7983,17 +8142,17 @@ theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma1
         gn21EndpointWiPath (arrival 0) lowerEndpoint density
           (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u)
     (hQ_replacement :
-      ∀ ε : ℝ,
+      ∀ ε : ℝ, 0 < ε →
         gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
             (replacement ε) =
           gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
             (gn21SwitchProb switch12 switch21) (u + ε))
     (hT_replacement :
-      ∀ ε : ℝ,
+      ∀ ε : ℝ, 0 < ε →
         gn21ScaledStateTime (μ 0) (arrival 0) (replacement ε) =
           gn21EndpointTiPath (arrival 0) lowerEndpoint density (u + ε))
     (hW_replacement :
-      ∀ ε : ℝ,
+      ∀ ε : ℝ, 0 < ε →
         gn21ScaledStateEarning (μ 0) (arrival 0)
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
             (replacement ε) =
@@ -8024,8 +8183,8 @@ theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma1
   · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos
   · simpa [gn21MeasuredAggregateDynamicStateReward_zero,
       gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
-      hQ_current, hT_current, hW_current, hQ_replacement ε,
-      hT_replacement ε, hW_replacement ε] using hlt
+      hQ_current, hT_current, hW_current, hQ_replacement ε hε_pos,
+      hT_replacement ε hε_pos, hW_replacement ε hε_pos] using hlt
 
 /--
 Primitive data package for applying the surge-state Lemma 9 interval bridge to
@@ -8129,17 +8288,17 @@ structure GN21SurgeIntervalEndpointBridgeData
       gn21EndpointWiPath (arrival 1) lowerEndpoint density
         (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u
   hQ_replacement :
-    ∀ ε : ℝ,
+    ∀ ε : ℝ, 0 < ε →
       gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
           (replacement ε) =
         gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
           (gn21SwitchProb switch21 switch12) (u + ε)
   hT_replacement :
-    ∀ ε : ℝ,
+    ∀ ε : ℝ, 0 < ε →
       gn21ScaledStateTime (μ 1) (arrival 1) (replacement ε) =
         gn21EndpointTiPath (arrival 1) lowerEndpoint density (u + ε)
   hW_replacement :
-    ∀ ε : ℝ,
+    ∀ ε : ℝ, 0 < ε →
       gn21ScaledStateEarning (μ 1) (arrival 1)
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
           (replacement ε) =
@@ -8277,17 +8436,17 @@ structure GN21NonsurgeIntervalEndpointBridgeData
       gn21EndpointWiPath (arrival 0) lowerEndpoint density
         (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u
   hQ_replacement :
-    ∀ ε : ℝ,
+    ∀ ε : ℝ, 0 < ε →
       gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
           (replacement ε) =
         gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
           (gn21SwitchProb switch12 switch21) (u + ε)
   hT_replacement :
-    ∀ ε : ℝ,
+    ∀ ε : ℝ, 0 < ε →
       gn21ScaledStateTime (μ 0) (arrival 0) (replacement ε) =
         gn21EndpointTiPath (arrival 0) lowerEndpoint density (u + ε)
   hW_replacement :
-    ∀ ε : ℝ,
+    ∀ ε : ℝ, 0 < ε →
       gn21ScaledStateEarning (μ 0) (arrival 0)
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
           (replacement ε) =
