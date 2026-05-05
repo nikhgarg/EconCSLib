@@ -5877,6 +5877,75 @@ theorem rejectsMiddleTrips_rejectMiddleTripsPolicy (lo hi : ℝ) :
   intro τ hτ
   simp [rejectMiddleTripsPolicy, hτ]
 
+/--
+A feasible policy with the long-trip-rejection shape is exactly the canonical
+long-trip-rejection set.
+-/
+theorem eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsLongTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    σ = rejectLongTripsPolicy t := by
+  ext τ
+  constructor
+  · intro hτ
+    have hpos : 0 < τ := hsub hτ
+    exact ⟨hpos, (hshape hpos).mp hτ⟩
+  · intro hτ
+    exact (hshape hτ.1).mpr hτ.2
+
+/--
+A feasible policy with the short-trip-rejection shape is exactly the canonical
+tail set.
+-/
+theorem eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsShortTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    σ = rejectShortTripsPolicy t := by
+  ext τ
+  constructor
+  · intro hτ
+    have hpos : 0 < τ := hsub hτ
+    exact ⟨hpos, (hshape hpos).mp hτ⟩
+  · intro hτ
+    exact (hshape hτ.1).mpr hτ.2
+
+/--
+A feasible policy with the middle-acceptance shape is exactly the canonical
+bounded middle interval.
+-/
+theorem eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : acceptsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    σ = acceptMiddleTripsPolicy lo hi := by
+  ext τ
+  constructor
+  · intro hτ
+    have hpos : 0 < τ := hsub hτ
+    rcases (hshape hpos).mp hτ with ⟨hlo, hhi⟩
+    exact ⟨⟨hpos, hlo⟩, hhi⟩
+  · intro hτ
+    exact (hshape hτ.1.1).mpr ⟨hτ.1.2, hτ.2⟩
+
+/--
+A feasible policy with the middle-rejection shape is exactly the canonical
+short-or-tail set.
+-/
+theorem eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    σ = rejectMiddleTripsPolicy lo hi := by
+  ext τ
+  constructor
+  · intro hτ
+    have hpos : 0 < τ := hsub hτ
+    exact ⟨hpos, (hshape hpos).mp hτ⟩
+  · intro hτ
+    exact (hshape hτ.1).mpr hτ.2
+
 /-- Canonical long-trip-rejection policies are measurable. -/
 theorem measurableSet_rejectLongTripsPolicy (t : ℝ) :
     MeasurableSet (rejectLongTripsPolicy t) := by
@@ -7927,6 +7996,38 @@ def theorem4SurgeShape (σ : TripPolicy) : Prop :=
   (∃ t : ℝ, rejectsShortTrips t σ) ∨
     (∃ lo hi : ℝ, rejectsMiddleTrips lo hi σ) ∨
       acceptsAllTrips σ
+
+/--
+Non-surge shape elimination away from accept-all.  This is the pure logical
+case split needed by the endpoint-selection layer of Theorem 4.
+-/
+theorem theorem4NonsurgeShape_cases_of_not_acceptsAll
+    {σ : TripPolicy}
+    (hshape : theorem4NonsurgeShape σ)
+    (hnot : ¬ acceptsAllTrips σ) :
+    (∃ t : ℝ, rejectsLongTrips t σ) ∨
+      ∃ lo hi : ℝ, acceptsMiddleTrips lo hi σ := by
+  rcases hshape with hlong | hmiddle_or_all
+  · exact Or.inl hlong
+  · rcases hmiddle_or_all with hmiddle | hall
+    · exact Or.inr hmiddle
+    · exact False.elim (hnot hall)
+
+/--
+Surge shape elimination away from accept-all.  This exposes the short-tail and
+middle-rejection endpoint cases.
+-/
+theorem theorem4SurgeShape_cases_of_not_acceptsAll
+    {σ : TripPolicy}
+    (hshape : theorem4SurgeShape σ)
+    (hnot : ¬ acceptsAllTrips σ) :
+    (∃ t : ℝ, rejectsShortTrips t σ) ∨
+      ∃ lo hi : ℝ, rejectsMiddleTrips lo hi σ := by
+  rcases hshape with hshort | hmiddle_or_all
+  · exact Or.inl hshort
+  · rcases hmiddle_or_all with hmiddle | hall
+    · exact Or.inr hmiddle
+    · exact False.elim (hnot hall)
 
 /-- Lemma 5 derivative-shape outcomes admissible for Theorem 4 non-surge states. -/
 def theorem4NonsurgeAllowedLemma5Shape : Lemma5DerivativeShape → Prop
@@ -11051,6 +11152,110 @@ structure Theorem4Lemma910EndpointBridgeCertificate
       ¬ acceptsAllTrips (ρ 1) →
         GN21SurgeEndpointBridgeData
           μ arrival m z switch12 switch21 ρ
+
+/--
+Endpoint-selection certificate organized by the policy-shape cases of
+Theorem 4.  Once the structural theorem classifies every optimal policy, the
+remaining analytic work is to provide a Lemma 9/10 endpoint bridge for each
+non-accept-all shape case.
+-/
+structure Theorem4ShapeEndpointSelectionCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  feasible_optimal :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy
+  shape_optimal :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1)
+  nonsurge_reject_long_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          GN21NonsurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          GN21SurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeEndpointBridgeData
+            μ arrival m z switch12 switch21 ρ
+
+/--
+Shape-case endpoint selection is exactly the data needed by the generalized
+Lemma 9/10 endpoint bridge certificate.
+-/
+def Theorem4Lemma910EndpointBridgeCertificate.of_shape_endpoint_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4ShapeEndpointSelectionCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4Lemma910EndpointBridgeCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := C.exists_optimal
+  feasible_optimal := C.feasible_optimal
+  nonsurge_bridge := by
+    intro ρ hρ hnot
+    have hshape := (C.shape_optimal ρ hρ).1
+    rcases theorem4NonsurgeShape_cases_of_not_acceptsAll hshape hnot with
+      hlong | hmiddle
+    · rcases hlong with ⟨t, ht⟩
+      exact C.nonsurge_reject_long_bridge ρ hρ t ht
+    · rcases hmiddle with ⟨lo, hi, hmid⟩
+      exact C.nonsurge_accept_middle_bridge ρ hρ lo hi hmid
+  surge_bridge := by
+    intro ρ hρ hnot
+    have hshape := (C.shape_optimal ρ hρ).2
+    rcases theorem4SurgeShape_cases_of_not_acceptsAll hshape hnot with
+      hshort | hmiddle
+    · rcases hshort with ⟨t, ht⟩
+      exact C.surge_reject_short_bridge ρ hρ t ht
+    · rcases hmiddle with ⟨lo, hi, hmid⟩
+      exact C.surge_reject_middle_bridge ρ hρ lo hi hmid
 
 /-- Upper-endpoint interval certificates are a special case of endpoint bridge certificates. -/
 def Theorem4Lemma910EndpointBridgeCertificate.of_interval_bridges
