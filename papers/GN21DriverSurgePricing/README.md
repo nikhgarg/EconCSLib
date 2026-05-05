@@ -125,9 +125,9 @@ The first concrete shape-level endpoint bridge is also exposed as
 `paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape`,
 with the corresponding accept-middle bridge
 `paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_accept_middle_withDensity_of_shape`;
-these derive the non-surge current primitive identities and
-current/replacement nondegeneracy from canonicalization and density
-assumptions.
+the surge reject-short bridge
+`paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_tail_withDensity_of_shape`
+does the same for the tail case.
 
 ## Remaining Work
 
@@ -190,7 +190,7 @@ choosing the relevant upper, lower, tail, or middle-rejection endpoint move and
 discharging statewise feasibility/nondegeneracy; concrete with-density
 replacement policies, primitive equalities, and finite positive-density
 current/replacement nondegeneracy are now available for the four Theorem 4
-shape cases; both non-surge shape cases now have shape-level wrappers that
+shape cases; both non-surge shape cases and the surge reject-short case now have shape-level wrappers that
 discharge current primitive identities and nondegeneracy from the
 canonicalization and density assumptions. Then finish Theorem 1's
 global threshold-existence
