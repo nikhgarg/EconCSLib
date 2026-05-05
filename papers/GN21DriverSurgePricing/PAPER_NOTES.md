@@ -51,6 +51,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `gn21MeasuredAggregateRewardPrimitives_le_union_left_of_kernel_nonneg`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_union_right_of_kernel_nonneg`,
+  accept-all-complement aggregate add specializations
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_complement_kernel_nonneg`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_kernel_nonneg`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

@@ -69,6 +69,7 @@ cache is `source.txt`.
   monotonicity for left/right accepted-trip additions from nonnegative
   integrated Lemma 6 kernels, measured `Q,T,W` union additivity and measured
   left/right aggregate weak-improvement bridges for adding accepted sets,
+  including accept-all-complement specializations for rejected feasible sets,
   endpoint-data-to-Lemma-6 derivative certificate bridge,
   structured-kernel-to-Lemma-6 derivative certificate bridge, structured-price
   derivative algebra, small-time switch derivative, the Lemma 7
@@ -98,7 +99,10 @@ cache is `source.txt`.
   the constructed prices and does not require exact-set uniqueness of all
   optima. This can now be supplied from a weak measured aggregate `Q,T,W`
   certificate through
-  `theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward`.
+  `theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward`,
+  with accept-all-complement bridges reducing each statewise weak improvement
+  to nonnegativity of the integrated Lemma 6 kernel over the rejected feasible
+  complement.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
