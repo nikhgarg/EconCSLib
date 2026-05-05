@@ -133,6 +133,9 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_endpoint_selection`:
   measured Theorem 3 endpoint that consumes the Theorem 4 four-shape
   endpoint-selection certificate directly.
+- `paper_theorem4_accept_all_unique_optimal_of_shape_endpoint_selection`:
+  measured Theorem 4 endpoint that turns the four-shape endpoint-selection
+  certificate directly into accept-all unique optimality.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -15050,6 +15053,71 @@ def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_endpo
     (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
     (theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
       μ arrival m z switch12 switch21 C)
+
+/--
+The four shape-case endpoint-selection certificate directly instantiates the
+uniform statewise strict-local aggregate certificate.
+-/
+def theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_shape_endpoint_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4ShapeEndpointSelectionCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
+    μ arrival m z switch12 switch21
+    (Theorem4Lemma910EndpointBridgeCertificate.of_shape_endpoint_selection
+      μ arrival m z switch12 switch21 C)
+
+/--
+The four shape-case endpoint-selection certificate directly instantiates the
+measured aggregate strict-local certificate consumed by Theorem 4 and
+Theorem 3.
+-/
+def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_shape_endpoint_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4ShapeEndpointSelectionCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_statewise_strict_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_shape_endpoint_selection
+      μ arrival m z switch12 switch21 C)
+
+/--
+Theorem 4 accept-all uniqueness from the four-case shape endpoint-selection
+certificate.
+-/
+theorem paper_theorem4_accept_all_unique_optimal_of_shape_endpoint_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4ShapeEndpointSelectionCertificate
+      μ arrival m z switch12 switch21) :
+    dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_accept_all_unique_optimal_of_measured_aggregate_strict_local_improvements
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      (theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_shape_endpoint_selection
+        μ arrival m z switch12 switch21 C)
 
 /--
 Lemma 1 algebra: if subcycle earning and length share the same nonzero cycle
