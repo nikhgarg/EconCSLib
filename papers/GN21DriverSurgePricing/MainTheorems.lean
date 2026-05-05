@@ -2,11 +2,12 @@ import EconCSLib.Foundations.Math.QuasiConvex
 import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.MDP
 import EconCSLib.Foundations.Probability.RenewalReward
+import Mathlib.MeasureTheory.Measure.WithDensity
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 open EconCSLib
 open MeasureTheory
-open scoped Topology
+open scoped Topology ENNReal
 
 /-!
 # Paper-Facing Theorems: Driver Surge Pricing
@@ -2482,6 +2483,97 @@ def gn21LowerEndpointTiPath
     (arrivalRate upperEndpoint : ℝ)
     (density : ℝ → ℝ) (x : ℝ) : ℝ :=
   1 + arrivalRate * ∫ τ in x..upperEndpoint, τ * density τ
+
+/-- Upper-endpoint interval policy used by the interval-density endpoint paths. -/
+def gn21UpperEndpointPolicy (lowerEndpoint x : ℝ) : TripPolicy :=
+  Set.Ioc lowerEndpoint x
+
+/-- Measurability of the upper-endpoint interval policy. -/
+theorem measurableSet_gn21UpperEndpointPolicy (lowerEndpoint x : ℝ) :
+    MeasurableSet (gn21UpperEndpointPolicy lowerEndpoint x) := by
+  simpa [gn21UpperEndpointPolicy] using measurableSet_Ioc
+
+/--
+Measured-policy realization of the endpoint `Q_i` path when trip lengths are
+Lebesgue distributed with density `density` and the accepted set is the upper
+endpoint interval `(lowerEndpoint, x]`.
+-/
+theorem gn21ExitWeightIntegral_upperEndpoint_withDensity_eq_endpointQiPath
+    (arrivalRate switchIJ switchJI lowerEndpoint x : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : lowerEndpoint ≤ x) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21UpperEndpointPolicy lowerEndpoint x) =
+      gn21EndpointQiPath arrivalRate switchIJ lowerEndpoint
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) x := by
+  unfold gn21ExitWeightIntegral gn21EndpointQiPath gn21UpperEndpointPolicy
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density)
+    hdensity_meas
+    (fun τ => gn21SwitchProb switchIJ switchJI τ)
+    measurableSet_Ioc]
+  apply congrArg (fun y => switchIJ + arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioc
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Measured-policy realization of the endpoint `T_i` path under an interval policy
+and a Lebesgue density.
+-/
+theorem gn21ScaledStateTime_upperEndpoint_withDensity_eq_endpointTiPath
+    (arrivalRate lowerEndpoint x : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : lowerEndpoint ≤ x) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21UpperEndpointPolicy lowerEndpoint x) =
+      gn21EndpointTiPath arrivalRate lowerEndpoint
+        (fun τ => (density τ : ℝ)) x := by
+  unfold gn21ScaledStateTime singleStateTripTime gn21EndpointTiPath
+    gn21UpperEndpointPolicy
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas (fun τ => τ)
+    measurableSet_Ioc]
+  apply congrArg (fun y => 1 + arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioc
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Measured-policy realization of the endpoint `W_i` path under an interval policy
+and a Lebesgue density.
+-/
+theorem gn21ScaledStateEarning_upperEndpoint_withDensity_eq_endpointWiPath
+    (arrivalRate lowerEndpoint x : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hle : lowerEndpoint ≤ x) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21UpperEndpointPolicy lowerEndpoint x) =
+      gn21EndpointWiPath arrivalRate lowerEndpoint
+        (fun τ => (density τ : ℝ)) payment x := by
+  unfold gn21ScaledStateEarning singleStateTripPayment gn21EndpointWiPath
+    gn21UpperEndpointPolicy
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas payment
+    measurableSet_Ioc]
+  apply congrArg (fun y => arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioc
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
 
 /-- Fundamental-theorem bridge for the endpoint `Q_i` path. -/
 theorem gn21EndpointQiPath_hasDerivAt
