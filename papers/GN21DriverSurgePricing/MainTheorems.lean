@@ -136,9 +136,16 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_endpoint_bridge_certificate`:
   measured Theorem 3 endpoint that consumes the paper-ordered Theorem 4
   certificate: shape derivation, feasibility, and four endpoint bridges.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvements`:
+  measured Theorem 3 endpoint whose Theorem 4 input is the raw statewise
+  strict-improvement form produced by concrete endpoint lemmas.
 - `Theorem4ShapeDerivationEndpointBridgeCertificate` and
   `Theorem4ShapeEndpointSelectionCertificate.of_shape_derivation_endpoint_bridges`:
   certificate package and constructor for the paper-ordered Theorem 4 route.
+- `gn21SurgeStatewiseStrictAggregateImprovement`,
+  `gn21NonsurgeStatewiseStrictAggregateImprovement`, and
+  `Theorem4ShapeDerivationEndpointBridgeCertificate.of_statewise_improvements`:
+  adapters from raw endpoint-improvement existentials into bridge data.
 - `paper_theorem4_accept_all_unique_optimal_of_shape_endpoint_selection`:
   measured Theorem 4 endpoint that turns the four-shape endpoint-selection
   certificate directly into accept-all unique optimality.
@@ -150,6 +157,8 @@ the continuous CTMC source theorems.
   feasibility and the four shape-specific endpoint bridges.
 - `paper_theorem4_accept_all_unique_optimal_of_shape_derivation_endpoint_bridge_certificate`:
   measured Theorem 4 endpoint from the packaged paper-ordered certificate.
+- `paper_theorem4_accept_all_unique_optimal_of_shape_derivation_statewise_improvements`:
+  measured Theorem 4 endpoint from raw statewise strict improvements.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -14790,6 +14799,52 @@ def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_inter
       μ arrival m z switch12 switch21 C)
 
 /--
+State-1 raw strict aggregate improvement proposition.  The concrete endpoint
+bridges produce this proposition before it is packaged as bridge data.
+-/
+abbrev gn21SurgeStatewiseStrictAggregateImprovement
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) : Prop :=
+  ∃ τ : TripPolicy,
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1) ∧
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21
+        ((replaceDynamicPolicyState ρ 1 τ) 0)
+        ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+    gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+      gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ
+
+/--
+State-0 raw strict aggregate improvement proposition.  The concrete endpoint
+bridges produce this proposition before it is packaged as bridge data.
+-/
+abbrev gn21NonsurgeStatewiseStrictAggregateImprovement
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) : Prop :=
+  ∃ τ : TripPolicy,
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1) ∧
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21
+        ((replaceDynamicPolicyState ρ 0 τ) 0)
+        ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+    gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+      gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ
+
+/--
 State-1 endpoint bridge in its most direct form.  Both upper-endpoint and
 finite lower-endpoint Lemma 9 packages can instantiate this interface.
 -/
@@ -14833,9 +14888,31 @@ structure GN21NonsurgeEndpointBridgeData
       gn21MeasuredAggregateDynamicStateReward
           μ arrival switch12 switch21
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
-        gn21MeasuredAggregateDynamicStateReward
+      gn21MeasuredAggregateDynamicStateReward
           μ arrival switch12 switch21
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ
+
+/-- Package a raw state-1 strict aggregate improvement as surge endpoint data. -/
+def GN21SurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (h : gn21SurgeStatewiseStrictAggregateImprovement
+      μ arrival m z switch12 switch21 ρ) :
+    GN21SurgeEndpointBridgeData μ arrival m z switch12 switch21 ρ where
+  statewise_strict_aggregate_improvement := h
+
+/-- Package a raw state-0 strict aggregate improvement as non-surge endpoint data. -/
+def GN21NonsurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (h : gn21NonsurgeStatewiseStrictAggregateImprovement
+      μ arrival m z switch12 switch21 ρ) :
+    GN21NonsurgeEndpointBridgeData μ arrival m z switch12 switch21 ρ where
+  statewise_strict_aggregate_improvement := h
 
 /-- Existing upper-endpoint surge bridge data lift to the generalized endpoint interface. -/
 def GN21SurgeEndpointBridgeData.of_interval
@@ -14962,6 +15039,91 @@ structure Theorem4ShapeDerivationEndpointBridgeCertificate
         rejectsMiddleTrips lo hi (ρ 1) →
           GN21SurgeEndpointBridgeData
             μ arrival m z switch12 switch21 ρ
+
+/--
+Build the paper-ordered Theorem 4 certificate from raw statewise strict
+aggregate improvement statements, the form produced by the endpoint-calculus
+and with-density bridge theorems.
+-/
+def Theorem4ShapeDerivationEndpointBridgeCertificate.of_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (Cshape :
+      Theorem4ShapeDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    Theorem4ShapeDerivationEndpointBridgeCertificate
+      μ arrival m z switch12 switch21 where
+  shape_derivation := Cshape
+  feasible_optimal := hfeasible
+  nonsurge_reject_long_bridge := by
+    intro ρ hρ t ht
+    exact
+      GN21NonsurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement
+        (hnonsurge_reject_long ρ hρ t ht)
+  nonsurge_accept_middle_bridge := by
+    intro ρ hρ lo hi hmid
+    exact
+      GN21NonsurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement
+        (hnonsurge_accept_middle ρ hρ lo hi hmid)
+  surge_reject_short_bridge := by
+    intro ρ hρ t ht
+    exact
+      GN21SurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement
+        (hsurge_reject_short ρ hρ t ht)
+  surge_reject_middle_bridge := by
+    intro ρ hρ lo hi hmid
+    exact
+      GN21SurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement
+        (hsurge_reject_middle ρ hρ lo hi hmid)
 
 /--
 Endpoint-selection certificate organized by the policy-shape cases of
@@ -15390,6 +15552,83 @@ theorem paper_theorem4_accept_all_unique_optimal_of_shape_derivation_endpoint_br
       μ arrival m z switch12 switch21
       (Theorem4ShapeEndpointSelectionCertificate.of_shape_derivation_endpoint_bridges
         μ arrival m z switch12 switch21 C)
+
+/--
+Theorem 4 accept-all uniqueness from raw statewise strict improvement
+statements for the four shape cases.
+-/
+theorem paper_theorem4_accept_all_unique_optimal_of_shape_derivation_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (Cshape :
+      Theorem4ShapeDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_accept_all_unique_optimal_of_shape_derivation_endpoint_bridge_certificate
+      μ arrival m z switch12 switch21
+      (Theorem4ShapeDerivationEndpointBridgeCertificate.of_statewise_improvements
+        μ arrival m z switch12 switch21 Cshape hfeasible
+        hnonsurge_reject_long hnonsurge_accept_middle hsurge_reject_short
+        hsurge_reject_middle)
 
 /--
 Lemma 1 algebra: if subcycle earning and length share the same nonzero cycle
@@ -17310,6 +17549,207 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
           Theorem4ShapeEndpointSelectionCertificate.of_shape_derivation_endpoint_bridges
             μ arrival m z switch12 switch21
             (hcertificate m z hnonneg hparams))
+
+/--
+Measured Theorem 3 endpoint from raw statewise strict improvements in the four
+shape cases, matching the output of the concrete endpoint bridge lemmas.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hlemma9_den_lower :
+      0 < lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_den_upper :
+      0 < lemma9StructuredUpperDenominator Q1 Q2 switch21)
+    (hlemma9_left_nonpos :
+      lemma9StructuredLowerNumerator T1 Q1 T2 Q2 switch21 *
+          lemma9StructuredUpperDenominator Q1 Q2 switch21 ≤ 0)
+    (hlemma9_right_pos :
+      0 < lemma9StructuredUpperNumerator T1 Q1 Q2 *
+        lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_upper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hshape :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4ShapeDerivationCertificate
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (hfeasible :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy)
+    (hnonsurge_reject_long :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ t : ℝ,
+            rejectsLongTrips t (ρ 0) →
+              gn21NonsurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ)
+    (hnonsurge_accept_middle :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ lo hi : ℝ,
+            acceptsMiddleTrips lo hi (ρ 0) →
+              gn21NonsurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_short :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ t : ℝ,
+            rejectsShortTrips t (ρ 1) →
+              gn21SurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ)
+    (hsurge_reject_middle :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∀ lo hi : ℝ,
+            rejectsMiddleTrips lo hi (ρ 1) →
+              gn21SurgeStatewiseStrictAggregateImprovement
+                μ arrival m z switch12 switch21 ρ) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_endpoint_bridge_certificate
+      μ arrival rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hlemma9_den_lower
+      hlemma9_den_upper hlemma9_left_nonpos hlemma9_right_pos
+      hlemma9_upper_pos hT2_ge_one hswitch21_lt_Q2
+      (by
+        intro m z hnonneg hparams
+        exact
+          Theorem4ShapeDerivationEndpointBridgeCertificate.of_statewise_improvements
+            μ arrival m z switch12 switch21
+            (hshape m z hnonneg hparams)
+            (hfeasible m z hnonneg hparams)
+            (hnonsurge_reject_long m z hnonneg hparams)
+            (hnonsurge_accept_middle m z hnonneg hparams)
+            (hsurge_reject_short m z hnonneg hparams)
+            (hsurge_reject_middle m z hnonneg hparams))
 
 /--
 Accept-all measured primitives discharge the scalar positivity conditions used
