@@ -130,6 +130,9 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_lemma910_endpoint_bridges`:
   measured Theorem 3 endpoint that consumes generalized endpoint bridge data,
   including upper, lower, tail, and reject-middle endpoint moves.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_endpoint_selection`:
+  measured Theorem 3 endpoint that consumes the Theorem 4 four-shape
+  endpoint-selection certificate directly.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -16799,6 +16802,91 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
           theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
             μ arrival m z switch12 switch21
             (hbridges m z hnonneg hparams))
+
+/--
+Measured Theorem 3 endpoint from the four shape-case endpoint-selection
+certificate used by Theorem 4.  This is the top-level route after structural
+shape routing has selected reject-long, accept-middle, reject-short, or
+reject-middle endpoint moves for every non-accept-all optimum.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_endpoint_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hlemma9_den_lower :
+      0 < lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_den_upper :
+      0 < lemma9StructuredUpperDenominator Q1 Q2 switch21)
+    (hlemma9_left_nonpos :
+      lemma9StructuredLowerNumerator T1 Q1 T2 Q2 switch21 *
+          lemma9StructuredUpperDenominator Q1 Q2 switch21 ≤ 0)
+    (hlemma9_right_pos :
+      0 < lemma9StructuredUpperNumerator T1 Q1 Q2 *
+        lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_upper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hselection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4ShapeEndpointSelectionCertificate
+          μ arrival m z switch12 switch21) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_lemma910_endpoint_bridges
+      μ arrival rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hlemma9_den_lower
+      hlemma9_den_upper hlemma9_left_nonpos hlemma9_right_pos
+      hlemma9_upper_pos hT2_ge_one hswitch21_lt_Q2
+      (by
+        intro m z hnonneg hparams
+        exact
+          Theorem4Lemma910EndpointBridgeCertificate.of_shape_endpoint_selection
+            μ arrival m z switch12 switch21
+            (hselection m z hnonneg hparams))
 
 /--
 Accept-all measured primitives discharge the scalar positivity conditions used
