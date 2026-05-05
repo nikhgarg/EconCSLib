@@ -121,6 +121,11 @@ calculus to the top-level routes without extra structure plumbing:
 `paper_theorem4_accept_all_unique_optimal_of_shape_derivation_statewise_improvements`,
 and
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvements`.
+The first concrete shape-level endpoint bridge is also exposed as
+`paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape`,
+which derives the non-surge reject-long current primitive identities and
+current/replacement nondegeneracy from canonicalization and density
+assumptions.
 
 ## Remaining Work
 
@@ -183,7 +188,9 @@ choosing the relevant upper, lower, tail, or middle-rejection endpoint move and
 discharging statewise feasibility/nondegeneracy; concrete with-density
 replacement policies, primitive equalities, and finite positive-density
 current/replacement nondegeneracy are now available for the four Theorem 4
-shape cases. Then finish Theorem 1's
+shape cases; the non-surge reject-long case now has a shape-level wrapper that
+discharges current primitive identities and nondegeneracy from the
+canonicalization and density assumptions. Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers
 bridge.
