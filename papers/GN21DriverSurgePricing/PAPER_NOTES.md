@@ -47,14 +47,24 @@ This is a lightweight handoff document for source-to-Lean mapping.
   aggregate add-left/add-right weak monotonicity lemmas
   `gn21AggregateDynamicReward_le_add_left_of_kernel_nonneg` and
   `gn21AggregateDynamicReward_le_add_right_of_kernel_nonneg`,
+  pointwise-to-integrated kernel bridge
+  `gn21PrimitiveKernel_nonneg_of_pointwise_derivative_kernel_nonneg`,
   measured primitive union and aggregate add bridges
   `gn21MeasuredAggregateRewardPrimitives_le_union_left_of_kernel_nonneg`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_union_right_of_kernel_nonneg`,
+  measured pointwise-kernel add bridges
+  `gn21MeasuredAggregateRewardPrimitives_le_union_left_of_pointwise_kernel_nonneg`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_le_union_right_of_pointwise_kernel_nonneg`,
   accept-all-complement aggregate add specializations
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_complement_kernel_nonneg`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_kernel_nonneg`,
+  accept-all-complement pointwise-kernel specializations
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_complement_pointwise_kernel_nonneg`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_pointwise_kernel_nonneg`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

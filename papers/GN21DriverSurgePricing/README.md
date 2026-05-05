@@ -70,6 +70,9 @@ cache is `source.txt`.
   integrated Lemma 6 kernels, measured `Q,T,W` union additivity and measured
   left/right aggregate weak-improvement bridges for adding accepted sets,
   including accept-all-complement specializations for rejected feasible sets,
+  plus pointwise-to-integrated kernel bridges that turn nonnegative Lemma 6
+  derivative kernels on an added set into the aggregate primitive side
+  condition,
   endpoint-data-to-Lemma-6 derivative certificate bridge,
   structured-kernel-to-Lemma-6 derivative certificate bridge, structured-price
   derivative algebra, small-time switch derivative, the Lemma 7
@@ -101,8 +104,8 @@ cache is `source.txt`.
   certificate through
   `theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward`,
   with accept-all-complement bridges reducing each statewise weak improvement
-  to nonnegativity of the integrated Lemma 6 kernel over the rejected feasible
-  complement.
+  to pointwise nonnegativity of the Lemma 6 kernel over the rejected feasible
+  complement plus the usual denominator and integrability side conditions.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
