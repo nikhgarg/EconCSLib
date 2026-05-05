@@ -1,6 +1,7 @@
 import EconCSLib.Foundations.Math.QuasiConvex
 import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.MDP
+import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Probability.RenewalReward
 import Mathlib.MeasureTheory.Measure.WithDensity
 import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -2609,6 +2610,97 @@ theorem gn21UpperEndpointReplacement_subset_acceptAllPolicy
   simpa [gn21UpperEndpointReplacement] using
     gn21UpperEndpointPolicy_subset_acceptAllPolicy lowerEndpoint (u + ε)
       hlower_nonneg
+
+/-- Real trip mass is positive when the underlying measure mass is nonzero and finite. -/
+theorem singleStateTripMass_pos_of_measure_ne_zero_ne_top
+    (μ : Measure TripLength) (σ : TripPolicy)
+    (h_ne_zero : μ σ ≠ 0)
+    (h_ne_top : μ σ ≠ ∞) :
+    0 < singleStateTripMass μ σ := by
+  exact ENNReal.toReal_pos h_ne_zero h_ne_top
+
+/-- A nontrivial upper-endpoint interval has positive Lebesgue mass. -/
+theorem volume_gn21UpperEndpointPolicy_ne_zero
+    (lowerEndpoint x : ℝ)
+    (hlt : lowerEndpoint < x) :
+    volume (gn21UpperEndpointPolicy lowerEndpoint x) ≠ 0 := by
+  rw [gn21UpperEndpointPolicy, Real.volume_Ioc]
+  exact ne_of_gt (ENNReal.ofReal_pos.mpr (sub_pos.mpr hlt))
+
+/--
+Positive density on a measurable set gives positive real trip mass under a
+finite `withDensity` measure.
+-/
+theorem singleStateTripMass_withDensity_pos_of_pos_on
+    (D : TripLength → ℝ≥0∞) {σ : TripPolicy}
+    (hD : Measurable D)
+    (hσ : MeasurableSet σ)
+    (hvolume_ne_zero : volume σ ≠ 0)
+    (hfinite : (volume.withDensity D) σ ≠ ∞)
+    (hpos : ∀ τ, τ ∈ σ → D τ ≠ 0) :
+    0 < singleStateTripMass (volume.withDensity D) σ := by
+  exact
+    singleStateTripMass_pos_of_measure_ne_zero_ne_top
+      (volume.withDensity D) σ
+      (withDensity_measure_ne_zero_of_pos_on volume D hD hσ
+        hvolume_ne_zero hpos)
+      hfinite
+
+/--
+Positive NNReal density on a nontrivial upper-endpoint interval gives positive
+real trip mass under a finite `withDensity` measure.
+-/
+theorem singleStateTripMass_upperEndpoint_withDensity_pos_of_pos_on
+    (density : TripLength → NNReal)
+    (hdensity_meas : Measurable density)
+    (lowerEndpoint x : ℝ)
+    (hlt : lowerEndpoint < x)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21UpperEndpointPolicy lowerEndpoint x) ≠ ∞)
+    (hpos :
+      ∀ τ, τ ∈ gn21UpperEndpointPolicy lowerEndpoint x → density τ ≠ 0) :
+    0 <
+      singleStateTripMass
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21UpperEndpointPolicy lowerEndpoint x) := by
+  refine
+    singleStateTripMass_withDensity_pos_of_pos_on
+      (fun τ => (density τ : ℝ≥0∞))
+      (measurable_coe_nnreal_ennreal.comp hdensity_meas)
+      (measurableSet_gn21UpperEndpointPolicy lowerEndpoint x)
+      (volume_gn21UpperEndpointPolicy_ne_zero lowerEndpoint x hlt)
+      hfinite ?_
+  intro τ hτ
+  simpa using hpos τ hτ
+
+/--
+Positive NNReal density on a nontrivial right-endpoint replacement interval
+gives positive real trip mass under a finite `withDensity` measure.
+-/
+theorem singleStateTripMass_upperEndpointReplacement_withDensity_pos_of_pos_on
+    (density : TripLength → NNReal)
+    (hdensity_meas : Measurable density)
+    (lowerEndpoint u ε : ℝ)
+    (hle : lowerEndpoint < u)
+    (hε_pos : 0 < ε)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21UpperEndpointReplacement lowerEndpoint u ε) ≠ ∞)
+    (hpos :
+      ∀ τ, τ ∈ gn21UpperEndpointReplacement lowerEndpoint u ε →
+        density τ ≠ 0) :
+    0 <
+      singleStateTripMass
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21UpperEndpointReplacement lowerEndpoint u ε) := by
+  simpa [gn21UpperEndpointReplacement] using
+    singleStateTripMass_upperEndpoint_withDensity_pos_of_pos_on
+      density hdensity_meas lowerEndpoint (u + ε) (by linarith)
+      (by simpa [gn21UpperEndpointReplacement] using hfinite)
+      (by
+        intro τ hτ
+        exact hpos τ (by simpa [gn21UpperEndpointReplacement] using hτ))
 
 /-- `Q_i` primitive realization along the positive right-endpoint replacement path. -/
 theorem gn21ExitWeightIntegral_upperEndpointReplacement_withDensity_eq_endpointQiPath
@@ -7271,6 +7363,83 @@ theorem gn21MeasuredPairNondegenerate_of_positive_measure_upperEndpoint_left
       (gn21UpperEndpointPolicy_subset_acceptAllPolicy lowerEndpoint x
         hlower_nonneg)
       hσJ_positive
+
+/--
+Measured pair nondegeneracy when the right/state-`J` policy is an upper-endpoint
+interval under an NNReal density with finite positive interval mass.
+-/
+theorem gn21MeasuredPairNondegenerate_of_upperEndpoint_withDensity_right
+    (μI : Measure TripLength)
+    (density : TripLength → NNReal)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI : TripPolicy)
+    (lowerEndpoint x : ℝ)
+    (hmassI_pos : 0 < singleStateTripMass μI σI)
+    (hdensity_meas : Measurable density)
+    (hlt : lowerEndpoint < x)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21UpperEndpointPolicy lowerEndpoint x) ≠ ∞)
+    (hpos :
+      ∀ τ, τ ∈ gn21UpperEndpointPolicy lowerEndpoint x → density τ ≠ 0)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσI_measurable : MeasurableSet σI)
+    (hσI_positive : σI ⊆ acceptAllPolicy)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    GN21MeasuredPairNondegenerate μI
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI
+      σI (gn21UpperEndpointPolicy lowerEndpoint x) := by
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure_upperEndpoint_right
+      μI (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI σI lowerEndpoint x
+      hmassI_pos
+      (singleStateTripMass_upperEndpoint_withDensity_pos_of_pos_on
+        density hdensity_meas lowerEndpoint x hlt hfinite hpos)
+      harrivalI_pos harrivalJ_pos hswitchIJ_pos hswitchJI_pos
+      hσI_measurable hσI_positive hlower_nonneg
+
+/--
+Measured pair nondegeneracy when the left/state-`I` policy is an upper-endpoint
+interval under an NNReal density with finite positive interval mass.
+-/
+theorem gn21MeasuredPairNondegenerate_of_upperEndpoint_withDensity_left
+    (μJ : Measure TripLength)
+    (density : TripLength → NNReal)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (lowerEndpoint x : ℝ)
+    (σJ : TripPolicy)
+    (hdensity_meas : Measurable density)
+    (hlt : lowerEndpoint < x)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21UpperEndpointPolicy lowerEndpoint x) ≠ ∞)
+    (hpos :
+      ∀ τ, τ ∈ gn21UpperEndpointPolicy lowerEndpoint x → density τ ≠ 0)
+    (hmassJ_pos : 0 < singleStateTripMass μJ σJ)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσJ_measurable : MeasurableSet σJ)
+    (hσJ_positive : σJ ⊆ acceptAllPolicy)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    GN21MeasuredPairNondegenerate
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞)) μJ
+      arrivalI arrivalJ switchIJ switchJI
+      (gn21UpperEndpointPolicy lowerEndpoint x) σJ := by
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure_upperEndpoint_left
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞)) μJ
+      arrivalI arrivalJ switchIJ switchJI lowerEndpoint x σJ
+      (singleStateTripMass_upperEndpoint_withDensity_pos_of_pos_on
+        density hdensity_meas lowerEndpoint x hlt hfinite hpos)
+      hmassJ_pos harrivalI_pos harrivalJ_pos hswitchIJ_pos hswitchJI_pos
+      hσJ_measurable hσJ_positive hlower_nonneg
 
 /--
 Named wrapper for Lemma 1/3's measured reward-to-aggregate reduction.
