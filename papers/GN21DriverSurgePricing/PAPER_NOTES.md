@@ -42,6 +42,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   canonical non-accept-all finite-interval shape witnesses,
   weak-reward IC source wrapper
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
+  measured aggregate weak-reward bridge
+  `theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

@@ -13338,6 +13338,91 @@ structure Theorem4MeasuredAggregateAcceptAllRewardCertificate
             (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) acceptAllPolicy
 
 /--
+Weak aggregate-reward certificate for the measured two-state functional.  It
+is the aggregate `Q,T,W` version of the IC-only statewise accept-all reward
+boundary: no strictness, feasibility, or optimizer-selection data is required.
+-/
+structure Theorem4MeasuredAggregateWeakAcceptAllRewardCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  current_nondegenerate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1)
+  nonsurge_accept_all_nondegenerate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 acceptAllPolicy (ρ 1)
+  surge_accept_all_nondegenerate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) acceptAllPolicy
+  nonsurge_aggregate_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) ≤
+        gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) acceptAllPolicy (ρ 1)
+  surge_aggregate_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) ≤
+        gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) acceptAllPolicy
+
+/--
+Weak aggregate `Q,T,W` improvements instantiate the weak statewise reward
+interface used by the IC-only Theorem 3 route.
+-/
+def theorem4StatewiseAcceptAllWeakRewardCertificate_of_measured_aggregate_weak_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C : Theorem4MeasuredAggregateWeakAcceptAllRewardCertificate
+      μ arrival switch12 switch21 w) :
+    Theorem4StatewiseAcceptAllWeakRewardCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) where
+  nonsurge_accept_all_reward_ge := by
+    intro ρ
+    have hle :=
+      paper_lemma1_measured_dynamic_reward_le_of_aggregate_pair_le_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) acceptAllPolicy (ρ 1)
+        (C.current_nondegenerate ρ)
+        (C.nonsurge_accept_all_nondegenerate ρ)
+        (C.nonsurge_aggregate_ge ρ)
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero] using hle
+  surge_accept_all_reward_ge := by
+    intro ρ
+    have hle :=
+      paper_lemma1_measured_dynamic_reward_le_of_aggregate_pair_le_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) (ρ 0) acceptAllPolicy
+        (C.current_nondegenerate ρ)
+        (C.surge_accept_all_nondegenerate ρ)
+        (C.surge_aggregate_ge ρ)
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_one] using hle
+
+/-- The strong aggregate accept-all certificate contains the weak aggregate interface. -/
+def theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_measured_aggregate_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C : Theorem4MeasuredAggregateAcceptAllRewardCertificate
+      μ arrival switch12 switch21 w) :
+    Theorem4MeasuredAggregateWeakAcceptAllRewardCertificate
+      μ arrival switch12 switch21 w where
+  current_nondegenerate := C.current_nondegenerate
+  nonsurge_accept_all_nondegenerate := C.nonsurge_accept_all_nondegenerate
+  surge_accept_all_nondegenerate := C.surge_accept_all_nondegenerate
+  nonsurge_aggregate_ge := C.nonsurge_aggregate_ge
+  surge_aggregate_ge := C.surge_aggregate_ge
+
+/--
 Aggregate `Q,T,W` accept-all improvements instantiate the measured global
 statewise reward interface used by Theorem 4.
 -/
@@ -24215,6 +24300,59 @@ def theorem3AcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward
       (gn21MeasuredCTMCStructuredDynamicReward
         μ arrival switch12 switch21 m z)
       (C m z hnonneg hparams)
+
+/--
+Measured aggregate weak accept-all comparisons instantiate the weak Theorem 3
+boundary for the constructed CTMC structured prices.
+-/
+def theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregateWeakAcceptAllRewardCertificate
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    theorem3AcceptAllWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  simpa [gn21MeasuredCTMCStructuredDynamicReward] using
+    theorem4StatewiseAcceptAllWeakRewardCertificate_of_measured_aggregate_weak_improvements
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      (C m z hnonneg hparams)
+
+/--
+The stronger measured aggregate accept-all certificate also instantiates the
+weak Theorem 3 boundary.
+-/
+def theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregateAcceptAllRewardCertificate
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    theorem3AcceptAllWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward
+    μ arrival R1 R2 switch12 switch21
+    (by
+      intro m z hnonneg hparams
+      exact
+        theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_measured_aggregate_improvements
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+          (C m z hnonneg hparams))
 
 /--
 Accept-all-primitive Theorem 3 endpoint from weak statewise accept-all reward

@@ -93,7 +93,10 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
   whose final field is just weak statewise accept-all reward improvement for
   the constructed prices and does not require exact-set uniqueness of all
-  optima. The stronger positive-replacement source boundary is exposed as
+  optima. This can now be supplied from a weak measured aggregate `Q,T,W`
+  certificate through
+  `theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward`.
+  The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
   whose final field is exactly the Lemma 9/10 positive-replacement proof for
@@ -189,11 +192,16 @@ and
 `Theorem4StatewiseAcceptAllWeakRewardCertificate`,
 `theorem4StatewiseAcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward`,
 `paper_theorem4_accept_all_optimal_of_statewise_accept_all_weak_reward`,
+`Theorem4MeasuredAggregateWeakAcceptAllRewardCertificate`,
+`theorem4StatewiseAcceptAllWeakRewardCertificate_of_measured_aggregate_weak_improvements`,
+`theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_measured_aggregate_improvements`,
 `paper_theorem3_ctmc_structured_prices_ic_of_accept_all_optimal`,
 `paper_theorem3_ctmc_structured_prices_ic_of_statewise_accept_all_weak_reward`,
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_statewise_accept_all_weak_reward_of_lemma9_positive_primitives`,
 `theorem3AcceptAllWeakRewardCertificate`,
 `theorem3AcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward`,
+`theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward`,
+`theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_reward`,
 `paper_theorem3_measured_structured_ic_prices_of_weak_reward`,
 `Theorem3AcceptAllWeakRewardSourceAssumptions`,
 `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
