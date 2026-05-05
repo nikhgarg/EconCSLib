@@ -44,16 +44,18 @@ cache is `source.txt`.
   measured upper- and lower-endpoint interval-policy primitive realizations,
   improper-tail FTC and tail primitive derivatives/realizations, bounded
   endpoint-move calculus, positive right-endpoint and left-expansion
-  replacement realizations, plus finite positive density-mass wrappers for
+  replacement realizations, concrete unbounded-tail left replacements, plus
+  finite positive density-mass wrappers for
   interval nondegeneracy and canonical long-/short-trip-rejection primitive
   realizations, feasible shape-to-canonical-policy equalities, and arbitrary
   feasible reject-long/reject-short/accept-middle/reject-middle primitive
   realizations, including the two-piece reject-middle endpoint paths and both
   reject-middle cutoff derivative bridges, concrete with-density
-  reject-middle cutoff replacement policies, and surge-state wrappers that
-  feed those replacements into the Lemma 9 strict-local bridge, including
+  reject-middle cutoff and unbounded-tail replacement policies, and surge-state
+  wrappers that feed those replacements into the Lemma 9 strict-local bridge,
+  including
   positive-density nondegeneracy constructors for both current and replacement
-  middle-rejection policies,
+  tail and middle-rejection policies,
   aggregate quotient-calculus derivative bridge, endpoint-data-to-Lemma-6
   derivative certificate bridge,
   structured-kernel-to-Lemma-6 derivative certificate bridge, structured-price
@@ -142,9 +144,11 @@ endpoint replacement realization, Lemma 9/10 upper/lower/tail endpoint bridges
 for both states, Lemma 9 reject-middle lower/upper cutoff bridges for the surge
   state, concrete with-density replacement-policy specializations for both
   surge reject-middle cutoff moves with finite positive-density nondegeneracy
-  constructors for both current and replacement middle-rejection policies, and
-  a generalized endpoint bridge certificate feeding the measured strict-local
-  interface. Theorem 3 now has a
+  constructors for both current and replacement middle-rejection policies,
+  concrete tail left-replacement realizations and current/replacement
+  nondegeneracy constructors for the surge reject-short case, and a generalized
+  endpoint bridge certificate feeding the measured strict-local interface.
+  Theorem 3 now has a
 concrete CTMC structured-price endpoint that consumes all of those interfaces,
 including integrated ratio-to-parameters-to-IC theorems for the global
 statewise reward comparisons, measured aggregate strict-local improvements,
@@ -153,11 +157,11 @@ with scalar positivity side conditions derived for both reward routes.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
 policy-selection layer for arbitrary open measurable optimal policies by
 choosing the relevant upper, lower, tail, or middle-rejection endpoint move and
-discharging statewise feasibility/nondegeneracy; for surge reject-middle cases,
-the concrete with-density replacement policies and primitive equalities are now
-already wired into the strict-local bridge, and current/replacement
-nondegeneracy is available from finite positive-density assumptions. Then
-finish Theorem 1's
+discharging statewise feasibility/nondegeneracy; for the surge reject-short and
+reject-middle cases, the concrete with-density replacement policies and
+primitive equalities are now wired into the strict-local bridge, and
+current/replacement nondegeneracy is available from finite positive-density
+assumptions. Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers
 bridge.

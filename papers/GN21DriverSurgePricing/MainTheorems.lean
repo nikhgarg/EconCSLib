@@ -3078,6 +3078,56 @@ theorem volume_gn21TailPolicy_ne_zero (x : ℝ) :
   rw [gn21TailPolicy, Real.volume_Ioi]
   exact ENNReal.top_ne_zero
 
+/-- Leftward movement of an unbounded tail cutoff. -/
+def gn21TailLeftReplacement (u : ℝ) (ε : ℝ) : TripPolicy :=
+  gn21TailPolicy (u - ε)
+
+/-- Tail left-replacements are measurable. -/
+theorem measurableSet_gn21TailLeftReplacement (u ε : ℝ) :
+    MeasurableSet (gn21TailLeftReplacement u ε) := by
+  simpa [gn21TailLeftReplacement] using
+    measurableSet_gn21TailPolicy (u - ε)
+
+/-- Tail left-replacements remain feasible while the moved cutoff is nonnegative. -/
+theorem gn21TailLeftReplacement_subset_acceptAllPolicy
+    (u ε : ℝ) (hε_le_u : ε ≤ u) :
+    gn21TailLeftReplacement u ε ⊆ acceptAllPolicy := by
+  simpa [gn21TailLeftReplacement] using
+    gn21TailPolicy_subset_acceptAllPolicy (u - ε) (sub_nonneg.mpr hε_le_u)
+
+/-- Tail left-replacements have nonzero Lebesgue volume. -/
+theorem volume_gn21TailLeftReplacement_ne_zero (u ε : ℝ) :
+    volume (gn21TailLeftReplacement u ε) ≠ 0 := by
+  simpa [gn21TailLeftReplacement] using
+    volume_gn21TailPolicy_ne_zero (u - ε)
+
+/--
+Positive NNReal density on a tail left-replacement gives positive real trip
+mass under a finite `withDensity` measure.
+-/
+theorem singleStateTripMass_tailLeftReplacement_withDensity_pos_of_pos_on
+    (density : TripLength → NNReal)
+    (hdensity_meas : Measurable density)
+    (u ε : ℝ)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21TailLeftReplacement u ε) ≠ ∞)
+    (hpos :
+      ∀ τ, τ ∈ gn21TailLeftReplacement u ε → density τ ≠ 0) :
+    0 <
+      singleStateTripMass
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21TailLeftReplacement u ε) := by
+  refine
+    singleStateTripMass_withDensity_pos_of_pos_on
+      (fun τ => (density τ : ℝ≥0∞))
+      (measurable_coe_nnreal_ennreal.comp hdensity_meas)
+      (measurableSet_gn21TailLeftReplacement u ε)
+      (volume_gn21TailLeftReplacement_ne_zero u ε)
+      hfinite ?_
+  intro τ hτ
+  simpa using hpos τ hτ
+
 /--
 Measured-policy realization of the tail `Q_i` path under a Lebesgue density.
 -/
@@ -3148,6 +3198,52 @@ theorem gn21ScaledStateEarning_tail_withDensity_eq_tailWiPath
   apply setIntegral_congr_fun measurableSet_Ioi
   intro τ _hτ
   simp [Algebra.smul_def, mul_comm]
+
+/-- `Q_i` realization along a tail left-replacement path. -/
+theorem gn21ExitWeightIntegral_tailLeftReplacement_withDensity_eq_tailQiPath
+    (arrivalRate switchIJ switchJI u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21TailLeftReplacement u ε) =
+      gn21TailQiPath arrivalRate switchIJ
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) (u - ε) := by
+  simpa [gn21TailLeftReplacement] using
+    gn21ExitWeightIntegral_tail_withDensity_eq_tailQiPath
+      arrivalRate switchIJ switchJI (u - ε) density hdensity_meas
+
+/-- `T_i` realization along a tail left-replacement path. -/
+theorem gn21ScaledStateTime_tailLeftReplacement_withDensity_eq_tailTiPath
+    (arrivalRate u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21TailLeftReplacement u ε) =
+      gn21TailTiPath arrivalRate (fun τ => (density τ : ℝ)) (u - ε) := by
+  simpa [gn21TailLeftReplacement] using
+    gn21ScaledStateTime_tail_withDensity_eq_tailTiPath
+      arrivalRate (u - ε) density hdensity_meas
+
+/-- `W_i` realization along a tail left-replacement path. -/
+theorem gn21ScaledStateEarning_tailLeftReplacement_withDensity_eq_tailWiPath
+    (arrivalRate u ε : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21TailLeftReplacement u ε) =
+      gn21TailWiPath arrivalRate
+        (fun τ => (density τ : ℝ)) payment (u - ε) := by
+  simpa [gn21TailLeftReplacement] using
+    gn21ScaledStateEarning_tail_withDensity_eq_tailWiPath
+      arrivalRate (u - ε) density payment hdensity_meas
 
 /--
 Local FTC bridge for an improper tail integral.  Around `u`, the tail
@@ -7311,6 +7407,55 @@ theorem rejectMiddleTripsPolicy_subset_acceptAll (lo hi : ℝ) :
   intro τ hτ
   exact hτ.1
 
+/-- Canonical short-trip-rejection policies have nonzero Lebesgue volume. -/
+theorem volume_rejectShortTripsPolicy_ne_zero (t : ℝ) :
+    volume (rejectShortTripsPolicy t) ≠ 0 := by
+  intro hzero
+  have hsubset : Set.Ioi (max t 0) ⊆ rejectShortTripsPolicy t := by
+    intro τ hτ
+    have h0 : 0 < τ := lt_of_le_of_lt (le_max_right t 0) hτ
+    have ht : t < τ := lt_of_le_of_lt (le_max_left t 0) hτ
+    exact ⟨h0, ht⟩
+  have hle : volume (Set.Ioi (max t 0)) ≤
+      volume (rejectShortTripsPolicy t) :=
+    measure_mono hsubset
+  have hbad : ¬ ((⊤ : ℝ≥0∞) ≤ 0) := by simp
+  exact hbad (by simpa [Real.volume_Ioi, hzero] using hle)
+
+/--
+Positive NNReal density on any feasible short-trip-rejection-shaped policy
+gives positive real trip mass under a finite `withDensity` measure.
+-/
+theorem singleStateTripMass_rejectsShortTrips_withDensity_pos_of_pos_on
+    (density : TripLength → NNReal)
+    (hdensity_meas : Measurable density)
+    (t : ℝ)
+    (σ : TripPolicy)
+    (hshape : rejectsShortTrips t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞)) σ ≠ ∞)
+    (hpos : ∀ τ, τ ∈ σ → density τ ≠ 0) :
+    0 <
+      singleStateTripMass
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞)) σ := by
+  have hσ_eq : σ = rejectShortTripsPolicy t :=
+    eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+      hshape hsub
+  have hσ_meas : MeasurableSet σ := by
+    rw [hσ_eq]
+    exact measurableSet_rejectShortTripsPolicy t
+  have hvolume_ne_zero : volume σ ≠ 0 := by
+    rw [hσ_eq]
+    exact volume_rejectShortTripsPolicy_ne_zero t
+  refine
+    singleStateTripMass_withDensity_pos_of_pos_on
+      (fun τ => (density τ : ℝ≥0∞))
+      (measurable_coe_nnreal_ennreal.comp hdensity_meas)
+      hσ_meas hvolume_ne_zero hfinite ?_
+  intro τ hτ
+  simpa using hpos τ hτ
+
 /-- Rightward movement of the lower cutoff in a middle-rejection policy. -/
 def gn21RejectMiddleLoReplacement (lo hi : ℝ) (ε : ℝ) : TripPolicy :=
   rejectMiddleTripsPolicy (lo + ε) hi
@@ -10996,6 +11141,124 @@ theorem gn21MeasuredPairNondegenerate_of_rejectsMiddleTrips_withDensity_right
       arrivalI arrivalJ switchIJ switchJI σI σJ hmassI_pos
       (singleStateTripMass_rejectsMiddleTrips_withDensity_pos_of_pos_on
         density hdensity_meas lo hi σJ hshape hsub hfinite hpos)
+      harrivalI_pos harrivalJ_pos hswitchIJ_pos hswitchJI_pos
+      hσI_measurable hσJ_measurable hσI_positive hsub
+
+/--
+Measured pair nondegeneracy when the right/state-`J` policy is a concrete
+tail left-replacement under a positive NNReal density.
+-/
+theorem gn21MeasuredPairNondegenerate_of_tailLeftReplacement_withDensity_right
+    (μI : Measure TripLength)
+    (density : TripLength → NNReal)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI : TripPolicy)
+    (u ε : ℝ)
+    (hmassI_pos : 0 < singleStateTripMass μI σI)
+    (hdensity_meas : Measurable density)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        (gn21TailLeftReplacement u ε) ≠ ∞)
+    (hpos :
+      ∀ τ, τ ∈ gn21TailLeftReplacement u ε → density τ ≠ 0)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσI_measurable : MeasurableSet σI)
+    (hσI_positive : σI ⊆ acceptAllPolicy)
+    (hε_le_u : ε ≤ u) :
+    GN21MeasuredPairNondegenerate μI
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI
+      σI (gn21TailLeftReplacement u ε) := by
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure
+      μI (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI σI (gn21TailLeftReplacement u ε)
+      hmassI_pos
+      (singleStateTripMass_tailLeftReplacement_withDensity_pos_of_pos_on
+        density hdensity_meas u ε hfinite hpos)
+      harrivalI_pos harrivalJ_pos hswitchIJ_pos hswitchJI_pos
+      hσI_measurable (measurableSet_gn21TailLeftReplacement u ε)
+      hσI_positive
+      (gn21TailLeftReplacement_subset_acceptAllPolicy u ε hε_le_u)
+
+/--
+Pointwise finite positive-density assumptions produce the nondegeneracy
+function required by the tail strict-local bridge.
+-/
+theorem gn21MeasuredPairNondegenerate_tailLeftReplacement_withDensity_right_forall
+    (μI : Measure TripLength)
+    (density : TripLength → NNReal)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI : TripPolicy)
+    (u δ : ℝ)
+    (hmassI_pos : 0 < singleStateTripMass μI σI)
+    (hdensity_meas : Measurable density)
+    (hfinite :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+          (gn21TailLeftReplacement u ε) ≠ ∞)
+    (hpos :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        ∀ τ, τ ∈ gn21TailLeftReplacement u ε → density τ ≠ 0)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσI_measurable : MeasurableSet σI)
+    (hσI_positive : σI ⊆ acceptAllPolicy)
+    (hδ_le_u : δ ≤ u) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      GN21MeasuredPairNondegenerate μI
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalI arrivalJ switchIJ switchJI
+        σI (gn21TailLeftReplacement u ε) := by
+  intro ε hε_pos hε_lt
+  exact
+    gn21MeasuredPairNondegenerate_of_tailLeftReplacement_withDensity_right
+      μI density arrivalI arrivalJ switchIJ switchJI σI u ε
+      hmassI_pos hdensity_meas (hfinite ε hε_pos hε_lt)
+      (hpos ε hε_pos hε_lt) harrivalI_pos harrivalJ_pos hswitchIJ_pos
+      hswitchJI_pos hσI_measurable hσI_positive (by linarith)
+
+/--
+Measured pair nondegeneracy when the right/state-`J` current policy has the
+short-trip-rejection tail shape under a positive NNReal density.
+-/
+theorem gn21MeasuredPairNondegenerate_of_rejectsShortTrips_withDensity_right
+    (μI : Measure TripLength)
+    (density : TripLength → NNReal)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy)
+    (t : ℝ)
+    (hshape : rejectsShortTrips t σJ)
+    (hsub : σJ ⊆ acceptAllPolicy)
+    (hmassI_pos : 0 < singleStateTripMass μI σI)
+    (hdensity_meas : Measurable density)
+    (hfinite :
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞)) σJ ≠ ∞)
+    (hpos : ∀ τ, τ ∈ σJ → density τ ≠ 0)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitchIJ_pos : 0 < switchIJ)
+    (hswitchJI_pos : 0 < switchJI)
+    (hσI_measurable : MeasurableSet σI)
+    (hσI_positive : σI ⊆ acceptAllPolicy) :
+    GN21MeasuredPairNondegenerate μI
+      (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI σI σJ := by
+  have hσJ_measurable : MeasurableSet σJ := by
+    rw [eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+      hshape hsub]
+    exact measurableSet_rejectShortTripsPolicy t
+  exact
+    gn21MeasuredPairNondegenerate_of_positive_measure
+      μI (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+      arrivalI arrivalJ switchIJ switchJI σI σJ hmassI_pos
+      (singleStateTripMass_rejectsShortTrips_withDensity_pos_of_pos_on
+        density hdensity_meas t σJ hshape hsub hfinite hpos)
       harrivalI_pos harrivalJ_pos hswitchIJ_pos hswitchJI_pos
       hσI_measurable hσJ_measurable hσI_positive hsub
 
