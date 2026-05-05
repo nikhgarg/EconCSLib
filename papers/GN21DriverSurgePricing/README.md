@@ -109,6 +109,10 @@ cache is `source.txt`.
   with accept-all-complement bridges reducing each statewise weak improvement
   to pointwise nonnegativity of the Lemma 6 kernel over the rejected feasible
   complement plus the usual denominator and integrability side conditions.
+  The current-bounds route is now packaged as
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`, which
+  feeds the weak Theorem 3 boundary through
+  `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,

@@ -13397,6 +13397,200 @@ theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_curre
             htime_integrable_σ hq_integrable_σ hW_fixed))
 
 /--
+One-policy data package for the non-surge Lemma 10 current-bounds route into
+accept-all aggregate improvement.
+-/
+structure GN21NonsurgeLemma10AcceptAllAggregateData
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ)
+    (wJ : PricingFunction) (σI σJ : TripPolicy) : Prop where
+  policy_subset : σI ⊆ acceptAllPolicy
+  policy_measurable : MeasurableSet σI
+  arrival_nonneg : 0 ≤ arrivalI
+  q_integrable_current :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σI μI
+  q_integrable_rejected :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      (acceptAllPolicy \ σI) μI
+  time_integrable_current :
+    IntegrableOn (fun τ : TripLength => τ) σI μI
+  time_integrable_rejected :
+    IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σI) μI
+  earning_integrable_current :
+    IntegrableOn (ctmcStructuredSurgePrice R2 z switch12 switch21) σI μI
+  earning_integrable_rejected :
+    IntegrableOn (ctmcStructuredSurgePrice R2 z switch12 switch21)
+      (acceptAllPolicy \ σI) μI
+  denominator_pos :
+    0 <
+      gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+          gn21ScaledStateTime μI arrivalI σI
+  acceptAll_denominator_pos :
+    0 <
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI +
+          arrivalI *
+            ∫ τ in acceptAllPolicy \ σI,
+              gn21SwitchProb switch12 switch21 τ ∂μI) *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+          (gn21ScaledStateTime μI arrivalI σI +
+            arrivalI * ∫ τ in acceptAllPolicy \ σI, τ ∂μI)
+  fixed_exit_nonneg :
+    0 ≤ gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ
+  bounds :
+    lemma10StructuredBounds ratio
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      switch12
+  z_eq : z = ratio * R2
+  R2_pos : 0 < R2
+  fixed_exit_pos :
+    0 < gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ
+  switch_pos : 0 < switch12
+  switch_sum_pos : 0 < switch12 + switch21
+  switch_lt_current_exit :
+    switch12 < gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI
+  current_gap_nonneg :
+    0 ≤
+      switch12 * gn21ScaledStateTime μI arrivalI σI -
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI
+  lower_numerator_pos :
+    0 <
+      gn21ScaledStateTime μJ arrivalJ σJ * switch12 +
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ
+  fixed_reward_rate :
+    gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+      R2 * gn21ScaledStateTime μJ arrivalJ σJ
+
+/-- The non-surge current-bounds data package proves accept-all aggregate improvement. -/
+theorem GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_le_acceptAll
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ}
+    {wJ : PricingFunction} {σI σJ : TripPolicy}
+    (D :
+      GN21NonsurgeLemma10AcceptAllAggregateData μI μJ arrivalI arrivalJ
+        switch12 switch21 R2 z ratio wJ σI σJ) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ
+        acceptAllPolicy σJ :=
+  gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds
+    μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio wJ σI σJ
+    D.policy_subset D.policy_measurable D.arrival_nonneg
+    D.q_integrable_current D.q_integrable_rejected
+    D.time_integrable_current D.time_integrable_rejected
+    D.earning_integrable_current D.earning_integrable_rejected
+    D.denominator_pos D.acceptAll_denominator_pos D.fixed_exit_nonneg
+    D.bounds D.z_eq D.R2_pos D.fixed_exit_pos D.switch_pos
+    D.switch_sum_pos D.switch_lt_current_exit D.current_gap_nonneg
+    D.lower_numerator_pos D.fixed_reward_rate
+
+/--
+One-policy data package for the surge Lemma 9 current-bounds route into
+accept-all aggregate improvement.
+-/
+structure GN21SurgeLemma9AcceptAllAggregateData
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 m R1 z ratio : ℝ)
+    (wI : PricingFunction) (σI σJ : TripPolicy) : Prop where
+  policy_subset : σJ ⊆ acceptAllPolicy
+  policy_measurable : MeasurableSet σJ
+  arrival_nonneg : 0 ≤ arrivalJ
+  q_integrable_current :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ) σJ μJ
+  q_integrable_rejected :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      (acceptAllPolicy \ σJ) μJ
+  time_integrable_current :
+    IntegrableOn (fun τ : TripLength => τ) σJ μJ
+  time_integrable_rejected :
+    IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σJ) μJ
+  earning_integrable_current :
+    IntegrableOn (ctmcStructuredSurgePrice m z switch21 switch12) σJ μJ
+  earning_integrable_rejected :
+    IntegrableOn (ctmcStructuredSurgePrice m z switch21 switch12)
+      (acceptAllPolicy \ σJ) μJ
+  denominator_pos :
+    0 <
+      gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+          gn21ScaledStateTime μI arrivalI σI
+  acceptAll_denominator_pos :
+    0 <
+      gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+          (gn21ScaledStateTime μJ arrivalJ σJ +
+            arrivalJ * ∫ τ in acceptAllPolicy \ σJ, τ ∂μJ) +
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ +
+          arrivalJ *
+            ∫ τ in acceptAllPolicy \ σJ,
+              gn21SwitchProb switch21 switch12 τ ∂μJ) *
+          gn21ScaledStateTime μI arrivalI σI
+  fixed_exit_nonneg :
+    0 ≤ gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI
+  bounds :
+    lemma9StructuredBounds ratio
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      switch21
+  z_eq : z = ratio * (m - R1)
+  m_sub_R1_pos : 0 < m - R1
+  R1_nonneg : 0 ≤ R1
+  fixed_time_nonneg : 0 ≤ gn21ScaledStateTime μI arrivalI σI
+  fixed_exit_pos :
+    0 < gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI
+  switch_pos : 0 < switch21
+  switch_sum_pos : 0 < switch21 + switch12
+  switch_lt_current_exit :
+    switch21 < gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ
+  current_gap_nonneg :
+    0 ≤
+      switch21 * gn21ScaledStateTime μJ arrivalJ σJ -
+        gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ
+  fixed_reward_rate :
+    gn21ScaledStateEarning μI arrivalI wI σI =
+      R1 * gn21ScaledStateTime μI arrivalI σI
+
+/-- The surge current-bounds data package proves accept-all aggregate improvement. -/
+theorem GN21SurgeLemma9AcceptAllAggregateData.aggregate_le_acceptAll
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 m R1 z ratio : ℝ}
+    {wI : PricingFunction} {σI σJ : TripPolicy}
+    (D :
+      GN21SurgeLemma9AcceptAllAggregateData μI μJ arrivalI arrivalJ
+        switch12 switch21 m R1 z ratio wI σI σJ) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21 wI
+        (ctmcStructuredSurgePrice m z switch21 switch12) σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21 wI
+        (ctmcStructuredSurgePrice m z switch21 switch12) σI
+        acceptAllPolicy :=
+  gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_current_bounds
+    μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio wI σI σJ
+    D.policy_subset D.policy_measurable D.arrival_nonneg
+    D.q_integrable_current D.q_integrable_rejected
+    D.time_integrable_current D.time_integrable_rejected
+    D.earning_integrable_current D.earning_integrable_rejected
+    D.denominator_pos D.acceptAll_denominator_pos D.fixed_exit_nonneg
+    D.bounds D.z_eq D.m_sub_R1_pos D.R1_nonneg D.fixed_time_nonneg
+    D.fixed_exit_pos D.switch_pos D.switch_sum_pos D.switch_lt_current_exit
+    D.current_gap_nonneg D.fixed_reward_rate
+
+/--
 Nondegeneracy side conditions needed to identify measured dynamic reward with
 the Appendix-D aggregate quotient for a fixed pair of state policies.
 -/
@@ -14692,6 +14886,76 @@ def theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_measured_aggregat
   surge_accept_all_nondegenerate := C.surge_accept_all_nondegenerate
   nonsurge_aggregate_ge := C.nonsurge_aggregate_ge
   surge_aggregate_ge := C.surge_aggregate_ge
+
+/--
+Structured-price current-bounds package that supplies weak measured aggregate
+accept-all improvements in both states.
+-/
+structure Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  m0_eq : m 0 = R2
+  current_nondegenerate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1)
+  nonsurge_accept_all_nondegenerate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 acceptAllPolicy (ρ 1)
+  surge_accept_all_nondegenerate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) acceptAllPolicy
+  nonsurge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      ∃ ratio : ℝ,
+        GN21NonsurgeLemma10AcceptAllAggregateData
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          R2 (z 0) ratio
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (ρ 0) (ρ 1)
+  surge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      ∃ ratio : ℝ,
+        GN21SurgeLemma9AcceptAllAggregateData
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          (m 1) R1 (z 1) ratio
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          (ρ 0) (ρ 1)
+
+/--
+Current Lemma 9/10 bounds instantiate the weak aggregate accept-all certificate
+for structured CTMC prices.
+-/
+def theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_structured_current_bounds
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateWeakAcceptAllRewardCertificate
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  current_nondegenerate := C.current_nondegenerate
+  nonsurge_accept_all_nondegenerate := C.nonsurge_accept_all_nondegenerate
+  surge_accept_all_nondegenerate := C.surge_accept_all_nondegenerate
+  nonsurge_aggregate_ge := by
+    intro ρ
+    rcases C.nonsurge_data ρ with ⟨ratio, D⟩
+    have hle := D.aggregate_le_acceptAll
+    simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb, C.m0_eq]
+      using hle
+  surge_aggregate_ge := by
+    intro ρ
+    rcases C.surge_data ρ with ⟨ratio, D⟩
+    have hle := D.aggregate_le_acceptAll
+    simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb, C.m0_eq]
+      using hle
 
 /--
 Aggregate `Q,T,W` accept-all improvements instantiate the measured global
@@ -25596,6 +25860,32 @@ def theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward
       μ arrival switch12 switch21
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
       (C m z hnonneg hparams)
+
+/--
+Structured current Lemma 9/10 bounds instantiate the weak Theorem 3 boundary
+for the constructed CTMC structured prices.
+-/
+def theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3AcceptAllWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3AcceptAllWeakRewardCertificate_of_measured_aggregate_weak_reward
+    μ arrival R1 R2 switch12 switch21
+    (by
+      intro m z hnonneg hparams
+      exact
+        theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_structured_current_bounds
+          μ arrival R1 R2 switch12 switch21 m z
+          (C m z hnonneg hparams))
 
 /--
 The stronger measured aggregate accept-all certificate also instantiates the

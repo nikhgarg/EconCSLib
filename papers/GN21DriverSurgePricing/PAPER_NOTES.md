@@ -73,6 +73,12 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds`
   and
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_lemma9_current_bounds`,
+  structured current-bounds weak aggregate package
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`,
+  its adapter
+  `theorem4MeasuredAggregateWeakAcceptAllRewardCertificate_of_structured_current_bounds`,
+  and the Theorem 3 weak-boundary adapter
+  `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper
