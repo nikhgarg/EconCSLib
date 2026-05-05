@@ -119,6 +119,9 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements`:
   measured Theorem 3 endpoint for the derivative-proof route where every
   optimal non-accept-all policy has a strict aggregate local improvement.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_lemma910_interval_bridges`:
+  measured Theorem 3 endpoint that consumes the combined Lemma 9/10 interval
+  bridge certificate directly.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -126,6 +129,11 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_measured_aggregate_strict_local_improvements`:
   the corresponding accept-all-primitive endpoint for the strict local
   aggregate-improvement route.
+- `GN21SurgeIntervalEndpointBridgeData`,
+  `GN21NonsurgeIntervalEndpointBridgeData`, and
+  `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
+  Lemma 9/10 interval endpoint identification step, with constructors into the
+  measured aggregate strict-local interface.
 - `paper_aux_finite_dynamic_pricing_ic_of_greedy`,
   `paper_aux_finite_dynamic_pricing_not_ic_of_profitable_deviation`: closed
   finite MDP support lemmas.
@@ -7928,6 +7936,345 @@ theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma1
       hT_replacement ε, hW_replacement ε] using hlt
 
 /--
+Primitive data package for applying the surge-state Lemma 9 interval bridge to
+a fixed dynamic policy.  This isolates the remaining continuous endpoint
+identification work from the already-compiled aggregate-reward routing.
+-/
+structure GN21SurgeIntervalEndpointBridgeData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) where
+  replacement : ℝ → TripPolicy
+  lowerEndpoint : ℝ
+  u : ℝ
+  T1 : ℝ
+  Q1 : ℝ
+  T2 : ℝ
+  Q2 : ℝ
+  R1 : ℝ
+  ratio : ℝ
+  density : ℝ → ℝ
+  harrival_pos : 0 < arrival 1
+  hdensity_pos : 0 < density u
+  hQ1_pos : 0 < Q1
+  hden :
+    gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+        (gn21SwitchProb switch21 switch12) u * T1 +
+      Q1 *
+        gn21EndpointTiPath (arrival 1) lowerEndpoint density u ≠ 0
+  hq_int :
+    IntervalIntegrable
+      (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) volume
+      lowerEndpoint u
+  hq_meas :
+    StronglyMeasurableAtFilter
+      (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u)
+  hq_cont :
+    ContinuousAt
+      (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u
+  hw_int :
+    IntervalIntegrable
+      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+        density τ) volume lowerEndpoint u
+  hw_meas :
+    StronglyMeasurableAtFilter
+      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+        density τ) (𝓝 u)
+  hw_cont :
+    ContinuousAt
+      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+        density τ) u
+  ht_int :
+    IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u
+  ht_meas :
+    StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u)
+  ht_cont : ContinuousAt (fun τ => τ * density τ) u
+  hQ2 :
+    gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+      (gn21SwitchProb switch21 switch12) u = Q2
+  hT2 :
+    gn21EndpointTiPath (arrival 1) lowerEndpoint density u = T2
+  hW2 :
+    gn21EndpointWiPath (arrival 1) lowerEndpoint density
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u =
+        m 1 * (T2 - 1) + z 1 * (Q2 - switch21)
+  hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21
+  hz : z 1 = ratio * (m 1 - R1)
+  hmR_pos : 0 < m 1 - R1
+  hR1_nonneg : 0 ≤ R1
+  hT1_nonneg : 0 ≤ T1
+  hswitch21_pos : 0 < switch21
+  hsum : 0 < switch21 + switch12
+  hu : 0 < u
+  hswitch_lt_Q2 : switch21 < Q2
+  hgap_nonneg : 0 ≤ switch21 * T2 - Q2
+  Hcur :
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1)
+  Hrep :
+    ∀ ε : ℝ, 0 < ε →
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (replacement ε)
+  hQ_other :
+    gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) = Q1
+  hT_other :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) = T1
+  hW_other :
+    gn21ScaledStateEarning (μ 0) (arrival 0)
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * T1
+  hQ_current :
+    gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) =
+      gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+        (gn21SwitchProb switch21 switch12) u
+  hT_current :
+    gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) =
+      gn21EndpointTiPath (arrival 1) lowerEndpoint density u
+  hW_current :
+    gn21ScaledStateEarning (μ 1) (arrival 1)
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+      gn21EndpointWiPath (arrival 1) lowerEndpoint density
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u
+  hQ_replacement :
+    ∀ ε : ℝ,
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+          (replacement ε) =
+        gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+          (gn21SwitchProb switch21 switch12) (u + ε)
+  hT_replacement :
+    ∀ ε : ℝ,
+      gn21ScaledStateTime (μ 1) (arrival 1) (replacement ε) =
+        gn21EndpointTiPath (arrival 1) lowerEndpoint density (u + ε)
+  hW_replacement :
+    ∀ ε : ℝ,
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (replacement ε) =
+        gn21EndpointWiPath (arrival 1) lowerEndpoint density
+          (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u + ε)
+
+/-- A surge bridge data package supplies the state-1 strict aggregate improvement. -/
+theorem GN21SurgeIntervalEndpointBridgeData.statewise_strict_aggregate_improvement
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (D : GN21SurgeIntervalEndpointBridgeData μ arrival m z switch12 switch21 ρ) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 1 τ) 0)
+          ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ := by
+  exact
+    paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_interval_density
+      μ arrival m z switch12 switch21 ρ D.replacement D.lowerEndpoint D.u
+      D.T1 D.Q1 D.T2 D.Q2 D.R1 D.ratio D.density D.harrival_pos
+      D.hdensity_pos D.hQ1_pos D.hden D.hq_int D.hq_meas D.hq_cont
+      D.hw_int D.hw_meas D.hw_cont D.ht_int D.ht_meas D.ht_cont D.hQ2
+      D.hT2 D.hW2 D.hbounds D.hz D.hmR_pos D.hR1_nonneg D.hT1_nonneg
+      D.hswitch21_pos D.hsum D.hu D.hswitch_lt_Q2 D.hgap_nonneg D.Hcur
+      D.Hrep D.hQ_other D.hT_other D.hW_other D.hQ_current D.hT_current
+      D.hW_current D.hQ_replacement D.hT_replacement D.hW_replacement
+
+/--
+Primitive data package for applying the non-surge-state Lemma 10 interval
+bridge to a fixed dynamic policy.
+-/
+structure GN21NonsurgeIntervalEndpointBridgeData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) where
+  replacement : ℝ → TripPolicy
+  lowerEndpoint : ℝ
+  u : ℝ
+  T2 : ℝ
+  Q2 : ℝ
+  T1 : ℝ
+  Q1 : ℝ
+  R2 : ℝ
+  ratio : ℝ
+  density : ℝ → ℝ
+  harrival_pos : 0 < arrival 0
+  hdensity_pos : 0 < density u
+  hQ2_pos : 0 < Q2
+  hden :
+    gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+        (gn21SwitchProb switch12 switch21) u * T2 +
+      Q2 *
+        gn21EndpointTiPath (arrival 0) lowerEndpoint density u ≠ 0
+  hq_int :
+    IntervalIntegrable
+      (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) volume
+      lowerEndpoint u
+  hq_meas :
+    StronglyMeasurableAtFilter
+      (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u)
+  hq_cont :
+    ContinuousAt
+      (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u
+  hw_int :
+    IntervalIntegrable
+      (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+        density τ) volume lowerEndpoint u
+  hw_meas :
+    StronglyMeasurableAtFilter
+      (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+        density τ) (𝓝 u)
+  hw_cont :
+    ContinuousAt
+      (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+        density τ) u
+  ht_int :
+    IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u
+  ht_meas :
+    StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u)
+  ht_cont : ContinuousAt (fun τ => τ * density τ) u
+  hQ1 :
+    gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+      (gn21SwitchProb switch12 switch21) u = Q1
+  hT1 :
+    gn21EndpointTiPath (arrival 0) lowerEndpoint density u = T1
+  hW1 :
+    gn21EndpointWiPath (arrival 0) lowerEndpoint density
+      (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u =
+        R2 * (T1 - 1) + z 0 * (Q1 - switch12)
+  hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12
+  hz : z 0 = ratio * R2
+  hR2_pos : 0 < R2
+  hswitch12_pos : 0 < switch12
+  hsum : 0 < switch12 + switch21
+  hu : 0 < u
+  hswitch_lt_Q1 : switch12 < Q1
+  hgap_nonneg : 0 ≤ switch12 * T1 - Q1
+  hA_pos : 0 < T2 * switch12 + Q2
+  Hcur :
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1)
+  Hrep :
+    ∀ ε : ℝ, 0 < ε →
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (replacement ε) (ρ 1)
+  hQ_other :
+    gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) = Q2
+  hT_other :
+    gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) = T2
+  hW_other :
+    gn21ScaledStateEarning (μ 1) (arrival 1)
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * T2
+  hQ_current :
+    gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) =
+      gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+        (gn21SwitchProb switch12 switch21) u
+  hT_current :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) =
+      gn21EndpointTiPath (arrival 0) lowerEndpoint density u
+  hW_current :
+    gn21ScaledStateEarning (μ 0) (arrival 0)
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+      gn21EndpointWiPath (arrival 0) lowerEndpoint density
+        (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u
+  hQ_replacement :
+    ∀ ε : ℝ,
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+          (replacement ε) =
+        gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+          (gn21SwitchProb switch12 switch21) (u + ε)
+  hT_replacement :
+    ∀ ε : ℝ,
+      gn21ScaledStateTime (μ 0) (arrival 0) (replacement ε) =
+        gn21EndpointTiPath (arrival 0) lowerEndpoint density (u + ε)
+  hW_replacement :
+    ∀ ε : ℝ,
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          (replacement ε) =
+        gn21EndpointWiPath (arrival 0) lowerEndpoint density
+          (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) (u + ε)
+
+/-- A non-surge bridge data package supplies the state-0 strict aggregate improvement. -/
+theorem GN21NonsurgeIntervalEndpointBridgeData.statewise_strict_aggregate_improvement
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (D : GN21NonsurgeIntervalEndpointBridgeData μ arrival m z switch12 switch21 ρ) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 0 τ) 0)
+          ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ := by
+  exact
+    paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_interval_density
+      μ arrival m z switch12 switch21 ρ D.replacement D.lowerEndpoint D.u
+      D.T2 D.Q2 D.T1 D.Q1 D.R2 D.ratio D.density D.harrival_pos
+      D.hdensity_pos D.hQ2_pos D.hden D.hq_int D.hq_meas D.hq_cont
+      D.hw_int D.hw_meas D.hw_cont D.ht_int D.ht_meas D.ht_cont D.hQ1
+      D.hT1 D.hW1 D.hbounds D.hz D.hR2_pos D.hswitch12_pos D.hsum D.hu
+      D.hswitch_lt_Q1 D.hgap_nonneg D.hA_pos D.Hcur D.Hrep D.hQ_other
+      D.hT_other D.hW_other D.hQ_current D.hT_current D.hW_current
+      D.hQ_replacement D.hT_replacement D.hW_replacement
+
+/--
+Combined Lemma 9/10 interval bridge certificate for the CTMC structured price
+family.  The remaining analytic task is exactly to build the two bridge-data
+objects for each optimal policy/state that is not accept-all.
+-/
+structure Theorem4Lemma910IntervalBridgeCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  feasible_optimal :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy
+  nonsurge_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ¬ acceptsAllTrips (ρ 0) →
+        GN21NonsurgeIntervalEndpointBridgeData
+          μ arrival m z switch12 switch21 ρ
+  surge_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ¬ acceptsAllTrips (ρ 1) →
+        GN21SurgeIntervalEndpointBridgeData
+          μ arrival m z switch12 switch21 ρ
+
+/--
 Uniform statewise strict-local aggregate certificate.  Endpoint arguments can
 target this interface without duplicating the state-0/state-1 bookkeeping.
 -/
@@ -7997,6 +8344,48 @@ def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_statewise_stri
     · simpa [replaceDynamicPolicyState] using Hrep
     · simpa [gn21MeasuredAggregateDynamicStateReward,
         replaceDynamicPolicyState] using hagg
+
+/--
+Lemma 9/10 interval bridge data instantiate the uniform statewise strict-local
+aggregate certificate.
+-/
+def theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_interval_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4Lemma910IntervalBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := C.exists_optimal
+  feasible_optimal := C.feasible_optimal
+  statewise_strict_aggregate_improvement_unless := by
+    intro ρ hρ i hnot
+    fin_cases i
+    · exact
+        (C.nonsurge_bridge ρ hρ hnot).statewise_strict_aggregate_improvement
+    · exact
+        (C.surge_bridge ρ hρ hnot).statewise_strict_aggregate_improvement
+
+/--
+Lemma 9/10 interval bridge data instantiate the measured aggregate strict-local
+certificate consumed by Theorem 4 and Theorem 3.
+-/
+def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_interval_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4Lemma910IntervalBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_statewise_strict_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_interval_bridges
+      μ arrival m z switch12 switch21 C)
 
 /--
 Lemma 1 algebra: if subcycle earning and length share the same nonzero cycle
@@ -9581,6 +9970,90 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
     hsAccount⟩
   · simpa [R] using hIC
   · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
+Measured Theorem 3 endpoint from Lemma 9/10 interval bridge data.  This is the
+strict-local derivative route after the endpoint primitive-identification data
+has been packaged state by state.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_lemma910_interval_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hlemma9_den_lower :
+      0 < lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_den_upper :
+      0 < lemma9StructuredUpperDenominator Q1 Q2 switch21)
+    (hlemma9_left_nonpos :
+      lemma9StructuredLowerNumerator T1 Q1 T2 Q2 switch21 *
+          lemma9StructuredUpperDenominator Q1 Q2 switch21 ≤ 0)
+    (hlemma9_right_pos :
+      0 < lemma9StructuredUpperNumerator T1 Q1 Q2 *
+        lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_upper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hbridges :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4Lemma910IntervalBridgeCertificate
+          μ arrival m z switch12 switch21) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements
+      μ arrival rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hlemma9_den_lower
+      hlemma9_den_upper hlemma9_left_nonpos hlemma9_right_pos
+      hlemma9_upper_pos hT2_ge_one hswitch21_lt_Q2
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_interval_bridges
+            μ arrival m z switch12 switch21
+            (hbridges m z hnonneg hparams))
 
 /--
 Accept-all measured primitives discharge the scalar positivity conditions used
