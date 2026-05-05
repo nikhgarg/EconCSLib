@@ -112,6 +112,10 @@ the continuous CTMC source theorems.
   `theorem4SurgeAllowedReplacement_rejectShort`, and
   `theorem4SurgeAllowedReplacement_rejectMiddle`: state-specific constructors
   packaging canonical Lemma 5 replacements as allowed Theorem 4 shape data.
+- `Theorem4NonsurgeAllowedReplacementData`,
+  `Theorem4SurgeAllowedReplacementData`, and
+  `Theorem4AllOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`:
+  source-facing case data and builder for all-optimal replacement proofs.
 - `paper_theorem4_dynamic_structural_policy_of_shape_derivation`: Theorem 4
   assembly from a Lemma 5-style shape derivation certificate.
 - `Theorem4ShapeReplacementDerivationCertificate`,
@@ -10851,6 +10855,88 @@ def theorem4SurgeAllowedReplacement_rejectMiddle
     lemma5StrictlyQuasiConvexOptimizerReplacementCertificate_rejectMiddle
       Rhat σ0 lo hi hreward_ge hstrict_unless_rejects_middle⟩
 
+/--
+Source-facing non-surge replacement cases for Lemma 5 inside Theorem 4.  Each
+constructor records the concrete canonical replacement and the weak/strict
+reward comparisons needed by the optimizer-replacement certificate.
+-/
+inductive Theorem4NonsurgeAllowedReplacementData
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) : Type where
+  | positive
+      (hreward_ge : Rhat σ0 ≤ Rhat acceptAllPolicy)
+      (hstrict_unless_accepts_all :
+        ¬ acceptsAllTrips σ0 → Rhat σ0 < Rhat acceptAllPolicy)
+  | rejectLong
+      (t : ℝ)
+      (hreward_ge : Rhat σ0 ≤ Rhat (rejectLongTripsPolicy t))
+      (hstrict_unless_rejects_long :
+        ¬ lemma5PolicyForm .strictlyDecreasing σ0 →
+          Rhat σ0 < Rhat (rejectLongTripsPolicy t))
+  | acceptMiddle
+      (lo hi : ℝ)
+      (hreward_ge : Rhat σ0 ≤ Rhat (acceptMiddleTripsPolicy lo hi))
+      (hstrict_unless_accepts_middle :
+        ¬ lemma5PolicyForm .strictlyQuasiConcave σ0 →
+          Rhat σ0 < Rhat (acceptMiddleTripsPolicy lo hi))
+
+/--
+Source-facing surge replacement cases for Lemma 5 inside Theorem 4.
+-/
+inductive Theorem4SurgeAllowedReplacementData
+    (Rhat : SingleStateReward) (σ0 : TripPolicy) : Type where
+  | positive
+      (hreward_ge : Rhat σ0 ≤ Rhat acceptAllPolicy)
+      (hstrict_unless_accepts_all :
+        ¬ acceptsAllTrips σ0 → Rhat σ0 < Rhat acceptAllPolicy)
+  | rejectShort
+      (t : ℝ)
+      (hreward_ge : Rhat σ0 ≤ Rhat (rejectShortTripsPolicy t))
+      (hstrict_unless_rejects_short :
+        ¬ lemma5PolicyForm .strictlyIncreasing σ0 →
+          Rhat σ0 < Rhat (rejectShortTripsPolicy t))
+  | rejectMiddle
+      (lo hi : ℝ)
+      (hreward_ge : Rhat σ0 ≤ Rhat (rejectMiddleTripsPolicy lo hi))
+      (hstrict_unless_rejects_middle :
+        ¬ lemma5PolicyForm .strictlyQuasiConvex σ0 →
+          Rhat σ0 < Rhat (rejectMiddleTripsPolicy lo hi))
+
+/-- Convert source-facing non-surge replacement data into Theorem 4's dependent shape data. -/
+def Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement
+    {Rhat : SingleStateReward} {σ0 : TripPolicy} :
+    Theorem4NonsurgeAllowedReplacementData Rhat σ0 →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+          Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1
+  | .positive hreward_ge hstrict_unless_accepts_all =>
+      theorem4NonsurgeAllowedReplacement_positive_acceptAll
+        Rhat σ0 hreward_ge hstrict_unless_accepts_all
+  | .rejectLong t hreward_ge hstrict_unless_rejects_long =>
+      theorem4NonsurgeAllowedReplacement_rejectLong
+        Rhat σ0 t hreward_ge hstrict_unless_rejects_long
+  | .acceptMiddle lo hi hreward_ge hstrict_unless_accepts_middle =>
+      theorem4NonsurgeAllowedReplacement_acceptMiddle
+        Rhat σ0 lo hi hreward_ge hstrict_unless_accepts_middle
+
+/-- Convert source-facing surge replacement data into Theorem 4's dependent shape data. -/
+def Theorem4SurgeAllowedReplacementData.to_allowed_replacement
+    {Rhat : SingleStateReward} {σ0 : TripPolicy} :
+    Theorem4SurgeAllowedReplacementData Rhat σ0 →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+          Lemma5OptimizerReplacementCertificate Rhat σ0 shape.1
+  | .positive hreward_ge hstrict_unless_accepts_all =>
+      theorem4SurgeAllowedReplacement_positive_acceptAll
+        Rhat σ0 hreward_ge hstrict_unless_accepts_all
+  | .rejectShort t hreward_ge hstrict_unless_rejects_short =>
+      theorem4SurgeAllowedReplacement_rejectShort
+        Rhat σ0 t hreward_ge hstrict_unless_rejects_short
+  | .rejectMiddle lo hi hreward_ge hstrict_unless_rejects_middle =>
+      theorem4SurgeAllowedReplacement_rejectMiddle
+        Rhat σ0 lo hi hreward_ge hstrict_unless_rejects_middle
+
 /-- Lemma 5's accept-all form is admissible for Theorem 4 non-surge states. -/
 theorem theorem4NonsurgeShape_of_lemma5_positive
     {σ : TripPolicy}
@@ -11096,6 +11182,31 @@ structure Theorem4AllOptimalShapeReplacementDerivationCertificate
           theorem4SurgeAllowedLemma5Shape shape},
           Lemma5OptimizerReplacementCertificate
             (dynamicStateReward R ρ 1) (ρ 1) shape.1)
+
+/--
+Build the all-optimal replacement certificate from source-facing non-surge and
+surge replacement cases for every optimal policy.
+-/
+def Theorem4AllOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data
+    (R : DynamicReward)
+    (hexists : ∃ ρ : Fin 2 → TripPolicy, dynamicOptimal R ρ)
+    (hnonsurge :
+      ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicOptimal R ρ) →
+        Theorem4NonsurgeAllowedReplacementData
+          (dynamicStateReward R ρ 0) (ρ 0))
+    (hsurge :
+      ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicOptimal R ρ) →
+        Theorem4SurgeAllowedReplacementData
+          (dynamicStateReward R ρ 1) (ρ 1)) :
+    Theorem4AllOptimalShapeReplacementDerivationCertificate R where
+  exists_optimal := hexists
+  replacements := by
+    intro ρ hρ
+    exact
+      ⟨Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement
+          (hnonsurge ρ hρ),
+        Theorem4SurgeAllowedReplacementData.to_allowed_replacement
+          (hsurge ρ hρ)⟩
 
 /--
 Select an optimal policy from the all-optimal replacement interface and package
