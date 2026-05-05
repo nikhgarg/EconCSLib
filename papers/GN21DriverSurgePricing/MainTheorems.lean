@@ -206,6 +206,15 @@ the continuous CTMC source theorems.
 - `paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure_eq` and
   `paper_remark4_exit_weight_gt_switch_of_positive_measure_eq`: positivity
   bridges rewritten through named current `T,Q` primitives.
+- `paper_lemma9_structured_bounds_feasible_positive_of_positive_primitives`,
+  `theorem3SurgeParameters_exist_of_lemma9_positive_primitives`,
+  `theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives`:
+  direct Lemma 9 feasibility and Theorem 3 parameter constructors from
+  primitive positivity, avoiding the stronger cross-multiplied final-sign
+  assumptions.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives`:
+  measured Theorem 3 strict-local endpoint using the direct Lemma 9 primitive
+  feasibility bridge.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -9442,6 +9451,66 @@ theorem paper_lemma9_structured_bounds_feasible_positive_of_final_signs
     exact lt_of_le_of_lt hleft_nonpos hright_pos
   · exact hupper_pos
 
+/--
+Lemma 9 feasibility directly from the primitive positivity conditions.  The
+source cross-multiplied gap factors into
+`(Q1 + T1*lambda) * (Q1*(lambda*Tbar2-Qbar2) + Qbar2*(Q1+T1*lambda))`,
+which is positive under the usual Remark 4 signs.
+-/
+theorem paper_lemma9_structured_bounds_feasible_positive_of_positive_primitives
+    (T1 Q1 Tbar2 Qbar2 switch21 : ℝ)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (hswitch_pos : 0 < switch21)
+    (hgap_nonneg : 0 ≤ switch21 * Tbar2 - Qbar2)
+    (hswitch_lt_Qbar2 : switch21 < Qbar2) :
+    ∃ ratio : ℝ,
+      0 < ratio ∧
+        lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21 := by
+  have hB_pos : 0 < Q1 + T1 * switch21 := by
+    nlinarith [mul_nonneg hT1_nonneg (le_of_lt hswitch_pos)]
+  have hQbar2_pos : 0 < Qbar2 := lt_trans hswitch_pos hswitch_lt_Qbar2
+  have hden_lower :
+      0 < lemma9StructuredLowerDenominator T1 Q1 Tbar2 Qbar2 switch21 := by
+    unfold lemma9StructuredLowerDenominator
+    exact add_pos_of_nonneg_of_pos
+      (mul_nonneg (le_of_lt hQ1_pos) hgap_nonneg)
+      (mul_pos hswitch_pos hB_pos)
+  have hden_upper :
+      0 < lemma9StructuredUpperDenominator Q1 Qbar2 switch21 := by
+    unfold lemma9StructuredUpperDenominator
+    exact mul_pos hQ1_pos (sub_pos.mpr hswitch_lt_Qbar2)
+  have hcross :
+      lemma9StructuredLowerNumerator T1 Q1 Tbar2 Qbar2 switch21 *
+          lemma9StructuredUpperDenominator Q1 Qbar2 switch21 <
+        lemma9StructuredUpperNumerator T1 Q1 Qbar2 *
+          lemma9StructuredLowerDenominator T1 Q1 Tbar2 Qbar2 switch21 := by
+    rw [← sub_pos]
+    have hfactor :
+        lemma9StructuredUpperNumerator T1 Q1 Qbar2 *
+            lemma9StructuredLowerDenominator T1 Q1 Tbar2 Qbar2 switch21 -
+          lemma9StructuredLowerNumerator T1 Q1 Tbar2 Qbar2 switch21 *
+            lemma9StructuredUpperDenominator Q1 Qbar2 switch21 =
+          (Q1 + T1 * switch21) *
+            (Q1 * (switch21 * Tbar2 - Qbar2) +
+              Qbar2 * (Q1 + T1 * switch21)) := by
+      unfold lemma9StructuredUpperNumerator
+        lemma9StructuredLowerDenominator lemma9StructuredLowerNumerator
+        lemma9StructuredUpperDenominator
+      ring
+    rw [hfactor]
+    exact mul_pos hB_pos
+      (add_pos_of_nonneg_of_pos
+        (mul_nonneg (le_of_lt hQ1_pos) hgap_nonneg)
+        (mul_pos hQbar2_pos hB_pos))
+  apply paper_lemma9_structured_bounds_feasible_positive_of_lower_lt_upper
+    T1 Q1 Tbar2 Qbar2 switch21
+  · unfold lemma9StructuredLower lemma9StructuredUpper
+    rw [div_lt_div_iff₀ hden_lower hden_upper]
+    exact hcross
+  · exact lemma9StructuredUpper_pos T1 Q1 Tbar2 Qbar2 switch21
+      hT1_nonneg hQ1_pos hswitch_pos hswitch_lt_Qbar2
+
 /-- Lemma 9 certificate: the stated bounds imply positive upper-endpoint derivative in state 2. -/
 structure Lemma9SurgeDerivativeCertificate where
   ratio : ℝ
@@ -18510,6 +18579,50 @@ theorem theorem3SurgeParameters_exist_of_lemma9_final_signs
       R1 R2 Tbar2 Qbar2 switch21 ratio (ne_of_gt hden_pos)
 
 /--
+Theorem 3 surge-side parameter existence from Lemma 9 primitive positivity,
+using the direct feasibility bridge instead of carrying the source
+cross-multiplied final-sign assumptions.
+-/
+theorem theorem3SurgeParameters_exist_of_lemma9_positive_primitives
+    (R1 R2 T1 Q1 Tbar2 Qbar2 switch21 : ℝ)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (hswitch21_pos : 0 < switch21)
+    (hgap_nonneg : 0 ≤ switch21 * Tbar2 - Qbar2)
+    (hswitch21_lt_Qbar2 : switch21 < Qbar2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hTbar2_ge_one : 1 ≤ Tbar2) :
+    ∃ ratio m z : ℝ,
+      0 < ratio ∧
+        lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21 ∧
+        m = theorem3SurgeMultiplierFromRatio R1 R2 Tbar2 Qbar2 switch21 ratio ∧
+        z = theorem3SurgeZFromRatio R1 R2 Tbar2 Qbar2 switch21 ratio ∧
+        R1 < m ∧
+        0 < z ∧
+        m * (Tbar2 - 1) + z * (Qbar2 - switch21) = R2 * Tbar2 := by
+  rcases paper_lemma9_structured_bounds_feasible_positive_of_positive_primitives
+      T1 Q1 Tbar2 Qbar2 switch21 hT1_nonneg hQ1_pos hswitch21_pos
+      hgap_nonneg hswitch21_lt_Qbar2 with
+    ⟨ratio, hratio_pos, hbounds⟩
+  let m := theorem3SurgeMultiplierFromRatio R1 R2 Tbar2 Qbar2 switch21 ratio
+  let z := theorem3SurgeZFromRatio R1 R2 Tbar2 Qbar2 switch21 ratio
+  have hden_pos :
+      0 < (Tbar2 - 1) + ratio * (Qbar2 - switch21) :=
+    theorem3SurgeRatio_denominator_pos Tbar2 Qbar2 switch21 ratio
+      hTbar2_ge_one hratio_pos hswitch21_lt_Qbar2
+  have hTbar2_nonneg : 0 ≤ Tbar2 := le_trans zero_le_one hTbar2_ge_one
+  refine ⟨ratio, m, z, hratio_pos, hbounds, rfl, rfl, ?_, ?_, ?_⟩
+  · exact theorem3SurgeMultiplierFromRatio_gt_R1
+      R1 R2 Tbar2 Qbar2 switch21 ratio hR1_pos hR1_lt_R2 hTbar2_nonneg
+      hden_pos
+  · exact theorem3SurgeZFromRatio_pos
+      R1 R2 Tbar2 Qbar2 switch21 ratio hratio_pos hR1_pos hR1_lt_R2
+      hTbar2_nonneg hden_pos
+  · exact theorem3SurgeRatio_accounting
+      R1 R2 Tbar2 Qbar2 switch21 ratio (ne_of_gt hden_pos)
+
+/--
 Theorem 3 structured-parameter algebra assembly.  This combines the non-surge
 `C < rho < 1` construction with the surge Lemma 9 positive-ratio construction
 into two-state `m,z` arrays with the source sign constraints and target
@@ -18563,6 +18676,79 @@ theorem theorem3StructuredParameters_exist_of_ratio_and_lemma9_final_signs
       R1 R2 T1 Q1 T2 Q2 switch21 hlemma9_den_lower hlemma9_den_upper
       hlemma9_left_nonpos hlemma9_right_pos hlemma9_upper_pos hR1_pos
       hR1_lt_R2 hT2_ge_one hswitch21_lt_Q2 with
+    ⟨surgeRatio, mS, zS, hsurgeRatio_pos, hsBounds, hmS_eq, hzS_eq,
+      hmS_gt, hzS_pos, hsAccount⟩
+  let m : Fin 2 → ℝ := fun i => if i = 0 then R2 else mS
+  let z : Fin 2 → ℝ := fun i => if i = 0 then zN else zS
+  have hm0_eq : m 0 = R2 := by simp [m]
+  have hm1_eq : m 1 = mS := by simp [m]
+  have hz0_eq : z 0 = zN := by simp [z]
+  have hz1_eq : z 1 = zS := by simp [z]
+  refine ⟨m, z, ?_, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
+    hm0_eq, ?_, ?_, ?_, ?_, ?_⟩
+  · constructor
+    · rw [hm0_eq]
+      exact le_of_lt hR2_pos
+    · constructor
+      · rw [hm1_eq]
+        exact le_trans (le_of_lt hR1_pos) (le_of_lt hmS_gt)
+      · rw [hz1_eq]
+        exact le_of_lt hzS_pos
+  · rw [hz0_eq]
+    exact hzN_eq
+  · rw [hm1_eq]
+    exact hmS_eq
+  · rw [hz1_eq]
+    exact hzS_eq
+  · rw [hm0_eq, hz0_eq, hR1_eq]
+    exact hnAccount
+  · rw [hm1_eq, hz1_eq]
+    exact hsAccount
+
+/--
+Theorem 3 structured-parameter algebra assembly using the direct Lemma 9
+primitive-positivity feasibility bridge, avoiding the cross-multiplied
+final-sign hypotheses.
+-/
+theorem theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3NonsurgeParameters_of_theorem3_ratio
+      rho R2 T1 T2 Q1 Q2 switch12 hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos with
+    ⟨nonsurgeRatio, zN, hnratio_eq, hzN_eq, hnBounds, hnAccount⟩
+  rcases theorem3SurgeParameters_exist_of_lemma9_positive_primitives
+      R1 R2 T1 Q1 T2 Q2 switch21 (le_of_lt hT1_pos) hQ1_pos
+      hswitch21_pos hgap2_nonneg hswitch21_lt_Q2 hR1_pos hR1_lt_R2
+      hT2_ge_one with
     ⟨surgeRatio, mS, zS, hsurgeRatio_pos, hsBounds, hmS_eq, hzS_eq,
       hmS_gt, hzS_pos, hsAccount⟩
   let m : Fin 2 → ℝ := fun i => if i = 0 then R2 else mS
@@ -19630,6 +19816,114 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
       hQ1_sub_switch12_pos hden_theorem3_pos hlemma9_den_lower
       hlemma9_den_upper hlemma9_left_nonpos hlemma9_right_pos
       hlemma9_upper_pos hT2_ge_one hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hnBounds, hsBounds, hm0_eq, hz0_eq,
+      hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hstrictC :
+      Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+    hstrict m z hnonneg hparams
+  have hunique :
+      dynamicOptimal R acceptAllDynamicPolicy ∧
+        ∀ σ : Fin 2 → TripPolicy,
+          dynamicOptimal R σ → σ = acceptAllDynamicPolicy := by
+    simpa [R, gn21MeasuredCTMCStructuredDynamicReward] using
+      paper_theorem4_accept_all_unique_optimal_of_measured_aggregate_strict_local_improvements
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) hstrictC
+  have hIC : dynamicIncentiveCompatible R :=
+    (paper_theorem3_ctmc_structured_prices_ic_of_accept_all_unique_optimal
+      R m z switch12 switch21 hnonneg.1 hnonneg.2.1 hnonneg.2.2
+      hunique).1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
+Measured Theorem 3 strict-local endpoint using the direct Lemma 9
+primitive-positivity feasibility bridge, instead of the stronger
+cross-multiplied final-sign assumptions.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hstrict :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives
+      rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq hR1_pos
+      hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos hQ1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos hgap2_nonneg
+      hT2_ge_one hswitch21_lt_Q2 with
     ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
       hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
   have hparams :
