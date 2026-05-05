@@ -22,7 +22,8 @@ cache is `source.txt`.
   measured rejection-step proof rather than only a finite analogue, plus a
   standard-measure constructor that discharges routine nonnegativity and
   monotonicity assumptions and proves the zero-time feasible-set mass bridge
-  from positivity of trip lengths.
+  from positivity of trip lengths, plus a bridge from positive real trip mass
+  back to positive underlying measure mass for measured tightening.
 - The reusable renewal-reward layer proves the marginal add/remove inequalities
   used in the continuous proof of Theorem 1, plus the same-time replacement
   improvement used in Step 1.

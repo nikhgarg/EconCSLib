@@ -111,6 +111,8 @@ the continuous CTMC source theorems.
   routine Proposition 3.1 measure assumptions from standard distribution facts.
 - `singleStateTripMass_eq_zero_of_time_zero_subset_acceptAll`: measure-theoretic
   bridge that zero total positive trip time implies zero mass for feasible sets.
+- `measure_pos_of_singleStateTripMass_pos`: bridge from positive real trip mass
+  back to positive underlying measure mass, used by measured tightening.
 - `paper_proposition3_1_affine_single_state_measurable_ic`: Proposition 3.1
   measurable-policy IC endpoint for the continuous single-state reward model.
 - `paper_theorem1_single_state_threshold_best_response_of_certificate`,
@@ -2786,6 +2788,13 @@ theorem singleStateTripMass_pos_of_measure_ne_zero_ne_top
     (h_ne_top : μ σ ≠ ∞) :
     0 < singleStateTripMass μ σ := by
   exact ENNReal.toReal_pos h_ne_zero h_ne_top
+
+/-- Positive real trip mass implies positive underlying measure mass. -/
+theorem measure_pos_of_singleStateTripMass_pos
+    (μ : Measure TripLength) (σ : TripPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ) :
+    0 < μ σ := by
+  simpa [singleStateTripMass] using (ENNReal.toReal_pos_iff.mp hmass_pos).1
 
 /-- A nontrivial upper-endpoint interval has positive Lebesgue mass. -/
 theorem volume_gn21UpperEndpointPolicy_ne_zero
