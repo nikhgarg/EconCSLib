@@ -2485,6 +2485,24 @@ def gn21LowerEndpointTiPath
     (density : ℝ → ℝ) (x : ℝ) : ℝ :=
   1 + arrivalRate * ∫ τ in x..upperEndpoint, τ * density τ
 
+/-- Tail path for `Q_i` on the unbounded policy interval `(x,∞)`. -/
+def gn21TailQiPath
+    (arrivalRate switchRate : ℝ)
+    (density switchProb : ℝ → ℝ) (x : ℝ) : ℝ :=
+  switchRate + arrivalRate * ∫ τ in Set.Ioi x, switchProb τ * density τ
+
+/-- Tail path for `W_i` on the unbounded policy interval `(x,∞)`. -/
+def gn21TailWiPath
+    (arrivalRate : ℝ)
+    (density payment : ℝ → ℝ) (x : ℝ) : ℝ :=
+  arrivalRate * ∫ τ in Set.Ioi x, payment τ * density τ
+
+/-- Tail path for `T_i` on the unbounded policy interval `(x,∞)`. -/
+def gn21TailTiPath
+    (arrivalRate : ℝ)
+    (density : ℝ → ℝ) (x : ℝ) : ℝ :=
+  1 + arrivalRate * ∫ τ in Set.Ioi x, τ * density τ
+
 /-- Upper-endpoint interval policy used by the interval-density endpoint paths. -/
 def gn21UpperEndpointPolicy (lowerEndpoint x : ℝ) : TripPolicy :=
   Set.Ioc lowerEndpoint x
@@ -2756,6 +2774,451 @@ theorem gn21ScaledStateEarning_upperEndpointReplacement_withDensity_eq_endpointW
     gn21ScaledStateEarning_upperEndpoint_withDensity_eq_endpointWiPath
       arrivalRate lowerEndpoint (u + ε) density payment hdensity_meas
       (by linarith)
+
+/-- Lower-endpoint interval policy used by finite moving-left/right endpoints. -/
+def gn21LowerEndpointPolicy (x upperEndpoint : ℝ) : TripPolicy :=
+  Set.Ioc x upperEndpoint
+
+/-- Lower-endpoint interval policies are measurable. -/
+theorem measurableSet_gn21LowerEndpointPolicy (x upperEndpoint : ℝ) :
+    MeasurableSet (gn21LowerEndpointPolicy x upperEndpoint) := by
+  simpa [gn21LowerEndpointPolicy] using measurableSet_Ioc
+
+/--
+A lower-endpoint interval is feasible whenever its moving lower endpoint is
+nonnegative.
+-/
+theorem gn21LowerEndpointPolicy_subset_acceptAllPolicy
+    (x upperEndpoint : ℝ)
+    (hx_nonneg : 0 ≤ x) :
+    gn21LowerEndpointPolicy x upperEndpoint ⊆ acceptAllPolicy := by
+  intro τ hτ
+  exact lt_of_le_of_lt hx_nonneg hτ.1
+
+/--
+Measured-policy realization of the lower-endpoint `Q_i` path on the finite
+interval `(x, upperEndpoint]`.
+-/
+theorem gn21ExitWeightIntegral_lowerEndpoint_withDensity_eq_lowerEndpointQiPath
+    (arrivalRate switchIJ switchJI upperEndpoint x : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : x ≤ upperEndpoint) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21LowerEndpointPolicy x upperEndpoint) =
+      gn21LowerEndpointQiPath arrivalRate switchIJ upperEndpoint
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) x := by
+  unfold gn21ExitWeightIntegral gn21LowerEndpointQiPath gn21LowerEndpointPolicy
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density)
+    hdensity_meas
+    (fun τ => gn21SwitchProb switchIJ switchJI τ)
+    measurableSet_Ioc]
+  apply congrArg (fun y => switchIJ + arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioc
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Measured-policy realization of the lower-endpoint `T_i` path on the finite
+interval `(x, upperEndpoint]`.
+-/
+theorem gn21ScaledStateTime_lowerEndpoint_withDensity_eq_lowerEndpointTiPath
+    (arrivalRate upperEndpoint x : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : x ≤ upperEndpoint) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21LowerEndpointPolicy x upperEndpoint) =
+      gn21LowerEndpointTiPath arrivalRate upperEndpoint
+        (fun τ => (density τ : ℝ)) x := by
+  unfold gn21ScaledStateTime singleStateTripTime gn21LowerEndpointTiPath
+    gn21LowerEndpointPolicy
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas (fun τ => τ)
+    measurableSet_Ioc]
+  apply congrArg (fun y => 1 + arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioc
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Measured-policy realization of the lower-endpoint `W_i` path on the finite
+interval `(x, upperEndpoint]`.
+-/
+theorem gn21ScaledStateEarning_lowerEndpoint_withDensity_eq_lowerEndpointWiPath
+    (arrivalRate upperEndpoint x : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hle : x ≤ upperEndpoint) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21LowerEndpointPolicy x upperEndpoint) =
+      gn21LowerEndpointWiPath arrivalRate upperEndpoint
+        (fun τ => (density τ : ℝ)) payment x := by
+  unfold gn21ScaledStateEarning singleStateTripPayment gn21LowerEndpointWiPath
+    gn21LowerEndpointPolicy
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas payment
+    measurableSet_Ioc]
+  apply congrArg (fun y => arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioc
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/-- Rightward movement of a lower endpoint inside a fixed finite interval. -/
+def gn21LowerEndpointReplacement
+    (upperEndpoint u : ℝ) (ε : ℝ) : TripPolicy :=
+  gn21LowerEndpointPolicy (u + ε) upperEndpoint
+
+/-- Lower-endpoint replacements are measurable. -/
+theorem measurableSet_gn21LowerEndpointReplacement
+    (upperEndpoint u ε : ℝ) :
+    MeasurableSet (gn21LowerEndpointReplacement upperEndpoint u ε) := by
+  simpa [gn21LowerEndpointReplacement] using
+    measurableSet_gn21LowerEndpointPolicy (u + ε) upperEndpoint
+
+/--
+Lower-endpoint replacements remain feasible when the base endpoint is
+nonnegative and the move is to the right.
+-/
+theorem gn21LowerEndpointReplacement_subset_acceptAllPolicy
+    (upperEndpoint u ε : ℝ)
+    (hu_nonneg : 0 ≤ u)
+    (hε_nonneg : 0 ≤ ε) :
+    gn21LowerEndpointReplacement upperEndpoint u ε ⊆ acceptAllPolicy := by
+  refine gn21LowerEndpointPolicy_subset_acceptAllPolicy (u + ε) upperEndpoint ?_
+  exact add_nonneg hu_nonneg hε_nonneg
+
+/-- `Q_i` realization along a bounded lower-endpoint replacement path. -/
+theorem gn21ExitWeightIntegral_lowerEndpointReplacement_withDensity_eq_lowerEndpointQiPath
+    (arrivalRate switchIJ switchJI upperEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : u + ε ≤ upperEndpoint) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21LowerEndpointReplacement upperEndpoint u ε) =
+      gn21LowerEndpointQiPath arrivalRate switchIJ upperEndpoint
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) (u + ε) := by
+  simpa [gn21LowerEndpointReplacement] using
+    gn21ExitWeightIntegral_lowerEndpoint_withDensity_eq_lowerEndpointQiPath
+      arrivalRate switchIJ switchJI upperEndpoint (u + ε)
+      density hdensity_meas hle
+
+/-- `T_i` realization along a bounded lower-endpoint replacement path. -/
+theorem gn21ScaledStateTime_lowerEndpointReplacement_withDensity_eq_lowerEndpointTiPath
+    (arrivalRate upperEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : u + ε ≤ upperEndpoint) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21LowerEndpointReplacement upperEndpoint u ε) =
+      gn21LowerEndpointTiPath arrivalRate upperEndpoint
+        (fun τ => (density τ : ℝ)) (u + ε) := by
+  simpa [gn21LowerEndpointReplacement] using
+    gn21ScaledStateTime_lowerEndpoint_withDensity_eq_lowerEndpointTiPath
+      arrivalRate upperEndpoint (u + ε) density hdensity_meas hle
+
+/-- `W_i` realization along a bounded lower-endpoint replacement path. -/
+theorem gn21ScaledStateEarning_lowerEndpointReplacement_withDensity_eq_lowerEndpointWiPath
+    (arrivalRate upperEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hle : u + ε ≤ upperEndpoint) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21LowerEndpointReplacement upperEndpoint u ε) =
+      gn21LowerEndpointWiPath arrivalRate upperEndpoint
+        (fun τ => (density τ : ℝ)) payment (u + ε) := by
+  simpa [gn21LowerEndpointReplacement] using
+    gn21ScaledStateEarning_lowerEndpoint_withDensity_eq_lowerEndpointWiPath
+      arrivalRate upperEndpoint (u + ε) density payment hdensity_meas hle
+
+/-- Leftward movement of a lower endpoint inside a fixed finite interval. -/
+def gn21LowerEndpointLeftReplacement
+    (upperEndpoint u : ℝ) (ε : ℝ) : TripPolicy :=
+  gn21LowerEndpointPolicy (u - ε) upperEndpoint
+
+/-- Leftward lower-endpoint replacements are measurable. -/
+theorem measurableSet_gn21LowerEndpointLeftReplacement
+    (upperEndpoint u ε : ℝ) :
+    MeasurableSet (gn21LowerEndpointLeftReplacement upperEndpoint u ε) := by
+  simpa [gn21LowerEndpointLeftReplacement] using
+    measurableSet_gn21LowerEndpointPolicy (u - ε) upperEndpoint
+
+/--
+Leftward lower-endpoint replacements remain feasible when the moved endpoint
+is still nonnegative.
+-/
+theorem gn21LowerEndpointLeftReplacement_subset_acceptAllPolicy
+    (upperEndpoint u ε : ℝ)
+    (hε_le_u : ε ≤ u) :
+    gn21LowerEndpointLeftReplacement upperEndpoint u ε ⊆ acceptAllPolicy := by
+  refine gn21LowerEndpointPolicy_subset_acceptAllPolicy (u - ε) upperEndpoint ?_
+  exact sub_nonneg.mpr hε_le_u
+
+/-- `Q_i` realization along a leftward lower-endpoint replacement path. -/
+theorem gn21ExitWeightIntegral_lowerEndpointLeftReplacement_withDensity_eq_lowerEndpointQiPath
+    (arrivalRate switchIJ switchJI upperEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : u - ε ≤ upperEndpoint) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21LowerEndpointLeftReplacement upperEndpoint u ε) =
+      gn21LowerEndpointQiPath arrivalRate switchIJ upperEndpoint
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) (u - ε) := by
+  simpa [gn21LowerEndpointLeftReplacement] using
+    gn21ExitWeightIntegral_lowerEndpoint_withDensity_eq_lowerEndpointQiPath
+      arrivalRate switchIJ switchJI upperEndpoint (u - ε)
+      density hdensity_meas hle
+
+/-- `T_i` realization along a leftward lower-endpoint replacement path. -/
+theorem gn21ScaledStateTime_lowerEndpointLeftReplacement_withDensity_eq_lowerEndpointTiPath
+    (arrivalRate upperEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hle : u - ε ≤ upperEndpoint) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21LowerEndpointLeftReplacement upperEndpoint u ε) =
+      gn21LowerEndpointTiPath arrivalRate upperEndpoint
+        (fun τ => (density τ : ℝ)) (u - ε) := by
+  simpa [gn21LowerEndpointLeftReplacement] using
+    gn21ScaledStateTime_lowerEndpoint_withDensity_eq_lowerEndpointTiPath
+      arrivalRate upperEndpoint (u - ε) density hdensity_meas hle
+
+/-- `W_i` realization along a leftward lower-endpoint replacement path. -/
+theorem gn21ScaledStateEarning_lowerEndpointLeftReplacement_withDensity_eq_lowerEndpointWiPath
+    (arrivalRate upperEndpoint u ε : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hle : u - ε ≤ upperEndpoint) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21LowerEndpointLeftReplacement upperEndpoint u ε) =
+      gn21LowerEndpointWiPath arrivalRate upperEndpoint
+        (fun τ => (density τ : ℝ)) payment (u - ε) := by
+  simpa [gn21LowerEndpointLeftReplacement] using
+    gn21ScaledStateEarning_lowerEndpoint_withDensity_eq_lowerEndpointWiPath
+      arrivalRate upperEndpoint (u - ε) density payment hdensity_meas hle
+
+/-- Unbounded tail policy `(x,∞)`. -/
+def gn21TailPolicy (x : ℝ) : TripPolicy :=
+  Set.Ioi x
+
+/-- Tail policies are measurable. -/
+theorem measurableSet_gn21TailPolicy (x : ℝ) :
+    MeasurableSet (gn21TailPolicy x) := by
+  simpa [gn21TailPolicy] using measurableSet_Ioi
+
+/-- Tail policies are feasible when the lower endpoint is nonnegative. -/
+theorem gn21TailPolicy_subset_acceptAllPolicy
+    (x : ℝ) (hx_nonneg : 0 ≤ x) :
+    gn21TailPolicy x ⊆ acceptAllPolicy := by
+  intro τ hτ
+  exact lt_of_le_of_lt hx_nonneg hτ
+
+/-- Lebesgue mass of an unbounded tail is nonzero. -/
+theorem volume_gn21TailPolicy_ne_zero (x : ℝ) :
+    volume (gn21TailPolicy x) ≠ 0 := by
+  rw [gn21TailPolicy, Real.volume_Ioi]
+  exact ENNReal.top_ne_zero
+
+/--
+Measured-policy realization of the tail `Q_i` path under a Lebesgue density.
+-/
+theorem gn21ExitWeightIntegral_tail_withDensity_eq_tailQiPath
+    (arrivalRate switchIJ switchJI x : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (gn21TailPolicy x) =
+      gn21TailQiPath arrivalRate switchIJ
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) x := by
+  unfold gn21ExitWeightIntegral gn21TailQiPath gn21TailPolicy
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density)
+    hdensity_meas
+    (fun τ => gn21SwitchProb switchIJ switchJI τ)
+    measurableSet_Ioi]
+  apply congrArg (fun y => switchIJ + arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioi
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Measured-policy realization of the tail `T_i` path under a Lebesgue density.
+-/
+theorem gn21ScaledStateTime_tail_withDensity_eq_tailTiPath
+    (arrivalRate x : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (gn21TailPolicy x) =
+      gn21TailTiPath arrivalRate (fun τ => (density τ : ℝ)) x := by
+  unfold gn21ScaledStateTime singleStateTripTime gn21TailTiPath
+    gn21TailPolicy
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas (fun τ => τ)
+    measurableSet_Ioi]
+  apply congrArg (fun y => 1 + arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioi
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Measured-policy realization of the tail `W_i` path under a Lebesgue density.
+-/
+theorem gn21ScaledStateEarning_tail_withDensity_eq_tailWiPath
+    (arrivalRate x : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (gn21TailPolicy x) =
+      gn21TailWiPath arrivalRate
+        (fun τ => (density τ : ℝ)) payment x := by
+  unfold gn21ScaledStateEarning singleStateTripPayment gn21TailWiPath
+    gn21TailPolicy
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas payment
+    measurableSet_Ioi]
+  apply congrArg (fun y => arrivalRate * y)
+  apply setIntegral_congr_fun measurableSet_Ioi
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Local FTC bridge for an improper tail integral.  Around `u`, the tail
+`∫_(x,∞) f` is a fixed tail constant minus the finite interval integral
+`∫_(u-1)^x f`, so its derivative is `-f u`.
+-/
+theorem integral_Ioi_hasDerivAt
+    (f : ℝ → ℝ) (u : ℝ)
+    (hint : IntegrableOn f (Set.Ioi (u - 1)) volume)
+    (hmeas : StronglyMeasurableAtFilter f (𝓝 u))
+    (hcont : ContinuousAt f u) :
+    HasDerivAt (fun x => ∫ τ in Set.Ioi x, f τ) (-(f u)) u := by
+  let a : ℝ := u - 1
+  have hau : a < u := by
+    dsimp [a]
+    linarith
+  have hinterval : IntervalIntegrable f volume a u := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le hau.le]
+    exact hint.mono_set (fun _ hτ => hτ.1)
+  have hfinite :
+      HasDerivAt
+        (fun x => (∫ τ in Set.Ioi a, f τ) - ∫ τ in a..x, f τ)
+        (-(f u)) u := by
+    have h :=
+      (intervalIntegral.integral_hasDerivAt_right hinterval hmeas hcont).const_sub
+        (∫ τ in Set.Ioi a, f τ)
+    simpa using h
+  have heq :
+      (fun x => ∫ τ in Set.Ioi x, f τ) =ᶠ[𝓝 u]
+        (fun x => (∫ τ in Set.Ioi a, f τ) - ∫ τ in a..x, f τ) := by
+    filter_upwards [Ioi_mem_nhds hau] with x hx
+    have hsub := intervalIntegral.integral_Ioi_sub_Ioi hint (le_of_lt hx)
+    have hsub' :
+        (∫ τ in Set.Ioi a, f τ) - (∫ τ in Set.Ioi x, f τ) =
+          ∫ τ in a..x, f τ := by
+      simpa [a] using hsub
+    linarith
+  exact hfinite.congr_of_eventuallyEq heq
+
+/-- Fundamental-theorem bridge for the tail `Q_i` path. -/
+theorem gn21TailQiPath_hasDerivAt
+    (arrivalRate switchRate u : ℝ)
+    (density switchProb : ℝ → ℝ)
+    (hint :
+      IntegrableOn (fun τ => switchProb τ * density τ) (Set.Ioi (u - 1))
+        volume)
+    (hmeas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hcont : ContinuousAt (fun τ => switchProb τ * density τ) u) :
+    HasDerivAt
+      (fun x => gn21TailQiPath arrivalRate switchRate density switchProb x)
+      (-(arrivalRate * (switchProb u * density u))) u := by
+  unfold gn21TailQiPath
+  have h :=
+    ((integral_Ioi_hasDerivAt
+      (fun τ => switchProb τ * density τ) u hint hmeas hcont).const_mul
+        arrivalRate).const_add switchRate
+  convert h using 1
+  ring
+
+/-- Fundamental-theorem bridge for the tail `W_i` path. -/
+theorem gn21TailWiPath_hasDerivAt
+    (arrivalRate u : ℝ)
+    (density payment : ℝ → ℝ)
+    (hint :
+      IntegrableOn (fun τ => payment τ * density τ) (Set.Ioi (u - 1))
+        volume)
+    (hmeas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hcont : ContinuousAt (fun τ => payment τ * density τ) u) :
+    HasDerivAt
+      (fun x => gn21TailWiPath arrivalRate density payment x)
+      (-(arrivalRate * (payment u * density u))) u := by
+  unfold gn21TailWiPath
+  have h :=
+    (integral_Ioi_hasDerivAt
+      (fun τ => payment τ * density τ) u hint hmeas hcont).const_mul
+        arrivalRate
+  convert h using 1
+  ring
+
+/-- Fundamental-theorem bridge for the tail `T_i` path. -/
+theorem gn21TailTiPath_hasDerivAt
+    (arrivalRate u : ℝ)
+    (density : ℝ → ℝ)
+    (hint :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (hmeas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (hcont : ContinuousAt (fun τ => τ * density τ) u) :
+    HasDerivAt
+      (fun x => gn21TailTiPath arrivalRate density x)
+      (-(arrivalRate * (u * density u))) u := by
+  unfold gn21TailTiPath
+  have h :=
+    ((integral_Ioi_hasDerivAt
+      (fun τ => τ * density τ) u hint hmeas hcont).const_mul
+        arrivalRate).const_add 1
+  convert h using 1
+  ring
 
 /-- Fundamental-theorem bridge for the endpoint `Q_i` path. -/
 theorem gn21EndpointQiPath_hasDerivAt
@@ -3448,6 +3911,32 @@ theorem exists_pos_right_improvement_of_hasDerivAt_pos
   exact ⟨ε, hε, by linarith⟩
 
 /--
+Bounded version of the one-sided improvement step.  This is useful for moving
+a finite interval endpoint while preserving the interval order.
+-/
+theorem exists_pos_right_improvement_of_hasDerivAt_pos_lt
+    {f : ℝ → ℝ} {x derivativeValue δ : ℝ}
+    (hderiv : HasDerivAt f derivativeValue x)
+    (hpos : 0 < derivativeValue)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧ f x < f (x + ε) := by
+  have hslope_pos :
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+        0 < ε⁻¹ * (f (x + ε) - f x) := by
+    simpa using
+      hderiv.tendsto_slope_zero_right.eventually (Ioi_mem_nhds hpos)
+  have hε_pos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε :=
+    self_mem_nhdsWithin
+  have hε_lt : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ε < δ := by
+    exact nhdsWithin_le_nhds (Iio_mem_nhds hδ)
+  rcases (hε_pos.and (hε_lt.and hslope_pos)).exists with
+    ⟨ε, hε, hε_lt, hslope⟩
+  have hdiff_pos : 0 < f (x + ε) - f x := by
+    rw [mul_comm] at hslope
+    exact pos_of_mul_pos_left hslope (le_of_lt (inv_pos.mpr hε))
+  exact ⟨ε, hε, hε_lt, by linarith⟩
+
+/--
 Local calculus bridge for endpoint-improvement arguments: a negative derivative
 at an endpoint gives a positive right move with strictly smaller reward.
 -/
@@ -3462,6 +3951,100 @@ theorem exists_pos_right_decrease_of_hasDerivAt_neg
       hderiv.neg hpos with
     ⟨ε, hε_pos, hlt⟩
   exact ⟨ε, hε_pos, by linarith⟩
+
+/--
+Bounded version of the one-sided decrease step.
+-/
+theorem exists_pos_right_decrease_of_hasDerivAt_neg_lt
+    {f : ℝ → ℝ} {x derivativeValue δ : ℝ}
+    (hderiv : HasDerivAt f derivativeValue x)
+    (hneg : derivativeValue < 0)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧ f (x + ε) < f x := by
+  have hpos : 0 < -derivativeValue := by linarith
+  rcases exists_pos_right_improvement_of_hasDerivAt_pos_lt
+      (f := fun y => -f y) (x := x) (derivativeValue := -derivativeValue)
+      hderiv.neg hpos hδ with
+    ⟨ε, hε_pos, hε_lt, hlt⟩
+  exact ⟨ε, hε_pos, hε_lt, by linarith⟩
+
+/--
+Left-move improvement step: with a negative derivative, moving a small positive
+distance to the left strictly improves the function value.
+-/
+theorem exists_pos_left_improvement_of_hasDerivAt_neg
+    {f : ℝ → ℝ} {x derivativeValue : ℝ}
+    (hderiv : HasDerivAt f derivativeValue x)
+    (hneg : derivativeValue < 0) :
+    ∃ ε : ℝ, 0 < ε ∧ f x < f (x - ε) := by
+  have hslope_neg :
+      ∀ᶠ t in 𝓝[<] (0 : ℝ),
+        t⁻¹ * (f (x + t) - f x) < 0 := by
+    simpa using
+      hderiv.tendsto_slope_zero_left.eventually (Iio_mem_nhds hneg)
+  have ht_neg : ∀ᶠ t in 𝓝[<] (0 : ℝ), t < 0 :=
+    self_mem_nhdsWithin
+  rcases (ht_neg.and hslope_neg).exists with ⟨t, ht, hslope⟩
+  have hε_pos : 0 < -t := by linarith
+  have hdiff_pos : 0 < f (x + t) - f x := by
+    rw [mul_comm] at hslope
+    exact pos_of_mul_neg_left hslope (inv_nonpos.mpr (le_of_lt ht))
+  exact ⟨-t, hε_pos, by simpa [sub_eq_add_neg] using hdiff_pos⟩
+
+/-- Bounded left-move improvement step. -/
+theorem exists_pos_left_improvement_of_hasDerivAt_neg_lt
+    {f : ℝ → ℝ} {x derivativeValue δ : ℝ}
+    (hderiv : HasDerivAt f derivativeValue x)
+    (hneg : derivativeValue < 0)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧ f x < f (x - ε) := by
+  have hslope_neg :
+      ∀ᶠ t in 𝓝[<] (0 : ℝ),
+        t⁻¹ * (f (x + t) - f x) < 0 := by
+    simpa using
+      hderiv.tendsto_slope_zero_left.eventually (Iio_mem_nhds hneg)
+  have ht_neg : ∀ᶠ t in 𝓝[<] (0 : ℝ), t < 0 :=
+    self_mem_nhdsWithin
+  have ht_gt : ∀ᶠ t in 𝓝[<] (0 : ℝ), -δ < t := by
+    exact nhdsWithin_le_nhds (Ioi_mem_nhds (by linarith))
+  rcases (ht_neg.and (ht_gt.and hslope_neg)).exists with
+    ⟨t, ht, ht_gt, hslope⟩
+  have hε_pos : 0 < -t := by linarith
+  have hε_lt : -t < δ := by linarith
+  have hdiff_pos : 0 < f (x + t) - f x := by
+    rw [mul_comm] at hslope
+    exact pos_of_mul_neg_left hslope (inv_nonpos.mpr (le_of_lt ht))
+  exact ⟨-t, hε_pos, hε_lt, by simpa [sub_eq_add_neg] using hdiff_pos⟩
+
+/--
+Left-move decrease step: with a positive derivative, moving a small positive
+distance to the left strictly decreases the function value.
+-/
+theorem exists_pos_left_decrease_of_hasDerivAt_pos
+    {f : ℝ → ℝ} {x derivativeValue : ℝ}
+    (hderiv : HasDerivAt f derivativeValue x)
+    (hpos : 0 < derivativeValue) :
+    ∃ ε : ℝ, 0 < ε ∧ f (x - ε) < f x := by
+  have hneg : -derivativeValue < 0 := by linarith
+  rcases exists_pos_left_improvement_of_hasDerivAt_neg
+      (f := fun y => -f y) (x := x) (derivativeValue := -derivativeValue)
+      hderiv.neg hneg with
+    ⟨ε, hε_pos, hlt⟩
+  exact ⟨ε, hε_pos, by linarith⟩
+
+/-- Bounded left-move decrease step. -/
+theorem exists_pos_left_decrease_of_hasDerivAt_pos_lt
+    {f : ℝ → ℝ} {x derivativeValue δ : ℝ}
+    (hderiv : HasDerivAt f derivativeValue x)
+    (hpos : 0 < derivativeValue)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧ f (x - ε) < f x := by
+  have hneg : -derivativeValue < 0 := by linarith
+  rcases exists_pos_left_improvement_of_hasDerivAt_neg_lt
+      (f := fun y => -f y) (x := x) (derivativeValue := -derivativeValue)
+      hderiv.neg hneg hδ with
+    ⟨ε, hε_pos, hε_lt, hlt⟩
+  exact ⟨ε, hε_pos, hε_lt, by linarith⟩
 
 /--
 Concrete Lemma 6 endpoint-data constructor from the aggregate quotient
@@ -3833,6 +4416,105 @@ theorem paper_lemma6_lower_derivative_formula_of_interval_density_paths
       hQj_pos hden
 
 /--
+Tail-density lower-endpoint form of Lemma 6.  This is the unbounded analogue
+of the finite lower-endpoint interval formula: moving the lower endpoint of
+`(u,∞)` inward negates the primitive endpoint derivatives, so the aggregate
+derivative has the same strict sign as the negative Lemma 6 kernel.
+-/
+theorem paper_lemma6_tail_derivative_formula_of_interval_density_paths
+    (arrivalRate switchRate u Qj Tj Wj : ℝ)
+    (density switchProb payment : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQj_pos : 0 < Qj)
+    (hden :
+      gn21TailQiPath arrivalRate switchRate density switchProb u * Tj +
+        Qj * gn21TailTiPath arrivalRate density u ≠ 0)
+    (hq_int :
+      IntegrableOn (fun τ => switchProb τ * density τ) (Set.Ioi (u - 1))
+        volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hq_cont : ContinuousAt (fun τ => switchProb τ * density τ) u)
+    (hw_int :
+      IntegrableOn (fun τ => payment τ * density τ) (Set.Ioi (u - 1))
+        volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hw_cont : ContinuousAt (fun τ => payment τ * density τ) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u) :
+    HasDerivAt
+      (fun x =>
+        gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switchRate density switchProb x)
+          Qj
+          (gn21TailTiPath arrivalRate density x)
+          Tj
+          (gn21TailWiPath arrivalRate density payment x)
+          Wj)
+      (-((arrivalRate * density u) * Qj *
+        gn21DerivativeSignKernel (switchProb u) u (payment u)
+          (gn21TailQiPath arrivalRate switchRate density switchProb u)
+          Qj
+          (gn21TailTiPath arrivalRate density u)
+          Tj
+          (gn21TailWiPath arrivalRate density payment u)
+          Wj /
+          (gn21TailQiPath arrivalRate switchRate density switchProb u * Tj +
+            Qj * gn21TailTiPath arrivalRate density u) ^ 2)) u ∧
+    sameStrictSign
+      (-((arrivalRate * density u) * Qj *
+        gn21DerivativeSignKernel (switchProb u) u (payment u)
+          (gn21TailQiPath arrivalRate switchRate density switchProb u)
+          Qj
+          (gn21TailTiPath arrivalRate density u)
+          Tj
+          (gn21TailWiPath arrivalRate density payment u)
+          Wj /
+          (gn21TailQiPath arrivalRate switchRate density switchProb u * Tj +
+            Qj * gn21TailTiPath arrivalRate density u) ^ 2))
+      (-(gn21DerivativeSignKernel (switchProb u) u (payment u)
+        (gn21TailQiPath arrivalRate switchRate density switchProb u)
+        Qj
+        (gn21TailTiPath arrivalRate density u)
+        Tj
+        (gn21TailWiPath arrivalRate density payment u)
+        Wj)) := by
+  constructor
+  · apply paper_lemma6_lower_aggregate_reward_hasDerivAt
+    · convert gn21TailQiPath_hasDerivAt
+        arrivalRate switchRate u density switchProb hq_int hq_meas hq_cont
+        using 1
+      ring
+    · convert gn21TailWiPath_hasDerivAt
+        arrivalRate u density payment hw_int hw_meas hw_cont using 1
+      ring
+    · convert gn21TailTiPath_hasDerivAt
+        arrivalRate u density ht_int ht_meas ht_cont using 1
+      ring
+    · rfl
+    · rfl
+    · rfl
+    · exact hden
+  · exact paper_lemma6_lower_derivative_formula_of_aggregate_paths
+      (switchProb u) u (payment u)
+      (gn21TailQiPath arrivalRate switchRate density switchProb u)
+      Qj
+      (gn21TailTiPath arrivalRate density u)
+      Tj
+      (gn21TailWiPath arrivalRate density payment u)
+      Wj
+      (arrivalRate * density u)
+      (mul_pos harrival_pos hdensity_pos)
+      hQj_pos hden
+
+/--
 Positive kernels imply positive endpoint derivatives directly from endpoint
 data, without constructing the older certificate object by hand.
 -/
@@ -4101,6 +4783,76 @@ theorem paper_lemma6_exists_pos_right_improvement_of_lower_interval_density_kern
     (sameStrictSign_pos_left hsign (by linarith))
 
 /--
+Bounded lower-endpoint improvement step.  The additional upper bound on `ε`
+lets later measured-policy replacements stay inside a fixed finite interval.
+-/
+theorem paper_lemma6_exists_pos_right_improvement_of_lower_interval_density_kernel_neg_lt
+    (arrivalRate switchRate upperEndpoint u Qj Tj Wj δ : ℝ)
+    (density switchProb payment : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQj_pos : 0 < Qj)
+    (hden :
+      gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint density
+          switchProb u * Tj +
+        Qj *
+          gn21LowerEndpointTiPath arrivalRate upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable (fun τ => switchProb τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hq_cont : ContinuousAt (fun τ => switchProb τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable (fun τ => payment τ * density τ) volume
+        u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hw_cont : ContinuousAt (fun τ => payment τ * density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hkernel_neg :
+      gn21DerivativeSignKernel (switchProb u) u (payment u)
+        (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint density
+          switchProb u)
+        Qj
+        (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+        Tj
+        (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment u)
+        Wj < 0)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint
+            density switchProb u)
+          Qj
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+          Tj
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment u)
+          Wj <
+        gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint
+            density switchProb (u + ε))
+          Qj
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density (u + ε))
+          Tj
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment
+            (u + ε))
+          Wj := by
+  rcases paper_lemma6_lower_derivative_formula_of_interval_density_paths
+      arrivalRate switchRate upperEndpoint u Qj Tj Wj density switchProb
+      payment harrival_pos hdensity_pos hQj_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont with
+    ⟨hderiv, hsign⟩
+  exact exists_pos_right_improvement_of_hasDerivAt_pos_lt hderiv
+    (sameStrictSign_pos_left hsign (by linarith)) hδ
+
+/--
 Interval-density decrease step for a moving lower endpoint.  A positive
 Lemma 6 kernel makes the lower-endpoint derivative negative, so moving the
 lower endpoint right strictly decreases aggregate dynamic reward.
@@ -4169,6 +4921,212 @@ theorem paper_lemma6_exists_pos_right_decrease_of_lower_interval_density_kernel_
     ⟨hderiv, hsign⟩
   exact exists_pos_right_decrease_of_hasDerivAt_neg hderiv
     (sameStrictSign_neg_left hsign (by linarith))
+
+/--
+Bounded lower-endpoint decrease step.  This is the finite-interval counterpart
+of `paper_lemma6_exists_pos_right_decrease_of_lower_interval_density_kernel_pos`.
+-/
+theorem paper_lemma6_exists_pos_right_decrease_of_lower_interval_density_kernel_pos_lt
+    (arrivalRate switchRate upperEndpoint u Qj Tj Wj δ : ℝ)
+    (density switchProb payment : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQj_pos : 0 < Qj)
+    (hden :
+      gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint density
+          switchProb u * Tj +
+        Qj *
+          gn21LowerEndpointTiPath arrivalRate upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable (fun τ => switchProb τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hq_cont : ContinuousAt (fun τ => switchProb τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable (fun τ => payment τ * density τ) volume
+        u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hw_cont : ContinuousAt (fun τ => payment τ * density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hkernel_pos :
+      0 < gn21DerivativeSignKernel (switchProb u) u (payment u)
+        (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint density
+          switchProb u)
+        Qj
+        (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+        Tj
+        (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment u)
+        Wj)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint
+            density switchProb (u + ε))
+          Qj
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density (u + ε))
+          Tj
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment
+            (u + ε))
+          Wj <
+        gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint
+            density switchProb u)
+          Qj
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+          Tj
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment u)
+          Wj := by
+  rcases paper_lemma6_lower_derivative_formula_of_interval_density_paths
+      arrivalRate switchRate upperEndpoint u Qj Tj Wj density switchProb
+      payment harrival_pos hdensity_pos hQj_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont with
+    ⟨hderiv, hsign⟩
+  exact exists_pos_right_decrease_of_hasDerivAt_neg_lt hderiv
+    (sameStrictSign_neg_left hsign (by linarith)) hδ
+
+/--
+Bounded lower-endpoint left-expansion improvement.  A positive Lemma 6 kernel
+makes the derivative in the lower endpoint negative, so moving the lower
+endpoint left strictly improves aggregate reward.
+-/
+theorem paper_lemma6_exists_pos_left_improvement_of_lower_interval_density_kernel_pos_lt
+    (arrivalRate switchRate upperEndpoint u Qj Tj Wj δ : ℝ)
+    (density switchProb payment : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQj_pos : 0 < Qj)
+    (hden :
+      gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint density
+          switchProb u * Tj +
+        Qj *
+          gn21LowerEndpointTiPath arrivalRate upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable (fun τ => switchProb τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hq_cont : ContinuousAt (fun τ => switchProb τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable (fun τ => payment τ * density τ) volume
+        u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hw_cont : ContinuousAt (fun τ => payment τ * density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hkernel_pos :
+      0 < gn21DerivativeSignKernel (switchProb u) u (payment u)
+        (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint density
+          switchProb u)
+        Qj
+        (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+        Tj
+        (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment u)
+        Wj)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint
+            density switchProb u)
+          Qj
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+          Tj
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment u)
+          Wj <
+        gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switchRate upperEndpoint
+            density switchProb (u - ε))
+          Qj
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density (u - ε))
+          Tj
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density payment
+            (u - ε))
+          Wj := by
+  rcases paper_lemma6_lower_derivative_formula_of_interval_density_paths
+      arrivalRate switchRate upperEndpoint u Qj Tj Wj density switchProb
+      payment harrival_pos hdensity_pos hQj_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont with
+    ⟨hderiv, hsign⟩
+  exact exists_pos_left_improvement_of_hasDerivAt_neg_lt hderiv
+    (sameStrictSign_neg_left hsign (by linarith)) hδ
+
+/--
+Bounded tail left-expansion improvement.  This is the unbounded-tail analogue
+of the finite lower-endpoint movement: a positive Lemma 6 kernel makes a small
+decrease of the tail threshold strictly improve aggregate reward.
+-/
+theorem paper_lemma6_exists_pos_left_improvement_of_tail_interval_density_kernel_pos_lt
+    (arrivalRate switchRate u Qj Tj Wj δ : ℝ)
+    (density switchProb payment : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQj_pos : 0 < Qj)
+    (hden :
+      gn21TailQiPath arrivalRate switchRate density switchProb u * Tj +
+        Qj * gn21TailTiPath arrivalRate density u ≠ 0)
+    (hq_int :
+      IntegrableOn (fun τ => switchProb τ * density τ) (Set.Ioi (u - 1))
+        volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hq_cont : ContinuousAt (fun τ => switchProb τ * density τ) u)
+    (hw_int :
+      IntegrableOn (fun τ => payment τ * density τ) (Set.Ioi (u - 1))
+        volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hw_cont : ContinuousAt (fun τ => payment τ * density τ) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hkernel_pos :
+      0 < gn21DerivativeSignKernel (switchProb u) u (payment u)
+        (gn21TailQiPath arrivalRate switchRate density switchProb u)
+        Qj
+        (gn21TailTiPath arrivalRate density u)
+        Tj
+        (gn21TailWiPath arrivalRate density payment u)
+        Wj)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switchRate density switchProb u)
+          Qj
+          (gn21TailTiPath arrivalRate density u)
+          Tj
+          (gn21TailWiPath arrivalRate density payment u)
+          Wj <
+        gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switchRate density switchProb (u - ε))
+          Qj
+          (gn21TailTiPath arrivalRate density (u - ε))
+          Tj
+          (gn21TailWiPath arrivalRate density payment (u - ε))
+          Wj := by
+  rcases paper_lemma6_tail_derivative_formula_of_interval_density_paths
+      arrivalRate switchRate u Qj Tj Wj density switchProb payment
+      harrival_pos hdensity_pos hQj_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont with
+    ⟨hderiv, hsign⟩
+  exact exists_pos_left_improvement_of_hasDerivAt_neg_lt hderiv
+    (sameStrictSign_neg_left hsign (by linarith)) hδ
 
 /-- Lemma 6, conditional on the continuous endpoint-derivative certificate. -/
 theorem paper_lemma6_derivative_formula_of_certificate
@@ -5042,6 +6000,84 @@ theorem gn21ScaledStateEarning_rejectLongTripsPolicy_withDensity_eq_endpointWiPa
   intro τ _hτ
   simp [Algebra.smul_def, mul_comm]
 
+/--
+Canonical short-trip-rejection policy realizes the unbounded tail `Q_i` path
+when the cutoff is nonnegative.
+-/
+theorem gn21ExitWeightIntegral_rejectShortTripsPolicy_withDensity_eq_tailQiPath
+    (arrivalRate switchIJ switchJI t : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (rejectShortTripsPolicy t) =
+      gn21TailQiPath arrivalRate switchIJ
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) t := by
+  have hpolicy : rejectShortTripsPolicy t = gn21TailPolicy t := by
+    ext τ
+    constructor
+    · intro hτ
+      exact hτ.2
+    · intro hτ
+      exact ⟨lt_of_le_of_lt ht_nonneg hτ, hτ⟩
+  rw [hpolicy]
+  exact gn21ExitWeightIntegral_tail_withDensity_eq_tailQiPath
+    arrivalRate switchIJ switchJI t density hdensity_meas
+
+/--
+Canonical short-trip-rejection policy realizes the unbounded tail `T_i` path
+when the cutoff is nonnegative.
+-/
+theorem gn21ScaledStateTime_rejectShortTripsPolicy_withDensity_eq_tailTiPath
+    (arrivalRate t : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (rejectShortTripsPolicy t) =
+      gn21TailTiPath arrivalRate (fun τ => (density τ : ℝ)) t := by
+  have hpolicy : rejectShortTripsPolicy t = gn21TailPolicy t := by
+    ext τ
+    constructor
+    · intro hτ
+      exact hτ.2
+    · intro hτ
+      exact ⟨lt_of_le_of_lt ht_nonneg hτ, hτ⟩
+  rw [hpolicy]
+  exact gn21ScaledStateTime_tail_withDensity_eq_tailTiPath
+    arrivalRate t density hdensity_meas
+
+/--
+Canonical short-trip-rejection policy realizes the unbounded tail `W_i` path
+when the cutoff is nonnegative.
+-/
+theorem gn21ScaledStateEarning_rejectShortTripsPolicy_withDensity_eq_tailWiPath
+    (arrivalRate t : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (ht_nonneg : 0 ≤ t) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (rejectShortTripsPolicy t) =
+      gn21TailWiPath arrivalRate (fun τ => (density τ : ℝ)) payment t := by
+  have hpolicy : rejectShortTripsPolicy t = gn21TailPolicy t := by
+    ext τ
+    constructor
+    · intro hτ
+      exact hτ.2
+    · intro hτ
+      exact ⟨lt_of_le_of_lt ht_nonneg hτ, hτ⟩
+  rw [hpolicy]
+  exact gn21ScaledStateEarning_tail_withDensity_eq_tailWiPath
+    arrivalRate t density payment hdensity_meas
+
 /-- Canonical short-trip-rejection policies only accept positive trips. -/
 theorem rejectShortTripsPolicy_subset_acceptAll (t : ℝ) :
     rejectShortTripsPolicy t ⊆ acceptAllPolicy := by
@@ -5664,6 +6700,228 @@ theorem paper_lemma9_exists_pos_right_improvement_of_interval_density_current_bo
       hbounds hz hmR_pos hR1_nonneg hT1_nonneg hQ1_pos hswitch21_pos
       hsum hu hswitch_lt_Q2 hgap_nonneg
   simpa [D] using h
+
+/--
+Lower-endpoint Lemma 9 endpoint-improvement bridge.  This supports finite
+tail-interval policy moves by expanding the lower endpoint left under the
+same positive structured-kernel conditions as the upper-endpoint bridge.
+-/
+theorem paper_lemma9_exists_pos_left_improvement_of_lower_interval_density_current_bounds
+    (arrivalRate upperEndpoint u T1 Q1 T2 Q2 switch21 switch12 m R1 z ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21LowerEndpointQiPath arrivalRate switch21 upperEndpoint density
+          (gn21SwitchProb switch21 switch12) u * T1 +
+        Q1 *
+          gn21LowerEndpointTiPath arrivalRate upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) volume u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ2 :
+      gn21LowerEndpointQiPath arrivalRate switch21 upperEndpoint density
+        (gn21SwitchProb switch21 switch12) u = Q2)
+    (hT2 :
+      gn21LowerEndpointTiPath arrivalRate upperEndpoint density u = T2)
+    (hW2 :
+      gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+        (ctmcStructuredSurgePrice m z switch21 switch12) u =
+          m * (T2 - 1) + z * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switch21 upperEndpoint density
+            (gn21SwitchProb switch21 switch12) u)
+          Q1
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+          T1
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+            (ctmcStructuredSurgePrice m z switch21 switch12) u)
+          (R1 * T1) <
+        gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switch21 upperEndpoint density
+            (gn21SwitchProb switch21 switch12) (u - ε))
+          Q1
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density (u - ε))
+          T1
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+            (ctmcStructuredSurgePrice m z switch21 switch12) (u - ε))
+          (R1 * T1) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch21 switch12 u) u m z switch21 Q2 Q1 T2 T1 R1 :=
+    paper_lemma9_structured_derivative_kernel_pos_of_current_bounds
+      ratio u T1 Q1 T2 Q2 switch21 switch12 m R1 z hbounds hz hmR_pos
+      hR1_nonneg hT1_nonneg hQ1_pos hswitch21_pos hsum hu
+      hswitch_lt_Q2 hgap_nonneg
+  have hkernel :
+      0 < gn21DerivativeSignKernel (gn21SwitchProb switch21 switch12 u) u
+        (ctmcStructuredSurgePrice m z switch21 switch12 u)
+        (gn21LowerEndpointQiPath arrivalRate switch21 upperEndpoint density
+          (gn21SwitchProb switch21 switch12) u)
+        Q1
+        (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+        T1
+        (gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+          (ctmcStructuredSurgePrice m z switch21 switch12) u)
+        (R1 * T1) := by
+    rw [hQ2, hT2, hW2]
+    simp only [ctmcStructuredSurgePrice, structuredSurgePrice]
+    rw [paper_remark2_structured_derivative_kernel_algebra]
+    exact hstructured
+  exact
+    paper_lemma6_exists_pos_left_improvement_of_lower_interval_density_kernel_pos_lt
+      arrivalRate switch21 upperEndpoint u Q1 T1 (R1 * T1) δ density
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice m z switch21 switch12)
+      harrival_pos hdensity_pos hQ1_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont hkernel hδ
+
+/--
+Tail Lemma 9 endpoint-improvement bridge.  This is the unbounded
+`(u,∞)` counterpart of the finite lower-endpoint bridge.
+-/
+theorem paper_lemma9_exists_pos_left_improvement_of_tail_interval_density_current_bounds
+    (arrivalRate u T1 Q1 T2 Q2 switch21 switch12 m R1 z ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21TailQiPath arrivalRate switch21 density
+          (gn21SwitchProb switch21 switch12) u * T1 +
+        Q1 * gn21TailTiPath arrivalRate density u ≠ 0)
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ)
+        (Set.Ioi (u - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) (Set.Ioi (u - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ2 :
+      gn21TailQiPath arrivalRate switch21 density
+        (gn21SwitchProb switch21 switch12) u = Q2)
+    (hT2 :
+      gn21TailTiPath arrivalRate density u = T2)
+    (hW2 :
+      gn21TailWiPath arrivalRate density
+        (ctmcStructuredSurgePrice m z switch21 switch12) u =
+          m * (T2 - 1) + z * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switch21 density
+            (gn21SwitchProb switch21 switch12) u)
+          Q1
+          (gn21TailTiPath arrivalRate density u)
+          T1
+          (gn21TailWiPath arrivalRate density
+            (ctmcStructuredSurgePrice m z switch21 switch12) u)
+          (R1 * T1) <
+        gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switch21 density
+            (gn21SwitchProb switch21 switch12) (u - ε))
+          Q1
+          (gn21TailTiPath arrivalRate density (u - ε))
+          T1
+          (gn21TailWiPath arrivalRate density
+            (ctmcStructuredSurgePrice m z switch21 switch12) (u - ε))
+          (R1 * T1) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch21 switch12 u) u m z switch21 Q2 Q1 T2 T1 R1 :=
+    paper_lemma9_structured_derivative_kernel_pos_of_current_bounds
+      ratio u T1 Q1 T2 Q2 switch21 switch12 m R1 z hbounds hz hmR_pos
+      hR1_nonneg hT1_nonneg hQ1_pos hswitch21_pos hsum hu
+      hswitch_lt_Q2 hgap_nonneg
+  have hkernel :
+      0 < gn21DerivativeSignKernel (gn21SwitchProb switch21 switch12 u) u
+        (ctmcStructuredSurgePrice m z switch21 switch12 u)
+        (gn21TailQiPath arrivalRate switch21 density
+          (gn21SwitchProb switch21 switch12) u)
+        Q1
+        (gn21TailTiPath arrivalRate density u)
+        T1
+        (gn21TailWiPath arrivalRate density
+          (ctmcStructuredSurgePrice m z switch21 switch12) u)
+        (R1 * T1) := by
+    rw [hQ2, hT2, hW2]
+    simp only [ctmcStructuredSurgePrice, structuredSurgePrice]
+    rw [paper_remark2_structured_derivative_kernel_algebra]
+    exact hstructured
+  exact
+    paper_lemma6_exists_pos_left_improvement_of_tail_interval_density_kernel_pos_lt
+      arrivalRate switch21 u Q1 T1 (R1 * T1) δ density
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice m z switch21 switch12)
+      harrival_pos hdensity_pos hQ1_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont hkernel hδ
 
 /-- Lemma 9 feasibility bridge: a nonempty open interval contains an admissible ratio. -/
 theorem paper_lemma9_structured_bounds_feasible_of_lower_lt_upper
@@ -6316,6 +7574,225 @@ theorem paper_lemma10_exists_pos_right_improvement_of_interval_density_current_b
       hbounds hz hR2_pos hQ2_pos hswitch12_pos hsum hu hswitch_lt_Q1
       hgap_nonneg hA_pos
   simpa [D] using h
+
+/--
+Lower-endpoint Lemma 10 endpoint-improvement bridge.  This is the finite
+tail-interval counterpart of the upper-endpoint bridge: a positive structured
+kernel makes a small leftward lower-endpoint expansion strictly improve
+aggregate reward.
+-/
+theorem paper_lemma10_exists_pos_left_improvement_of_lower_interval_density_current_bounds
+    (arrivalRate upperEndpoint u T2 Q2 T1 Q1 switch12 switch21 R2 z ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQ2_pos : 0 < Q2)
+    (hden :
+      gn21LowerEndpointQiPath arrivalRate switch12 upperEndpoint density
+          (gn21SwitchProb switch12 switch21) u * T2 +
+        Q2 *
+          gn21LowerEndpointTiPath arrivalRate upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) volume u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ1 :
+      gn21LowerEndpointQiPath arrivalRate switch12 upperEndpoint density
+        (gn21SwitchProb switch12 switch21) u = Q1)
+    (hT1 :
+      gn21LowerEndpointTiPath arrivalRate upperEndpoint density u = T1)
+    (hW1 :
+      gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) u =
+          R2 * (T1 - 1) + z * (Q1 - switch12))
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switch12 upperEndpoint density
+            (gn21SwitchProb switch12 switch21) u)
+          Q2
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+          T2
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+            (ctmcStructuredSurgePrice R2 z switch12 switch21) u)
+          (R2 * T2) <
+        gn21AggregateDynamicReward
+          (gn21LowerEndpointQiPath arrivalRate switch12 upperEndpoint density
+            (gn21SwitchProb switch12 switch21) (u - ε))
+          Q2
+          (gn21LowerEndpointTiPath arrivalRate upperEndpoint density (u - ε))
+          T2
+          (gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+            (ctmcStructuredSurgePrice R2 z switch12 switch21) (u - ε))
+          (R2 * T2) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch12 switch21 u) u R2 z switch12 Q1 Q2 T1 T2 R2 :=
+    paper_lemma10_structured_derivative_kernel_pos_of_current_bounds
+      ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z hbounds hz hR2_pos
+      hQ2_pos hswitch12_pos hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
+  have hkernel :
+      0 < gn21DerivativeSignKernel (gn21SwitchProb switch12 switch21 u) u
+        (ctmcStructuredSurgePrice R2 z switch12 switch21 u)
+        (gn21LowerEndpointQiPath arrivalRate switch12 upperEndpoint density
+          (gn21SwitchProb switch12 switch21) u)
+        Q2
+        (gn21LowerEndpointTiPath arrivalRate upperEndpoint density u)
+        T2
+        (gn21LowerEndpointWiPath arrivalRate upperEndpoint density
+          (ctmcStructuredSurgePrice R2 z switch12 switch21) u)
+        (R2 * T2) := by
+    rw [hQ1, hT1, hW1]
+    simp only [ctmcStructuredSurgePrice, structuredSurgePrice]
+    rw [paper_remark2_structured_derivative_kernel_algebra]
+    exact hstructured
+  exact
+    paper_lemma6_exists_pos_left_improvement_of_lower_interval_density_kernel_pos_lt
+      arrivalRate switch12 upperEndpoint u Q2 T2 (R2 * T2) δ density
+      (gn21SwitchProb switch12 switch21)
+      (ctmcStructuredSurgePrice R2 z switch12 switch21)
+      harrival_pos hdensity_pos hQ2_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont hkernel hδ
+
+/--
+Tail Lemma 10 endpoint-improvement bridge.  This is the unbounded
+`(u,∞)` counterpart of the finite lower-endpoint bridge.
+-/
+theorem paper_lemma10_exists_pos_left_improvement_of_tail_interval_density_current_bounds
+    (arrivalRate u T2 Q2 T1 Q1 switch12 switch21 R2 z ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQ2_pos : 0 < Q2)
+    (hden :
+      gn21TailQiPath arrivalRate switch12 density
+          (gn21SwitchProb switch12 switch21) u * T2 +
+        Q2 * gn21TailTiPath arrivalRate density u ≠ 0)
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ)
+        (Set.Ioi (u - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) (Set.Ioi (u - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ1 :
+      gn21TailQiPath arrivalRate switch12 density
+        (gn21SwitchProb switch12 switch21) u = Q1)
+    (hT1 :
+      gn21TailTiPath arrivalRate density u = T1)
+    (hW1 :
+      gn21TailWiPath arrivalRate density
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) u =
+          R2 * (T1 - 1) + z * (Q1 - switch12))
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hδ : 0 < δ) :
+    ∃ ε : ℝ, 0 < ε ∧ ε < δ ∧
+      gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switch12 density
+            (gn21SwitchProb switch12 switch21) u)
+          Q2
+          (gn21TailTiPath arrivalRate density u)
+          T2
+          (gn21TailWiPath arrivalRate density
+            (ctmcStructuredSurgePrice R2 z switch12 switch21) u)
+          (R2 * T2) <
+        gn21AggregateDynamicReward
+          (gn21TailQiPath arrivalRate switch12 density
+            (gn21SwitchProb switch12 switch21) (u - ε))
+          Q2
+          (gn21TailTiPath arrivalRate density (u - ε))
+          T2
+          (gn21TailWiPath arrivalRate density
+            (ctmcStructuredSurgePrice R2 z switch12 switch21) (u - ε))
+          (R2 * T2) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch12 switch21 u) u R2 z switch12 Q1 Q2 T1 T2 R2 :=
+    paper_lemma10_structured_derivative_kernel_pos_of_current_bounds
+      ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z hbounds hz hR2_pos
+      hQ2_pos hswitch12_pos hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
+  have hkernel :
+      0 < gn21DerivativeSignKernel (gn21SwitchProb switch12 switch21 u) u
+        (ctmcStructuredSurgePrice R2 z switch12 switch21 u)
+        (gn21TailQiPath arrivalRate switch12 density
+          (gn21SwitchProb switch12 switch21) u)
+        Q2
+        (gn21TailTiPath arrivalRate density u)
+        T2
+        (gn21TailWiPath arrivalRate density
+          (ctmcStructuredSurgePrice R2 z switch12 switch21) u)
+        (R2 * T2) := by
+    rw [hQ1, hT1, hW1]
+    simp only [ctmcStructuredSurgePrice, structuredSurgePrice]
+    rw [paper_remark2_structured_derivative_kernel_algebra]
+    exact hstructured
+  exact
+    paper_lemma6_exists_pos_left_improvement_of_tail_interval_density_kernel_pos_lt
+      arrivalRate switch12 u Q2 T2 (R2 * T2) δ density
+      (gn21SwitchProb switch12 switch21)
+      (ctmcStructuredSurgePrice R2 z switch12 switch21)
+      harrival_pos hdensity_pos hQ2_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont hkernel hδ
 
 /--
 Lemma 10 feasibility bridge: under the positivity conditions used in the
@@ -8444,6 +9921,573 @@ theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma1
       hT_replacement ε hε_pos, hW_replacement ε hε_pos] using hlt
 
 /--
+Surge-state finite lower-endpoint counterpart of the Lemma 9 bridge.  A
+leftward expansion of a lower endpoint feeds the same measured aggregate
+strict-local state-replacement interface as the upper-endpoint movement.
+-/
+theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_lower_interval_density
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (replacement : ℝ → TripPolicy)
+    (upperEndpoint u T1 Q1 T2 Q2 R1 ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrival 1)
+    (hdensity_pos : 0 < density u)
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21LowerEndpointQiPath (arrival 1) switch21 upperEndpoint density
+          (gn21SwitchProb switch21 switch12) u * T1 +
+        Q1 *
+          gn21LowerEndpointTiPath (arrival 1) upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) volume u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ2 :
+      gn21LowerEndpointQiPath (arrival 1) switch21 upperEndpoint density
+        (gn21SwitchProb switch21 switch12) u = Q2)
+    (hT2 :
+      gn21LowerEndpointTiPath (arrival 1) upperEndpoint density u = T2)
+    (hW2 :
+      gn21LowerEndpointWiPath (arrival 1) upperEndpoint density
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u =
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z 1 = ratio * (m 1 - R1))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hδ : 0 < δ)
+    (Hcur :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hrep :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) (replacement ε))
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) = Q1)
+    (hT_other :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) = T1)
+    (hW_other :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+          R1 * T1)
+    (hQ_current :
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) =
+        gn21LowerEndpointQiPath (arrival 1) switch21 upperEndpoint density
+          (gn21SwitchProb switch21 switch12) u)
+    (hT_current :
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) =
+        gn21LowerEndpointTiPath (arrival 1) upperEndpoint density u)
+    (hW_current :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        gn21LowerEndpointWiPath (arrival 1) upperEndpoint density
+          (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u)
+    (hQ_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+            (replacement ε) =
+          gn21LowerEndpointQiPath (arrival 1) switch21 upperEndpoint density
+            (gn21SwitchProb switch21 switch12) (u - ε))
+    (hT_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateTime (μ 1) (arrival 1) (replacement ε) =
+          gn21LowerEndpointTiPath (arrival 1) upperEndpoint density (u - ε))
+    (hW_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateEarning (μ 1) (arrival 1)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+            (replacement ε) =
+          gn21LowerEndpointWiPath (arrival 1) upperEndpoint density
+            (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+            (u - ε)) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 1 τ) 0)
+          ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ := by
+  rcases
+      paper_lemma9_exists_pos_left_improvement_of_lower_interval_density_current_bounds
+        (arrival 1) upperEndpoint u T1 Q1 T2 Q2 switch21 switch12
+        (m 1) R1 (z 1) ratio δ density harrival_pos hdensity_pos hQ1_pos
+        hden hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+        ht_cont hQ2 hT2 hW2 hbounds hz hmR_pos hR1_nonneg hT1_nonneg
+        hswitch21_pos hsum hu hswitch_lt_Q2 hgap_nonneg hδ with
+    ⟨ε, hε_pos, hε_lt, hlt⟩
+  refine ⟨replacement ε, Hcur, ?_, ?_⟩
+  · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos hε_lt
+  · simpa [gn21MeasuredAggregateDynamicStateReward_one,
+      gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
+      hQ_current, hT_current, hW_current,
+      hQ_replacement ε hε_pos hε_lt,
+      hT_replacement ε hε_pos hε_lt,
+      hW_replacement ε hε_pos hε_lt,
+      gn21AggregateDynamicReward_swap]
+      using hlt
+
+/--
+Non-surge finite lower-endpoint counterpart of the Lemma 10 bridge.
+-/
+theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_lower_interval_density
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (replacement : ℝ → TripPolicy)
+    (upperEndpoint u T2 Q2 T1 Q1 R2 ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrival 0)
+    (hdensity_pos : 0 < density u)
+    (hQ2_pos : 0 < Q2)
+    (hden :
+      gn21LowerEndpointQiPath (arrival 0) switch12 upperEndpoint density
+          (gn21SwitchProb switch12 switch21) u * T2 +
+        Q2 *
+          gn21LowerEndpointTiPath (arrival 0) upperEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) volume
+        u upperEndpoint)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) volume u upperEndpoint)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume u upperEndpoint)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ1 :
+      gn21LowerEndpointQiPath (arrival 0) switch12 upperEndpoint density
+        (gn21SwitchProb switch12 switch21) u = Q1)
+    (hT1 :
+      gn21LowerEndpointTiPath (arrival 0) upperEndpoint density u = T1)
+    (hW1 :
+      gn21LowerEndpointWiPath (arrival 0) upperEndpoint density
+        (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u =
+          R2 * (T1 - 1) + z 0 * (Q1 - switch12))
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hz : z 0 = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hδ : 0 < δ)
+    (Hcur :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hrep :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (replacement ε) (ρ 1))
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) = Q2)
+    (hT_other :
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) = T2)
+    (hW_other :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+          R2 * T2)
+    (hQ_current :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) =
+        gn21LowerEndpointQiPath (arrival 0) switch12 upperEndpoint density
+          (gn21SwitchProb switch12 switch21) u)
+    (hT_current :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) =
+        gn21LowerEndpointTiPath (arrival 0) upperEndpoint density u)
+    (hW_current :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        gn21LowerEndpointWiPath (arrival 0) upperEndpoint density
+          (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u)
+    (hQ_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+            (replacement ε) =
+          gn21LowerEndpointQiPath (arrival 0) switch12 upperEndpoint density
+            (gn21SwitchProb switch12 switch21) (u - ε))
+    (hT_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateTime (μ 0) (arrival 0) (replacement ε) =
+          gn21LowerEndpointTiPath (arrival 0) upperEndpoint density (u - ε))
+    (hW_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateEarning (μ 0) (arrival 0)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (replacement ε) =
+          gn21LowerEndpointWiPath (arrival 0) upperEndpoint density
+            (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) (u - ε)) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 0 τ) 0)
+          ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ := by
+  rcases
+      paper_lemma10_exists_pos_left_improvement_of_lower_interval_density_current_bounds
+        (arrival 0) upperEndpoint u T2 Q2 T1 Q1 switch12 switch21
+        R2 (z 0) ratio δ density harrival_pos hdensity_pos hQ2_pos hden
+        hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+        ht_cont hQ1 hT1 hW1 hbounds hz hR2_pos hswitch12_pos hsum hu
+        hswitch_lt_Q1 hgap_nonneg hA_pos hδ with
+    ⟨ε, hε_pos, hε_lt, hlt⟩
+  refine ⟨replacement ε, Hcur, ?_, ?_⟩
+  · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos hε_lt
+  · simpa [gn21MeasuredAggregateDynamicStateReward_zero,
+      gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
+      hQ_current, hT_current, hW_current,
+      hQ_replacement ε hε_pos hε_lt,
+      hT_replacement ε hε_pos hε_lt,
+      hW_replacement ε hε_pos hε_lt] using hlt
+
+/--
+Surge-state unbounded-tail counterpart of the Lemma 9 bridge.  A leftward
+expansion of the lower endpoint of `(u,∞)` feeds the measured aggregate
+strict-local state-replacement interface.
+-/
+theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_tail_interval_density
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (replacement : ℝ → TripPolicy)
+    (u T1 Q1 T2 Q2 R1 ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrival 1)
+    (hdensity_pos : 0 < density u)
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21TailQiPath (arrival 1) switch21 density
+          (gn21SwitchProb switch21 switch12) u * T1 +
+        Q1 * gn21TailTiPath (arrival 1) density u ≠ 0)
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ)
+        (Set.Ioi (u - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) (Set.Ioi (u - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ2 :
+      gn21TailQiPath (arrival 1) switch21 density
+        (gn21SwitchProb switch21 switch12) u = Q2)
+    (hT2 :
+      gn21TailTiPath (arrival 1) density u = T2)
+    (hW2 :
+      gn21TailWiPath (arrival 1) density
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u =
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z 1 = ratio * (m 1 - R1))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hδ : 0 < δ)
+    (Hcur :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hrep :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) (replacement ε))
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) = Q1)
+    (hT_other :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) = T1)
+    (hW_other :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+          R1 * T1)
+    (hQ_current :
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) =
+        gn21TailQiPath (arrival 1) switch21 density
+          (gn21SwitchProb switch21 switch12) u)
+    (hT_current :
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) =
+        gn21TailTiPath (arrival 1) density u)
+    (hW_current :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        gn21TailWiPath (arrival 1) density
+          (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u)
+    (hQ_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+            (replacement ε) =
+          gn21TailQiPath (arrival 1) switch21 density
+            (gn21SwitchProb switch21 switch12) (u - ε))
+    (hT_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateTime (μ 1) (arrival 1) (replacement ε) =
+          gn21TailTiPath (arrival 1) density (u - ε))
+    (hW_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateEarning (μ 1) (arrival 1)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+            (replacement ε) =
+          gn21TailWiPath (arrival 1) density
+            (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+            (u - ε)) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 1 τ) 0)
+          ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ := by
+  rcases
+      paper_lemma9_exists_pos_left_improvement_of_tail_interval_density_current_bounds
+        (arrival 1) u T1 Q1 T2 Q2 switch21 switch12
+        (m 1) R1 (z 1) ratio δ density harrival_pos hdensity_pos
+        hQ1_pos hden hq_int hq_meas hq_cont hw_int hw_meas hw_cont
+        ht_int ht_meas ht_cont hQ2 hT2 hW2 hbounds hz hmR_pos
+        hR1_nonneg hT1_nonneg hswitch21_pos hsum hu hswitch_lt_Q2
+        hgap_nonneg hδ with
+    ⟨ε, hε_pos, hε_lt, hlt⟩
+  refine ⟨replacement ε, Hcur, ?_, ?_⟩
+  · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos hε_lt
+  · simpa [gn21MeasuredAggregateDynamicStateReward_one,
+      gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
+      hQ_current, hT_current, hW_current,
+      hQ_replacement ε hε_pos hε_lt,
+      hT_replacement ε hε_pos hε_lt,
+      hW_replacement ε hε_pos hε_lt,
+      gn21AggregateDynamicReward_swap]
+      using hlt
+
+/--
+Non-surge unbounded-tail counterpart of the Lemma 10 bridge.
+-/
+theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_tail_interval_density
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (replacement : ℝ → TripPolicy)
+    (u T2 Q2 T1 Q1 R2 ratio δ : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrival 0)
+    (hdensity_pos : 0 < density u)
+    (hQ2_pos : 0 < Q2)
+    (hden :
+      gn21TailQiPath (arrival 0) switch12 density
+          (gn21SwitchProb switch12 switch21) u * T2 +
+        Q2 * gn21TailTiPath (arrival 0) density u ≠ 0)
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ)
+        (Set.Ioi (u - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) (Set.Ioi (u - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * density τ) (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ1 :
+      gn21TailQiPath (arrival 0) switch12 density
+        (gn21SwitchProb switch12 switch21) u = Q1)
+    (hT1 :
+      gn21TailTiPath (arrival 0) density u = T1)
+    (hW1 :
+      gn21TailWiPath (arrival 0) density
+        (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u =
+          R2 * (T1 - 1) + z 0 * (Q1 - switch12))
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hz : z 0 = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hδ : 0 < δ)
+    (Hcur :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hrep :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (replacement ε) (ρ 1))
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) = Q2)
+    (hT_other :
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) = T2)
+    (hW_other :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+          R2 * T2)
+    (hQ_current :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) =
+        gn21TailQiPath (arrival 0) switch12 density
+          (gn21SwitchProb switch12 switch21) u)
+    (hT_current :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) =
+        gn21TailTiPath (arrival 0) density u)
+    (hW_current :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        gn21TailWiPath (arrival 0) density
+          (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u)
+    (hQ_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+            (replacement ε) =
+          gn21TailQiPath (arrival 0) switch12 density
+            (gn21SwitchProb switch12 switch21) (u - ε))
+    (hT_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateTime (μ 0) (arrival 0) (replacement ε) =
+          gn21TailTiPath (arrival 0) density (u - ε))
+    (hW_replacement :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        gn21ScaledStateEarning (μ 0) (arrival 0)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (replacement ε) =
+          gn21TailWiPath (arrival 0) density
+            (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) (u - ε)) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 0 τ) 0)
+          ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ := by
+  rcases
+      paper_lemma10_exists_pos_left_improvement_of_tail_interval_density_current_bounds
+        (arrival 0) u T2 Q2 T1 Q1 switch12 switch21
+        R2 (z 0) ratio δ density harrival_pos hdensity_pos hQ2_pos hden
+        hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+        ht_cont hQ1 hT1 hW1 hbounds hz hR2_pos hswitch12_pos hsum hu
+        hswitch_lt_Q1 hgap_nonneg hA_pos hδ with
+    ⟨ε, hε_pos, hε_lt, hlt⟩
+  refine ⟨replacement ε, Hcur, ?_, ?_⟩
+  · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos hε_lt
+  · simpa [gn21MeasuredAggregateDynamicStateReward_zero,
+      gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
+      hQ_current, hT_current, hW_current,
+      hQ_replacement ε hε_pos hε_lt,
+      hT_replacement ε hε_pos hε_lt,
+      hW_replacement ε hε_pos hε_lt] using hlt
+
+/--
 Primitive data package for applying the surge-state Lemma 9 interval bridge to
 a fixed dynamic policy.  This isolates the remaining continuous endpoint
 identification work from the already-compiled aggregate-reward routing.
@@ -8893,6 +10937,181 @@ def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_inter
     μ arrival switch12 switch21
     (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
     (theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_interval_bridges
+      μ arrival m z switch12 switch21 C)
+
+/--
+State-1 endpoint bridge in its most direct form.  Both upper-endpoint and
+finite lower-endpoint Lemma 9 packages can instantiate this interface.
+-/
+structure GN21SurgeEndpointBridgeData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) where
+  statewise_strict_aggregate_improvement :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 1 τ) 0)
+          ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ
+
+/--
+State-0 endpoint bridge in its most direct form.  Both upper-endpoint and
+finite lower-endpoint Lemma 10 packages can instantiate this interface.
+-/
+structure GN21NonsurgeEndpointBridgeData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) where
+  statewise_strict_aggregate_improvement :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 0 τ) 0)
+          ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ
+
+/-- Existing upper-endpoint surge bridge data lift to the generalized endpoint interface. -/
+def GN21SurgeEndpointBridgeData.of_interval
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (D : GN21SurgeIntervalEndpointBridgeData μ arrival m z switch12 switch21 ρ) :
+    GN21SurgeEndpointBridgeData μ arrival m z switch12 switch21 ρ where
+  statewise_strict_aggregate_improvement :=
+    D.statewise_strict_aggregate_improvement
+
+/-- Existing upper-endpoint non-surge bridge data lift to the generalized endpoint interface. -/
+def GN21NonsurgeEndpointBridgeData.of_interval
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (D : GN21NonsurgeIntervalEndpointBridgeData
+      μ arrival m z switch12 switch21 ρ) :
+    GN21NonsurgeEndpointBridgeData μ arrival m z switch12 switch21 ρ where
+  statewise_strict_aggregate_improvement :=
+    D.statewise_strict_aggregate_improvement
+
+/--
+Generalized Lemma 9/10 endpoint bridge certificate for the CTMC structured
+price family.  This is the Theorem 4-facing route after the endpoint
+primitive-identification proof has selected whichever endpoint move is
+available in a state.
+-/
+structure Theorem4Lemma910EndpointBridgeCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  feasible_optimal :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ i : Fin 2, ρ i ⊆ acceptAllPolicy
+  nonsurge_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ¬ acceptsAllTrips (ρ 0) →
+        GN21NonsurgeEndpointBridgeData
+          μ arrival m z switch12 switch21 ρ
+  surge_bridge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ¬ acceptsAllTrips (ρ 1) →
+        GN21SurgeEndpointBridgeData
+          μ arrival m z switch12 switch21 ρ
+
+/-- Upper-endpoint interval certificates are a special case of endpoint bridge certificates. -/
+def Theorem4Lemma910EndpointBridgeCertificate.of_interval_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4Lemma910IntervalBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4Lemma910EndpointBridgeCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := C.exists_optimal
+  feasible_optimal := C.feasible_optimal
+  nonsurge_bridge := by
+    intro ρ hρ hnot
+    exact GN21NonsurgeEndpointBridgeData.of_interval
+      (C.nonsurge_bridge ρ hρ hnot)
+  surge_bridge := by
+    intro ρ hρ hnot
+    exact GN21SurgeEndpointBridgeData.of_interval
+      (C.surge_bridge ρ hρ hnot)
+
+/--
+General endpoint bridge data instantiate the uniform statewise strict-local
+aggregate certificate.
+-/
+def theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4Lemma910EndpointBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := C.exists_optimal
+  feasible_optimal := C.feasible_optimal
+  statewise_strict_aggregate_improvement_unless := by
+    intro ρ hρ i hnot
+    fin_cases i
+    · exact
+        (C.nonsurge_bridge ρ hρ hnot).statewise_strict_aggregate_improvement
+    · exact
+        (C.surge_bridge ρ hρ hnot).statewise_strict_aggregate_improvement
+
+/--
+General endpoint bridge data instantiate the measured aggregate strict-local
+certificate consumed by Theorem 4 and Theorem 3.
+-/
+def theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4Lemma910EndpointBridgeCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_statewise_strict_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateStatewiseStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
       μ arrival m z switch12 switch21 C)
 
 /--
@@ -10560,6 +12779,90 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
         intro m z hnonneg hparams
         exact
           theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_interval_bridges
+            μ arrival m z switch12 switch21
+            (hbridges m z hnonneg hparams))
+
+/--
+Measured Theorem 3 endpoint from generalized Lemma 9/10 endpoint bridge data.
+This accepts either upper-endpoint or finite lower-endpoint primitive
+identifications through the generalized bridge certificate.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_lemma910_endpoint_bridges
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hlemma9_den_lower :
+      0 < lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_den_upper :
+      0 < lemma9StructuredUpperDenominator Q1 Q2 switch21)
+    (hlemma9_left_nonpos :
+      lemma9StructuredLowerNumerator T1 Q1 T2 Q2 switch21 *
+          lemma9StructuredUpperDenominator Q1 Q2 switch21 ≤ 0)
+    (hlemma9_right_pos :
+      0 < lemma9StructuredUpperNumerator T1 Q1 Q2 *
+        lemma9StructuredLowerDenominator T1 Q1 T2 Q2 switch21)
+    (hlemma9_upper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hbridges :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4Lemma910EndpointBridgeCertificate
+          μ arrival m z switch12 switch21) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements
+      μ arrival rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hlemma9_den_lower
+      hlemma9_den_upper hlemma9_left_nonpos hlemma9_right_pos
+      hlemma9_upper_pos hT2_ge_one hswitch21_lt_Q2
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_lemma910_endpoint_bridges
             μ arrival m z switch12 switch21
             (hbridges m z hnonneg hparams))
 
