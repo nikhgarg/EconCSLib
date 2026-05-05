@@ -92,8 +92,13 @@ This is a lightweight handoff document for source-to-Lean mapping.
   source-data current-bounds packages
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData` and
   `GN21SurgeLemma9AcceptAllAggregateSourceData`,
+  accounting-form current-bounds packages
+  `GN21NonsurgeLemma10AcceptAllAggregateAccountingData` and
+  `GN21SurgeLemma9AcceptAllAggregateAccountingData`,
   source-facing feasible current-bounds certificate
   `Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate`,
+  accounting-form feasible current-bounds certificate
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsAccountingFeasibleCertificate`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   source-facing current-bounds wrapper
@@ -104,6 +109,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
   source-data feasible measurable-IC source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_source_feasible_source_assumptions`,
+  accounting-form feasible measurable-IC source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

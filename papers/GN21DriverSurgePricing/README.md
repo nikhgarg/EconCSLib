@@ -132,6 +132,10 @@ cache is `source.txt`.
   `Q > lambda` / `lambda*T-Q >= 0` side conditions from global accept-all
   integrability, positive rates, feasible measurability, and positive current
   mass.
+  The accounting-form wrapper,
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions`,
+  further replaces fixed-state reward-rate identities with the structured
+  price accounting equations discharged by Remark 2.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
