@@ -138,6 +138,9 @@ with the unbundled raw-argument variant
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvements`.
 The first concrete shape-level endpoint bridge is also exposed as
 `paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape`,
+with an accept-all-bound variant
+`paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_acceptAll_bounds`
+that derives the current Lemma 10 bounds and Remark 4 positivity conditions,
 with the corresponding accept-middle bridge
 `paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_accept_middle_withDensity_of_shape`;
 the surge reject-short bridge
@@ -217,7 +220,9 @@ current/replacement nondegeneracy are now available for the four Theorem 4
 shape cases; all four Theorem 4 shape cases now have shape-level wrappers
 that discharge current primitive identities and nondegeneracy from the
 canonicalization and density assumptions, with reject-middle split into
-lower- and upper-cutoff endpoint variants. Then finish Theorem 1's
+lower- and upper-cutoff endpoint variants. The non-surge reject-long case now
+also has an accept-all-bound wrapper that derives current Lemma 10 bounds from
+the measured tightening layer. Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers
 bridge.
