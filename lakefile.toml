@@ -56,6 +56,10 @@ name = "ZL21TestOptionalPolicies"
 srcDir = "papers"
 
 [[lean_lib]]
+name = "GN21DriverSurgePricing"
+srcDir = "papers"
+
+[[lean_lib]]
 name = "Roth82StableMatching"
 srcDir = "papers"
 

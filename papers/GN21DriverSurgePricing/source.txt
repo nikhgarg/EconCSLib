@@ -1,0 +1,4809 @@
+Driver Surge Pricing
+
+arXiv:1905.07544v4 [cs.GT] 7 Mar 2021
+
+Nikhil Garg
+Stanford University
+nkgar6@gmail.com
+
+Hamid Nazerzadeh
+USC Marshall & Uber Technologies
+nazerzad@usc.edu
+March 9, 2021
+
+Abstract
+Ride-hailing marketplaces like Uber and Lyft use dynamic pricing, often called surge, to
+balance the supply of available drivers with the demand for rides. We study driver-side payment
+mechanisms for such marketplaces, presenting the theoretical foundation that has informed the
+design of Uber’s new additive driver surge mechanism. We present a dynamic stochastic model
+to capture the impact of surge pricing on driver earnings and their strategies to maximize
+such earnings. In this setting, some time periods (surge) are more valuable than others (nonsurge), and so trips of different time lengths vary in the induced driver opportunity cost. First,
+we show that multiplicative surge, historically the standard on ride-hailing platforms, is not
+incentive compatible in a dynamic setting. We then propose a structured, incentive-compatible
+pricing mechanism. This closed-form mechanism has a simple form and is well-approximated by
+Uber’s new additive surge mechanism. Finally, through both numerical analysis and real data
+from a ride-hailing marketplace, we show that additive surge is more incentive compatible in
+practice than is multiplicative surge.
+
+1
+
+Introduction
+
+Ride-hailing marketplaces like Uber, Lyft, and Didi match millions of riders and drivers every day.
+A key component of these marketplaces is a surge (dynamic) pricing mechanism. On the rider
+side of the market, surge pricing reduces the demand to match the level of available drivers and
+maintains the reliability of the marketplace, cf., Hall et al. (2015), and so allocates the rides to
+the riders with the highest valuations. On the driver side, surge encourages drivers to drive during
+certain hours and locations, as drivers earn more during surge (Lu et al., 2018; Hall et al., 2017;
+Chen and Sheldon, 2016). Castillo et al. (2017) show that surge balances both sides of this spatial
+market by moderating the demand and the density of available drivers, hence avoiding so called
+“Wild Goose Chase” equilibria in which drivers spend much of their time on long distance pick
+ups. Surge pricing – along with centralized matching technologies – is often considered the primary
+reason that ride-hailing marketplaces outperform traditional taxi services on metrics such as driver
+utilization and overall welfare (Cramer and Krueger, 2016; Buchholz, 2017; Ata et al., 2019).
+We would like to thank Uber’s driver pricing data science team, in particular Carter Mundell, Jake Edison,
+Alice Lu, Michael Sheldon, Margaret Tian, Qitang Wang, Peter Cohen, Kane Sweeney, and Jonathan Hall for their
+support and suggestions without which this work would have not been possible. We also thank Leighton Barnes,
+Ashish Goel, Ramesh Johari, Vijay Kamble, Anurag Komanduri, Hannah Li, Virag Shah, and anonymous reviewers.
+This work was funded in part by the Stanford Cyber Initiative, the Office of Naval Research grant N00014-15-1-2786,
+and National Science Foundation grants 1544548 and 1839229.
+
+1
+
+(a) Multiplicative surge heatmap. “1.6x” on the map
+means that the standard fares for trips from the corresponding area are increased by 60%.
+
+(b) Additive surge heatmap. “$7.8” on the map
+means that $7.8 is added to each trip’s standard fare
+from the corresponding area.
+
+Figure 1: Driver surge heatmaps with multiplicative and additive surge. On Uber, drivers see
+a heatmap of surge when they are logged in but not on a trip, guiding them to higher earning
+opportunities by signaling each location’s value (Lu et al., 2018). Structural simplicity is essential
+to clearly communicate payments to drivers, and additive and multiplicative surge represent the
+two simplest options.
+However, variable pricing (across space and time) must be carefully designed, since it can create
+incentives for “cherry-picking” and rejecting certain trip requests. Such behavior increases earnings
+of strategic drivers at the expense of other drivers, who may then disproportionately receive such
+trip requests after they are rejected by others, cf., Cook et al. (2018). It also reduces overall
+platform reliability, inconveniencing riders who may have to wait longer before receiving a ride.
+Uber recently revamped its driver surge mechanism, to improve the driver experience and make
+earnings more dependable (Uber, 2019b). The main change is making surge “additive” instead of
+“multiplicative.” Under multiplicative surge, the driver payout from a surged trip scales with
+the length of the trip. In contrast, under additive surge, the payout surge component is constant
+(independent of trip length), with some adjustment for very long trips (Uber, 2019c). Figure 1
+depicts the driver app surge heat-map for each type of surge. We show that the change directly
+addresses a primary reason that drivers who strategically reject trip requests may earn more than
+others, even as total payments remain the same.
+
+1.1
+
+Contributions
+
+We consider the design of incentive compatible (IC) pricing mechanisms in the presence of surge.
+Trips differ by their length τ ∈ R+ , and the platform sets the payout w(τ ) for each trip in each
+world state (i.e., surge vs non-surge). Drivers decide which trip requests σ ⊆ R+ to accept in each
+world state, in response to the payout function w.1 The technical challenge is to design an IC
+pricing mechanism w, for which accepting all trips is an earning maximizing strategy for drivers
+over a long horizon, i.e., where σ = (0, ∞) in each world state maximizes driver earnings.
+We first study a continuous-time, infinite horizon single-state model, where trip requests arrive
+over time according to a stationary Poisson process. We show that in this model, multiplicative
+pricing – where the payout of a trip is proportional to the length of that trip – is incentive com1
+
+Drivers’ level of sophistication and experience varies, cf. Cook et al. (2018). An IC mechanism aligns the incentives
+of drivers to accept all trips, for any level of strategic response to pricing strategies.
+
+2
+
+patible. To obtain this result, we show in Theorem 1 that the best response strategy of a driver
+to function w, to maximize earnings, is a threshold strategy where the driver accepts all trips with
+)
+payout rate w(τ
+above some threshold. Hence, a mechanism that equalizes the payout rate of all
+τ
+trips is incentive compatible.
+We then present a model where the world state stochastically transitions over time between surge
+and non-surge states, with trip payments, distributions, and intensity varying between states. In
+such a dynamic system, completing a given trip affects a driver’s earnings beyond just the length
+of the trip, i.e., it imposes a future-time externality on the driver that is a function of the trip
+length. The driver’s trip opportunity cost thus includes both what occurs during a trip, and a
+continuation value. This externality causes multiplicative pricing to not be incentive compatible
+in the presence of surge (Theorem 2), in contrast to the single-state model. Namely, drivers can
+benefit from rejecting long trips in a non-surge state, and short trips in the surge state.
+In Theorem 3, our main result, we propose a class of incentive compatible pricing functions described in closed form of the model primitives. The prices incorporate driver temporal externalities:
+during surge, short trips pay more per unit time than do long trips.
+Next, we study surge pricing in our model numerically, showing that additive surge is incentive
+compatible in more regimes of interest than is multiplicative surge. Finally, using RideAustin data,
+we show that our theoretical insights extend to practice: additive surge correctly values trips amid
+temporal externalities, unlike multiplicative surge.
+To our knowledge, ours is the first ride-hailing pricing work to incorporate dynamic (nonconstant), stochastic demand and pricing. This component is essential to uncover how a particular
+trip imposes substantial temporal externalities on a driver’s future earnings.
+
+1.2
+
+Related Work
+
+We discussed some of the related work on surge pricing above. Here, we briefly review the lines
+of research closest to ours. We refer the reader to a recent survey by Korolko et al. (2018) for a
+broader overview of the growing literature on ride-hailing markets.
+Driver spatio-temporal strategic behavior. Several works model strategic driver behavior
+in a spatial network structure, and across time in a single-state. Ma et al. (2018) develop spatially
+and temporally smooth prices that are welfare-optimal and incentive compatible in a deterministic
+model. Their prices form a competitive equilibrium and are the output of a linear program with
+integer solutions. We similarly seek to develop incentive compatible pricing schemes, and both
+works broadly construct VCG-like prices that account for driver opportunity costs. Our focus is
+on structural aspects (e.g., multiplicative in trip length) in a non-deterministic model.
+Bimpikis et al. (2016) show how the platform would price trips between locations, taking into
+account strategic driver re-location decisions, in a stationary model with discrete locations. They
+show that pricing trips based on the origin location substantially improves surplus, as well as
+the benefits of “balanced” demand patterns. Besbes et al. (2018b) consider a continuous state
+space setting and show how a platform may optimally set prices across the space in reaction to a
+localized demand shock to encourage drivers to relocate; their model has driver cost to re-locate,
+but no explicit time dimension. They find that localized prices have a global impact, and, e.g.,
+the optimal pricing solution incentivizes some drivers to move away from a demand shock. Afèche
+et al. (2018) consider a two state model with demand imbalances and compare platform levers such
+as limiting ride requests and directing drivers to relocate, in a two-state fluid model with strategic
+drivers. They upper-bound performance under these policies, and find that it may be optimal for
+the platform to reject rider demand even in over-supplied areas, to encourage driver movement. A
+similar insight is developed by Guda and Subramanian (2019) who explicitly model market response
+3
+
+to surge pricing. Finally, Yang et al. (2018) analyze a mean-field system in which agents compete
+for a location-dependent, time-varying resource, and decide when to leave a given location. They
+leverage structural results—agents’ equilibrium strategies depend just on the current resource level
+and number of agents—to numerically study driver relocation decisions as a function of the platform
+commission structure.
+Pricing in ride-sharing and service systems. There is a growing literature on queuing
+and service systems motivated in part by the ride-sharing market. For example, Besbes et al.
+(2018a) revisit the classic square root safety staffing rule in spatial settings, cf., Bertsimas and
+van Ryzin (1991, 1993). Much of the focus of this line of work is how pricing affects the arrival
+rate of (potentially heterogeneous) customers, and thus the trade-off between the price and rate of
+customers served in maximizing revenue.
+Banerjee et al. (2015) consider a network of queues in which long-lived drivers enter the system
+based on their expected earnings but cannot reject specific trip requests. Under their model,
+dynamic pricing cannot outperform the optimal static policy in terms of throughput and revenue,
+but is more robust. Cachon et al. (2017) argue in contrast that surge pricing and payments are
+welfare increasing for all market participants when drivers decide when to work. Chen and Hu
+(2018) consider a marketplace with forward-looking buyers and sellers who arrive sequentially and
+can wait for better prices in the future. They develop strategy-proof prices whose variation over
+time matches the participants’ expected utility loss incurred by waiting. Lei and Jasin (2016)
+consider a model where customers arrive over time and utilize a capacity constrained resource for a
+certain amount of time. They develop an asymptotically revenue-maximizing, dynamic, customerside pricing policy, even when service times may be heterogeneous. Glazer and Hassin (1983)
+consider taxi-driver strategic responses to multiplicative and affine pricing, as we do, focusing on
+deviations in which a driver can take a circuitous route in order to increase the length of a trip.
+One of the most related to our work in modeling approach, Kamble (2019) studies how a freelancer can maximize long-term earnings with job-length-specific prices, balancing on-job payments
+and utilization time. In his model, a freelancer sets their own prices for a discrete number of jobs
+of different lengths and, with assumptions similar to our single-state model, it is optimal for the
+freelancer to set the same price per hour for all jobs. We further discuss the relationship of this
+work to our single-state model below.
+Organization. The rest of the paper is organized as follows. Section 2 contains our model; we
+derive driver earnings as it depends on their strategy, and formalize the platform objective. In
+Section 3, we formulate a driver’s best response strategy to affine pricing functions in each model.
+In Section 4, we present incentive compatible pricing functions for our surge model. In Section 5, we
+numerically compare the IC properties of additive and multiplicative surge. Finally, in Section 6, we
+empirically compare additive and multiplicative surge using data from the RideAustin marketplace.
+
+2
+
+Model, driver earnings, and platform objective
+
+We consider a large ride-hailing market with decoupled pricing, from the perspective of a single
+driver. This driver receives trip requests of various lengths. The trips’ rate, distribution, and
+payment are known to the driver and determined exogeneously to decisions to accept or decline
+requests. We do not consider spatial heterogeneity, to focus on the temporal opportunity cost and
+continuation value based on a length of the trip.2
+2
+
+We believe our insight can be extended to a spatial setting where the price can be decomposed to a time-based
+component, based on the length of the trip, and a spatial component based on the destination of the trip. However,
+
+4
+
+In this section, we first in Section 2.1 present the primitives of our two models, a single-state
+model and a dynamic model with surge pricing. Then in Section 2.2 we describe the driver’s
+strategy space and derive the driver reward in each model. Next, in Section 2.3, we formalize the
+platform objective and technical challenge solved in this work. We conclude with a short discussion
+on our model’s relationship to practice in Section 2.4.
+
+2.1
+
+Model primitives
+
+We start with the model primitives in each model.
+2.1.1
+
+Single-state model
+
+We start with a model where there is a single world state, i.e., all model components are constant
+over time. Time is continuous and indexed by t. At each time t, the driver is either open, or busy.
+While open, the driver receives job (trip) requests from riders according to a Poisson process at
+rate λ, i.e., the time between requests is exponential with mean λ1 . Job lengths, denoted by τ , are
+drawn independently and identically from a continuous distribution F .
+If the driver accepts a job request of length τ at time t (as discussed below), they receive
+a payout of w(τ ) at time t + τ , at which time they become open again. Otherwise, the driver
+remains open. Except where specified, the only assumptions on w are that it is continuous and
+)
+asymptotically (sub)-linear: ∃c : lim inf τ →∞ w(τ
+τ ≤ c, which ensures that the driver reward is also
+bounded.3
+2.1.2
+
+Dynamic model with surge pricing
+
+A model with fixed pricing and arrival rates of jobs is not a realistic representation of ride-hailing
+platforms. In particular, rider demand (both in intensity and in distribution) may vary substantially
+over time, even within a day (cf. Appendix Figure 9c). To study how this dynamic nature affects
+driver decisions, we consider a model with two states, i ∈ {1, 2}, where i = 2 denotes the surge
+state. (At a high level, the surge state provides a higher earnings rate to the driver. The precise
+definition is in Section 2.2.2, after we formulate the driver’s earnings rate in each state).
+The world evolves stochastically between the two states, as a Continuous Time Markov Chain
+(CTMC). When the world is in state i, the state changes to j according to a fixed exponential clock
+that ticks at rate λi→j , independently of other randomness.
+When open in state i, the driver receives job requests at rate λi with lengths τ ∼ Fi , and collects
+payout according to payment function wi , which is presumed to have the same properties as w in
+the single-state model. The state of the world may change while a driver is on trip. Crucially, the
+driver receives payments according to the state of the world i when the trip begins. We will use
+w = {w1 , w2 } to denote the overall pricing mechanism.
+
+2.2
+
+Driver strategies and earnings
+
+In our model, the driver can decide whether to accept the trip request, with no penalty.4
+In the single-state model, let σ ⊆ R+ , (0, ∞) denote the driver’s (fixed) strategy, where
+τ ∈ σ implies that a driver accepts job requests of length τ . In the dynamic model, the driver
+this would be beyond the scope of this work, cf., Bimpikis et al. (2016).
+3
+These restrictions are innocuous. With continuity, similar trips pay similarly. Asymptotic sub-linearity means
+that the marginal value of additional length of a trip remains bounded; it trivially holds if the domain of F is bounded.
+4
+This assumption follows Uber’s current practice. We further discuss the driver’s information set in Section 2.4.
+
+5
+
+follows policy σ = {σ1 , σ2 }, where σi ⊆ R+ indicates the jobs accepted in state i. We assume that
+driver policies are measurable with respect to F (corresponding Fi in dynamic model); for technical
+reasons, in the dynamic model we also assume that σi consist of a union of open intervals, i.e., are
+open subsets of R+ . When we write equalities with policies σ, we mean equality up to changes of
+measure 0.
+The driver is long-lived and aims to maximize their own lifetime average hourly earnings on the
+platform, including both open and busy times. Let R(w, σ, t) denote the (random) total earnings
+from jobs accepted from time 0 up to time t if the driver follows policy σ and the payout function
+is w. Then, the driver’s lifetime earnings rate is
+R(w, σ) , lim inf t→∞
+
+R(w, σ, t)
+.
+t
+
+This earnings rate is a deterministic (non-random) quantity, and is a function of the driver policy
+σ, pricing function w, and the primitives.
+A driver policy σ ∗ is optimal (best-response) with respect to pricing function w if it maximizes
+the lifetime earnings rate of the driver among all policies: R(w, σ ∗ ) ≥ R(w, σ), for all valid policies
+σ (i.e., measurable with respect to F or Fi , with σi open sets). Then, pricing function w is incentive
+compatible (IC) if accepting all job requests is optimal with respect to w, i.e., σ = (0, ∞) in
+the single-state model or σ = {(0, ∞), (0, ∞)} in the dynamic model is optimal with respect to w.
+In other words, payment function w is incentive compatible if an earnings-maximizing driver (who
+knows all the primitives, w, and the trip length τ at request time) accepts every trip request.
+We now analyze the driver’s lifetime earnings rate R(w, σ) for each model.
+2.2.1
+
+Driver earnings in the single state model
+
+In the single-state model, the primitives directly induce a renewal reward process, where a given
+renewal cycle is the time a driver is newly open to the time they are open again after completing a
+job. Let W (σ) be the mean earnings on trips τ ∈ σ, i.e., the expected earning in a renewal cycle;
+let T (σ) be the sum of the expected wait time to an accepted trip and the expected length of a
+trip, and thus the expected renewal cycle length; let F (σ) be the probability the driver receives a
+request in σ. Then, the lifetime driver mean hourly earnings (earnings rate) is
+R
+1
+W (σ)
+F (σ) τ ∈σ w(τ )dF (τ )
+R
+R(w, σ) =
+= 1
+1
+T (σ)
+F (σ)λ + F (σ) τ ∈σ τ dF (τ )
+The first equality follows from the renewal reward theorem, and holds with probability 1.
+2.2.2
+
+Driver earnings in the dynamic model
+
+For the dynamic model, on the other hand, we cannot directly use the renewal reward theorem
+with a renewal cycle containing just a single trip. The driver’s earning on a given trip is no longer
+independent of earnings on other trips: given a job that starts in the surge state, the driver’s next
+job is more likely to also start in surge. Given whether each job started in the surge state, however,
+job earnings are independent. We can use this property to prove our next lemma, which gives the
+driver earnings rate in the dynamic model. Let µi (σ) be the fraction of time the driver spends
+either open state i or on a trip that starts in state i.
+
+6
+
+Lemma 1. In the dynamic model, the earnings rate can be decomposed into each state i earnings
+rate Ri (wi , σi ) and fraction of time µi (σ) spent in state i:
+R(w, σ) = µ1 (σ)R1 (w1 , σ1 ) + µ2 (σ)R2 (w2 , σ2 )
+
+with probability 1.
+
+i (σi )
+As in the single-state model, Ri (wi , σi ) = W
+Ti (σi ) , where
+
+Z
+1
+Wi (σi ) =
+wi (τ )dFi (τ ),
+Fi (σi ) τ ∈σi
+
+1
+1
+Ti (σi ) =
++
+λi Fi (σi ) Fi (σi )
+
+Z
+τ dFi (τ )
+τ ∈σi
+
+We prove the result by defining a new renewal process, in which a single reward renewal cycle
+is: the time between the driver is open in state 1 to the next time the driver is open in state 1
+after being open in state 2 at least once. In other words, each renewal cycle is composed of some
+number (potentially zero) of sub-cycles in which the driver is open in state 1 and then is open in
+state 1 again after a completed trip; one sub-cycle starting with the driver open in state 1 and
+ending with being open in state 2 (either after a completed trip or a state transition while open);
+some number (potentially zero) of sub-cycles in which the driver is open in state 2 and then is open
+in state 2 again after a completed trip; and finally one sub-cycle starting in state 2 and ending with
+the driver open in state 1.
+Given the number of such renewal reward cycles completed up to time t, the total earnings on
+trips starting in each state (earnings in each sub-cycle) are independent of each other, and then we
+use Wald’s identity (Wald, 1973) to separate µi (σ) and Ri (σi ).
+Note that Ti (σi ) is not exactly the expected length of time in a single sub-cycle in a state
+given σi , but rather is proportional to it; the multiplicative constant λi Fi (σi1)+λi→j cancels out with
+the same constant in the expected earnings in a single sub-cycle in a state given σi . This constant
+emerges from the primitives: when the driver is open in state i, there are two competing exponential
+clocks (with rates λi Fi (σi ) and λi→j , respectively) that determine whether the driver will accept a
+request before the world state changes.
+What does µi (σ) look like? We defer showing the exact form to Section 4.1 in advance of
+developing incentive compatible pricing. Here, we provide some intuition: the trips that a driver
+accepts in each state determines the portion of their time spent on trips started in each state. If
+a driver never accepts trips in the non-surge state, they will be open and thus available for a trip
+as soon as surge begins. Inversely, if a driver accepts a long surge trip immediately before surge
+ends, they will be paid according to the surge payment function w2 even though surge has ended.
+Surprisingly, given the complex formulation of the reward R(w, σ) as it depends on σ = {σ1 , σ2 },
+we find the structure of optimal policies as they depend on the pricing wi , as well as incentive
+compatible pricing functions.
+Finally, we can now precisely define what it means for i = 2 to be the surge state: it has a higher
+potential earning rate than state 1. There exists some policy σ2 such that R2 (w2 , σ2 ) > R1 (w1 , σ1 ),
+for all σ1 ⊆ R+ . In other words, suppose that instead we were in the single-state setting, where
+the primitives were set as either (λ1 , F1 , w1 ) or (λ2 , F2 , w2 ). Then the latter set of primitives would
+yield a higher maximum earnings.5
+5
+This assumption is different than the statement that each surge trip pays more than an equivalent non-surge
+trip, w2 (τ ) ≥ w1 (τ ), ∀τ , and neither statement implies the other. Under this definition, surge may be characterized
+as higher per-trip payments. Alternatively, if request arrival rate is high due to a demand shock, λ2  λ1 , then
+the driver waits less time between trip requests and so has a higher earnings rate – even without higher per-trip
+payments. While a less common scenario in practice, our model further allows surge to be characterized by a more
+lucrative distribution of trips F2 compared to F1 , even if the intensity of trips and on-trip payments conditional on
+trip length are identical. More generally, surge may be characterized by a combination of such scenarios.
+
+7
+
+2.3
+
+Platform objective and constraints
+
+Having derived the driver reward, we now describe the platform objective, setting up the technical
+challenge we solve in the rest of the work. Recall that our model is decoupled: rider and driver
+prices are determined separately. Under decoupled pricing, the platform has under its control both
+the price pi (τ ) charged to the rider and the payment wi (τ ) paid to the driver for a trip of length τ —
+and the proportion of these two values may vary across trips. This modeling assumption follows the
+current practice (Uber, 2019e) and allows us to focus on the drivers’ perspective, without further
+complicating the analysis.6
+What should be the role of driver payments with decoupled pricing? In practice, the platform
+quotes the rider a price and ‘guarantees’ fulfillment if a ride is requested; driver payments should
+thus primarily ensure that all requested rides are fulfilled, motivating our goal of designing incentive
+compatible prices. In Appendix Section A.1, we formalize this intuition by considering driver
+payments w as a sub-problem of the comprehensive platform challenge, involving jointly setting
+both rider prices and driver payments to maximize an objective (e.g., profit or welfare). We
+establish that – with decoupled pricing and an earnings-maximizing driver within our model – this
+joint problem can be decomposed into one in which the rider pricing (not considered in this work)
+determines the objective value, subject to finding a driver payment policy w that satisfies incentive
+compatibility and a driver participation constraint: that the driver earnings rate is higher than an
+outside option earnings rate (denoted R), i.e., maxσ R(w, σ) ≥ R.
+In the dynamic model, we additionally consider per-state driver earnings constraints, Ri (wi , (0, ∞)) =
+Ri , for some exogenous R2 > R1 . This constraint comes from practice, via features not directly
+captured in our model. As detailed in Appendix Section A.2, following the current practice, in our
+model platforms impose a business constraint to approximately pass on rider revenue in each world
+state to the driver, i.e., the constraints Ri are determined by per-state revenue, a function of latent
+demand and rider prices.
+If the platform has more flexibility, Ri may also be optimized, for example to induce drivers
+to position themselves in areas with more frequent surges. Lu et al. (2018) find empirically that
+drivers do re-position to higher surge areas. Ong et al. (2020) describe how Lyft manages an
+incentive budget over time and space to incentivize driver re-positioning, and in a coupled pricing
+setting Besbes et al. (2018b) show theoretically how to set prices to induce driver movement. More
+broadly, the revenue during one spatio-temporal period may be used to smooth out driver payments
+in another period, cf. Asadpour et al. (2019); Bai et al. (2018). In this work, we do not directly
+consider how the platform should set Ri (or R); how to do so over space and time is an interesting
+avenue for future work. Instead, we establish our results for a range of Ri for which incentive
+compatible prices can be constructed. This decomposition reflects how decoupled surge pricing is
+set in practice, and for the rest of this work we seek a payment policy that satisfies these conditions.
+
+2.4
+
+Practical considerations
+
+Our model is stylized in several important respects, and ride-hailing practice is not consistent across
+marketplaces, time, or geography. Our theoretical model reflects our view on the most relevant
+components from practice.
+Driver heat-maps and affine pricing We are especially interested in affine pricing schemes,
+where wi (τ ) = mi τ + ai , with mi ≥ 0 (in the single-state model: w(τ ) = mτ + a, with m ≥ 0; we
+refer to the case with ai > 0 (ai < 0) as positive (negative) affine pricing). Such pricing functions
+6
+
+Coupled pricing imposes more constraints. Bai et al. (2018) and Bikhchandani (2020) both find that the platform
+should adjust its payout ratio with demand—an example of decoupling—to maximize profit or overall welfare.
+
+8
+
+can be communicated as time and distance rates (see, e.g., Uber (2019d)), and the surge component
+displayed on a heat-map. This simplicity is an important desiderata from practice, where payments
+should be clear to drivers.
+Driver information structure: trip time and time to the rider. We assume that the
+platform reveals the total trip length to the driver at the time of request, and that the driver can
+freely reject it without penalty. Drivers often cannot see the rider’s destination or the trip length
+until they pick up the rider (but they can reject a request based on the pick-up time to the rider,
+without penalty).7 Some drivers call ahead to find out the rider’s destination or even cancel the
+trip at the pick-up location, creating negative experiences for both the rider and the driver.8 Our
+notion of incentive compatibility is ex-post, in which drivers would accept all trips even knowing
+the trip length. This notion is stronger than an ex-ante setting in which the trip length is not
+revealed to drivers. Furthermore, in practice, jobs have two components: the time it takes to pick
+up the rider, and the time while the rider is in the driver’s vehicle – and the former component is
+typically unpaid.9 Our model combines these two components into an overall trip length, which
+determines payments.
+Markovian surge and model limitations. In practice, surge has strong intra-day patterns
+– for example, rush hours have higher average surge values, cf. Appendix Figure 9b. However,
+evolution of surge on finer time scales, on the level of drivers’ individual trip decisions, is more
+volatile and believably Markovian, cf. Appendix Figure 9c. Our theoretical model assumes that
+surge is Markovian and binary and the response of a single driver, and further ignores spatial effects.
+We discuss such issues in Sections A.3 and B.1, and our empirical analysis in Section 6 provides
+evidence that our insights extend to practice despite these theoretical limitations.
+
+3
+
+Incentive compatibility with affine pricing
+
+In this section, we study the incentive compatibility of affine pricing. In Section 3.1, we first
+characterize the driver’s best-response strategy with respect to any pricing function w in the singlestate model. We then observe that multiplicative pricing, a special case of affine pricing where
+w(τ ) = mτ , is incentive compatible. In contrast, in Section 3.2, we show that in the dynamic model,
+multiplicative pricing may no longer be incentive compatible. We further derive the structure of
+optimal driver policies in each state with respect to affine or multiplicative pricing, which will
+enable numerical study of the incentive compatibility properties of additive and multiplicative
+surge in Section 5. Section 3.3 discusses the key differences in the two models, setting up Section 4
+where we derive incentive compatible pricing functions for the dynamic model.
+
+3.1
+
+Single-state model: multiplicative pricing is incentive compatible
+
+Our first result is a simple optimal driver policy in the single-state model.
+Theorem
+1. With o
+a single state, for each w there exists a constant cw ∈ R+ such that the policy
+n
+w(τ )
+∗
+σ = τ : τ ≥ cw is optimal for the driver with respect to w.
+Theorem 1 establishes that, in a single-state model with Poisson job arrivals, the length of the
+job is not important, only the hourly rate while busy on the job. The optimal cw in the policy is
+7
+This practice is not consistent across marketplaces and locations. For example, in California as of January 2020,
+Uber shows the driver the destination and payment estimate at request time. Incentive compatible pricing is an
+important stepping stone to showing this information.
+8
+We note that destination discrimination is against Uber’s guidelines and could lead to deactivation (Uber, 2019a).
+9
+Lyft has recently experimented with paying drivers for the time it takes to pick up the rider (Auerbach, 2019).
+
+9
+
+)
+not necessarily cw = sup w(τ
+τ : drivers must trade off the earnings rate while on a trip with their
+utilization rate; the more trips that a driver rejects, the longer the wait for an acceptable trip. In
+the appendix we prove the result by, starting at an arbitrary policy σ, making changes to the policy
+that increase the earnings rate while on a job without decreasing the utilization rate. Thus, each
+such change improves the reward R(w, σ), and the sequence of changes results in a policy of the
+above form, for some threshold c0 . Then, this threshold c0 can be optimized, leading to an optimal
+policy of this form.
+An immediate corollary of Theorem 1 is that w(τ ) = mτ , for m > 0, is IC. In other words, if the
+)
+platform pays a constant rate w(τ
+τ = m to busy drivers, then in the single-state model it is in the
+driver’s best interest to accept every trip. This result is driven by the following insight for Poisson
+arrivals: while receiving long trip requests is more beneficial to drivers in the single-state setting as
+they increase one’s utilization rate (the driver is busy for a longer time until the next open period),
+rejecting short trips to cherry-pick long trips decreases utilization by the same amount.10 Further
+note that, given an earnings rate target R, calculating the multiplier m and thus an IC pricing
+policy is trivial.
+On the other hand, affine pricing may not be incentive compatible because short trips are worth
+)
+a
+more per unit time than are long trips: w(τ
+τ = m + τ . The optimal policy may thus be to accept
+∗
+trips in σ = (0, T ) for some T . However, our next proposition establishes that affine pricing is
+incentive compatible if the additive component stays small enough as a function of the request
+arrival rate:
+With a single state, w(τ ) = mτ + a is incentive compatible if 0 ≤ a ≤ m
+λ.
+The sufficient condition has a simple intuition: when open, the expected amount of time the
+driver must wait for the next request is λ1 ; if on-trip time is valued at m per unit-time, then with
+a= m
+λ the additive component can be interpreted as paying for the driver’s expected waiting time.
+Thus, while a driver may earn more per hour for a short trip than a long trip with affine pricing,
+such a short trip is not worth the time the driver must wait for the next trip request. We further
+note that the condition in the proposition is not a necessary one; however, deriving necessary and
+sufficient conditions in closed form requires specifying the trip distribution F .
+As we’ll see in the next sub-section, the structure of optimal driver policies in reaction to affine
+pricing differs sharply in the dynamic model.
+
+3.2
+
+Dynamic model: multiplicative pricing is not incentive compatible
+
+In the single-state model, multiplicative pricing is incentive compatible; a driver cannot benefit in
+the future by rejecting certain trips if all trips have the same on-trip earning rate. In contrast, we
+now show that the same insight does not hold for the dynamic model, as a driver can influence
+future trips through the decision to accept or reject certain trips.
+Theorem 2. If w = {w1 , w2 }, there exists an optimal policy σ = {σ1 , σ2 } (i.e., that maximizes
+R(w, σ)), defined with parameters t1 , t2 , t3 , t4 , t5 , t6 ∈ [0, ∞) ∪ {∞}, such that
+• Non-surge state driver optimal policy σ1 :
+– If w1 is multiplicative or positive affine, σ1 rejects long trips, i.e., σ1 = (0, t1 ).
+– If w1 is negative affine, σ1 rejects short and long trips, i.e., σ1 = (t2 , t3 ).
+10
+
+This insight is similar to a result of Kamble (2019); however, in our setting the driver’s strategy σ is a subset of
+R+ denoting the job requests accepted, as opposed to a discrete set of prices charged. Further, in our settings the
+driver responds to the platform’s prices instead of setting prices, enabling a wider range of IC pricing mechanisms.
+
+10
+
+• Surge state driver optimal policy σ2 :
+– If w2 is multiplicative or negative affine, σ2 rejects short trips, i.e., σ2 = (t4 , ∞).
+
+– If w2 is positive affine, σ2 rejects medium length trips, i.e., σ2 = (0, t5 ) ∪ (t6 , ∞).
+Furthermore, there exist settings where ti ’s take positive finite values, and in which multiplicative
+pricing is not incentive compatible in either state. Finally, only policies of the appropriate form as
+indicated (up to differences of measure 0) can be optimal.
+We discuss the intuition in the next section. In the appendix, we prove the result for each case
+as follows: fixing σj for j 6= i, we start with an arbitrary open set σi = ∪∞
+k (`k , uk ), recalling that
+open sets can be written as a countable union of such disjoint intervals. Then, we find ∂u∂ k R(w, σ),
+the derivative of the set function R(w, σ) with respect to one of the interval upper end-points
+of σi , i.e., uk . This derivative is the infinitesimal change in the overall reward if σi is expanded
+by increasing uk , and it has useful properties. In the surge state with multiplicative pricing, for
+∂
+example, ∂u
+R(w, σ) has the same sign as a function that is increasing in u, for each fixed σ. With
+affine pricing, it has the same sign as a quasi-convex (positive affine in the surge state) or quasiconcave (negative affine in the non-surge state) function in u, for a fixed σ. Such properties enable
+constructing a sequence of changes to σi that each do not decrease the reward R(w, σ), with the
+limit being a policy of the appropriate form. In particular, we can show that any policy that is not
+of the appropriate form above has ∂u∂ k R(w, σ) > 0 for some uk , allowing local improvements until
+adjacent intervals (`k , uk ), (`k+1 , uk+1 ) can be combined or expanded to infinity. The numerics in
+Section 5 provide examples in which multiplicative pricing is not incentive compatible, i.e., where
+policies of the form above with positive finite constants strictly increase driver earnings over the
+driver policy that accepts all trip requests.
+The results of rejecting long trips in non-surge (and short trips in surge) extend to arbitrary
+functions where w1τ(τ ) is non-increasing (respectively, w2τ(τ ) is non-decreasing). The other two results
+do not hold with such generality, as the behavior of the derivative may be arbitrarily complex.
+
+3.3
+
+Why is multiplicative surge pricing not incentive compatible?
+“I thoroughly dislike short trips ESPECIALLY when I’m picking up in a waning surge zone”
+Anonymous driver
+
+What explains the difference between multiplicative pricing being incentive compatible in the singlestate model but not in the dynamic model? In the latter, a driver’s policy affects not just their
+earnings while they are busy, but also the fraction of time during which they are busy during the
+lucrative surge state. In particular, it turns out, accepting short trips during surge may reduce the
+amount of time that a driver is on a surge trip! Appendix Figure 7 shows in an example how the
+fraction of time in the surge state µ2 (σ) changes as a function of how many short trips the driver
+rejects.
+The anonymous driver we quote above identifies the key effect: when surge is short-lived, a
+driver may only have the chance to complete one surge trip before it ends. Thus, the driver may
+be better off waiting to receive a longer trip request, as with multiplicative surge they are paid
+a higher rate for the full duration of the longer trip. (Of course, there is a trade-off as rejecting
+too many trip requests risks not receiving any acceptable request before surge ends). In the surge
+state, then, multiplicative pricing does not compensate drivers enough to accept short trips that
+may reduce their future surge earnings. In the non-surge state, analogously, multiplicative pricing
+under-values long trips that may prevent taking advantage of a future surge.
+11
+
+Affine pricing is a first, reasonable attempt at fixing these issues. In the surge state, the additive
+value makes the previously under-valued short trips comparatively more valuable, as the earnings
+per unit time w2τ(τ ) = m2 + aτ2 (with a2 > 0) are now higher for short trips. Unfortunately, with
+such pricing the structure for the surge optimal policy becomes σ2 = (0, t5 ) ∪ (t6 , ∞) – if the values
+m2 , a2 are not balanced correctly, the additive value is enough to make accepting extremely short
+trips (0, t5 ) profitable; for medium-length trips τ ∈ (t5 , t6 ), however, the additive value is not large
+enough to make up for the fact that accepting the trip prevents accepting another surged trip
+before surge ends. Similarly, negative affine pricing in the non-surge state, w1 (τ ) = m1 τ + a1 , (with
+a1 < 0) is now too harsh on very short trips but potentially not enticing enough for long trips.
+Next, we fix these issues and construct incentive compatible pricing schemes for our dynamic
+model. Then, in Section 5 we leverage structural results derived here to numerically compare the
+incentive compatibility of additive and multiplicative surge.
+
+4
+
+Incentive Compatible Surge Pricing
+
+We now present our main result, regarding the structure of incentive compatible pricing in the
+dynamic model. To this aim, in Section 4.1, we characterize µi (σ), how much time the driver
+spends in each state. In Section 4.2, we present incentive compatible prices, under a condition
+R1
+on the ratio of per-state earning rate constraints, R
+. Section 4.3 discusses an intuition of the IC
+2
+pricing structure in terms of the driver’s opportunity cost.
+
+4.1
+
+Transition probabilities and expected time spent in each state
+
+The expected fraction of time spent in each state, µi (σ), depends both on the evolution of the
+world state and the trips a driver accepts. To quantify the effects previewed in Section 3.3, we first
+analyze the evolution of the world state CTMC.
+Lemma 2. Suppose the world is in state i at time t. Let qi→j (s) denote the probability that the
+world will be in state j 6= i at time t + s. Then,
+i
+h
+λi→j
+qi→j (s) =
+1 − e−(λi→j +λj→i )s
+λi→j + λj→i
+Note that qi→j (s) is not just the probability that the world state transitions once during time
+(t, t + s), but the probability that it transitions an odd number of times. This formulation emerges
+through a standard analysis of two-state CTMCs, in which this probability can be found through
+the inverse of the Laplace transform of the inverse of the resolvent of the Q-matrix for the system.
+Incorporating this value in closed form is the main hurdle in extending our results to general systems
+with more than two states. Using this formulation, the following lemma shows µi (σ).
+Lemma 3. Let Ti (σi ) be as defined in Lemma 1. The fraction of time a driver following strategy
+σ = {σ1 , σ2 } spends either open in state i or on a trip started in state i is
+λi Fi (σi )Ti (σi )Qj (σj )
+λj Fj (σj )Tj (σj )Qi (σi ) + λi Fi (σi )Ti (σi )Qj (σj )
+Z
+Qi (σi ) = λi→j + λi
+qi→j (τ )dFi (τ )
+µi (σ) =
+
+where
+
+τ ∈σi
+
+We prove this lemma by finding the expected number of sub-cycles in each state i, i.e., within a
+larger renewal reward cycle as defined, the expected number of sub-cycles that start with the driver
+12
+
+being open in state i. This expectation is the mean of a geometric random variable parameterized
+by the probability that the driver will next be open in state j, given the driver is currently open in
+state i. Qi (σi ) is proportional to this probability. (As with Ti (σi ), there is a normalizing constant
+1
+λi Fi (σi )+λi→j ); the larger it is, the fewer sub-cycles spent in state i. It has two components: the
+first is the probability that the state changes before the driver accepts a trip request; the second
+is the probability that the world state is j when the driver completes a trip. Thus, the numerator
+in µi (σ) is proportional to the length of a sub-cycle in state i, times the fraction of sub-cycles that
+are started in state i. The larger Qj (σj ) or Ti (σi ), the more time the driver spends in state i.
+
+4.2
+
+Incentive Compatible pricing in the dynamic model
+
+How can the platform create incentive compatible pricing given the previously described effects?
+Our main result establishes when such IC prices exist, and reveals their form.
+Theorem 3. Let R1 < R2 be target earning rates during non-surged and surge states, respectively.
+There exist prices w = {w1 , w2 } of the form
+wi (τ ) = mi τ + zi qi→j (τ ),
+where m1 , m2 , z2 ≥ 0 (but z1 may be either positive or negative), such that the optimal driver policy
+is to accept every trip in the surge state and all trips up to a certain length in the non-surge state.
+R1
+Furthermore, for R
+∈ (C, 1), there exist fully incentive compatible prices of this form, where
+2
+C =1−
+
+1 Q2 (λ12 T1 − Q1 ) + Q1 (T2 λ1→2 + Q2 )
+∈ [0, 1),
+T1 Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+
+and Ti = λi Fi (σi )Ti ((0, ∞)), and Qi = Qi ((0, ∞)). For such prices, the driver policy to accept all
+requests is the unique optimal driver policy (up to differences of measure 0).
+Section 4.4 contains a proof sketch. To convey intuition, Figure 2a shows pricing functions
+in each state, plotting wiτ(τ ) against τ . Compared to multiplicative pricing with constant wiτ(τ ) ,
+IC surge pricing pays more for short trips and less for long trips. Inversely, IC non-surge pricing
+pays more for long trips than it does for short trips. Further, as τ increases, w1 (τ ) approaches
+w2 (τ ), reflecting the fact that the opportunity cost for long trips does not depend as strongly on
+the state in which it started (as discussed in Section 4.3). Next, observe that IC surge pricing
+w2 (τ ) = m2 τ + z2 q2→1 (τ ) is approximately affine, as q2→1 (τ ) (plotted in Figure 2b) is upper
+λ2→1
+bounded by λ1→2
++λ2→1 . The two components of pricing, mi and zi , thus balance the comparative
+benefit of long and short trips. We give further intuition for the form of payment scheme wi and
+the range [C, 1] in Section 4.3, showing how they emerge from the driver’s opportunity cost.
+Rather surprisingly and contrary to platform design focus, the non-surge state is difficult to
+make incentive compatible. Our result establishes that there always exist payments, for any target
+driver earning rates R1 < R2 , such that accepting every trip in the surge state is driver optimal;
+the same is not true for the non-surge state.11 Figure 3 shows how C changes with the primitives.
+Finally, for a given feasible R1 , R2 , there is a range of mi , zi that form an incentive compatible
+pricing scheme. Why? A driver who rejects a trip request waits to receive another request, during
+which time they do not earn money. This wait time tilts the driver toward accepting any trip
+request to maximize earnings. Thus, there is flexibility in the balance between short and long trip
+R1
+For R
+small enough, no pricing function w1 can be incentive compatible in non-surge periods. A driver would
+2
+rather wait for the far more lucrative surge state.
+11
+
+13
+
+Multiplicative surge
+Multiplicative non-surge
+
+IC surge
+IC non-surge
+
+wi(τ )
+, Price per unit time
+τ
+
+0.8
+1.6
+
+0.6
+
+q2→1(τ )
+
+1.4
+1.2
+1.0
+
+0.4
+
+0.2
+
+0.8
+0.6
+
+0.0
+0.0
+
+0.5
+
+1.0
+
+1.5
+
+2.0
+
+2.5
+
+0.00
+
+3.0
+
+0.25
+
+0.50
+
+0.75
+
+(a) Price per unit time wiτ(τ ) for trips of different
+lengths τ in the each state for Incentive Compatible
+and multiplicative pricing when R2 = 1 and R1 = 23 .
+
+1.00
+
+τ
+
+τ , Length of trip
+
+1.25
+
+1.50
+
+(b) q2→1 (τ ) when λ1→2 = 1, λ2→1 = 4. IC surge
+pricing is well-approximated by an affine function:
+z2 q2→1 (τ ) is approximately constant for longer trips.
+
+Figure 2: The primitives are as follows: λ1 = λ2 = 12, λ1→2 = 1, λ2→1 = 4; in both states,
+trip lengths are distributed according to a Weibull distribution with shape 2 and mean 13 . These
+parameters reflect realistic average trip to wait time values, and that surge tends to be short-lived
+compared to non-surge times.
+0.7
+
+0.8
+
+0.6
+0.6
+
+C
+
+C
+
+0.5
+0.4
+
+0.4
+0.3
+
+Vary both F1 , F2
+Vary F1
+Vary F2
+
+0.2
+0.0
+0.0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+λ2→1
+λ1→2
+
+0.2
+
+1.0
+
+0
+
+Mean trip length
+
+2
+
+4
+
+6
+
+8
+
+10
+
+State change rate
+
+(a) C as the mean trip length changes.
+
+(b) C as λi→j change.
+
+Figure 3: How C, the ratio R1 /R2 at which IC pricing is feasible from Theorem 3, changes (1) with
+respect to the mean trip length, and (2) with respect to λi→j . Except for those that are varied in
+each plot, the primitives are fixed to those used in Figure 2: λ1 = λ2 = 12, λ1→2 = 1, λ2→1 = 4
+and, in both states, trip lengths are distributed according to a Weibull distribution with shape 2
+and mean 13 .
+earnings. The same insight drives Proposition 3.1; even in the single-state model, trips do not have
+)
+to have the same earnings per unit time, w(τ
+τ , as long as they meet some minimum threshold,
+w(τ )
+τ ≥ cw .
+
+14
+
+4.3
+
+Opportunity cost intuition for incentive compatible pricing
+
+We now present some intuition to understand Theorem 3 and our incentive compatible pricing
+scheme. The payment wi (τ ) must account for the driver’s opportunity cost (in a VCG-like manner),
+i.e., how much the driver can expect to earn if they instead reject the trip request. Of course,
+this opportunity cost itself depends on the pricing scheme w. We now break down parts of this
+opportunity cost.
+On-trip opportunity cost. While the driver is on-trip, the world state continues to evolve:
+surge might end or start, affecting the opportunity cost.
+Let φki (τ ) be the expected amount of time that the world is in state k during time (t, t + τ ),
+given that it is in state i at time t. Then, by integrating qi→j (s) from 0 to τ :
+
+
+
+
+λj→i
+1
+i
+φi (τ ) =
+τ+
+qi→j (τ )
+λi→j + λj→i
+λi→j + λj→i
+
+
+
+
+λi→j
+1
+j
+φi (τ ) =
+τ−
+qi→j (τ ) = τ − φii (τ )
+λi→j + λj→i
+λi→j + λj→i
+Several insights emerge:
+One. As trip length τ → ∞, the first summand of each of φii (τ ), φji (τ ) dominates, and this
+component does not depend on starting state i. As τ → ∞, we have φii (τ ) = φij (τ ), φji (τ ) = φjj (τ ).
+The stationary distribution of a positive recurrent CTMC does not depend on the starting state.
+We cannot always construct incentive compatible prices, for any R1 , R2 : as τ → ∞, the opportunity
+cost does not depend on the starting state i, and so payments must be similar, w1 (τ ) ≈ w2 (τ ).
+When all non-surge trips are long, i.e., F1 is concentrated around large values, the earnings rate in
+each state must be similar, R1 ≈ R2 .
+C encodes such constraints, as shown in Figure 3. As the mean of τ ∼ F1 goes to 0, then
+1
+λ12 T1 − Q1 → 0 and so C → 0, and so the range of feasible R
+R2 expands. Similarly, λ2→1 also plays
+an important role. When small, the surge state is long. Thus, a driver will receive many trips
+during surge regardless of how long their last non-surge trip is—and so long trips during non-surge
+are no longer constrained to be highly paid compared to short trips.
+Two. The expected time spent in each state has the form, m0i τ + zi0 qi→j (τ ), matching the form
+of our IC scheme. Thus, we can expect the “network minutes” on-trip opportunity cost – the
+expected earnings during the time the driver would otherwise be on the given trip – to have the
+same form as well.
+Continuation value opportunity cost It is not sufficient to consider just the opportunity cost
+for the duration of the trip: the driver’s counter-factual earnings by rejecting the trip depends
+on future trips accepted. Such counter-factual trips both (1) pay the driver according to their
+starting state even after a world state transition, i.e., the difference between Ri and R̃i above;
+and (2) potentially are still in progress past time t + τ , when the current trip ends. This second
+complication is illustrated in Figure 7, where a driver can extend the time spent on trips starting in
+the surge state by rejecting short surge trips. The effect depends on the lengths of future potential
+trips, i.e., Ti (σi ), and state transitions during those trips, Qi (σi ), and is incorporated in both C
+and the pricing scheme.
+
+15
+
+4.4
+
+Proof sketch of Theorem 3
+
+The result is shown in the appendix by manipulating the derivative of the reward function with
+respect to the policy σ. In particular, when the pricing function is of the given form with the
+appropriate constants mi , zi , then any policy σ = {σ1 , σ2 } can be locally improved by adding
+more trips to it, i.e., the overall reward is increasing as the driver accepts more trips: R(w, σ 0 ) >
+∂
+R(w, σ), ∀σ ( σ 0 . This result follows from ∂u
+R(w, σ) > 0, for all u, σ, given the constraints, where
+u is an upper endpoint of the policy in a state, σi = ∪k (`k , uk ).
+The key step is finding sufficient constraints for this derivative to be positive with a pricing
+function of the given form, given any σi , as opposed to just σi = (0, ∞). This difficulty emerges
+because incentive compatibility is a global condition on the set function R(w, σ). In particular, we
+need to express these constraints simply—e.g., as a function of just Ti ((0, ∞)), Qi ((0, ∞)), instead
+of the values Ti (σi ), Qi (σi ), ∀σi ⊆ R+ . The C presented in the theorem statement results from such
+a set of constraints on mi , zi .
+
+5
+
+Numerics: Incentive Compatibility with Additive Surge
+
+We now analyze surge policies that reflect practice at ride-hailing platforms today. Non-surge
+pricing is typically approximately multiplicative, i.e., w1 (τ ) = m1 τ , where m1 is the base time (and
+distance) rate for a ride. We consider two types of affine surge pricing w2 , which differ in their
+relationship to w1 through a single parameter:
+Multiplicative surge:
+Additive surge:
+
+w2 (τ ) = m2 τ
+w2 (τ ) = m1 τ + a2
+
+m2 ≥ m1
+
+a2 ≥ 0
+
+m2
+Multiplicative surge uses a multiplier m2 larger than the base fare m1 , and m
+is reported on the
+1
+heat-map as in Figure 1a; additive surge uses the same base fare multiplier m1 but adds a factor
+a2 that is reported on the heat-map as in Figure 1b. These functions are trivial to calculate, given
+fixed primitives and target earnings rate R2 in the surge state.
+Figure 8 in the Appendix shows these types of pricing, compared to the incentive compatible
+pricing function. Multiplicative surge has constant w2τ(τ ) and so under-pays short trips and overpays long-trips compared to IC pricing. Additive surge asymptotically (for large τ ) pays the same as
+multiplicative non-surge pricing, i.e. limτ →∞ w2τ(τ ) = limτ →∞ w1τ(τ ) = m1 . As a result, it over-pays
+short trips and under-pays long trips compared to IC surge pricing.
+Uber has recently started a transition from multiplicative to additive surge. In this section,
+we argue that the additive component is more important than the multiplicative component for
+incentive compatibility in parameter regimes of interest.
+
+5.1
+
+Computing optimal driver policies
+
+Theorem 2 establishes that multiplicative pricing (and, more generally, affine pricing) may not
+be incentive compatible in general. However, we still wish to compare the various types of surge
+pricing, and to analyze the regimes under which each is incentive compatible.
+However, to do this comparison, one needs to calculate optimal driver policies with respect to a
+pricing function. Recall that the optimal driver policy in each state σi is some subset of R+ . Finding
+such optimal subsets for general pricing functions w is intractable, and so Theorem 2 is particularly
+important for computational reasons. It establishes that, for any affine pricing structure in the
+surge state, all driver optimal policies are of the form (0, t1 ) ∪ (t2 , ∞), for some t1 , t2 . We only
+16
+
+Additive Surge
+
+50
+
+Multiplicative Surge
+
+10
+8
+
+30
+
+6
+
+λ2
+
+λ2→1
+
+40
+
+20
+10
+
+Additive Surge
+
+Multiplicative Surge
+
+4
+2
+
+1.0
+
+1.5
+
+2.0
+
+2.5
+R2
+
+3.0
+
+3.5
+
+4.0
+
+2
+
+4
+
+6
+
+8
+
+10
+
+λ1→2
+
+(a) With R2 , surge state earnings rate, and λ2 , surge
+state job arrival rate. R2 ∈ [1.1, 3] is common in
+practice.
+
+(b) With λ2→1 , λ1→2 , rates for world state changing.
+λ2→1  λ1→2 is common in practice.
+
+Figure 4: Incentive compatibility for each type of surge. The shaded regions are where the respective
+scheme is incentive compatible in the surge state (σ2 = (0, ∞) is optimal). When not varied,
+λ1 = λ2 = 10, λ1→2 = 1, λ2→1 = 4, R2 = 3.33, R1 = 1, and trip lengths in both states are
+distributed according to a Weibull distribution with shape 2 and mean 0.3. We assume every trip
+is accepted in the non-surge state.
+need to find the values for these parameters that maximize the driver reward among sets of this
+form, and the resulting policy is optimal; this search is tractable with grid search and numeric
+integration. Note that the proposition does not establish uniqueness of driver optimal policies; we
+thus choose the policy that maximizes the fraction of trips accepted in our computations.
+
+5.2
+
+Results
+
+We now study the regimes in which each surge mechanism is incentive compatible. The shaded
+regions in Figure 4 correspond to areas where the surge pricing function is fully incentive compatible
+in the surge state (σ2 = (0, ∞) is optimal). For example, when R2 = 2, λ2 = 30, additive surge is
+incentive compatible, but multiplicative surge is not.
+As illustrated in Appendix B with data from the RideAustin marketplace, ride-hailing platforms
+most often operate in the following parameter regimes: (1) surge is between 1.1 and 3 times more
+valuable than non-surge; (2) surge is short-lived compared to non-surge periods (λ2→1  λ1→2 );
+λ2
+(3) and in a typical surge the driver receives several trip requests ( λ2→1
+> 1, but small) but only
+1
+completes one or two such trips ( λ2→1 ≈ mean trip length). Additive surge is incentive compatible
+in much more of this regime than is multiplicative surge, supporting Uber’s recent shift from
+multiplicative to additive surge.
+We can also draw qualitative insights in terms of sensitivity to the primitives, similar in spirit
+to effects in the form of C in Theorem 3. Figure 4a shows the sensitivity with respect to λ2 and
+R2 . As the arrival rate of jobs in the surge state, λ2 , increases, it becomes optimal for the driver
+to reject some trips: “cherry-picking” becomes easier, as the driver is likely to receive many more
+trip requests before surge ends. Similarly, as surge becomes increasingly more valuable compared
+17
+
+to non-surge (R2 increases), the incentive to reject non-valuable trips in the surge state increases.
+Additive surge contains an interesting non-monotonicity: when R2  R1 , the effect above
+dominates, and long trips are rejected. When the surge state is moderately more valuable than
+non-surge, additive surge effectively balances the payments for different trip lengths and so is
+incentive compatible. When the two states are nearly equally valuable, again the optimal driver
+policy rejects long trips: our single-state model approximates the system, and so additive surge
+may not be incentive compatible, cf. Theorem 1.
+Figure 4b shows the effects of the relative lengths of surge and non-surge. Here, the two types
+2→1
+of surge are incentive compatible in opposing regimes. When λλ1→2
+is large, surge is comparatively
+rare and short, and so short trips are naturally under-valued – accepting them decreases the time
+spent in the surge state – and additive surge is incentive compatible. With long-lasting surge (small
+λ2→1
+λ1→2 ), on the other hand, the world almost seems unchanging during surge, and so multiplicative
+surge becomes incentive compatible.
+The short, in-frequent surge setting – in which additive surge is preferable – is pre-dominant
+in the RideAustin data used in Section 6. Nevertheless, our analysis suggests that when surge is
+expected to last throughout the day, such as with a predictable demand shock, multiplicative surge
+may be preferable. (However, switching between different payment functions may be undesirable
+for transparency and communication reasons).
+
+6
+
+Empirical Comparison of Surge Mechanisms
+
+We now study how the various surge mechanisms affect driver earnings in practice using publicly
+available trips data from RideAustin, a nonprofit ride-hailing company based and operating in
+Austin, Texas. We show that additive surge effectively balances the relative value of short and long
+surged trips, in contrast to the multiplicative surge pricing scheme used in practice by the platform,
+which comparatively undervalues short surged trips.
+After reverse-engineering the functional form of the actual driver payments, we calculate both
+status quo (with multiplicative surge) and simulated (with additive surge) driver earnings. For each
+payment scheme, we estimate the driver’s value in receiving and accepting a given trip request, as
+a function of the trip—where “value” is the increase (or decrease) in the driver’s earnings over the
+next 90 minutes as a result of accepting the given request.
+We note that this data is not the result of an experiment with additive surge, and thus our
+analysis describes what changes would occur in driver earnings with the new pricing function if
+driver behavior does not change.12 Thus, the additive surge exercise is a calibrated simulation for
+such pricing functions in a realistic setting: such as when surge has more than two levels and may
+not evolve in a Markovian manner, the driver is not paid for the time it takes to drive to the
+rider, and where location plays a role. Furthermore, as the data observed is at the completed trip
+level (i.e., requests which the driver accepted), results showing that the driver would be better
+off accepting the same trip in the counter-factual world should directionally hold even as driver
+behavior changes.
+This section is organized as follows: Section 6.1 describes the data, context, and analysis,
+and Section 6.2 contains results. Appendix Section B contains supporting details, and both the
+data (RideAustin, 2017) and our replication code is available online.13
+12
+We are not concerned with rider behavior changing, as with decoupled pricing the rider pricing can remain the
+same even as the driver payments change.
+13
+https://github.com/nikhgarg/driver_surge_rideaustin
+
+18
+
+6.1
+
+Data setting and analysis description
+
+This analysis is enabled by the rich dataset, spanning from June 2016 to April 2017, during which
+RideAustin experienced tremendous growth and was one of the largest ride-hailing marketplaces
+serving the area. The data is at the completed trip level. Komanduri et al. (2018) study the
+same dataset and provide useful statistics about driver earnings, platform growth, and the service’s
+relationship to public transportation.
+We consider the period from February 16, 2017, to April 10, 2017, as (1) we can reliably reverse
+engineer the platform’s payment function during this period, and (2), the underlying marketplace
+was fairly stable during this period, except for one week of high, atypical demand and surge,
+corresponding to the SXSW Music Festival held in Austin. (Figure 10a in the Appendix shows the
+trips per day during this period). We discard trips longer than 1 hour or shorter than 30 seconds and
+other trips with data errors; 6440 such trips were discarded. We analyze 503,383 completed trips
+by 3811 drivers. (For analyses aggregating multiple trips, such as driver earnings in a given time
+period, we discard aggregations that include a discarded trip). The full pre-processing sequence is
+described in the appendix.
+Several dataset features make it attractive for our analysis when compared to other publicly
+available ride-hailing datasets. Most importantly, there are consistent driver IDs attached to each
+trip. Second, for each trip, there is a value for the total fare paid by the rider, along with terms
+that contribute to this calculated fare: trip duration (in time and distance), payment rate (in time
+and distance), surge factor, standard additive fare (Pickup), and trip class (Regular vs Luxury vs
+SUV).14 These features allow us to track a driver’s trajectory and earnings over a day and the entire
+year, reverse engineer how RideAustin calculates payments, and simulate additive surge payments.
+6.1.1
+
+Constructing payment functions
+
+To simulate driver earnings with additive surge, we must first reverse engineer how the platform’s
+actual total fare was calculated, a non-trivial task as the calculation changes over time in the dataset
+and is not documented. We find that this status quo fare is approximately:15
+max(B + Pickup, MinFareForClass) × SurgeFactor.
+B , (DistanceRate × Distance) + (T imeRate × T ime) is the trip time and distance fare, only
+counting when the rider is in the car (recall that current practice deviates from the theory in that
+driving to the rider is typically unpaid). MinFareForClass is $4 for Regular trips and $10 otherwise.
+SurgeFactor of 1 indicates no surge, comprising 70% of trips. It increments in multiples of 0.25,
+and 97% of surged trips have a factor of at most 3. Each of the above payment components are
+given as columns in the dataset.
+Then, we construct the following payment for each trip, to simulate how the driver would be
+paid with additive surge, i.e., Additive surge with base fare:
+max(B + Pickup, MinFareForClass) + [(SurgeFactor − 1) × ASurgeF actor .]
+ASurgeF actor are (calculated) surge factor dependent constants that are set such that this alternative
+payment function spends the same amount of money overall for each surge factor as does the
+status quo fare. In other words, the alternative payment does not change the mean trip payment
+14
+
+Our results include trips from all trip classes, as a given driver may be cross-dispatched across trip classes.
+The payment includes a multiplier of 1.01 and an additive value of 2.02. From publicly available information, we
+assume that the platform takes a fixed commission independent of trip length, and so the driver receies everything
+but the $2.02 (RideAustin, 2019). On average, this reversed engineered fare differs from total fare by less than 1 cent.
+15
+
+19
+
+conditional on the surge factor, but does change how money is allocated to various trips within
+that surge. This choice reflects our theory in assuming an exogenous Ri and removes any degrees of
+freedom in setting ASurgeF actor . If instead we used a single constant across surge factors, Additive
+surge with base fare may pay different amounts on average for the same surge factor than does the
+status quo fare.
+6.1.2
+
+Matching open drivers
+
+We are interested in the value of a trip request to a driver A; to calculate this value, we need a
+measure of the counter-factual: what would have happened if the driver does not accept (or does
+not receive) a trip of length τ . We match the focal driver A of each given completed trip to a nearby
+driver B who is also open to receive a trip request at the time of the request. Driver B’s earnings
+then serve as a counter-factual for focal driver A’s earnings had driver A rejected the request.
+We estimate matches for each focal driver A as follows. We observe trip start and end times
+and locations but not driver locations when they are not on a trip or even whether they still have
+their app open. We also observe the time at which a driver received a given trip request but not
+their location at this time, due to what seems like a data export bug.
+This data does not allow us to simply query for other open drivers nearby who could have (but
+did not) receive a given trip request, as we do not directly observe drivers’ movements while they
+are not on a trip. Instead, we leverage recent, nearby completed trips to identify drivers who must
+still be nearby, as follows.
+First, we define a “matching distance” between pairs of (date-time, location) tuples. Events
+with small matching distances occur nearby and at similar times. The exact function with how
+time and geographic distance are weighted is specified in the appendix. For driver’s A’s time and
+location, we use the trip’s start location (where the rider was) and the dispatch time (when the
+rider’s request was accepted). Then, we find a driver B who recently completed a trip nearby and
+has yet to start another trip. We do so by calculating the matching distance between driver A and
+each recent completed trips’ destination time and location. We choose the closest match, filtering
+out drivers who are the same as the given trip’s driver, who have started another trip before the
+given trip’s start time, or who ended their session (did not start any trip in the next hour).
+In the appendix, we provide results from a different but complementary matching method, as
+well as additional information about the matches and their quality.
+6.1.3
+
+Calculating the value of a trip to a driver
+
+We now measure how valuable a trip is to a driver, through a notion we call trip indifference: given
+a specific trip request length τ , in expectation the driver is at least as well off accepting the request
+as rejecting it, assuming some future behavior. Given focal driver A with trip request τ and a
+matched driver B, we estimate this measure as illustrated in Figure 5: we compare the two drivers’
+future earnings over the 90 minutes after the accepted trip begins—the higher driver A’s earnings
+over that of matched driver B, the more valuable the given trip request τ . If there is no difference,
+i.e., the matched driver in expectation earns the same amount, then the given driver should be
+“indifferent” between accepting or rejecting the request.16
+Suppose trips are mis-priced and do not fully incorporate the drivers’ temporal externalities.
+Then, trips of different lengths τ would vary in the value delivered to drivers. We would expect
+16
+
+Trip indifference is related to our theoretical notion of incentive compatibility as follows. Suppose the given
+driver accepts all future requests over the next 90 minutes. Then, if a payment scheme is incentive compatible, the
+earnings difference between the given driver who accepts trip τ and the matched driver will be at least 0 for all τ .
+
+20
+
+Figure 5: Earnings of focal vs matched driver. The value of a trip τ to the focal driver is the
+difference (conditional on τ ) between the 90 minute earnings of the focal and matched drivers.
+Diagonal stripes represent earnings unknown at the time the focal driver A starts trip τ but are
+later observed in the data.
+Payment = Status quo
+
+Earnings difference
+
+50
+40
+
+Trip time in seconds
+(29.0, 699.0]
+
+30
+
+(699.0, 3598.0]
+
+Payment = Additive surge with base fare
+
+20
+10
+0
+−10
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+Surge factor
+
+2
+
+3
+
+4
+
+5
+
+Surge Factor
+
+Figure 6: Difference in earnings over the next 90 minutes for the driver of a given accepted trip
+request, and a matched driver who also was open nearby at the time of the request, conditional
+on surge factor (rounded to nearest 0.5) and length of trip. Error bars are 95% bootstrapped
+confidence intervals.
+to see the average earnings differential, conditional on trip length, to vary as a function of the trip
+length; i.e., receiving a long trip during surge may be more valuable to a driver than is receiving a
+short trip.17
+
+6.2
+
+Results: value of short versus long trips
+
+Figure 6 shows the difference in value between short (below the median trip length) and long (above
+the median) trips, as it changes with surge. As expected, it is more beneficial for drivers to receive
+trips with higher surge factors. However, with the platform’s existing multiplicative surge payment
+17
+Bias in the matching process may shift the expected earnings difference, but should not differentially affect the
+measurement for each payment function: the same matches are used for each. As robustness checks, in the appendix
+we vary both the matching function and the length of time over which we calculate the two drivers’ earnings.
+
+21
+
+function, only long trips become more valuable as the surge factor increases; even at high surge
+factors, drivers would have often had higher earnings had they rejected short trip requests. With
+additive surge, in contrast, trips of all lengths become more beneficial on average as surge increases.
+During high surge times, additive surge increases the value of short trips by about $15 per hour.
+In the appendix, we further simulate a world with the RideAustin data, but with surge being
+common and extremely valuable (we “flip” the surge factor). This analysis illustrates that our
+other insights also extend to practice, with there being settings where non-surge periods cannot be
+made incentive compatible, and where neither multiplicative nor additive surge correctly balance
+the value of short and long trips. We also show how hourly driver earnings during a single “shift”
+change with additive and multiplicative surge, and how the former leads to more stable earnings.
+Overall, this analysis suggests the substantial difference that changing the structure of payments
+can make, and the comparative benefits of additive surge in practice under common regimes in
+ride-hailing.
+
+7
+
+Conclusion
+
+In this work, we studied the problem of designing incentive compatible mechanisms for ride-hailing
+marketplaces. We presented a dynamic model to capture essential features of these environments.
+Even-though our model is simple and stylized, it highlights how driver incentives and subsequently
+dynamic pricing strategies would change in the presence of stochasticity. Our numeric and empirical
+analysis suggests the importance of such components in practice. We hope our work inspires other
+researchers in this area to incorporate such uncertainty in their models, as it is one of the biggest
+challenges faced in practice.
+An important direction for extending our work is studying matching and pricing polices jointly,
+i.e., how to best match open drivers to riders in the presence of such effects, cf. (Özkan and Ward,
+2016; Banerjee et al., 2017a,b; Feng et al., 2017; Zhang et al., 2017; Banerjee et al., 2018; Hu and
+Zhou, 2018; Korolko et al., 2018; Özkan, 2018; Ashlagi et al., 2018; Kanoria and Qian, 2019). In
+this work, we look at incentive compatible pricing. The platform, in addition to pricing, can use
+matching policies to align incentives.
+
+References
+Philipp Afèche, Zhe Liu, and Costis Maglaras. Ride-Hailing Networks with Strategic Drivers: The
+Impact of Platform Control Capabilities on Performance. SSRN Electronic Journal, 2018. ISSN
+1556-5068. doi: 10.2139/ssrn.3120544. URL https://www.ssrn.com/abstract=3120544.
+Arash Asadpour, Daniel Freund, and Garrett J. van Ryzin. Escrow Payments: A Smoother
+Driver Pay Mechanism, October 2019. URL https://www.abstractsonline.com/pp8/#!
+/6818/presentation/7365.
+Itai Ashlagi, Maximilien Burq, Patrick Jaillet, and Amin Saberi. Maximizing efficiency in dynamic
+matching markets. arXiv preprint arXiv:1803.01285, 2018. URL https://arxiv.org/pdf/
+1803.01285.pdf.
+Baris Ata, Nasser Barjesteh, and Sunil Kumar. Spatial Pricing: An Empirical Analysis of Taxi
+Rides in New York City. Working Paper, 2019.
+Shane Auerbach. Paying Rideshare Drivers for Pickups, October 2019. URL https://simons.
+berkeley.edu/talks/tbd-78.
+22
+
+Jiaru Bai, Kut C. So, Christopher S. Tang, Xiqun (Michael) Chen, and Hai Wang. Coordinating
+Supply and Demand on an On-Demand Service Platform with Impatient Customers. Manufacturing & Service Operations Management, June 2018.
+Siddhartha Banerjee, Carlos Riquelme, and Ramesh Johari. Pricing in Ride-Share Platforms: A
+Queueing-Theoretic Approach. SSRN Electronic Journal, 2015. ISSN 1556-5068. doi: 10.2139/
+ssrn.2568258. URL http://www.ssrn.com/abstract=2568258.
+Siddhartha Banerjee, Daniel Freund, and Thodoris Lykouris. Pricing and optimization in shared
+vehicle systems: An approximation framework. In Proceedings of the 2017 ACM Conference on
+Economics and Computation, pages 517–517. ACM, 2017a.
+Siddhartha Banerjee, Sreenivas Gollapudi, Kostas Kollias, and Kamesh Munagala. Segmenting
+two-sided markets. In Proceedings of the 26th International Conference on World Wide Web,
+pages 63–72, 2017b.
+Siddhartha Banerjee, Yash Kanoria, and Pengyu Qian. State Dependent Control of Closed Queueing
+Networks with Application to Ride-Hailing. March 2018. URL http://arxiv.org/abs/1803.
+04959.
+Dimitris J. Bertsimas and Garrett van Ryzin. A Stochastic and Dynamic Vehicle Routing Problem
+in the Euclidean Plane. Operations Research, 39(4):601–615, August 1991. ISSN 0030-364X,
+1526-5463.
+Dimitris J. Bertsimas and Garrett van Ryzin. Stochastic and Dynamic Vehicle Routing in the
+Euclidean Plane with Multiple Capacitated Vehicles. Operations Research, 41(1):60–76, February
+1993. ISSN 0030-364X, 1526-5463.
+Omar Besbes, Francisco Castro, and Ilan Lobel. Spatial Capacity Planning. SSRN Electronic
+Journal, 2018a. ISSN 1556-5068. doi: 10.2139/ssrn.3292651. URL https://www.ssrn.com/
+abstract=3292651.
+Omar Besbes, Francisco Castro, and Ilan Lobel. Surge Pricing and Its Spatial Supply Response.
+SSRN Electronic Journal, 2018b. ISSN 1556-5068. doi: 10.2139/ssrn.3124571. URL https:
+//www.ssrn.com/abstract=3124571.
+Sushil Bikhchandani. Intermediated surge pricing. Journal of Economics & Management Strategy,
+29(1):31–50, 2020.
+Kostas Bimpikis, Ozan Candogan, and Daniela Saban. Spatial Pricing in Ride-Sharing Networks.
+(ID 2868080), November 2016. URL https://papers.ssrn.com/abstract=2868080.
+Nicholas Buchholz. Spatial Equilibrium, Search Frictions and Efficient Regulation in the Taxi
+Industry. 2017. URL https://scholar.princeton.edu/sites/default/files/nbuchholz/
+files/taxi_draft.pdf.
+Gérard P. Cachon, Kaitlin M. Daniels, and Ruben Lobel. The Role of Surge Pricing on a Service
+Platform with Self-Scheduling Capacity. Manufacturing & Service Operations Management, 19
+(3):368–384, June 2017. ISSN 1523-4614.
+Juan Camilo Castillo, Dan Knoepfle, and Glen Weyl. Surge Pricing Solves the Wild Goose Chase.
+pages 241–242. ACM Press, 2017. ISBN 978-1-4503-4527-9. doi: 10.1145/3033274.3085098. URL
+http://dl.acm.org/citation.cfm?doid=3033274.3085098.
+23
+
+M Keith Chen and Michael Sheldon. Dynamic Pricing in a Labor Market: Surge Pricing and
+Flexible Work on the Uber Platform. 2016. doi: 10.1145/2940716.2940798.
+Yiwei Chen and Ming Hu. Pricing and Matching with Forward-Looking Buyers and Sellers. SSRN
+Scholarly Paper ID 2859864, Social Science Research Network, Rochester, NY, July 2018. URL
+https://papers.ssrn.com/abstract=2859864.
+Cody Cook, Rebecca Diamond, Jonathan Hall, John List, and Paul Oyer. The Gender Earnings
+Gap in the Gig Economy: Evidence from over a Million Rideshare Drivers. June 2018. doi:
+10.3386/w24732. URL https://www.nber.org/papers/w24732.
+Judd Cramer and Alan B. Krueger. Disruptive Change in the Taxi Business: The Case of Uber.
+American Economic Review, 106(5):177–182, May 2016. ISSN 0002-8282. doi: 10.1257/aer.
+p20161002.
+Guiyun Feng, Guangwen Kong, and Zizhuo Wang. We are on the way: Analysis of on-demand
+ride-hailing systems. 2017.
+Amihai Glazer and Refael Hassin. The economics of cheating in the taxi market. Transportation
+Research Part A, 17(1):25–31, 1983.
+Harish Guda and Upender Subramanian. Your uber is arriving: Managing on-demand workers
+through surge pricing, forecast communication, and worker incentives. Management Science,
+65(5):1995–2014, 2019. doi: 10.1287/mnsc.2018.3050. URL https://doi.org/10.1287/mnsc.
+2018.3050.
+Jonathan V. Hall, Cory Kendrick, and Chris Nosko.
+The effects of Uber’s
+surge pricing:
+A case study.
+2015.
+URL https://eng.uber.com/research/
+the-effects-of-ubers-surge-pricing-a-case-study/.
+Jonathan V. Hall, John J. Horton, and Daniel T. Knoepfle.
+Labor Market Equilibration:
+Evidence from Uber.
+2017.
+URL https://eng.uber.com/research/
+labor-market-equilibration-evidence-from-uber/.
+Ming Hu and Yun Zhou. Dynamic type matching. Rotman School of Management Working Paper,
+(2592622), 2018.
+Vijay Kamble. Revenue Management on an On-Demand Service Platform. Operations Research
+Letters, 47(5):377–385, 2019.
+Yash Kanoria and Pengyu Qian. Near Optimal Control of a Ride-Hailing Platform via Mirror
+Backpressure. March 2019. URL http://arxiv.org/abs/1903.02764.
+Anurag Komanduri, Zeina Wafa, Kimon Proussaloglou, and Simon Jacobs. Assessing the impact of
+app-based ride share systems in an urban context: Findings from austin. Transportation Research
+Record, 2672(7):34–46, 2018.
+Nikita Korolko, Dawn Woodard, Chiwei Yan, and Helin Zhu. Dynamic Pricing and Matching
+in Ride-Hailing Platforms. SSRN Electronic Journal, page 40, 2018. ISSN 1556-5068. doi:
+10.2139/ssrn.3258234. URL https://www.ssrn.com/abstract=3258234.
+Yanzhe Lei and Stefanus Jasin. Real-time dynamic pricing for revenue management with reusable
+resources and deterministic service time requirements. 2016.
+24
+
+Alice Lu, Peter I. Frazier, and Oren Kislev. Surge Pricing Moves Uber’s Driver-Partners. In
+Proceedings of the 2018 ACM Conference on Economics and Computation, EC ’18, pages 3–3,
+New York, NY, USA, 2018. ACM. ISBN 978-1-4503-5829-3. doi: 10.1145/3219166.3219192.
+Hongyao Ma, Fei Fang, and David C. Parkes. Spatio-Temporal Pricing for Ridesharing Platforms.
+January 2018. URL http://arxiv.org/abs/1801.04015.
+Hao Yi Ong, Daniel Freund, and Davide Crapis. Driver positioning and incentive budgeting with
+an escrow mechanism for ridesharing platforms, 2020.
+Erhun Özkan. Joint pricing and matching in ridesharing systems. 2018.
+Erhun Özkan and Amy Ward. Dynamic Matching for Real-Time Ridesharing. SSRN Electronic
+Journal, 2016. ISSN 1556-5068. doi: 10.2139/ssrn.2844451. URL http://www.ssrn.com/
+abstract=2844451.
+RideAustin. Dataset, 2017. URL https://data.world/ride-austin.
+RideAustin. Driver rates, 2019. URL http://www.rideaustin.com/drivers/rates.
+Uber.
+Community Guidelines,
+community-guidelines/us-en/.
+Uber.
+Dependable Earnings,
+dependable-earnings/.
+
+2019b.
+
+2019a.
+
+URL
+
+https://www.uber.com/legal/
+
+URL https://www.uber.com/drive/resources/
+
+Uber.
+New
+Driver
+Surge,
+2019c.
+URL
+your-questions-about-the-new-surge-answered/.
+
+https://www.uber.com/blog/
+
+Uber. How are fares calculated, 2019d. URL https://help.uber.com/riders/article/
+how-are-fares-calculated?nodeId=d2d43bbc-f4bb-4882-b8bb-4bd8acf03a9d.
+Uber. Service Fee, 2019e. URL https://marketplace.uber.com/pricing/service-fee.
+Abraham Wald. Sequential Analysis. Courier Corporation, 1973.
+Pu Yang, Krishnamurthy Iyer, and Peter Frazier. Mean field equilibria for resource competition in
+spatial settings. Stochastic Systems, 8(4):307–334, 2018.
+Lingyu Zhang, Tao Hu, Yue Min, Guobin Wu, Junying Zhang, Pengcheng Feng, Pinghua Gong,
+and Jieping Ye. A taxi order dispatch model based on combinatorial optimization. In Proceedings
+of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining,
+pages 2151–2159. ACM, 2017.
+
+25
+
+APPENDIX TABLE OF CONTENTS
+Appendix A Additional discussion and information
+A.1 Platform objective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+A.2 Driver earnings in each state . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+A.3 Model’s relationship to practice . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+A.4 Supplementary figures . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+Appendix B More empirics
+B.1 Additional results and facts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+B.1.1 Model validity . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+B.1.2 Regime with frequent, valuable surge . . . . . . . . . . . . . . . . . . . . . . .
+B.1.3 Driver earnings variance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+B.2 Empirical analysis additional information . . . . . . . . . . . . . . . . . . . . . . . .
+B.2.1 Pre-processing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+B.2.2 Payment functions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+B.2.3 Matching trips . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+B.2.4 Trip indifference . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+Appendix C Proofs of single state model results
+C.1 Driver reward . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+C.2 Proof of Theorem 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+C.3 Proof of Proposition 3.1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+C.4 Uniqueness of optimal policy for single-state model . . . . . . . . . . . . . . . . . . .
+Appendix D Proofs of dynamic model results
+D.1 Driver reward . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+D.2 Proof strategy for incentive compatible pricing and structural results . . . . . . . . .
+D.3 Auxiliary lemmas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+D.3.1 Notation and assumptions . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+D.3.2 Derivative derivation and comments . . . . . . . . . . . . . . . . . . . . . . .
+D.3.3 Lemmas for driver policy in response to affine pricing . . . . . . . . . . . . .
+D.3.4 Lemmas for IC policy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+D.4 Proofs of main results, Theorems 2 and 3 . . . . . . . . . . . . . . . . . . . . . . . .
+D.5 Proofs of auxiliary lemmas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+D.5.1 Derivative derivation and comments . . . . . . . . . . . . . . . . . . . . . . .
+D.5.2 Lemmas for driver policy in response to affine pricing . . . . . . . . . . . . .
+D.5.3 Lemmas for IC policy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+26
+
+27
+28
+29
+30
+31
+32
+35
+36
+37
+37
+37
+37
+39
+41
+41
+44
+45
+47
+50
+55
+56
+57
+57
+57
+58
+62
+62
+62
+64
+
+A
+
+Additional discussion and information
+
+A.1
+
+Platform objective
+
+Our focus in this work is on designing incentive compatible payment functions for drivers. Here, we
+establish that this task is a sub-problem of the comprehensive platform pricing problem—one that
+can be studied separately given the components we considered exogenous in our model description.
+We work with the dynamic model, and suppose that the platform’s primary objective is profit
+(our argument also trivially holds for revenue, trips served, welfare, or other objectives). With our
+assumption of a single, earnings-maximizing driver, the platform’s overall challenge is as follows.
+On the rider side, we suppose that the two world state periods, i ∈ {1, 2}, are induced by latent
+demand shocks. The platform’s design lever is the pricing policy p = {p1 , p2 }, where pi (τ ) indicates
+the rider price for trip length τ in world state i. Rider demand depends on the prices, inducing
+request rates and distributions λpi , Fip through a standard demand model for each trip: a rider with
+latent demand for trip τ requests a ride if the price is no more than their valuation for the trip
+(without substituting for trips of different lengths).
+On the driver side, as detailed in our model formulation, the driver chooses a strategy σ to
+maximize earnings rate R(w, σ, λpi , Fip ), where the additional arguments emphasize that earnings
+depend on rider prices through induced demand. Further, the driver has an outside option earnings rate of R, and will participate in the system only if it is possible to achieve earnings rate
+R(w, σ, λpi , Fip ) ≥ R with some strategy σ.
+The set S of rides served by the platform are those that are both requested by riders (as induced
+by pricing p and denoted by Support(Fip )) and accepted by the driver (denoted by driver strategy
+σ):
+S = Support(Fip ) ∩ σ.
+Rev(p,λp ,F p ,σ,t)
+
+i
+i
+Let Rev(p, λpi , Fip , σ) = lim inf t→∞
+denote the resulting revenue rate for the platform,
+t
+i.e., the rate paid by riders for served trips.
+Putting things together, the platform’s profit maximization problem is as follows.
+
+maximize
+p,w
+
+Rev(p, λpi , Fip , σ ∗ ) − R(w, σ ∗ , λpi , Fip )
+
+subject to R(w, σ ∗ , λpi , Fip ) ≥ R
+
+(1)
+
+R(w, σ, λpi , Fip )
+
+∗
+
+σ ∈ arg max
+σ
+
+Where the first constraint is for driver participation, and the second for incentive compatibility
+(where the arg max is not unique, assume that the driver chooses the policy σ with largest measure.).
+With this formulation, the platform must jointly optimize prices p and payments w, as both together
+determine the set of trips served and the profit for each such trip. Such a tightly connected
+optimization would preclude the approach taken in this work, where we focus on designing the
+payment functions for drivers, holding prices p fixed. However, the optimization can be rewritten.
+Program (2) below yields the same optimal value as Program (1). For each solution, the same
+set of rides S are served at the same prices p as in a matching solution of Program (1).
+maximize
+p,w
+
+Rev(p, λpi , Fip , σ ∗ ) − R
+
+subject to σ ∗ = Support(Fip )
+R(w, σ ∗ , λpi , Fip ) = R
+σ ∗ ∈ arg max R(w, σ, λpi , Fip )
+σ
+
+27
+
+(2)
+
+The reformulation in Proposition A.1 follows from a simple insight: in our model with no driver
+private information, a driver rejecting a request is equivalent to the rider not requesting the trip
+in terms of how it affects the set S of trips served – and the platform can predict such rejections
+perfectly. Then, for any optimal solution of Program (1) in which a rider requests a trip τ but
+the driver rejects it, the platform can equivalently raise rider prices until no rider requests such a
+trip, Fip (τ ) = 0, and so the driver accepts all requested trips lengths. Further, the driver earnings
+constraint R(w, σ ∗ , λpi , Fip ) ≥ R is of course tight: driver payments can otherwise be proportionally
+scaled down, as scaling w does not affect incentive compatibility.
+With Program (2), the driver payment function w and induced driver strategies σ just appear
+in the constraints. Given each potential choice of rider pricing function p and induced demand
+λpi , Fip (i.e., which trips to service at what prices), the platform must determine how to pay drivers
+such that they accept every request, i.e., the platform must choose payments wi such that the
+participation and IC constraints are met. In this work, we focus on this challenge, holding rider
+prices p and thus demand λi , λpi , Fi , Fip , fixed. Note that in the main text we denote the
+challenge as finding payments such that σ ∗ = {(0, ∞), (0, ∞)}, instead of σ ∗ = Support(Fip ). The
+two notations are equivalent: we can trivially add to a driver’s policy trips lengths where the
+measure under Fip is zero, as such trips do not affect driver earnings. We use the former notation
+for convenience.
+
+A.2
+
+Driver earnings in each state
+
+Recall that in Lemma 1, we decompose the driver reward into reward rates for each world state,
+Ri (wi , σi ), denoting the earnings rate while the driver is either open in i or on a trip that started
+in i. In our theoretical pricing results in Section 4, we show how to construct incentive compatible
+pricing given choices of average earnings in each state, i.e., setting Ri (wi , σi ) = Ri for some R1 , R2 .
+These rates, subject to the participation constraint that overall earnings R(w, σ) ≥ R, is a design
+choice for the platform. Here, we provide some intuition for how to make this choice.18
+Business constraint from revenues. The platform’s revenue rate can be decomposed
+just
+R
+1
+
+pi (τ )dFi (τ )
+
+like the driver earnings rate, with state i revenue rate, Revi (pi , σi , λpi , Fip ) = Fi (σi ) Tii(σi )
+.
+Latent demand and the choice of prices pi together induce platform revenue rates for each world
+state. Then, the per-state driver earnings rates Ri could be approximately set as a fixed fraction
+of revenue
+Ri = α Revi (pi , σi , λpi , Fip )
+τ ∈σ
+
+for some α. While in our model we have a constraint on per-state driver earnings assuming the driver
+accepts every trip, in practice a platform may desire to constrain realized payments with revenue.
+However, neither the revenue nor driver decisions (and hence actual payments) can be predicted
+perfectly ahead of time, and so the platform must either dynamically adjust α or otherwise work
+with approximations that are correct in expectation. How to do so well is in practice an interesting
+machine learning prediction problem.
+The above choice passes on the revenue earned in each state to drivers, and so represents a
+partially decoupled setting: at the trip level, the amount paid to drivers may deviate from that
+paid by the rider, but prices are coupled on average at the level of a surge state. In practice this
+simple rule helps ensure that individual prices for a rider and driver do not differ by too much,
+which may be desirable for transparency and driver satisfaction reasons.
+18
+The rider-side pricing problem of setting average prices and thus revenue Revi , given the latent demand, is
+potentially easier as the primary goal is a short-term allocation of the supply (drivers) to the riders who most value
+the service. The driver side problem, as discussed, is trickier as there are both short- and long-term effects.
+
+28
+
+Driver positioning. However, the question of at what level to best decouple prices, and
+e.g., how to potentially transfer money between different surge states across time and space, is an
+interesting one for future work. Here, we describe one potential rationale for optimizing Ri .
+Empirically, Lu et al. (2018) find that drivers respond to real-time surge prices (displayed
+through a heat-map) by re-positioning themselves to surge areas, an effect that is in addition to
+drivers choosing to drive (activating) in times and places where they expect to see surge. Thus, a
+higher surge earnings rate R2 translates to more drivers during surge, as a result of both (a) short
+term, real-time movement toward surge due to seeing the heat-maps as in Figure 1, and (b) drivers
+logging on when and where there tends to be surge. A platform could thus choose the relative values
+of Ri as a lever for this type of re-positioning. For example, Ong et al. (2020) describe how Lyft
+manages an incentive budget over time and space to incentivize driver re-positioning. We further
+refer the reader to Besbes et al. (2018b) for theoretical insight on short-term driver positioning, in
+a setting with coupled rider prices and driver payments.
+Our model does not directly capture the above ways a platform could set and optimize Ri , as it
+has a single driver and geographic location, and we do not optimize rider prices and thus revenue.
+However, note that both effects above are mediated through the average earnings (i.e., Ri ), either
+predicted by the driver or communicated through a heat-map, and do not depend directly on
+trip specific earnings, i.e., wi . Thus, these effects can be incorporated by adding the constraints
+Ri (wi , σi ) = Ri in Program (2), with target earnings rate Ri optimized elsewhere. An interesting
+avenue of future work is indeed to optimize Ri over both space and time, given these effects.
+We take this approach in this work, analyzing for what values of Ri the constraints Ri (wi , σi ) =
+Ri are compatible with incentive compatible pricing. In our main result, Theorem 3, we cannot
+construct IC prices that induce all relative values of R1 (w1 , σ1 ) = R1 and R2 (w2 , σ2 ) = R2 : if
+the platform tries to make the surge state i = 2 is too valuable compared to regular times i = 1,
+R2  R1 , then drivers will reject long trips in the non-surge state.
+
+A.3
+
+Model’s relationship to practice
+
+Several of our theoretical model choices emerge from common ride-hailing practice; other choices
+– such as not considering spatial heterogeneity – differ from practice, and so we consider the
+generalizability of our insights to practice in Section 6, using real ride-hailing data. See also
+Section B.1 where we justify our choices in the numerical section with RideAustin data and provide
+more information on, e.g., surge evolution.
+Heat-map constraint and affine pricing. When drivers are not on a trip, they see a heatmap of the current surge values, indicated as a multiplier or additive value, cf. Figure 1; this has
+important implications for practice, and for the pricing functions we consider in this work.
+First, in our numerical and empirical sections we focus on multiplicative and additive surge, as
+opposed to other general surge payment schemes. Two rationales for this choice are that these are
+the schemes considered by platforms in practice, and that they naturally serve as approximations
+of our IC scheme. More fundamentally, however, such schemes can be directly displayed on the
+heat-map. With such single-parameter schemes, the driver can connect their surge payment to
+knowledge available to them before the trip starts. This is an important feature in practice, where
+platforms must be as transparent as possible regarding how they pay drivers. Consider for example,
+if the platform instead displayed on the heat-map some expected payment over all trips taken in
+that spatio-temporal spot (e.g., the equivalent of Ri ); the driver would not be able to verify that
+the platform in fact did pay out that amount on average, without data from other drivers.
+Second, in this work we consider only pricing functions that depend on the world state when the
+trip starts, but do not incorporate information from what happens during the trip. Again, this is
+29
+
+an important practical constraint: incorporating on-trip information would require the platform to
+perform a path-integral over surge values in the driver’s spatio-temporal path from the origin to the
+destination, which would be difficult to implement and for the driver to verify. More fundamentally,
+however, the surge payment is partially an incentive for drivers to re-locate to a surge area, cf. Lu
+et al. (2018), and modeled by Ri in our work. Updating surge payments based on what happens
+when a driver is on-trip would change such incentives.
+Surge evolution. Surge is clearly non-Markovian and non-binary in practice, with strong
+intra-day patterns – for example, rush hours have predictably higher surge values: see Appendix
+Figure 9b.
+However, evolution of surge on finer time scales, on the level of individual trips, is more volatile,
+and believably Markovian: see Appendix Figure 9c, which shows the (spatially-averaged) surge
+factor in a small region around the Texas Capitol building every ten minutes over 3 days. Thus,
+from the perspective of a single driver who has decided to drive at a certain time block (for example,
+5-8pm), surge is believably Markovian on the time order that they are making decisions for whether
+to accept certain trips.
+The main theoretical difficulty with analyzing non-Markovian updates is that, then, the driver
+optimal policy is dependent on the time index as well as the state index; then, results will very
+strongly depend on the specific trip length distribution chosen, and in particular the interaction
+between the trip length distribution and the surge pattern structure. This interaction prevents any
+generalizable insights from emerging. However, as detailed above, our empirical analysis suggests
+that our results hold up even under more realistic surge.
+Driver activation. We do not endeavor to explain why surge pricing might be useful in this
+paper: in our view, riders respond to rider prices, and drivers activate based on expected mean
+earnings (i.e., Ri and R, as discussed above), which we take as exogenous. These aspects are well
+studied in the ride-hailing literature. Rather, our paper studies the orthogonal question of how to
+pay a driver for trips once they are online, not how to induce drivers to drive when and where there
+is high demand.
+Single driver and equilibrium effects. Our model considers a single driver, when in reality
+there are of course many drivers on the road. We do not believe that doing so affects the results,
+as the number of other drivers on the road affects average surge dynamics and activation, but
+presumably not individual trip decisions, except as mediated through future expectations of surge.
+The main theoretical difficulty with analyzing multiple drivers is it would add historical state to
+the system not captured by just the current surge state, pertaining to the number of currently open
+drivers and the distribution of when currently busy drivers will next become open. This difficulty
+is similar to that of modeling non-Markovian surge evolution. It would also lead to an implausible
+driver behavior model – each earnings maximizing driver would have to keep track of the number
+of other open drivers (and the distribution of when currently busy drivers will next become open).
+
+A.4
+
+Supplementary figures
+
+Figure 7 shows in an example µ2 (σ) as it changes with the surge driver policy σ2 = (t, ∞), for some
+t. Figure 8 compares IC surge pricing to multiplicative and additive surge.
+
+30
+
+0.20
+
+µ2(σ)
+
+0.18
+
+0.16
+
+0.14
+
+0.12
+
+0.00
+
+0.25
+
+0.50
+
+0.75
+
+1.00
+
+1.25
+
+1.50
+
+t, Min trip length accepted in surge
+
+Figure 7: Fraction of time spent in surge state, µ2 (σ), with driver policy σ = {σ1 = (0, ∞), σ2 },
+where σ2 = (t, ∞), i.e., t is the minimum trip length accepted in the surge state. The primitives are
+as follows: λ1 = λ2 = 12, λ1→2 = 1, λ2→1 = 4; in both states, trip lengths are distributed according
+to a Weibull distribution with shape 2 and mean 31 . These parameters reflect realistic average trip
+to wait time values, and that surge tends to be short-lived compared to non-surge times. Note that
+the driver can increase the time spent in the surge state by rejecting short surge trips.
+
+w(τ ), Price for trip length τ
+
+Additive surge
+Multiplicative non-surge
+
+wi(τ )
+, Price per unit time
+τ
+
+Multiplicative surge
+IC surge
+
+1.6
+1.4
+1.2
+1.0
+0.8
+0.0
+
+0.5
+
+1.0
+
+1.5
+
+2.0
+
+2.5
+
+3.0
+
+Multiplicative surge
+IC surge
+
+Additive surge
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+τ , Length of trip
+
+τ , Length of trip
+
+(a) Price per unit time wiτ(τ )
+
+(b) Price w2 (τ )
+
+Figure 8: Using the same model primitives as in Figure 7: the payment function wi (τ ) for various
+surge mechanisms plotted two ways, when R2 = 1 and R1 = 23 for drivers who accept every trip.
+
+B
+
+Supplementary empirical information
+
+This section contains supplementary empirical information. Section B.1 contains new findings
+related to the model validity and the variance of driver earnings with the various payment functions.
+Section B.2 contains more detail and robustness checks for the primary empirical analysis presented
+in the main text.
+
+B.1
+
+Additional results and facts
+
+We now detail new results and empirical findings discussed briefly in the Appendix. Section B.1.1
+validates our model choices and claims in the numerical analysis in Section 5. Section B.1.2 presents
+31
+
+an analysis of a simulated scenario in which surge is frequent and highly valuable, as opposed to
+rare and moderately valuable. Finally, Section B.1.3 shows that additive surge pricing has the
+additional benefit of reducing drivers’ earning variance in practice.
+B.1.1
+
+Model validity
+
+Here, we discuss how various components of the model relate to ride-hailing marketplaces in practice, using the RideAustin data from the rest of the empirics. We also justify the three claims we
+make in the numerics regarding the common parameter regimes for ride-hailing platforms.
+Surge is non-binary, and between 1.1 and 3 times more valuable than non-surge Figure
+9a contains a histogram of the surge factor. Surge in the RideAustin marketplace during the
+time period analyzed takes values divisible by 0.25, between 1 and 5. The mean surge factor
+is 1.19, only 30% of trips are surged, and more than 97% of surged trips have a surge factor
+in (1, 3].
+In the model, surge evolves according to a continuous time markov chain. Figure 9b breaks
+down the average surge factor in each 30 minute period in a day, split up by weekdays and
+weekends. Surge is clearly not Markovian – there are clear, expected patterns in surge that
+correlate with rush hours and early morning times when there may be few drivers on the
+road.
+However, there is substantial additional volatility in addition to the non-Markovian daily
+patterns. Figure 9c shows average surge in each 10 minute period, over 3 days for trips
+starting near the Texas Capitol building. The lengths, peak, and start/end times of each
+surge period differ – on a ten minute time scale, i.e., on the order of trip lengths, surge is not
+very predictable, and so a Markovian assumption may be reasonable on a small time scale.
+Surge is short-lived compared to non-surge periods (λ2→1  λ1→2 ) High-surge periods are
+indeed short-lasting compared to low surge periods, and peak surge tends to be short lasting. Figure 9d shows the mean surge factor in the future, based on the current surge factor.
+Without surge, the average surge even an hour in the future remains close to 1. With high
+surge, however, the average surge in the future decays – and the higher the surge, the faster
+the decay. Reality deviates from the model with low surge, with factor in [1.5, 2) – average
+surge even an hour later tends to stay in this region, suggesting that such levels of surge are
+durable on this platform and surge trips may be more common than non-surge during such
+times.
+1
+In a typical surge a driver may only be able to complete one or two such trips. ( λ2→1
+≈
+mean trip length). By jointly analyzing Figures 9d and 10c, we can see that drivers are indeed
+only be able to complete a few trips during surge before it dissipates. On-trip times (with
+rider in the car) are on the order of 10-15 minutes, and the driver must also wait for a new
+request and then drive to the rider. Surge has typically decreased substantially after an hour.
+
+More directly, Figure 9e shows for each driver session that has at least 5 trips, the average
+surge factor of each trip in the session, split by the surge factor of the first trip. Indeed, a
+driver is only able to complete a few trips with peak surge. We note, however, that this plot
+is susceptible to selection effects – a driver may choose to drive a different amount of time
+based on surge conditions.
+
+32
+
+(a) Histogram of surge, in log scale.
+
+(b) Average surge factor in each 30 minute period
+of the day
+
+(c) Average surge in each 10 minute period over
+three days on trips that start within 5 miles from
+Texas Capitol building.
+
+(d) Divide the 2 months into periods of 10 minutes
+each. Then, this plot shows the mean surge factor
+x hours in the future, split by bucket of the current
+surge factor.
+
+(e) For each driver session that has at least 5 trips, the average surge factor of each trip in the session, split
+by the surge factor of the first trip.
+
+Figure 9: Surge facts from RideAustin marketplace
+In the model, on-trip time and time driving to the rider are combined. In practice, a job
+is typically split up into two components: the time it takes to drive to the rider, and the time
+that the ride is in the car – and only the second part is paid. Figure 10e shows a histogram of
+33
+
+Number of trips
+
+20000
+
+15000
+
+10000
+
+5000
+
+0
+
+10
+
+20
+
+30
+
+40
+
+50
+
+Day in analysis period
+(a) Trips per day
+
+(b) Trip length distribution (non-surge)
+
+(c) Mean trip length by surge factor
+
+(d) Average number of trips per hour period in the
+day. Note the discontinuities at midnight are due to
+weekdays becoming weekends and vice versa (Friday
+night becomes Saturday morning).
+
+(e) Fraction of a job’s total time that is the time to
+drive to the rider, i.e., unpaid.
+
+Figure 10: Basic trip facts from RideAustin marketplace
+the resulting fraction of the total job time that is unpaid. Note that this time is substantial
+in the RideAustin data, on average about 30%.
+In the numerics, trip lengths are distributed as a Weibull distribution with shape 2. Figure 10b
+shows the distribution of trip lengths for trips without surge. The shape approximation is
+34
+
+Payment = Status quo
+
+Earnings difference
+
+40
+
+Payment = Additive surge with base fare
+
+20
+0
+−20
+
+Trip time in seconds
+(29.0, 699.0]
+
+−40
+−60
+
+(699.0, 3598.0]
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge factor
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge Factor
+
+Figure 11: Same as Figure 6, except with the surge factor flipped to simulate a world with frequent,
+valuable surge.
+reasonable, as a Weibull distribution with shape 2.6 best fits the data (with mean set to the
+empirical mean). Figure 10c shows the mean length distribution by surge factor. Perhaps
+interestingly, this mean length is non-monotonic in the surge factor, first decreasing and then
+increasing with the surge factor.
+We cannot directly test the claim in the numerics that in a typical surge the driver will be able to
+λ2
+receive and reject several trip requests ( λ2→1
+> 1, but small) – we do not observe drivers being open
+to receive a request, unless they actually received a trip request. Unlike in the matching technique
+for trip indifference, we cannot use drivers who completed a trip as a proxy – the measurement
+would be sensitive to drivers logging off, and the end-locations of trips not being representative of
+all trips.
+Despite the ways reality deviates from the model, the insights regarding additive vs multiplicative surge extend to the empirics.
+B.1.2
+
+Regime with frequent, valuable surge
+
+Recall that one of the theoretical insights from Theorem 3 is that our incentive compatible pricing
+scheme only works in a certain regime, if surge is not too valuable compared to regular periods
+1
+on average, that R
+R2 ∈ (C, 1). This general insight extends to arbitrary pricing functions (i.e., as
+R1
+R2 → 0, then no pricing function w1 during regular periods will induce drivers to accept non-surged
+trips).
+Here, we show that this insight also extends to practice, with non-binary surge. We simulate
+the following world: we “flip” the surge factor
+Simulated surge = 6 − Actual surge.
+With this flipped surge, 97% of surged trips have a surge factor in [3, 5], and 30% of the trips
+have a surge factor of 5: surge is now the default, and extremely valuable compared to non-surge
+periods.
+Then, we calculate the driver’s payment according to each such pricing function. Figure 11
+shows the resulting plots for earnings difference by trip length, using the status quo payment
+35
+
+Figure 12: Histogram of per-shift driver earnings per hour. Note that the y-axis is in log scale.
+function (but with the simulated surge factor) and with an equivalent additive surge. Two insights
+emerge:
+• With low surge (factor in [1, 3]), drivers are better off on average rejecting most trip requests,
+regardless of whether payments are additive or multiplicative.
+• A more complex pricing function may be needed: multiplicative surge over-values long trips
+with high surge, and additive surge over-values short trips.
+B.1.3
+
+Driver earnings variance
+
+We now calculate statistics regarding the average amount drivers earn during a single driving
+“shift,” ideally defined as the time between which drivers turn on their app and when they turn
+it off. To group trips together into a single driver shift, we use a data column called active driver
+ID, which is a refinement of driver ID and seems to correspond to a shift as defined internally by
+RideAustin.
+The “length” of a shift is defined as the time between the first time the driver was dispatched
+for a trip during the shift, and the end time of the last completed trip during the shift. Note that
+this value is an underestimate of the true shift length, as it does not contain the time it took to
+receive the first trip request or the time it takes for the driver to go home after their last trip.
+Thus, our estimated shift per hour earnings are biased upwards.
+The driver’s total earning during the shift is simply the sum of the payments from each trip,
+under the payment function being analyzed. Then, the earnings per hour in a single shift is the
+total earnings divided by the shift length.
+Figure 12 shows a weighted histogram of the per hour shift earnings, where the weights are
+the shift lengths in hours. Additive surge leads to a lower variance of per hour shift earnings (but
+the same mean, as constructed). The standard deviation of per-hour earnings are, respectively:
+$16.97 (Status quo fare), and $15.83 (Additive surge with base fare) with mean hourly earnings of
+about $32.22. If we instead remove the minimum fare and pickup fare components and simulate
+pure additive or multiplicative surge, the standard deviations are: $16.59 (Additive surge), $18.35
+(Multiplicative surge).
+
+36
+
+(a) Histogram of difference between total fare and
+the reverse engineered fare.
+
+B.2
+
+(b) “Matching distance” between matched trips used
+for the counter-factual earnings.
+
+Empirical analysis additional information
+
+We now provide additional detail for each step of the primary analysis presented in Section 6.
+B.2.1
+
+Pre-processing
+
+There are 509, 823 rows (trips) in the time period analyzed.
+• 4626 trips were longer than 1 hour or shorter than 30 seconds and were discarded.
+• 3780 were longer than 100 miles or shorter than 0.25 miles and were discarded (some overlap
+with those discarded for time).
+• 26 trips had clearly erroneous total fare (null, or too high for mileage/distance by multiple
+orders of magnitude) and were not used to calibrate the reverse engineered fare.
+We end up with 503, 383 trips in our analysis.
+B.2.2
+
+Payment functions
+
+Figure 13a shows a histogram of the difference between the total fare available as a column, and
+the reverse engineered fare derived from the functional form in the main text. The fit is good, with
+a mean difference of $0.005.
+Figure 14 plots the constructed Additive surge fare versus the status quo payments, at the trip
+level. As expected, additive surge pays more for short surged trips, and less for long surged trips.
+B.2.3
+
+Matching trips
+
+The “matching distance” as described in the main text between pairs of (date-time, location) tuples
+is:
+distance((time1 , location1 ), (time2 , location2 )) = difference in hours(time1 , time2 )
+1
++ difference in miles(location1 , location2 )
+20
+Figure 13b shows the distribution of these distances between a given trip and the matched trip
+used for counter-factual earnings, for the matching technique described in the main text.
+37
+
+Figure 14: Constructed payment function (Additive surge with base fare) vs the reverse engineered
+Status quo fare payments at the trip level. As expected, additive surge tends to pay higher for
+shorter trips and lower for longer trips.
+
+Payment = Status quo
+
+Earnings difference
+
+50
+40
+
+Trip time in seconds
+(29.0, 699.0]
+
+30
+
+(699.0, 3598.0]
+
+Payment = Additive surge with base fare
+
+20
+10
+0
+−10
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge factor
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge Factor
+
+Figure 15: Using next nearby driver with an accepted trip as the counter-factual match.
+For robustness, we also use an alternate way to find a match for a given trip: using the next
+driver who accepted a trip nearby. We calculate the matching distance between the given trip’s
+start time and location, and each future trips’ start time and location, and choose the driver of
+the closest match. As with the previous method, we filter out recent trips with drivers who are
+the same as the given trip’s driver. Note that with this method, the expected earnings difference
+should be close to zero, as both drivers match at about the same time and place. However, the
+variances may vary with the payment function.
+
+38
+
+Payment = Status quo
+
+Earnings difference
+
+50
+40
+
+Trip time in seconds
+(29.0, 699.0]
+
+30
+
+(699.0, 3598.0]
+
+Payment = Additive surge with base fare
+
+20
+10
+0
+−10
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+Surge factor
+
+3
+
+4
+
+5
+
+Surge Factor
+
+Figure 16: Using period length of next 1 hour (instead of 1.5 hours).
+Payment = Status quo
+
+50
+
+Payment = Additive surge with base fare
+
+Earnings difference
+
+40
+30
+20
+10
+Trip time in seconds
+(29.0, 699.0]
+
+0
+−10
+−20
+
+(699.0, 3598.0]
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge factor
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge Factor
+
+Figure 17: Starting measurement from dispatch time instead of trip start time, i.e., taking into
+account the first part of the trip that is unpaid for the driver.
+B.2.4
+
+Trip indifference
+
+We now carry out some robustness checks for the trip indifference results, and present supplementary results.
+Figure 15 shows the same figure as in the main text, but instead using the next driver with
+an accepted trip matching function described in Section B.2.3. The means of the trip indifference
+(unconditional on trip length) are close to zero, as expected, but additive surge better balances the
+relative value of short and long trips, as before.
+Figure 16 shows the same figure as in the main text with the same matching function, but
+instead calculating the driver’s earnings over the next 1 hour. Results are identical.
+Figure 17 starts counting the earnings of drivers starting at the given driver’s dispatch time
+instead of trip start time; results are qualitatively identical, demonstrating that the fact that in
+practice there are two components to a trip – time from dispatch to the rider (unpaid typically),
+and time with the rider to the destination (paid) – do not substantively affect the results.
+Finally, Figure 18 shows the same figure but with how the driver would be paid under the pure
+
+39
+
+Payment = Multiplicative surge
+
+Earnings difference
+
+50
+40
+
+Trip time in seconds
+(29.0, 699.0]
+
+30
+
+(699.0, 3598.0]
+
+Payment = Additive surge
+
+20
+10
+0
+−10
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge factor
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Surge Factor
+
+Figure 18: With pure multiplicative and additive surge, respectively (no min fare).
+multiplicative and additive surge functions studied in the rest of this work, defined as follows:
+Multiplicative surge :
+Additive surge :
+
+[B × MSurgeF actor ] × SurgeF actor
+
+[B × MSurgeF actor ] + [(SurgeF actor − 1) × ASurgeF actor ]
+
+MSurgeF actor and ASurgeF actor are surge factor dependent constants that are set such that these
+alternative payment functions spend the same amount of money overall for each surge factor as does
+the status quo fare. As with the additive surge with a minimum fare, these alternative payments
+do not change the mean trip payment conditional on the surge factor, but do change how money
+is allocated to various trips within that surge. If instead we used a single constant across surge
+factors, this feature would not hold, and the payment functions may pay different amounts on
+average for the same surge factor.
+
+40
+
+C
+
+Proofs of single state model results
+
+In this section, we provide proofs of the theorems and lemmas in the main text regarding the
+single state model. Section C.1 formally states the driver reward. Section C.2 contains the proof
+of Theorem 1. Section C.3 contains the proof of Proposition 3.1. Finally, Section C.4 contains a
+partial uniqueness result regarding optimal driver policies.
+
+C.1
+
+Driver reward
+
+Recall
+hP that R(w,
+i σ, t) is the total earnings from jobs finished from time 0 to time t, i.e., R(w, σ, t) =
+N (t)
+E
+k=1 w(τi ) , where τi is the length of the ith job the driver accepts, ei is time at which that
+job is accepted, and N (t) = |{i : 0 ≤ ei + τi ≤ t}| is the number of accepted jobs up to time t.
+Let a renewal cycle be the time the driver is open after completing a job to the next time the
+driver is open after completing a job. As mentioned using the renewal reward theorem in the main
+text,
+R
+1
+R(w, σ, t)
+Expected cycle payment given σ
+F (σ) τ ∈σ w(τ )dF (τ )
+R
+R(w, σ) , lim inf
+=
+= 1
+1
+t→∞
+t
+Expected cycle length given σ
+F (σ)λ + F (σ) τ ∈σ τ dF (τ )
+The λF1(σ) term is the expected value of a exponential random variable with rate λF (σ), which is
+the rate at which a driver accepts ride requests when open.
+
+C.2
+
+Proof of Theorem 1
+
+We now prove Theorem 1, regarding the form of the optimal policy in the single-state model –
+where the length of a trip does not matter, only the earnings rate. The optimal policy trades
+off the earnings rate while on a trip with the driver’s utilization rate. At a high level, the proof
+proceeds as follows: starting from any policy that is not of the appropriate form, we replace trips
+in the policy with those with a higher earnings rate, while keeping the utilization rate exactly the
+same. Such replacements result in a policy that is almost of the correct form, except there may be
+)
+an earnings rate c such that only a subset of {τ : w(τ
+τ = c} is in the policy. The remainder of the
+proof is showing that such a policy can transformed to a policy of the appropriate form without
+reducing the reward.
+For ease of reading, we re-state each main text result in the appropriate location in the Appendix.
+Theorem
+1. With o
+a single state, for each w there exists a constant cw ∈ R+ such that the policy
+n
+w(τ )
+∗
+σ = τ : τ ≥ cw is optimal for the driver with respect to w.
+)
+Proof. Proof. Let γ(τ ) , w(τ
+be the per time earning rate for a trip of length τ . Assume that
+τ
+w(τ ) is not zero everywhere, i.e., F ({τ : w(τ ) > 0}) > 0. Otherwise any policy is optimal and so
+the result is trivial.
+For each threshold c, let σc> denote the set {τ : γ(τ ) > c}, i.e., a strict threshold policy where
+the threshold inequality is strict. Let σc≥ denote the set {τ : γ(τ ) ≥ c}, i.e., a complete threshold
+policy where all trips at the threshold are included. Let σ̃c = σc> ∪ C for some C ⊆ {τ : γ(τ ) = c0 }
+be a partial threshold policy where some trips at the threshold are included.
+The proof proceeds in three steps. Starting at any set σ ⊂ (0, ∞), each step sequentially replaces
+σ with a set σ 0 closer to the desired form such that R(σ 0 ) ≥ R(σ).
+
+41
+
+Step 1 If σ is not already at least partial threshold policy, then it can be replaced by a partial
+threshold policy while improving the reward: If there does not exist c ∈ R+ , C ⊆ {τ :
+γ(τ ) = c} such that σ = σc> ∪ C, then there exists σ̃c0 such that R(w, σ̃c0 ) > R(w, σ), where
+σ̃c0 = σc>0 ∪ C0 for some c0 ∈ R+ , C0 ⊆ {τ : γ(τ ) = c0 }.
+The rest of the proof is devoted to showing that a partial threshold policy can be replaced
+by a threshold policy where all trips at the threshold are included.
+
+Step 2 A partial threshold policy is weakly dominated by either a strict or complete threshold
+policy: for any σ̃c0 of the form σ̃c0 = σc>0 ∪ C0 for some c0 ∈ R+ , C0 ⊆ {τ : γ(τ ) = c0 }, at least
+one of the following is true: R(w, σc>0 ) ≥ R(w, σ̃c0 ) or R(w, σc≥0 ) ≥ R(w, σ̃c0 ).
+Step 3 There exists an optimal complete threshold policy: ∃c∗ such that for all c:
+R(w, σc≥∗ ) ≥ max(R(w, σc≥ ), R(w, σc> ))
+Thus there exists c∗ , such that for all σ, we have R(w, σc≥∗ ) ≥ R(w, σ).
+Note that if σ = (0, ∞), F ({τ : γ(τ ) > 0} ∩ σ) = 0, or F ({τ : γ(τ ) > 0} ∩ σ) = 1, then we can
+skip the first two steps, with the set σc = (0, ∞).
+Step 1. If there does not exist c ∈ R+ , C ⊆ {τ : γ(τ ) = c} such that σ = σc> ∪ C, then there exists
+σ̃c0 such that R(w, σ̃c0 ) > R(w, σ), where σ̃c0 = σc>0 ∪ C0 for some c0 ∈ R+ , C0 ⊆ {τ : γ(τ ) = c0 }.
+For given σ, c, let
+Ac = {τ : τ ∈
+/ σ, γ(τ ) ≥ c}
+
+Bc = {τ : τ ∈ σ, γ(τ ) < c}
+Z
+L(X) =
+τ dF (τ )
+τ ∈X
+
+X ⊆ (0, ∞)
+
+Ac is a set of trips that pay at least c per unit time but are not in σ, and Bc is the set of the
+trips that pay less than c per unit time and are in σ. L(X) is the mean extra utilization that trips
+in X contribute in a renewal cycle. The idea is that if we find sets A, B such that the marginal
+utilizations are equal (L(A) = L(B) > 0) and the earnings rate in set A dominate those in set B
+(γ(a) > γ(b), ∀a ∈ A, b ∈ B), then we can replace B in the policy with A: σ 0 = σ ∪ A \ B =⇒
+R(w, σ 0 ) > R(w, σ). The denominator of the reward stays the same, and the numerator increases.
+A few facts that follow from the assumptions and definitions:
+σ 6= (0, ∞), F ({τ : γ(τ ) > 0} ∩ σ) < 1
+
+L(A0 ) > 0
+∃c : L(Bc ) > 0
+
+F ({τ : γ(τ ) > 0} ∩ σ) > 0
+
+L(Ac ) is non-increasing in c
+
+Ac contracts as c increases
+
+L(Bc ) is non-decreasing in c
+
+Bc expands as c increases
+
+lim L(Ac ) = 0
+
+γ(τ ) asymptotically bounded by defn
+
+L(B0 ) = 0
+
+γ(τ ) non-negative
+
+c→∞
+
+L(Ac ), L(Bc ) are left-continuous in c
+To help see the last claim, notice that L(Ac ) and L(Bc ) are discontinuous only where F ({τ : γ(τ ) =
+c}) is non-zero, and even in such cases are continuous from the left.
+
+42
+
+The non-increasing/non-decreasing properties imply that ∃c0 such that L(Ac ) < L(Bc ), ∀c > c0 .
+This fact, along with the left-continuity and the same points of discontinuity for L(Ac ), L(Bc ),
+implies that
+∃c0 such that c0 = max{c0 : L(Ac0 ) ≥ L(Bc0 )}
+If L(Ac0 ) = L(Bc0 ), then we are done with this part: let σ̃c0 = σ ∪ Ac0 \ Bc0 = {τ : γ(τ ) ≥ c0 },
+and we have that R(w, σ̃c0 ) > R(w, σ).
+Otherwise if L(Ac0 ) > L(Bc0 ) (which can happen if F ({τ : γ(τ ) = c0 }) is non-zero.), we need
+to select a subset of {τ : γ(τ ) = c0 } such that the overall utilization of the constructed set remains
+the same. We can do so as follows:
+• By the definition of c0 , for all c > c0 we have L(Ac ) < L(Bc ). Then
+L(Bc0 ) < L(Ac0 ) < L(Bc0 ∪ {τ : τ ∈ σ, γ(τ ) = c0 })
+• Let C ⊆ {τ : τ ∈ σ, γ(τ ) = c0 } such that L(Bc0 ∪ C) = L(Ac0 ). Such C exists because F is
+continuous.
+• Let σ̃c0 = σ ∪ Ac0 \ (Bc0 ∪ C), which is equal to σ̃c0 = σc>0 ∪ C0 for some C0 ⊆ {τ : γ(τ ) = c0 }.
+We now have R(w, σ̃c0 ) > R(w, σ), as the utilization rates of both sets are the same, and each trip
+in σ̃c0 is at least as valuable per unit time as a corresponding trip in σ.
+
+Step 2. For any σ̃c0 of the form σ̃c0 = σc>0 ∪ C0 for some c0 ∈ R+ , C0 ⊆ {τ : γ(τ ) = c0 }, at least
+one of the following is true: R(w, σc>0 ) ≥ R(w, σ̃c0 ) or R(w, σc≥0 ) ≥ R(w, σ̃c0 ).
+Let C00 = {τ ∈ {τ : τ ∈ σ, γ(τ ) = c0 } \ C0 }, i.e., the set of trips such that γ(τ ) = c0 but that
+are not in C0 .
+We prove this step by reasoning about the value of R(w, σ̃c0 ) in comparison to the marginal
+value threshold c0 .
+• Suppose c0 ≥ R(w, σ̃c0 ). Then, we can add trips to the set:
+R
+R
+λ τ ∈σ̃c w(τ )dF (τ ) + λ τ ∈C 0 w(τ )dF (τ )
+0
+R
+R 0
+R(w, {τ : γ(τ ) ≥ c0 }) =
+1 + λ τ ∈σ̃c τ dF (τ ) + λ τ ∈C 0 τ dF (τ )
+0
+
+0
+
+≥ R(w, σ̃c0 )
+
+(3)
+
+R
+λ τ ∈σ̃c w(τ )dF (τ )
+Where the inequality follows from R(w, σ̃c0 ) = 1+λ R 0 τ dF (τ ) ,
+τ ∈σ̃c
+0
+
+R
+
+R
+
+w(τ )
+τ dF (τ )
+0
+τ ∈C0
+τ
+
+λ
+λ τ ∈C 0 w(τ )dF (τ )
+R 0
+= λ R 0 τ dF (τ )
+λ τ ∈C 0 τ dF (τ )
+τ ∈C
+0
+
+0
+
+w
+= c0 , and xz ≥ wy =⇒ w+x
+y+z ≥ y .
+
+• Alternatively, suppose c0 < R(w, σ̃c0 ). Then, we can remove trips from the set:
+R
+R
+λ τ ∈σ̃c w(τ )dF (τ ) − λ τ ∈C0 w(τ )dF (τ )
+0
+R
+R
+R(w, {τ : γ(τ ) > c0 }) =
+1 + λ τ ∈σ̃c τ dF (τ ) − λ τ ∈C0 τ dF (τ )
+0
+
+> R(w, σ̃c0 )
+w
+Where the inequality follows from wy > xz =⇒ w−x
+y−z > y when w − x ≥ 0, y − z ≥ 0.
+
+43
+
+(4)
+
+Step 3. ∃c∗ such that for all c:
+R(w, σc≥∗ ) ≥ max(R(w, σc≥ ), R(w, σc> ))
+In the first subpart, we simply need to prove that there exists a maximizer c∗ for the function
+max(R(w, σc≥ ), R(w, σc> )): this fact is not immediate because σ are infinite sets. The following are
+true
+• By assumption that w(τ )/τ is asymptotically bounded, we have that the reward is bounded:
+there exists R̄ such that for all σ, we have R(w, σ) ∈ [0, R̄].
+• F is a continuous distribution, and so limc→∞ F ({τ : γ(τ ) ≥ c}) = 0. There exists C such
+that ∀c > C: R(w, σc> ) < R((0, ∞)), R(w, σc≥ ) < R((0, ∞))
+• R(w, σc> ) is continuous from the right in c, and R(w, σc≥ ) is continuous from the left in c, and
+the two functions have the same points of discontinuities: c such that F ({τ : γ(τ ) = c}) > 0
+(and these are also their only points of disagreement). To see these facts, observe that F (σc> )
+and F (σc≥ ) have the same properties, respectively.
+Thus, the function max(R(w, σc≥ ), R(w, σc> )) of c attains its maximum at some c∗ ∈ [0, C]. In
+other words, there exists c∗ such that ∀c, max(R(w, σc≥∗ ), R(w, σc>∗ )) ≥ max(R(w, σc≥ ), R(w, σc> )).
+In the second subpart, we finish by proving that R(w, σc≥∗ ) ≥ R(w, σc>∗ ), i.e., that we can include
+trips at the margin of per-time value to the policy.
+• Suppose c∗ ≥ R(w, σc>∗ ). Then, by the same argument as Line (3), R(w, σc≥∗ ) ≥ R(w, σc>∗ ),
+including the marginal trips increases the reward.
+• Suppose c∗ < R(w, σc>∗ ).
+– If ∃B : c∗ < B such that the mass F ({τ : γ(τ ) ∈ (c∗ , B]}) = 0, then note that σc>∗ is
+≥
+≥
+equal to σB
+up to a set of measure 0, and so R(w, σc>∗ ) = R(w, σB
+).
+– Otherwise, let B : c∗ < B < R(w, σc>∗ ), and note that F ({τ : γ(τ ) ∈ (c∗ , B]}) > 0. Then,
+>
+by the same argument as in Line (4), R(w, σc>∗ ) < R(w, σB
+) ≤ max(R(w, σc≥∗ ), R(w, σc>∗ )) =
+R(w, σc≥∗ ): we can remove the subset (c∗ , B) from the policy σc>∗ and improve reward,
+and so σc≥∗ must be optimal.
+Thus there exists c∗ , such that for all σ, we have R(w, σc≥∗ ) ≥ R(w, σ).
+
+C.3
+
+Proof of Proposition 3.1
+
+With a single state, w(τ ) = mτ + a is incentive compatible if 0 ≤ a ≤ m
+λ.
+R
+Proof. Proof. Let T = τ ∈(0,∞) τ dF (τ ). Let σ 0 = (0, ∞) \ σ, for some σ.
+R
+λ τ ∈(0,∞) w(τ )dF (τ )
+R((0, ∞)) =
+1 + λT
+R
+R
+λ τ ∈(0,∞) w(τ )dF (τ ) − λ τ ∈σ w(τ )dF (τ )
+R
+R(σ 0 ) =
+1 + λT − λ τ ∈σ τ dF (τ )
+R
+R
+λ τ ∈(0,∞) w(τ )dF (τ )
+w(τ )dF (τ )
+0
+=⇒ R((0, ∞)) ≥ R(σ ) ⇐⇒
+≤ τR∈σ
+1 + λT
+τ ∈σ τ dF (τ )
+44
+
+w
+x
+The last line follows from wy ≥ w−x
+y−z ⇐⇒ y ≤ z .
+Thus, a necessary and sufficient condition for incentive compatibility is that
+R
+R
+λ τ ∈(0,∞) w(τ )dF (τ )
+w(τ )dF (τ )
+∀σ.
+≤ τR∈σ
+1 + λT
+τ ∈σ τ dF (τ )
+
+Suppose w(τ ) = mτ + a. Then, for 0 ≤ a ≤ m
+λ:
+R
+λ τ ∈(0,∞) w(τ )dF (τ )
+λ(mT + a)
+=
+1 + λT
+1 + λT
+m(λT + 1)
+≤
+=m
+1 + λT
+"
+
+F (σ)
+≤m+a R
+τ ∈σ τ dF (τ )
+R
+w(τ )dF (τ )
+= τR∈σ
+τ ∈σ τ dF (τ )
+
+a≤
+
+m
+λ
+
+#
+∀σ
+
+a≥0
+
+(5)
+
+Note that the condition is sufficient but not necessary. Proving necessary conditions requires
+tightening Line (5) under assumptions on the distribution F .
+
+C.4
+
+Uniqueness of optimal policy for single-state model
+
+Lemma 4. Consider the single-state model. There exists an optimal policy σ ∗ of the form σ ∗ =
+)
+∗
+∗
+∗
+{τ : w(τ
+τ ≥ c } such that R(σ ) = c . Furthermore, this policy is the unique optimal policy, up to
+)
+∗
+sets of measure 0 and up to modifications (subtractions) of sets {τ : w(τ
+τ = c }.
+)
+≥ c∗ },
+Proof. Proof. By Theorem 1, there exists an optimal policy of the form σ ∗ = {τ : w(τ
+τ
+∗
+∗
+for some c . Here, we show (1) that there exists an optimal policy σ of that form such that
+R(σ ∗ ) = c∗ , and (2) this is the unique optimal policy up to sets of measure 0 and up to modifications
+)
+∗
+(subtractions) of sets {τ : w(τ
+τ = c }.
+)
+1. Start with any optimal policy σ ∗ of the form σ ∗ = {τ : w(τ
+≥ c}, for some c, and let
+τ
+≥
+∗
+∗
+∗
+c = R(σ ) be the optimal reward. Then, σc∗ = σ up to sets of measure 0, where σc≥∗ = {τ :
+w(τ )
+∗
+∗
+τ ≥ c }. If c = c, this is trivial. Otherwise,
+
+Suppose R(σ ∗ ) = c∗ > c. Then, note that σc≥∗ ⊆ σ ∗ . If F (σ ∗ \ σc≥∗ ) > 0:
+R
+R
+λ τ ∈σ∗ w(τ )dF (τ ) − λ τ ∈σ∗ \σ≥ w(τ )dF (τ )
+c∗
+R
+R
+R(σc≥∗ ) =
+1 + λ τ ∈σ∗ τ dF (τ ) − λ τ ∈σ∗ \σ≥ τ dF (τ )
+c∗
+
+∗
+
+> R(σ )
+λ
+
+Which follows from
+
+R
+
+≥ w(τ )dF (τ )
+τ ∈σ ∗ \σ ∗
+c
+R
+
+λ
+
+≥ τ dF (τ )
+τ ∈σ ∗ \σ ∗
+c
+
+R
+λ τ ∈σ∗ w(τ )dF (τ )
+∗
+∗
+< c = R(σ ) = 1+λ R
+, and xz
+τ ∈σ ∗ τ dF (τ )
+
+w−x
+w
+∗
+y−z > y when w − x ≥ 0, y − z ≥ 0. This contradicts that σ is optimal.
+
+45
+
+< wy =⇒
+
+Similarly, suppose R(σ ∗ ) = c∗ < c. Then, note that σ ∗ ⊆ σc≥∗ . If F (σc≥∗ \ σ ∗ ) > 0:
+R
+R
+λ τ ∈σ∗ w(τ )dF (τ ) + λ τ ∈σ≥ \σ∗ w(τ )dF (τ )
+R
+R c∗
+R(σc≥∗ ) =
+1 + λ τ ∈σ∗ τ dF (τ ) + λ τ ∈σ≥ \σ∗ τ dF (τ )
+c∗
+
+> R(σ ∗ )
+λ
+
+Which follows from
+
+R
+
+w(τ )dF (τ )
+≥
+τ ∈σ ∗ \σ ∗
+R c
+
+λ
+
+τ dF (τ )
+≥
+τ ∈σ ∗ \σ ∗
+c
+
+λ
+
+R
+
+τ ∈σ
+R
+> c∗ = R(σ ∗ ) = 1+λ
+
+∗ w(τ )dF (τ )
+
+τ ∈σ ∗ τ dF (τ )
+
+, and xz > wy =⇒
+
+w+x
+w
+∗
+y+z > y . This contradicts that σ is optimal.
+)
+2. The first part above proves uniqueness among policies of the form σc≥ = {τ : w(τ
+≥ c},
+τ
+for some c. Step 1 of the proof of Theorem 1 further shows that only policies of the form
+σ̃c0 = σc≥0 \ C0 for some c0 ∈ R+ , C0 ⊆ {τ : γ(τ ) = c0 } can be optimal. Arguments near
+identical to that above and to Step 2 of the proof of Theorem 1 will finish the proof.
+
+46
+
+D
+
+Proofs of dynamic model results
+
+In this section, we provide proofs of the theorems and lemmas in the main text regarding the
+dynamic model. Section D.1 contains proofs for the dynamic model lemmas regarding driver
+reward and time spent in each state, Lemmas 1, 2, and 3.
+Section D.2 contains an overview of the proof strategy for both Theorems 2 and 3, and in
+particular contains the main technical lemma used to prove both theorems.
+Section D.3 contains the statements of several auxiliary lemmas that are used to prove the main
+results. Proofs for these lemmas are deferred to Section D.5, as they are algebraically tedious.
+Finally, Section D.4 contains the proofs for our main results, Theorems 2 and 3.
+
+D.1
+
+Driver reward
+
+Lemma 2. Suppose the world is in state i at time t. Let qi→j (s) denote the probability that the
+world will be in state j 6= i at time t + s. Then,
+h
+i
+λi→j
+qi→j (s) =
+1 − e−(λi→j +λj→i )s
+λi→j + λj→i
+Proof. Proof. Given the state dynamics in the model, qi→j (s) is determined by the evolution of a
+CTMC in time s, given that the current state is i. We can use standard CTMC results here. Let
+Q denote the Q-matrix for the world state CTMC. From the model definition,
+
+
+−λ1→2 λ1→2
+Q=
+λ2→1 −λ2→1
+Recall that the state transition matrix after time t is then given by the matrix exponential eQt ,
+which is equal to the inverse of the Laplace transform of the inverse of the resolvent of Q:
+qi→j (τ ) = (eQτ )ij
+= L−1 ((wI − Q)−1
+ij )(τ )
+h
+i
+λi→j
+=
+1 − e−(λi→j +λj→i )τ
+λi→j + λj→i
+
+w is a Laplace transform parameter
+
+where the closed form in the last line emerges due to the 2 state model assumption.
+Then, Lemma 1 and Lemma 3 are proven together next.
+Lemma 1. In the dynamic model, the earnings rate can be decomposed into each state i earnings
+rate Ri (wi , σi ) and fraction of time µi (σ) spent in state i:
+R(w, σ) = µ1 (σ)R1 (w1 , σ1 ) + µ2 (σ)R2 (w2 , σ2 )
+
+with probability 1.
+
+i (σi )
+As in the single-state model, Ri (wi , σi ) = W
+Ti (σi ) , where
+Z
+Z
+1
+1
+1
+Wi (σi ) =
+wi (τ )dFi (τ ),
+Ti (σi ) =
++
+τ dFi (τ )
+Fi (σi ) τ ∈σi
+λi Fi (σi ) Fi (σi ) τ ∈σi
+
+Lemma 3. Let Ti (σi ) be as defined in Lemma 1. The fraction of time a driver following strategy
+σ = {σ1 , σ2 } spends either open in state i or on a trip started in state i is
+λi Fi (σi )Ti (σi )Qj (σj )
+λj Fj (σj )Tj (σj )Qi (σi ) + λi Fi (σi )Ti (σi )Qj (σj )
+Z
+Qi (σi ) = λi→j + λi
+qi→j (τ )dFi (τ )
+µi (σ) =
+
+where
+
+τ ∈σi
+
+47
+
+Proof. Proof. Consider the renewal process (with cycles and sub-cycles) defined in the main text.
+A single reward renewal cycle is: the time between the driver is open in state 1 to the next time
+the driver is open in state 1 after being open in state 2 at least once. In other words, each renewal
+cycle is composed of some number (potentially zero) of sub-cycles in which the driver is open in
+state 1 and then is open in state 1 again after a completed trip; one sub-cycle starting with the
+driver open in state 1 and ending with being open in state 2 (either after a completed trip or a
+state transition while open); some number (potentially zero) of sub-cycles in which the driver is
+open in state 2 and then is open in state 2 again after a completed trip; and finally one sub-cycle
+starting in state 2 and ending with the driver open in state 1.
+We use the following notation
+• M (t) is the total number of cycles that have been completed up to time t
+• Nj (M ) is the number of sub-cycles in state j in the M th cycle – i.e., in the M th cycle of the
+single renewal process described above, the number of times that the driver is open in state j
+(after transitioning from the other state, or finishing a trip that started in the same state j)
+• Sj (k, M ) is the length of the kth such sub-cycle in the M th cycle, with expected length Sj (σj ).
+Let S̃(σ) be the expected length of one of the overall cycles.
+• Wj (k, M ) is the earnings of the driver in the kth such sub-cycle in the M th cycle, with
+expected value Ŵj (σj )
+• pji (σj ) is the probability that the current sub-cycle is the last in state j for the current cycle
+– as the next sub-cycle starts in the other state.
+• Rj (wj , σj , M ) is the total amount earned in state j after M such cycles.
+Ŵ (σ )
+
+• Define the earnings rate in state j as Rj (wj , σj ) = Sjj(σjj) , the expected earnings in a sub-cycle
+over the expected length.
+Then:
+M (t) Nj (M )
+
+Rj (wj , σj , M (t)) =
+
+X X
+
+Wj (k, M )
+
+M =1 k=1
+
+
+
+M (t) Nj (M )
+Rj (wj , σj , M (t))
+1 X X
+= lim
+Wj (k, M )
+lim
+t→∞
+t→∞ M (t)
+M (t)
+M =1 k=1
+
+=
+
+Ŵj (σj )
+pji (σj )
+
+almost surely
+
+1
+by the mean of a geometric random variable (E[Nj (M )] = pji (σ
+is the expected number of subj)
+cycles in j in a given cycle) and the basic law of large numbers for renewal processes.
+Similarly, we know that Mt(t) converges to its mean almost surely as t → ∞, where the mean is
+
+48
+
+based on the length of time in each state in each cycle. Then:
+M (t)
+1
+=
+t→∞
+t
+S̃(σ)
+
+
+
+
+N1 (1)
+N2 (1)
+X
+X
+S2 (k, 1)
+S̃(σ) = E 
+S1 (k, 1) + E 
+lim
+
+k=1
+
+k=1
+
+= E[N1 (1)]E[S1 (k, 1)] + E[N2 (1)]E[S2 (k, 1)]
+1
+1
+=
+S1 (σ1 ) +
+S2 (σ2 )
+p12 (σ1 )
+p21 (σ2 )
+p21 (σ2 )p12 (σ1 )
+M (t)
+=
+=⇒ lim
+t→∞
+t
+p21 (σ2 )S1 (σ1 ) + p12 (σ1 )S2 (σ2 )
+
+Wald’s identity
+
+Then, by standard algebra on multiplication with almost sure convergence
+lim
+
+t→∞
+
+Rj (wj , σj , M (t))
+Rj (wj , σj , M (t)) M (t)
+= lim
+t→∞
+t
+M (t)
+t
+
+
+1
+p21 (σ2 )p12 (σ1 )
+=
+Ŵj (σj )
+pji (σj )
+p21 (σ2 )S1 (σ1 ) + p12 (σ1 )S2 (σ2 )
+
+
+pij (σi )Sj (σj )
+=
+Rj (wj , σj )
+p21 (σ2 )S1 (σ1 ) + p12 (σ1 )S2 (σ2 )
+p (σ )S (σ )
+
+i j
+j
+Let µj (σ) , p21 (σ2 )S1ij(σ1 )+p
+. Putting the above together:
+12 (σ1 )S2 (σ2 )
+
+lim inf
+
+t→∞
+
+R(w, σ, t)
+R1 (w1 , σ1 , M (t))
+R2 (w2 , σ2 , M (t))
+= lim inf
++ lim inf
+t→∞
+t→∞
+t
+t
+t
+= µ1 (σ)R1 (w1 , σ1 ) + µ2 (σ)R2 (w2 , σ2 )
+
+To finish the proofs, we will further derive the form of the appropriate quantities. Recall that
+Si (σi ) is the expected length of the time between being open in a state i to being open again, either
+after a state transition or after finishing a job; and pij (σi ) is the probability that the driver is next
+open in state j given they are currently open in state i. These are:
+Z
+1
+fi (τ )
+λi Fi (σi )
+Si (σi ) =
+τ
++
+dτ
+λi Fi (σi ) + λi→j
+λi Fi (σi ) + λi→j τ ∈σi Fi (σi )
+
+
+Z
+1
+1 + λi
+τ dFi (τ )
+=
+λi Fi (σi ) + λi→j
+τ ∈σi
+
+
+Z
+λi Fi (σi )
+1
+1
+=
+Ti (σi )
+Ti (σi ) ,
++
+τ dFi (τ )
+λi Fi (σi ) + λi→j
+λi Fi (σi ) Fi (σi ) τ ∈σi
+The first part of the sum λi Fi (σi1)+λi→j is the expected time until either the driver receives and
+accepts a request, or the world state transitions to the other state. This form emerges because
+there are two competing independent exponential clocks – that for a request and that for the world
+state changing. The second part of the sum is the probability of receiving an accepted trip request
+before a state transition, times the expected length of an accepted trip.
+Similarly, the expected earning in a sub-cycle in state j is:
+Z
+fi (τ )
+λi Fi (σi )
+wi (τ )
+dτ
+Ŵj (σj ) =
+λi Fi (σi ) + λi→j τ ∈σi
+Fi (σi )
+
+
+λi Fi (σi )
+=
+Wi (σi )
+λi Fi (σi ) + λi→j
+49
+
+Ŵ (σ )
+
+W (σ )
+
+and so Rj (wj , σj ) = Sjj(σjj) = Tj(σjj) .
+The next step is to find an expression for pij (σi ), the probability that the next renewal cycle is
+at state j, given the current one is at state i. We find it for j 6= i, and then pii = 1 − pij .
+Z
+λi→j
+λi Fi (σi )
+1
++
+pij (σ) =
+qi→j (τ )dFi (τ )
+λi Fi (σi ) + λi→j
+λi Fi (σi ) + λi→j Fi (σi ) σi
+
+
+1
+=
+Qi (σi )
+λi Fi (σi ) + λi→j
+The first part of the summation is the probability that the world state transitions to state j
+before the driver accepts a trip request. The second part is the probability that the
+R driver accepts
+1
+a trip request before the state transitions, times the probability qi→j (σi ) = Fi (σ
+qi→j (τ )dFi (τ )
+i ) σi
+that the world will be in state j when the driver’s trip ends. The result follows.
+
+D.2
+
+Proof strategy for incentive compatible pricing and structural results
+
+We now give an overview of the proof strategy for both Theorems 2 and 3. The key step to both
+is Lemma 5 below, which shows how to use properties of the derivative of a reward function with
+respect to an element of a driver policy, to establish the structural properties of optimal driver
+policies – this Lemma is the primary theoretical result. Next, Section D.3 provides lemmas that
+help us establish the properties of this derivative as they depend on the pricing function. We put
+things together in Section D.4 to prove Theorems 2 and 3. Proofs of the lemmas in Section D.3 are
+in Section D.5.
+Lemma 5 shows how the structure of an optimizer σ ∗ = ∪k (`k , uk ) of a set function R̂(σ)
+depends on the derivative of the set function with respect to the endpoints of the sets that make
+∂
+up the policy, ∂u
+R̂(σ). The main idea is that as long as the derivative can be shown to be positive
+for some u that is an endpoint of σi , that policy can be locally modified to accept more trips and
+increase the overall reward function. We work with a function r(u, σ) that has the same sign as the
+∂
+∂
+derivative ∂u
+R̂(σ). Given r(u, σ), we analyze the sign of ∂u
+R̂(σ) as it depends on the structure of
+σ, and in turn can characterize the structure of the optimal σ ∗ .
+In particular, we will show how properties of r(u, σ) – whether for a fixed σ it is always positive,
+strictly increasing, strictly decreasing, strictly quasi-convex, or strictly quasi-concave in u – lead to
+different optimal σ ∗ . The rest of the appendix section applies Lemma 5 to our context, by showing
+how different pricing functions induce different properties of r(u, σ) and thus different optimal
+policies for each state σi∗ .
+Lemma 5. Consider a function R̂(σ) that maps open, measurable subsets σ = ∪∞
+k (`k , uk ) ⊆ (0, ∞)
+to the non-negative reals, and probability measure F such that F is continuous, i.e. f is bounded.
+∂
+Let ∂u
+R̂(σ) denote the partial derivative of R̂ with respect to an upper end-point u of the intervals
+that make up σ = ∪∞
+k (`k , uk ), i.e., it is the infinitesimal gain in the value of R̂(σ) by adding u to
+the set σ. Suppose,
+∂
+1. R̂(σ) is continuous in σ, and ∂u
+R̂(σ) exists, for all σ and u.
+∂
+2. ∂u
+R̂(σ) is continuous in u, for each fixed σ.
+∂
+3. ∂u
+R̂(σ) is continuous in σ, for each fixed u.
+∂
+Suppose that there exists a function r(u, σ) that has the same sign as ∂u
+R̂(σ), for all σ, u where
+0
+0
+f (u) > 0. Consider any open measurable subset σ ⊆ (0, ∞), where F (σ ) > 0, and R̂(σ 0 ) > R̂(∅).
+
+50
+
+Then the following statement holds for each of the below specific cases: “Suppose ∃ > 0 s.t.
+r(u, σ) is [Property] in u (for a fixed σ), for all σ such that R̂(σ) ≥ R̂(σ 0 ) − . Then, there exists
+a policy σ ∗ of the form [Form] such that R(σ ∗ ) ≥ R(σ 0 ), and the inequality is strict unless σ 0 is
+also of the same form.”
+Property
+r(u, σ) > 0 (is positive)
+r(u, σ) is strictly increasing
+r(u, σ) is strictly decreasing
+r(u, σ) is strictly quasi-convex
+r(u, σ) is strictly quasi-concave
+
+Form
+σ ∗ = (0, ∞)
+σ ∗ = (`∗ , ∞), for `∗ ∈ R+
+σ ∗ = (0, u∗ ), for u∗ ∈ R+ ∪ {∞}
+σ ∗ = (0, `∗ ) ∪ (u∗ , ∞), for `∗ , u∗ ∈ R+ ∪ {∞}
+σ ∗ = (`∗ , u∗ ), for `∗ , u∗ ∈ R+ ∪ {∞}
+
+Proof. Proof. The facts that policies not of the appropriate form cannot be optimal follow directly
+from the respective structures of the derivatives, as we will show below. However, since the domain
+of the set function R̂ is any subset of R+ , we need to also prove existence of a maximizer of the
+appropriate form. The proof is structured around proving existence of a maximizer in each case,
+but we will point out where the given facts imply necessity of having the appropriate form.
+∞
+The general approach is as follows: Start at subset σ 0 ⊆ (0, ∞) = ∪∞
+k (`k , uk ) = ∪k ζk , where
+the intervals are disjoint and ζk = (`k , uk ) denotes the kth interval. (recall that any open subset of
+R can be uniquely written as the countable union of such disjoint intervals).
+Then, do the following:
+1. Create a sequence σδ0 → σ 0 (as δ → 0), where, for each δ, the set σδ0 is δ-close to σ 0 : F ((σ 0 \
+σδ0 ) ∪ (σδ0 \ σ 0 )) < δ.
+2. Show that there exists a σ ∗ of the appropriate form (according to the property that holds
+above), such that R̂(σδ0 ) ≤ R(σ ∗ ), ∀δ.
+By continuity of the set function R̂, this implies that R̂(σ 0 ) ≤ R(σ ∗ ).
+The second step is the main proof step and the only one that depends substantially on the given
+property of the function r(u, σ).
+
+Step one: a sequence σδ0 → σ 0 . Each σδ0 will be of the form σδ0 = (0, L)∪ ∪K
+k=1 (`k , uk ) ∪(B, ∞),
+for some K, B, L that depend on δ. We construct a σδ0 such that F (σ 0 \ σδ0 ∪ σδ0 \ σ 0 ) < δ as follows:
+• F is a finite (probability) measure, and so there exists K such that F (∪∞
+k=K+1 (`k , uk )) < δ/2.
+0
+(Since F (σ ) ≤ 1, it follows by the Cauchy condition).
+• Let B ∈ R s.t. F ((B, ∞)) < δ/4. Let L ∈ R s.t. F ((0, L)) < δ/4. Such B, L exist by
+condition on F .
+
+• Set σδ0 = (0, L) ∪ ∪K
+k=1 (`k , uk ) ∪ (B, ∞).
+• For convenience, we re-index the disjoint intervals {ζk }K+2
+k=1 such that they are in increasing
+order, i.e. uk > `k ≥ uk−1 , ∀k > 1, starting at (0, L), with the last interval (B, ∞). If there
+exist any intervals such that `k = uk−1 , replace them with the combined interval (`k−1 , uk ).
+If {B, ∞} overlaps with the last interval, combine them.
+Note that, by the suppositions, in each case ∃δ0 small enough such that r(u, σ) maintains the
+appropriate property for all σ such that R̂(σ) ≥ R̂(σδ0 ), ∀δ < δ0 .
+51
+
+Step 2: showing that R̂(σ ∗ ) ≥R̂(σ 0 ), where σ ∗ is of the appropriate form. Now, starting
+at σ = σδ0 = (0, L)∪ ∪K
+k=1 (`k , uk ) ∪(B, ∞), we describe a sequence of modifications to σ, such that
+each modification does not reduce the reward R̂(σ). The limit of this sequence of modifications is
+a policy σ ∗ of the appropriate form, regardless of the starting σδ0 .
+We now carry out this step separately for each case. The general argument is that the properties
+force r(u, σ) to be positive at certain points, which allows expanding the policy until a policy of
+the appropriate form is reached.
+Let rL (`, σ) = −r(u, σ), i.e., it is a function that has the same sign as the derivative of a lower
+endpoint of σi (the same sign as the infinitesimal loss as removing the point ` from the set σ).
+∂
+R̂(σ) is positive in u, we can
+Setting where r(u, σ) > 0 (is positive). By supposition that ∂u
+increase u1 (merging with other intervals) while increasing R̂(σ). Thus, we can keep increasing u1 ,
+and u1 → B, and so R((0, ∞)) ≥ R(σδ0 ). For any set σ 0 6= (0, ∞), we can increase the reward by
+expanding an interval, and so it cannot be optimal. Thus, (0, ∞) is the unique optimal set.
+
+Setting where r(u, σ) is strictly increasing.
+Now, starting at σ = σδ0 , the limit of the sequence of modifications is a policy σ ∗ = (`∗ , ∞).
+By the supposition that r(u, σ) strictly increasing in u, we have:
+rL (`, σ) strictly decreasing
+rL (`1 , σ) ≤ 0 =⇒ r(u1 , σ) > 0
+∂
+∂
+≡
+R̂(σ) ≤ 0 =⇒
+R̂(σ) > 0
+∂`1
+∂u1
+
+`1 < u1
+
+rL (`1 , σ) > 0 ⇐= r(u1 , σ) ≤ 0
+∂
+∂
+≡
+R̂(σ) > 0 ⇐=
+R̂(σ) ≤ 0
+∂`1
+∂u1
+Case 1: ∃ζ1 , ζ2 ⊂ σ such that `2 > u1 , |ζ1 |, |ζ2 |, i.e. there is more than one interval that
+makes up σ, and ζ1 , ζ2 are the first and second such intervals, respectively, with positive mass.
+Then we make the following sequence of changes (forming new σ), depending on ∂`∂1 R̂(σ), ∂u∂ 1 R̂(σ):
+Subcase 1A, ∂u∂ 1 R̂(σ) > 0: Increase u1 until u1 = `2 (exit Case 1), or ∂u∂ 1 R̂(σ) ≤ 0 (go to Case
+1B).
+Sub-subcase 1AA, ∂`∂1 R̂(σ) < 0, `1 > 0:
+
+Simultaneously, decrease `1 .
+
+Sub-subcase 1AB, ∂`∂1 R̂(σ) ≥ 0 or `1 = 0:
+
+Hold `1 fixed.
+
+Subcase 1B, ∂u∂ 1 R̂(σ) ≤ 0 =⇒ ∂`∂1 R̂(σ) > 0: Increase `1 until `1 = u1 (exit Case 1), or ∂`∂1 R̂(σ) ≤
+0 (which implies ∂u∂ 1 R̂(σ) > 0, i.e. go to Case 1A).
+Each of these changes increases R̂(σ), due to the direction of the changes in u1 , `1 and the signs
+of the appropriate derivatives. Note that these subcases are mutually-exclusive, and one is true
+as long as there is more than one disjoint interval, ∃ζ1 , ζ2 ⊂ σ, `2 > u1 . Further, note that u1 is
+increasing in Subcase 1A and constant in Subcase 1B. Thus, with `2 fixed and bounded, eventually:
+
+52
+
+• `1 → u1 , in Subcase 1B (i.e. the first interval collapses to mass 0). OR
+• u1 → `2 , in Subcase 1A (i.e. the first interval merges with the second).
+Thus, this sequence of changes increases the reward, and results in there being one fewer interval
+than before (after combining the bottom 2 intervals by adding the point u1 = `2 of 0 measure).
+Case 1 can be iteratively applied until there is just a single interval σ = (`0 , ∞).
+That the changes can increase the reward for any other σ implies that such σ cannot be optimal.
+Case 2: σ = (`0 , ∞), i.e. there is a single interval that makes up σ
+By supposition, R̂(σ 0 ) > R̂(∅) and so R̂((`0 , ∞)) > R̂(∅). Further R̂((`, ∞)) is a continuous
+function in `. Thus, there exists L such that ∀` > L, R̂((`0 , ∞)) > R̂((`, ∞)).
+Thus, there exists `∗ ∈ [0, L] such that R̂((`∗ , ∞)) ≥ R̂((`, ∞)), ∀` ∈ R+ ∪ {∞} (continuous
+functions in a compact domain have a maximum).
+Setting where r(u, σ) is strictly decreasing.
+The proof is extremely similar to the strictly increasing case, with two differences.
+First we now need to modify the starting σ 0 so it does not contain an interval (B, ∞): set
+0
+σδ = (0, L) ∪ ∪K
+k=1 (`k , uk ) \ (B, ∞).
+Second, each case from above is duplicated but move the policy in the opposite different to
+increase the reward. We omit the details of this case for brevity.
+Setting where r(u, σ) is strictly quasi-convex.
+We show that there exists a σ ∗ = (0, `∗ ) ∪ (u∗ , ∞), for some u∗ , l∗ ∈ R+ , such that R̂(σδ0 ) ≤
+R(σ ∗ ), ∀δ.
+The key is noting that quasi-convexity of r(u, σ) in u implies that any σ with three intervals
+ζ1 , ζ2 , ζ3 can be improved by eliminating the middle interval (or joining it with one of the others).
+Case 1: ∃ disjoint ζ1 = (0, u1 ), ζ2 = (`2 , u2 ), ζ3 = (`3 , u3 ), s.t. |ζ1 |, |ζ2 |, |ζ3 | > 0, i.e. σ is
+composed of at least three intervals, and ζ1 , ζ2 , ζ3 are the first three such intervals with positive
+mass. (u3 may be ∞).
+By supposition, r(uk , σ), is strictly quasi-convex in u, and so rL (`k , σ), is strictly quasi-concave
+in `.
+Then, we have:
+∂
+∂
+∂
+∂
+R̂(σ) ≤ 0 and
+R̂(σ) ≥ 0 =⇒
+R̂(σ) > 0 and
+R̂(σ) < 0
+∂u1
+∂`3
+∂`2
+∂u2
+∂
+∂
+∂
+∂
+R̂(σ) ≤ 0 or
+R̂(σ) ≥ 0 =⇒
+R̂(σ) > 0 or
+R̂(σ) < 0
+∂`2
+∂u2
+∂u1
+∂`3
+Then we make the following sequence of changes (forming new σ):
+Subcase 1A, ∂u∂ 1 R̂(σ) ≤ 0 and ∂`∂3 R̂(σ) ≥ 0 =⇒ ∂`∂2 R̂(σ) > 0 and ∂u∂ 2 R̂(σ) < 0: Increase `2 and
+decrease u2 simultaneously until `2 = u2 (exit Case 1), ∂u∂ 2 R̂(σ) ≥ 0, or ∂`∂2 R̂(σ) ≤ 0 (go to
+1B or 1C).
+Subcase 1B, ∂u∂ 1 R̂(σ) > 0: Increase u1 until u1 = `2 (exit Case 1), or ∂u∂ 1 R̂(σ) ≤ 0 (go to 1A or
+1C)
+Subcase 1C, ∂`∂3 R̂(σ) < 0: Decrease `3 until u2 = `3 (exit Case 1), or ∂`∂3 R̂(σ) ≥ 0 (go to 1B or
+1A).
+53
+
+Each of these changes strictly increase R̂(σ). 1B and 1C may both be true, in which case we
+arbitrarily decide between them. At least one of the three subcases is true as long as the Case 1
+condition holds. Thus, eventually:
+• `2 = u2 , in Subcase 1A (i.e. the middle interval collapses to mass 0). OR
+• u1 = `2 , in Subcase 1B (i.e. the first interval merges with the second). OR
+• u2 = `3 , in Subcase 1C (i.e. the third interval merges with the second).
+Thus, this sequence of changes cannot decrease the reward, and results in there being one fewer
+interval than before. Case 1 can be iteratively applied until there are just two intervals σ =
+(0, t1 ) ∪ (t2 , ∞).
+That the changes can increase the reward for any other σ implies that such σ cannot be optimal.
+Case 2: σ = (0, t1 ) ∪ (t2 , ∞). We need to show that there exists a maxima (t∗1 , t∗2 ). Specifically, we
+need to eliminate the possible cases where t1 or t2 increase to infinity, but the asymptotic values
+at ∞ produce lower rewards, which would have implied that the maximum is not achieved.
+By supposition, R̂(σ 0 ) > R̂(∅) and so R̂((0, t1 ) ∪ (t2 , ∞)) > R̂(∅) for t1 > 0 or t2 < ∞.
+Further R̂((0, t1 ) ∪ (t2 , ∞)) is a continuous function in t1 , t2 . Thus R̂((0, t1 ) ∪ (t2 , ∞)) → R̂(∅)
+as t1 → 0, t2 → ∞ together.
+Further, R̂((0, t1 ) ∪ (t2 , ∞)) → R̂((0, ∞)) as t1 → ∞, regardless of how t2 behaves. Similarly,
+fixing t1 , R̂((0, t1 ) ∪ (t2 , ∞)) → R̂((0, t1 )) as t2 → ∞.
+• If R̂((0, t1 ) ∪ (t∗2 (t1 ), ∞)) is increasing for t1 > T1 , for however t∗2 (t1 ) behaves as a function of
+t1 then R̂((0, ∞)) ≥ R̂((0, t1 ) ∪ (t2 , ∞)), ∀t1 > T1 , t2 .
+
+• For any fixed t1 , if R̂((0, t1 ) ∪ (t2 , ∞)) is increasing for t2 > T2 , then R̂((0, t1 )) ≥ R̂((0, t1 ) ∪
+(t2 , ∞)), ∀t2 .
+
+Thus, the maximum is achieved: either
+
+1. ∃t∗1 ∈ (0, ∞) : R̂((0, t∗1 )) ≥ R̂((0, t1 ) ∪ (t2 , ∞)), ∀t1 , t2
+2. ∃t∗1 , t∗2 ∈ [0, ∞) : R̂((0, t∗1 ) ∪ (t∗2 , ∞)) ≥ R̂((0, t1 ) ∪ (t2 , ∞)), ∀t1 , t2
+Setting where r(u, σ) is strictly quasi-concave.
+The proof is extremely similar to the strictly quasi-convex case. However, we now need to
+modify the starting σ 0 so it does not contain an intervals (0, L) or (B, ∞), and the subsequent
+modifications also differ directionally.
+
+Let σδ0 = ∪K
+k=1 (`k , uk ) \ (0, L) \ (B, ∞). Now, the key step is noting that strict quasi-concavity
+of r(u, σ) implies that any σ with two intervals ζ1 , ζ2 can be improved by eliminating one (or joining
+the two).
+Case 1: ∃ disjoint ζ1 = (`1 , u1 ), ζ2 = (`2 , u2 ), s.t. |ζ1 |, |ζ2 | > 0, i.e. σ is composed of at least
+two intervals with positive mass, and ζ1 , ζ2 are the first two such intervals.
+By supposition, r(uk , σ), is strictly quasi-concave in u. Then, rL (`k , σ), is strictly quasi-convex
+in u.
+Then, we have:
+∂
+∂
+∂
+R̂(σ) ≤ 0 and
+R̂(σ) ≤ 0 =⇒
+R̂(σ) > 0
+∂`1
+∂`2
+∂u1
+∂
+∂
+∂
+R̂(σ) ≤ 0 =⇒
+R̂(σ) > 0 or
+R̂(σ) > 0
+∂u1
+∂`1
+∂`2
+54
+
+Then we make the following sequence of changes (forming new σ):
+Subcase 1A, ∂`∂1 R̂(σ) ≤ 0 and ∂`∂2 R̂(σ) ≤ 0 =⇒ ∂u∂ 1 R̂(σ) > 0: Increase u1 until u1 = `2 (exit
+Case 1) or ∂u∂ 1 R̂(σ) ≤ 0 (go to 1B or 1C).
+Subcase 1B, ∂`∂1 R̂(σ) > 0: Increase `1 until u1 = `1 (exit Case 1), or ∂`∂1 R̂(σ) ≤ 0 (go to 1A or
+1C)
+Subcase 1C, ∂`∂2 R̂(σ) > 0: Increase `2 until u2 = `2 (exit Case 1), or ∂`∂2 R̂(σ) ≤ 0 (go to 1B or
+1A).
+Each of these changes strictly increase R(σ). 1B and 1C may both be true, in which case arbitrarily
+decide between them. At least one of the three subcases is true as long as the Case 1 condition
+holds. Thus, eventually:
+• `2 = u1 , in Subcase 1A (i.e. the intervals combine). OR
+• u1 = `1 , in Subcase 1B (i.e. the first interval collapses to mass 0). OR
+• u2 = `2 , in Subcase 1C (i.e. the second interval collapses to mass 0).
+Thus, this sequence of changes cannot decrease the reward, and result in there being one fewer
+interval than before. Case 1 can be iteratively applied until there is just one interval σi = (t1 , t2 ).
+That the changes can increase the reward for any other σ implies that such σ cannot be optimal.
+Case 2: σi = (t1 , t2 ). As in the same case in the quasi-convex setting. We need to values eliminate
+the possible cases where t1 or t2 increasing to infinity, but the asymptotic values at ∞ produce
+lower rewards, which would imply that the maximum is not achieved.
+Note that R̂((t1 , t2 )) is a continuous function in t1 , t2 . Thus R̂((t1 , t2 )) → R̂(∅) as t1 → t2 .
+Further, R̂((t1 , t2 )) → R̂(∅) as t1 → ∞, regardless of how t2 ≥ t1 behaves. Similarly, fixing t1 ,
+R̂((t1 , t2 )) → R̂((t1 , ∞)) as t2 → ∞.
+• If R̂((t1 , t∗2 (t1 ))) is increasing for t1 > T1 , for however t∗2 (t1 ) behaves as a function of t1 then
+R̂(∅) ≥ R̂((t1 , t2 )), ∀t1 > T1 , t2 .
+• For any fixed t1 , if R̂((t1 , t2 )) is increasing for t2 > T2 , then R̂((t1 , ∞)) ≥ R̂((t1 , t2 )), ∀t2 > T2 .
+Thus, either
+1. R̂(∅) ≥ R̂((t1 , t2 )), ∀t1 , t2
+2. ∃t∗1 ∈ [0, ∞) : R̂((t∗1 , ∞)) ≥ R̂((t1 , t2 )), ∀t1 , t2
+3. ∃t∗1 , t∗2 ∈ [0, ∞) : R̂(t∗1 , t∗2 ) ≥ R̂((t1 , t2 )), ∀t1 , t2
+
+D.3
+
+Auxiliary lemmas
+
+Here we present lemmas necessary to prove the main theorems regarding incentive compatibility
+and optimal driver policies. Proofs are deferred to Section D.5, as they are tedious and algebraic.
+These lemmas primarily involve properties of derivatives of the reward function R(w, σ) and its
+components in the dynamic model, as a function of the pricing.
+55
+
+D.3.1
+
+Notation and assumptions
+
+Recall in the dynamic model that we constrain σi to be measurable, open, subsets of the R+ . Then,
+σi can be written as a countable union of disjoint subsets of R+ , i.e. σi = ∪∞
+k=0 (`k , uk ). We further
+assume that uk 6= `m , for any k, m; we can do so without loss of generality by making a measure 0
+change to σi , by adding uk = `m to σi .
+∂
+Suppose u is an upper-endpoint of σi , ie. ∃k such that u = uk . Then, we use ∂u
+H(σi ) to denote
+∂
+the derivative of the set function H with respect to u at σi . Similarly, ∂` H(σi ) is the derivative of
+H at σi with respect to a lower-endpoint of σi .
+∂
+∂
+We derive ∂u
+R(w, {σ1 , σ2 }), ∂`
+R(w, {σ1 , σ2 }). We will make it clear in each instance whether u
+∂
+refers to the derivative
+or ` is an endpoint of σ1 or σ2 . For all the derivatives in this subsection ∂u
+∂
+with respect to an upper endpoint in σi , and ∂` refers to a derivative at a lower endpoint of σi .
+Note that
+∂
+∂
+R(w, {σ1 , σ2 }) = − R(w, {σ1 , σ2 }).
+∂u
+∂`
+Furthermore:
+• We use σ in the function argument when the function depends on policies in both states, and
+σi when it only depends on the policy in state i.
+• We use ∝ to denote that “two functions of u have the same sign except where f (u) = 0”,
+rather than proportional to.
+• All policy equalities are up to measure 0.
+Let
+∆(σi , σj ) = Ri (wi , σi ) − Rj (wj , σj ).
+be the earnings difference between the two states. Finally, when σi , σj are clear from context, let
+Z
+qi→j (τ )dFi (τ )
+Qi , Qi (σi ) = λi→j + λi
+σi
+Z
+τ dFi (τ )
+Ti , λi Fi (σi )Ti (σi ) = 1 + λi
+τ ∈σi
+Z
+wi (τ )dFi (τ )
+Wi , λi Fi (σi )Wi (σi ) = λi
+τ ∈σi
+
+∆ji , ∆(σj , σi ) = Rj (wj , σj ) − Ri (wi , σi )
+We assume throughout:
+• Distribution of jobs F, Fi is a continuous probability measure, i.e., f, fi bounded.
+• There exists a policy in state 2 that dominates state 1: ∃σ2 such that ∆(σ2 , σ1 ) > 0, ∀σ1 ⊆
+(0, ∞).
+• σ, σi constrained to be measurable with respect to F, Fi , and σi are open.
+
+56
+
+D.3.2
+
+Derivative derivation and comments
+
+∂
+R(w, σ) ∝ r(u, i, w, σ), where
+Lemma 6. Let R(w, σ) be as defined in Lemma 1. Then, ∂u
+
+
+ 
+qi→j (u)
+Qj
+Qi
+wi (u) Qi Qj
+r(u, i, w, σ) ,
++
+−
+Rj +
+Ri
+∆ji +
+u
+u
+Ti
+Tj
+Ti
+Tj
+
+In other words, r(u, i, w, σ) has the same sign as the derivative of the overall reward with respect
+to u (an upper endpoint of σi ) at w, σ, but it is not necessarily monotonic with it.
+Remark 1. Given assumptions on Fi , wi :
+• Ri (σ), R(σ), µi are continuous in σ
+∂
+• ∂u
+R(w, σ), r(u, i, w, σ) are both continuous in u (for fixed σ), and continuous in σ.
+
+•
+
+qi→j (u)
+is strictly decreasing in u.
+u
+
+• If ∆ji < 0 (i = 2 the surge state) and wiu(u) is non-decreasing in u, then r(u, i, w, σ) is
+∂
+R(w, σ) is negative up to a certain point
+strictly increasing in u for a fixed σ. Thus, ∂u
+U ∈ (0, ∞) ∪ {∞} and then positive thereafter.
+• If ∆ji > 0 (i = 1 the non-surge state) and wiu(u) is non-increasing in u, then r(u, i, w, σ)
+∂
+is strictly decreasing in u for a fixed σ. Thus, ∂u
+R(w, σ) is positive up to a certain point
+U ∈ (0, ∞) ∪ {∞} and then negative thereafter.
+D.3.3
+
+Lemmas for driver policy in response to affine pricing
+
+Lemma 7. Suppose wi (τ ) = mτ + a, where m, a > 0. Then, r(u, i, w, σ) is strictly quasi-convex in
+u, for each fixed σ where ∆ji ≤ 0.
+Lemma 8. Suppose wi (τ ) = mτ + a, where m > 0 and a < 0. Then, r(u, i, w, σ) is strictly
+quasi-concave in u, for each fixed σ where ∆ji ≥ 0.
+D.3.4
+
+Lemmas for IC policy
+
+Remark 2.
+Let
+Then
+
+wi (u) = mu + zqi→j (u)
+Wi = m(Ti − 1) + z(Qi − λi→j )
+∂
+R(w, σ) ∝ qi→j (u) [(Rj − m)Tj Ti + mTj + zQj Ti + zTj λi→j ]
+∂u
++ u [Qi Tj (m − Rj ) + Qj (m − zQi + zλi→j )]
+q
+
+Remark 3. limu→0 i→ju
+
+(u)
+
+= λi→j .
+
+Remark 4. λi→j Ti − Qi ≥ 0 and maximized when σi = (0, ∞). Similarly, Qi ≥ 0 and maximized
+when σi = (0, ∞).
+
+∂
+In the next lemma, we consider u an upper endpoint of σ2 , and so ∂u
+R(w = {w1 , w2 }, σ =
+{σ1 , σ2 }) is a derivative with respect to an upper endpoint of σ2 .
+
+57
+
+Lemma 9. Fix arbitrary σ1 , and thus Q1 , T1 , R1 . Let Q̄2 , T̄2 be the respective values of Q2 , T2 at
+σ2 = (0, ∞). Let w2 (τ ) = mτ + zq2→1 (τ ), where m > R1 .
+If
+z
+T1 (λ2→1 T̄2 − Q̄2 ) − (Q1 + T1 λ2→1 )
+Q̄2 T1 + Q1
+<
+<
+m
+−
+R
+Q1 (Q̄2 − λ2→1 )
+Q1 (λ2→1 T̄2 − Q̄2 ) + λ2→1 (Q1 + T1 λ2→1 )
+1
+∂
+Then ∂u
+R(w, σ) > 0, for all u, σ2 . Furthermore, the constraint set is feasible regardless of the
+primitives.
+
+We can now do the same thing for the first state, assuming that w1 (τ ) is of the form w1 (τ ) =
+mτ + zq1→2 (τ ), where now z ≤ 0 and m = R2 . In the next lemma, we consider u an upper endpoint
+∂
+of σ1 , and so ∂u
+R(w = {w1 , w2 }, σ = {σ1 , σ2 }) is a derivative with respect to an upper endpoint of
+σ1 . Then,
+Lemma 10. Fix arbitrary σ2 , and thus Q2 , T2 , R2 . Let Q̄1 , T̄1 be the respective values of Q1 , T1 at
+σ1 = (0, ∞). Let w1 (τ ) = mτ + zq1→2 (τ ), where m = R2 .
+If
+−
+
+z
+1
+(T2 λ1→2 + Q2 )
+<
+<
+R2
+Q2 (λ1→2 T̄1 − Q̄1 ) + λ1→2 (T2 λ1→2 + Q2 )
+(Q̄1 − λ1→2 )
+
+∂
+Then ∂u
+R(w, σ) > 0, for all u, σ1 . Furthermore, the constraint set is feasible regardless of the
+primitives.
+
+D.4
+
+Proofs of main results, Theorems 2 and 3
+
+We are now ready to combine the results above to prove our main results. The following theorem
+subsumes Theorem 2, (slightly expanding it to make it useful to prove Theorem 3).
+Theorem 4. Consider pricing function w = {w1 , w2 }, where i = 2 is the surge state as defined.
+Then, there exists an optimal policy σ = {σ1 , σ2 } that maximizes R(w, σ), with the following properties.
+• Non-surge state driver optimal policy σ1 :
+– If w1 (τ ) = m1 τ + a1 , for a1 ≥ 0, then σ1 = (0, t1 ), for some t1 ∈ [0, ∞) ∪ {∞}.
+
+– If w1 (τ ) = m1 τ − a1 , for a1 > 0, then σ1 = (t2 , t3 ), for some t2 , t3 ∈ [0, ∞) ∪ {∞}.
+
+∂
+– If w1 such that ∂u
+R(w, σ 0 = {σ10 , σ20 }) > 0 for all σ 0 , where u is an upper endpoint of an
+interval that makes up σ10 , then σ1 = (0, ∞).
+
+• Surge state driver optimal policy σ2 :
+– If w2 (τ ) = m2 τ − a2 , for a2 ≥ 0, then σ1 = (t4 , ∞), for some t4 ∈ [0, ∞).
+
+– If w2 (τ ) = m2 τ +a2 , for a2 > 0, then σ1 = (0, t5 )∪(t6 , ∞), for some t5 , t6 ∈ [0, ∞)∪{∞}.
+∂
+– If w2 such that ∂u
+R(w, σ 0 = {σ10 , σ20 }) > 0 for all σ 0 , where u is an upper endpoint of an
+interval that makes up σ20 , then σ2 = (0, ∞).
+
+Furthermore, only policies of the given forms can be optimal.
+Proof. Proof. The proof strategy is as follows:
+58
+
+• Start with some arbitrary policy σ = {σ1 , σ2 }.
+• With assumption on the surge state providing higher potential earnings, replace σ2 with a
+policy that provides higher earnings in state 2 than σ1 does in state 1, without decreasing
+total reward.
+• Using Lemma 5, replace σ1 with policy of the appropriate form, without decreasing total
+reward.
+• Using Lemma 5, replace σ2 with policy of the appropriate form, without decreasing total
+reward.
+∂
+Let r(u, i, w, σ) be as defined in Lemma 6, a function that has the same sign as ∂u
+R(w, σ),
+where u is an upper endpoint of an interval that is part of σi . Recall that, above, we show
+
+• (Remark 1). ∆(σi , σj ) > 0 and wiτ(τ ) non-decreasing implies r(u, i, w, σ) strictly increasing in
+u ∈ σi .
+• (Remark 1). ∆(σi , σj ) < 0 and wiτ(τ ) non-increasing implies r(u, i, w, σ) strictly decreasing in
+u ∈ σi .
+• (Lemma 7). w(τ ) = mτ + a for m, a > 0 and ∆(σi , σ−i ) ≥ 0 implies r(u, i, w, σ) is strictly
+quasi-convex in u ∈ σi
+• (Lemma 8). w(τ ) = mτ − a for m, a > 0 and ∆(σi , σ−i ) ≤ 0 implies r(u, i, w, σ) is strictly
+quasi-concave in u ∈ σi
+We need to show that there exists a σ of the appropriate form such that R(w, σ) ≥ R(w, σ 0 ),
+for all σ 0 .
+Start with arbitrary σ 0 = {σ10 , σ20 } where σ10 , σ20 ⊆ R+ are open, measurable sets, but not of the
+correct form in the theorem statement. Invoking Lemma 5 as appropriate, we construct a sequence
+of changes to σ 0 such that the overall reward does not decrease with each change, and the sequence
+ends with a policy consistent with the theorem statement.
+Step A First, if R2 (σ20 ) < R1 (σ10 ), then we replace σ20 with a policy σ2A such that R2 (σ2A ) >
+R1 (σ1 ), ∀σ1 .
+Let σ2A be such that ∆(σ2A , σ100 ) > 0, for all σ100 open and measurable. Such σ2A exists by the
+definition of the surge state (we in fact define the surge state so that such σ2A exists).
+Then, let σ A , {σ1A = σ10 , σ2A }.
+
+Note that R(w, σ A ) ≥ R(w, σ 0 ): time spent earning reward at the rate of R2 (w2 , σ20 ) is replaced
+by time spent earning at rate R1 (w1 , σ10 ) or earning at rate R2 (w2 , σ2A ); time spent earning
+at R1 (w1 , σ10 ) may be replaced by time earning at rate R2 (w2 , σ2A ).
+
+Step B Now, we replace σ1A with a policy that is of the appropriate form.
+Let R̂(σ1 ) , R(w, {σ1 , σ2A }). By Lemma 5, there exists σ1B such that R(w, {σ1B , σ2A }) ≥
+R(w, {σ1A , σ2A }), and σ1B is of the required form. The inequality is strict if σ1A is not of the
+required form.
+Note that all the assumptions of Lemma 5 are met for each appropriate case: σ2B such
+that ∆(σ2B , σ10 ) > 0, ∀σ10 , and so r(u, i, w, σ) remains decreasing or strictly quasi-concave as
+necessary.
+Let σ B , {σ1B , σ2B = σ2A }.
+59
+
+Step C Now, we replace σ2B with a policy that is of the appropriate form.
+Let R̂(σ2 ) , R(w, {σ1B , σ2 }).
+
+By Lemma 5, there exists σ2C such that R(w, {σ1B , σ2C }) ≥ R(w, {σ1B , σ2B }), and σ2C is of the
+required form according to the table. The inequality is strict if σ2B is not of the required form.
+As before, all the assumptions of Lemma 5 are met for each appropriate case. σ2B such that
+∆(σ2B , σ10 ) > 0, ∀σ10 , and so r(u, i, w, σ) remains strictly increasing / strictly quasi-convex in
+u for a fixed σ.
+Let σ C , {σ1C = σ1B , σ2C }.
+Thus, we have constructed σ ∗ = {σ1∗ = σ1C , σ2∗ = σ2C } such that σ1∗ , σ2∗ correspond to theorem
+statement for the appropriate cases, respectively, and R(w, σ ∗ ) ≥ R(w, σ), for all σ = {σ1 , σ2 }
+where σ1 , σ2 ⊆ R+ are open, measurable sets, with the inequality strict if σ is not of the required
+form.
+Theorem 3. Let R1 < R2 be target earning rates during non-surged and surge states, respectively.
+There exist prices w = {w1 , w2 } of the form
+wi (τ ) = mi τ + zi qi→j (τ ),
+where m1 , m2 , z2 ≥ 0 (but z1 may be either positive or negative), such that the optimal driver policy
+is to accept every trip in the surge state and all trips up to a certain length in the non-surge state.
+R1
+Furthermore, for R
+∈ (C, 1), there exist fully incentive compatible prices of this form, where
+2
+C =1−
+
+1 Q2 (λ12 T1 − Q1 ) + Q1 (T2 λ1→2 + Q2 )
+∈ [0, 1),
+T1 Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+
+and Ti = λi Fi (σi )Ti ((0, ∞)), and Qi = Qi ((0, ∞)). For such prices, the driver policy to accept all
+requests is the unique optimal driver policy (up to differences of measure 0).
+Proof. Proof. Note that in the theorem statement we defined Qi , Ti as what we call Q̄i , T̄i in the
+helper lemmas in Section D.3.4, i.e., they refer to their respective values when every trip is accepted.
+Let w2 (τ ) = m2 τ + z2 q2→1 (τ ), and w1 (τ ) = m1 τ + z1 q1→2 (τ ).
+∂
+The following constraints are sufficient such that for these prices, ∂u
+R(w, σ) > 0, where the
+derivatives are with respect to upper endpoints u of the intervals that compose either σ1 or σ2 :
+From Lemma 9, for derivative with respect to σ2 :
+z2
+Q2 T1 + Q1
+T1 (λ2→1 T2 − Q2 ) − (Q1 + T1 λ2→1 )
+<
+<
+(Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 )) m2 − R1
+Q1 (Q2 − λ2→1 )
+From Lemma 10, for derivative with respect to σ1 :
+−
+
+(T2 λ1→2 + Q2 )
+z1
+1
+<
+<
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 ) R2
+(Q1 − λ1→2 )
+
+Now, applying Theorem 4, the policy that accepts everything, σ = {(0, ∞), (0, ∞)}, is the
+unique optimal policy, given these constraints are satisfied, as the appropriate derivative is always
+positive.
+Resulting constraints on R1 , R2 . These constraints limit R1 , R2 with respect to each other.
+60
+
+From Remark 2,
+W2 = m2 (T2 − 1) + z2 (Q2 − λ2→1 )
+W1 = m1 (T1 − 1) + z1 (Q1 − λ1→2 )
+
+Given R2 , what’s the range R1 can be in to still satisfy Lemma 10 conditions?
+First, we need
+1
+z1
+<
+⇐⇒ W1 − m1 (T1 − 1) < R2
+R2
+(Q1 − λ1→2 )
+1
+Let m1 = R2 . Then, R
+R2 < 1 is satisfies the condition.
+Second, we need
+
+z1
+(T2 λ1→2 + Q2 )
+>−
+R2
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+
+
+
+
+(T2 λ1→2 + Q2 )
+⇐⇒ W1 > R2 T1 − 1 −
+(Q1 − λ1→2 )
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+
+
+
+
+R1
+1
+(T2 λ1→2 + Q2 )
+⇐⇒
+>
+T1 − 1 −
+(Q1 − λ1→2 )
+R2
+T1
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+
+
+1
+(T2 λ1→2 + Q2 )(Q1 − λ1→2 )
+=1−
+1+
+T1
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+1 Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 ) + (T2 λ1→2 + Q2 )(Q1 − λ1→2 )
+=1−
+T1
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+1 Q2 (λ1→2 T1 − Q1 ) + Q1 (T2 λ1→2 + Q2 )
+=1−
+T1 Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+,C
+
+What about incentive compatible pricing in state 2 to satisfy Lemma 9? If we only
+care about that state, we can support any ratio of payments:
+
+
+Q2 T1 + Q1
+Let z2 =
+(m2 − R1 ) , c(m2 − R1 )
+Q1 (Q2 − λ2→1 )
+1
+R2 =
+[m2 (T2 − 1) + z2 (Q2 − λ2→1 )]
+T2
+R2
+1
+=⇒
+=
+[m2 (T2 − 1) + (m2 − R1 )c(Q2 − λ2→1 )]
+R1
+R1 T2
+1
+→1−
+≤ 1 as m2 → R1
+T2
+→ ∞ as m2 → ∞
+R1
+2
+Thus, we can make the surge state IC for any ratio of payments R
+R1 ≥ 1, i.e., R2 ≤ 1.
+1
+Now, suppose we want to achieve R1 , R2 such that R
+R2 ∈ [0, C). From the previous line, we
+can still set w2 such that every trip in state 2 is accepted (the derivative with respect to the surge
+policy is positive everywhere). Then, setting z1 = 0, and m1 to satisfy R1 , all trips up to a certain
+∂
+length will be accepted in the non-surge state: By Remark 1, ∂u
+R(w, σ) is positive up to a certain
+value and then negative after that, where u is an upper endpoint of σ1 . Thus, by Theorem 4, the
+optimal policy is of the form σ = {(0, t1 ), (0, ∞)}.
+
+61
+
+D.5
+
+Proofs of auxiliary lemmas
+
+D.5.1
+
+Derivative derivation and comments
+
+∂
+R(w, σ) ∝ r(u, i, w, σ), where
+Lemma 6. Let R(w, σ) be as defined in Lemma 1. Then, ∂u
+
+
+ 
+qi→j (u)
+Qj
+Qi
+wi (u) Qi Qj
+r(u, i, w, σ) ,
++
+−
+Rj +
+Ri
+∆ji +
+u
+u
+Ti
+Tj
+Ti
+Tj
+
+Proof. Proof.
+µi ({σj , σ2 }) =
+
+Qj Ti
+Qj Ti + Qi Tj
+
+R(w, σ) = µ1 (σ)R1 (w1 , σ1 ) + µ2 (σ)R2 (w2 , σ2 )
+
+
+1
+[Q2 W1 + Q1 W2 ]
+=
+Q2 T1 + Q1 T2
+Wi
+Ri (σi ) =
+Ti
+
+
+Z
+∂
+∂
+Qi =
+λi→j + λi
+qi→j (τ )dFi (τ ) = λi qi→j (u)fi (u)
+∂u
+∂u
+τ ∈σi
+ Z
+
+∂
+∂
+Wi =
+λi
+wi (τ )dFi (τ ) = λi wi (u)fi (u)
+∂u
+∂u
+τ ∈σi
+∂
+Ti = λi fi (u)u
+∂u
+
+
+∂
+λi fi (u)
+R(w, σ) =
+[[qi→j (u)Wj + Qj wi (u)] − R(w, σ)(uQj + qi→j (u)Tj )]
+∂u
+Qi Tj + Qj Ti
+∝ [qi→j (u)Wj + Qj wi (u)] − R(w, σ)(uQj + qi→j (u)Tj )
+
+∝ [qi→j (u)Wj + Qj wi (u)] (Qi Tj
+
++ Qj Ti ) − (Qi Wj + Qj Wi )(uQj + qi→j (u)Tj )
+
+= qi→j (u)Wj (Qi Tj + Qj Ti ) + Qj wi (u)(Qi Tj + Qj Ti )
+− uQj (Qi Wj + Qj Wi ) − qi→j (u)Tj (Qi Wj + Qj Wi )
+
+∝ qi→j (u)Wj Ti + wi (u)(Qi Tj + Qj Ti ) − u(Qi Wj + Qj Wi ) − qi→j (u)Tj Wi
+
+= qi→j (u) [Wj Ti − Tj Wi ] + wi (u)(Qi Tj + Qj Ti ) − u(Qi Wj + Qj Wi )
+
+ 
+
+
+qi→j (u)
+Qj
+wi (u) Qi Qj
+Qi
+(Rj − Ri ) +
++
+−
+Rj +
+Ri
+= uTi Tj
+u
+u
+Ti
+Tj
+Ti
+Tj
+
+ 
+
+qi→j (u)
+Qj
+wi (u) Qi Qj
+Qi
+∝
+∆ji +
++
+−
+Rj +
+Ri
+u
+u
+Ti
+Tj
+Ti
+Tj
+
+∆ji = Rj − Ri
+
+, r(u, i, w, σ)
+
+D.5.2
+
+Lemmas for driver policy in response to affine pricing
+
+Lemma 7. Suppose wi (τ ) = mτ + a, where m, a > 0. Then, r(u, i, w, σ) is strictly quasi-convex in
+u, for each fixed σ where ∆ji ≤ 0.
+62
+
+Proof. Proof. Recall that by definition of strict quasi-convexity, r(u, i, w, σ) is strictly quasi-convex
+if its derivative is strictly negative up to a point, and then strictly positive above that point u, for
+a fixed σ.
+From Lemma 6,
+c1 a − c2 qi→j (u)
++ c3
+u
+For some c1 > 0, c2 ≥ 0, c3 .For the case of c2 = 0, the result immediately follows. Otherwise:
+∂
+∂u r(u, i, w, σ)
+
+
+∂ c1 − c2 qi→j (u)
++ c3
+=
+∂u
+u
+
+
+∂
+1
+= 2 −uc2 qi→j (u) − [c1 − c2 qi→j (u)]
+u
+∂u
+
+
+
+i 
+i
+α h
+∂
+α h
+1
+−(α+β)u
+−(α+β)u
+− c1 − c2
+1−e
+1−e
+= 2 −uc2
+u
+∂u α + β
+α+β
+
+
+
+i
+h
+i
+1
+α h
+= 2 −uc2 αe−(α+β)u + c2
+1 − e−(α+β)u − c1
+u
+α+β
+"
+" "∞
+##
+"
+"
+"∞
+###
+#
+X un (−1)n (α + β)n
+X un (−1)n (α + β)n
+1
+α
+= 2 −uc2 α
++ c2
+1−
+− c1
+u
+n!
+α+β
+n!
+n=0
+n=0
+"
+"∞
+#
+#
+∞
+X
+c2 α X (−1)n+1 un+1 (α + β)n+1
+1
+un (−1)n+1 (α + β)n
+= 2
++1+
+− c1
+u α+β
+n!
+n!
+n=0
+n=0
+"
+" ∞
+#
+#
+0
+0
+0
+∞
+X
+c2 α X (−1)n un (α + β)n
+un (−1)n+1 (α + β)n
+1
++
+− c1
+n0 = n + 1
+= 2
+u α+β 0
+(n0 − 1)!
+n!
+n=1
+n =1
+"
+"∞
+#
+#
+
+X
+c2 α
+1
+1
+1
+−
+− c1
+= 2
+(−1)n un (α + β)n
+u α+β
+(n − 1)! n!
+r(u, i, w, σ) =
+
+n=2
+
+Where last line follows because first (n = 1) term of summation is zero.
+It is sufficient for the following to be strictly increasing.
+"∞
+#
+
+c2 α X
+1
+1
+(−1)n un (α + β)n
+−
+− c1 ,
+α+β
+(n − 1)! n!
+n=2
+
+which holds:
+"
+"∞
+∂
+c2 α X
+
+#
+#
+1
+1
+(−1) u (α + β)
+−
+− c1
+∂u α + β
+(n − 1)! n!
+n=2
+"∞
+
+#
+c2 α X
+n
+n
+n n−1
+n
+=
+(−1) u
+(α + β)
+−
+α+β
+(n − 1)! n!
+n=2
+"∞
+#
+" ∞
+#
+X
+c2 α X
+1
+c
+α
+1
+0
+0
+0
+2
+=
+(−1)n un−1 (α + β)n
+=
+(−1)n +2 un +1 (α + β)n +2 0
+n0 = n − 2
+α+β
+(n − 2)!
+α+β 0
+n!
+n=2
+n =0
+"∞
+#
+X
+1
+= c2 αu(α + β)
+(−1)n un (α + β)n
+= c2 αu(α + β)e−(α+β)u > 0
+n!
+n n
+
+n
+
+
+
+n=0
+
+63
+
+Lemma 8. Suppose wi (τ ) = mτ + a, where m > 0 and a < 0. Then, r(u, i, w, σ) is strictly
+quasi-concave in u, for each fixed σ where ∆ji ≥ 0.
+Proof. Proof. Corollary of Lemma 7. r(u, i, w, σ) is the negative of the previous case, modulo
+constants that do not affect quasi-concavity.
+D.5.3
+
+Lemmas for IC policy
+
+Remark 2.
+wi (u) = mu + zqi→j (u)
+
+Let
+
+Wi = m(Ti − 1) + z(Qi − λi→j )
+∂
+R(w, σ) ∝ qi→j (u) [(Rj − m)Tj Ti + mTj + zQj Ti + zTj λi→j ]
+∂u
++ u [Qi Tj (m − Rj ) + Qj (m − zQi + zλi→j )]
+
+Then
+
+Proof. Proof.
+wi (u) = mu + zqi→j (u)
+Z
+Z
+Wi = λi
+wi (τ )dFi (τ ) = λi
+τ ∈σi
+
+τ ∈σi
+
+m, z ≥ 0
+[mτ + zqi→j (τ )] dFi (τ ) = m(Ti − 1) + z(Qi − λi→j )
+
+Then
+Wj Ti − Tj Wi = Rj Tj Ti − mTj (Ti − 1) − zTj (Qi − λi→j )
+
+wi (u)(Qi Tj + Qj Ti ) = (mu + zqi→j (u))(Qi Tj + Qj Ti )
+
+= qi→j (u)(zQi Tj + zQj Ti ) + u(mQi Tj + mQj Ti )
+∂
+R(w, σ) ∝ qi→j (u) [Wj Ti − Tj Wi ] + wi (u)(Qi Tj + Qj Ti ) − u(Qi Wj + Qj Wi )
+∂u
+= qi→j (u) [Rj Tj Ti − mTj (Ti − 1) − zTj (Qi − λi→j ) + zQi Tj + zQj Ti ]
+
+(6)
+
++ u [mQi Tj + mQj Ti − Qi Rj Tj − Qj (m(Ti − 1) + z(Qi − λi→j ))]
+
+= qi→j (u) [(Rj − m)Tj Ti + mTj + zQj Ti + zTj λi→j ]
++ u [Qi Tj (m − Rj ) + Qj (m − zQi + zλi→j )]
+
+Where Line (6) is shown in the proof of Lemma 6.
+q
+
+Remark 3. limu→0 i→ju
+
+(u)
+
+= λi→j .
+
+Proof. Proof. Simple application of L’Hopital’s rule.
+h
+i
+qi→j (u)
+λi→j
+∂
+∂
+= lim
+qi→j (u) = lim
+1 − e−(λi→j +λj→i )u = λi→j
+u→0
+u→0 ∂u
+u→0 ∂u λi→j + λj→i
+u
+lim
+
+Remark 4. λi→j Ti − Qi ≥ 0 and maximized when σi = (0, ∞). Similarly, Qi ≥ 0 and maximized
+when σi = (0, ∞).
+
+64
+
+Proof. Proof.
+
+
+Z
+
+
+Z
+τ dFi (τ ) − λi→j − λi
+qi→j (τ )dFi (τ )
+
+λi→j Ti − Qi = λi→j 1 + λi
+τ ∈σi
+Z
+= λi
+[λi→j τ − qi→j (τ )] dFi (τ )
+
+σi
+
+τ ∈σi
+
+λi→j τ − qi→j (τ ) is increasing in τ :
+h
+i
+∂
+[λi→j τ − qi→j (τ )] = λi→j − λi→j e−(λi→j +λj→i )τ ≥ 0
+∂τ
+and λi→j ×0−qi→j (0) = 0. Thus, the function being integrated is positive, and so λi→j Ti −Qi ≥ 0
+and maximized when σi = (0, ∞). Near identical proof holds for Qi .
+Lemma 9. Fix arbitrary σ1 , and thus Q1 , T1 , R1 . Let Q̄2 , T̄2 be the respective values of Q2 , T2 at
+σ2 = (0, ∞). Let w2 (τ ) = mτ + zq2→1 (τ ), where m > R1 .
+If
+T1 (λ2→1 T̄2 − Q̄2 ) − (Q1 + T1 λ2→1 )
+z
+Q̄2 T1 + Q1
+<
+<
+m − R1
+Q1 (Q̄2 − λ2→1 )
+Q1 (λ2→1 T̄2 − Q̄2 ) + λ2→1 (Q1 + T1 λ2→1 )
+∂
+R(w, σ) > 0, for all u, σ2 . Furthermore, the constraint set is feasible regardless of the
+Then ∂u
+primitives.
+
+Proof. Proof.
+Suppose we have w2 (u) = mu + zq2→1 (u), for some m > R1 , z ≥ 0.
+From Remark 2,
+∂
+R(w, σ) ∝
+∂u
+
+
+
+
+q2→1 (u)
+u
+[(R1 − m)T1 T2 + mT1 + zQ1 T2 + zT1 λ2→1 ]
+u
++ u [Q2 T1 (m − R1 ) + Q1 (m − zQ2 + zλ2→1 )]
+
+T2 , Q2 are functions of σ2 .
+As u → ∞, the term in brackets in the first term goes to 0, and thus the first necessary condition
+is to have the second term always greater than 0.
+If the second term is always positive, then the first term may be negative as long as it has a
+smaller absolute value than the second term. As u → 0, the ratio between (absolute value of) the
+first and second terms is maximized. Thus, the second necessary (and sufficient) condition is to
+(u)
+have the entire value positive when we take the limit of q2→1
+as u → 0.
+u
+∂
+These two conditions are sufficient for ∂u
+R(w, σ) > 0, for all u, σ2 .
+From the first condition, we need m, z such that:
+Q2 T1 (m − R1 ) + Q1 (m − zQ2 + zλ2→1 ) > 0
+m
+Q2 T1 + m−R
+Q1
+z
+1
+⇐⇒
+<
+m − R1
+Q1 (Q2 − λ2→1 )
+
+65
+
+∀T1 , Q1 , Q2 , R1
+
+From the second condition, and using Remark 3 we need:
+λ2→1 [(R1 − m)T1 T2 + mT1 + zQ1 T2 + zT1 λ2→1 ] + [Q2 T1 (m − R1 ) + Q1 (m − zQ2 + zλ2→1 )] > 0
+
+⇐⇒ (m − R1 )T1 (Q2 − λ2→1 T2 ) + m(Q1 + λ2→1 T1 ) + zQ1 (λ2→1 T2 − Q2 + λ2→1 ) + zT1 λ22→1 > 0
+
+⇐⇒ z (Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 )) > (m − R1 )T1 (λ2→1 T2 − Q2 ) − m(Q1 + T1 λ2→1 )
+m
+T1 (λ2→1 T2 − Q2 ) − m−R
+(Q1 + T1 λ2→1 )
+z
+1
+>
+⇐⇒
+m − R1
+(Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 ))
+Putting the conditions together, we need, for all Ti , Qi , Ri :
+m
+T1 (λ2→1 T2 − Q2 ) − m−R
+(Q1 + T1 λ2→1 )
+1
+
+(Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 ))
+
+<
+
+m
+Q2 T1 + m−R
+Q1
+z
+1
+<
+m − R1
+Q1 (Q2 − λ2→1 )
+
+m
+m > R1 by supposition, and so m−R
+> 1. Thus, the following is sufficient as the constraints
+1
+become tighter:
+
+T1 (λ2→1 T2 − Q2 ) − (Q1 + T1 λ2→1 )
+z
+Q2 T1 + Q1
+<
+<
+(Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 )) m − R1
+Q1 (Q2 − λ2→1 )
+1 +T1 λ2→1
+T1 − (λQ2→1
+T2 −Q2 )
+
+Q1
+
+T1 + Q2
+z
+
+
+<
+⇐⇒
+<
+(Q1 +T1 λ2→1 )
+m − R1
+2→1
+Q1 + λ2→1
+Q1 1 − λQ
+(λ2→1 T2 −Q2 )
+2
+
+It turns out that both constraints are tightest when σ2 = (0, ∞). In the left constraint, the
+numerator is increasing and the denominator is decreasing with λ2→1 T2 − Q2 , and so the constraint
+becomes tighter as λ2→1 T2 − Q2 increases. By Remark 4, λ2→1 T2 − Q2 is always positive, and
+maximized when σ2 = (0, ∞). Similarly, in the right constraint, the numerator decreases and the
+denominator increases with Q2 .
+Thus, it is sufficient for the two constraints to be feasible for σ2 = (0, ∞). Then, they are
+satisfied for all σ20 . For feasibility, we need
+T1 (λ2→1 T2 − Q2 ) − (Q1 + T1 λ2→1 )
+Q2 T1 + Q1
+<
+(Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 ))
+Q1 (Q2 − λ2→1 )
+⇐⇒ (T1 (λ2→1 T2 − Q2 ) − (Q1 + T1 λ2→1 ))Q1 (Q2 − λ2→1 )
+
+< (Q2 T1 + Q1 )(Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 ))
+
+⇐⇒ Q1 Q2 (T1 (λ2→1 T2 − Q2 ) − (Q1 + T1 λ2→1 )) − Q1 λ2→1 (T1 (λ2→1 T2 − Q2 ) − (Q1 + T1 λ2→1 ))
+
+< Q2 T1 (Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 )) + Q1 (Q1 (λ2→1 T2 − Q2 ) + λ2→1 (Q1 + T1 λ2→1 ))
+
+⇐⇒ Q1 Q2 (− (Q1 + T1 λ2→1 )) − Q1 λ2→1 (T1 (λ2→1 T2 − Q2 ))
+
+< Q2 T1 (λ2→1 (Q1 + T1 λ2→1 )) + Q1 (Q1 (λ2→1 T2 − Q2 ))
+
+For any valid Qi , Ti , the left hand side of the final line is always non-positive, and the right
+z
+.
+hand side is always positive, and thus there exist feasible ratios m−R
+1
+Lemma 10. Fix arbitrary σ2 , and thus Q2 , T2 , R2 . Let Q̄1 , T̄1 be the respective values of Q1 , T1 at
+σ1 = (0, ∞). Let w1 (τ ) = mτ + zq1→2 (τ ), where m = R2 .
+If
+−
+
+(T2 λ1→2 + Q2 )
+z
+1
+<
+<
+R2
+Q2 (λ1→2 T̄1 − Q̄1 ) + λ1→2 (T2 λ1→2 + Q2 )
+(Q̄1 − λ1→2 )
+
+∂
+Then ∂u
+R(w, σ) > 0, for all u, σ1 . Furthermore, the constraint set is feasible regardless of the
+primitives.
+
+66
+
+Proof. Proof. Similar to previous proof. Suppose we have w1 (u) = mu + zq1→2 (u), for some
+m = R2 , z ≤ 0.
+From Remark 2,
+
+
+∂
+q1→2 (u)
+R(w, σ) =u
+[(R2 − m)T1 T2 + mT2 + zQ2 T1 + zT2 λ1→2 ]
+∂u
+u
++ u [Q1 T2 (m − R2 ) + Q2 (m − zQ1 + zλ1→2 )]
+
+
+q1→2 (u)
+[R2 T2 + zQ2 T1 + zT2 λ1→2 ] + [Q2 (R2 − zQ1 + zλ1→2 )]
+=u
+u
+∂
+As before, we have two necessary and sufficient conditions for ∂u
+R(w, σ) > 0, for all u, σ1 .
+From the first condition, we need m, z such that:
+
+Q2 (R2 − z(Q1 − λ1→2 )) > 0
+z
+1
+<
+⇐⇒
+R2
+(Q1 − λ1→2 )
+
+∀T2 , Q2 , Q1 , R2
+
+Similarly, the second condition becomes
+λ1→2 [R2 T2 + zQ2 T1 + zT2 λ1→2 ] + [Q2 (R2 − zQ1 + zλ1→2 )] > 0
+
+⇐⇒ λ1→2 R2 T2 + Q2 R2 > −zQ2 (λ1→2 T1 − Q1 ) − zλ1→2 (T2 λ1→2 + Q2 )
+z
+(T2 λ1→2 + Q2 )
+⇐⇒
+>−
+R2
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+
+Both constraints are tightest when σ1 = (0, ∞). By Remark 4, λ1→2 T1 − Q1 is always positive,
+and maximized when σ1 = (0, ∞), and so the right hand side is always negative.
+The constraints are thus feasible when
+−
+
+(T2 λ1→2 + Q2 )
+1
+<
+Q2 (λ1→2 T1 − Q1 ) + λ1→2 (T2 λ1→2 + Q2 )
+(Q1 − λ1→2 )
+
+which trivially holds as the right hand side is positive and the left hand side is negative.
+
+67
+
+
