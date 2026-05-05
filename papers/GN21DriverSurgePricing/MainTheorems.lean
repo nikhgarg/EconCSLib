@@ -7790,6 +7790,144 @@ theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_in
       using hlt
 
 /--
+Non-surge-state counterpart of the Lemma 9 bridge: Lemma 10's
+interval-density endpoint movement feeds the measured aggregate strict-local
+state-replacement interface for state `0`.
+-/
+theorem paper_theorem4_nonsurge_statewise_strict_aggregate_improvement_of_lemma10_interval_density
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (replacement : ℝ → TripPolicy)
+    (lowerEndpoint u T2 Q2 T1 Q1 R2 ratio : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrival 0)
+    (hdensity_pos : 0 < density u)
+    (hQ2_pos : 0 < Q2)
+    (hden :
+      gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+          (gn21SwitchProb switch12 switch21) u * T2 +
+        Q2 *
+          gn21EndpointTiPath (arrival 0) lowerEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) volume
+        lowerEndpoint u)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) volume lowerEndpoint u)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ1 :
+      gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+        (gn21SwitchProb switch12 switch21) u = Q1)
+    (hT1 :
+      gn21EndpointTiPath (arrival 0) lowerEndpoint density u = T1)
+    (hW1 :
+      gn21EndpointWiPath (arrival 0) lowerEndpoint density
+        (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u =
+          R2 * (T1 - 1) + z 0 * (Q1 - switch12))
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hz : z 0 = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (Hcur :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hrep :
+      ∀ ε : ℝ, 0 < ε →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (replacement ε) (ρ 1))
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) = Q2)
+    (hT_other :
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) = T2)
+    (hW_other :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+          R2 * T2)
+    (hQ_current :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) =
+        gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+          (gn21SwitchProb switch12 switch21) u)
+    (hT_current :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) =
+        gn21EndpointTiPath (arrival 0) lowerEndpoint density u)
+    (hW_current :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        gn21EndpointWiPath (arrival 0) lowerEndpoint density
+          (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) u)
+    (hQ_replacement :
+      ∀ ε : ℝ,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+            (replacement ε) =
+          gn21EndpointQiPath (arrival 0) switch12 lowerEndpoint density
+            (gn21SwitchProb switch12 switch21) (u + ε))
+    (hT_replacement :
+      ∀ ε : ℝ,
+        gn21ScaledStateTime (μ 0) (arrival 0) (replacement ε) =
+          gn21EndpointTiPath (arrival 0) lowerEndpoint density (u + ε))
+    (hW_replacement :
+      ∀ ε : ℝ,
+        gn21ScaledStateEarning (μ 0) (arrival 0)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (replacement ε) =
+          gn21EndpointWiPath (arrival 0) lowerEndpoint density
+            (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) (u + ε)) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 0 τ) 0)
+          ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ := by
+  rcases
+      paper_lemma10_exists_pos_right_improvement_of_interval_density_current_bounds
+        (arrival 0) lowerEndpoint u T2 Q2 T1 Q1 switch12 switch21
+        R2 (z 0) ratio density harrival_pos hdensity_pos hQ2_pos hden
+        hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+        ht_cont hQ1 hT1 hW1 hbounds hz hR2_pos hswitch12_pos hsum hu
+        hswitch_lt_Q1 hgap_nonneg hA_pos with
+    ⟨ε, hε_pos, hlt⟩
+  refine ⟨replacement ε, Hcur, ?_, ?_⟩
+  · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos
+  · simpa [gn21MeasuredAggregateDynamicStateReward_zero,
+      gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
+      hQ_current, hT_current, hW_current, hQ_replacement ε,
+      hT_replacement ε, hW_replacement ε] using hlt
+
+/--
 Uniform statewise strict-local aggregate certificate.  Endpoint arguments can
 target this interface without duplicating the state-0/state-1 bookkeeping.
 -/
