@@ -158,6 +158,15 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   for the aggregate cancellation. Also expose
   `reflMallowsBestInSetPrefixCutSum_eq_sum_bestInSetWeight` so prefix-cut
   statements can be translated back to best-in-set fiber weights when useful.
+- For the latest KR21 arbitrary prefix-cut reduction, delete absent center
+  extremes before attacking same-size first-choice weights. The verified
+  deletion recurrences reduce the successor to remaining sets containing both
+  center endpoints and a nontrivial cut; package this as
+  `ReflMallowsBestInSetPrefixCutFirstChoiceWeightedExtremes` plus
+  `ReflMallowsBestInSetPrefixCutDominance.succ_of_extremeWeighted` and
+  `ReflMallowsBestInSetPrefixCutDominance.of_extremeWeighted`. The hard proof
+  should then focus on hole/block cancellation in the adjacent-boundary form,
+  not on finite candidate casework or pointwise monotonicity of branch values.
 - For KR21 arbitrary remaining-set Mallows dominance, keep the exact
   best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
   dominance targets. Define an identity-center unnormalised fiber such as

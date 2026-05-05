@@ -1,6 +1,6 @@
 ---
 name: econcs-formalizer
-description: Formalize economics-and-computation papers in Lean. Use when asked to add, continue, triage, or plan Lean formalizations of EC/ACM EC/SIGecom-style papers; extract reusable finite/discrete primitives; choose theorem seams; repair Lean/mathlib proof scripts; or prepare general handoff guidance for future formalization work.
+description: Formalize economics-and-computation papers in Lean. Use when asked to add, continue, triage, or plan Lean formalizations of EC/ACM EC/SIGecom-style papers; formalize finite, continuous, probabilistic, or measure-theoretic theorem seams; extract reusable primitives; repair Lean/mathlib proof scripts; or prepare general handoff guidance for future formalization work.
 ---
 
 # EconCS Formalizer
@@ -16,6 +16,12 @@ belongs in `docs/ECONCSLEAN_CURRENT_STATUS.md`.
 Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
+
+Do not avoid continuous, probabilistic, or measure-theoretic formalization when
+the source theorem requires it. Finite analogues are useful scaffolds only when
+they shorten the faithful proof. If the fastest honest route is a direct
+measure/integral/renewal/CTMC statement, build that statement directly and keep
+the paper-facing wrapper source-level.
 
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
@@ -281,6 +287,36 @@ the Lean statements against the paper.
   build are the source of truth. Older author-wide notes or campaign reports
   are historical/secondary and may be stale; never use them to override a
   paper-local README/DAG plus successful build.
+- **Post-paper audit protocol:** Before claiming that a paper is done, create
+  or update a paper-local final audit. The audit must check all four artifacts:
+  the cached paper text/PDF, `README.md`, `DependencyDAG.tex`, and the
+  paper-facing Lean file(s).
+  - Source check: search the cached text for every named paper `Definition`,
+    `Lemma`, `Proposition`, `Theorem`, and `Corollary`; list the source line or
+    section in the audit report.
+  - README check: every named source item must have a row using the controlled
+    status vocabulary from `docs/STATUS.md`, and every non-`formalized` row must
+    name the exact remaining declaration, certificate, or reason for deferral.
+  - DAG check: every named result node must have a style consistent with the
+    README row. Solid arrows mean verified Lean dependencies; dashed arrows
+    mean paper-route/context links or unresolved dependencies. A green node with
+    a dashed incoming edge is allowed only if the README/audit says the dashed
+    edge is not required by the formal proof.
+  - Lean check: create a compiling `PostPaperAudit.lean` or equivalent ledger
+    in the paper folder. It must be importable from the paper root module and
+    expose one source-numbered audit theorem per final paper endpoint. Prefer
+    raw assumption lists in the audit theorem signatures; if a paper-model
+    structure is used, the docstring must state the exact paper convention that
+    the structure packages. The theorem body should be a thin call to the
+    paper-facing declaration, so a human can verify the endpoint in one file.
+  - Report check: create or update `FINAL_VALIDATION_REPORT.md` in the paper
+    folder. It must state whether the paper is verified, the exact source
+    version, the named-result inventory, any deliberate model conventions or
+    proof-route deviations, the commands run, and links to the README, DAG, and
+    audit ledger.
+  - Build check: after updating the audit, run the targeted paper build and
+    render the DAG from the paper folder. Do not mark the audit complete until
+    both commands succeed.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -388,12 +424,17 @@ search.
    EC papers often have useful finite entry points: finite agents, items,
    actions, rankings, allocations, mechanisms, PMFs, and finite sums. Use those
    when they expose the key combinatorics cleanly. But do not force a finite
-   analogue first if the paper theorem is genuinely continuous and the direct
-   continuous statement is shorter or more faithful. For proof-specific tactics
-   such as LP certificates, continuous-density bridges, RUM support witnesses,
-   symmetric recommendation pivots, or ranking/Mallows algebra, load the
-   relevant reference in Component 2 instead of putting those techniques in this
-   main workflow file.
+   analogue first if the paper theorem is genuinely continuous, stochastic, or
+   measure-theoretic and the direct source statement is shorter, more faithful,
+   or necessary to finish the paper. In that case, state the continuous objects
+   directly: measures, Bochner or Lebesgue integrals, almost-everywhere claims,
+   densities, stopping/renewal assumptions, CTMC transition probabilities, and
+   long-run reward limits should be first-class Lean targets rather than
+   deferred prose. For proof-specific tactics such as LP certificates,
+   continuous-density bridges, RUM support witnesses, symmetric recommendation
+   pivots, renewal-reward reductions, CTMC bridges, or ranking/Mallows algebra,
+   load the relevant reference in Component 2 instead of putting those
+   techniques in this main workflow file.
    The priority order is: close the paper-facing theorem faithfully, choose the
    quickest model level that makes the proof work, and extract reusable tools
    only when they clearly help this proof or a near-term second paper. A finite
@@ -428,7 +469,11 @@ search.
    When stopping mid-proof, record the module, theorem, assumptions still
    missing, commands run, the next lemma to prove, and any closed layers that
    should not be revisited. Future agents should not have to rediscover the
-   proof state.
+   proof state. If a paper is plausibly beyond the current model's effective
+   proof-search capacity, make that explicit in the paper README and handoff:
+   name the reduced target, record failed/counterexample-search evidence, and
+   mark it as a future stronger-model pickup instead of leaving an ambiguous
+   stale conditional theorem.
 
 8. Verify narrowly, then broadly.
    First build the touched module. Then build the parent paper root. Run full
