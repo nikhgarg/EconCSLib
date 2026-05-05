@@ -47,6 +47,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   aggregate add-left/add-right weak monotonicity lemmas
   `gn21AggregateDynamicReward_le_add_left_of_kernel_nonneg` and
   `gn21AggregateDynamicReward_le_add_right_of_kernel_nonneg`,
+  measured primitive union and aggregate add bridges
+  `gn21MeasuredAggregateRewardPrimitives_le_union_left_of_kernel_nonneg`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_le_union_right_of_kernel_nonneg`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper

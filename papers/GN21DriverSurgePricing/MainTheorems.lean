@@ -366,6 +366,21 @@ theorem eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
   exact Set.Subset.antisymm hsubset
     (by simpa [acceptsAllTrips, acceptAllPolicy] using hall)
 
+/-- A feasible policy plus its rejected feasible trips recovers accept-all. -/
+theorem union_acceptAll_diff_of_subset
+    {σ : TripPolicy}
+    (hsubset : σ ⊆ acceptAllPolicy) :
+    σ ∪ (acceptAllPolicy \ σ) = acceptAllPolicy := by
+  ext τ
+  constructor
+  · rintro (hτ | hτ)
+    · exact hsubset hτ
+    · exact hτ.1
+  · intro hτ
+    by_cases hmem : τ ∈ σ
+    · exact Or.inl hmem
+    · exact Or.inr ⟨hτ, hmem⟩
+
 /-- The feasible positive-trip domain is measurable. -/
 theorem measurableSet_acceptAllPolicy : MeasurableSet acceptAllPolicy := by
   simpa [acceptAllPolicy, positiveTripLengths, Set.Ioi] using
@@ -2039,6 +2054,63 @@ def gn21ScaledStateEarning
     (μ : Measure TripLength) (arrivalRate : ℝ)
     (w : PricingFunction) (σ : TripPolicy) : ℝ :=
   arrivalRate * singleStateTripPayment μ w σ
+
+/-- Exit-weight integral over a disjoint union of accepted trip-length sets. -/
+theorem gn21ExitWeightIntegral_union
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) added μ) :
+    gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI (σ ∪ added) =
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ +
+        arrivalRate *
+          ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μ := by
+  unfold gn21ExitWeightIntegral
+  rw [setIntegral_union hdisjoint hadded_measurable hq_integrable_σ
+    hq_integrable_added]
+  ring
+
+/-- Scaled state time over a disjoint union of accepted trip-length sets. -/
+theorem gn21ScaledStateTime_union
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ) :
+    gn21ScaledStateTime μ arrivalRate (σ ∪ added) =
+      gn21ScaledStateTime μ arrivalRate σ +
+        arrivalRate * ∫ τ in added, τ ∂μ := by
+  unfold gn21ScaledStateTime
+  rw [singleStateTripTime_union μ σ added hdisjoint hadded_measurable
+    htime_integrable_σ htime_integrable_added]
+  unfold singleStateTripTime
+  ring
+
+/-- Scaled state earning over a disjoint union of accepted trip-length sets. -/
+theorem gn21ScaledStateEarning_union
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hw_integrable_added : IntegrableOn w added μ) :
+    gn21ScaledStateEarning μ arrivalRate w (σ ∪ added) =
+      gn21ScaledStateEarning μ arrivalRate w σ +
+        arrivalRate * ∫ τ in added, w τ ∂μ := by
+  unfold gn21ScaledStateEarning
+  rw [singleStateTripPayment_union μ w σ added hdisjoint hadded_measurable
+    hw_integrable_σ hw_integrable_added]
+  unfold singleStateTripPayment
+  ring
 
 /-- Structured IC price family from Theorem 3: `w_i(τ)=m_i τ + z_i q_{i→j}(τ)`. -/
 def structuredSurgePrice (m z : ℝ) (q : TripLength → ℝ) : PricingFunction :=
@@ -12196,6 +12268,166 @@ def gn21MeasuredAggregateRewardPrimitives
     (gn21ScaledStateTime μJ arrivalJ σJ)
     (gn21ScaledStateEarning μI arrivalI wI σI)
     (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+
+/--
+Measured aggregate weak improvement from adding a disjoint left-state accepted
+set whose primitive increments have nonnegative integrated Lemma 6 kernel.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_le_union_left_of_kernel_nonneg
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ added : TripPolicy)
+    (hdisjoint : Disjoint σI added)
+    (hadded_measurable : MeasurableSet added)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σI μI)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) added μI)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μI)
+    (hw_integrable_σ : IntegrableOn wI σI μI)
+    (hw_integrable_added : IntegrableOn wI added μI)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI +
+            arrivalI *
+              ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μI) *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            (gn21ScaledStateTime μI arrivalI σI +
+              arrivalI * ∫ τ in added, τ ∂μI))
+    (hQj_nonneg :
+      0 ≤ gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+    (hkernel_nonneg :
+      0 ≤
+        (arrivalI * ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μI) *
+            (gn21ScaledStateEarning μJ arrivalJ wJ σJ *
+                gn21ScaledStateTime μI arrivalI σI -
+              gn21ScaledStateTime μJ arrivalJ σJ *
+                gn21ScaledStateEarning μI arrivalI wI σI) +
+          (arrivalI * ∫ τ in added, wI τ ∂μI) *
+            (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+                gn21ScaledStateTime μJ arrivalJ σJ +
+              gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+                gn21ScaledStateTime μI arrivalI σI) -
+            (arrivalI * ∫ τ in added, τ ∂μI) *
+              (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+                  gn21ScaledStateEarning μJ arrivalJ wJ σJ +
+                gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+                  gn21ScaledStateEarning μI arrivalI wI σI)) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ (σI ∪ added) σJ := by
+  unfold gn21MeasuredAggregateRewardPrimitives
+  rw [gn21ExitWeightIntegral_union μI arrivalI switchIJ switchJI σI added
+      hdisjoint hadded_measurable hq_integrable_σ hq_integrable_added,
+    gn21ScaledStateTime_union μI arrivalI σI added hdisjoint
+      hadded_measurable htime_integrable_σ htime_integrable_added,
+    gn21ScaledStateEarning_union μI arrivalI wI σI added hdisjoint
+      hadded_measurable hw_integrable_σ hw_integrable_added]
+  exact
+    gn21AggregateDynamicReward_le_add_left_of_kernel_nonneg
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateEarning μI arrivalI wI σI)
+      (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+      (arrivalI * ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μI)
+      (arrivalI * ∫ τ in added, τ ∂μI)
+      (arrivalI * ∫ τ in added, wI τ ∂μI)
+      hden_pos hden_add_pos hQj_nonneg hkernel_nonneg
+
+/--
+Measured aggregate weak improvement from adding a disjoint right-state accepted
+set whose primitive increments have nonnegative integrated Lemma 6 kernel.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_le_union_right_of_kernel_nonneg
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ added : TripPolicy)
+    (hdisjoint : Disjoint σJ added)
+    (hadded_measurable : MeasurableSet added)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ) σJ μJ)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ) added μJ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σJ μJ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μJ)
+    (hw_integrable_σ : IntegrableOn wJ σJ μJ)
+    (hw_integrable_added : IntegrableOn wJ added μJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            (gn21ScaledStateTime μJ arrivalJ σJ +
+              arrivalJ * ∫ τ in added, τ ∂μJ) +
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ +
+            arrivalJ *
+              ∫ τ in added, gn21SwitchProb switchJI switchIJ τ ∂μJ) *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hQi_nonneg :
+      0 ≤ gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+    (hkernel_nonneg :
+      0 ≤
+        (arrivalJ * ∫ τ in added, gn21SwitchProb switchJI switchIJ τ ∂μJ) *
+            (gn21ScaledStateEarning μI arrivalI wI σI *
+                gn21ScaledStateTime μJ arrivalJ σJ -
+              gn21ScaledStateTime μI arrivalI σI *
+                gn21ScaledStateEarning μJ arrivalJ wJ σJ) +
+          (arrivalJ * ∫ τ in added, wJ τ ∂μJ) *
+            (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+                gn21ScaledStateTime μI arrivalI σI +
+              gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+                gn21ScaledStateTime μJ arrivalJ σJ) -
+            (arrivalJ * ∫ τ in added, τ ∂μJ) *
+              (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+                  gn21ScaledStateEarning μI arrivalI wI σI +
+                gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+                  gn21ScaledStateEarning μJ arrivalJ wJ σJ)) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI (σJ ∪ added) := by
+  unfold gn21MeasuredAggregateRewardPrimitives
+  rw [gn21ExitWeightIntegral_union μJ arrivalJ switchJI switchIJ σJ added
+      hdisjoint hadded_measurable hq_integrable_σ hq_integrable_added,
+    gn21ScaledStateTime_union μJ arrivalJ σJ added hdisjoint
+      hadded_measurable htime_integrable_σ htime_integrable_added,
+    gn21ScaledStateEarning_union μJ arrivalJ wJ σJ added hdisjoint
+      hadded_measurable hw_integrable_σ hw_integrable_added]
+  exact
+    gn21AggregateDynamicReward_le_add_right_of_kernel_nonneg
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateEarning μI arrivalI wI σI)
+      (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+      (arrivalJ * ∫ τ in added, gn21SwitchProb switchJI switchIJ τ ∂μJ)
+      (arrivalJ * ∫ τ in added, τ ∂μJ)
+      (arrivalJ * ∫ τ in added, wJ τ ∂μJ)
+      hden_pos hden_add_pos hQi_nonneg hkernel_nonneg
 
 /--
 Nondegeneracy side conditions needed to identify measured dynamic reward with

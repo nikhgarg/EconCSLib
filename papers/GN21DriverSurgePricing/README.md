@@ -67,8 +67,9 @@ cache is `source.txt`.
   4 positivity wrappers,
   aggregate quotient-calculus derivative bridge, aggregate quotient
   monotonicity for left/right accepted-trip additions from nonnegative
-  integrated Lemma 6 kernels, endpoint-data-to-Lemma-6 derivative certificate
-  bridge,
+  integrated Lemma 6 kernels, measured `Q,T,W` union additivity and measured
+  left/right aggregate weak-improvement bridges for adding accepted sets,
+  endpoint-data-to-Lemma-6 derivative certificate bridge,
   structured-kernel-to-Lemma-6 derivative certificate bridge, structured-price
   derivative algebra, small-time switch derivative, the Lemma 7
   canonical derivative-numerator calculation,
