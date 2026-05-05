@@ -190,6 +190,9 @@ the continuous CTMC source theorems.
   `lemma10StructuredBounds_of_acceptAll_measured_tightening`, with
   positive-measure and primitive-equality variants: measured monotone-tightening
   bridges deriving current-policy Lemma 9/10 bounds from accept-all bounds.
+- `paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure_eq` and
+  `paper_remark4_exit_weight_gt_switch_of_positive_measure_eq`: positivity
+  bridges rewritten through named current `T,Q` primitives.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -2316,6 +2319,33 @@ theorem paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure
       hmeasure_pos
 
 /--
+Remark 4 strict measured gap rewritten through explicit current primitive
+equalities.
+-/
+theorem paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure_eq
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy) (T Q : ℝ)
+    (hT : gn21ScaledStateTime μ arrivalRate σ = T)
+    (hQ : gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ = Q)
+    (harrival_pos : 0 < arrivalRate)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_positive : σ ⊆ acceptAllPolicy)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn (fun τ : TripLength =>
+        gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hmeasure_pos : 0 < μ σ) :
+    0 < switchIJ * T - Q := by
+  have h :=
+    paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure
+      μ arrivalRate switchIJ switchJI σ harrival_pos hswitch_pos hsum
+      hσ_measurable hσ_positive htime_integrable hq_integrable hmeasure_pos
+  simpa [hT, hQ] using h
+
+/--
 Remark 4 maximization step: the nonnegative integrand
 `λ_{i→j}τ - q_{i→j}(τ)` has largest feasible set integral at accept-all.
 -/
@@ -2470,6 +2500,31 @@ theorem paper_remark4_exit_weight_gt_switch_of_positive_measure
       μ arrivalRate switchIJ switchJI σ harrival_pos hswitch_pos hsum
       hσ_measurable hσ_positive hintegrable hmeasure_pos
   linarith
+
+/--
+Remark 4 strict exit-weight positivity rewritten through an explicit current
+primitive equality.
+-/
+theorem paper_remark4_exit_weight_gt_switch_of_positive_measure_eq
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy) (Q : ℝ)
+    (hQ : gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ = Q)
+    (harrival_pos : 0 < arrivalRate)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_positive : σ ⊆ acceptAllPolicy)
+    (hintegrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        σ μ)
+    (hmeasure_pos : 0 < μ σ) :
+    switchIJ < Q := by
+  have h :=
+    paper_remark4_exit_weight_gt_switch_of_positive_measure
+      μ arrivalRate switchIJ switchJI σ harrival_pos hswitch_pos hsum
+      hσ_measurable hσ_positive hintegrable hmeasure_pos
+  simpa [hQ] using h
 
 /--
 Remark 4 maximization step for `Q_i`: the nonnegative switch-probability
