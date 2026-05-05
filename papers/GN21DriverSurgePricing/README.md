@@ -88,12 +88,16 @@ cache is `source.txt`.
   discharge scalar positivity and, with state-2 accept-all time integrability,
   the direct Lemma 9 feasibility side conditions from measure/CTMC assumptions
   for both the strict-local and packaged statewise-certificate routes.  The
-  strongest route is now also exposed as a bundled source-assumption wrapper:
-  `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
+  lightest current source boundary is now exposed as
+  `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
+  `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
+  whose final field is exactly the Lemma 9/10 positive-replacement proof for
+  the constructed prices. The broader allowed-replacement route is also
+  exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
-  only proof boundary is the continuous allowed-replacement Theorem 4
-  certificate for the constructed prices; endpoint-bridge data can now be
-  converted directly into that boundary via
+  proof boundary is the continuous allowed-replacement Theorem 4 certificate
+  for the constructed prices; endpoint-bridge data can now be converted
+  directly into that boundary via
   `Theorem4AllowedReplacementEndpointBridgeCertificate` and
   `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`, with a
   direct source wrapper
@@ -177,6 +181,12 @@ and
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_allowed_replacement_data_of_lemma9_positive_primitives`,
 `theorem3AcceptAllStructuredParameterEvidence`,
 `theorem3MeasuredStructuredICConclusion`,
+`paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_positive_replacement_of_lemma9_positive_primitives`,
+`theorem3AcceptAllPositiveReplacementCertificate`,
+`theorem3AcceptAllPositiveReplacementCertificate_of_statewise_accept_all_reward`,
+`paper_theorem3_measured_structured_ic_prices_of_positive_replacement`,
+`Theorem3AcceptAllPositiveReplacementSourceAssumptions`,
+`paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
 `theorem3AcceptAllAllowedReplacementCertificate`,
 `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`,
 `Theorem3AcceptAllAllowedReplacementSourceAssumptions`,
@@ -277,7 +287,9 @@ the measured CTMC structured reward, and the measured accept-all primitives
 with scalar positivity and direct Lemma 9 primitive-feasibility side
 conditions derived for the global, strict-local, and packaged
 statewise-certificate routes, plus a
-direct ratio-to-IC route from the four-case Theorem 4 shape-endpoint-selection
+direct positive-replacement source wrapper whose final obligation is the
+Lemma 9/10 positive Lemma 5 replacement proof for the constructed prices, plus
+a direct ratio-to-IC route from the four-case Theorem 4 shape-endpoint-selection
 certificate and the paper-ordered shape-derivation endpoint-bridge
 certificate, plus a route that accepts the raw statewise improvement
 existentials produced by the concrete endpoint lemmas and a packaged

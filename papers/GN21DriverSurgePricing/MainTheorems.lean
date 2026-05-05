@@ -24004,6 +24004,278 @@ def theorem3MeasuredStructuredICConclusion
         μ arrival R1 R2 switch12 switch21 m z
 
 /--
+Measured Theorem 3 endpoint from statewise positive Lemma 5 replacement
+certificates, using the direct Lemma 9 primitive-positivity feasibility route.
+This matches the paper's accept-all proof shape: Lemmas 9 and 10 make the
+relevant local derivatives positive, so every optimum must accept all positive
+trips in both states.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_positive_replacement_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hpositive :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4PositiveReplacementDerivationCertificate
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives
+      rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq hR1_pos
+      hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos hQ1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos hgap2_nonneg
+      hT2_ge_one hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hnBounds, hsBounds, hm0_eq, hz0_eq,
+      hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hpositiveC : Theorem4PositiveReplacementDerivationCertificate R := by
+    simpa [R] using hpositive m z hnonneg hparams
+  have hIC : dynamicIncentiveCompatible R :=
+    (paper_theorem3_ctmc_structured_prices_ic_of_positive_replacement_derivation
+      R m z switch12 switch21 hnonneg.1 hnonneg.2.1 hnonneg.2.2
+      hpositiveC).1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
+The remaining positive-replacement boundary for the accept-all measured
+Theorem 3 route.  It asks only for the Lemma 9/10 positive derivative proof
+for the prices actually constructed by Theorem 3.
+-/
+def theorem3AcceptAllPositiveReplacementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Type :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4PositiveReplacementDerivationCertificate
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)
+
+/--
+Statewise accept-all reward comparisons instantiate the positive-replacement
+boundary for Theorem 3.
+-/
+def theorem3AcceptAllPositiveReplacementCertificate_of_statewise_accept_all_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4StatewiseAcceptAllRewardCertificate
+            (gn21MeasuredCTMCStructuredDynamicReward
+              μ arrival switch12 switch21 m z)) :
+    theorem3AcceptAllPositiveReplacementCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  exact
+    theorem4PositiveReplacementDerivationCertificate_of_statewise_accept_all_reward
+      (gn21MeasuredCTMCStructuredDynamicReward
+        μ arrival switch12 switch21 m z)
+      (C m z hnonneg hparams)
+
+/--
+Accept-all-primitive Theorem 3 endpoint from the positive-replacement boundary
+and direct Lemma 9 primitive feasibility.  This is the shortest current route
+for the paper's Theorem 3 proof once Lemmas 9 and 10 are supplied for the
+constructed prices.
+-/
+theorem paper_theorem3_measured_structured_ic_prices_of_positive_replacement
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hpositive :
+      theorem3AcceptAllPositiveReplacementCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  simpa [theorem3MeasuredStructuredICConclusion,
+    theorem3AcceptAllStructuredParameterEvidence,
+    theorem3AcceptAllPositiveReplacementCertificate] using
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_positive_replacement_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+      hswitch21_lt_Q2 hpositive
+
+/--
+Bundled source-level assumptions for the positive-replacement Theorem 3 route.
+All CTMC/measure scalar side conditions are discharged internally; the final
+field is the direct Lemma 9/10 positive-replacement proof for the constructed
+prices.
+-/
+structure Theorem3AcceptAllPositiveReplacementSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  positive_replacement :
+    theorem3AcceptAllPositiveReplacementCertificate
+      μ arrival R1 R2 switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper at the positive-replacement boundary.  This is
+now the lightest source-facing target for closing Theorem 3 directly.
+-/
+theorem paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllPositiveReplacementSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_ic_prices_of_positive_replacement
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      A.positive_replacement
+
+/--
 The one remaining Theorem 4 boundary used by the strongest Theorem 3 route:
 for the prices constructed by Theorem 3, the continuous Lemma 5 selection and
 endpoint-improvement proof must supply the allowed-replacement certificate.

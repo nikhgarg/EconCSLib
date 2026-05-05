@@ -42,6 +42,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   canonical non-accept-all finite-interval shape witnesses,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
+  positive-replacement source wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
   endpoint-bridge source wrapper
   `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions`,
   and
