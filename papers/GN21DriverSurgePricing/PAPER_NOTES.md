@@ -29,7 +29,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   statewise-improvement certificate for Theorem 4/Theorem 3, Theorem 3 CTMC
   structured price form, direct Lemma 9 primitive-feasibility bridge,
   ratio-to-IC endpoints, and accept-all-primitive statewise-certificate
-  endpoint, and auxiliary finite dynamic policy support.
+  endpoint, accept-all-primitive positive-primitives strict-local and
+  statewise-certificate endpoints, and auxiliary finite dynamic policy
+  support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
   global Theorem 1 threshold-existence compactness/continuity argument, the
   continuous renewal-reward cycle construction, CTMC stochastic-process bridge,

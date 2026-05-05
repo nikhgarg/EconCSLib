@@ -215,6 +215,9 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives`:
   measured Theorem 3 strict-local endpoint using the direct Lemma 9 primitive
   feasibility bridge.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives`:
+  packaged source-facing Theorem 3 endpoint using the same direct Lemma 9
+  primitive feasibility bridge.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
   primitives and scalar positivity obligations derived from CTMC/measure
@@ -222,9 +225,15 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_measured_aggregate_strict_local_improvements`:
   the corresponding accept-all-primitive endpoint for the strict local
   aggregate-improvement route.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives`:
+  accept-all-primitive strict-local endpoint that also discharges Lemma 9
+  feasibility from primitive positivity.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_shape_derivation_statewise_improvement_certificate`:
   accept-all-primitive Theorem 3 endpoint whose remaining Theorem 4 input is
   the packaged source-facing statewise-improvement certificate.
+- `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives`:
+  accept-all-primitive packaged statewise-certificate endpoint on the direct
+  Lemma 9 primitive-feasibility route.
 - `GN21SurgeIntervalEndpointBridgeData`,
   `GN21NonsurgeIntervalEndpointBridgeData`, and
   `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
@@ -20385,6 +20394,84 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and
             (hcertificate m z hnonneg hparams))
 
 /--
+Measured Theorem 3 endpoint from the packaged source-facing Theorem 4
+statewise-improvement certificate, using the direct Lemma 9
+primitive-positivity feasibility bridge.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hcertificate :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4ShapeDerivationStatewiseImprovementCertificate
+          μ arrival m z switch12 switch21) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives
+      μ arrival rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_pos hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos
+      hgap2_nonneg hT2_ge_one hswitch21_lt_Q2
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4MeasuredAggregateStrictLocalImprovementCertificate_of_shape_endpoint_selection
+            μ arrival m z switch12 switch21
+            (Theorem4ShapeEndpointSelectionCertificate.of_shape_derivation_endpoint_bridges
+              μ arrival m z switch12 switch21
+              (Theorem4ShapeDerivationEndpointBridgeCertificate.of_statewise_improvement_certificate
+                μ arrival m z switch12 switch21
+                (hcertificate m z hnonneg hparams))))
+
+/--
 Measured Theorem 3 endpoint from raw statewise strict improvements in the four
 shape cases, matching the output of the concrete endpoint bridge lemmas.
 -/
@@ -20728,6 +20815,79 @@ theorem theorem3_acceptAll_measured_primitives_scalar_conditions
         (fun _ hτ => hτ) hq2_integrable hmeasure2_pos
   exact ⟨hT1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
     hT2_ge_one, hswitch21_lt_Q2⟩
+
+/--
+Accept-all measured primitives also discharge the direct Lemma 9
+primitive-positivity route: besides the Theorem 3 scalar conditions, positive
+mass in state 2 and first-moment integrability give the Remark 4 gap
+`switch21 * T2 - Q2 >= 0`.
+-/
+theorem theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy) :
+    0 < gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+      0 <
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ∧
+      0 <
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+          switch12 ∧
+      0 <
+        theorem3FeasibilityDenominator
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 ∧
+      0 ≤
+        switch21 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) -
+          gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 ∧
+      1 ≤ gn21AcceptAllScaledStateTime (μ 1) (arrival 1) ∧
+      switch21 <
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable hq1_integrable
+      hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos, hT2_ge_one,
+      hswitch21_lt_Q2⟩
+  have hQ1_pos :
+      0 <
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 := by
+    linarith
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith
+  have hgap2_nonneg :
+      0 ≤
+        switch21 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) -
+          gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 := by
+    exact le_of_lt
+      (by
+        simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral] using
+          paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure
+            (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+            harrival2_pos hswitch21_pos hsum21 measurableSet_acceptAllPolicy
+            (fun _ hτ => hτ) htime2_integrable hq2_integrable hmeasure2_pos)
+  exact ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+    hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
 
 /--
 Measured Theorem 3 endpoint with `T_i,Q_i` specialized to the accept-all
@@ -21183,6 +21343,154 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll
 
 /--
 Measured Theorem 3 endpoint with `T_i,Q_i` specialized to the accept-all
+measured primitives, using the strict-local aggregate-improvement route and
+the direct Lemma 9 primitive-positivity feasibility bridge.  The CTMC/measure
+assumptions discharge both Theorem 3 positivity and Lemma 9 feasibility side
+conditions.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hstrict :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio
+            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+            switch12 ∧
+            lemma9StructuredBounds surgeRatio
+              (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+              (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+              (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+              (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+              switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            m 0 *
+                (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+              z 0 *
+                (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+                  switch12) =
+                R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+            m 1 *
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+              z 1 *
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+                  switch21) =
+                R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)) →
+        Theorem4MeasuredAggregateStrictLocalImprovementCertificate
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio
+            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+            switch12 ∧
+            lemma9StructuredBounds surgeRatio
+              (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+              (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+              (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+              (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+              switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            m 0 *
+                (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+              z 0 *
+                (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+                  switch12) =
+                R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+            m 1 *
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+              z 1 *
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+                  switch21) =
+                R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+      hswitch21_lt_Q2 hstrict
+
+/--
+Measured Theorem 3 endpoint with `T_i,Q_i` specialized to the accept-all
 measured primitives, using the packaged source-facing Theorem 4
 statewise-improvement certificate.
 -/
@@ -21368,6 +21676,152 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll
       hC_lt_rho hrho_lt_one hT1_pos hQ1_sub_switch12_pos
       hden_theorem3_pos hlemma9_den_lower hlemma9_den_upper
       hlemma9_left_nonpos hlemma9_right_pos hlemma9_upper_pos hT2_ge_one
+      hswitch21_lt_Q2 hcertificate
+
+/--
+Measured Theorem 3 endpoint with `T_i,Q_i` specialized to accept-all measured
+primitives and the remaining Theorem 4 input packaged as the source-facing
+statewise-improvement certificate, using the direct Lemma 9
+primitive-positivity feasibility bridge.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hcertificate :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio
+            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+            switch12 ∧
+            lemma9StructuredBounds surgeRatio
+              (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+              (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+              (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+              (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+              switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            m 0 *
+                (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+              z 0 *
+                (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+                  switch12) =
+                R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+            m 1 *
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+              z 1 *
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+                  switch21) =
+                R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)) →
+        Theorem4ShapeDerivationStatewiseImprovementCertificate
+          μ arrival m z switch12 switch21) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio
+            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+            switch12 ∧
+            lemma9StructuredBounds surgeRatio
+              (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+              (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+              (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+              (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+              switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+                switch21 surgeRatio ∧
+            m 0 *
+                (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+              z 0 *
+                (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+                  switch12) =
+                R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+            m 1 *
+                (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+              z 1 *
+                (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+                  switch21) =
+                R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  exact
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
       hswitch21_lt_Q2 hcertificate
 
 section FiniteSupport
