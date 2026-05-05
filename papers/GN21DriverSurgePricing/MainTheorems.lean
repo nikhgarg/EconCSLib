@@ -6288,6 +6288,190 @@ theorem gn21ScaledStateEarning_rejectsShortTrips_withDensity_eq_tailWiPath
     gn21ScaledStateEarning_rejectShortTripsPolicy_withDensity_eq_tailWiPath
       arrivalRate t density payment hdensity_meas ht_nonneg
 
+/--
+Canonical middle-acceptance policy realizes the finite lower-endpoint `Q_i`
+path when its lower endpoint is nonnegative.
+-/
+theorem gn21ExitWeightIntegral_acceptMiddleTripsPolicy_withDensity_eq_lowerEndpointQiPath
+    (arrivalRate switchIJ switchJI lo hi : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hlo_nonneg : 0 ≤ lo)
+    (hle : lo ≤ hi) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI
+        (acceptMiddleTripsPolicy lo hi) =
+      gn21LowerEndpointQiPath arrivalRate switchIJ hi
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) lo := by
+  have hpolicy : acceptMiddleTripsPolicy lo hi = Set.Ioo lo hi := by
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1.2, hτ.2⟩
+    · intro hτ
+      exact ⟨⟨lt_of_le_of_lt hlo_nonneg hτ.1, hτ.1⟩, hτ.2⟩
+  unfold gn21ExitWeightIntegral gn21LowerEndpointQiPath
+  rw [hpolicy]
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density)
+    hdensity_meas
+    (fun τ => gn21SwitchProb switchIJ switchJI τ)
+    measurableSet_Ioo]
+  apply congrArg (fun y => switchIJ + arrivalRate * y)
+  rw [integral_Ioc_eq_integral_Ioo]
+  apply setIntegral_congr_fun measurableSet_Ioo
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Canonical middle-acceptance policy realizes the finite lower-endpoint `T_i`
+path when its lower endpoint is nonnegative.
+-/
+theorem gn21ScaledStateTime_acceptMiddleTripsPolicy_withDensity_eq_lowerEndpointTiPath
+    (arrivalRate lo hi : ℝ)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hlo_nonneg : 0 ≤ lo)
+    (hle : lo ≤ hi) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate
+        (acceptMiddleTripsPolicy lo hi) =
+      gn21LowerEndpointTiPath arrivalRate hi
+        (fun τ => (density τ : ℝ)) lo := by
+  have hpolicy : acceptMiddleTripsPolicy lo hi = Set.Ioo lo hi := by
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1.2, hτ.2⟩
+    · intro hτ
+      exact ⟨⟨lt_of_le_of_lt hlo_nonneg hτ.1, hτ.1⟩, hτ.2⟩
+  unfold gn21ScaledStateTime singleStateTripTime gn21LowerEndpointTiPath
+  rw [hpolicy]
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas (fun τ => τ)
+    measurableSet_Ioo]
+  apply congrArg (fun y => 1 + arrivalRate * y)
+  rw [integral_Ioc_eq_integral_Ioo]
+  apply setIntegral_congr_fun measurableSet_Ioo
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Canonical middle-acceptance policy realizes the finite lower-endpoint `W_i`
+path when its lower endpoint is nonnegative.
+-/
+theorem gn21ScaledStateEarning_acceptMiddleTripsPolicy_withDensity_eq_lowerEndpointWiPath
+    (arrivalRate lo hi : ℝ)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hlo_nonneg : 0 ≤ lo)
+    (hle : lo ≤ hi) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment
+        (acceptMiddleTripsPolicy lo hi) =
+      gn21LowerEndpointWiPath arrivalRate hi
+        (fun τ => (density τ : ℝ)) payment lo := by
+  have hpolicy : acceptMiddleTripsPolicy lo hi = Set.Ioo lo hi := by
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1.2, hτ.2⟩
+    · intro hτ
+      exact ⟨⟨lt_of_le_of_lt hlo_nonneg hτ.1, hτ.1⟩, hτ.2⟩
+  unfold gn21ScaledStateEarning singleStateTripPayment
+    gn21LowerEndpointWiPath
+  rw [hpolicy]
+  rw [intervalIntegral.integral_of_le hle]
+  rw [setIntegral_withDensity_eq_setIntegral_smul
+    (μ := volume) (f := density) hdensity_meas payment measurableSet_Ioo]
+  apply congrArg (fun y => arrivalRate * y)
+  rw [integral_Ioc_eq_integral_Ioo]
+  apply setIntegral_congr_fun measurableSet_Ioo
+  intro τ _hτ
+  simp [Algebra.smul_def, mul_comm]
+
+/--
+Any feasible middle-acceptance-shaped policy realizes the finite
+lower-endpoint `Q_i` path after canonicalizing the policy.
+-/
+theorem gn21ExitWeightIntegral_acceptsMiddleTrips_withDensity_eq_lowerEndpointQiPath
+    (arrivalRate switchIJ switchJI lo hi : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hshape : acceptsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hlo_nonneg : 0 ≤ lo)
+    (hle : lo ≤ hi) :
+    gn21ExitWeightIntegral
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate switchIJ switchJI σ =
+      gn21LowerEndpointQiPath arrivalRate switchIJ hi
+        (fun τ => (density τ : ℝ))
+        (gn21SwitchProb switchIJ switchJI) lo := by
+  rw [eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ExitWeightIntegral_acceptMiddleTripsPolicy_withDensity_eq_lowerEndpointQiPath
+      arrivalRate switchIJ switchJI lo hi density hdensity_meas
+      hlo_nonneg hle
+
+/--
+Any feasible middle-acceptance-shaped policy realizes the finite
+lower-endpoint `T_i` path after canonicalizing the policy.
+-/
+theorem gn21ScaledStateTime_acceptsMiddleTrips_withDensity_eq_lowerEndpointTiPath
+    (arrivalRate lo hi : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (hdensity_meas : Measurable density)
+    (hshape : acceptsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hlo_nonneg : 0 ≤ lo)
+    (hle : lo ≤ hi) :
+    gn21ScaledStateTime
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate σ =
+      gn21LowerEndpointTiPath arrivalRate hi
+        (fun τ => (density τ : ℝ)) lo := by
+  rw [eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateTime_acceptMiddleTripsPolicy_withDensity_eq_lowerEndpointTiPath
+      arrivalRate lo hi density hdensity_meas hlo_nonneg hle
+
+/--
+Any feasible middle-acceptance-shaped policy realizes the finite
+lower-endpoint `W_i` path after canonicalizing the policy.
+-/
+theorem gn21ScaledStateEarning_acceptsMiddleTrips_withDensity_eq_lowerEndpointWiPath
+    (arrivalRate lo hi : ℝ)
+    (σ : TripPolicy)
+    (density : ℝ → NNReal)
+    (payment : PricingFunction)
+    (hdensity_meas : Measurable density)
+    (hshape : acceptsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hlo_nonneg : 0 ≤ lo)
+    (hle : lo ≤ hi) :
+    gn21ScaledStateEarning
+        (volume.withDensity fun τ => (density τ : ℝ≥0∞))
+        arrivalRate payment σ =
+      gn21LowerEndpointWiPath arrivalRate hi
+        (fun τ => (density τ : ℝ)) payment lo := by
+  rw [eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateEarning_acceptMiddleTripsPolicy_withDensity_eq_lowerEndpointWiPath
+      arrivalRate lo hi density payment hdensity_meas hlo_nonneg hle
+
 /-- Canonical short-trip-rejection policies only accept positive trips. -/
 theorem rejectShortTripsPolicy_subset_acceptAll (t : ℝ) :
     rejectShortTripsPolicy t ⊆ acceptAllPolicy := by
