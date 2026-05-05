@@ -27,8 +27,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   with-density bridges for all four Theorem 4 shape cases, the accept-all-bound
   wrappers for all four shape cases, the packaged source-facing
   statewise-improvement certificate for Theorem 4/Theorem 3, Theorem 3 CTMC
-  structured price form, Theorem 4 shape-replacement to shape-derivation
-  bridge, direct Lemma 9 primitive-feasibility bridge,
+  structured price form, Theorem 4 shape-replacement to shape-derivation and
+  statewise-improvement bridges, direct Lemma 9 primitive-feasibility bridge,
   ratio-to-IC endpoints, and accept-all-primitive statewise-certificate
   endpoint, accept-all-primitive positive-primitives strict-local and
   statewise-certificate endpoints, raw statewise-improvement positive-primitives

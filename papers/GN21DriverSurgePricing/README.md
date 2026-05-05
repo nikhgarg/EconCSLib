@@ -125,6 +125,8 @@ calculus to the top-level routes without extra structure plumbing:
 `Theorem4ShapeReplacementDerivationCertificate`,
 `theorem4ShapeDerivationCertificate_of_shape_replacement`,
 `paper_theorem4_dynamic_structural_policy_of_shape_replacement`,
+`Theorem4ShapeDerivationStatewiseImprovementCertificate.of_shape_replacement`,
+`paper_theorem4_accept_all_unique_optimal_of_shape_replacement_statewise_improvements`,
 `gn21SurgeStatewiseStrictAggregateImprovement`,
 `gn21NonsurgeStatewiseStrictAggregateImprovement`,
 `GN21SurgeEndpointBridgeData.of_statewise_strict_aggregate_improvement`,
