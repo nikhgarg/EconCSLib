@@ -7648,6 +7648,148 @@ theorem gn21MeasuredAggregateDynamicStateReward_one
   simp [gn21MeasuredAggregateDynamicStateReward, replaceDynamicPolicyState]
 
 /--
+Surge-state bridge from the Lemma 9 interval-density endpoint movement to the
+measured aggregate strict-local state-replacement interface.  The policy
+equalities identify the current surge policy and the candidate endpoint
+replacements with the interval primitive paths.
+-/
+theorem paper_theorem4_surge_statewise_strict_aggregate_improvement_of_lemma9_interval_density
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (replacement : ℝ → TripPolicy)
+    (lowerEndpoint u T1 Q1 T2 Q2 R1 ratio : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrival 1)
+    (hdensity_pos : 0 < density u)
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+          (gn21SwitchProb switch21 switch12) u * T1 +
+        Q1 *
+          gn21EndpointTiPath (arrival 1) lowerEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) volume
+        lowerEndpoint u)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) volume lowerEndpoint u)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ2 :
+      gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+        (gn21SwitchProb switch21 switch12) u = Q2)
+    (hT2 :
+      gn21EndpointTiPath (arrival 1) lowerEndpoint density u = T2)
+    (hW2 :
+      gn21EndpointWiPath (arrival 1) lowerEndpoint density
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u =
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21))
+    (hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21)
+    (hz : z 1 = ratio * (m 1 - R1))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (Hcur :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hrep :
+      ∀ ε : ℝ, 0 < ε →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) (replacement ε))
+    (hQ_other :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) = Q1)
+    (hT_other :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) = T1)
+    (hW_other :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+          R1 * T1)
+    (hQ_current :
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) =
+        gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+          (gn21SwitchProb switch21 switch12) u)
+    (hT_current :
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) =
+        gn21EndpointTiPath (arrival 1) lowerEndpoint density u)
+    (hW_current :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        gn21EndpointWiPath (arrival 1) lowerEndpoint density
+          (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u)
+    (hQ_replacement :
+      ∀ ε : ℝ,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+            (replacement ε) =
+          gn21EndpointQiPath (arrival 1) switch21 lowerEndpoint density
+            (gn21SwitchProb switch21 switch12) (u + ε))
+    (hT_replacement :
+      ∀ ε : ℝ,
+        gn21ScaledStateTime (μ 1) (arrival 1) (replacement ε) =
+          gn21EndpointTiPath (arrival 1) lowerEndpoint density (u + ε))
+    (hW_replacement :
+      ∀ ε : ℝ,
+        gn21ScaledStateEarning (μ 1) (arrival 1)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+            (replacement ε) =
+          gn21EndpointWiPath (arrival 1) lowerEndpoint density
+            (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+            (u + ε)) :
+    ∃ τ : TripPolicy,
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1) ∧
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21
+          ((replaceDynamicPolicyState ρ 1 τ) 0)
+          ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+      gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+        gn21MeasuredAggregateDynamicStateReward
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ := by
+  rcases
+      paper_lemma9_exists_pos_right_improvement_of_interval_density_current_bounds
+        (arrival 1) lowerEndpoint u T1 Q1 T2 Q2 switch21 switch12
+        (m 1) R1 (z 1) ratio density harrival_pos hdensity_pos hQ1_pos
+        hden hq_int hq_meas hq_cont hw_int hw_meas hw_cont ht_int ht_meas
+        ht_cont hQ2 hT2 hW2 hbounds hz hmR_pos hR1_nonneg hT1_nonneg
+        hswitch21_pos hsum hu hswitch_lt_Q2 hgap_nonneg with
+    ⟨ε, hε_pos, hlt⟩
+  refine ⟨replacement ε, Hcur, ?_, ?_⟩
+  · simpa [replaceDynamicPolicyState] using Hrep ε hε_pos
+  · simpa [gn21MeasuredAggregateDynamicStateReward_one,
+      gn21MeasuredAggregateRewardPrimitives, hQ_other, hT_other, hW_other,
+      hQ_current, hT_current, hW_current, hQ_replacement ε,
+      hT_replacement ε, hW_replacement ε, gn21AggregateDynamicReward_swap]
+      using hlt
+
+/--
 Uniform statewise strict-local aggregate certificate.  Endpoint arguments can
 target this interface without duplicating the state-0/state-1 bookkeeping.
 -/
