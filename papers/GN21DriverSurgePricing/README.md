@@ -86,7 +86,12 @@ cache is `source.txt`.
   the stronger Lemma 9 final-sign assumptions.  Accept-all-primitive versions
   discharge scalar positivity and, with state-2 accept-all time integrability,
   the direct Lemma 9 feasibility side conditions from measure/CTMC assumptions
-  for both the strict-local and packaged statewise-certificate routes.
+  for both the strict-local and packaged statewise-certificate routes.  The
+  strongest route is now also exposed as a bundled source-assumption wrapper:
+  `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
+  `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
+  only proof boundary is the continuous allowed-replacement Theorem 4
+  certificate for the constructed prices.
 - The finite MDP declarations are marked auxiliary support only. They are not
   used to claim the paper's continuous CTMC theorems.
 - The DAG uses the shared TikZ preamble and separates solid verified support
@@ -161,6 +166,11 @@ and
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives`,
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_shape_derivation_statewise_improvement_certificate_of_lemma9_positive_primitives`,
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_allowed_replacement_data_of_lemma9_positive_primitives`,
+`theorem3AcceptAllStructuredParameterEvidence`,
+`theorem3MeasuredStructuredICConclusion`,
+`theorem3AcceptAllAllowedReplacementCertificate`,
+`Theorem3AcceptAllAllowedReplacementSourceAssumptions`,
+`paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
 with the unbundled raw-argument variant
 `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_shape_derivation_statewise_improvements`
 and its positive-primitives counterpart

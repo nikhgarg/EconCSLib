@@ -23661,6 +23661,163 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll
             μ arrival m z switch12 switch21
             (hcertificate m z hnonneg hparams))
 
+/--
+The parameter identities produced by the Theorem 3 construction once
+`T_i,Q_i` are specialized to accept-all measured primitives.  This is the
+source-facing evidence that the constructed `m,z` prices have the paper's
+closed-form accounting and Lemma 9/10 ratio bounds.
+-/
+def theorem3AcceptAllStructuredParameterEvidence
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) : Prop :=
+  ∃ nonsurgeRatio surgeRatio : ℝ,
+    lemma10StructuredBounds nonsurgeRatio
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      switch12 ∧
+    lemma9StructuredBounds surgeRatio
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21 ∧
+    m 0 = R2 ∧
+    z 0 = nonsurgeRatio * R2 ∧
+    m 1 =
+      theorem3SurgeMultiplierFromRatio R1 R2
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 surgeRatio ∧
+    z 1 =
+      theorem3SurgeZFromRatio R1 R2
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 surgeRatio ∧
+    m 0 *
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+      z 0 *
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+          switch12) =
+        R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+    m 1 *
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+      z 1 *
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+          switch21) =
+        R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)
+
+/--
+Readable conclusion of the measured Theorem 3 endpoint: there are structured
+CTMC prices satisfying the source sign constraints, incentive compatibility,
+the paper's `structuredSurgePrice` form, and the constructed-parameter
+evidence above.
+-/
+def theorem3MeasuredStructuredICConclusion
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∃ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+      dynamicIncentiveCompatible
+        (gn21MeasuredCTMCStructuredDynamicReward
+          μ arrival switch12 switch21 m z) ∧
+      (∃ q : Fin 2 → TripLength → ℝ,
+        ∀ i τ,
+          ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+            structuredSurgePrice (m i) (z i) (q i) τ) ∧
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z
+
+/--
+The one remaining Theorem 4 boundary used by the strongest Theorem 3 route:
+for the prices constructed by Theorem 3, the continuous Lemma 5 selection and
+endpoint-improvement proof must supply the allowed-replacement certificate.
+-/
+def theorem3AcceptAllAllowedReplacementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Type :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4AllowedReplacementStatewiseImprovementCertificate
+          μ arrival m z switch12 switch21
+
+/--
+Bundled source-level assumptions for the current strongest formal Theorem 3
+route.  The scalar CTMC/measure fields are discharged inside Lean; the final
+field is exactly the continuous arbitrary-optimal-policy selection proof left
+from Theorem 4.
+-/
+structure Theorem3AcceptAllAllowedReplacementSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  allowed_replacement :
+    theorem3AcceptAllAllowedReplacementCertificate
+      μ arrival R1 R2 switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper at the strongest current boundary.  All
+constructed-price algebra, accept-all primitive specialization, CTMC scalar
+positivity, and IC routing are proved; the assumption bundle isolates the
+remaining Theorem 4 continuous allowed-replacement proof.
+-/
+theorem paper_theorem3_measured_structured_ic_prices_of_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllAllowedReplacementSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  simpa [theorem3MeasuredStructuredICConclusion,
+    theorem3AcceptAllStructuredParameterEvidence,
+    theorem3AcceptAllAllowedReplacementCertificate] using
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_allowed_replacement_data_of_lemma9_positive_primitives
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      A.allowed_replacement
+
 section FiniteSupport
 
 variable {State Action : Type*}
