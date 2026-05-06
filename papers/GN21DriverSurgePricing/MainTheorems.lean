@@ -10720,6 +10720,55 @@ theorem exists_effectiveRatio_pos_le_targetRatio_of_reward_le
   exact ⟨effectiveRatio, hz_effective, heffective_pos, heffective_le⟩
 
 /--
+Slack version of the effective-ratio construction.  If the current fixed-state
+reward rate is only known to be below an envelope `Rmax`, it is enough for the
+surge intercept `z` to be small relative to `m - Rmax`; the resulting
+effective current ratio is still positive and below the requested upper
+ratio.  This is the scalar form of the source proof's "support any ratio" move.
+-/
+theorem exists_effectiveRatio_pos_lt_upperRatio_of_reward_le_envelope
+    (z m Rcurrent Rmax upperRatio : ℝ)
+    (hz_pos : 0 < z)
+    (hmRmax_pos : 0 < m - Rmax)
+    (hreward_le : Rcurrent ≤ Rmax)
+    (hz_lt_upper : z < upperRatio * (m - Rmax)) :
+    ∃ effectiveRatio : ℝ,
+      z = effectiveRatio * (m - Rcurrent) ∧
+        0 < effectiveRatio ∧ effectiveRatio < upperRatio := by
+  have hden_effective_pos : 0 < m - Rcurrent := by
+    linarith
+  let effectiveRatio := z / (m - Rcurrent)
+  have hz_effective : z = effectiveRatio * (m - Rcurrent) := by
+    unfold effectiveRatio
+    field_simp [ne_of_gt hden_effective_pos]
+  have heffective_pos : 0 < effectiveRatio := by
+    unfold effectiveRatio
+    exact div_pos hz_pos hden_effective_pos
+  have hupper_mul_pos : 0 < upperRatio * (m - Rmax) :=
+    lt_trans hz_pos hz_lt_upper
+  have hupper_pos : 0 < upperRatio :=
+    pos_of_mul_pos_left hupper_mul_pos (le_of_lt hmRmax_pos)
+  have hden_max_le_effective : m - Rmax ≤ m - Rcurrent := by
+    linarith
+  have hupper_mul_le :
+      upperRatio * (m - Rmax) ≤ upperRatio * (m - Rcurrent) :=
+    mul_le_mul_of_nonneg_left hden_max_le_effective (le_of_lt hupper_pos)
+  have hz_lt_upper_effective :
+      z < upperRatio * (m - Rcurrent) :=
+    lt_of_lt_of_le hz_lt_upper hupper_mul_le
+  have heffective_mul_lt :
+      effectiveRatio * (m - Rcurrent) <
+        upperRatio * (m - Rcurrent) := by
+    simpa [hz_effective] using hz_lt_upper_effective
+  have heffective_lt : effectiveRatio < upperRatio := by
+    have hdiv :=
+      (div_lt_div_iff₀ hden_effective_pos hden_effective_pos).2
+        heffective_mul_lt
+    field_simp [ne_of_gt hden_effective_pos] at hdiv
+    exact hdiv
+  exact ⟨effectiveRatio, hz_effective, heffective_pos, heffective_lt⟩
+
+/--
 Target-ratio Lemma 9 bounds also cover any positive effective ratio below the
 target ratio, provided the lower endpoint is nonpositive.
 -/
@@ -15431,6 +15480,191 @@ theorem gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg
       hσ_measurable hσ_subset hmass_pos
   exact div_nonneg hmean_nonneg (le_of_lt hcycle_pos)
 
+/--
+Measured Lemma 1 state reward rates are bounded above by any nonnegative
+pointwise trip-payment rate envelope.  The cycle-time denominator includes the
+waiting-time term, so this converts a trip-level bound `w τ <= M * τ` into the
+state reward-rate bound `R_i(w,σ) <= M`.
+-/
+theorem gn21MeasuredStateRewardRate_le_of_pointwise_payment_le_rate
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ : TripPolicy) (M : ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hw_integrable : IntegrableOn w σ μ)
+    (hM_nonneg : 0 ≤ M)
+    (hpayment_le : ∀ τ ∈ σ, w τ ≤ M * τ) :
+    gn21MeasuredStateRewardRate μ arrivalRate w σ ≤ M := by
+  unfold gn21MeasuredStateRewardRate gn21StateRewardRate gn21StateMeanEarning
+  have hpayment_integral_le :
+      singleStateTripPayment μ w σ ≤ M * singleStateTripTime μ σ := by
+    unfold singleStateTripPayment singleStateTripTime
+    have hmono :
+        ∫ τ in σ, w τ ∂μ ≤ ∫ τ in σ, M * τ ∂μ := by
+      exact setIntegral_mono_on hw_integrable
+        (htime_integrable.const_mul M) hσ_measurable hpayment_le
+    rw [integral_const_mul] at hmono
+    exact hmono
+  have hmean_le :
+      singleStateTripPayment μ w σ / singleStateTripMass μ σ ≤
+        (M * singleStateTripTime μ σ) / singleStateTripMass μ σ :=
+    div_le_div_of_nonneg_right hpayment_integral_le (le_of_lt hmass_pos)
+  have hcycle_pos :
+      0 < gn21StateCycleTime μ arrivalRate σ :=
+    gn21StateCycleTime_pos_of_mass_pos μ arrivalRate σ harrival_pos
+      hσ_measurable hσ_subset hmass_pos
+  have htime_div_le_cycle :
+      singleStateTripTime μ σ / singleStateTripMass μ σ ≤
+        gn21StateCycleTime μ arrivalRate σ := by
+    unfold gn21StateCycleTime
+    have harrival_mass_pos :
+        0 < arrivalRate * singleStateTripMass μ σ :=
+      mul_pos harrival_pos hmass_pos
+    have hwaiting_nonneg :
+        0 ≤ 1 / (arrivalRate * singleStateTripMass μ σ) :=
+      le_of_lt (one_div_pos.mpr harrival_mass_pos)
+    linarith
+  have hscaled_le_cycle :
+      (M * singleStateTripTime μ σ) / singleStateTripMass μ σ ≤
+        M * gn21StateCycleTime μ arrivalRate σ := by
+    calc
+      (M * singleStateTripTime μ σ) / singleStateTripMass μ σ
+          = M * (singleStateTripTime μ σ / singleStateTripMass μ σ) := by
+            ring
+      _ ≤ M * gn21StateCycleTime μ arrivalRate σ :=
+        mul_le_mul_of_nonneg_left htime_div_le_cycle hM_nonneg
+  have hscaled_div_le :
+      ((M * singleStateTripTime μ σ) / singleStateTripMass μ σ) /
+          gn21StateCycleTime μ arrivalRate σ ≤ M := by
+    rw [div_le_iff₀ hcycle_pos]
+    exact hscaled_le_cycle
+  exact le_trans
+    (div_le_div_of_nonneg_right hmean_le (le_of_lt hcycle_pos))
+    hscaled_div_le
+
+/--
+When the structured CTMC coefficient `z` is nonpositive, the pointwise payment
+rate is bounded by the trip-time slope `m`.
+-/
+theorem ctmcStructuredSurgePrice_le_slope_of_z_nonpos
+    (m z switchIJ switchJI τ : ℝ)
+    (hz_nonpos : z ≤ 0)
+    (hswitch_nonneg : 0 ≤ switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hτ_pos : 0 < τ) :
+    ctmcStructuredSurgePrice m z switchIJ switchJI τ ≤ m * τ := by
+  unfold ctmcStructuredSurgePrice structuredSurgePrice
+  have hq_nonneg :
+      0 ≤ gn21SwitchProb switchIJ switchJI τ :=
+    paper_lemma2_switch_probability_nonneg switchIJ switchJI τ
+      hswitch_nonneg hsum (le_of_lt hτ_pos)
+  have hzq_nonpos : z * gn21SwitchProb switchIJ switchJI τ ≤ 0 :=
+    mul_nonpos_of_nonpos_of_nonneg hz_nonpos hq_nonneg
+  linarith
+
+/--
+When the structured CTMC coefficient `z` is nonnegative, the pointwise payment
+rate is bounded by the linearized switch-probability envelope
+`m + z * λ_{i→j}`.
+-/
+theorem ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
+    (m z switchIJ switchJI τ : ℝ)
+    (hz_nonneg : 0 ≤ z)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hτ_pos : 0 < τ) :
+    ctmcStructuredSurgePrice m z switchIJ switchJI τ ≤
+      (m + z * switchIJ) * τ := by
+  unfold ctmcStructuredSurgePrice structuredSurgePrice
+  have hq_le :
+      gn21SwitchProb switchIJ switchJI τ ≤ switchIJ * τ :=
+    le_of_lt
+      (paper_remark4_switch_probability_lt_rate_mul_time
+        switchIJ switchJI τ hswitch_pos hsum hτ_pos)
+  have hzq_le :
+      z * gn21SwitchProb switchIJ switchJI τ ≤ z * (switchIJ * τ) :=
+    mul_le_mul_of_nonneg_left hq_le hz_nonneg
+  nlinarith
+
+/--
+Measured reward-rate upper bound for structured CTMC prices with nonpositive
+switch coefficient.
+-/
+theorem gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_slope_of_z_nonpos
+    (μ : Measure TripLength) (arrivalRate m z switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m)
+    (hz_nonpos : z ≤ 0)
+    (hswitch_nonneg : 0 ≤ switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ) :
+    gn21MeasuredStateRewardRate μ arrivalRate
+      (ctmcStructuredSurgePrice m z switchIJ switchJI) σ ≤ m := by
+  exact
+    gn21MeasuredStateRewardRate_le_of_pointwise_payment_le_rate
+      μ arrivalRate (ctmcStructuredSurgePrice m z switchIJ switchJI) σ m
+      harrival_pos hσ_measurable hσ_subset hmass_pos htime_integrable
+      (integrableOn_ctmcStructuredSurgePrice μ m z switchIJ switchJI σ
+        htime_integrable hq_integrable)
+      hm_nonneg
+      (by
+        intro τ hτ
+        exact ctmcStructuredSurgePrice_le_slope_of_z_nonpos
+          m z switchIJ switchJI τ hz_nonpos hswitch_nonneg hsum
+          (hσ_subset hτ))
+
+/--
+Measured reward-rate upper bound for structured CTMC prices with nonnegative
+switch coefficient, using the linearized switch-probability envelope.
+-/
+theorem gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
+    (μ : Measure TripLength) (arrivalRate m z switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m)
+    (hz_nonneg : 0 ≤ z)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ) :
+    gn21MeasuredStateRewardRate μ arrivalRate
+      (ctmcStructuredSurgePrice m z switchIJ switchJI) σ ≤
+        m + z * switchIJ := by
+  have hM_nonneg : 0 ≤ m + z * switchIJ := by
+    exact add_nonneg hm_nonneg
+      (mul_nonneg hz_nonneg (le_of_lt hswitch_pos))
+  exact
+    gn21MeasuredStateRewardRate_le_of_pointwise_payment_le_rate
+      μ arrivalRate (ctmcStructuredSurgePrice m z switchIJ switchJI) σ
+      (m + z * switchIJ) harrival_pos hσ_measurable hσ_subset hmass_pos
+      htime_integrable
+      (integrableOn_ctmcStructuredSurgePrice μ m z switchIJ switchJI σ
+        htime_integrable hq_integrable)
+      hM_nonneg
+      (by
+        intro τ hτ
+        exact ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
+          m z switchIJ switchJI τ hz_nonneg hswitch_pos hsum
+          (hσ_subset hτ))
+
 /-- Lemma 1 dynamic reward decomposition from time fractions and state reward rates. -/
 def gn21DynamicRewardFormula
     (timeFractionI rewardRateI timeFractionJ rewardRateJ : ℝ) : ℝ :=
@@ -18030,6 +18264,118 @@ theorem GN21SurgeLemma9AcceptAllAggregateRewardRateData.of_target_ratio_reward_l
         linarith
       R1_nonneg := hRcurrent_nonneg
       fixed_reward_rate := hfixed_reward_rate }
+
+/--
+Build surge Lemma 9 reward-rate data from a verified upper envelope for the
+current fixed-state reward rate and explicit slack below the current Lemma 9
+upper endpoint.  This is the source-faithful alternative to requiring
+`R_current <= R_target`: the effective ratio is constructed from
+`z/(m-R_current)` and bounded using `R_current <= Rmax`.
+-/
+theorem GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 m Rcurrent Rmax z mI zI : ℝ}
+    {σI σJ : TripPolicy}
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (hσJ_subset : σJ ⊆ acceptAllPolicy)
+    (hσJ_measurable : MeasurableSet σJ)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeJ_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μJ)
+    (hqJ_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy μJ)
+    (hacceptAllJ_mass_pos : 0 < singleStateTripMass μJ acceptAllPolicy)
+    (hmoving_mass_pos : 0 < singleStateTripMass μJ σJ)
+    (hcurrent_lower_nonpos :
+      lemma9StructuredLower
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ScaledStateTime μJ arrivalJ acceptAllPolicy)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12
+          acceptAllPolicy)
+        switch21 ≤ 0)
+    (hz_pos : 0 < z)
+    (hmRmax_pos : 0 < m - Rmax)
+    (hRcurrent_le_envelope : Rcurrent ≤ Rmax)
+    (hRcurrent_nonneg : 0 ≤ Rcurrent)
+    (hz_upper_slack :
+      z <
+        lemma9StructuredUpper
+          (gn21ScaledStateTime μI arrivalI σI)
+          (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+          (gn21ScaledStateTime μJ arrivalJ acceptAllPolicy)
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12
+            acceptAllPolicy)
+          switch21 *
+            (m - Rmax))
+    (hfixed_reward_rate :
+      gn21MeasuredStateRewardRate μI arrivalI
+        (ctmcStructuredSurgePrice mI zI switch12 switch21) σI =
+          Rcurrent) :
+    ∃ effectiveRatio : ℝ,
+      GN21SurgeLemma9AcceptAllAggregateRewardRateData
+        μI μJ arrivalI arrivalJ switch12 switch21 m Rcurrent z
+        effectiveRatio mI zI σI σJ := by
+  rcases
+      exists_effectiveRatio_pos_lt_upperRatio_of_reward_le_envelope
+        z m Rcurrent Rmax
+        (lemma9StructuredUpper
+          (gn21ScaledStateTime μI arrivalI σI)
+          (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+          (gn21ScaledStateTime μJ arrivalJ acceptAllPolicy)
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12
+            acceptAllPolicy)
+          switch21)
+        hz_pos hmRmax_pos hRcurrent_le_envelope hz_upper_slack with
+    ⟨effectiveRatio, hz_effective, heffective_pos, heffective_lt_upper⟩
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [hswitch12_pos, hswitch21_pos]
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [hswitch12_pos, hswitch21_pos]
+  have hfixed_time_pos :
+      0 < gn21ScaledStateTime μI arrivalI σI :=
+    gn21ScaledStateTime_pos_of_nonneg μI arrivalI σI
+      (le_of_lt harrivalI_pos) hσI_measurable hσI_subset
+  have hfixed_exit_pos :
+      0 < gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI :=
+    gn21ExitWeightIntegral_pos_of_switch_pos μI arrivalI switch12
+      switch21 σI (le_of_lt harrivalI_pos) hswitch12_pos hsum12
+      hσI_measurable hσI_subset
+  have hfixed_bounds :
+      lemma9StructuredBounds effectiveRatio
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ScaledStateTime μJ arrivalJ acceptAllPolicy)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12
+          acceptAllPolicy)
+        switch21 := by
+    exact ⟨lt_of_le_of_lt hcurrent_lower_nonpos heffective_pos,
+      heffective_lt_upper⟩
+  exact
+    ⟨effectiveRatio,
+      { current_mass_pos := hmoving_mass_pos
+        bounds :=
+          lemma9StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure
+            μJ arrivalJ switch21 switch12 σJ effectiveRatio
+            (gn21ScaledStateTime μI arrivalI σI)
+            (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+            hfixed_bounds (le_of_lt hfixed_time_pos) hfixed_exit_pos
+            harrivalJ_pos hswitch21_pos hsum21 hσJ_measurable hσJ_subset
+            (htimeJ_acceptAll_integrable.mono_set hσJ_subset)
+            (hqJ_acceptAll_integrable.mono_set hσJ_subset)
+            htimeJ_acceptAll_integrable hqJ_acceptAll_integrable
+            (measure_pos_of_singleStateTripMass_pos μJ σJ hmoving_mass_pos)
+        z_eq := hz_effective
+        m_sub_R1_pos := by
+          linarith
+        R1_nonneg := hRcurrent_nonneg
+        fixed_reward_rate := hfixed_reward_rate }⟩
 
 /--
 Measured reward-rate equality supplies the fixed-state scaled earning identity

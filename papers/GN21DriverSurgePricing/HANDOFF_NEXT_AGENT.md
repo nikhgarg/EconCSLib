@@ -58,7 +58,8 @@ For every feasible measurable positive-mass policy `rho`, the remaining Lemma 9
 source field at the original current-lower boundary asks for:
 
 - a current non-surge reward rate `r1_current`;
-- `r1_current <= R1`;
+- a verified envelope `r1_current <= Rmax` together with enough surge-ratio
+  slack below the current Lemma 9 upper endpoint;
 - `0 <= r1_current`;
 - the measured reward-rate identity for state 0;
 - current Lemma 9 lower-endpoint nonpositivity with fixed non-surge `T,Q` and
@@ -69,12 +70,20 @@ source field at the original current-lower boundary asks for:
 At the payment-nonnegative boundary, `0 <= r1_current` is no longer a source
 field.  Supply pointwise nonnegative current non-surge payments on `rho 0`;
 Lean derives the reward-rate nonnegativity from the measured Lemma 1 formula.
-The upper bound `r1_current <= R1` remains a genuine rate-comparison obligation
-and does not follow from nonnegative payments alone.
+Do not treat `r1_current <= R1` as a universal arbitrary-policy fact.  The
+source proof's usable argument is the Theorem 3 surge-side slack paragraph:
+choose the surge parameters so `z_2/(m_2-r1_current)` remains inside Lemma 9's
+current interval for any current reward below a verified envelope.
 
-Lean constructs the effective ratio `z_2/(m_2-r1_current)` internally from the
-Theorem 3 positive-parameter evidence.  Do not reintroduce an explicit
-effective-ratio witness unless it removes a real obstacle.
+Lean now has a compiled constructor for this route:
+
+```lean
+GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+```
+
+It combines `r1_current <= Rmax`, current lower-endpoint nonpositivity, and
+`z_2 < current_upper * (m_2 - Rmax)` to build the effective Lemma 9 ratio and
+the full aggregate reward-rate data.
 
 ## Why This Route
 
@@ -87,9 +96,9 @@ for the current fixed state to replace the lower cross comparison.
 
 ## Next Concrete Step
 
-Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the shortest route and the
-distinction between the easy `0 <= r1_current` proof and the separate
-`r1_current <= R1` rate comparison.
+Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the corrected route and the
+distinction between the easy `0 <= r1_current` proof, the reward-envelope
+bound, and the surge-side slack proof.
 
 Then try to prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma

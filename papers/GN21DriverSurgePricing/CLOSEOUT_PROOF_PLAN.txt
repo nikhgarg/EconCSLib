@@ -141,38 +141,35 @@ data:
   accept-all gap positivity from Remark 4
 
 
-Step 3: prove r1_current <= R1 as a rate comparison, not an integral monotonicity fact.
+Step 3: stop trying to prove the too-strong universal bound r1_current <= R1.
 
-Target shape:
+The paper's useful argument is the surge-side paragraph after the displayed
+Theorem 3 constraints: state 2 can support any admissible Lemma 9 ratio by
+choosing the surge multiplier/intercept with enough slack.  In Lean, this
+should be represented as:
 
-  gn21MeasuredStateRewardRate current_nonsurge_price (ρ 0)
-    <=
-  gn21MeasuredStateRewardRate current_nonsurge_price acceptAllPolicy
+  r1_current <= Rmax
+  z_2 < lemma9_current_upper * (m_2 - Rmax)
 
-Then rewrite the accept-all reward-rate using Theorem 3 accounting:
+for some verified envelope Rmax, not as r1_current <= R1.
 
-  gn21MeasuredStateRewardRate ... acceptAllPolicy = R1.
+The new compiled infrastructure is:
 
-There are two possible routes.
+  gn21MeasuredStateRewardRate_le_of_pointwise_payment_le_rate
+  ctmcStructuredSurgePrice_le_slope_of_z_nonpos
+  ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
+  gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_slope_of_z_nonpos
+  gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
+  exists_effectiveRatio_pos_lt_upperRatio_of_reward_le_envelope
+  GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
 
-Route A, likely fastest:
-Use the already compiled Lemma 10/non-surge-after-surge aggregate branch.  It
-already proves that, with surge fixed at accept-all, moving non-surge to
-accept-all weakly improves aggregate reward.  Since the surge state and its
-time/reward terms are fixed in that branch, extract or add a one-state
-consequence that the non-surge current rate is <= the target accept-all rate.
+These lemmas let the proof use a real current reward envelope and then build
+the effective Lemma 9 ratio `z_2/(m_2-r1_current)` from the source slack.
 
-This avoids reproving Lemma 10 derivative positivity.
-
-Route B, more direct:
-Use the single-state accepted/rejected-set algebra for the non-surge price.
-Show that every rejected complement piece has average rate at most R1, then
-adding it cannot reduce the rate comparison in the wrong direction.  This is
-probably more measure/integral work than Route A, but it is conceptually
-simple.
-
-Do not try to get r1_current <= R1 from raw payment monotonicity.  That is
-false for rates.
+Do not try to get r1_current <= R1 from raw payment monotonicity.  For arbitrary
+feasible non-surge policies it is not the right invariant; long-trip policies
+can push the state reward rate above the target accept-all rate unless the
+proof has already restricted the policy shape.
 
 
 Step 4: prove the current Lemma 9 lower endpoint directly.
