@@ -253,7 +253,10 @@ cache is `source.txt`.
   in `PointwiseRewardRateNoMassLocalData.of_fixed_complement_pointwise_eq`
   let source proofs provide a single fixed-state pointwise equality instead of
   separate lower/upper complement comparisons in the surge fixed-transfer
-  cases.
+  cases.  The no-mass constructors ending in `of_other_acceptAll` discharge
+  the fixed-state pointwise and reward-rate fields directly when the fixed
+  other state accepts all trips, using Theorem 3 accept-all accounting and
+  empty rejected complement.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

@@ -370,6 +370,11 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `of_fixed_complement_pointwise_eq`, which convert a fixed-state pointwise
   equality into the one-sided or two-sided pointwise comparisons required by
   the fixed-transfer route,
+  no-mass accept-all fixed-state constructors ending in `of_other_acceptAll`,
+  and accept-all reward-rate helpers
+  `GN21RegularEndpointSharedSourceData.nonsurge_acceptAll_reward_rate_of_theorem3_parameter_data`
+  and
+  `GN21RegularEndpointSharedSourceData.surge_acceptAll_reward_rate_of_theorem3_parameter_data`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
