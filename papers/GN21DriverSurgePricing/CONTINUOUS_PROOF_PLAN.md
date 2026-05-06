@@ -13,9 +13,10 @@ for the structured prices constructed by Theorem 3, paired with ordinary
 all-measurable allowed Lemma 5 replacement data.  This endpoint packages shared
 continuous-density regularity, non-surge cutoff nondegeneracy, one fixed-state
 policy-form data package for each state, and the moving-state cutoff/tail facts
-for the endpoint branches.  Lean uses allowed Lemma 5 policy forms to choose
-the accept-all or non-accept-all fixed-state branch, then derives current mass,
-no-mass pointwise endpoint facts, mass-separated endpoint facts,
+for the surge endpoint branches.  Lean uses allowed Lemma 5 policy forms to
+choose the accept-all or non-accept-all fixed-state branch, derives the
+non-surge accept-middle local move from the positive lower cutoff, then derives
+current mass, no-mass pointwise endpoint facts, mass-separated endpoint facts,
 positive-cutoff endpoint data, and the regular Theorem 4 certificate
 internally.  The older regular
 allowed-policy-form route remains compiled and asks for fully built regular
@@ -48,8 +49,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
 2. Prove one source regularity/selection theorem that supplies optimum
    existence, ordinary all-measurable Lemma 5 allowed replacement data, the
    branch-specific fixed-state pointwise equality and reward-rate facts for
-   each allowed policy form, and the moving-state cutoff/tail facts for each
-   non-accept-all endpoint shape.  This should target exactly
+   each allowed policy form, and the moving-state cutoff/tail facts for the
+   surge endpoint shapes.  This should target exactly
    `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormSourceAssumptions`.
 
 3. Instantiate
@@ -221,7 +222,7 @@ into the concrete endpoint policy data.
   no-mass endpoint certificate internally.  The source proof now supplies
   ordinary allowed Lemma 5 replacement cases, nondegenerate non-surge cutoffs
   for the reject-long/accept-middle fixed-state forms, branch-specific
-  fixed-state pointwise equality and reward-rate facts, and moving-state
+  fixed-state pointwise equality and reward-rate facts, and surge moving-state
   cutoff/tail local endpoint facts.
 - If the fixed other state already accepts all trips, use the
   `...PositiveCutoffLocalData.of_other_acceptAll` constructors.  They derive

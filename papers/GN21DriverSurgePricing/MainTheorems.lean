@@ -41131,13 +41131,6 @@ def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFo
           (D.accept_middle_pointwise_eq lo hi hshape)
           (D.accept_middle_reward_rate lo hi hshape)
 
-/-- Moving-state cutoff data for a non-surge accept-middle endpoint. -/
-structure GN21NonsurgeAcceptMiddleTheorem3FixedTransferMovingData
-    (lo hi : ℝ) where
-  δ : ℝ
-  hδ : 0 < δ
-  hδ_le_lo : δ ≤ lo
-
 /-- Moving-state cutoff/tail data for a surge reject-short endpoint. -/
 structure GN21SurgeRejectShortTheorem3FixedTransferMovingData
     {μ : Fin 2 → Measure TripLength}
@@ -41521,15 +41514,6 @@ structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFix
         ρ →
         GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
           shared m z R1 ρ
-  nonsurge_accept_middle_moving :
-    ∀ ρ : Fin 2 → TripPolicy,
-      dynamicMeasurableOptimal
-        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
-          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
-        ρ →
-      ∀ lo hi : ℝ,
-        acceptsMiddleTrips lo hi (ρ 0) →
-          GN21NonsurgeAcceptMiddleTheorem3FixedTransferMovingData lo hi
   surge_reject_short_moving :
     ∀ ρ : Fin 2 → TripPolicy,
       dynamicMeasurableOptimal
@@ -41573,12 +41557,10 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
         (C.nonsurge_rejectLong_pos ρ hopt u hshape)
   nonsurge_accept_middle_local := by
     intro ρ hopt lo hi hshape
-    let M := C.nonsurge_accept_middle_moving ρ hopt lo hi hshape
+    let B := C.nonsurge_acceptMiddle_bounds ρ hopt lo hi hshape
     exact
       (C.surge_fixed_state ρ hopt).to_nonsurge_accept_middle
-        (C.nonsurge_acceptMiddle_bounds ρ hopt lo hi hshape).1
-        (C.nonsurge_acceptMiddle_bounds ρ hopt lo hi hshape).2
-        M.hδ M.hδ_le_lo
+        B.1 B.2 B.1 le_rfl
   surge_reject_short_local := by
     intro ρ hopt u hshape
     let M := C.surge_reject_short_moving ρ hopt u hshape
@@ -41643,15 +41625,6 @@ structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFix
         ρ →
         GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
           shared m z R1 ρ
-  nonsurge_accept_middle_moving :
-    ∀ ρ : Fin 2 → TripPolicy,
-      dynamicMeasurableOptimal
-        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
-          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
-        ρ →
-      ∀ lo hi : ℝ,
-        acceptsMiddleTrips lo hi (ρ 0) →
-          GN21NonsurgeAcceptMiddleTheorem3FixedTransferMovingData lo hi
   surge_reject_short_moving :
     ∀ ρ : Fin 2 → TripPolicy,
       dynamicMeasurableOptimal
@@ -41705,7 +41678,6 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
     exact
       (C.nonsurge_fixed_state_by_policy_form ρ hopt).to_fixed_state
         P hopt.1 (allowed_policy_forms.only_policy_forms ρ hopt).1
-  nonsurge_accept_middle_moving := C.nonsurge_accept_middle_moving
   surge_reject_short_moving := C.surge_reject_short_moving
   surge_reject_middle_moving := C.surge_reject_middle_moving
 

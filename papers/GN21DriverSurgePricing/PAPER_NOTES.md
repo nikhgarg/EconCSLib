@@ -379,7 +379,6 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData` and
   `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData`,
   fixed-state-separated moving endpoint data
-  `GN21NonsurgeAcceptMiddleTheorem3FixedTransferMovingData`,
   `GN21SurgeRejectShortTheorem3FixedTransferMovingData`,
   and
   `GN21SurgeRejectMiddleTheorem3FixedTransferMovingData`,
