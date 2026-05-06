@@ -376,6 +376,11 @@ the continuous CTMC source theorems.
   regularity and scalar fields for the regular endpoint cases, so the final
   selector can state only cutoff-local positivity, tail-integrability, and
   Lemma 9/10 current-bound data.
+- `GN21RegularEndpointSharedSourceData.nonsurge_rejectLong_current_mass_pos`,
+  `GN21RegularEndpointSharedSourceData.nonsurge_acceptMiddle_current_mass_pos`,
+  `GN21RegularEndpointSharedSourceData.surge_rejectShort_current_mass_pos`,
+  and `GN21RegularEndpointSharedSourceData.surge_rejectMiddle_current_mass_pos`:
+  shape-specific current-mass positivity lemmas from shared support.
 - `GN21SurgeIntervalEndpointBridgeData`,
   `GN21NonsurgeIntervalEndpointBridgeData`, and
   `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
@@ -27854,6 +27859,81 @@ structure GN21RegularEndpointSharedSourceData
     IntegrableOn
       (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
       acceptAllPolicy (μ 1)
+
+/-- Shared regular support gives positive non-surge current mass for reject-long shapes. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_rejectLong_current_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 0))
+    (hu : 0 < u) :
+    0 < singleStateTripMass (μ 0) (ρ 0) := by
+  rw [S.nonsurge_support.hμ]
+  exact
+    singleStateTripMass_rejectsLongTrips_withDensity_pos_of_pos_on
+      S.nonsurge_support.densityNN S.nonsurge_support.hdensity_meas u (ρ 0)
+      hshape (hρ_feasible 0).1 hu
+      (S.nonsurge_support.finite_current_of_feasible hρ_feasible 0)
+      (S.nonsurge_support.pos_current_of_feasible hρ_feasible 0)
+
+/-- Shared regular support gives positive non-surge current mass for accept-middle shapes. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_acceptMiddle_current_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 lo hi : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : acceptsMiddleTrips lo hi (ρ 0))
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi) :
+    0 < singleStateTripMass (μ 0) (ρ 0) := by
+  rw [S.nonsurge_support.hμ]
+  exact
+    singleStateTripMass_acceptsMiddleTrips_withDensity_pos_of_pos_on
+      S.nonsurge_support.densityNN S.nonsurge_support.hdensity_meas lo hi
+      (ρ 0) hshape (hρ_feasible 0).1 (le_of_lt hlo_pos) hlo_lt_hi
+      (S.nonsurge_support.finite_current_of_feasible hρ_feasible 0)
+      (S.nonsurge_support.pos_current_of_feasible hρ_feasible 0)
+
+/-- Shared regular support gives positive surge current mass for reject-short shapes. -/
+theorem GN21RegularEndpointSharedSourceData.surge_rejectShort_current_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsShortTrips u (ρ 1)) :
+    0 < singleStateTripMass (μ 1) (ρ 1) := by
+  rw [S.surge_support.hμ]
+  exact
+    singleStateTripMass_rejectsShortTrips_withDensity_pos_of_pos_on
+      S.surge_support.densityNN S.surge_support.hdensity_meas u (ρ 1)
+      hshape (hρ_feasible 1).1
+      (S.surge_support.finite_current_of_feasible hρ_feasible 1)
+      (S.surge_support.pos_current_of_feasible hρ_feasible 1)
+
+/-- Shared regular support gives positive surge current mass for reject-middle shapes. -/
+theorem GN21RegularEndpointSharedSourceData.surge_rejectMiddle_current_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 lo hi : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1)) :
+    0 < singleStateTripMass (μ 1) (ρ 1) := by
+  rw [S.surge_support.hμ]
+  exact
+    singleStateTripMass_rejectsMiddleTrips_withDensity_pos_of_pos_on
+      S.surge_support.densityNN S.surge_support.hdensity_meas lo hi (ρ 1)
+      hshape (hρ_feasible 1).1
+      (S.surge_support.finite_current_of_feasible hρ_feasible 1)
+      (S.surge_support.pos_current_of_feasible hρ_feasible 1)
 
 /-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
 def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source

@@ -567,7 +567,9 @@ route remains compiled for the variant that proves ordinary allowed Lemma 5
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening` and
   `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`, which
   apply the measured Remark 4 tightening lemmas from accept-all moving-state
-  bounds to the current moving-state policy.
+  bounds to the current moving-state policy.  The shared-source package also
+  has shape-specific current-mass positivity lemmas for reject-long,
+  accept-middle, reject-short, and reject-middle policies.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

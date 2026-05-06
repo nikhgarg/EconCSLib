@@ -245,7 +245,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21TailProductIntegrabilityData`,
   shared regular endpoint source package
   `GN21RegularEndpointSharedSourceData` and the five
-  `...RegularEndpointData.of_shared_source` constructors,
+  `...RegularEndpointData.of_shared_source` constructors, including the four
+  `GN21RegularEndpointSharedSourceData.*_current_mass_pos` shape lemmas,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

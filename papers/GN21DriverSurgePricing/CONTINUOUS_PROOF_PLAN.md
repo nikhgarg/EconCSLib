@@ -149,6 +149,10 @@ into the concrete endpoint policy data.
   shapes; the shape cases should only provide cutoff-local density positivity,
   small-move/tail data, mass positivity of the other state, and source
   Lemma 9/10 current-bound data.
+- The shape-specific `GN21RegularEndpointSharedSourceData.*_current_mass_pos`
+  lemmas derive the moving state's positive current mass from shared support
+  and the realized Lemma 5 shape, which is exactly the mass input needed by
+  the accept-all tightening constructors.
 - `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
   are the current targets because they avoid duplicating Lemma 5 replacement
