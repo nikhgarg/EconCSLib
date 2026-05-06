@@ -189,6 +189,12 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `stronglyMeasurableAtFilter_mul_density_of_continuous`,
   and
   `intervalIntegrable_mul_density_of_continuous`,
+  bundled product-calculus packages
+  `GN21EndpointProductContinuityData` and
+  `GN21FiniteEndpointProductCalculusData`,
+  plus endpoint constructors ending in
+  `of_acceptAll_support_and_calculus` and
+  `of_acceptAll_support_and_continuity`,
   feasible accept-all-bound endpoint wrappers for all four Theorem 4 shape
   cases
   `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_acceptAll_bounds`,

@@ -95,6 +95,11 @@ into the concrete endpoint policy data.
   `intervalIntegrable_mul_density_of_continuous` derive endpoint continuity,
   strong measurability, and finite-interval integrability fields from a
   continuous real-valued density.
+- `GN21EndpointProductContinuityData.of_ctmcStructured` and
+  `GN21FiniteEndpointProductCalculusData.of_ctmcStructured` bundle the `q,w,t`
+  endpoint calculus fields for structured prices.  Prefer the endpoint
+  constructors ending in `of_acceptAll_support_and_calculus` or
+  `of_acceptAll_support_and_continuity` when building the final endpoint data.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

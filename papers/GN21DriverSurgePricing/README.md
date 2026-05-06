@@ -145,7 +145,12 @@ cache is `source.txt`.
   `continuous_ctmcStructuredSurgePrice`, and
   `intervalIntegrable_mul_density_of_continuous` derive the finite-interval
   continuity, strong-measurability, and integrability fields from continuous
-  densities.  The lightest current
+  densities, with `GN21EndpointProductContinuityData` and
+  `GN21FiniteEndpointProductCalculusData` bundling those fields for structured
+  prices.  The endpoint constructors ending in
+  `of_acceptAll_support_and_calculus` or
+  `of_acceptAll_support_and_continuity` consume both the density support and
+  product-calculus packages.  The lightest current
   IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
@@ -318,6 +323,10 @@ and
 `continuousAt_mul_density_of_continuous`,
 `stronglyMeasurableAtFilter_mul_density_of_continuous`,
 `intervalIntegrable_mul_density_of_continuous`,
+`GN21EndpointProductContinuityData`,
+`GN21EndpointProductContinuityData.of_ctmcStructured`,
+`GN21FiniteEndpointProductCalculusData`,
+`GN21FiniteEndpointProductCalculusData.of_ctmcStructured`,
 `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection`,
 `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`,
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
