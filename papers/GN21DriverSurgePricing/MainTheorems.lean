@@ -15665,6 +15665,50 @@ theorem gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_linearized_rate_
           m z switchIJ switchJI τ hz_nonneg hswitch_pos hsum
           (hσ_subset hτ))
 
+/--
+Sign-split envelope for a structured CTMC price.  The caller gets a concrete
+nonnegative `Rmax`: either the slope `m` when `z <= 0`, or the linearized
+envelope `m + z * λ_{i→j}` when `z > 0`.
+-/
+theorem exists_reward_rate_envelope_ctmcStructuredSurgePrice
+    (μ : Measure TripLength) (arrivalRate m z switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ) :
+    ∃ Rmax : ℝ,
+      0 ≤ Rmax ∧
+        gn21MeasuredStateRewardRate μ arrivalRate
+          (ctmcStructuredSurgePrice m z switchIJ switchJI) σ ≤ Rmax ∧
+        (Rmax = m ∨ Rmax = m + z * switchIJ) := by
+  by_cases hz_nonpos : z ≤ 0
+  · exact
+      ⟨m, hm_nonneg,
+        gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_slope_of_z_nonpos
+          μ arrivalRate m z switchIJ switchJI σ harrival_pos hm_nonneg
+          hz_nonpos (le_of_lt hswitch_pos) hsum hσ_measurable hσ_subset
+          hmass_pos htime_integrable hq_integrable,
+        Or.inl rfl⟩
+  · have hz_pos : 0 < z := lt_of_not_ge hz_nonpos
+    have hM_nonneg : 0 ≤ m + z * switchIJ :=
+      add_nonneg hm_nonneg (mul_nonneg (le_of_lt hz_pos) (le_of_lt hswitch_pos))
+    exact
+      ⟨m + z * switchIJ, hM_nonneg,
+        gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
+          μ arrivalRate m z switchIJ switchJI σ harrival_pos hm_nonneg
+          (le_of_lt hz_pos) hswitch_pos hsum hσ_measurable hσ_subset
+          hmass_pos htime_integrable hq_integrable,
+        Or.inr rfl⟩
+
 /-- Lemma 1 dynamic reward decomposition from time fractions and state reward rates. -/
 def gn21DynamicRewardFormula
     (timeFractionI rewardRateI timeFractionJ rewardRateJ : ℝ) : ℝ :=
