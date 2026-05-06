@@ -118,7 +118,10 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    current non-surge rejected complement.  The positive-ratio pointwise wrapper
    `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_positive_ratio_pointwise_fixed_transfer_data_assumptions`
    additionally derives `m_2-R1>0` from the existing Theorem 3 multiplier
-   lemma.  The older broad
+   lemma.  The positive-parameter sequential boundary
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positive_parameter_positive_mass_feasible_sequential_weak_reward`
+   preserves the constructed positive surge-ratio witness for source adapters
+   that should not ask for it again.  The older broad
    feasible-measurable wrapper still exposes the explicit positive-current-mass
    obligation, and the accounting-form/raw source-data wrappers remain compiled
    as intermediate adapters.
