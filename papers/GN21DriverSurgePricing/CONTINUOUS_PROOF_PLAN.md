@@ -241,6 +241,13 @@ into the concrete endpoint policy data.
   `...PositiveCutoffLocalData.of_fixed_complement_pointwise` constructors feed
   the resulting cross-ratio facts straight into the fixed-transfer local
   endpoint records.
+- The fixed-state accounting equation in those local records can now be
+  supplied as a measured reward-rate identity via
+  `GN21RegularEndpointSharedSourceData.nonsurge_fixed_accounting_of_reward_rate`
+  or
+  `GN21RegularEndpointSharedSourceData.surge_fixed_accounting_of_reward_rate`;
+  the helpers expand structured CTMC prices with Remark 2 and shared
+  accept-all integrability restricted to the current feasible policy.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

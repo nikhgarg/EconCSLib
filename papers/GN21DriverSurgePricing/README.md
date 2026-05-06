@@ -214,6 +214,12 @@ cache is `source.txt`.
   `...PositiveCutoffLocalData.of_fixed_complement_pointwise` constructors
   discharge the non-accept-all fixed-state cross-ratio fields from pointwise
   complement ratio comparisons plus the existing mass and accounting facts.
+  Shared-source accounting helpers
+  `GN21RegularEndpointSharedSourceData.nonsurge_fixed_accounting_of_reward_rate`
+  and
+  `GN21RegularEndpointSharedSourceData.surge_fixed_accounting_of_reward_rate`
+  convert measured fixed-state reward-rate equalities into those accounting
+  equations.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

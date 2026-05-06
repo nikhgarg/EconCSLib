@@ -28958,6 +28958,80 @@ theorem GN21RegularEndpointSharedSourceData.surge_fixed_cross_ge_acceptAll_of_co
       (S.hq1_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
       hpointwise
 
+/--
+Convert a non-surge fixed-state reward-rate identity into the structured
+fixed-state accounting equation used by the Theorem 3 fixed-transfer endpoint.
+-/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_fixed_accounting_of_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    m 0 * (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) - 1) +
+        z 0 *
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) -
+            switch12) =
+      R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) := by
+  calc
+    m 0 * (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) - 1) +
+        z 0 *
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) -
+            switch12)
+        =
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) := by
+          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+            ctmcStructuredSurgePrice] using
+            (paper_remark2_structured_scaled_earning_algebra
+              (μ 0) (arrival 0) (m 0) (z 0) switch12 switch21 (ρ 0)
+              (S.htime0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+              (S.hq0_acceptAll_integrable.mono_set (hρ_feasible 0).1)).symm
+    _ = R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
+      hfixed_reward_rate
+
+/--
+Convert a surge fixed-state reward-rate identity into the structured
+fixed-state accounting equation used by the Theorem 3 fixed-transfer endpoint.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_fixed_accounting_of_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    m 1 * (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) - 1) +
+        z 1 *
+          (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) -
+            switch21) =
+      R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) := by
+  calc
+    m 1 * (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) - 1) +
+        z 1 *
+          (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) -
+            switch21)
+        =
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) := by
+          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+            ctmcStructuredSurgePrice] using
+            (paper_remark2_structured_scaled_earning_algebra
+              (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12 (ρ 1)
+              (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+              (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)).symm
+    _ = R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) :=
+      hfixed_reward_rate
+
 /-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
 def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source
     {μ : Fin 2 → Measure TripLength}

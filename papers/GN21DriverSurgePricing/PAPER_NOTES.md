@@ -282,6 +282,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21RegularEndpointSharedSourceData.surge_fixed_cross_le_acceptAll_of_complement_pointwise`,
   and
   `GN21RegularEndpointSharedSourceData.surge_fixed_cross_ge_acceptAll_of_complement_pointwise`,
+  shared-source fixed-state accounting helpers
+  `GN21RegularEndpointSharedSourceData.nonsurge_fixed_accounting_of_reward_rate`
+  and
+  `GN21RegularEndpointSharedSourceData.surge_fixed_accounting_of_reward_rate`,
   Theorem 3 surge ratio-form bridge
   `Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1`,
   Theorem 3 surge multiplier positivity bridges
