@@ -9887,6 +9887,110 @@ theorem lemma9StructuredBounds_of_acceptAll_tightening
     exact lt_of_lt_of_le hbounds_bar.2 hmono'
 
 /--
+Lemma 9 fixed-state lower-bound comparison.  Holding the moving-state gap
+fixed, the current fixed-state lower bound is no larger than the expanded
+fixed-state lower bound when the current fixed-state time/exit ratio is no
+larger: `T * Qbar <= Tbar * Q`.
+-/
+theorem lemma9StructuredLowerFromGap_le_of_fixed_state_expansion
+    (T Q Tbar Qbar gap switch21 : ℝ)
+    (hT_nonneg : 0 ≤ T)
+    (hQ_pos : 0 < Q)
+    (hTbar_nonneg : 0 ≤ Tbar)
+    (hQbar_pos : 0 < Qbar)
+    (hswitch_pos : 0 < switch21)
+    (hgap_nonneg : 0 ≤ gap)
+    (hcross : T * Qbar ≤ Tbar * Q) :
+    lemma9StructuredLowerFromGap T Q gap switch21 ≤
+      lemma9StructuredLowerFromGap Tbar Qbar gap switch21 := by
+  unfold lemma9StructuredLowerFromGap
+  have hB_pos : 0 < Q + T * switch21 := by
+    nlinarith [mul_nonneg hT_nonneg (le_of_lt hswitch_pos)]
+  have hBbar_pos : 0 < Qbar + Tbar * switch21 := by
+    nlinarith [mul_nonneg hTbar_nonneg (le_of_lt hswitch_pos)]
+  have hden_pos : 0 < Q * gap + switch21 * (Q + T * switch21) := by
+    have hleft : 0 ≤ Q * gap := mul_nonneg (le_of_lt hQ_pos) hgap_nonneg
+    have hright : 0 < switch21 * (Q + T * switch21) :=
+      mul_pos hswitch_pos hB_pos
+    nlinarith
+  have hdenbar_pos :
+      0 < Qbar * gap + switch21 * (Qbar + Tbar * switch21) := by
+    have hleft : 0 ≤ Qbar * gap :=
+      mul_nonneg (le_of_lt hQbar_pos) hgap_nonneg
+    have hright : 0 < switch21 * (Qbar + Tbar * switch21) :=
+      mul_pos hswitch_pos hBbar_pos
+    nlinarith
+  rw [div_le_div_iff₀ hden_pos hdenbar_pos]
+  nlinarith [mul_nonneg (sq_nonneg gap) (sub_nonneg.mpr hcross)]
+
+/--
+Lemma 9 fixed-state upper-bound comparison.  Holding the moving-state exit
+weight fixed, the expanded fixed-state upper bound is no larger than the
+current fixed-state upper bound when the current fixed-state time/exit ratio
+is no smaller: `Tbar * Q <= T * Qbar`.
+-/
+theorem lemma9StructuredUpperFromExitWeight_le_of_fixed_state_expansion
+    (T Q Tbar Qbar Q2 switch21 : ℝ)
+    (hQ_pos : 0 < Q)
+    (hQbar_pos : 0 < Qbar)
+    (hswitch_pos : 0 < switch21)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hcross : Tbar * Q ≤ T * Qbar) :
+    lemma9StructuredUpperFromExitWeight Tbar Qbar Q2 switch21 ≤
+      lemma9StructuredUpperFromExitWeight T Q Q2 switch21 := by
+  unfold lemma9StructuredUpperFromExitWeight
+  have hQ2_pos : 0 < Q2 := lt_trans hswitch_pos hswitch_lt_Q2
+  have hgap_pos : 0 < Q2 - switch21 := sub_pos.mpr hswitch_lt_Q2
+  have hdenbar_pos : 0 < Qbar * (Q2 - switch21) :=
+    mul_pos hQbar_pos hgap_pos
+  have hden_pos : 0 < Q * (Q2 - switch21) :=
+    mul_pos hQ_pos hgap_pos
+  rw [div_le_div_iff₀ hdenbar_pos hden_pos]
+  nlinarith [mul_nonneg
+    (mul_nonneg (le_of_lt hgap_pos) (le_of_lt hQ2_pos))
+    (sub_nonneg.mpr hcross)]
+
+/--
+Lemma 9 fixed-state transfer.  Unlike Lemma 10, the lower and upper comparisons
+pull in opposite cross-ratio directions, so this theorem exposes both
+conditions explicitly.
+-/
+theorem lemma9StructuredBounds_of_fixed_state_expansion
+    (ratio T1 Q1 Tbar1 Qbar1 T2 Q2 switch21 : ℝ)
+    (hbounds_bar :
+      lemma9StructuredBounds ratio Tbar1 Qbar1 T2 Q2 switch21)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (hTbar1_nonneg : 0 ≤ Tbar1)
+    (hQbar1_pos : 0 < Qbar1)
+    (hswitch_pos : 0 < switch21)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hlower_cross : T1 * Qbar1 ≤ Tbar1 * Q1)
+    (hupper_cross : Tbar1 * Q1 ≤ T1 * Qbar1) :
+    lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21 := by
+  constructor
+  · have hmono :=
+      lemma9StructuredLowerFromGap_le_of_fixed_state_expansion
+        T1 Q1 Tbar1 Qbar1 (switch21 * T2 - Q2) switch21
+        hT1_nonneg hQ1_pos hTbar1_nonneg hQbar1_pos hswitch_pos
+        hgap_nonneg hlower_cross
+    have hmono' :
+        lemma9StructuredLower T1 Q1 T2 Q2 switch21 ≤
+          lemma9StructuredLower Tbar1 Qbar1 T2 Q2 switch21 := by
+      simpa [lemma9StructuredLower_eq_lowerFromGap] using hmono
+    exact lt_of_le_of_lt hmono' hbounds_bar.1
+  · have hmono :=
+      lemma9StructuredUpperFromExitWeight_le_of_fixed_state_expansion
+        T1 Q1 Tbar1 Qbar1 Q2 switch21 hQ1_pos hQbar1_pos hswitch_pos
+        hswitch_lt_Q2 hupper_cross
+    have hmono' :
+        lemma9StructuredUpper Tbar1 Qbar1 T2 Q2 switch21 ≤
+          lemma9StructuredUpper T1 Q1 T2 Q2 switch21 := by
+      simpa [lemma9StructuredUpper_eq_upperFromExitWeight] using hmono
+    exact lt_of_lt_of_le hbounds_bar.2 hmono'
+
+/--
 Measured Lemma 9 tightening bridge: accept-all structured bounds imply the
 current-policy bounds for a feasible surge-state policy once the current
 `lambda*T-Q` gap is nonnegative and `Q` exceeds the switch rate.

@@ -156,8 +156,15 @@ cache is `source.txt`.
   and reuses it for narrower tails.  `GN21RegularEndpointSharedSourceData` and
   the five `...RegularEndpointData.of_shared_source` constructors now factor
   shared density support, density continuity, arrival/switch positivity, and
-  accept-all integrability out of the regular endpoint cases.  The current
-  regular allowed-policy-form endpoint route is now exposed as
+  accept-all integrability out of the regular endpoint cases; the shared
+  source package now also discharges routine fixed-state scaled-time and
+  exit-weight positivity for the composed accept-all-tightening endpoint
+  builders.  Fixed-state current-bound transfer is explicit:
+  `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`
+  reduces the Lemma 10 side to a cross-ratio condition, while the Lemma 9
+  comparison lemmas show that its lower and upper fixed-state transfers require
+  opposite cross-ratio directions.  The current regular allowed-policy-form
+  endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`,

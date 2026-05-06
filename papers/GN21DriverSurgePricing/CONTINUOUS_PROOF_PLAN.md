@@ -153,11 +153,24 @@ into the concrete endpoint policy data.
   lemmas derive the moving state's positive current mass from shared support
   and the realized Lemma 5 shape, which is exactly the mass input needed by
   the accept-all tightening constructors.
+- `GN21RegularEndpointSharedSourceData.nonsurge_scaled_time_pos`,
+  `surge_scaled_time_pos`, `nonsurge_exit_weight_pos`,
+  `surge_exit_weight_pos`, and
+  `surge_fixed_switch_term_pos_for_nonsurge_bounds` discharge routine
+  fixed-state time/exit positivity for the shared-source endpoint builders.
 - The five `...RegularEndpointData.of_shared_source_and_acceptAll_tightening`
   constructors are the preferred endpoint builders: they compose shared
   source regularity, shape-derived current mass, accept-all moving-state
   tightening, and fixed-state reward-rate data into the regular endpoint
   records consumed by Theorem 4.
+- Fixed-state transfer is now named algebraically.  Lemma 10 has
+  `lemma10StructuredBounds_of_fixed_state_expansion` and the measured wrapper
+  `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`,
+  which reduce accept-all fixed-state transfer to the cross-ratio condition
+  `T_acceptAll * Q_current <= T_current * Q_acceptAll`.  Lemma 9 has
+  `lemma9StructuredBounds_of_fixed_state_expansion`; its lower and upper
+  comparisons require opposite cross-ratio directions, exposing that this
+  side cannot be discharged by one-sided monotonicity alone.
 - `Theorem3AcceptAllStructuredParameterData.of_evidence` should be used as
   soon as a constructed-price endpoint receives
   `theorem3AcceptAllStructuredParameterEvidence`; it names the two ratios,

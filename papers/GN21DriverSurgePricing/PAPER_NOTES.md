@@ -249,6 +249,19 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `...RegularEndpointData.of_shared_source_and_acceptAll_tightening`
   constructors, and the four
   `GN21RegularEndpointSharedSourceData.*_current_mass_pos` shape lemmas,
+  shared fixed-state positivity helpers
+  `GN21RegularEndpointSharedSourceData.nonsurge_scaled_time_pos`,
+  `GN21RegularEndpointSharedSourceData.surge_scaled_time_pos`,
+  `GN21RegularEndpointSharedSourceData.nonsurge_exit_weight_pos`,
+  `GN21RegularEndpointSharedSourceData.surge_exit_weight_pos`, and
+  `GN21RegularEndpointSharedSourceData.surge_fixed_switch_term_pos_for_nonsurge_bounds`,
+  fixed-state Lemma 10 transfer lemmas
+  `lemma10StructuredBounds_of_fixed_state_expansion` and
+  `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`,
+  and fixed-state Lemma 9 comparison/transfer lemmas
+  `lemma9StructuredLowerFromGap_le_of_fixed_state_expansion`,
+  `lemma9StructuredUpperFromExitWeight_le_of_fixed_state_expansion`, and
+  `lemma9StructuredBounds_of_fixed_state_expansion`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
