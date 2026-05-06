@@ -2454,6 +2454,60 @@ theorem fixedStateCross_ge_of_increment_ratio_le
   nlinarith
 
 /--
+Pointwise increment ratio comparison, integrated and scaled by a nonnegative
+arrival rate.  This is the continuous-set bridge used when the fixed state's
+rejected complement has pointwise exit-weight/time ratio at least the current
+accepted-set ratio.
+-/
+theorem arrivalScaledIntegral_mul_le_of_pointwise
+    (μ : Measure TripLength) (arrival A B : ℝ)
+    (q : TripLength → ℝ) (added : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrival)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hq_integrable : IntegrableOn q added μ)
+    (hpointwise : ∀ τ ∈ added, A * τ ≤ B * q τ) :
+    A * (arrival * ∫ τ in added, τ ∂μ) ≤
+      B * (arrival * ∫ τ in added, q τ ∂μ) := by
+  have hmono :
+      ∫ τ in added, A * τ ∂μ ≤
+        ∫ τ in added, B * q τ ∂μ := by
+    exact setIntegral_mono_on
+      (htime_integrable.const_mul A) (hq_integrable.const_mul B)
+      hadded_measurable hpointwise
+  rw [integral_const_mul, integral_const_mul] at hmono
+  have hscaled := mul_le_mul_of_nonneg_left hmono harrival_nonneg
+  ring_nf at hscaled ⊢
+  exact hscaled
+
+/--
+Reverse pointwise increment ratio comparison, integrated and scaled by a
+nonnegative arrival rate.
+-/
+theorem arrivalScaledIntegral_mul_ge_of_pointwise
+    (μ : Measure TripLength) (arrival A B : ℝ)
+    (q : TripLength → ℝ) (added : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrival)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hq_integrable : IntegrableOn q added μ)
+    (hpointwise : ∀ τ ∈ added, B * q τ ≤ A * τ) :
+    B * (arrival * ∫ τ in added, q τ ∂μ) ≤
+      A * (arrival * ∫ τ in added, τ ∂μ) := by
+  have hmono :
+      ∫ τ in added, B * q τ ∂μ ≤
+        ∫ τ in added, A * τ ∂μ := by
+    exact setIntegral_mono_on
+      (hq_integrable.const_mul B) (htime_integrable.const_mul A)
+      hadded_measurable hpointwise
+  rw [integral_const_mul, integral_const_mul] at hmono
+  have hscaled := mul_le_mul_of_nonneg_left hmono harrival_nonneg
+  ring_nf at hscaled ⊢
+  exact hscaled
+
+/--
 Measured fixed-state cross-ratio bridge for adding accepted trips.  This is
 the `gn21ScaledStateTime`/`gn21ExitWeightIntegral` version of
 `fixedStateCross_le_of_increment_ratio_ge`.
@@ -2537,6 +2591,88 @@ theorem gn21FixedStateCross_ge_union_of_increment_ratio_le
       hincrement
 
 /--
+Measured fixed-state cross-ratio bridge from pointwise complement/addition
+ratio evidence.
+-/
+theorem gn21FixedStateCross_le_union_of_pointwise_increment_ratio_ge
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ added : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) added μ)
+    (hpointwise :
+      ∀ τ ∈ added,
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ * τ ≤
+          gn21ScaledStateTime μ arrivalRate σ *
+            gn21SwitchProb switchIJ switchJI τ) :
+    gn21ScaledStateTime μ arrivalRate (σ ∪ added) *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ ≤
+      gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI (σ ∪ added) := by
+  exact
+    gn21FixedStateCross_le_union_of_increment_ratio_ge
+      μ arrivalRate switchIJ switchJI σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added hq_integrable_σ
+      hq_integrable_added
+      (arrivalScaledIntegral_mul_le_of_pointwise μ arrivalRate
+        (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+        (gn21ScaledStateTime μ arrivalRate σ)
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        added harrival_nonneg hadded_measurable htime_integrable_added
+        hq_integrable_added hpointwise)
+
+/--
+Reverse measured fixed-state cross-ratio bridge from pointwise
+complement/addition ratio evidence.
+-/
+theorem gn21FixedStateCross_ge_union_of_pointwise_increment_ratio_le
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ added : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) added μ)
+    (hpointwise :
+      ∀ τ ∈ added,
+        gn21ScaledStateTime μ arrivalRate σ *
+            gn21SwitchProb switchIJ switchJI τ ≤
+          gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ * τ) :
+    gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI (σ ∪ added) ≤
+      gn21ScaledStateTime μ arrivalRate (σ ∪ added) *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ := by
+  exact
+    gn21FixedStateCross_ge_union_of_increment_ratio_le
+      μ arrivalRate switchIJ switchJI σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added hq_integrable_σ
+      hq_integrable_added
+      (arrivalScaledIntegral_mul_ge_of_pointwise μ arrivalRate
+        (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+        (gn21ScaledStateTime μ arrivalRate σ)
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        added harrival_nonneg hadded_measurable htime_integrable_added
+        hq_integrable_added hpointwise)
+
+/--
 Accept-all complement specialization of
 `gn21FixedStateCross_le_union_of_increment_ratio_ge`.
 -/
@@ -2580,6 +2716,49 @@ theorem gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge
       hq_integrable_rejected hincrement
 
 /--
+Accept-all complement specialization whose increment-ratio side condition is
+discharged from a pointwise ratio comparison on rejected trips.
+-/
+theorem gn21FixedStateCross_le_acceptAll_of_complement_pointwise_increment_ratio_ge
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σ) μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σ) μ)
+    (hpointwise :
+      ∀ τ ∈ acceptAllPolicy \ σ,
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ * τ ≤
+          gn21ScaledStateTime μ arrivalRate σ *
+            gn21SwitchProb switchIJ switchJI τ) :
+    gn21ScaledStateTime μ arrivalRate acceptAllPolicy *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ ≤
+      gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI acceptAllPolicy := by
+  exact
+    gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge
+      μ arrivalRate switchIJ switchJI σ hσ_subset hσ_measurable
+      htime_integrable_σ htime_integrable_rejected hq_integrable_σ
+      hq_integrable_rejected
+      (arrivalScaledIntegral_mul_le_of_pointwise μ arrivalRate
+        (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+        (gn21ScaledStateTime μ arrivalRate σ)
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σ) harrival_nonneg
+        (measurableSet_acceptAllPolicy.diff hσ_measurable)
+        htime_integrable_rejected hq_integrable_rejected hpointwise)
+
+/--
 Reverse accept-all complement specialization of
 `gn21FixedStateCross_ge_union_of_increment_ratio_le`.
 -/
@@ -2621,6 +2800,49 @@ theorem gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le
       (measurableSet_acceptAllPolicy.diff hσ_measurable)
       htime_integrable_σ htime_integrable_rejected hq_integrable_σ
       hq_integrable_rejected hincrement
+
+/--
+Reverse accept-all complement specialization whose increment-ratio side
+condition is discharged from a pointwise ratio comparison on rejected trips.
+-/
+theorem gn21FixedStateCross_ge_acceptAll_of_complement_pointwise_increment_ratio_le
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σ) μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σ) μ)
+    (hpointwise :
+      ∀ τ ∈ acceptAllPolicy \ σ,
+        gn21ScaledStateTime μ arrivalRate σ *
+            gn21SwitchProb switchIJ switchJI τ ≤
+          gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ * τ) :
+    gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI acceptAllPolicy ≤
+      gn21ScaledStateTime μ arrivalRate acceptAllPolicy *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ := by
+  exact
+    gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le
+      μ arrivalRate switchIJ switchJI σ hσ_subset hσ_measurable
+      htime_integrable_σ htime_integrable_rejected hq_integrable_σ
+      hq_integrable_rejected
+      (arrivalScaledIntegral_mul_ge_of_pointwise μ arrivalRate
+        (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+        (gn21ScaledStateTime μ arrivalRate σ)
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σ) harrival_nonneg
+        (measurableSet_acceptAllPolicy.diff hσ_measurable)
+        htime_integrable_rejected hq_integrable_rejected hpointwise)
 
 /-- Structured IC price family from Theorem 3: `w_i(τ)=m_i τ + z_i q_{i→j}(τ)`. -/
 def structuredSurgePrice (m z : ℝ) (q : TripLength → ℝ) : PricingFunction :=
@@ -28612,6 +28834,130 @@ theorem GN21RegularEndpointSharedSourceData.surge_acceptAll_exit_gt_switch
       S.harrival1_pos S.hswitch21_pos hsum21 measurableSet_acceptAllPolicy
       (fun _ hτ => hτ) S.hq1_acceptAll_integrable hmeasure_pos
 
+/--
+Non-surge fixed-state cross-ratio from a pointwise ratio comparison on the
+non-surge rejected complement.
+-/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hpointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ) :
+    gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 := by
+  simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral] using
+    gn21FixedStateCross_le_acceptAll_of_complement_pointwise_increment_ratio_ge
+      (μ 0) (arrival 0) switch12 switch21 (ρ 0)
+      (le_of_lt S.harrival0_pos) (hρ_feasible 0).1 (hρ_feasible 0).2
+      (S.htime0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+      (S.htime0_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      (S.hq0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+      (S.hq0_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      hpointwise
+
+/--
+Reverse non-surge fixed-state cross-ratio from a pointwise ratio comparison on
+the non-surge rejected complement.
+-/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_ge_acceptAll_of_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hpointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ) :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) := by
+  simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral] using
+    gn21FixedStateCross_ge_acceptAll_of_complement_pointwise_increment_ratio_le
+      (μ 0) (arrival 0) switch12 switch21 (ρ 0)
+      (le_of_lt S.harrival0_pos) (hρ_feasible 0).1 (hρ_feasible 0).2
+      (S.htime0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+      (S.htime0_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      (S.hq0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+      (S.hq0_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      hpointwise
+
+/--
+Surge fixed-state cross-ratio from a pointwise ratio comparison on the surge
+rejected complement.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_fixed_cross_le_acceptAll_of_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hpointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ ≤
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ) :
+    gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) ≤
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 := by
+  simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral] using
+    gn21FixedStateCross_le_acceptAll_of_complement_pointwise_increment_ratio_ge
+      (μ 1) (arrival 1) switch21 switch12 (ρ 1)
+      (le_of_lt S.harrival1_pos) (hρ_feasible 1).1 (hρ_feasible 1).2
+      (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+      (S.htime1_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+      (S.hq1_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      hpointwise
+
+/--
+Reverse surge fixed-state cross-ratio from a pointwise ratio comparison on the
+surge rejected complement.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_fixed_cross_ge_acceptAll_of_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hpointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ ≤
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ) :
+    gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 ≤
+      gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) := by
+  simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral] using
+    gn21FixedStateCross_ge_acceptAll_of_complement_pointwise_increment_ratio_le
+      (μ 1) (arrival 1) switch21 switch12 (ρ 1)
+      (le_of_lt S.harrival1_pos) (hρ_feasible 1).1 (hρ_feasible 1).2
+      (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+      (S.htime1_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+      (S.hq1_acceptAll_integrable.mono_set (fun _ hτ => hτ.1))
+      hpointwise
+
 /-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
 def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source
     {μ : Fin 2 → Measure TripLength}
@@ -38610,6 +38956,247 @@ def GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData.of_other
     exact S.nonsurge_acceptAll_mass_pos hmeasure_other_pos
   · simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
       hother_eq] using P.nonsurge_accounting
+
+/--
+Non-surge reject-long local data from a pointwise fixed-surge complement
+ratio comparison.
+-/
+def GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hu : 0 < u)
+    (hfixed_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ ≤
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (hfixed_accounting :
+      m 1 * (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) - 1) +
+          z 1 *
+            (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) -
+              switch21) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R2 ρ u where
+  hu := hu
+  hfixed_cross :=
+    S.surge_fixed_cross_le_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_pointwise
+  hmass_other_pos := hmass_other_pos
+  hfixed_accounting := hfixed_accounting
+
+/--
+Non-surge accept-middle local data from a pointwise fixed-surge complement
+ratio comparison.
+-/
+def GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo)
+    (hfixed_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ ≤
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (hfixed_accounting :
+      m 1 * (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) - 1) +
+          z 1 *
+            (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) -
+              switch21) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R2 ρ lo hi where
+  δ := δ
+  hlo_pos := hlo_pos
+  hlo_lt_hi := hlo_lt_hi
+  hδ := hδ
+  hδ_le_lo := hδ_le_lo
+  hfixed_cross :=
+    S.surge_fixed_cross_le_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_pointwise
+  hmass_other_pos := hmass_other_pos
+  hfixed_accounting := hfixed_accounting
+
+/--
+Surge reject-short local data from pointwise fixed-non-surge complement ratio
+comparisons in both directions.
+-/
+def GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 u δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1))
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u)
+    (hfixed_lower_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ)
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hfixed_accounting :
+      m 0 * (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) - 1) +
+          z 0 *
+            (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) -
+              switch12) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ u where
+  δ := δ
+  tail_integrability := tail_integrability
+  hu := hu
+  hδ := hδ
+  hδ_le_u := hδ_le_u
+  hfixed_lower_cross :=
+    S.nonsurge_fixed_cross_ge_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_lower_pointwise
+  hfixed_upper_cross :=
+    S.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_upper_pointwise
+  hmass_other_pos := hmass_other_pos
+  hfixed_accounting := hfixed_accounting
+
+/--
+Lower-cutoff surge reject-middle local data from pointwise fixed-non-surge
+complement ratio comparisons in both directions.
+-/
+def GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi)
+    (hfixed_lower_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ)
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hfixed_accounting :
+      m 0 * (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) - 1) +
+          z 0 *
+            (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) -
+              switch12) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ lo hi where
+  δ := δ
+  hlo_pos := hlo_pos
+  hloδ_le_hi := hloδ_le_hi
+  hδ := hδ
+  tail_integrability := tail_integrability
+  hfixed_lower_cross :=
+    S.nonsurge_fixed_cross_ge_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_lower_pointwise
+  hfixed_upper_cross :=
+    S.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_upper_pointwise
+  hmass_other_pos := hmass_other_pos
+  hfixed_accounting := hfixed_accounting
+
+/--
+Upper-cutoff surge reject-middle local data from pointwise fixed-non-surge
+complement ratio comparisons in both directions.
+-/
+def GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (derivative_tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1))
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ))
+    (hfixed_lower_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ)
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hfixed_accounting :
+      m 0 * (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) - 1) +
+          z 0 *
+            (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) -
+              switch12) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ lo hi where
+  δ := δ
+  derivative_tail_integrability := derivative_tail_integrability
+  hhi_pos := hhi_pos
+  hδ := hδ
+  hlo_nonneg := hlo_nonneg
+  hlo_le_hiδ := hlo_le_hiδ
+  tail_integrability := tail_integrability
+  hfixed_lower_cross :=
+    S.nonsurge_fixed_cross_ge_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_lower_pointwise
+  hfixed_upper_cross :=
+    S.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise
+      hρ_feasible hfixed_upper_pointwise
+  hmass_other_pos := hmass_other_pos
+  hfixed_accounting := hfixed_accounting
 
 /--
 Local endpoint facts stated with positive cutoffs instead of density-positivity

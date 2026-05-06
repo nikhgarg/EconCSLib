@@ -89,7 +89,10 @@ cache is `source.txt`.
   remaining non-accept-all fixed-state transfer facts to increment ratio
   inequalities on added trips, with accept-all-complement specializations
   `gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge` and
-  `gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le`.
+  `gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le`, plus
+  pointwise complement versions and shared-source helpers
+  `GN21RegularEndpointSharedSourceData.*_fixed_cross_*_of_complement_pointwise`
+  that feed the fixed-transfer endpoint records directly.
 - Theorem 3 now has the `C` numerator-bound factorization, a measured
   accept-all `C ∈ [0,1)` theorem with that bound discharged, the non-surge
   `C < R1/R2 < 1` to Lemma 10 bounds bridge, direct Lemma 9 primitive
@@ -207,7 +210,10 @@ cache is `source.txt`.
   constructors additionally discharge the fixed-state cross-ratio,
   positive-mass, and accounting fields whenever the fixed other state already
   accepts all trips, using equality, accept-all mass positivity from shared
-  support, and `Theorem3AcceptAllStructuredParameterData`.
+  support, and `Theorem3AcceptAllStructuredParameterData`.  The
+  `...PositiveCutoffLocalData.of_fixed_complement_pointwise` constructors
+  discharge the non-accept-all fixed-state cross-ratio fields from pointwise
+  complement ratio comparisons plus the existing mass and accounting facts.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

@@ -230,6 +230,17 @@ into the concrete endpoint policy data.
   `gn21FixedStateCross_ge_union_of_increment_ratio_le` to reduce the needed
   cross-ratio direction to an increment ratio inequality on the trips added
   when passing from the current fixed-state policy to accept-all.
+- The pointwise versions
+  `gn21FixedStateCross_le_acceptAll_of_complement_pointwise_increment_ratio_ge`
+  and
+  `gn21FixedStateCross_ge_acceptAll_of_complement_pointwise_increment_ratio_le`
+  now discharge those increment inequalities from pointwise rejected-complement
+  comparisons.  The shared-source helpers
+  `GN21RegularEndpointSharedSourceData.*_fixed_cross_*_of_complement_pointwise`
+  add the accept-all/current integrability automatically, and the
+  `...PositiveCutoffLocalData.of_fixed_complement_pointwise` constructors feed
+  the resulting cross-ratio facts straight into the fixed-transfer local
+  endpoint records.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

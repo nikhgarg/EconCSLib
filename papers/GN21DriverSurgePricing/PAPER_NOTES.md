@@ -272,6 +272,16 @@ This is a lightweight handoff document for source-to-Lean mapping.
   accept-all-complement variants
   `gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge` and
   `gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le`,
+  pointwise complement variants
+  `gn21FixedStateCross_le_acceptAll_of_complement_pointwise_increment_ratio_ge`
+  and
+  `gn21FixedStateCross_ge_acceptAll_of_complement_pointwise_increment_ratio_le`,
+  and shared-source pointwise helpers
+  `GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise`,
+  `GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_ge_acceptAll_of_complement_pointwise`,
+  `GN21RegularEndpointSharedSourceData.surge_fixed_cross_le_acceptAll_of_complement_pointwise`,
+  and
+  `GN21RegularEndpointSharedSourceData.surge_fixed_cross_ge_acceptAll_of_complement_pointwise`,
   Theorem 3 surge ratio-form bridge
   `Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1`,
   Theorem 3 surge multiplier positivity bridges
@@ -323,7 +333,11 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`,
   accept-all fixed-state local constructors ending in `of_other_acceptAll`,
   which derive the fixed-state cross-ratio, mass, and accounting fields from
-  accept-all shape, shared support, and Theorem 3 accounting data,
+  accept-all shape, shared support, and Theorem 3 accounting data, and
+  pointwise fixed-complement local constructors ending in
+  `of_fixed_complement_pointwise`, which derive the non-accept-all
+  fixed-state cross-ratio fields from pointwise rejected-complement ratio
+  comparisons,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
