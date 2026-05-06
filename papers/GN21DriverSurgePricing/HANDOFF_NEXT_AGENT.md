@@ -69,6 +69,7 @@ theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
 theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
 theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
 theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
+lemma9StructuredUpper_gt_uniform_of_switch_gap_pos
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerSignedEnvelopeSlackDataAssumptions
 ```
@@ -130,9 +131,12 @@ Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the corrected route and the
 distinction between the easy `0 <= r1_current` proof, the reward-envelope
 bound, and the surge-side slack proof.
 
-Next, prove the scalar sign-split surge slack for the two possible envelopes,
-or add the next wrapper that asks for a proof for both sign cases instead of an
-existential chosen `Rmax`.
+Next, prove the scalar sign-split surge slack for the two possible envelopes.
+The newest helper
+`lemma9StructuredUpper_gt_uniform_of_switch_gap_pos` gives a policy-uniform
+positive lower bound on the current Lemma 9 upper endpoint from
+`Q_current < switch12 * T_current`; use it to choose the surge ratio small
+enough in the Theorem 3 parameter construction.
 
 Also prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma

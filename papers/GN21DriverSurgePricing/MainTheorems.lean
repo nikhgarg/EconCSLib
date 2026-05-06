@@ -12075,6 +12075,39 @@ theorem lemma9StructuredUpper_pos
     mul_pos hQ1_pos (sub_pos.mpr hswitch_lt_Qbar2)
   exact div_pos hnum_pos hden_pos
 
+/--
+The Lemma 9 upper endpoint has a policy-uniform positive lower bound whenever
+the current fixed-state exit weight is strictly below its linearized
+switch-rate envelope.  This is the scalar fact needed to choose a sufficiently
+small surge ratio uniformly over current non-surge policies.
+-/
+theorem lemma9StructuredUpper_gt_uniform_of_switch_gap_pos
+    (T1 Q1 Tbar2 Qbar2 switch12 switch21 : ℝ)
+    (hQ1_pos : 0 < Q1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hswitch21_lt_Qbar2 : switch21 < Qbar2)
+    (hgap_pos : 0 < switch12 * T1 - Q1) :
+    (Qbar2 + switch12) / (switch12 * (Qbar2 - switch21)) <
+      lemma9StructuredUpper T1 Q1 Tbar2 Qbar2 switch21 := by
+  unfold lemma9StructuredUpper lemma9StructuredUpperNumerator
+    lemma9StructuredUpperDenominator
+  have hQbar2_pos : 0 < Qbar2 := lt_trans hswitch21_pos hswitch21_lt_Qbar2
+  have hleft_den_pos : 0 < switch12 * (Qbar2 - switch21) :=
+    mul_pos hswitch12_pos (sub_pos.mpr hswitch21_lt_Qbar2)
+  have hright_den_pos : 0 < Q1 * (Qbar2 - switch21) :=
+    mul_pos hQ1_pos (sub_pos.mpr hswitch21_lt_Qbar2)
+  rw [div_lt_div_iff₀ hleft_den_pos hright_den_pos]
+  rw [← sub_pos]
+  have hfactor :
+      (Qbar2 * T1 + Q1) * (switch12 * (Qbar2 - switch21)) -
+          (Qbar2 + switch12) * (Q1 * (Qbar2 - switch21)) =
+        (Qbar2 - switch21) * Qbar2 * (switch12 * T1 - Q1) := by
+    ring
+  rw [hfactor]
+  exact mul_pos (mul_pos (sub_pos.mpr hswitch21_lt_Qbar2) hQbar2_pos)
+    hgap_pos
+
 /-- Lemma 9 feasibility with a positive admissible structured-price ratio. -/
 theorem paper_lemma9_structured_bounds_feasible_positive_of_lower_lt_upper
     (T1 Q1 Tbar2 Qbar2 switch21 : ℝ)
