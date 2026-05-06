@@ -12335,6 +12335,93 @@ theorem lemma10StructuredLinearEndpoint_pos_of_lower_bound
   exact mul_pos hR2_pos hmargin_pos
 
 /--
+Lemma 10 static-term algebra with the moving-state slope `m` separated from
+the current fixed-state reward rate `R2`.  The source proof specializes to
+`m = R2`; Theorem 3-facing uses may instead need to prove the displayed
+reward-rate slack explicitly.
+-/
+theorem lemma10StructuredStaticTerm_eq_reward_split
+    (m R2 z switch12 Q1 Q2 T2 : ℝ) :
+    gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2 =
+      Q2 * (m - z * (Q1 - switch12)) +
+        Q1 * T2 * (m - R2) := by
+  unfold gn21StructuredDerivativeStaticTerm
+  ring
+
+/--
+Lemma 10 zero-time linearized endpoint algebra with the moving-state slope
+`m` separated from the current fixed-state reward rate `R2`.
+-/
+theorem lemma10StructuredLinearEndpoint_eq_reward_split
+    (m R2 z switch12 T2 Q2 T1 Q1 : ℝ) :
+    switch12 *
+        gn21StructuredDerivativeSwitchBracket m z switch12 Q1 Q2 T1 T2 R2 +
+      gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2 =
+      switch12 * (m * T2 + z * Q2 * T1 + z * T2 * switch12) +
+        Q2 * (m - z * Q1 + z * switch12) +
+          (m - R2) * T2 * (Q1 - switch12 * T1) := by
+  unfold gn21StructuredDerivativeSwitchBracket gn21StructuredDerivativeStaticTerm
+  ring
+
+/--
+Lemma 10 static-term algebra after writing `z = ratio * m`.  The first term is
+the paper's `m = R2` static margin; the second is the reward-rate mismatch
+slack.
+-/
+theorem lemma10StructuredStaticTerm_eq_ratio_reward_split
+    (ratio m R2 z switch12 Q1 Q2 T2 : ℝ)
+    (hz : z = ratio * m) :
+    gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2 =
+      Q2 * m * (1 - ratio * (Q1 - switch12)) +
+        Q1 * T2 * (m - R2) := by
+  rw [lemma10StructuredStaticTerm_eq_reward_split, hz]
+  ring
+
+/--
+Lemma 10 zero-time endpoint algebra after writing `z = ratio * m`.  This is
+the exact scalar identity needed when the Theorem 3 moving slope is not known
+to equal the current fixed-state reward rate.
+-/
+theorem lemma10StructuredLinearEndpoint_eq_ratio_reward_split
+    (ratio m R2 z switch12 T2 Q2 T1 Q1 : ℝ)
+    (hz : z = ratio * m) :
+    switch12 *
+        gn21StructuredDerivativeSwitchBracket m z switch12 Q1 Q2 T1 T2 R2 +
+      gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2 =
+      m *
+          (T2 * switch12 + Q2 +
+            ratio *
+              (Q2 * (switch12 * T1 - Q1) +
+                switch12 * (T2 * switch12 + Q2))) +
+        (m - R2) * T2 * (Q1 - switch12 * T1) := by
+  rw [lemma10StructuredLinearEndpoint_eq_reward_split, hz]
+  ring
+
+/--
+Lemma 10 derivative-kernel positivity from the two endpoint scalar
+inequalities themselves.  This is the reward-rate-separated frontier: callers
+may set `m = R2` and use `paper_lemma10_structured_derivative_kernel_pos_of_current_bounds`,
+or keep `m` and the current fixed-state reward rate separate and prove the two
+displayed endpoint terms directly.
+-/
+theorem paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms
+    (u T2 Q2 T1 Q1 switch12 switch21 m R2 z : ℝ)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hstatic_pos :
+      0 < gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2)
+    (hlinear_pos :
+      0 < switch12 *
+            gn21StructuredDerivativeSwitchBracket m z switch12 Q1 Q2 T1 T2 R2 +
+          gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2) :
+    0 < gn21StructuredDerivativeSignKernel
+      (gn21SwitchProb switch12 switch21 u) u m z switch12 Q1 Q2 T1 T2 R2 :=
+  paper_remark2_structured_derivative_kernel_pos_of_ctmc_switch_and_tail
+    u m z switch12 switch21 Q1 Q2 T1 T2 R2 hswitch12_pos hsum hu
+    hstatic_pos hlinear_pos
+
+/--
 Lemma 10 derivative-kernel positivity from the current structured ratio bounds.
 This closes the algebraic part of the Lemma 10 endpoint, leaving only the
 continuous Lemma 6 derivative-value certificate.
@@ -12419,6 +12506,37 @@ theorem paper_lemma10_derivative_sign_kernel_pos_of_current_bounds
     paper_remark2_structured_derivative_kernel_algebra] using hstructured
 
 /--
+Lemma 10 pointwise Lemma 6 kernel positivity from direct endpoint terms, with
+the moving non-surge slope `m` separated from the fixed surge-state reward
+rate `R2`.
+-/
+theorem paper_lemma10_derivative_sign_kernel_pos_of_endpoint_terms
+    (u T2 Q2 T1 Q1 switch12 switch21 m R2 z : ℝ)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hstatic_pos :
+      0 < gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2)
+    (hlinear_pos :
+      0 < switch12 *
+            gn21StructuredDerivativeSwitchBracket m z switch12 Q1 Q2 T1 T2 R2 +
+          gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2) :
+    0 <
+      gn21DerivativeSignKernel (gn21SwitchProb switch12 switch21 u) u
+        (ctmcStructuredSurgePrice m z switch12 switch21 u)
+        Q1 Q2 T1 T2
+        (m * (T1 - 1) + z * (Q1 - switch12))
+        (R2 * T2) := by
+  have hstructured :
+      0 < gn21StructuredDerivativeSignKernel
+        (gn21SwitchProb switch12 switch21 u) u m z switch12 Q1 Q2 T1 T2 R2 :=
+    paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms
+      u T2 Q2 T1 Q1 switch12 switch21 m R2 z hswitch12_pos hsum hu
+      hstatic_pos hlinear_pos
+  simpa [ctmcStructuredSurgePrice, structuredSurgePrice,
+    paper_remark2_structured_derivative_kernel_algebra] using hstructured
+
+/--
 Measured-current Lemma 10 pointwise kernel positivity.  The moving non-surge
 earning primitive is expanded from the structured price, while the fixed surge
 state is supplied through its current reward-rate identity.
@@ -12484,6 +12602,69 @@ theorem paper_lemma10_measured_derivative_sign_kernel_pos_of_current_bounds
       (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
       switch12 switch21 R2 z hbounds hz hR2_pos hQ2_pos hswitch12_pos
       hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
+
+/--
+Measured-current Lemma 10 pointwise kernel positivity from direct endpoint
+terms.  This version is the source-faithful interface when the current fixed
+surge-state reward rate is not definitionally the Theorem 3 target `R2`.
+-/
+theorem paper_lemma10_measured_derivative_sign_kernel_pos_of_endpoint_terms
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 m R2 z u : ℝ)
+    (wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hstatic_pos :
+      0 <
+        gn21StructuredDerivativeStaticTerm m z switch12
+          (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+          (gn21ScaledStateTime μJ arrivalJ σJ) R2)
+    (hlinear_pos :
+      0 <
+        switch12 *
+            gn21StructuredDerivativeSwitchBracket m z switch12
+              (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+              (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+              (gn21ScaledStateTime μI arrivalI σI)
+              (gn21ScaledStateTime μJ arrivalJ σJ) R2 +
+          gn21StructuredDerivativeStaticTerm m z switch12
+            (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+            (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+            (gn21ScaledStateTime μJ arrivalJ σJ) R2)
+    (htime_integrable_σI :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (hq_integrable_σI :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        σI μI)
+    (hW_fixed :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        R2 * gn21ScaledStateTime μJ arrivalJ σJ) :
+    0 <
+      gn21DerivativeSignKernel (gn21SwitchProb switch12 switch21 u) u
+        (ctmcStructuredSurgePrice m z switch12 switch21 u)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ScaledStateEarning μI arrivalI
+          (ctmcStructuredSurgePrice m z switch12 switch21) σI)
+        (gn21ScaledStateEarning μJ arrivalJ wJ σJ) := by
+  rw [paper_remark2_structured_scaled_earning_algebra
+      μI arrivalI m z switch12 switch21 σI htime_integrable_σI
+      hq_integrable_σI,
+    hW_fixed]
+  exact
+    paper_lemma10_derivative_sign_kernel_pos_of_endpoint_terms
+      u
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      switch12 switch21 m R2 z hswitch12_pos hsum hu
+      hstatic_pos hlinear_pos
 
 /--
 Lemma 10 analytic endpoint derivative, using the current structured ratio
@@ -15552,6 +15733,101 @@ theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_curre
             σI σJ hbounds hz hR2_pos hQ2_pos hswitch12_pos hsum hτ.1
             hswitch_lt_Q1 hgap_nonneg hA_pos htime_integrable_σ
             hq_integrable_σ hW_fixed))
+
+/--
+Non-surge accept-all aggregate improvement from direct Lemma 10 endpoint terms.
+This is the reward-rate-separated version of
+`gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_current_bounds`:
+the moving non-surge slope `m` and the current fixed surge-state reward rate
+`R2` are independent, and the caller proves the two endpoint scalar
+inequalities directly.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 m R2 z : ℝ)
+    (wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (harrivalI_nonneg : 0 ≤ arrivalI)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σI μI)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        (acceptAllPolicy \ σI) μI)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σI) μI)
+    (hw_integrable_σ :
+      IntegrableOn (ctmcStructuredSurgePrice m z switch12 switch21) σI μI)
+    (hw_integrable_rejected :
+      IntegrableOn (ctmcStructuredSurgePrice m z switch12 switch21)
+        (acceptAllPolicy \ σI) μI)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI +
+            arrivalI *
+              ∫ τ in acceptAllPolicy \ σI,
+                gn21SwitchProb switch12 switch21 τ ∂μI) *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ *
+            (gn21ScaledStateTime μI arrivalI σI +
+              arrivalI * ∫ τ in acceptAllPolicy \ σI, τ ∂μI))
+    (hQj_nonneg :
+      0 ≤ gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hstatic_pos :
+      0 <
+        gn21StructuredDerivativeStaticTerm m z switch12
+          (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+          (gn21ScaledStateTime μJ arrivalJ σJ) R2)
+    (hlinear_pos :
+      0 <
+        switch12 *
+            gn21StructuredDerivativeSwitchBracket m z switch12
+              (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+              (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+              (gn21ScaledStateTime μI arrivalI σI)
+              (gn21ScaledStateTime μJ arrivalJ σJ) R2 +
+          gn21StructuredDerivativeStaticTerm m z switch12
+            (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+            (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+            (gn21ScaledStateTime μJ arrivalJ σJ) R2)
+    (hW_fixed :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        R2 * gn21ScaledStateTime μJ arrivalJ σJ) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice m z switch12 switch21) wJ σI σJ ≤
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice m z switch12 switch21) wJ
+        acceptAllPolicy σJ := by
+  exact
+    gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_complement_pointwise_kernel_nonneg
+      μI μJ arrivalI arrivalJ switch12 switch21
+      (ctmcStructuredSurgePrice m z switch12 switch21) wJ σI σJ
+      hσI_subset hσI_measurable harrivalI_nonneg hq_integrable_σ
+      hq_integrable_rejected htime_integrable_σ htime_integrable_rejected
+      hw_integrable_σ hw_integrable_rejected hden_pos hden_add_pos
+      hQj_nonneg
+      (by
+        intro τ hτ
+        exact le_of_lt
+          (paper_lemma10_measured_derivative_sign_kernel_pos_of_endpoint_terms
+            μI μJ arrivalI arrivalJ switch12 switch21 m R2 z τ wJ σI σJ
+            hswitch12_pos hsum hτ.1 hstatic_pos hlinear_pos
+            htime_integrable_σ hq_integrable_σ hW_fixed))
 
 /--
 Surge accept-all aggregate improvement from Lemma 9 current bounds.  This is

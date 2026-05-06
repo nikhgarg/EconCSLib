@@ -57,10 +57,17 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `Q,T,W` paths, denominator positivity, or Remark 4 side conditions by hand.
 
 2. Repair the source-facing Lemma 9/10 current-bounds frontier so it matches the
-   paper algebra for arbitrary fixed-state policies.  The compiled fixed-state
-   routes currently need target reward-rate facts for the fixed state; those are
-   automatic in accept-all fixed-state branches but are not a source consequence
-   for arbitrary non-accept-all fixed states.
+   paper algebra for arbitrary fixed-state policies.  The reward-rate audit in
+   `LEMMA9_10_REWARD_RATE_AUDIT.md` records the current distinction between
+   Theorem 3 target rates and Lemma 9/10 current fixed-state rates.  Lean now
+   has a reward-rate-separated Lemma 10 endpoint-term route:
+   `lemma10StructuredStaticTerm_eq_ratio_reward_split`,
+   `lemma10StructuredLinearEndpoint_eq_ratio_reward_split`,
+   `paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms`, and
+   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms`.
+   The compiled fixed-state routes still need target reward-rate facts for the
+   fixed state; those are automatic in accept-all fixed-state branches but are
+   not a source consequence for arbitrary non-accept-all fixed states.
 
 3. After the current-bounds frontier is repaired, instantiate the regular
    allowed-policy-form/current-bounds source route:
@@ -92,6 +99,10 @@ endpoint primitives:
 - The Lemma 9/10 structured bounds hold for the constructed prices through a
   current-bounds interface that does not assume target reward-rate identities
   for arbitrary non-accept-all fixed states.
+- For Lemma 10 non-accept-all fixed-state branches, the direct endpoint-term
+  interface proves the aggregate improvement once the source proof supplies the
+  true static and zero-time linearized endpoint inequalities for the current
+  fixed reward rate.
 - The other state's current policy has positive finite mass and the required
   `Q,T,W` accounting identity.
 

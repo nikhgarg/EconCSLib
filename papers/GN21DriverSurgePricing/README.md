@@ -82,7 +82,17 @@ cache is `source.txt`.
   strict measured positivity bridges used by Lemmas 6 and 9-10.
   Lemma 9/10 current-bound positivity now also has measured pointwise
   derivative-kernel wrappers and direct accept-all-complement aggregate
-  improvement bridges for the surge and non-surge states, plus fixed-state
+  improvement bridges for the surge and non-surge states.  Lemma 10 additionally
+  has a reward-rate-separated endpoint-term layer
+  `lemma10StructuredStaticTerm_eq_ratio_reward_split`,
+  `lemma10StructuredLinearEndpoint_eq_ratio_reward_split`,
+  `paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms`, and
+  `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms`,
+  so non-accept-all fixed-state branches can be closed by proving the actual
+  current fixed-reward endpoint inequalities rather than assuming target
+  reward-rate identities.  The derivation and remaining alternatives are
+  recorded in `LEMMA9_10_REWARD_RATE_AUDIT.md`.  The current-bound layer also
+  includes fixed-state
   cross-ratio union bridges
   `gn21FixedStateCross_le_union_of_increment_ratio_ge` and
   `gn21FixedStateCross_ge_union_of_increment_ratio_le` that reduce the
@@ -726,7 +736,11 @@ optimal policies by proving the regularity theorem that supplies ordinary Lemma
 5 allowed policy-form classification, chooses the relevant upper, lower, tail,
 or middle-rejection endpoint move, and discharges the remaining Lemma 9/10
 current-bound fields without assuming target reward-rate identities for
-arbitrary non-accept-all fixed states.
+arbitrary non-accept-all fixed states.  For Lemma 10, the compiled
+endpoint-term route now exposes the exact static and zero-time linearized
+endpoint inequalities needed when the current fixed surge reward rate differs
+from the Theorem 3 target rate; `LEMMA9_10_REWARD_RATE_AUDIT.md` records why a
+one-sided reward comparison alone is not enough.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
