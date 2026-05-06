@@ -332,13 +332,21 @@ the continuous CTMC source theorems.
   `GN21SurgeRejectShortRegularEndpointData`,
   `GN21SurgeRejectMiddleLoRegularEndpointData`,
   `GN21SurgeRejectMiddleHiRegularEndpointData`,
-  `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,
+  `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_allowed_policy_forms`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`:
+  current regular source-facing Theorem 3 boundary from all-optimal measurable
+  Lemma 5 allowed policy-form classification plus continuous density, source
+  Lemma 9/10 current-bounds data, support, and tail-integrability endpoint
+  packages.
+- `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`:
-  current regular-shape source-facing Theorem 3 boundary from measurable
-  Lemma 5 shape derivation plus continuous density, source Lemma 9/10
-  current-bounds data, support, and tail-integrability endpoint packages.
+  compiled regular-shape source-facing Theorem 3 boundary when the caller has
+  already packaged the measurable Lemma 5 shape derivation.
 - `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_selection`,
   and
@@ -12872,6 +12880,60 @@ structure Theorem4MeasurableShapeDerivationCertificate
       (∃ shape : Lemma5DerivativeShape,
         theorem4SurgeAllowedLemma5Shape shape ∧
           lemma5PolicyForm shape (ρ 1))
+
+/--
+All measurable optimal policies have the allowed Lemma 5 policy forms.  This is
+the direct target for the continuous Lemma 5 optimizer-shape argument when the
+proof establishes policy-form classification without constructing explicit
+replacement reward comparisons.
+-/
+structure Theorem4AllMeasurableAllowedPolicyFormsCertificate
+    (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  only_policy_forms :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      (∃ shape : Lemma5DerivativeShape,
+        theorem4NonsurgeAllowedLemma5Shape shape ∧
+          lemma5PolicyForm shape (ρ 0)) ∧
+      (∃ shape : Lemma5DerivativeShape,
+        theorem4SurgeAllowedLemma5Shape shape ∧
+          lemma5PolicyForm shape (ρ 1))
+
+/--
+Choose one measurable optimum from the all-optimal policy-form classification
+and expose the standard measurable shape-derivation certificate.
+-/
+noncomputable def theorem4MeasurableShapeDerivationCertificate_of_all_measurable_allowed_policy_forms
+    (R : DynamicReward)
+    (C : Theorem4AllMeasurableAllowedPolicyFormsCertificate R) :
+    Theorem4MeasurableShapeDerivationCertificate R := by
+  classical
+  let ρstar := Classical.choose C.exists_optimal
+  have hρstar : dynamicMeasurableOptimal R ρstar :=
+    Classical.choose_spec C.exists_optimal
+  let nshape :=
+    Classical.choose (C.only_policy_forms ρstar hρstar).1
+  have hnshape :
+      theorem4NonsurgeAllowedLemma5Shape nshape ∧
+        lemma5PolicyForm nshape (ρstar 0) :=
+    Classical.choose_spec (C.only_policy_forms ρstar hρstar).1
+  let sshape :=
+    Classical.choose (C.only_policy_forms ρstar hρstar).2
+  have hsshape :
+      theorem4SurgeAllowedLemma5Shape sshape ∧
+        lemma5PolicyForm sshape (ρstar 1) :=
+    Classical.choose_spec (C.only_policy_forms ρstar hρstar).2
+  exact
+    { policy := ρstar
+      optimal := hρstar
+      nonsurge_shape := nshape
+      surge_shape := sshape
+      nonsurge_allowed := hnshape.1
+      surge_allowed := hsshape.1
+      nonsurge_form := hnshape.2
+      surge_form := hsshape.2
+      only_policy_forms := C.only_policy_forms }
 
 /--
 All-measurable-optimal replacement certificate.  The Lemma 5 replacement
@@ -28327,6 +28389,108 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
         μ arrival m z switch12 switch21 C)
 
 /--
+Regular endpoint data attached to an all-optimal measurable Lemma 5 policy-form
+classification.  This is a source-facing variant of the regular-shape route:
+the caller proves that every measurable optimum has one of the paper's allowed
+forms, and Lean chooses a representative optimum for the shape derivation.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  allowed_policy_forms :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/-- Convert all-optimal allowed policy forms plus regular endpoints to the regular-shape route. -/
+noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+      μ arrival m z switch12 switch21 where
+  shape_derivation :=
+    theorem4MeasurableShapeDerivationCertificate_of_all_measurable_allowed_policy_forms
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      C.allowed_policy_forms
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
+
+/--
+Measurable Theorem 4 accept-all uniqueness from all-optimal allowed policy forms
+and regular endpoint data.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_allowed_policy_forms
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation
+      μ arrival m z switch12 switch21
+      (Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
+        μ arrival m z switch12 switch21 C)
+
+/--
 Surge reject-middle upper-cutoff bridge using accept-all Lemma 9 bounds.  The
 current-policy bounds, `Q_2 > switch21`, and `switch21*T_2-Q_2 >= 0` are
 derived from measured Remark 4 tightening and positive current-policy measure.
@@ -37010,6 +37174,93 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
             theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_regular_shape_derivation_endpoint_data
               μ arrival m z switch12 switch21
               (A.endpoint_current_bounds_regular_shape_selection
+                m z hnonneg hparams) }
+
+/--
+Source-level assumptions for the regular allowed-policy-form endpoint route.
+The remaining proof field is an all-optimal measurable Lemma 5 policy-form
+classification plus regular endpoint data for each non-accept-all form.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_regular_allowed_policy_forms_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from all-optimal measurable policy-form
+classification and regular endpoint data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_current_bounds_regular_shape_selection := by
+          intro m z hnonneg hparams
+          exact
+            Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
+              μ arrival m z switch12 switch21
+              (A.endpoint_current_bounds_regular_allowed_policy_forms_selection
                 m z hnonneg hparams) }
 
 /--

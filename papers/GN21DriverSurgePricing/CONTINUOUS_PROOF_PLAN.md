@@ -4,23 +4,26 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The current Lean endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
 ```
 
 The remaining paper-facing field is
-`Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`
+`Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
 for the structured prices constructed by Theorem 3.  This endpoint packages
-the measurable Lemma 5 shape derivation together with continuous-density
-endpoint regularity, accept-all density support, source Lemma 9/10
-current-bounds data, and the remaining improper-tail integrability data; Lean
-derives endpoint calculus, short-interval integrability, and then converts the
-package to the feasible strict-local Theorem 4 certificate internally.  The
-older regular-selection route remains compiled and asks for ordinary allowed
-Lemma 5 replacement data in addition to the same regular endpoint packages.  The
-previous broader endpoints remain
+all-optimal measurable Lemma 5 allowed policy-form classification together with
+continuous-density endpoint regularity, accept-all density support, source
+Lemma 9/10 current-bounds data, and the remaining improper-tail integrability
+data; Lean chooses a representative optimum, derives the measurable shape
+derivation, endpoint calculus, short-interval integrability, and then converts
+the package to the feasible strict-local Theorem 4 certificate internally.  The
+older regular-shape route remains compiled and asks for the already-packaged
+shape derivation; the older regular-selection route remains compiled and asks
+for ordinary allowed Lemma 5 replacement data in addition to the same regular
+endpoint packages.  The previous broader endpoints remain
 compiled:
 
 ```lean
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
@@ -39,13 +42,14 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `Q,T,W` paths, denominator positivity, or Remark 4 side conditions by hand.
 
 2. Prove one source regularity/selection theorem that supplies optimum
-   existence, measurable Lemma 5 shape derivation, and the matching regular
-   endpoint data package for each non-accept-all shape.  This should target
+   existence, all-optimal measurable Lemma 5 allowed policy forms, and the
+   matching regular endpoint data package for each non-accept-all shape.  This
+   should target
    exactly
-   `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`.
+   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`.
 
 3. Instantiate
-   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`
    from that selection theorem, with the scalar Theorem 3 parameter
    construction already proved.
 
@@ -56,7 +60,7 @@ The hard theorem should have this shape:
 ```lean
 theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
     (...) :
-    Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+    Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
       μ arrival m z switch12 switch21
 ```
 
@@ -134,10 +138,12 @@ into the concrete endpoint policy data.
   `GN21SurgeRejectMiddleRegularEndpointData` now derive the supported endpoint
   records from continuous density, source current-bounds data, support, and
   tail-integrability packages.
-- `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`
-  is the current target because it avoids duplicating Lemma 5 replacement
-  measurability work: the shape derivation identifies the four policy forms,
-  and the regular endpoint fields supply the realized endpoint moves.
+- `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
+  `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
+  are the current targets because they avoid duplicating Lemma 5 replacement
+  measurability work: the continuous proof only needs to classify every
+  measurable optimum into the allowed policy forms, and the regular endpoint
+  fields supply the realized endpoint moves.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
@@ -145,7 +151,7 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions`
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper

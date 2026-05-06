@@ -153,18 +153,27 @@ cache is `source.txt`.
   product-calculus packages.  `GN21PositiveIntervalProductIntegrabilityData`
   derives short accepted-interval integrability from continuous product data,
   while `GN21TailProductIntegrabilityData` bundles improper tail integrability
-  and reuses it for narrower tails.  The current regular-shape endpoint route is
-  now exposed as
+  and reuses it for narrower tails.  The current regular allowed-policy-form
+  endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,
+  `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_allowed_policy_forms`,
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`;
+  it consumes the all-optimal measurable Lemma 5 allowed policy-form
+  classification plus continuous-density endpoint data, source Lemma 9/10
+  current-bounds data, support, and tail-integrability packages, then chooses a
+  representative optimum and derives the feasible strict-local Theorem 4
+  certificate internally.  The regular-shape route remains exposed as
   `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation`,
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`;
-  it consumes the measurable Lemma 5 shape derivation plus continuous-density
-  endpoint data, source Lemma 9/10 current-bounds data, support, and
-  tail-integrability packages, then derives the feasible strict-local Theorem 4
-  certificate internally.  The older regular-selection route remains exposed as
+  it is useful when the caller has already packaged the measurable Lemma 5
+  shape derivation.  The older regular-selection route remains exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_selection`,
@@ -530,16 +539,16 @@ certificate, plus a route that accepts the raw statewise improvement
 existentials produced by the concrete endpoint lemmas and a packaged
 statewise-improvement certificate for the same source boundary, and a route
 that consumes all-optimal Lemma 5 replacement data directly or the packaged
-allowed-replacement source-boundary certificate, and the current
-regular-shape route that consumes measurable Lemma 5 shape derivation plus
-regular endpoint packages directly.
+allowed-replacement source-boundary certificate, and the current regular
+allowed-policy-form route that consumes measurable Lemma 5 policy-form
+classification plus regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-regular-shape source-facing endpoint layer for arbitrary open measurable
+regular allowed-policy-form source-facing endpoint layer for arbitrary open measurable
 optimal policies by proving the regularity theorem that derives the measurable
-Lemma 5 shape case, chooses the relevant upper, lower, tail, or
+Lemma 5 allowed policy forms, chooses the relevant upper, lower, tail, or
 middle-rejection endpoint move, and discharges the remaining density,
 integrability, finite-mass, and current-bound fields of
-`Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`.
+`Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
