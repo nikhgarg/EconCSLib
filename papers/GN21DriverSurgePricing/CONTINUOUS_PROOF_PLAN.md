@@ -266,7 +266,10 @@ into the concrete endpoint policy data.
   and
   `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form`
   derive the two state-level mass fields from allowed policy forms, accept-all
-  mass, and nondegenerate non-surge cutoffs.  If the source proof produces
+  mass, and nondegenerate non-surge cutoffs.  The local constructors ending in
+  `PointwiseRewardRateNoMassLocalData.of_fixed_complement_pointwise_eq` turn a
+  fixed-state pointwise equality into the one-sided non-surge comparison or the
+  two-sided surge comparisons.  If the source proof produces
   all-optimal allowed policy forms directly instead, use the sibling wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_no_mass_source_assumptions`.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:

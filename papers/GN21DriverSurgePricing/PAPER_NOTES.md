@@ -366,6 +366,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_allowed_policy_form`
   and
   `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form`,
+  no-mass local equality constructors ending in
+  `of_fixed_complement_pointwise_eq`, which convert a fixed-state pointwise
+  equality into the one-sided or two-sided pointwise comparisons required by
+  the fixed-transfer route,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

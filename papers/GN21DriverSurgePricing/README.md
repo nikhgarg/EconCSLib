@@ -249,7 +249,11 @@ cache is `source.txt`.
   and
   `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form`
   derive the state-level mass fields from Lemma 5 allowed policy forms and
-  cutoff nondegeneracy when those are available.
+  cutoff nondegeneracy when those are available.  Equality constructors ending
+  in `PointwiseRewardRateNoMassLocalData.of_fixed_complement_pointwise_eq`
+  let source proofs provide a single fixed-state pointwise equality instead of
+  separate lower/upper complement comparisons in the surge fixed-transfer
+  cases.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
