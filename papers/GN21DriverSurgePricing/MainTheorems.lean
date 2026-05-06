@@ -52635,6 +52635,233 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
             hcurrent_lower_nonpos, hupper⟩ }
 
 /--
+Positive-parameter current-lower source assumptions with current non-surge
+payment nonnegativity derived from the Lemma 10 branch, rather than supplied
+as a source field.
+-/
+structure Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperDerivedPaymentNonnegDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  surge_current_lower_reward_bound_fixed_upper_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            ∃ R1_current : ℝ,
+              R1_current ≤ R1 ∧
+                gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) = R1_current ∧
+                lemma9StructuredLower
+                  (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+                  (gn21ExitWeightIntegral (μ 0) (arrival 0)
+                    switch12 switch21 (ρ 0))
+                  (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                  (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                    switch21 switch12)
+                  switch21 ≤ 0 ∧
+                gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+                    gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0) ≤
+                  gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21
+
+/--
+Theorem 3 accept-all parameter data and Lemma 10 tightening imply pointwise
+nonnegative current non-surge payments for every feasible positive-mass current
+policy.  This packages the shared Lemma 10 accounting once, so paper-facing
+source assumptions do not need a separate payment-nonnegativity field.
+-/
+theorem theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hR2_pos : 0 < R2)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ : dynamicFeasibleMeasurablePositiveMassPolicy μ ρ) :
+    ∀ τ ∈ ρ 0,
+      0 ≤ ctmcStructuredDynamicSurgePrice m z switch12 switch21 0 τ := by
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [hswitch21_pos, hswitch12_pos]
+  have hfixed_exit_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+          acceptAllPolicy :=
+    gn21ExitWeightIntegral_pos_of_switch_pos
+      (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+      (le_of_lt harrival2_pos) hswitch21_pos hsum21
+      measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+  have hfixed_time_pos :
+      0 < gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+    gn21ScaledStateTime_pos_of_nonneg
+      (μ 1) (arrival 1) acceptAllPolicy
+      (le_of_lt harrival2_pos) measurableSet_acceptAllPolicy
+      (fun _ hτ => hτ)
+  have hfixed_A_pos :
+      0 <
+        gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
+            switch12 +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+            acceptAllPolicy := by
+    exact add_pos (mul_pos hfixed_time_pos hswitch12_pos) hfixed_exit_pos
+  have hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          acceptAllPolicy =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy := by
+    calc
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          acceptAllPolicy
+          =
+        m 1 * (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+          z 1 *
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12 -
+              switch21) := by
+            simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+              ctmcStructuredSurgePrice, gn21AcceptAllScaledStateTime,
+              gn21AcceptAllExitWeightIntegral] using
+              paper_remark2_structured_scaled_earning_algebra
+                (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12
+                acceptAllPolicy htime2_integrable hq2_integrable
+      _ = R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+        P.surge_accounting
+  have Dsrc :
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        R2 (z 0) P.nonsurgeRatio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) acceptAllPolicy :=
+    GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening
+      (hρ.1 0).1 (hρ.1 0).2 harrival1_pos
+      hswitch12_pos hswitch21_pos
+      (htime1_integrable.mono_set (hρ.1 0).1)
+      (hq1_integrable.mono_set (hρ.1 0).1)
+      htime1_integrable hq1_integrable
+      P.nonsurge_acceptAll_bounds hfixed_A_pos
+      (le_of_lt hfixed_exit_pos) (hρ.2 0)
+      P.hz0 hR2_pos hfixed_reward_rate
+  intro τ hτ
+  have hpay :
+      0 ≤ ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ :=
+    Dsrc.current_price_nonneg
+      (hρ.1 0).1 (hρ.1 0).2 harrival1_pos hswitch12_pos
+      hswitch21_pos
+      (htime1_integrable.mono_set (hρ.1 0).1)
+      (hq1_integrable.mono_set (hρ.1 0).1)
+      hfixed_exit_pos hfixed_A_pos τ hτ
+  simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+    ctmcStructuredSurgePrice, P.hm0] using hpay
+
+/--
+Paper-facing wrapper deriving current non-surge payment nonnegativity from
+the already-compiled Lemma 10 source package for the non-surge-after-surge
+branch.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_derived_payment_nonneg_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperDerivedPaymentNonnegDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_pos := A.hmass1_pos
+      hmass2_pos := A.hmass2_pos
+      surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data := by
+        intro m z hnonneg hparams_pos ρ hρ
+        let P :=
+          (Theorem3AcceptAllStructuredPositiveParameterData.of_evidence
+            hparams_pos).params
+        rcases
+            A.surge_current_lower_reward_bound_fixed_upper_data
+              m z hnonneg hparams_pos ρ hρ with
+          ⟨R1_current, hRcurrent_le, hrate, hcurrent_lower_nonpos, hupper⟩
+        have hpayment_nonneg :
+            ∀ τ ∈ ρ 0,
+              0 ≤ ctmcStructuredDynamicSurgePrice m z switch12 switch21 0 τ := by
+          exact
+            theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
+              A.harrival1_pos A.harrival2_pos A.hswitch12_pos
+              A.hswitch21_pos A.hR2_pos A.htime1_integrable
+              A.htime2_integrable A.hq1_integrable A.hq2_integrable
+              P hρ
+        exact
+          ⟨R1_current, hRcurrent_le, hrate, hpayment_nonneg,
+            hcurrent_lower_nonpos, hupper⟩ }
+
+/--
 Positive-mass source assumptions with the target-rate fixed-state transfer
 stated as a pointwise equality on trips rejected by the current non-surge
 policy.  Lean integrates this equality over the rejected complement to derive
