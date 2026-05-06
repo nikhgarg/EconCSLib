@@ -112,7 +112,9 @@ The paper folder should expose the source's definitions, theorem numbers, and
 assumptions clearly enough that a human can compare Lean against the PDF without
 reading the entire implementation stack.
 
-For a concise domain-by-domain index of reusable modules and entrypoints, use
+For agent-facing instructions on starting and finishing a paper, use
+[`docs/AGENT_FORMALIZATION_WORKFLOW.md`](AGENT_FORMALIZATION_WORKFLOW.md). For a
+concise domain-by-domain index of reusable modules and entrypoints, use
 [`docs/ECONCSLIB_DOMAIN_INDEX.md`](ECONCSLIB_DOMAIN_INDEX.md).
 
 ## Lean Style

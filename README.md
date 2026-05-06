@@ -1,106 +1,92 @@
 # EconCSLib
 
-`EconCSLib` is a Lean 4 library dedicated to formalizing results that matter to the Economics and Computation (EC) community. 
+EconCSLib is a Lean 4 project for checking results in Economics and
+Computation. The repository has two roles:
 
-The project has three high-level goals:
-1. **Formalize canonical EC-style papers:** Systematically verify both foundational Test-of-Time papers and modern, active research.
-2. **Extract reusable library primitives:** Build a robust, shared foundation of discrete math, probability, game theory, and mechanism design concepts that the community can reuse.
-3. **Develop AI formalization skills:** Eventually turn this structured workflow into an agent skill for autonomously verifying new EC papers.
+- Build a reusable library of mathematical tools for EC: probability,
+  optimization, matching, auctions, online algorithms, fair division, learning,
+  and related foundations.
+- Keep a paper-by-paper audit trail showing which source definitions and
+  theorems have been formalized, which assumptions remain, and where the proof
+  deviates from an informal paper argument.
 
-## Paper Formalization Status
+The project is meant to support both formalization work and human review. A
+human reader should be able to open a completed paper folder and understand
+what was proved without reading the full Lean implementation.
 
-Current paper status is tracked in the table below and in each
-`papers/[Paper]/README.md`. PDFs are cached locally in each paper folder and
-ignored by Git; extracted `.txt` caches are kept beside them for source audits.
+## How The Repository Is Organized
 
-| Paper folder | Paper | Overall status | Current Lean surface |
-|---|---|---|---|
-| `papers/MBJG25ProducerFairness` | *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design* | Formalized with documented caveat | Source Theorems 3.1--3.2 and the main Section 4 / appendix support are formalized. Lean found and documents the boundary correction needed for the paper's strict variance-decrease clause. |
-| `papers/MSVV07AdWords` | *AdWords and Generalized Online Matching* | Main endpoints formalized with documented deviations | `PaperFacingTheorems.lean` exposes the paper formulas and closes Theorem 8 plus the finite integral-prefix Theorem 9 endpoint. Source Lemmas 1--7 are documented as not one-for-one wrappers. |
-| `papers/DSWG24DiscretizationBias` | *Addressing Discretization-Induced Bias in Demographic Prediction* | Partially formalized | Source-facing expected-objective wrappers cover Theorem 2(i)--(ii); Theorem 1 and Theorem 2(iii) remain open. |
-| `papers/ZL21TestOptionalPolicies` | *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps* | Partially formalized | Finite base/test decomposition identities and nonnegativity monotonicity lemmas are formalized; broader paper theorems remain open. |
-| `papers/Roth82StableMatching` | *The Economics of Matching: Stability and Incentives* | Partially formalized | Conditional DA wrappers cover Theorems 1, 2, and 5 seams; impossibility and manipulation theorems remain open. |
-| `papers/GHW01DigitalGoods` | *Competitive Auctions and Digital Goods* | Partially formalized | Digital-goods primitives, fixed-price support, Section 4 dyadic fixed-price bound, Section 6 sampling support, and the Section 7.2 weighted-pairing `F^(2)` lower bound are formalized under natural-number log certificates; exact `Real.log` packaging, Section 7.2 concrete tightness-family instantiation, and Sections 8--9 general-auction wrappers remain open. |
-| `papers/GCG24UserItemFairness` | *User-item fairness tradeoffs in recommendations* | Verified in Lean | Paper-local validation reports Theorem 3 price-of-fairness monotonicity and Theorem 4 misestimation tradeoff closed, with Proposition 1, Proposition 2, and appendix lemmas tracked in the paper README/DAG. |
+- `EconCSLib/` is the reusable library. Code here should be paper-independent
+  and useful across more than one formalization.
+- `papers/` contains one folder per source paper. These folders preserve the
+  paper's notation, theorem numbering, proof DAG, validation report, and
+  human-facing Lean interface.
+- `docs/` contains project documentation. Some files are human-facing strategy
+  and status documents; others are detailed conventions for agents and
+  maintainers.
+- `skills/econcs-formalizer/` contains the agent workflow instructions used to
+  formalize papers consistently.
 
-## Repository Architecture: Textbook vs. Audit Trail
+## Reviewing A Formalized Paper
 
-This repository strictly separates generalized mathematical foundations from paper-specific proofs using a "Textbook vs. Audit Trail" model:
+Start in the paper folder under `papers/<PaperName>/`.
 
-### 1. The Core Library (`EconCSLib/`)
-This is the "Textbook." It contains highly abstracted, generic EC/CS/econ definitions and theorems stripped of paper-specific notation. If a concept is foundational enough that a graduate student should know it (e.g., Gale-Shapley, Nash equilibrium, LP duality, or generic choice models), it belongs here.
+For a completed or nearly completed paper, read these files in this order:
 
-The core library is organized around major EC domains:
-- `Foundations/`: Discrete math, probability, asymptotics, and econometrics.
-- `MechanismDesign/`: Auctions, contracts, and information design.
-- `SocialChoice/`: Fair division and voting.
-- `Markets/`: Matching and platform design.
-- `Learning/`: Bandits and learning in games.
-- `Algorithms/`: Online algorithms and complexity.
-- `Applications/`: Recommender systems and other applied models.
+1. `FINAL_VALIDATION_REPORT.md`: source checked, theorem inventory, proof
+   deviations, remaining assumptions, and final status.
+2. `PaperInterface.lean`: readable definitions and theorem statements matching
+   the paper. This is the main human-facing Lean file.
+3. `DependencyDAG.pdf`: visual map of named definitions, lemmas, theorems, and
+   remaining caveats.
+4. `README.md`: paper metadata and theorem-status ledger.
 
-### 2. Paper Formalizations (`papers/`)
-This is the "Audit Trail." Each paper formalized in this repository gets its own isolated folder named using the `[AuthorInitials][2DigitYear][Descriptor]` format (e.g., `MSVV07AdWords`).
+Implementation files such as `MainTheorems.lean` and lower proof files are for
+maintainers and agents. They should not be necessary for a first human audit of
+what the paper claims and what Lean proves.
 
-These folders serve to prove that the *specific claims in a specific PDF* are true. 
-Each paper folder strictly adheres to a standard template:
-- A downloaded `.pdf` of the source material (git-ignored to prevent repo bloat).
-- A cached `.txt` extraction created once with `pdftotext` for named-statement
-  audits.
-- A `README.md` containing the citation, source URLs, and a theorem-status ledger.
-- A `DependencyDAG.tex` providing a visual proof roadmap of how definitions and lemmas connect.
-- A `MainTheorems.lean` file containing notation-exact wrappers around the core library's theorems, demonstrating fidelity to the original text.
+## Current Status
 
-## Upstreaming Workflow
-When formalizing a new paper, authors typically build everything locally in their `papers/` folder. Once a proof is stable, the generalized mathematical core is "upstreamed" to `EconCSLib`, leaving only the thin, paper-facing wrappers behind.
+Paper status changes frequently. Use:
 
-## Orientation
-For current paper status, start with the table above and the relevant
-paper-folder `README.md`. For repository conventions, see:
+- [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md) for the
+  current project status ledger.
+- Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
+  for the author-paper formalization summary.
 
-- [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md)
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- [docs/ECONCSLIB_DOMAIN_INDEX.md](docs/ECONCSLIB_DOMAIN_INDEX.md)
-- [docs/LEAN_STYLE.md](docs/LEAN_STYLE.md)
-- [docs/THEOREM_ERGONOMICS.md](docs/THEOREM_ERGONOMICS.md)
-- [docs/STATUS.md](docs/STATUS.md)
-- [skills/econcs-formalizer/SKILL.md](skills/econcs-formalizer/SKILL.md)
+## Starting A New Paper With An Agent
 
-Historical plans and handoff reports live under `docs/` and `docs/archive/`.
+Use [docs/AGENT_FORMALIZATION_WORKFLOW.md](docs/AGENT_FORMALIZATION_WORKFLOW.md).
+That file is intentionally agent-facing and includes the expected prompts,
+artifact checklist, validation commands, and workflow rules.
 
-## Build
+## Development
 
-This code is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
+This project is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
+
+Useful commands:
 
 ```bash
-lake build EconCSLib
-```
-
-## Audits
-
-Use the repository audit before status-table or handoff cleanup:
-
-```bash
+lake build EconCSLib.Foundations
 python3 scripts/audit_repository.py
-python3 scripts/check_smoke.py
 ```
 
-It checks for Lean `sorry`s, unguarded `#check` ledgers, missing paper-folder
-contract files, missing cached PDFs/text extractions, obvious status-table
-overclaims, and tracked generated artifacts. By default it skips the active
-fairness and monoculture paper folders; pass `--include-active` when those are
-ready for a full-tree audit.
+The full `lake build EconCSLib` target can be temporarily blocked by active
+paper work. When that happens, use the narrower build target documented in the
+relevant maintenance notes rather than changing unrelated active files.
 
-## GitHub Automation
+## More Documentation
 
-The repository keeps CI and manual dependency-update workflows under
-`.github/workflows`. Release-tag/release-publishing automation has been removed;
-releases should be cut manually if needed.
-
-## Repository Direction
-
-The imported decision/fairness/recommendation track is not the whole project.
-It is the first substantial batch of paper formalization work inside
-`EconCSLib`, and it should inform how the broader library grows.
-
-That broader roadmap lives in [ROADMAP.md](ROADMAP.md).
+- [docs/README.md](docs/README.md): documentation index split into
+  human-facing and agent-facing references.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): repository architecture,
+  paper-folder contract, and maintenance notes.
+- [docs/ECONCSLIB_DOMAIN_INDEX.md](docs/ECONCSLIB_DOMAIN_INDEX.md): reusable
+  library modules by domain.
+- [docs/PROBABILITY_LIBRARY_ROADMAP.md](docs/PROBABILITY_LIBRARY_ROADMAP.md):
+  probability-library roadmap.
+- [docs/OPTIMIZATION_LIBRARY_ROADMAP.md](docs/OPTIMIZATION_LIBRARY_ROADMAP.md):
+  optimization-library roadmap.
+- [docs/LEAN_STYLE.md](docs/LEAN_STYLE.md): Lean style conventions.
+- [docs/STATUS.md](docs/STATUS.md): controlled vocabulary for paper status.
+- [ROADMAP.md](ROADMAP.md): high-level project roadmap.
