@@ -182,6 +182,11 @@ into the concrete endpoint policy data.
   These use the Lemma 9 fixed-state transfer and therefore expose both
   cross-ratio directions, plus the usual surge accept-all positive-measure
   input for `Q_2 > lambda_21`.
+- The Theorem 3 fixed-transfer local data records now state the fixed-state
+  structured-price accounting equation, not a pre-expanded scaled-earning
+  reward-rate identity.  The adapter expands this with
+  `paper_remark2_structured_scaled_earning_algebra` and shared accept-all
+  integrability restricted to the current feasible policy.
 - Fixed-state transfer is now named algebraically.  Lemma 10 has
   `lemma10StructuredBounds_of_fixed_state_expansion` and the measured wrapper
   `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`,

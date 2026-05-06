@@ -281,7 +281,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21NonsurgeRejectLongTheorem3FixedTransferLocalData`,
   `GN21NonsurgeAcceptMiddleTheorem3FixedTransferLocalData`,
   `GN21SurgeRejectShortTheorem3FixedTransferLocalData`, and
-  `GN21SurgeRejectMiddleTheorem3FixedTransferLocalData`,
+  `GN21SurgeRejectMiddleTheorem3FixedTransferLocalData` with fixed-state
+  accounting fields expanded internally by
+  `paper_remark2_structured_scaled_earning_algebra`,
   Theorem 3 fixed-transfer regular allowed-policy-form certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate`
   with its `.to_regular_allowed_policy_forms` adapter, and source wrapper

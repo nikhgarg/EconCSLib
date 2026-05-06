@@ -178,9 +178,12 @@ cache is `source.txt`.
   `GN21SurgeRejectMiddleTheorem3FixedTransferLocalData`,
   and the paper-facing wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`.
-  It derives the surge `m 1 - R1 > 0` side condition from the shared source,
-  positive surge accept-all mass, Theorem 3 ratio positivity, and the
-  constructed parameter data.  The current regular allowed-policy-form
+  Its local records state the fixed-state structured-price accounting
+  equations, and Lean expands those equations to the scaled-earning
+  reward-rate identities using Remark 2.  It also derives the surge
+  `m 1 - R1 > 0` side condition from the shared source, positive surge
+  accept-all mass, Theorem 3 ratio positivity, and the constructed parameter
+  data.  The current regular allowed-policy-form
   endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,
