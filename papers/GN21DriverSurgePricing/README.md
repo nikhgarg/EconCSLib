@@ -282,10 +282,19 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_source_assumptions`
-  are the current lightest fixed-transfer source boundary: all-optimal Lemma 5
-  allowed policy forms choose the fixed-state branch internally, so the source
-  proof supplies only branch-specific pointwise equalities, reward-rate fields,
-  and surge moving-state cutoff-gap/tail data.
+  let all-optimal Lemma 5 allowed policy forms choose the fixed-state branch
+  internally.  The uniform-tail package
+  `GN21SurgeTheorem3FixedTransferUniformTailData`, cutoff choice
+  `GN21SurgeRejectMiddleMovingCutoffChoice`, endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormUniformTailLocalEndpointCertificate`,
+  and wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`
+  are the current lightest fixed-transfer source boundary: the source proof
+  supplies only branch-specific pointwise equalities, reward-rate fields,
+  surge cutoff positivity/gaps, and one uniform surge-tail integrability
+  package.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

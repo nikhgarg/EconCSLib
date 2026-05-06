@@ -398,6 +398,16 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_source_assumptions`,
+  uniform surge-tail package
+  `GN21SurgeTheorem3FixedTransferUniformTailData`,
+  constructive reject-middle cutoff choice
+  `GN21SurgeRejectMiddleMovingCutoffChoice`,
+  fixed-state-by-policy-form uniform-tail endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormUniformTailLocalEndpointCertificate`
+  with its `to_fixed_state_by_policy_form` adapter, and source wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
