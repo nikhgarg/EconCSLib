@@ -15591,6 +15591,114 @@ theorem ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
   nlinarith
 
 /--
+Pointwise nonnegativity for the non-surge structured price.  A ratio above
+`-1 / λ_{i→j}` keeps `τ + ratio*q_{i→j}(τ)` positive because
+`q_{i→j}(τ) < λ_{i→j}τ`.
+-/
+theorem ctmcStructuredSurgePrice_nonneg_of_ratio_gt_neg_inv_switch
+    (R ratio switchIJ switchJI τ : ℝ)
+    (hR_nonneg : 0 ≤ R)
+    (hratio_gt : -(1 / switchIJ) < ratio)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hτ_pos : 0 < τ) :
+    0 ≤ ctmcStructuredSurgePrice R (ratio * R) switchIJ switchJI τ := by
+  let q := gn21SwitchProb switchIJ switchJI τ
+  have hq_nonneg : 0 ≤ q := by
+    exact paper_lemma2_switch_probability_nonneg switchIJ switchJI τ
+      (le_of_lt hswitch_pos) hsum (le_of_lt hτ_pos)
+  have hinner_nonneg : 0 ≤ τ + ratio * q := by
+    by_cases hratio_nonneg : 0 ≤ ratio
+    · have hratio_q_nonneg : 0 ≤ ratio * q :=
+        mul_nonneg hratio_nonneg hq_nonneg
+      exact le_of_lt (add_pos_of_pos_of_nonneg hτ_pos hratio_q_nonneg)
+    · have hratio_neg : ratio < 0 := lt_of_not_ge hratio_nonneg
+      have hq_lt : q < switchIJ * τ := by
+        exact paper_remark4_switch_probability_lt_rate_mul_time
+          switchIJ switchJI τ hswitch_pos hsum hτ_pos
+      have hratio_switch_lt_ratio_q : ratio * (switchIJ * τ) < ratio * q :=
+        mul_lt_mul_of_neg_left hq_lt hratio_neg
+      have hratio_switch_gt_neg_one : -1 < ratio * switchIJ := by
+        have hmul := mul_lt_mul_of_pos_right hratio_gt hswitch_pos
+        field_simp [ne_of_gt hswitch_pos] at hmul
+        simpa [mul_comm] using hmul
+      have hfactor_pos : 0 < 1 + ratio * switchIJ := by
+        linarith
+      have hbase_pos : 0 < τ + ratio * (switchIJ * τ) := by
+        have hbase_eq :
+            τ + ratio * (switchIJ * τ) = τ * (1 + ratio * switchIJ) := by
+          ring
+        rw [hbase_eq]
+        exact mul_pos hτ_pos hfactor_pos
+      exact le_of_lt
+        (lt_trans hbase_pos
+          (by linarith [hratio_switch_lt_ratio_q]))
+  unfold ctmcStructuredSurgePrice structuredSurgePrice
+  have hprice_eq :
+      R * τ + ratio * R * gn21SwitchProb switchIJ switchJI τ =
+        R * (τ + ratio * q) := by
+    unfold q
+    ring
+  rw [hprice_eq]
+  exact mul_nonneg hR_nonneg hinner_nonneg
+
+/--
+Lemma 10's lower endpoint is above `-1 / switch12` when the fixed-state
+Remark 4 gap is strictly positive.  This is the scalar fact used to turn
+Lemma 10 bounds into pointwise nonnegative non-surge payments.
+-/
+theorem lemma10StructuredLower_gt_neg_inv_switch_of_gap_pos
+    (T2 Q2 T1 Q1 switch12 : ℝ)
+    (hQ2_pos : 0 < Q2)
+    (hswitch_pos : 0 < switch12)
+    (hgap_pos : 0 < switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2) :
+    -(1 / switch12) <
+      lemma10StructuredLower T2 Q2 T1 Q1 switch12 := by
+  unfold lemma10StructuredLower lemma10StructuredLowerNumerator
+    lemma10StructuredLowerDenominator
+  have hden_pos :
+      0 <
+        Q2 * (switch12 * T1 - Q1) +
+          switch12 * (T2 * switch12 + Q2) :=
+    add_pos (mul_pos hQ2_pos hgap_pos) (mul_pos hswitch_pos hA_pos)
+  have hdiv_lt :
+      (T2 * switch12 + Q2) /
+          (Q2 * (switch12 * T1 - Q1) +
+            switch12 * (T2 * switch12 + Q2)) <
+        1 / switch12 := by
+    rw [div_lt_div_iff₀ hden_pos hswitch_pos]
+    nlinarith [mul_pos hQ2_pos hgap_pos]
+  exact neg_lt_neg hdiv_lt
+
+/--
+Lemma 10 bounds imply pointwise nonnegative non-surge structured prices under
+the positive primitive conditions from Remark 4.
+-/
+theorem ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds
+    (ratio R2 T2 Q2 T1 Q1 switch12 switch21 τ : ℝ)
+    (hbounds : lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12)
+    (hR2_nonneg : 0 ≤ R2)
+    (hQ2_pos : 0 < Q2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hgap_pos : 0 < switch12 * T1 - Q1)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hτ_pos : 0 < τ) :
+    0 ≤ ctmcStructuredSurgePrice R2 (ratio * R2) switch12 switch21 τ := by
+  have hlower_gt :
+      -(1 / switch12) <
+        lemma10StructuredLower T2 Q2 T1 Q1 switch12 :=
+    lemma10StructuredLower_gt_neg_inv_switch_of_gap_pos
+      T2 Q2 T1 Q1 switch12 hQ2_pos hswitch12_pos hgap_pos hA_pos
+  have hratio_gt : -(1 / switch12) < ratio :=
+    lt_trans hlower_gt hbounds.1
+  exact
+    ctmcStructuredSurgePrice_nonneg_of_ratio_gt_neg_inv_switch
+      R2 ratio switch12 switch21 τ hR2_nonneg hratio_gt hswitch12_pos
+      hsum hτ_pos
+
+/--
 Measured reward-rate upper bound for structured CTMC prices with nonpositive
 switch coefficient.
 -/
