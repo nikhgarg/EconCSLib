@@ -268,11 +268,23 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_separated_source_assumptions`
-  are the current lightest fixed-transfer source boundary: source proofs
-  supply one fixed-state package for each state plus only moving-state
-  cutoff/tail data for each endpoint branch, and Lean expands that into the
-  no-mass, mass-separated, pointwise, positive-cutoff, and regular endpoint
-  routes internally.
+  let source proofs supply one fixed-state package for each state plus only
+  moving-state cutoff/tail data for each endpoint branch, and Lean expands that
+  into the no-mass, mass-separated, pointwise, positive-cutoff, and regular
+  endpoint routes internally.  The policy-form fixed-state data records
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData`
+  and
+  `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData`,
+  the endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormLocalEndpointCertificate`,
+  and wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_source_assumptions`
+  are the current lightest fixed-transfer source boundary: all-optimal Lemma 5
+  allowed policy forms choose the fixed-state branch internally, so the source
+  proof supplies only branch-specific pointwise equalities, reward-rate fields,
+  and moving-state cutoff/tail data.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
