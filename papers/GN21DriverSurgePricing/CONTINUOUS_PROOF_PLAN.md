@@ -170,6 +170,14 @@ into the concrete endpoint policy data.
   These consume `Theorem3AcceptAllStructuredParameterData` directly and use
   the Lemma 10 fixed-state transfer, so the caller supplies a fixed-state
   cross-ratio condition instead of pre-built current-fixed Lemma 10 bounds.
+- The surge endpoint cases likewise have
+  `GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`,
+  `GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`,
+  and
+  `GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`.
+  These use the Lemma 9 fixed-state transfer and therefore expose both
+  cross-ratio directions, plus the usual surge accept-all positive-measure
+  input for `Q_2 > lambda_21`.
 - Fixed-state transfer is now named algebraically.  Lemma 10 has
   `lemma10StructuredBounds_of_fixed_state_expansion` and the measured wrapper
   `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`,

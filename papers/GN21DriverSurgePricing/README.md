@@ -166,7 +166,9 @@ cache is `source.txt`.
   opposite cross-ratio directions.  The two non-surge regular endpoint cases
   now have Theorem 3 parameter-data constructors that consume this Lemma 10
   transfer directly, replacing current-fixed Lemma 10 bounds with the single
-  fixed-state cross-ratio condition.  The current regular allowed-policy-form
+  fixed-state cross-ratio condition.  The three surge regular endpoint cases
+  have analogous constructors using the Lemma 9 transfer and therefore expose
+  both cross-ratio directions explicitly.  The current regular allowed-policy-form
   endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,

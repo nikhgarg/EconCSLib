@@ -28312,6 +28312,23 @@ theorem GN21RegularEndpointSharedSourceData.surge_acceptAll_gap_nonneg
       (le_of_lt S.harrival1_pos) (le_of_lt S.hswitch21_pos) hsum21
       measurableSet_acceptAllPolicy (fun _ hτ => hτ)
 
+/-- Shared regular source data plus positive accept-all mass gives strict surge accept-all exit. -/
+theorem GN21RegularEndpointSharedSourceData.surge_acceptAll_exit_gt_switch
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hmeasure_pos : 0 < μ 1 acceptAllPolicy) :
+    switch21 <
+      gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 := by
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [S.hswitch21_pos, S.hswitch12_pos]
+  exact
+    paper_remark4_exit_weight_gt_switch_of_positive_measure
+      (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+      S.harrival1_pos S.hswitch21_pos hsum21 measurableSet_acceptAllPolicy
+      (fun _ hτ => hτ) S.hq1_acceptAll_integrable hmeasure_pos
+
 /-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
 def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source
     {μ : Fin 2 → Measure TripLength}
@@ -36919,6 +36936,231 @@ def GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_theorem3_fi
       S.hq1_acceptAll_integrable S.nonsurge_acceptAll_gap_nonneg
       hfixed_cross)
     hmass_other_pos P.hz0 hR2_pos hfixed_reward_rate
+
+/-- Theorem 3 parameter data plus Lemma 9 fixed-state transfer build surge reject-short data. -/
+def GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 u δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsShortTrips u (ρ 1))
+    (hdensity_pos : 0 < (S.surge_support.densityNN u : ℝ))
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1))
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (hfixed_lower_cross :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+        gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hfixed_upper_cross :
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectShortRegularEndpointData
+      μ arrival m z switch12 switch21 ρ u := by
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  exact
+    GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_acceptAll_tightening
+      S hρ_feasible hshape hdensity_pos tail_integrability hu hδ hδ_le_u
+      (lemma9StructuredBounds_of_fixed_state_expansion
+        P.surgeRatio
+        (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+        (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 P.surge_acceptAll_bounds
+        (le_of_lt (S.nonsurge_scaled_time_pos hρ_feasible))
+        (S.nonsurge_exit_weight_pos hρ_feasible)
+        (le_of_lt
+          (gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) acceptAllPolicy
+            (le_of_lt S.harrival0_pos) measurableSet_acceptAllPolicy
+            (fun _ hτ => hτ)))
+        (gn21ExitWeightIntegral_pos_of_switch_pos (μ 0) (arrival 0) switch12
+          switch21 acceptAllPolicy (le_of_lt S.harrival0_pos)
+          S.hswitch12_pos hsum12 measurableSet_acceptAllPolicy
+          (fun _ hτ => hτ))
+        S.hswitch21_pos S.surge_acceptAll_gap_nonneg
+        (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
+        hfixed_lower_cross hfixed_upper_cross)
+      hmass_other_pos
+      (by
+        rw [P.hz1, P.hm1]
+        rfl)
+      hmR_pos hR1_nonneg hfixed_reward_rate
+
+/-- Theorem 3 parameter data plus Lemma 9 fixed-state transfer build lower-cutoff surge reject-middle data. -/
+def GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1))
+    (hdensity_pos : 0 < (S.surge_support.densityNN lo : ℝ))
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (hfixed_lower_cross :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+        gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hfixed_upper_cross :
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectMiddleLoRegularEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi := by
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  exact
+    GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_acceptAll_tightening
+      S hρ_feasible hshape hdensity_pos hlo_pos hloδ_le_hi hδ tail_integrability
+      (lemma9StructuredBounds_of_fixed_state_expansion
+        P.surgeRatio
+        (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+        (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 P.surge_acceptAll_bounds
+        (le_of_lt (S.nonsurge_scaled_time_pos hρ_feasible))
+        (S.nonsurge_exit_weight_pos hρ_feasible)
+        (le_of_lt
+          (gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) acceptAllPolicy
+            (le_of_lt S.harrival0_pos) measurableSet_acceptAllPolicy
+            (fun _ hτ => hτ)))
+        (gn21ExitWeightIntegral_pos_of_switch_pos (μ 0) (arrival 0) switch12
+          switch21 acceptAllPolicy (le_of_lt S.harrival0_pos)
+          S.hswitch12_pos hsum12 measurableSet_acceptAllPolicy
+          (fun _ hτ => hτ))
+        S.hswitch21_pos S.surge_acceptAll_gap_nonneg
+        (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
+        hfixed_lower_cross hfixed_upper_cross)
+      hmass_other_pos
+      (by
+        rw [P.hz1, P.hm1]
+        rfl)
+      hmR_pos hR1_nonneg hfixed_reward_rate
+
+/-- Theorem 3 parameter data plus Lemma 9 fixed-state transfer build upper-cutoff surge reject-middle data. -/
+def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1))
+    (hdensity_pos : 0 < (S.surge_support.densityNN hi : ℝ))
+    (derivative_tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1))
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ))
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (hfixed_lower_cross :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+        gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hfixed_upper_cross :
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hmR_pos : 0 < m 1 - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectMiddleHiRegularEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi := by
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  exact
+    GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_acceptAll_tightening
+      S hρ_feasible hshape hdensity_pos derivative_tail_integrability hhi_pos
+      hδ hlo_nonneg hlo_le_hiδ tail_integrability
+      (lemma9StructuredBounds_of_fixed_state_expansion
+        P.surgeRatio
+        (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+        (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 P.surge_acceptAll_bounds
+        (le_of_lt (S.nonsurge_scaled_time_pos hρ_feasible))
+        (S.nonsurge_exit_weight_pos hρ_feasible)
+        (le_of_lt
+          (gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) acceptAllPolicy
+            (le_of_lt S.harrival0_pos) measurableSet_acceptAllPolicy
+            (fun _ hτ => hτ)))
+        (gn21ExitWeightIntegral_pos_of_switch_pos (μ 0) (arrival 0) switch12
+          switch21 acceptAllPolicy (le_of_lt S.harrival0_pos)
+          S.hswitch12_pos hsum12 measurableSet_acceptAllPolicy
+          (fun _ hτ => hτ))
+        S.hswitch21_pos S.surge_acceptAll_gap_nonneg
+        (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
+        hfixed_lower_cross hfixed_upper_cross)
+      hmass_other_pos
+      (by
+        rw [P.hz1, P.hm1]
+        rfl)
+      hmR_pos hR1_nonneg hfixed_reward_rate
 
 /--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured

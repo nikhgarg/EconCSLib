@@ -266,6 +266,11 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`
   and
   `GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`,
+  surge Theorem 3 parameter-data endpoint constructors
+  `GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`,
+  `GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`,
+  and
+  `GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
