@@ -87,7 +87,9 @@ cache is `source.txt`.
   `gn21FixedStateCross_le_union_of_increment_ratio_ge` and
   `gn21FixedStateCross_ge_union_of_increment_ratio_le` that reduce the
   remaining non-accept-all fixed-state transfer facts to increment ratio
-  inequalities on the added complement.
+  inequalities on added trips, with accept-all-complement specializations
+  `gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge` and
+  `gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le`.
 - Theorem 3 now has the `C` numerator-bound factorization, a measured
   accept-all `C ∈ [0,1)` theorem with that bound discharged, the non-surge
   `C < R1/R2 < 1` to Lemma 10 bounds bridge, direct Lemma 9 primitive

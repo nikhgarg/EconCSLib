@@ -268,7 +268,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `fixedStateCross_le_of_increment_ratio_ge`,
   `fixedStateCross_ge_of_increment_ratio_le`,
   `gn21FixedStateCross_le_union_of_increment_ratio_ge`, and
-  `gn21FixedStateCross_ge_union_of_increment_ratio_le`,
+  `gn21FixedStateCross_ge_union_of_increment_ratio_le`, with
+  accept-all-complement variants
+  `gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge` and
+  `gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le`,
   Theorem 3 surge ratio-form bridge
   `Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1`,
   Theorem 3 surge multiplier positivity bridges

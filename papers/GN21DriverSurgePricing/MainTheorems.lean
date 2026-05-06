@@ -2536,6 +2536,92 @@ theorem gn21FixedStateCross_ge_union_of_increment_ratio_le
       (arrivalRate * ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μ)
       hincrement
 
+/--
+Accept-all complement specialization of
+`gn21FixedStateCross_le_union_of_increment_ratio_ge`.
+-/
+theorem gn21FixedStateCross_le_acceptAll_of_complement_increment_ratio_ge
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σ) μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σ) μ)
+    (hincrement :
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ *
+          (arrivalRate * ∫ τ in acceptAllPolicy \ σ, τ ∂μ) ≤
+        gn21ScaledStateTime μ arrivalRate σ *
+          (arrivalRate *
+            ∫ τ in acceptAllPolicy \ σ,
+              gn21SwitchProb switchIJ switchJI τ ∂μ)) :
+    gn21ScaledStateTime μ arrivalRate acceptAllPolicy *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ ≤
+      gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI acceptAllPolicy := by
+  rw [← union_acceptAll_diff_of_subset hσ_subset]
+  exact
+    gn21FixedStateCross_le_union_of_increment_ratio_ge
+      μ arrivalRate switchIJ switchJI σ (acceptAllPolicy \ σ)
+      (by
+        rw [Set.disjoint_left]
+        intro τ hτ hτ_rejected
+        exact hτ_rejected.2 hτ)
+      (measurableSet_acceptAllPolicy.diff hσ_measurable)
+      htime_integrable_σ htime_integrable_rejected hq_integrable_σ
+      hq_integrable_rejected hincrement
+
+/--
+Reverse accept-all complement specialization of
+`gn21FixedStateCross_ge_union_of_increment_ratio_le`.
+-/
+theorem gn21FixedStateCross_ge_acceptAll_of_complement_increment_ratio_le
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σ) μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σ) μ)
+    (hincrement :
+      gn21ScaledStateTime μ arrivalRate σ *
+          (arrivalRate *
+            ∫ τ in acceptAllPolicy \ σ,
+              gn21SwitchProb switchIJ switchJI τ ∂μ) ≤
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ *
+          (arrivalRate * ∫ τ in acceptAllPolicy \ σ, τ ∂μ)) :
+    gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI acceptAllPolicy ≤
+      gn21ScaledStateTime μ arrivalRate acceptAllPolicy *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ := by
+  rw [← union_acceptAll_diff_of_subset hσ_subset]
+  exact
+    gn21FixedStateCross_ge_union_of_increment_ratio_le
+      μ arrivalRate switchIJ switchJI σ (acceptAllPolicy \ σ)
+      (by
+        rw [Set.disjoint_left]
+        intro τ hτ hτ_rejected
+        exact hτ_rejected.2 hτ)
+      (measurableSet_acceptAllPolicy.diff hσ_measurable)
+      htime_integrable_σ htime_integrable_rejected hq_integrable_σ
+      hq_integrable_rejected hincrement
+
 /-- Structured IC price family from Theorem 3: `w_i(τ)=m_i τ + z_i q_{i→j}(τ)`. -/
 def structuredSurgePrice (m z : ℝ) (q : TripLength → ℝ) : PricingFunction :=
   fun τ => m * τ + z * q τ
