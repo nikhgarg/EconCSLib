@@ -2328,6 +2328,22 @@ def gn21ScaledStateTime
     (μ : Measure TripLength) (arrivalRate : ℝ) (σ : TripPolicy) : ℝ :=
   1 + arrivalRate * singleStateTripTime μ σ
 
+/-- Scaled state time is monotone among feasible policies under nonnegative arrivals. -/
+theorem gn21ScaledStateTime_le_acceptAll_of_subset
+    (μ : Measure TripLength) (arrivalRate : ℝ) (σ : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    gn21ScaledStateTime μ arrivalRate σ ≤
+      gn21ScaledStateTime μ arrivalRate acceptAllPolicy := by
+  unfold gn21ScaledStateTime
+  have htime_le :
+      singleStateTripTime μ σ ≤ singleStateTripTime μ acceptAllPolicy :=
+    singleStateTripTime_le_acceptAll_of_subset μ σ htime_integrable_acceptAll
+      hσ_subset
+  nlinarith [mul_le_mul_of_nonneg_left htime_le harrival_nonneg]
+
 /-- Scaled state time is at least one under nonnegative arrivals and feasible trips. -/
 theorem gn21ScaledStateTime_ge_one_of_nonneg
     (μ : Measure TripLength) (arrivalRate : ℝ) (σ : TripPolicy)
@@ -11252,6 +11268,135 @@ theorem lemma10StructuredUpperFromExitWeight_antitone
     sub_pos.mpr hswitch_lt_Q1
   rw [div_le_div_iff₀ hden_Qbar_pos hden_Q_pos]
   nlinarith
+
+/--
+Lemma 10 fixed-state monotonicity.  Holding the moving-state gap fixed, the
+lower bound for a current fixed state is at most the lower bound for an
+expanded fixed state whenever the expansion does not lower the fixed state's
+exit-weight/time ratio, equivalently `T * Qbar >= Tbar * Q`.
+-/
+theorem lemma10StructuredLowerFromGap_le_of_fixed_state_expansion
+    (T Q Tbar Qbar gap switch12 : ℝ)
+    (hT_pos : 0 < T)
+    (hQ_nonneg : 0 ≤ Q)
+    (hT_le : T ≤ Tbar)
+    (hQ_le : Q ≤ Qbar)
+    (hswitch_pos : 0 < switch12)
+    (hgap_nonneg : 0 ≤ gap)
+    (hcross : Tbar * Q ≤ T * Qbar) :
+    lemma10StructuredLowerFromGap T Q gap switch12 ≤
+      lemma10StructuredLowerFromGap Tbar Qbar gap switch12 := by
+  unfold lemma10StructuredLowerFromGap
+  have hTbar_pos : 0 < Tbar := lt_of_lt_of_le hT_pos hT_le
+  have hQbar_nonneg : 0 ≤ Qbar := le_trans hQ_nonneg hQ_le
+  have hA_pos : 0 < T * switch12 + Q := by
+    have hprod_pos : 0 < T * switch12 := mul_pos hT_pos hswitch_pos
+    exact add_pos_of_pos_of_nonneg hprod_pos hQ_nonneg
+  have hAbar_pos : 0 < Tbar * switch12 + Qbar := by
+    have hprod_pos : 0 < Tbar * switch12 := mul_pos hTbar_pos hswitch_pos
+    exact add_pos_of_pos_of_nonneg hprod_pos hQbar_nonneg
+  have hden_pos : 0 < Q * gap + switch12 * (T * switch12 + Q) := by
+    have hleft : 0 ≤ Q * gap := mul_nonneg hQ_nonneg hgap_nonneg
+    have hright : 0 < switch12 * (T * switch12 + Q) :=
+      mul_pos hswitch_pos hA_pos
+    nlinarith
+  have hdenbar_pos :
+      0 < Qbar * gap + switch12 * (Tbar * switch12 + Qbar) := by
+    have hleft : 0 ≤ Qbar * gap := mul_nonneg hQbar_nonneg hgap_nonneg
+    have hright : 0 < switch12 * (Tbar * switch12 + Qbar) :=
+      mul_pos hswitch_pos hAbar_pos
+    nlinarith
+  rw [neg_le_neg_iff]
+  rw [div_le_div_iff₀ hdenbar_pos hden_pos]
+  nlinarith [mul_nonneg (mul_nonneg (le_of_lt hswitch_pos) hgap_nonneg)
+    (sub_nonneg.mpr hcross)]
+
+/--
+Lemma 10 fixed-state transfer: accept-all fixed-state bounds imply current
+fixed-state bounds under the same cross-ratio condition as
+`lemma10StructuredLowerFromGap_le_of_fixed_state_expansion`.  The upper bound
+is independent of the fixed state's `T,Q` pair.
+-/
+theorem lemma10StructuredBounds_of_fixed_state_expansion
+    (ratio T2 Q2 Tbar2 Qbar2 T1 Q1 switch12 : ℝ)
+    (hbounds_bar :
+      lemma10StructuredBounds ratio Tbar2 Qbar2 T1 Q1 switch12)
+    (hT2_pos : 0 < T2)
+    (hQ2_nonneg : 0 ≤ Q2)
+    (hT2_le : T2 ≤ Tbar2)
+    (hQ2_le : Q2 ≤ Qbar2)
+    (hswitch_pos : 0 < switch12)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hcross : Tbar2 * Q2 ≤ T2 * Qbar2) :
+    lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12 := by
+  constructor
+  · have hmono :=
+      lemma10StructuredLowerFromGap_le_of_fixed_state_expansion
+        T2 Q2 Tbar2 Qbar2 (switch12 * T1 - Q1) switch12
+        hT2_pos hQ2_nonneg hT2_le hQ2_le hswitch_pos hgap_nonneg hcross
+    have hmono' :
+        lemma10StructuredLower T2 Q2 T1 Q1 switch12 ≤
+          lemma10StructuredLower Tbar2 Qbar2 T1 Q1 switch12 := by
+      simpa [lemma10StructuredLower_eq_lowerFromGap] using hmono
+    exact lt_of_le_of_lt hmono' hbounds_bar.1
+  · simpa [lemma10StructuredUpper] using hbounds_bar.2
+
+/--
+Measured Lemma 10 fixed-state transfer from accept-all fixed-state primitives
+to a current feasible fixed-state policy.  The only non-routine condition is
+the cross-ratio inequality saying that the current fixed policy's
+exit-weight/time ratio is at least the accept-all ratio.
+-/
+theorem lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion
+    (μ : Measure TripLength) (arrivalRate switch12 switch21 ratio T1 Q1 : ℝ)
+    (σ : TripPolicy)
+    (hbounds_acceptAll :
+      lemma10StructuredBounds ratio
+        (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+        (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 acceptAllPolicy)
+        T1 Q1 switch12)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hsum21 : 0 < switch21 + switch12)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (htime_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hq_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy μ)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hcross :
+      gn21ScaledStateTime μ arrivalRate acceptAllPolicy *
+          gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ ≤
+        gn21ScaledStateTime μ arrivalRate σ *
+          gn21ExitWeightIntegral μ arrivalRate switch21 switch12 acceptAllPolicy) :
+    lemma10StructuredBounds ratio
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ)
+      T1 Q1 switch12 := by
+  exact
+    lemma10StructuredBounds_of_fixed_state_expansion
+      ratio
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 σ)
+      (gn21ScaledStateTime μ arrivalRate acceptAllPolicy)
+      (gn21ExitWeightIntegral μ arrivalRate switch21 switch12 acceptAllPolicy)
+      T1 Q1 switch12 hbounds_acceptAll
+      (gn21ScaledStateTime_pos_of_nonneg μ arrivalRate σ harrival_nonneg
+        hσ_measurable hσ_subset)
+      (le_of_lt
+        (gn21ExitWeightIntegral_pos_of_switch_pos μ arrivalRate switch21
+          switch12 σ harrival_nonneg hswitch21_pos hsum21 hσ_measurable
+          hσ_subset))
+      (gn21ScaledStateTime_le_acceptAll_of_subset μ arrivalRate σ
+        harrival_nonneg htime_acceptAll_integrable hσ_subset)
+      (paper_remark4_exit_weight_integral_le_acceptAll μ arrivalRate switch21
+        switch12 σ harrival_nonneg (le_of_lt hswitch21_pos) hsum21
+        hq_acceptAll_integrable hσ_subset)
+      hswitch12_pos hgap_nonneg hcross
 
 /--
 Lemma 10 tightening bridge: if the accept-all lower/upper bounds hold, the
