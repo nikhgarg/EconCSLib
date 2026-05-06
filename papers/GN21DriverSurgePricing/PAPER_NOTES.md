@@ -243,6 +243,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   short/tail integrability packages
   `GN21PositiveIntervalProductIntegrabilityData` and
   `GN21TailProductIntegrabilityData`,
+  shared regular endpoint source package
+  `GN21RegularEndpointSharedSourceData` and the five
+  `...RegularEndpointData.of_shared_source` constructors,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`,

@@ -153,8 +153,11 @@ cache is `source.txt`.
   product-calculus packages.  `GN21PositiveIntervalProductIntegrabilityData`
   derives short accepted-interval integrability from continuous product data,
   while `GN21TailProductIntegrabilityData` bundles improper tail integrability
-  and reuses it for narrower tails.  The current regular allowed-policy-form
-  endpoint route is now exposed as
+  and reuses it for narrower tails.  `GN21RegularEndpointSharedSourceData` and
+  the five `...RegularEndpointData.of_shared_source` constructors now factor
+  shared density support, density continuity, arrival/switch positivity, and
+  accept-all integrability out of the regular endpoint cases.  The current
+  regular allowed-policy-form endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`,
@@ -557,7 +560,9 @@ Lemma 9/10 current-bound data plumbing are now available through regular
 endpoint records for all four Theorem 4 shape cases, with reject-middle split
 into lower- and upper-cutoff endpoint variants; the older regular-selection
 route remains compiled for the variant that proves ordinary allowed Lemma 5
-replacement data explicitly.
+replacement data explicitly.  Shared source regularity is now factored into
+`GN21RegularEndpointSharedSourceData`, so the final selector can focus on
+cutoff-local density positivity, tail integrability, and source current bounds.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

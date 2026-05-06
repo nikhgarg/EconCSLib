@@ -138,6 +138,12 @@ into the concrete endpoint policy data.
   `GN21SurgeRejectMiddleRegularEndpointData` now derive the supported endpoint
   records from continuous density, source current-bounds data, support, and
   tail-integrability packages.
+- `GN21RegularEndpointSharedSourceData` and the five
+  `...RegularEndpointData.of_shared_source` constructors factor out shared
+  source regularity.  Use this package before case-splitting on endpoint
+  shapes; the shape cases should only provide cutoff-local density positivity,
+  small-move/tail data, mass positivity of the other state, and source
+  Lemma 9/10 current-bound data.
 - `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
   are the current targets because they avoid duplicating Lemma 5 replacement

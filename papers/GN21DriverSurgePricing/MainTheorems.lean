@@ -367,6 +367,11 @@ the continuous CTMC source theorems.
 - `GN21PositiveIntervalProductIntegrabilityData` and
   `GN21TailProductIntegrabilityData`: reusable packages for short accepted
   intervals and narrower-tail integrability in the surge endpoint cases.
+- `GN21RegularEndpointSharedSourceData` and the five
+  `...RegularEndpointData.of_shared_source` constructors: shared source
+  regularity and scalar fields for the regular endpoint cases, so the final
+  selector can state only cutoff-local positivity, tail-integrability, and
+  Lemma 9/10 current-bound data.
 - `GN21SurgeIntervalEndpointBridgeData`,
   `GN21NonsurgeIntervalEndpointBridgeData`, and
   `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
@@ -27694,6 +27699,252 @@ def GN21SurgeRejectMiddleRegularEndpointData.to_supported_endpoint_data
       exact .lower (Dlo.to_supported_endpoint_data hρ_feasible)
   | upper Dhi =>
       exact .upper (Dhi.to_supported_endpoint_data hρ_feasible)
+
+/--
+Shared source regularity for the five regular endpoint cases.  The final
+continuous selection proof should pass this once, then provide only cutoff-local
+positivity, tail-integrability, and Lemma 9/10 current-bound data in each shape
+case.
+-/
+structure GN21RegularEndpointSharedSourceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  nonsurge_support : GN21WithDensityAcceptAllSupport (μ 0)
+  surge_support : GN21WithDensityAcceptAllSupport (μ 1)
+  nonsurge_density_cont :
+    Continuous fun τ => (nonsurge_support.densityNN τ : ℝ)
+  surge_density_cont :
+    Continuous fun τ => (surge_support.densityNN τ : ℝ)
+  harrival0_pos : 0 < arrival 0
+  harrival1_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime0_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime1_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq0_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq1_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+
+/-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
+def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 u R2 ratio : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hm0 : m 0 = R2)
+    (hdensity_pos : 0 < (S.nonsurge_support.densityNN u : ℝ))
+    (hu : 0 < u)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (current_bounds_source :
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        R2 (z 0) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) (ρ 1)) :
+    GN21NonsurgeRejectLongRegularEndpointData
+      μ arrival m z switch12 switch21 ρ u where
+  support := S.nonsurge_support
+  hdensity_cont := S.nonsurge_density_cont
+  R2 := R2
+  ratio := ratio
+  hm0 := hm0
+  harrival_pos := S.harrival0_pos
+  harrival_other_pos := S.harrival1_pos
+  hswitch12_pos := S.hswitch12_pos
+  hswitch21_pos := S.hswitch21_pos
+  hdensity_pos := hdensity_pos
+  hu := hu
+  htime_acceptAll_integrable := S.htime0_acceptAll_integrable
+  hq_acceptAll_integrable := S.hq0_acceptAll_integrable
+  hmass_other_pos := hmass_other_pos
+  current_bounds_source := current_bounds_source
+
+/-- Build regular non-surge accept-middle endpoint data from shared source regularity. -/
+def GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 lo hi R2 ratio δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hm0 : m 0 = R2)
+    (hdensity_pos : 0 < (S.nonsurge_support.densityNN lo : ℝ))
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (current_bounds_source :
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        R2 (z 0) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) (ρ 1)) :
+    GN21NonsurgeAcceptMiddleRegularEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi where
+  support := S.nonsurge_support
+  hdensity_cont := S.nonsurge_density_cont
+  R2 := R2
+  ratio := ratio
+  δ := δ
+  hm0 := hm0
+  harrival_pos := S.harrival0_pos
+  harrival_other_pos := S.harrival1_pos
+  hswitch12_pos := S.hswitch12_pos
+  hswitch21_pos := S.hswitch21_pos
+  hdensity_pos := hdensity_pos
+  hlo_pos := hlo_pos
+  hlo_lt_hi := hlo_lt_hi
+  hδ := hδ
+  hδ_le_lo := hδ_le_lo
+  htime_acceptAll_integrable := S.htime0_acceptAll_integrable
+  hq_acceptAll_integrable := S.hq0_acceptAll_integrable
+  hmass_other_pos := hmass_other_pos
+  current_bounds_source := current_bounds_source
+
+/-- Build regular surge reject-short endpoint data from shared source regularity. -/
+def GN21SurgeRejectShortRegularEndpointData.of_shared_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 u R1 ratio δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hdensity_pos : 0 < (S.surge_support.densityNN u : ℝ))
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1))
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (current_bounds_source :
+      GN21SurgeLemma9AcceptAllAggregateSourceData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (m 1) R1 (z 1) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) (ρ 1)) :
+    GN21SurgeRejectShortRegularEndpointData
+      μ arrival m z switch12 switch21 ρ u where
+  support := S.surge_support
+  hdensity_cont := S.surge_density_cont
+  R1 := R1
+  ratio := ratio
+  δ := δ
+  harrival_other_pos := S.harrival0_pos
+  harrival_pos := S.harrival1_pos
+  hswitch12_pos := S.hswitch12_pos
+  hswitch21_pos := S.hswitch21_pos
+  hdensity_pos := hdensity_pos
+  tail_integrability := tail_integrability
+  hu := hu
+  hδ := hδ
+  hδ_le_u := hδ_le_u
+  htime_acceptAll_integrable := S.htime1_acceptAll_integrable
+  hq_acceptAll_integrable := S.hq1_acceptAll_integrable
+  hmass_other_pos := hmass_other_pos
+  current_bounds_source := current_bounds_source
+
+/-- Build regular lower-cutoff surge reject-middle data from shared source regularity. -/
+def GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 lo hi R1 ratio δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hdensity_pos : 0 < (S.surge_support.densityNN lo : ℝ))
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (current_bounds_source :
+      GN21SurgeLemma9AcceptAllAggregateSourceData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (m 1) R1 (z 1) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) (ρ 1)) :
+    GN21SurgeRejectMiddleLoRegularEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi where
+  support := S.surge_support
+  hdensity_cont := S.surge_density_cont
+  R1 := R1
+  ratio := ratio
+  δ := δ
+  harrival_other_pos := S.harrival0_pos
+  harrival_pos := S.harrival1_pos
+  hswitch12_pos := S.hswitch12_pos
+  hswitch21_pos := S.hswitch21_pos
+  hdensity_pos := hdensity_pos
+  hlo_pos := hlo_pos
+  hloδ_le_hi := hloδ_le_hi
+  hδ := hδ
+  tail_integrability := tail_integrability
+  htime_acceptAll_integrable := S.htime1_acceptAll_integrable
+  hq_acceptAll_integrable := S.hq1_acceptAll_integrable
+  hmass_other_pos := hmass_other_pos
+  current_bounds_source := current_bounds_source
+
+/-- Build regular upper-cutoff surge reject-middle data from shared source regularity. -/
+def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 lo hi R1 ratio δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hdensity_pos : 0 < (S.surge_support.densityNN hi : ℝ))
+    (derivative_tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1))
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ))
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (current_bounds_source :
+      GN21SurgeLemma9AcceptAllAggregateSourceData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (m 1) R1 (z 1) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) (ρ 1)) :
+    GN21SurgeRejectMiddleHiRegularEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi where
+  support := S.surge_support
+  hdensity_cont := S.surge_density_cont
+  R1 := R1
+  ratio := ratio
+  δ := δ
+  harrival_other_pos := S.harrival0_pos
+  harrival_pos := S.harrival1_pos
+  hswitch12_pos := S.hswitch12_pos
+  hswitch21_pos := S.hswitch21_pos
+  hdensity_pos := hdensity_pos
+  derivative_tail_integrability := derivative_tail_integrability
+  hhi_pos := hhi_pos
+  hδ := hδ
+  hlo_nonneg := hlo_nonneg
+  hlo_le_hiδ := hlo_le_hiδ
+  tail_integrability := tail_integrability
+  htime_acceptAll_integrable := S.htime1_acceptAll_integrable
+  hq_acceptAll_integrable := S.hq1_acceptAll_integrable
+  hmass_other_pos := hmass_other_pos
+  current_bounds_source := current_bounds_source
 
 /--
 Measurable Theorem 4 selection certificate at the current-bounds endpoint
