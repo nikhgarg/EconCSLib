@@ -4,7 +4,7 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The most recent compiled adapter is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
 
 This is now the preferred IC closure route.  It proves the surge-state
@@ -87,6 +87,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions`.
    The lightest feasible-measurable wrapper is
    `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions`,
+   exposed canonically as
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions`,
    whose final field is
    `Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate`;
    Lean derives the packed aggregate data and nondegeneracy fields from

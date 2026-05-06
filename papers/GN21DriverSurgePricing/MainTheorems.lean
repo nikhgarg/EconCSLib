@@ -49447,6 +49447,24 @@ theorem paper_theorem3_measured_structured_ic_prices_of_source_assumptions
       A.allowed_replacement
 
 /--
+Canonical source-facing measurable Theorem 3 wrapper.  This entry point uses
+the sequential current-bounds source-data route: first move the surge state to
+accept-all with Lemma 9 at the current non-surge reward rate, then move the
+non-surge state with surge already fixed at accept-all.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A
+
+/--
 Bundled source-level assumptions for the endpoint-bridge version of the
 strongest Theorem 3 route.  Compared with
 `Theorem3AcceptAllAllowedReplacementSourceAssumptions`, the final field is
