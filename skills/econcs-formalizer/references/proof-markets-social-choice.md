@@ -8,6 +8,49 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 - For matching, keep preference, blocking-pair, stability, and algorithmic
   invariants separate. Paper-facing theorem wrappers should call generic
   deferred-acceptance correctness when possible.
+- For Gale-Shapley/Roth-style one-to-one marriage results, close the
+  men-proposing DA chain in the reusable library: stability, rejected-pair
+  impossibility, men-optimality, equal-size all-acceptable completeness, and
+  then women-pessimality by the blocking-pair argument from men-optimality.
+  Use the library `womenDeferredAcceptance` role-reversal primitive for
+  women-proposing DA statements; it already packages stability and
+  women-optimality from swapped men-optimality, and men-pessimality from the
+  swapped women-pessimal theorem.
+  Proposal-order independence can often be captured first as uniqueness of the
+  men-optimal stable matching; keep a separate caveat until an arbitrary
+  proposal-order trace has been modeled and connected to that uniqueness
+  theorem.
+  For papers that cite Roth/Dubins-Freedman truthfulness rather than reproving
+  it, prefer a thin paper-local wrapper around the existing Roth Theorem 5
+  declarations, with the strict equal-size domain exposed in the local paper
+  notation.
+  For exchangeability or random-market arguments, use
+  `Assignment.relabelWomen` and `isStable_relabelWomen_iff` to prove that
+  stable-partner events are invariant under woman-side relabeling before
+  invoking finite uniform probability relabeling.
+  Keep optional-list/rural-hospitals strengthenings separate from complete
+  all-acceptable wrappers, and make the domain assumption visible in paper
+  theorem names and README rows.
+- For college-admissions/hospitals-residents capacity models, first build a
+  generic many-to-one assignment API with applicant matches, finite college
+  rosters, consistency, quota feasibility, individual rationality, and blocking
+  pairs. Then prove the cloned-seat bridge: define `CollegeSeat quota` as a
+  dependent sigma over colleges and `Fin (quota c)`, add explicit `Fintype` and
+  `DecidableEq` instances at that abstraction boundary, run ordinary
+  one-to-one deferred acceptance over seats, and collapse the assignment back to
+  rosters.
+- In cloned-seat many-to-one proofs, close quota feasibility by injecting each
+  roster member into the seat copy chosen from its one-to-one match. Close the
+  free-seat blocking case with a companion lemma: if a collapsed roster has
+  cardinality below quota, then some cloned seat for that college is unmatched;
+  prove it by contradiction and inject seats into the roster via the
+  one-to-one consistency field.
+- To lift stability from cloned seats to colleges, split a many-to-one blocking
+  pair into either a free-seat case or a replacement case. The free-seat case
+  blocks the stable seat assignment using the empty cloned seat; the replacement
+  case uses the currently assigned applicant's cloned seat. Keep all seat values
+  definitionally equal to the owning college's value so `simp` can finish most
+  valuation rewrites.
 - For fair division, reuse bundle/allocation primitives. Prove feasibility,
   marginal-value, and envy/fairness predicates separately before combining them
   in paper wrappers.

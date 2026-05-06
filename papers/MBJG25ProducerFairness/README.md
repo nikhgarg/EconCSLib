@@ -18,7 +18,7 @@ for theorem-number and definition comparisons.
 
 ## Central Theorem File
 
-- `MBJG25ProducerFairness/PaperFacingTheorems.lean`
+- `MBJG25ProducerFairness/PaperInterface.lean`
   (imports and re-exports the wrappers in `MBJG25ProducerFairness/MainTheorems.lean` for a
   single-file audit target)
 

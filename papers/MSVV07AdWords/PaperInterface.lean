@@ -1,7 +1,7 @@
 import MSVV07AdWords.MainTheorems
 
 /-!
-# Paper-Facing Theorem Ledger: MSVV07 AdWords
+# Paper Interface: MSVV07 AdWords
 
 This file is the single Lean file intended for human audit of the formalized
 surface of Mehta, Saberi, Vazirani, and Vazirani, *AdWords and Generalized

@@ -2,59 +2,67 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=1.1cm and 2cm,
+\begin{tikzpicture}[node distance=1.05cm and 1.8cm,
   every node/.style={font=\sffamily\small}]
 
-% Legend
 \dagPaperMetadata{Addressing Discretization-Induced Bias in Demographic Prediction}{Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg}{ACM FAccT 2024}{2024}{https://arxiv.org/pdf/2405.16762}
 \dagPaperLegendRightOfMetadata{
-\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\formalized};
-\node[dag_model, right=0.35cm of legRes, dag_template_legend] (legDef) {\textbf{Definition}\\model/interface};
-\node[dag_conditional, right=0.35cm of legDef, dag_template_legend] (legCond) {\textbf{Conditional}\\source-facing};
-\node[dag_unformalized, right=0.35cm of legCond, dag_template_legend] (legOpen) {\textbf{Open}\\not formalized};
+\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\paper result};
+\node[dag_model, right=0.35cm of legRes, dag_template_legend] (legDef) {\textbf{Definition}\\model/setup};
 }
-\daglegend{(legRes)(legDef)(legCond)(legOpen)}{Legend}
+\daglegend{(legRes)(legDef)}{Legend}
 
 \begin{dagPaperBody}
+\begin{scope}[yshift=1.20cm]
 
-% Paper definitions and objectives
-\node[dag_model] (Scores)
-  {\textbf{Section 3.1}\\continuous classifier, argmax rule, bias, MAE};
-\node[dag_model, below=of Scores] (DecisionObj)
-  {\textbf{Eq. (3)}\\accuracy/fidelity objective $O_N^\gamma$};
-\node[dag_model, below=of DecisionObj] (Nontrivial)
-  {\textbf{Section 3.3}\\non-trivial reference distributions};
+\node[dag_model, text width=5.4cm] (Model) at (7,0)
+  {\textbf{Theorem 1 Setup}\\classifier, bias, MAE, calibration};
 
-% Current reusable expected-decision layer
-\node[dag_result, right=of DecisionObj] (Argmax)
-  {\textbf{Expected Decision Core}\\finite-linear expectation, pointwise optimizers, Bayes-score argmax};
-\node[dag_conditional, above=of Argmax] (Thm2i)
-  {\textbf{Theorem 2(i)}\\joint rule maximizes $O_N^\gamma$ assuming row Bayes identities};
-\node[dag_conditional, below=of Argmax] (Thm2ii)
-  {\textbf{Theorem 2(ii)}\\argmax maximizes expected accuracy assuming row Bayes identities};
+\node[dag_result, text width=4.0cm] (Thm1i) at (1.6,-2.7)
+  {\textbf{Theorem 1(i)}\\no-information argmax bias formula};
+\node[dag_result, text width=4.0cm] (Thm1ii) at (7,-2.7)
+  {\textbf{Theorem 1(ii)}\\perfect classifiers have zero bias};
+\node[dag_result, text width=4.0cm] (Thm1iii) at (12.4,-2.7)
+  {\textbf{Theorem 1(iii)}\\argmax bias is bounded by MAE, tightly};
 
-% Source theorems
-\node[dag_unformalized, right=of Scores] (Thm1)
-  {\textbf{Theorem 1 (Sec. 3.2)}\\argmax bias bounded by predictive MAE; tightness};
-\node[dag_unformalized, right=of Nontrivial] (Thm2iii)
-  {\textbf{Theorem 2(iii)}\\argmax only Pareto-optimal independent rule};
-\node[dag_conditional, right=of Argmax] (RowBayes)
-  {\textbf{Bayes Row Identities}\\$E[1\{Y_i=\hat y_i\}] = E[q_i(\hat y_i)]$ for each row rule};
-\node[dag_result, right=of Thm2ii] (BayesBridge)
-  {\textbf{Tower Bridge}\\row identities imply expected 0-1 accuracy equals expected posterior score};
+\node[dag_model, text width=5.4cm] (Objective) at (7,-6.2)
+  {\textbf{Theorem 2 Setup}\\Bayes row identity and $O_N^\gamma$};
 
-% Edges
-\draw[dag_arrow] (Scores) -- (Thm1);
-\draw[dag_arrow] (DecisionObj) -- (Argmax);
-\draw[dag_arrow] (Argmax) -- (Thm2i);
-\draw[dag_arrow] (Argmax) -- (Thm2ii);
-\draw[dag_arrow] (DecisionObj) -- (Thm2i);
-\draw[dag_arrow] (Scores) -- (RowBayes);
-\draw[dag_arrow] (RowBayes) |- (BayesBridge);
-\draw[dag_arrow] (BayesBridge) -- (Thm2ii);
-\draw[dag_arrow] (BayesBridge) -- (Thm2i);
-\draw[dag_dashed_arrow] (Nontrivial) -- (Thm2iii);
-\draw[dag_dashed_arrow] (BayesBridge) -- (Thm2iii);
+\node[dag_result, text width=4.0cm] (Thm2i) at (1.6,-8.9)
+  {\textbf{Theorem 2(i)}\\joint rule optimizes $O_N^\gamma$};
+\node[dag_result, text width=4.0cm] (Thm2ii) at (7,-8.9)
+  {\textbf{Theorem 2(ii)}\\argmax maximizes expected accuracy};
+\node[dag_result, text width=4.0cm] (Thm2iii) at (12.4,-8.9)
+  {\textbf{Theorem 2(iii)}\\argmax is the only Pareto-optimal independent rule};
+
+\begin{scope}[on background layer]
+\node[draw=green!55!black, fill=green!4, rounded corners, inner sep=0.35cm,
+  fit=(Thm1i)(Thm1ii)(Thm1iii)] (Thm1Group) {};
+\node[draw=green!55!black, fill=green!4, rounded corners, inner sep=0.35cm,
+  fit=(Thm2i)(Thm2ii)(Thm2iii)] (Thm2Group) {};
+\end{scope}
+
+\node[font=\sffamily\bfseries, fill=white, inner sep=1pt,
+  anchor=south west] at ($(Thm1Group.north west) + (0.12cm,-0.02cm)$)
+  {Theorem 1 family};
+\node[font=\sffamily\bfseries, fill=white, inner sep=1pt,
+  anchor=south west] at ($(Thm2Group.north west) + (0.12cm,-0.02cm)$)
+  {Theorem 2 family};
+
+\draw[dag_arrow] (Model.south) -- (Thm1i.north);
+\draw[dag_arrow] (Model.south) -- (Thm1ii.north);
+\draw[dag_arrow] (Model.south) -- (Thm1iii.north);
+
+\draw[dag_arrow] (Objective.south) -- (Thm2i.north);
+\draw[dag_arrow] (Objective.south) -- (Thm2ii.north);
+\draw[dag_arrow] (Objective.south) -- (Thm2iii.north);
+
+\node[dag_template_note, text width=14.2cm] (AuditNote) at (7,-12.1)
+  {\textbf{Audit note.} Cached source text has only Theorem 1 and Theorem 2 as named results.
+  Proof-route deviations and optional future strengthening are documented in the validation report;
+  the green theorem boxes are closed paper-facing endpoints.};
+
+\end{scope}
 \end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

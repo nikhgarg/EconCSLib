@@ -8,15 +8,9 @@ The tracked paper-facing formalization for *User-item fairness tradeoffs in
 recommendations* is verified in Lean.
 
 The paper-local status ledger marks no active target remaining, and the targeted
-build command
-
-```bash
-lake build GCG24UserItemFairness
-```
-
-completed successfully. A Lean-file placeholder scan found no real `sorry`,
-`admit`, or `axiom` proof gaps in `papers/GCG24UserItemFairness`; matches were
-only comment prose.
+paper build completed successfully. A Lean-file placeholder scan found no real
+`sorry`, `admit`, or `axiom` proof gaps in `papers/GCG24UserItemFairness`;
+matches were only comment prose.
 
 ## Scope Checked
 
@@ -25,12 +19,14 @@ notes:
 
 - `papers/GCG24UserItemFairness/README.md`
 - `papers/GCG24UserItemFairness/DependencyDAG.tex`
+- `papers/GCG24UserItemFairness/PaperInterface.lean`
 - `papers/GCG24UserItemFairness/MainTheorems.lean`
 - the successful targeted Lean build
 
-The central theorem file exposes the paper-facing wrappers. Detailed proof work
-is split across the paper-local LP reduction, optimization, symmetry,
-opposing-types, and misestimation files.
+`PaperInterface.lean` exposes the human-facing definitions and main theorem
+statements. `MainTheorems.lean` exposes the full paper-facing wrappers.
+Detailed proof work is split across the paper-local LP reduction,
+optimization, symmetry, opposing-types, and misestimation files.
 
 ## Results Covered
 

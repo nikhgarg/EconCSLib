@@ -4,9 +4,10 @@ import Roth82StableMatching.MainTheorems
 # Post-Paper Audit: Roth 1982 Stable Matching
 
 This ledger exposes source-numbered final endpoints for the post-verification
-audit. Each declaration is intentionally a thin alias to the paper-facing theorem
-proved in `MainTheorems.lean`, so the source inventory can be checked from one
-importable file without duplicating proof scripts.
+audit. For the compact human-facing statement surface, read
+`PaperInterface.lean`. Each declaration here is intentionally a thin alias to
+the paper-facing theorem proved in `MainTheorems.lean`, so the source inventory
+can be checked from one importable file without duplicating proof scripts.
 -/
 
 namespace Roth82StableMatching

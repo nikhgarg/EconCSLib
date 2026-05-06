@@ -5,7 +5,7 @@
 - Paper: *AdWords and Generalized Online Matching*
 - Source version: Journal of the ACM 54(5), 2007, Article 22; DOI https://doi.org/10.1145/1284320.1284321
 - Lean folder: `papers/MSVV07AdWords`
-- Human-facing theorem file: `papers/MSVV07AdWords/PaperFacingTheorems.lean`
+- Human-facing theorem file: `papers/MSVV07AdWords/PaperInterface.lean`
 - DAG artifacts: `papers/MSVV07AdWords/DependencyDAG.tex`, `papers/MSVV07AdWords/DependencyDAG.pdf`
 
 ## 2. Theorem-by-Theorem Validation
@@ -47,4 +47,4 @@
 ## 7. Final Verdict
 
 - Completion status: main endpoints formalized with documented proof-strategy deviations.
-- Summary: The paper's central positive result (Theorem 8) and lower-bound endpoint (Theorem 9) have compiling Lean theorem surfaces in `PaperFacingTheorems.lean`. The formalization is not a line-by-line proof of source Lemmas 1--7; those proof steps are explicitly listed as not one-for-one formalized.
+- Summary: The paper's central positive result (Theorem 8) and lower-bound endpoint (Theorem 9) have compiling Lean theorem surfaces in `PaperInterface.lean`. The formalization is not a line-by-line proof of source Lemmas 1--7; those proof steps are explicitly listed as not one-for-one formalized.

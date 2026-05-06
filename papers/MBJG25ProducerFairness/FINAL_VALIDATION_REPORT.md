@@ -4,7 +4,7 @@
 - Paper: *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*
 - Source version: [arXiv:2207.04369](https://arxiv.org/abs/2207.04369) / ICWSM 2025
 - Lean folder: `MBJG25ProducerFairness/`
-- Human-facing theorem file: `MBJG25ProducerFairness/PaperFacingTheorems.lean`
+- Human-facing theorem file: `MBJG25ProducerFairness/PaperInterface.lean`
 - DAG artifacts: `MBJG25ProducerFairness/DependencyDAG.tex`
 
 ## 2. Theorem-by-Theorem Validation

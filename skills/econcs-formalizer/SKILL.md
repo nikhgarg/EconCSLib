@@ -52,6 +52,14 @@ endpoint directly: in GN21 Lemma 9, current lower-endpoint nonpositivity plus
 the upper fixed-state comparison is a weaker and more source-faithful boundary
 than requiring both fixed-state cross-ratio comparisons.
 
+For long continuous proofs, save tokens by separating the proof into scalar
+algebra, measured bridge, and paper wrapper layers before iterating in Lean.
+First compile the scalar lemma with explicit parameters and positivity
+premises; then add a small bridge that threads only the evidence the wrapper
+needs. Avoid repeatedly rebuilding a broad wrapper while the scalar algebra is
+still unstable, and avoid adding pass-through wrappers that do not remove a
+real paper-facing obligation.
+
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
 library tools. Do not force a detached library project before proving the paper,

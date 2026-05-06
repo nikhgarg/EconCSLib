@@ -4,7 +4,7 @@
 The script performs the deterministic intake step for a new source paper:
 create the citation-specific folder, cache the source PDF when possible,
 extract a text cache with `pdftotext` when available, and write the required
-README/DAG/MainTheorems/.gitignore files.
+README/DAG/MainTheorems/PaperInterface/formalization-plan/.gitignore files.
 """
 
 from __future__ import annotations
@@ -121,13 +121,16 @@ the text.
 
 ## Paper-Facing Ledger
 
-- Human-facing theorem file: `{folder}/MainTheorems.lean`
+- Implementation theorem file: `{folder}/MainTheorems.lean`
+- Human-facing theorem file: `{folder}/PaperInterface.lean`
+- Outside-Lean proof plan: `{folder}/FORMALIZATION_PLAN.md`
 - Dependency DAG: `{folder}/DependencyDAG.tex`
 - Rendered DAG: `{folder}/DependencyDAG.pdf` when generated locally
 
-`MainTheorems.lean` should expose source formulas and theorem wrappers directly.
-Do not mark a row `formalized` unless the Lean declaration is closed and the
-remaining assumptions cell is `None`.
+`PaperInterface.lean` should be readable on its own: expose source formulas and
+direct theorem statements there, with short proofs that call into
+`MainTheorems.lean`. Do not mark a row `formalized` unless the Lean declaration
+is closed and the remaining assumptions cell is `None`.
 
 Use the controlled status vocabulary from `../../docs/STATUS.md`:
 `formalized`, `formalized with caveat`, `partially formalized`, `conditional`,
@@ -147,8 +150,11 @@ Keep theorem/table content synchronized with `DependencyDAG.tex` node styles and
 
 - [ ] Confirm the official PDF URL, version, and bibliographic fields.
 - [ ] Extract/confirm all named definitions, lemmas, and theorems in source order.
+- [ ] Fill in `FORMALIZATION_PLAN.md` with the initial proof strategy and
+      likely hard seams before deep Lean work.
 - [ ] Populate `DependencyDAG.tex` with the same named-result inventory.
-- [ ] Replace placeholders in `MainTheorems.lean` before updating any status row.
+- [ ] Replace placeholders in `MainTheorems.lean` and `PaperInterface.lean`
+      before updating any status row.
 - [ ] Rebuild `DependencyDAG.pdf` and verify visually after each significant edit.
 """
 
@@ -282,6 +288,60 @@ end {namespace}
 """
 
 
+def paper_interface_text(title: str, folder: str, namespace: str) -> str:
+    display_title = title or "[Paper Title]"
+    return f"""import {folder}.MainTheorems
+
+/-!
+# Human-Facing Paper Interface: {display_title}
+
+This is the compact Lean file a human should read after formalization to check
+whether the paper's definitions and named theorem statements were represented
+correctly.
+
+Rules for completing this file:
+
+- Keep the paper's definitions/formatted objects first, in source order.
+- Expose the actual paper formulas here; do not only point to generic library
+  definitions or implementation witnesses.
+- Then state the named results directly, with assumptions visible in each
+  theorem signature.
+- Use short proofs that call into `MainTheorems.lean` or lower proof files.
+- Keep exhaustive endpoint aliases and proof-seam checks in `PostPaperAudit.lean`,
+  not here.
+
+## Paper Definitions
+
+- `paperDefinition1_formula`: placeholder for the first exact source formula.
+
+## Named Results
+
+- `paper_theorem_1_statement`: placeholder for the first exact source theorem.
+-/
+
+namespace {namespace}
+
+/--
+Definition 1 / first source object.
+
+Replace this placeholder with the raw formula from the paper. A reviewer should
+not need to open imported files to know what this object means.
+-/
+abbrev paperDefinition1_formula : Prop := True
+
+/--
+Theorem 1 / first named result.
+
+Replace this placeholder with the exact source theorem statement, using the
+visible paper-facing definitions above.
+-/
+theorem paper_theorem_1_statement : paperDefinition1_formula := by
+  simpa [paperDefinition1_formula] using paper_theorem_1
+
+end {namespace}
+"""
+
+
 def gitignore_text() -> str:
     return """*.pdf
 *.aux
@@ -293,7 +353,7 @@ def gitignore_text() -> str:
 
 
 def root_import_text(folder: str) -> str:
-    return f"""import {folder}.MainTheorems
+    return f"""import {folder}.PaperInterface
 """
 
 
@@ -322,6 +382,43 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - Last theorem row verified:
 - Outstanding assumptions / caveats:
 
+"""
+
+
+def formalization_plan_text(title: str, namespace: str) -> str:
+    title_text = title or "[Paper Title]"
+    return f"""# Formalization Plan: {title_text}
+
+This is a working scratchpad for outside-Lean proof thinking. Keep it short and
+useful; it is not the final validation report.
+
+- Namespace: `{namespace}`
+
+## Source Inventory
+
+- Definitions / formatted paper objects:
+- Named lemmas / propositions / theorems / corollaries:
+- Theorem-like displayed claims that are used later:
+
+## Initial Proof Strategy
+
+- Main theorem chain:
+- Likely reusable `EconCSLib` seams:
+- Paper steps that look underspecified or analytically hard:
+- Planned fallback route if the source proof is too informal:
+
+## Active Scratchpad
+
+- Current Lean endpoint:
+- Exact current mathematical gap:
+- Next bridge lemmas to try:
+- Informal proof sketch / recurrence / construction:
+
+## Deviations And Assumptions
+
+- Source imprecision or proof deviation to report later:
+- Genuine paper assumptions:
+- Temporary certificate fields to discharge:
 """
 
 
@@ -361,8 +458,18 @@ def main() -> int:
 
     write_file(paper_dir / ".gitignore", gitignore_text(), args.force)
     write_file(paper_dir / "README.md", readme_text(args, folder), args.force)
+    write_file(
+        paper_dir / "FORMALIZATION_PLAN.md",
+        formalization_plan_text(args.title or "", namespace),
+        args.force,
+    )
     write_file(paper_dir / "DependencyDAG.tex", dag_text(), args.force)
     write_file(paper_dir / "MainTheorems.lean", main_theorems_text(args.title or "", namespace), args.force)
+    write_file(
+        paper_dir / "PaperInterface.lean",
+        paper_interface_text(args.title or "", folder, namespace),
+        args.force,
+    )
     write_file(PAPERS / f"{folder}.lean", root_import_text(folder), args.force)
     if args.with_notes:
         write_file(

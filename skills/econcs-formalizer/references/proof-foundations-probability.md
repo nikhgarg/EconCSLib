@@ -32,6 +32,31 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   routes should quantify over feasible measurable policies with positive mass,
   while broader measurable wrappers should either keep explicit positive-mass
   obligations or use scaled-earning/accounting forms that avoid division.
+- For GN21-style two-state CTMC surge proofs, the useful "support any ratio"
+  paragraph is a small-ratio construction, not a claim that the current fixed
+  reward equals the target accept-all reward. Prove a scalar lemma of the form:
+  for any envelope `Rmax`, if `0 < R2*T2 - Rmax*(T2-1)` and the Lemma 9 upper
+  endpoint is positive, choose a sufficiently small positive surge ratio so
+  `m2 > Rmax`, accounting holds, and `z2 < U*(m2-Rmax)`. Then wrap it with the
+  current lower-endpoint nonpositivity to get a feasible Lemma 9 ratio.
+- For signed structured-price envelopes, use two layers. First prove the
+  current reward is below `Rmax = m0` when `z0 <= 0`, or below
+  `Rmax = m0 + z0*lambda12` when `0 <= z0`. Second prove the small-ratio
+  zero-ratio numerator `0 < R2*T2 - Rmax*(T2-1)`. The `Rmax = R2` branch is
+  immediate from `R2 > 0`; the positive-`z0` branch should be derived from the
+  non-surge ratio formula/feasibility assumptions, or recorded as the exact
+  missing source regime condition.
+- To avoid token-heavy Lean retries in CTMC algebra, name the denominator and
+  numerator identities before using inequalities. Prove `m-r = numerator/den`
+  and `z = ratio*B/den`, then transfer slack by
+  `div_lt_div_of_pos_right` instead of letting `ring_nf` expand a whole
+  reward-rate inequality. For small-ratio existence, choose
+  `ratio = min upper (min eps_slack eps_positive) / 2` and derive each
+  half-bound with explicit positive-denominator multiplication.
+- When the current Lemma 9 upper endpoint varies with the fixed current
+  policy, prove a policy-uniform positive lower bound first and transfer slack
+  with one monotonic multiplication lemma. This is cheaper and clearer than
+  rebuilding the surge construction for every current upper expression.
 
 ## Finite PMF and Expectation Seams
 

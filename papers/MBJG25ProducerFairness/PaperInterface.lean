@@ -4,9 +4,9 @@ import EconCSLib.Learning.Bandits.ThompsonSampling
 import EconCSLib.Algorithms.Online.Regret
 
 /-!
-# Paper-Facing Theorem Ledger: Bayesian Rating Fairness
+# Paper Interface: Bayesian Rating Fairness
 
-This file is the single-file Lean audit surface for the ICWSM 2025
+This file is the single-file human-facing Lean interface for the ICWSM 2025
 *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*
 formalization. The declarations are ordered to match paper presentation:
 
@@ -228,7 +228,7 @@ The total expected regret across a finite time horizon.
 -/
 noncomputable def paper_facing_expected_regret
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] :=
-  @EconCSLib.Algorithms.Online.expectedRegret V _ _ _
+  @EconCSLib.Online.expectedRegret V _ _ _
 
 /-- Appendix C: MSE Decomposition in the responsive setting.
 When the number of reviews $N$ is a random variable, the expected mean squared error

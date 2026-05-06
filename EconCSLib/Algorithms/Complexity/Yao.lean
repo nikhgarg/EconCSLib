@@ -83,5 +83,58 @@ theorem not_forall_input_bound_lt_randomized_payoff_of_forall_deterministic_aver
       distribution randomizedAlgorithm payoff bound hdet with ⟨input, hle⟩
   exact not_lt_of_ge hle (hbetter input)
 
+/--
+A finite Yao certificate for randomized lower bounds.
+
+The certificate says a hard input distribution gives every deterministic
+algorithm average payoff at most `bound`.
+-/
+structure RandomizedUpperPayoffCertificate
+    (Algorithm Input : Type*) [Fintype Input] [DecidableEq Input]
+    (bound : ℝ) where
+  distribution : PMF Input
+  payoff : Algorithm → Input → ℝ
+  deterministic_average_le :
+    ∀ algorithm,
+      pmfExp distribution (fun input => payoff algorithm input) ≤ bound
+
+namespace RandomizedUpperPayoffCertificate
+
+variable {Algorithm Input : Type*} {bound : ℝ}
+variable [Fintype Algorithm] [DecidableEq Algorithm]
+variable [Fintype Input] [DecidableEq Input] [Nonempty Input]
+
+/--
+Every randomized algorithm has an input where its expected payoff is at most
+the certificate bound.
+-/
+theorem exists_input_randomized_payoff_le
+    (C : RandomizedUpperPayoffCertificate Algorithm Input bound)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ∃ input,
+      pmfExp randomizedAlgorithm (fun algorithm => C.payoff algorithm input) ≤
+        bound := by
+  exact
+    exists_input_randomized_payoff_le_of_forall_deterministic_average_le
+      C.distribution randomizedAlgorithm C.payoff bound
+      C.deterministic_average_le
+
+/--
+No randomized algorithm can have payoff strictly above the certificate bound on
+every input.
+-/
+theorem not_forall_input_bound_lt_randomized_payoff
+    (C : RandomizedUpperPayoffCertificate Algorithm Input bound)
+    (randomizedAlgorithm : PMF Algorithm) :
+    ¬ ∀ input,
+      bound <
+        pmfExp randomizedAlgorithm (fun algorithm => C.payoff algorithm input) := by
+  exact
+    not_forall_input_bound_lt_randomized_payoff_of_forall_deterministic_average_le
+      C.distribution randomizedAlgorithm C.payoff bound
+      C.deterministic_average_le
+
+end RandomizedUpperPayoffCertificate
+
 end Decision
 end EconCSLib

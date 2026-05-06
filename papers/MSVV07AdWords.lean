@@ -1,4 +1,4 @@
 import MSVV07AdWords.MainTheorems
-import MSVV07AdWords.PaperFacingTheorems
+import MSVV07AdWords.PaperInterface
 import MSVV07AdWords.AdWordsExtensions
 import MSVV07AdWords.AdWordsLowerBound

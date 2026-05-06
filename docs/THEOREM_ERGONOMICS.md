@@ -5,10 +5,13 @@ that will be inspected by humans first, and Lean second.
 
 ## 1) Paper-facing declaration shape
 
-For `MainTheorems.lean`-style files:
+For `PaperInterface.lean` and `MainTheorems.lean`-style files:
 
-- State source definitions and statement wrappers in the same order as the paper
-  text.
+- Put the compact human-facing surface in `PaperInterface.lean`: source
+  definitions/formulas and named theorem statements in the same order as the
+  paper text.
+- Put implementation-level source wrappers and proof plumbing in
+  `MainTheorems.lean`.
 - Keep source notation explicit, even when generic wrappers exist in `EconCSLib`.
 - Prefer source names in docstrings and comments:
   - “Lemma X”, “Theorem 3.1”, “Proposition A”, etc.
@@ -50,11 +53,15 @@ For each paper DAG:
 
 Before claiming progress:
 
-1. Update `DependencyDAG.tex` for topology.
-2. Update `MainTheorems.lean` source wrappers.
-3. Update `README.md` theorem table with matching declaration names.
-4. Compile the paper folder and the shared `smoke check` file.
-5. Run the repository audit with strict style when declarations are finalized.
+1. Update `FORMALIZATION_PLAN.md` with any proof-route deviation or new
+   outside-Lean strategy that affected the implementation.
+2. Update `DependencyDAG.tex` for topology and status.
+3. Update `MainTheorems.lean` source wrappers.
+4. Update `PaperInterface.lean` so a human can verify source definitions and
+   named theorem statements without opening proof files.
+5. Update `README.md` theorem table with matching declaration names.
+6. Compile the paper folder and the shared `smoke check` file.
+7. Run the repository audit with strict style when declarations are finalized.
 
 ## 6) Reusable declaration discoverability
 

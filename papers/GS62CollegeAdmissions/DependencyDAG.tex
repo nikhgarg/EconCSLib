@@ -1,0 +1,36 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[node distance=1.05cm and 1.5cm,
+  every node/.style={font=\sffamily\small}]
+
+\dagPaperMetadata{College Admissions and the Stability of Marriage}{D. Gale and L. S. Shapley}{The American Mathematical Monthly}{1962}{https://doi.org/10.1080/00029890.1962.11989827}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\paper-facing};
+\node[dag_model, right=0.35cm of legRes, dag_template_legend] (legDef) {\textbf{Definition}\\model};
+}
+\daglegend{(legRes)(legDef)}{Legend}
+
+\begin{dagPaperBody}
+\node[dag_model] (Defs) at (0,0)
+  {\textbf{Definitions}\\strict marriage domain, stability, completeness, proposer optimality};
+\node[dag_result] (DA) at (0,-3)
+  {\textbf{Deferred Acceptance}\\reusable stability, completeness, optimality};
+\node[dag_result] (Thm1) at (6,-3)
+  {\textbf{Theorem 1}\\stable marriages exist};
+\node[dag_result] (QuotaOne) at (6,-6)
+  {\textbf{Quota-one admissions}\\one-to-one and many-to-one wrappers};
+\node[dag_result] (Thm2) at (12,-3)
+  {\textbf{Theorem 2}\\applicant/proposer optimality};
+\node[dag_result] (ManyToOne) at (12,-6)
+  {\textbf{General quotas}\\stable college admissions via cloned seats};
+
+\draw[dag_arrow] (Defs) -- (DA);
+\draw[dag_arrow] (DA) -- (Thm1);
+\draw[dag_arrow] (Thm1) -- (QuotaOne);
+\draw[dag_arrow] (DA) -- (Thm2);
+\draw[dag_arrow] (DA) -- (ManyToOne);
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

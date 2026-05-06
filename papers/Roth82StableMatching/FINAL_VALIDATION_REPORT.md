@@ -4,7 +4,7 @@
 - Paper: *The Economics of Matching: Stability and Incentives* (Roth 1982)
 - Source version: Mathematics of Operations Research, Vol. 7, No. 4 (Nov., 1982)
 - Lean folder: `papers/Roth82StableMatching/`
-- Human-facing theorem file: `papers/Roth82StableMatching/MainTheorems.lean`
+- Human-facing theorem file: `papers/Roth82StableMatching/PaperInterface.lean`
 - Post-paper audit ledger: `papers/Roth82StableMatching/PostPaperAudit.lean`,
   imported by `papers/Roth82StableMatching.lean`
 - DAG artifacts: `papers/Roth82StableMatching/DependencyDAG.tex`,
@@ -25,9 +25,9 @@
   because the arbitrary-`k` padded proof now uses the formal Theorem 3 route.
 - Lean audit check: `PostPaperAudit.lean` exposes one source-numbered audit
   endpoint per final paper result, and the paper root imports it.
-- Verification commands used for this audit: `lake build Roth82StableMatching`,
-  placeholder grep over the Roth and matching Lean files, stale-status grep
-  over Roth docs, `git diff --check`, and DAG rendering from the paper folder.
+- Verification checks covered the paper Lean build, placeholder scan over the
+  Roth and matching Lean files, stale-status scan over Roth docs, whitespace
+  diff check, and DAG rendering from the paper folder.
 
 ## 2. Theorem-by-Theorem Validation
 | Paper item | Lean declaration | Status | Statement match | Notes |

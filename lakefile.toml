@@ -52,7 +52,7 @@ srcDir = "papers"
 srcDir = "papers"
 
 [[lean_lib]]
-name = "ZL21TestOptionalPolicies"
+name = "LG21TestOptionalPolicies"
 srcDir = "papers"
 
 [[lean_lib]]
@@ -61,6 +61,13 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "Roth82StableMatching"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "GS62CollegeAdmissions"
+srcDir = "papers"
+
+[[lean_lib]]
 srcDir = "papers"
 
 [[lean_lib]]
