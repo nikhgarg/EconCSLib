@@ -38,10 +38,24 @@ ROOT_STATUS_VALUES = {
     "Formalized",
     "Formalized with caveat",
     "Formalized with documented caveat",
+    "Main endpoints formalized",
     "Main endpoints formalized with documented deviations",
     "Partially formalized",
     "Not formalized",
+    "Active validation",
     "Verified in Lean",
+    "Verified with OCR caveat",
+    "Verified in Lean with source OCR caveat",
+}
+ROOT_INTERFACE_REQUIRED_STATUSES = {
+    "Formalized",
+    "Formalized with caveat",
+    "Formalized with documented caveat",
+    "Main endpoints formalized",
+    "Main endpoints formalized with documented deviations",
+    "Verified in Lean",
+    "Verified with OCR caveat",
+    "Verified in Lean with source OCR caveat",
 }
 PAPER_STATUS_VALUES = {
     "formalized",
@@ -68,6 +82,33 @@ LEAN_DECL_RE = re.compile(r"^\s*(?:theorem|lemma|def|abbrev|structure|class|indu
 LEDGER_PLACEHOLDER_RE = re.compile(
     r"\[Paper Title\]|\bnamespace TEMPLATE\b|\bpaperDefinition1\b|\bpaper_theorem_1\b|Replace before claiming progress",
 )
+PROOF_FACING_AUDIT_FORMULA_RE = re.compile(
+    r"/--(?:(?!-/).)*\bformula\b(?:(?!-/).)*-/\s*noncomputable\s+abbrev\s+audit[A-Za-z0-9_]*",
+    re.I | re.S,
+)
+INTERFACE_WITNESS_RE = re.compile(
+    r"^\s*(?:theorem|lemma|def|abbrev)\s+[A-Za-z0-9_]*witness[A-Za-z0-9_]*\b",
+    re.I | re.M,
+)
+README_AGENT_DETAIL_RE = re.compile(
+    r"Get context on this repo|source inventory first|FORMALIZATION_PLAN\.md|"
+    r"PostPaperAudit\.lean|pdftotext|econcs-formalizer/SKILL\.md|"
+    r"DependencyDAG\.tex|MainTheorems\.lean",
+    re.I,
+)
+README_OLD_STATUS_TABLE_RE = re.compile(
+    r"^\|\s*Paper folder\s*\|\s*Paper\s*\|\s*Overall status\s*\|",
+    re.M,
+)
+README_STATUS_DETAIL_RE = re.compile(
+    r"Current Lean surface|Lean declaration|PostPaperAudit\.lean|"
+    r"DependencyDAG\.tex|MainTheorems\.lean",
+    re.I,
+)
+README_STATUS_HEADER = ["Paper", "Status", "Human summary"]
+README_MAX_STATUS_ROWS = 20
+README_MAX_STATUS_SUMMARY_CHARS = 180
+README_MAX_LINES = 140
 
 
 @dataclass(frozen=True)
@@ -259,7 +300,7 @@ def check_paper_facing_ledgers(include_active: bool) -> list[Finding]:
         if folder.name in ACTIVE_PAPERS and not include_active:
             continue
 
-        ledger_candidates = [folder / "MainTheorems.lean", folder / "PaperFacingTheorems.lean"]
+        ledger_candidates = [folder / "MainTheorems.lean", folder / "PaperInterface.lean"]
         existing = [path for path in ledger_candidates if path.exists()]
         if not existing:
             continue
@@ -278,6 +319,102 @@ def check_paper_facing_ledgers(include_active: bool) -> list[Finding]:
                 findings.append(
                     Finding("ERROR", ledger, "paper-facing ledger contains unguarded `#check`")
                 )
+    return findings
+
+
+def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
+    findings: list[Finding] = []
+    readme = ROOT / "README.md"
+    interface_required = root_status_interface_required_papers(readme) if readme.exists() else set()
+
+    for folder in paper_dirs():
+        if folder.name in ACTIVE_PAPERS and not include_active:
+            continue
+
+        interface = folder / "PaperInterface.lean"
+        audit = folder / "PostPaperAudit.lean"
+        report = folder / "FINAL_VALIDATION_REPORT.md"
+        aggregator = PAPERS / f"{folder.name}.lean"
+
+        if folder.name in interface_required and not interface.exists():
+            findings.append(
+                Finding(
+                    "ERROR",
+                    folder,
+                    "completed/formalized paper is missing `PaperInterface.lean`",
+                )
+            )
+
+        if interface.exists():
+            text = interface.read_text(encoding="utf-8")
+            if folder.name in interface_required and aggregator.exists():
+                import_line = f"import {folder.name}.PaperInterface"
+                if import_line not in aggregator.read_text(encoding="utf-8"):
+                    findings.append(
+                        Finding(
+                            "ERROR",
+                            aggregator,
+                            "completed/formalized paper root should import `PaperInterface.lean`",
+                        )
+                    )
+            if "PProd" in text:
+                findings.append(
+                    Finding("ERROR", interface, "human-facing interface should not use tuple witnesses")
+                )
+            if INTERFACE_WITNESS_RE.search(text):
+                findings.append(
+                    Finding("ERROR", interface, "human-facing interface should not expose witness declarations")
+                )
+            if not re.search(r"^\s*(?:noncomputable\s+)?(?:def|abbrev)\s+", text, re.M):
+                findings.append(
+                    Finding(
+                        "WARN",
+                        interface,
+                        "human-facing interface has no visible definition/abbrev declarations",
+                    )
+                )
+            if not re.search(r"^\s*theorem\s+", text, re.M):
+                findings.append(
+                    Finding("WARN", interface, "human-facing interface has no visible theorem statements")
+                )
+
+        if audit.exists():
+            text = audit.read_text(encoding="utf-8")
+            if aggregator.exists():
+                import_line = f"import {folder.name}.PostPaperAudit"
+                if import_line not in aggregator.read_text(encoding="utf-8"):
+                    findings.append(
+                        Finding(
+                            "WARN",
+                            aggregator,
+                            "paper root should import existing `PostPaperAudit.lean`",
+                        )
+                    )
+            if interface.exists() and "PaperInterface.lean" not in text:
+                findings.append(
+                    Finding("WARN", audit, "post-paper audit should point to `PaperInterface.lean`")
+                )
+            for match in PROOF_FACING_AUDIT_FORMULA_RE.finditer(text):
+                line_no = text.count("\n", 0, match.start()) + 1
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        audit,
+                        f"proof-facing formula alias at line {line_no}; put paper formulas in `PaperInterface.lean`",
+                    )
+                )
+
+        if report.exists():
+            text = report.read_text(encoding="utf-8")
+            if "Lean witness" in text:
+                findings.append(
+                    Finding(
+                        "WARN",
+                        report,
+                        "final report should prefer `Lean interface statement(s)` over `Lean witness`",
+                    )
+                )
+
     return findings
 
 
@@ -305,6 +442,112 @@ def iter_markdown_tables(path: Path) -> list[tuple[list[str], list[list[str]]]]:
             i += 1
         tables.append((header, rows))
     return tables
+
+
+def paper_folder_from_link(cell: str) -> str | None:
+    markdown_link = re.search(r"\]\((papers/[^)#]+)", cell)
+    if markdown_link:
+        return Path(markdown_link.group(1)).name
+    backtick_path = re.fullmatch(r"`?papers/([^`]+)`?", cell.strip())
+    if backtick_path:
+        return Path(backtick_path.group(1)).name
+    return None
+
+
+def root_status_interface_required_papers(readme: Path) -> set[str]:
+    required: set[str] = set()
+    for header, rows in iter_markdown_tables(readme):
+        if header != README_STATUS_HEADER:
+            continue
+        paper_idx = header.index("Paper")
+        status_idx = header.index("Status")
+        for row in rows:
+            if len(row) <= max(paper_idx, status_idx):
+                continue
+            if row[status_idx].strip() not in ROOT_INTERFACE_REQUIRED_STATUSES:
+                continue
+            folder = paper_folder_from_link(row[paper_idx])
+            if folder is not None:
+                required.add(folder)
+    return required
+
+
+def check_root_human_status_table(readme: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    matching_tables = [(header, rows) for header, rows in iter_markdown_tables(readme) if header == README_STATUS_HEADER]
+
+    if not matching_tables:
+        findings.append(
+            Finding(
+                "ERROR",
+                readme,
+                "top-level README should include a concise human status table: `Paper | Status | Human summary`",
+            )
+        )
+        return findings
+
+    if len(matching_tables) > 1:
+        findings.append(Finding("WARN", readme, "top-level README has multiple human status tables"))
+
+    header, rows = matching_tables[0]
+    paper_idx = header.index("Paper")
+    status_idx = header.index("Status")
+    summary_idx = header.index("Human summary")
+    seen: set[str] = set()
+
+    if len(rows) > README_MAX_STATUS_ROWS:
+        findings.append(
+            Finding(
+                "WARN",
+                readme,
+                f"human status table has {len(rows)} rows; keep it concise",
+            )
+        )
+
+    for row_number, row in enumerate(rows, start=1):
+        if len(row) <= max(paper_idx, status_idx, summary_idx):
+            findings.append(Finding("ERROR", readme, f"malformed human status row {row_number}"))
+            continue
+
+        paper = row[paper_idx].strip()
+        status = row[status_idx].strip()
+        summary = row[summary_idx].strip()
+
+        folder = paper_folder_from_link(paper)
+        if folder is None:
+            findings.append(
+                Finding("ERROR", readme, f"human status row {row_number} should link to `papers/<PaperName>`")
+            )
+        else:
+            seen.add(folder)
+
+        if status not in ROOT_STATUS_VALUES:
+            findings.append(Finding("ERROR", readme, f"unexpected human README status `{status}` for `{paper}`"))
+        if not summary:
+            findings.append(Finding("ERROR", readme, f"missing human summary for `{paper}`"))
+        elif len(summary) > README_MAX_STATUS_SUMMARY_CHARS:
+            findings.append(Finding("WARN", readme, f"human summary is too long for `{paper}`"))
+
+        for cell in row:
+            detail = README_STATUS_DETAIL_RE.search(cell)
+            if detail:
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        readme,
+                        f"implementation-facing detail `{detail.group(0)}` in human status row `{paper}`",
+                    )
+                )
+
+    known = {folder.name for folder in paper_dirs()}
+    missing = known - seen
+    extra = seen - known
+    if missing:
+        findings.append(Finding("ERROR", readme, f"missing human status rows: {', '.join(sorted(missing))}"))
+    if extra:
+        findings.append(Finding("ERROR", readme, f"unknown human status rows: {', '.join(sorted(extra))}"))
+
+    return findings
 
 
 def check_root_status_table() -> list[Finding]:
@@ -458,6 +701,85 @@ def check_stale_architecture_terms() -> list[Finding]:
     return findings
 
 
+def check_human_facing_readme() -> list[Finding]:
+    findings: list[Finding] = []
+    readme = ROOT / "README.md"
+    docs_index = ROOT / "docs" / "README.md"
+    workflow = ROOT / "docs" / "AGENT_FORMALIZATION_WORKFLOW.md"
+
+    if not readme.exists():
+        findings.append(Finding("ERROR", readme, "top-level human-facing README is missing"))
+        return findings
+
+    text = readme.read_text(encoding="utf-8")
+    lines = text.splitlines()
+
+    if len(lines) > README_MAX_LINES:
+        findings.append(
+            Finding(
+                "WARN",
+                readme,
+                f"top-level README has {len(lines)} lines; keep it short and human-facing",
+            )
+        )
+
+    if README_OLD_STATUS_TABLE_RE.search(text):
+        findings.append(
+            Finding(
+                "ERROR",
+                readme,
+                "top-level README should use the concise `Paper | Status | Human summary` table, not the full paper ledger",
+            )
+        )
+    findings.extend(check_root_human_status_table(readme))
+
+    for match in README_AGENT_DETAIL_RE.finditer(text):
+        line_no = text.count("\n", 0, match.start()) + 1
+        findings.append(
+            Finding(
+                "ERROR",
+                readme,
+                f"agent-facing detail `{match.group(0)}` at line {line_no}; move it to docs/AGENT_FORMALIZATION_WORKFLOW.md",
+            )
+        )
+
+    if "docs/AGENT_FORMALIZATION_WORKFLOW.md" not in text:
+        findings.append(
+            Finding(
+                "ERROR",
+                readme,
+                "top-level README should link to docs/AGENT_FORMALIZATION_WORKFLOW.md for agent instructions",
+            )
+        )
+
+    if "docs/README.md" not in text:
+        findings.append(
+            Finding(
+                "WARN",
+                readme,
+                "top-level README should link to docs/README.md for the documentation audience split",
+            )
+        )
+
+    if not docs_index.exists():
+        findings.append(Finding("ERROR", docs_index, "docs index is missing"))
+    else:
+        docs_text = docs_index.read_text(encoding="utf-8")
+        if "Human-Facing" not in docs_text or "Agent And Maintainer-Facing" not in docs_text:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    docs_index,
+                    "docs index should split human-facing docs from agent/maintainer-facing docs",
+                )
+            )
+
+    if not workflow.exists():
+        findings.append(Finding("ERROR", workflow, "agent formalization workflow doc is missing"))
+
+    return findings
+
+
 def has_module_docstring_with_main_declarations(path: Path) -> bool:
     text = path.read_text(encoding="utf-8")
     match = re.search(r"/-!.*?-/", text, re.S)
@@ -485,9 +807,11 @@ def run(include_active: bool, strict_style: bool) -> list[Finding]:
     findings.extend(check_paper_contract(include_active))
     findings.extend(check_dag_status_styles())
     findings.extend(check_paper_facing_ledgers(include_active))
+    findings.extend(check_post_paper_audit_interfaces(include_active))
     findings.extend(check_readme_status_tables(include_active))
     findings.extend(check_tracked_artifacts(include_active))
     findings.extend(check_stale_architecture_terms())
+    findings.extend(check_human_facing_readme())
     if strict_style:
         findings.extend(check_strict_lean_style())
     return findings
