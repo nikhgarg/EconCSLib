@@ -131,7 +131,11 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_no_ratio_data_assumptions`
    constructs `z_2/(m_2-r1_current)` internally, leaving only
    `r1_current <= R1`, `0 <= r1_current`, reward-rate identity, and the
-   fixed-state cross comparisons as policy-dependent data.
+   fixed-state cross comparisons as policy-dependent data.  The final-sign
+   variant
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions`
+   derives the accept-all lower-endpoint fact from the paper's Lemma 9
+   denominator and left-nonpositive final-sign assumptions.
    The older broad
    feasible-measurable wrapper still exposes the explicit positive-current-mass
    obligation, and the accounting-form/raw source-data wrappers remain compiled
@@ -140,10 +144,10 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
 3. Instantiate the positive-mass feasible sequential source route from source
    regularity: prove either the effective-ratio fixed-transfer data above for
    the surge move at each positive-mass feasible current policy, or prove the
-   reward-bound/no-ratio specialization by showing the current non-surge reward
-   rate is at most `R1`, nonnegative, and equal to the measured reward-rate
-   expression, plus the accept-all Lemma 9 lower endpoint and fixed-state
-   cross-ratio comparisons.  The target-rate positive-ratio pointwise
+   final-sign reward-bound/no-ratio specialization by showing the current
+   non-surge reward rate is at most `R1`, nonnegative, and equal to the
+   measured reward-rate expression, plus the fixed-state cross-ratio
+   comparisons.  The target-rate positive-ratio pointwise
    specialization remains available when the current non-surge reward rate is
    known to equal `R1`.  The Lemma 10 non-surge move with surge fixed to
    accept-all is now compiled from the constructed Theorem 3 parameter data,

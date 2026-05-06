@@ -51306,6 +51306,140 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
             hRcurrent_nonneg, hrate, hlower, hupper⟩ }
 
 /--
+Final-sign version of the positive-parameter reward-bound/no-ratio assumptions.
+The paper's displayed Lemma 9 final-sign line supplies the nonpositive
+accept-all lower endpoint.
+-/
+structure Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeFinalSignRewardBoundFixedTransferNoRatioDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  hlemma9_den_lower :
+    0 <
+      lemma9StructuredLowerDenominator
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21
+  hlemma9_den_upper :
+    0 <
+      lemma9StructuredUpperDenominator
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21
+  hlemma9_left_nonpos :
+    lemma9StructuredLowerNumerator
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch21 *
+        lemma9StructuredUpperDenominator
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch21 ≤ 0
+  surge_target_reward_bound_fixed_transfer_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            ∃ R1_current : ℝ,
+              R1_current ≤ R1 ∧
+                0 ≤ R1_current ∧
+                gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) = R1_current ∧
+                gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 ≤
+                  gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+                    gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0) ∧
+                gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+                    gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0) ≤
+                  gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from positive-parameter reward-bound/no-ratio
+data plus the source Lemma 9 final-sign lower-endpoint proof.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeFinalSignRewardBoundFixedTransferNoRatioDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_no_ratio_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_pos := A.hmass1_pos
+      hmass2_pos := A.hmass2_pos
+      surge_acceptAll_lower_nonpos :=
+        lemma9StructuredLower_nonpos_of_final_signs
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+            switch12 switch21)
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+            switch21 switch12)
+          switch21 A.hlemma9_den_lower A.hlemma9_den_upper
+          A.hlemma9_left_nonpos
+      surge_target_reward_bound_fixed_transfer_data :=
+        A.surge_target_reward_bound_fixed_transfer_data }
+
+/--
 Positive-mass source assumptions with the target-rate fixed-state transfer
 stated as a pointwise equality on trips rejected by the current non-surge
 policy.  Lean integrates this equality over the rejected complement to derive

@@ -169,7 +169,10 @@ cache is `source.txt`.
   no-ratio variant
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_no_ratio_data_assumptions`
   constructs the effective ratio internally, so callers no longer supply the
-  quotient/accounting witness.
+  quotient/accounting witness.  The final-sign variant
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions`
+  also derives the accept-all lower-endpoint nonpositivity from the paper's
+  Lemma 9 final-sign line.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

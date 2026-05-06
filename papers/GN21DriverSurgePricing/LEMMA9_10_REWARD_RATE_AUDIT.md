@@ -124,6 +124,7 @@ paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structu
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positive_parameter_positive_mass_feasible_sequential_weak_reward
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_no_ratio_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
@@ -163,8 +164,9 @@ also derives `m_2-R1>0` from the constructed surge-ratio positivity witness.
 The positive-parameter sequential boundary preserves that witness in the
 source certificate, avoiding a duplicate positivity premise when using the
 positive-primitives construction.  The positive-parameter reward-bound wrapper
-has a no-ratio variant that constructs `z_2/(m_2-r1_current)` internally.  After
-the global accept-all lower-endpoint fact, the per-policy source work is now
+has a no-ratio variant that constructs `z_2/(m_2-r1_current)` internally, and
+a final-sign variant that derives the accept-all lower endpoint from the
+paper's Lemma 9 final-sign line.  The remaining per-policy source work is now
 `r1_current <= R1`, `0 <= r1_current`, reward-rate identity, and fixed-state
 cross comparisons.
 The broad
