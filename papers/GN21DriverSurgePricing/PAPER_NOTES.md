@@ -195,7 +195,15 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21SurgeRejectMiddleLoRegularEndpointData`,
   `GN21SurgeRejectMiddleHiRegularEndpointData`,
   and `GN21SurgeRejectMiddleRegularEndpointData`,
-  regular endpoint selection certificate
+  regular-shape endpoint derivation certificate
+  `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
+  regular-shape selection-to-Theorem-4 adapter
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation`,
+  and Theorem 3 regular-shape endpoint wrapper
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions`
+  plus
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`,
+  older regular endpoint selection certificate
   `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`,
   regular selection-to-Theorem-4 adapter
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_selection`,

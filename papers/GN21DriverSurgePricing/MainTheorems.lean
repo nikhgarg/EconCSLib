@@ -332,11 +332,19 @@ the continuous CTMC source theorems.
   `GN21SurgeRejectShortRegularEndpointData`,
   `GN21SurgeRejectMiddleLoRegularEndpointData`,
   `GN21SurgeRejectMiddleHiRegularEndpointData`,
-  `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`, and
+  `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`:
+  current regular-shape source-facing Theorem 3 boundary from measurable
+  Lemma 5 shape derivation plus continuous density, source Lemma 9/10
+  current-bounds data, support, and tail-integrability endpoint packages.
+- `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_selection`,
+  and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_source_assumptions`:
-  current regular source-facing Theorem 3 boundary from continuous density,
-  source Lemma 9/10 current-bounds data, support, and tail-integrability
-  packages.
+  compiled regular source-facing route from ordinary allowed Lemma 5
+  replacement cases plus the same regular endpoint packages.
 - `GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
   `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
   `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
@@ -28179,6 +28187,146 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
         μ arrival m z switch12 switch21 C)
 
 /--
+Regular endpoint data attached directly to a measurable Lemma 5 shape
+derivation.  This avoids asking for Lemma 5 replacement reward comparisons
+when the source proof has already supplied the policy-form classification.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  shape_derivation :
+    Theorem4MeasurableShapeDerivationCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+Regular endpoint data plus measurable shape derivation gives the statewise
+improvement certificate used by the measurable Theorem 4 route.
+-/
+def Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_regular_shape_derivation_endpoint_data
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+      μ arrival m z switch12 switch21 where
+  shape_derivation := C.shape_derivation
+  nonsurge_reject_long_improvement := by
+    intro ρ hρ u hshape
+    exact
+      (((C.nonsurge_reject_long_endpoint ρ hρ u hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1).statewise_improvement
+        hρ hshape
+  nonsurge_accept_middle_improvement := by
+    intro ρ hρ lo hi hshape
+    exact
+      (((C.nonsurge_accept_middle_endpoint ρ hρ lo hi hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1).statewise_improvement
+        hρ hshape
+  surge_reject_short_improvement := by
+    intro ρ hρ u hshape
+    exact
+      (((C.surge_reject_short_endpoint ρ hρ u hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1).statewise_improvement
+        hρ hshape
+  surge_reject_middle_improvement := by
+    intro ρ hρ lo hi hshape
+    exact
+      (((C.surge_reject_middle_endpoint ρ hρ lo hi hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1).statewise_improvement
+        hρ hshape
+
+/--
+Regular endpoint data plus measurable shape derivation instantiates the
+feasible strict-local certificate consumed by Theorem 4.
+-/
+def theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_regular_shape_derivation_endpoint_data
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_measurable_shape_statewise_improvements
+    μ arrival m z switch12 switch21
+    (Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_regular_shape_derivation_endpoint_data
+      μ arrival m z switch12 switch21 C)
+
+/--
+Measurable Theorem 4 accept-all uniqueness from measurable shape derivation and
+regular endpoint data.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      (theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_regular_shape_derivation_endpoint_data
+        μ arrival m z switch12 switch21 C)
+
+/--
 Surge reject-middle upper-cutoff bridge using accept-all Lemma 9 bounds.  The
 current-policy bounds, `Q_2 > switch21`, and `switch21*T_2-Q_2 >= 0` are
 derived from measured Remark 4 tightening and positive current-policy measure.
@@ -36775,6 +36923,93 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
             Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate.of_regular_endpoint_data
               μ arrival m z switch12 switch21
               (A.endpoint_current_bounds_regular_selection
+                m z hnonneg hparams) }
+
+/--
+Source-level assumptions for the regular shape-derivation endpoint route.  The
+remaining proof field is a measurable Lemma 5 shape derivation plus regular
+endpoint data, not Lemma 5 replacement reward-comparison data.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_regular_shape_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from measurable shape derivation and regular
+endpoint data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        strict_local := by
+          intro m z hnonneg hparams
+          exact
+            theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_regular_shape_derivation_endpoint_data
+              μ arrival m z switch12 switch21
+              (A.endpoint_current_bounds_regular_shape_selection
                 m z hnonneg hparams) }
 
 /--

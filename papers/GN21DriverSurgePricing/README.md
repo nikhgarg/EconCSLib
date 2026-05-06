@@ -153,16 +153,27 @@ cache is `source.txt`.
   product-calculus packages.  `GN21PositiveIntervalProductIntegrabilityData`
   derives short accepted-interval integrability from continuous product data,
   while `GN21TailProductIntegrabilityData` bundles improper tail integrability
-  and reuses it for narrower tails.  The regular endpoint route is now exposed as
+  and reuses it for narrower tails.  The current regular-shape endpoint route is
+  now exposed as
+  the five `GN21...RegularEndpointData` packages,
+  `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation`,
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`;
+  it consumes the measurable Lemma 5 shape derivation plus continuous-density
+  endpoint data, source Lemma 9/10 current-bounds data, support, and
+  tail-integrability packages, then derives the feasible strict-local Theorem 4
+  certificate internally.  The older regular-selection route remains exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_selection`,
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_source_assumptions`;
-  it expands continuous-density endpoint data, source Lemma 9/10 current-bounds
-  data, support, and tail-integrability packages into the supported endpoint
-  route internally.  The supported endpoint route remains exposed as
+  it additionally asks for ordinary allowed Lemma 5 replacement data and expands
+  the regular endpoint packages into the supported endpoint route internally.
+  The supported endpoint route remains exposed as
   the five `GN21...SupportedEndpointData` packages,
   `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_supported_selection`,
@@ -519,21 +530,25 @@ certificate, plus a route that accepts the raw statewise improvement
 existentials produced by the concrete endpoint lemmas and a packaged
 statewise-improvement certificate for the same source boundary, and a route
 that consumes all-optimal Lemma 5 replacement data directly or the packaged
-allowed-replacement source-boundary certificate.
+allowed-replacement source-boundary certificate, and the current
+regular-shape route that consumes measurable Lemma 5 shape derivation plus
+regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-supported source-facing endpoint selection layer for arbitrary open measurable
-optimal policies by proving the regularity theorem that chooses the relevant
-allowed Lemma 5 replacement case, upper, lower, tail, or middle-rejection
-endpoint move and discharges the remaining density, integrability, finite-mass,
-and current-bound fields of
-`Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`.
+regular-shape source-facing endpoint layer for arbitrary open measurable
+optimal policies by proving the regularity theorem that derives the measurable
+Lemma 5 shape case, chooses the relevant upper, lower, tail, or
+middle-rejection endpoint move, and discharges the remaining density,
+integrability, finite-mass, and current-bound fields of
+`Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
 continuous-density endpoint calculus helpers, feasible-domain preservation, and
-Lemma 9/10 current-bound data plumbing are now available through supported
+Lemma 9/10 current-bound data plumbing are now available through regular
 endpoint records for all four Theorem 4 shape cases, with reject-middle split
-into lower- and upper-cutoff endpoint variants.
+into lower- and upper-cutoff endpoint variants; the older regular-selection
+route remains compiled for the variant that proves ordinary allowed Lemma 5
+replacement data explicitly.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers
