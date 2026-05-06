@@ -344,6 +344,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   comparisons, plus reward-rate variants ending in
   `of_fixed_complement_pointwise_reward_rate`, which also derive the
   fixed-state accounting equations from measured reward-rate identities,
+  pointwise/reward-rate local endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`
+  with its `to_positive_cutoff` adapter, and source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_source_assumptions`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

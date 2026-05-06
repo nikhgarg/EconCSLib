@@ -221,7 +221,12 @@ cache is `source.txt`.
   convert measured fixed-state reward-rate equalities into those accounting
   equations, and the corresponding
   `...PositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate`
-  constructors use those helpers directly.
+  constructors use those helpers directly.  The pointwise/reward-rate local
+  endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`
+  and source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_source_assumptions`
+  make this the current lightest fixed-transfer boundary.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -624,8 +629,9 @@ positive-cutoff fixed-transfer source endpoint for arbitrary feasible
 measurable optimal policies by proving the regularity theorem that supplies
 ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
 tail, or middle-rejection endpoint move, and discharges the remaining
-integrability, fixed-state cross-ratio, finite-mass, and accounting fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPositiveCutoffLocalEndpointCertificate`.
+integrability, pointwise fixed-state complement ratio, finite-mass, and
+fixed-state reward-rate fields of
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
