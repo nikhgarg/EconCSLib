@@ -12,6 +12,133 @@ structure AdmissionsModel (Θ Ω : Type*) [Fintype Θ] [DecidableEq Θ]
   (prior : PMF Θ)
   (signalKernel : Θ → PMF Ω)
 
+/--
+Two-signal admissions comparison model with a common latent prior and value.
+
+This is the reusable finite accounting core for papers that compare two
+information regimes, such as with-test versus without-test or base-profile
+versus optional-test channels.
+-/
+structure TwoSignalAdmissionsModel
+    (Θ ΩLeft ΩRight : Type*) [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight] where
+  (prior : PMF Θ)
+  (leftKernel : Θ → PMF ΩLeft)
+  (rightKernel : Θ → PMF ΩRight)
+  (value : Θ → ℝ)
+
+/-- Left signal regime as a reusable `AdmissionsModel`. -/
+def twoSignalLeftModel
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight) :
+    AdmissionsModel Θ ΩLeft :=
+  { prior := m.prior, signalKernel := m.leftKernel }
+
+/-- Right signal regime as a reusable `AdmissionsModel`. -/
+def twoSignalRightModel
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight) :
+    AdmissionsModel Θ ΩRight :=
+  { prior := m.prior, signalKernel := m.rightKernel }
+
+/-!
+## Reusable finite admissions and resampling policies
+
+The declarations in this section are generic enough for multiple admissions
+papers: a base profile is observed, a missing signal is resampled from the same
+conditional law as the observed signal, and both groups are evaluated by the
+same estimate map.
+-/
+
+/--
+Finite conditional-resampling experiment.
+
+`baseProfile` is the population law over observed base profiles,
+`signalGivenBase` is the conditional distribution of the missing/optional
+signal, and `estimate` is the common downstream score or posterior estimate.
+-/
+structure ConditionalResamplingExperiment
+    (Base Signal Estimate : Type*) [Fintype Base] [DecidableEq Base] where
+  (baseProfile : PMF Base)
+  (signalGivenBase : Base → PMF Signal)
+  (estimate : Base → Signal → Estimate)
+
+/-- Estimate distribution for agents who directly observe the optional signal. -/
+noncomputable def accessEstimateKernel
+    {Base Signal Estimate : Type*} [Fintype Base] [DecidableEq Base]
+    (e : ConditionalResamplingExperiment Base Signal Estimate) (base : Base) :
+    PMF Estimate :=
+  (e.signalGivenBase base).map (fun signal => e.estimate base signal)
+
+/-- Signal kernel used by a conditional-resampling policy. -/
+noncomputable def resamplingSignalKernel
+    {Base Signal Estimate : Type*} [Fintype Base] [DecidableEq Base]
+    (e : ConditionalResamplingExperiment Base Signal Estimate) : Base → PMF Signal :=
+  e.signalGivenBase
+
+/-- Estimate distribution after resampling the missing signal. -/
+noncomputable def resampledEstimateKernel
+    {Base Signal Estimate : Type*} [Fintype Base] [DecidableEq Base]
+    (e : ConditionalResamplingExperiment Base Signal Estimate) (base : Base) :
+    PMF Estimate :=
+  (resamplingSignalKernel e base).map (fun signal => e.estimate base signal)
+
+/-- Observable fairness: equal estimate laws at every observed base profile. -/
+def ObservableFair
+    {Base Estimate : Type*} (access noAccess : Base → PMF Estimate) : Prop :=
+  ∀ base, access base = noAccess base
+
+/-- Demographic estimate law obtained by mixing base-profile conditional laws. -/
+noncomputable def demographicEstimateDistribution
+    {Base Estimate : Type*} (baseProfile : PMF Base)
+    (kernel : Base → PMF Estimate) : PMF Estimate :=
+  baseProfile.bind kernel
+
+/-- Demographic fairness: equal mixed estimate laws under a shared base-profile law. -/
+def DemographicallyFair
+    {Base Estimate : Type*} (baseProfile : PMF Base)
+    (access noAccess : Base → PMF Estimate) : Prop :=
+  demographicEstimateDistribution baseProfile access =
+    demographicEstimateDistribution baseProfile noAccess
+
+/-- Observable fairness implies demographic fairness when the base-profile law is shared. -/
+theorem demographicallyFair_of_observableFair
+    {Base Estimate : Type*} (baseProfile : PMF Base)
+    {access noAccess : Base → PMF Estimate}
+    (hobs : ObservableFair access noAccess) :
+    DemographicallyFair baseProfile access noAccess := by
+  have hk : access = noAccess := funext hobs
+  simp [DemographicallyFair, demographicEstimateDistribution, hk]
+
+/-- The resampling policy uses exactly the conditional signal law supplied by the experiment. -/
+theorem resamplingSignalKernel_eq_signalGivenBase
+    {Base Signal Estimate : Type*} [Fintype Base] [DecidableEq Base]
+    (e : ConditionalResamplingExperiment Base Signal Estimate) :
+    resamplingSignalKernel e = e.signalGivenBase := by
+  rfl
+
+/-- Conditional resampling is observably fair by construction. -/
+theorem resampling_observableFair
+    {Base Signal Estimate : Type*} [Fintype Base] [DecidableEq Base]
+    (e : ConditionalResamplingExperiment Base Signal Estimate) :
+    ObservableFair (accessEstimateKernel e) (resampledEstimateKernel e) := by
+  intro base
+  rfl
+
+/-- Conditional resampling is demographically fair after mixing over base profiles. -/
+theorem resampling_demographicallyFair
+    {Base Signal Estimate : Type*} [Fintype Base] [DecidableEq Base]
+    (e : ConditionalResamplingExperiment Base Signal Estimate) :
+    DemographicallyFair e.baseProfile
+      (accessEstimateKernel e) (resampledEstimateKernel e) := by
+  exact demographicallyFair_of_observableFair e.baseProfile
+    (resampling_observableFair e)
+
 /-- Admission process induced by the model and a binary policy on observed signals. -/
 noncomputable def admissionsJointMass {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype Ω] [DecidableEq Ω]
@@ -35,6 +162,71 @@ noncomputable def admissionsPosteriorExpectation {Θ Ω : Type*} [Fintype Θ] [D
     [Fintype Ω] [DecidableEq Ω]
     (m : AdmissionsModel Θ Ω) (ω : Ω) (value : Θ → ℝ) : ℝ :=
   pmfKernelPosteriorExpectation m.prior m.signalKernel ω value
+
+/-- Positive-denominator formula for posterior expectations in an admissions model. -/
+theorem admissionsPosteriorExpectation_eq_div_of_signalProb_pos
+    {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype Ω] [DecidableEq Ω]
+    (m : AdmissionsModel Θ Ω) (ω : Ω) (value : Θ → ℝ)
+    (h : 0 < admissionsSignalProb m ω) :
+    admissionsPosteriorExpectation m ω value =
+      (∑ θ : Θ, (m.prior θ).toReal * (m.signalKernel θ ω).toReal * value θ) /
+        admissionsSignalProb m ω := by
+  simpa [admissionsPosteriorExpectation, admissionsSignalProb] using
+    (pmfKernelPosteriorExpectation_eq_div_of_pos m.prior m.signalKernel ω value h)
+
+/-- Positive-denominator posterior expectation with the signal probability cleared. -/
+theorem admissionsPosteriorExpectation_mul_signalProb_eq_sum_of_pos
+    {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype Ω] [DecidableEq Ω]
+    (m : AdmissionsModel Θ Ω) (ω : Ω) (value : Θ → ℝ)
+    (h : 0 < admissionsSignalProb m ω) :
+    admissionsPosteriorExpectation m ω value * admissionsSignalProb m ω =
+      ∑ θ : Θ, (m.prior θ).toReal * (m.signalKernel θ ω).toReal * value θ := by
+  simpa [admissionsPosteriorExpectation, admissionsSignalProb] using
+    (pmfKernelPosteriorExpectation_mul_signalProb_eq_sum_of_pos
+      m.prior m.signalKernel ω value h)
+
+/-- The posterior expectation of the constant-one value is one on positive signals. -/
+theorem admissionsPosteriorExpectation_const_one_eq_one_of_signalProb_pos
+    {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype Ω] [DecidableEq Ω]
+    (m : AdmissionsModel Θ Ω) (ω : Ω)
+    (h : 0 < admissionsSignalProb m ω) :
+    admissionsPosteriorExpectation m ω (fun _ : Θ => (1 : ℝ)) = 1 := by
+  simpa [admissionsPosteriorExpectation, admissionsSignalProb] using
+    (pmfKernelPosteriorExpectation_const_one_eq_one_of_pos
+      m.prior m.signalKernel ω h)
+
+/-- Posterior expectations in an admissions model preserve nonnegativity. -/
+theorem admissionsPosteriorExpectation_nonneg_of_nonneg
+    {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype Ω] [DecidableEq Ω]
+    (m : AdmissionsModel Θ Ω) (ω : Ω) (value : Θ → ℝ)
+    (h : 0 < admissionsSignalProb m ω)
+    (hvalue : ∀ θ : Θ, 0 ≤ value θ) :
+    0 ≤ admissionsPosteriorExpectation m ω value := by
+  simpa [admissionsPosteriorExpectation, admissionsSignalProb] using
+    (pmfKernelPosteriorExpectation_nonneg_of_nonneg
+      m.prior m.signalKernel ω value h hvalue)
+
+/-- Posterior expectations in an admissions model preserve upper bounds. -/
+theorem admissionsPosteriorExpectation_le_of_forall_le
+    {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype Ω] [DecidableEq Ω]
+    (m : AdmissionsModel Θ Ω) (ω : Ω) (value : Θ → ℝ)
+    (h : 0 < admissionsSignalProb m ω)
+    {c : ℝ} (hvalue : ∀ θ : Θ, value θ ≤ c) :
+    admissionsPosteriorExpectation m ω value ≤ c := by
+  simpa [admissionsPosteriorExpectation, admissionsSignalProb] using
+    (pmfKernelPosteriorExpectation_le_of_forall_le
+      m.prior m.signalKernel ω value h hvalue)
+
+/-- Posterior expectations in an admissions model preserve interval bounds. -/
+theorem admissionsPosteriorExpectation_mem_Icc_of_mem_Icc
+    {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype Ω] [DecidableEq Ω]
+    (m : AdmissionsModel Θ Ω) (ω : Ω) (value : Θ → ℝ)
+    (h : 0 < admissionsSignalProb m ω) {a b : ℝ}
+    (hvalue : ∀ θ : Θ, value θ ∈ Set.Icc a b) :
+    admissionsPosteriorExpectation m ω value ∈ Set.Icc a b := by
+  simpa [admissionsPosteriorExpectation, admissionsSignalProb] using
+    (pmfKernelPosteriorExpectation_mem_Icc_of_mem_Icc
+      m.prior m.signalKernel ω value h hvalue)
 
 /-- Unnormalized welfare mass from applicants selected by signal policy `p`. -/
 noncomputable def admissionsSelectedWelfareMass {Θ Ω : Type*} [Fintype Θ] [DecidableEq Θ]
@@ -350,5 +542,98 @@ theorem admissionsSelectedWelfareMass_le_total_of_value_nonneg {Θ Ω : Type*}
       exact admissionsSelectedWelfareMass_le_of_pred_le (m := m) (p := p) (q := fun _ => True)
         (value := value) hvalue (by intro ω _; trivial)
     _ = pmfExp m.prior value := htop
+
+/-!
+## Two-signal admissions accounting
+
+These wrappers keep paper-specific files thin when they compare two information
+regimes but share the same latent prior and value function.
+-/
+
+/-- Selection probability in the left signal regime. -/
+noncomputable def twoSignalLeftSelectionProb
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩLeft → Prop) [DecidablePred p] : ℝ :=
+  admissionsSelectionProb (twoSignalLeftModel m) p
+
+/-- Selection probability in the right signal regime. -/
+noncomputable def twoSignalRightSelectionProb
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩRight → Prop) [DecidablePred p] : ℝ :=
+  admissionsSelectionProb (twoSignalRightModel m) p
+
+/-- Selected welfare mass in the left signal regime. -/
+noncomputable def twoSignalLeftSelectedValueMass
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩLeft → Prop) [DecidablePred p] : ℝ :=
+  admissionsSelectedWelfareMass (twoSignalLeftModel m) p m.value
+
+/-- Selected welfare mass in the right signal regime. -/
+noncomputable def twoSignalRightSelectedValueMass
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩRight → Prop) [DecidablePred p] : ℝ :=
+  admissionsSelectedWelfareMass (twoSignalRightModel m) p m.value
+
+/-- Conditional selected value in the left signal regime. -/
+noncomputable def twoSignalLeftConditionalValue
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩLeft → Prop) [DecidablePred p] : ℝ :=
+  admissionsSelectedWelfareConditionalExp (twoSignalLeftModel m) p m.value
+
+/-- Conditional selected value in the right signal regime. -/
+noncomputable def twoSignalRightConditionalValue
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩRight → Prop) [DecidablePred p] : ℝ :=
+  admissionsSelectedWelfareConditionalExp (twoSignalRightModel m) p m.value
+
+/-- Total latent value decomposes through selected/unselected left-regime groups. -/
+theorem twoSignalLeftValueExp_decompose
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩLeft → Prop) [DecidablePred p] :
+    pmfExp m.prior m.value =
+      twoSignalLeftSelectionProb m p * twoSignalLeftConditionalValue m p +
+        twoSignalLeftSelectionProb m (fun ω => ¬ p ω) *
+          twoSignalLeftConditionalValue m (fun ω => ¬ p ω) := by
+  simpa [twoSignalLeftSelectionProb, twoSignalLeftConditionalValue,
+    twoSignalLeftModel] using
+    (admissionsSelectedWelfareExp_decompose (m := twoSignalLeftModel m)
+      (p := p) (value := m.value))
+
+/-- Total latent value decomposes through selected/unselected right-regime groups. -/
+theorem twoSignalRightValueExp_decompose
+    {Θ ΩLeft ΩRight : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype ΩLeft] [DecidableEq ΩLeft]
+    [Fintype ΩRight] [DecidableEq ΩRight]
+    (m : TwoSignalAdmissionsModel Θ ΩLeft ΩRight)
+    (p : ΩRight → Prop) [DecidablePred p] :
+    pmfExp m.prior m.value =
+      twoSignalRightSelectionProb m p * twoSignalRightConditionalValue m p +
+        twoSignalRightSelectionProb m (fun ω => ¬ p ω) *
+          twoSignalRightConditionalValue m (fun ω => ¬ p ω) := by
+  simpa [twoSignalRightSelectionProb, twoSignalRightConditionalValue,
+    twoSignalRightModel] using
+    (admissionsSelectedWelfareExp_decompose (m := twoSignalRightModel m)
+      (p := p) (value := m.value))
 
 end EconCSLib

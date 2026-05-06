@@ -17,6 +17,25 @@ Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
 
+Unless told otherwise, you do not have a time limit; keep going until you fully
+finish a paper and run the post-paper checklist.
+
+When a proof is blocked, think outside Lean as needed, patch the mathematical
+argument yourself, and then implement the patched proof in Lean. Do not stop at
+identifying the gap unless the target theorem is false or the needed assumption
+is mathematically indispensable.
+
+If a paper proof is imprecise, think hard outside Lean to create a precise proof
+strategy, implement that strategy in Lean, and log in the paper's final report
+that the source proof was imprecise and needed additional formalization work.
+
+When the right proof strategy is unclear, think deeply outside Lean before
+editing. If a written scratch argument would help, create a short `.txt`,
+`.tex`, or `.md` sketch in the paper folder; keep it only as detailed as needed
+to unlock the Lean proof. Do not create a sketch when it would be ceremony
+rather than useful proof planning. After the strategy is clear, execute it in
+Lean and keep moving.
+
 Do not avoid continuous, probabilistic, or measure-theoretic formalization when
 the source theorem requires it. Finite analogues are useful scaffolds only when
 they shorten the faithful proof. If the fastest honest route is a direct
@@ -29,6 +48,134 @@ library tools. Do not force a detached library project before proving the paper,
 but if a lemma, interface, or theorem is likely to be useful to another EC paper,
 build it in `EconCSLib` while formalizing the current result.
 
+When starting a paper, do an outside-Lean proof-planning pass over the entire
+proof and formalization route before deep Lean implementation. Identify the
+main theorem chain, likely reusable library seams, underspecified paper steps,
+necessary assumptions or certificates, and fallback proof paths. Use the
+scaffolded `FORMALIZATION_PLAN.md` in the paper folder as the live plan, or use
+`.txt`/`.tex` instead only when that is genuinely more convenient. Keep it short
+and functional: it is a scratchpad for thinking, not a polished deliverable.
+Then start executing the plan in Lean. As the formal proof progresses, edit the
+plan to record strategy changes, patched source gaps, discharged seams, and
+remaining blockers.
+
+For long or fragile proofs, keep a theorem-specific scratch plan beside the
+paper files and use it actively, not as decoration. A good plan records:
+current Lean endpoints, the exact remaining mathematical gap, the next two or
+three bridge lemmas to try, why each bridge should be true, and which
+assumptions are genuine source assumptions versus temporary certificate fields.
+When Lean gets too low-level, first write the informal recurrence, induction,
+or history construction in this scratch file; then translate only the stable
+pieces into named Lean declarations and audit wrappers. This was especially
+effective for EOS Theorem 8: exact-drop histories, finite completed-rank
+wrappers, core-vs-full source-completion certificates, and derived-outcome
+bridges made the extensive-form gap visible while still allowing useful
+verified algebra to accumulate. If the scratch proof shows that some
+certificate fields are consequences of other fields, formalize the smaller core
+certificate and a derived bridge before continuing; this keeps the remaining
+human-verification obligations honest and minimal.
+When a source proof uses local payoff comparisons as the key sequential
+rationality step, promote the raw algebra into named payoff definitions and a
+small best-response predicate before trying to prove the full dynamic-game
+obligation. In EOS Theorem 8, exposing the continue payoff, drop payoff, and
+named finite `B*` one-step best-response theorem made the remaining
+belief/sequential-rationality lift much more human-verifiable than referring
+directly to long indifference inequalities.
+When the source proof uses strict exclusion directions, also add an
+off-threshold strict wrapper pairing the strict payoff inequality with the
+strategy's actual drop/not-drop action. This lets later dynamic-game proofs
+cite the paper's Step 1 and Step 2 directly instead of unpacking raw algebra.
+If behavioral uniqueness depends on tie-breaking at an indifference threshold,
+make the tie-breaking convention a named predicate and prove a separate
+characterization theorem from local best response plus tie-breaking to the
+paper's cutoff rule. This turns a future PBE-characterization field into two
+local obligations: best response and tie-breaking.
+When a PBE predicate existentially packages a belief and a
+sequential-rationality proof, do not keep behavioral facts as opaque
+"every PBE behaves this way" obligations if the source proof is really about
+sequential rationality. Add a certificate that proves local best response and
+tie-breaking from `isSequentiallyRational`, then unpack the PBE witness in a
+thin bridge. This was the right hardening move in EOS Theorem 8: it turned the
+remaining behavioral PBE obligation into source-level sequential-rationality
+implications.
+If the source proof defines sequential rationality by local deviations, sharpen
+that certificate further to an iff between `isSequentiallyRational` and the
+audited local optimality/tie-breaking predicates. The reverse direction should
+lift the named strategy's local proof to game-level sequential rationality, and
+the forward direction should replace opaque arbitrary-PBE behavior fields.
+When a remaining paper-facing premise is recursive or hard to audit directly
+(for example, a clock-sorted finite schedule), add small `nil`, `cons`,
+`singleton`, or pair helper lemmas and expose them in the paper audit surface;
+this lets humans verify concrete instances by local inequalities rather than
+unfolding recursive definitions by hand.
+If a finite schedule theorem has a separate "completed set is contained in the
+schedule" premise, also expose an all-scheduled constructor or endpoint for the
+common case where the completed set is exactly `scheduledRanks.toFinset`. This
+removes a trivial but noisy human-verification obligation and keeps source
+audits focused on sortedness, no-duplicates, activity, and terminality.
+For nonempty finite schedules, expose an append-singleton final-clock lemma:
+if the schedule is `scheduledPrefix ++ [lastRank]`, prove that the final clock
+is exactly the last scheduled threshold. Then provide endpoints whose
+terminality premise compares unscheduled thresholds to that last threshold
+rather than to a recursively computed final state. This makes exact-record
+source obligations much easier to audit by hand.
+When recursive schedule sortedness mixes initial-clock and adjacent-threshold
+obligations, split out a separate adjacent-threshold sorted predicate. Prove a
+bridge from initial-clock-plus-threshold-sorted to the recursive predicate, and
+for cold-start states discharge the initial-clock inequality automatically.
+Expose nil, singleton, cons, and pair helpers for the threshold-sorted
+predicate so concrete source schedules can be verified by local inequalities.
+If schedules are naturally built incrementally, also provide an append-singleton
+rule whose only new premise is the boundary comparison between the previous
+last threshold and the appended threshold.
+When a route to a paper-facing theorem is built from source obligations, expose
+the intermediate certificate constructors as first-class definitions, not just
+the final theorem endpoints. For finite schedule audits, this lets reviewers
+inspect the terminal-dynamic and source-completion objects before unique-PBE
+conclusions are applied.
+If a terminal-dynamic certificate is built from a concrete strategy-consistent
+terminal history, expose the terminal-history behavior certificate as a named
+intermediate too. This lets humans verify the actual history/terminality object
+before reading the dynamic-game and source-completion packaging layers.
+Also expose direct facts from that terminal-history certificate when they are
+the human-verification target, especially scheduled-rank exact terminal records
+and final-state active iff unscheduled. Do not force reviewers to unfold the
+deterministic final-state constructor if they are auditing the certificate
+object.
+For source-completion certificates, also expose obligation-conjunction theorems
+for each important certificate layer. The full certificate should list all
+source obligations, while core, one-sided, ex-post, sequential-rationality,
+one-step/tie-break, and local-deviation certificates should list only their
+minimized obligations so reviewers can tell which facts are assumptions and
+which conclusions are derived.
+When a reduced source-obligation certificate is expected to be cited directly
+by a paper audit, also expose direct downstream endpoints from that certificate
+to named-strategy PBE, PBE strategy equality, the PBE cutoff/action rule,
+unique PBE, and outcome equality rather than requiring reviewers to manually
+follow conversion lemmas through a stronger certificate.
+Apply this consistently to all reduced layers that a human may cite, including
+one-step/tie-break, sequential-rationality, one-sided, ex-post, and
+local-deviation routes. Also expose the same direct cutoff/action endpoint for
+the full and core source certificates, even if it is available as a field, so
+paper-facing audit files can cite a named theorem. When the paper proof is
+phrased as two one-sided steps, expose named corollaries for both directions:
+drop at or after the threshold and no drop before the threshold.
+Also expose the final compact paper-conclusion theorem directly from every
+reduced source-obligation certificate layer that a paper audit may cite.
+When the compact conclusion is normally bundled with uniqueness, also expose
+the direct `exists_unique_pbe_with_conclusion` endpoint from every such reduced
+certificate layer, not just from the strongest full source-completion
+certificate. This gives the audit file a one-line citation from the minimized
+source obligation to the final human-facing theorem shape.
+For exact finite schedules, also expose deterministic-final-state facts:
+scheduled ranks have terminal records equal to their threshold, and from an
+all-active initial state the active ranks are exactly the unscheduled ranks.
+Specialize these facts to the paper's cold-start threshold-sorted route when
+that is the interface reviewers will use.
+If an endpoint already contains terminal-record conclusions but its name only
+says `exists_unique_pbe`, add a paper-facing alias whose name explicitly says
+`with_terminal_record_conclusion`.
+
 Follow the original paper's proof structure as closely as is practical. Preserve
 named definitions, lemmas, propositions, and theorem numbers in Lean declaration
 names, docstrings, and README status rows. When deviating from the paper proof
@@ -37,12 +184,18 @@ interface, make the deviation explicit and keep the paper-facing wrapper close
 to the original named result.
 
 When a source proof explicitly routes a theorem through named paper lemmas or a
-named proof-line corollary, prefer formalizing that named route even if it is
-hard. Do not replace a difficult named-lemma path with a looser certificate,
-alternate theorem, or broad abstraction just because it is faster, unless the
-source route is false or genuinely inapplicable. If an auxiliary certificate is
-temporarily useful, keep it as a clearly marked staging device and continue
-toward the paper's named proof chain until the named theorem itself is proved.
+named proof-line corollary, prefer formalizing that named route when it is
+reasonably available. Do not spend unbounded time following the exact proof line
+by line if a different or more precise argument proves the same paper-facing
+statement cleanly. In that case, keep the named theorem/lemma structure in the
+README, DAG, audit wrappers, and declaration names where practical; state the
+same theorem; and log the route change in `FINAL_VALIDATION_REPORT.md` under
+`Proof-Strategy Deviations` as a proof deviation. Do not replace a named-lemma
+path with a looser certificate, alternate theorem, or broad abstraction unless
+the resulting paper-facing endpoint still states the source result or the source
+route is false, imprecise, or genuinely inapplicable. If an auxiliary
+certificate is temporarily useful, keep it as a clearly marked staging device
+and continue toward the paper's named theorem itself.
 
 For stable-matching/deferred-acceptance papers, check the paper's model section
 before calling strictness, completeness, or no-outside-option assumptions
@@ -101,6 +254,11 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   Identify the declaration owner with `rg`, import that leaf module directly,
   and re-run the targeted `lake build Paper.Module`; do not broaden imports just
   to make the immediate elaboration error disappear.
+- When a focused paper build fails in a shared library file that was not touched
+  in the current task and other agents may be active, wait about one minute and
+  rerun once before intervening. If the same shared-library failure persists,
+  patch the minimal local problem yourself, rebuild, and move on; do not leave
+  the paper blocked indefinitely on likely concurrent shared-library work.
 
 ### 1.2.1 Paper Link Intake Protocol
 
@@ -139,7 +297,9 @@ the Lean statements against the paper.
   1. A `README.md` (see details below).
   2. A `DependencyDAG.tex` providing the proof roadmap.
   3. A `MainTheorems.lean` file holding the paper-facing wrappers.
-  4. A local `.gitignore` file.
+  4. A `PaperInterface.lean` file holding the compact human-facing definitions
+     and named theorem statements.
+  5. A local `.gitignore` file.
 - **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but should not contain paper-specific PDF exclusions or paths.
 - **Reproducible PDF and text cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF changes.
 - **README Requirements:** The `README.md` must clearly identify the exact
@@ -153,12 +313,15 @@ the Lean statements against the paper.
   verify the intended theorem was formalized. Use paper theorem numbers/names in
   docstrings and keep wrappers thin.
 - For large campaigns, add one adjacent Lean declaration ledger file (for
-  example `PaperFacingTheorems.lean`) that is the single-file human verification
+  example `PaperInterface.lean`) that is the single-file human verification
   target for the folder’s claims.
   The file should be declaration-ordered by paper section and should expose the
   paper-facing definitions and full theorem statements (with assumptions and
   short paper-context comments) rather than `#check` entries alone.
-- **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLib.Statistics.priorWeightedVariance`). The ledger file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the ledger that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements (or prove they equal the generic terms). A reviewer must see the actual math equations inside this single file without needing to open imported generic modules.
+- For new papers, create `PaperInterface.lean` during intake from the scaffold,
+  not only after the proof is complete. Keep it synchronized with the proof plan
+  and DAG so the eventual human review file grows with the formalization.
+- **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLib.Statistics.priorWeightedVariance`). The `PaperInterface.lean` file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the interface that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements or prove they equal the generic terms. A reviewer must see the actual math equations inside this single file without needing to open imported generic modules. Keep `PostPaperAudit.lean` for theorem endpoint aliases and proof-seam coverage, not standalone proof-facing formula duplicates.
   Include for each entry:
   1. the declaration name,
   2. a compact paper-style statement in comments,
@@ -220,6 +383,25 @@ the Lean statements against the paper.
   - **Stable Topology Requirement:** The initial DAG should contain the paper's full named-result structure: all named Definitions, Lemmas, Propositions, Theorems, Corollaries, and appendix results, with dependency arrows reflecting the paper proof architecture. After that initial roadmap is created, routine progress updates should normally change only node status/style/text, not add new boxes or arrows. Add or remove boxes/arrows only when the initial named-result inventory was incomplete or a genuine paper dependency was discovered to be missing/wrong; if topology changes, rerender and re-check for overlap.
   - The DAG must encode formalization status and node type explicitly by using the preamble styles.
   - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
+  - **Closed theorem text stays short:** Once a theorem is closed, the theorem
+    node should describe the source theorem's statement, not the Lean proof
+    machinery that closed it. Do not fill a closed theorem box with internal
+    helper names, certificate layers, construction details, or a list of every
+    bridge lemma. Put those details in the README status row, final report, or
+    proof comments.
+  - **Keep theorem families together:** Parts of the same source theorem
+    (`Theorem 2(i)`, `Theorem 2(ii)`, `Theorem 2(iii)`) should be visually
+    grouped in the same column, row, or labeled cluster. Do not scatter theorem
+    parts around auxiliary boxes in a way that makes the source theorem hard to
+    read as one result.
+  - **Named results are mandatory; auxiliaries are subordinate:** Every named
+    paper Definition/Lemma/Proposition/Theorem/Corollary must appear unless the
+    source inventory confirms there are none of that kind. Paper-unnamed
+    implementation layers, reusable Lean primitives, certificate packages,
+    feature-map plumbing, and finite analogues should usually not be primary
+    DAG nodes. Add them only when they are the exact remaining caveat or are
+    needed to make the named-result dependency legible, and keep them visually
+    subordinate to the source-named theorem/lemma nodes.
   - **Legend:** You MUST include a Legend using the shared helper macro from the preamble, e.g., `\daglegend{(legRes)(legLem)(legDef)(legOpen)}{Legend}`. Place legend nodes concisely at the top. For caveat entries inside the legend, use `dag_caveat_legend` rather than combining `dag_caveat` with `dag_template_legend`; the full-size red diamond is for graph nodes and makes the legend oversized.
   - **Edge Routing (No Overlaps):** Use explicit positioning (`node distance`, `below=of`, `right=of`, `xshift`, `yshift`) carefully. **Prefer straight paths or simple orthogonal routing (`|-`, `-|`) whenever possible without overlap.** Use a column-based layout (the preamble standardizes horizontal spacing at `3cm` or `4cm` depending on the specific diagram needs) to ensure paths are clear and text boxes do not collide. Only use complex curves (`to[out=..., in=...]`) or bends when absolutely necessary to route around an immediate obstacle. Use `dag_arrow` and `dag_dashed_arrow` from the preamble for styling.
   - For dense paper DAGs, prioritize a visually auditable named-result topology
@@ -239,6 +421,9 @@ the Lean statements against the paper.
   README status table or proof comments, and use the DAG to show how the
   paper's named results relate and which of them are formalized, conditional,
   caveated, or open.
+  If the source has only a few named results, keep the DAG correspondingly
+  simple; do not compensate by adding a large set of paper-unnamed Lean helper
+  nodes.
   Even when the working proof closes a finite analogue first, the DAG should
   still show the corresponding source theorem node with the honest paper-level
   status; finite versions belong in Lean helper names, README rows, or proof
@@ -255,6 +440,20 @@ the Lean statements against the paper.
   measure-theoretic bridge from `Pr[...]` to that integral (for example, an
   independence/Fubini/density derivation), keep the theorem conditional in the
   README/DAG and explicitly name the probability-to-integral bridge that remains.
+- For sequential weighted without-replacement or "first distinct draw" models,
+  audit conditioning/deletion claims before proving them.  Conditioning on an
+  item being absent from the first `k` distinct draws is generally not the same
+  as deleting that item's weight when weights are nonuniform and `k >= 2`.
+  A one-sided repair by comparing to the deleted process can also be false:
+  in the IM05 two-draw Plackett--Luce law, weights `i=2, j=1, a=1, b=1` make
+  `Pr[omit i | omit j]` larger than the deleted-`j` process' `Pr[omit i]`,
+  even though the desired unconditional negative-correlation inequality still
+  holds.  If a source proof says conditioning equals deletion, test a small
+  numeric model outside Lean, then formalize the inequality actually needed
+  directly, usually as a negative-dependence statement for the sampler.  Keep
+  any false equality or false deletion upper bound only as a clearly named
+  rejected scratch target, never as a theorem assumption hidden inside a green
+  paper-facing result.
 - When a proof step invokes an external cited analytic theorem that is not in
   Mathlib, encode that input as a named paper-local hypothesis or definition
   (for example, a `Sampford...Bound` assumption), prove the source's downstream
@@ -344,6 +543,18 @@ the Lean statements against the paper.
     the structure packages. The theorem body should be a thin call to the
     paper-facing declaration, so a human can verify the endpoint in one file.
     Do not mark the paper complete until the root module imports this ledger.
+  - One-stop endpoint check: for each main theorem, expose at least one audit
+    wrapper whose conclusion is the paper-level result a human expects to read,
+    not only internal component lemmas. If the proof naturally produces an iff,
+    certificate, or witness, also add direct wrappers such as named-witness
+    existence, `∃!` uniqueness, bundled conclusion endpoints, and componentwise
+    equality statements for opaque structures. For dynamic games or mechanisms
+    with named strategies/witnesses, also add pointwise behavior equivalences,
+    pairwise uniqueness/equality consequences, named-witness outcome wrappers,
+    and any useful generic certificate constructors plus the generic theorem
+    conclusion obtained from those constructors. Keep assumptions/certificates
+    in the signature only when they are genuine remaining paper obligations, and
+    name them explicitly in the README/DAG.
   - Report check: create or update `FINAL_VALIDATION_REPORT.md` in the paper
     folder. It must state whether the paper is verified, the exact source
     version, the named-result inventory, any deliberate model conventions or
@@ -665,7 +876,7 @@ Before declaring a paper or proof phase "done," run a final human-facing
 validation pass:
 
 - Re-read the paper-facing theorem ledger file (for example,
-  `PaperFacingTheorems.lean` or the named human-facing theorem file) and check
+  `PaperInterface.lean` or the named human-facing theorem file) and check
   each named definition/theorem/corollary against the paper statement.
 - Confirm every final paper-facing declaration is fully formalized with no
   hidden placeholders; no unresolved `sorry`, scaffold wrappers, or unnamed
@@ -675,19 +886,89 @@ validation pass:
   declaration names and no vague wording.
 - Produce a final human-facing report in the paper folder alongside the DAG
   artifacts (TikZ source and rendered image). This report is not for routine
-  handoff; it is the concise final assessment a human should read to decide what
-  was actually verified.
+  handoff or an implementation inventory. It is the concise final assessment a
+  human should read to decide whether the paper's definitions and named theorem
+  statements were represented correctly.
+- Before writing that report, do a statement-surface pass outside Lean: list
+  every paper definition/object and every named result in source order, decide
+  which Lean declaration should be the reader-facing statement for each one,
+  and note any source imprecision or proof deviation. Keep this plan current as
+  proof work progresses; do not wait until the end to reconstruct the theorem
+  inventory from helper lemmas.
+- For completed papers, create a compact human-facing Lean interface file when
+  the existing theorem files are too implementation-heavy to inspect directly.
+  Prefer the name `PaperInterface.lean`. This file should mirror the DAG:
+  paper definitions first, with the actual formulas visible in the file, then
+  direct theorem statements matching the paper. It must not be only an alias
+  list, witness tuple, or pointer layer to `MainTheorems.lean`; a human should
+  be able to read this file alone and check that the encoded definitions and
+  theorem statements reflect the source text. Proofs may be short calls into
+  the implementation layer. Keep exhaustive aliases and auxiliary seams in
+  `PostPaperAudit.lean`, not in the interface.
+- In `PaperInterface.lean`, aim for one declaration per paper definition or
+  formatted paper object, and one declaration per named result or numbered part
+  of a named result. If a theorem box has parts (i)--(iii), separate direct
+  declarations are acceptable when they mirror those source parts and avoid
+  noisy tuple witnesses.
+- Treat `PostPaperAudit.lean` as the exhaustive importable ledger, not the
+  readable paper interface. Its header should say that explicitly and point to
+  `PaperInterface.lean` for the DAG-shaped human-facing surface. It should
+  contain source-numbered theorem aliases, named-result wrappers, and supporting
+  proof-seam endpoints when those seams are useful for auditing the named
+  claims. Do not add standalone proof-facing formula aliases when the formulas
+  already appear in `PaperInterface.lean` or are only internal implementation
+  plumbing.
+- For papers already marked `Verified in Lean`, `Formalized`, or `Formalized
+  with caveat`, backfill the same post-paper surface instead of leaving older
+  validation artifacts in place: a readable Lean interface (prefer
+  `PaperInterface.lean`, or a clearly documented equivalent), an exhaustive
+  `PostPaperAudit.lean` endpoint ledger when useful, a compact final validation
+  report, and synchronized README/status-table text.
 - Confirm the paper root module imports the post-paper audit ledger and that the
   audit ledger has one source-numbered theorem alias or wrapper for each final
   named endpoint.
+- Run `python3 scripts/audit_repository.py` after post-paper cleanup. Treat its
+  PaperInterface/PostPaperAudit findings as part of the final audit: no tuple
+  witness interfaces, no standalone proof-facing formula aliases in the audit
+  ledger, no stale `Lean witness` report language, and no completed-paper status
+  rows that hide caveats in prose.
 - Update the front repository `README.md` paper-status table and
   `docs/ECONCSLEAN_CURRENT_STATUS.md` at the same time, using the exact caveats
   from the final report. Do not let the front README keep stale "partial" or
   "active" wording after a paper-local validation report says a paper is
   verified.
+- Use one status vocabulary per artifact. For paper validation reports, prefer
+  `complete`, `conditionally complete`, and `incomplete`. For author-wide
+  inventory tables, prefer `Complete`, `Partial`, and `Deferred`. Do not mix
+  "Verified in Lean" and "Formalized" as parallel category names; use those only
+  as descriptive prose if needed.
 - **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
-- The report must summarize: source version checked, theorem-by-theorem completion status (including unformalized items), additional assumptions introduced beyond the paper, proof-strategy deviations from the paper, and any suspected paper errors or inconsistencies found during formalization.
+- The report must first present the paper interface: the definitions and
+  formatted mathematical objects the reader needs to inspect, even when the
+  source did not number them as "Definition." Examples include bias, aggregate
+  posterior, calibration, objective functions, equilibrium notions, allocation
+  rules, or any paper-specific named/boxed notation. Give each definition in
+  paper notation plus the Lean declarations that encode it.
+- Then state each named theorem/proposition/corollary once, matching the paper
+  text at theorem-box granularity. Do not expand one source theorem into dozens
+  of auxiliary lemmas in the human report. Put only the direct Lean interface
+  statement declarations under each theorem, ideally from `PaperInterface.lean`.
+  Keep auxiliary implementation inventories in the Lean audit ledger, README,
+  or proof files.
+- The report must summarize: source version checked, named-result completion
+  status (including unformalized items), additional assumptions introduced
+  beyond the paper, proof-strategy deviations from the paper, and any suspected
+  paper errors or inconsistencies found during formalization.
 - If no extra assumptions, deviations, or errors were needed/found, state that explicitly in the report rather than leaving sections implicit.
+- Keep the report human-facing. Do not include routine shell commands such as
+  `rg -n ...` scans or full build command blocks unless the exact invocation is
+  essential to understanding a caveat. Summarize verification checks in prose
+  instead. If the report is getting long because it lists every helper theorem,
+  stop and replace that section by a short paper-definition/theorem interface
+  plus links or declaration names for the main witnesses.
+- Avoid wide Markdown tables for definition inventories when the notation or
+  declaration names are long. Use a concise bullet checklist instead, with the
+  paper notation first and the Lean interface declaration second.
 
 Use this report template (create in the paper folder, for example
 `FINAL_VALIDATION_REPORT.md`):
@@ -702,28 +983,44 @@ Use this report template (create in the paper folder, for example
 - Human-facing theorem file: <file path>
 - DAG artifacts: <tikz file>, <rendered image>
 
-## 2. Theorem-by-Theorem Validation
-| Paper item | Lean declaration | Status (`fully formalized` / `conditional` / `not formalized`) | Statement match (`exact` / `minor deviation` / `major deviation`) | Notes |
-|---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+## 2. Paper Definitions Checked
+These are the mathematical objects from the paper interface. All should be
+exposed in `PaperInterface.lean`.
 
-## 3. Additional Assumptions Beyond Paper
+- <Paper object>: <paper notation and one-line statement>.
+  Lean: `<PaperInterface.definitionName>`.
+- <Next paper object>: <paper notation and one-line statement>.
+  Lean: `<PaperInterface.definitionName>`.
+
+## 3. Named Theorem Statements Checked
+### Theorem <n>
+**Paper statement.** <one theorem-box-level statement matching the source>
+
+**Lean interface statement(s).**
+- `<PaperInterface.theoremN_part>`: <which paper clause it states>
+
+**Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>
+
+## 4. Additional Assumptions Beyond Paper
 - `<assumption declaration>`: <why needed, where used>
 - If none: `None`
 
-## 4. Proof-Strategy Deviations
+## 5. Proof-Strategy Deviations
 - `<paper result/declaration>`: <what changed in strategy and why>
 - If none: `None`
 
-## 5. Conditional Results and Remaining Gaps
+## 6. Conditional Results and Remaining Gaps
 - `<paper item>`: <exact remaining certificate/assumption declaration name>
 - If none: `None`
 
-## 6. Suspected Paper Errors or Inconsistencies
+## 7. Suspected Paper Errors or Inconsistencies
 - `<location in paper>`: <issue description + Lean/formalization evidence>
 - If none: `None`
 
-## 7. Final Verdict
+## 8. Verification Checks
+- <build/audit/DAG/no-placeholder outcomes in prose>
+
+## 9. Final Verdict
 - Completion status: <complete / conditionally complete / incomplete>
 - Summary: <2-5 lines>
 ```
@@ -738,7 +1035,7 @@ reference.
 | Touched code | Read |
 |---|---|
 | `EconCSLib/Foundations/Math/*`, graph/counting/rounding/sign lemmas | `references/proof-foundations-math.md` |
-| `EconCSLib/Foundations/Probability/*`, finite PMFs, Markov kernels/chains, concentration, measure inequalities, continuous densities, RUM/noise laws | `references/proof-foundations-probability.md` |
+| `EconCSLib/Foundations/Probability/*`, finite PMFs, Markov kernels/chains, concentration, measure inequalities, continuous densities, RUM/noise laws, order statistics, large deviations | `references/proof-foundations-probability.md` |
 | `EconCSLib/Foundations/Optimization/*`, argmax/existence/objective wrappers | `references/proof-foundations-optimization.md` |
 | `EconCSLib/Applications/RecommenderSystems/*`, accuracy/diversity, producer fairness, count allocation | `references/proof-recommender-systems.md` |
 | `EconCSLib/Algorithms/Online/*`, AdWords/MSVV, online matching, regret/Yao | `references/proof-algorithms-online.md` |

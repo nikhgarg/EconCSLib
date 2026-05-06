@@ -3,6 +3,7 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -88,6 +89,100 @@ theorem weighted_sum_le_bound_of_nonneg_sum_le_one
     (by simpa using hweight_sum)
     (by intro i _; exact hvalue i)
     hB
+
+/--
+If every element of a finite comparison set has weight at least `a`'s weight,
+then `a`'s share of the combined weight of `a` and that set is at most
+`1 / (|s| + 1)`.
+-/
+theorem weight_share_le_inv_card_add_one_of_forall_le
+    {α : Type*} (s : Finset α) (weight : α → ℝ) (a : α)
+    (ha_nonneg : 0 ≤ weight a)
+    (hden_pos : 0 < weight a + ∑ i ∈ s, weight i)
+    (hle : ∀ i ∈ s, weight a ≤ weight i) :
+    weight a / (weight a + ∑ i ∈ s, weight i) ≤
+      1 / ((s.card : ℝ) + 1) := by
+  have hcard_pos : 0 < (s.card : ℝ) + 1 := by positivity
+  have hsum_ge :
+      (s.card : ℝ) * weight a ≤ ∑ i ∈ s, weight i := by
+    calc
+      (s.card : ℝ) * weight a = ∑ _i ∈ s, weight a := by
+          simp [nsmul_eq_mul]
+      _ ≤ ∑ i ∈ s, weight i :=
+          Finset.sum_le_sum (by
+            intro i hi
+            exact hle i hi)
+  rw [div_le_div_iff₀ hden_pos hcard_pos]
+  nlinarith
+
+/--
+If every term in a finite sum is at least `x`, then the whole sum is at least
+`|s| * x`.
+-/
+theorem card_mul_le_sum_of_forall_le
+    {α : Type*} (s : Finset α) (f : α → ℝ) {x : ℝ}
+    (hle : ∀ i ∈ s, x ≤ f i) :
+    (s.card : ℝ) * x ≤ ∑ i ∈ s, f i := by
+  calc
+    (s.card : ℝ) * x = ∑ _i ∈ s, x := by
+        simp [nsmul_eq_mul]
+    _ ≤ ∑ i ∈ s, f i :=
+        Finset.sum_le_sum (by
+          intro i hi
+          exact hle i hi)
+
+/--
+Finite averaging upper bound: if every term in `s` is at least `x`, but the
+sum over `s` is at most `total`, then `x <= total / |s|`.
+-/
+theorem le_div_card_of_sum_le_of_forall_le
+    {α : Type*} (s : Finset α) (f : α → ℝ) {x total : ℝ}
+    (hcard_pos : 0 < s.card)
+    (hsum_le : (∑ i ∈ s, f i) ≤ total)
+    (hle : ∀ i ∈ s, x ≤ f i) :
+    x ≤ total / (s.card : ℝ) := by
+  have hcard_real_pos : 0 < (s.card : ℝ) := by
+    exact_mod_cast hcard_pos
+  rw [le_div_iff₀ hcard_real_pos]
+  rw [mul_comm]
+  exact le_trans (card_mul_le_sum_of_forall_le s f hle) hsum_le
+
+/--
+Compare a finite sum over `s` to a finite sum over `t` using an injection from
+`s` into `t`, pointwise domination along the injection, and nonnegativity of
+the unused target terms.
+-/
+theorem finset_sum_le_sum_of_injOn_nonneg
+    {α β : Type*} [DecidableEq β]
+    (s : Finset α) (t : Finset β) (φ : α → β)
+    (f : α → ℝ) (g : β → ℝ)
+    (hφ_mem : ∀ a ∈ s, φ a ∈ t)
+    (hφ_inj : Set.InjOn φ (↑s : Set α))
+    (hfg : ∀ a ∈ s, f a ≤ g (φ a))
+    (hg_nonneg : ∀ b ∈ t, 0 ≤ g b) :
+    (∑ a ∈ s, f a) ≤ ∑ b ∈ t, g b := by
+  classical
+  have hpoint :
+      (∑ a ∈ s, f a) ≤ ∑ a ∈ s, g (φ a) :=
+    Finset.sum_le_sum (by
+      intro a ha
+      exact hfg a ha)
+  have himage :
+      (∑ a ∈ s, g (φ a)) = ∑ b ∈ s.image φ, g b := by
+    rw [Finset.sum_image]
+    intro a ha a' ha' hsame
+    exact hφ_inj ha ha' hsame
+  have hsubset : s.image φ ⊆ t := by
+    intro b hb
+    rcases Finset.mem_image.mp hb with ⟨a, ha, rfl⟩
+    exact hφ_mem a ha
+  have htarget :
+      (∑ b ∈ s.image φ, g b) ≤ ∑ b ∈ t, g b :=
+    Finset.sum_le_sum_of_subset_of_nonneg hsubset
+      (by
+        intro b _hb hbt
+        exact hg_nonneg b _hb)
+  exact le_trans hpoint (by simpa [himage] using htarget)
 
 /-- Telescoping identity for adjacent real sequence increments. -/
 theorem sum_range_probabilityIncrements
@@ -186,6 +281,98 @@ theorem sum_le_sum_of_injective_nonneg
     exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
       (by intro b _hb _hnot; exact hg_nonneg b)
   exact le_trans hpoint (by simpa [hmap] using hlarge)
+
+/--
+Exchange comparison for two finite sums.  If `s` has no more elements than
+`t`, every element in `s \ t` is dominated by every element in `t \ s`, and the
+extra target terms are nonnegative, then the sum over `s` is at most the sum
+over `t`.
+-/
+theorem finset_sum_le_sum_of_card_le_pairwise_sdiff
+    {α : Type*} [DecidableEq α]
+    (s t : Finset α) (f : α → ℝ)
+    (hcard : s.card ≤ t.card)
+    (hpair : ∀ a ∈ s \ t, ∀ b ∈ t \ s, f a ≤ f b)
+    (htdiff_nonneg : ∀ b ∈ t \ s, 0 ≤ f b) :
+    (∑ a ∈ s, f a) ≤ ∑ b ∈ t, f b := by
+  classical
+  let sdiff : Finset α := s \ t
+  let tdiff : Finset α := t \ s
+  have hdiff_card : sdiff.card ≤ tdiff.card := by
+    dsimp [sdiff, tdiff]
+    exact Finset.card_sdiff_le_card_sdiff_iff.mpr hcard
+  have hdiff_sum :
+      (∑ a ∈ sdiff, f a) ≤ ∑ b ∈ tdiff, f b := by
+    obtain ⟨e, he_range⟩ :=
+      Function.Embedding.exists_of_card_le_finset
+        (α := {a // a ∈ sdiff}) (s := tdiff) (by
+          simpa [Fintype.card_coe] using hdiff_card)
+    let e' : {a // a ∈ sdiff} ↪ {b // b ∈ tdiff} := {
+      toFun := fun a => ⟨e a, he_range ⟨a, rfl⟩⟩
+      inj' := by
+        intro a b hab
+        exact e.injective (congrArg Subtype.val hab) }
+    have hsub :
+        (∑ a : {a // a ∈ sdiff}, f a.1) ≤
+          ∑ b : {b // b ∈ tdiff}, f b.1 :=
+      finset_sum_le_sum_of_injOn_nonneg
+        (Finset.univ : Finset {a // a ∈ sdiff})
+        (Finset.univ : Finset {b // b ∈ tdiff})
+        (fun a : {a // a ∈ sdiff} => e' a)
+        (fun a : {a // a ∈ sdiff} => f a.1)
+        (fun b : {b // b ∈ tdiff} => f b.1)
+        (by intro a _; simp)
+        (by intro a _ b _ hab; exact e'.injective hab)
+        (by
+          intro a _
+          exact hpair a.1 (by simpa [sdiff] using a.2) (e' a).1
+            (by simpa [tdiff] using (e' a).2))
+        (by
+          intro b _
+          exact htdiff_nonneg b.1 (by simpa [tdiff] using b.2))
+    have hleft :
+        (∑ a : {a // a ∈ sdiff}, f a.1) = ∑ a ∈ sdiff, f a := by
+      exact (Finset.sum_subtype
+        (s := sdiff) (p := fun a => a ∈ sdiff)
+        (h := by intro a; rfl) (f := f)).symm
+    have hright :
+        (∑ b : {b // b ∈ tdiff}, f b.1) = ∑ b ∈ tdiff, f b := by
+      exact (Finset.sum_subtype
+        (s := tdiff) (p := fun b => b ∈ tdiff)
+        (h := by intro b; rfl) (f := f)).symm
+    linarith
+  have hs_decomp :
+      (∑ a ∈ s, f a) =
+        (∑ a ∈ sdiff, f a) + ∑ a ∈ s ∩ t, f a := by
+    change s.sum f = sdiff.sum f + (s ∩ t).sum f
+    calc
+      s.sum f = ((s \ t) ∪ (s ∩ t)).sum f := by
+        rw [Finset.sdiff_union_inter s t]
+      _ = (s \ t).sum f + (s ∩ t).sum f :=
+        Finset.sum_union
+          (s₁ := s \ t) (s₂ := s ∩ t) (f := f)
+          (Finset.disjoint_sdiff_inter s t)
+      _ = sdiff.sum f + (s ∩ t).sum f := by
+        rfl
+  have ht_decomp :
+      (∑ b ∈ t, f b) =
+        (∑ b ∈ tdiff, f b) + ∑ b ∈ s ∩ t, f b := by
+    change t.sum f = tdiff.sum f + (s ∩ t).sum f
+    calc
+      t.sum f = ((t \ s) ∪ (t ∩ s)).sum f := by
+        rw [Finset.sdiff_union_inter t s]
+      _ = (t \ s).sum f + (t ∩ s).sum f :=
+        Finset.sum_union
+          (s₁ := t \ s) (s₂ := t ∩ s) (f := f)
+          (Finset.disjoint_sdiff_inter t s)
+      _ = tdiff.sum f + (s ∩ t).sum f := by
+        rw [Finset.inter_comm t s]
+  calc
+    (∑ a ∈ s, f a)
+        = (∑ a ∈ sdiff, f a) + ∑ a ∈ s ∩ t, f a := hs_decomp
+    _ ≤ (∑ b ∈ tdiff, f b) + ∑ a ∈ s ∩ t, f a :=
+          add_le_add hdiff_sum le_rfl
+    _ = ∑ b ∈ t, f b := ht_decomp.symm
 
 /--
 Discrete crossing for Boolean predicates on a finite integer interval. If a

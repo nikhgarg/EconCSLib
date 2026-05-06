@@ -49,6 +49,31 @@ theorem measureProb_pos_of_measure_ne_zero
     0 < measureProb μ p := by
   exact ENNReal.toReal_pos h (measure_ne_top μ {a | p a})
 
+/-- Finite measure of a larger set transfers to every subset. -/
+theorem measure_ne_top_of_subset_of_ne_top
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) {s t : Set α}
+    (hsub : s ⊆ t) (hfinite : μ t ≠ ∞) :
+    μ s ≠ ∞ := by
+  exact ne_top_of_le_ne_top hfinite (measure_mono hsub)
+
+/-- Real-valued measure is positive when the underlying `ENNReal` mass is nonzero and finite. -/
+theorem measureReal_pos_of_measure_ne_zero_ne_top
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (s : Set α)
+    (h_ne_zero : μ s ≠ 0)
+    (h_ne_top : μ s ≠ ∞) :
+    0 < μ.real s :=
+  ENNReal.toReal_pos h_ne_zero h_ne_top
+
+/-- Positive real-valued measure implies positive underlying `ENNReal` mass. -/
+theorem measure_pos_of_measureReal_pos
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (s : Set α)
+    (h : 0 < μ.real s) :
+    0 < μ s := by
+  exact (ENNReal.toReal_pos_iff.mp h).1
+
 theorem measureReal_inter_ge_one_sub_add
     {α : Type*} [MeasurableSpace α]
     (μ : Measure α) [IsProbabilityMeasure μ]
@@ -120,6 +145,20 @@ theorem withDensity_measure_ne_zero_of_pos_on
     exact hμpos
   rw [withDensity_apply D hs]
   exact ne_of_gt hlin
+
+/--
+Positive density on a measurable set gives positive real mass under a finite
+`withDensity` measure.
+-/
+theorem withDensity_measureReal_pos_of_pos_on
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) (D : α → ENNReal)
+    {s : Set α} (hD : Measurable D) (hs : MeasurableSet s)
+    (hμ : μ s ≠ 0) (hfinite : μ.withDensity D s ≠ ∞)
+    (hpos : ∀ a, a ∈ s → D a ≠ 0) :
+    0 < (μ.withDensity D).real s :=
+  measureReal_pos_of_measure_ne_zero_ne_top (μ.withDensity D) s
+    (withDensity_measure_ne_zero_of_pos_on μ D hD hs hμ hpos)
+    hfinite
 
 /--
 Hoeffding upper-tail bound for a finite sum of independent bounded variables,

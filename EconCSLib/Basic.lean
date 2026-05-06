@@ -1,17 +1,4 @@
-import EconCSLib.Foundations.Graph
-import EconCSLib.Foundations.Math
-import EconCSLib.Foundations.Optimization.Argmax
-import EconCSLib.Foundations.Probability.Admissions
-import EconCSLib.Foundations.Probability.Conditional
-import EconCSLib.Foundations.Probability.FairCoin
-import EconCSLib.Foundations.Probability.FiniteExpectation
-import EconCSLib.Foundations.Probability.Kernel
-import EconCSLib.Foundations.Probability.MarkovChain
-import EconCSLib.Foundations.Probability.MDP
-import EconCSLib.Foundations.Probability.MeasureInequalities
-import EconCSLib.Foundations.Probability.StochasticDominance
-import EconCSLib.Foundations.Econometrics.RatingModels.BinaryRating
-import EconCSLib.Foundations.Econometrics.RatingModels.OrdinalRating
+import EconCSLib.Foundations
 import EconCSLib.Algorithms.Online
 import EconCSLib.Algorithms.Complexity.Yao
 import EconCSLib.Algorithms.Online.AdWords
@@ -21,13 +8,7 @@ import EconCSLib.MechanismDesign.Auctions
 import EconCSLib.MechanismDesign.Auctions.MainTheorems
 import EconCSLib.SocialChoice.FairDivision
 import EconCSLib.Markets.Matching
-import EconCSLib.Applications.RecommenderSystems.Policy
-import EconCSLib.Applications.RecommenderSystems.Classwise
-import EconCSLib.Applications.RecommenderSystems.Allocation
-import EconCSLib.Applications.RecommenderSystems.PolicyAveraging
-import EconCSLib.Foundations.Math.FiniteSigns
-import EconCSLib.Foundations.Math.IntervalCrossing
-import EconCSLib.Foundations.Math.EpsilonContinuity
+import EconCSLib.Applications.RecommenderSystems
 
 /-!
 # EconCSLib Shared Prelude

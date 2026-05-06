@@ -242,6 +242,87 @@ theorem horizonValue_le_optimalValue [Nonempty α]
         _ = optimalValue M (n + 1) x := by
             rfl
 
+/-!
+## Finite-horizon policy optimality and incentive compatibility
+
+Dynamic pricing and platform papers often phrase the driver-side result as
+"truthful" or "accept-all" behavior being a best response.  The generic finite
+MDP form is: a policy is incentive compatible at a horizon if no alternative
+policy has larger value from any state.
+-/
+
+/-- Policy `π` weakly dominates policy `ρ` at a finite horizon. -/
+def PolicyWeaklyDominatesAtHorizon
+    (M : FiniteMDP σ α) (π ρ : Policy σ α) (n : ℕ) : Prop :=
+  ∀ x, horizonValue M ρ n x ≤ horizonValue M π n x
+
+/-- Finite-horizon incentive compatibility: no policy deviation improves value. -/
+def IncentiveCompatibleAtHorizon
+    (M : FiniteMDP σ α) (π : Policy σ α) (n : ℕ) : Prop :=
+  ∀ ρ : Policy σ α, PolicyWeaklyDominatesAtHorizon M π ρ n
+
+/-- A concrete finite-horizon profitable deviation from policy `π` to policy `ρ`. -/
+def ProfitableDeviationAtHorizon
+    (M : FiniteMDP σ α) (π ρ : Policy σ α) (n : ℕ) (x : σ) : Prop :=
+  horizonValue M π n x < horizonValue M ρ n x
+
+/-- A concrete profitable deviation refutes finite-horizon incentive compatibility. -/
+theorem not_incentiveCompatibleAtHorizon_of_profitableDeviation
+    (M : FiniteMDP σ α) (π ρ : Policy σ α) (n : ℕ) (x : σ)
+    (hdev : ProfitableDeviationAtHorizon M π ρ n x) :
+    ¬ IncentiveCompatibleAtHorizon M π n := by
+  intro hIC
+  exact not_le_of_gt hdev (hIC ρ x)
+
+/-- A policy that attains the Bellman optimal value is finite-horizon IC. -/
+theorem incentiveCompatibleAtHorizon_of_horizonValue_eq_optimalValue [Nonempty α]
+    (M : FiniteMDP σ α) (π : Policy σ α) (n : ℕ)
+    (hπ : ∀ x, horizonValue M π n x = optimalValue M n x) :
+    IncentiveCompatibleAtHorizon M π n := by
+  intro ρ x
+  rw [hπ x]
+  exact horizonValue_le_optimalValue M ρ n x
+
+/--
+If a deterministic policy is greedy with respect to the optimal continuation
+value at every remaining horizon, then its finite-horizon value equals the
+Bellman optimal value.
+-/
+theorem horizonValue_eq_optimalValue_of_greedy_optimalValue [Nonempty α]
+    (M : FiniteMDP σ α) (choose : σ → α)
+    (hgreedy : ∀ n, Greedy M choose (optimalValue M n)) :
+    ∀ n x, horizonValue M (deterministicPolicy choose) n x = optimalValue M n x := by
+  intro n
+  induction n with
+  | zero =>
+      intro x
+      simp
+  | succ n ih =>
+      intro x
+      have hfun : horizonValue M (deterministicPolicy choose) n = optimalValue M n := by
+        exact funext ih
+      calc
+        horizonValue M (deterministicPolicy choose) (n + 1) x
+            = policyValueStep M (deterministicPolicy choose)
+                (horizonValue M (deterministicPolicy choose) n) x := by
+              rfl
+        _ = actionValue M (horizonValue M (deterministicPolicy choose) n) x (choose x) := by
+              rw [policyValueStep_deterministic]
+        _ = actionValue M (optimalValue M n) x (choose x) := by
+              rw [hfun]
+        _ = optimalStep M (optimalValue M n) x := hgreedy n x
+        _ = optimalValue M (n + 1) x := by
+              rfl
+
+/-- A deterministic policy that is Bellman-greedy at every horizon is finite-horizon IC. -/
+theorem incentiveCompatibleAtHorizon_of_greedy_optimalValue [Nonempty α]
+    (M : FiniteMDP σ α) (choose : σ → α)
+    (hgreedy : ∀ n, Greedy M choose (optimalValue M n)) (n : ℕ) :
+    IncentiveCompatibleAtHorizon M (deterministicPolicy choose) n :=
+  incentiveCompatibleAtHorizon_of_horizonValue_eq_optimalValue M
+    (deterministicPolicy choose) n
+    (horizonValue_eq_optimalValue_of_greedy_optimalValue M choose hgreedy n)
+
 /-- State distribution at time `t` under initial law `μ0` and policy `π`. -/
 noncomputable def stateDistribution
     (M : FiniteMDP σ α) (π : Policy σ α) (μ0 : PMF σ) (t : ℕ) : PMF σ :=

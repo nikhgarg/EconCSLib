@@ -147,6 +147,27 @@ theorem image_rankAgentByValue_univ (s : Finset α) (value : α → ℝ)
   · rw [Finset.card_image_of_injective _ (rankAgentByValue_injective s value hcard)]
     rw [Finset.card_univ, Fintype.card_fin, ← hcard]
 
+/-- Sum a real-valued function over a finite set by its ranked enumeration. -/
+theorem sum_rankAgentByValue_eq_sum (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (f : α → ℝ) :
+    (∑ i : Fin k, f (rankAgentByValue s value hcard i)) =
+      ∑ a ∈ s, f a := by
+  classical
+  calc
+    (∑ i : Fin k, f (rankAgentByValue s value hcard i))
+        = (∑ a ∈ Finset.image (rankAgentByValue s value hcard)
+          (Finset.univ : Finset (Fin k)), f a) := by
+          symm
+          exact Finset.sum_image
+            (s := (Finset.univ : Finset (Fin k)))
+            (f := f)
+            (g := rankAgentByValue s value hcard)
+            (by
+              intro i _hi j _hj hij
+              exact rankAgentByValue_injective s value hcard hij)
+    _ = ∑ a ∈ s, f a := by
+          rw [image_rankAgentByValue_univ s value hcard]
+
 theorem sum_rankValueByValue_eq_sum (s : Finset α) (value : α → ℝ)
     {k : ℕ} (hcard : s.card = k) :
     (∑ i : Fin k, rankValueByValue s value hcard i) =
@@ -191,6 +212,19 @@ theorem lowerRankFinset_subset (s : Finset α) (value : α → ℝ)
   rcases Finset.mem_image.mp ha with ⟨i, _hi, rfl⟩
   exact rankAgentByValue_mem s value hcard i
 
+theorem lowerRankFinset_mono (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) {cut₁ cut₂ : ℕ}
+    (hcut : cut₁ ≤ cut₂) :
+    lowerRankFinset s value hcard cut₁ ⊆
+      lowerRankFinset s value hcard cut₂ := by
+  classical
+  intro a ha
+  rcases Finset.mem_image.mp ha with ⟨i, hi, rfl⟩
+  refine Finset.mem_image.mpr ⟨i, ?_, rfl⟩
+  exact Finset.mem_filter.mpr
+    ⟨Finset.mem_univ i,
+      Nat.lt_of_lt_of_le (Finset.mem_filter.mp hi).2 hcut⟩
+
 theorem upperRankFinset_subset (s : Finset α) (value : α → ℝ)
     {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
     upperRankFinset s value hcard cut ⊆ s := by
@@ -217,6 +251,39 @@ theorem lowerRankFinset_disjoint_upperRankFinset
     rankAgentByValue_injective s value hcard hagent_eq
   subst hi
   exact not_le_of_gt (Finset.mem_filter.mp hlo).2 (Finset.mem_filter.mp hhi).2
+
+/-- The upper ranked block is the complement of the lower ranked block inside
+the ranked finite universe. -/
+theorem upperRankFinset_eq_sdiff_lowerRankFinset
+    (s : Finset α) (value : α → ℝ)
+    {k : ℕ} (hcard : s.card = k) (cut : ℕ) :
+    upperRankFinset s value hcard cut =
+      s \ lowerRankFinset s value hcard cut := by
+  classical
+  ext a
+  constructor
+  · intro haupper
+    refine Finset.mem_sdiff.mpr
+      ⟨upperRankFinset_subset s value hcard cut haupper, ?_⟩
+    intro halower
+    exact lowerRankFinset_disjoint_upperRankFinset
+      s value hcard cut a halower haupper
+  · intro ha
+    have has : a ∈ s := (Finset.mem_sdiff.mp ha).1
+    have hanotlower : a ∉ lowerRankFinset s value hcard cut :=
+      (Finset.mem_sdiff.mp ha).2
+    have himage :
+        a ∈ Finset.image (rankAgentByValue s value hcard)
+          (Finset.univ : Finset (Fin k)) := by
+      rw [image_rankAgentByValue_univ s value hcard]
+      exact has
+    rcases Finset.mem_image.mp himage with ⟨i, _hi, hi_eq⟩
+    refine Finset.mem_image.mpr ⟨i, ?_, hi_eq⟩
+    refine Finset.mem_filter.mpr ⟨Finset.mem_univ i, ?_⟩
+    by_contra hnot
+    have hi_lt : i.val < cut := Nat.lt_of_not_ge hnot
+    exact hanotlower (Finset.mem_image.mpr
+      ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ i, hi_lt⟩, hi_eq⟩)
 
 theorem lowerRank_value_le_upperRank_value
     (s : Finset α) (value : α → ℝ)

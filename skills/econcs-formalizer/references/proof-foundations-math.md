@@ -21,6 +21,24 @@ finite signs, asymptotics, and interval-crossing arguments.
   the selected index type into the full index type and use
   `FiniteSum.sum_le_sum_of_injective_nonneg`, with nonnegativity of the full
   summands, to compare the selected sum to the full sum.
+- For finset-to-finset mass comparisons, use
+  `FiniteSum.finset_sum_le_sum_of_injOn_nonneg`: provide an injection from the
+  source finset into the target finset, prove pointwise domination along the
+  injection, and prove nonnegativity for unused target terms. This is the right
+  helper for top-k domination lines such as "any previously selected block has
+  total probability at most the top-k block's mass."
+- For finite weighted-race arguments, use
+  `FiniteSum.weight_share_le_inv_card_add_one_of_forall_le`: if every element
+  of a finite comparison set has weight at least the distinguished element's
+  weight, then the distinguished element's share of the combined weight is at
+  most `1 / (card + 1)`. This is the clean algebraic core for first-hit
+  probability bounds like Immorlica-Mahdian Equation (4.1).
+- For finite popularity-tail averaging, use
+  `FiniteSum.card_mul_le_sum_of_forall_le` and
+  `FiniteSum.le_div_card_of_sum_le_of_forall_le`: if every member of a finite
+  tail has mass at least `p_w` but the tail's total mass is at most `T`, then
+  `p_w <= T / tail.card`. This is the source algebra behind
+  Immorlica-Mahdian Lemma 4.3's `p_w <= (1-Q)/(w-k)` line.
 - When a proof needs "sort these finitely many objects by score, with ties
   broken arbitrarily", do not leave ranking/injectivity/monotonicity as paper
   assumptions. Build or reuse a finite-ranking helper that maps each object to
@@ -42,6 +60,31 @@ finite signs, asymptotics, and interval-crossing arguments.
 - For analytic crossing proofs, first prove the finite algebra conditionally
   from a named crossing certificate. Then instantiate continuity/limit facts in
   small generic interval modules.
+- For probability or count sequences bounded by `C / n`, use
+  `TendsToZero_of_nonneg_le_const_div` when the sequence is nonnegative, and
+  `TendsToZero_of_eventually_abs_le_inv` when you already have an eventual
+  absolute-value bound. For bounded counts divided by `n`, use
+  `TendsToZero_ratio_of_nonneg_bounded`.
+- For analytic statements of the form `x_n ~ y_n`, use
+  `AsymptoticEquivalent` rather than restating ratio convergence locally. Use
+  `AsymptoticEquivalent.eventually_ratio_mem_Icc` for ratio bounds and
+  `AsymptoticEquivalent.eventually_sandwich_of_pos_right` when downstream
+  probability or optimization code needs an eventual multiplicative sandwich.
+- For paper asymptotics with logarithmic cutoffs, use
+  `tendsto_const_div_log_nat_nhds_zero` for `C / log n` terms and
+  `tendsto_log_div_sqrt_nat_nhds_zero` for `log n / sqrt n` terms. When a
+  paper gives a pre-division count bound such as
+  `C n / log n + D sqrt n log n`, first divide by `n` on an eventual
+  positive tail, simplify `sqrt n / n` using `Real.sq_sqrt`, and then combine
+  the two zero limits with `TendsToZero_of_eventually_abs_le_tendsto_zero`.
+- For finite probability-product lower bounds of the form
+  `(1 - 1/d)^N`, use `EconCSLib.Foundations.Math.ExponentialBounds`:
+  `exp_neg_two_div_le_one_sub_inv_of_two_le` gives
+  `exp(-(2/d)) <= 1 - 1/d` when `d >= 2`, and
+  `exp_neg_two_mul_nat_div_le_one_sub_inv_pow_of_two_le` raises it to
+  `exp(-(2N/d)) <= (1 - 1/d)^N`. This is the clean analytic core for
+  Immorlica-Mahdian Lemma 4.3's
+  `(1 - 1/(w-k))^(nk) >= exp(-2nk/(w-k))` step.
 - Do not assume an intermediate-value crossing gives the needed one-sided sign.
   If the proof needs positivity immediately to the right, use a last-nonpositive
   or first-nonnegative compact-interval lemma and state the interval sign-change

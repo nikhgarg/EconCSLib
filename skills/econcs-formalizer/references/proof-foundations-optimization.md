@@ -4,12 +4,29 @@ Use for `EconCSLib/Foundations/Optimization/*`, argmax existence, objective
 comparison wrappers, finite rule optimization, and paper-facing optimality
 statements.
 
+Start with `docs/OPTIMIZATION_LIBRARY_ROADMAP.md` when deciding whether an
+optimization proof seam should stay paper-local or move to `EconCSLib`.
+
 ## Proof Seams
 
+- For "candidate plus universal bound" proofs, use
+  `EconCSLib.Optimization.UpperBoundCertificate` for maximization and
+  `EconCSLib.Optimization.LowerBoundCertificate` for minimization. These are
+  the preferred wrappers for paper LP certificates, exchange upper bounds,
+  endpoint/current-bound certificates, and finite lower-bound arguments.
+- Use `StrictUpperBoundCertificate` / `StrictLowerBoundCertificate` when the
+  paper also proves uniqueness or a strict structure theorem away from the
+  candidate. Keep equality-case algebra paper-local until a second paper needs
+  the same condition.
 - For finite deterministic-rule optimization statements, first prove a generic
   maximizer-existence theorem over the finite function type
   `(instances -> actions)`. Keep paper folders responsible for defining the
   paper-specific objective and applying the generic result.
+- For finite feasible regions that are awkward to optimize over directly, use
+  `exists_isMaximizerOn_of_finite_code` or
+  `exists_isMinimizerOn_of_finite_code`: define a finite code type, prove every
+  feasible code decodes to a feasible object, and prove every source-feasible
+  object is covered by some feasible code.
 - For expected objective wrappers, separate the deterministic objective from
   the expectation operator. Prove a monotone/linear expectation interface once,
   then instantiate paper theorems by rewriting the expected paper objective to
@@ -24,15 +41,38 @@ statements.
   exact paper-local equality-form or epigraph LP; prove weak duality for the
   exact variables; construct the closed-form primal witness; construct the
   matching dual/certificate; prove feasibility, tightness/complementary
-  slackness, and uniqueness; then wrap this as the paper theorem. This can
-  fully verify a source result without a generic LP solver when the final
-  wrapper constructs or discharges every certificate internally.
+  slackness, and uniqueness; then finish with an `UpperBoundCertificate` or
+  `LowerBoundCertificate` and wrap this as the paper theorem. This can fully
+  verify a source result without a generic LP solver when the final wrapper
+  constructs or discharges every certificate internally. Generalize the LP
+  record only after a second paper needs the same constraint shape.
+- For standard finite maximization LPs with `x >= 0` and `Ax <= b`, use
+  `StandardMaxLP.weak_duality` and `StandardMaxLPCertificate.isMaximizerOn`.
+  This is the right first abstraction for GCG-style closed primal/dual
+  certificates. Full basic-feasible-solution/rank support is heavier; add it
+  only when a source theorem needs the BFS support-size statement itself.
+- For online-auction or primal-dual competitive-ratio proofs, separate the
+  generic sandwich from the paper accounting. Use
+  `UpperBoundApproximationCertificate` when `benchmark <= dual` and
+  `ratio * dual <= achieved`; use
+  `UpperBoundApproximationWithErrorCertificate` for small-bids or finite-error
+  variants.
+- For auction lower bounds by hard input distributions, prefer the generic Yao
+  certificate `EconCSLib.Decision.RandomizedUpperPayoffCertificate`; keep
+  source-specific permutation, layer-count, or benchmark-normalization fields
+  in the paper folder.
 - For normalized objective values, prove boundedness before compactness or
   supremum reasoning. Finite PMF expectations are often bounded by row maxima,
   giving immediate `BddAbove` side conditions.
 - For optimization reductions, prove lift/descend functional preservation,
   symmetrization dominance, and then `sSup` equality from explicit nonempty and
   bounded-above feasible-value conditions.
+- For exchange proofs over integer allocations, state the local move relation
+  explicitly. Prove "global optimum has no improving move" immediately from
+  `IsMaximizerOn`, and only prove the harder converse after establishing the
+  feasible move graph is connected by those moves. Once reachability is
+  available, finish with `isMaximizerOn_of_reachable_nonincreasing` or
+  `isMinimizerOn_of_reachable_nondecreasing`.
 
 ## Lean Patterns
 
@@ -42,3 +82,6 @@ statements.
   reusable argmax/ordering theorem into the library.
 - When comparing objectives, expose monotonicity as a named field or theorem
   rather than unfolding expectation internals inside every paper wrapper.
+- Prefer theorem statements over opaque bundled witnesses in `PaperInterface`;
+  bundled certificates are implementation tools and belong in proof files,
+  post-paper audit ledgers, or reusable foundation modules.
