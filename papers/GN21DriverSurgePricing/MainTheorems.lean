@@ -19192,6 +19192,113 @@ def theorem4MeasuredAggregateFeasibleSequentialWeakAcceptAllRewardCertificate_of
       using hle
 
 /--
+Source-facing feasible sequential current-bounds certificate.  The surge step
+uses the current non-surge fixed reward rate.  The non-surge step is stated
+only after the surge state has been fixed at accept-all.
+-/
+structure Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  m0_eq : m 0 = R2
+  arrival1_pos : 0 < arrival 0
+  arrival2_pos : 0 < arrival 1
+  switch12_pos : 0 < switch12
+  switch21_pos : 0 < switch21
+  acceptAll_mass_pos :
+    ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy
+  time1_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  time2_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  q1_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  q2_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  nonsurge_after_surge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePolicy ρ →
+        ∃ ratio : ℝ,
+          GN21NonsurgeLemma10AcceptAllAggregateSourceData
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            R2 (z 0) ratio
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+            (ρ 0) acceptAllPolicy
+  surge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePolicy ρ →
+        ∃ R1_current ratio : ℝ,
+          GN21SurgeLemma9AcceptAllAggregateSourceData
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            (m 1) R1_current (z 1) ratio
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (ρ 0) (ρ 1)
+
+/--
+Source-facing feasible sequential current bounds instantiate the packed
+feasible sequential current-bounds certificate.
+-/
+def Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsWeakCertificate.of_source
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+        μ arrival R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsWeakCertificate
+      μ arrival R2 switch12 switch21 m z where
+  m0_eq := C.m0_eq
+  current_nondegenerate := by
+    intro ρ hρ
+    rcases C.nonsurge_after_surge_data ρ hρ with ⟨ratioN, DN⟩
+    rcases C.surge_data ρ hρ with ⟨R1_current, ratioS, DS⟩
+    exact
+      gn21MeasuredPairNondegenerate_of_positive_measure
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) (ρ 1) DN.current_mass_pos DS.current_mass_pos
+        C.arrival1_pos C.arrival2_pos C.switch12_pos C.switch21_pos
+        (hρ 0).2 (hρ 1).2 (hρ 0).1 (hρ 1).1
+  surge_accept_all_nondegenerate := by
+    intro ρ hρ
+    rcases C.nonsurge_after_surge_data ρ hρ with ⟨ratioN, DN⟩
+    exact
+      gn21MeasuredPairNondegenerate_of_positive_measure
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) acceptAllPolicy DN.current_mass_pos
+        (C.acceptAll_mass_pos 1) C.arrival1_pos C.arrival2_pos
+        C.switch12_pos C.switch21_pos (hρ 0).2
+        measurableSet_acceptAllPolicy (hρ 0).1 (fun _ hτ => hτ)
+  accept_all_nondegenerate :=
+    gn21MeasuredPairNondegenerate_of_positive_measure
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      acceptAllPolicy acceptAllPolicy (C.acceptAll_mass_pos 0)
+      (C.acceptAll_mass_pos 1) C.arrival1_pos C.arrival2_pos
+      C.switch12_pos C.switch21_pos measurableSet_acceptAllPolicy
+      measurableSet_acceptAllPolicy (fun _ hτ => hτ) (fun _ hτ => hτ)
+  nonsurge_after_surge_data := by
+    intro ρ hρ
+    rcases C.nonsurge_after_surge_data ρ hρ with ⟨ratio, D⟩
+    exact ⟨ratio,
+      GN21NonsurgeLemma10AcceptAllAggregateData.of_source
+        (hρ 0).1 (hρ 0).2 (fun _ hτ => hτ) measurableSet_acceptAllPolicy
+        C.arrival1_pos C.arrival2_pos C.switch12_pos C.switch21_pos
+        C.time1_acceptAll_integrable C.q1_acceptAll_integrable D⟩
+  surge_data := by
+    intro ρ hρ
+    rcases C.surge_data ρ hρ with ⟨R1_current, ratio, D⟩
+    exact ⟨R1_current, ratio,
+      GN21SurgeLemma9AcceptAllAggregateData.of_source
+        (hρ 0).1 (hρ 0).2 (hρ 1).1 (hρ 1).2
+        C.arrival1_pos C.arrival2_pos C.switch12_pos C.switch21_pos
+        C.time2_acceptAll_integrable C.q2_acceptAll_integrable D⟩
+
+/--
 Primitive structured current-bounds package for the weak measured aggregate
 accept-all route.  Compared with
 `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`, this asks
@@ -44871,6 +44978,31 @@ def theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasi
         theorem4MeasuredAggregateFeasibleSequentialWeakAcceptAllRewardCertificate_of_structured_feasible_sequential_current_bounds
           μ arrival R2 switch12 switch21 m z (C m z hnonneg hparams))
 
+/--
+Source-facing feasible sequential current bounds instantiate the feasible
+sequential weak Theorem 3 boundary.
+-/
+def theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds_source
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+            μ arrival R2 switch12 switch21 m z) :
+    theorem3AcceptAllFeasibleSequentialWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds
+    μ arrival R1 R2 switch12 switch21
+    (by
+      intro m z hnonneg hparams
+      exact
+        Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsWeakCertificate.of_source
+          μ arrival R2 switch12 switch21 m z (C m z hnonneg hparams))
+
 /-- Feasible primitive current bounds instantiate the feasible weak Theorem 3 boundary. -/
 def theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_primitive
     (μ : Fin 2 → Measure TripLength)
@@ -48483,6 +48615,80 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_fe
         μ arrival R1 R2 switch12 switch21 :=
     theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds
       μ arrival R1 R2 switch12 switch21 A.feasible_sequential_current_bounds
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_sequential_weak_reward
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos hweak
+
+/--
+Source-level assumptions for the feasible-measurable sequential route with
+source-facing Lemma 9/10 data.  Lean derives the packed aggregate data,
+nondegeneracy, and routine integrability side conditions internally.
+-/
+structure Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  feasible_sequential_current_bounds_source :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+          μ arrival R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper from source-facing feasible sequential
+current-bounds data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  have hweak :
+      theorem3AcceptAllFeasibleSequentialWeakRewardCertificate
+        μ arrival R1 R2 switch12 switch21 :=
+    theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds_source
+      μ arrival R1 R2 switch12 switch21
+      A.feasible_sequential_current_bounds_source
   exact
     paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_sequential_weak_reward
       μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos

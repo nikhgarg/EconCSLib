@@ -110,6 +110,8 @@ theorem3AcceptAllSequentialWeakRewardCertificate_of_structured_sequential_curren
 theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds
 paper_theorem3_measured_structured_ic_prices_of_structured_sequential_current_bounds_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions
+Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
 ```
 
 The endpoint-term theorems do not assume target fixed-state reward-rate
@@ -121,7 +123,9 @@ The sequential current-bounds theorems avoid the arbitrary fixed-surge Lemma 10
 problem for the IC conclusion.  They prove the surge move first with Lemma 9
 and the current fixed non-surge reward rate; after that, the non-surge move has
 surge fixed at accept-all, so Lemma 10 can use the Theorem 3 target surge
-accept-all rate.
+accept-all rate.  The source-data wrapper derives the packed aggregate and
+nondegeneracy fields from source-facing Lemma 9/10 data, accept-all
+integrability, and positive accept-all mass.
 
 ## Closure Options
 

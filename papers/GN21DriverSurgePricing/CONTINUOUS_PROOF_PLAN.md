@@ -4,7 +4,7 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The most recent compiled adapter is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
 ```
 
 This is now the preferred IC closure route.  It proves the surge-state
@@ -85,8 +85,13 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `paper_theorem3_measured_structured_ic_prices_of_structured_sequential_current_bounds_source_assumptions`,
    and
    `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions`.
-   These wrappers make the accept-all fixed-state branch the only Lemma 10
-   obligation needed for Theorem 3 IC.
+   The lightest feasible-measurable wrapper is
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions`,
+   whose final field is
+   `Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate`;
+   Lean derives the packed aggregate data and nondegeneracy fields from
+   source-facing Lemma 9/10 data.  These wrappers make the accept-all
+   fixed-state branch the only Lemma 10 obligation needed for Theorem 3 IC.
 
 3. Instantiate the feasible sequential source route from source regularity:
    prove the Lemma 9 aggregate data for the surge move at each feasible
