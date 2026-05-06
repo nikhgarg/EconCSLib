@@ -179,7 +179,9 @@ The new compiled infrastructure is:
   exists_effectiveRatio_pos_lt_upperRatio_of_reward_le_envelope
   GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
   theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
+  theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
   paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_envelope_slack_data_assumptions
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_signed_envelope_slack_data_assumptions
 
 These lemmas let the proof use a real current reward envelope and then build
 the effective Lemma 9 ratio `z_2/(m_2-r1_current)` from the source slack.
@@ -248,9 +250,9 @@ Recommended proof order
 3. Use it to discharge pointwise nonnegative payments for Theorem 3 non-surge
    prices.  Done.
 4. Remove the source-facing `R_current <= Rmax` field by instantiating `Rmax`
-   with the sign-split reward-rate envelope.
+   with the sign-split reward-rate envelope.  Done.
 5. Prove the scalar surge slack inequality for the constructed Theorem 3
-   parameters and the chosen `Rmax`.
+   parameters and the signed-envelope `Rmax`.
 6. Prove the current Lemma 9 lower endpoint scalar lemma.
 7. Instantiate the envelope/slack source wrapper.
 

@@ -46,7 +46,7 @@ GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_curren
 The newest source-facing endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_envelope_slack_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_signed_envelope_slack_data_assumptions
 ```
 
 It proves the positive-mass measurable Theorem 3 IC conclusion by moving surge
@@ -68,7 +68,9 @@ Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeC
 theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
 theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
 theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
+theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
+Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerSignedEnvelopeSlackDataAssumptions
 ```
 
 ## Remaining Mathematical Work
@@ -76,21 +78,24 @@ Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeC
 For every feasible measurable positive-mass policy `rho`, the newest Lemma 9
 source field asks for:
 
-- the current non-surge reward rate identity for state 0;
-- a verified envelope `r1_current <= Rmax`;
+- a signed reward-envelope choice:
+  `(z_0 <= 0 and Rmax = m_0)` or
+  `(0 <= z_0 and Rmax = m_0 + z_0 * switch12)`;
 - positivity of `m_2 - Rmax`;
 - current Lemma 9 lower-endpoint nonpositivity with fixed non-surge `T,Q` and
   moving surge accept-all `Tbar,Qbar`;
 - surge-side slack
   `z_2 < current_Lemma9_upper * (m_2 - Rmax)`.
 
-`0 <= r1_current` is no longer a source field.  Lean derives current
-non-surge pointwise payment nonnegativity from Lemma 10 and then derives
-reward-rate nonnegativity from the measured Lemma 1 formula.  The main compiled
-bridge is:
+`0 <= r1_current`, the reward-rate identity, and `r1_current <= Rmax` are no
+longer source fields.  Lean defines the current reward rate internally,
+derives current non-surge pointwise payment nonnegativity from Lemma 10, and
+derives the reward-rate envelope from the signed structured-price bound.  The
+main compiled bridges are:
 
 ```lean
 theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
+theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
 ```
 
 The source-facing pointwise-nonnegativity field has already been removed by
@@ -125,14 +130,11 @@ Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the corrected route and the
 distinction between the easy `0 <= r1_current` proof, the reward-envelope
 bound, and the surge-side slack proof.
 
-Then remove the remaining envelope source field by instantiating `Rmax` from
-the sign-split reward envelope:
+Next, prove the scalar sign-split surge slack for the two possible envelopes,
+or add the next wrapper that asks for a proof for both sign cases instead of an
+existential chosen `Rmax`.
 
-```lean
-exists_reward_rate_envelope_ctmcStructuredSurgePrice
-```
-
-After that, prove a current-state version of the Lemma 9 final-sign/nonpositive
+Also prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma
 already exists:
 
