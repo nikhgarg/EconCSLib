@@ -315,12 +315,14 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`
-  are the current lightest fixed-transfer source boundary: the source proof
+  are compiled fixed-state adapters: the source proof
   supplies ordinary allowed Lemma 5 replacement data, common fixed-state
   complement pointwise equality and reward-rate facts for each state, and
   ordinary surge cutoff bounds; Lean derives the branch-specific policy-form
   packages, surge moving-cutoff choice, and tail-integrability package
-  internally.
+  internally.  These adapters are strongest in accept-all fixed-state branches;
+  the source-faithful closure path remains the regular current-bounds route
+  until the non-accept-all fixed-state reward-rate issue is discharged.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -719,14 +721,12 @@ allowed-replacement source-boundary certificate, and the current regular
 allowed-policy-form route that consumes measurable Lemma 5 policy-form
 classification plus regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-fixed-state-equality derived-tail cutoff-bounds fixed-transfer source endpoint
-for arbitrary feasible
-measurable optimal policies by proving the regularity theorem that supplies
-ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
-tail, or middle-rejection endpoint move, and discharges the remaining
-pointwise fixed-state complement ratio, non-surge cutoff
-nondegeneracy, and fixed-state reward-rate fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`.
+regular current-bounds source endpoint for arbitrary feasible measurable
+optimal policies by proving the regularity theorem that supplies ordinary Lemma
+5 allowed policy-form classification, chooses the relevant upper, lower, tail,
+or middle-rejection endpoint move, and discharges the remaining Lemma 9/10
+current-bound fields without assuming target reward-rate identities for
+arbitrary non-accept-all fixed states.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

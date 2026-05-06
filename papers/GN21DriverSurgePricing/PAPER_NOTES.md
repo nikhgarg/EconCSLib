@@ -433,6 +433,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`,
+  noting that these fixed-state wrappers are stronger than the paper-facing
+  current-bounds route in non-accept-all fixed-state branches unless the
+  target reward-rate/equality facts are separately proved,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

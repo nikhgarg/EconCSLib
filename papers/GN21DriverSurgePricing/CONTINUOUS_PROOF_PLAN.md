@@ -1,13 +1,16 @@
 # GN21 Continuous Proof Plan
 
 This note records the fastest route to closing the remaining GN21 proof, beyond
-the already-compiled wrappers.  The current Lean endpoint is:
+the already-compiled wrappers.  The most recent compiled adapter is:
 
 ```lean
 paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions
 ```
 
-The remaining paper-facing field is
+That adapter is useful for branch bookkeeping, but it should not be treated as
+the final source-faithful closure route unless the source proof also establishes
+the target reward-rate/equality facts for arbitrary non-accept-all fixed
+states.  The remaining field for that adapter is
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`
 for the structured prices constructed by Theorem 3, paired with ordinary
 all-measurable allowed Lemma 5 replacement data.  This endpoint packages shared
@@ -53,17 +56,17 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    are also compiled, so the final theorem no longer has to thread current
    `Q,T,W` paths, denominator positivity, or Remark 4 side conditions by hand.
 
-2. Prove one source regularity/selection theorem that supplies optimum
-   existence, ordinary all-measurable Lemma 5 allowed replacement data, the
-   common fixed-state complement pointwise equality and reward-rate facts for
-   each state, and ordinary surge cutoff bounds.  This
-   should target exactly
-   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions`.
+2. Repair the source-facing Lemma 9/10 current-bounds frontier so it matches the
+   paper algebra for arbitrary fixed-state policies.  The compiled fixed-state
+   routes currently need target reward-rate facts for the fixed state; those are
+   automatic in accept-all fixed-state branches but are not a source consequence
+   for arbitrary non-accept-all fixed states.
 
-3. Instantiate
-   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`
-   from that selection theorem, with the scalar Theorem 3 parameter
-   construction already proved.
+3. After the current-bounds frontier is repaired, instantiate the regular
+   allowed-policy-form/current-bounds source route:
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`.
+   The fixed-state-equality adapter can remain available for the accept-all
+   fixed-state subcases and for any later stronger source theorem.
 
 ## Key Missing Mathematical Lemma
 
@@ -72,8 +75,8 @@ The hard theorem should have this shape:
 ```lean
 theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
     (...) :
-    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate
-      μ arrival R1 R2 switch12 switch21 m z
+    Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+      μ arrival m z switch12 switch21
 ```
 
 Its hypotheses should be source-level regularity assumptions, not pre-unpacked
@@ -86,8 +89,9 @@ endpoint primitives:
 - Current feasible optimal policies have the interval/tail shapes from Lemma 5.
 - The current-policy `Q,T,W` primitives agree with the endpoint path formulas,
   or equivalently produce the compiled current-bounds endpoint data packages.
-- The Lemma 9/10 structured bounds hold for the constructed prices through the
-  existing accept-all aggregate-data interfaces.
+- The Lemma 9/10 structured bounds hold for the constructed prices through a
+  current-bounds interface that does not assume target reward-rate identities
+  for arbitrary non-accept-all fixed states.
 - The other state's current policy has positive finite mass and the required
   `Q,T,W` accounting identity.
 
@@ -220,7 +224,7 @@ into the concrete endpoint policy data.
   fields supply the realized endpoint moves.  If the source proof instead
   produces all-measurable Lemma 5 replacement data, it feeds this target through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
-- For the fixed-transfer route, the current lightest source boundary is
+- For the fixed-transfer route, the lightest compiled fixed-state adapter is
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,
   all-measurable Lemma 5 replacement certificates, allowed policy-form
@@ -232,7 +236,9 @@ into the concrete endpoint policy data.
   complement pointwise equality and reward-rate facts for each state, and
   ordinary surge cutoff bounds.  The branch-specific policy-form fixed-state
   packages, moving cutoff choice, and surge tail integrability are derived
-  internally.
+  internally.  This is stronger than the paper currently gives for
+  non-accept-all fixed-state branches, so it is no longer the primary closure
+  target.
 - If the fixed other state already accepts all trips, use the
   `...PositiveCutoffLocalData.of_other_acceptAll` constructors.  They derive
   the cross-ratio inequalities by equality, derive positive fixed-state mass
@@ -287,8 +293,9 @@ into the concrete endpoint policy data.
   fixed-state pointwise equality into the one-sided non-surge comparison or the
   two-sided surge comparisons.  The no-mass constructors ending in
   `of_other_acceptAll` discharge the fixed-state pointwise and reward-rate
-  fields directly in accept-all fixed-state branches.  The current shortest
-  source proof should target the reusable common packages
+  fields directly in accept-all fixed-state branches.  If the fixed-state
+  target reward/equality facts are available, target the reusable common
+  packages
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData` and
   `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData`
   once per optimal policy; Lean maps them to the branch-specific policy-form
@@ -302,8 +309,9 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions`
-  rather than adding more theorem-specific argument lists.
+  `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
+  through a repaired current-bounds interface, rather than adding more
+  fixed-state target-reward wrappers.
 
 ## What Would Fully Close The Paper
 
