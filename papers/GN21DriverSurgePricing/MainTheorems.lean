@@ -52808,6 +52808,247 @@ theorem theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
     ctmcStructuredSurgePrice, P.hm0] using hpay
 
 /--
+The non-surge-after-surge aggregate move follows from the Theorem 3 Lemma 10
+accept-all bounds after tightening them to the current non-surge policy.
+-/
+theorem theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hR2_pos : 0 < R2)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ : dynamicFeasibleMeasurablePositiveMassPolicy μ ρ) :
+    gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+        (arrival 1) switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) acceptAllPolicy ≤
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+        (arrival 1) switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        acceptAllPolicy acceptAllPolicy := by
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [hswitch21_pos, hswitch12_pos]
+  have hfixed_exit_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+          acceptAllPolicy :=
+    gn21ExitWeightIntegral_pos_of_switch_pos
+      (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+      (le_of_lt harrival2_pos) hswitch21_pos hsum21
+      measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+  have hfixed_time_pos :
+      0 < gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+    gn21ScaledStateTime_pos_of_nonneg
+      (μ 1) (arrival 1) acceptAllPolicy
+      (le_of_lt harrival2_pos) measurableSet_acceptAllPolicy
+      (fun _ hτ => hτ)
+  have hfixed_A_pos :
+      0 <
+        gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
+            switch12 +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+            acceptAllPolicy := by
+    exact add_pos (mul_pos hfixed_time_pos hswitch12_pos) hfixed_exit_pos
+  have hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          acceptAllPolicy =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy := by
+    calc
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          acceptAllPolicy
+          =
+        m 1 * (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+          z 1 *
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12 -
+              switch21) := by
+            simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+              ctmcStructuredSurgePrice, gn21AcceptAllScaledStateTime,
+              gn21AcceptAllExitWeightIntegral] using
+              paper_remark2_structured_scaled_earning_algebra
+                (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12
+                acceptAllPolicy htime2_integrable hq2_integrable
+      _ = R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+        P.surge_accounting
+  have Dsrc :
+      ∃ ratio : ℝ,
+        GN21NonsurgeLemma10AcceptAllAggregateSourceData
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          R2 (z 0) ratio
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (ρ 0) acceptAllPolicy :=
+    ⟨P.nonsurgeRatio,
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening
+        (hρ.1 0).1 (hρ.1 0).2 harrival1_pos hswitch12_pos
+        hswitch21_pos
+        (htime1_integrable.mono_set (hρ.1 0).1)
+        (hq1_integrable.mono_set (hρ.1 0).1)
+        htime1_integrable hq1_integrable
+        P.nonsurge_acceptAll_bounds hfixed_A_pos
+        (le_of_lt hfixed_exit_pos) (hρ.2 0)
+        P.hz0 hR2_pos hfixed_reward_rate⟩
+  rcases Dsrc with ⟨ratio, D⟩
+  have Dag :=
+    GN21NonsurgeLemma10AcceptAllAggregateData.of_source
+      (hρ.1 0).1 (hρ.1 0).2 (fun _ hτ => hτ)
+      measurableSet_acceptAllPolicy harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable hq1_integrable D
+  have hle := Dag.aggregate_le_acceptAll
+  simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb, P.hm0] using
+    hle
+
+/--
+Surge aggregate move from the source-faithful current Lemma 9 envelope route:
+the current fixed-state reward only needs a verified envelope and enough
+slack below the current Lemma 9 upper endpoint.
+-/
+theorem theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 R1_current Rmax : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hR2_pos : 0 < R2)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hz1_pos : 0 < z 1)
+    (hρ : dynamicFeasibleMeasurablePositiveMassPolicy μ ρ)
+    (hrate :
+      gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) = R1_current)
+    (hRcurrent_le_envelope : R1_current ≤ Rmax)
+    (hmRmax_pos : 0 < m 1 - Rmax)
+    (hcurrent_lower_nonpos :
+      lemma9StructuredLower
+        (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+        (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+          (ρ 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+          switch21 switch12)
+        switch21 ≤ 0)
+    (hz_upper_slack :
+      z 1 <
+        lemma9StructuredUpper
+          (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+            (ρ 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+            switch21 switch12)
+          switch21 *
+            (m 1 - Rmax)) :
+    gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+        (arrival 1) switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) (ρ 1) ≤
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+        (arrival 1) switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) acceptAllPolicy := by
+  have hpayment_nonneg :
+      ∀ τ ∈ ρ 0,
+        0 ≤ ctmcStructuredDynamicSurgePrice m z switch12 switch21 0 τ :=
+    theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
+      harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos hR2_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      P hρ
+  have hRcurrent_nonneg : 0 ≤ R1_current := by
+    have hreward_nonneg :
+        0 ≤
+          gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (ρ 0) :=
+      gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg
+        (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) harrival1_pos (hρ.1 0).2 (hρ.1 0).1
+        (hρ.2 0) hpayment_nonneg
+    simpa [hrate] using hreward_nonneg
+  rcases
+      GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+        (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+        harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+        htime2_integrable hq2_integrable hmass2_pos (hρ.2 1)
+        (by
+          simpa [gn21AcceptAllScaledStateTime,
+            gn21AcceptAllExitWeightIntegral] using hcurrent_lower_nonpos)
+        hz1_pos hmRmax_pos hRcurrent_le_envelope hRcurrent_nonneg
+        (by
+          simpa [gn21AcceptAllScaledStateTime,
+            gn21AcceptAllExitWeightIntegral] using hz_upper_slack)
+        (by
+          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb]
+            using hrate) with
+    ⟨effectiveRatio, D⟩
+  have hmassI : singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+    ne_of_gt (hρ.2 0)
+  have harrivalI_ne : arrival 0 ≠ 0 := ne_of_gt harrival1_pos
+  have harrivalMassI :
+      arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+    mul_ne_zero harrivalI_ne hmassI
+  have htimeI_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
+    gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) (ρ 0)
+      (le_of_lt harrival1_pos) (hρ.1 0).2 (hρ.1 0).1
+  have Dsrc :=
+    GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
+      hmassI harrivalMassI (ne_of_gt htimeI_pos) D
+  have Dag :=
+    GN21SurgeLemma9AcceptAllAggregateData.of_source
+      (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+      harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime2_integrable hq2_integrable
+      (by
+        simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb] using
+          Dsrc)
+  have hle := Dag.aggregate_le_acceptAll
+  simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb, P.hm0] using
+    hle
+
+/--
 Paper-facing wrapper deriving current non-surge payment nonnegativity from
 the already-compiled Lemma 10 source package for the non-surge-after-surge
 branch.
@@ -52860,6 +53101,168 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
         exact
           ⟨R1_current, hRcurrent_le, hrate, hpayment_nonneg,
             hcurrent_lower_nonpos, hupper⟩ }
+
+/--
+Positive-parameter source assumptions using the source-faithful Lemma 9
+envelope/slack route.  The current fixed non-surge reward rate is only required
+to sit below a verified envelope `Rmax`, with the surge intercept strictly
+below the current Lemma 9 upper endpoint times `m₂ - Rmax`.
+-/
+structure Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  surge_current_lower_envelope_slack_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            ∃ R1_current Rmax : ℝ,
+              gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) = R1_current ∧
+                R1_current ≤ Rmax ∧
+                0 < m 1 - Rmax ∧
+                lemma9StructuredLower
+                  (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+                  (gn21ExitWeightIntegral (μ 0) (arrival 0)
+                    switch12 switch21 (ρ 0))
+                  (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                  (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                    switch21 switch12)
+                  switch21 ≤ 0 ∧
+                z 1 <
+                  lemma9StructuredUpper
+                    (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+                    (gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0))
+                    (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                    (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                      switch21 switch12)
+                    switch21 *
+                      (m 1 - Rmax)
+
+/--
+Paper-facing Theorem 3 wrapper using the envelope/slack Lemma 9 route.  This
+is the first wrapper in this chain that no longer requires the too-strong
+source field `R1_current <= R1`.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_envelope_slack_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positive_parameter_positive_mass_feasible_sequential_weak_reward
+    μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+    A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+    A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+    A.htime1_integrable A.htime2_integrable A.hq1_integrable
+    A.hq2_integrable
+    (measure_pos_of_singleStateTripMass_pos
+      (μ 0) acceptAllPolicy A.hmass1_pos)
+    (measure_pos_of_singleStateTripMass_pos
+      (μ 1) acceptAllPolicy A.hmass2_pos)
+    (theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardPositiveParameterCertificate_of_measured_aggregate_positive_mass_feasible_sequential_weak_reward
+      μ arrival R1 R2 switch12 switch21
+      (by
+        intro m z hnonneg hparams_pos
+        let Ppos :=
+          Theorem3AcceptAllStructuredPositiveParameterData.of_evidence
+            hparams_pos
+        let P := Ppos.params
+        have hT2_ge_one :
+            1 ≤ gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+          gn21ScaledStateTime_ge_one_of_nonneg (μ 1) (arrival 1)
+            acceptAllPolicy (le_of_lt A.harrival2_pos)
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+        have hsum21 : 0 < switch21 + switch12 := by
+          linarith [A.hswitch21_pos, A.hswitch12_pos]
+        have hswitch_lt_Q2 :
+            switch21 <
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12 :=
+          paper_remark4_exit_weight_gt_switch_of_positive_measure
+            (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+            A.harrival2_pos A.hswitch21_pos hsum21
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+            A.hq2_integrable
+            (measure_pos_of_singleStateTripMass_pos
+              (μ 1) acceptAllPolicy A.hmass2_pos)
+        have hmRtarget_pos : 0 < m 1 - R1 :=
+          P.m1_sub_R1_pos_of_surgeRatio_pos A.hR1_pos A.hR1_lt_R2
+            hT2_ge_one hswitch_lt_Q2 Ppos.hsurgeRatio_pos
+        have hz1_pos : 0 < z 1 := by
+          rw [P.surge_z_eq_ratio_m_sub_R1]
+          exact mul_pos Ppos.hsurgeRatio_pos hmRtarget_pos
+        exact
+          { acceptAll_mass_pos := by
+              intro i
+              fin_cases i
+              · exact A.hmass1_pos
+              · exact A.hmass2_pos
+            arrival1_pos := A.harrival1_pos
+            arrival2_pos := A.harrival2_pos
+            switch12_pos := A.hswitch12_pos
+            switch21_pos := A.hswitch21_pos
+            surge_aggregate_ge := by
+              intro ρ hρ
+              rcases
+                  A.surge_current_lower_envelope_slack_data
+                    m z hnonneg hparams_pos ρ hρ with
+                ⟨R1_current, Rmax, hrate, hRcurrent_le_envelope,
+                  hmRmax_pos, hcurrent_lower_nonpos, hz_upper_slack⟩
+              exact
+                theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
+                  A.harrival1_pos A.harrival2_pos A.hswitch12_pos
+                  A.hswitch21_pos A.hR2_pos A.htime1_integrable
+                  A.htime2_integrable A.hq1_integrable A.hq2_integrable
+                  A.hmass2_pos P hz1_pos hρ hrate
+                  hRcurrent_le_envelope hmRmax_pos hcurrent_lower_nonpos
+                  hz_upper_slack
+            nonsurge_after_surge_aggregate_ge := by
+              intro ρ hρ
+              exact
+                theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
+                  A.harrival1_pos A.harrival2_pos A.hswitch12_pos
+                  A.hswitch21_pos A.hR2_pos A.htime1_integrable
+                  A.htime2_integrable A.hq1_integrable A.hq2_integrable
+                  P hρ }))
 
 /--
 Positive-mass source assumptions with the target-rate fixed-state transfer

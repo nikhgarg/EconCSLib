@@ -8,8 +8,8 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 ## Build State
 
 As of this handoff, `lake build GN21DriverSurgePricing` passes after the newest
-Lemma 9 source-boundary reduction and the current reward-rate nonnegativity
-wrapper.  Re-run it before and after any edits.
+Lemma 9 envelope/slack source-boundary reduction and the current payment
+nonnegativity derivation.  Re-run it before and after any edits.
 
 Useful checks:
 
@@ -46,21 +46,14 @@ GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_curren
 The newest source-facing endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
-```
-
-The newest payment-nonnegative variant replaces the explicit
-`0 <= r1_current` source field by pointwise nonnegative current non-surge
-payments:
-
-```lean
-paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_envelope_slack_data_assumptions
 ```
 
 It proves the positive-mass measurable Theorem 3 IC conclusion by moving surge
 to accept-all first, then using Lemma 10 only after surge is fixed at
 accept-all.  Compared with the earlier final-sign/fixed-transfer route, it no
-longer requires the lower fixed-state cross-ratio comparison.
+longer requires either fixed-state cross-ratio comparison for the surge move,
+and it no longer asks for `R1_current <= R1`.
 
 The key new infrastructure is:
 
@@ -72,36 +65,36 @@ singleStateTripPayment_nonneg_of_pointwise_nonneg
 gn21StateCycleTime_pos_of_mass_pos
 gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperPaymentNonnegDataAssumptions
+theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
+theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
+theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
+Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
 ```
 
 ## Remaining Mathematical Work
 
-For every feasible measurable positive-mass policy `rho`, the remaining Lemma 9
-source field at the original current-lower boundary asks for:
+For every feasible measurable positive-mass policy `rho`, the newest Lemma 9
+source field asks for:
 
-- a current non-surge reward rate `r1_current`;
-- a verified envelope `r1_current <= Rmax` together with enough surge-ratio
-  slack below the current Lemma 9 upper endpoint;
-- `0 <= r1_current`;
-- the measured reward-rate identity for state 0;
+- the current non-surge reward rate identity for state 0;
+- a verified envelope `r1_current <= Rmax`;
+- positivity of `m_2 - Rmax`;
 - current Lemma 9 lower-endpoint nonpositivity with fixed non-surge `T,Q` and
   moving surge accept-all `Tbar,Qbar`;
-- the upper fixed-state cross comparison
-  `T_acceptAll * Q_current <= T_current * Q_acceptAll`.
+- surge-side slack
+  `z_2 < current_Lemma9_upper * (m_2 - Rmax)`.
 
-At the payment-nonnegative boundary, `0 <= r1_current` is no longer a source
-field.  Supply pointwise nonnegative current non-surge payments on `rho 0`;
-Lean derives the reward-rate nonnegativity from the measured Lemma 1 formula.
-The pointwise payment nonnegativity itself is now mostly compiled from Lemma
-10:
+`0 <= r1_current` is no longer a source field.  Lean derives current
+non-surge pointwise payment nonnegativity from Lemma 10 and then derives
+reward-rate nonnegativity from the measured Lemma 1 formula.  The main compiled
+bridge is:
 
 ```lean
-ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds
+theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
 ```
 
-The remaining integration is to pass the already-built current Lemma 10 bounds
-from the non-surge-after-surge branch into this theorem, then remove the
-source-facing pointwise-nonnegativity field.
+The source-facing pointwise-nonnegativity field has already been removed by
+the derived-payment wrapper.
 Do not treat `r1_current <= R1` as a universal arbitrary-policy fact.  The
 source proof's usable argument is the Theorem 3 surge-side slack paragraph:
 choose the surge parameters so `z_2/(m_2-r1_current)` remains inside Lemma 9's
@@ -132,7 +125,14 @@ Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the corrected route and the
 distinction between the easy `0 <= r1_current` proof, the reward-envelope
 bound, and the surge-side slack proof.
 
-Then try to prove a current-state version of the Lemma 9 final-sign/nonpositive
+Then remove the remaining envelope source field by instantiating `Rmax` from
+the sign-split reward envelope:
+
+```lean
+exists_reward_rate_envelope_ctmcStructuredSurgePrice
+```
+
+After that, prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma
 already exists:
 

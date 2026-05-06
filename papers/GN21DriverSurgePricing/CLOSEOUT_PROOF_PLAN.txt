@@ -97,7 +97,7 @@ constructed `m_2,z_2`, not measure theory and not a global audit.
 
 Fastest remaining path
 ----------------------
-Step 1: finish the nonnegativity wrapper.
+Step 1: finish the nonnegativity wrapper.  Done.
 
 The currently added payment-nonnegative wrapper should compile and then be used
 as the preferred source boundary:
@@ -109,6 +109,7 @@ not weaken it back to an explicit r1_current >= 0 assumption.
 
 
 Step 2: prove pointwise nonnegativity of the constructed non-surge price.
+Done.
 
 The difficult-looking issue is that Theorem 3 allows z_1 to be negative.  This
 is still manageable from the Lemma 10 lower bound.
@@ -149,10 +150,11 @@ This is now compiled as:
   lemma10StructuredLower_gt_neg_inv_switch_of_gap_pos
   ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds
 
-The remaining integration step is to feed the current Lemma 10 bounds already
-constructed in the non-surge-after-surge branch into
-`ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds`, rather than
-asking the source assumptions for pointwise payment nonnegativity.
+The integration step is compiled as:
+
+  theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
+
+The source-facing pointwise payment-nonnegativity field has been removed.
 
 
 Step 3: stop trying to prove the too-strong universal bound r1_current <= R1.
@@ -176,6 +178,8 @@ The new compiled infrastructure is:
   gn21MeasuredStateRewardRate_ctmcStructuredSurgePrice_le_linearized_rate_of_z_nonneg
   exists_effectiveRatio_pos_lt_upperRatio_of_reward_le_envelope
   GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+  theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_envelope_slack_data_assumptions
 
 These lemmas let the proof use a real current reward envelope and then build
 the effective Lemma 9 ratio `z_2/(m_2-r1_current)` from the source slack.
@@ -210,7 +214,7 @@ so it is reusable.
 
 Step 5: prove the remaining upper fixed-state cross-ratio comparison.
 
-The current frontier still asks for:
+The old current-lower/fixed-upper frontier still asks for:
 
   acceptAll_T1 * current_Q1 <= current_T1 * acceptAll_Q1
 
@@ -231,19 +235,24 @@ If the current policy shape is not yet available at this boundary, route
 through the existing Theorem 4 allowed-policy-form endpoint packages rather
 than making an unstructured arbitrary-policy claim.
 
+The newer envelope/slack frontier bypasses this upper fixed-state comparison
+for the surge move.  Prefer the envelope/slack frontier unless a later source
+route specifically needs fixed-transfer data.
+
 
 Recommended proof order
 -----------------------
-1. Compile the new generic nonnegativity lemmas and payment-nonnegative wrapper.
-2. Add the Lemma 10 lower-bound-to-price-nonnegative scalar lemma.
+1. Compile the generic nonnegativity lemmas and payment-nonnegative wrapper.
+   Done.
+2. Add the Lemma 10 lower-bound-to-price-nonnegative scalar lemma.  Done.
 3. Use it to discharge pointwise nonnegative payments for Theorem 3 non-surge
-   prices.
-4. Prove or extract r1_current <= R1 from the non-surge-after-surge Lemma 10
-   branch.
-5. Prove the current Lemma 9 lower endpoint scalar lemma.
-6. Prove the upper fixed-state cross-ratio comparison from policy shape or the
-   existing fixed-state cross helper.
-7. Instantiate the current-lower/fixed-upper payment-nonnegative source wrapper.
+   prices.  Done.
+4. Remove the source-facing `R_current <= Rmax` field by instantiating `Rmax`
+   with the sign-split reward-rate envelope.
+5. Prove the scalar surge slack inequality for the constructed Theorem 3
+   parameters and the chosen `Rmax`.
+6. Prove the current Lemma 9 lower endpoint scalar lemma.
+7. Instantiate the envelope/slack source wrapper.
 
 
 What not to do
