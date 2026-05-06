@@ -28178,6 +28178,36 @@ structure GN21RegularEndpointSharedSourceData
       (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
       acceptAllPolicy (μ 1)
 
+/-- Shared regular support gives positive non-surge accept-all mass. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_acceptAll_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hmeasure_pos : 0 < μ 0 acceptAllPolicy) :
+    0 < singleStateTripMass (μ 0) acceptAllPolicy := by
+  have hfinite : μ 0 acceptAllPolicy ≠ ∞ := by
+    rw [S.nonsurge_support.hμ]
+    exact S.nonsurge_support.hfinite_acceptAll
+  exact
+    singleStateTripMass_pos_of_measure_ne_zero_ne_top (μ 0) acceptAllPolicy
+      (ne_of_gt hmeasure_pos) hfinite
+
+/-- Shared regular support gives positive surge accept-all mass. -/
+theorem GN21RegularEndpointSharedSourceData.surge_acceptAll_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hmeasure_pos : 0 < μ 1 acceptAllPolicy) :
+    0 < singleStateTripMass (μ 1) acceptAllPolicy := by
+  have hfinite : μ 1 acceptAllPolicy ≠ ∞ := by
+    rw [S.surge_support.hμ]
+    exact S.surge_support.hfinite_acceptAll
+  exact
+    singleStateTripMass_pos_of_measure_ne_zero_ne_top (μ 1) acceptAllPolicy
+      (ne_of_gt hmeasure_pos) hfinite
+
 /-- Shared regular support gives positive non-surge current mass for reject-long shapes. -/
 theorem GN21RegularEndpointSharedSourceData.nonsurge_rejectLong_current_mass_pos
     {μ : Fin 2 → Measure TripLength}
@@ -38181,6 +38211,214 @@ def GN21SurgeRejectMiddleTheorem3FixedTransferPositiveCutoffLocalData.to_local_d
   cases D with
   | lower Dlo => exact .lower Dlo.to_local_data
   | upper Dhi => exact .upper Dhi.to_local_data
+
+/-- Non-surge reject-long local data when the fixed surge state accepts all trips. -/
+def GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData.of_other_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 1))
+    (hmeasure_other_pos : 0 < μ 1 acceptAllPolicy)
+    (hu : 0 < u) :
+    GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R2 ρ u := by
+  have hother_eq : ρ 1 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 1).1 hother_all
+  refine
+    { hu := hu
+      hfixed_cross := ?_
+      hmass_other_pos := ?_
+      hfixed_accounting := ?_ }
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · rw [hother_eq]
+    exact S.surge_acceptAll_mass_pos hmeasure_other_pos
+  · simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq] using P.surge_accounting
+
+/-- Non-surge accept-middle local data when the fixed surge state accepts all trips. -/
+def GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData.of_other_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 1))
+    (hmeasure_other_pos : 0 < μ 1 acceptAllPolicy)
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo) :
+    GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R2 ρ lo hi := by
+  have hother_eq : ρ 1 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 1).1 hother_all
+  refine
+    { δ := δ
+      hlo_pos := hlo_pos
+      hlo_lt_hi := hlo_lt_hi
+      hδ := hδ
+      hδ_le_lo := hδ_le_lo
+      hfixed_cross := ?_
+      hmass_other_pos := ?_
+      hfixed_accounting := ?_ }
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · rw [hother_eq]
+    exact S.surge_acceptAll_mass_pos hmeasure_other_pos
+  · simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq] using P.surge_accounting
+
+/-- Surge reject-short local data when the fixed non-surge state accepts all trips. -/
+def GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData.of_other_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 u δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 0))
+    (hmeasure_other_pos : 0 < μ 0 acceptAllPolicy)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1))
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u) :
+    GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ u := by
+  have hother_eq : ρ 0 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 0).1 hother_all
+  refine
+    { δ := δ
+      tail_integrability := tail_integrability
+      hu := hu
+      hδ := hδ
+      hδ_le_u := hδ_le_u
+      hfixed_lower_cross := ?_
+      hfixed_upper_cross := ?_
+      hmass_other_pos := ?_
+      hfixed_accounting := ?_ }
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · rw [hother_eq]
+    exact S.nonsurge_acceptAll_mass_pos hmeasure_other_pos
+  · simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq] using P.nonsurge_accounting
+
+/-- Lower-cutoff surge reject-middle local data when the fixed non-surge state accepts all trips. -/
+def GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData.of_other_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 0))
+    (hmeasure_other_pos : 0 < μ 0 acceptAllPolicy)
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi) :
+    GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ lo hi := by
+  have hother_eq : ρ 0 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 0).1 hother_all
+  refine
+    { δ := δ
+      hlo_pos := hlo_pos
+      hloδ_le_hi := hloδ_le_hi
+      hδ := hδ
+      tail_integrability := tail_integrability
+      hfixed_lower_cross := ?_
+      hfixed_upper_cross := ?_
+      hmass_other_pos := ?_
+      hfixed_accounting := ?_ }
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · rw [hother_eq]
+    exact S.nonsurge_acceptAll_mass_pos hmeasure_other_pos
+  · simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq] using P.nonsurge_accounting
+
+/-- Upper-cutoff surge reject-middle local data when the fixed non-surge state accepts all trips. -/
+def GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData.of_other_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 0))
+    (hmeasure_other_pos : 0 < μ 0 acceptAllPolicy)
+    (derivative_tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1))
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ)) :
+    GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ lo hi := by
+  have hother_eq : ρ 0 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 0).1 hother_all
+  refine
+    { δ := δ
+      derivative_tail_integrability := derivative_tail_integrability
+      hhi_pos := hhi_pos
+      hδ := hδ
+      hlo_nonneg := hlo_nonneg
+      hlo_le_hiδ := hlo_le_hiδ
+      tail_integrability := tail_integrability
+      hfixed_lower_cross := ?_
+      hfixed_upper_cross := ?_
+      hmass_other_pos := ?_
+      hfixed_accounting := ?_ }
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · simp [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq]
+  · rw [hother_eq]
+    exact S.nonsurge_acceptAll_mass_pos hmeasure_other_pos
+  · simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+      hother_eq] using P.nonsurge_accounting
 
 /--
 Local endpoint facts stated with positive cutoffs instead of density-positivity

@@ -220,6 +220,11 @@ into the concrete endpoint policy data.
   classification, and density positivity internally.  The source proof now
   supplies ordinary allowed Lemma 5 replacement cases plus positive-cutoff
   local fixed-transfer endpoint facts.
+- If the fixed other state already accepts all trips, use the
+  `...PositiveCutoffLocalData.of_other_acceptAll` constructors.  They derive
+  the cross-ratio inequalities by equality, derive positive fixed-state mass
+  from shared support and accept-all mass positivity, and use the Theorem 3
+  accept-all accounting identities for the fixed-state accounting equation.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

@@ -196,7 +196,11 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`
   remove `hdensity_pos` from the current lightest source boundary: positive
   cutoffs plus accept-all density support now derive density positivity
-  internally.
+  internally.  The `...PositiveCutoffLocalData.of_other_acceptAll`
+  constructors additionally discharge the fixed-state cross-ratio,
+  positive-mass, and accounting fields whenever the fixed other state already
+  accepts all trips, using equality, accept-all mass positivity from shared
+  support, and `Theorem3AcceptAllStructuredParameterData`.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
