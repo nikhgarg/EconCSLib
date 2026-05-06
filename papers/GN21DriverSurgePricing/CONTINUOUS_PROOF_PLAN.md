@@ -4,19 +4,19 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The current Lean endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions
 ```
 
 The remaining paper-facing field is
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate`
-for the structured prices constructed by Theorem 3.  This endpoint packages
-all-optimal measurable Lemma 5 allowed policy-form classification together with
-shared continuous-density regularity, cutoff-local endpoint data, the fixed-state
-cross-ratio/accounting facts, and the remaining improper-tail integrability
-data; Lean names the Theorem 3 ratios, transfers accept-all Lemma 9/10 bounds
-to the relevant fixed state, derives the surge `m 1 - R1 > 0` side condition,
-chooses a representative optimum, and then converts the package to the feasible
-strict-local Theorem 4 certificate internally.  The older regular
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateSeparatedLocalEndpointCertificate`
+for the structured prices constructed by Theorem 3, paired with ordinary
+all-measurable allowed Lemma 5 replacement data.  This endpoint packages shared
+continuous-density regularity, non-surge cutoff nondegeneracy, one fixed-state
+transfer package for each state, and the moving-state cutoff/tail facts for the
+endpoint branches.  Lean derives allowed policy forms, current mass, no-mass
+pointwise endpoint facts, mass-separated endpoint facts, positive-cutoff
+endpoint data, and the regular Theorem 4 certificate internally.  The older
+regular
 allowed-policy-form route remains compiled and asks for fully built regular
 endpoint records; the older regular-shape route remains compiled and asks for
 the already-packaged shape derivation; the older regular-selection route remains
@@ -45,15 +45,14 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `Q,T,W` paths, denominator positivity, or Remark 4 side conditions by hand.
 
 2. Prove one source regularity/selection theorem that supplies optimum
-   existence, all-optimal measurable Lemma 5 allowed policy forms, and the
-   matching Theorem 3 fixed-transfer local endpoint data package for each
-   non-accept-all shape.  This
-   should target
-   exactly
-   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate`.
+   existence, ordinary all-measurable Lemma 5 allowed replacement data, the
+   two fixed-state transfer packages for each optimum, and the moving-state
+   cutoff/tail facts for each non-accept-all endpoint shape.  This should
+   target exactly
+   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateSeparatedSourceAssumptions`.
 
 3. Instantiate
-   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions`
    from that selection theorem, with the scalar Theorem 3 parameter
    construction already proved.
 
@@ -64,7 +63,7 @@ The hard theorem should have this shape:
 ```lean
 theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
     (...) :
-    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateSeparatedLocalEndpointCertificate
       μ arrival R1 R2 switch12 switch21 m z
 ```
 
@@ -206,23 +205,23 @@ into the concrete endpoint policy data.
   strict-local route.
 - `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
-  are the current targets because they avoid duplicating Lemma 5 replacement
+  remain useful older targets because they avoid duplicating Lemma 5 replacement
   measurability work: the continuous proof only needs to classify every
   measurable optimum into the allowed policy forms, and the regular endpoint
   fields supply the realized endpoint moves.  If the source proof instead
-  produces all-measurable Lemma 5 replacement data, it now feeds this target
-  directly through
+  produces all-measurable Lemma 5 replacement data, it feeds this target through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
 - For the fixed-transfer route, the current lightest source boundary is
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_no_mass_source_assumptions`:
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,
   all-measurable Lemma 5 replacement certificates, allowed policy-form
   classification, density positivity, state-level current mass, fixed-state
-  cross-ratios, and fixed-state accounting internally.  The source proof now
-  supplies ordinary allowed Lemma 5 replacement cases, nondegenerate non-surge
-  cutoffs for the reject-long/accept-middle fixed-state forms, pointwise
-  fixed-complement comparisons, fixed-state reward-rate identities, and the
-  cutoff/tail local endpoint facts.
+  pointwise comparisons, fixed-state reward-rate accounting, and the older
+  no-mass endpoint certificate internally.  The source proof now supplies
+  ordinary allowed Lemma 5 replacement cases, nondegenerate non-surge cutoffs
+  for the reject-long/accept-middle fixed-state forms, one reusable fixed-state
+  transfer package for each state, and moving-state cutoff/tail local endpoint
+  facts.
 - If the fixed other state already accepts all trips, use the
   `...PositiveCutoffLocalData.of_other_acceptAll` constructors.  They derive
   the cross-ratio inequalities by equality, derive positive fixed-state mass
@@ -254,13 +253,13 @@ into the concrete endpoint policy data.
   `...PositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate`
   constructors combine the pointwise fixed-complement route with this
   reward-rate accounting route.
-- The current lightest source theorem is now
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_no_mass_source_assumptions`.
-  It asks for ordinary all-measurable allowed Lemma 5 replacement data and a
-  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate`;
-  the adapter derives the mass-separated endpoint certificate, the older
-  pointwise certificate, positive-cutoff endpoint data, fixed-state cross-ratios,
-  and fixed-state accounting internally.  The
+- The fixed-state-separated source theorem asks for ordinary all-measurable
+  allowed Lemma 5 replacement data and a
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateSeparatedLocalEndpointCertificate`;
+  the adapter derives the no-mass endpoint certificate, the mass-separated
+  endpoint certificate, the older pointwise certificate, positive-cutoff
+  endpoint data, fixed-state cross-ratios, and fixed-state accounting
+  internally.  The
   shared-source helpers
   `GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_allowed_policy_form`
   and
@@ -278,7 +277,7 @@ into the concrete endpoint policy data.
   packages once per optimal policy, then feed them to the moving-state endpoint
   constructors.  If the source proof produces
   all-optimal allowed policy forms directly instead, use the sibling wrapper
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_no_mass_source_assumptions`.
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_separated_source_assumptions`.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
@@ -286,7 +285,7 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementPositiveCutoffSourceAssumptions`
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateSeparatedSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper

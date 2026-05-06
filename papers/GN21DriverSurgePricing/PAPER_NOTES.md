@@ -332,7 +332,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
   constructors ending in `of_positive_cutoff`, positive-cutoff local endpoint
   certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPositiveCutoffLocalEndpointCertificate`
-  with its `to_local_endpoint` adapter, and the current lightest
+  with its `to_local_endpoint` adapter, and the positive-cutoff
   fixed-transfer source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`,
   accept-all fixed-state local constructors ending in `of_other_acceptAll`,
@@ -378,6 +378,17 @@ This is a lightweight handoff document for source-to-Lean mapping.
   reusable fixed-state transfer packages
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData` and
   `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData`,
+  fixed-state-separated moving endpoint data
+  `GN21NonsurgeAcceptMiddleTheorem3FixedTransferMovingData`,
+  `GN21SurgeRejectShortTheorem3FixedTransferMovingData`,
+  and
+  `GN21SurgeRejectMiddleTheorem3FixedTransferMovingData`,
+  fixed-state-separated endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateSeparatedLocalEndpointCertificate`
+  with its `to_no_mass` adapter, and source wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_separated_source_assumptions`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

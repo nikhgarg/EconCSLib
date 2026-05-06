@@ -204,7 +204,7 @@ cache is `source.txt`.
   The support-derived `GN21...Theorem3FixedTransferLocalData.of_positive_cutoff`
   constructors, the positive-cutoff local endpoint certificate, and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`
-  remove `hdensity_pos` from the current lightest source boundary: positive
+  remove `hdensity_pos` from the positive-cutoff source boundary: positive
   cutoffs plus accept-all density support now derive density positivity
   internally.  The `...PositiveCutoffLocalData.of_other_acceptAll`
   constructors additionally discharge the fixed-state cross-ratio,
@@ -236,7 +236,7 @@ cache is `source.txt`.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate`
   and wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_no_mass_source_assumptions`
-  are now the lightest fixed-transfer boundary: Lean derives the state-level
+  derive the state-level
   mass fields from allowed Lemma 5 forms, accept-all mass positivity, and
   nondegenerate non-surge cutoffs.  The sibling wrappers
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_source_assumptions`
@@ -261,7 +261,18 @@ cache is `source.txt`.
   `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData`
   now feed the corresponding non-surge and surge moving-state endpoint cases,
   so the source proof can establish fixed-state transfer once per state and
-  reuse it across endpoint branches.
+  reuse it across endpoint branches.  The fixed-state-separated endpoint
+  certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateSeparatedLocalEndpointCertificate`
+  and wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_separated_source_assumptions`
+  are the current lightest fixed-transfer source boundary: source proofs
+  supply one fixed-state package for each state plus only moving-state
+  cutoff/tail data for each endpoint branch, and Lean expands that into the
+  no-mass, mass-separated, pointwise, positive-cutoff, and regular endpoint
+  routes internally.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
