@@ -70,6 +70,16 @@ source field at the original current-lower boundary asks for:
 At the payment-nonnegative boundary, `0 <= r1_current` is no longer a source
 field.  Supply pointwise nonnegative current non-surge payments on `rho 0`;
 Lean derives the reward-rate nonnegativity from the measured Lemma 1 formula.
+The pointwise payment nonnegativity itself is now mostly compiled from Lemma
+10:
+
+```lean
+ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds
+```
+
+The remaining integration is to pass the already-built current Lemma 10 bounds
+from the non-surge-after-surge branch into this theorem, then remove the
+source-facing pointwise-nonnegativity field.
 Do not treat `r1_current <= R1` as a universal arbitrary-policy fact.  The
 source proof's usable argument is the Theorem 3 surge-side slack paragraph:
 choose the surge parameters so `z_2/(m_2-r1_current)` remains inside Lemma 9's

@@ -122,23 +122,16 @@ Therefore the lower bound is strictly greater than -1/switch12.  Hence
 
 and pointwise w_1(τ) >= 0 follows for all positive τ.
 
-Lean lemma to add:
+This is now compiled as:
 
-  lemma10StructuredLower_gt_neg_inv_switch
+  ctmcStructuredSurgePrice_nonneg_of_ratio_gt_neg_inv_switch
+  lemma10StructuredLower_gt_neg_inv_switch_of_gap_pos
+  ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds
 
-or a theorem3-facing specialization:
-
-  theorem3_nonsurge_price_nonneg_of_lemma10_bounds
-
-The specialization may be faster because it can use existing named parameter
-data:
-
-  P.nonsurge_acceptAll_bounds
-  P.hm0
-  P.hz0
-  A.hR2_pos
-  A.hswitch12_pos
-  accept-all gap positivity from Remark 4
+The remaining integration step is to feed the current Lemma 10 bounds already
+constructed in the non-surge-after-surge branch into
+`ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds`, rather than
+asking the source assumptions for pointwise payment nonnegativity.
 
 
 Step 3: stop trying to prove the too-strong universal bound r1_current <= R1.
