@@ -2122,6 +2122,47 @@ theorem pmfProb_or_eq_add_of_disjoint
         exact ⟨Or.inr hq, fun hp => hdisjoint a hp hq⟩)
   rw [hleft, hright]
 
+/-- Inclusion-exclusion for two finite-PMF events. -/
+theorem pmfProb_or_eq_add_sub_inter
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q] :
+    pmfProb μ (fun a => p a ∨ q a) =
+      pmfProb μ p + pmfProb μ q -
+        pmfProb μ (fun a => p a ∧ q a) := by
+  classical
+  have hor_split :=
+    pmfProb_eq_inter_add_inter_not μ (fun a => p a ∨ q a) p
+  have hq_split := pmfProb_eq_inter_add_inter_not μ q p
+  have hleft :
+      pmfProb μ (fun a => (p a ∨ q a) ∧ p a) =
+        pmfProb μ p :=
+    pmfProb_congr μ (by
+      intro a
+      constructor
+      · intro h
+        exact h.2
+      · intro hp
+        exact ⟨Or.inl hp, hp⟩)
+  have hright :
+      pmfProb μ (fun a => (p a ∨ q a) ∧ ¬ p a) =
+        pmfProb μ (fun a => q a ∧ ¬ p a) :=
+    pmfProb_congr μ (by
+      intro a
+      constructor
+      · intro h
+        rcases h.1 with hp | hq
+        · exact False.elim (h.2 hp)
+        · exact ⟨hq, h.2⟩
+      · intro h
+        exact ⟨Or.inr h.1, h.2⟩)
+  have hpq_comm :
+      pmfProb μ (fun a => q a ∧ p a) =
+        pmfProb μ (fun a => p a ∧ q a) :=
+    pmfProb_congr μ (by intro a; constructor <;> intro h <;> exact ⟨h.2, h.1⟩)
+  rw [hor_split, hleft, hright]
+  rw [hq_split, hpq_comm]
+  ring
+
 /--
 For disjoint finite-PMF events, the probability that neither occurs is
 `1 - P(p) - P(q)`.
@@ -2142,6 +2183,36 @@ theorem pmfProb_not_and_not_eq_one_sub_add_of_disjoint
     _ = 1 - (pmfProb μ p + pmfProb μ q) := by
           rw [pmfProb_or_eq_add_of_disjoint μ p q hdisjoint]
     _ = 1 - pmfProb μ p - pmfProb μ q := by ring
+
+/-- Complementing both events preserves a finite-PMF negative-correlation bound. -/
+theorem pmfProb_not_and_not_le_mul_of_inter_le_mul
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hinter : pmfProb μ (fun a => p a ∧ q a) ≤
+      pmfProb μ p * pmfProb μ q) :
+    pmfProb μ (fun a => ¬ p a ∧ ¬ q a) ≤
+      pmfProb μ (fun a => ¬ p a) *
+        pmfProb μ (fun a => ¬ q a) := by
+  classical
+  have hnotnot :
+      pmfProb μ (fun a => ¬ p a ∧ ¬ q a) =
+        1 - pmfProb μ p - pmfProb μ q +
+          pmfProb μ (fun a => p a ∧ q a) := by
+    calc
+      pmfProb μ (fun a => ¬ p a ∧ ¬ q a) =
+          pmfProb μ (fun a => ¬ (p a ∨ q a)) := by
+            exact pmfProb_congr μ (by intro a; tauto)
+      _ = 1 - pmfProb μ (fun a => p a ∨ q a) := by
+            rw [pmfProb_compl]
+      _ =
+          1 - (pmfProb μ p + pmfProb μ q -
+            pmfProb μ (fun a => p a ∧ q a)) := by
+            rw [pmfProb_or_eq_add_sub_inter]
+      _ =
+          1 - pmfProb μ p - pmfProb μ q +
+            pmfProb μ (fun a => p a ∧ q a) := by ring
+  rw [hnotnot, pmfProb_compl, pmfProb_compl]
+  nlinarith
 
 /--
 Finite union-bound lower-tail form: if two events each hold with probability at

@@ -31,6 +31,39 @@ def swap {M W : Type*} (mu : Assignment M W) : Assignment W M where
   cases mu
   rfl
 
+/-- Relabel the women side of a matching by an equivalence. -/
+def relabelWomen {M W W' : Type*} (e : W ≃ W')
+    (mu : Assignment M W) : Assignment M W' where
+  m_match m := Option.map e (mu.m_match m)
+  w_match w' := mu.w_match (e.symm w')
+  consistent_m m w' := by
+    constructor
+    · intro h
+      cases hmu : mu.m_match m with
+      | none =>
+          simp [hmu] at h
+      | some w =>
+          simp [hmu] at h
+          subst w'
+          simpa using (mu.consistent_m m w).1 hmu
+    · intro h
+      have hm : mu.m_match m = some (e.symm w') :=
+        (mu.consistent_m m (e.symm w')).2 h
+      simp [hm]
+
+@[simp] theorem relabelWomen_m_match
+    {M W W' : Type*} (e : W ≃ W') (mu : Assignment M W) (m : M) :
+    (mu.relabelWomen e).m_match m = Option.map e (mu.m_match m) := rfl
+
+@[simp] theorem relabelWomen_w_match
+    {M W W' : Type*} (e : W ≃ W') (mu : Assignment M W) (w' : W') :
+    (mu.relabelWomen e).w_match w' = mu.w_match (e.symm w') := rfl
+
+@[simp] theorem relabelWomen_w_match_apply
+    {M W W' : Type*} (e : W ≃ W') (mu : Assignment M W) (w : W) :
+    (mu.relabelWomen e).w_match (e w) = mu.w_match w := by
+  simp
+
 /-- Two consistent matchings are equal when they give every man the same partner. -/
 theorem ext_of_m_match {M W : Type*} {mu nu : Assignment M W}
     (h : ∀ m, mu.m_match m = nu.m_match m) : mu = nu := by
@@ -58,6 +91,20 @@ theorem ext_of_m_match {M W : Type*} {mu nu : Assignment M W}
             exact hnu.symm
       subst nu_w
       rfl
+
+@[simp] theorem relabelWomen_symm_relabelWomen
+    {M W W' : Type*} (e : W ≃ W') (mu : Assignment M W) :
+    (mu.relabelWomen e).relabelWomen e.symm = mu := by
+  apply ext_of_m_match
+  intro m
+  cases h : mu.m_match m <;> simp [h]
+
+@[simp] theorem relabelWomen_relabelWomen_symm
+    {M W W' : Type*} (e : W ≃ W') (mu : Assignment M W') :
+    (mu.relabelWomen e.symm).relabelWomen e = mu := by
+  apply ext_of_m_match
+  intro m
+  cases h : mu.m_match m <;> simp [h]
 
 /-- If man `m` is matched to woman `w`, then woman `w` is matched to `m`. -/
 theorem w_match_eq_some_of_m_match_eq_some {M W : Type*} {mu : Assignment M W}
@@ -130,12 +177,103 @@ def valW {M W : Type*} (val : W → M → ℝ) (w : W) (m : Option M) : ℝ :=
   | none => 0
   | some m' => val w m'
 
+@[simp] theorem valM_relabelWomen_option_map
+    {M W W' : Type*} (e : W ≃ W') (val_m : M → W → ℝ)
+    (m : M) (wopt : Option W) :
+    valM (fun m w' => val_m m (e.symm w')) m (Option.map e wopt) =
+      valM val_m m wopt := by
+  cases wopt <;> simp [valM]
+
+@[simp] theorem valW_relabelWomen_apply
+    {M W W' : Type*} (e : W ≃ W') (val_w : W → M → ℝ)
+    (w : W) (mopt : Option M) :
+    valW (fun w' m => val_w (e.symm w') m) (e w) mopt =
+      valW val_w w mopt := by
+  cases mopt <;> simp [valW]
+
+@[simp] theorem valW_relabelWomen_symm_apply
+    {M W W' : Type*} (e : W ≃ W') (val_w : W → M → ℝ)
+    (w' : W') (mopt : Option M) :
+    valW (fun w' m => val_w (e.symm w') m) w' mopt =
+      valW val_w (e.symm w') mopt := by
+  cases mopt <;> simp [valW]
+
 /-- A matching is stable if it is individually rational and admits no blocking pairs. -/
 def IsStable {M W : Type*} (val_m : M → W → ℝ) (val_w : W → M → ℝ) (mu : Assignment M W) : Prop :=
   (∀ m, 0 ≤ valM val_m m (mu.m_match m)) ∧
   (∀ w, 0 ≤ valW val_w w (mu.w_match w)) ∧
   (∀ m w, valM val_m m (mu.m_match m) < val_m m w →
           valW val_w w (mu.w_match w) < val_w w m → False)
+
+/-- Stability is invariant under relabeling the women side of the market. -/
+theorem isStable_relabelWomen_iff {M W W' : Type*}
+    (e : W ≃ W') (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (mu : Assignment M W) :
+    IsStable
+        (fun m w' => val_m m (e.symm w'))
+        (fun w' m => val_w (e.symm w') m)
+        (mu.relabelWomen e) ↔
+      IsStable val_m val_w mu := by
+  have hman_val :
+      ∀ m,
+        valM (fun m w' => val_m m (e.symm w')) m
+            ((mu.relabelWomen e).m_match m) =
+          valM val_m m (mu.m_match m) := by
+    intro m
+    cases h : mu.m_match m <;> simp [Assignment.relabelWomen, h, valM]
+  have hwoman_val :
+      ∀ w,
+        valW (fun w' m => val_w (e.symm w') m) (e w)
+            ((mu.relabelWomen e).w_match (e w)) =
+          valW val_w w (mu.w_match w) := by
+    intro w
+    cases h : mu.w_match w <;> simp [Assignment.relabelWomen, h, valW]
+  have hwoman_val_symm :
+      ∀ w',
+        valW (fun w' m => val_w (e.symm w') m) w'
+            ((mu.relabelWomen e).w_match w') =
+          valW val_w (e.symm w') (mu.w_match (e.symm w')) := by
+    intro w'
+    cases h : mu.w_match (e.symm w') <;> simp [Assignment.relabelWomen, h, valW]
+  constructor
+  · intro h
+    rcases h with ⟨hm_ir, hw_ir, hblock⟩
+    refine ⟨?_, ?_, ?_⟩
+    · intro m
+      have hval := hm_ir m
+      rw [hman_val m] at hval
+      exact hval
+    · intro w
+      have hval := hw_ir (e w)
+      rw [hwoman_val w] at hval
+      exact hval
+    · intro m w hm hw
+      have hm' := hm
+      rw [← hman_val m] at hm'
+      have hw' := hw
+      rw [← hwoman_val w] at hw'
+      exact hblock m (e w)
+        (by simpa using hm')
+        (by simpa using hw')
+  · intro h
+    rcases h with ⟨hm_ir, hw_ir, hblock⟩
+    refine ⟨?_, ?_, ?_⟩
+    · intro m
+      have hval := hm_ir m
+      rw [← hman_val m] at hval
+      exact hval
+    · intro w'
+      have hval := hw_ir (e.symm w')
+      rw [← hwoman_val_symm w'] at hval
+      exact hval
+    · intro m w' hm hw
+      have hm' := hm
+      rw [hman_val m] at hm'
+      have hw' := hw
+      rw [hwoman_val_symm w'] at hw'
+      exact hblock m (e.symm w')
+        (by simpa using hm')
+        (by simpa using hw')
 
 /-- Stability is invariant under swapping the two sides of the market. -/
 theorem isStable_swap_iff {M W : Type*}

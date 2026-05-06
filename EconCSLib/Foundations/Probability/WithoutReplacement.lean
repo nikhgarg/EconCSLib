@@ -599,6 +599,292 @@ theorem finiteWithoutReplacementPMF_head_tail_prob
           q := rfl
 
 /--
+First-step recurrence for any event under the recursive without-replacement
+sampler: sum over the realized head and then evaluate the event on the
+corresponding consed tail.
+-/
+theorem finiteWithoutReplacementPMF_event_prob_succ_eq_sum_head
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (baseWeight : α → ℝ)
+    (hbase_nonneg : ∀ a, 0 ≤ baseWeight a)
+    (havailable : ∀ forbidden : Finset α,
+      forbidden.card < Fintype.card α →
+        0 < finiteAvailableWeight baseWeight forbidden)
+    {k : ℕ} (forbidden : Finset α)
+    (hbudget : forbidden.card + (k + 1) ≤ Fintype.card α)
+    (event : finiteFreshList α (k + 1) forbidden → Prop)
+    [DecidablePred event] :
+    pmfProb
+        (finiteWithoutReplacementPMF
+          baseWeight hbase_nonneg havailable
+          (k + 1) forbidden hbudget)
+        event =
+      ∑ head : {a // a ∉ forbidden},
+        (finiteWeightedPMFAvailable
+          baseWeight forbidden hbase_nonneg
+          (havailable forbidden (by omega)) head).toReal *
+          pmfProb
+            (finiteWithoutReplacementPMF
+              baseWeight hbase_nonneg havailable
+              k (insert head.1 forbidden)
+              (by
+                rw [Finset.card_insert_of_notMem head.2]
+                omega))
+            (fun tail => event (finiteFreshListCons head tail)) := by
+  classical
+  rw [finiteWithoutReplacementPMF]
+  rw [pmfProb_bind]
+  let headLaw :=
+    finiteWeightedPMFAvailable
+      baseWeight forbidden hbase_nonneg
+      (havailable forbidden (by omega))
+  let tailLaw :
+      (head : {a // a ∉ forbidden}) →
+        PMF (finiteFreshList α k (insert head.1 forbidden)) :=
+    fun head =>
+      finiteWithoutReplacementPMF
+        baseWeight hbase_nonneg havailable
+        k (insert head.1 forbidden)
+        (by
+          rw [Finset.card_insert_of_notMem head.2]
+          omega)
+  calc
+    pmfExp headLaw
+        (fun head =>
+          pmfProb ((tailLaw head).map (finiteFreshListCons head)) event)
+        =
+      pmfExp headLaw
+        (fun head =>
+          pmfProb (tailLaw head)
+            (fun tail => event (finiteFreshListCons head tail))) := by
+        refine pmfExp_congr headLaw ?_
+        intro head
+        rw [pmfProb_map]
+    _ =
+      ∑ head : {a // a ∉ forbidden},
+        (finiteWeightedPMFAvailable
+          baseWeight forbidden hbase_nonneg
+          (havailable forbidden (by omega)) head).toReal *
+          pmfProb
+            (finiteWithoutReplacementPMF
+              baseWeight hbase_nonneg havailable
+              k (insert head.1 forbidden)
+              (by
+                rw [Finset.card_insert_of_notMem head.2]
+                omega))
+            (fun tail => event (finiteFreshListCons head tail)) := by
+        rfl
+
+/--
+First-step recurrence for the event that a fixed atom is omitted by the whole
+without-replacement list.
+-/
+theorem finiteWithoutReplacementPMF_omit_atom_succ_prob_eq_sum_head
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (baseWeight : α → ℝ)
+    (hbase_nonneg : ∀ a, 0 ≤ baseWeight a)
+    (havailable : ∀ forbidden : Finset α,
+      forbidden.card < Fintype.card α →
+        0 < finiteAvailableWeight baseWeight forbidden)
+    {k : ℕ} (forbidden : Finset α)
+    (hbudget : forbidden.card + (k + 1) ≤ Fintype.card α)
+    (target : α) :
+    pmfProb
+        (finiteWithoutReplacementPMF
+          baseWeight hbase_nonneg havailable
+          (k + 1) forbidden hbudget)
+        (fun sample => ∀ slot : Fin (k + 1), sample.1 slot ≠ target) =
+      ∑ head : {a // a ∉ forbidden},
+        if head.1 = target then 0 else
+          (finiteWeightedPMFAvailable
+            baseWeight forbidden hbase_nonneg
+            (havailable forbidden (by omega)) head).toReal *
+            pmfProb
+              (finiteWithoutReplacementPMF
+                baseWeight hbase_nonneg havailable
+                k (insert head.1 forbidden)
+                (by
+                  rw [Finset.card_insert_of_notMem head.2]
+                  omega))
+              (fun tail => ∀ slot : Fin k, tail.1 slot ≠ target) := by
+  classical
+  rw [finiteWithoutReplacementPMF_event_prob_succ_eq_sum_head
+    baseWeight hbase_nonneg havailable forbidden hbudget
+    (fun sample : finiteFreshList α (k + 1) forbidden =>
+      ∀ slot : Fin (k + 1), sample.1 slot ≠ target)]
+  refine Finset.sum_congr rfl ?_
+  intro head _hhead
+  by_cases hhead_target : head.1 = target
+  · have hzero :
+        pmfProb
+          (finiteWithoutReplacementPMF
+            baseWeight hbase_nonneg havailable
+            k (insert head.1 forbidden)
+            (by
+              rw [Finset.card_insert_of_notMem head.2]
+              omega))
+          (fun tail =>
+            ∀ slot : Fin (k + 1),
+              (finiteFreshListCons head tail).1 slot ≠ target) = 0 := by
+      refine pmfProb_eq_zero_of_no_mass _ _ ?_
+      intro tail htail
+      exact False.elim
+        (htail ⟨0, Nat.succ_pos k⟩ (by
+          simpa using hhead_target))
+    simp [hhead_target, hzero]
+  · have htail_congr :
+        pmfProb
+          (finiteWithoutReplacementPMF
+            baseWeight hbase_nonneg havailable
+            k (insert head.1 forbidden)
+            (by
+              rw [Finset.card_insert_of_notMem head.2]
+              omega))
+          (fun tail =>
+            ∀ slot : Fin (k + 1),
+              (finiteFreshListCons head tail).1 slot ≠ target) =
+        pmfProb
+          (finiteWithoutReplacementPMF
+            baseWeight hbase_nonneg havailable
+            k (insert head.1 forbidden)
+            (by
+              rw [Finset.card_insert_of_notMem head.2]
+              omega))
+          (fun tail => ∀ slot : Fin k, tail.1 slot ≠ target) := by
+      refine pmfProb_congr _ ?_
+      intro tail
+      constructor
+      · intro htail slot hslot
+        exact htail slot.succ (by simpa using hslot)
+      · intro htail slot
+        cases slot using Fin.cases with
+        | zero =>
+            simpa using hhead_target
+        | succ slot =>
+            exact htail slot
+    simp [hhead_target, htail_congr]
+
+/--
+First-step recurrence for the event that two fixed atoms are both omitted by
+the whole without-replacement list.
+-/
+theorem finiteWithoutReplacementPMF_omit_pair_succ_prob_eq_sum_head
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (baseWeight : α → ℝ)
+    (hbase_nonneg : ∀ a, 0 ≤ baseWeight a)
+    (havailable : ∀ forbidden : Finset α,
+      forbidden.card < Fintype.card α →
+        0 < finiteAvailableWeight baseWeight forbidden)
+    {k : ℕ} (forbidden : Finset α)
+    (hbudget : forbidden.card + (k + 1) ≤ Fintype.card α)
+    (i j : α) :
+    pmfProb
+        (finiteWithoutReplacementPMF
+          baseWeight hbase_nonneg havailable
+          (k + 1) forbidden hbudget)
+        (fun sample =>
+          (∀ slot : Fin (k + 1), sample.1 slot ≠ i) ∧
+            (∀ slot : Fin (k + 1), sample.1 slot ≠ j)) =
+      ∑ head : {a // a ∉ forbidden},
+        if head.1 = i ∨ head.1 = j then 0 else
+          (finiteWeightedPMFAvailable
+            baseWeight forbidden hbase_nonneg
+            (havailable forbidden (by omega)) head).toReal *
+            pmfProb
+              (finiteWithoutReplacementPMF
+                baseWeight hbase_nonneg havailable
+                k (insert head.1 forbidden)
+                (by
+                  rw [Finset.card_insert_of_notMem head.2]
+                  omega))
+              (fun tail =>
+                (∀ slot : Fin k, tail.1 slot ≠ i) ∧
+                  (∀ slot : Fin k, tail.1 slot ≠ j)) := by
+  classical
+  rw [finiteWithoutReplacementPMF_event_prob_succ_eq_sum_head
+    baseWeight hbase_nonneg havailable forbidden hbudget
+    (fun sample : finiteFreshList α (k + 1) forbidden =>
+      (∀ slot : Fin (k + 1), sample.1 slot ≠ i) ∧
+        (∀ slot : Fin (k + 1), sample.1 slot ≠ j))]
+  refine Finset.sum_congr rfl ?_
+  intro head _hhead
+  by_cases hhead_bad : head.1 = i ∨ head.1 = j
+  · have hzero :
+        pmfProb
+          (finiteWithoutReplacementPMF
+            baseWeight hbase_nonneg havailable
+            k (insert head.1 forbidden)
+            (by
+              rw [Finset.card_insert_of_notMem head.2]
+              omega))
+          (fun tail =>
+            (∀ slot : Fin (k + 1),
+              (finiteFreshListCons head tail).1 slot ≠ i) ∧
+              (∀ slot : Fin (k + 1),
+                (finiteFreshListCons head tail).1 slot ≠ j)) = 0 := by
+      refine pmfProb_eq_zero_of_no_mass _ _ ?_
+      intro tail htail
+      rcases hhead_bad with hi | hj
+      · exact False.elim
+          (htail.1 ⟨0, Nat.succ_pos k⟩ (by simpa using hi))
+      · exact False.elim
+          (htail.2 ⟨0, Nat.succ_pos k⟩ (by simpa using hj))
+    simp [hhead_bad, hzero]
+  · have hhead_i : head.1 ≠ i := by
+      intro hi
+      exact hhead_bad (Or.inl hi)
+    have hhead_j : head.1 ≠ j := by
+      intro hj
+      exact hhead_bad (Or.inr hj)
+    have htail_congr :
+        pmfProb
+          (finiteWithoutReplacementPMF
+            baseWeight hbase_nonneg havailable
+            k (insert head.1 forbidden)
+            (by
+              rw [Finset.card_insert_of_notMem head.2]
+              omega))
+          (fun tail =>
+            (∀ slot : Fin (k + 1),
+              (finiteFreshListCons head tail).1 slot ≠ i) ∧
+              (∀ slot : Fin (k + 1),
+                (finiteFreshListCons head tail).1 slot ≠ j)) =
+        pmfProb
+          (finiteWithoutReplacementPMF
+            baseWeight hbase_nonneg havailable
+            k (insert head.1 forbidden)
+            (by
+              rw [Finset.card_insert_of_notMem head.2]
+              omega))
+          (fun tail =>
+            (∀ slot : Fin k, tail.1 slot ≠ i) ∧
+              (∀ slot : Fin k, tail.1 slot ≠ j)) := by
+      refine pmfProb_congr _ ?_
+      intro tail
+      constructor
+      · intro htail
+        constructor
+        · intro slot hslot
+          exact htail.1 slot.succ (by simpa using hslot)
+        · intro slot hslot
+          exact htail.2 slot.succ (by simpa using hslot)
+      · intro htail
+        constructor
+        · intro slot
+          cases slot using Fin.cases with
+          | zero =>
+              simpa using hhead_i
+          | succ slot =>
+              exact htail.1 slot
+        · intro slot
+          cases slot using Fin.cases with
+          | zero =>
+              simpa using hhead_j
+          | succ slot =>
+              exact htail.2 slot
+    simp [hhead_bad, htail_congr]
+
+/--
 Conditional tail law for the recursive without-replacement sampler after a
 positive-probability realized head.
 -/

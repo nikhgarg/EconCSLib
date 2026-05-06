@@ -774,6 +774,21 @@ theorem pmfProb_inter_le_mul_of_conditionalProb_le
   rw [div_le_iff₀ hq_pos] at hcond
   simpa [and_comm, mul_comm] using hcond
 
+/--
+Pairwise negative correlation implies the corresponding conditional comparison
+when the conditioning event has positive probability.
+-/
+theorem pmfConditionalProb_le_of_inter_le_mul
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (hq_pos : 0 < pmfProb μ q)
+    (hinter : pmfProb μ (fun a => p a ∧ q a) ≤
+      pmfProb μ p * pmfProb μ q) :
+    pmfConditionalProb μ q p ≤ pmfProb μ p := by
+  rw [pmfConditionalProb_eq_inter_div_of_pos μ q p hq_pos]
+  rw [div_le_iff₀ hq_pos]
+  simpa [and_comm, mul_comm] using hinter
+
 /-- Probability of an event on a pair of independent PMF draws. -/
 noncomputable def pmfPairProb {α β : Type*}
     [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
