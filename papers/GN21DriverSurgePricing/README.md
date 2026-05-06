@@ -100,6 +100,18 @@ cache is `source.txt`.
   `theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates`
   for the weak Theorem 3 boundary, with the paper-facing source wrapper
   `paper_theorem3_measured_structured_ic_prices_of_structured_endpoint_terms_current_rate_source_assumptions`.
+  The source-faithful IC route now also has a compiled sequential accept-all
+  interface:
+  `Theorem4MeasuredAggregateStructuredSequentialCurrentBoundsWeakCertificate`,
+  `Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsWeakCertificate`,
+  `theorem3AcceptAllSequentialWeakRewardCertificate_of_structured_sequential_current_bounds`,
+  `theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds`,
+  `paper_theorem3_measured_structured_ic_prices_of_structured_sequential_current_bounds_source_assumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions`.
+  This proves Theorem 3 IC by moving the surge state to accept-all first and
+  then applying Lemma 10 only with the surge state already fixed at accept-all,
+  avoiding the arbitrary-fixed-surge reward-rate mismatch.
   The derivation and remaining alternatives are
   recorded in `LEMMA9_10_REWARD_RATE_AUDIT.md`.  The current-bound layer also
   includes fixed-state
@@ -132,8 +144,11 @@ cache is `source.txt`.
   `Theorem3AcceptAllFeasibleStrictLocalSourceAssumptions` plus
   `paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions`,
   whose final field is the feasible measurable local-improvement certificate
-  for constructed prices; this is the closest current paper-facing endpoint to
-  the Lemma 9/10 derivative proof.  A narrower measurable-shape source boundary
+  for constructed prices.  For IC alone, the closest current paper-facing
+  endpoint to the Lemma 9/10 derivative proof is the sequential current-bounds
+  wrapper above: it asks only for the surge Lemma 9 move at the current policy
+  and the non-surge Lemma 10 move after surge is accept-all.  A narrower
+  measurable-shape source boundary
   is now exposed as
   `Theorem3AcceptAllMeasurableShapeStatewiseImprovementSourceAssumptions` plus
   `paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions`;

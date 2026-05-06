@@ -4,13 +4,17 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The most recent compiled adapter is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions
 ```
 
-That adapter is useful for branch bookkeeping, but it should not be treated as
-the final source-faithful closure route unless the source proof also establishes
-the target reward-rate/equality facts for arbitrary non-accept-all fixed
-states.  The remaining field for that adapter is
+This is now the preferred IC closure route.  It proves the surge-state
+accept-all move first, using Lemma 9 with the current fixed non-surge reward
+rate, and then proves the non-surge accept-all move only after surge is already
+fixed at accept-all, where Lemma 10 can use the Theorem 3 target surge reward
+rate.  The older fixed-transfer adapter remains useful for branch bookkeeping,
+but it should not be treated as the final source-faithful closure route unless
+the source proof also establishes the target reward-rate/equality facts for
+arbitrary non-accept-all fixed states.  The remaining field for that adapter is
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`
 for the structured prices constructed by Theorem 3, paired with ordinary
 all-measurable allowed Lemma 5 replacement data.  This endpoint packages shared
@@ -56,8 +60,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    are also compiled, so the final theorem no longer has to thread current
    `Q,T,W` paths, denominator positivity, or Remark 4 side conditions by hand.
 
-2. Repair the source-facing Lemma 9/10 current-bounds frontier so it matches the
-   paper algebra for arbitrary fixed-state policies.  The reward-rate audit in
+2. Use the sequential Theorem 3 frontier instead of the stronger simultaneous
+   statewise frontier.  The reward-rate audit in
    `LEMMA9_10_REWARD_RATE_AUDIT.md` records the current distinction between
    Theorem 3 target rates and Lemma 9/10 current fixed-state rates.  Lean now
    has a reward-rate-separated Lemma 10 endpoint-term route:
@@ -75,15 +79,21 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates`.
    The paper-facing source wrapper is
    `paper_theorem3_measured_structured_ic_prices_of_structured_endpoint_terms_current_rate_source_assumptions`.
-   The compiled fixed-state routes still need target reward-rate facts for the
-   fixed state; those are automatic in accept-all fixed-state branches but are
-   not a source consequence for arbitrary non-accept-all fixed states.
+   More importantly, Lean now has the sequential current-bounds route:
+   `Theorem4MeasuredAggregateStructuredSequentialCurrentBoundsWeakCertificate`,
+   `Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsWeakCertificate`,
+   `paper_theorem3_measured_structured_ic_prices_of_structured_sequential_current_bounds_source_assumptions`,
+   and
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions`.
+   These wrappers make the accept-all fixed-state branch the only Lemma 10
+   obligation needed for Theorem 3 IC.
 
-3. After the current-bounds frontier is repaired, instantiate the regular
-   allowed-policy-form/current-bounds source route:
-   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`.
-   The fixed-state-equality adapter can remain available for the accept-all
-   fixed-state subcases and for any later stronger source theorem.
+3. Instantiate the feasible sequential source route from source regularity:
+   prove the Lemma 9 aggregate data for the surge move at each feasible
+   current policy and the Lemma 10 aggregate data for the non-surge move with
+   surge fixed to accept-all.  The older regular allowed-policy-form and
+   fixed-transfer routes can remain available for stronger uniqueness or
+   statewise statements.
 
 ## Key Missing Mathematical Lemma
 
@@ -106,13 +116,11 @@ endpoint primitives:
 - Current feasible optimal policies have the interval/tail shapes from Lemma 5.
 - The current-policy `Q,T,W` primitives agree with the endpoint path formulas,
   or equivalently produce the compiled current-bounds endpoint data packages.
-- The Lemma 9/10 structured bounds hold for the constructed prices through a
-  current-bounds interface that does not assume target reward-rate identities
-  for arbitrary non-accept-all fixed states.
-- For Lemma 10 non-accept-all fixed-state branches, the direct endpoint-term
-  interface proves the aggregate improvement once the source proof supplies the
-  true static and zero-time linearized endpoint inequalities for the current
-  fixed reward rate.
+- The Lemma 9 structured bounds hold for the surge move with the current
+  non-surge fixed-state reward rate.
+- The Lemma 10 structured bounds hold for the non-surge move after the surge
+  state is accept-all, so the fixed-state reward rate is the Theorem 3 target
+  accept-all rate.
 - The other state's current policy has positive finite mass and the required
   `Q,T,W` accounting identity.
 

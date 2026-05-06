@@ -104,27 +104,42 @@ GN21NonsurgeLemma10EndpointTermsAggregateData
 Theorem4MeasuredAggregateStructuredEndpointTermsCurrentRateWeakCertificate
 theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates
 paper_theorem3_measured_structured_ic_prices_of_structured_endpoint_terms_current_rate_source_assumptions
+Theorem4MeasuredAggregateStructuredSequentialCurrentBoundsWeakCertificate
+Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsWeakCertificate
+theorem3AcceptAllSequentialWeakRewardCertificate_of_structured_sequential_current_bounds
+theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_structured_feasible_sequential_current_bounds
+paper_theorem3_measured_structured_ic_prices_of_structured_sequential_current_bounds_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions
 ```
 
-These theorems do not assume target fixed-state reward-rate identities.  They
-ask directly for the two scalar endpoint inequalities that are mathematically
-needed by the derivative proof, and the weak Theorem 3 wrapper lets each policy
-carry its own current fixed-state reward rates.
+The endpoint-term theorems do not assume target fixed-state reward-rate
+identities.  They ask directly for the two scalar endpoint inequalities that
+are mathematically needed by the derivative proof, and the weak Theorem 3
+wrapper lets each policy carry its own current fixed-state reward rates.
+
+The sequential current-bounds theorems avoid the arbitrary fixed-surge Lemma 10
+problem for the IC conclusion.  They prove the surge move first with Lemma 9
+and the current fixed non-surge reward rate; after that, the non-surge move has
+surge fixed at accept-all, so Lemma 10 can use the Theorem 3 target surge
+accept-all rate.
 
 ## Closure Options
 
-1. Prove fixed-state reward-rate equality for every non-accept-all branch.
+1. Use the sequential Theorem 3 route for IC.  This is the fastest
+   source-faithful path: it needs Lemma 9 for the arbitrary current surge move
+   and Lemma 10 only in the accept-all fixed-surge branch.
+
+2. Prove fixed-state reward-rate equality for every non-accept-all branch.
    This is the strongest route and is already supported by the fixed-state
    equality adapters, but it is not a consequence of the source text by itself.
 
-2. Prove the Lemma 9 effective-ratio bounds and Lemma 10 endpoint slack
+3. Prove the Lemma 9 effective-ratio bounds and Lemma 10 endpoint slack
    inequalities for the actual current fixed-state reward rates.  This is the
    most source-faithful local repair.
 
-3. Replace the statewise Lemma 9/10 transfer with a direct two-state aggregate
+4. Replace the statewise Lemma 9/10 transfer with a direct two-state aggregate
    comparison that avoids identifying current fixed-state rates with target
    rates.  This may be cleaner if the local slack inequalities are cumbersome.
 
-The current fastest path is option 2: keep the compiled endpoint selection
-machinery, but discharge the final non-accept-all fixed-state branches through
-actual current reward rates and the endpoint-term interface above.
+The current fastest path is option 1.  The endpoint-term interface remains the
+right backup for stronger simultaneous statewise statements.
