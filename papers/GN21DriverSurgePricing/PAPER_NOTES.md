@@ -118,6 +118,16 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `theorem3AcceptAllFeasibleStrictLocalCertificate`,
   feasible strict-local source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions`,
+  measurable shape derivation certificates
+  `Theorem4MeasurableShapeDerivationCertificate` and
+  `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate`,
+  feasible statewise improvement adapters
+  `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate`,
+  `theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_measurable_shape_statewise_improvements`,
+  Theorem 3 measurable-shape source adapter
+  `theorem3AcceptAllFeasibleStrictLocalCertificate_of_measurable_shape_statewise_improvements`,
+  and measurable-shape source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   source-facing current-bounds wrapper

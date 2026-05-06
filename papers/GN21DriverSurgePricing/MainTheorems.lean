@@ -8957,6 +8957,23 @@ theorem lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
   linarith
 
 /--
+If the concrete Lemma 5 replacement candidate is no better than the current
+policy, the current policy must already have the Lemma 5 form.  This variant
+is useful on restricted feasible-measurable domains, where local optimality is
+only available for feasible replacement candidates.
+-/
+theorem lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (shape : Lemma5DerivativeShape)
+    (C : Lemma5OptimizerReplacementCertificate Rhat σ0 shape)
+    (hcandidate : Rhat C.policy ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  by_contra hnot_form
+  have hlt : Rhat σ0 < Rhat C.policy :=
+    C.strict_unless_initial_form hnot_form
+  linarith
+
+/--
 Positive-derivative Lemma 5 replacement plus local optimality gives
 accept-all behavior directly.
 -/
@@ -12145,6 +12162,150 @@ theorem paper_theorem4_dynamic_structural_policy_of_all_shape_replacements
   simpa using
     paper_theorem4_dynamic_structural_policy_of_shape_derivation R
       (theorem4ShapeDerivationCertificate_of_all_shape_replacements R C)
+
+/--
+Measurable-domain Theorem 4 shape-derivation certificate.  This mirrors the
+unrestricted `Theorem4ShapeDerivationCertificate`, but every optimizer is only
+assumed optimal among feasible measurable policies.
+-/
+structure Theorem4MeasurableShapeDerivationCertificate
+    (R : DynamicReward) where
+  policy : Fin 2 → TripPolicy
+  optimal : dynamicMeasurableOptimal R policy
+  nonsurge_shape : Lemma5DerivativeShape
+  surge_shape : Lemma5DerivativeShape
+  nonsurge_allowed : theorem4NonsurgeAllowedLemma5Shape nonsurge_shape
+  surge_allowed : theorem4SurgeAllowedLemma5Shape surge_shape
+  nonsurge_form : lemma5PolicyForm nonsurge_shape (policy 0)
+  surge_form : lemma5PolicyForm surge_shape (policy 1)
+  only_policy_forms :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      (∃ shape : Lemma5DerivativeShape,
+        theorem4NonsurgeAllowedLemma5Shape shape ∧
+          lemma5PolicyForm shape (ρ 0)) ∧
+      (∃ shape : Lemma5DerivativeShape,
+        theorem4SurgeAllowedLemma5Shape shape ∧
+          lemma5PolicyForm shape (ρ 1))
+
+/--
+All-measurable-optimal replacement certificate.  The Lemma 5 replacement
+candidates are explicitly required to stay inside the feasible measurable
+dynamic-policy domain, so restricted local optimality can be used.
+-/
+structure Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+    (R : DynamicReward) where
+  exists_optimal : ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  replacements :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      (Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Σ C : Lemma5OptimizerReplacementCertificate
+          (dynamicStateReward R ρ 0) (ρ 0) shape.1,
+          {h : dynamicFeasibleMeasurablePolicy
+            (Function.update ρ 0 C.policy) // True}) ×
+      (Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Σ C : Lemma5OptimizerReplacementCertificate
+          (dynamicStateReward R ρ 1) (ρ 1) shape.1,
+          {h : dynamicFeasibleMeasurablePolicy
+            (Function.update ρ 1 C.policy) // True})
+
+/--
+Convert all-measurable-optimal Lemma 5 replacement data into the measurable
+shape-derivation certificate by applying restricted local optimality to the
+feasible replacement candidates.
+-/
+noncomputable def theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+    (R : DynamicReward)
+    (C : Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate R) :
+    Theorem4MeasurableShapeDerivationCertificate R := by
+  classical
+  let ρstar := Classical.choose C.exists_optimal
+  have hρstar : dynamicMeasurableOptimal R ρstar :=
+    Classical.choose_spec C.exists_optimal
+  let ndata := (C.replacements ρstar hρstar).1
+  let sdata := (C.replacements ρstar hρstar).2
+  exact
+    { policy := ρstar
+      optimal := hρstar
+      nonsurge_shape := ndata.1.1
+      surge_shape := sdata.1.1
+      nonsurge_allowed := ndata.1.2
+      surge_allowed := sdata.1.2
+      nonsurge_form :=
+        lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+          (dynamicStateReward R ρstar 0) (ρstar 0) ndata.1.1
+          ndata.2.1
+          (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+            R hρstar 0 ndata.2.2.1)
+      surge_form :=
+        lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+          (dynamicStateReward R ρstar 1) (ρstar 1) sdata.1.1
+          sdata.2.1
+          (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+            R hρstar 1 sdata.2.2.1)
+      only_policy_forms := by
+        intro ρ hρ
+        rcases C.replacements ρ hρ with
+          ⟨⟨⟨nshape, hnallowed⟩, ⟨hnreplacement, hnfeasible⟩⟩,
+            ⟨⟨sshape, hsallowed⟩, ⟨hsreplacement, hsfeasible⟩⟩⟩
+        exact
+          ⟨⟨nshape, hnallowed,
+              lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+                (dynamicStateReward R ρ 0) (ρ 0) nshape hnreplacement
+                (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+                  R hρ 0 hnfeasible.1)⟩,
+            ⟨sshape, hsallowed,
+              lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+                (dynamicStateReward R ρ 1) (ρ 1) sshape hsreplacement
+                (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+                  R hρ 1 hsfeasible.1)⟩⟩ }
+
+/-- Measurable shape derivation implies the source Theorem 4 shape predicates. -/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_shape_derivation
+    (R : DynamicReward)
+    (C : Theorem4MeasurableShapeDerivationCertificate R) :
+    dynamicMeasurableOptimal R C.policy ∧
+      theorem4NonsurgeShape (C.policy 0) ∧
+      theorem4SurgeShape (C.policy 1) ∧
+      ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+        theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) := by
+  refine ⟨C.optimal, ?_, ?_, ?_⟩
+  · exact theorem4NonsurgeShape_of_allowed_lemma5_form
+      C.nonsurge_allowed C.nonsurge_form
+  · exact theorem4SurgeShape_of_allowed_lemma5_form
+      C.surge_allowed C.surge_form
+  · intro ρ hρ
+    rcases C.only_policy_forms ρ hρ with
+      ⟨⟨nshape, hnallowed, hnform⟩, ⟨sshape, hsallowed, hsform⟩⟩
+    exact
+      ⟨theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform,
+        theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform⟩
+
+/--
+Measurable Theorem 4 structural endpoint from all-measurable-optimal Lemma 5
+replacement data.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_all_shape_replacements
+    (R : DynamicReward)
+    (C : Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate R) :
+    dynamicMeasurableOptimal R
+        (theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+          R C).policy ∧
+      theorem4NonsurgeShape
+        ((theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+          R C).policy 0) ∧
+      theorem4SurgeShape
+        ((theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+          R C).policy 1) ∧
+      ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+        theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) := by
+  simpa using
+    paper_theorem4_measurable_dynamic_structural_policy_of_shape_derivation R
+      (theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+        R C)
 
 /-- Theorem 4 endpoint, conditional on the derivative-shape and replacement certificates. -/
 theorem paper_theorem4_dynamic_structural_policy_of_certificate
@@ -17013,6 +17174,226 @@ abbrev gn21NonsurgeStatewiseStrictAggregateImprovement
       gn21MeasuredAggregateDynamicStateReward
         μ arrival switch12 switch21
         (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ
+
+/-- Feasible-measurable version of the state-1 strict aggregate improvement. -/
+abbrev gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) : Prop :=
+  ∃ τ : TripPolicy,
+    dynamicFeasibleMeasurablePolicy (Function.update ρ 1 τ) ∧
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1) ∧
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21
+        ((replaceDynamicPolicyState ρ 1 τ) 0)
+        ((replaceDynamicPolicyState ρ 1 τ) 1) ∧
+    gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 (ρ 1) <
+      gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 1 τ
+
+/-- Feasible-measurable version of the state-0 strict aggregate improvement. -/
+abbrev gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy) : Prop :=
+  ∃ τ : TripPolicy,
+    dynamicFeasibleMeasurablePolicy (Function.update ρ 0 τ) ∧
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1) ∧
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21
+        ((replaceDynamicPolicyState ρ 0 τ) 0)
+        ((replaceDynamicPolicyState ρ 0 τ) 1) ∧
+    gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 (ρ 0) <
+      gn21MeasuredAggregateDynamicStateReward
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ
+
+/--
+Uniform feasible-measurable statewise strict-local aggregate certificate.  This
+is the direct endpoint interface needed by the feasible strict-local Theorem 4
+route.
+-/
+structure Theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  statewise_strict_aggregate_improvement_unless :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      ∀ i : Fin 2,
+        ¬ acceptsAllTrips (ρ i) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update ρ i τ) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) (ρ 1) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 ((replaceDynamicPolicyState ρ i τ) 0)
+              ((replaceDynamicPolicyState ρ i τ) 1) ∧
+            gn21MeasuredAggregateDynamicStateReward
+                μ arrival switch12 switch21 w ρ i (ρ i) <
+              gn21MeasuredAggregateDynamicStateReward
+                μ arrival switch12 switch21 w ρ i τ
+
+/--
+Uniform feasible statewise strict aggregate improvements instantiate the
+two-field feasible strict-local certificate used by the measurable Theorem 4
+endpoint.
+-/
+def theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_statewise_feasible_strict_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C : Theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w) :
+    Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w where
+  exists_optimal := C.exists_optimal
+  nonsurge_strict_aggregate_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.statewise_strict_aggregate_improvement_unless ρ hρ 0 hnot with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+    · simpa [replaceDynamicPolicyState] using Hrep
+    · simpa [gn21MeasuredAggregateDynamicStateReward,
+        replaceDynamicPolicyState] using hagg
+  surge_strict_aggregate_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.statewise_strict_aggregate_improvement_unless ρ hρ 1 hnot with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+    · simpa [replaceDynamicPolicyState] using Hrep
+    · simpa [gn21MeasuredAggregateDynamicStateReward,
+        replaceDynamicPolicyState] using hagg
+
+/--
+Measurable shape derivation plus feasible statewise endpoint improvements in
+the four non-accept-all shape cases instantiates the uniform feasible
+strict-local aggregate certificate.
+-/
+structure Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  shape_derivation :
+    Theorem4MeasurableShapeDerivationCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+
+/--
+The measurable shape-derivation statewise-improvement certificate provides
+the uniform feasible strict-local aggregate certificate.
+-/
+def theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate_of_measurable_shape_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := ⟨C.shape_derivation.policy, C.shape_derivation.optimal⟩
+  statewise_strict_aggregate_improvement_unless := by
+    intro ρ hρ i hnot
+    fin_cases i
+    · rcases C.shape_derivation.only_policy_forms ρ hρ with
+        ⟨⟨nshape, hnallowed, hnform⟩, _⟩
+      have hshape : theorem4NonsurgeShape (ρ 0) :=
+        theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform
+      rcases theorem4NonsurgeShape_cases_of_not_acceptsAll hshape hnot with
+        hlong | hmiddle
+      · rcases hlong with ⟨t, ht⟩
+        exact C.nonsurge_reject_long_improvement ρ hρ t ht
+      · rcases hmiddle with ⟨lo, hi, hmid⟩
+        exact C.nonsurge_accept_middle_improvement ρ hρ lo hi hmid
+    · rcases C.shape_derivation.only_policy_forms ρ hρ with
+        ⟨_, ⟨sshape, hsallowed, hsform⟩⟩
+      have hshape : theorem4SurgeShape (ρ 1) :=
+        theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform
+      rcases theorem4SurgeShape_cases_of_not_acceptsAll hshape hnot with
+        hshort | hmiddle
+      · rcases hshort with ⟨t, ht⟩
+        exact C.surge_reject_short_improvement ρ hρ t ht
+      · rcases hmiddle with ⟨lo, hi, hmid⟩
+        exact C.surge_reject_middle_improvement ρ hρ lo hi hmid
+
+/--
+The measurable shape-derivation statewise-improvement certificate directly
+instantiates the feasible strict-local certificate consumed by Theorem 3.
+-/
+def theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_measurable_shape_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_statewise_feasible_strict_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate_of_measurable_shape_statewise_improvements
+      μ arrival m z switch12 switch21 C)
 
 /--
 Surge-state bridge from the Lemma 9 interval-density endpoint movement to the
@@ -27878,6 +28259,29 @@ def theorem3AcceptAllFeasibleStrictLocalCertificate
           μ arrival switch12 switch21
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
 
+/--
+Measurable Lemma 5 shape derivation plus feasible statewise endpoint
+improvements instantiate the feasible strict-local Theorem 3 boundary.
+-/
+def theorem3AcceptAllFeasibleStrictLocalCertificate_of_measurable_shape_statewise_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+            μ arrival m z switch12 switch21) :
+    theorem3AcceptAllFeasibleStrictLocalCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  exact
+    theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_measurable_shape_statewise_improvements
+      μ arrival m z switch12 switch21
+      (C m z hnonneg hparams)
+
 /-- Global statewise reward comparisons instantiate the weak Theorem 3 boundary. -/
 def theorem3AcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward
     (μ : Fin 2 → Measure TripLength)
@@ -28311,6 +28715,91 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_stri
       A.htime1_integrable A.htime2_integrable A.hq1_integrable
       A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
       A.strict_local
+
+/--
+Bundled source-level assumptions for the measurable shape/statewise-improvement
+Theorem 3 route.  This is the narrower paper-facing boundary after the
+measurable Lemma 5 reduction: prove the admissible shape derivation and the
+four feasible endpoint-improvement cases for each constructed price pair.
+-/
+structure Theorem3AcceptAllMeasurableShapeStatewiseImprovementSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  measurable_shape_statewise_improvements :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from measurable shape/statewise-improvement
+source assumptions.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableShapeStatewiseImprovementSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        strict_local :=
+          theorem3AcceptAllFeasibleStrictLocalCertificate_of_measurable_shape_statewise_improvements
+            μ arrival R1 R2 switch12 switch21
+            A.measurable_shape_statewise_improvements }
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is
