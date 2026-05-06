@@ -70,6 +70,12 @@ theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
 theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
 theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
 lemma9StructuredUpper_gt_uniform_of_switch_gap_pos
+lemma9StructuredUpperUniformBound_pos
+theorem3SurgeSlack_of_uniform_upper_lt_current
+theorem3SurgeRatio_exists_small_slack_at_R2
+theorem3SurgeRatio_exists_small_slack
+theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
+theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerSignedEnvelopeSlackDataAssumptions
 ```
@@ -131,12 +137,32 @@ Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the corrected route and the
 distinction between the easy `0 <= r1_current` proof, the reward-envelope
 bound, and the surge-side slack proof.
 
-Next, prove the scalar sign-split surge slack for the two possible envelopes.
-The newest helper
-`lemma9StructuredUpper_gt_uniform_of_switch_gap_pos` gives a policy-uniform
-positive lower bound on the current Lemma 9 upper endpoint from
-`Q_current < switch12 * T_current`; use it to choose the surge ratio small
-enough in the Theorem 3 parameter construction.
+The scalar small-ratio surge slack is now compiled.  The most useful packaged
+constructor is:
+
+```lean
+theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+```
+
+It returns Theorem 3 structured parameters together with positive parameter
+evidence, the sign-selected envelope `Rmax`, `0 < m_2 - Rmax`, and
+`z_2 < U * (m_2 - Rmax)`.  The generic scalar side condition still to discharge
+in the measured Theorem 3 route is:
+
+```lean
+0 < R2 * T2 - Rmax * (T2 - 1)
+```
+
+for the chosen sign envelope.  For the `Rmax = R2` branch this is just
+`0 < R2`.  For the `Rmax = R2 + z_0 * switch12` branch, prove it from the
+Theorem 3 non-surge construction/feasibility assumptions, or record the exact
+extra source condition if the paper is implicitly using a regime restriction.
+
+The helper `lemma9StructuredUpper_gt_uniform_of_switch_gap_pos` gives a
+policy-uniform positive lower bound on the current Lemma 9 upper endpoint from
+`Q_current < switch12 * T_current`; use
+`theorem3SurgeSlack_of_uniform_upper_lt_current` to transfer the constructed
+uniform slack to the actual current upper endpoint.
 
 Also prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma

@@ -253,7 +253,24 @@ Recommended proof order
 4. Remove the source-facing `R_current <= Rmax` field by instantiating `Rmax`
    with the sign-split reward-rate envelope.  Done.
 5. Prove the scalar surge slack inequality for the constructed Theorem 3
-   parameters and the signed-envelope `Rmax`.
+   parameters and the signed-envelope `Rmax`.  The generic small-ratio algebra
+   is now done.  Compiled names:
+
+     lemma9StructuredUpperUniformBound_pos
+     theorem3SurgeSlack_of_uniform_upper_lt_current
+     theorem3SurgeRatio_exists_small_slack_at_R2
+     theorem3SurgeRatio_exists_small_slack
+     theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
+     theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+
+   The remaining measured-route obligation is to prove
+
+     0 < R2 * T2 - Rmax * (T2 - 1)
+
+   for the sign-selected non-surge envelope.  The `Rmax = R2` branch is
+   immediate from `R2 > 0`; the `Rmax = R2 + z0 * switch12` branch should be
+   derived from the Theorem 3 non-surge ratio/feasibility assumptions, or
+   documented as the exact extra source regime condition if it is not implied.
 6. Prove the current Lemma 9 lower endpoint scalar lemma.
 7. Instantiate the envelope/slack source wrapper.
 

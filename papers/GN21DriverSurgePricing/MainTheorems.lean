@@ -12108,6 +12108,32 @@ theorem lemma9StructuredUpper_gt_uniform_of_switch_gap_pos
   exact mul_pos (mul_pos (sub_pos.mpr hswitch21_lt_Qbar2) hQbar2_pos)
     hgap_pos
 
+/-- Positivity of the policy-uniform Lemma 9 upper lower bound. -/
+theorem lemma9StructuredUpperUniformBound_pos
+    (Qbar2 switch12 switch21 : ℝ)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hswitch21_lt_Qbar2 : switch21 < Qbar2) :
+    0 < (Qbar2 + switch12) / (switch12 * (Qbar2 - switch21)) := by
+  have hQbar2_pos : 0 < Qbar2 := lt_trans hswitch21_pos hswitch21_lt_Qbar2
+  have hnum_pos : 0 < Qbar2 + switch12 := add_pos hQbar2_pos hswitch12_pos
+  have hden_pos : 0 < switch12 * (Qbar2 - switch21) :=
+    mul_pos hswitch12_pos (sub_pos.mpr hswitch21_lt_Qbar2)
+  exact div_pos hnum_pos hden_pos
+
+/--
+Slack below a policy-uniform Lemma 9 upper lower bound transfers to any
+current-policy Lemma 9 upper endpoint that strictly exceeds that bound.
+-/
+theorem theorem3SurgeSlack_of_uniform_upper_lt_current
+    (z m Rmax U currentUpper : ℝ)
+    (hslack : z < U * (m - Rmax))
+    (hU_lt_current : U < currentUpper)
+    (hmRmax_pos : 0 < m - Rmax) :
+    z < currentUpper * (m - Rmax) := by
+  exact lt_trans hslack
+    (mul_lt_mul_of_pos_right hU_lt_current hmRmax_pos)
+
 /-- Lemma 9 feasibility with a positive admissible structured-price ratio. -/
 theorem paper_lemma9_structured_bounds_feasible_positive_of_lower_lt_upper
     (T1 Q1 Tbar2 Qbar2 switch21 : ℝ)
@@ -35967,6 +35993,358 @@ theorem theorem3SurgeZFromRatio_pos
         hden_pos))
 
 /--
+For the `Rmax = R2` reward-envelope branch, a sufficiently small positive
+surge ratio makes the constructed surge multiplier exceed `R2` and leaves
+strict Lemma 9 upper-endpoint slack.  This is the scalar small-ratio step for
+the `z₀ <= 0` sign case.
+-/
+theorem theorem3SurgeRatio_exists_small_slack_at_R2
+    (R1 R2 T2 Q2 switch21 U upper : ℝ)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hU_pos : 0 < U)
+    (hupper_pos : 0 < upper) :
+    ∃ ratio : ℝ,
+      0 < ratio ∧
+        ratio < upper ∧
+        0 <
+          theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+            R2 ∧
+        theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio <
+          U *
+            (theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+              R2) := by
+  let d := Q2 - switch21
+  let B := R2 * T2 - R1 * (T2 - 1)
+  have hR2_pos : 0 < R2 := lt_trans hR1_pos hR1_lt_R2
+  have hT2_nonneg : 0 ≤ T2 := le_trans zero_le_one hT2_ge_one
+  have hd_pos : 0 < d := by
+    unfold d
+    exact sub_pos.mpr hswitch_lt_Q2
+  have hRgap_pos : 0 < R2 - R1 := sub_pos.mpr hR1_lt_R2
+  have hB_pos : 0 < B := by
+    have hB_eq : B = R1 + T2 * (R2 - R1) := by
+      unfold B
+      ring
+    rw [hB_eq]
+    exact add_pos_of_pos_of_nonneg hR1_pos
+      (mul_nonneg hT2_nonneg (le_of_lt hRgap_pos))
+  let eps2 := U * R2 / (2 * B)
+  let eps3 := R2 / (2 * d * (R2 - R1))
+  let eps := min upper (min eps2 eps3)
+  let ratio := eps / 2
+  have heps2_pos : 0 < eps2 := by
+    unfold eps2
+    positivity
+  have heps3_pos : 0 < eps3 := by
+    unfold eps3
+    positivity
+  have heps_pos : 0 < eps := by
+    unfold eps
+    exact lt_min hupper_pos (lt_min heps2_pos heps3_pos)
+  have hratio_pos : 0 < ratio := by
+    unfold ratio
+    positivity
+  have hratio_lt_eps : ratio < eps := by
+    unfold ratio
+    linarith
+  have hratio_lt_upper : ratio < upper :=
+    lt_of_lt_of_le hratio_lt_eps (by unfold eps; exact min_le_left _ _)
+  have hratio_lt_eps2 : ratio < eps2 :=
+    lt_of_lt_of_le hratio_lt_eps
+      (by
+        unfold eps
+        exact le_trans (min_le_right upper (min eps2 eps3))
+          (min_le_left eps2 eps3))
+  have hratio_lt_eps3 : ratio < eps3 :=
+    lt_of_lt_of_le hratio_lt_eps
+      (by
+        unfold eps
+        exact le_trans (min_le_right upper (min eps2 eps3))
+          (min_le_right eps2 eps3))
+  have hden_pos :
+      0 < (T2 - 1) + ratio * (Q2 - switch21) := by
+    exact theorem3SurgeRatio_denominator_pos T2 Q2 switch21 ratio
+      hT2_ge_one hratio_pos hswitch_lt_Q2
+  have hden_ne :
+      (T2 - 1) + ratio * (Q2 - switch21) ≠ 0 := ne_of_gt hden_pos
+  have hratio_d_gap_lt_half :
+      ratio * d * (R2 - R1) < R2 / 2 := by
+    have hsmall : ratio * d * (R2 - R1) < R2 / 2 := by
+      have hmul_pos : 0 < 2 * d * (R2 - R1) := by positivity
+      have hmul :=
+        mul_lt_mul_of_pos_right hratio_lt_eps3 hmul_pos
+      unfold eps3 at hmul
+      field_simp [ne_of_gt hmul_pos] at hmul
+      linarith
+    exact hsmall
+  have hnum_R2_half :
+      R2 / 2 < R2 + ratio * d * (R1 - R2) := by
+    nlinarith
+  have hnum_R2_pos :
+      0 < R2 + ratio * d * (R1 - R2) := by
+    have hhalf_pos : 0 < R2 / 2 := by positivity
+    exact lt_trans hhalf_pos hnum_R2_half
+  have hm_sub_R2_eq :
+      theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio - R2 =
+        (R2 + ratio * d * (R1 - R2)) /
+          ((T2 - 1) + ratio * (Q2 - switch21)) := by
+    unfold theorem3SurgeMultiplierFromRatio d
+    field_simp [hden_ne]
+    ring
+  have hm_sub_R1_eq :
+      theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio - R1 =
+        B / ((T2 - 1) + ratio * (Q2 - switch21)) := by
+    unfold theorem3SurgeMultiplierFromRatio B
+    field_simp [hden_ne]
+    ring
+  have hm_sub_R2_pos :
+      0 <
+        theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+          R2 := by
+    rw [hm_sub_R2_eq]
+    exact div_pos hnum_R2_pos hden_pos
+  have hz_eq :
+      theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio =
+        ratio * B / ((T2 - 1) + ratio * (Q2 - switch21)) := by
+    unfold theorem3SurgeZFromRatio
+    rw [hm_sub_R1_eq]
+    ring
+  have hratioB_lt : ratio * B < U * (R2 / 2) := by
+    have hmul := mul_lt_mul_of_pos_right hratio_lt_eps2 hB_pos
+    unfold eps2 at hmul
+    field_simp [ne_of_gt hB_pos] at hmul
+    ring_nf at hmul ⊢
+    nlinarith
+  have hU_half_lt : U * (R2 / 2) < U * (R2 + ratio * d * (R1 - R2)) := by
+    exact mul_lt_mul_of_pos_left hnum_R2_half hU_pos
+  have hratioB_lt_target :
+      ratio * B < U * (R2 + ratio * d * (R1 - R2)) :=
+    lt_trans hratioB_lt hU_half_lt
+  have hslack :
+      theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio <
+        U *
+          (theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+            R2) := by
+    rw [hz_eq, hm_sub_R2_eq]
+    have hdiv :=
+      div_lt_div_of_pos_right hratioB_lt_target hden_pos
+    simpa [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using hdiv
+  exact ⟨ratio, hratio_pos, hratio_lt_upper, hm_sub_R2_pos, hslack⟩
+
+/--
+General small-ratio surge slack: if the zero-ratio numerator of
+`m₂ - Rmax` is positive, a sufficiently small positive feasible Lemma 9 ratio
+makes `m₂ > Rmax` and keeps `z₂` below any positive multiple of that slack.
+-/
+theorem theorem3SurgeRatio_exists_small_slack
+    (R1 R2 Rmax T2 Q2 switch21 U upper : ℝ)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hC_pos : 0 < R2 * T2 - Rmax * (T2 - 1))
+    (hU_pos : 0 < U)
+    (hupper_pos : 0 < upper) :
+    ∃ ratio : ℝ,
+      0 < ratio ∧
+        ratio < upper ∧
+        0 <
+          theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+            Rmax ∧
+        theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio <
+          U *
+            (theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+              Rmax) := by
+  let d := Q2 - switch21
+  let B := R2 * T2 - R1 * (T2 - 1)
+  let C := R2 * T2 - Rmax * (T2 - 1)
+  let D := |Rmax - R1| + 1
+  have hT2_nonneg : 0 ≤ T2 := le_trans zero_le_one hT2_ge_one
+  have hd_pos : 0 < d := by
+    unfold d
+    exact sub_pos.mpr hswitch_lt_Q2
+  have hRgap_pos : 0 < R2 - R1 := sub_pos.mpr hR1_lt_R2
+  have hB_pos : 0 < B := by
+    have hB_eq : B = R1 + T2 * (R2 - R1) := by
+      unfold B
+      ring
+    rw [hB_eq]
+    exact add_pos_of_pos_of_nonneg hR1_pos
+      (mul_nonneg hT2_nonneg (le_of_lt hRgap_pos))
+  have hC_pos' : 0 < C := by
+    unfold C
+    exact hC_pos
+  have hD_pos : 0 < D := by
+    unfold D
+    nlinarith [abs_nonneg (Rmax - R1)]
+  let eps2 := U * C / (2 * B)
+  let eps3 := C / (2 * (d * D))
+  let eps := min upper (min eps2 eps3)
+  let ratio := eps / 2
+  have heps2_pos : 0 < eps2 := by
+    unfold eps2
+    positivity
+  have heps3_pos : 0 < eps3 := by
+    unfold eps3
+    positivity
+  have heps_pos : 0 < eps := by
+    unfold eps
+    exact lt_min hupper_pos (lt_min heps2_pos heps3_pos)
+  have hratio_pos : 0 < ratio := by
+    unfold ratio
+    positivity
+  have hratio_lt_eps : ratio < eps := by
+    unfold ratio
+    linarith
+  have hratio_lt_upper : ratio < upper :=
+    lt_of_lt_of_le hratio_lt_eps (by unfold eps; exact min_le_left _ _)
+  have hratio_lt_eps2 : ratio < eps2 :=
+    lt_of_lt_of_le hratio_lt_eps
+      (by
+        unfold eps
+        exact le_trans (min_le_right upper (min eps2 eps3))
+          (min_le_left eps2 eps3))
+  have hratio_lt_eps3 : ratio < eps3 :=
+    lt_of_lt_of_le hratio_lt_eps
+      (by
+        unfold eps
+        exact le_trans (min_le_right upper (min eps2 eps3))
+          (min_le_right eps2 eps3))
+  have hden_pos :
+      0 < (T2 - 1) + ratio * (Q2 - switch21) := by
+    exact theorem3SurgeRatio_denominator_pos T2 Q2 switch21 ratio
+      hT2_ge_one hratio_pos hswitch_lt_Q2
+  have hden_ne :
+      (T2 - 1) + ratio * (Q2 - switch21) ≠ 0 := ne_of_gt hden_pos
+  have hratio_dD_lt_half : ratio * d * D < C / 2 := by
+    have hdD_pos : 0 < d * D := mul_pos hd_pos hD_pos
+    have hmul :=
+      mul_lt_mul_of_pos_right hratio_lt_eps3 hdD_pos
+    unfold eps3 at hmul
+    field_simp [ne_of_gt hdD_pos] at hmul
+    ring_nf at hmul ⊢
+    nlinarith
+  have hdelta_le_D : Rmax - R1 ≤ D := by
+    have habs : Rmax - R1 ≤ |Rmax - R1| := le_abs_self (Rmax - R1)
+    unfold D
+    nlinarith [abs_nonneg (Rmax - R1), habs]
+  have hratio_d_delta_lt_half :
+      ratio * d * (Rmax - R1) < C / 2 := by
+    have hrd_nonneg : 0 ≤ ratio * d :=
+      mul_nonneg (le_of_lt hratio_pos) (le_of_lt hd_pos)
+    have hle : ratio * d * (Rmax - R1) ≤ ratio * d * D := by
+      exact mul_le_mul_of_nonneg_left hdelta_le_D hrd_nonneg
+    exact lt_of_le_of_lt hle hratio_dD_lt_half
+  have hnum_half :
+      C / 2 < C + ratio * d * (R1 - Rmax) := by
+    nlinarith
+  have hnum_pos : 0 < C + ratio * d * (R1 - Rmax) := by
+    have hhalf_pos : 0 < C / 2 := by positivity
+    exact lt_trans hhalf_pos hnum_half
+  have hm_sub_Rmax_eq :
+      theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio - Rmax =
+        (C + ratio * d * (R1 - Rmax)) /
+          ((T2 - 1) + ratio * (Q2 - switch21)) := by
+    unfold theorem3SurgeMultiplierFromRatio C d
+    field_simp [hden_ne]
+    ring
+  have hm_sub_R1_eq :
+      theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio - R1 =
+        B / ((T2 - 1) + ratio * (Q2 - switch21)) := by
+    unfold theorem3SurgeMultiplierFromRatio B
+    field_simp [hden_ne]
+    ring
+  have hm_sub_Rmax_pos :
+      0 <
+        theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+          Rmax := by
+    rw [hm_sub_Rmax_eq]
+    exact div_pos hnum_pos hden_pos
+  have hz_eq :
+      theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio =
+        ratio * B / ((T2 - 1) + ratio * (Q2 - switch21)) := by
+    unfold theorem3SurgeZFromRatio
+    rw [hm_sub_R1_eq]
+    ring
+  have hratioB_lt : ratio * B < U * (C / 2) := by
+    have hmul := mul_lt_mul_of_pos_right hratio_lt_eps2 hB_pos
+    unfold eps2 at hmul
+    field_simp [ne_of_gt hB_pos] at hmul
+    ring_nf at hmul ⊢
+    nlinarith
+  have hU_half_lt : U * (C / 2) < U * (C + ratio * d * (R1 - Rmax)) := by
+    exact mul_lt_mul_of_pos_left hnum_half hU_pos
+  have hratioB_lt_target :
+      ratio * B < U * (C + ratio * d * (R1 - Rmax)) :=
+    lt_trans hratioB_lt hU_half_lt
+  have hslack :
+      theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio <
+        U *
+          (theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio -
+            Rmax) := by
+    rw [hz_eq, hm_sub_Rmax_eq]
+    have hdiv :=
+      div_lt_div_of_pos_right hratioB_lt_target hden_pos
+    simpa [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using hdiv
+  exact ⟨ratio, hratio_pos, hratio_lt_upper, hm_sub_Rmax_pos, hslack⟩
+
+/--
+Surge-side parameter existence with a deliberately small Lemma 9 ratio.  The
+current lower endpoint supplies the left side of the Lemma 9 interval, while
+the small-ratio construction supplies the right side, accounting, positivity,
+and slack against an arbitrary reward envelope `Rmax`.
+-/
+theorem theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
+    (R1 R2 Rmax T1 Q1 T2 Q2 switch21 U : ℝ)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hlower_nonpos :
+      lemma9StructuredLower T1 Q1 T2 Q2 switch21 ≤ 0)
+    (hupper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hC_pos : 0 < R2 * T2 - Rmax * (T2 - 1))
+    (hU_pos : 0 < U) :
+    ∃ ratio m z : ℝ,
+      0 < ratio ∧
+        lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21 ∧
+        m = theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio ∧
+        z = theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio ∧
+        R1 < m ∧
+        0 < z ∧
+        0 < m - Rmax ∧
+        z < U * (m - Rmax) ∧
+        m * (T2 - 1) + z * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3SurgeRatio_exists_small_slack
+      R1 R2 Rmax T2 Q2 switch21
+      U
+      (lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+      hR1_pos hR1_lt_R2 hT2_ge_one hswitch_lt_Q2 hC_pos hU_pos
+      hupper_pos with
+    ⟨ratio, hratio_pos, hratio_lt_upper, hmRmax_pos, hz_slack⟩
+  let m := theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 ratio
+  let z := theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 ratio
+  have hbounds : lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21 := by
+    exact ⟨lt_of_le_of_lt hlower_nonpos hratio_pos, hratio_lt_upper⟩
+  have hden_pos :
+      0 < (T2 - 1) + ratio * (Q2 - switch21) :=
+    theorem3SurgeRatio_denominator_pos T2 Q2 switch21 ratio hT2_ge_one
+      hratio_pos hswitch_lt_Q2
+  have hT2_nonneg : 0 ≤ T2 := le_trans zero_le_one hT2_ge_one
+  refine ⟨ratio, m, z, hratio_pos, hbounds, rfl, rfl, ?_, ?_,
+    by simpa [m] using hmRmax_pos, by simpa [m, z] using hz_slack, ?_⟩
+  · exact theorem3SurgeMultiplierFromRatio_gt_R1 R1 R2 T2 Q2 switch21
+      ratio hR1_pos hR1_lt_R2 hT2_nonneg hden_pos
+  · exact theorem3SurgeZFromRatio_pos R1 R2 T2 Q2 switch21 ratio
+      hratio_pos hR1_pos hR1_lt_R2 hT2_nonneg hden_pos
+  · exact theorem3SurgeRatio_accounting R1 R2 T2 Q2 switch21 ratio
+      (ne_of_gt hden_pos)
+
+/--
 Theorem 3 surge-side parameter existence from Lemma 9's final-sign feasibility
 certificate. This packages the positive feasible ratio together with the
 constructed `m_2,z_2` and their target scaled-earning identity.
@@ -36291,6 +36669,112 @@ theorem theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitiv
     exact hnAccount
   · rw [hm1_eq, hz1_eq]
     exact hsAccount
+
+/--
+Theorem 3 structured-parameter assembly using the small-ratio surge
+construction.  In addition to the ordinary positive parameter evidence, this
+returns the sign-selected non-surge reward envelope and a uniform surge slack
+bound against that envelope.
+-/
+theorem theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+    (rho R1 R2 Rmax T1 Q1 T2 Q2 switch12 switch21 U : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hlower_nonpos :
+      lemma9StructuredLower T1 Q1 T2 Q2 switch21 ≤ 0)
+    (hupper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hRmax_envelope :
+      (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2 ≤ 0 ∧
+          Rmax = R2) ∨
+        (0 ≤ theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2 ∧
+          Rmax =
+            R2 + (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2) *
+              switch12))
+    (hRmax_zero_ratio_pos : 0 < R2 * T2 - Rmax * (T2 - 1))
+    (hU_pos : 0 < U) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          0 < surgeRatio ∧
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) ∧
+        ((z 0 ≤ 0 ∧ Rmax = m 0) ∨
+          (0 ≤ z 0 ∧ Rmax = m 0 + z 0 * switch12)) ∧
+        0 < m 1 - Rmax ∧
+        z 1 < U * (m 1 - Rmax) := by
+  rcases theorem3NonsurgeParameters_of_theorem3_ratio
+      rho R2 T1 T2 Q1 Q2 switch12 hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos with
+    ⟨nonsurgeRatio, zN, hnratio_eq, hzN_eq, hnBounds, hnAccount⟩
+  rcases theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
+      R1 R2 Rmax T1 Q1 T2 Q2 switch21 U hR1_pos hR1_lt_R2
+      hT2_ge_one hswitch21_lt_Q2 hlower_nonpos hupper_pos
+      hRmax_zero_ratio_pos hU_pos with
+    ⟨surgeRatio, mS, zS, hsurgeRatio_pos, hsBounds, hmS_eq, hzS_eq,
+      hmS_gt, hzS_pos, hmS_Rmax_pos, hzS_slack, hsAccount⟩
+  let m : Fin 2 → ℝ := fun i => if i = 0 then R2 else mS
+  let z : Fin 2 → ℝ := fun i => if i = 0 then zN else zS
+  have hm0_eq : m 0 = R2 := by simp [m]
+  have hm1_eq : m 1 = mS := by simp [m]
+  have hz0_eq : z 0 = zN := by simp [z]
+  have hz1_eq : z 1 = zS := by simp [z]
+  have hRmax_envelope_out :
+      (z 0 ≤ 0 ∧ Rmax = m 0) ∨
+        (0 ≤ z 0 ∧ Rmax = m 0 + z 0 * switch12) := by
+    rcases hRmax_envelope with ⟨hzN_nonpos, hRmax_eq⟩ |
+      ⟨hzN_nonneg, hRmax_eq⟩
+    · left
+      constructor
+      · rw [hz0_eq, hzN_eq, hnratio_eq]
+        exact hzN_nonpos
+      · rw [hm0_eq]
+        exact hRmax_eq
+    · right
+      constructor
+      · rw [hz0_eq, hzN_eq, hnratio_eq]
+        exact hzN_nonneg
+      · rw [hm0_eq, hz0_eq, hzN_eq, hnratio_eq]
+        exact hRmax_eq
+  refine ⟨m, z, ?_, ?_, hRmax_envelope_out, ?_, ?_⟩
+  · constructor
+    · rw [hm0_eq]
+      exact le_of_lt hR2_pos
+    · constructor
+      · rw [hm1_eq]
+        exact le_trans (le_of_lt hR1_pos) (le_of_lt hmS_gt)
+      · rw [hz1_eq]
+        exact le_of_lt hzS_pos
+  · exact
+      ⟨nonsurgeRatio, surgeRatio, hsurgeRatio_pos, hnBounds, hsBounds,
+        hm0_eq, by rw [hz0_eq]; exact hzN_eq,
+        by rw [hm1_eq]; exact hmS_eq,
+        by rw [hz1_eq]; exact hzS_eq,
+        by rw [hm0_eq, hz0_eq, hR1_eq]; exact hnAccount,
+        by rw [hm1_eq, hz1_eq]; exact hsAccount⟩
+  · rw [hm1_eq]
+    exact hmS_Rmax_pos
+  · rw [hm1_eq, hz1_eq]
+    exact hzS_slack
 
 /--
 Theorem 3 accept-all measured bridge: for the measured accept-all primitives,
