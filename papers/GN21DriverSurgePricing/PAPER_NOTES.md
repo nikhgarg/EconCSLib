@@ -173,6 +173,15 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`
   plus
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
+  accept-all density support package
+  `GN21WithDensityAcceptAllSupport`,
+  support-derived endpoint constructors
+  `GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`,
+  and
+  `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`,
   feasible accept-all-bound endpoint wrappers for all four Theorem 4 shape
   cases
   `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_acceptAll_bounds`,

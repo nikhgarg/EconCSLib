@@ -56,7 +56,9 @@ theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
 Its hypotheses should be source-level regularity assumptions, not pre-unpacked
 endpoint primitives:
 
-- `μ 0` and `μ 1` are Lebesgue measures with nonnegative measurable densities.
+- `μ 0` and `μ 1` are Lebesgue measures with nonnegative measurable densities,
+  packaged as `GN21WithDensityAcceptAllSupport` when finite/positive support is
+  needed.
 - The densities are positive and continuous at the relevant finite endpoint.
 - Current feasible optimal policies have the interval/tail shapes from Lemma 5.
 - The current-policy `Q,T,W` primitives agree with the endpoint path formulas,
@@ -78,6 +80,15 @@ into the concrete endpoint policy data.
   now derives feasible measurable replacement data from source-facing allowed
   Lemma 5 cases, so the final source theorem should not provide dependent
   measurable replacement packages by hand.
+- `GN21WithDensityAcceptAllSupport` now derives current and replacement
+  finite-mass/positive-density support fields for feasible policies and all
+  five endpoint movements.  Use
+  `GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`, and
+  `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`
+  instead of filling those fields manually.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

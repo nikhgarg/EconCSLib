@@ -136,7 +136,11 @@ cache is `source.txt`.
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`;
   it derives feasible measurability of the canonical Lemma 5 replacement
-  policies from ordinary allowed replacement cases.  The lightest current
+  policies from ordinary allowed replacement cases.  The density-support layer
+  `GN21WithDensityAcceptAllSupport` and the five
+  `GN21...CurrentBoundsEndpointData.of_acceptAll_support` constructors now
+  derive current/replacement finite-mass and positive-density endpoint fields
+  from finite positive accept-all density support.  The lightest current
   IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
@@ -298,6 +302,12 @@ and
 `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`,
 `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`,
 `Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate.of_allowed_replacement_data`,
+`GN21WithDensityAcceptAllSupport`,
+`GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
+`GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
+`GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
+`GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`,
+`GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`,
 `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection`,
 `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`,
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
@@ -475,9 +485,10 @@ finite-mass, and current-bound fields of
 `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
-current/replacement nondegeneracy, feasible-domain preservation, and Lemma 9/10
-current-bound data plumbing are now available for all four Theorem 4 shape
-cases, with reject-middle split into lower- and upper-cutoff endpoint variants.
+current/replacement nondegeneracy, accept-all density support constructors,
+feasible-domain preservation, and Lemma 9/10 current-bound data plumbing are
+now available for all four Theorem 4 shape cases, with reject-middle split into
+lower- and upper-cutoff endpoint variants.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

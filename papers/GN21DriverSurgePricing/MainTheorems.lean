@@ -158,6 +158,10 @@ the continuous CTMC source theorems.
   bridge that zero total positive trip time implies zero mass for feasible sets.
 - `measure_pos_of_singleStateTripMass_pos`: bridge from positive real trip mass
   back to positive underlying measure mass, used by measured tightening.
+- `GN21WithDensityAcceptAllSupport` and its endpoint-replacement support
+  lemmas: finite accept-all density support supplies current/replacement
+  finiteness and positive-density fields for feasible policies and endpoint
+  moves.
 - `paper_proposition3_1_affine_single_state_measurable_ic`: Proposition 3.1
   measurable-policy IC endpoint for the continuous single-state reward model.
 - `paper_theorem1_single_state_threshold_best_response_of_certificate`,
@@ -299,6 +303,14 @@ the continuous CTMC source theorems.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`:
   current source-facing measurable Theorem 3 boundary from allowed Lemma 5
   cases plus endpoint current-bounds selections.
+- `GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
+  `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`,
+  and
+  `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`:
+  endpoint-data constructors deriving finite/positive density support fields
+  from the accept-all support package.
 - `GN21SurgeIntervalEndpointBridgeData`,
   `GN21NonsurgeIntervalEndpointBridgeData`, and
   `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
@@ -8531,6 +8543,309 @@ theorem gn21RejectMiddleHiReplacement_subset_acceptAllPolicy
     gn21RejectMiddleHiReplacement lo hi ε ⊆ acceptAllPolicy := by
   simpa [gn21RejectMiddleHiReplacement] using
     rejectMiddleTripsPolicy_subset_acceptAll lo (hi - ε)
+
+/-- Finite measure of a larger set transfers to every subset. -/
+theorem measure_ne_top_of_subset_of_ne_top
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) {s t : Set α}
+    (hsub : s ⊆ t) (hfinite : μ t ≠ ∞) :
+    μ s ≠ ∞ := by
+  exact ne_top_of_le_ne_top hfinite (measure_mono hsub)
+
+/--
+Source support assumption for a trip-length measure with NNReal density:
+accept-all has finite measure and the density is positive on every feasible
+positive trip length.
+-/
+structure GN21WithDensityAcceptAllSupport
+    (μ : Measure TripLength) where
+  densityNN : TripLength → NNReal
+  hμ : μ = volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)
+  hdensity_meas : Measurable densityNN
+  hfinite_acceptAll :
+    (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)) acceptAllPolicy ≠ ∞
+  hpos_acceptAll : ∀ τ, τ ∈ acceptAllPolicy → densityNN τ ≠ 0
+
+/-- The accept-all support package gives finite mass to every feasible subset. -/
+theorem GN21WithDensityAcceptAllSupport.finite_of_subset
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy}
+    (hsub : σ ⊆ acceptAllPolicy) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞)) σ ≠ ∞ :=
+  measure_ne_top_of_subset_of_ne_top
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+    hsub D.hfinite_acceptAll
+
+/-- The accept-all support package gives positive density on every feasible subset. -/
+theorem GN21WithDensityAcceptAllSupport.pos_on_of_subset
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy}
+    (hsub : σ ⊆ acceptAllPolicy) :
+    ∀ τ, τ ∈ σ → D.densityNN τ ≠ 0 := by
+  intro τ hτ
+  exact D.hpos_acceptAll τ (hsub hτ)
+
+/-- Feasible measurable dynamic policies have finite current mass under the support package. -/
+theorem GN21WithDensityAcceptAllSupport.finite_current_of_feasible
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ : dynamicFeasibleMeasurablePolicy ρ)
+    (i : Fin 2) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞)) (ρ i) ≠ ∞ :=
+  D.finite_of_subset (hρ i).1
+
+/-- Feasible measurable dynamic policies have positive density on current trips. -/
+theorem GN21WithDensityAcceptAllSupport.pos_current_of_feasible
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ : dynamicFeasibleMeasurablePolicy ρ)
+    (i : Fin 2) :
+    ∀ τ, τ ∈ ρ i → D.densityNN τ ≠ 0 :=
+  D.pos_on_of_subset (hρ i).1
+
+/-- Upper-endpoint replacements have finite mass under accept-all support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_upperEndpointReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lowerEndpoint u ε : ℝ)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+      (gn21UpperEndpointReplacement lowerEndpoint u ε) ≠ ∞ :=
+  D.finite_of_subset
+    (gn21UpperEndpointReplacement_subset_acceptAllPolicy
+      lowerEndpoint u ε hlower_nonneg)
+
+/-- Upper-endpoint replacements inherit positive density from accept-all support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_upperEndpointReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lowerEndpoint u ε : ℝ)
+    (hlower_nonneg : 0 ≤ lowerEndpoint) :
+    ∀ τ, τ ∈ gn21UpperEndpointReplacement lowerEndpoint u ε →
+      D.densityNN τ ≠ 0 :=
+  D.pos_on_of_subset
+    (gn21UpperEndpointReplacement_subset_acceptAllPolicy
+      lowerEndpoint u ε hlower_nonneg)
+
+/-- The non-surge reject-long replacement family has finite mass under support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_rejectLongReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u ε : ℝ) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+      (gn21UpperEndpointReplacement 0 u ε) ≠ ∞ :=
+  D.finite_upperEndpointReplacement 0 u ε (le_refl (0 : ℝ))
+
+/-- The non-surge reject-long replacement family has positive density under support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_rejectLongReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u ε : ℝ) :
+    ∀ τ, τ ∈ gn21UpperEndpointReplacement 0 u ε →
+      D.densityNN τ ≠ 0 :=
+  D.pos_upperEndpointReplacement 0 u ε (le_refl (0 : ℝ))
+
+/-- Reject-long replacement finite-mass field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_rejectLongReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u : ℝ) :
+    ∀ ε : ℝ, 0 < ε →
+      (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+        (gn21UpperEndpointReplacement 0 u ε) ≠ ∞ := by
+  intro ε hε
+  exact D.finite_rejectLongReplacement u ε
+
+/-- Reject-long replacement positive-density field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_rejectLongReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u : ℝ) :
+    ∀ ε : ℝ, 0 < ε →
+      ∀ τ, τ ∈ gn21UpperEndpointReplacement 0 u ε →
+        D.densityNN τ ≠ 0 := by
+  intro ε hε
+  exact D.pos_rejectLongReplacement u ε
+
+/-- Leftward lower-endpoint replacements have finite mass under support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_lowerEndpointLeftReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (upperEndpoint u ε : ℝ)
+    (hε_le_u : ε ≤ u) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+      (gn21LowerEndpointLeftReplacement upperEndpoint u ε) ≠ ∞ :=
+  D.finite_of_subset
+    (gn21LowerEndpointLeftReplacement_subset_acceptAllPolicy
+      upperEndpoint u ε hε_le_u)
+
+/-- Leftward lower-endpoint replacements inherit positive density from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_lowerEndpointLeftReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (upperEndpoint u ε : ℝ)
+    (hε_le_u : ε ≤ u) :
+    ∀ τ, τ ∈ gn21LowerEndpointLeftReplacement upperEndpoint u ε →
+      D.densityNN τ ≠ 0 :=
+  D.pos_on_of_subset
+    (gn21LowerEndpointLeftReplacement_subset_acceptAllPolicy
+      upperEndpoint u ε hε_le_u)
+
+/-- Leftward lower-endpoint replacement finite-mass field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_lowerEndpointLeftReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (upperEndpoint u δ : ℝ)
+    (hδ_le_u : δ ≤ u) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+        (gn21LowerEndpointLeftReplacement upperEndpoint u ε) ≠ ∞ := by
+  intro ε hε_pos hε_lt
+  exact D.finite_lowerEndpointLeftReplacement upperEndpoint u ε (by linarith)
+
+/-- Leftward lower-endpoint replacement positive-density field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_lowerEndpointLeftReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (upperEndpoint u δ : ℝ)
+    (hδ_le_u : δ ≤ u) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      ∀ τ, τ ∈ gn21LowerEndpointLeftReplacement upperEndpoint u ε →
+        D.densityNN τ ≠ 0 := by
+  intro ε hε_pos hε_lt
+  exact D.pos_lowerEndpointLeftReplacement upperEndpoint u ε (by linarith)
+
+/-- Tail left-replacements have finite mass under support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_tailLeftReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u ε : ℝ)
+    (hε_le_u : ε ≤ u) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+      (gn21TailLeftReplacement u ε) ≠ ∞ :=
+  D.finite_of_subset
+    (gn21TailLeftReplacement_subset_acceptAllPolicy u ε hε_le_u)
+
+/-- Tail left-replacements inherit positive density from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_tailLeftReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u ε : ℝ)
+    (hε_le_u : ε ≤ u) :
+    ∀ τ, τ ∈ gn21TailLeftReplacement u ε → D.densityNN τ ≠ 0 :=
+  D.pos_on_of_subset
+    (gn21TailLeftReplacement_subset_acceptAllPolicy u ε hε_le_u)
+
+/-- Tail replacement finite-mass field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_tailLeftReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u δ : ℝ)
+    (hδ_le_u : δ ≤ u) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+        (gn21TailLeftReplacement u ε) ≠ ∞ := by
+  intro ε hε_pos hε_lt
+  exact D.finite_tailLeftReplacement u ε (by linarith)
+
+/-- Tail replacement positive-density field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_tailLeftReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (u δ : ℝ)
+    (hδ_le_u : δ ≤ u) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      ∀ τ, τ ∈ gn21TailLeftReplacement u ε → D.densityNN τ ≠ 0 := by
+  intro ε hε_pos hε_lt
+  exact D.pos_tailLeftReplacement u ε (by linarith)
+
+/-- Lower-cutoff reject-middle replacements have finite mass under support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_rejectMiddleLoReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi ε : ℝ) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+      (gn21RejectMiddleLoReplacement lo hi ε) ≠ ∞ :=
+  D.finite_of_subset
+    (gn21RejectMiddleLoReplacement_subset_acceptAllPolicy lo hi ε)
+
+/-- Lower-cutoff reject-middle replacements inherit positive density from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_rejectMiddleLoReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi ε : ℝ) :
+    ∀ τ, τ ∈ gn21RejectMiddleLoReplacement lo hi ε →
+      D.densityNN τ ≠ 0 :=
+  D.pos_on_of_subset
+    (gn21RejectMiddleLoReplacement_subset_acceptAllPolicy lo hi ε)
+
+/-- Lower-cutoff reject-middle replacement finite-mass field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_rejectMiddleLoReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi δ : ℝ) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+        (gn21RejectMiddleLoReplacement lo hi ε) ≠ ∞ := by
+  intro ε hε_pos hε_lt
+  exact D.finite_rejectMiddleLoReplacement lo hi ε
+
+/-- Lower-cutoff reject-middle replacement positive-density field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_rejectMiddleLoReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi δ : ℝ) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      ∀ τ, τ ∈ gn21RejectMiddleLoReplacement lo hi ε →
+        D.densityNN τ ≠ 0 := by
+  intro ε hε_pos hε_lt
+  exact D.pos_rejectMiddleLoReplacement lo hi ε
+
+/-- Upper-cutoff reject-middle replacements have finite mass under support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_rejectMiddleHiReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi ε : ℝ) :
+    (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+      (gn21RejectMiddleHiReplacement lo hi ε) ≠ ∞ :=
+  D.finite_of_subset
+    (gn21RejectMiddleHiReplacement_subset_acceptAllPolicy lo hi ε)
+
+/-- Upper-cutoff reject-middle replacements inherit positive density from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_rejectMiddleHiReplacement
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi ε : ℝ) :
+    ∀ τ, τ ∈ gn21RejectMiddleHiReplacement lo hi ε →
+      D.densityNN τ ≠ 0 :=
+  D.pos_on_of_subset
+    (gn21RejectMiddleHiReplacement_subset_acceptAllPolicy lo hi ε)
+
+/-- Upper-cutoff reject-middle replacement finite-mass field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.finite_rejectMiddleHiReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi δ : ℝ) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      (volume.withDensity fun τ => (D.densityNN τ : ℝ≥0∞))
+        (gn21RejectMiddleHiReplacement lo hi ε) ≠ ∞ := by
+  intro ε hε_pos hε_lt
+  exact D.finite_rejectMiddleHiReplacement lo hi ε
+
+/-- Upper-cutoff reject-middle replacement positive-density field generated from support. -/
+theorem GN21WithDensityAcceptAllSupport.pos_rejectMiddleHiReplacement_forall
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    (lo hi δ : ℝ) :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      ∀ τ, τ ∈ gn21RejectMiddleHiReplacement lo hi ε →
+        D.densityNN τ ≠ 0 := by
+  intro ε hε_pos hε_lt
+  exact D.pos_rejectMiddleHiReplacement lo hi ε
 
 /-- Middle-rejection policies have nonzero Lebesgue volume because they include a tail. -/
 theorem volume_rejectMiddleTripsPolicy_ne_zero (lo hi : ℝ) :
@@ -24646,6 +24961,92 @@ structure GN21NonsurgeRejectLongCurrentBoundsEndpointData
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
       (ρ 0) (ρ 1)
 
+/--
+Build non-surge reject-long endpoint data from accept-all density support,
+deriving current/replacement finiteness and positive-density fields.
+-/
+def GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {u R2 ratio : ℝ}
+    (support : GN21WithDensityAcceptAllSupport (μ 0))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hm0 : m 0 = R2)
+    (harrival_pos : 0 < arrival 0)
+    (harrival_other_pos : 0 < arrival 1)
+    (hswitch21_pos : 0 < switch21)
+    (hdensity_pos : 0 < (support.densityNN u : ℝ))
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) volume 0 u)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) volume 0 u)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * (support.densityNN τ : ℝ))
+        volume 0 u)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (support.densityNN τ : ℝ)) (𝓝 u))
+    (ht_cont :
+      ContinuousAt (fun τ => τ * (support.densityNN τ : ℝ)) u)
+    (hu : 0 < u)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (current_bounds :
+      GN21NonsurgeLemma10AcceptAllAggregateData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        R2 (z 0) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) (ρ 1)) :
+    GN21NonsurgeRejectLongCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ u where
+  R2 := R2
+  ratio := ratio
+  densityNN := support.densityNN
+  hμ_nonsurge := support.hμ
+  hdensity_meas := support.hdensity_meas
+  hm0 := hm0
+  harrival_pos := harrival_pos
+  harrival_other_pos := harrival_other_pos
+  hswitch21_pos := hswitch21_pos
+  hdensity_pos := hdensity_pos
+  hq_int := hq_int
+  hq_meas := hq_meas
+  hq_cont := hq_cont
+  hw_int := hw_int
+  hw_meas := hw_meas
+  hw_cont := hw_cont
+  ht_int := ht_int
+  ht_meas := ht_meas
+  ht_cont := ht_cont
+  hu := hu
+  hfinite_current := support.finite_current_of_feasible hρ_feasible 0
+  hpos_current := support.pos_current_of_feasible hρ_feasible 0
+  hfinite_replacement := support.finite_rejectLongReplacement_forall u
+  hpos_replacement := support.pos_rejectLongReplacement_forall u
+  hmass_other_pos := hmass_other_pos
+  current_bounds := current_bounds
+
 /-- Reject-long endpoint data instantiate the feasible non-surge improvement. -/
 theorem GN21NonsurgeRejectLongCurrentBoundsEndpointData.statewise_improvement
     {μ : Fin 2 → Measure TripLength}
@@ -24760,6 +25161,100 @@ structure GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData
       R2 (z 0) ratio
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
       (ρ 0) (ρ 1)
+
+/--
+Build non-surge accept-middle endpoint data from accept-all density support.
+-/
+def GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi R2 ratio δ : ℝ}
+    (support : GN21WithDensityAcceptAllSupport (μ 0))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hm0 : m 0 = R2)
+    (harrival_pos : 0 < arrival 0)
+    (harrival_other_pos : 0 < arrival 1)
+    (hswitch21_pos : 0 < switch21)
+    (hdensity_pos : 0 < (support.densityNN lo : ℝ))
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) volume lo hi)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) (𝓝 lo))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) lo)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) volume lo hi)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) (𝓝 lo))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ *
+          (support.densityNN τ : ℝ)) lo)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * (support.densityNN τ : ℝ))
+        volume lo hi)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (support.densityNN τ : ℝ)) (𝓝 lo))
+    (ht_cont :
+      ContinuousAt (fun τ => τ * (support.densityNN τ : ℝ)) lo)
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (current_bounds :
+      GN21NonsurgeLemma10AcceptAllAggregateData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        R2 (z 0) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+        (ρ 0) (ρ 1)) :
+    GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi where
+  R2 := R2
+  ratio := ratio
+  δ := δ
+  densityNN := support.densityNN
+  hμ_nonsurge := support.hμ
+  hdensity_meas := support.hdensity_meas
+  hm0 := hm0
+  harrival_pos := harrival_pos
+  harrival_other_pos := harrival_other_pos
+  hswitch21_pos := hswitch21_pos
+  hdensity_pos := hdensity_pos
+  hq_int := hq_int
+  hq_meas := hq_meas
+  hq_cont := hq_cont
+  hw_int := hw_int
+  hw_meas := hw_meas
+  hw_cont := hw_cont
+  ht_int := ht_int
+  ht_meas := ht_meas
+  ht_cont := ht_cont
+  hlo_pos := hlo_pos
+  hlo_lt_hi := hlo_lt_hi
+  hδ := hδ
+  hδ_le_lo := hδ_le_lo
+  hfinite_current := support.finite_current_of_feasible hρ_feasible 0
+  hpos_current := support.pos_current_of_feasible hρ_feasible 0
+  hfinite_replacement :=
+    support.finite_lowerEndpointLeftReplacement_forall hi lo δ hδ_le_lo
+  hpos_replacement :=
+    support.pos_lowerEndpointLeftReplacement_forall hi lo δ hδ_le_lo
+  hmass_other_pos := hmass_other_pos
+  current_bounds := current_bounds
 
 /-- Accept-middle endpoint data instantiate the feasible non-surge improvement. -/
 theorem GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.statewise_improvement
@@ -24876,6 +25371,94 @@ structure GN21SurgeRejectShortCurrentBoundsEndpointData
       (m 1) R1 (z 1) ratio
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
       (ρ 0) (ρ 1)
+
+/--
+Build surge reject-short endpoint data from accept-all density support.
+-/
+def GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {u R1 ratio δ : ℝ}
+    (support : GN21WithDensityAcceptAllSupport (μ 1))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (harrival_other_pos : 0 < arrival 0)
+    (harrival_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hdensity_pos : 0 < (support.densityNN u : ℝ))
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi (u - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) u)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi (u - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) u)
+    (ht_int :
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioi (u - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (support.densityNN τ : ℝ)) (𝓝 u))
+    (ht_cont :
+      ContinuousAt (fun τ => τ * (support.densityNN τ : ℝ)) u)
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (current_bounds :
+      GN21SurgeLemma9AcceptAllAggregateData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (m 1) R1 (z 1) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) (ρ 1)) :
+    GN21SurgeRejectShortCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ u where
+  R1 := R1
+  ratio := ratio
+  δ := δ
+  densityNN := support.densityNN
+  hμ_surge := support.hμ
+  hdensity_meas := support.hdensity_meas
+  harrival_other_pos := harrival_other_pos
+  harrival_pos := harrival_pos
+  hswitch12_pos := hswitch12_pos
+  hdensity_pos := hdensity_pos
+  hq_int := hq_int
+  hq_meas := hq_meas
+  hq_cont := hq_cont
+  hw_int := hw_int
+  hw_meas := hw_meas
+  hw_cont := hw_cont
+  ht_int := ht_int
+  ht_meas := ht_meas
+  ht_cont := ht_cont
+  hu := hu
+  hδ := hδ
+  hδ_le_u := hδ_le_u
+  hfinite_current := support.finite_current_of_feasible hρ_feasible 1
+  hpos_current := support.pos_current_of_feasible hρ_feasible 1
+  hfinite_replacement := support.finite_tailLeftReplacement_forall u δ hδ_le_u
+  hpos_replacement := support.pos_tailLeftReplacement_forall u δ hδ_le_u
+  hmass_other_pos := hmass_other_pos
+  current_bounds := current_bounds
 
 /-- Reject-short endpoint data instantiate the feasible surge improvement. -/
 theorem GN21SurgeRejectShortCurrentBoundsEndpointData.statewise_improvement
@@ -25030,6 +25613,147 @@ structure GN21SurgeRejectMiddleLoCurrentBoundsEndpointData
       (m 1) R1 (z 1) ratio
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
       (ρ 0) (ρ 1)
+
+/--
+Build lower-cutoff surge reject-middle endpoint data from accept-all density
+support.
+-/
+def GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi R1 ratio δ : ℝ}
+    (support : GN21WithDensityAcceptAllSupport (μ 1))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (harrival_other_pos : 0 < arrival 0)
+    (harrival_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hdensity_pos : 0 < (support.densityNN lo : ℝ))
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) volume 0 lo)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (𝓝 lo))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) lo)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) volume 0 lo)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (𝓝 lo))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) lo)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * (support.densityNN τ : ℝ))
+        volume 0 lo)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (support.densityNN τ : ℝ)) (𝓝 lo))
+    (ht_cont :
+      ContinuousAt (fun τ => τ * (support.densityNN τ : ℝ)) lo)
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hq_short_current_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (ht_short_current_int :
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) lo) volume)
+    (hw_short_current_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (hq_tail_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (ht_tail_int :
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioi hi) volume)
+    (hw_tail_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (support.densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (hq_short_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ => gn21SwitchProb switch21 switch12 τ *
+            (support.densityNN τ : ℝ))
+          (Set.Ioo (0 : ℝ) (lo + ε)) volume)
+    (ht_short_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+          (Set.Ioo (0 : ℝ) (lo + ε)) volume)
+    (hw_short_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ =>
+            ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+              (support.densityNN τ : ℝ))
+          (Set.Ioo (0 : ℝ) (lo + ε)) volume)
+    (current_bounds :
+      GN21SurgeLemma9AcceptAllAggregateData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (m 1) R1 (z 1) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) (ρ 1)) :
+    GN21SurgeRejectMiddleLoCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi where
+  R1 := R1
+  ratio := ratio
+  δ := δ
+  densityNN := support.densityNN
+  hμ_surge := support.hμ
+  hdensity_meas := support.hdensity_meas
+  harrival_other_pos := harrival_other_pos
+  harrival_pos := harrival_pos
+  hswitch12_pos := hswitch12_pos
+  hdensity_pos := hdensity_pos
+  hq_int := hq_int
+  hq_meas := hq_meas
+  hq_cont := hq_cont
+  hw_int := hw_int
+  hw_meas := hw_meas
+  hw_cont := hw_cont
+  ht_int := ht_int
+  ht_meas := ht_meas
+  ht_cont := ht_cont
+  hlo_pos := hlo_pos
+  hloδ_le_hi := hloδ_le_hi
+  hδ := hδ
+  hfinite_current := support.finite_current_of_feasible hρ_feasible 1
+  hpos_current := support.pos_current_of_feasible hρ_feasible 1
+  hfinite_replacement :=
+    support.finite_rejectMiddleLoReplacement_forall lo hi δ
+  hpos_replacement :=
+    support.pos_rejectMiddleLoReplacement_forall lo hi δ
+  hmass_other_pos := hmass_other_pos
+  hq_short_current_int := hq_short_current_int
+  ht_short_current_int := ht_short_current_int
+  hw_short_current_int := hw_short_current_int
+  hq_tail_int := hq_tail_int
+  ht_tail_int := ht_tail_int
+  hw_tail_int := hw_tail_int
+  hq_short_replacement_int := hq_short_replacement_int
+  ht_short_replacement_int := ht_short_replacement_int
+  hw_short_replacement_int := hw_short_replacement_int
+  current_bounds := current_bounds
 
 /-- Lower-cutoff reject-middle endpoint data instantiate the feasible surge improvement. -/
 theorem GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.statewise_improvement
@@ -25196,6 +25920,149 @@ structure GN21SurgeRejectMiddleHiCurrentBoundsEndpointData
       (m 1) R1 (z 1) ratio
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
       (ρ 0) (ρ 1)
+
+/--
+Build upper-cutoff surge reject-middle endpoint data from accept-all density
+support.
+-/
+def GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi R1 ratio δ : ℝ}
+    (support : GN21WithDensityAcceptAllSupport (μ 1))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (harrival_other_pos : 0 < arrival 0)
+    (harrival_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hdensity_pos : 0 < (support.densityNN hi : ℝ))
+    (hq_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (𝓝 hi))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) hi)
+    (hw_int :
+      IntegrableOn
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (𝓝 hi))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) hi)
+    (ht_int :
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioi (hi - 1)) volume)
+    (ht_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => τ * (support.densityNN τ : ℝ)) (𝓝 hi))
+    (ht_cont :
+      ContinuousAt (fun τ => τ * (support.densityNN τ : ℝ)) hi)
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hq_short_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (ht_short_int :
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) lo) volume)
+    (hw_short_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume)
+    (hq_tail_current_int :
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (ht_tail_current_int :
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioi hi) volume)
+    (hw_tail_current_int :
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (support.densityNN τ : ℝ)) (Set.Ioi hi) volume)
+    (hq_tail_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ => gn21SwitchProb switch21 switch12 τ *
+            (support.densityNN τ : ℝ))
+          (Set.Ioi (hi - ε)) volume)
+    (ht_tail_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+          (Set.Ioi (hi - ε)) volume)
+    (hw_tail_replacement_int :
+      ∀ ε : ℝ, 0 < ε → ε < δ →
+        IntegrableOn
+          (fun τ =>
+            ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+              (support.densityNN τ : ℝ))
+          (Set.Ioi (hi - ε)) volume)
+    (current_bounds :
+      GN21SurgeLemma9AcceptAllAggregateData
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (m 1) R1 (z 1) ratio
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (ρ 0) (ρ 1)) :
+    GN21SurgeRejectMiddleHiCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi where
+  R1 := R1
+  ratio := ratio
+  δ := δ
+  densityNN := support.densityNN
+  hμ_surge := support.hμ
+  hdensity_meas := support.hdensity_meas
+  harrival_other_pos := harrival_other_pos
+  harrival_pos := harrival_pos
+  hswitch12_pos := hswitch12_pos
+  hdensity_pos := hdensity_pos
+  hq_int := hq_int
+  hq_meas := hq_meas
+  hq_cont := hq_cont
+  hw_int := hw_int
+  hw_meas := hw_meas
+  hw_cont := hw_cont
+  ht_int := ht_int
+  ht_meas := ht_meas
+  ht_cont := ht_cont
+  hhi_pos := hhi_pos
+  hδ := hδ
+  hlo_nonneg := hlo_nonneg
+  hlo_le_hiδ := hlo_le_hiδ
+  hfinite_current := support.finite_current_of_feasible hρ_feasible 1
+  hpos_current := support.pos_current_of_feasible hρ_feasible 1
+  hfinite_replacement :=
+    support.finite_rejectMiddleHiReplacement_forall lo hi δ
+  hpos_replacement :=
+    support.pos_rejectMiddleHiReplacement_forall lo hi δ
+  hmass_other_pos := hmass_other_pos
+  hq_short_int := hq_short_int
+  ht_short_int := ht_short_int
+  hw_short_int := hw_short_int
+  hq_tail_current_int := hq_tail_current_int
+  ht_tail_current_int := ht_tail_current_int
+  hw_tail_current_int := hw_tail_current_int
+  hq_tail_replacement_int := hq_tail_replacement_int
+  ht_tail_replacement_int := ht_tail_replacement_int
+  hw_tail_replacement_int := hw_tail_replacement_int
+  current_bounds := current_bounds
 
 /-- Upper-cutoff reject-middle endpoint data instantiate the feasible surge improvement. -/
 theorem GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.statewise_improvement
