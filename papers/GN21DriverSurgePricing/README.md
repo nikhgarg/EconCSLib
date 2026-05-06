@@ -293,12 +293,22 @@ cache is `source.txt`.
   uniform-tail package `GN21SurgeTheorem3FixedTransferUniformTailData`, while
   `GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll` derives
   positive surge tails from the shared accept-all time/switch integrability
-  fields.  The cutoff-bounds endpoint certificate
+  fields.  The common fixed-state equality packages
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData`
+  and
+  `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData`
+  supply one complement pointwise equality plus one reward-rate identity per
+  state and convert to the policy-form records internally.  The cutoff-bounds
+  endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`
   derives the older `GN21SurgeRejectMiddleMovingCutoffChoice` internally.  The
+  common fixed-state-equality cutoff-bounds endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`
+  converts those common packages to the by-policy-form endpoint.  The
   derived-tail endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`,
   and wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_source_assumptions`,
@@ -306,9 +316,11 @@ cache is `source.txt`.
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`
   are the current lightest fixed-transfer source boundary: the source proof
-  supplies only branch-specific pointwise equalities, reward-rate fields,
-  and ordinary surge cutoff bounds; Lean derives the surge moving-cutoff
-  choice and tail-integrability package internally.
+  supplies ordinary allowed Lemma 5 replacement data, common fixed-state
+  complement pointwise equality and reward-rate facts for each state, and
+  ordinary surge cutoff bounds; Lean derives the branch-specific policy-form
+  packages, surge moving-cutoff choice, and tail-integrability package
+  internally.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -707,13 +719,14 @@ allowed-replacement source-boundary certificate, and the current regular
 allowed-policy-form route that consumes measurable Lemma 5 policy-form
 classification plus regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-derived-tail cutoff-bounds fixed-transfer source endpoint for arbitrary feasible
+fixed-state-equality derived-tail cutoff-bounds fixed-transfer source endpoint
+for arbitrary feasible
 measurable optimal policies by proving the regularity theorem that supplies
 ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
 tail, or middle-rejection endpoint move, and discharges the remaining
 pointwise fixed-state complement ratio, non-surge cutoff
 nondegeneracy, and fixed-state reward-rate fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`.
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

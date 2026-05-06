@@ -392,6 +392,11 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData`
   and
   `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData`,
+  common fixed-state equality records
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData`
+  and
+  `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData`
+  with adapters to the policy-form records,
   fixed-state-by-policy-form endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormLocalEndpointCertificate`
   with its `to_fixed_state_separated` adapter, and source wrappers
@@ -409,6 +414,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21SurgeTheorem3FixedTransferUniformTailData`,
   constructive reject-middle cutoff choice
   `GN21SurgeRejectMiddleMovingCutoffChoice`,
+  common fixed-state-equality derived-tail cutoff-bounds endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`
+  with its `to_fixed_state_by_policy_form` adapter,
   fixed-state-by-policy-form derived-tail cutoff-bounds endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`
   with its `to_derived_tail` adapter, the derived-tail endpoint certificate
@@ -418,6 +426,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
   with its `to_uniform_tail` adapter, the uniform-tail endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormUniformTailLocalEndpointCertificate`
   with its `to_fixed_state_by_policy_form` adapter, and source wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_source_assumptions`,
