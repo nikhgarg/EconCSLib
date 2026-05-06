@@ -18034,6 +18034,59 @@ theorem GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_reward_rate
       σJ hfixed_mass hfixed_arrival_mass hfixed_time D.fixed_reward_rate
 
 /--
+Current Lemma 10 source data imply pointwise nonnegative non-surge payments.
+This integrates the scalar Lemma 10 lower-bound proof with the measured
+current-policy Remark 4 gap.
+-/
+theorem GN21NonsurgeLemma10AcceptAllAggregateSourceData.current_price_nonneg
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ}
+    {wJ : PricingFunction} {σI σJ : TripPolicy}
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (harrivalI_pos : 0 < arrivalI)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeI_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (hqI_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σI μI)
+    (hfixed_exit_pos :
+      0 < gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hfixed_A_pos :
+      0 <
+        gn21ScaledStateTime μJ arrivalJ σJ * switch12 +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (D :
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData
+        μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio wJ σI σJ) :
+    ∀ τ ∈ σI,
+      0 ≤ ctmcStructuredSurgePrice R2 z switch12 switch21 τ := by
+  intro τ hτ
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [hswitch12_pos, hswitch21_pos]
+  have hgap_pos :
+      0 <
+        switch12 * gn21ScaledStateTime μI arrivalI σI -
+          gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI :=
+    paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure
+      μI arrivalI switch12 switch21 σI harrivalI_pos hswitch12_pos hsum12
+      hσI_measurable hσI_subset htimeI_integrable hqI_integrable
+      (measure_pos_of_singleStateTripMass_pos μI σI D.current_mass_pos)
+  have hnonneg :
+      0 ≤ ctmcStructuredSurgePrice R2 (ratio * R2) switch12 switch21 τ :=
+    ctmcStructuredSurgePrice_nonneg_of_lemma10StructuredBounds
+      ratio R2
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      switch12 switch21 τ D.bounds (le_of_lt D.R2_pos) hfixed_exit_pos
+      hswitch12_pos hsum12 hgap_pos hfixed_A_pos (hσI_subset hτ)
+  simpa [D.z_eq] using hnonneg
+
+/--
 Source-facing surge Lemma 9 data with the fixed state's reward-rate identity
 stated directly as `R_i(w_i, σ_i) = R_1`.
 -/
