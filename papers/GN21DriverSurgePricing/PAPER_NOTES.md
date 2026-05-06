@@ -475,6 +475,12 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
   endpoint-bridge source wrapper
   `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions`,
+  the reduced Lemma 9 current-lower/fixed-upper route
+  `lemma9StructuredBounds_of_target_ratio_effective_ratio_le_current_lower_fixed_upper`,
+  `GN21SurgeLemma9AcceptAllAggregateRewardRateData.of_target_ratio_reward_le_current_lower_fixed_upper`,
+  and
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions`,
+  plus next-agent handoff notes in `HANDOFF_NEXT_AGENT.md`,
   and
   auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the

@@ -42,6 +42,16 @@ they shorten the faithful proof. If the fastest honest route is a direct
 measure/integral/renewal/CTMC statement, build that statement directly and keep
 the paper-facing wrapper source-level.
 
+For continuous reward-rate/CTMC papers, do not silently identify a theorem's
+target accept-all reward rates with the source lemma's current fixed-state
+reward rates. Keep target rates, current rates, and effective ratios as named
+objects. If the source proof moves one state at a time, expose a sequential
+route rather than forcing simultaneous statewise IC. When a transfer proof asks
+for strong ratio equality, look for source sign facts that prove the needed
+endpoint directly: in GN21 Lemma 9, current lower-endpoint nonpositivity plus
+the upper fixed-state comparison is a weaker and more source-faithful boundary
+than requiring both fixed-state cross-ratio comparisons.
+
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
 library tools. Do not force a detached library project before proving the paper,
@@ -103,6 +113,12 @@ that certificate further to an iff between `isSequentiallyRational` and the
 audited local optimality/tie-breaking predicates. The reverse direction should
 lift the named strategy's local proof to game-level sequential rationality, and
 the forward direction should replace opaque arbitrary-PBE behavior fields.
+If the paper also says the best response is belief-independent, add an
+ex-post local-deviation certificate layer: the named one-step best-response
+proof should lift to sequential rationality for every belief, while arbitrary
+sequential rationality remains equivalent to the local-deviation predicate.
+Provide conversion lemmas both to the local-deviation core certificate and to
+the ex-post one-sided Step 1/Step 2 certificate.
 When a remaining paper-facing premise is recursive or hard to audit directly
 (for example, a clock-sorted finite schedule), add small `nil`, `cons`,
 `singleton`, or pair helper lemmas and expose them in the paper audit surface;
@@ -113,6 +129,25 @@ schedule" premise, also expose an all-scheduled constructor or endpoint for the
 common case where the completed set is exactly `scheduledRanks.toFinset`. This
 removes a trivial but noisy human-verification obligation and keeps source
 audits focused on sortedness, no-duplicates, activity, and terminality.
+When a concrete history condition is naturally local to realized transitions,
+make it a first-class history object instead of a global predicate over all
+possible states. In EOS Theorem 8, finite no-overshoot strategy histories were
+the right interface: each dropout transition carries its own no-overshoot proof,
+ordinary strategy histories and exact-drop histories are derived from that one
+object, and terminal-record/source-completion endpoints no longer ask reviewers
+to audit a global "whenever the strategy would drop" premise.
+When an exact schedule already pins dropouts to threshold prices, add a
+conversion from the exact schedule to the local annotated history object and a
+terminal-history certificate constructor from that annotated history. This
+creates the human path `clock-sorted schedule -> exact schedule -> annotated
+finite history -> terminal records/source certificate` without restating timing
+evidence at every theorem boundary.
+If a sharper concrete-history certificate is introduced, mirror the existing
+ordinary certificate stack with forgetful constructors and obligation ledgers:
+terminal-history certificate, terminal/dynamic certificate, core source
+certificate, full source certificate, finite source certificate, and direct
+paper-facing endpoints. This keeps old endpoints usable while giving audits a
+more local and inspectable route.
 For nonempty finite schedules, expose an append-singleton final-clock lemma:
 if the schedule is `scheduledPrefix ++ [lastRank]`, prove that the final clock
 is exactly the last scheduled threshold. Then provide endpoints whose
@@ -142,6 +177,78 @@ the human-verification target, especially scheduled-rank exact terminal records
 and final-state active iff unscheduled. Do not force reviewers to unfold the
 deterministic final-state constructor if they are auditing the certificate
 object.
+When the final remaining source boundary combines source PBE semantics with an
+exact terminal history, create a single bundled source-completion certificate
+that contains both pieces and proves the final unique-PBE conclusion from that
+object. This makes the remaining human obligation a single inspectable
+certificate rather than parallel source-semantics and history objects.
+If exact terminal-history completion is only available on a finite completed
+rank set, expose a finite analogue of that bundled certificate with the
+completed set and inactive-on-completed proof as fields, and derive the finite
+unique-PBE terminal-record conclusion from it.
+When a source-shaped checker already instantiates the ex-post/local-deviation
+semantics, add constructors from exact histories and exact schedules into the
+finite bundled certificate; add an all-scheduled variant when the completed set
+is the schedule's `toFinset`.
+If an adjacent source-obligation layer already has a sorted-schedule endpoint,
+add a direct endpoint from the sharper ex-post/local-deviation layer rather
+than forcing reviewers to compose the conversion manually.
+When doing so, add the all-scheduled specialization too if the general theorem
+still asks for a completed-subset-of-schedule premise.
+For the paper's main finite schedule route, add a cold-start or canonical-state
+specialization from the same sharpened source-obligation layer when it removes
+a manual certificate conversion from the human audit path.
+For small concrete schedules, mirror existing singleton/pair helpers at the
+sharper source-obligation layer so reviewers can check one or two scheduled
+ranks by local inequalities only.
+For final bundled exact-history source objects, add obligation ledgers that
+spell out both the minimized source-semantics fields and the exact-history /
+terminal-inactivity evidence instead of merely pointing to a constructor.
+When a long session ends before validation, write a paper-local handoff note
+before stopping. Include the files touched, the latest unvalidated theorem
+families, the intended proof route, exact next validation command, and likely
+fragile Lean points. Link that handoff from the paper README and post-paper
+audit report so a future agent does not need chat context.
+When a paper theorem includes a continuity restriction on a strategy formula,
+formalize continuity of the numeric policy formula itself, not just monotonicity
+or affine algebra; expose both scalar and indexed/update forms if the theorem
+is rank-indexed.
+When a theorem states "same payoff" and the formalization already proves slot
+and payment equality, add a utility-extensionality bridge and a direct
+paper-facing utility-equality endpoint so reviewers do not have to unfold the
+quasilinear utility definition.
+If the theorem has both all-rank and finite completed-rank routes, expose the
+payoff endpoint for both routes rather than only the all-rank object.
+When a source model uses a convention such as an empty history value, add a
+named theorem that rewrites the general formula under that convention, plus the
+indexed specialization if the theorem is rank-indexed.
+When strict monotonicity is used in a source uniqueness argument, add the
+corresponding injectivity theorem so later uniqueness proofs can cite the
+identification property directly.
+If the source proof uses a named symbol such as `q`, expose source-line aliases
+with that symbol in the declaration/docstring after proving the lower-level
+algebra.
+At abstract game-interface layers, expose payoff-equality bridges from
+same-allocation/same-payment fields before building more specialized endpoints.
+Also expose the outcome-equality-to-payoff-equality bridge when stronger
+outcome equality is already the common endpoint.
+When a certificate field captures a paper phrase such as "best response
+regardless of beliefs," expose a direct theorem with that conclusion instead
+of leaving reviewers to inspect the field projection manually. When final
+theorem objects wrap a source certificate, lift the endpoint to those final
+objects too, so human citations do not have to thread through `.source`.
+If an iff endpoint converts source sequential rationality into a local
+paper-facing predicate, also expose the direct theorem discharging that
+predicate from the named-strategy best-response obligation.
+When the only use of a belief argument is to instantiate a belief-independent
+result, also expose a `[Nonempty Belief]` citation form so paper-facing audits
+do not require an arbitrary belief term.
+When a paper-facing strategy is named, also expose the named-strategy
+`for all beliefs` iff the source local predicate endpoint, not only the
+arbitrary-strategy iff.
+When a paper proof gives a named scalar such as `q`, provide source-proof-line
+aliases not only for the defining formula but also for the paper's expected
+interval, endpoint, monotonicity, and continuity checks.
 For source-completion certificates, also expose obligation-conjunction theorems
 for each important certificate layer. The full certificate should list all
 source obligations, while core, one-sided, ex-post, sequential-rationality,
@@ -454,6 +561,29 @@ the Lean statements against the paper.
   any false equality or false deletion upper bound only as a clearly named
   rejected scratch target, never as a theorem assumption hidden inside a green
   paper-facing result.
+  A useful two-draw repair pattern is to prove negative correlation first for
+  hit events, not omission events: derive exact ordered-atom and one-target
+  hit-probability factor formulas, split hazard sums into the paired term plus
+  the outside `{i,j}` terms, prove the scalar Plackett--Luce inequality, and
+  then complement both events using a reusable lemma such as
+  `pmfProb_not_and_not_le_mul_of_inter_le_mul`.  In IM05 this closed the
+  `k = 2` raw-count theorem
+  `paper_im05_lemma4_4_freshList_pairwise_negative_correlation_countWeight_two`
+  and its scaled-count/product-variance endpoints.  Do not assume the same
+  inequality holds for larger `k`: in IM05, exact enumeration at `k = 3` with
+  weights `[30, 1, 1, 1, 30, 1]` gives positive covariance for omission of
+  targets `0` and `4`, and weights `[50, 50, 1, 1, 1]` with five men give a
+  finite variance violation for the source's unrestricted `Var(Y_g) <= E[Y_g]`
+  statement.  When a generalized negative-dependence theorem fails in small
+  numeric audits, record the counterexample as a validation issue and redirect
+  the paper proof to a corrected statement instead of continuing proof search
+  for a false lemma.  For IM05 specifically, the plausible repair is not to
+  resurrect pairwise negative correlation for all popular women: the bad
+  examples live in the top block.  The next agent should try a tail-count
+  replacement aligned with Lemma 4.3's actual lower-bound sum, e.g. count only
+  ranks in the tail after the first `2k` or otherwise in the high-`g` regime,
+  then plug that tail variance bound into the same Chebyshev bridge.  Document
+  this as a proof-strategy deviation, not as the paper's Lemma 4.4.
 - When a proof step invokes an external cited analytic theorem that is not in
   Mathlib, encode that input as a named paper-local hypothesis or definition
   (for example, a `Sampford...Bound` assumption), prove the source's downstream

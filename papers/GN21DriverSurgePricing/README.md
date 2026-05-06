@@ -172,7 +172,12 @@ cache is `source.txt`.
   quotient/accounting witness.  The final-sign variant
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions`
   also derives the accept-all lower-endpoint nonpositivity from the paper's
-  Lemma 9 final-sign line.
+  Lemma 9 final-sign line.  The current-lower/fixed-upper variant
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions`
+  is the newest reduced boundary: it replaces the lower fixed-state
+  cross-ratio comparison by a direct current Lemma 9 lower-endpoint
+  nonpositivity proof, keeps only the upper fixed-state comparison, and still
+  constructs the effective current ratio internally.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

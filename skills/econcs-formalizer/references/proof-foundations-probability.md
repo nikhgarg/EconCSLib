@@ -5,6 +5,34 @@ conditional probability, finite variance, finite Markov kernels/chains/MDPs,
 stochastic dominance/couplings, concentration, measure inequalities,
 continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
 
+## Continuous Reward And CTMC Seams
+
+- For two-state CTMC reward papers, separate primitive accounting from reward
+  rates. Prove measured `T`, `Q`, and scaled-earning identities first, then
+  derive measured reward-rate statements only when positive mass/time
+  denominators are available.
+- When a source lemma fixes an arbitrary current policy but the theorem
+  constructs prices using accept-all target rates, introduce an effective
+  current ratio instead of rewriting the current reward rate to the target
+  rate. The reusable pattern is: target accounting `z = ratio*(m-Rtarget)`,
+  current reward bound `Rcurrent <= Rtarget`, positivity of `m-Rtarget`, then
+  construct `z/(m-Rcurrent)` and prove it is positive and no larger than the
+  target ratio.
+- Prefer sequential CTMC IC routes when the paper proof is sequential. Move
+  the state whose lemma works with the arbitrary current fixed state first;
+  after that state is accept-all, discharge the second-state lemma with the
+  theorem's target accept-all accounting. This avoids false fixed-state
+  reward-rate equalities.
+- Audit fixed-state transfer assumptions algebraically. If lower and upper
+  bounds demand opposite cross-ratio directions, do not assume equality unless
+  the source proves it. Try replacing one direction with a direct endpoint
+  sign proof; for GN21 Lemma 9, current lower-endpoint nonpositivity plus only
+  the upper fixed-state comparison is enough.
+- Keep the paper-facing source boundary honest: denominator-valid reward-rate
+  routes should quantify over feasible measurable policies with positive mass,
+  while broader measurable wrappers should either keep explicit positive-mass
+  obligations or use scaled-earning/accounting forms that avoid division.
+
 ## Finite PMF and Expectation Seams
 
 - For finite expectation decompositions, prove pointwise identities first, then

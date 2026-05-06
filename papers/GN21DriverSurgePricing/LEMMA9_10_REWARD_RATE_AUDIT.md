@@ -125,6 +125,7 @@ paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positiv
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_no_ratio_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
@@ -166,9 +167,12 @@ source certificate, avoiding a duplicate positivity premise when using the
 positive-primitives construction.  The positive-parameter reward-bound wrapper
 has a no-ratio variant that constructs `z_2/(m_2-r1_current)` internally, and
 a final-sign variant that derives the accept-all lower endpoint from the
-paper's Lemma 9 final-sign line.  The remaining per-policy source work is now
-`r1_current <= R1`, `0 <= r1_current`, reward-rate identity, and fixed-state
-cross comparisons.
+paper's Lemma 9 final-sign line.  The newest current-lower/fixed-upper variant
+uses the current fixed non-surge Lemma 9 lower endpoint directly, so it no
+longer needs the lower fixed-state cross-ratio comparison.  Its remaining
+per-policy source work is `r1_current <= R1`, `0 <= r1_current`, reward-rate
+identity, current Lemma 9 lower-endpoint nonpositivity, and the upper
+fixed-state cross comparison.
 The broad
 feasible-measurable wrapper keeps the explicit positive-current-mass obligation
 for users who want the stronger domain.
@@ -178,8 +182,9 @@ for users who want the stronger domain.
 1. Use the sequential Theorem 3 route for IC.  This is the fastest
    source-faithful path: it needs Lemma 9 for the arbitrary current surge move
    on the positive-mass feasible domain.  The newest compiled boundary reduces
-   this to effective-ratio accept-all Lemma 9 bounds plus fixed-state transfer
-   comparisons, and Lean now discharges Lemma 10 in the accept-all fixed-surge
+   this to a current reward bound, current lower-endpoint sign, reward-rate
+   identity, and one upper fixed-state transfer comparison; Lean constructs the
+   effective ratio and discharges Lemma 10 in the accept-all fixed-surge
    branch.
 
 2. Prove fixed-state reward-rate equality for every non-accept-all branch.

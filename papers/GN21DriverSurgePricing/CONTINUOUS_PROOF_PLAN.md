@@ -1,17 +1,25 @@
 # GN21 Continuous Proof Plan
 
 This note records the fastest route to closing the remaining GN21 proof, beyond
-the already-compiled wrappers.  The most recent compiled adapter is:
+the already-compiled wrappers.  The canonical broad measurable entry point is:
 
 ```lean
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
 
-This is now the preferred IC closure route.  It proves the surge-state
+The newest reduced positive-mass frontier is:
+
+```lean
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
+```
+
+This sequential route is the preferred IC closure route.  It proves the surge-state
 accept-all move first, using Lemma 9 with the current fixed non-surge reward
 rate, and then proves the non-surge accept-all move only after surge is already
 fixed at accept-all, where Lemma 10 can use the Theorem 3 target surge reward
-rate.  The older fixed-transfer adapter remains useful for branch bookkeeping,
+rate.  The current-lower/fixed-upper frontier is the best handoff target for
+closing the remaining Lemma 9 source field.  The older fixed-transfer adapter
+remains useful for branch bookkeeping,
 but it should not be treated as the final source-faithful closure route unless
 the source proof also establishes the target reward-rate/equality facts for
 arbitrary non-accept-all fixed states.  The remaining field for that adapter is
@@ -135,7 +143,12 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    variant
    `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_final_sign_reward_bound_fixed_transfer_no_ratio_data_assumptions`
    derives the accept-all lower-endpoint fact from the paper's Lemma 9
-   denominator and left-nonpositive final-sign assumptions.
+   denominator and left-nonpositive final-sign assumptions.  The newest
+   reduced boundary is
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions`:
+   it uses the current fixed non-surge Lemma 9 lower-endpoint nonpositivity
+   directly, constructs the effective current ratio internally, and needs only
+   the upper fixed-state cross-ratio comparison.
    The older broad
    feasible-measurable wrapper still exposes the explicit positive-current-mass
    obligation, and the accounting-form/raw source-data wrappers remain compiled
@@ -147,7 +160,11 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    final-sign reward-bound/no-ratio specialization by showing the current
    non-surge reward rate is at most `R1`, nonnegative, and equal to the
    measured reward-rate expression, plus the fixed-state cross-ratio
-   comparisons.  The target-rate positive-ratio pointwise
+   comparisons.  Prefer the current-lower/fixed-upper specialization if the
+   source Lemma 9 final-sign proof can be repeated with the current fixed
+   non-surge `T,Q`: it replaces the lower cross-ratio comparison by that direct
+   current lower-endpoint sign proof, leaving only the upper fixed-state
+   comparison.  The target-rate positive-ratio pointwise
    specialization remains available when the current non-surge reward rate is
    known to equal `R1`.  The Lemma 10 non-surge move with surge fixed to
    accept-all is now compiled from the constructed Theorem 3 parameter data,
