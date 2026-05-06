@@ -144,7 +144,13 @@ cache is `source.txt`.
   The target-rate specialization
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions`
   reuses the constructed Theorem 3 accept-all Lemma 9 bounds when the current
-  fixed non-surge policy has target reward rate `R1`.  The pointwise variant
+  fixed non-surge policy has target reward rate `R1`.  A reward-bound
+  specialization
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions`
+  reuses those target bounds for the policy's effective current ratio when
+  the current fixed non-surge reward rate is at most `R1`, the accept-all
+  Lemma 9 lower endpoint is nonpositive, and the two fixed-state cross-ratio
+  comparisons hold.  The pointwise variant
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_pointwise_fixed_transfer_data_assumptions`
   derives both cross-ratio comparisons by integrating a source-style equality
   on the current non-surge rejected complement.  The positive-ratio pointwise

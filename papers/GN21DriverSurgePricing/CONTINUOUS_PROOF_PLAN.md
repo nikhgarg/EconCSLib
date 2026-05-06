@@ -104,7 +104,14 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    surge state.  A target-rate specialization,
    `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions`,
    reuses the constructed Theorem 3 accept-all bounds when the current fixed
-   non-surge reward rate is `R1` and `m_2-R1>0` is available.  The pointwise
+   non-surge reward rate is `R1` and `m_2-R1>0` is available.  The
+   reward-bound specialization
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions`
+   keeps the same target accept-all bounds but lets the current fixed
+   non-surge reward rate be below `R1`; Lean converts the target ratio into
+   the effective current ratio using the shared `z_2` accounting identity,
+   a nonpositive accept-all lower endpoint, and the two fixed-state
+   cross-ratio comparisons.  The pointwise
    variant
    `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_pointwise_fixed_transfer_data_assumptions`
    derives both fixed-state cross-ratio comparisons from one equality on the
@@ -119,11 +126,14 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
 3. Instantiate the positive-mass feasible sequential source route from source
    regularity: prove either the effective-ratio fixed-transfer data above for
    the surge move at each positive-mass feasible current policy, or prove the
-   target-rate positive-ratio pointwise specialization when the current
-   non-surge reward rate is known to equal `R1`.  The Lemma 10 non-surge move
-   with surge fixed to accept-all is now compiled from the constructed
-   Theorem 3 parameter data, and positive mass supplies the
-   denominator/nondegeneracy side conditions.  The older regular
+   reward-bound specialization by showing the current non-surge reward rate is
+   at most `R1`, the accept-all Lemma 9 lower endpoint is nonpositive, and the
+   fixed-state cross-ratio comparisons hold.  The target-rate positive-ratio
+   pointwise specialization remains available when the current non-surge
+   reward rate is known to equal `R1`.  The Lemma 10 non-surge move with surge
+   fixed to accept-all is now compiled from the constructed Theorem 3 parameter
+   data, and positive mass supplies the denominator/nondegeneracy side
+   conditions.  The older regular
    allowed-policy-form and fixed-transfer routes can remain available for
    stronger uniqueness or statewise statements.
 

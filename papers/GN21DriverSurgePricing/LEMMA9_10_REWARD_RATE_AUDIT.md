@@ -118,6 +118,7 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_s
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_reward_rate_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_fixed_transfer_reward_rate_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_pointwise_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_positive_ratio_pointwise_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
@@ -148,7 +149,11 @@ Lemma 9 bounds at the effective current ratio plus the two fixed-state
 cross-ratio comparisons imply the current fixed-state bounds, and positive
 moving-state mass tightens the moving surge state.  A target-rate specialization
 uses the constructed Theorem 3 accept-all bounds when the current non-surge
-fixed reward rate is `R1` and `m_2-R1>0` is supplied.  Its pointwise variant
+fixed reward rate is `R1` and `m_2-R1>0` is supplied.  A reward-bound
+specialization keeps the constructed target bounds but converts them to the
+effective current ratio from `z_2 = ratio*(m_2-r1_current)` when
+`r1_current <= R1`, the accept-all Lemma 9 lower endpoint is nonpositive, and
+the fixed-state transfer comparisons hold.  Its pointwise variant
 derives both cross-ratio comparisons by integrating one equality over the
 current non-surge rejected complement.  Its positive-ratio pointwise variant
 also derives `m_2-R1>0` from the constructed surge-ratio positivity witness.
