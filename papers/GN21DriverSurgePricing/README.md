@@ -86,6 +86,9 @@ cache is `source.txt`.
   has a reward-rate-separated endpoint-term layer
   `lemma10StructuredStaticTerm_eq_ratio_reward_split`,
   `lemma10StructuredLinearEndpoint_eq_ratio_reward_split`,
+  `lemma10StructuredStaticTerm_pos_of_ratio_reward_slack`,
+  `lemma10StructuredLinearEndpoint_pos_of_ratio_reward_slack`,
+  `paper_lemma10_structured_derivative_kernel_pos_of_ratio_reward_slack`,
   `paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms`, and
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms`,
   so non-accept-all fixed-state branches can be closed by proving the actual

@@ -12398,6 +12398,74 @@ theorem lemma10StructuredLinearEndpoint_eq_ratio_reward_split
   ring
 
 /--
+Lemma 10 static endpoint positivity from the explicit current-reward slack
+formula.
+-/
+theorem lemma10StructuredStaticTerm_pos_of_ratio_reward_slack
+    (ratio m R2 z switch12 Q1 Q2 T2 : ℝ)
+    (hz : z = ratio * m)
+    (hslack :
+      0 <
+        Q2 * m * (1 - ratio * (Q1 - switch12)) +
+          Q1 * T2 * (m - R2)) :
+    0 < gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2 := by
+  simpa [lemma10StructuredStaticTerm_eq_ratio_reward_split ratio m R2 z
+    switch12 Q1 Q2 T2 hz] using hslack
+
+/--
+Lemma 10 zero-time linearized endpoint positivity from the explicit
+current-reward slack formula.
+-/
+theorem lemma10StructuredLinearEndpoint_pos_of_ratio_reward_slack
+    (ratio m R2 z switch12 T2 Q2 T1 Q1 : ℝ)
+    (hz : z = ratio * m)
+    (hslack :
+      0 <
+        m *
+            (T2 * switch12 + Q2 +
+              ratio *
+                (Q2 * (switch12 * T1 - Q1) +
+                  switch12 * (T2 * switch12 + Q2))) +
+          (m - R2) * T2 * (Q1 - switch12 * T1)) :
+    0 <
+      switch12 *
+          gn21StructuredDerivativeSwitchBracket m z switch12 Q1 Q2 T1 T2 R2 +
+        gn21StructuredDerivativeStaticTerm m z switch12 Q1 Q2 T2 R2 := by
+  simpa [lemma10StructuredLinearEndpoint_eq_ratio_reward_split ratio m R2 z
+    switch12 T2 Q2 T1 Q1 hz] using hslack
+
+/--
+Lemma 10 derivative-kernel positivity from the explicit current-reward slack
+formulas after writing `z = ratio * m`.
+-/
+theorem paper_lemma10_structured_derivative_kernel_pos_of_ratio_reward_slack
+    (ratio u T2 Q2 T1 Q1 switch12 switch21 m R2 z : ℝ)
+    (hz : z = ratio * m)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hstatic_slack :
+      0 <
+        Q2 * m * (1 - ratio * (Q1 - switch12)) +
+          Q1 * T2 * (m - R2))
+    (hlinear_slack :
+      0 <
+        m *
+            (T2 * switch12 + Q2 +
+              ratio *
+                (Q2 * (switch12 * T1 - Q1) +
+                  switch12 * (T2 * switch12 + Q2))) +
+          (m - R2) * T2 * (Q1 - switch12 * T1)) :
+    0 < gn21StructuredDerivativeSignKernel
+      (gn21SwitchProb switch12 switch21 u) u m z switch12 Q1 Q2 T1 T2 R2 :=
+  paper_remark2_structured_derivative_kernel_pos_of_ctmc_switch_and_tail
+    u m z switch12 switch21 Q1 Q2 T1 T2 R2 hswitch12_pos hsum hu
+    (lemma10StructuredStaticTerm_pos_of_ratio_reward_slack
+      ratio m R2 z switch12 Q1 Q2 T2 hz hstatic_slack)
+    (lemma10StructuredLinearEndpoint_pos_of_ratio_reward_slack
+      ratio m R2 z switch12 T2 Q2 T1 Q1 hz hlinear_slack)
+
+/--
 Lemma 10 derivative-kernel positivity from the two endpoint scalar
 inequalities themselves.  This is the reward-rate-separated frontier: callers
 may set `m = R2` and use `paper_lemma10_structured_derivative_kernel_pos_of_current_bounds`,
