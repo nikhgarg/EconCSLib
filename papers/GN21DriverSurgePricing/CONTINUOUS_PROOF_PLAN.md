@@ -4,16 +4,17 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The current Lean endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions
 ```
 
 The remaining paper-facing field is
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`
 for the structured prices constructed by Theorem 3, paired with ordinary
 all-measurable allowed Lemma 5 replacement data.  This endpoint packages shared
 continuous-density regularity, non-surge cutoff nondegeneracy, one fixed-state
-policy-form data package for each state, and surge cutoff positivity/gap facts.
-Lean derives positive surge-tail product integrability from the shared
+policy-form data package for each state, and ordinary surge cutoff bounds.
+Lean chooses the upper reject-middle cutoff from `0 ≤ lo < hi`, derives
+positive surge-tail product integrability from the shared
 accept-all time/switch integrability fields, upgrades those positive tails to
 the older uniform-tail package using continuous finite-interval product
 calculus, then uses allowed Lemma 5 policy forms to
@@ -53,12 +54,12 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
 2. Prove one source regularity/selection theorem that supplies optimum
    existence, ordinary all-measurable Lemma 5 allowed replacement data, the
    branch-specific fixed-state pointwise equality and reward-rate facts for
-   each allowed policy form, and surge cutoff positivity/gap facts.  This
+   each allowed policy form, and ordinary surge cutoff bounds.  This
    should target exactly
-   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailSourceAssumptions`.
+   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions`.
 
 3. Instantiate
-   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions`
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions`
    from that selection theorem, with the scalar Theorem 3 parameter
    construction already proved.
 
@@ -69,7 +70,7 @@ The hard theorem should have this shape:
 ```lean
 theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
     (...) :
-    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate
       μ arrival R1 R2 switch12 switch21 m z
 ```
 
@@ -218,7 +219,7 @@ into the concrete endpoint policy data.
   produces all-measurable Lemma 5 replacement data, it feeds this target through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
 - For the fixed-transfer route, the current lightest source boundary is
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions`:
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,
   all-measurable Lemma 5 replacement certificates, allowed policy-form
   classification, density positivity, state-level current mass, fixed-state
@@ -226,9 +227,9 @@ into the concrete endpoint policy data.
   no-mass endpoint certificate internally.  The source proof now supplies
   ordinary allowed Lemma 5 replacement cases, nondegenerate non-surge cutoffs
   for the reject-long/accept-middle fixed-state forms, branch-specific
-  fixed-state pointwise equality and reward-rate facts, and surge cutoff
-  positivity/gap facts.  Surge tail integrability is derived internally from
-  shared accept-all time/switch integrability.
+  fixed-state pointwise equality and reward-rate facts, and ordinary surge
+  cutoff bounds.  The moving cutoff choice and surge tail integrability are
+  derived internally.
 - If the fixed other state already accepts all trips, use the
   `...PositiveCutoffLocalData.of_other_acceptAll` constructors.  They derive
   the cross-ratio inequalities by equality, derive positive fixed-state mass
@@ -260,10 +261,11 @@ into the concrete endpoint policy data.
   `...PositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate`
   constructors combine the pointwise fixed-complement route with this
   reward-rate accounting route.
-- The fixed-state-by-policy-form derived-tail source theorem asks for ordinary
+- The fixed-state-by-policy-form derived-tail cutoff-bounds source theorem asks for ordinary
   all-measurable allowed Lemma 5 replacement data and a
-  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`;
-  the adapter derives positive tails from shared accept-all integrability,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`;
+  the adapter chooses the upper reject-middle cutoff from `0 ≤ lo < hi`,
+  derives positive tails from shared accept-all integrability,
   derives the uniform-tail package from positive tails plus continuous
   finite-interval product calculus, chooses fixed-state branches from allowed
   policy forms, builds surge moving endpoint data from the uniform tail package
@@ -297,7 +299,7 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailSourceAssumptions`
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper

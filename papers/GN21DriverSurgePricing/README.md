@@ -293,10 +293,13 @@ cache is `source.txt`.
   uniform-tail package `GN21SurgeTheorem3FixedTransferUniformTailData`, while
   `GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll` derives
   positive surge tails from the shared accept-all time/switch integrability
-  fields.  The cutoff choice
-  `GN21SurgeRejectMiddleMovingCutoffChoice`, endpoint certificate
+  fields.  The cutoff-bounds endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`
+  derives the older `GN21SurgeRejectMiddleMovingCutoffChoice` internally.  The
+  derived-tail endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`,
   and wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions`
@@ -304,8 +307,8 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`
   are the current lightest fixed-transfer source boundary: the source proof
   supplies only branch-specific pointwise equalities, reward-rate fields,
-  and surge cutoff positivity/gaps; Lean derives the surge tail-integrability
-  package internally from shared accept-all integrability.
+  and ordinary surge cutoff bounds; Lean derives the surge moving-cutoff
+  choice and tail-integrability package internally.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -704,13 +707,13 @@ allowed-replacement source-boundary certificate, and the current regular
 allowed-policy-form route that consumes measurable Lemma 5 policy-form
 classification plus regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-derived-tail fixed-transfer source endpoint for arbitrary feasible
+derived-tail cutoff-bounds fixed-transfer source endpoint for arbitrary feasible
 measurable optimal policies by proving the regularity theorem that supplies
 ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
 tail, or middle-rejection endpoint move, and discharges the remaining
 pointwise fixed-state complement ratio, non-surge cutoff
 nondegeneracy, and fixed-state reward-rate fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`.
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
