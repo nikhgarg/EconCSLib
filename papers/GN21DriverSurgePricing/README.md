@@ -153,7 +153,16 @@ cache is `source.txt`.
   product-calculus packages.  `GN21PositiveIntervalProductIntegrabilityData`
   derives short accepted-interval integrability from continuous product data,
   while `GN21TailProductIntegrabilityData` bundles improper tail integrability
-  and reuses it for narrower tails.  The supported endpoint route is now exposed as
+  and reuses it for narrower tails.  The regular endpoint route is now exposed as
+  the five `GN21...RegularEndpointData` packages,
+  `Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_selection`,
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_source_assumptions`;
+  it expands continuous-density endpoint data, source Lemma 9/10 current-bounds
+  data, support, and tail-integrability packages into the supported endpoint
+  route internally.  The supported endpoint route remains exposed as
   the five `GN21...SupportedEndpointData` packages,
   `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_supported_selection`,
