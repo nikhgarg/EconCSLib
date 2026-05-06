@@ -28270,6 +28270,48 @@ theorem GN21RegularEndpointSharedSourceData.surge_fixed_switch_term_pos_for_nons
     mul_pos hT_pos S.hswitch12_pos
   exact add_pos hprod_pos hQ_pos
 
+/-- Shared regular source data gives the non-surge accept-all Remark 4 gap. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_acceptAll_gap_nonneg
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21) :
+    0 ≤
+      switch12 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) -
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 := by
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  rw [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+    paper_remark4_scaled_time_minus_exit_weight_eq_integral
+      (μ 0) (arrival 0) switch12 switch21 acceptAllPolicy
+      S.htime0_acceptAll_integrable S.hq0_acceptAll_integrable]
+  exact
+    paper_remark4_scaled_time_minus_exit_weight_nonneg
+      (μ 0) (arrival 0) switch12 switch21 acceptAllPolicy
+      (le_of_lt S.harrival0_pos) (le_of_lt S.hswitch12_pos) hsum12
+      measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+
+/-- Shared regular source data gives the surge accept-all Remark 4 gap. -/
+theorem GN21RegularEndpointSharedSourceData.surge_acceptAll_gap_nonneg
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21) :
+    0 ≤
+      switch21 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) -
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 := by
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [S.hswitch21_pos, S.hswitch12_pos]
+  rw [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral,
+    paper_remark4_scaled_time_minus_exit_weight_eq_integral
+      (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+      S.htime1_acceptAll_integrable S.hq1_acceptAll_integrable]
+  exact
+    paper_remark4_scaled_time_minus_exit_weight_nonneg
+      (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+      (le_of_lt S.harrival1_pos) (le_of_lt S.hswitch21_pos) hsum21
+      measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+
 /-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
 def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source
     {μ : Fin 2 → Measure TripLength}
@@ -36783,6 +36825,100 @@ noncomputable def Theorem3AcceptAllStructuredParameterData.of_evidence
       hz1 := Hdata.2.2.2.2.2.1
       nonsurge_accounting := Hdata.2.2.2.2.2.2.1
       surge_accounting := Hdata.2.2.2.2.2.2.2 }
+
+/--
+Theorem 3 parameter data plus the Lemma 10 fixed-state transfer build the
+regular non-surge reject-long endpoint record.  Compared with
+`GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_acceptAll_tightening`,
+the caller no longer supplies Lemma 10 bounds with the fixed state already at
+the current policy; it supplies only the fixed-state cross-ratio condition.
+-/
+def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 0))
+    (hdensity_pos : 0 < (S.nonsurge_support.densityNN u : ℝ))
+    (hu : 0 < u)
+    (hfixed_cross :
+      gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) ≤
+        gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+          gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (hR2_pos : 0 < R2)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21NonsurgeRejectLongRegularEndpointData
+      μ arrival m z switch12 switch21 ρ u :=
+  GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_acceptAll_tightening
+    S hρ_feasible P.hm0 hshape hdensity_pos hu
+    (lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion
+      (μ 1) (arrival 1) switch12 switch21 P.nonsurgeRatio
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (ρ 1) P.nonsurge_acceptAll_bounds (le_of_lt S.harrival1_pos)
+      S.hswitch12_pos S.hswitch21_pos (by
+        linarith [S.hswitch21_pos, S.hswitch12_pos])
+      (hρ_feasible 1).2 (hρ_feasible 1).1 S.htime1_acceptAll_integrable
+      S.hq1_acceptAll_integrable S.nonsurge_acceptAll_gap_nonneg
+      hfixed_cross)
+    hmass_other_pos P.hz0 hR2_pos hfixed_reward_rate
+
+/--
+Theorem 3 parameter data plus the Lemma 10 fixed-state transfer build the
+regular non-surge accept-middle endpoint record.
+-/
+def GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : acceptsMiddleTrips lo hi (ρ 0))
+    (hdensity_pos : 0 < (S.nonsurge_support.densityNN lo : ℝ))
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo)
+    (hfixed_cross :
+      gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) ≤
+        gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+          gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (hR2_pos : 0 < R2)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21NonsurgeAcceptMiddleRegularEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi :=
+  GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_acceptAll_tightening
+    S hρ_feasible P.hm0 hshape hdensity_pos hlo_pos hlo_lt_hi hδ hδ_le_lo
+    (lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion
+      (μ 1) (arrival 1) switch12 switch21 P.nonsurgeRatio
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (ρ 1) P.nonsurge_acceptAll_bounds (le_of_lt S.harrival1_pos)
+      S.hswitch12_pos S.hswitch21_pos (by
+        linarith [S.hswitch21_pos, S.hswitch12_pos])
+      (hρ_feasible 1).2 (hρ_feasible 1).1 S.htime1_acceptAll_integrable
+      S.hq1_acceptAll_integrable S.nonsurge_acceptAll_gap_nonneg
+      hfixed_cross)
+    hmass_other_pos P.hz0 hR2_pos hfixed_reward_rate
 
 /--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured

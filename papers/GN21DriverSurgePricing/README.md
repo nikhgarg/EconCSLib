@@ -163,7 +163,10 @@ cache is `source.txt`.
   `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`
   reduces the Lemma 10 side to a cross-ratio condition, while the Lemma 9
   comparison lemmas show that its lower and upper fixed-state transfers require
-  opposite cross-ratio directions.  The current regular allowed-policy-form
+  opposite cross-ratio directions.  The two non-surge regular endpoint cases
+  now have Theorem 3 parameter-data constructors that consume this Lemma 10
+  transfer directly, replacing current-fixed Lemma 10 bounds with the single
+  fixed-state cross-ratio condition.  The current regular allowed-policy-form
   endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,

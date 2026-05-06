@@ -163,6 +163,13 @@ into the concrete endpoint policy data.
   source regularity, shape-derived current mass, accept-all moving-state
   tightening, and fixed-state reward-rate data into the regular endpoint
   records consumed by Theorem 4.
+- The non-surge endpoint cases now also have
+  `GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`
+  and
+  `GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`.
+  These consume `Theorem3AcceptAllStructuredParameterData` directly and use
+  the Lemma 10 fixed-state transfer, so the caller supplies a fixed-state
+  cross-ratio condition instead of pre-built current-fixed Lemma 10 bounds.
 - Fixed-state transfer is now named algebraically.  Lemma 10 has
   `lemma10StructuredBounds_of_fixed_state_expansion` and the measured wrapper
   `lemma10StructuredBounds_of_acceptAll_fixed_state_measured_expansion`,
