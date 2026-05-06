@@ -41168,7 +41168,6 @@ structure GN21SurgeRejectMiddleHiTheorem3FixedTransferMovingData
     (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
     (m z : Fin 2 → ℝ)
     (lo hi : ℝ) where
-  δ : ℝ
   derivative_tail_integrability :
       GN21TailProductIntegrabilityData S.surge_support.densityNN
         (gn21SwitchProb switch21 switch12)
