@@ -262,6 +262,7 @@ Recommended proof order
      theorem3SurgeRatio_exists_small_slack
      theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
      theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+     paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
 
    The remaining measured-route obligation is to prove
 
@@ -271,6 +272,12 @@ Recommended proof order
    immediate from `R2 > 0`; the `Rmax = R2 + z0 * switch12` branch should be
    derived from the Theorem 3 non-surge ratio/feasibility assumptions, or
    documented as the exact extra source regime condition if it is not implied.
+
+   The small-slack positive-mass endpoint bridge already chooses the right
+   prices and threads the sign-envelope/slack evidence into the weak-reward
+   certificate.  The next wrapper should specialize it to accept-all measured
+   primitives and build its `hweak` argument from the existing sequential
+   aggregate bridges.
 6. Prove the current Lemma 9 lower endpoint scalar lemma.
 7. Instantiate the envelope/slack source wrapper.
 

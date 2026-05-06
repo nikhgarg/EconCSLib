@@ -76,6 +76,7 @@ theorem3SurgeRatio_exists_small_slack_at_R2
 theorem3SurgeRatio_exists_small_slack
 theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
 theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerSignedEnvelopeSlackDataAssumptions
 ```
@@ -163,6 +164,19 @@ policy-uniform positive lower bound on the current Lemma 9 upper endpoint from
 `Q_current < switch12 * T_current`; use
 `theorem3SurgeSlack_of_uniform_upper_lt_current` to transfer the constructed
 uniform slack to the actual current upper endpoint.
+
+There is also a compiled positive-mass endpoint bridge:
+
+```lean
+paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
+```
+
+This chooses the small-slack prices and then asks the weak-reward certificate
+only for those selected prices, with the envelope/slack evidence already
+threaded in.  The next source-facing wrapper should specialize this theorem to
+measured accept-all primitives and instantiate its `hweak` field from
+`theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack` plus
+`theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10`.
 
 Also prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma

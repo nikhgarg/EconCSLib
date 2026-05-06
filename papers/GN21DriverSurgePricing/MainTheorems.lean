@@ -46625,6 +46625,128 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_m
   · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
 
 /--
+Positive-mass measured Theorem 3 endpoint using the small-ratio surge
+construction.  The weak-reward certificate only has to handle the prices
+selected with the sign-envelope and uniform slack evidence, rather than every
+positive Lemma 9 surge-ratio witness.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 Rmax T1 Q1 T2 Q2 switch12 switch21 U : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hlower_nonpos :
+      lemma9StructuredLower T1 Q1 T2 Q2 switch21 ≤ 0)
+    (hupper_pos :
+      0 < lemma9StructuredUpper T1 Q1 T2 Q2 switch21)
+    (hRmax_envelope :
+      (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2 ≤ 0 ∧
+          Rmax = R2) ∨
+        (0 ≤ theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2 ∧
+          Rmax =
+            R2 + (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2) *
+              switch12))
+    (hRmax_zero_ratio_pos : 0 < R2 * T2 - Rmax * (T2 - 1))
+    (hU_pos : 0 < U)
+    (hweak :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          0 < surgeRatio ∧
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        ((z 0 ≤ 0 ∧ Rmax = m 0) ∨
+          (0 ≤ z 0 ∧ Rmax = m 0 + z 0 * switch12)) →
+        0 < m 1 - Rmax →
+        z 1 < U * (m 1 - Rmax) →
+        Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+          μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicPositiveMassMeasurableIncentiveCompatible μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+      rho R1 R2 Rmax T1 Q1 T2 Q2 switch12 switch21 U hR1_eq
+      hR1_pos hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hT2_ge_one
+      hswitch21_lt_Q2 hlower_nonpos hupper_pos hRmax_envelope
+      hRmax_zero_ratio_pos hU_pos with
+    ⟨m, z, hnonneg, hparams_pos, hRmax_envelope_out, hmRmax_pos,
+      hz_slack⟩
+  rcases hparams_pos with
+    ⟨nonsurgeRatio, surgeRatio, hsurgeRatio_pos, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams_pos :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        0 < surgeRatio ∧
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hsurgeRatio_pos, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hweakC :
+      Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+        μ R := by
+    simpa [R] using
+      hweak m z hnonneg hparams_pos hRmax_envelope_out hmRmax_pos hz_slack
+  have hIC : dynamicPositiveMassMeasurableIncentiveCompatible μ R :=
+    (paper_theorem3_ctmc_structured_prices_positive_mass_measurable_ic_of_sequential_accept_all_weak_reward
+      μ R m z switch12 switch21 hnonneg.1 hnonneg.2.1 hnonneg.2.2
+      hweakC).1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
 Measured Theorem 3 endpoint from feasible-measurable strict local aggregate
 improvements, using the direct Lemma 9 primitive-positivity feasibility route.
 This is the source-domain analogue of the unrestricted strict-local endpoint.
