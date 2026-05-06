@@ -118,6 +118,7 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_s
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_reward_rate_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_fixed_transfer_reward_rate_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_pointwise_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
@@ -146,7 +147,9 @@ Lemma 9 bounds at the effective current ratio plus the two fixed-state
 cross-ratio comparisons imply the current fixed-state bounds, and positive
 moving-state mass tightens the moving surge state.  A target-rate specialization
 uses the constructed Theorem 3 accept-all bounds when the current non-surge
-fixed reward rate is `R1` and `m_2-R1>0` is supplied.  The broad
+fixed reward rate is `R1` and `m_2-R1>0` is supplied.  Its pointwise variant
+derives both cross-ratio comparisons by integrating one equality over the
+current non-surge rejected complement.  The broad
 feasible-measurable wrapper keeps the explicit positive-current-mass obligation
 for users who want the stronger domain.
 
