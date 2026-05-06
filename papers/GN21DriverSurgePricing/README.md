@@ -231,12 +231,19 @@ cache is `source.txt`.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateMassSeparatedLocalEndpointCertificate`
   and wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_mass_separated_source_assumptions`
-  are now the lightest fixed-transfer boundary: fixed-state positive mass is
-  supplied once per state and then reused across all local endpoint cases.
-  The sibling wrappers
+  factor fixed-state positive mass once per state and then reuse it across all
+  local endpoint cases.  The no-mass endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate`
+  and wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_no_mass_source_assumptions`
+  are now the lightest fixed-transfer boundary: Lean derives the state-level
+  mass fields from allowed Lemma 5 forms, accept-all mass positivity, and
+  nondegenerate non-surge cutoffs.  The sibling wrappers
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_mass_separated_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_no_mass_source_assumptions`
   accept all-optimal allowed policy forms directly.  Shared-source mass helpers
   `GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_allowed_policy_form`
   and
@@ -645,9 +652,9 @@ positive-cutoff fixed-transfer source endpoint for arbitrary feasible
 measurable optimal policies by proving the regularity theorem that supplies
 ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
 tail, or middle-rejection endpoint move, and discharges the remaining
-integrability, pointwise fixed-state complement ratio, state-level finite-mass,
-and fixed-state reward-rate fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateMassSeparatedLocalEndpointCertificate`.
+integrability, pointwise fixed-state complement ratio, non-surge cutoff
+nondegeneracy, and fixed-state reward-rate fields of
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
