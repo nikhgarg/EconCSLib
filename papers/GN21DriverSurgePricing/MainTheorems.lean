@@ -32793,6 +32793,81 @@ theorem theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitiv
     exact hsAccount
 
 /--
+Theorem 3 structured-parameter assembly with the positive surge-ratio witness
+kept in the public evidence.  This is the version needed by endpoint routes
+that derive `m_2 > R_1` from the constructed ratio rather than taking it as an
+unrelated assumption.
+-/
+theorem theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives_positive_evidence
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          0 < surgeRatio ∧
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3NonsurgeParameters_of_theorem3_ratio
+      rho R2 T1 T2 Q1 Q2 switch12 hC_lt_rho hrho_lt_one hT1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos with
+    ⟨nonsurgeRatio, zN, hnratio_eq, hzN_eq, hnBounds, hnAccount⟩
+  rcases theorem3SurgeParameters_exist_of_lemma9_positive_primitives
+      R1 R2 T1 Q1 T2 Q2 switch21 (le_of_lt hT1_pos) hQ1_pos
+      hswitch21_pos hgap2_nonneg hswitch21_lt_Q2 hR1_pos hR1_lt_R2
+      hT2_ge_one with
+    ⟨surgeRatio, mS, zS, hsurgeRatio_pos, hsBounds, hmS_eq, hzS_eq,
+      hmS_gt, hzS_pos, hsAccount⟩
+  let m : Fin 2 → ℝ := fun i => if i = 0 then R2 else mS
+  let z : Fin 2 → ℝ := fun i => if i = 0 then zN else zS
+  have hm0_eq : m 0 = R2 := by simp [m]
+  have hm1_eq : m 1 = mS := by simp [m]
+  have hz0_eq : z 0 = zN := by simp [z]
+  have hz1_eq : z 1 = zS := by simp [z]
+  refine ⟨m, z, ?_, nonsurgeRatio, surgeRatio, hsurgeRatio_pos,
+    hnBounds, hsBounds, hm0_eq, ?_, ?_, ?_, ?_, ?_⟩
+  · constructor
+    · rw [hm0_eq]
+      exact le_of_lt hR2_pos
+    · constructor
+      · rw [hm1_eq]
+        exact le_trans (le_of_lt hR1_pos) (le_of_lt hmS_gt)
+      · rw [hz1_eq]
+        exact le_of_lt hzS_pos
+  · rw [hz0_eq]
+    exact hzN_eq
+  · rw [hm1_eq]
+    exact hmS_eq
+  · rw [hz1_eq]
+    exact hzS_eq
+  · rw [hm0_eq, hz0_eq, hR1_eq]
+    exact hnAccount
+  · rw [hm1_eq, hz1_eq]
+    exact hsAccount
+
+/--
 Theorem 3 accept-all measured bridge: for the measured accept-all primitives,
 the CTMC and positive-trip facts discharge the positivity side conditions
 needed for the feasibility-threshold interval check.
@@ -36787,6 +36862,71 @@ def theorem3AcceptAllStructuredParameterEvidence
         R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)
 
 /--
+Positive version of the Theorem 3 accept-all parameter evidence.  The scalar
+construction proves the surge ratio is positive; this package preserves that
+fact for endpoint routes that need `m_2 > R_1`.
+-/
+def theorem3AcceptAllStructuredPositiveParameterEvidence
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) : Prop :=
+  ∃ nonsurgeRatio surgeRatio : ℝ,
+    0 < surgeRatio ∧
+    lemma10StructuredBounds nonsurgeRatio
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      switch12 ∧
+    lemma9StructuredBounds surgeRatio
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21 ∧
+    m 0 = R2 ∧
+    z 0 = nonsurgeRatio * R2 ∧
+    m 1 =
+      theorem3SurgeMultiplierFromRatio R1 R2
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 surgeRatio ∧
+    z 1 =
+      theorem3SurgeZFromRatio R1 R2
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 surgeRatio ∧
+    m 0 *
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+      z 0 *
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+          switch12) =
+        R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) ∧
+    m 1 *
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+      z 1 *
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+          switch21) =
+        R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)
+
+/-- Positive parameter evidence forgets to ordinary Theorem 3 parameter evidence. -/
+theorem theorem3AcceptAllStructuredParameterEvidence_of_positive
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (H :
+      theorem3AcceptAllStructuredPositiveParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3AcceptAllStructuredParameterEvidence
+      μ arrival R1 R2 switch12 switch21 m z := by
+  rcases H with
+    ⟨nonsurgeRatio, surgeRatio, _hsurgeRatio_pos, hnBounds, hsBounds,
+      hm0, hz0, hm1, hz1, hnAccount, hsAccount⟩
+  exact ⟨nonsurgeRatio, surgeRatio, hnBounds, hsBounds, hm0, hz0,
+    hm1, hz1, hnAccount, hsAccount⟩
+
+/--
 Named data view of `theorem3AcceptAllStructuredParameterEvidence`.  This is
 useful for source endpoint construction because the paper repeatedly reuses the
 same two constructed ratios, accept-all Lemma 9/10 bounds, and accounting
@@ -36869,6 +37009,47 @@ noncomputable def Theorem3AcceptAllStructuredParameterData.of_evidence
       hz1 := Hdata.2.2.2.2.2.1
       nonsurge_accounting := Hdata.2.2.2.2.2.2.1
       surge_accounting := Hdata.2.2.2.2.2.2.2 }
+
+/-- Named data view of positive Theorem 3 accept-all parameter evidence. -/
+structure Theorem3AcceptAllStructuredPositiveParameterData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  params :
+    Theorem3AcceptAllStructuredParameterData
+      μ arrival R1 R2 switch12 switch21 m z
+  hsurgeRatio_pos : 0 < params.surgeRatio
+
+/-- Extract named positive Theorem 3 parameter data from positive evidence. -/
+noncomputable def Theorem3AcceptAllStructuredPositiveParameterData.of_evidence
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    (H :
+      theorem3AcceptAllStructuredPositiveParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem3AcceptAllStructuredPositiveParameterData
+      μ arrival R1 R2 switch12 switch21 m z := by
+  classical
+  let nonsurgeRatio := Classical.choose H
+  have Hnonsurge := Classical.choose_spec H
+  let surgeRatio := Classical.choose Hnonsurge
+  have Hdata := Classical.choose_spec Hnonsurge
+  exact
+    { params :=
+        { nonsurgeRatio := nonsurgeRatio
+          surgeRatio := surgeRatio
+          nonsurge_acceptAll_bounds := Hdata.2.1
+          surge_acceptAll_bounds := Hdata.2.2.1
+          hm0 := Hdata.2.2.2.1
+          hz0 := Hdata.2.2.2.2.1
+          hm1 := Hdata.2.2.2.2.2.1
+          hz1 := Hdata.2.2.2.2.2.2.1
+          nonsurge_accounting := Hdata.2.2.2.2.2.2.2.1
+          surge_accounting := Hdata.2.2.2.2.2.2.2.2 }
+      hsurgeRatio_pos := Hdata.1 }
 
 /-- Theorem 3 surge `z` data in the Lemma 9 ratio form. -/
 theorem Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1
@@ -38025,6 +38206,115 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_o
   · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
 
 /--
+Measured Theorem 3 endpoint from feasible-measurable strict local aggregate
+improvements, retaining the positive surge-ratio evidence for the constructed
+parameters while returning the standard Theorem 3 conclusion.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_of_ratio_and_measured_aggregate_feasible_strict_local_improvements_of_lemma9_positive_primitives_positive_evidence
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hstrict :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          0 < surgeRatio ∧
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicMeasurableIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases
+      theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives_positive_evidence
+        rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq hR1_pos
+        hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos hQ1_pos
+        hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos hgap2_nonneg
+        hT2_ge_one hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hsurgeRatio_pos,
+      hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+      hsAccount⟩
+  have hparams_pos :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        0 < surgeRatio ∧
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hsurgeRatio_pos, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hstrictC :
+      Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+    hstrict m z hnonneg hparams_pos
+  have hopt :
+      dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal R ρ → ρ = acceptAllDynamicPolicy := by
+    simpa [R, gn21MeasuredCTMCStructuredDynamicReward] using
+      paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) hstrictC
+  have hIC : dynamicMeasurableIncentiveCompatible R := hopt.1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
 Weak statewise accept-all boundary for the accept-all measured Theorem 3
 route.  It asks only for weak accept-all improvements for the prices actually
 constructed by Theorem 3.
@@ -38069,6 +38359,22 @@ def theorem3AcceptAllFeasibleStrictLocalCertificate
   ∀ m z : Fin 2 → ℝ,
     (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
       theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+
+/--
+Feasible-measurable strict-local boundary for Theorem 3, with the positive
+surge-ratio witness preserved in the constructed-parameter evidence.
+-/
+def theorem3AcceptAllFeasibleStrictLocalPositiveParameterCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredPositiveParameterEvidence
         μ arrival R1 R2 switch12 switch21 m z →
         Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
           μ arrival switch12 switch21
@@ -38455,6 +38761,71 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_stri
     theorem3AcceptAllStructuredParameterEvidence,
     theorem3AcceptAllFeasibleStrictLocalCertificate] using
     paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_of_ratio_and_measured_aggregate_feasible_strict_local_improvements_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+      hswitch21_lt_Q2 hstrict
+
+/--
+Accept-all-primitive Theorem 3 endpoint from feasible measurable strict-local
+improvements, preserving the positive surge-ratio witness in the parameter
+evidence passed to the source proof.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hstrict :
+      theorem3AcceptAllFeasibleStrictLocalPositiveParameterCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  simpa [theorem3MeasuredStructuredMeasurableICConclusion,
+    theorem3AcceptAllStructuredParameterEvidence,
+    theorem3AcceptAllStructuredPositiveParameterEvidence,
+    theorem3AcceptAllFeasibleStrictLocalPositiveParameterCertificate] using
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_of_ratio_and_measured_aggregate_feasible_strict_local_improvements_of_lemma9_positive_primitives_positive_evidence
       μ arrival rho R1 R2
       (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
       (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
@@ -39373,6 +39744,84 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
           exact
             (A.endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection
               m z hnonneg hparams).to_regular_allowed_policy_forms }
+
+/--
+Source-level assumptions for the Theorem 3 fixed-transfer regular endpoint
+route, using the positive constructed-parameter evidence.  This is the
+preferred fixed-transfer boundary when the endpoint proof needs the constructed
+surge ratio positivity.
+-/
+structure Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedPolicyFormsPositiveSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+            μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper from the positive-evidence fixed-transfer
+regular endpoint certificate.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedPolicyFormsPositiveSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_regular_shape_derivation_endpoint_data
+            μ arrival m z switch12 switch21
+            (Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
+              μ arrival m z switch12 switch21
+              ((A.endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection
+                m z hnonneg hparams).to_regular_allowed_policy_forms)))
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is

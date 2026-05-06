@@ -179,6 +179,10 @@ cache is `source.txt`.
   `GN21SurgeRejectMiddleTheorem3FixedTransferLocalData`,
   and the paper-facing wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`.
+  A stronger positive-evidence wrapper is exposed as
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions`;
+  it preserves the positive surge-ratio witness from the Theorem 3 construction
+  through `theorem3AcceptAllStructuredPositiveParameterEvidence`.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

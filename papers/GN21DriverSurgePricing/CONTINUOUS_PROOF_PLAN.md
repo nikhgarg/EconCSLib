@@ -199,7 +199,11 @@ into the concrete endpoint policy data.
   soon as a constructed-price endpoint receives
   `theorem3AcceptAllStructuredParameterEvidence`; it names the two ratios,
   accept-all Lemma 9/10 bounds, and accounting identities used by the endpoint
-  builders.
+  builders.  When a surge endpoint needs the constructed positive-ratio witness,
+  use `theorem3AcceptAllStructuredPositiveParameterEvidence` and
+  `Theorem3AcceptAllStructuredPositiveParameterData.of_evidence`; the positive
+  fixed-transfer wrapper preserves that witness through the Theorem 3
+  strict-local route.
 - `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
   are the current targets because they avoid duplicating Lemma 5 replacement

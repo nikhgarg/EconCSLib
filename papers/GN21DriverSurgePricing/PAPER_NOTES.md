@@ -290,6 +290,15 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate`
   with its `.to_regular_allowed_policy_forms` adapter, and source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`,
+  positive parameter-evidence package
+  `theorem3AcceptAllStructuredPositiveParameterEvidence` with extractor
+  `Theorem3AcceptAllStructuredPositiveParameterData.of_evidence`,
+  positive-evidence scalar/strict-local route
+  `theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives_positive_evidence`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters`,
+  plus the positive fixed-transfer source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
