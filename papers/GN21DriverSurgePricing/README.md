@@ -283,18 +283,29 @@ cache is `source.txt`.
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_source_assumptions`
   let all-optimal Lemma 5 allowed policy forms choose the fixed-state branch
-  internally.  The uniform-tail package
-  `GN21SurgeTheorem3FixedTransferUniformTailData`, cutoff choice
+  internally.  The tail-integrability layer now includes
+  `integrableOn_Ioi_of_intervalIntegrable_of_integrableOn_Ioi`,
+  `GN21TailProductIntegrabilityData.of_interval_and_tail`, and
+  `GN21TailProductIntegrabilityData.of_ctmcStructured_positive_tail`, which
+  extend positive-tail assumptions to arbitrary lower cutoffs using continuous
+  finite-interval product calculus.  The positive-tail package
+  `GN21SurgeTheorem3FixedTransferPositiveTailData` derives the older
+  uniform-tail package `GN21SurgeTheorem3FixedTransferUniformTailData`, while
+  `GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll` derives
+  positive surge tails from the shared accept-all time/switch integrability
+  fields.  The cutoff choice
   `GN21SurgeRejectMiddleMovingCutoffChoice`, endpoint certificate
-  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormUniformTailLocalEndpointCertificate`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`,
   and wrappers
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_by_policy_form_uniform_tail_source_assumptions`
   are the current lightest fixed-transfer source boundary: the source proof
   supplies only branch-specific pointwise equalities, reward-rate fields,
-  surge cutoff positivity/gaps, and one uniform surge-tail integrability
-  package.
+  and surge cutoff positivity/gaps; Lean derives the surge tail-integrability
+  package internally from shared accept-all integrability.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -693,13 +704,13 @@ allowed-replacement source-boundary certificate, and the current regular
 allowed-policy-form route that consumes measurable Lemma 5 policy-form
 classification plus regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-positive-cutoff fixed-transfer source endpoint for arbitrary feasible
+derived-tail fixed-transfer source endpoint for arbitrary feasible
 measurable optimal policies by proving the regularity theorem that supplies
 ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
 tail, or middle-rejection endpoint move, and discharges the remaining
-integrability, pointwise fixed-state complement ratio, non-surge cutoff
+pointwise fixed-state complement ratio, non-surge cutoff
 nondegeneracy, and fixed-state reward-rate fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate`.
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
@@ -710,7 +721,7 @@ into lower- and upper-cutoff endpoint variants; the older regular-selection
 route remains compiled for the variant that proves ordinary allowed Lemma 5
   replacement data explicitly.  Shared source regularity is now factored into
   `GN21RegularEndpointSharedSourceData`, so the final selector can focus on
-  positive cutoff geometry, tail integrability, and fixed-state transfer
+  positive cutoff geometry and fixed-state transfer
   facts.  The source current-bound records can still be built with
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening` and
   `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`, which

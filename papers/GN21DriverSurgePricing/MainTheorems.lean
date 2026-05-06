@@ -3156,6 +3156,153 @@ theorem GN21TailProductIntegrabilityData.t_mono
   D.t_int.mono_set (fun _ hτ => lt_of_le_of_lt hab hτ)
 
 /--
+Finite-interval integrability plus a farther tail gives integrability on the
+larger tail.  This is the basic bridge from local continuity and a positive
+tail moment assumption to arbitrary lower cutoffs.
+-/
+theorem integrableOn_Ioi_of_intervalIntegrable_of_integrableOn_Ioi
+    {f : TripLength → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hfinite : IntervalIntegrable f volume a b)
+    (htail : IntegrableOn f (Set.Ioi b) volume) :
+    IntegrableOn f (Set.Ioi a) volume := by
+  have hIoc : IntegrableOn f (Set.Ioc a b) volume :=
+    (intervalIntegrable_iff_integrableOn_Ioc_of_le hab).1 hfinite
+  simpa [Set.Ioc_union_Ioi_eq_Ioi hab] using hIoc.union htail
+
+/--
+Extend a product tail bundle leftward using finite-interval product calculus.
+-/
+def GN21TailProductIntegrabilityData.of_interval_and_tail
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    {a b : ℝ}
+    (hab : a ≤ b)
+    (C : GN21FiniteEndpointProductCalculusData densityNN switchProb payment a b b)
+    (D : GN21TailProductIntegrabilityData densityNN switchProb payment b) :
+    GN21TailProductIntegrabilityData densityNN switchProb payment a where
+  q_int :=
+    integrableOn_Ioi_of_intervalIntegrable_of_integrableOn_Ioi
+      hab C.q_int D.q_int
+  w_int :=
+    integrableOn_Ioi_of_intervalIntegrable_of_integrableOn_Ioi
+      hab C.w_int D.w_int
+  t_int :=
+    integrableOn_Ioi_of_intervalIntegrable_of_integrableOn_Ioi
+      hab C.t_int D.t_int
+
+/--
+Continuous product factors turn positive-tail integrability into tail
+integrability at an arbitrary lower cutoff.
+-/
+def GN21TailProductIntegrabilityData.of_continuous_positive_tail
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (hswitch_cont : Continuous switchProb)
+    (hpayment_cont : Continuous payment)
+    (hpositive_tail :
+      ∀ b : ℝ, 0 < b →
+        GN21TailProductIntegrabilityData densityNN switchProb payment b)
+    (a : ℝ) :
+    GN21TailProductIntegrabilityData densityNN switchProb payment a := by
+  let b : ℝ := max a 0 + 1
+  have hb_pos : 0 < b := by
+    dsimp [b]
+    linarith [le_max_right a 0]
+  have hab : a ≤ b := by
+    dsimp [b]
+    linarith [le_max_left a 0]
+  exact
+    GN21TailProductIntegrabilityData.of_interval_and_tail hab
+      (GN21FiniteEndpointProductCalculusData.of_continuous
+        hdensity_cont hswitch_cont hpayment_cont a b b)
+      (hpositive_tail b hb_pos)
+
+/--
+Structured CTMC specialization of positive-tail-to-arbitrary-tail
+integrability.
+-/
+def GN21TailProductIntegrabilityData.of_ctmcStructured_positive_tail
+    {densityNN : TripLength → NNReal}
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (m z switchIJ switchJI : ℝ)
+    (hpositive_tail :
+      ∀ b : ℝ, 0 < b →
+        GN21TailProductIntegrabilityData densityNN
+          (gn21SwitchProb switchIJ switchJI)
+          (ctmcStructuredSurgePrice m z switchIJ switchJI) b)
+    (a : ℝ) :
+    GN21TailProductIntegrabilityData densityNN
+      (gn21SwitchProb switchIJ switchJI)
+      (ctmcStructuredSurgePrice m z switchIJ switchJI) a :=
+  GN21TailProductIntegrabilityData.of_continuous_positive_tail
+    hdensity_cont
+    (continuous_gn21SwitchProb switchIJ switchJI)
+    (continuous_ctmcStructuredSurgePrice m z switchIJ switchJI)
+    hpositive_tail a
+
+/--
+Convert integrability under a with-density measure into product integrability
+against Lebesgue measure on the same measurable set.
+-/
+theorem integrableOn_mul_density_of_integrableOn_withDensity
+    {densityNN : TripLength → NNReal}
+    {f : TripLength → ℝ}
+    {s : Set TripLength}
+    (hdensity_meas : Measurable densityNN)
+    (hs : MeasurableSet s)
+    (hf :
+      IntegrableOn f s
+        (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞))) :
+    IntegrableOn (fun τ => f τ * (densityNN τ : ℝ)) s volume := by
+  have hsmul :
+      IntegrableOn (fun τ => (densityNN τ : ℝ) • f τ) s volume := by
+    rw [IntegrableOn, restrict_withDensity hs] at hf
+    rw [IntegrableOn]
+    exact (integrable_withDensity_iff_integrable_smul hdensity_meas).1 hf
+  exact hsmul.congr_fun (fun τ _ => by simp [mul_comm]) hs
+
+/--
+Positive tails inherit product integrability from accept-all integrability
+under the with-density measure.
+-/
+def GN21TailProductIntegrabilityData.of_acceptAll_withDensity
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    (hdensity_meas : Measurable densityNN)
+    (hq_acceptAll :
+      IntegrableOn switchProb acceptAllPolicy
+        (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)))
+    (hw_acceptAll :
+      IntegrableOn payment acceptAllPolicy
+        (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)))
+    (ht_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy
+        (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)))
+    (a : ℝ)
+    (ha : 0 < a) :
+    GN21TailProductIntegrabilityData densityNN switchProb payment a := by
+  have htail_subset : Set.Ioi a ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact lt_trans ha hτ
+  have htail_meas : MeasurableSet (Set.Ioi a) :=
+    measurableSet_Ioi
+  exact
+    { q_int :=
+        integrableOn_mul_density_of_integrableOn_withDensity
+          hdensity_meas htail_meas
+          (hq_acceptAll.mono_set htail_subset)
+      w_int :=
+        integrableOn_mul_density_of_integrableOn_withDensity
+          hdensity_meas htail_meas
+          (hw_acceptAll.mono_set htail_subset)
+      t_int :=
+        integrableOn_mul_density_of_integrableOn_withDensity
+          hdensity_meas htail_meas
+          (ht_acceptAll.mono_set htail_subset) }
+
+/--
 Theorem 3 state-indexed CTMC switch probabilities.  State `0` is the
 non-surge state and state `1` is the surge state.
 -/
@@ -41208,6 +41355,81 @@ structure GN21SurgeTheorem3FixedTransferUniformTailData
         (gn21SwitchProb switch21 switch12)
         (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) a
 
+/--
+Positive surge-tail integrability for the structured Theorem 3 price.  Together
+with the shared continuous-density data, this implies the uniform all-cutoff
+tail package used by the endpoint adapters.
+-/
+structure GN21SurgeTheorem3FixedTransferPositiveTailData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ) where
+  tail_integrability :
+    ∀ a : ℝ, 0 < a →
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) a
+
+/--
+The shared accept-all time/switch integrability fields imply all positive
+structured surge-tail product integrability fields.
+-/
+def GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21) :
+    GN21SurgeTheorem3FixedTransferPositiveTailData S m z where
+  tail_integrability := by
+    intro a ha
+    have htime_acceptAll :
+        IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy
+          (volume.withDensity fun τ =>
+            (S.surge_support.densityNN τ : ℝ≥0∞)) := by
+      simpa [S.surge_support.hμ] using S.htime1_acceptAll_integrable
+    have hq_acceptAll :
+        IntegrableOn
+          (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+          acceptAllPolicy
+          (volume.withDensity fun τ =>
+            (S.surge_support.densityNN τ : ℝ≥0∞)) := by
+      simpa [S.surge_support.hμ] using S.hq1_acceptAll_integrable
+    have hpayment_acceptAll :
+        IntegrableOn
+          (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+          acceptAllPolicy
+          (volume.withDensity fun τ =>
+            (S.surge_support.densityNN τ : ℝ≥0∞)) :=
+      integrableOn_ctmcStructuredSurgePrice
+        (volume.withDensity fun τ =>
+          (S.surge_support.densityNN τ : ℝ≥0∞))
+        (m 1) (z 1) switch21 switch12 acceptAllPolicy
+        htime_acceptAll hq_acceptAll
+    exact
+      GN21TailProductIntegrabilityData.of_acceptAll_withDensity
+        S.surge_support.hdensity_meas hq_acceptAll hpayment_acceptAll
+        htime_acceptAll a ha
+
+/--
+Continuous finite-interval calculus upgrades positive surge-tail integrability
+to the uniform all-cutoff package.
+-/
+def GN21SurgeTheorem3FixedTransferPositiveTailData.to_uniform_tail
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D : GN21SurgeTheorem3FixedTransferPositiveTailData S m z) :
+    GN21SurgeTheorem3FixedTransferUniformTailData S m z where
+  tail_integrability := by
+    intro a
+    exact
+      GN21TailProductIntegrabilityData.of_ctmcStructured_positive_tail
+        S.surge_density_cont (m 1) (z 1) switch21 switch12
+        D.tail_integrability a
+
 /-- Build reject-short moving data from uniform surge tail integrability. -/
 def GN21SurgeTheorem3FixedTransferUniformTailData.to_reject_short_moving
     {μ : Fin 2 → Measure TripLength}
@@ -41831,6 +42053,167 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
     | upper hlo_nonneg hlo_lt_hi =>
         exact .upper
           (C.surge_tail.to_reject_middle_hi_moving hlo_nonneg hlo_lt_hi)
+
+/--
+Endpoint certificate with policy-form fixed-state data and positive surge-tail
+integrability.  The adapter below derives the older uniform-tail endpoint
+certificate using continuous finite-interval product calculus.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormPositiveTailLocalEndpointCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_rejectLong_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ, rejectsLongTrips u (ρ 0) → 0 < u
+  nonsurge_acceptMiddle_bounds :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ, acceptsMiddleTrips lo hi (ρ 0) → 0 < lo ∧ lo < hi
+  surge_rejectShort_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ, rejectsShortTrips u (ρ 1) → 0 < u
+  surge_rejectMiddle_cutoff_bounds :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleMovingCutoffChoice lo hi
+  surge_fixed_state_by_policy_form :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+          shared m z R2 ρ
+  nonsurge_fixed_state_by_policy_form :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+          shared m z R1 ρ
+  surge_tail : GN21SurgeTheorem3FixedTransferPositiveTailData shared m z
+
+/--
+Expand the positive-tail endpoint certificate to the uniform-tail endpoint
+certificate.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormPositiveTailLocalEndpointCertificate.to_uniform_tail
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormPositiveTailLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormUniformTailLocalEndpointCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := C.shared
+  nonsurge_rejectLong_pos := C.nonsurge_rejectLong_pos
+  nonsurge_acceptMiddle_bounds := C.nonsurge_acceptMiddle_bounds
+  surge_rejectShort_pos := C.surge_rejectShort_pos
+  surge_rejectMiddle_cutoff_bounds := C.surge_rejectMiddle_cutoff_bounds
+  surge_fixed_state_by_policy_form := C.surge_fixed_state_by_policy_form
+  nonsurge_fixed_state_by_policy_form := C.nonsurge_fixed_state_by_policy_form
+  surge_tail := C.surge_tail.to_uniform_tail
+
+/--
+Endpoint certificate with policy-form fixed-state data and no explicit tail
+field.  Positive surge tails are derived from the shared accept-all
+time/switch integrability fields.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_rejectLong_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ, rejectsLongTrips u (ρ 0) → 0 < u
+  nonsurge_acceptMiddle_bounds :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ, acceptsMiddleTrips lo hi (ρ 0) → 0 < lo ∧ lo < hi
+  surge_rejectShort_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ, rejectsShortTrips u (ρ 1) → 0 < u
+  surge_rejectMiddle_cutoff_bounds :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleMovingCutoffChoice lo hi
+  surge_fixed_state_by_policy_form :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+          shared m z R2 ρ
+  nonsurge_fixed_state_by_policy_form :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+          shared m z R1 ρ
+
+/--
+Expand the derived-tail endpoint certificate to the positive-tail endpoint
+certificate.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate.to_positive_tail
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormPositiveTailLocalEndpointCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := C.shared
+  nonsurge_rejectLong_pos := C.nonsurge_rejectLong_pos
+  nonsurge_acceptMiddle_bounds := C.nonsurge_acceptMiddle_bounds
+  surge_rejectShort_pos := C.surge_rejectShort_pos
+  surge_rejectMiddle_cutoff_bounds := C.surge_rejectMiddle_cutoff_bounds
+  surge_fixed_state_by_policy_form := C.surge_fixed_state_by_policy_form
+  nonsurge_fixed_state_by_policy_form := C.nonsurge_fixed_state_by_policy_form
+  surge_tail := GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll C.shared
 
 /--
 Derive the mass-separated certificate from no-mass endpoint facts and the
@@ -45648,6 +46031,188 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
                 m z hnonneg hparams with
             ⟨Creplacement, L⟩
           exact ⟨Creplacement, L.to_fixed_state_by_policy_form⟩ }
+
+/--
+Source-level assumptions for the allowed-replacement fixed-transfer route with
+policy-form fixed-state data and positive surge-tail integrability.  Continuous
+finite-interval calculus derives the all-cutoff uniform tail package used by
+the endpoint proof.
+-/
+structure Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormPositiveTailSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4AllMeasurableOptimalAllowedReplacementData
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ×
+          Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormPositiveTailLocalEndpointCertificate
+            μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper from allowed replacement data, policy-form
+fixed-state data, and positive surge-tail integrability.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormPositiveTailSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_uniform_tail_selection := by
+          intro m z hnonneg hparams
+          rcases
+              A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_selection
+                m z hnonneg hparams with
+            ⟨Creplacement, L⟩
+          exact ⟨Creplacement, L.to_uniform_tail⟩ }
+
+/--
+Source-level assumptions for the allowed-replacement fixed-transfer route with
+policy-form fixed-state data and no separate tail-integrability field.  Surge
+tail integrability is derived from shared accept-all time/switch integrability.
+-/
+structure Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4AllMeasurableOptimalAllowedReplacementData
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ×
+          Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate
+            μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper from allowed replacement data and policy-form
+fixed-state data; tail integrability is derived from shared accept-all
+integrability.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_positive_tail_selection := by
+          intro m z hnonneg hparams
+          rcases
+              A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_selection
+                m z hnonneg hparams with
+            ⟨Creplacement, L⟩
+          exact ⟨Creplacement, L.to_positive_tail⟩ }
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is
