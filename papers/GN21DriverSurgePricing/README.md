@@ -150,7 +150,16 @@ cache is `source.txt`.
   prices.  The endpoint constructors ending in
   `of_acceptAll_support_and_calculus` or
   `of_acceptAll_support_and_continuity` consume both the density support and
-  product-calculus packages.  The lightest current
+  product-calculus packages.  The supported endpoint route is now exposed as
+  the five `GN21...SupportedEndpointData` packages,
+  `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_supported_selection`,
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`;
+  it expands ordinary allowed replacement cases plus density-support and
+  calculus-backed endpoint data into the allowed-replacement current-bounds
+  route internally.  The lightest current
   IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
@@ -496,19 +505,19 @@ statewise-improvement certificate for the same source boundary, and a route
 that consumes all-optimal Lemma 5 replacement data directly or the packaged
 allowed-replacement source-boundary certificate.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-source-facing endpoint current-bounds selection layer for arbitrary open
-measurable optimal policies by proving the regularity theorem that chooses the
-relevant allowed Lemma 5 replacement case, upper, lower, tail, or
-middle-rejection endpoint move and discharges the density, integrability,
-finite-mass, and current-bound fields of
-`Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`.
+supported source-facing endpoint selection layer for arbitrary open measurable
+optimal policies by proving the regularity theorem that chooses the relevant
+allowed Lemma 5 replacement case, upper, lower, tail, or middle-rejection
+endpoint move and discharges the remaining density, integrability, finite-mass,
+and current-bound fields of
+`Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
 continuous-density endpoint calculus helpers, feasible-domain preservation, and
-Lemma 9/10 current-bound data plumbing are now available for all four Theorem 4
-shape cases, with reject-middle split into lower- and upper-cutoff endpoint
-variants.
+Lemma 9/10 current-bound data plumbing are now available through supported
+endpoint records for all four Theorem 4 shape cases, with reject-middle split
+into lower- and upper-cutoff endpoint variants.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

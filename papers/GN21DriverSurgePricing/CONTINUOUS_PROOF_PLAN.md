@@ -4,19 +4,20 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The current Lean endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions
 ```
 
 The remaining paper-facing field is
-`Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`
+`Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`
 for the structured prices constructed by Theorem 3.  This endpoint packages
-source-facing allowed Lemma 5 replacement cases and the case-by-case density
-endpoint selection data; Lean derives feasible measurability of the canonical
-replacement policies and then converts the package to the feasible strict-local
-Theorem 4 certificate internally.  The previous broader endpoints remain
-compiled:
+ordinary allowed Lemma 5 replacement cases, accept-all density support, bundled
+endpoint product calculus, and the remaining case-by-case current-bounds data;
+Lean derives feasible measurability of the canonical replacement policies and
+then converts the package to the feasible strict-local Theorem 4 certificate
+internally.  The previous broader endpoints remain compiled:
 
 ```lean
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_replacement_statewise_improvements_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions
@@ -33,12 +34,12 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
 
 2. Prove one source regularity/selection theorem that supplies optimum
    existence, source-facing allowed Lemma 5 replacement data, and the matching
-   endpoint current-bounds data package for each non-accept-all shape.  This
-   should target exactly
-   `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`.
+   supported endpoint data package for each non-accept-all shape.  This should
+   target exactly
+   `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`.
 
 3. Instantiate
-   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`
    from that selection theorem, with the scalar Theorem 3 parameter
    construction already proved.
 
@@ -49,7 +50,7 @@ The hard theorem should have this shape:
 ```lean
 theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
     (...) :
-    Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate
+    Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate
       μ arrival m z switch12 switch21
 ```
 
@@ -100,6 +101,15 @@ into the concrete endpoint policy data.
   endpoint calculus fields for structured prices.  Prefer the endpoint
   constructors ending in `of_acceptAll_support_and_calculus` or
   `of_acceptAll_support_and_continuity` when building the final endpoint data.
+- The supported endpoint records
+  `GN21NonsurgeRejectLongSupportedEndpointData`,
+  `GN21NonsurgeAcceptMiddleSupportedEndpointData`,
+  `GN21SurgeRejectShortSupportedEndpointData`,
+  `GN21SurgeRejectMiddleLoSupportedEndpointData`,
+  `GN21SurgeRejectMiddleHiSupportedEndpointData`, and
+  `GN21SurgeRejectMiddleSupportedEndpointData` now bridge these support and
+  calculus packages into the current-bounds endpoint certificate expected by
+  Theorem 4.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
@@ -107,7 +117,7 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper

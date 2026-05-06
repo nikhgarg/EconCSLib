@@ -313,6 +313,16 @@ the continuous CTMC source theorems.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`:
   current source-facing measurable Theorem 3 boundary from allowed Lemma 5
   cases plus endpoint current-bounds selections.
+- `GN21NonsurgeRejectLongSupportedEndpointData`,
+  `GN21NonsurgeAcceptMiddleSupportedEndpointData`,
+  `GN21SurgeRejectShortSupportedEndpointData`,
+  `GN21SurgeRejectMiddleLoSupportedEndpointData`,
+  `GN21SurgeRejectMiddleHiSupportedEndpointData`,
+  `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`, and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`:
+  supported source-facing Theorem 3 boundary from ordinary allowed Lemma 5
+  replacement cases, accept-all density support, endpoint product calculus, and
+  current-bounds endpoint data.
 - `GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
   `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
   `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
@@ -26641,6 +26651,400 @@ def GN21SurgeRejectMiddleCurrentBoundsEndpointData.statewise_improvement
   | upper Dhi => exact Dhi.statewise_improvement hρ hshape
 
 /--
+Source-facing supported endpoint data for non-surge reject-long moves.  The
+finite/positive density support and endpoint product calculus are bundled, and
+`to_current_bounds_endpoint_data` expands them into the lower-level endpoint
+record.
+-/
+structure GN21NonsurgeRejectLongSupportedEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (u : ℝ) where
+  support : GN21WithDensityAcceptAllSupport (μ 0)
+  R2 : ℝ
+  ratio : ℝ
+  hm0 : m 0 = R2
+  harrival_pos : 0 < arrival 0
+  harrival_other_pos : 0 < arrival 1
+  hswitch21_pos : 0 < switch21
+  hdensity_pos : 0 < (support.densityNN u : ℝ)
+  calculus :
+    GN21FiniteEndpointProductCalculusData support.densityNN
+      (gn21SwitchProb switch12 switch21)
+      (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) 0 u u
+  hu : 0 < u
+  hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1)
+  current_bounds :
+    GN21NonsurgeLemma10AcceptAllAggregateData
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      R2 (z 0) ratio
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+      (ρ 0) (ρ 1)
+
+/-- Expand supported non-surge reject-long data to the current-bounds endpoint record. -/
+def GN21NonsurgeRejectLongSupportedEndpointData.to_current_bounds_endpoint_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {u : ℝ}
+    (D :
+      GN21NonsurgeRejectLongSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ u)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    GN21NonsurgeRejectLongCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ u :=
+  GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support_and_calculus
+    D.support hρ_feasible D.hm0 D.harrival_pos D.harrival_other_pos
+    D.hswitch21_pos D.hdensity_pos D.calculus D.hu D.hmass_other_pos
+    D.current_bounds
+
+/-- Source-facing supported endpoint data for non-surge accept-middle moves. -/
+structure GN21NonsurgeAcceptMiddleSupportedEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  support : GN21WithDensityAcceptAllSupport (μ 0)
+  R2 : ℝ
+  ratio : ℝ
+  δ : ℝ
+  hm0 : m 0 = R2
+  harrival_pos : 0 < arrival 0
+  harrival_other_pos : 0 < arrival 1
+  hswitch21_pos : 0 < switch21
+  hdensity_pos : 0 < (support.densityNN lo : ℝ)
+  calculus :
+    GN21FiniteEndpointProductCalculusData support.densityNN
+      (gn21SwitchProb switch12 switch21)
+      (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) lo hi lo
+  hlo_pos : 0 < lo
+  hlo_lt_hi : lo < hi
+  hδ : 0 < δ
+  hδ_le_lo : δ ≤ lo
+  hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1)
+  current_bounds :
+    GN21NonsurgeLemma10AcceptAllAggregateData
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      R2 (z 0) ratio
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+      (ρ 0) (ρ 1)
+
+/-- Expand supported non-surge accept-middle data to the current-bounds endpoint record. -/
+def GN21NonsurgeAcceptMiddleSupportedEndpointData.to_current_bounds_endpoint_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi : ℝ}
+    (D :
+      GN21NonsurgeAcceptMiddleSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi :=
+  GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support_and_calculus
+    D.support hρ_feasible D.hm0 D.harrival_pos D.harrival_other_pos
+    D.hswitch21_pos D.hdensity_pos D.calculus D.hlo_pos D.hlo_lt_hi
+    D.hδ D.hδ_le_lo D.hmass_other_pos D.current_bounds
+
+/-- Source-facing supported endpoint data for surge reject-short moves. -/
+structure GN21SurgeRejectShortSupportedEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (u : ℝ) where
+  support : GN21WithDensityAcceptAllSupport (μ 1)
+  R1 : ℝ
+  ratio : ℝ
+  δ : ℝ
+  harrival_other_pos : 0 < arrival 0
+  harrival_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hdensity_pos : 0 < (support.densityNN u : ℝ)
+  hq_int :
+    IntegrableOn
+      (fun τ => gn21SwitchProb switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioi (u - 1)) volume
+  hw_int :
+    IntegrableOn
+      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioi (u - 1)) volume
+  ht_int :
+    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+      (Set.Ioi (u - 1)) volume
+  continuity :
+    GN21EndpointProductContinuityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) u
+  hu : 0 < u
+  hδ : 0 < δ
+  hδ_le_u : δ ≤ u
+  hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
+  current_bounds :
+    GN21SurgeLemma9AcceptAllAggregateData
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (m 1) R1 (z 1) ratio
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+      (ρ 0) (ρ 1)
+
+/-- Expand supported surge reject-short data to the current-bounds endpoint record. -/
+def GN21SurgeRejectShortSupportedEndpointData.to_current_bounds_endpoint_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {u : ℝ}
+    (D :
+      GN21SurgeRejectShortSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ u)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    GN21SurgeRejectShortCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ u :=
+  GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support_and_continuity
+    D.support hρ_feasible D.harrival_other_pos D.harrival_pos
+    D.hswitch12_pos D.hdensity_pos D.hq_int D.hw_int D.ht_int
+    D.continuity D.hu D.hδ D.hδ_le_u D.hmass_other_pos D.current_bounds
+
+/-- Source-facing supported endpoint data for lower-cutoff surge reject-middle moves. -/
+structure GN21SurgeRejectMiddleLoSupportedEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  support : GN21WithDensityAcceptAllSupport (μ 1)
+  R1 : ℝ
+  ratio : ℝ
+  δ : ℝ
+  harrival_other_pos : 0 < arrival 0
+  harrival_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hdensity_pos : 0 < (support.densityNN lo : ℝ)
+  calculus :
+    GN21FiniteEndpointProductCalculusData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) 0 lo lo
+  hlo_pos : 0 < lo
+  hloδ_le_hi : lo + δ ≤ hi
+  hδ : 0 < δ
+  hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
+  hq_short_current_int :
+    IntegrableOn
+      (fun τ => gn21SwitchProb switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
+  ht_short_current_int :
+    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+      (Set.Ioo (0 : ℝ) lo) volume
+  hw_short_current_int :
+    IntegrableOn
+      (fun τ =>
+        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
+  hq_tail_int :
+    IntegrableOn
+      (fun τ => gn21SwitchProb switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
+  ht_tail_int :
+    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+      (Set.Ioi hi) volume
+  hw_tail_int :
+    IntegrableOn
+      (fun τ =>
+        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
+  hq_short_replacement_int :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) (lo + ε)) volume
+  ht_short_replacement_int :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) (lo + ε)) volume
+  hw_short_replacement_int :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (support.densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) (lo + ε)) volume
+  current_bounds :
+    GN21SurgeLemma9AcceptAllAggregateData
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (m 1) R1 (z 1) ratio
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+      (ρ 0) (ρ 1)
+
+/-- Expand supported lower-cutoff reject-middle data to the endpoint record. -/
+def GN21SurgeRejectMiddleLoSupportedEndpointData.to_current_bounds_endpoint_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi : ℝ}
+    (D :
+      GN21SurgeRejectMiddleLoSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    GN21SurgeRejectMiddleLoCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi :=
+  GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support_and_calculus
+    D.support hρ_feasible D.harrival_other_pos D.harrival_pos
+    D.hswitch12_pos D.hdensity_pos D.calculus D.hlo_pos D.hloδ_le_hi
+    D.hδ D.hmass_other_pos D.hq_short_current_int D.ht_short_current_int
+    D.hw_short_current_int D.hq_tail_int D.ht_tail_int D.hw_tail_int
+    D.hq_short_replacement_int D.ht_short_replacement_int
+    D.hw_short_replacement_int D.current_bounds
+
+/-- Source-facing supported endpoint data for upper-cutoff surge reject-middle moves. -/
+structure GN21SurgeRejectMiddleHiSupportedEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  support : GN21WithDensityAcceptAllSupport (μ 1)
+  R1 : ℝ
+  ratio : ℝ
+  δ : ℝ
+  harrival_other_pos : 0 < arrival 0
+  harrival_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hdensity_pos : 0 < (support.densityNN hi : ℝ)
+  hq_int :
+    IntegrableOn
+      (fun τ => gn21SwitchProb switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume
+  hw_int :
+    IntegrableOn
+      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume
+  ht_int :
+    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+      (Set.Ioi (hi - 1)) volume
+  continuity :
+    GN21EndpointProductContinuityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi
+  hhi_pos : 0 < hi
+  hδ : 0 < δ
+  hlo_nonneg : 0 ≤ lo
+  hlo_le_hiδ : lo ≤ hi - δ
+  hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
+  hq_short_int :
+    IntegrableOn
+      (fun τ => gn21SwitchProb switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
+  ht_short_int :
+    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+      (Set.Ioo (0 : ℝ) lo) volume
+  hw_short_int :
+    IntegrableOn
+      (fun τ =>
+        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
+  hq_tail_current_int :
+    IntegrableOn
+      (fun τ => gn21SwitchProb switch21 switch12 τ *
+        (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
+  ht_tail_current_int :
+    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+      (Set.Ioi hi) volume
+  hw_tail_current_int :
+    IntegrableOn
+      (fun τ =>
+        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+          (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
+  hq_tail_replacement_int :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      IntegrableOn
+        (fun τ => gn21SwitchProb switch21 switch12 τ *
+          (support.densityNN τ : ℝ))
+        (Set.Ioi (hi - ε)) volume
+  ht_tail_replacement_int :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
+        (Set.Ioi (hi - ε)) volume
+  hw_tail_replacement_int :
+    ∀ ε : ℝ, 0 < ε → ε < δ →
+      IntegrableOn
+        (fun τ =>
+          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
+            (support.densityNN τ : ℝ))
+        (Set.Ioi (hi - ε)) volume
+  current_bounds :
+    GN21SurgeLemma9AcceptAllAggregateData
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (m 1) R1 (z 1) ratio
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+      (ρ 0) (ρ 1)
+
+/-- Expand supported upper-cutoff reject-middle data to the endpoint record. -/
+def GN21SurgeRejectMiddleHiSupportedEndpointData.to_current_bounds_endpoint_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi : ℝ}
+    (D :
+      GN21SurgeRejectMiddleHiSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    GN21SurgeRejectMiddleHiCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi :=
+  GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support_and_continuity
+    D.support hρ_feasible D.harrival_other_pos D.harrival_pos
+    D.hswitch12_pos D.hdensity_pos D.hq_int D.hw_int D.ht_int
+    D.continuity D.hhi_pos D.hδ D.hlo_nonneg D.hlo_le_hiδ
+    D.hmass_other_pos D.hq_short_int D.ht_short_int D.hw_short_int
+    D.hq_tail_current_int D.ht_tail_current_int D.hw_tail_current_int
+    D.hq_tail_replacement_int D.ht_tail_replacement_int
+    D.hw_tail_replacement_int D.current_bounds
+
+/-- A supported surge reject-middle endpoint selection may move either cutoff. -/
+inductive GN21SurgeRejectMiddleSupportedEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  | lower :
+      GN21SurgeRejectMiddleLoSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi →
+      GN21SurgeRejectMiddleSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi
+  | upper :
+      GN21SurgeRejectMiddleHiSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi →
+      GN21SurgeRejectMiddleSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi
+
+/-- Expand supported surge reject-middle data to the current-bounds endpoint selection. -/
+def GN21SurgeRejectMiddleSupportedEndpointData.to_current_bounds_endpoint_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {lo hi : ℝ}
+    (D :
+      GN21SurgeRejectMiddleSupportedEndpointData
+        μ arrival m z switch12 switch21 ρ lo hi)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    GN21SurgeRejectMiddleCurrentBoundsEndpointData
+      μ arrival m z switch12 switch21 ρ lo hi := by
+  cases D with
+  | lower Dlo =>
+      exact .lower (Dlo.to_current_bounds_endpoint_data hρ_feasible)
+  | upper Dhi =>
+      exact .upper (Dhi.to_current_bounds_endpoint_data hρ_feasible)
+
+/--
 Measurable Theorem 4 selection certificate at the current-bounds endpoint
 frontier.  The final analytic obligation is now explicit: for each
 measurable optimum and each Lemma 5 shape case, choose endpoint data satisfying
@@ -26859,6 +27263,123 @@ structure Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCert
             μ arrival m z switch12 switch21 ρ lo hi
 
 /--
+Source-facing supported current-bounds endpoint selection certificate.  Endpoint
+fields return the support/calculus endpoint packages rather than the fully
+expanded current-bounds endpoint records.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  nonsurge_replacement_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        Theorem4NonsurgeAllowedReplacementData
+          (dynamicStateReward
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ 0)
+          (ρ 0)
+  surge_replacement_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        Theorem4SurgeAllowedReplacementData
+          (dynamicStateReward
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ 1)
+          (ρ 1)
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongSupportedEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleSupportedEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortSupportedEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleSupportedEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+Expand supported endpoint selections into the allowed-replacement current-bounds
+selection certificate.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate.of_supported_endpoint_data
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := C.exists_optimal
+  nonsurge_replacement_data := C.nonsurge_replacement_data
+  surge_replacement_data := C.surge_replacement_data
+  nonsurge_reject_long_endpoint := by
+    intro ρ hρ u hshape
+    exact
+      (C.nonsurge_reject_long_endpoint ρ hρ u hshape).to_current_bounds_endpoint_data
+        hρ.1
+  nonsurge_accept_middle_endpoint := by
+    intro ρ hρ lo hi hshape
+    exact
+      (C.nonsurge_accept_middle_endpoint ρ hρ lo hi hshape).to_current_bounds_endpoint_data
+        hρ.1
+  surge_reject_short_endpoint := by
+    intro ρ hρ u hshape
+    exact
+      (C.surge_reject_short_endpoint ρ hρ u hshape).to_current_bounds_endpoint_data
+        hρ.1
+  surge_reject_middle_endpoint := by
+    intro ρ hρ lo hi hshape
+    exact
+      (C.surge_reject_middle_endpoint ρ hρ lo hi hshape).to_current_bounds_endpoint_data
+        hρ.1
+
+/--
 Convert source-facing allowed replacement data and endpoint current-bounds
 selections into the dependent endpoint-selection certificate.
 -/
@@ -26906,6 +27427,33 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
     paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection
       μ arrival m z switch12 switch21
       (Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate.of_allowed_replacement_data
+        μ arrival m z switch12 switch21 C)
+
+/--
+Measurable Theorem 4 accept-all uniqueness from source-facing allowed
+replacement cases and supported endpoint selections.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_supported_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection
+      μ arrival m z switch12 switch21
+      (Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate.of_supported_endpoint_data
         μ arrival m z switch12 switch21 C)
 
 /--
@@ -35331,6 +35879,93 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
             Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate.of_allowed_replacement_data
               μ arrival m z switch12 switch21
               (A.endpoint_current_bounds_allowed_replacement_selection
+                m z hnonneg hparams) }
+
+/--
+Source-level assumptions for the supported endpoint-current-bounds route.  The
+remaining proof field may use density support and bundled endpoint product
+calculus instead of fully expanded endpoint records.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_supported_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from supported endpoint-current-bounds source
+assumptions.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_current_bounds_allowed_replacement_selection := by
+          intro m z hnonneg hparams
+          exact
+            Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate.of_supported_endpoint_data
+              μ arrival m z switch12 switch21
+              (A.endpoint_current_bounds_supported_selection
                 m z hnonneg hparams) }
 
 /--

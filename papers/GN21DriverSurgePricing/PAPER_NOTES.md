@@ -173,6 +173,21 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`
   plus
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
+  supported endpoint records
+  `GN21NonsurgeRejectLongSupportedEndpointData`,
+  `GN21NonsurgeAcceptMiddleSupportedEndpointData`,
+  `GN21SurgeRejectShortSupportedEndpointData`,
+  `GN21SurgeRejectMiddleLoSupportedEndpointData`,
+  `GN21SurgeRejectMiddleHiSupportedEndpointData`,
+  and `GN21SurgeRejectMiddleSupportedEndpointData`,
+  supported endpoint selection certificate
+  `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`,
+  supported selection-to-Theorem-4 adapter
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_supported_selection`,
+  and Theorem 3 supported endpoint wrapper
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions`
+  plus
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`,
   accept-all density support package
   `GN21WithDensityAcceptAllSupport`,
   support-derived endpoint constructors
