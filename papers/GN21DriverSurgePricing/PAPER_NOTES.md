@@ -299,6 +299,11 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters`,
   plus the positive fixed-transfer source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions`,
+  local fixed-transfer endpoint-facts certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate`
+  with its `of_shape_replacements` adapter, and shape-replacement positive
+  fixed-transfer wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_shape_replacement_positive_source_assumptions`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

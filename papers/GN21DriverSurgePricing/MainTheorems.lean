@@ -37712,6 +37712,123 @@ structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAll
             shared m z R1 ρ lo hi
 
 /--
+Local endpoint facts for the Theorem 3 fixed-transfer route, separated from the
+policy-form and constructed-parameter evidence.  This lets source wrappers
+derive parameter data and Lemma 5 policy forms internally, while the continuous
+part supplies only shared regularity and endpoint-local witnesses.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_reject_long_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongTheorem3FixedTransferLocalData
+            shared m z R2 ρ u
+  nonsurge_accept_middle_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleTheorem3FixedTransferLocalData
+            shared m z R2 ρ lo hi
+  surge_reject_short_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortTheorem3FixedTransferLocalData
+            shared m z R1 ρ u
+  surge_reject_middle_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleTheorem3FixedTransferLocalData
+            shared m z R1 ρ lo hi
+
+/-- Add constructed parameters and policy forms to local endpoint facts. -/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate.to_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (L :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (hsurgeRatio_pos : 0 < P.surgeRatio)
+    (allowed_policy_forms :
+      Theorem4AllMeasurableAllowedPolicyFormsCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := L.shared
+  params := P
+  hR1_pos := hR1_pos
+  hR1_lt_R2 := hR1_lt_R2
+  hR2_pos := hR2_pos
+  hmeasure_surge_acceptAll_pos := hmeasure_surge_acceptAll_pos
+  hsurgeRatio_pos := hsurgeRatio_pos
+  allowed_policy_forms := allowed_policy_forms
+  nonsurge_reject_long_local := L.nonsurge_reject_long_local
+  nonsurge_accept_middle_local := L.nonsurge_accept_middle_local
+  surge_reject_short_local := L.surge_reject_short_local
+  surge_reject_middle_local := L.surge_reject_middle_local
+
+/--
+Add positive constructed-parameter data and all-measurable Lemma 5 replacement
+data to local endpoint facts.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate.of_shape_replacements
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (L :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (Creplacement :
+      Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+      μ arrival R1 R2 switch12 switch21 m z :=
+  L.to_allowed_policy_forms P.params hR1_pos hR1_lt_R2 hR2_pos
+    hmeasure_surge_acceptAll_pos P.hsurgeRatio_pos
+    (Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
+      Creplacement)
+
+/--
 Expand the Theorem 3 fixed-transfer source certificate to the existing regular
 allowed-policy-form endpoint certificate.
 -/
@@ -39822,6 +39939,101 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
               μ arrival m z switch12 switch21
               ((A.endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection
                 m z hnonneg hparams).to_regular_allowed_policy_forms)))
+
+/--
+Source-level assumptions for the positive-evidence Theorem 3 fixed-transfer
+route, with Lemma 5 replacement data separated from endpoint-local witnesses.
+This is the preferred source boundary for continuing the continuous proof:
+replacement data classify all measurable optima, and the local endpoint package
+contains only regularity, cross-ratio, accounting, and tail facts.
+-/
+structure Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularShapeReplacementPositiveSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_theorem3_fixed_transfer_regular_shape_replacement_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ×
+          Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate
+            μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper from all-measurable Lemma 5 replacement data and
+positive-evidence fixed-transfer local endpoint facts.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_shape_replacement_positive_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularShapeReplacementPositiveSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection := by
+          intro m z hnonneg hparams
+          rcases
+              A.endpoint_theorem3_fixed_transfer_regular_shape_replacement_selection
+                m z hnonneg hparams with
+            ⟨Creplacement, L⟩
+          exact
+            L.of_shape_replacements
+              (Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams)
+              A.hR1_pos A.hR1_lt_R2 A.hR2_pos A.hmeasure2_pos Creplacement }
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is

@@ -213,6 +213,11 @@ into the concrete endpoint policy data.
   produces all-measurable Lemma 5 replacement data, it now feeds this target
   directly through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
+- For the fixed-transfer route, the current lightest source boundary is
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_shape_replacement_positive_source_assumptions`:
+  it derives the constructed parameter data, surge-ratio positivity, and
+  allowed policy-form classification internally, leaving only all-measurable
+  Lemma 5 replacement data plus the local fixed-transfer endpoint facts.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
