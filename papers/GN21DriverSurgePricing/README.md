@@ -269,7 +269,7 @@ cache is `source.txt`.
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_fixed_state_separated_source_assumptions`
   let source proofs supply one fixed-state package for each state plus only
-  the remaining surge moving-state cutoff/tail data, and Lean expands that into
+  the remaining surge moving-state cutoff-gap/tail data, and Lean expands that into
   the no-mass, mass-separated, pointwise, positive-cutoff, and regular endpoint
   routes internally.  The non-surge accept-middle branch chooses its local move
   directly from the positive lower cutoff.  The policy-form fixed-state data records
@@ -285,7 +285,7 @@ cache is `source.txt`.
   are the current lightest fixed-transfer source boundary: all-optimal Lemma 5
   allowed policy forms choose the fixed-state branch internally, so the source
   proof supplies only branch-specific pointwise equalities, reward-rate fields,
-  and surge moving-state cutoff/tail data.
+  and surge moving-state cutoff-gap/tail data.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

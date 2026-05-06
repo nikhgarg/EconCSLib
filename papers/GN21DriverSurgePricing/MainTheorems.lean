@@ -41139,14 +41139,11 @@ structure GN21SurgeRejectShortTheorem3FixedTransferMovingData
     (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
     (m z : Fin 2 → ℝ)
     (u : ℝ) where
-  δ : ℝ
   tail_integrability :
     GN21TailProductIntegrabilityData S.surge_support.densityNN
       (gn21SwitchProb switch21 switch12)
       (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1)
   hu : 0 < u
-  hδ : 0 < δ
-  hδ_le_u : δ ≤ u
 
 /-- Lower-cutoff moving-state data for a surge reject-middle endpoint. -/
 structure GN21SurgeRejectMiddleLoTheorem3FixedTransferMovingData
@@ -41156,10 +41153,8 @@ structure GN21SurgeRejectMiddleLoTheorem3FixedTransferMovingData
     (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
     (m z : Fin 2 → ℝ)
     (lo hi : ℝ) where
-  δ : ℝ
   hlo_pos : 0 < lo
-  hloδ_le_hi : lo + δ ≤ hi
-  hδ : 0 < δ
+  hlo_lt_hi : lo < hi
   tail_integrability :
     GN21TailProductIntegrabilityData S.surge_support.densityNN
       (gn21SwitchProb switch21 switch12)
@@ -41175,17 +41170,16 @@ structure GN21SurgeRejectMiddleHiTheorem3FixedTransferMovingData
     (lo hi : ℝ) where
   δ : ℝ
   derivative_tail_integrability :
-    GN21TailProductIntegrabilityData S.surge_support.densityNN
-      (gn21SwitchProb switch21 switch12)
-      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1)
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1)
   hhi_pos : 0 < hi
-  hδ : 0 < δ
   hlo_nonneg : 0 ≤ lo
-  hlo_le_hiδ : lo ≤ hi - δ
+  hlo_lt_hi : lo < hi
   tail_integrability :
     GN21TailProductIntegrabilityData S.surge_support.densityNN
       (gn21SwitchProb switch21 switch12)
-      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) lo
 
 /-- A surge reject-middle moving endpoint may move either cutoff. -/
 inductive GN21SurgeRejectMiddleTheorem3FixedTransferMovingData
@@ -41566,7 +41560,7 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
     let M := C.surge_reject_short_moving ρ hopt u hshape
     exact
       (C.nonsurge_fixed_state ρ hopt).to_surge_reject_short
-        M.tail_integrability M.hu M.hδ M.hδ_le_u
+        M.tail_integrability M.hu M.hu le_rfl
   surge_reject_middle_local := by
     intro ρ hopt lo hi hshape
     let M := C.surge_reject_middle_moving ρ hopt lo hi hshape
@@ -41575,13 +41569,18 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
         exact
           .lower
             ((C.nonsurge_fixed_state ρ hopt).to_surge_reject_middle_lo
-              Mlo.hlo_pos Mlo.hloδ_le_hi Mlo.hδ Mlo.tail_integrability)
+              (δ := hi - lo)
+              Mlo.hlo_pos (by linarith) (sub_pos.mpr Mlo.hlo_lt_hi)
+              Mlo.tail_integrability)
     | upper Mhi =>
         exact
           .upper
             ((C.nonsurge_fixed_state ρ hopt).to_surge_reject_middle_hi
-              Mhi.derivative_tail_integrability Mhi.hhi_pos Mhi.hδ
-              Mhi.hlo_nonneg Mhi.hlo_le_hiδ Mhi.tail_integrability)
+              (δ := hi - lo)
+              Mhi.derivative_tail_integrability Mhi.hhi_pos
+              (sub_pos.mpr Mhi.hlo_lt_hi)
+              Mhi.hlo_nonneg (by linarith)
+              (by simpa [sub_sub_cancel] using Mhi.tail_integrability))
 
 /--
 Endpoint certificate whose fixed-state data are indexed by the Lemma 5 policy
