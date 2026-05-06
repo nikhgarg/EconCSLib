@@ -225,6 +225,11 @@ into the concrete endpoint policy data.
   the cross-ratio inequalities by equality, derive positive fixed-state mass
   from shared support and accept-all mass positivity, and use the Theorem 3
   accept-all accounting identities for the fixed-state accounting equation.
+- If the fixed other state is non-accept-all, use
+  `gn21FixedStateCross_le_union_of_increment_ratio_ge` or
+  `gn21FixedStateCross_ge_union_of_increment_ratio_le` to reduce the needed
+  cross-ratio direction to an increment ratio inequality on the trips added
+  when passing from the current fixed-state policy to accept-all.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

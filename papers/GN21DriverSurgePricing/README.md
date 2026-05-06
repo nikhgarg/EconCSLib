@@ -82,7 +82,12 @@ cache is `source.txt`.
   strict measured positivity bridges used by Lemmas 6 and 9-10.
   Lemma 9/10 current-bound positivity now also has measured pointwise
   derivative-kernel wrappers and direct accept-all-complement aggregate
-  improvement bridges for the surge and non-surge states.
+  improvement bridges for the surge and non-surge states, plus fixed-state
+  cross-ratio union bridges
+  `gn21FixedStateCross_le_union_of_increment_ratio_ge` and
+  `gn21FixedStateCross_ge_union_of_increment_ratio_le` that reduce the
+  remaining non-accept-all fixed-state transfer facts to increment ratio
+  inequalities on the added complement.
 - Theorem 3 now has the `C` numerator-bound factorization, a measured
   accept-all `C ∈ [0,1)` theorem with that bound discharged, the non-surge
   `C < R1/R2 < 1` to Lemma 10 bounds bridge, direct Lemma 9 primitive

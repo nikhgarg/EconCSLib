@@ -2431,6 +2431,111 @@ theorem gn21ScaledStateEarning_union
   unfold singleStateTripPayment
   ring
 
+/--
+Cross-ratio algebra for expanding a fixed-state policy: if the increment's
+exit-weight/time ratio is at least the current ratio, then the expanded
+fixed-state pair satisfies `Tbar * Q <= T * Qbar`.
+-/
+theorem fixedStateCross_le_of_increment_ratio_ge
+    (T Q dT dQ : ℝ)
+    (hincrement : Q * dT ≤ T * dQ) :
+    (T + dT) * Q ≤ T * (Q + dQ) := by
+  nlinarith
+
+/--
+Reverse cross-ratio algebra for expanding a fixed-state policy: if the
+increment's exit-weight/time ratio is at most the current ratio, then
+`T * Qbar <= Tbar * Q`.
+-/
+theorem fixedStateCross_ge_of_increment_ratio_le
+    (T Q dT dQ : ℝ)
+    (hincrement : T * dQ ≤ Q * dT) :
+    T * (Q + dQ) ≤ (T + dT) * Q := by
+  nlinarith
+
+/--
+Measured fixed-state cross-ratio bridge for adding accepted trips.  This is
+the `gn21ScaledStateTime`/`gn21ExitWeightIntegral` version of
+`fixedStateCross_le_of_increment_ratio_ge`.
+-/
+theorem gn21FixedStateCross_le_union_of_increment_ratio_ge
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) added μ)
+    (hincrement :
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ *
+          (arrivalRate * ∫ τ in added, τ ∂μ) ≤
+        gn21ScaledStateTime μ arrivalRate σ *
+          (arrivalRate *
+            ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μ)) :
+    gn21ScaledStateTime μ arrivalRate (σ ∪ added) *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ ≤
+      gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI (σ ∪ added) := by
+  rw [gn21ScaledStateTime_union μ arrivalRate σ added hdisjoint
+      hadded_measurable htime_integrable_σ htime_integrable_added,
+    gn21ExitWeightIntegral_union μ arrivalRate switchIJ switchJI σ added
+      hdisjoint hadded_measurable hq_integrable_σ hq_integrable_added]
+  exact
+    fixedStateCross_le_of_increment_ratio_ge
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+      (arrivalRate * ∫ τ in added, τ ∂μ)
+      (arrivalRate * ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μ)
+      hincrement
+
+/--
+Reverse measured fixed-state cross-ratio bridge for adding accepted trips.
+This is the union version of `fixedStateCross_ge_of_increment_ratio_le`.
+-/
+theorem gn21FixedStateCross_ge_union_of_increment_ratio_le
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hq_integrable_added :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) added μ)
+    (hincrement :
+      gn21ScaledStateTime μ arrivalRate σ *
+          (arrivalRate *
+            ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μ) ≤
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ *
+          (arrivalRate * ∫ τ in added, τ ∂μ)) :
+    gn21ScaledStateTime μ arrivalRate σ *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI (σ ∪ added) ≤
+      gn21ScaledStateTime μ arrivalRate (σ ∪ added) *
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ := by
+  rw [gn21ScaledStateTime_union μ arrivalRate σ added hdisjoint
+      hadded_measurable htime_integrable_σ htime_integrable_added,
+    gn21ExitWeightIntegral_union μ arrivalRate switchIJ switchJI σ added
+      hdisjoint hadded_measurable hq_integrable_σ hq_integrable_added]
+  exact
+    fixedStateCross_ge_of_increment_ratio_le
+      (gn21ScaledStateTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+      (arrivalRate * ∫ τ in added, τ ∂μ)
+      (arrivalRate * ∫ τ in added, gn21SwitchProb switchIJ switchJI τ ∂μ)
+      hincrement
+
 /-- Structured IC price family from Theorem 3: `w_i(τ)=m_i τ + z_i q_{i→j}(τ)`. -/
 def structuredSurgePrice (m z : ℝ) (q : TripLength → ℝ) : PricingFunction :=
   fun τ => m * τ + z * q τ
