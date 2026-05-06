@@ -226,7 +226,10 @@ cache is `source.txt`.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`
   and source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_source_assumptions`
-  make this the current lightest fixed-transfer boundary.
+  make this the current lightest fixed-transfer boundary when the source proof
+  supplies allowed replacement data; the sibling wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_source_assumptions`
+  accepts all-optimal allowed policy forms directly.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

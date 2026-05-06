@@ -256,7 +256,9 @@ into the concrete endpoint policy data.
   It asks for ordinary all-measurable allowed Lemma 5 replacement data and a
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`;
   the adapter derives positive-cutoff endpoint data, fixed-state cross-ratios,
-  and fixed-state accounting internally.
+  and fixed-state accounting internally.  If the source proof produces
+  all-optimal allowed policy forms directly instead, use the sibling wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_source_assumptions`.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
