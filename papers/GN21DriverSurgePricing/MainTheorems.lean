@@ -1768,6 +1768,19 @@ theorem dynamicStateReward_optimal_of_dynamicOptimal
   simpa [Function.update_eq_self] using hσ (Function.update σ i τ)
 
 /--
+A measurably optimal dynamic policy is locally optimal against feasible
+measurable one-state replacements.
+-/
+theorem dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+    (R : DynamicReward) {σ : Fin 2 → TripPolicy}
+    (hσ : dynamicMeasurableOptimal R σ) (i : Fin 2)
+    {τ : TripPolicy}
+    (hτ : dynamicFeasibleMeasurablePolicy (Function.update σ i τ)) :
+    dynamicStateReward R σ i τ ≤ dynamicStateReward R σ i (σ i) := by
+  unfold dynamicStateReward
+  simpa [Function.update_eq_self] using hσ.2 (Function.update σ i τ) hτ
+
+/--
 If replacing either state's policy by accept-all weakly improves reward, then
 accept-all is dynamically optimal.
 -/
@@ -1961,6 +1974,71 @@ theorem acceptAllDynamic_unique_optimal_of_strict_local_improvements
   rcases C.exists_optimal with ⟨σstar, hσstar⟩
   have hstar_eq := hunique σstar hσstar
   have haccept : dynamicOptimal R acceptAllDynamicPolicy := by
+    simpa [hstar_eq] using hσstar
+  exact ⟨haccept, hunique⟩
+
+/--
+Strict local-improvement certificate on the source feasible measurable domain.
+The replacement itself is required to remain feasible measurable.
+-/
+structure Theorem4MeasurableStrictLocalImprovementCertificate
+    (R : DynamicReward) where
+  exists_optimal :
+    ∃ σ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R σ
+  nonsurge_strict_improvement_unless :
+    ∀ σ : Fin 2 → TripPolicy, (hσ : dynamicMeasurableOptimal R σ) →
+      ¬ acceptsAllTrips (σ 0) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update σ 0 τ) ∧
+            dynamicStateReward R σ 0 (σ 0) <
+              dynamicStateReward R σ 0 τ
+  surge_strict_improvement_unless :
+    ∀ σ : Fin 2 → TripPolicy, (hσ : dynamicMeasurableOptimal R σ) →
+      ¬ acceptsAllTrips (σ 1) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update σ 1 τ) ∧
+            dynamicStateReward R σ 1 (σ 1) <
+              dynamicStateReward R σ 1 τ
+
+/--
+Strict feasible-measurable local improvements rule out every non-accept-all
+measurable optimum.  Existence of a feasible measurable optimum then promotes
+accept-all itself to the measurable optimum.
+-/
+theorem acceptAllDynamic_measurable_unique_optimal_of_strict_local_improvements
+    (R : DynamicReward)
+    (C : Theorem4MeasurableStrictLocalImprovementCertificate R) :
+    dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal R σ → σ = acceptAllDynamicPolicy := by
+  have hall :
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal R σ → ∀ i : Fin 2, acceptsAllTrips (σ i) := by
+    intro σ hσ i
+    fin_cases i
+    · by_contra hnot
+      rcases C.nonsurge_strict_improvement_unless σ hσ hnot with
+        ⟨τ, hτ_feasible, hlt⟩
+      have hlocal :=
+        dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+          R hσ 0 hτ_feasible
+      linarith
+    · by_contra hnot
+      rcases C.surge_strict_improvement_unless σ hσ hnot with
+        ⟨τ, hτ_feasible, hlt⟩
+      have hlocal :=
+        dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+          R hσ 1 hτ_feasible
+      linarith
+  have hunique :
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal R σ → σ = acceptAllDynamicPolicy := by
+    intro σ hσ
+    exact eq_acceptAllDynamicPolicy_of_statewise_subset_acceptsAll
+      (fun i => (hσ.1 i).1) (hall σ hσ)
+  rcases C.exists_optimal with ⟨σstar, hσstar⟩
+  have hstar_eq := hunique σstar hσstar
+  have haccept : dynamicMeasurableOptimal R acceptAllDynamicPolicy := by
     simpa [hstar_eq] using hσstar
   exact ⟨haccept, hunique⟩
 
@@ -16782,6 +16860,115 @@ theorem gn21MeasuredAggregateDynamicStateReward_one
   simp [gn21MeasuredAggregateDynamicStateReward, replaceDynamicPolicyState]
 
 /--
+Measured aggregate strict-local-improvement certificate on the source feasible
+measurable policy domain.  The endpoint replacement is required to stay in
+that domain.
+-/
+structure Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  nonsurge_strict_aggregate_improvement_unless :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update ρ 0 τ) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) (ρ 1) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 τ (ρ 1) ∧
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) τ (ρ 1)
+  surge_strict_aggregate_improvement_unless :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update ρ 1 τ) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) (ρ 1) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) τ ∧
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) τ
+
+/--
+Feasible measured aggregate strict-local improvements instantiate the generic
+feasible-measurable strict-local interface.
+-/
+def theorem4MeasurableStrictLocalImprovementCertificate_of_measured_aggregate_feasible_strict_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C : Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w) :
+    Theorem4MeasurableStrictLocalImprovementCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) where
+  exists_optimal := C.exists_optimal
+  nonsurge_strict_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.nonsurge_strict_aggregate_improvement_unless ρ hρ hnot with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    refine ⟨τ, hτ_feasible, ?_⟩
+    have hlt :=
+      paper_lemma1_measured_dynamic_reward_lt_of_aggregate_pair_lt_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) τ (ρ 1) Hcur Hrep hagg
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero] using hlt
+  surge_strict_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.surge_strict_aggregate_improvement_unless ρ hρ hnot with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    refine ⟨τ, hτ_feasible, ?_⟩
+    have hlt :=
+      paper_lemma1_measured_dynamic_reward_lt_of_aggregate_pair_lt_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) (ρ 0) τ Hcur Hrep hagg
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_one] using hlt
+
+/--
+Feasible measured aggregate strict-local improvements imply accept-all
+measurable optimality, and uniqueness inside the feasible measurable domain.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C : Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ →
+          ρ = acceptAllDynamicPolicy :=
+  acceptAllDynamic_measurable_unique_optimal_of_strict_local_improvements
+    (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+    (theorem4MeasurableStrictLocalImprovementCertificate_of_measured_aggregate_feasible_strict_improvements
+      μ arrival switch12 switch21 w C)
+
+/--
 State-1 raw strict aggregate improvement proposition.  The concrete endpoint
 bridges produce this proposition before it is packaged as bridge data.
 -/
@@ -27537,6 +27724,111 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_o
   · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
 
 /--
+Measured Theorem 3 endpoint from feasible-measurable strict local aggregate
+improvements, using the direct Lemma 9 primitive-positivity feasibility route.
+This is the source-domain analogue of the unrestricted strict-local endpoint.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_of_ratio_and_measured_aggregate_feasible_strict_local_improvements_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hstrict :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicMeasurableIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives
+      rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq hR1_pos
+      hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos hQ1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos hgap2_nonneg
+      hT2_ge_one hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hnBounds, hsBounds, hm0_eq, hz0_eq,
+      hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hstrictC :
+      Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+    hstrict m z hnonneg hparams
+  have hopt :
+      dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal R ρ → ρ = acceptAllDynamicPolicy := by
+    simpa [R, gn21MeasuredCTMCStructuredDynamicReward] using
+      paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) hstrictC
+  have hIC : dynamicMeasurableIncentiveCompatible R := hopt.1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
 Weak statewise accept-all boundary for the accept-all measured Theorem 3
 route.  It asks only for weak accept-all improvements for the prices actually
 constructed by Theorem 3.
@@ -27568,6 +27860,23 @@ def theorem3AcceptAllFeasibleWeakRewardCertificate
         Theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate
           (gn21MeasuredCTMCStructuredDynamicReward
             μ arrival switch12 switch21 m z)
+
+/--
+Feasible-measurable strict-local boundary for the accept-all measured Theorem 3
+route.  The caller supplies the endpoint/measure-theoretic local improvement
+certificate for the prices constructed by Theorem 3.
+-/
+def theorem3AcceptAllFeasibleStrictLocalCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+          μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
 
 /-- Global statewise reward comparisons instantiate the weak Theorem 3 boundary. -/
 def theorem3AcceptAllWeakRewardCertificate_of_global_statewise_accept_all_reward
@@ -27871,6 +28180,137 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_weak
       hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
       hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
       hswitch21_lt_Q2 hweak
+
+/--
+Accept-all-primitive Theorem 3 endpoint from feasible measurable strict-local
+improvements.  This is the source-domain route matching the paper's local
+deviation proof: every non-accept-all feasible measurable optimum admits a
+strict feasible local improvement.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hstrict :
+      theorem3AcceptAllFeasibleStrictLocalCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  simpa [theorem3MeasuredStructuredMeasurableICConclusion,
+    theorem3AcceptAllStructuredParameterEvidence,
+    theorem3AcceptAllFeasibleStrictLocalCertificate] using
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_of_ratio_and_measured_aggregate_feasible_strict_local_improvements_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+      hswitch21_lt_Q2 hstrict
+
+/--
+Bundled source-level assumptions for the feasible strict-local Theorem 3
+route.  All scalar CTMC and accept-all measure obligations are proved inside
+Lean; the remaining field is exactly the paper's source-domain local
+improvement obligation for constructed structured prices.
+-/
+structure Theorem3AcceptAllFeasibleStrictLocalSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  strict_local :
+    theorem3AcceptAllFeasibleStrictLocalCertificate
+      μ arrival R1 R2 switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper at the feasible strict-local measurable-IC
+boundary.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllFeasibleStrictLocalSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      A.strict_local
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is

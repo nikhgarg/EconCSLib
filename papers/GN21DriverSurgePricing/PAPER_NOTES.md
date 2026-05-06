@@ -89,6 +89,14 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `dynamicMeasurableIncentiveCompatible`,
   feasible primitive current-bounds certificate
   `Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate`,
+  feasible measurable strict-local interface
+  `Theorem4MeasurableStrictLocalImprovementCertificate`,
+  feasible measured aggregate strict-local certificate
+  `Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate`,
+  feasible measured aggregate strict-local adapter
+  `theorem4MeasurableStrictLocalImprovementCertificate_of_measured_aggregate_feasible_strict_improvements`,
+  feasible measured aggregate strict-local Theorem 4 endpoint
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements`,
   source-data current-bounds packages
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData` and
   `GN21SurgeLemma9AcceptAllAggregateSourceData`,
@@ -106,6 +114,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate`,
   reward-rate to scaled-earning bridge
   `gn21ScaledStateEarning_eq_reward_mul_scaled_time_of_measuredStateRewardRate`,
+  Theorem 3 feasible strict-local boundary
+  `theorem3AcceptAllFeasibleStrictLocalCertificate`,
+  feasible strict-local source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   source-facing current-bounds wrapper
