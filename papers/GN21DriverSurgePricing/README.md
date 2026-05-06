@@ -187,7 +187,16 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_shape_replacement_positive_source_assumptions`
   now derives the all-optimal policy-form classification from all-measurable
   Lemma 5 replacement data and asks separately only for the fixed-transfer local
-  endpoint facts.
+  endpoint facts.  The lighter
+  `Theorem4AllMeasurableOptimalAllowedReplacementData` package and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_source_assumptions`
+  let the source proof give ordinary allowed Lemma 5 replacement cases instead.
+  The support-derived `GN21...Theorem3FixedTransferLocalData.of_positive_cutoff`
+  constructors, the positive-cutoff local endpoint certificate, and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`
+  remove `hdensity_pos` from the current lightest source boundary: positive
+  cutoffs plus accept-all density support now derive density positivity
+  internally.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -586,12 +595,12 @@ allowed-replacement source-boundary certificate, and the current regular
 allowed-policy-form route that consumes measurable Lemma 5 policy-form
 classification plus regular endpoint packages directly.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-regular allowed-policy-form source-facing endpoint layer for arbitrary open measurable
-optimal policies by proving the regularity theorem that derives the measurable
-Lemma 5 allowed policy forms, chooses the relevant upper, lower, tail, or
-middle-rejection endpoint move, and discharges the remaining density,
-integrability, finite-mass, and current-bound fields of
-`Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`.
+positive-cutoff fixed-transfer source endpoint for arbitrary feasible
+measurable optimal policies by proving the regularity theorem that supplies
+ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
+tail, or middle-rejection endpoint move, and discharges the remaining
+integrability, fixed-state cross-ratio, finite-mass, and accounting fields of
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPositiveCutoffLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
@@ -602,8 +611,8 @@ into lower- and upper-cutoff endpoint variants; the older regular-selection
 route remains compiled for the variant that proves ordinary allowed Lemma 5
   replacement data explicitly.  Shared source regularity is now factored into
   `GN21RegularEndpointSharedSourceData`, so the final selector can focus on
-  cutoff-local density positivity, tail integrability, and source current
-  bounds.  The source current-bound records can now be built with
+  positive cutoff geometry, tail integrability, and fixed-state transfer
+  facts.  The source current-bound records can still be built with
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening` and
   `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`, which
   apply the measured Remark 4 tightening lemmas from accept-all moving-state

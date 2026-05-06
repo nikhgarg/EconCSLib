@@ -304,6 +304,15 @@ This is a lightweight handoff document for source-to-Lean mapping.
   with its `of_shape_replacements` adapter, and shape-replacement positive
   fixed-transfer wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_shape_replacement_positive_source_assumptions`,
+  all-measurable allowed-replacement package
+  `Theorem4AllMeasurableOptimalAllowedReplacementData` with its
+  `to_shape_replacements` adapter, support-derived fixed-transfer local
+  constructors ending in `of_positive_cutoff`, positive-cutoff local endpoint
+  certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPositiveCutoffLocalEndpointCertificate`
+  with its `to_local_endpoint` adapter, and the current lightest
+  fixed-transfer source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

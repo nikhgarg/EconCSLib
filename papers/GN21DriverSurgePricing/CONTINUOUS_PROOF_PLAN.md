@@ -214,10 +214,12 @@ into the concrete endpoint policy data.
   directly through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
 - For the fixed-transfer route, the current lightest source boundary is
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_shape_replacement_positive_source_assumptions`:
-  it derives the constructed parameter data, surge-ratio positivity, and
-  allowed policy-form classification internally, leaving only all-measurable
-  Lemma 5 replacement data plus the local fixed-transfer endpoint facts.
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`:
+  it derives the constructed parameter data, surge-ratio positivity,
+  all-measurable Lemma 5 replacement certificates, allowed policy-form
+  classification, and density positivity internally.  The source proof now
+  supplies ordinary allowed Lemma 5 replacement cases plus positive-cutoff
+  local fixed-transfer endpoint facts.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
@@ -225,7 +227,7 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedPolicyFormsSourceAssumptions`
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementPositiveCutoffSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper
