@@ -160,6 +160,19 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions`,
+  source-facing measurable replacement data
+  `Theorem4NonsurgeMeasurableReplacementData` and
+  `Theorem4SurgeMeasurableReplacementData`,
+  allowed-replacement-to-measurable constructor
+  `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`,
+  source-facing endpoint current-bounds selection certificate
+  `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`,
+  source-facing selection-to-Theorem-4 adapter
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection`,
+  and Theorem 3 source-facing endpoint current-bounds wrapper
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`
+  plus
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
   feasible accept-all-bound endpoint wrappers for all four Theorem 4 shape
   cases
   `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_acceptAll_bounds`,

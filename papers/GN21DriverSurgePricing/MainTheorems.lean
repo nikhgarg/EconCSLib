@@ -116,6 +116,11 @@ the continuous CTMC source theorems.
   `Theorem4SurgeAllowedReplacementData`, and
   `Theorem4AllOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`:
   source-facing case data and builder for all-optimal replacement proofs.
+- `Theorem4NonsurgeMeasurableReplacementData`,
+  `Theorem4SurgeMeasurableReplacementData`, and
+  `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`:
+  measurable-domain builder deriving feasible canonical replacement data from
+  source-facing allowed Lemma 5 cases.
 - `paper_theorem4_dynamic_structural_policy_of_shape_derivation`: Theorem 4
   assembly from a Lemma 5-style shape derivation certificate.
 - `Theorem4ShapeReplacementDerivationCertificate`,
@@ -289,6 +294,11 @@ the continuous CTMC source theorems.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_acceptAll_primitives_and_allowed_replacement_data_of_lemma9_positive_primitives`:
   accept-all-primitive endpoint from the packaged allowed-replacement Theorem 4
   boundary.
+- `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`:
+  current source-facing measurable Theorem 3 boundary from allowed Lemma 5
+  cases plus endpoint current-bounds selections.
 - `GN21SurgeIntervalEndpointBridgeData`,
   `GN21NonsurgeIntervalEndpointBridgeData`, and
   `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
@@ -12232,6 +12242,178 @@ structure Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
           (dynamicStateReward R ρ 1) (ρ 1) shape.1,
           {h : dynamicFeasibleMeasurablePolicy
             (Function.update ρ 1 C.policy) // True})
+
+/--
+Source-facing non-surge Lemma 5 replacement data in the feasible measurable
+domain.  The replacement certificate is paired with the proof that updating the
+non-surge state by its canonical replacement remains a feasible measurable
+dynamic policy.
+-/
+structure Theorem4NonsurgeMeasurableReplacementData
+    (R : DynamicReward) (ρ : Fin 2 → TripPolicy) where
+  shape :
+    {shape : Lemma5DerivativeShape //
+      theorem4NonsurgeAllowedLemma5Shape shape}
+  replacement :
+    Lemma5OptimizerReplacementCertificate
+      (dynamicStateReward R ρ 0) (ρ 0) shape.1
+  feasible :
+    dynamicFeasibleMeasurablePolicy
+      (Function.update ρ 0 replacement.policy)
+
+/--
+Source-facing surge Lemma 5 replacement data in the feasible measurable domain.
+-/
+structure Theorem4SurgeMeasurableReplacementData
+    (R : DynamicReward) (ρ : Fin 2 → TripPolicy) where
+  shape :
+    {shape : Lemma5DerivativeShape //
+      theorem4SurgeAllowedLemma5Shape shape}
+  replacement :
+    Lemma5OptimizerReplacementCertificate
+      (dynamicStateReward R ρ 1) (ρ 1) shape.1
+  feasible :
+    dynamicFeasibleMeasurablePolicy
+      (Function.update ρ 1 replacement.policy)
+
+/--
+The canonical non-surge allowed Lemma 5 replacements preserve feasible
+measurability when applied to a feasible measurable dynamic policy.
+-/
+theorem Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement_feasible
+    {R : DynamicReward} {ρ : Fin 2 → TripPolicy}
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (D :
+      Theorem4NonsurgeAllowedReplacementData
+        (dynamicStateReward R ρ 0) (ρ 0)) :
+    dynamicFeasibleMeasurablePolicy
+      (Function.update ρ 0
+        (Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement D).2.policy) := by
+  cases D with
+  | positive hreward_ge hstrict_unless_accepts_all =>
+      exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ_feasible 0
+  | rejectLong t hreward_ge hstrict_unless_rejects_long =>
+      exact
+        dynamicFeasibleMeasurablePolicy_update hρ_feasible 0
+          (rejectLongTripsPolicy t)
+          (rejectLongTripsPolicy_subset_acceptAll t)
+          (measurableSet_rejectLongTripsPolicy t)
+  | acceptMiddle lo hi hreward_ge hstrict_unless_accepts_middle =>
+      exact
+        dynamicFeasibleMeasurablePolicy_update hρ_feasible 0
+          (acceptMiddleTripsPolicy lo hi)
+          (acceptMiddleTripsPolicy_subset_acceptAll lo hi)
+          (measurableSet_acceptMiddleTripsPolicy lo hi)
+
+/--
+The canonical surge allowed Lemma 5 replacements preserve feasible
+measurability when applied to a feasible measurable dynamic policy.
+-/
+theorem Theorem4SurgeAllowedReplacementData.to_allowed_replacement_feasible
+    {R : DynamicReward} {ρ : Fin 2 → TripPolicy}
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (D :
+      Theorem4SurgeAllowedReplacementData
+        (dynamicStateReward R ρ 1) (ρ 1)) :
+    dynamicFeasibleMeasurablePolicy
+      (Function.update ρ 1
+        (Theorem4SurgeAllowedReplacementData.to_allowed_replacement D).2.policy) := by
+  cases D with
+  | positive hreward_ge hstrict_unless_accepts_all =>
+      exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ_feasible 1
+  | rejectShort t hreward_ge hstrict_unless_rejects_short =>
+      exact
+        dynamicFeasibleMeasurablePolicy_update hρ_feasible 1
+          (rejectShortTripsPolicy t)
+          (rejectShortTripsPolicy_subset_acceptAll t)
+          (measurableSet_rejectShortTripsPolicy t)
+  | rejectMiddle lo hi hreward_ge hstrict_unless_rejects_middle =>
+      exact
+        dynamicFeasibleMeasurablePolicy_update hρ_feasible 1
+          (rejectMiddleTripsPolicy lo hi)
+          (rejectMiddleTripsPolicy_subset_acceptAll lo hi)
+          (measurableSet_rejectMiddleTripsPolicy lo hi)
+
+/-- Upgrade source-facing non-surge replacement cases to measurable replacement data. -/
+def Theorem4NonsurgeMeasurableReplacementData.of_allowed
+    {R : DynamicReward} {ρ : Fin 2 → TripPolicy}
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (D :
+      Theorem4NonsurgeAllowedReplacementData
+        (dynamicStateReward R ρ 0) (ρ 0)) :
+    Theorem4NonsurgeMeasurableReplacementData R ρ where
+  shape := (Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement D).1
+  replacement :=
+    (Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement D).2
+  feasible :=
+    Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement_feasible
+      hρ_feasible D
+
+/-- Upgrade source-facing surge replacement cases to measurable replacement data. -/
+def Theorem4SurgeMeasurableReplacementData.of_allowed
+    {R : DynamicReward} {ρ : Fin 2 → TripPolicy}
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (D :
+      Theorem4SurgeAllowedReplacementData
+        (dynamicStateReward R ρ 1) (ρ 1)) :
+    Theorem4SurgeMeasurableReplacementData R ρ where
+  shape := (Theorem4SurgeAllowedReplacementData.to_allowed_replacement D).1
+  replacement :=
+    (Theorem4SurgeAllowedReplacementData.to_allowed_replacement D).2
+  feasible :=
+    Theorem4SurgeAllowedReplacementData.to_allowed_replacement_feasible
+      hρ_feasible D
+
+/--
+Build the all-measurable-optimal replacement certificate from explicitly
+measurable per-state replacement data.
+-/
+def Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_measurable_replacement_data
+    (R : DynamicReward)
+    (hexists :
+      ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ)
+    (hnonsurge :
+      ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+        Theorem4NonsurgeMeasurableReplacementData R ρ)
+    (hsurge :
+      ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+        Theorem4SurgeMeasurableReplacementData R ρ) :
+    Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate R where
+  exists_optimal := hexists
+  replacements := by
+    intro ρ hρ
+    let N := hnonsurge ρ hρ
+    let S := hsurge ρ hρ
+    exact
+      ⟨⟨N.shape, ⟨N.replacement, ⟨N.feasible, trivial⟩⟩⟩,
+        ⟨S.shape, ⟨S.replacement, ⟨S.feasible, trivial⟩⟩⟩⟩
+
+/--
+Build the all-measurable-optimal replacement certificate directly from
+source-facing allowed replacement cases.  Feasible measurability of the
+canonical replacements is derived internally.
+-/
+def Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data
+    (R : DynamicReward)
+    (hexists :
+      ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ)
+    (hnonsurge :
+      ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+        Theorem4NonsurgeAllowedReplacementData
+          (dynamicStateReward R ρ 0) (ρ 0))
+    (hsurge :
+      ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+        Theorem4SurgeAllowedReplacementData
+          (dynamicStateReward R ρ 1) (ρ 1)) :
+    Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate R :=
+  Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_measurable_replacement_data
+    R hexists
+    (fun ρ hρ =>
+      Theorem4NonsurgeMeasurableReplacementData.of_allowed
+        hρ.1 (hnonsurge ρ hρ))
+    (fun ρ hρ =>
+      Theorem4SurgeMeasurableReplacementData.of_allowed
+        hρ.1 (hsurge ρ hρ))
 
 /--
 Convert all-measurable-optimal Lemma 5 replacement data into the measurable
@@ -25247,6 +25429,137 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
         μ arrival m z switch12 switch21 C)
 
 /--
+Source-facing current-bounds endpoint selection certificate.  It asks for
+ordinary allowed Lemma 5 replacement cases; feasible measurability of their
+canonical replacement policies is derived by
+`Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  nonsurge_replacement_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        Theorem4NonsurgeAllowedReplacementData
+          (dynamicStateReward
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ 0)
+          (ρ 0)
+  surge_replacement_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        Theorem4SurgeAllowedReplacementData
+          (dynamicStateReward
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ 1)
+          (ρ 1)
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+Convert source-facing allowed replacement data and endpoint current-bounds
+selections into the dependent endpoint-selection certificate.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate.of_allowed_replacement_data
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate
+      μ arrival m z switch12 switch21 where
+  all_measurable_shape_replacements :=
+    Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      C.exists_optimal C.nonsurge_replacement_data C.surge_replacement_data
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
+
+/--
+Measurable Theorem 4 accept-all uniqueness from source-facing allowed
+replacement cases and endpoint current-bounds selections.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection
+      μ arrival m z switch12 switch21
+      (Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate.of_allowed_replacement_data
+        μ arrival m z switch12 switch21 C)
+
+/--
 Surge reject-middle upper-cutoff bridge using accept-all Lemma 9 bounds.  The
 current-policy bounds, `Q_2 > switch21`, and `switch21*T_2-Q_2 >= 0` are
 derived from measured Remark 4 tightening and positive current-policy measure.
@@ -33498,9 +33811,8 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_sh
 
 /--
 Bundled source-level assumptions for the endpoint current-bounds selection
-route.  This is the narrowest compiled Theorem 3 boundary for the continuous
-GN21 proof: scalar CTMC obligations are discharged in Lean, while the remaining
-field packages the Lemma 5 measurable replacement data together with the
+route.  Scalar CTMC obligations are discharged in Lean, while the remaining
+field packages dependent measurable Lemma 5 replacement data together with the
 case-by-case density endpoint selections.
 -/
 structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions
@@ -33583,6 +33895,94 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
             Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_endpoint_current_bounds_selection
               μ arrival m z switch12 switch21
               (A.endpoint_current_bounds_selection m z hnonneg hparams) }
+
+/--
+Source-level assumptions for the current-bounds endpoint route with
+source-facing allowed Lemma 5 replacement cases.  This is the current
+paper-facing continuous boundary: Lean derives measurable feasibility of the
+canonical replacement policies and the scalar CTMC obligations.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_allowed_replacement_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from source-facing allowed Lemma 5 replacement
+cases and endpoint current-bounds selections.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_current_bounds_selection := by
+          intro m z hnonneg hparams
+          exact
+            Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate.of_allowed_replacement_data
+              μ arrival m z switch12 switch21
+              (A.endpoint_current_bounds_allowed_replacement_selection
+                m z hnonneg hparams) }
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is
