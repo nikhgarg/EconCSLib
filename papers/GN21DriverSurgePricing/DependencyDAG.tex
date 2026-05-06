@@ -73,6 +73,11 @@
   structured algebra, feasibility, tightening, positive-ratio, pointwise kernel, aggregate current-bounds, source-data/accounting/reward-rate reductions, and endpoint bridges encoded
 };
 
+\node[dag_result, text width=4.8cm] (EndpointFeasible) at (23.6,-9.9) {
+  \textbf{Feasible endpoint improvements}\\
+  compiled with-density, accept-all-bound wrappers for all four Theorem 4 shape cases
+};
+
 \node[dag_conditional, text width=4.6cm] (Thm4) at (23.6,-6.6) {
   \textbf{Theorem 4 (App. D.4)}\\
   shape routing/case split, feasible-measurable shape derivation, endpoint bridges, with-density wrappers, and packaged statewise certificates closed; arbitrary-policy selection open
@@ -86,6 +91,11 @@
 \node[dag_conditional, text width=4.6cm] (Thm3) at (23.6,-13.2) {
   \textbf{Theorem 3 (Sec. 4.2)}\\
   CTMC price family, C threshold, m/z construction, feasible-measurable shape/statewise source endpoint, accounting/reward-rate current-bounds route, and positive/allowed replacement wrappers exposed; proof remains conditional on optimal-policy local-improvement bridge
+};
+
+\node[dag_result, text width=5.0cm] (MeasShapeSource) at (29.5,-13.2) {
+  \textbf{Measurable replacement source route}\\
+  compiled adapter from all-measurable Lemma 5 replacements and endpoint cases to Theorem 3 IC
 };
 
 \node[dag_result, text width=4.9cm] (FiniteAux) at (0,-9.9) {
@@ -106,9 +116,12 @@
 \draw[dag_dashed_arrow] (Lemma6.east) -- (Lemmas78.west);
 \draw[dag_dashed_arrow] (Lemma6.south) |- (Lemmas910.west);
 \draw[dag_dashed_arrow] (Lemmas78.north east) -- (Thm4.north west);
-\draw[dag_dashed_arrow] (Lemmas910.east) -| (Thm4.south);
+\draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);
+\draw[dag_arrow] (EndpointFeasible.north) -- (Thm4.south);
 \draw[dag_dashed_arrow] (Thm4.east) -- (Thm2.west);
-\draw[dag_dashed_arrow] (Lemmas910.south) |- (Thm3.west);
+\draw[dag_arrow] (EndpointFeasible.east) -| (MeasShapeSource.north);
+\draw[dag_dashed_arrow] (Thm4.east) -| (MeasShapeSource.north);
+\draw[dag_arrow] (MeasShapeSource.west) -- (Thm3.east);
 
 \end{scope}
 \end{dagPaperBody}

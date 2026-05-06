@@ -9,22 +9,31 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
 
 The remaining paper-facing field is
 `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate` for the
-structured prices constructed by Theorem 3.
+structured prices constructed by Theorem 3.  A closer source endpoint is now
+also compiled:
+
+```lean
+paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_replacement_statewise_improvements_source_assumptions
+```
+
+This endpoint derives the measurable shape-derivation certificate internally
+from all-measurable-optimal Lemma 5 replacement data, then consumes the four
+feasible endpoint-improvement cases.
 
 ## Current Best Path
 
-1. Prove feasible endpoint improvement wrappers for the four shape cases:
+1. The feasible endpoint improvement wrappers for the four shape cases are
+   compiled, including the accept-all-bound versions:
    non-surge reject-long, non-surge accept-middle, surge reject-short, and
-   surge reject-middle.  These are mostly domain facts: the concrete endpoint
-   replacement set is measurable and remains inside `acceptAllPolicy`.
+   both surge reject-middle endpoint moves.
 
 2. Prove one selection theorem that turns a feasible measurable optimum with a
    Lemma 5 shape into the matching endpoint improvement data.  This should avoid
    more top-level wrappers and target exactly the four fields of
    `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate`.
 
-3. Instantiate the source Theorem 3 wrapper from that selection theorem, with
-   the scalar Theorem 3 parameter construction already proved.
+3. Instantiate the replacement-source Theorem 3 wrapper from that selection
+   theorem, with the scalar Theorem 3 parameter construction already proved.
 
 ## Key Missing Mathematical Lemma
 
@@ -56,13 +65,14 @@ into the concrete endpoint policy data.
 
 - `dynamicFeasibleMeasurablePolicy_update` is now proved and should be reused
   everywhere a single-state replacement is selected.
-- A family of feasible endpoint wrappers should mirror the raw endpoint wrappers:
+- The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
   `...surge_feasible...tail...`,
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
-- After those compile, define one source certificate for endpoint regularity
+- The source certificate should now target
+  `Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper
@@ -79,4 +89,3 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_continuous_so
 where the final assumptions are standard continuous-measure regularity and the
 paper's Lemma 9/10 inequalities, not any prepackaged local-improvement or
 replacement certificate.
-
