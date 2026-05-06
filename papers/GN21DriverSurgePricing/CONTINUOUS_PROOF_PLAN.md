@@ -205,7 +205,10 @@ into the concrete endpoint policy data.
   are the current targets because they avoid duplicating Lemma 5 replacement
   measurability work: the continuous proof only needs to classify every
   measurable optimum into the allowed policy forms, and the regular endpoint
-  fields supply the realized endpoint moves.
+  fields supply the realized endpoint moves.  If the source proof instead
+  produces all-measurable Lemma 5 replacement data, it now feeds this target
+  directly through
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

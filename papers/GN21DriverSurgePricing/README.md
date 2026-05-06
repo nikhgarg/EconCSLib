@@ -130,6 +130,7 @@ cache is `source.txt`.
   `Theorem4NonsurgeMeasurableReplacementData`,
   `Theorem4SurgeMeasurableReplacementData`,
   `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`,
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`,
   `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection`,
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`,
@@ -196,7 +197,10 @@ cache is `source.txt`.
   classification plus continuous-density endpoint data, source Lemma 9/10
   current-bounds data, support, and tail-integrability packages, then chooses a
   representative optimum and derives the feasible strict-local Theorem 4
-  certificate internally.  The regular-shape route remains exposed as
+  certificate internally.  All-measurable Lemma 5 replacement data can now
+  provide the policy-form classification directly through
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
+  The regular-shape route remains exposed as
   `Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_shape_derivation`,
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularShapeSourceAssumptions`,

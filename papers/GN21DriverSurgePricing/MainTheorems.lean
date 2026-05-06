@@ -13453,6 +13453,33 @@ noncomputable def theorem4MeasurableShapeDerivationCertificate_of_all_measurable
                 (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
                   R hρ 1 hsfeasible.1)⟩⟩ }
 
+/--
+All-measurable-optimal Lemma 5 replacement data directly imply the
+all-optimal allowed policy-form certificate.  This is the lightweight target
+used by the Theorem 3 fixed-transfer endpoint route.
+-/
+def Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
+    {R : DynamicReward}
+    (C : Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate R) :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate R where
+  exists_optimal := C.exists_optimal
+  only_policy_forms := by
+    intro ρ hρ
+    rcases C.replacements ρ hρ with
+      ⟨⟨⟨nshape, hnallowed⟩, ⟨hnreplacement, hnfeasible⟩⟩,
+        ⟨⟨sshape, hsallowed⟩, ⟨hsreplacement, hsfeasible⟩⟩⟩
+    exact
+      ⟨⟨nshape, hnallowed,
+          lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+            (dynamicStateReward R ρ 0) (ρ 0) nshape hnreplacement
+            (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+              R hρ 0 hnfeasible.1)⟩,
+        ⟨sshape, hsallowed,
+          lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+            (dynamicStateReward R ρ 1) (ρ 1) sshape hsreplacement
+            (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+              R hρ 1 hsfeasible.1)⟩⟩
+
 /-- Measurable shape derivation implies the source Theorem 4 shape predicates. -/
 theorem paper_theorem4_measurable_dynamic_structural_policy_of_shape_derivation
     (R : DynamicReward)

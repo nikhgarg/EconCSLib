@@ -165,6 +165,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem4SurgeMeasurableReplacementData`,
   allowed-replacement-to-measurable constructor
   `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`,
+  all-measurable replacement-to-policy-form adapter
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`,
   source-facing endpoint current-bounds selection certificate
   `Theorem4MeasurableEndpointCurrentBoundsAllowedReplacementSelectionCertificate`,
   source-facing selection-to-Theorem-4 adapter
