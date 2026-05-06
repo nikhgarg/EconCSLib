@@ -174,6 +174,10 @@ cache is `source.txt`.
   with accept-all-complement bridges reducing each statewise weak improvement
   to pointwise nonnegativity of the Lemma 6 kernel over the rejected feasible
   complement plus the usual denominator and integrability side conditions.
+  The direct constructors
+  `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
+  `GN21SurgeLemma9AcceptAllAggregateData.of_source` now compose source Lemma
+  9/10 data with the primitive current-bounds route in one step.
   The current-bounds route is now packaged as
   `Theorem4MeasuredAggregateStructuredCurrentBoundsWeakCertificate`, which
   feeds the weak Theorem 3 boundary through

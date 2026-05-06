@@ -116,6 +116,10 @@ into the concrete endpoint policy data.
   `GN21SurgeRejectMiddleSupportedEndpointData` now bridge these support,
   calculus, and short/tail integrability packages into the current-bounds
   endpoint certificate expected by Theorem 4.
+- `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
+  `GN21SurgeLemma9AcceptAllAggregateData.of_source` now turn source Lemma 9/10
+  current-bounds data directly into the full current-bounds endpoint packages,
+  so endpoint construction should not manually compose the primitive route.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

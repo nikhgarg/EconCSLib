@@ -266,6 +266,10 @@ the continuous CTMC source theorems.
 - `paper_remark4_scaled_time_minus_exit_weight_pos_of_positive_measure_eq` and
   `paper_remark4_exit_weight_gt_switch_of_positive_measure_eq`: positivity
   bridges rewritten through named current `T,Q` primitives.
+- `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
+  `GN21SurgeLemma9AcceptAllAggregateData.of_source`: direct constructors from
+  source Lemma 9/10 current-bounds data to the full endpoint current-bounds
+  packages.
 - `paper_lemma9_structured_bounds_feasible_positive_of_positive_primitives`,
   `theorem3SurgeParameters_exist_of_lemma9_positive_primitives`,
   `theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives`:
@@ -15389,6 +15393,39 @@ theorem GN21NonsurgeLemma10AcceptAllAggregatePrimitiveData.of_source
   fixed_reward_rate := D.fixed_reward_rate
 
 /--
+Direct source-facing constructor for the non-surge Lemma 10 current-bounds
+package.
+-/
+theorem GN21NonsurgeLemma10AcceptAllAggregateData.of_source
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ}
+    {wJ : PricingFunction} {σI σJ : TripPolicy}
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (hσJ_subset : σJ ⊆ acceptAllPolicy)
+    (hσJ_measurable : MeasurableSet σJ)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeI_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μI)
+    (hqI_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy μI)
+    (D :
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData
+        μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio wJ σI σJ) :
+    GN21NonsurgeLemma10AcceptAllAggregateData
+      μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio wJ σI σJ :=
+  GN21NonsurgeLemma10AcceptAllAggregateData.of_primitive
+    (GN21NonsurgeLemma10AcceptAllAggregatePrimitiveData.of_source
+      hσI_subset hσI_measurable hσJ_subset hσJ_measurable harrivalI_pos
+      harrivalJ_pos hswitch12_pos hswitch21_pos htimeI_acceptAll_integrable
+      hqI_acceptAll_integrable D)
+
+/--
 Source-facing surge Lemma 9 data.  Routine feasibility, integrability,
 switch positivity, denominator positivity, and Remark 4 side conditions are
 derived by `GN21SurgeLemma9AcceptAllAggregatePrimitiveData.of_source`.
@@ -15639,6 +15676,38 @@ theorem GN21SurgeLemma9AcceptAllAggregatePrimitiveData.of_source
         μJ arrivalJ switch21 switch12 σJ (le_of_lt harrivalJ_pos)
         (le_of_lt hswitch21_pos) hsum21 hσJ_measurable hσJ_subset
   fixed_reward_rate := D.fixed_reward_rate
+
+/--
+Direct source-facing constructor for the surge Lemma 9 current-bounds package.
+-/
+theorem GN21SurgeLemma9AcceptAllAggregateData.of_source
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 m R1 z ratio : ℝ}
+    {wI : PricingFunction} {σI σJ : TripPolicy}
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (hσJ_subset : σJ ⊆ acceptAllPolicy)
+    (hσJ_measurable : MeasurableSet σJ)
+    (harrivalI_pos : 0 < arrivalI)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeJ_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μJ)
+    (hqJ_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy μJ)
+    (D :
+      GN21SurgeLemma9AcceptAllAggregateSourceData
+        μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio wI σI σJ) :
+    GN21SurgeLemma9AcceptAllAggregateData
+      μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio wI σI σJ :=
+  GN21SurgeLemma9AcceptAllAggregateData.of_primitive
+    (GN21SurgeLemma9AcceptAllAggregatePrimitiveData.of_source
+      hσI_subset hσI_measurable hσJ_subset hσJ_measurable harrivalI_pos
+      harrivalJ_pos hswitch12_pos hswitch21_pos htimeJ_acceptAll_integrable
+      hqJ_acceptAll_integrable D)
 
 /--
 Nondegeneracy side conditions needed to identify measured dynamic reward with
