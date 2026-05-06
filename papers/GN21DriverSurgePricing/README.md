@@ -117,8 +117,16 @@ cache is `source.txt`.
   it derives the shape derivation internally from Lemma 5-style replacement
   data using
   `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_all_measurable_shape_replacements`.
-  The
-  lightest current IC-only source boundary is now exposed as
+  The endpoint current-bounds selection boundary is now exposed as
+  `Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate`,
+  `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_endpoint_current_bounds_selection`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection`,
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions`;
+  it packages the all-measurable Lemma 5 replacement data together with the
+  density endpoint choices and Lemma 9/10 current-bounds data for all four
+  shape cases.  The lightest current IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
   whose final field is just weak statewise accept-all reward improvement for
@@ -268,6 +276,12 @@ and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions`,
 `Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementSourceAssumptions`,
 `paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_replacement_statewise_improvements_source_assumptions`,
+`Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate`,
+`Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_endpoint_current_bounds_selection`,
+`theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection`,
+`paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection`,
+`Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions`,
+`paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions`,
 `theorem3AcceptAllStructuredParameterEvidence`,
 `theorem3MeasuredStructuredICConclusion`,
 `Theorem4StatewiseAcceptAllWeakRewardCertificate`,
@@ -336,8 +350,23 @@ Their feasible-measurable counterparts are also compiled:
 `paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity_of_shape_acceptAll_bounds`,
 and
 `paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity_of_shape_acceptAll_bounds`;
-these are the compiled endpoint fields needed by the measurable strict-local
-Theorem 4 route.
+the current-bounds-data variants
+`paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_current_bounds_data`,
+`paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_accept_middle_withDensity_of_shape_current_bounds_data`,
+`paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_tail_withDensity_of_shape_current_bounds_data`,
+`paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity_of_shape_current_bounds_data`,
+and
+`paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity_of_shape_current_bounds_data`
+remove duplicated `Q,T,W`, denominator, and Remark 4 plumbing.  The endpoint
+data packages
+`GN21NonsurgeRejectLongCurrentBoundsEndpointData`,
+`GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData`,
+`GN21SurgeRejectShortCurrentBoundsEndpointData`,
+`GN21SurgeRejectMiddleLoCurrentBoundsEndpointData`,
+`GN21SurgeRejectMiddleHiCurrentBoundsEndpointData`, and
+`GN21SurgeRejectMiddleCurrentBoundsEndpointData` feed the compiled
+`Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate` route to Theorem
+4 and Theorem 3.
 
 ## Remaining Work
 
@@ -392,7 +421,9 @@ for both states, Lemma 9 reject-middle lower/upper cutoff bridges for the surge
   that package the remaining analytic selection obligations without requiring
   the caller to preselect a structural optimum, plus a single
   allowed-replacement source-boundary certificate bundling optimum existence,
-  feasibility, replacement cases, and endpoint improvements.
+  feasibility, replacement cases, and endpoint improvements.  The endpoint
+  current-bounds selection certificate now packages the feasible endpoint data
+  cases and compiles directly to Theorem 4 measurable accept-all uniqueness.
   Theorem 3 now has a
 concrete CTMC structured-price endpoint that consumes all of those interfaces,
 including integrated ratio-to-parameters-to-IC theorems for the global
@@ -415,22 +446,15 @@ statewise-improvement certificate for the same source boundary, and a route
 that consumes all-optimal Lemma 5 replacement data directly or the packaged
 allowed-replacement source-boundary certificate.
 Proposition 3.1 has a measurable continuous IC endpoint. Next: instantiate the
-all-optimal replacement and policy-selection layer for arbitrary open
-measurable optimal policies by
-choosing the relevant upper, lower, tail, or middle-rejection endpoint move and
-discharging statewise feasibility/nondegeneracy; concrete with-density
-replacement policies, primitive equalities, and finite positive-density
-current/replacement nondegeneracy are now available for the four Theorem 4
-shape cases; all four Theorem 4 shape cases now have shape-level wrappers
-that discharge current primitive identities and nondegeneracy from the
-canonicalization and density assumptions, with reject-middle split into
-lower- and upper-cutoff endpoint variants. All four Theorem 4 shape cases now
-also have accept-all-bound wrappers that derive current Lemma 9/10 bounds from
-the measured tightening layer, and feasible counterparts that preserve the
-source measurable-policy domain. Theorem 3 now also has an all-measurable
-replacement source wrapper, so the remaining local-improvement work is a
-single analytic selection theorem that supplies Lemma 5 replacement data and
-selects the relevant endpoint move for every feasible measurable optimum.
+endpoint current-bounds selection layer for arbitrary open measurable optimal
+policies by proving the regularity theorem that chooses the relevant upper,
+lower, tail, or middle-rejection endpoint move and discharges the density,
+integrability, finite-mass, and current-bound fields of
+`Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate`. Concrete
+with-density replacement policies, primitive equalities, finite positive-density
+current/replacement nondegeneracy, feasible-domain preservation, and Lemma 9/10
+current-bound data plumbing are now available for all four Theorem 4 shape
+cases, with reject-middle split into lower- and upper-cutoff endpoint variants.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

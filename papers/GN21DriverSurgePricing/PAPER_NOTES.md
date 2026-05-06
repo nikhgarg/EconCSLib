@@ -134,6 +134,32 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementSourceAssumptions`,
   replacement source theorem
   `paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_replacement_statewise_improvements_source_assumptions`,
+  feasible current-bounds endpoint wrappers
+  `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_current_bounds_data`,
+  `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_accept_middle_withDensity_of_shape_current_bounds_data`,
+  `paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_tail_withDensity_of_shape_current_bounds_data`,
+  `paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_lo_withDensity_of_shape_current_bounds_data`,
+  and
+  `paper_theorem4_surge_feasible_statewise_strict_aggregate_improvement_of_lemma9_reject_middle_hi_withDensity_of_shape_current_bounds_data`,
+  endpoint current-bounds data packages
+  `GN21NonsurgeRejectLongCurrentBoundsEndpointData`,
+  `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData`,
+  `GN21SurgeRejectShortCurrentBoundsEndpointData`,
+  `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData`,
+  `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData`,
+  and
+  `GN21SurgeRejectMiddleCurrentBoundsEndpointData`,
+  endpoint current-bounds selection certificate
+  `Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate`,
+  selection-to-Theorem-4 adapters
+  `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_endpoint_current_bounds_selection`,
+  `theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection`,
+  and
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection`,
+  Theorem 3 endpoint current-bounds source wrapper
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions`,
   feasible accept-all-bound endpoint wrappers for all four Theorem 4 shape
   cases
   `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_acceptAll_bounds`,

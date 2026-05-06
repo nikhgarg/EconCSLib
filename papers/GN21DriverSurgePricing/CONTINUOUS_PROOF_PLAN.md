@@ -4,36 +4,39 @@ This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The current Lean endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions
 ```
 
 The remaining paper-facing field is
-`Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate` for the
-structured prices constructed by Theorem 3.  A closer source endpoint is now
-also compiled:
+`Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate` for the
+structured prices constructed by Theorem 3.  This endpoint packages the
+all-measurable Lemma 5 replacement data and the case-by-case density endpoint
+selection data, then Lean converts it to the feasible strict-local Theorem 4
+certificate internally.  The previous broader endpoints remain compiled:
 
 ```lean
 paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_replacement_statewise_improvements_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_statewise_improvements_source_assumptions
 ```
-
-This endpoint derives the measurable shape-derivation certificate internally
-from all-measurable-optimal Lemma 5 replacement data, then consumes the four
-feasible endpoint-improvement cases.
 
 ## Current Best Path
 
 1. The feasible endpoint improvement wrappers for the four shape cases are
    compiled, including the accept-all-bound versions:
    non-surge reject-long, non-surge accept-middle, surge reject-short, and
-   both surge reject-middle endpoint moves.
+   both surge reject-middle endpoint moves.  The current-bounds-data variants
+   are also compiled, so the final theorem no longer has to thread current
+   `Q,T,W` paths, denominator positivity, or Remark 4 side conditions by hand.
 
-2. Prove one selection theorem that turns a feasible measurable optimum with a
-   Lemma 5 shape into the matching endpoint improvement data.  This should avoid
-   more top-level wrappers and target exactly the four fields of
-   `Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate`.
+2. Prove one source regularity/selection theorem that turns a feasible
+   measurable optimum with a Lemma 5 shape into the matching endpoint
+   current-bounds data package.  This should target exactly the four endpoint
+   fields of `Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate`.
 
-3. Instantiate the replacement-source Theorem 3 wrapper from that selection
-   theorem, with the scalar Theorem 3 parameter construction already proved.
+3. Instantiate
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions`
+   from that selection theorem, with the scalar Theorem 3 parameter
+   construction already proved.
 
 ## Key Missing Mathematical Lemma
 
@@ -42,7 +45,7 @@ The hard theorem should have this shape:
 ```lean
 theorem theorem4_measurable_shape_statewise_improvements_of_endpoint_regular
     (...) :
-    Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate
+    Theorem4MeasurableEndpointCurrentBoundsSelectionCertificate
       μ arrival m z switch12 switch21
 ```
 
@@ -52,8 +55,10 @@ endpoint primitives:
 - `μ 0` and `μ 1` are Lebesgue measures with nonnegative measurable densities.
 - The densities are positive and continuous at the relevant finite endpoint.
 - Current feasible optimal policies have the interval/tail shapes from Lemma 5.
-- The current-policy `Q,T,W` primitives agree with the endpoint path formulas.
-- The Lemma 9/10 structured bounds hold for the constructed prices.
+- The current-policy `Q,T,W` primitives agree with the endpoint path formulas,
+  or equivalently produce the compiled current-bounds endpoint data packages.
+- The Lemma 9/10 structured bounds hold for the constructed prices through the
+  existing accept-all aggregate-data interfaces.
 - The other state's current policy has positive finite mass and the required
   `Q,T,W` accounting identity.
 
@@ -72,7 +77,7 @@ into the concrete endpoint policy data.
   `...surge_feasible...reject_middle_lo...`, and
   `...surge_feasible...reject_middle_hi...`.
 - The source certificate should now target
-  `Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementSourceAssumptions`
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions`
   rather than adding more theorem-specific argument lists.
 
 ## What Would Fully Close The Paper
