@@ -572,6 +572,9 @@ route remains compiled for the variant that proves ordinary allowed Lemma 5
   accept-middle, reject-short, and reject-middle policies.  The five
   `...RegularEndpointData.of_shared_source_and_acceptAll_tightening`
   constructors now compose these pieces into the regular endpoint records.
+  `Theorem3AcceptAllStructuredParameterData.of_evidence` gives a named view of
+  the constructed Theorem 3 ratios, accept-all Lemma 9/10 bounds, and
+  accounting identities.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

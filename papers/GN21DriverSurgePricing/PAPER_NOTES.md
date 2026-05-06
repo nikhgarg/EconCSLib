@@ -255,6 +255,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   tightening constructors
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening` and
   `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`,
+  named Theorem 3 parameter-data extractor
+  `Theorem3AcceptAllStructuredParameterData.of_evidence`,
   plus endpoint constructors ending in
   `of_acceptAll_support_and_calculus` and
   `of_acceptAll_support_and_continuity`,

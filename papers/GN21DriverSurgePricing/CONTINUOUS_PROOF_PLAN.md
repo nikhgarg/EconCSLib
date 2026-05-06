@@ -158,6 +158,11 @@ into the concrete endpoint policy data.
   source regularity, shape-derived current mass, accept-all moving-state
   tightening, and fixed-state reward-rate data into the regular endpoint
   records consumed by Theorem 4.
+- `Theorem3AcceptAllStructuredParameterData.of_evidence` should be used as
+  soon as a constructed-price endpoint receives
+  `theorem3AcceptAllStructuredParameterEvidence`; it names the two ratios,
+  accept-all Lemma 9/10 bounds, and accounting identities used by the endpoint
+  builders.
 - `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
   are the current targets because they avoid duplicating Lemma 5 replacement

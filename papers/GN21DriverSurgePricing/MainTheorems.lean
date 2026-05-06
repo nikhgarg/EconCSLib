@@ -280,6 +280,9 @@ the continuous CTMC source theorems.
   direct Lemma 9 feasibility and Theorem 3 parameter constructors from
   primitive positivity, avoiding the stronger cross-multiplied final-sign
   assumptions.
+- `Theorem3AcceptAllStructuredParameterData.of_evidence`: named view of the
+  constructed Theorem 3 ratios, accept-all Lemma 9/10 bounds, and accounting
+  identities carried by `theorem3AcceptAllStructuredParameterEvidence`.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_measured_aggregate_strict_local_improvements_of_lemma9_positive_primitives`:
   measured Theorem 3 strict-local endpoint using the direct Lemma 9 primitive
   feasibility bridge.
@@ -36379,6 +36382,90 @@ def theorem3AcceptAllStructuredParameterEvidence
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
           switch21) =
         R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)
+
+/--
+Named data view of `theorem3AcceptAllStructuredParameterEvidence`.  This is
+useful for source endpoint construction because the paper repeatedly reuses the
+same two constructed ratios, accept-all Lemma 9/10 bounds, and accounting
+identities.
+-/
+structure Theorem3AcceptAllStructuredParameterData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  nonsurgeRatio : ℝ
+  surgeRatio : ℝ
+  nonsurge_acceptAll_bounds :
+    lemma10StructuredBounds nonsurgeRatio
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      switch12
+  surge_acceptAll_bounds :
+    lemma9StructuredBounds surgeRatio
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21
+  hm0 : m 0 = R2
+  hz0 : z 0 = nonsurgeRatio * R2
+  hm1 :
+    m 1 =
+      theorem3SurgeMultiplierFromRatio R1 R2
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 surgeRatio
+  hz1 :
+    z 1 =
+      theorem3SurgeZFromRatio R1 R2
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 surgeRatio
+  nonsurge_accounting :
+    m 0 *
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1) +
+      z 0 *
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+          switch12) =
+        R1 * gn21AcceptAllScaledStateTime (μ 0) (arrival 0)
+  surge_accounting :
+    m 1 *
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+      z 1 *
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+          switch21) =
+        R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1)
+
+/-- Extract named Theorem 3 parameter data from the source evidence proposition. -/
+noncomputable def Theorem3AcceptAllStructuredParameterData.of_evidence
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    (H :
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem3AcceptAllStructuredParameterData
+      μ arrival R1 R2 switch12 switch21 m z := by
+  classical
+  let nonsurgeRatio := Classical.choose H
+  have Hnonsurge := Classical.choose_spec H
+  let surgeRatio := Classical.choose Hnonsurge
+  have Hdata := Classical.choose_spec Hnonsurge
+  exact
+    { nonsurgeRatio := nonsurgeRatio
+      surgeRatio := surgeRatio
+      nonsurge_acceptAll_bounds := Hdata.1
+      surge_acceptAll_bounds := Hdata.2.1
+      hm0 := Hdata.2.2.1
+      hz0 := Hdata.2.2.2.1
+      hm1 := Hdata.2.2.2.2.1
+      hz1 := Hdata.2.2.2.2.2.1
+      nonsurge_accounting := Hdata.2.2.2.2.2.2.1
+      surge_accounting := Hdata.2.2.2.2.2.2.2 }
 
 /--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured
