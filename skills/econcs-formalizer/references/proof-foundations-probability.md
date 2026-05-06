@@ -63,6 +63,17 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
 - For finite expectation decompositions, prove pointwise identities first, then
   `pmfExp`/`pmfPairExp` sum identities, then the paper-facing equivalence.
   Group by the event or fiber appearing in the paper.
+- For sequential weighted without-replacement or "first distinct draw" models,
+  audit conditioning/deletion claims before proving them. Conditioning on an
+  item being absent from the first `k` distinct draws is generally not the same
+  as deleting that item's weight when weights are nonuniform and `k >= 2`. If a
+  source proof says conditioning equals deletion, test a small numeric model
+  outside Lean, then formalize the inequality actually needed directly. Keep
+  false equalities or false deletion upper bounds only as clearly named rejected
+  scratch targets, never as theorem assumptions hidden inside green
+  paper-facing results. If small audits show the generalized theorem is false,
+  record the counterexample and redirect the paper proof to a corrected
+  statement instead of continuing proof search.
 - For probability-delta comparisons, prove the tiny indicator inequality over
   the finite outcome type, then lift it with a generic PMF lemma comparing
   indicator differences.

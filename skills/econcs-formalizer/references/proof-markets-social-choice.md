@@ -20,6 +20,15 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   men-optimal stable matching; keep a separate caveat until an arbitrary
   proposal-order trace has been modeled and connected to that uniqueness
   theorem.
+  Follow the paper's named lemma route when the user asks for a paper
+  formalization, even when a shorter modern proof exists: make the named paper
+  lemma available as a wrapper or bridge, then use cleaner library facts inside
+  it. This keeps the audit surface source-faithful without duplicating every
+  low-level argument.
+  Check the model notation before adding preference caveats. Classic matching
+  papers often assume strict preferences through notation such as ordered lists,
+  `P`, or "prefers" comparisons; if so, expose strictness as the local domain
+  assumption instead of treating it as an extra caveat.
   For papers that cite Roth/Dubins-Freedman truthfulness rather than reproving
   it, prefer a thin paper-local wrapper around the existing Roth Theorem 5
   declarations, with the strict equal-size domain exposed in the local paper
@@ -31,6 +40,54 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   Keep optional-list/rural-hospitals strengthenings separate from complete
   all-acceptable wrappers, and make the domain assumption visible in paper
   theorem names and README rows.
+- For Roth rural-hospitals or college-admissions papers, reuse the one-to-one
+  stable-matching/DA layer where possible, but introduce capacities as a
+  separate abstraction. Do not mix complete-marriage all-acceptable wrappers
+  with optional hospital/resident acceptability; rural-hospitals statements
+  usually need unmatched/underfilled-set invariance and should advertise those
+  assumptions explicitly.
+- For IM05-style random matching papers, keep three layers separate:
+  deterministic matching facts (`X_mu(g) >= Y_g`), the Algorithm 4.2
+  fresh-list probability law, and the Chebyshev/variance bridge. A false
+  stochastic lemma should not contaminate the matching layer. If the printed
+  unrestricted variance lemma fails, patch the probability statement and leave
+  Theorem 4.1/Algorithm 4.1 trace work independent.
+- In IM05 Lemma 4.4, the source conditioning/deletion step is false for
+  arbitrary nonuniform `D^k`. The tempting one-sided repair by comparing to the
+  deleted process is also false: in the two-draw Plackett--Luce law, weights
+  `i=2, j=1, a=1, b=1` make `Pr[omit i | omit j]` larger than the
+  deleted-`j` process' `Pr[omit i]`. The `k = 2` negative-correlation route
+  can be closed by proving hit-event negative correlation first, using exact
+  ordered-atom/one-target formulas, splitting outside hazard sums, proving the
+  scalar Plackett--Luce inequality, and complementing via
+  `pmfProb_not_and_not_le_mul_of_inter_le_mul`.
+- Do not generalize that IM05 `k = 2` route blindly. Exact enumeration at
+  `k = 3` with weights `[30, 1, 1, 1, 30, 1]` gives positive covariance for
+  omission of targets `0` and `4`, and weights `[50, 50, 1, 1, 1]` with five
+  men give a finite variance violation for the unrestricted
+  `Var(Y_g) <= E[Y_g]` statement. The current repaired bridge is the tail-count
+  route:
+  `paper_im05_lemma4_4_tail_variance_le_expectation_of_pairwise_negative_correlation`
+  and `paper_im05_lemma4_1_from_tail_negative_correlation_and_lemma4_3`.
+  Instantiate the rank tail used by Lemma 4.3's lower-bound sum and prove the
+  concrete tail negative-correlation or direct tail variance input.
+- For Algorithm 4.1 resumed DA traces, the useful interface is target divorce
+  plus arbitrary-start DA with target-exception invariants. Prove held-men
+  list nodup/order and final stable-except-target facts separately; the hard
+  bridge is usually the membership equality between the held-men set and the
+  target woman's stable-husband set.
+- For Algorithm 4.2 fresh-list/deferred-decision arguments, prefer concrete
+  prefix-set laws for the recursive weighted-without-replacement PMF over
+  opaque "conditional law equals filtered draw" hypotheses. Build expectation
+  lower bounds on ranked tails, then feed only the required tail count into the
+  concentration step.
+- For manipulation-rank or "no need to misrepresent" statements, formalize the
+  source wording rather than a nearby stronger or weaker slogan. "No need to
+  misrepresent the first choice" may mean every arbitrary report is weakly
+  dominated by a first-choice-preserving report, not that every false-top report
+  is unprofitable. If a theorem quantifies over every rank `k > 1`, finite
+  `k = 2` or `k = 3` witnesses are not enough; build the parameterized family,
+  padding, or scaling construction that the paper claims.
 - For college-admissions/hospitals-residents capacity models, first build a
   generic many-to-one assignment API with applicant matches, finite college
   rosters, consistency, quota feasibility, individual rationality, and blocking

@@ -20,6 +20,18 @@ that result.
 Unless told otherwise, you do not have a time limit; keep going until you fully
 finish a paper and run the post-paper checklist.
 
+Do not confuse "keep going" with broad exploration. Move in tight compile/proof
+loops: identify the exact current theorem seam, make the smallest coherent
+batch of edits, run only the requested or necessary targeted build, and patch
+the compiler's concrete line errors. Avoid rereading large files after you
+already know the relevant structure; use `rg` for exact declaration names and
+narrow line windows around compiler diagnostics.
+
+When another agent will pick up later, spend tokens on durable artifacts rather
+than chat: a paper-local handoff note, README/audit links, exact declaration
+names, validation status, and next command. Future agents should start from
+those files instead of reconstructing context from conversation history.
+
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
 identifying the gap unless the target theorem is false or the needed assumption
@@ -36,29 +48,27 @@ to unlock the Lean proof. Do not create a sketch when it would be ceremony
 rather than useful proof planning. After the strategy is clear, execute it in
 Lean and keep moving.
 
+Keep strategy notes token-cheap. A good scratch update is the active theorem
+name, the exact remaining mathematical obligation, the next bridge lemma, and
+the validation command. Do not copy long proof states, full diffs, or entire
+README tables into handoffs when declaration names and file links identify the
+same information.
+
 Do not avoid continuous, probabilistic, or measure-theoretic formalization when
 the source theorem requires it. Finite analogues are useful scaffolds only when
 they shorten the faithful proof. If the fastest honest route is a direct
 measure/integral/renewal/CTMC statement, build that statement directly and keep
 the paper-facing wrapper source-level.
 
-For continuous reward-rate/CTMC papers, do not silently identify a theorem's
-target accept-all reward rates with the source lemma's current fixed-state
-reward rates. Keep target rates, current rates, and effective ratios as named
-objects. If the source proof moves one state at a time, expose a sequential
-route rather than forcing simultaneous statewise IC. When a transfer proof asks
-for strong ratio equality, look for source sign facts that prove the needed
-endpoint directly: in GN21 Lemma 9, current lower-endpoint nonpositivity plus
-the upper fixed-state comparison is a weaker and more source-faithful boundary
-than requiring both fixed-state cross-ratio comparisons.
-
-For long continuous proofs, save tokens by separating the proof into scalar
-algebra, measured bridge, and paper wrapper layers before iterating in Lean.
-First compile the scalar lemma with explicit parameters and positivity
-premises; then add a small bridge that threads only the evidence the wrapper
-needs. Avoid repeatedly rebuilding a broad wrapper while the scalar algebra is
-still unstable, and avoid adding pass-through wrappers that do not remove a
-real paper-facing obligation.
+Keep theorem-specific proof tactics out of this always-loaded file. Use the
+reference routing table at the end: CTMC/reward-rate details live in
+`references/proof-foundations-probability.md`; dynamic-game/PBE certificate
+details live in `references/proof-mechanism-design.md`; matching and
+Plackett--Luce details live in `references/proof-markets-social-choice.md`.
+When updating the skill, treat this as an invariant, not a preference: if the
+new lesson names a specific paper, theorem number, counterexample, proof
+recipe, or declaration family, it belongs in a reference file unless it is only
+a one-line routing pointer.
 
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
@@ -78,218 +88,23 @@ plan to record strategy changes, patched source gaps, discharged seams, and
 remaining blockers.
 
 For long or fragile proofs, keep a theorem-specific scratch plan beside the
-paper files and use it actively, not as decoration. A good plan records:
-current Lean endpoints, the exact remaining mathematical gap, the next two or
-three bridge lemmas to try, why each bridge should be true, and which
-assumptions are genuine source assumptions versus temporary certificate fields.
-When Lean gets too low-level, first write the informal recurrence, induction,
-or history construction in this scratch file; then translate only the stable
-pieces into named Lean declarations and audit wrappers. This was especially
-effective for EOS Theorem 8: exact-drop histories, finite completed-rank
-wrappers, core-vs-full source-completion certificates, and derived-outcome
-bridges made the extensive-form gap visible while still allowing useful
-verified algebra to accumulate. If the scratch proof shows that some
-certificate fields are consequences of other fields, formalize the smaller core
-certificate and a derived bridge before continuing; this keeps the remaining
-human-verification obligations honest and minimal.
-When a source proof uses local payoff comparisons as the key sequential
-rationality step, promote the raw algebra into named payoff definitions and a
-small best-response predicate before trying to prove the full dynamic-game
-obligation. In EOS Theorem 8, exposing the continue payoff, drop payoff, and
-named finite `B*` one-step best-response theorem made the remaining
-belief/sequential-rationality lift much more human-verifiable than referring
-directly to long indifference inequalities.
-When the source proof uses strict exclusion directions, also add an
-off-threshold strict wrapper pairing the strict payoff inequality with the
-strategy's actual drop/not-drop action. This lets later dynamic-game proofs
-cite the paper's Step 1 and Step 2 directly instead of unpacking raw algebra.
-If behavioral uniqueness depends on tie-breaking at an indifference threshold,
-make the tie-breaking convention a named predicate and prove a separate
-characterization theorem from local best response plus tie-breaking to the
-paper's cutoff rule. This turns a future PBE-characterization field into two
-local obligations: best response and tie-breaking.
-When a PBE predicate existentially packages a belief and a
-sequential-rationality proof, do not keep behavioral facts as opaque
-"every PBE behaves this way" obligations if the source proof is really about
-sequential rationality. Add a certificate that proves local best response and
-tie-breaking from `isSequentiallyRational`, then unpack the PBE witness in a
-thin bridge. This was the right hardening move in EOS Theorem 8: it turned the
-remaining behavioral PBE obligation into source-level sequential-rationality
-implications.
-If the source proof defines sequential rationality by local deviations, sharpen
-that certificate further to an iff between `isSequentiallyRational` and the
-audited local optimality/tie-breaking predicates. The reverse direction should
-lift the named strategy's local proof to game-level sequential rationality, and
-the forward direction should replace opaque arbitrary-PBE behavior fields.
-If the paper also says the best response is belief-independent, add an
-ex-post local-deviation certificate layer: the named one-step best-response
-proof should lift to sequential rationality for every belief, while arbitrary
-sequential rationality remains equivalent to the local-deviation predicate.
-Provide conversion lemmas both to the local-deviation core certificate and to
-the ex-post one-sided Step 1/Step 2 certificate.
-When a remaining paper-facing premise is recursive or hard to audit directly
-(for example, a clock-sorted finite schedule), add small `nil`, `cons`,
-`singleton`, or pair helper lemmas and expose them in the paper audit surface;
-this lets humans verify concrete instances by local inequalities rather than
-unfolding recursive definitions by hand.
-If a finite schedule theorem has a separate "completed set is contained in the
-schedule" premise, also expose an all-scheduled constructor or endpoint for the
-common case where the completed set is exactly `scheduledRanks.toFinset`. This
-removes a trivial but noisy human-verification obligation and keeps source
-audits focused on sortedness, no-duplicates, activity, and terminality.
-When a concrete history condition is naturally local to realized transitions,
-make it a first-class history object instead of a global predicate over all
-possible states. In EOS Theorem 8, finite no-overshoot strategy histories were
-the right interface: each dropout transition carries its own no-overshoot proof,
-ordinary strategy histories and exact-drop histories are derived from that one
-object, and terminal-record/source-completion endpoints no longer ask reviewers
-to audit a global "whenever the strategy would drop" premise.
-When an exact schedule already pins dropouts to threshold prices, add a
-conversion from the exact schedule to the local annotated history object and a
-terminal-history certificate constructor from that annotated history. This
-creates the human path `clock-sorted schedule -> exact schedule -> annotated
-finite history -> terminal records/source certificate` without restating timing
-evidence at every theorem boundary.
-If a sharper concrete-history certificate is introduced, mirror the existing
-ordinary certificate stack with forgetful constructors and obligation ledgers:
-terminal-history certificate, terminal/dynamic certificate, core source
-certificate, full source certificate, finite source certificate, and direct
-paper-facing endpoints. This keeps old endpoints usable while giving audits a
-more local and inspectable route.
-For nonempty finite schedules, expose an append-singleton final-clock lemma:
-if the schedule is `scheduledPrefix ++ [lastRank]`, prove that the final clock
-is exactly the last scheduled threshold. Then provide endpoints whose
-terminality premise compares unscheduled thresholds to that last threshold
-rather than to a recursively computed final state. This makes exact-record
-source obligations much easier to audit by hand.
-When recursive schedule sortedness mixes initial-clock and adjacent-threshold
-obligations, split out a separate adjacent-threshold sorted predicate. Prove a
-bridge from initial-clock-plus-threshold-sorted to the recursive predicate, and
-for cold-start states discharge the initial-clock inequality automatically.
-Expose nil, singleton, cons, and pair helpers for the threshold-sorted
-predicate so concrete source schedules can be verified by local inequalities.
-If schedules are naturally built incrementally, also provide an append-singleton
-rule whose only new premise is the boundary comparison between the previous
-last threshold and the appended threshold.
-When a route to a paper-facing theorem is built from source obligations, expose
-the intermediate certificate constructors as first-class definitions, not just
-the final theorem endpoints. For finite schedule audits, this lets reviewers
-inspect the terminal-dynamic and source-completion objects before unique-PBE
-conclusions are applied.
-If a terminal-dynamic certificate is built from a concrete strategy-consistent
-terminal history, expose the terminal-history behavior certificate as a named
-intermediate too. This lets humans verify the actual history/terminality object
-before reading the dynamic-game and source-completion packaging layers.
-Also expose direct facts from that terminal-history certificate when they are
-the human-verification target, especially scheduled-rank exact terminal records
-and final-state active iff unscheduled. Do not force reviewers to unfold the
-deterministic final-state constructor if they are auditing the certificate
-object.
-When the final remaining source boundary combines source PBE semantics with an
-exact terminal history, create a single bundled source-completion certificate
-that contains both pieces and proves the final unique-PBE conclusion from that
-object. This makes the remaining human obligation a single inspectable
-certificate rather than parallel source-semantics and history objects.
-If exact terminal-history completion is only available on a finite completed
-rank set, expose a finite analogue of that bundled certificate with the
-completed set and inactive-on-completed proof as fields, and derive the finite
-unique-PBE terminal-record conclusion from it.
-When a source-shaped checker already instantiates the ex-post/local-deviation
-semantics, add constructors from exact histories and exact schedules into the
-finite bundled certificate; add an all-scheduled variant when the completed set
-is the schedule's `toFinset`.
-If an adjacent source-obligation layer already has a sorted-schedule endpoint,
-add a direct endpoint from the sharper ex-post/local-deviation layer rather
-than forcing reviewers to compose the conversion manually.
-When doing so, add the all-scheduled specialization too if the general theorem
-still asks for a completed-subset-of-schedule premise.
-For the paper's main finite schedule route, add a cold-start or canonical-state
-specialization from the same sharpened source-obligation layer when it removes
-a manual certificate conversion from the human audit path.
-For small concrete schedules, mirror existing singleton/pair helpers at the
-sharper source-obligation layer so reviewers can check one or two scheduled
-ranks by local inequalities only.
-For final bundled exact-history source objects, add obligation ledgers that
-spell out both the minimized source-semantics fields and the exact-history /
-terminal-inactivity evidence instead of merely pointing to a constructor.
+paper files and use it actively, not as decoration. A good plan records current
+Lean endpoints, the exact mathematical gap, the next two or three bridge lemmas,
+why each bridge should be true, and which assumptions are source assumptions
+versus temporary certificate fields. Put domain-specific certificate patterns in
+the relevant proof reference file, not here.
 When a long session ends before validation, write a paper-local handoff note
 before stopping. Include the files touched, the latest unvalidated theorem
 families, the intended proof route, exact next validation command, and likely
 fragile Lean points. Link that handoff from the paper README and post-paper
 audit report so a future agent does not need chat context.
-When a paper theorem includes a continuity restriction on a strategy formula,
-formalize continuity of the numeric policy formula itself, not just monotonicity
-or affine algebra; expose both scalar and indexed/update forms if the theorem
-is rank-indexed.
-When a theorem states "same payoff" and the formalization already proves slot
-and payment equality, add a utility-extensionality bridge and a direct
-paper-facing utility-equality endpoint so reviewers do not have to unfold the
-quasilinear utility definition.
-If the theorem has both all-rank and finite completed-rank routes, expose the
-payoff endpoint for both routes rather than only the all-rank object.
-When a source model uses a convention such as an empty history value, add a
-named theorem that rewrites the general formula under that convention, plus the
-indexed specialization if the theorem is rank-indexed.
-When strict monotonicity is used in a source uniqueness argument, add the
-corresponding injectivity theorem so later uniqueness proofs can cite the
-identification property directly.
-If the source proof uses a named symbol such as `q`, expose source-line aliases
-with that symbol in the declaration/docstring after proving the lower-level
-algebra.
-At abstract game-interface layers, expose payoff-equality bridges from
-same-allocation/same-payment fields before building more specialized endpoints.
-Also expose the outcome-equality-to-payoff-equality bridge when stronger
-outcome equality is already the common endpoint.
-When a certificate field captures a paper phrase such as "best response
-regardless of beliefs," expose a direct theorem with that conclusion instead
-of leaving reviewers to inspect the field projection manually. When final
-theorem objects wrap a source certificate, lift the endpoint to those final
-objects too, so human citations do not have to thread through `.source`.
-If an iff endpoint converts source sequential rationality into a local
-paper-facing predicate, also expose the direct theorem discharging that
-predicate from the named-strategy best-response obligation.
-When the only use of a belief argument is to instantiate a belief-independent
-result, also expose a `[Nonempty Belief]` citation form so paper-facing audits
-do not require an arbitrary belief term.
-When a paper-facing strategy is named, also expose the named-strategy
-`for all beliefs` iff the source local predicate endpoint, not only the
-arbitrary-strategy iff.
-When a paper proof gives a named scalar such as `q`, provide source-proof-line
-aliases not only for the defining formula but also for the paper's expected
-interval, endpoint, monotonicity, and continuity checks.
-For source-completion certificates, also expose obligation-conjunction theorems
-for each important certificate layer. The full certificate should list all
-source obligations, while core, one-sided, ex-post, sequential-rationality,
-one-step/tie-break, and local-deviation certificates should list only their
-minimized obligations so reviewers can tell which facts are assumptions and
-which conclusions are derived.
-When a reduced source-obligation certificate is expected to be cited directly
-by a paper audit, also expose direct downstream endpoints from that certificate
-to named-strategy PBE, PBE strategy equality, the PBE cutoff/action rule,
-unique PBE, and outcome equality rather than requiring reviewers to manually
-follow conversion lemmas through a stronger certificate.
-Apply this consistently to all reduced layers that a human may cite, including
-one-step/tie-break, sequential-rationality, one-sided, ex-post, and
-local-deviation routes. Also expose the same direct cutoff/action endpoint for
-the full and core source certificates, even if it is available as a field, so
-paper-facing audit files can cite a named theorem. When the paper proof is
-phrased as two one-sided steps, expose named corollaries for both directions:
-drop at or after the threshold and no drop before the threshold.
-Also expose the final compact paper-conclusion theorem directly from every
-reduced source-obligation certificate layer that a paper audit may cite.
-When the compact conclusion is normally bundled with uniqueness, also expose
-the direct `exists_unique_pbe_with_conclusion` endpoint from every such reduced
-certificate layer, not just from the strongest full source-completion
-certificate. This gives the audit file a one-line citation from the minimized
-source obligation to the final human-facing theorem shape.
-For exact finite schedules, also expose deterministic-final-state facts:
-scheduled ranks have terminal records equal to their threshold, and from an
-all-active initial state the active ranks are exactly the unscheduled ranks.
-Specialize these facts to the paper's cold-start threshold-sorted route when
-that is the interface reviewers will use.
-If an endpoint already contains terminal-record conclusions but its name only
-says `exists_unique_pbe`, add a paper-facing alias whose name explicitly says
-`with_terminal_record_conclusion`.
+After validation succeeds, immediately update the handoff/status language from
+"unvalidated" to the exact command that passed. Do not leave stale caveats that
+force the next agent to rerun work just to learn whether the current additions
+compile.
+For dynamic-game, PBE, strategy, payoff, or schedule-certificate proof details,
+load `references/proof-mechanism-design.md` instead of putting theorem-specific
+guidance here.
 
 Follow the original paper's proof structure as closely as is practical. Preserve
 named definitions, lemmas, propositions, and theorem numbers in Lean declaration
@@ -312,27 +127,10 @@ route is false, imprecise, or genuinely inapplicable. If an auxiliary
 certificate is temporarily useful, keep it as a clearly marked staging device
 and continue toward the paper's named theorem itself.
 
-For stable-matching/deferred-acceptance papers, check the paper's model section
-before calling strictness, completeness, or no-outside-option assumptions
-caveats. Older matching papers often encode strict preferences in notation and
-then state that only strict preferences are considered. In Lean, represent the
-marriage-market source domain explicitly: strict scores on each side, positive
-value for every potential pair when unmatched agents are not allowed, and equal
-cardinality when completeness is part of the source conclusion. Useful DA proof
-infrastructure usually belongs in `EconCSLib.Markets.Matching`: run-prefix
-states, proposal-removal/monotonicity lemmas, termination/stability invariants,
-side-swap lemmas, rejected-pair impossibility, men/women role reversal, and
-finite-cardinality completeness bridges. Keep paper-specific counterexample
-profiles, named proof wrappers, and source-language predicates in the paper
-folder unless they pass the second-paper reuse test.
-
-For manipulation-rank or "no need to misrepresent" statements, formalize the
-source wording rather than a nearby stronger or weaker slogan. "No need to
-misrepresent the first choice" may mean every arbitrary report is weakly
-dominated by a first-choice-preserving report, not that every false-top report
-is unprofitable. If a theorem quantifies over every rank `k > 1`, finite `k = 2`
-or `k = 3` witnesses are not enough; build the parameterized family, padding, or
-scaling construction that the paper claims.
+For stable-matching/deferred-acceptance papers, load
+`references/proof-markets-social-choice.md` after the first status pass. It
+contains the matching-specific assumptions, strict-preference notation checks,
+DA infrastructure guidance, manipulation-rank warning, and IM05 repair notes.
 
 ### 1.2 Library Layering Rule: Textbook vs. Audit Trail
 
@@ -374,6 +172,17 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   rerun once before intervening. If the same shared-library failure persists,
   patch the minimal local problem yourself, rebuild, and move on; do not leave
   the paper blocked indefinitely on likely concurrent shared-library work.
+- For compile-repair passes, let the first `lake build PaperName` produce the
+  error queue, then patch the first coherent cluster of errors by line number.
+  Do not inspect the whole theorem file. Constructor-pattern errors are often
+  fixed by checking the inductive declaration and matching only explicit
+  constructor parameters; field-projection errors are often fixed by projecting
+  from the certificate wrapper rather than an embedded base model.
+- When committing from a dirty multi-agent worktree, stage only explicit path
+  lists. Use `git status --short -- path...` and `git diff --stat -- path...`
+  before staging. If Git cannot create `.git/index.lock` because another agent
+  is using Git or the filesystem is temporarily read-only, pause; once clear,
+  retry the same scoped path list. Never use broad `git add .` in this repo.
 
 ### 1.2.1 Paper Link Intake Protocol
 
@@ -556,42 +365,9 @@ the Lean statements against the paper.
   independence/Fubini/density derivation), keep the theorem conditional in the
   README/DAG and explicitly name the probability-to-integral bridge that remains.
 - For sequential weighted without-replacement or "first distinct draw" models,
-  audit conditioning/deletion claims before proving them.  Conditioning on an
-  item being absent from the first `k` distinct draws is generally not the same
-  as deleting that item's weight when weights are nonuniform and `k >= 2`.
-  A one-sided repair by comparing to the deleted process can also be false:
-  in the IM05 two-draw Plackett--Luce law, weights `i=2, j=1, a=1, b=1` make
-  `Pr[omit i | omit j]` larger than the deleted-`j` process' `Pr[omit i]`,
-  even though the desired unconditional negative-correlation inequality still
-  holds.  If a source proof says conditioning equals deletion, test a small
-  numeric model outside Lean, then formalize the inequality actually needed
-  directly, usually as a negative-dependence statement for the sampler.  Keep
-  any false equality or false deletion upper bound only as a clearly named
-  rejected scratch target, never as a theorem assumption hidden inside a green
-  paper-facing result.
-  A useful two-draw repair pattern is to prove negative correlation first for
-  hit events, not omission events: derive exact ordered-atom and one-target
-  hit-probability factor formulas, split hazard sums into the paired term plus
-  the outside `{i,j}` terms, prove the scalar Plackett--Luce inequality, and
-  then complement both events using a reusable lemma such as
-  `pmfProb_not_and_not_le_mul_of_inter_le_mul`.  In IM05 this closed the
-  `k = 2` raw-count theorem
-  `paper_im05_lemma4_4_freshList_pairwise_negative_correlation_countWeight_two`
-  and its scaled-count/product-variance endpoints.  Do not assume the same
-  inequality holds for larger `k`: in IM05, exact enumeration at `k = 3` with
-  weights `[30, 1, 1, 1, 30, 1]` gives positive covariance for omission of
-  targets `0` and `4`, and weights `[50, 50, 1, 1, 1]` with five men give a
-  finite variance violation for the source's unrestricted `Var(Y_g) <= E[Y_g]`
-  statement.  When a generalized negative-dependence theorem fails in small
-  numeric audits, record the counterexample as a validation issue and redirect
-  the paper proof to a corrected statement instead of continuing proof search
-  for a false lemma.  For IM05 specifically, the plausible repair is not to
-  resurrect pairwise negative correlation for all popular women: the bad
-  examples live in the top block.  The next agent should try a tail-count
-  replacement aligned with Lemma 4.3's actual lower-bound sum, e.g. count only
-  ranks in the tail after the first `2k` or otherwise in the high-`g` regime,
-  then plug that tail variance bound into the same Chebyshev bridge.  Document
-  this as a proof-strategy deviation, not as the paper's Lemma 4.4.
+  load `references/proof-foundations-probability.md`; for matching-specific
+  Plackett--Luce/IM05 details, also load
+  `references/proof-markets-social-choice.md`.
 - When a proof step invokes an external cited analytic theorem that is not in
   Mathlib, encode that input as a named paper-local hypothesis or definition
   (for example, a `Sampford...Bound` assumption), prove the source's downstream
@@ -745,10 +521,18 @@ search.
   current repo/paper status note and the paper folder README. Protect unrelated
   dirty files, and let the documented current seam define the first theorem to
   inspect.
+- Use a five-minute resume path before opening large Lean files: read the
+  paper handoff/README current-target section, `rg` the exact public wrapper
+  and remaining assumption names, inspect only those theorem neighborhoods, and
+  run the targeted build if the status is uncertain. This usually recovers
+  context faster than reading thousands of lines or replaying chat history.
 - Use targeted `rg` searches for the strongest paper-facing wrapper, the exact
   remaining certificate/assumption named in the README, and the internal lemma
   that feeds it. Avoid scanning broad proof files or docs until those anchors are
   identified.
+- For huge diffs or dirty worktrees, use path-limited `git diff --stat`,
+  `git status --short -- <paths>`, and narrow `git diff -- <paths>` first. Do
+  not print whole-repo diffs unless the task is explicitly repository-wide.
 - Treat successfully compiling declarations and current status tables as the
   source of truth for "what is done." Use commit history only for provenance,
   rename recovery, or checking what changed since a known checkpoint. If history
@@ -759,6 +543,10 @@ search.
   the three cheap checks: worktree status, targeted declaration search, and a
   targeted `lake build <active-module>`. Do not replay old proof search unless
   those checks reveal a real gap.
+- When reading context, batch independent cheap shell reads with parallel tool
+  calls, but keep each output scoped: `sed` around named declarations, `rg -n`
+  for exact theorem names, and `git diff --stat` before full diffs. Prefer one
+  well-sized context read over many failed micro-reads when preparing an edit.
 - Before saying a paper is "done" or "fully verified," perform a paper-local
   validation pass: read the paper README theorem-status rows, inspect the DAG
   status for the named main results, check the paper-facing theorem file for
@@ -960,6 +748,9 @@ exit $status
 
 - Prefer `lake build <touched-root-module>` over full `lake build` until the
   paper slice is ready for integration.
+- Do not rerun Lean after Markdown-only edits unless the user needs a fresh
+  end-to-end checkpoint. After Lean edits, build the touched module first; after
+  documentation edits, use `git diff --check` and stale-text `rg` instead.
 
 ### 1.7 Paper Triage
 
@@ -991,6 +782,8 @@ Before ending work, update a repo note or paper handoff with:
 - closed layers and traps future agents should not re-open,
 - whether commit history is needed for the next resume; usually it should not be
   if the status docs and README are current.
+- enough exact declaration names that the next agent can start with `rg` rather
+  than rereading the proof session transcript.
 
 ### 1.10 Token Efficiency and Mathlib Discovery
 
@@ -1186,4 +979,7 @@ simple wrapper repairs.
 When updating this skill from a proof session, put proof tactics and theorem
 patterns in the relevant `references/proof-*.md` file. Keep `SKILL.md` limited
 to workflow, routing, folder contracts, validation, and context/source-control
-rules.
+rules. Before committing a skill update, run a quick grep for paper IDs, named
+theorem numbers, and declaration names in `SKILL.md`; any substantive match
+should usually be moved to a reference file. Acceptable matches are routing
+pointers, examples in folder-contract text, and generic validation templates.

@@ -197,3 +197,137 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 - When approximation proof is too large for the current pass, package it as a
   named certificate whose statement is exactly the benchmark/revenue inequality
   needed by the paper-facing theorem.
+
+## Dynamic Games, PBE, and Schedule Certificates
+
+- For long dynamic-game proofs, keep a theorem-specific scratch plan beside the
+  paper files. Record current Lean endpoints, the exact mathematical gap, the
+  next bridge lemmas, why they should be true, and which assumptions are genuine
+  source assumptions versus temporary certificate fields. When Lean gets too
+  low-level, write the informal recurrence, induction, or history construction
+  first, then translate only the stable pieces into named Lean declarations and
+  audit wrappers.
+- In EOS-style finite dropout/PBE proofs, exact-drop histories, finite
+  completed-rank wrappers, core-vs-full source-completion certificates, and
+  derived-outcome bridges make the extensive-form gap visible while still
+  allowing verified algebra to accumulate. If a scratch proof shows that some
+  certificate fields are consequences of other fields, formalize the smaller
+  core certificate and a derived bridge before continuing.
+- When a source proof uses local payoff comparisons as the sequential
+  rationality step, promote the raw algebra into named payoff definitions and a
+  small best-response predicate before proving the full dynamic-game
+  obligation. In EOS Theorem 8, exposing continue payoff, drop payoff, and the
+  finite `B*` one-step best-response theorem made the remaining
+  belief/sequential-rationality lift auditable.
+- If the source proof uses strict exclusion directions, add an off-threshold
+  strict wrapper pairing the strict payoff inequality with the strategy's
+  actual drop/not-drop action. If behavioral uniqueness depends on tie-breaking
+  at an indifference threshold, make tie-breaking a named predicate and prove a
+  characterization theorem from local best response plus tie-breaking to the
+  paper cutoff rule.
+- When a PBE predicate existentially packages a belief and a
+  sequential-rationality proof, do not keep behavioral facts as opaque
+  "every PBE behaves this way" obligations if the source proof is really about
+  sequential rationality. Add a certificate proving local best response and
+  tie-breaking from `isSequentiallyRational`, then unpack the PBE witness in a
+  thin bridge.
+- If the source proof defines sequential rationality by local deviations,
+  sharpen the certificate to an iff between `isSequentiallyRational` and the
+  audited local optimality/tie-breaking predicates. The reverse direction
+  should lift the named strategy's local proof to game-level sequential
+  rationality; the forward direction should replace opaque arbitrary-PBE
+  behavior fields. If the paper says the best response is belief-independent,
+  add an ex-post local-deviation certificate layer and conversion lemmas to the
+  local-deviation core and one-sided source steps.
+- For recursive or hard-to-audit paper-facing premises such as clock-sorted
+  finite schedules, add `nil`, `cons`, `singleton`, pair, and
+  append-singleton helpers so humans can verify concrete instances by local
+  inequalities. If a finite schedule theorem asks separately that the completed
+  set is contained in the schedule, add an all-scheduled constructor for the
+  common case `completed = scheduledRanks.toFinset`.
+- When a concrete history condition is local to realized transitions, make it a
+  first-class history object instead of a global predicate over all possible
+  states. For exact schedules, add a conversion to the annotated history object
+  and a terminal-history certificate constructor. This gives the audit path:
+  clock-sorted schedule -> exact schedule -> annotated finite history ->
+  terminal records/source certificate.
+- If a sharper concrete-history certificate is introduced, mirror the ordinary
+  certificate stack with forgetful constructors and obligation ledgers:
+  terminal-history certificate, terminal/dynamic certificate, core source
+  certificate, full source certificate, finite source certificate, and direct
+  paper-facing endpoints.
+- For nonempty finite schedules, expose an append-singleton final-clock lemma:
+  if the schedule is `scheduledPrefix ++ [lastRank]`, the final clock is the
+  last scheduled threshold. Then provide endpoints whose terminality premise
+  compares unscheduled thresholds to that last threshold instead of to a
+  recursively computed final state.
+- When recursive schedule sortedness mixes initial-clock and adjacent-threshold
+  obligations, split out an adjacent-threshold sorted predicate. Prove a bridge
+  from initial-clock-plus-threshold-sorted to the recursive predicate and
+  discharge the initial-clock inequality automatically for cold starts.
+- Expose intermediate certificate constructors as first-class definitions, not
+  only final theorem endpoints. If a terminal-dynamic certificate is built from
+  a concrete strategy-consistent terminal history, expose the terminal-history
+  behavior certificate and direct facts such as scheduled-rank terminal records
+  and final-state active iff unscheduled.
+- When the final source boundary combines source PBE semantics with an exact
+  terminal history, create a single bundled source-completion certificate that
+  proves the final unique-PBE conclusion. If exact terminal-history completion
+  is only finite, expose a finite analogue with the completed set and
+  inactive-on-completed proof as fields, and derive the finite
+  unique-PBE terminal-record conclusion from it.
+- If a source-shaped checker already instantiates the ex-post/local-deviation
+  semantics, add constructors from exact histories and exact schedules into the
+  finite bundled certificate, plus an all-scheduled variant. If an adjacent
+  source-obligation layer already has a sorted-schedule endpoint, add a direct
+  endpoint from the sharper ex-post/local-deviation layer and an all-scheduled
+  specialization. For small concrete schedules, mirror singleton/pair helpers
+  at that sharper layer.
+- For source-completion certificates, expose obligation-conjunction theorems
+  for each important layer. The full certificate should list all source
+  obligations, while core, one-sided, ex-post, sequential-rationality,
+  one-step/tie-break, and local-deviation certificates should list only their
+  minimized obligations. Also expose direct downstream endpoints from reduced
+  certificates to named-strategy PBE, PBE strategy equality, the cutoff/action
+  rule, unique PBE, outcome equality, and compact paper conclusions, so audit
+  files can cite one theorem from the minimized source obligation.
+- For exact finite schedules, expose deterministic-final-state facts:
+  scheduled ranks have terminal records equal to their threshold, and from an
+  all-active initial state the active ranks are exactly the unscheduled ranks.
+  If an endpoint already contains terminal-record conclusions but its name only
+  says `exists_unique_pbe`, add a paper-facing alias whose name explicitly says
+  `with_terminal_record_conclusion`.
+- When a paper theorem includes a continuity restriction on a strategy formula,
+  formalize continuity of the numeric policy formula itself, not just
+  monotonicity or affine algebra; expose both scalar and indexed/update forms
+  if the theorem is rank-indexed.
+- When a theorem states "same payoff" and the formalization already proves slot
+  and payment equality, add a utility-extensionality bridge and a direct
+  paper-facing utility-equality endpoint so reviewers do not have to unfold the
+  quasilinear utility definition. If the theorem has both all-rank and finite
+  completed-rank routes, expose the payoff endpoint for both routes.
+- When a source model uses a convention such as an empty history value, add a
+  named theorem that rewrites the general formula under that convention, plus
+  the indexed specialization if the theorem is rank-indexed.
+- When strict monotonicity is used in a source uniqueness argument, add the
+  corresponding injectivity theorem so later uniqueness proofs can cite the
+  identification property directly.
+- If the source proof uses a named scalar such as `q`, expose source-proof-line
+  aliases for the defining formula, expected interval, endpoint, monotonicity,
+  and continuity checks after proving the lower-level algebra.
+- At abstract game-interface layers, expose payoff-equality bridges from
+  same-allocation/same-payment fields before building more specialized
+  endpoints. Also expose outcome-equality-to-payoff-equality bridges when
+  stronger outcome equality is already the common endpoint.
+- When a certificate field captures a paper phrase such as "best response
+  regardless of beliefs," expose a direct theorem with that conclusion instead
+  of leaving reviewers to inspect the field projection manually. When final
+  theorem objects wrap a source certificate, lift the endpoint to those final
+  objects too.
+- If an iff endpoint converts source sequential rationality into a local
+  paper-facing predicate, expose the direct theorem discharging that predicate
+  from the named-strategy best-response obligation. When the only use of a
+  belief argument is to instantiate a belief-independent result, expose a
+  `[Nonempty Belief]` citation form. When a paper-facing strategy is named,
+  expose the named-strategy `for all beliefs` iff source-local-predicate
+  endpoint, not only the arbitrary-strategy iff.
