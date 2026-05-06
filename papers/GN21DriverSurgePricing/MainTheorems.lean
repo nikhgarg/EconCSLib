@@ -50457,6 +50457,127 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
         exact ⟨hmR_pos, hrate, hlower, hupper⟩ }
 
 /--
+Positive-mass target pointwise fixed-transfer assumptions with the scalar
+surge multiplier gap derived from positivity of the constructed Theorem 3
+surge ratio.
+-/
+structure Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeTargetPositiveRatioPointwiseFixedTransferDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  surge_target_positive_ratio_pointwise_fixed_transfer_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (hparams :
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z) →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            0 < (Theorem3AcceptAllStructuredParameterData.of_evidence
+              hparams).surgeRatio ∧
+              gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                (ρ 0) = R1 ∧
+              ∀ τ ∈ acceptAllPolicy \ ρ 0,
+                gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                    (ρ 0) *
+                    τ =
+                  gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21SwitchProb switch12 switch21 τ
+
+/--
+Paper-facing Theorem 3 wrapper from target pointwise fixed-state transfer data
+and a positive constructed surge ratio.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_positive_ratio_pointwise_fixed_transfer_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeTargetPositiveRatioPointwiseFixedTransferDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_pointwise_fixed_transfer_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_pos := A.hmass1_pos
+      hmass2_pos := A.hmass2_pos
+      surge_target_pointwise_fixed_transfer_data := by
+        intro m z hnonneg hparams ρ hρ
+        let P :=
+          Theorem3AcceptAllStructuredParameterData.of_evidence hparams
+        rcases
+            A.surge_target_positive_ratio_pointwise_fixed_transfer_data
+              m z hnonneg hparams ρ hρ with
+          ⟨hsurgeRatio_pos, hrate, hpointwise⟩
+        have hT2_ge_one :
+            1 ≤ gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+          gn21ScaledStateTime_ge_one_of_nonneg (μ 1) (arrival 1)
+            acceptAllPolicy (le_of_lt A.harrival2_pos)
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+        have hsum21 : 0 < switch21 + switch12 := by
+          linarith [A.hswitch21_pos, A.hswitch12_pos]
+        have hswitch_lt_Q2 :
+            switch21 <
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12 :=
+          paper_remark4_exit_weight_gt_switch_of_positive_measure
+            (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+            A.harrival2_pos A.hswitch21_pos hsum21
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+            A.hq2_integrable
+            (measure_pos_of_singleStateTripMass_pos (μ 1) acceptAllPolicy
+              A.hmass2_pos)
+        have hmR_pos : 0 < m 1 - R1 :=
+          P.m1_sub_R1_pos_of_surgeRatio_pos A.hR1_pos A.hR1_lt_R2
+            hT2_ge_one hswitch_lt_Q2 hsurgeRatio_pos
+        exact ⟨hmR_pos, hrate, hpointwise⟩ }
+
+/--
 Bundled source-level assumptions for the primitive structured current-bounds
 Theorem 3 route.  This is the lighter paper-facing version of
 `Theorem3AcceptAllStructuredCurrentBoundsSourceAssumptions`: the remaining

@@ -147,7 +147,11 @@ cache is `source.txt`.
   fixed non-surge policy has target reward rate `R1`.  The pointwise variant
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_pointwise_fixed_transfer_data_assumptions`
   derives both cross-ratio comparisons by integrating a source-style equality
-  on the current non-surge rejected complement.
+  on the current non-surge rejected complement.  The positive-ratio pointwise
+  wrapper
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_positive_ratio_pointwise_fixed_transfer_data_assumptions`
+  also derives the scalar gap `m_2-R1>0` from positivity of the constructed
+  surge ratio.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.
