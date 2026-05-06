@@ -48698,6 +48698,294 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_fe
       A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos hweak
 
 /--
+Minimal source-data assumptions for the feasible-measurable sequential
+Theorem 3 route.  Compared with
+`Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions`,
+the final field supplies only the genuinely policy-dependent Lemma 9/10 source
+data.  Positive real accept-all mass is assumed once and Lean derives the
+underlying measure positivity and packed sequential certificate fields.
+-/
+structure Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsMinimalSourceDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  feasible_sequential_current_bounds_source_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        (∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePolicy ρ →
+            ∃ ratio : ℝ,
+              GN21NonsurgeLemma10AcceptAllAggregateSourceData
+                (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+                R2 (z 0) ratio
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                (ρ 0) acceptAllPolicy) ∧
+          (∀ ρ : Fin 2 → TripPolicy,
+            dynamicFeasibleMeasurablePolicy ρ →
+              ∃ R1_current ratio : ℝ,
+                GN21SurgeLemma9AcceptAllAggregateSourceData
+                  (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+                  (m 1) R1_current (z 1) ratio
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) (ρ 1))
+
+/--
+Paper-facing Theorem 3 wrapper from the minimal source-data bundle.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_minimal_source_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsMinimalSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmeasure1_pos :=
+        measure_pos_of_singleStateTripMass_pos
+          (μ 0) acceptAllPolicy A.hmass1_pos
+      hmeasure2_pos :=
+        measure_pos_of_singleStateTripMass_pos
+          (μ 1) acceptAllPolicy A.hmass2_pos
+      feasible_sequential_current_bounds_source := by
+        intro m z hnonneg hparams
+        let P :=
+          Theorem3AcceptAllStructuredParameterData.of_evidence hparams
+        rcases
+            A.feasible_sequential_current_bounds_source_data
+              m z hnonneg hparams with
+          ⟨hnonsurge, hsurge⟩
+        exact
+          { m0_eq := P.hm0
+            arrival1_pos := A.harrival1_pos
+            arrival2_pos := A.harrival2_pos
+            switch12_pos := A.hswitch12_pos
+            switch21_pos := A.hswitch21_pos
+            acceptAll_mass_pos := by
+              intro i
+              fin_cases i
+              · exact A.hmass1_pos
+              · exact A.hmass2_pos
+            time1_acceptAll_integrable := A.htime1_integrable
+            time2_acceptAll_integrable := A.htime2_integrable
+            q1_acceptAll_integrable := A.hq1_integrable
+            q2_acceptAll_integrable := A.hq2_integrable
+            nonsurge_after_surge_data := hnonsurge
+            surge_data := hsurge } }
+
+/--
+Source assumptions for the sequential route after discharging the Lemma 10
+accept-all fixed-surge branch.  The remaining policy-dependent data are:
+positive current non-surge mass, and Lemma 9 source data for moving the surge
+state with the current non-surge policy fixed.
+-/
+structure Theorem3AcceptAllStructuredFeasibleSequentialSurgeSourceDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  nonsurge_current_mass_pos :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePolicy ρ →
+            0 < singleStateTripMass (μ 0) (ρ 0)
+  surge_source_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePolicy ρ →
+            ∃ R1_current ratio : ℝ,
+              GN21SurgeLemma9AcceptAllAggregateSourceData
+                (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+                (m 1) R1_current (z 1) ratio
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                (ρ 0) (ρ 1)
+
+/--
+Paper-facing Theorem 3 wrapper after the Lemma 10 accept-all fixed-surge branch
+has been discharged by Theorem 3 parameter data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredFeasibleSequentialSurgeSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_minimal_source_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_pos := A.hmass1_pos
+      hmass2_pos := A.hmass2_pos
+      feasible_sequential_current_bounds_source_data := by
+        intro m z hnonneg hparams
+        let P :=
+          Theorem3AcceptAllStructuredParameterData.of_evidence hparams
+        constructor
+        · intro ρ hρ
+          have hsum21 : 0 < switch21 + switch12 := by
+            linarith [A.hswitch21_pos, A.hswitch12_pos]
+          have hfixed_exit_pos :
+              0 <
+                gn21ExitWeightIntegral (μ 1) (arrival 1)
+                  switch21 switch12 acceptAllPolicy :=
+            gn21ExitWeightIntegral_pos_of_switch_pos
+              (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+              (le_of_lt A.harrival2_pos) A.hswitch21_pos hsum21
+              measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+          have hfixed_time_pos :
+              0 <
+                gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+            gn21ScaledStateTime_pos_of_nonneg
+              (μ 1) (arrival 1) acceptAllPolicy
+              (le_of_lt A.harrival2_pos) measurableSet_acceptAllPolicy
+              (fun _ hτ => hτ)
+          have hfixed_A_pos :
+              0 <
+                gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
+                    switch12 +
+                  gn21ExitWeightIntegral (μ 1) (arrival 1)
+                    switch21 switch12 acceptAllPolicy := by
+            exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+              hfixed_exit_pos
+          have hfixed_reward_rate :
+              gn21ScaledStateEarning (μ 1) (arrival 1)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                  acceptAllPolicy =
+                R2 * gn21ScaledStateTime (μ 1) (arrival 1)
+                  acceptAllPolicy := by
+            calc
+              gn21ScaledStateEarning (μ 1) (arrival 1)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                  acceptAllPolicy
+                  =
+                m 1 *
+                    (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+                  z 1 *
+                    (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                        switch21 switch12 -
+                      switch21) := by
+                    simpa [ctmcStructuredDynamicSurgePrice,
+                      ctmcDynamicSwitchProb, ctmcStructuredSurgePrice,
+                      gn21AcceptAllScaledStateTime,
+                      gn21AcceptAllExitWeightIntegral] using
+                      paper_remark2_structured_scaled_earning_algebra
+                        (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12
+                        acceptAllPolicy A.htime2_integrable
+                        A.hq2_integrable
+              _ = R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+                P.surge_accounting
+          exact ⟨P.nonsurgeRatio,
+            GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening
+              (hρ 0).1 (hρ 0).2 A.harrival1_pos A.hswitch12_pos
+              A.hswitch21_pos
+              (A.htime1_integrable.mono_set (hρ 0).1)
+              (A.hq1_integrable.mono_set (hρ 0).1)
+              A.htime1_integrable A.hq1_integrable
+              P.nonsurge_acceptAll_bounds hfixed_A_pos
+              (le_of_lt hfixed_exit_pos)
+              (A.nonsurge_current_mass_pos m z hnonneg hparams ρ hρ)
+              P.hz0 A.hR2_pos hfixed_reward_rate⟩
+        · exact A.surge_source_data m z hnonneg hparams }
+
+/--
 Bundled source-level assumptions for the primitive structured current-bounds
 Theorem 3 route.  This is the lighter paper-facing version of
 `Theorem3AcceptAllStructuredCurrentBoundsSourceAssumptions`: the remaining
@@ -49457,11 +49745,11 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_source_assump
     (arrival : Fin 2 → ℝ)
     (rho R1 R2 switch12 switch21 : ℝ)
     (A :
-      Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
+      Theorem3AcceptAllStructuredFeasibleSequentialSurgeSourceDataAssumptions
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
       μ arrival R1 R2 switch12 switch21 :=
-  paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+  paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions
     μ arrival rho R1 R2 switch12 switch21 A
 
 /--

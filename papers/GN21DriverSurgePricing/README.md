@@ -115,9 +115,13 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions`,
   which derives the packed aggregate data and nondegeneracy fields from
   source-facing Lemma 9/10 data, accept-all mass positivity, and accept-all
-  integrability.  The canonical measurable source entry point
+  integrability.  The next wrapper,
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions`,
+  discharges the Lemma 10 accept-all fixed-surge branch from Theorem 3
+  parameter data, leaving only positive current non-surge mass and Lemma 9
+  source data for the surge move.  The canonical measurable source entry point
   `paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions`
-  aliases this sequential source-data route.
+  aliases this reduced sequential source-data route.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

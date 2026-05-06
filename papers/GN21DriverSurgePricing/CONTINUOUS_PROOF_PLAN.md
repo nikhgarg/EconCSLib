@@ -89,16 +89,18 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions`,
    exposed canonically as
    `paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions`,
-   whose final field is
-   `Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate`;
-   Lean derives the packed aggregate data and nondegeneracy fields from
-   source-facing Lemma 9/10 data.  These wrappers make the accept-all
-   fixed-state branch the only Lemma 10 obligation needed for Theorem 3 IC.
+   but the current canonical theorem uses the still lighter
+   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions`.
+   Lean now derives the packed aggregate data, nondegeneracy fields, and the
+   Lemma 10 accept-all fixed-surge branch from Theorem 3 parameter data.  The
+   remaining field is positive current non-surge mass plus Lemma 9 source data
+   for the surge move.
 
 3. Instantiate the feasible sequential source route from source regularity:
-   prove the Lemma 9 aggregate data for the surge move at each feasible
-   current policy and the Lemma 10 aggregate data for the non-surge move with
-   surge fixed to accept-all.  The older regular allowed-policy-form and
+   prove current non-surge mass positivity and Lemma 9 aggregate data for the
+   surge move at each feasible current policy.  The Lemma 10 non-surge move
+   with surge fixed to accept-all is now compiled from the constructed
+   Theorem 3 parameter data.  The older regular allowed-policy-form and
    fixed-transfer routes can remain available for stronger uniqueness or
    statewise statements.
 

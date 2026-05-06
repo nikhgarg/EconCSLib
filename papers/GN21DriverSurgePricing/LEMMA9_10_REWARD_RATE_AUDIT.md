@@ -112,6 +112,7 @@ paper_theorem3_measured_structured_ic_prices_of_structured_sequential_current_bo
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_assumptions
 Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
 
@@ -126,13 +127,16 @@ and the current fixed non-surge reward rate; after that, the non-surge move has
 surge fixed at accept-all, so Lemma 10 can use the Theorem 3 target surge
 accept-all rate.  The source-data wrapper derives the packed aggregate and
 nondegeneracy fields from source-facing Lemma 9/10 data, accept-all
-integrability, and positive accept-all mass.
+integrability, and positive accept-all mass.  The reduced surge-source wrapper
+derives the Lemma 10 accept-all fixed-surge branch from Theorem 3 parameter
+data, so the remaining local proof is the Lemma 9 surge move plus positive
+current non-surge mass.
 
 ## Closure Options
 
 1. Use the sequential Theorem 3 route for IC.  This is the fastest
    source-faithful path: it needs Lemma 9 for the arbitrary current surge move
-   and Lemma 10 only in the accept-all fixed-surge branch.
+   and Lean now discharges Lemma 10 in the accept-all fixed-surge branch.
 
 2. Prove fixed-state reward-rate equality for every non-accept-all branch.
    This is the strongest route and is already supported by the fixed-state
