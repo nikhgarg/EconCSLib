@@ -95,7 +95,9 @@ cache is `source.txt`.
   `Theorem4MeasuredAggregateStructuredEndpointTermsCurrentRateWeakCertificate`,
   and
   `theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates`
-  for the weak Theorem 3 boundary.  The derivation and remaining alternatives are
+  for the weak Theorem 3 boundary, with the paper-facing source wrapper
+  `paper_theorem3_measured_structured_ic_prices_of_structured_endpoint_terms_current_rate_source_assumptions`.
+  The derivation and remaining alternatives are
   recorded in `LEMMA9_10_REWARD_RATE_AUDIT.md`.  The current-bound layer also
   includes fixed-state
   cross-ratio union bridges

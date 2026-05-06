@@ -70,6 +70,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `Theorem4MeasuredAggregateStructuredEndpointTermsCurrentRateWeakCertificate`,
    and
    `theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates`.
+   The paper-facing source wrapper is
+   `paper_theorem3_measured_structured_ic_prices_of_structured_endpoint_terms_current_rate_source_assumptions`.
    The compiled fixed-state routes still need target reward-rate facts for the
    fixed state; those are automatic in accept-all fixed-state branches but are
    not a source consequence for arbitrary non-accept-all fixed states.
