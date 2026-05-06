@@ -36843,6 +36843,18 @@ noncomputable def Theorem3AcceptAllStructuredParameterData.of_evidence
       nonsurge_accounting := Hdata.2.2.2.2.2.2.1
       surge_accounting := Hdata.2.2.2.2.2.2.2 }
 
+/-- Theorem 3 surge `z` data in the Lemma 9 ratio form. -/
+theorem Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    z 1 = P.surgeRatio * (m 1 - R1) := by
+  rw [P.hz1, P.hm1]
+  rfl
+
 /--
 Theorem 3 parameter data plus the Lemma 10 fixed-state transfer build the
 regular non-surge reject-long endpoint record.  Compared with
@@ -37004,11 +37016,8 @@ def GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_theorem3_fixed_
         S.hswitch21_pos S.surge_acceptAll_gap_nonneg
         (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
         hfixed_lower_cross hfixed_upper_cross)
-      hmass_other_pos
-      (by
-        rw [P.hz1, P.hm1]
-        rfl)
-      hmR_pos hR1_nonneg hfixed_reward_rate
+      hmass_other_pos P.surge_z_eq_ratio_m_sub_R1 hmR_pos hR1_nonneg
+      hfixed_reward_rate
 
 /-- Theorem 3 parameter data plus Lemma 9 fixed-state transfer build lower-cutoff surge reject-middle data. -/
 def GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
@@ -37077,11 +37086,8 @@ def GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_theorem3_fix
         S.hswitch21_pos S.surge_acceptAll_gap_nonneg
         (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
         hfixed_lower_cross hfixed_upper_cross)
-      hmass_other_pos
-      (by
-        rw [P.hz1, P.hm1]
-        rfl)
-      hmR_pos hR1_nonneg hfixed_reward_rate
+      hmass_other_pos P.surge_z_eq_ratio_m_sub_R1 hmR_pos hR1_nonneg
+      hfixed_reward_rate
 
 /-- Theorem 3 parameter data plus Lemma 9 fixed-state transfer build upper-cutoff surge reject-middle data. -/
 def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
@@ -37156,11 +37162,8 @@ def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fix
         S.hswitch21_pos S.surge_acceptAll_gap_nonneg
         (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
         hfixed_lower_cross hfixed_upper_cross)
-      hmass_other_pos
-      (by
-        rw [P.hz1, P.hm1]
-        rfl)
-      hmR_pos hR1_nonneg hfixed_reward_rate
+      hmass_other_pos P.surge_z_eq_ratio_m_sub_R1 hmR_pos hR1_nonneg
+      hfixed_reward_rate
 
 /--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured

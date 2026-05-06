@@ -262,6 +262,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `lemma9StructuredLowerFromGap_le_of_fixed_state_expansion`,
   `lemma9StructuredUpperFromExitWeight_le_of_fixed_state_expansion`, and
   `lemma9StructuredBounds_of_fixed_state_expansion`,
+  Theorem 3 surge ratio-form bridge
+  `Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1`,
   Theorem 3 parameter-data endpoint constructors
   `GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer`
   and
