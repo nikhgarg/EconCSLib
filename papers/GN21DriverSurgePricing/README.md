@@ -135,7 +135,11 @@ cache is `source.txt`.
   The accounting-form wrapper,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions`,
   further replaces fixed-state reward-rate identities with the structured
-  price accounting equations discharged by Remark 2.
+  price accounting equations discharged by Remark 2.  The reward-rate wrapper,
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_reward_rate_source_assumptions`,
+  goes in the other direction: fixed-state source obligations can be stated as
+  measured reward-rate equalities, and Lean derives the scaled earning
+  identities `W_i = R_i T_i` needed by the current-bounds route.
   The stronger positive-replacement source boundary is exposed as
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
@@ -354,7 +358,9 @@ statewise-certificate routes, plus a
 direct weak-reward IC wrapper whose final obligation is only weak statewise
 accept-all improvement for the constructed prices, a positive-replacement
 source wrapper whose final obligation is the Lemma 9/10 positive Lemma 5
-replacement proof for the constructed prices, plus
+replacement proof for the constructed prices, current-bounds source wrappers
+that accept either scaled accounting equations or measured reward-rate
+equalities for the fixed state, plus
 a direct ratio-to-IC route from the four-case Theorem 4 shape-endpoint-selection
 certificate and the paper-ordered shape-derivation endpoint-bridge
 certificate, plus a route that accepts the raw statewise improvement

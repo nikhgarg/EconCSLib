@@ -12623,6 +12623,30 @@ theorem gn21MeasuredStateRewardRate_eq_scaled_primitives
   field_simp [hmass, harrival, harrivalMass]
 
 /--
+State reward-rate equality as the scaled earning identity used in Appendix D.
+This is the source-facing bridge from `R_i(w_i, σ_i) = R_i` to
+`W_i(σ_i) = R_i T_i(σ_i)`.
+-/
+theorem gn21ScaledStateEarning_eq_reward_mul_scaled_time_of_measuredStateRewardRate
+    (μ : Measure TripLength) (arrivalRate rewardRate : ℝ)
+    (w : PricingFunction) (σ : TripPolicy)
+    (hmass : singleStateTripMass μ σ ≠ 0)
+    (harrivalMass : arrivalRate * singleStateTripMass μ σ ≠ 0)
+    (hscaledTime : gn21ScaledStateTime μ arrivalRate σ ≠ 0)
+    (hreward :
+      gn21MeasuredStateRewardRate μ arrivalRate w σ = rewardRate) :
+    gn21ScaledStateEarning μ arrivalRate w σ =
+      rewardRate * gn21ScaledStateTime μ arrivalRate σ := by
+  have hscaled :=
+    gn21MeasuredStateRewardRate_eq_scaled_primitives
+      μ arrivalRate w σ hmass harrivalMass
+  rw [hreward] at hscaled
+  have hmul :=
+    congrArg (fun x => x * gn21ScaledStateTime μ arrivalRate σ) hscaled
+  field_simp [hscaledTime] at hmul
+  exact hmul.symm
+
+/--
 Measured time-fraction algebra in Appendix-D scaled primitives:
 `mu_i = T_i Q_j / (T_j Q_i + T_i Q_j)`.
 -/
@@ -14368,6 +14392,111 @@ theorem GN21SurgeLemma9AcceptAllAggregateSourceData.of_structured_accounting
       μI arrivalI mI zI switch12 switch21 σI htimeI_integrable
       hqI_integrable]
     exact D.fixed_accounting
+
+/--
+Source-facing non-surge Lemma 10 data with the fixed state's reward-rate
+identity stated directly as `R_j(w_j, σ_j) = R_2`.  This matches the paper's
+Lemma 10 wording before expanding the reward rate into scaled primitives.
+-/
+structure GN21NonsurgeLemma10AcceptAllAggregateRewardRateData
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 R2 z ratio mJ zJ : ℝ)
+    (σI σJ : TripPolicy) : Prop where
+  current_mass_pos : 0 < singleStateTripMass μI σI
+  bounds :
+    lemma10StructuredBounds ratio
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      switch12
+  z_eq : z = ratio * R2
+  R2_pos : 0 < R2
+  fixed_reward_rate :
+    gn21MeasuredStateRewardRate μJ arrivalJ
+      (ctmcStructuredSurgePrice mJ zJ switch21 switch12) σJ = R2
+
+/--
+Measured reward-rate equality supplies the fixed-state scaled earning identity
+needed by the non-surge source-data package.
+-/
+theorem GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_reward_rate
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio mJ zJ : ℝ}
+    {σI σJ : TripPolicy}
+    (hfixed_mass :
+      singleStateTripMass μJ σJ ≠ 0)
+    (hfixed_arrival_mass :
+      arrivalJ * singleStateTripMass μJ σJ ≠ 0)
+    (hfixed_time :
+      gn21ScaledStateTime μJ arrivalJ σJ ≠ 0)
+    (D :
+      GN21NonsurgeLemma10AcceptAllAggregateRewardRateData
+        μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio mJ zJ σI σJ) :
+    GN21NonsurgeLemma10AcceptAllAggregateSourceData
+      μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio
+      (ctmcStructuredSurgePrice mJ zJ switch21 switch12) σI σJ where
+  current_mass_pos := D.current_mass_pos
+  bounds := D.bounds
+  z_eq := D.z_eq
+  R2_pos := D.R2_pos
+  fixed_reward_rate :=
+    gn21ScaledStateEarning_eq_reward_mul_scaled_time_of_measuredStateRewardRate
+      μJ arrivalJ R2 (ctmcStructuredSurgePrice mJ zJ switch21 switch12)
+      σJ hfixed_mass hfixed_arrival_mass hfixed_time D.fixed_reward_rate
+
+/--
+Source-facing surge Lemma 9 data with the fixed state's reward-rate identity
+stated directly as `R_i(w_i, σ_i) = R_1`.
+-/
+structure GN21SurgeLemma9AcceptAllAggregateRewardRateData
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switch12 switch21 m R1 z ratio mI zI : ℝ)
+    (σI σJ : TripPolicy) : Prop where
+  current_mass_pos : 0 < singleStateTripMass μJ σJ
+  bounds :
+    lemma9StructuredBounds ratio
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      switch21
+  z_eq : z = ratio * (m - R1)
+  m_sub_R1_pos : 0 < m - R1
+  R1_nonneg : 0 ≤ R1
+  fixed_reward_rate :
+    gn21MeasuredStateRewardRate μI arrivalI
+      (ctmcStructuredSurgePrice mI zI switch12 switch21) σI = R1
+
+/--
+Measured reward-rate equality supplies the fixed-state scaled earning identity
+needed by the surge source-data package.
+-/
+theorem GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 m R1 z ratio mI zI : ℝ}
+    {σI σJ : TripPolicy}
+    (hfixed_mass :
+      singleStateTripMass μI σI ≠ 0)
+    (hfixed_arrival_mass :
+      arrivalI * singleStateTripMass μI σI ≠ 0)
+    (hfixed_time :
+      gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (D :
+      GN21SurgeLemma9AcceptAllAggregateRewardRateData
+        μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio mI zI σI σJ) :
+    GN21SurgeLemma9AcceptAllAggregateSourceData
+      μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio
+      (ctmcStructuredSurgePrice mI zI switch12 switch21) σI σJ where
+  current_mass_pos := D.current_mass_pos
+  bounds := D.bounds
+  z_eq := D.z_eq
+  m_sub_R1_pos := D.m_sub_R1_pos
+  R1_nonneg := D.R1_nonneg
+  fixed_reward_rate :=
+    gn21ScaledStateEarning_eq_reward_mul_scaled_time_of_measuredStateRewardRate
+      μI arrivalI R1 (ctmcStructuredSurgePrice mI zI switch12 switch21)
+      σI hfixed_mass hfixed_arrival_mass hfixed_time D.fixed_reward_rate
 
 /--
 Build primitive surge current-bounds data from source-facing current mass and
@@ -16297,6 +16426,134 @@ def theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_curr
   theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_source
     μ arrival R1 R2 switch12 switch21 m z
     (Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate.of_accounting
+      μ arrival R1 R2 switch12 switch21 m z C)
+
+/--
+Feasible current-bounds certificate with fixed-state source data stated through
+measured state reward-rate equalities.  This is closer to Lemmas 9-10's source
+phrasing (`fix σ_i, hence R_i`) than the expanded accounting form.
+-/
+structure Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  m0_eq : m 0 = R2
+  arrival1_pos : 0 < arrival 0
+  arrival2_pos : 0 < arrival 1
+  switch12_pos : 0 < switch12
+  switch21_pos : 0 < switch21
+  acceptAll_mass_pos :
+    ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy
+  time1_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  time2_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  q1_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  q2_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  nonsurge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePolicy ρ →
+        ∃ ratio : ℝ,
+          GN21NonsurgeLemma10AcceptAllAggregateRewardRateData
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            R2 (z 0) ratio (m 1) (z 1) (ρ 0) (ρ 1)
+  surge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePolicy ρ →
+        ∃ ratio : ℝ,
+          GN21SurgeLemma9AcceptAllAggregateRewardRateData
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            (m 1) R1 (z 1) ratio (m 0) (z 0) (ρ 0) (ρ 1)
+
+/--
+Reward-rate feasible current bounds instantiate the source-data feasible
+current-bounds certificate.  Positive current masses from the paired state
+data discharge the nonzero denominators needed to rewrite `R_i=W_i/T_i`.
+-/
+def Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate.of_reward_rate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  m0_eq := C.m0_eq
+  arrival1_pos := C.arrival1_pos
+  arrival2_pos := C.arrival2_pos
+  switch12_pos := C.switch12_pos
+  switch21_pos := C.switch21_pos
+  acceptAll_mass_pos := C.acceptAll_mass_pos
+  time1_acceptAll_integrable := C.time1_acceptAll_integrable
+  time2_acceptAll_integrable := C.time2_acceptAll_integrable
+  q1_acceptAll_integrable := C.q1_acceptAll_integrable
+  q2_acceptAll_integrable := C.q2_acceptAll_integrable
+  nonsurge_data := by
+    intro ρ hρ
+    rcases C.nonsurge_data ρ hρ with ⟨ratioN, DN⟩
+    rcases C.surge_data ρ hρ with ⟨ratioS, DS⟩
+    have hmassJ : singleStateTripMass (μ 1) (ρ 1) ≠ 0 :=
+      ne_of_gt DS.current_mass_pos
+    have harrivalJ : arrival 1 ≠ 0 := ne_of_gt C.arrival2_pos
+    have harrivalMassJ :
+        arrival 1 * singleStateTripMass (μ 1) (ρ 1) ≠ 0 :=
+      mul_ne_zero harrivalJ hmassJ
+    have htimeJ_pos :
+        0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) :=
+      gn21ScaledStateTime_pos_of_nonneg (μ 1) (arrival 1) (ρ 1)
+        (le_of_lt C.arrival2_pos) (hρ 1).2 (hρ 1).1
+    have Dsrc :=
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_reward_rate
+        hmassJ harrivalMassJ (ne_of_gt htimeJ_pos) DN
+    exact ⟨ratioN, by
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb] using Dsrc⟩
+  surge_data := by
+    intro ρ hρ
+    rcases C.nonsurge_data ρ hρ with ⟨ratioN, DN⟩
+    rcases C.surge_data ρ hρ with ⟨ratioS, DS⟩
+    have hmassI : singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+      ne_of_gt DN.current_mass_pos
+    have harrivalI : arrival 0 ≠ 0 := ne_of_gt C.arrival1_pos
+    have harrivalMassI :
+        arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+      mul_ne_zero harrivalI hmassI
+    have htimeI_pos :
+        0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
+      gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) (ρ 0)
+        (le_of_lt C.arrival1_pos) (hρ 0).2 (hρ 0).1
+    have Dsrc :=
+      GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
+        hmassI harrivalMassI (ne_of_gt htimeI_pos) DS
+    exact ⟨ratioS, by
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb] using Dsrc⟩
+
+/--
+Reward-rate feasible current bounds instantiate the measurable weak statewise
+reward certificate directly.
+-/
+def theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_reward_rate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate
+      (gn21MeasuredCTMCStructuredDynamicReward
+        μ arrival switch12 switch21 m z) :=
+  theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_source
+    μ arrival R1 R2 switch12 switch21 m z
+    (Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate.of_reward_rate
       μ arrival R1 R2 switch12 switch21 m z C)
 
 /--
@@ -27442,6 +27699,25 @@ def theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_
     theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_accounting
       μ arrival R1 R2 switch12 switch21 m z (C m z hnonneg hparams)
 
+/-- Reward-rate feasible current bounds instantiate the feasible weak Theorem 3 boundary. -/
+def theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_reward_rate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3AcceptAllFeasibleWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  exact
+    theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_reward_rate
+      μ arrival R1 R2 switch12 switch21 m z (C m z hnonneg hparams)
+
 /--
 The stronger measured aggregate accept-all certificate also instantiates the
 weak Theorem 3 boundary.
@@ -28031,6 +28307,76 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_cu
       A.htime1_integrable A.htime2_integrable A.hq1_integrable
       A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
       (theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_accounting
+        μ arrival R1 R2 switch12 switch21 A.current_bounds)
+
+/--
+Bundled source-level assumptions for the reward-rate feasible current-bounds
+route.  The per-policy proof supplies positive current mass, Lemma 9/10
+current bounds, and fixed-state measured reward-rate equalities.
+-/
+structure Theorem3AcceptAllStructuredCurrentBoundsRewardRateSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  current_bounds :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
+          μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper at the reward-rate feasible current-bounds
+measurable-IC boundary.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_reward_rate_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsRewardRateSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_weak_reward
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_reward_rate
         μ arrival R1 R2 switch12 switch21 A.current_bounds)
 
 /--

@@ -95,10 +95,17 @@ This is a lightweight handoff document for source-to-Lean mapping.
   accounting-form current-bounds packages
   `GN21NonsurgeLemma10AcceptAllAggregateAccountingData` and
   `GN21SurgeLemma9AcceptAllAggregateAccountingData`,
+  reward-rate current-bounds packages
+  `GN21NonsurgeLemma10AcceptAllAggregateRewardRateData` and
+  `GN21SurgeLemma9AcceptAllAggregateRewardRateData`,
   source-facing feasible current-bounds certificate
   `Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate`,
   accounting-form feasible current-bounds certificate
   `Theorem4MeasuredAggregateStructuredCurrentBoundsAccountingFeasibleCertificate`,
+  reward-rate feasible current-bounds certificate
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate`,
+  reward-rate to scaled-earning bridge
+  `gn21ScaledStateEarning_eq_reward_mul_scaled_time_of_measuredStateRewardRate`,
   and the Theorem 3 weak-boundary adapter
   `theorem3AcceptAllWeakRewardCertificate_of_structured_current_bounds`,
   source-facing current-bounds wrapper
@@ -111,6 +118,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_source_feasible_source_assumptions`,
   accounting-form feasible measurable-IC source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions`,
+  reward-rate feasible measurable-IC source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_reward_rate_source_assumptions`,
   bundled source-assumption wrapper
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
   positive-replacement source wrapper
