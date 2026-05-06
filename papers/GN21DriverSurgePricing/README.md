@@ -90,7 +90,12 @@ cache is `source.txt`.
   `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms`,
   so non-accept-all fixed-state branches can be closed by proving the actual
   current fixed-reward endpoint inequalities rather than assuming target
-  reward-rate identities.  The derivation and remaining alternatives are
+  reward-rate identities.  The endpoint-term route is threaded through
+  `GN21NonsurgeLemma10EndpointTermsAggregateData`,
+  `Theorem4MeasuredAggregateStructuredEndpointTermsCurrentRateWeakCertificate`,
+  and
+  `theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates`
+  for the weak Theorem 3 boundary.  The derivation and remaining alternatives are
   recorded in `LEMMA9_10_REWARD_RATE_AUDIT.md`.  The current-bound layer also
   includes fixed-state
   cross-ratio union bridges
@@ -739,8 +744,10 @@ current-bound fields without assuming target reward-rate identities for
 arbitrary non-accept-all fixed states.  For Lemma 10, the compiled
 endpoint-term route now exposes the exact static and zero-time linearized
 endpoint inequalities needed when the current fixed surge reward rate differs
-from the Theorem 3 target rate; `LEMMA9_10_REWARD_RATE_AUDIT.md` records why a
-one-sided reward comparison alone is not enough.
+from the Theorem 3 target rate, and this route reaches the weak Theorem 3
+accept-all boundary through a current-rate aggregate certificate;
+`LEMMA9_10_REWARD_RATE_AUDIT.md` records why a one-sided reward comparison alone
+is not enough.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

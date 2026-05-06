@@ -97,11 +97,15 @@ paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms
 paper_lemma10_derivative_sign_kernel_pos_of_endpoint_terms
 paper_lemma10_measured_derivative_sign_kernel_pos_of_endpoint_terms
 gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms
+GN21NonsurgeLemma10EndpointTermsAggregateData
+Theorem4MeasuredAggregateStructuredEndpointTermsCurrentRateWeakCertificate
+theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates
 ```
 
 These theorems do not assume target fixed-state reward-rate identities.  They
 ask directly for the two scalar endpoint inequalities that are mathematically
-needed by the derivative proof.
+needed by the derivative proof, and the weak Theorem 3 wrapper lets each policy
+carry its own current fixed-state reward rates.
 
 ## Closure Options
 

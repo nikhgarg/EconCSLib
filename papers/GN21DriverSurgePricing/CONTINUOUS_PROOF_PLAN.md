@@ -65,6 +65,11 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    `lemma10StructuredLinearEndpoint_eq_ratio_reward_split`,
    `paper_lemma10_structured_derivative_kernel_pos_of_endpoint_terms`, and
    `gn21MeasuredAggregateRewardPrimitives_le_acceptAll_left_of_lemma10_endpoint_terms`.
+   This route is threaded up to the weak Theorem 3 boundary through
+   `GN21NonsurgeLemma10EndpointTermsAggregateData`,
+   `Theorem4MeasuredAggregateStructuredEndpointTermsCurrentRateWeakCertificate`,
+   and
+   `theorem3AcceptAllWeakRewardCertificate_of_structured_endpoint_terms_current_rates`.
    The compiled fixed-state routes still need target reward-rate facts for the
    fixed state; those are automatic in accept-all fixed-state branches but are
    not a source consequence for arbitrary non-accept-all fixed states.
