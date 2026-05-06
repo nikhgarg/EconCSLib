@@ -115,6 +115,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_s
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_accounting_data_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_reward_rate_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
 
@@ -133,14 +135,19 @@ integrability, and positive accept-all mass.  The reduced surge-source wrapper
 derives the Lemma 10 accept-all fixed-surge branch from Theorem 3 parameter
 data, and the accounting/reward-rate wrappers reduce the remaining Lemma 9
 fixed-state identity to the source accounting equation or measured reward-rate
-statement.  The remaining local proof is the Lemma 9 surge move plus positive
-current non-surge mass.
+statement.  The positive-mass wrapper restricts the policy domain to feasible
+measurable policies with positive accepted mass in both states, which is the
+domain where the source reward-rate denominators are defined.  On that route
+the remaining local proof is only the Lemma 9 surge reward-rate move on the
+positive-mass domain; the broad feasible-measurable wrapper keeps the explicit
+positive-current-mass obligation for users who want the stronger domain.
 
 ## Closure Options
 
 1. Use the sequential Theorem 3 route for IC.  This is the fastest
    source-faithful path: it needs Lemma 9 for the arbitrary current surge move
-   and Lean now discharges Lemma 10 in the accept-all fixed-surge branch.
+   on the positive-mass feasible domain, and Lean now discharges Lemma 10 in
+   the accept-all fixed-surge branch.
 
 2. Prove fixed-state reward-rate equality for every non-accept-all branch.
    This is the strongest route and is already supported by the fixed-state

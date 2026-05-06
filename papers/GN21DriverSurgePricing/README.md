@@ -125,10 +125,18 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions`,
   let the remaining Lemma 9 fixed-state proof be stated as the paper's
   structured accounting equation or measured reward-rate equality; Lean derives
-  the scaled fixed-state earning identity internally.  The canonical measurable
+  the scaled fixed-state earning identity internally.  The broad measurable
   source entry point
   `paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions`
   aliases the reduced sequential reward-rate route.
+  A denominator-valid variant,
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions`,
+  now restricts the source policy domain to feasible measurable policies with
+  positive accepted mass in both states, matching the reward-rate denominators
+  in Lemma 1 and Lemmas 9--10.  In that route Lean derives the Lemma 10
+  accept-all fixed-surge branch and all aggregate nondegeneracy fields; the
+  only remaining policy-dependent source field is the Lemma 9 surge
+  reward-rate data on this positive-mass domain.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

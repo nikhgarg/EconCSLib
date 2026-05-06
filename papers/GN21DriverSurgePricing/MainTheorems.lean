@@ -1849,6 +1849,44 @@ theorem dynamicFeasibleMeasurablePolicy_update
     · simpa [Function.update, hji] using hj.2
 
 /--
+Feasible measurable dynamic policies with positive accepted trip mass in every
+state.  This is the nondegenerate source domain for the measured Lemma 1
+decomposition, whose displayed state reward rates divide by `F_i(σ_i)`.
+-/
+def dynamicFeasibleMeasurablePositiveMassPolicy
+    (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop :=
+  dynamicFeasibleMeasurablePolicy σ ∧
+    ∀ i : Fin 2, 0 < singleStateTripMass (μ i) (σ i)
+
+/-- Accept-all is feasible in the positive-mass domain when both accept-all masses are positive. -/
+theorem dynamicFeasibleMeasurablePositiveMassPolicy_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    (hmass_acceptAll :
+      ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy) :
+    dynamicFeasibleMeasurablePositiveMassPolicy μ acceptAllDynamicPolicy := by
+  exact ⟨dynamicFeasibleMeasurablePolicy_acceptAll, by
+    intro i
+    simpa [acceptAllDynamicPolicy] using hmass_acceptAll i⟩
+
+/-- Replacing one state by accept-all preserves the positive-mass feasible domain. -/
+theorem dynamicFeasibleMeasurablePositiveMassPolicy_update_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {σ : Fin 2 → TripPolicy}
+    (hσ : dynamicFeasibleMeasurablePositiveMassPolicy μ σ)
+    (hmass_acceptAll :
+      ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy)
+    (i : Fin 2) :
+    dynamicFeasibleMeasurablePositiveMassPolicy μ
+      (Function.update σ i acceptAllPolicy) := by
+  constructor
+  · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hσ.1 i
+  · intro j
+    by_cases hji : j = i
+    · subst j
+      simpa [Function.update] using hmass_acceptAll i
+    · simpa [Function.update, hji] using hσ.2 j
+
+/--
 Dynamic optimality restricted to the source feasible measurable policy domain.
 The target policy is included in the domain explicitly.
 -/
@@ -1864,6 +1902,24 @@ among feasible measurable dynamic policies.
 -/
 def dynamicMeasurableIncentiveCompatible (R : DynamicReward) : Prop :=
   dynamicMeasurableOptimal R acceptAllDynamicPolicy
+
+/--
+Dynamic optimality restricted to feasible measurable policies whose accepted
+trip mass is positive in both states.
+-/
+def dynamicPositiveMassMeasurableOptimal
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward) (σ : Fin 2 → TripPolicy) : Prop :=
+  dynamicFeasibleMeasurablePositiveMassPolicy μ σ ∧
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePositiveMassPolicy μ ρ → R ρ ≤ R σ
+
+/--
+Dynamic measurable IC on the nondegenerate positive-mass source domain.
+-/
+def dynamicPositiveMassMeasurableIncentiveCompatible
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) : Prop :=
+  dynamicPositiveMassMeasurableOptimal μ R acceptAllDynamicPolicy
 
 /--
 Statewise continuation reward induced by a dynamic reward functional after
@@ -2056,6 +2112,59 @@ theorem dynamicMeasurableOptimal_acceptAll_of_surge_then_nonsurge_acceptAll_impr
     dynamicMeasurableOptimal R acceptAllDynamicPolicy := by
   constructor
   · exact dynamicFeasibleMeasurablePolicy_acceptAll
+  · intro σ hσ
+    have hsurge_step :
+        R σ ≤ R (Function.update σ 1 acceptAllPolicy) := by
+      simpa [dynamicStateReward, Function.update_eq_self] using
+        hsurge σ hσ
+    have hnonsurge_step :
+        R (Function.update σ 1 acceptAllPolicy) ≤
+          R acceptAllDynamicPolicy := by
+      have h := hnonsurge_after_surge σ hσ
+      unfold dynamicStateReward at h
+      have hcur :
+          Function.update (Function.update σ 1 acceptAllPolicy) 0
+              (σ 0) =
+            Function.update σ 1 acceptAllPolicy :=
+        by
+          have hval : (Function.update σ 1 acceptAllPolicy) 0 = σ 0 := by
+            simp
+          rw [← hval]
+          exact Function.update_eq_self 0 (Function.update σ 1 acceptAllPolicy)
+      have htarget :
+          Function.update (Function.update σ 1 acceptAllPolicy) 0
+              acceptAllPolicy =
+            acceptAllDynamicPolicy := by
+        funext i
+        fin_cases i <;> simp [acceptAllDynamicPolicy]
+      simpa [hcur, htarget] using h
+    exact le_trans hsurge_step hnonsurge_step
+
+/--
+Sequential measurable accept-all optimality on the source feasible measurable
+domain restricted to policies with positive accepted trip mass in each state.
+This is the domain on which the source paper's ratio formulas are defined.
+-/
+theorem dynamicPositiveMassMeasurableOptimal_acceptAll_of_surge_then_nonsurge_acceptAll_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward)
+    (hmass_acceptAll :
+      ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy)
+    (hsurge :
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicFeasibleMeasurablePositiveMassPolicy μ σ →
+          dynamicStateReward R σ 1 (σ 1) ≤
+            dynamicStateReward R σ 1 acceptAllPolicy)
+    (hnonsurge_after_surge :
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicFeasibleMeasurablePositiveMassPolicy μ σ →
+          dynamicStateReward R (Function.update σ 1 acceptAllPolicy) 0
+              ((Function.update σ 1 acceptAllPolicy) 0) ≤
+            dynamicStateReward R (Function.update σ 1 acceptAllPolicy) 0
+              acceptAllPolicy) :
+    dynamicPositiveMassMeasurableOptimal μ R acceptAllDynamicPolicy := by
+  constructor
+  · exact dynamicFeasibleMeasurablePositiveMassPolicy_acceptAll hmass_acceptAll
   · intro σ hσ
     have hsurge_step :
         R σ ≤ R (Function.update σ 1 acceptAllPolicy) := by
@@ -14668,6 +14777,28 @@ structure Theorem4SequentialAcceptAllMeasurableWeakRewardCertificate
             acceptAllPolicy
 
 /--
+Sequential weak accept-all reward certificate on the nondegenerate source
+domain: feasible measurable policies with positive accepted trip mass in both
+states.
+-/
+structure Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  acceptAll_mass_pos :
+    ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy
+  surge_accept_all_reward_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+        dynamicStateReward R ρ 1 (ρ 1) ≤
+          dynamicStateReward R ρ 1 acceptAllPolicy
+  nonsurge_after_surge_accept_all_reward_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+        dynamicStateReward R (Function.update ρ 1 acceptAllPolicy) 0
+            ((Function.update ρ 1 acceptAllPolicy) 0) ≤
+          dynamicStateReward R (Function.update ρ 1 acceptAllPolicy) 0
+            acceptAllPolicy
+
+/--
 Global statewise accept-all reward certificate: replacing either state's policy
 by accept-all weakly improves every dynamic policy, and strictly improves
 optimal policies unless the relevant state already accepts all positive trips.
@@ -14747,6 +14878,23 @@ theorem paper_theorem4_measurable_accept_all_optimal_of_sequential_accept_all_we
   exact
     dynamicMeasurableOptimal_acceptAll_of_surge_then_nonsurge_acceptAll_improvements R
       C.surge_accept_all_reward_ge
+      C.nonsurge_after_surge_accept_all_reward_ge
+
+/--
+Sequential weak accept-all reward comparisons on positive-mass feasible
+measurable policies imply accept-all optimality on that nondegenerate source
+domain.
+-/
+theorem paper_theorem4_positive_mass_measurable_accept_all_optimal_of_sequential_accept_all_weak_reward
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward)
+    (C :
+      Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+        μ R) :
+    dynamicPositiveMassMeasurableOptimal μ R acceptAllDynamicPolicy := by
+  exact
+    dynamicPositiveMassMeasurableOptimal_acceptAll_of_surge_then_nonsurge_acceptAll_improvements
+      μ R C.acceptAll_mass_pos C.surge_accept_all_reward_ge
       C.nonsurge_after_surge_accept_all_reward_ge
 
 /-- Global statewise reward improvements instantiate the statewise reward interface. -/
@@ -18756,6 +18904,38 @@ structure Theorem4MeasuredAggregateFeasibleSequentialWeakAcceptAllRewardCertific
             acceptAllPolicy acceptAllPolicy
 
 /--
+Sequential weak aggregate-reward certificate restricted to the nondegenerate
+source domain.  Positive accepted mass and positive CTMC rates let Lean derive
+all Lemma 1 nondegeneracy side conditions internally.
+-/
+structure Theorem4MeasuredAggregatePositiveMassFeasibleSequentialWeakAcceptAllRewardCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  acceptAll_mass_pos :
+    ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy
+  arrival1_pos : 0 < arrival 0
+  arrival2_pos : 0 < arrival 1
+  switch12_pos : 0 < switch12
+  switch21_pos : 0 < switch21
+  surge_aggregate_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+        gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+            (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) ≤
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+            (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) acceptAllPolicy
+  nonsurge_after_surge_aggregate_ge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+        gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+            (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) acceptAllPolicy ≤
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+            (arrival 1) switch12 switch21 (w 0) (w 1)
+            acceptAllPolicy acceptAllPolicy
+
+/--
 Weak aggregate `Q,T,W` improvements instantiate the weak statewise reward
 interface used by the IC-only Theorem 3 route.
 -/
@@ -18888,6 +19068,75 @@ def theorem4SequentialAcceptAllMeasurableWeakRewardCertificate_of_measured_aggre
         (w 0) (w 1) (ρ 0) acceptAllPolicy acceptAllPolicy acceptAllPolicy
         (C.surge_accept_all_nondegenerate ρ hρ)
         C.accept_all_nondegenerate
+        (C.nonsurge_after_surge_aggregate_ge ρ hρ)
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero] using hle
+
+/--
+Positive-mass feasible sequential aggregate weak improvements instantiate the
+positive-mass sequential weak reward interface used by the denominator-valid
+source-domain IC route.
+-/
+def theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate_of_measured_aggregate_positive_mass_feasible_sequential_weak_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C :
+      Theorem4MeasuredAggregatePositiveMassFeasibleSequentialWeakAcceptAllRewardCertificate
+        μ arrival switch12 switch21 w) :
+    Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+      μ (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) where
+  acceptAll_mass_pos := C.acceptAll_mass_pos
+  surge_accept_all_reward_ge := by
+    intro ρ hρ
+    have hcurrent :
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) (ρ 1) :=
+      gn21MeasuredPairNondegenerate_of_positive_measure
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) (ρ 1) (hρ.2 0) (hρ.2 1)
+        C.arrival1_pos C.arrival2_pos C.switch12_pos C.switch21_pos
+        (hρ.1 0).2 (hρ.1 1).2 (hρ.1 0).1 (hρ.1 1).1
+    have hsurge :
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) acceptAllPolicy :=
+      gn21MeasuredPairNondegenerate_of_positive_measure
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) acceptAllPolicy (hρ.2 0) (C.acceptAll_mass_pos 1)
+        C.arrival1_pos C.arrival2_pos C.switch12_pos C.switch21_pos
+        (hρ.1 0).2 measurableSet_acceptAllPolicy (hρ.1 0).1
+        (fun _ hτ => hτ)
+    have hle :=
+      paper_lemma1_measured_dynamic_reward_le_of_aggregate_pair_le_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) (ρ 0) acceptAllPolicy
+        hcurrent hsurge (C.surge_aggregate_ge ρ hρ)
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_one] using hle
+  nonsurge_after_surge_accept_all_reward_ge := by
+    intro ρ hρ
+    have hsurge :
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) acceptAllPolicy :=
+      gn21MeasuredPairNondegenerate_of_positive_measure
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (ρ 0) acceptAllPolicy (hρ.2 0) (C.acceptAll_mass_pos 1)
+        C.arrival1_pos C.arrival2_pos C.switch12_pos C.switch21_pos
+        (hρ.1 0).2 measurableSet_acceptAllPolicy (hρ.1 0).1
+        (fun _ hτ => hτ)
+    have haccept :
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 acceptAllPolicy acceptAllPolicy :=
+      gn21MeasuredPairNondegenerate_of_positive_measure
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        acceptAllPolicy acceptAllPolicy (C.acceptAll_mass_pos 0)
+        (C.acceptAll_mass_pos 1) C.arrival1_pos C.arrival2_pos
+        C.switch12_pos C.switch21_pos measurableSet_acceptAllPolicy
+        measurableSet_acceptAllPolicy (fun _ hτ => hτ) (fun _ hτ => hτ)
+    have hle :=
+      paper_lemma1_measured_dynamic_reward_le_of_aggregate_pair_le_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) acceptAllPolicy acceptAllPolicy
+        acceptAllPolicy hsurge haccept
         (C.nonsurge_after_surge_aggregate_ge ρ hρ)
     simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero] using hle
 
@@ -35359,6 +35608,32 @@ theorem paper_theorem3_ctmc_structured_prices_measurable_ic_of_sequential_accept
     ⟨hm0_nonneg, hm1_nonneg, hz1_nonneg⟩, by intro i τ; rfl⟩
 
 /--
+Theorem 3 endpoint from sequential weak accept-all reward comparisons on the
+positive-mass feasible measurable source domain.
+-/
+theorem paper_theorem3_ctmc_structured_prices_positive_mass_measurable_ic_of_sequential_accept_all_weak_reward
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward)
+    (m z : Fin 2 → ℝ) (switch12 switch21 : ℝ)
+    (hm0_nonneg : 0 ≤ m 0)
+    (hm1_nonneg : 0 ≤ m 1)
+    (hz1_nonneg : 0 ≤ z 1)
+    (C :
+      Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+        μ R) :
+    dynamicPositiveMassMeasurableIncentiveCompatible μ R ∧
+      ∃ m' z' : Fin 2 → ℝ, ∃ q : Fin 2 → TripLength → ℝ,
+        (0 ≤ m' 0 ∧ 0 ≤ m' 1 ∧ 0 ≤ z' 1) ∧
+          (∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m' i) (z' i) (q i) τ) := by
+  exact ⟨
+    paper_theorem4_positive_mass_measurable_accept_all_optimal_of_sequential_accept_all_weak_reward
+      μ R C,
+    m, z, ctmcDynamicSwitchProb switch12 switch21,
+    ⟨hm0_nonneg, hm1_nonneg, hz1_nonneg⟩, by intro i τ; rfl⟩
+
+/--
 Theorem 3 endpoint from the statewise accept-all conclusion produced by the
 continuous structural proof: once every optimal policy is feasible and accepts
 all positive trips in both states, the CTMC structured price family is IC.
@@ -44055,6 +44330,27 @@ def theorem3MeasuredStructuredMeasurableICConclusion
         μ arrival R1 R2 switch12 switch21 m z
 
 /--
+Readable nondegenerate source-domain conclusion of the measured Theorem 3
+endpoint: the constructed structured CTMC prices are IC among feasible
+measurable policies with positive accepted trip mass in both states.
+-/
+def theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∃ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+      dynamicPositiveMassMeasurableIncentiveCompatible μ
+        (gn21MeasuredCTMCStructuredDynamicReward
+          μ arrival switch12 switch21 m z) ∧
+      (∃ q : Fin 2 → TripLength → ℝ,
+        ∀ i τ,
+          ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+            structuredSurgePrice (m i) (z i) (q i) τ) ∧
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z
+
+/--
 Measured Theorem 3 endpoint from weak statewise accept-all reward comparisons,
 using the direct Lemma 9 primitive-positivity feasibility route.  This proves
 the IC conclusion without asking for exact-set uniqueness of all optima.
@@ -44442,6 +44738,105 @@ theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_o
   · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
 
 /--
+Measured Theorem 3 endpoint from sequential weak accept-all reward
+comparisons on the positive-mass feasible measurable source domain.
+-/
+theorem paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_lemma9_positive_primitives
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC T1 T2 Q1 Q2 switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (hT1_pos : 0 < T1)
+    (hQ1_pos : 0 < Q1)
+    (hQ1_sub_switch12_pos : 0 < Q1 - switch12)
+    (hden_theorem3_pos :
+      0 < theorem3FeasibilityDenominator T1 T2 Q1 Q2 switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hgap2_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hT2_ge_one : 1 ≤ T2)
+    (hswitch21_lt_Q2 : switch21 < Q2)
+    (hweak :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        (∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2) →
+        Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+          μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicPositiveMassMeasurableIncentiveCompatible μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        ∃ nonsurgeRatio surgeRatio : ℝ,
+          lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+            lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+            m 0 = R2 ∧
+            z 0 = nonsurgeRatio * R2 ∧
+            m 1 =
+              theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            z 1 =
+              theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+            m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+            m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+  rcases theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives
+      rho R1 R2 T1 Q1 T2 Q2 switch12 switch21 hR1_eq hR1_pos
+      hR1_lt_R2 hR2_pos hC_lt_rho hrho_lt_one hT1_pos hQ1_pos
+      hQ1_sub_switch12_pos hden_theorem3_pos hswitch21_pos hgap2_nonneg
+      hT2_ge_one hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams :
+      ∃ nonsurgeRatio surgeRatio : ℝ,
+        lemma10StructuredBounds nonsurgeRatio T2 Q2 T1 Q1 switch12 ∧
+          lemma9StructuredBounds surgeRatio T1 Q1 T2 Q2 switch21 ∧
+          m 0 = R2 ∧
+          z 0 = nonsurgeRatio * R2 ∧
+          m 1 =
+            theorem3SurgeMultiplierFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          z 1 =
+            theorem3SurgeZFromRatio R1 R2 T2 Q2 switch21 surgeRatio ∧
+          m 0 * (T1 - 1) + z 0 * (Q1 - switch12) = R1 * T1 ∧
+          m 1 * (T2 - 1) + z 1 * (Q2 - switch21) = R2 * T2 := by
+    exact ⟨nonsurgeRatio, surgeRatio, hnBounds, hsBounds, hm0_eq, hz0_eq,
+      hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hweakC :
+      Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+        μ R := by
+    simpa [R] using hweak m z hnonneg hparams
+  have hIC : dynamicPositiveMassMeasurableIncentiveCompatible μ R :=
+    (paper_theorem3_ctmc_structured_prices_positive_mass_measurable_ic_of_sequential_accept_all_weak_reward
+      μ R m z switch12 switch21 hnonneg.1 hnonneg.2.1 hnonneg.2.2
+      hweakC).1
+  refine ⟨m, z, hnonneg, ?_, ?_, nonsurgeRatio, surgeRatio,
+    hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+    hsAccount⟩
+  · simpa [R] using hIC
+  · exact ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩
+
+/--
 Measured Theorem 3 endpoint from feasible-measurable strict local aggregate
 improvements, using the direct Lemma 9 primitive-positivity feasibility route.
 This is the source-domain analogue of the unrestricted strict-local endpoint.
@@ -44723,6 +45118,23 @@ def theorem3AcceptAllFeasibleSequentialWeakRewardCertificate
             μ arrival switch12 switch21 m z)
 
 /--
+Sequential weak accept-all boundary restricted to the nondegenerate feasible
+measurable policy domain where both states have positive accepted trip mass.
+-/
+def theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate
+          μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)
+
+/--
 Feasible-measurable strict-local boundary for the accept-all measured Theorem 3
 route.  The caller supplies the endpoint/measure-theoretic local improvement
 certificate for the prices constructed by Theorem 3.
@@ -44949,6 +45361,32 @@ def theorem3AcceptAllFeasibleSequentialWeakRewardCertificate_of_measured_aggrega
   intro m z hnonneg hparams
   simpa [gn21MeasuredCTMCStructuredDynamicReward] using
     theorem4SequentialAcceptAllMeasurableWeakRewardCertificate_of_measured_aggregate_feasible_sequential_weak_improvements
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      (C m z hnonneg hparams)
+
+/--
+Positive-mass feasible sequential aggregate weak improvements instantiate the
+positive-mass feasible sequential Theorem 3 boundary for the constructed CTMC
+structured prices.
+-/
+def theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardCertificate_of_measured_aggregate_positive_mass_feasible_sequential_weak_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregatePositiveMassFeasibleSequentialWeakAcceptAllRewardCertificate
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :
+    theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  simpa [gn21MeasuredCTMCStructuredDynamicReward] using
+    theorem4SequentialAcceptAllPositiveMassMeasurableWeakRewardCertificate_of_measured_aggregate_positive_mass_feasible_sequential_weak_improvements
       μ arrival switch12 switch21
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
       (C m z hnonneg hparams)
@@ -45349,6 +45787,69 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_sequ
     theorem3AcceptAllStructuredParameterEvidence,
     theorem3AcceptAllFeasibleSequentialWeakRewardCertificate] using
     paper_theorem3_measured_ctmc_structured_prices_exist_and_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_lemma9_positive_primitives
+      μ arrival rho R1 R2
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+      hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+      hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+      hswitch21_lt_Q2 hweak
+
+/--
+Accept-all-primitive Theorem 3 endpoint from positive-mass feasible measurable
+sequential weak accept-all reward comparisons.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positive_mass_feasible_sequential_weak_reward
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hweak :
+      theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  simpa [theorem3MeasuredStructuredPositiveMassMeasurableICConclusion,
+    theorem3AcceptAllStructuredParameterEvidence,
+    theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardCertificate] using
+    paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_lemma9_positive_primitives
       μ arrival rho R1 R2
       (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
       (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
@@ -49206,6 +49707,211 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_fe
             using Dsrc⟩ }
 
 /--
+Reward-rate-form source assumptions for the denominator-valid sequential
+route.  The policy-dependent Lemma 9 data is only required for feasible
+measurable policies with positive accepted trip mass in both states, which is
+the domain on which the source paper's fixed-state reward rates are defined.
+-/
+structure Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  surge_reward_rate_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            ∃ R1_current ratio : ℝ,
+              GN21SurgeLemma9AcceptAllAggregateRewardRateData
+                (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+                (m 1) R1_current (z 1) ratio (m 0) (z 0)
+                (ρ 0) (ρ 1)
+
+/--
+Paper-facing Theorem 3 wrapper on the denominator-valid positive-mass source
+domain, from reward-rate-form surge Lemma 9 data.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_reward_rate_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positive_mass_feasible_sequential_weak_reward
+    μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+    A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+    A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+    A.htime1_integrable A.htime2_integrable A.hq1_integrable
+    A.hq2_integrable
+    (measure_pos_of_singleStateTripMass_pos
+      (μ 0) acceptAllPolicy A.hmass1_pos)
+    (measure_pos_of_singleStateTripMass_pos
+      (μ 1) acceptAllPolicy A.hmass2_pos)
+    (theorem3AcceptAllPositiveMassFeasibleSequentialWeakRewardCertificate_of_measured_aggregate_positive_mass_feasible_sequential_weak_reward
+      μ arrival R1 R2 switch12 switch21
+      (by
+        intro m z hnonneg hparams
+        let P :=
+          Theorem3AcceptAllStructuredParameterData.of_evidence hparams
+        exact
+          { acceptAll_mass_pos := by
+              intro i
+              fin_cases i
+              · exact A.hmass1_pos
+              · exact A.hmass2_pos
+            arrival1_pos := A.harrival1_pos
+            arrival2_pos := A.harrival2_pos
+            switch12_pos := A.hswitch12_pos
+            switch21_pos := A.hswitch21_pos
+            surge_aggregate_ge := by
+              intro ρ hρ
+              rcases A.surge_reward_rate_data m z hnonneg hparams ρ hρ with
+                ⟨R1_current, ratio, D⟩
+              have hmassI :
+                  singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+                ne_of_gt (hρ.2 0)
+              have harrivalI_ne : arrival 0 ≠ 0 :=
+                ne_of_gt A.harrival1_pos
+              have harrivalMassI :
+                  arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+                mul_ne_zero harrivalI_ne hmassI
+              have htimeI_pos :
+                  0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
+                gn21ScaledStateTime_pos_of_nonneg
+                  (μ 0) (arrival 0) (ρ 0) (le_of_lt A.harrival1_pos)
+                  (hρ.1 0).2 (hρ.1 0).1
+              have Dsrc :=
+                GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
+                  hmassI harrivalMassI (ne_of_gt htimeI_pos) D
+              have Dag :=
+                GN21SurgeLemma9AcceptAllAggregateData.of_source
+                  (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+                  A.harrival1_pos A.harrival2_pos A.hswitch12_pos
+                  A.hswitch21_pos A.htime2_integrable A.hq2_integrable
+                  (by
+                    simpa [ctmcStructuredDynamicSurgePrice,
+                      ctmcDynamicSwitchProb] using Dsrc)
+              have hle := Dag.aggregate_le_acceptAll
+              simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+                P.hm0] using hle
+            nonsurge_after_surge_aggregate_ge := by
+              intro ρ hρ
+              have hsum21 : 0 < switch21 + switch12 := by
+                linarith [A.hswitch21_pos, A.hswitch12_pos]
+              have hfixed_exit_pos :
+                  0 <
+                    gn21ExitWeightIntegral (μ 1) (arrival 1)
+                      switch21 switch12 acceptAllPolicy :=
+                gn21ExitWeightIntegral_pos_of_switch_pos
+                  (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+                  (le_of_lt A.harrival2_pos) A.hswitch21_pos hsum21
+                  measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+              have hfixed_time_pos :
+                  0 <
+                    gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+                gn21ScaledStateTime_pos_of_nonneg
+                  (μ 1) (arrival 1) acceptAllPolicy
+                  (le_of_lt A.harrival2_pos) measurableSet_acceptAllPolicy
+                  (fun _ hτ => hτ)
+              have hfixed_A_pos :
+                  0 <
+                    gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
+                        switch12 +
+                      gn21ExitWeightIntegral (μ 1) (arrival 1)
+                        switch21 switch12 acceptAllPolicy := by
+                exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+                  hfixed_exit_pos
+              have hfixed_reward_rate :
+                  gn21ScaledStateEarning (μ 1) (arrival 1)
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                      acceptAllPolicy =
+                    R2 * gn21ScaledStateTime (μ 1) (arrival 1)
+                      acceptAllPolicy := by
+                calc
+                  gn21ScaledStateEarning (μ 1) (arrival 1)
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                      acceptAllPolicy
+                      =
+                    m 1 *
+                        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+                      z 1 *
+                        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                            switch21 switch12 -
+                          switch21) := by
+                        simpa [ctmcStructuredDynamicSurgePrice,
+                          ctmcDynamicSwitchProb, ctmcStructuredSurgePrice,
+                          gn21AcceptAllScaledStateTime,
+                          gn21AcceptAllExitWeightIntegral] using
+                          paper_remark2_structured_scaled_earning_algebra
+                            (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12
+                            acceptAllPolicy A.htime2_integrable
+                            A.hq2_integrable
+                  _ = R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+                    P.surge_accounting
+              have Dsrc :
+                  ∃ ratio : ℝ,
+                    GN21NonsurgeLemma10AcceptAllAggregateSourceData
+                      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+                      R2 (z 0) ratio
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                      (ρ 0) acceptAllPolicy :=
+                ⟨P.nonsurgeRatio,
+                  GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening
+                    (hρ.1 0).1 (hρ.1 0).2 A.harrival1_pos
+                    A.hswitch12_pos A.hswitch21_pos
+                    (A.htime1_integrable.mono_set (hρ.1 0).1)
+                    (A.hq1_integrable.mono_set (hρ.1 0).1)
+                    A.htime1_integrable A.hq1_integrable
+                    P.nonsurge_acceptAll_bounds hfixed_A_pos
+                    (le_of_lt hfixed_exit_pos) (hρ.2 0)
+                    P.hz0 A.hR2_pos hfixed_reward_rate⟩
+              rcases Dsrc with ⟨ratio, D⟩
+              have Dag :=
+                GN21NonsurgeLemma10AcceptAllAggregateData.of_source
+                  (hρ.1 0).1 (hρ.1 0).2 (fun _ hτ => hτ)
+                  measurableSet_acceptAllPolicy A.harrival1_pos
+                  A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+                  A.htime1_integrable A.hq1_integrable D
+              have hle := Dag.aggregate_le_acceptAll
+              simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+                P.hm0] using hle }))
+
+/--
 Bundled source-level assumptions for the primitive structured current-bounds
 Theorem 3 route.  This is the lighter paper-facing version of
 `Theorem3AcceptAllStructuredCurrentBoundsSourceAssumptions`: the remaining
@@ -49970,6 +50676,24 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_source_assump
     theorem3MeasuredStructuredMeasurableICConclusion
       μ arrival R1 R2 switch12 switch21 :=
   paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A
+
+/--
+Canonical denominator-valid source-facing measurable Theorem 3 wrapper.  This
+entry point uses the same sequential reward-rate route as the broad measurable
+wrapper, but restricts the policy domain to feasible measurable policies with
+positive accepted trip mass, matching the source reward-rate denominators.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_reward_rate_data_assumptions
     μ arrival rho R1 R2 switch12 switch21 A
 
 /--
