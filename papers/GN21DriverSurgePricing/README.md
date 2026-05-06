@@ -150,16 +150,19 @@ cache is `source.txt`.
   prices.  The endpoint constructors ending in
   `of_acceptAll_support_and_calculus` or
   `of_acceptAll_support_and_continuity` consume both the density support and
-  product-calculus packages.  The supported endpoint route is now exposed as
+  product-calculus packages.  `GN21PositiveIntervalProductIntegrabilityData`
+  derives short accepted-interval integrability from continuous product data,
+  while `GN21TailProductIntegrabilityData` bundles improper tail integrability
+  and reuses it for narrower tails.  The supported endpoint route is now exposed as
   the five `GN21...SupportedEndpointData` packages,
   `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`,
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_supported_selection`,
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`;
-  it expands ordinary allowed replacement cases plus density-support and
-  calculus-backed endpoint data into the allowed-replacement current-bounds
-  route internally.  The lightest current
+  it expands ordinary allowed replacement cases plus density-support,
+  calculus-backed endpoint data, and short/tail integrability packages into the
+  allowed-replacement current-bounds route internally.  The lightest current
   IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,

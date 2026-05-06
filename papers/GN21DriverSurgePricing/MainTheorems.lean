@@ -322,7 +322,7 @@ the continuous CTMC source theorems.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`:
   supported source-facing Theorem 3 boundary from ordinary allowed Lemma 5
   replacement cases, accept-all density support, endpoint product calculus, and
-  current-bounds endpoint data.
+  short-interval/tail integrability packages.
 - `GN21NonsurgeRejectLongCurrentBoundsEndpointData.of_acceptAll_support`,
   `GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData.of_acceptAll_support`,
   `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
@@ -334,6 +334,9 @@ the continuous CTMC source theorems.
 - The corresponding `...of_acceptAll_support_and_calculus` and
   `...of_acceptAll_support_and_continuity` constructors: endpoint-data
   constructors that additionally consume bundled product-calculus data.
+- `GN21PositiveIntervalProductIntegrabilityData` and
+  `GN21TailProductIntegrabilityData`: reusable packages for short accepted
+  intervals and narrower-tail integrability in the surge endpoint cases.
 - `GN21SurgeIntervalEndpointBridgeData`,
   `GN21NonsurgeIntervalEndpointBridgeData`, and
   `Theorem4Lemma910IntervalBridgeCertificate`: data packages for the remaining
@@ -2544,6 +2547,133 @@ def GN21FiniteEndpointProductCalculusData.of_ctmcStructured
     (continuous_gn21SwitchProb switchIJ switchJI)
     (continuous_ctmcStructuredSurgePrice m z switchIJ switchJI)
     a b u
+
+/-- Interval-integrability on an ordered interval gives integrability on the open interval. -/
+theorem integrableOn_Ioo_of_intervalIntegrable_of_le
+    {f : TripLength → ℝ} {a b : ℝ}
+    (hf : IntervalIntegrable f volume a b)
+    (hab : a ≤ b) :
+    IntegrableOn f (Set.Ioo a b) volume :=
+  (intervalIntegrable_iff_integrableOn_Ioo_of_le hab).1 hf
+
+/-- Continuous product-density data is integrable on every ordered open interval. -/
+theorem integrableOn_Ioo_mul_density_of_continuous
+    {f : TripLength → ℝ} {densityNN : TripLength → NNReal}
+    (hf : Continuous f)
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    {a b : ℝ}
+    (hab : a ≤ b) :
+    IntegrableOn (fun τ => f τ * (densityNN τ : ℝ)) (Set.Ioo a b) volume :=
+  integrableOn_Ioo_of_intervalIntegrable_of_le
+    (intervalIntegrable_mul_density_of_continuous hf hdensity_cont a b) hab
+
+/--
+Product integrability on all positive finite intervals.  This removes the need
+to restate short-interval current and replacement integrability separately.
+-/
+structure GN21PositiveIntervalProductIntegrabilityData
+    (densityNN : TripLength → NNReal)
+    (switchProb payment : TripLength → ℝ) where
+  q_int :
+    ∀ b : ℝ, 0 ≤ b →
+      IntegrableOn
+        (fun τ => switchProb τ * (densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) b) volume
+  w_int :
+    ∀ b : ℝ, 0 ≤ b →
+      IntegrableOn
+        (fun τ => payment τ * (densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) b) volume
+  t_int :
+    ∀ b : ℝ, 0 ≤ b →
+      IntegrableOn (fun τ => τ * (densityNN τ : ℝ))
+        (Set.Ioo (0 : ℝ) b) volume
+
+/-- Build positive-interval product integrability from continuous factors. -/
+def GN21PositiveIntervalProductIntegrabilityData.of_continuous
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (hswitch_cont : Continuous switchProb)
+    (hpayment_cont : Continuous payment) :
+    GN21PositiveIntervalProductIntegrabilityData densityNN switchProb payment where
+  q_int := by
+    intro b hb
+    exact
+      integrableOn_Ioo_mul_density_of_continuous
+        hswitch_cont hdensity_cont hb
+  w_int := by
+    intro b hb
+    exact
+      integrableOn_Ioo_mul_density_of_continuous
+        hpayment_cont hdensity_cont hb
+  t_int := by
+    intro b hb
+    exact
+      integrableOn_Ioo_mul_density_of_continuous
+        continuous_id hdensity_cont hb
+
+/-- Positive finite-interval product integrability for structured CTMC prices. -/
+def GN21PositiveIntervalProductIntegrabilityData.of_ctmcStructured
+    {densityNN : TripLength → NNReal}
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (m z switchIJ switchJI : ℝ) :
+    GN21PositiveIntervalProductIntegrabilityData densityNN
+      (gn21SwitchProb switchIJ switchJI)
+      (ctmcStructuredSurgePrice m z switchIJ switchJI) :=
+  GN21PositiveIntervalProductIntegrabilityData.of_continuous
+    hdensity_cont
+    (continuous_gn21SwitchProb switchIJ switchJI)
+    (continuous_ctmcStructuredSurgePrice m z switchIJ switchJI)
+
+/--
+Product integrability on a tail, bundled for the three Lemma 6 integrands.
+The monotonicity methods reuse one source tail assumption for narrower tails.
+-/
+structure GN21TailProductIntegrabilityData
+    (densityNN : TripLength → NNReal)
+    (switchProb payment : TripLength → ℝ)
+    (a : ℝ) where
+  q_int :
+    IntegrableOn
+      (fun τ => switchProb τ * (densityNN τ : ℝ)) (Set.Ioi a) volume
+  w_int :
+    IntegrableOn
+      (fun τ => payment τ * (densityNN τ : ℝ)) (Set.Ioi a) volume
+  t_int :
+    IntegrableOn (fun τ => τ * (densityNN τ : ℝ)) (Set.Ioi a) volume
+
+/-- A tail integrability bundle applies to every narrower tail. -/
+theorem GN21TailProductIntegrabilityData.q_mono
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    {a b : ℝ}
+    (D : GN21TailProductIntegrabilityData densityNN switchProb payment a)
+    (hab : a ≤ b) :
+    IntegrableOn
+      (fun τ => switchProb τ * (densityNN τ : ℝ)) (Set.Ioi b) volume :=
+  D.q_int.mono_set (fun _ hτ => lt_of_le_of_lt hab hτ)
+
+/-- A tail integrability bundle applies to every narrower tail. -/
+theorem GN21TailProductIntegrabilityData.w_mono
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    {a b : ℝ}
+    (D : GN21TailProductIntegrabilityData densityNN switchProb payment a)
+    (hab : a ≤ b) :
+    IntegrableOn
+      (fun τ => payment τ * (densityNN τ : ℝ)) (Set.Ioi b) volume :=
+  D.w_int.mono_set (fun _ hτ => lt_of_le_of_lt hab hτ)
+
+/-- A tail integrability bundle applies to every narrower tail. -/
+theorem GN21TailProductIntegrabilityData.t_mono
+    {densityNN : TripLength → NNReal}
+    {switchProb payment : TripLength → ℝ}
+    {a b : ℝ}
+    (D : GN21TailProductIntegrabilityData densityNN switchProb payment a)
+    (hab : a ≤ b) :
+    IntegrableOn (fun τ => τ * (densityNN τ : ℝ)) (Set.Ioi b) volume :=
+  D.t_int.mono_set (fun _ hτ => lt_of_le_of_lt hab hτ)
 
 /--
 Theorem 3 state-indexed CTMC switch probabilities.  State `0` is the
@@ -26766,17 +26896,10 @@ structure GN21SurgeRejectShortSupportedEndpointData
   harrival_pos : 0 < arrival 1
   hswitch12_pos : 0 < switch12
   hdensity_pos : 0 < (support.densityNN u : ℝ)
-  hq_int :
-    IntegrableOn
-      (fun τ => gn21SwitchProb switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioi (u - 1)) volume
-  hw_int :
-    IntegrableOn
-      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioi (u - 1)) volume
-  ht_int :
-    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-      (Set.Ioi (u - 1)) volume
+  tail_integrability :
+    GN21TailProductIntegrabilityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1)
   continuity :
     GN21EndpointProductContinuityData support.densityNN
       (gn21SwitchProb switch21 switch12)
@@ -26807,7 +26930,8 @@ def GN21SurgeRejectShortSupportedEndpointData.to_current_bounds_endpoint_data
       μ arrival m z switch12 switch21 ρ u :=
   GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support_and_continuity
     D.support hρ_feasible D.harrival_other_pos D.harrival_pos
-    D.hswitch12_pos D.hdensity_pos D.hq_int D.hw_int D.ht_int
+    D.hswitch12_pos D.hdensity_pos D.tail_integrability.q_int
+    D.tail_integrability.w_int D.tail_integrability.t_int
     D.continuity D.hu D.hδ D.hδ_le_u D.hmass_other_pos D.current_bounds
 
 /-- Source-facing supported endpoint data for lower-cutoff surge reject-middle moves. -/
@@ -26833,47 +26957,14 @@ structure GN21SurgeRejectMiddleLoSupportedEndpointData
   hloδ_le_hi : lo + δ ≤ hi
   hδ : 0 < δ
   hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
-  hq_short_current_int :
-    IntegrableOn
-      (fun τ => gn21SwitchProb switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
-  ht_short_current_int :
-    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-      (Set.Ioo (0 : ℝ) lo) volume
-  hw_short_current_int :
-    IntegrableOn
-      (fun τ =>
-        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-          (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
-  hq_tail_int :
-    IntegrableOn
-      (fun τ => gn21SwitchProb switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
-  ht_tail_int :
-    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-      (Set.Ioi hi) volume
-  hw_tail_int :
-    IntegrableOn
-      (fun τ =>
-        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-          (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
-  hq_short_replacement_int :
-    ∀ ε : ℝ, 0 < ε → ε < δ →
-      IntegrableOn
-        (fun τ => gn21SwitchProb switch21 switch12 τ *
-          (support.densityNN τ : ℝ))
-        (Set.Ioo (0 : ℝ) (lo + ε)) volume
-  ht_short_replacement_int :
-    ∀ ε : ℝ, 0 < ε → ε < δ →
-      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-        (Set.Ioo (0 : ℝ) (lo + ε)) volume
-  hw_short_replacement_int :
-    ∀ ε : ℝ, 0 < ε → ε < δ →
-      IntegrableOn
-        (fun τ =>
-          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-            (support.densityNN τ : ℝ))
-        (Set.Ioo (0 : ℝ) (lo + ε)) volume
+  short_integrability :
+    GN21PositiveIntervalProductIntegrabilityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+  tail_integrability :
+    GN21TailProductIntegrabilityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi
   current_bounds :
     GN21SurgeLemma9AcceptAllAggregateData
       (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
@@ -26897,10 +26988,28 @@ def GN21SurgeRejectMiddleLoSupportedEndpointData.to_current_bounds_endpoint_data
   GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support_and_calculus
     D.support hρ_feasible D.harrival_other_pos D.harrival_pos
     D.hswitch12_pos D.hdensity_pos D.calculus D.hlo_pos D.hloδ_le_hi
-    D.hδ D.hmass_other_pos D.hq_short_current_int D.ht_short_current_int
-    D.hw_short_current_int D.hq_tail_int D.ht_tail_int D.hw_tail_int
-    D.hq_short_replacement_int D.ht_short_replacement_int
-    D.hw_short_replacement_int D.current_bounds
+    D.hδ D.hmass_other_pos
+    (D.short_integrability.q_int lo (le_of_lt D.hlo_pos))
+    (D.short_integrability.t_int lo (le_of_lt D.hlo_pos))
+    (D.short_integrability.w_int lo (le_of_lt D.hlo_pos))
+    D.tail_integrability.q_int D.tail_integrability.t_int
+    D.tail_integrability.w_int
+    (by
+      intro ε hε_pos hε_lt
+      exact
+        D.short_integrability.q_int (lo + ε)
+          (add_nonneg (le_of_lt D.hlo_pos) (le_of_lt hε_pos)))
+    (by
+      intro ε hε_pos hε_lt
+      exact
+        D.short_integrability.t_int (lo + ε)
+          (add_nonneg (le_of_lt D.hlo_pos) (le_of_lt hε_pos)))
+    (by
+      intro ε hε_pos hε_lt
+      exact
+        D.short_integrability.w_int (lo + ε)
+          (add_nonneg (le_of_lt D.hlo_pos) (le_of_lt hε_pos)))
+    D.current_bounds
 
 /-- Source-facing supported endpoint data for upper-cutoff surge reject-middle moves. -/
 structure GN21SurgeRejectMiddleHiSupportedEndpointData
@@ -26917,17 +27026,10 @@ structure GN21SurgeRejectMiddleHiSupportedEndpointData
   harrival_pos : 0 < arrival 1
   hswitch12_pos : 0 < switch12
   hdensity_pos : 0 < (support.densityNN hi : ℝ)
-  hq_int :
-    IntegrableOn
-      (fun τ => gn21SwitchProb switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume
-  hw_int :
-    IntegrableOn
-      (fun τ => ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioi (hi - 1)) volume
-  ht_int :
-    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-      (Set.Ioi (hi - 1)) volume
+  derivative_tail_integrability :
+    GN21TailProductIntegrabilityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1)
   continuity :
     GN21EndpointProductContinuityData support.densityNN
       (gn21SwitchProb switch21 switch12)
@@ -26937,47 +27039,14 @@ structure GN21SurgeRejectMiddleHiSupportedEndpointData
   hlo_nonneg : 0 ≤ lo
   hlo_le_hiδ : lo ≤ hi - δ
   hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
-  hq_short_int :
-    IntegrableOn
-      (fun τ => gn21SwitchProb switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
-  ht_short_int :
-    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-      (Set.Ioo (0 : ℝ) lo) volume
-  hw_short_int :
-    IntegrableOn
-      (fun τ =>
-        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-          (support.densityNN τ : ℝ)) (Set.Ioo (0 : ℝ) lo) volume
-  hq_tail_current_int :
-    IntegrableOn
-      (fun τ => gn21SwitchProb switch21 switch12 τ *
-        (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
-  ht_tail_current_int :
-    IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-      (Set.Ioi hi) volume
-  hw_tail_current_int :
-    IntegrableOn
-      (fun τ =>
-        ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-          (support.densityNN τ : ℝ)) (Set.Ioi hi) volume
-  hq_tail_replacement_int :
-    ∀ ε : ℝ, 0 < ε → ε < δ →
-      IntegrableOn
-        (fun τ => gn21SwitchProb switch21 switch12 τ *
-          (support.densityNN τ : ℝ))
-        (Set.Ioi (hi - ε)) volume
-  ht_tail_replacement_int :
-    ∀ ε : ℝ, 0 < ε → ε < δ →
-      IntegrableOn (fun τ => τ * (support.densityNN τ : ℝ))
-        (Set.Ioi (hi - ε)) volume
-  hw_tail_replacement_int :
-    ∀ ε : ℝ, 0 < ε → ε < δ →
-      IntegrableOn
-        (fun τ =>
-          ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ *
-            (support.densityNN τ : ℝ))
-        (Set.Ioi (hi - ε)) volume
+  short_integrability :
+    GN21PositiveIntervalProductIntegrabilityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+  tail_integrability :
+    GN21TailProductIntegrabilityData support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ)
   current_bounds :
     GN21SurgeLemma9AcceptAllAggregateData
       (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
@@ -27000,12 +27069,26 @@ def GN21SurgeRejectMiddleHiSupportedEndpointData.to_current_bounds_endpoint_data
       μ arrival m z switch12 switch21 ρ lo hi :=
   GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support_and_continuity
     D.support hρ_feasible D.harrival_other_pos D.harrival_pos
-    D.hswitch12_pos D.hdensity_pos D.hq_int D.hw_int D.ht_int
+    D.hswitch12_pos D.hdensity_pos D.derivative_tail_integrability.q_int
+    D.derivative_tail_integrability.w_int D.derivative_tail_integrability.t_int
     D.continuity D.hhi_pos D.hδ D.hlo_nonneg D.hlo_le_hiδ
-    D.hmass_other_pos D.hq_short_int D.ht_short_int D.hw_short_int
-    D.hq_tail_current_int D.ht_tail_current_int D.hw_tail_current_int
-    D.hq_tail_replacement_int D.ht_tail_replacement_int
-    D.hw_tail_replacement_int D.current_bounds
+    D.hmass_other_pos
+    (D.short_integrability.q_int lo D.hlo_nonneg)
+    (D.short_integrability.t_int lo D.hlo_nonneg)
+    (D.short_integrability.w_int lo D.hlo_nonneg)
+    (D.tail_integrability.q_mono (sub_le_self hi (le_of_lt D.hδ)))
+    (D.tail_integrability.t_mono (sub_le_self hi (le_of_lt D.hδ)))
+    (D.tail_integrability.w_mono (sub_le_self hi (le_of_lt D.hδ)))
+    (by
+      intro ε hε_pos hε_lt
+      exact D.tail_integrability.q_mono (sub_le_sub_left (le_of_lt hε_lt) hi))
+    (by
+      intro ε hε_pos hε_lt
+      exact D.tail_integrability.t_mono (sub_le_sub_left (le_of_lt hε_lt) hi))
+    (by
+      intro ε hε_pos hε_lt
+      exact D.tail_integrability.w_mono (sub_le_sub_left (le_of_lt hε_lt) hi))
+    D.current_bounds
 
 /-- A supported surge reject-middle endpoint selection may move either cutoff. -/
 inductive GN21SurgeRejectMiddleSupportedEndpointData

@@ -11,10 +11,11 @@ The remaining paper-facing field is
 `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`
 for the structured prices constructed by Theorem 3.  This endpoint packages
 ordinary allowed Lemma 5 replacement cases, accept-all density support, bundled
-endpoint product calculus, and the remaining case-by-case current-bounds data;
-Lean derives feasible measurability of the canonical replacement policies and
-then converts the package to the feasible strict-local Theorem 4 certificate
-internally.  The previous broader endpoints remain compiled:
+endpoint product calculus, bundled short/tail integrability, and the remaining
+case-by-case current-bounds data; Lean derives feasible measurability of the
+canonical replacement policies and then converts the package to the feasible
+strict-local Theorem 4 certificate internally.  The previous broader endpoints
+remain compiled:
 
 ```lean
 paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
@@ -101,15 +102,20 @@ into the concrete endpoint policy data.
   endpoint calculus fields for structured prices.  Prefer the endpoint
   constructors ending in `of_acceptAll_support_and_calculus` or
   `of_acceptAll_support_and_continuity` when building the final endpoint data.
+- `GN21PositiveIntervalProductIntegrabilityData.of_ctmcStructured` derives the
+  short accepted-interval integrability fields for all positive finite
+  endpoints from continuous density/product data.  `GN21TailProductIntegrabilityData`
+  bundles one improper tail assumption and uses `q_mono`, `w_mono`, and
+  `t_mono` to supply narrower current and replacement tails.
 - The supported endpoint records
   `GN21NonsurgeRejectLongSupportedEndpointData`,
   `GN21NonsurgeAcceptMiddleSupportedEndpointData`,
   `GN21SurgeRejectShortSupportedEndpointData`,
   `GN21SurgeRejectMiddleLoSupportedEndpointData`,
   `GN21SurgeRejectMiddleHiSupportedEndpointData`, and
-  `GN21SurgeRejectMiddleSupportedEndpointData` now bridge these support and
-  calculus packages into the current-bounds endpoint certificate expected by
-  Theorem 4.
+  `GN21SurgeRejectMiddleSupportedEndpointData` now bridge these support,
+  calculus, and short/tail integrability packages into the current-bounds
+  endpoint certificate expected by Theorem 4.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

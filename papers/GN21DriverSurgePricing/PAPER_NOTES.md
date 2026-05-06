@@ -207,6 +207,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   bundled product-calculus packages
   `GN21EndpointProductContinuityData` and
   `GN21FiniteEndpointProductCalculusData`,
+  short/tail integrability packages
+  `GN21PositiveIntervalProductIntegrabilityData` and
+  `GN21TailProductIntegrabilityData`,
   plus endpoint constructors ending in
   `of_acceptAll_support_and_calculus` and
   `of_acceptAll_support_and_continuity`,
