@@ -560,9 +560,14 @@ Lemma 9/10 current-bound data plumbing are now available through regular
 endpoint records for all four Theorem 4 shape cases, with reject-middle split
 into lower- and upper-cutoff endpoint variants; the older regular-selection
 route remains compiled for the variant that proves ordinary allowed Lemma 5
-replacement data explicitly.  Shared source regularity is now factored into
-`GN21RegularEndpointSharedSourceData`, so the final selector can focus on
-cutoff-local density positivity, tail integrability, and source current bounds.
+  replacement data explicitly.  Shared source regularity is now factored into
+  `GN21RegularEndpointSharedSourceData`, so the final selector can focus on
+  cutoff-local density positivity, tail integrability, and source current
+  bounds.  The source current-bound records can now be built with
+  `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening` and
+  `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`, which
+  apply the measured Remark 4 tightening lemmas from accept-all moving-state
+  bounds to the current moving-state policy.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

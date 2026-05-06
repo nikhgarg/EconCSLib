@@ -248,7 +248,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `...RegularEndpointData.of_shared_source` constructors,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
-  `GN21SurgeLemma9AcceptAllAggregateData.of_source`,
+  `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
+  tightening constructors
+  `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening` and
+  `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`,
   plus endpoint constructors ending in
   `of_acceptAll_support_and_calculus` and
   `of_acceptAll_support_and_continuity`,

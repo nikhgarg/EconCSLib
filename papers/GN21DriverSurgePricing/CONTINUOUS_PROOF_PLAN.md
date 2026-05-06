@@ -129,6 +129,11 @@ into the concrete endpoint policy data.
   `GN21SurgeLemma9AcceptAllAggregateData.of_source` now turn source Lemma 9/10
   current-bounds data directly into the full current-bounds endpoint packages,
   so endpoint construction should not manually compose the primitive route.
+- `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening`
+  and `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`
+  build those source current-bound records from accept-all moving-state bounds,
+  positive current mass, current integrability, and the fixed-state reward-rate
+  identity.  Use these before falling back to hand-proving the source records.
 - The regular endpoint records
   `GN21NonsurgeRejectLongRegularEndpointData`,
   `GN21NonsurgeAcceptMiddleRegularEndpointData`,

@@ -270,6 +270,10 @@ the continuous CTMC source theorems.
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`: direct constructors from
   source Lemma 9/10 current-bounds data to the full endpoint current-bounds
   packages.
+- `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening`
+  and `GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening`:
+  source-data constructors that tighten accept-all moving-state Lemma 10/9
+  bounds to the current moving-state policy using positive current mass.
 - `paper_lemma9_structured_bounds_feasible_positive_of_positive_primitives`,
   `theorem3SurgeParameters_exist_of_lemma9_positive_primitives`,
   `theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives`:
@@ -15589,6 +15593,124 @@ theorem GN21SurgeLemma9AcceptAllAggregateSourceData.of_structured_accounting
       μI arrivalI mI zI switch12 switch21 σI htimeI_integrable
       hqI_integrable]
     exact D.fixed_accounting
+
+/--
+Build non-surge source current-bounds data by tightening Lemma 10 from the
+accept-all moving-state bounds to the current moving-state policy.
+-/
+theorem GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ}
+    {wJ : PricingFunction} {σI σJ : TripPolicy}
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (harrivalI_pos : 0 < arrivalI)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeI_current_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (hqI_current_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σI μI)
+    (htimeI_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μI)
+    (hqI_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy μI)
+    (hbounds_acceptAll :
+      lemma10StructuredBounds ratio
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ScaledStateTime μI arrivalI acceptAllPolicy)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 acceptAllPolicy)
+        switch12)
+    (hfixed_A_pos :
+      0 <
+        gn21ScaledStateTime μJ arrivalJ σJ * switch12 +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hfixed_exit_nonneg :
+      0 ≤ gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hcurrent_mass_pos : 0 < singleStateTripMass μI σI)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        R2 * gn21ScaledStateTime μJ arrivalJ σJ) :
+    GN21NonsurgeLemma10AcceptAllAggregateSourceData
+      μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio wJ σI σJ where
+  current_mass_pos := hcurrent_mass_pos
+  bounds :=
+    lemma10StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure
+      μI arrivalI switch12 switch21 σI ratio
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+      hbounds_acceptAll hfixed_A_pos hfixed_exit_nonneg harrivalI_pos
+      hswitch12_pos (by linarith) hσI_measurable hσI_subset
+      htimeI_current_integrable hqI_current_integrable
+      htimeI_acceptAll_integrable hqI_acceptAll_integrable
+      (measure_pos_of_singleStateTripMass_pos μI σI hcurrent_mass_pos)
+  z_eq := hz
+  R2_pos := hR2_pos
+  fixed_reward_rate := hfixed_reward_rate
+
+/--
+Build surge source current-bounds data by tightening Lemma 9 from the
+accept-all moving-state bounds to the current moving-state policy.
+-/
+theorem GN21SurgeLemma9AcceptAllAggregateSourceData.of_acceptAll_tightening
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 m R1 z ratio : ℝ}
+    {wI : PricingFunction} {σI σJ : TripPolicy}
+    (hσJ_subset : σJ ⊆ acceptAllPolicy)
+    (hσJ_measurable : MeasurableSet σJ)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeJ_current_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σJ μJ)
+    (hqJ_current_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ) σJ μJ)
+    (htimeJ_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μJ)
+    (hqJ_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy μJ)
+    (hbounds_acceptAll :
+      lemma9StructuredBounds ratio
+        (gn21ScaledStateTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+        (gn21ScaledStateTime μJ arrivalJ acceptAllPolicy)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 acceptAllPolicy)
+        switch21)
+    (hfixed_time_nonneg : 0 ≤ gn21ScaledStateTime μI arrivalI σI)
+    (hfixed_exit_pos : 0 < gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+    (hcurrent_mass_pos : 0 < singleStateTripMass μJ σJ)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        R1 * gn21ScaledStateTime μI arrivalI σI) :
+    GN21SurgeLemma9AcceptAllAggregateSourceData
+      μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio wI σI σJ where
+  current_mass_pos := hcurrent_mass_pos
+  bounds :=
+    lemma9StructuredBounds_of_acceptAll_measured_tightening_of_positive_measure
+      μJ arrivalJ switch21 switch12 σJ ratio
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+      hbounds_acceptAll hfixed_time_nonneg hfixed_exit_pos harrivalJ_pos
+      hswitch21_pos (by linarith) hσJ_measurable hσJ_subset
+      htimeJ_current_integrable hqJ_current_integrable
+      htimeJ_acceptAll_integrable hqJ_acceptAll_integrable
+      (measure_pos_of_singleStateTripMass_pos μJ σJ hcurrent_mass_pos)
+  z_eq := hz
+  m_sub_R1_pos := hmR_pos
+  R1_nonneg := hR1_nonneg
+  fixed_reward_rate := hfixed_reward_rate
 
 /--
 Source-facing non-surge Lemma 10 data with the fixed state's reward-rate
