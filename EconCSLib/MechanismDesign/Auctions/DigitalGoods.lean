@@ -2474,6 +2474,16 @@ def DeterministicOfferBidIndependent (offer : ℝ → Option ℝ) : Prop :=
       (∀ report, criticalPrice < report → offer report = some criticalPrice)
 
 /--
+A deterministic offer slice is dominated by a threshold if every winning report
+pays exactly that threshold and the threshold is no larger than the winning
+report.
+-/
+def DeterministicOfferThresholdDominates
+    (offer : ℝ → Option ℝ) (threshold : ℝ) : Prop :=
+  ∀ report price,
+    offer report = some price → price = threshold ∧ threshold ≤ report
+
+/--
 GHW Lemma 9.2 payment-constancy step: in a truthful deterministic offer slice,
 any two winning reports must be charged the same price.
 -/
@@ -2569,6 +2579,31 @@ theorem deterministicOffer_bidIndependent_of_truthful
       | none => rfl
       | some price =>
           exact False.elim (hwin ⟨report, price, hreport⟩))
+
+/--
+Critical-price domination extracted from a bid-independent deterministic offer
+slice. The always-rejecting case is dominated by the arbitrary threshold `0`;
+otherwise the critical price dominates every winning report.
+-/
+theorem deterministicOffer_exists_thresholdDominates_of_bidIndependent
+    {offer : ℝ → Option ℝ}
+    (hbid : DeterministicOfferBidIndependent offer) :
+    ∃ threshold, DeterministicOfferThresholdDominates offer threshold := by
+  rcases hbid with hallReject | hcritical
+  · refine ⟨0, ?_⟩
+    intro report price hoff
+    rw [hallReject report] at hoff
+    contradiction
+  · rcases hcritical with
+      ⟨criticalPrice, hpayment, hlosesBelow, _hwinsAbove⟩
+    refine ⟨criticalPrice, ?_⟩
+    intro report price hoff
+    constructor
+    · exact hpayment report price hoff
+    · by_contra hnot
+      have hlt : report < criticalPrice := lt_of_not_ge hnot
+      rw [hlosesBelow report hlt] at hoff
+      contradiction
 
 namespace DigitalGoodsAuction
 
@@ -2694,6 +2729,96 @@ theorem deterministicAuctionOffer_bidIndependent_of_truthful
       M htruth hbinary hloser bids i)
     (deterministicAuctionOffer_feasible_of_individuallyRational
       M hIR bids i)
+
+/--
+If a deterministic auction offer slice is dominated by a nonnegative threshold,
+then the actual payment at any report is bounded by the corresponding posted
+threshold revenue term.
+-/
+theorem deterministicAuction_payment_le_threshold_of_offer_thresholdDominates
+    [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent)
+    (hbinary : M.BinaryAllocation)
+    (hloser : M.LosersPayZero)
+    (bids : Agent → ℝ) (i : Agent) (value threshold : ℝ)
+    (hthreshold_nonneg : 0 ≤ threshold)
+    (hdom :
+      DeterministicOfferThresholdDominates
+        (deterministicAuctionOffer M bids i) threshold) :
+    M.payment (Function.update bids i value) i ≤
+      if threshold ≤ value then threshold else 0 := by
+  classical
+  by_cases halloc : M.allocation (Function.update bids i value) i = 1
+  · have hoff :
+        deterministicAuctionOffer M bids i value =
+          some (M.payment (Function.update bids i value) i) := by
+      unfold deterministicAuctionOffer
+      simp [halloc]
+    obtain ⟨hpay, hthreshold_le_value⟩ :=
+      hdom value (M.payment (Function.update bids i value) i) hoff
+    rw [hpay]
+    simp [hthreshold_le_value]
+  · have halloc_zero :
+        M.allocation (Function.update bids i value) i = 0 := by
+      rcases hbinary (Function.update bids i value) i with hzero | hone
+      · exact hzero
+      · exact False.elim (halloc hone)
+    have hpay_zero :
+        M.payment (Function.update bids i value) i = 0 :=
+      hloser (Function.update bids i value) i halloc_zero
+    rw [hpay_zero]
+    by_cases hle : threshold ≤ value
+    · simp [hle, hthreshold_nonneg]
+    · simp [hle]
+
+/--
+Truthful, individually rational, no-positive-transfers deterministic auctions
+produce nonnegative threshold-dominating offer slices after fixing other bids.
+-/
+theorem deterministicAuctionOffer_exists_nonnegative_thresholdDominates_of_truthful
+    [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent)
+    (htruth : M.TruthfulDominantStrategy)
+    (hIR : M.IndividuallyRational)
+    (hNPT : M.NoPositiveTransfers)
+    (hbinary : M.BinaryAllocation)
+    (bids : Agent → ℝ) (i : Agent) :
+    ∃ threshold,
+      0 ≤ threshold ∧
+        DeterministicOfferThresholdDominates
+          (deterministicAuctionOffer M bids i) threshold := by
+  classical
+  have hbid :
+      DeterministicOfferBidIndependent (deterministicAuctionOffer M bids i) :=
+    deterministicAuctionOffer_bidIndependent_of_truthful
+      M htruth hIR hNPT hbinary bids i
+  rcases hbid with hallReject | hcritical
+  · refine ⟨0, le_rfl, ?_⟩
+    intro report price hoff
+    rw [hallReject report] at hoff
+    contradiction
+  · rcases hcritical with
+      ⟨criticalPrice, hpayment, hlosesBelow, hwinsAbove⟩
+    have hwin :
+        deterministicAuctionOffer M bids i (criticalPrice + 1) =
+          some criticalPrice := by
+      exact hwinsAbove (criticalPrice + 1) (by linarith)
+    have hcritical_nonneg : 0 ≤ criticalPrice := by
+      unfold deterministicAuctionOffer at hwin
+      by_cases halloc :
+          M.allocation (Function.update bids i (criticalPrice + 1)) i = 1
+      · simp [halloc] at hwin
+        rw [← hwin]
+        exact hNPT (Function.update bids i (criticalPrice + 1)) i
+      · simp [halloc] at hwin
+    refine ⟨criticalPrice, hcritical_nonneg, ?_⟩
+    intro report price hoff
+    constructor
+    · exact hpayment report price hoff
+    · by_contra hnot
+      have hlt : report < criticalPrice := lt_of_not_ge hnot
+      rw [hlosesBelow report hlt] at hoff
+      contradiction
 
 end Auction
 end EconCSLib
