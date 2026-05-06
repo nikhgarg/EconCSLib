@@ -153,6 +153,11 @@ into the concrete endpoint policy data.
   lemmas derive the moving state's positive current mass from shared support
   and the realized Lemma 5 shape, which is exactly the mass input needed by
   the accept-all tightening constructors.
+- The five `...RegularEndpointData.of_shared_source_and_acceptAll_tightening`
+  constructors are the preferred endpoint builders: they compose shared
+  source regularity, shape-derived current mass, accept-all moving-state
+  tightening, and fixed-state reward-rate data into the regular endpoint
+  records consumed by Theorem 4.
 - `Theorem4AllMeasurableAllowedPolicyFormsCertificate` and
   `Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate`
   are the current targets because they avoid duplicating Lemma 5 replacement

@@ -569,7 +569,9 @@ route remains compiled for the variant that proves ordinary allowed Lemma 5
   apply the measured Remark 4 tightening lemmas from accept-all moving-state
   bounds to the current moving-state policy.  The shared-source package also
   has shape-specific current-mass positivity lemmas for reject-long,
-  accept-middle, reject-short, and reject-middle policies.
+  accept-middle, reject-short, and reject-middle policies.  The five
+  `...RegularEndpointData.of_shared_source_and_acceptAll_tightening`
+  constructors now compose these pieces into the regular endpoint records.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers
