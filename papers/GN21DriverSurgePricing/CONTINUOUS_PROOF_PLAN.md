@@ -95,18 +95,29 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    Lemma 10 accept-all fixed-surge branch from Theorem 3 parameter data.  The
    remaining field on the positive-mass route is just Lemma 9 reward-rate data
    for the surge move, quantified over feasible measurable policies whose
-   accepted trip mass is positive in both states.  The older broad
+   accepted trip mass is positive in both states.  This field now has a
+   compiled fixed-transfer adapter:
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_fixed_transfer_reward_rate_data_assumptions`.
+   It asks for accept-all Lemma 9 bounds at the effective current ratio, the
+   current fixed non-surge reward rate, and the two fixed-state cross-ratio
+   comparisons; Lean transfers the fixed state and then tightens the moving
+   surge state.  A target-rate specialization,
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions`,
+   reuses the constructed Theorem 3 accept-all bounds when the current fixed
+   non-surge reward rate is `R1` and `m_2-R1>0` is available.  The older broad
    feasible-measurable wrapper still exposes the explicit positive-current-mass
    obligation, and the accounting-form/raw source-data wrappers remain compiled
    as intermediate adapters.
 
 3. Instantiate the positive-mass feasible sequential source route from source
-   regularity: prove Lemma 9 reward-rate data for the surge move at each
-   positive-mass feasible current policy.  The Lemma 10 non-surge move with
-   surge fixed to accept-all is now compiled from the constructed Theorem 3
-   parameter data, and positive mass supplies the denominator/nondegeneracy side
-   conditions.  The older regular allowed-policy-form and fixed-transfer routes
-   can remain available for stronger uniqueness or statewise statements.
+   regularity: prove either the effective-ratio fixed-transfer data above for
+   the surge move at each positive-mass feasible current policy, or prove the
+   target-rate specialization when the current non-surge reward rate is known
+   to equal `R1`.  The Lemma 10 non-surge move with surge fixed to accept-all
+   is now compiled from the constructed Theorem 3 parameter data, and positive
+   mass supplies the denominator/nondegeneracy side conditions.  The older
+   regular allowed-policy-form and fixed-transfer routes can remain available
+   for stronger uniqueness or statewise statements.
 
 ## Key Missing Mathematical Lemma
 

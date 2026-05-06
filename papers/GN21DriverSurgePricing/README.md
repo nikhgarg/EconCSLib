@@ -136,7 +136,15 @@ cache is `source.txt`.
   in Lemma 1 and Lemmas 9--10.  In that route Lean derives the Lemma 10
   accept-all fixed-surge branch and all aggregate nondegeneracy fields; the
   only remaining policy-dependent source field is the Lemma 9 surge
-  reward-rate data on this positive-mass domain.
+  reward-rate data on this positive-mass domain.  The new fixed-transfer
+  adapter
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_fixed_transfer_reward_rate_data_assumptions`
+  derives that field from accept-all Lemma 9 bounds, the current fixed
+  non-surge reward rate, and the two fixed-state cross-ratio comparisons.
+  The target-rate specialization
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions`
+  reuses the constructed Theorem 3 accept-all Lemma 9 bounds when the current
+  fixed non-surge policy has target reward rate `R1`.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

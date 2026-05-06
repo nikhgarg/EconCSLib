@@ -116,6 +116,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_s
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_accounting_data_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_reward_rate_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_fixed_transfer_reward_rate_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_mass_feasible_sequential_surge_target_fixed_transfer_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
@@ -139,15 +141,23 @@ statement.  The positive-mass wrapper restricts the policy domain to feasible
 measurable policies with positive accepted mass in both states, which is the
 domain where the source reward-rate denominators are defined.  On that route
 the remaining local proof is only the Lemma 9 surge reward-rate move on the
-positive-mass domain; the broad feasible-measurable wrapper keeps the explicit
-positive-current-mass obligation for users who want the stronger domain.
+positive-mass domain.  That move now has a fixed-transfer adapter: accept-all
+Lemma 9 bounds at the effective current ratio plus the two fixed-state
+cross-ratio comparisons imply the current fixed-state bounds, and positive
+moving-state mass tightens the moving surge state.  A target-rate specialization
+uses the constructed Theorem 3 accept-all bounds when the current non-surge
+fixed reward rate is `R1` and `m_2-R1>0` is supplied.  The broad
+feasible-measurable wrapper keeps the explicit positive-current-mass obligation
+for users who want the stronger domain.
 
 ## Closure Options
 
 1. Use the sequential Theorem 3 route for IC.  This is the fastest
    source-faithful path: it needs Lemma 9 for the arbitrary current surge move
-   on the positive-mass feasible domain, and Lean now discharges Lemma 10 in
-   the accept-all fixed-surge branch.
+   on the positive-mass feasible domain.  The newest compiled boundary reduces
+   this to effective-ratio accept-all Lemma 9 bounds plus fixed-state transfer
+   comparisons, and Lean now discharges Lemma 10 in the accept-all fixed-surge
+   branch.
 
 2. Prove fixed-state reward-rate equality for every non-accept-all branch.
    This is the strongest route and is already supported by the fixed-state
