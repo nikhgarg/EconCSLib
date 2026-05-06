@@ -10663,6 +10663,33 @@ theorem effectiveRatio_pos_le_targetRatio_of_reward_le
     le_of_mul_le_mul_right heffective_mul_le hden_effective_pos⟩
 
 /--
+Construct the effective current ratio from the current reward rate.  This keeps
+source-facing wrappers from asking callers to provide the quotient
+`z/(m-r_current)` by hand.
+-/
+theorem exists_effectiveRatio_pos_le_targetRatio_of_reward_le
+    (z targetRatio m Rtarget Rcurrent : ℝ)
+    (hz_target : z = targetRatio * (m - Rtarget))
+    (htarget_pos : 0 < targetRatio)
+    (hmRtarget_pos : 0 < m - Rtarget)
+    (hreward_le : Rcurrent ≤ Rtarget) :
+    ∃ effectiveRatio : ℝ,
+      z = effectiveRatio * (m - Rcurrent) ∧
+        0 < effectiveRatio ∧ effectiveRatio ≤ targetRatio := by
+  have hden_effective_pos : 0 < m - Rcurrent := by
+    linarith
+  let effectiveRatio := z / (m - Rcurrent)
+  have hz_effective : z = effectiveRatio * (m - Rcurrent) := by
+    unfold effectiveRatio
+    field_simp [ne_of_gt hden_effective_pos]
+  rcases
+      effectiveRatio_pos_le_targetRatio_of_reward_le
+        z targetRatio effectiveRatio m Rtarget Rcurrent hz_target
+        hz_effective htarget_pos hmRtarget_pos hreward_le with
+    ⟨heffective_pos, heffective_le⟩
+  exact ⟨effectiveRatio, hz_effective, heffective_pos, heffective_le⟩
+
+/--
 Target-ratio Lemma 9 bounds also cover any positive effective ratio below the
 target ratio, provided the lower endpoint is nonpositive.
 -/
@@ -51131,6 +51158,152 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
               have hle := Dag.aggregate_le_acceptAll
               simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
                 P.hm0] using hle }))
+
+/--
+Positive-parameter reward-bound assumptions with the effective current ratio
+constructed internally from `z_2/(m_2-r1_current)`.
+-/
+structure Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeTargetRewardBoundFixedTransferNoRatioDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  surge_acceptAll_lower_nonpos :
+    lemma9StructuredLower
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21 ≤ 0
+  surge_target_reward_bound_fixed_transfer_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            ∃ R1_current : ℝ,
+              R1_current ≤ R1 ∧
+                0 ≤ R1_current ∧
+                gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) = R1_current ∧
+                gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 ≤
+                  gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+                    gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0) ∧
+                gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+                    gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0) ≤
+                  gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from positive-parameter reward-bound data where
+Lean constructs the effective current ratio internally.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_no_ratio_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeTargetRewardBoundFixedTransferNoRatioDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_pos := A.hmass1_pos
+      hmass2_pos := A.hmass2_pos
+      surge_acceptAll_lower_nonpos := A.surge_acceptAll_lower_nonpos
+      surge_target_reward_bound_fixed_transfer_data := by
+        intro m z hnonneg hparams_pos ρ hρ
+        let Ppos :=
+          Theorem3AcceptAllStructuredPositiveParameterData.of_evidence
+            hparams_pos
+        let P := Ppos.params
+        rcases
+            A.surge_target_reward_bound_fixed_transfer_data
+              m z hnonneg hparams_pos ρ hρ with
+          ⟨R1_current, hRcurrent_le, hRcurrent_nonneg, hrate, hlower,
+            hupper⟩
+        have hT2_ge_one :
+            1 ≤ gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+          gn21ScaledStateTime_ge_one_of_nonneg (μ 1) (arrival 1)
+            acceptAllPolicy (le_of_lt A.harrival2_pos)
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+        have hsum21 : 0 < switch21 + switch12 := by
+          linarith [A.hswitch21_pos, A.hswitch12_pos]
+        have hswitch_lt_Q2 :
+            switch21 <
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12 :=
+          paper_remark4_exit_weight_gt_switch_of_positive_measure
+            (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+            A.harrival2_pos A.hswitch21_pos hsum21
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+            A.hq2_integrable
+            (measure_pos_of_singleStateTripMass_pos (μ 1) acceptAllPolicy
+              A.hmass2_pos)
+        have hmRtarget_pos : 0 < m 1 - R1 :=
+          P.m1_sub_R1_pos_of_surgeRatio_pos A.hR1_pos A.hR1_lt_R2
+            hT2_ge_one hswitch_lt_Q2 Ppos.hsurgeRatio_pos
+        rcases
+            exists_effectiveRatio_pos_le_targetRatio_of_reward_le
+              (z 1) P.surgeRatio (m 1) R1 R1_current
+              P.surge_z_eq_ratio_m_sub_R1 Ppos.hsurgeRatio_pos
+              hmRtarget_pos hRcurrent_le with
+          ⟨effectiveRatio, hz_effective, _heffective_pos,
+            _heffective_le⟩
+        exact
+          ⟨R1_current, effectiveRatio, hz_effective, hRcurrent_le,
+            hRcurrent_nonneg, hrate, hlower, hupper⟩ }
 
 /--
 Positive-mass source assumptions with the target-rate fixed-state transfer
