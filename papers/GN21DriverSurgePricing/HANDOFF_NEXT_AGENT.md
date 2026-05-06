@@ -19,6 +19,28 @@ latexmk -pdf DependencyDAG.tex   # from papers/GN21DriverSurgePricing
 git diff --check -- papers/GN21DriverSurgePricing skills/econcs-formalizer
 ```
 
+## Important Conclusion
+
+Do not try to finish Lemma 9 by proving a universal arbitrary-policy bound
+`r1_current <= R1`.  That is not the invariant used by the source proof and can
+be false for arbitrary current non-surge policies.
+
+The paper's usable argument is the Theorem 3 surge-side slack paragraph:
+state 2 can support any admissible payment ratio by choosing the surge
+multiplier/intercept with enough slack.  The Lean route is:
+
+```lean
+r1_current <= Rmax
+z_2 < current_Lemma9_upper * (m_2 - Rmax)
+```
+
+together with current Lemma 9 lower-endpoint nonpositivity.  The compiled
+constructor that packages this is:
+
+```lean
+GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+```
+
 ## Current Best Frontier
 
 The newest source-facing endpoint is:

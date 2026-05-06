@@ -46,6 +46,30 @@ Theorem 3 proof that fixed-state reward rate is this current policy-dependent
 r1_current, not the target accept-all R1 unless σ_1 is already accept-all or a
 separate equality has been proved.
 
+Important conclusion from the source proof
+------------------------------------------
+Do not try to close Lemma 9 by proving a universal arbitrary-policy bound
+
+  r1_current <= R1.
+
+That is not the right invariant, and for arbitrary current non-surge policies
+it can be false.  The usable paper argument is the Theorem 3 surge-side
+"support any ratio" paragraph: choose the surge-state multiplier/intercept with
+enough slack so that
+
+  z_2 / (m_2 - r1_current)
+
+stays inside the current Lemma 9 interval whenever the current non-surge reward
+is below a verified envelope Rmax.  In Lean, the target is therefore:
+
+  r1_current <= Rmax
+  z_2 < current_Lemma9_upper * (m_2 - Rmax)
+
+plus current lower-endpoint nonpositivity.  The compiled constructor for this
+route is:
+
+  GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+
 
 What is easy versus not easy
 ----------------------------
@@ -62,16 +86,13 @@ singleStateTripPayment_nonneg_of_pointwise_nonneg,
 gn21StateCycleTime_pos_of_mass_pos, and
 gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg.
 
-The upper bound
+The upper-envelope bound r1_current <= Rmax now has generic support from:
 
-  r1_current <= R1
+  gn21MeasuredStateRewardRate_le_of_pointwise_payment_le_rate
+  exists_reward_rate_envelope_ctmcStructuredSurgePrice
 
-does not follow from nonnegative payments or from integrating over a larger
-accepted set.  Adding nonnegative trips can lower or raise a rate, because the
-denominator changes.  This upper bound must come from a rate comparison:
-accept-all is at least as good as the current non-surge policy for the
-constructed non-surge price, or from the equivalent rejected-complement
-average-rate comparison.
+The remaining hard part is the scalar surge slack proof for the Theorem 3
+constructed `m_2,z_2`, not measure theory and not a global audit.
 
 
 Fastest remaining path
