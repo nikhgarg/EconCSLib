@@ -121,7 +121,13 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_measurable_shape_stat
    lemma.  The positive-parameter sequential boundary
    `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_positive_parameter_positive_mass_feasible_sequential_weak_reward`
    preserves the constructed positive surge-ratio witness for source adapters
-   that should not ask for it again.  The older broad
+   that should not ask for it again.  The positive-parameter reward-bound
+   wrapper
+   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_target_reward_bound_fixed_transfer_data_assumptions`
+   is now the cleanest compiled boundary for the sequential route: the source
+   supplies effective-ratio accounting, `r1_current <= R1`, nonnegativity of
+   `r1_current`, reward-rate identity, and the fixed-state cross comparisons.
+   The older broad
    feasible-measurable wrapper still exposes the explicit positive-current-mass
    obligation, and the accounting-form/raw source-data wrappers remain compiled
    as intermediate adapters.
