@@ -27942,6 +27942,85 @@ theorem GN21RegularEndpointSharedSourceData.surge_rejectMiddle_current_mass_pos
       (S.surge_support.finite_current_of_feasible hρ_feasible 1)
       (S.surge_support.pos_current_of_feasible hρ_feasible 1)
 
+/-- Shared regular source data gives positive scaled time for the non-surge current policy. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_scaled_time_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) := by
+  exact
+    gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) (ρ 0)
+      (le_of_lt S.harrival0_pos) (hρ_feasible 0).2 (hρ_feasible 0).1
+
+/-- Shared regular source data gives positive scaled time for the surge current policy. -/
+theorem GN21RegularEndpointSharedSourceData.surge_scaled_time_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) := by
+  exact
+    gn21ScaledStateTime_pos_of_nonneg (μ 1) (arrival 1) (ρ 1)
+      (le_of_lt S.harrival1_pos) (hρ_feasible 1).2 (hρ_feasible 1).1
+
+/-- Shared regular source data gives positive non-surge exit weight. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_exit_weight_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) := by
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  exact
+    gn21ExitWeightIntegral_pos_of_switch_pos (μ 0) (arrival 0) switch12
+      switch21 (ρ 0) (le_of_lt S.harrival0_pos) S.hswitch12_pos hsum12
+      (hρ_feasible 0).2 (hρ_feasible 0).1
+
+/-- Shared regular source data gives positive surge exit weight. -/
+theorem GN21RegularEndpointSharedSourceData.surge_exit_weight_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    0 < gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) := by
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [S.hswitch21_pos, S.hswitch12_pos]
+  exact
+    gn21ExitWeightIntegral_pos_of_switch_pos (μ 1) (arrival 1) switch21
+      switch12 (ρ 1) (le_of_lt S.harrival1_pos) S.hswitch21_pos hsum21
+      (hρ_feasible 1).2 (hρ_feasible 1).1
+
+/--
+For non-surge Lemma 10 current bounds, the fixed surge state's denominator
+side term is positive under shared regular source data.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_fixed_switch_term_pos_for_nonsurge_bounds
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    0 <
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) * switch12 +
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) := by
+  have hT_pos := S.surge_scaled_time_pos hρ_feasible
+  have hQ_pos := S.surge_exit_weight_pos hρ_feasible
+  have hprod_pos :
+      0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) * switch12 :=
+    mul_pos hT_pos S.hswitch12_pos
+  exact add_pos hprod_pos hQ_pos
+
 /-- Build regular non-surge reject-long endpoint data from shared source regularity. -/
 def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source
     {μ : Fin 2 → Measure TripLength}
@@ -27999,12 +28078,6 @@ def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_acceptAll_tig
         (gn21ScaledStateTime (μ 0) (arrival 0) acceptAllPolicy)
         (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 acceptAllPolicy)
         switch12)
-    (hfixed_A_pos :
-      0 <
-        gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) * switch12 +
-          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
-    (hfixed_exit_nonneg :
-      0 ≤ gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
     (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
     (hz : z 0 = ratio * R2)
     (hR2_pos : 0 < R2)
@@ -28022,7 +28095,9 @@ def GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_acceptAll_tig
       (S.htime0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
       (S.hq0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
       S.htime0_acceptAll_integrable S.hq0_acceptAll_integrable
-      hbounds_acceptAll hfixed_A_pos hfixed_exit_nonneg
+      hbounds_acceptAll
+      (S.surge_fixed_switch_term_pos_for_nonsurge_bounds hρ_feasible)
+      (le_of_lt (S.surge_exit_weight_pos hρ_feasible))
       (S.nonsurge_rejectLong_current_mass_pos hρ_feasible hshape hu)
       hz hR2_pos hfixed_reward_rate)
 
@@ -28093,12 +28168,6 @@ def GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_acceptAll_t
         (gn21ScaledStateTime (μ 0) (arrival 0) acceptAllPolicy)
         (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 acceptAllPolicy)
         switch12)
-    (hfixed_A_pos :
-      0 <
-        gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) * switch12 +
-          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
-    (hfixed_exit_nonneg :
-      0 ≤ gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
     (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
     (hz : z 0 = ratio * R2)
     (hR2_pos : 0 < R2)
@@ -28116,7 +28185,9 @@ def GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_acceptAll_t
       (S.htime0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
       (S.hq0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
       S.htime0_acceptAll_integrable S.hq0_acceptAll_integrable
-      hbounds_acceptAll hfixed_A_pos hfixed_exit_nonneg
+      hbounds_acceptAll
+      (S.surge_fixed_switch_term_pos_for_nonsurge_bounds hρ_feasible)
+      (le_of_lt (S.surge_exit_weight_pos hρ_feasible))
       (S.nonsurge_acceptMiddle_current_mass_pos
         hρ_feasible hshape hlo_pos hlo_lt_hi)
       hz hR2_pos hfixed_reward_rate)
@@ -28191,9 +28262,6 @@ def GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_acceptAll_tight
         (gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy)
         (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy)
         switch21)
-    (hfixed_time_nonneg : 0 ≤ gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
-    (hfixed_exit_pos :
-      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
     (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
     (hz : z 1 = ratio * (m 1 - R1))
     (hmR_pos : 0 < m 1 - R1)
@@ -28212,7 +28280,9 @@ def GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_acceptAll_tight
       (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
       (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
       S.htime1_acceptAll_integrable S.hq1_acceptAll_integrable
-      hbounds_acceptAll hfixed_time_nonneg hfixed_exit_pos
+      hbounds_acceptAll
+      (le_of_lt (S.nonsurge_scaled_time_pos hρ_feasible))
+      (S.nonsurge_exit_weight_pos hρ_feasible)
       (S.surge_rejectShort_current_mass_pos hρ_feasible hshape)
       hz hmR_pos hR1_nonneg hfixed_reward_rate)
 
@@ -28286,9 +28356,6 @@ def GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_acceptAll_ti
         (gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy)
         (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy)
         switch21)
-    (hfixed_time_nonneg : 0 ≤ gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
-    (hfixed_exit_pos :
-      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
     (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
     (hz : z 1 = ratio * (m 1 - R1))
     (hmR_pos : 0 < m 1 - R1)
@@ -28307,7 +28374,9 @@ def GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_acceptAll_ti
       (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
       (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
       S.htime1_acceptAll_integrable S.hq1_acceptAll_integrable
-      hbounds_acceptAll hfixed_time_nonneg hfixed_exit_pos
+      hbounds_acceptAll
+      (le_of_lt (S.nonsurge_scaled_time_pos hρ_feasible))
+      (S.nonsurge_exit_weight_pos hρ_feasible)
       (S.surge_rejectMiddle_current_mass_pos hρ_feasible hshape)
       hz hmR_pos hR1_nonneg hfixed_reward_rate)
 
@@ -28393,9 +28462,6 @@ def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_acceptAll_ti
         (gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy)
         (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy)
         switch21)
-    (hfixed_time_nonneg : 0 ≤ gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
-    (hfixed_exit_pos :
-      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
     (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
     (hz : z 1 = ratio * (m 1 - R1))
     (hmR_pos : 0 < m 1 - R1)
@@ -28415,7 +28481,9 @@ def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_acceptAll_ti
       (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
       (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
       S.htime1_acceptAll_integrable S.hq1_acceptAll_integrable
-      hbounds_acceptAll hfixed_time_nonneg hfixed_exit_pos
+      hbounds_acceptAll
+      (le_of_lt (S.nonsurge_scaled_time_pos hρ_feasible))
+      (S.nonsurge_exit_weight_pos hρ_feasible)
       (S.surge_rejectMiddle_current_mass_pos hρ_feasible hshape)
       hz hmR_pos hR1_nonneg hfixed_reward_rate)
 
