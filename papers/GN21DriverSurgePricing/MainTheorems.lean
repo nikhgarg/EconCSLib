@@ -37233,6 +37233,337 @@ def GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fix
       hfixed_reward_rate
 
 /--
+Cutoff-local source data for a non-surge reject-long endpoint once the shared
+regular source data and Theorem 3 parameter data have been fixed.
+-/
+structure GN21NonsurgeRejectLongTheorem3FixedTransferLocalData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R2 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (u : ℝ) where
+  hdensity_pos : 0 < (S.nonsurge_support.densityNN u : ℝ)
+  hu : 0 < u
+  hfixed_cross :
+    gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) ≤
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+  hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1)
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+      R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+
+/--
+Cutoff-local source data for a non-surge accept-middle endpoint once the shared
+regular source data and Theorem 3 parameter data have been fixed.
+-/
+structure GN21NonsurgeAcceptMiddleTheorem3FixedTransferLocalData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R2 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  δ : ℝ
+  hdensity_pos : 0 < (S.nonsurge_support.densityNN lo : ℝ)
+  hlo_pos : 0 < lo
+  hlo_lt_hi : lo < hi
+  hδ : 0 < δ
+  hδ_le_lo : δ ≤ lo
+  hfixed_cross :
+    gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) ≤
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+  hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1)
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+      R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+
+/--
+Cutoff-local source data for a surge reject-short endpoint once the shared
+regular source data and Theorem 3 parameter data have been fixed.
+-/
+structure GN21SurgeRejectShortTheorem3FixedTransferLocalData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R1 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (u : ℝ) where
+  δ : ℝ
+  hdensity_pos : 0 < (S.surge_support.densityNN u : ℝ)
+  tail_integrability :
+    GN21TailProductIntegrabilityData S.surge_support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1)
+  hu : 0 < u
+  hδ : 0 < δ
+  hδ_le_u : δ ≤ u
+  hfixed_lower_cross :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0)
+  hfixed_upper_cross :
+    gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+  hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+      R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+
+/--
+Cutoff-local source data for a lower-cutoff surge reject-middle endpoint once
+the shared regular source data and Theorem 3 parameter data have been fixed.
+-/
+structure GN21SurgeRejectMiddleLoTheorem3FixedTransferLocalData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R1 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  δ : ℝ
+  hdensity_pos : 0 < (S.surge_support.densityNN lo : ℝ)
+  hlo_pos : 0 < lo
+  hloδ_le_hi : lo + δ ≤ hi
+  hδ : 0 < δ
+  tail_integrability :
+    GN21TailProductIntegrabilityData S.surge_support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi
+  hfixed_lower_cross :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0)
+  hfixed_upper_cross :
+    gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+  hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+      R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+
+/--
+Cutoff-local source data for an upper-cutoff surge reject-middle endpoint once
+the shared regular source data and Theorem 3 parameter data have been fixed.
+-/
+structure GN21SurgeRejectMiddleHiTheorem3FixedTransferLocalData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R1 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  δ : ℝ
+  hdensity_pos : 0 < (S.surge_support.densityNN hi : ℝ)
+  derivative_tail_integrability :
+    GN21TailProductIntegrabilityData S.surge_support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1)
+  hhi_pos : 0 < hi
+  hδ : 0 < δ
+  hlo_nonneg : 0 ≤ lo
+  hlo_le_hiδ : lo ≤ hi - δ
+  tail_integrability :
+    GN21TailProductIntegrabilityData S.surge_support.densityNN
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ)
+  hfixed_lower_cross :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0)
+  hfixed_upper_cross :
+    gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+  hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0)
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+      R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+
+/--
+A surge reject-middle Theorem 3 fixed-transfer endpoint may move either cutoff.
+-/
+inductive GN21SurgeRejectMiddleTheorem3FixedTransferLocalData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R1 : ℝ)
+    (ρ : Fin 2 → TripPolicy)
+    (lo hi : ℝ) where
+  | lower :
+      GN21SurgeRejectMiddleLoTheorem3FixedTransferLocalData
+        S m z R1 ρ lo hi →
+      GN21SurgeRejectMiddleTheorem3FixedTransferLocalData
+        S m z R1 ρ lo hi
+  | upper :
+      GN21SurgeRejectMiddleHiTheorem3FixedTransferLocalData
+        S m z R1 ρ lo hi →
+      GN21SurgeRejectMiddleTheorem3FixedTransferLocalData
+        S m z R1 ρ lo hi
+
+/--
+All-optimal allowed policy forms plus the local source facts needed by the
+Theorem 3 fixed-state transfer endpoint constructors.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  params :
+    Theorem3AcceptAllStructuredParameterData
+      μ arrival R1 R2 switch12 switch21 m z
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy
+  hsurgeRatio_pos : 0 < params.surgeRatio
+  allowed_policy_forms :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongTheorem3FixedTransferLocalData
+            shared m z R2 ρ u
+  nonsurge_accept_middle_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleTheorem3FixedTransferLocalData
+            shared m z R2 ρ lo hi
+  surge_reject_short_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortTheorem3FixedTransferLocalData
+            shared m z R1 ρ u
+  surge_reject_middle_local :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleTheorem3FixedTransferLocalData
+            shared m z R1 ρ lo hi
+
+/--
+Expand the Theorem 3 fixed-transfer source certificate to the existing regular
+allowed-policy-form endpoint certificate.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_regular_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+      μ arrival m z switch12 switch21 where
+  allowed_policy_forms := C.allowed_policy_forms
+  nonsurge_reject_long_endpoint := by
+    intro ρ hopt u hshape
+    let D := C.nonsurge_reject_long_local ρ hopt u hshape
+    exact
+      GN21NonsurgeRejectLongRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+        C.shared C.params hopt.1 hshape D.hdensity_pos D.hu D.hfixed_cross
+        D.hmass_other_pos C.hR2_pos D.hfixed_reward_rate
+  nonsurge_accept_middle_endpoint := by
+    intro ρ hopt lo hi hshape
+    let D := C.nonsurge_accept_middle_local ρ hopt lo hi hshape
+    exact
+      GN21NonsurgeAcceptMiddleRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+        C.shared C.params hopt.1 hshape D.hdensity_pos D.hlo_pos
+        D.hlo_lt_hi D.hδ D.hδ_le_lo D.hfixed_cross D.hmass_other_pos
+        C.hR2_pos D.hfixed_reward_rate
+  surge_reject_short_endpoint := by
+    intro ρ hopt u hshape
+    let D := C.surge_reject_short_local ρ hopt u hshape
+    have hmR_pos : 0 < m 1 - R1 :=
+      C.params.m1_sub_R1_pos_of_shared_source C.shared
+        C.hmeasure_surge_acceptAll_pos C.hR1_pos C.hR1_lt_R2
+        C.hsurgeRatio_pos
+    exact
+      GN21SurgeRejectShortRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+        C.shared C.params hopt.1 hshape D.hdensity_pos D.tail_integrability
+        D.hu D.hδ D.hδ_le_u C.hmeasure_surge_acceptAll_pos
+        D.hfixed_lower_cross D.hfixed_upper_cross D.hmass_other_pos
+        hmR_pos (le_of_lt C.hR1_pos) D.hfixed_reward_rate
+  surge_reject_middle_endpoint := by
+    intro ρ hopt lo hi hshape
+    let D := C.surge_reject_middle_local ρ hopt lo hi hshape
+    have hmR_pos : 0 < m 1 - R1 :=
+      C.params.m1_sub_R1_pos_of_shared_source C.shared
+        C.hmeasure_surge_acceptAll_pos C.hR1_pos C.hR1_lt_R2
+        C.hsurgeRatio_pos
+    cases D with
+    | lower Dlo =>
+        exact
+          .lower
+            (GN21SurgeRejectMiddleLoRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+              C.shared C.params hopt.1 hshape Dlo.hdensity_pos Dlo.hlo_pos
+              Dlo.hloδ_le_hi Dlo.hδ Dlo.tail_integrability
+              C.hmeasure_surge_acceptAll_pos Dlo.hfixed_lower_cross
+              Dlo.hfixed_upper_cross Dlo.hmass_other_pos hmR_pos
+              (le_of_lt C.hR1_pos) Dlo.hfixed_reward_rate)
+    | upper Dhi =>
+        exact
+          .upper
+            (GN21SurgeRejectMiddleHiRegularEndpointData.of_shared_source_and_theorem3_fixed_transfer
+              C.shared C.params hopt.1 hshape Dhi.hdensity_pos
+              Dhi.derivative_tail_integrability Dhi.hhi_pos Dhi.hδ
+              Dhi.hlo_nonneg Dhi.hlo_le_hiδ Dhi.tail_integrability
+              C.hmeasure_surge_acceptAll_pos Dhi.hfixed_lower_cross
+              Dhi.hfixed_upper_cross Dhi.hmass_other_pos hmR_pos
+              (le_of_lt C.hR1_pos) Dhi.hfixed_reward_rate)
+
+/--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured
 CTMC prices satisfying the source sign constraints, incentive compatibility,
 the paper's `structuredSurgePrice` form, and the constructed-parameter
@@ -38835,6 +39166,93 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
               μ arrival m z switch12 switch21
               (A.endpoint_current_bounds_regular_allowed_policy_forms_selection
                 m z hnonneg hparams) }
+
+/--
+Source-level assumptions for the Theorem 3 fixed-transfer regular endpoint
+route.  This is the current closest source boundary for the paper's continuous
+Theorem 4 argument: scalar accept-all primitives are discharged internally,
+while the remaining proof supplies all-optimal Lemma 5 policy forms plus the
+local endpoint facts needed by the Theorem 3 fixed-state transfer constructors.
+-/
+structure Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedPolicyFormsSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+            μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 wrapper from the Theorem 3 fixed-transfer regular
+endpoint certificate.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedPolicyFormsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_current_bounds_regular_allowed_policy_forms_selection := by
+          intro m z hnonneg hparams
+          exact
+            (A.endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection
+              m z hnonneg hparams).to_regular_allowed_policy_forms }
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is

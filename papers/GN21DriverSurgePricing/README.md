@@ -168,7 +168,19 @@ cache is `source.txt`.
   transfer directly, replacing current-fixed Lemma 10 bounds with the single
   fixed-state cross-ratio condition.  The three surge regular endpoint cases
   have analogous constructors using the Lemma 9 transfer and therefore expose
-  both cross-ratio directions explicitly.  The current regular allowed-policy-form
+  both cross-ratio directions explicitly.  The Theorem 3 fixed-transfer regular
+  endpoint route is now exposed as
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate`,
+  the local source records
+  `GN21NonsurgeRejectLongTheorem3FixedTransferLocalData`,
+  `GN21NonsurgeAcceptMiddleTheorem3FixedTransferLocalData`,
+  `GN21SurgeRejectShortTheorem3FixedTransferLocalData`, and
+  `GN21SurgeRejectMiddleTheorem3FixedTransferLocalData`,
+  and the paper-facing wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`.
+  It derives the surge `m 1 - R1 > 0` side condition from the shared source,
+  positive surge accept-all mass, Theorem 3 ratio positivity, and the
+  constructed parameter data.  The current regular allowed-policy-form
   endpoint route is now exposed as
   the five `GN21...RegularEndpointData` packages,
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate`,
