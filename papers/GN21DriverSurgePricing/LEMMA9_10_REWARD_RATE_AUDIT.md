@@ -113,6 +113,8 @@ paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_s
 Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_accounting_data_assumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
 
@@ -129,7 +131,9 @@ accept-all rate.  The source-data wrapper derives the packed aggregate and
 nondegeneracy fields from source-facing Lemma 9/10 data, accept-all
 integrability, and positive accept-all mass.  The reduced surge-source wrapper
 derives the Lemma 10 accept-all fixed-surge branch from Theorem 3 parameter
-data, so the remaining local proof is the Lemma 9 surge move plus positive
+data, and the accounting/reward-rate wrappers reduce the remaining Lemma 9
+fixed-state identity to the source accounting equation or measured reward-rate
+statement.  The remaining local proof is the Lemma 9 surge move plus positive
 current non-surge mass.
 
 ## Closure Options

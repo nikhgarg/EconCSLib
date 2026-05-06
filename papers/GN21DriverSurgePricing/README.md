@@ -119,9 +119,16 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_source_data_assumptions`,
   discharges the Lemma 10 accept-all fixed-surge branch from Theorem 3
   parameter data, leaving only positive current non-surge mass and Lemma 9
-  source data for the surge move.  The canonical measurable source entry point
+  source data for the surge move.  Two thinner compiled variants,
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_accounting_data_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions`,
+  let the remaining Lemma 9 fixed-state proof be stated as the paper's
+  structured accounting equation or measured reward-rate equality; Lean derives
+  the scaled fixed-state earning identity internally.  The canonical measurable
+  source entry point
   `paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions`
-  aliases this reduced sequential source-data route.
+  aliases the reduced sequential reward-rate route.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.
