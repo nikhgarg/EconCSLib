@@ -650,6 +650,15 @@ theorem singleStateTripTime_nonneg_of_subset_acceptAll
   exact setIntegral_nonneg hσ_measurable (fun τ hτ =>
     le_of_lt (hσ_subset hτ))
 
+/-- Accepted payment is nonnegative when the payment function is nonnegative on the policy. -/
+theorem singleStateTripPayment_nonneg_of_pointwise_nonneg
+    (μ : Measure TripLength) (w : PricingFunction) (σ : TripPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (hpayment_nonneg : ∀ τ ∈ σ, 0 ≤ w τ) :
+    0 ≤ singleStateTripPayment μ w σ := by
+  unfold singleStateTripPayment
+  exact setIntegral_nonneg hσ_measurable hpayment_nonneg
+
 /-- Accepted trip time is monotone among feasible policies. -/
 theorem singleStateTripTime_le_acceptAll_of_subset
     (μ : Measure TripLength) (σ : TripPolicy)
@@ -2480,6 +2489,27 @@ def gn21StateCycleTime
     (μ : Measure TripLength) (arrivalRate : ℝ) (σ : TripPolicy) : ℝ :=
   1 / (arrivalRate * singleStateTripMass μ σ) +
     singleStateTripTime μ σ / singleStateTripMass μ σ
+
+/-- Lemma 1 state-cycle time is positive on positive-mass feasible policies. -/
+theorem gn21StateCycleTime_pos_of_mass_pos
+    (μ : Measure TripLength) (arrivalRate : ℝ) (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ) :
+    0 < gn21StateCycleTime μ arrivalRate σ := by
+  unfold gn21StateCycleTime
+  have htime_nonneg : 0 ≤ singleStateTripTime μ σ :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ σ hσ_measurable hσ_subset
+  have harrival_mass_pos :
+      0 < arrivalRate * singleStateTripMass μ σ :=
+    mul_pos harrival_pos hmass_pos
+  have hfirst_pos : 0 < 1 / (arrivalRate * singleStateTripMass μ σ) :=
+    one_div_pos.mpr harrival_mass_pos
+  have hsecond_nonneg :
+      0 ≤ singleStateTripTime μ σ / singleStateTripMass μ σ :=
+    div_nonneg htime_nonneg (le_of_lt hmass_pos)
+  exact add_pos_of_pos_of_nonneg hfirst_pos hsecond_nonneg
 
 /-- Lemma 3 integral exit weight `Q_i(σ_i)`. -/
 def gn21ExitWeightIntegral
@@ -15373,6 +15403,33 @@ def gn21MeasuredStateRewardRate
   gn21StateRewardRate
     (gn21StateMeanEarning μ w σ)
     (gn21StateCycleTime μ arrivalRate σ)
+
+/--
+Measured Lemma 1 state reward rates are nonnegative when accepted payments are
+pointwise nonnegative on a positive-mass feasible policy.
+-/
+theorem gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ)
+    (hpayment_nonneg : ∀ τ ∈ σ, 0 ≤ w τ) :
+    0 ≤ gn21MeasuredStateRewardRate μ arrivalRate w σ := by
+  unfold gn21MeasuredStateRewardRate gn21StateRewardRate gn21StateMeanEarning
+  have hpayment_integral_nonneg :
+      0 ≤ singleStateTripPayment μ w σ :=
+    singleStateTripPayment_nonneg_of_pointwise_nonneg μ w σ
+      hσ_measurable hpayment_nonneg
+  have hmean_nonneg :
+      0 ≤ singleStateTripPayment μ w σ / singleStateTripMass μ σ :=
+    div_nonneg hpayment_integral_nonneg (le_of_lt hmass_pos)
+  have hcycle_pos :
+      0 < gn21StateCycleTime μ arrivalRate σ :=
+    gn21StateCycleTime_pos_of_mass_pos μ arrivalRate σ harrival_pos
+      hσ_measurable hσ_subset hmass_pos
+  exact div_nonneg hmean_nonneg (le_of_lt hcycle_pos)
 
 /-- Lemma 1 dynamic reward decomposition from time fractions and state reward rates. -/
 def gn21DynamicRewardFormula
@@ -51901,6 +51958,130 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
               have hle := Dag.aggregate_le_acceptAll
               simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
                 P.hm0] using hle }))
+
+/--
+Positive-parameter current-lower source assumptions with nonnegative current
+payments instead of an explicit `0 <= R1_current` field.  The nonnegativity of
+the current fixed-state reward rate is derived from Lemma 1's measured
+reward-rate formula.
+-/
+structure Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperPaymentNonnegDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy
+  hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy
+  surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicFeasibleMeasurablePositiveMassPolicy μ ρ →
+            ∃ R1_current : ℝ,
+              R1_current ≤ R1 ∧
+                gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) = R1_current ∧
+                (∀ τ ∈ ρ 0,
+                  0 ≤
+                    ctmcStructuredDynamicSurgePrice m z switch12 switch21 0 τ) ∧
+                lemma9StructuredLower
+                  (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+                  (gn21ExitWeightIntegral (μ 0) (arrival 0)
+                    switch12 switch21 (ρ 0))
+                  (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+                  (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                    switch21 switch12)
+                  switch21 ≤ 0 ∧
+                gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+                    gn21ExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21 (ρ 0) ≤
+                  gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                    gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                      switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper deriving `0 <= R1_current` from pointwise
+nonnegative current non-surge payments.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperPaymentNonnegDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR1_pos := A.hR1_pos
+      hR1_lt_R2 := A.hR1_lt_R2
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_pos := A.hmass1_pos
+      hmass2_pos := A.hmass2_pos
+      surge_current_lower_reward_bound_fixed_upper_data := by
+        intro m z hnonneg hparams ρ hρ
+        rcases
+            A.surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data
+              m z hnonneg hparams ρ hρ with
+          ⟨R1_current, hRcurrent_le, hrate, hpayment_nonneg,
+            hcurrent_lower_nonpos, hupper⟩
+        have hRcurrent_nonneg : 0 ≤ R1_current := by
+          have hreward_nonneg :
+              0 ≤
+                gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                  (ρ 0) :=
+            gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg
+              (μ 0) (arrival 0)
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+              (ρ 0) A.harrival1_pos (hρ.1 0).2 (hρ.1 0).1
+              (hρ.2 0) hpayment_nonneg
+          simpa [hrate] using hreward_nonneg
+        exact
+          ⟨R1_current, hRcurrent_le, hRcurrent_nonneg, hrate,
+            hcurrent_lower_nonpos, hupper⟩ }
 
 /--
 Positive-mass source assumptions with the target-rate fixed-state transfer

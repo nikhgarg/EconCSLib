@@ -8,7 +8,8 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 ## Build State
 
 As of this handoff, `lake build GN21DriverSurgePricing` passes after the newest
-Lemma 9 source-boundary reduction.  Re-run it before and after any edits.
+Lemma 9 source-boundary reduction and the current reward-rate nonnegativity
+wrapper.  Re-run it before and after any edits.
 
 Useful checks:
 
@@ -26,6 +27,14 @@ The newest source-facing endpoint is:
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
 ```
 
+The newest payment-nonnegative variant replaces the explicit
+`0 <= r1_current` source field by pointwise nonnegative current non-surge
+payments:
+
+```lean
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data_assumptions
+```
+
 It proves the positive-mass measurable Theorem 3 IC conclusion by moving surge
 to accept-all first, then using Lemma 10 only after surge is fixed at
 accept-all.  Compared with the earlier final-sign/fixed-transfer route, it no
@@ -37,12 +46,16 @@ The key new infrastructure is:
 lemma9StructuredBounds_of_target_ratio_effective_ratio_le_current_lower_fixed_upper
 GN21SurgeLemma9AcceptAllAggregateRewardRateData.of_target_ratio_reward_le_current_lower_fixed_upper
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperNoRatioDataAssumptions
+singleStateTripPayment_nonneg_of_pointwise_nonneg
+gn21StateCycleTime_pos_of_mass_pos
+gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg
+Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerRewardBoundFixedUpperPaymentNonnegDataAssumptions
 ```
 
 ## Remaining Mathematical Work
 
 For every feasible measurable positive-mass policy `rho`, the remaining Lemma 9
-source field now asks for:
+source field at the original current-lower boundary asks for:
 
 - a current non-surge reward rate `r1_current`;
 - `r1_current <= R1`;
@@ -52,6 +65,12 @@ source field now asks for:
   moving surge accept-all `Tbar,Qbar`;
 - the upper fixed-state cross comparison
   `T_acceptAll * Q_current <= T_current * Q_acceptAll`.
+
+At the payment-nonnegative boundary, `0 <= r1_current` is no longer a source
+field.  Supply pointwise nonnegative current non-surge payments on `rho 0`;
+Lean derives the reward-rate nonnegativity from the measured Lemma 1 formula.
+The upper bound `r1_current <= R1` remains a genuine rate-comparison obligation
+and does not follow from nonnegative payments alone.
 
 Lean constructs the effective ratio `z_2/(m_2-r1_current)` internally from the
 Theorem 3 positive-parameter evidence.  Do not reintroduce an explicit
@@ -68,7 +87,11 @@ for the current fixed state to replace the lower cross comparison.
 
 ## Next Concrete Step
 
-Try to prove a current-state version of the Lemma 9 final-sign/nonpositive
+Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the shortest route and the
+distinction between the easy `0 <= r1_current` proof and the separate
+`r1_current <= R1` rate comparison.
+
+Then try to prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma
 already exists:
 
@@ -97,6 +120,7 @@ the pointwise fixed-transfer route.
 ## Documentation Map
 
 - `README.md`: theorem inventory and status.
+- `CLOSEOUT_PROOF_PLAN.txt`: shortest remaining source proof plan for Theorem 3.
 - `CONTINUOUS_PROOF_PLAN.md`: strategic route and reusable infrastructure.
 - `LEMMA9_10_REWARD_RATE_AUDIT.md`: why target reward rates cannot be confused
   with current fixed-state rates, and why the sequential route is preferred.

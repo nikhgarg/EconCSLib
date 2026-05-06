@@ -1,0 +1,249 @@
+GN21 Driver Surge Pricing closeout proof plan
+=============================================
+
+Purpose
+-------
+This file is the external-to-Lean plan for finishing Theorem 3.  It is meant
+to be read before doing more Lean work, so the next agent does not rediscover
+the same Lemma 9/10 boundary issues.
+
+Do not edit source.txt for this purpose.  source.txt is the extracted paper.
+
+
+Current best Lean frontier
+--------------------------
+The current best route is the positive-mass sequential Theorem 3 route:
+
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
+
+This route is source-faithful:
+
+1. Move the surge policy to accept-all first.
+2. Use Lemma 9 with the current fixed non-surge policy's reward rate.
+3. Then move the non-surge policy to accept-all with surge fixed at accept-all.
+4. The Lemma 10 branch is already discharged from Theorem 3 parameter data.
+
+The remaining work is therefore not a global Theorem 4 audit.  It is the
+source Lemma 9 data for the surge move, for every feasible measurable
+positive-mass current policy.
+
+
+Meaning of r1_current
+---------------------
+r1_current is the measured one-state reward rate of the current fixed
+non-surge policy:
+
+  gn21MeasuredStateRewardRate
+    (μ 0) (arrival 0)
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+    (ρ 0)
+
+It is not a raw expected payment.  It is W_1(σ_1) / T_1(σ_1), where W_1 is
+average payment per accepted trip and T_1 is the state cycle time.
+
+The paper's Lemma 9 fixes arbitrary σ_1, and thus Q_1, T_1, R_1.  In the
+Theorem 3 proof that fixed-state reward rate is this current policy-dependent
+r1_current, not the target accept-all R1 unless σ_1 is already accept-all or a
+separate equality has been proved.
+
+
+What is easy versus not easy
+----------------------------
+Nonnegativity of r1_current should be easy once the current non-surge payment
+is pointwise nonnegative on the accepted policy:
+
+  accepted payment integral >= 0
+  accepted mass > 0
+  state cycle time > 0
+  therefore measured reward rate >= 0
+
+This has now been started in Lean with generic lemmas around
+singleStateTripPayment_nonneg_of_pointwise_nonneg,
+gn21StateCycleTime_pos_of_mass_pos, and
+gn21MeasuredStateRewardRate_nonneg_of_pointwise_payment_nonneg.
+
+The upper bound
+
+  r1_current <= R1
+
+does not follow from nonnegative payments or from integrating over a larger
+accepted set.  Adding nonnegative trips can lower or raise a rate, because the
+denominator changes.  This upper bound must come from a rate comparison:
+accept-all is at least as good as the current non-surge policy for the
+constructed non-surge price, or from the equivalent rejected-complement
+average-rate comparison.
+
+
+Fastest remaining path
+----------------------
+Step 1: finish the nonnegativity wrapper.
+
+The currently added payment-nonnegative wrapper should compile and then be used
+as the preferred source boundary:
+
+  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_payment_nonneg_data_assumptions
+
+If it does not compile, fix only the generic algebra/measure arguments.  Do
+not weaken it back to an explicit r1_current >= 0 assumption.
+
+
+Step 2: prove pointwise nonnegativity of the constructed non-surge price.
+
+The difficult-looking issue is that Theorem 3 allows z_1 to be negative.  This
+is still manageable from the Lemma 10 lower bound.
+
+For the non-surge price,
+
+  w_1(τ) = R2 * τ + z_1 * q_{1->2}(τ)
+         = R2 * (τ + ratio * q_{1->2}(τ))
+
+where z_1 = ratio * R2 and R2 > 0.
+
+If ratio >= 0, use q >= 0 and τ > 0.
+
+If ratio < 0, use q_{1->2}(τ) <= switch12 * τ.  It is enough to show
+
+  1 + ratio * switch12 >= 0.
+
+The Lemma 10 lower bound gives
+
+  ratio > -(T2*switch12 + Q2)
+            / (Q2*(switch12*T1 - Q1) + switch12*(T2*switch12 + Q2)).
+
+Because Q2 > 0 and switch12*T1 - Q1 > 0 for the accept-all non-surge
+primitive, the denominator is strictly larger than
+
+  switch12 * (T2*switch12 + Q2).
+
+Therefore the lower bound is strictly greater than -1/switch12.  Hence
+
+  ratio > -1/switch12
+  1 + ratio*switch12 > 0
+
+and pointwise w_1(τ) >= 0 follows for all positive τ.
+
+Lean lemma to add:
+
+  lemma10StructuredLower_gt_neg_inv_switch
+
+or a theorem3-facing specialization:
+
+  theorem3_nonsurge_price_nonneg_of_lemma10_bounds
+
+The specialization may be faster because it can use existing named parameter
+data:
+
+  P.nonsurge_acceptAll_bounds
+  P.hm0
+  P.hz0
+  A.hR2_pos
+  A.hswitch12_pos
+  accept-all gap positivity from Remark 4
+
+
+Step 3: prove r1_current <= R1 as a rate comparison, not an integral monotonicity fact.
+
+Target shape:
+
+  gn21MeasuredStateRewardRate current_nonsurge_price (ρ 0)
+    <=
+  gn21MeasuredStateRewardRate current_nonsurge_price acceptAllPolicy
+
+Then rewrite the accept-all reward-rate using Theorem 3 accounting:
+
+  gn21MeasuredStateRewardRate ... acceptAllPolicy = R1.
+
+There are two possible routes.
+
+Route A, likely fastest:
+Use the already compiled Lemma 10/non-surge-after-surge aggregate branch.  It
+already proves that, with surge fixed at accept-all, moving non-surge to
+accept-all weakly improves aggregate reward.  Since the surge state and its
+time/reward terms are fixed in that branch, extract or add a one-state
+consequence that the non-surge current rate is <= the target accept-all rate.
+
+This avoids reproving Lemma 10 derivative positivity.
+
+Route B, more direct:
+Use the single-state accepted/rejected-set algebra for the non-surge price.
+Show that every rejected complement piece has average rate at most R1, then
+adding it cannot reduce the rate comparison in the wrong direction.  This is
+probably more measure/integral work than Route A, but it is conceptually
+simple.
+
+Do not try to get r1_current <= R1 from raw payment monotonicity.  That is
+false for rates.
+
+
+Step 4: prove the current Lemma 9 lower endpoint directly.
+
+The current frontier asks for:
+
+  lemma9StructuredLower current_T1 current_Q1 acceptAll_T2 acceptAll_Q2 switch21 <= 0
+
+This replaces one cross-ratio comparison.  The source proof says the Lemma 9
+left endpoint is nonpositive because the final feasibility line has a
+nonpositive left side and a positive right side.  In Lean, prove the
+current-policy version using:
+
+  current T1 >= 1
+  current Q1 > 0
+  acceptAll gap switch21*T2 - Q2 >= 0
+  switch rates positive
+
+If the algebra gets sticky, add a separate scalar lemma for
+lemma9StructuredLower_nonpos_of_current_primitives and prove it by unfolding
+the numerator/denominator definitions.  Keep it parameterized over T1,Q1,T2,Q2
+so it is reusable.
+
+
+Step 5: prove the remaining upper fixed-state cross-ratio comparison.
+
+The current frontier still asks for:
+
+  acceptAll_T1 * current_Q1 <= current_T1 * acceptAll_Q1
+
+This says the current non-surge exit-weight/time ratio is at least the
+accept-all ratio.  It is exactly the fixed-state upper transfer needed for the
+surge Lemma 9 route.
+
+Use the complement pointwise comparison if possible:
+
+  current_Q1 * τ >= current_T1 * q_{1->2}(τ)
+
+on rejected non-surge trips, or its already compiled helper in the
+gn21FixedStateCross_* family.  This comes from the fact that q(τ)/τ is
+decreasing in τ and the rejected complement lies on the appropriate side of
+the current non-surge threshold/shape.
+
+If the current policy shape is not yet available at this boundary, route
+through the existing Theorem 4 allowed-policy-form endpoint packages rather
+than making an unstructured arbitrary-policy claim.
+
+
+Recommended proof order
+-----------------------
+1. Compile the new generic nonnegativity lemmas and payment-nonnegative wrapper.
+2. Add the Lemma 10 lower-bound-to-price-nonnegative scalar lemma.
+3. Use it to discharge pointwise nonnegative payments for Theorem 3 non-surge
+   prices.
+4. Prove or extract r1_current <= R1 from the non-surge-after-surge Lemma 10
+   branch.
+5. Prove the current Lemma 9 lower endpoint scalar lemma.
+6. Prove the upper fixed-state cross-ratio comparison from policy shape or the
+   existing fixed-state cross helper.
+7. Instantiate the current-lower/fixed-upper payment-nonnegative source wrapper.
+
+
+What not to do
+--------------
+Do not restart a global paper audit.
+
+Do not use Theorem 3 target R1 as the current fixed-state reward rate inside
+Lemma 9 unless an equality has been proved.
+
+Do not prove a finite/discrete version first.  The current bottleneck is
+continuous but local: scalar inequalities plus measured reward-rate algebra.
+
+Do not add wrappers that simply restate r1_current >= 0 or r1_current <= R1
+without moving one of those obligations closer to source facts.
