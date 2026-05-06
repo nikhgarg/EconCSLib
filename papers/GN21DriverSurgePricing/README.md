@@ -140,7 +140,12 @@ cache is `source.txt`.
   `GN21WithDensityAcceptAllSupport` and the five
   `GN21...CurrentBoundsEndpointData.of_acceptAll_support` constructors now
   derive current/replacement finite-mass and positive-density endpoint fields
-  from finite positive accept-all density support.  The lightest current
+  from finite positive accept-all density support.  The endpoint calculus
+  helpers `continuous_gn21SwitchProb`,
+  `continuous_ctmcStructuredSurgePrice`, and
+  `intervalIntegrable_mul_density_of_continuous` derive the finite-interval
+  continuity, strong-measurability, and integrability fields from continuous
+  densities.  The lightest current
   IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,
@@ -308,6 +313,11 @@ and
 `GN21SurgeRejectShortCurrentBoundsEndpointData.of_acceptAll_support`,
 `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`,
 `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`,
+`continuous_gn21SwitchProb`,
+`continuous_ctmcStructuredSurgePrice`,
+`continuousAt_mul_density_of_continuous`,
+`stronglyMeasurableAtFilter_mul_density_of_continuous`,
+`intervalIntegrable_mul_density_of_continuous`,
 `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_allowed_replacement_selection`,
 `Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions`,
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
@@ -486,9 +496,10 @@ finite-mass, and current-bound fields of
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
-feasible-domain preservation, and Lemma 9/10 current-bound data plumbing are
-now available for all four Theorem 4 shape cases, with reject-middle split into
-lower- and upper-cutoff endpoint variants.
+continuous-density endpoint calculus helpers, feasible-domain preservation, and
+Lemma 9/10 current-bound data plumbing are now available for all four Theorem 4
+shape cases, with reject-middle split into lower- and upper-cutoff endpoint
+variants.
 Then finish Theorem 1's
 global threshold-existence
 compactness/continuity argument and the two-state renewal law-of-large-numbers

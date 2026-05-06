@@ -168,6 +168,12 @@ the continuous CTMC source theorems.
   `paper_theorem2_multiplicative_not_ic_of_witness`, and
   `paper_theorem3_structured_prices_ic_of_certificate`: conditional
   source-facing wrappers that name the remaining continuous certificates.
+- `continuous_gn21SwitchProb`, `continuous_ctmcStructuredSurgePrice`,
+  `continuousAt_mul_density_of_continuous`,
+  `stronglyMeasurableAtFilter_mul_density_of_continuous`, and
+  `intervalIntegrable_mul_density_of_continuous`: calculus support deriving
+  endpoint continuity, strong measurability, and finite-interval integrability
+  from continuous density assumptions.
 - `paper_theorem3_measured_ctmc_structured_prices_exist_and_ic_of_ratio_and_global_statewise_accept_all_reward`:
   measured Theorem 3 endpoint that constructs the structured CTMC prices and
   concludes IC for the actual measured reward functional once the global
@@ -2175,6 +2181,13 @@ theorem paper_lemma2_transition_probability_row_sum
         gn21TransitionProb lambda01 lambda10 s i 1 = 1 := by
   exact twoStateCtmcTransitionProb_row_sum lambda01 lambda10 s i
 
+/-- The CTMC switch probability is continuous in elapsed trip length. -/
+theorem continuous_gn21SwitchProb
+    (lambdaIJ lambdaJI : ℝ) :
+    Continuous (gn21SwitchProb lambdaIJ lambdaJI) := by
+  unfold gn21SwitchProb twoStateCtmcSwitchProb
+  fun_prop
+
 /-!
 Lemma 3's stochastic renewal argument has a law-of-large-numbers layer and a
 deterministic algebra layer.  The declarations below close the algebra layer:
@@ -2356,6 +2369,46 @@ theorem integrableOn_ctmcStructuredSurgePrice
     IntegrableOn (ctmcStructuredSurgePrice m z switchIJ switchJI) σ μ := by
   unfold ctmcStructuredSurgePrice structuredSurgePrice
   exact (htime_integrable.const_mul m).add (hq_integrable.const_mul z)
+
+/-- Structured CTMC prices are continuous in trip length. -/
+theorem continuous_ctmcStructuredSurgePrice
+    (m z switchIJ switchJI : ℝ) :
+    Continuous (ctmcStructuredSurgePrice m z switchIJ switchJI) := by
+  unfold ctmcStructuredSurgePrice structuredSurgePrice
+  exact
+    (continuous_const.mul continuous_id).add
+      (continuous_const.mul (continuous_gn21SwitchProb switchIJ switchJI))
+
+/-- Product with a continuous real-valued density is continuous at an endpoint. -/
+theorem continuousAt_mul_density_of_continuous
+    {f : TripLength → ℝ} {densityNN : TripLength → NNReal}
+    (hf : Continuous f)
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (u : ℝ) :
+    ContinuousAt (fun τ => f τ * (densityNN τ : ℝ)) u :=
+  (hf.mul hdensity_cont).continuousAt
+
+/--
+Product with a continuous real-valued density is strongly measurable at an
+endpoint filter.
+-/
+theorem stronglyMeasurableAtFilter_mul_density_of_continuous
+    {f : TripLength → ℝ} {densityNN : TripLength → NNReal}
+    (hf : Continuous f)
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (u : ℝ) :
+    StronglyMeasurableAtFilter
+      (fun τ => f τ * (densityNN τ : ℝ)) (𝓝 u) :=
+  (hf.mul hdensity_cont).stronglyMeasurableAtFilter volume (𝓝 u)
+
+/-- Product with a continuous density is interval-integrable on finite intervals. -/
+theorem intervalIntegrable_mul_density_of_continuous
+    {f : TripLength → ℝ} {densityNN : TripLength → NNReal}
+    (hf : Continuous f)
+    (hdensity_cont : Continuous fun τ => (densityNN τ : ℝ))
+    (a b : ℝ) :
+    IntervalIntegrable (fun τ => f τ * (densityNN τ : ℝ)) volume a b :=
+  (hf.mul hdensity_cont).intervalIntegrable a b
 
 /--
 Theorem 3 state-indexed CTMC switch probabilities.  State `0` is the

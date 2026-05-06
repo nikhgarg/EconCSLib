@@ -182,6 +182,13 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`,
   and
   `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`,
+  continuous-density endpoint calculus helpers
+  `continuous_gn21SwitchProb`,
+  `continuous_ctmcStructuredSurgePrice`,
+  `continuousAt_mul_density_of_continuous`,
+  `stronglyMeasurableAtFilter_mul_density_of_continuous`,
+  and
+  `intervalIntegrable_mul_density_of_continuous`,
   feasible accept-all-bound endpoint wrappers for all four Theorem 4 shape
   cases
   `paper_theorem4_nonsurge_feasible_statewise_strict_aggregate_improvement_of_lemma10_reject_long_withDensity_of_shape_acceptAll_bounds`,

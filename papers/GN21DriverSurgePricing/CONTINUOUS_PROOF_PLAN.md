@@ -89,6 +89,12 @@ into the concrete endpoint policy data.
   `GN21SurgeRejectMiddleLoCurrentBoundsEndpointData.of_acceptAll_support`, and
   `GN21SurgeRejectMiddleHiCurrentBoundsEndpointData.of_acceptAll_support`
   instead of filling those fields manually.
+- `continuous_gn21SwitchProb`, `continuous_ctmcStructuredSurgePrice`,
+  `continuousAt_mul_density_of_continuous`,
+  `stronglyMeasurableAtFilter_mul_density_of_continuous`, and
+  `intervalIntegrable_mul_density_of_continuous` derive endpoint continuity,
+  strong measurability, and finite-interval integrability fields from a
+  continuous real-valued density.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
