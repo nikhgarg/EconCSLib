@@ -36855,6 +36855,73 @@ theorem Theorem3AcceptAllStructuredParameterData.surge_z_eq_ratio_m_sub_R1
   rw [P.hz1, P.hm1]
   rfl
 
+/-- Positive Theorem 3 surge ratio implies the constructed multiplier is above `R1`. -/
+theorem Theorem3AcceptAllStructuredParameterData.m1_sub_R1_pos_of_surgeRatio_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hT2_ge_one :
+      1 ≤ gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+    (hswitch_lt_Q2 :
+      switch21 <
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+    (hsurgeRatio_pos : 0 < P.surgeRatio) :
+    0 < m 1 - R1 := by
+  have hden_pos :
+      0 <
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+          P.surgeRatio *
+            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 -
+              switch21) :=
+    theorem3SurgeRatio_denominator_pos
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21 P.surgeRatio hT2_ge_one hsurgeRatio_pos hswitch_lt_Q2
+  have hT2_nonneg : 0 ≤ gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+    le_trans zero_le_one hT2_ge_one
+  have hgt :
+      R1 <
+        theorem3SurgeMultiplierFromRatio R1 R2
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch21 P.surgeRatio :=
+    theorem3SurgeMultiplierFromRatio_gt_R1 R1 R2
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21 P.surgeRatio hR1_pos hR1_lt_R2 hT2_nonneg hden_pos
+  rw [P.hm1]
+  exact sub_pos.mpr hgt
+
+/--
+Shared-source version of
+`Theorem3AcceptAllStructuredParameterData.m1_sub_R1_pos_of_surgeRatio_pos`.
+-/
+theorem Theorem3AcceptAllStructuredParameterData.m1_sub_R1_pos_of_shared_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hsurgeRatio_pos : 0 < P.surgeRatio) :
+    0 < m 1 - R1 := by
+  exact
+    P.m1_sub_R1_pos_of_surgeRatio_pos hR1_pos hR1_lt_R2
+      (gn21ScaledStateTime_ge_one_of_nonneg (μ 1) (arrival 1)
+        acceptAllPolicy (le_of_lt S.harrival1_pos) measurableSet_acceptAllPolicy
+        (fun _ hτ => hτ))
+      (S.surge_acceptAll_exit_gt_switch hmeasure_surge_acceptAll_pos)
+      hsurgeRatio_pos
+
 /--
 Theorem 3 parameter data plus the Lemma 10 fixed-state transfer build the
 regular non-surge reject-long endpoint record.  Compared with
