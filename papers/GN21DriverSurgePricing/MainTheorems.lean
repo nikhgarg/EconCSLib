@@ -40663,6 +40663,301 @@ def GN21SurgeRejectMiddleHiTheorem3FixedTransferPointwiseRewardRateNoMassLocalDa
       S.nonsurge_acceptAll_reward_rate_of_theorem3_parameter_data P
 
 /--
+Reusable fixed-surge transfer data for the Theorem 3 fixed-transfer route.  A
+single proof of this package feeds both non-surge moving-state endpoint cases.
+-/
+structure GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R2 : ℝ)
+    (ρ : Fin 2 → TripPolicy) where
+  hfixed_pointwise :
+    ∀ τ ∈ acceptAllPolicy \ ρ 1,
+      gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+          τ ≤
+        gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+          gn21SwitchProb switch21 switch12 τ
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 1) (arrival 1)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+      R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+
+/-- Fixed-surge transfer data from pointwise equality. -/
+def GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_pointwise_eq
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (hfixed_pointwise_eq :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ =
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R2 ρ where
+  hfixed_pointwise := by
+    intro τ hτ
+    exact le_of_eq (hfixed_pointwise_eq τ hτ)
+  hfixed_reward_rate := hfixed_reward_rate
+
+/-- Fixed-surge transfer data when the surge state already accepts all trips. -/
+def GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 1)) :
+    GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R2 ρ := by
+  have hother_eq : ρ 1 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 1).1 hother_all
+  refine
+    { hfixed_pointwise := ?_
+      hfixed_reward_rate := ?_ }
+  · intro τ hτ
+    have hmem : τ ∈ ρ 1 := by
+      simpa [hother_eq] using hτ.1
+    exact False.elim (hτ.2 hmem)
+  · simpa [hother_eq, gn21AcceptAllScaledStateTime] using
+      S.surge_acceptAll_reward_rate_of_theorem3_parameter_data P
+
+/-- Feed reusable fixed-surge data to a non-surge reject-long endpoint. -/
+def GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_nonsurge_reject_long
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+        S m z R2 ρ)
+    (hu : 0 < u) :
+    GN21NonsurgeRejectLongTheorem3FixedTransferPointwiseRewardRateNoMassLocalData
+      S m z R2 ρ u where
+  hu := hu
+  hfixed_pointwise := D.hfixed_pointwise
+  hfixed_reward_rate := D.hfixed_reward_rate
+
+/-- Feed reusable fixed-surge data to a non-surge accept-middle endpoint. -/
+def GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_nonsurge_accept_middle
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+        S m z R2 ρ)
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo) :
+    GN21NonsurgeAcceptMiddleTheorem3FixedTransferPointwiseRewardRateNoMassLocalData
+      S m z R2 ρ lo hi where
+  δ := δ
+  hlo_pos := hlo_pos
+  hlo_lt_hi := hlo_lt_hi
+  hδ := hδ
+  hδ_le_lo := hδ_le_lo
+  hfixed_pointwise := D.hfixed_pointwise
+  hfixed_reward_rate := D.hfixed_reward_rate
+
+/--
+Reusable fixed-non-surge transfer data for the Theorem 3 fixed-transfer route.
+A single proof of this package feeds the surge reject-short and reject-middle
+endpoint cases.
+-/
+structure GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (m z : Fin 2 → ℝ)
+    (R1 : ℝ)
+    (ρ : Fin 2 → TripPolicy) where
+  hfixed_lower_pointwise :
+    ∀ τ ∈ acceptAllPolicy \ ρ 0,
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21SwitchProb switch12 switch21 τ ≤
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          τ
+  hfixed_upper_pointwise :
+    ∀ τ ∈ acceptAllPolicy \ ρ 0,
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          τ ≤
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21SwitchProb switch12 switch21 τ
+  hfixed_reward_rate :
+    gn21ScaledStateEarning (μ 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+      R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+
+/-- Fixed-non-surge transfer data from pointwise equality. -/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_pointwise_eq
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (hfixed_pointwise_eq :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ =
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R1 ρ where
+  hfixed_lower_pointwise := by
+    intro τ hτ
+    exact le_of_eq (hfixed_pointwise_eq τ hτ).symm
+  hfixed_upper_pointwise := by
+    intro τ hτ
+    exact le_of_eq (hfixed_pointwise_eq τ hτ)
+  hfixed_reward_rate := hfixed_reward_rate
+
+/-- Fixed-non-surge transfer data when the non-surge state already accepts all trips. -/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hother_all : acceptsAllTrips (ρ 0)) :
+    GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R1 ρ := by
+  have hother_eq : ρ 0 = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (hρ_feasible 0).1 hother_all
+  refine
+    { hfixed_lower_pointwise := ?_
+      hfixed_upper_pointwise := ?_
+      hfixed_reward_rate := ?_ }
+  · intro τ hτ
+    have hmem : τ ∈ ρ 0 := by
+      simpa [hother_eq] using hτ.1
+    exact False.elim (hτ.2 hmem)
+  · intro τ hτ
+    have hmem : τ ∈ ρ 0 := by
+      simpa [hother_eq] using hτ.1
+    exact False.elim (hτ.2 hmem)
+  · simpa [hother_eq, gn21AcceptAllScaledStateTime] using
+      S.nonsurge_acceptAll_reward_rate_of_theorem3_parameter_data P
+
+/-- Feed reusable fixed-non-surge data to a surge reject-short endpoint. -/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_surge_reject_short
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 u δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+        S m z R1 ρ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1))
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u) :
+    GN21SurgeRejectShortTheorem3FixedTransferPointwiseRewardRateNoMassLocalData
+      S m z R1 ρ u where
+  δ := δ
+  tail_integrability := tail_integrability
+  hu := hu
+  hδ := hδ
+  hδ_le_u := hδ_le_u
+  hfixed_lower_pointwise := D.hfixed_lower_pointwise
+  hfixed_upper_pointwise := D.hfixed_upper_pointwise
+  hfixed_reward_rate := D.hfixed_reward_rate
+
+/-- Feed reusable fixed-non-surge data to a lower-cutoff surge reject-middle endpoint. -/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_surge_reject_middle_lo
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+        S m z R1 ρ)
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi) :
+    GN21SurgeRejectMiddleLoTheorem3FixedTransferPointwiseRewardRateNoMassLocalData
+      S m z R1 ρ lo hi where
+  δ := δ
+  hlo_pos := hlo_pos
+  hloδ_le_hi := hloδ_le_hi
+  hδ := hδ
+  tail_integrability := tail_integrability
+  hfixed_lower_pointwise := D.hfixed_lower_pointwise
+  hfixed_upper_pointwise := D.hfixed_upper_pointwise
+  hfixed_reward_rate := D.hfixed_reward_rate
+
+/-- Feed reusable fixed-non-surge data to an upper-cutoff surge reject-middle endpoint. -/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_surge_reject_middle_hi
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+        S m z R1 ρ)
+    (derivative_tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1))
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ)) :
+    GN21SurgeRejectMiddleHiTheorem3FixedTransferPointwiseRewardRateNoMassLocalData
+      S m z R1 ρ lo hi where
+  δ := δ
+  derivative_tail_integrability := derivative_tail_integrability
+  hhi_pos := hhi_pos
+  hδ := hδ
+  hlo_nonneg := hlo_nonneg
+  hlo_le_hiδ := hlo_le_hiδ
+  tail_integrability := tail_integrability
+  hfixed_lower_pointwise := D.hfixed_lower_pointwise
+  hfixed_upper_pointwise := D.hfixed_upper_pointwise
+  hfixed_reward_rate := D.hfixed_reward_rate
+
+/--
 Local endpoint facts stated with positive cutoffs instead of density-positivity
 fields.  The adapter below derives density positivity from the shared
 accept-all support package.

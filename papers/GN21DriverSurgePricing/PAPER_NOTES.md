@@ -375,6 +375,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `GN21RegularEndpointSharedSourceData.nonsurge_acceptAll_reward_rate_of_theorem3_parameter_data`
   and
   `GN21RegularEndpointSharedSourceData.surge_acceptAll_reward_rate_of_theorem3_parameter_data`,
+  reusable fixed-state transfer packages
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData` and
+  `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData`,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound

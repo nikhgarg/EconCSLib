@@ -271,7 +271,12 @@ into the concrete endpoint policy data.
   fixed-state pointwise equality into the one-sided non-surge comparison or the
   two-sided surge comparisons.  The no-mass constructors ending in
   `of_other_acceptAll` discharge the fixed-state pointwise and reward-rate
-  fields directly in accept-all fixed-state branches.  If the source proof produces
+  fields directly in accept-all fixed-state branches.  For non-accept-all
+  fixed-state branches, target the reusable
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData` and
+  `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData`
+  packages once per optimal policy, then feed them to the moving-state endpoint
+  constructors.  If the source proof produces
   all-optimal allowed policy forms directly instead, use the sibling wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_no_mass_source_assumptions`.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:

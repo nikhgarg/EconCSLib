@@ -256,7 +256,12 @@ cache is `source.txt`.
   cases.  The no-mass constructors ending in `of_other_acceptAll` discharge
   the fixed-state pointwise and reward-rate fields directly when the fixed
   other state accepts all trips, using Theorem 3 accept-all accounting and
-  empty rejected complement.
+  empty rejected complement.  Reusable fixed-state packages
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData` and
+  `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData`
+  now feed the corresponding non-surge and surge moving-state endpoint cases,
+  so the source proof can establish fixed-state transfer once per state and
+  reuse it across endpoint branches.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
