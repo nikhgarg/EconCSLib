@@ -39273,6 +39273,203 @@ def GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData.of_fixed
   hfixed_accounting := hfixed_accounting
 
 /--
+Non-surge reject-long local data from pointwise fixed-surge complement ratios
+and a measured fixed-surge reward-rate identity.
+-/
+def GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hu : 0 < u)
+    (hfixed_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ ≤
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R2 ρ u :=
+  GN21NonsurgeRejectLongTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    S hρ_feasible hu hfixed_pointwise hmass_other_pos
+    (S.surge_fixed_accounting_of_reward_rate hρ_feasible hfixed_reward_rate)
+
+/--
+Non-surge accept-middle local data from pointwise fixed-surge complement ratios
+and a measured fixed-surge reward-rate identity.
+-/
+def GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hlo_pos : 0 < lo)
+    (hlo_lt_hi : lo < hi)
+    (hδ : 0 < δ)
+    (hδ_le_lo : δ ≤ lo)
+    (hfixed_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 1,
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            τ ≤
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+            gn21SwitchProb switch21 switch12 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 1) (ρ 1))
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)) :
+    GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R2 ρ lo hi :=
+  GN21NonsurgeAcceptMiddleTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    S hρ_feasible hlo_pos hlo_lt_hi hδ hδ_le_lo hfixed_pointwise
+    hmass_other_pos
+    (S.surge_fixed_accounting_of_reward_rate hρ_feasible hfixed_reward_rate)
+
+/--
+Surge reject-short local data from pointwise fixed-non-surge complement ratios
+and a measured fixed-non-surge reward-rate identity.
+-/
+def GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 u δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (u - 1))
+    (hu : 0 < u)
+    (hδ : 0 < δ)
+    (hδ_le_u : δ ≤ u)
+    (hfixed_lower_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ)
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ u :=
+  GN21SurgeRejectShortTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    S hρ_feasible tail_integrability hu hδ hδ_le_u
+    hfixed_lower_pointwise hfixed_upper_pointwise hmass_other_pos
+    (S.nonsurge_fixed_accounting_of_reward_rate hρ_feasible
+      hfixed_reward_rate)
+
+/--
+Lower-cutoff surge reject-middle local data from pointwise fixed-non-surge
+complement ratios and a measured fixed-non-surge reward-rate identity.
+-/
+def GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hlo_pos : 0 < lo)
+    (hloδ_le_hi : lo + δ ≤ hi)
+    (hδ : 0 < δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) hi)
+    (hfixed_lower_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ)
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ lo hi :=
+  GN21SurgeRejectMiddleLoTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    S hρ_feasible hlo_pos hloδ_le_hi hδ tail_integrability
+    hfixed_lower_pointwise hfixed_upper_pointwise hmass_other_pos
+    (S.nonsurge_fixed_accounting_of_reward_rate hρ_feasible
+      hfixed_reward_rate)
+
+/--
+Upper-cutoff surge reject-middle local data from pointwise fixed-non-surge
+complement ratios and a measured fixed-non-surge reward-rate identity.
+-/
+def GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 lo hi δ : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (derivative_tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - 1))
+    (hhi_pos : 0 < hi)
+    (hδ : 0 < δ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_le_hiδ : lo ≤ hi - δ)
+    (tail_integrability :
+      GN21TailProductIntegrabilityData S.surge_support.densityNN
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (hi - δ))
+    (hfixed_lower_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ ≤
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ)
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hmass_other_pos : 0 < singleStateTripMass (μ 0) (ρ 0))
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData
+      S m z R1 ρ lo hi :=
+  GN21SurgeRejectMiddleHiTheorem3FixedTransferPositiveCutoffLocalData.of_fixed_complement_pointwise
+    S hρ_feasible derivative_tail_integrability hhi_pos hδ hlo_nonneg
+    hlo_le_hiδ tail_integrability hfixed_lower_pointwise
+    hfixed_upper_pointwise hmass_other_pos
+    (S.nonsurge_fixed_accounting_of_reward_rate hρ_feasible
+      hfixed_reward_rate)
+
+/--
 Local endpoint facts stated with positive cutoffs instead of density-positivity
 fields.  The adapter below derives density positivity from the shared
 accept-all support package.

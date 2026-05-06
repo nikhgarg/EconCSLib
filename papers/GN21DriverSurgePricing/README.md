@@ -219,7 +219,9 @@ cache is `source.txt`.
   and
   `GN21RegularEndpointSharedSourceData.surge_fixed_accounting_of_reward_rate`
   convert measured fixed-state reward-rate equalities into those accounting
-  equations.
+  equations, and the corresponding
+  `...PositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate`
+  constructors use those helpers directly.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge

@@ -247,7 +247,10 @@ into the concrete endpoint policy data.
   or
   `GN21RegularEndpointSharedSourceData.surge_fixed_accounting_of_reward_rate`;
   the helpers expand structured CTMC prices with Remark 2 and shared
-  accept-all integrability restricted to the current feasible policy.
+  accept-all integrability restricted to the current feasible policy.  The
+  `...PositiveCutoffLocalData.of_fixed_complement_pointwise_reward_rate`
+  constructors combine the pointwise fixed-complement route with this
+  reward-rate accounting route.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,

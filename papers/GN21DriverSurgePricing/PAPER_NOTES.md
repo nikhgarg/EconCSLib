@@ -341,7 +341,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   pointwise fixed-complement local constructors ending in
   `of_fixed_complement_pointwise`, which derive the non-accept-all
   fixed-state cross-ratio fields from pointwise rejected-complement ratio
-  comparisons,
+  comparisons, plus reward-rate variants ending in
+  `of_fixed_complement_pointwise_reward_rate`, which also derive the
+  fixed-state accounting equations from measured reward-rate identities,
   direct source current-bounds constructors
   `GN21NonsurgeLemma10AcceptAllAggregateData.of_source` and
   `GN21SurgeLemma9AcceptAllAggregateData.of_source`, source current-bound
