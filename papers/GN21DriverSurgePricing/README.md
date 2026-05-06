@@ -226,10 +226,23 @@ cache is `source.txt`.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`
   and source wrapper
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_source_assumptions`
-  make this the current lightest fixed-transfer boundary when the source proof
-  supplies allowed replacement data; the sibling wrapper
+  expose the pointwise fixed-transfer boundary when the source proof supplies
+  allowed replacement data.  The mass-separated endpoint certificate
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateMassSeparatedLocalEndpointCertificate`
+  and wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_mass_separated_source_assumptions`
+  are now the lightest fixed-transfer boundary: fixed-state positive mass is
+  supplied once per state and then reused across all local endpoint cases.
+  The sibling wrappers
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_source_assumptions`
-  accepts all-optimal allowed policy forms directly.
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_mass_separated_source_assumptions`
+  accept all-optimal allowed policy forms directly.  Shared-source mass helpers
+  `GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_allowed_policy_form`
+  and
+  `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form`
+  derive the state-level mass fields from Lemma 5 allowed policy forms and
+  cutoff nondegeneracy when those are available.
   Its local records state the fixed-state structured-price accounting
   equations, and Lean expands those equations to the scaled-earning
   reward-rate identities using Remark 2.  It also derives the surge
@@ -632,9 +645,9 @@ positive-cutoff fixed-transfer source endpoint for arbitrary feasible
 measurable optimal policies by proving the regularity theorem that supplies
 ordinary Lemma 5 allowed replacement cases, chooses the relevant upper, lower,
 tail, or middle-rejection endpoint move, and discharges the remaining
-integrability, pointwise fixed-state complement ratio, finite-mass, and
-fixed-state reward-rate fields of
-`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`.
+integrability, pointwise fixed-state complement ratio, state-level finite-mass,
+and fixed-state reward-rate fields of
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateMassSeparatedLocalEndpointCertificate`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

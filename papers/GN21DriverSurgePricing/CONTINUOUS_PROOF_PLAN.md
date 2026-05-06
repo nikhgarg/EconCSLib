@@ -214,12 +214,14 @@ into the concrete endpoint policy data.
   directly through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
 - For the fixed-transfer route, the current lightest source boundary is
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_positive_cutoff_source_assumptions`:
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_mass_separated_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,
   all-measurable Lemma 5 replacement certificates, allowed policy-form
-  classification, and density positivity internally.  The source proof now
-  supplies ordinary allowed Lemma 5 replacement cases plus positive-cutoff
-  local fixed-transfer endpoint facts.
+  classification, density positivity, fixed-state cross-ratios, and
+  fixed-state accounting internally.  The source proof now supplies ordinary
+  allowed Lemma 5 replacement cases, state-level positive mass facts for the
+  two current policies, pointwise fixed-complement comparisons, fixed-state
+  reward-rate identities, and the cutoff/tail local endpoint facts.
 - If the fixed other state already accepts all trips, use the
   `...PositiveCutoffLocalData.of_other_acceptAll` constructors.  They derive
   the cross-ratio inequalities by equality, derive positive fixed-state mass
@@ -252,13 +254,19 @@ into the concrete endpoint policy data.
   constructors combine the pointwise fixed-complement route with this
   reward-rate accounting route.
 - The current lightest source theorem is now
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_source_assumptions`.
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_pointwise_reward_rate_mass_separated_source_assumptions`.
   It asks for ordinary all-measurable allowed Lemma 5 replacement data and a
-  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate`;
-  the adapter derives positive-cutoff endpoint data, fixed-state cross-ratios,
-  and fixed-state accounting internally.  If the source proof produces
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateMassSeparatedLocalEndpointCertificate`;
+  the adapter derives the older pointwise certificate, positive-cutoff endpoint
+  data, fixed-state cross-ratios, and fixed-state accounting internally.  The
+  shared-source helpers
+  `GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_allowed_policy_form`
+  and
+  `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form`
+  can derive the two state-level mass fields from allowed policy forms,
+  accept-all mass, and nondegenerate non-surge cutoffs.  If the source proof produces
   all-optimal allowed policy forms directly instead, use the sibling wrapper
-  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_source_assumptions`.
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_mass_separated_source_assumptions`.
 - The feasible endpoint wrappers now mirror the raw endpoint wrappers:
   `...nonsurge_feasible...reject_long...`,
   `...nonsurge_feasible...accept_middle...`,
