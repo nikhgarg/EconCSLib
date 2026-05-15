@@ -233,7 +233,10 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   equation route to differentiating the displayed `η` formula: prove the
   admission cutoff is strictly increasing in group-B access from the capacity
   equations and positive tails, then infer diversity monotonicity from the
-  falling group-A tail share.
+  falling group-A tail share. If the source defines diversity as the admitted
+  group-B share, first use the capacity equation to rewrite that direct share
+  as the complement of admitted group-A mass over capacity; do this algebraic
+  bridge once instead of carrying both diversity formulas through the proof.
   For no-barrier Gaussian admissions comparisons, a fast threshold route is:
   prove the dropped-feature threshold is above the common mean from selective
   capacity, show the full-policy mixture tail at that lower threshold is
