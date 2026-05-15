@@ -262,7 +262,10 @@ Recommended proof order
      theorem3SurgeRatio_exists_small_slack
      theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
      theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+     theorem3StructuredParameters_exist_of_ratio_and_small_surge_mass_affine_slack
      paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
+     paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack
+     theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackCurrentLowerDataAssumptions
@@ -273,23 +276,40 @@ Recommended proof order
      GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_interval_slack
      theorem3SurgeAggregate_ge_of_currentIntervalEnvelopeSlack
      theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack
+     theorem3SurgeAggregate_ge_of_currentMassAffineSignedIntervalEnvelopeSlack
      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentSignedIntervalSlackDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_signed_interval_slack_data_assumptions
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeCurrentIntervalSlackFinalSignDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
+     Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentIntervalSlackFinalSignDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions
 
    The measured accept-all, current-lower, and final-sign wrappers are now
    compiled.  The newer interval-slack wrappers are also compiled and should be
    preferred if the current lower endpoint is not actually nonpositive.  The
-   remaining measured-route scalar obligation in both newest wrappers is to
+   mass-affine interval wrapper should now be the default frontier because it
+   replaces the loose positive-`z0` envelope `R2 + z0*switch12` by
+   `max R2 (arrival0*z0)`.  The remaining measured-route scalar obligation in
+   the newest wrappers is to
    prove
 
      0 < R2 * T2 - Rmax * (T2 - 1)
 
    for the sign-selected non-surge envelope.  The `Rmax = R2` branch is
-   immediate from `R2 > 0`; the `Rmax = R2 + z0 * switch12` branch should be
-   derived from the Theorem 3 non-surge ratio/feasibility assumptions, or
-   documented as the exact extra source regime condition if it is not implied.
+   immediate from `R2 > 0`; for the mass-affine positive-`z0` branch, the
+   compiled helper
+
+     theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
+
+   reduces this to `arrival0*z0 <= R2`.  Try to derive that from the Theorem 3
+   non-surge ratio/feasibility assumptions; if it is not implied, document it
+   as the exact extra source regime condition.
+   A scalar random search found feasible-looking positive-`z0` examples
+   satisfying the loose inequalities `C < rho < 1`, `Q1 > switch12`,
+   `switch12*T1 > Q1`, and `T2 >= 1` where this zero-ratio numerator is
+   negative.  Do not try to prove the positive-`z0` branch from only those
+   scalar facts; either use a sharper current-reward envelope than
+   `R2 + z0*switch12`, or add the exact regime condition.
 
    The small-slack positive-mass endpoint bridge already chooses the right
    prices and threads the sign-envelope/slack evidence into the weak-reward

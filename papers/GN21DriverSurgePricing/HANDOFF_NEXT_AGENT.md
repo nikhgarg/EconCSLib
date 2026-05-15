@@ -89,9 +89,13 @@ theorem3SurgeRatio_exists_small_slack_at_R2
 theorem3SurgeRatio_exists_small_slack
 theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
 theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+theorem3StructuredParameters_exist_of_ratio_and_small_surge_mass_affine_slack
 paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
+paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack
+theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerSignedEnvelopeSlackDataAssumptions
+Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentMassAffineIntervalSlackDataAssumptions
 Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackDataAssumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
 Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackCurrentLowerDataAssumptions
@@ -100,6 +104,8 @@ Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSig
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
 Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeCurrentIntervalSlackFinalSignDataAssumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
+Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentIntervalSlackFinalSignDataAssumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions
 ```
 
 ## Remaining Mathematical Work
@@ -109,6 +115,7 @@ The newest source wrapper is:
 ```lean
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions
 ```
 
 The lower-sign wrapper asks for:
@@ -123,9 +130,10 @@ The lower-sign wrapper asks for:
   Lemma 9 lower-endpoint sign condition:
   `lowerNumerator * upperDenominator <= 0`.
 
-The interval wrapper asks for the same sign-selected `Rmax`, zero-ratio
-numerator, and accept-all final-sign certificate, but replaces the
-policy-dependent current lower-sign field by:
+The preferred mass-affine interval wrapper asks for a sharper sign-selected
+`Rmax`, zero-ratio numerator, accept-all mass-one/finite support for state 1,
+and accept-all final-sign certificate.  It replaces the policy-dependent
+current lower-sign field by:
 
 ```lean
 current_lower *
@@ -149,12 +157,15 @@ The wrapper itself derives:
 longer source fields.  Lean defines the current reward rate internally,
 derives current non-surge pointwise payment nonnegativity from Lemma 10, and
 derives the reward-rate envelope from the signed structured-price bound.  The
-main compiled bridges are:
+mass-affine branch improves that envelope from `m_0+z_0*switch12` to
+`max m_0 (arrival_0*z_0)`.  The main compiled bridges are:
 
 ```lean
 theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
 theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
 theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack
+theorem3SurgeAggregate_ge_of_currentMassAffineSignedIntervalEnvelopeSlack
+theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
 ```
 
 The source-facing pointwise-nonnegativity field has already been removed by
@@ -196,6 +207,7 @@ constructor is:
 
 ```lean
 theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
+theorem3StructuredParameters_exist_of_ratio_and_small_surge_mass_affine_slack
 ```
 
 It returns Theorem 3 structured parameters together with positive parameter
@@ -208,9 +220,13 @@ in the measured Theorem 3 route is:
 ```
 
 for the chosen sign envelope.  For the `Rmax = R2` branch this is just
-`0 < R2`.  For the `Rmax = R2 + z_0 * switch12` branch, prove it from the
-Theorem 3 non-surge construction/feasibility assumptions, or record the exact
-extra source condition if the paper is implicitly using a regime restriction.
+`0 < R2`.  For the older `Rmax = R2 + z_0 * switch12` branch, a scalar search
+found loose-feasibility counterexamples, so prefer the newer mass-affine
+envelope `Rmax=max R2 (arrival_0*z_0)`.  In that route the helper
+`theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2` closes the
+zero-ratio condition from `arrival_0*z_0 <= R2`; either derive that from the
+non-surge Theorem 3 ratio data or record it as the precise extra regime
+condition.
 
 The helper `lemma9StructuredUpper_gt_uniform_of_switch_gap_pos` gives a
 policy-uniform positive lower bound on the current Lemma 9 upper endpoint from
@@ -222,6 +238,7 @@ There is also a compiled positive-mass endpoint bridge:
 
 ```lean
 paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
+paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack
 ```
 
 This chooses the small-slack prices and then asks the weak-reward certificate
