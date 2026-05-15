@@ -247,6 +247,29 @@ theorem normalTail_strictAnti (api : StandardGaussianCDFAPI)
   exact sub_lt_sub_left
     (api.cdf_strictMono (L.standardize_strictMono hxy)) 1
 
+theorem standardTail_gt_iff_lt (api : StandardGaussianCDFAPI)
+    {z₁ z₂ : ℝ} :
+    1 - api.cdf z₁ > 1 - api.cdf z₂ ↔ z₁ < z₂ := by
+  constructor
+  · intro htail
+    have hcdf : api.cdf z₁ < api.cdf z₂ := by
+      linarith
+    by_contra hnot
+    have hle : z₂ ≤ z₁ := le_of_not_gt hnot
+    have hcdf_le : api.cdf z₂ ≤ api.cdf z₁ := api.cdf_mono hle
+    linarith
+  · intro hz
+    have hcdf : api.cdf z₁ < api.cdf z₂ := api.cdf_strictMono hz
+    linarith
+
+theorem normalTail_gt_iff_standardize_lt
+    (api : StandardGaussianCDFAPI)
+    {L₁ L₂ : GaussianScaleLaw} {threshold : ℝ} :
+    api.normalTail L₁ threshold > api.normalTail L₂ threshold ↔
+      L₁.standardize threshold < L₂.standardize threshold := by
+  dsimp [normalTail, normalCDF]
+  exact api.standardTail_gt_iff_lt
+
 theorem normalCDF_le_of_mean_le_same_scale (api : StandardGaussianCDFAPI)
     {L1 L2 : GaussianScaleLaw} (hscale : L1.scale = L2.scale)
     (hmean : L1.mean ≤ L2.mean) (x : ℝ) :
@@ -308,6 +331,14 @@ theorem thresholdPassProb_strictAnti_threshold
     (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
     StrictAnti (api.thresholdPassProb L) := by
   exact api.normalTail_strictAnti L
+
+theorem thresholdPassProb_gt_iff_standardize_lt
+    (api : StandardGaussianCDFAPI)
+    {L₁ L₂ : GaussianScaleLaw} {threshold : ℝ} :
+    api.thresholdPassProb L₁ threshold >
+        api.thresholdPassProb L₂ threshold ↔
+      L₁.standardize threshold < L₂.standardize threshold :=
+  api.normalTail_gt_iff_standardize_lt
 
 theorem thresholdPassProb_le_of_mean_le_same_scale
     (api : StandardGaussianCDFAPI)
