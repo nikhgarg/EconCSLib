@@ -213,6 +213,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `GaussianHazardCertificate.mixtureUpperTailMean_mul_tailMass_eq_numerator`
   for location-scale tail, academic-merit, and finite-mixture admitted-mean
   comparisons.
+  For admissions threshold statements, distinguish the main-body real-threshold
+  claim from stronger appendix interior-threshold claims. A continuous strictly
+  monotone scalar score on `[0,1]` has a real cutoff for its strict or weak lower
+  set without endpoint-crossing assumptions; use
+  `exists_threshold_of_continuous_strictMonoOn_Icc` or
+  `exists_threshold_le_of_continuous_strictMonoOn_Icc`. Only use endpoint
+  crossing lemmas when the paper explicitly needs an interior threshold.
   For access-barrier threshold theorems that use `Φ⁻¹` or `HR⁻¹`, keep the
   analytic inverse facts narrow: use `StandardGaussianQuantileAPI` for
   quantile monotonicity/continuity/positivity above one half, and use
