@@ -45,4 +45,18 @@ theorem weighted_share_lt_weight_of_value_lt_total
   rw [div_lt_iff₀ htotal_pos]
   nlinarith [mul_pos hweight_pos (sub_pos.mpr hvalue_lt_total)]
 
+/--
+For a positive constant `a`, the ratio `x / (a + x)` is strictly increasing on
+nonnegative `x`.
+-/
+theorem div_const_add_lt_div_const_add
+    {a x y : ℝ} (ha : 0 < a) (hx : 0 ≤ x) (hxy : x < y) :
+    x / (a + x) < y / (a + y) := by
+  have hdenx : 0 < a + x := by
+    linarith
+  have hdeny : 0 < a + y := by
+    linarith
+  rw [div_lt_div_iff₀ hdenx hdeny]
+  nlinarith [mul_pos ha (sub_pos.mpr hxy)]
+
 end EconCSLib
