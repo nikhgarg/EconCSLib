@@ -516,7 +516,14 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless`
   thread those existing packages through `SelectionUnless`; the remaining
   closeout target is to weaken the endpoint source assumptions using the
-  branch-local `¬ acceptsAllTrips` facts.
+  branch-local `¬ acceptsAllTrips` facts.  The lower fixed-transfer
+  middle-reroute boundary
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions`
+  now expose exactly that reduced source shape: local endpoint facts receive
+  the relevant non-accept-all hypothesis, and reject-middle local data is only
+  required when `0 <= lo`.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.

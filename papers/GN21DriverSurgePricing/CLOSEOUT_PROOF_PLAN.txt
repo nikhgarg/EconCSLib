@@ -383,7 +383,16 @@ Recommended proof order
    middle-reroute endpoint boundary already splits the surge reject-middle
    case on `lo <= 0` and uses
    `rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos` to route that
-   degenerate branch through the short-tail endpoint.
+   degenerate branch through the short-tail endpoint.  The lower fixed-transfer
+   middle-reroute source boundary is also compiled:
+
+     Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate
+     paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions
+
+   The next reduction is to derive this certificate from the existing
+   fixed-state-by-policy-form / derived-tail data, using `hnot` to derive the
+   surge short cutoff positivity and to avoid reject-middle endpoint data when
+   `lo <= 0`.
 6. Prove or explicitly source-assume the exposed arrival/intercept bound
    `arrival0*z0 <= R2`.
 7. Prove the selected-price current lower interval slack, probably using the

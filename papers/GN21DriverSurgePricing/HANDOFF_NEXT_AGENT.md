@@ -260,11 +260,15 @@ and the two `..._via_selection_unless` Theorem 3 wrappers.
 
 The middle-reroute source boundary already performs the `lo <= 0` split for
 surge reject-middle shapes and routes that branch through the short-tail
-endpoint at cutoff `hi`.  The next useful Lean target is the lower
-fixed-transfer adapter that supplies
-`Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate`
-from fixed-state-by-policy-form data, so the source assumptions ask only for
-reject-middle endpoint data when `0 <= lo`.
+endpoint at cutoff `hi`.  The lower fixed-transfer boundary is now compiled as
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate`
+and
+`paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions`.
+
+The next useful Lean target is deriving this middle-reroute certificate from
+the existing fixed-state-by-policy-form / derived-tail data, replacing the old
+global `surge_rejectShort_pos` and all-branch `surge_rejectMiddle_bounds`
+fields with branch-local facts from `hnot`.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:
