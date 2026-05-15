@@ -116,6 +116,7 @@ The newest source wrapper is:
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions
 ```
 
 The lower-sign wrapper asks for:
@@ -131,9 +132,10 @@ The lower-sign wrapper asks for:
   `lowerNumerator * upperDenominator <= 0`.
 
 The preferred mass-affine interval wrapper asks for a sharper sign-selected
-`Rmax`, zero-ratio numerator, accept-all mass-one/finite support for state 1,
-and accept-all final-sign certificate.  It replaces the policy-dependent
-current lower-sign field by:
+`Rmax`, accept-all mass-one/finite support for state 1, and accept-all
+final-sign certificate.  The newest arrival-bound variant asks for
+`arrival_0*z_0 <= R2` and derives the old zero-ratio numerator internally.  It
+replaces the policy-dependent current lower-sign field by:
 
 ```lean
 current_lower *
@@ -142,6 +144,19 @@ current_lower *
 
 for the selected small-surge prices.  It derives the current upper slack
 internally from the uniform `U` bound and positive-mass Remark 4 facts.
+
+Do not keep pushing this as an arbitrary-policy sequential obligation without
+first adding a policy-shape restriction.  A CTMC-generated two-atom numerical
+probe suggests that all-policy selected-price lower slack can fail even with
+`C < rho < 1`: with `arrival0=arrival1=5`,
+`switch12=switch21=1/2`, state-0 lengths `{1,6}` and state-1 lengths `{1,5}`
+with equal masses, and `rho=(C+1)/2≈0.951787`, the accept-all Lemma 9 interval
+is approximately `(5.568,12.699)`, but the current state-0 short-trip subset
+has lower endpoint about `3.065` while the maximum effective current ratio
+over target ratios in that accept-all interval is only about `2.255`.  This is
+not a formal Lean counterexample, but it is strong guidance: either use the
+endpoint/allowed-policy Theorem 4 route, or prove the lower slack only for the
+policy shapes that can actually be optimal.
 
 The wrapper itself derives:
 
@@ -224,9 +239,11 @@ for the chosen sign envelope.  For the `Rmax = R2` branch this is just
 found loose-feasibility counterexamples, so prefer the newer mass-affine
 envelope `Rmax=max R2 (arrival_0*z_0)`.  In that route the helper
 `theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2` closes the
-zero-ratio condition from `arrival_0*z_0 <= R2`; either derive that from the
-non-surge Theorem 3 ratio data or record it as the precise extra regime
-condition.
+zero-ratio condition from `arrival_0*z_0 <= R2`.  The wrapper
+`paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`
+is now the preferred source boundary for this route because it exposes exactly
+that bound and no longer asks callers for
+`0 < R2*T2 - Rmax*(T2 - 1)`.
 
 Do not try to prove even the mass-affine positive-`z0` branch from only the
 loose scalar feasibility facts.  The concrete values
@@ -269,9 +286,9 @@ a non-small-ratio Lemma 9 construction instead of forcing this route.  Also
 close or precisely document the sign-envelope zero-ratio numerator condition
 in the `Rmax = R2 + z0*switch12` branch.
 
-Also prove a current-state version of the Lemma 9 final-sign/nonpositive
-lower endpoint under the regular source hypotheses.  The useful scalar lemma
-already exists:
+Also prove the current-state selected lower-slack condition under the regular
+source hypotheses.  The useful scalar lemma for the older nonpositive-lower
+route already exists:
 
 ```lean
 lemma9StructuredLower_nonpos_of_final_signs

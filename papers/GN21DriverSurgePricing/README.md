@@ -218,14 +218,16 @@ cache is `source.txt`.
   `theorem3StructuredParameters_exist_of_ratio_and_small_surge_mass_affine_slack`,
   `paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack`,
   `theorem3SurgeAggregate_ge_of_currentMassAffineSignedIntervalEnvelopeSlack`,
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions`,
   and
-  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions`.
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`.
   This replaces the positive-`z_0` reward envelope `m_0+z_0*switch12` by the
   cycle-normalized envelope `max m_0 (arrival_0*z_0)`, using accept-all mass
   normalization and finite current mass.  The scalar helper
   `theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2` discharges the
-  zero-ratio condition when the remaining source-side regime condition
-  `arrival_0*z_0 <= R2` is available.
+  zero-ratio condition when `arrival_0*z_0 <= R2`; the newest source wrapper
+  uses that bound directly instead of asking for the opaque zero-ratio
+  numerator.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

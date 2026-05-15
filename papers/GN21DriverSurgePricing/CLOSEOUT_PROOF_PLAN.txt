@@ -289,21 +289,17 @@ Recommended proof order
    preferred if the current lower endpoint is not actually nonpositive.  The
    mass-affine interval wrapper should now be the default frontier because it
    replaces the loose positive-`z0` envelope `R2 + z0*switch12` by
-   `max R2 (arrival0*z0)`.  The remaining measured-route scalar obligation in
-   the newest wrappers is to
-   prove
+   `max R2 (arrival0*z0)`.  The newest compiled source wrapper is:
 
-     0 < R2 * T2 - Rmax * (T2 - 1)
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions
 
-   for the sign-selected non-surge envelope.  The `Rmax = R2` branch is
-   immediate from `R2 > 0`; for the mass-affine positive-`z0` branch, the
-   compiled helper
+   It derives the old zero-ratio numerator condition
 
      theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
 
-   reduces this to `arrival0*z0 <= R2`.  Try to derive that from the Theorem 3
-   non-surge ratio/feasibility assumptions; if it is not implied, document it
-   as the exact extra source regime condition.
+   from the explicit source-side condition `arrival0*z0 <= R2`.  If that bound
+   is not implied by the source regime, document it as the exact extra regime
+   condition; do not go back to the opaque `0 < R2*T2 - Rmax*(T2 - 1)` field.
    A scalar random search found feasible-looking positive-`z0` examples
    satisfying the loose inequalities `C < rho < 1`, `Q1 > switch12`,
    `switch12*T1 > Q1`, and `T2 >= 1` where this zero-ratio numerator is
@@ -335,9 +331,30 @@ Recommended proof order
    staging condition.  Do not cite the source Lemma 9 interval-feasibility
    final line as proving lower nonpositivity automatically: that line proves
    `lower < upper`, not `lower <= 0`.
-6. Prove the zero-ratio numerator condition for the sign-selected `Rmax`, or
-   record the precise source-side regime condition for the positive `z0`
-   branch if it is not implied by `C < rho < 1`.
+
+   Important: do not spend another long loop trying to prove this selected-price
+   lower slack for every arbitrary feasible positive-mass policy.  A quick
+   CTMC-generated two-atom numerical probe indicates that the all-policy
+   sequential obligation can fail for a current non-surge policy that accepts
+   only short trips, even when `C < rho < 1` and the accept-all Lemma 9
+   interval is nonempty.  One clean probe used
+
+     arrival0 = arrival1 = 5
+     switch12 = switch21 = 1/2
+     state0 lengths = {1, 6} with mass {1/2, 1/2}
+     state1 lengths = {1, 5} with mass {1/2, 1/2}
+     rho = (C + 1)/2 ≈ 0.951787
+
+   It gives accept-all Lemma 9 interval approximately `(5.568, 12.699)`,
+   but for the current state-0 short-trip subset the lower endpoint is about
+   `3.065`, while the largest effective current ratio induced by any
+   accept-all target ratio in that interval is about `2.255`.  Treat this as
+   evidence that the final proof should either route through the
+   endpoint/allowed-policy Theorem 4 machinery, or prove lower slack only for
+   the policy shapes that can actually be optimal under the constructed
+   prices, not for arbitrary feasible policies.
+6. Prove or explicitly source-assume the exposed arrival/intercept bound
+   `arrival0*z0 <= R2`.
 7. Prove the selected-price current lower interval slack, probably using the
    explicit small-ratio formula for `z_2,m_2` and the signed current reward
    envelope.  If this fails, the paper needs an explicit uniform lower-bound
