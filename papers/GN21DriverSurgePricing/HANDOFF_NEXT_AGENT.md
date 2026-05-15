@@ -228,6 +228,14 @@ zero-ratio condition from `arrival_0*z_0 <= R2`; either derive that from the
 non-surge Theorem 3 ratio data or record it as the precise extra regime
 condition.
 
+Do not try to prove even the mass-affine positive-`z0` branch from only the
+loose scalar feasibility facts.  The concrete values
+`switch12=switch21=arrival0=R2=1`, `T1=10`, `Q1=11/10`, `T2=10`, `Q2=2`,
+`rho=99/100` satisfy `C=267/298 < rho < 1`, `Q1>switch12`,
+`switch12*T1>Q1`, and `switch21*T2-Q2>=0`; they give `z0/R2=9`, so
+`Rmax=max R2 (arrival0*z0)=9` and
+`R2*T2-Rmax*(T2-1)=-71`.
+
 The helper `lemma9StructuredUpper_gt_uniform_of_switch_gap_pos` gives a
 policy-uniform positive lower bound on the current Lemma 9 upper endpoint from
 `Q_current < switch12 * T_current`; use

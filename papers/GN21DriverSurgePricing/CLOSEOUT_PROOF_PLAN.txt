@@ -311,6 +311,17 @@ Recommended proof order
    scalar facts; either use a sharper current-reward envelope than
    `R2 + z0*switch12`, or add the exact regime condition.
 
+   Concrete scalar warning example for the zero-ratio side condition:
+
+     switch12 = switch21 = arrival0 = R2 = 1
+     T1 = 10, Q1 = 11/10, T2 = 10, Q2 = 2, rho = 99/100
+
+   Then `C = 267/298 < rho < 1`, `Q1 > switch12`, `switch12*T1 > Q1`,
+   `switch21*T2 - Q2 >= 0`, and the non-surge ratio gives `z0/R2 = 9`.
+   For the mass-affine envelope `Rmax = max R2 (arrival0*z0) = 9`, the
+   zero-ratio numerator is `R2*T2 - Rmax*(T2-1) = -71`.  Thus the remaining
+   condition is not derivable from these scalar feasibility facts alone.
+
    The small-slack positive-mass endpoint bridge already chooses the right
    prices and threads the sign-envelope/slack evidence into the weak-reward
    certificate.  The interval final-sign wrapper now derives the uniform-upper
