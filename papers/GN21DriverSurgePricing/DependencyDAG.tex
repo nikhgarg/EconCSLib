@@ -75,12 +75,12 @@
 
 \node[dag_result, text width=4.8cm] (EndpointFeasible) at (23.6,-9.9) {
   \textbf{Feasible endpoint improvements}\\
-  compiled with-density, accept-all-bound, current-bounds, and density-support endpoint wrappers for all four Theorem 4 shape cases
+  compiled with-density, accept-all-bound, current-bounds, density-support, hnot-aware endpoint-selection, and degenerate-cutoff normalization wrappers for all four Theorem 4 shape cases
 };
 
 \node[dag_conditional, text width=4.6cm] (Thm4) at (23.6,-6.6) {
   \textbf{Theorem 4 (App. D.4)}\\
-  shape routing/case split, feasible-measurable shape derivation, endpoint bridges, with-density wrappers, source-facing current-bounds endpoint selection boundary, and packaged statewise certificates closed; source regularity selection open
+  shape routing/case split, feasible-measurable shape derivation, endpoint bridges, with-density wrappers, source-facing and hnot-aware current-bounds endpoint selection boundaries, and packaged statewise certificates closed; source regularity selection open
 };
 
 \node[dag_conditional, text width=4.6cm] (Thm2) at (29.5,-6.6) {
@@ -90,12 +90,12 @@
 
 \node[dag_conditional, text width=4.6cm] (Thm3) at (23.6,-13.2) {
   \textbf{Theorem 3 (Sec. 4.2)}\\
-  CTMC price family, C threshold, m/z construction, sequential IC current-bounds route, positive-mass reward-rate/fixed-transfer/effective-ratio source route, current-rate endpoint-term weak route, fixed-transfer fixed-state-by-policy-form route, small-surge-slack route, accounting/reward-rate current-bounds route, and positive/allowed replacement wrappers exposed; proof remains conditional on source regularity selection
+  CTMC price family, C threshold, m/z construction, sequential IC current-bounds route, positive-mass reward-rate/fixed-transfer/effective-ratio source route, current-rate endpoint-term weak route, fixed-transfer fixed-state-by-policy-form route, small-surge-slack route, hnot-aware endpoint-selection route, accounting/reward-rate current-bounds route, and positive/allowed replacement wrappers exposed; proof remains conditional on source regularity selection
 };
 
 \node[dag_result, text width=5.0cm] (MeasShapeSource) at (29.5,-13.2) {
   \textbf{Theorem 3 sequential IC route}\\
-  compiled unrestricted, feasible-measurable, and positive-mass source wrappers move surge to accept-all first by Lemma 9; Lemma 10 with surge fixed at accept-all is discharged from Theorem 3 parameter data; newest mass-affine selected-price interval wrapper derives zero-ratio from arrival/z bound and reduces remaining Lemma 9 work to exact current lower slack
+  compiled unrestricted, feasible-measurable, and positive-mass source wrappers move surge to accept-all first by Lemma 9; Lemma 10 with surge fixed at accept-all is discharged from Theorem 3 parameter data; newest mass-affine selected-price interval wrapper derives zero-ratio from arrival/z bound but all-policy current lower slack is no longer the preferred closeout path
 };
 
 \node[dag_result, text width=4.9cm] (FiniteAux) at (0,-9.9) {

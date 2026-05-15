@@ -8703,6 +8703,74 @@ theorem not_acceptsAllTrips_of_rejectsMiddleTrips_of_subset_acceptAll_of_pos_lt
     hshape hsub]
   exact not_acceptsAllTrips_rejectMiddleTripsPolicy_of_pos_lt hlo_pos hlohi
 
+/--
+A nonpositive short-trip cutoff is not a genuine non-accept-all shape: on
+positive trip lengths it accepts every trip.
+-/
+theorem acceptsAllTrips_of_rejectsShortTrips_of_nonpos
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsShortTrips t σ)
+    (ht : t ≤ 0) :
+    acceptsAllTrips σ := by
+  intro τ hτ
+  exact (hshape hτ).mpr (lt_of_le_of_lt ht hτ)
+
+/--
+Any short-trip-rejection shape that is used in a non-accept-all branch has a
+strictly positive cutoff.
+-/
+theorem cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsShortTrips t σ)
+    (hnot : ¬ acceptsAllTrips σ) :
+    0 < t := by
+  by_contra ht_not
+  exact hnot
+    (acceptsAllTrips_of_rejectsShortTrips_of_nonpos hshape
+      (le_of_not_gt ht_not))
+
+/--
+If the upper cutoff in a middle-rejection shape is nonpositive, then every
+positive trip is above it, so the policy is accept-all on the feasible domain.
+-/
+theorem acceptsAllTrips_of_rejectsMiddleTrips_of_hi_nonpos
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hhi : hi ≤ 0) :
+    acceptsAllTrips σ := by
+  intro τ hτ
+  exact (hshape hτ).mpr (Or.inr (lt_of_le_of_lt hhi hτ))
+
+/-- A middle-rejection shape in a non-accept-all branch has positive upper cutoff. -/
+theorem hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hnot : ¬ acceptsAllTrips σ) :
+    0 < hi := by
+  by_contra hhi_not
+  exact hnot
+    (acceptsAllTrips_of_rejectsMiddleTrips_of_hi_nonpos hshape
+      (le_of_not_gt hhi_not))
+
+/--
+When the lower cutoff in a middle-rejection shape is nonpositive, the same
+policy is a short-trip-rejection policy with cutoff `hi` on positive lengths.
+-/
+theorem rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hlo : lo ≤ 0) :
+    rejectsShortTrips hi σ := by
+  intro τ hτ
+  constructor
+  · intro hτ_mem
+    rcases (hshape hτ).mp hτ_mem with hlt | hhi
+    · exfalso
+      linarith
+    · exact hhi
+  · intro hhi
+    exact (hshape hτ).mpr (Or.inr hhi)
+
 /-- Canonical long-trip-rejection policies are measurable. -/
 theorem measurableSet_rejectLongTripsPolicy (t : ℝ) :
     MeasurableSet (rejectLongTripsPolicy t) := by
@@ -32788,6 +32856,168 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
         μ arrival m z switch12 switch21 C)
 
 /--
+Endpoint current-bounds selection where endpoint data is only requested in the
+non-accept-all branch.  This matches the strict-local proof structure and lets
+source arguments use the missing-positive-trip witness before choosing
+nondegenerate endpoint cutoffs.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  all_measurable_shape_replacements :
+    Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+Non-accept-all endpoint selections instantiate the statewise feasible
+strict-local certificate directly, preserving the local `¬ acceptsAllTrips`
+hypothesis for endpoint construction.
+-/
+noncomputable def theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := C.all_measurable_shape_replacements.exists_optimal
+  statewise_strict_aggregate_improvement_unless := by
+    intro ρ hρ i hnot
+    let D :=
+      theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        C.all_measurable_shape_replacements
+    fin_cases i
+    · rcases D.only_policy_forms ρ hρ with
+        ⟨⟨nshape, hnallowed, hnform⟩, _⟩
+      have hshape : theorem4NonsurgeShape (ρ 0) :=
+        theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform
+      rcases theorem4NonsurgeShape_cases_of_not_acceptsAll hshape hnot with
+        hlong | hmiddle
+      · rcases hlong with ⟨u, hu⟩
+        exact
+          (C.nonsurge_reject_long_endpoint ρ hρ hnot u hu).statewise_improvement
+            hρ hu
+      · rcases hmiddle with ⟨lo, hi, hmid⟩
+        exact
+          (C.nonsurge_accept_middle_endpoint ρ hρ hnot lo hi hmid).statewise_improvement
+            hρ hmid
+    · rcases D.only_policy_forms ρ hρ with
+        ⟨_, ⟨sshape, hsallowed, hsform⟩⟩
+      have hshape : theorem4SurgeShape (ρ 1) :=
+        theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform
+      rcases theorem4SurgeShape_cases_of_not_acceptsAll hshape hnot with
+        hshort | hmiddle
+      · rcases hshort with ⟨u, hu⟩
+        exact
+          (C.surge_reject_short_endpoint ρ hρ hnot u hu).statewise_improvement
+            hρ hu
+      · rcases hmiddle with ⟨lo, hi, hmid⟩
+        exact
+          (C.surge_reject_middle_endpoint ρ hρ hnot lo hi hmid).statewise_improvement
+            hρ hmid
+
+/--
+Endpoint current-bounds selections in the non-accept-all branch instantiate the
+feasible strict-local certificate consumed by the measurable Theorem 4 route.
+-/
+noncomputable def theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C : Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+      μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_statewise_feasible_strict_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+      μ arrival m z switch12 switch21 C)
+
+/--
+Measurable Theorem 4 accept-all uniqueness from endpoint selections that are
+only required for non-accept-all policy branches.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      (theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+        μ arrival m z switch12 switch21 C)
+
+/--
 Source-facing current-bounds endpoint selection certificate.  It asks for
 ordinary allowed Lemma 5 replacement cases; feasible measurability of their
 canonical replacement policies is derived by
@@ -49041,6 +49271,113 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
             Theorem4MeasurableShapeDerivationStatewiseImprovementCertificate.of_endpoint_current_bounds_selection
               μ arrival m z switch12 switch21
               (A.endpoint_current_bounds_selection m z hnonneg hparams) }
+
+/--
+Theorem 3 strict-local boundary from endpoint current-bounds selections that
+are only required in non-accept-all branches.
+-/
+def theorem3AcceptAllFeasibleStrictLocalCertificate_of_endpoint_current_bounds_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+            μ arrival m z switch12 switch21) :
+    theorem3AcceptAllFeasibleStrictLocalCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  exact
+    theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+      μ arrival m z switch12 switch21 (C m z hnonneg hparams)
+
+/--
+Bundled source-level assumptions for the hnot-aware endpoint current-bounds
+selection route.  This is the same Theorem 3 boundary as the ordinary endpoint
+selection route, but endpoint data may use the branch-local
+`¬ acceptsAllTrips` fact before choosing nondegenerate cutoffs.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_selection_unless :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from hnot-aware endpoint current-bounds
+selection source assumptions.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        strict_local :=
+          theorem3AcceptAllFeasibleStrictLocalCertificate_of_endpoint_current_bounds_selection_unless
+            μ arrival R1 R2 switch12 switch21
+            A.endpoint_current_bounds_selection_unless }
 
 /--
 Source-level assumptions for the current-bounds endpoint route with

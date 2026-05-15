@@ -290,7 +290,25 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_source_assumptions`;
   it packages the all-measurable Lemma 5 replacement data together with the
   density endpoint choices and Lemma 9/10 current-bounds data for all four
-  shape cases.  The source-facing variant is now exposed as
+  shape cases.  A hnot-aware variant,
+  `Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate` plus
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless`,
+  preserves the `¬ acceptsAllTrips` hypothesis until endpoint witnesses are
+  chosen; this is the preferred internal shape-selection interface when cutoff
+  nondegeneracy is derived from the actual non-accept-all branch rather than
+  assumed for every syntactic shape case.  The accompanying shape-normalization
+  lemmas
+  `acceptsAllTrips_of_rejectsShortTrips_of_nonpos`,
+  `cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll`,
+  `acceptsAllTrips_of_rejectsMiddleTrips_of_hi_nonpos`,
+  `hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll`, and
+  `rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos` formalize the
+  degenerate-cutoff reductions needed by this route.  The Theorem 3 source
+  boundary for the same route is now exposed as
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions`
+  plus
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_source_assumptions`.
+  The source-facing variant is now exposed as
   `Theorem4NonsurgeMeasurableReplacementData`,
   `Theorem4SurgeMeasurableReplacementData`,
   `Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`,

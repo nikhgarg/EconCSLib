@@ -119,6 +119,29 @@ paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_s
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions
 ```
 
+The endpoint/allowed-policy pivot now has a compiled hnot-aware selection
+interface:
+
+```lean
+Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless
+Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_source_assumptions
+```
+
+Use it when endpoint witnesses need the actual `¬ acceptsAllTrips (ρ i)`
+hypothesis before proving cutoff nondegeneracy.  The supporting
+shape-normalization lemmas are:
+
+```lean
+acceptsAllTrips_of_rejectsShortTrips_of_nonpos
+cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll
+acceptsAllTrips_of_rejectsMiddleTrips_of_hi_nonpos
+hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll
+rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos
+```
+
 The lower-sign wrapper asks for:
 
 - a signed reward-envelope choice:
@@ -213,104 +236,28 @@ for the current fixed state to replace the lower cross comparison.
 
 ## Next Concrete Step
 
-Start from `CLOSEOUT_PROOF_PLAN.txt`; it records the corrected route and the
-distinction between the easy `0 <= r1_current` proof, the reward-envelope
-bound, and the surge-side slack proof.
+Start from `CLOSEOUT_PROOF_PLAN.txt`; it records why the all-policy sequential
+Lemma 9 lower-slack route is suspect.  The next proof work should use the
+endpoint/allowed-policy route, not another attempt to prove the selected lower
+slack for arbitrary feasible positive-mass policies.
 
-The scalar small-ratio surge slack is now compiled.  The most useful packaged
-constructor is:
+The most useful next Lean target is a fixed-transfer regular endpoint wrapper
+that uses `Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate`
+internally.  The Theorem 3 source wrapper is already compiled.  The remaining
+work is to thread the existing fixed-transfer/local endpoint packages through
+the hnot-aware interface so cutoff nondegeneracy can be proved after the proof
+knows the policy branch is genuinely non-accept-all.
 
-```lean
-theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
-theorem3StructuredParameters_exist_of_ratio_and_small_surge_mass_affine_slack
-```
-
-It returns Theorem 3 structured parameters together with positive parameter
-evidence, the sign-selected envelope `Rmax`, `0 < m_2 - Rmax`, and
-`z_2 < U * (m_2 - Rmax)`.  The generic scalar side condition still to discharge
-in the measured Theorem 3 route is:
+Keep the mass-affine sequential wrapper as a documented fallback/source
+boundary:
 
 ```lean
-0 < R2 * T2 - Rmax * (T2 - 1)
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions
 ```
 
-for the chosen sign envelope.  For the `Rmax = R2` branch this is just
-`0 < R2`.  For the older `Rmax = R2 + z_0 * switch12` branch, a scalar search
-found loose-feasibility counterexamples, so prefer the newer mass-affine
-envelope `Rmax=max R2 (arrival_0*z_0)`.  In that route the helper
-`theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2` closes the
-zero-ratio condition from `arrival_0*z_0 <= R2`.  The wrapper
-`paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`
-is now the preferred source boundary for this route because it exposes exactly
-that bound and no longer asks callers for
-`0 < R2*T2 - Rmax*(T2 - 1)`.
-
-Do not try to prove even the mass-affine positive-`z0` branch from only the
-loose scalar feasibility facts.  The concrete values
-`switch12=switch21=arrival0=R2=1`, `T1=10`, `Q1=11/10`, `T2=10`, `Q2=2`,
-`rho=99/100` satisfy `C=267/298 < rho < 1`, `Q1>switch12`,
-`switch12*T1>Q1`, and `switch21*T2-Q2>=0`; they give `z0/R2=9`, so
-`Rmax=max R2 (arrival0*z0)=9` and
-`R2*T2-Rmax*(T2-1)=-71`.
-
-The helper `lemma9StructuredUpper_gt_uniform_of_switch_gap_pos` gives a
-policy-uniform positive lower bound on the current Lemma 9 upper endpoint from
-`Q_current < switch12 * T_current`; use
-`theorem3SurgeSlack_of_uniform_upper_lt_current` to transfer the constructed
-uniform slack to the actual current upper endpoint.
-
-There is also a compiled positive-mass endpoint bridge:
-
-```lean
-paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
-paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack
-```
-
-This chooses the small-slack prices and then asks the weak-reward certificate
-only for those selected prices, with the envelope/slack evidence already
-threaded in.  The source-facing measured wrapper is now compiled as:
-
-```lean
-paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
-```
-
-Next, prove a constructor for
-`Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions`
-from regular measured source hypotheses.  The uniform-upper and denominator
-work is already discharged by the wrapper; the remaining policy-dependent
-field is the lower-endpoint sign condition for the current fixed non-surge
-policy.  Be careful: the source text's Lemma 9 "left side non-positive/right
-side positive" final line proves interval feasibility, not this stronger lower
-endpoint sign condition.  If that lower sign condition is not implied, pivot to
-a non-small-ratio Lemma 9 construction instead of forcing this route.  Also
-close or precisely document the sign-envelope zero-ratio numerator condition
-in the `Rmax = R2 + z0*switch12` branch.
-
-Also prove the current-state selected lower-slack condition under the regular
-source hypotheses.  The useful scalar lemma for the older nonpositive-lower
-route already exists:
-
-```lean
-lemma9StructuredLower_nonpos_of_final_signs
-```
-
-A likely next bridge should specialize it to:
-
-```lean
-lemma9StructuredLower
-  (gn21ScaledStateTime (mu 0) (arrival 0) (rho 0))
-  (gn21ExitWeightIntegral (mu 0) (arrival 0) switch12 switch21 (rho 0))
-  (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
-  (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
-  switch21 <= 0
-```
-
-using current fixed-state denominator positivity and the source final-sign
-left-nonpositive inequality.
-
-If that stalls, fall back to the older wrappers documented in
-`LEMMA9_10_REWARD_RATE_AUDIT.md`, especially the final-sign/no-ratio route and
-the pointwise fixed-transfer route.
+Do not try to prove the mass-affine positive-`z0` branch from only loose scalar
+feasibility facts; `arrival_0*z_0 <= R2` is the current explicit extra
+condition for that wrapper.
 
 ## Documentation Map
 

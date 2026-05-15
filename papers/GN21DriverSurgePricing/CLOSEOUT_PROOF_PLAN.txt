@@ -353,6 +353,27 @@ Recommended proof order
    endpoint/allowed-policy Theorem 4 machinery, or prove lower slack only for
    the policy shapes that can actually be optimal under the constructed
    prices, not for arbitrary feasible policies.
+
+   The endpoint/allowed-policy pivot now has a compiled non-accept-all
+   interface:
+
+     Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+     theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+     paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless
+     Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions
+     paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_source_assumptions
+
+   Prefer this interface when constructing endpoint witnesses from Lemma 5
+   policy forms.  It preserves the branch-local `not acceptsAllTrips` fact,
+   which can be combined with the new cutoff-normalization lemmas:
+
+     cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll
+     hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll
+     rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos
+
+   This is the clean route for avoiding endpoint obligations on degenerate
+   syntactic cutoff cases that are actually accept-all or reducible to a
+   simpler short-tail case on positive trip lengths.
 6. Prove or explicitly source-assume the exposed arrival/intercept bound
    `arrival0*z0 <= R2`.
 7. Prove the selected-price current lower interval slack, probably using the
