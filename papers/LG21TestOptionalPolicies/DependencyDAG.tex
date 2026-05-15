@@ -27,7 +27,7 @@
 
 \node[dag_partial, text width=4.8cm] (SharedProb) at (5.9,0) {
   \textbf{Shared testing probability library}\\
-  posterior wrappers, Gaussian score algebra, and conditional resampling
+  posterior wrappers, Gaussian law comparison, and conditional resampling
 };
 
 \node[dag_partial, text width=4.8cm] (Model) at (11.8,0) {
@@ -52,7 +52,7 @@
 
 \node[dag_caveat, text width=4.0cm] (FairDefs) at (11.8,-4.2) {
   \textbf{Definitions 2--5 (Sec. 2)}\\
-  source fairness and test-blank predicates encoded with caveats
+  PMF and continuous-law fairness/test-blank predicates encoded
 };
 
 \node[dag_conditional, text width=4.8cm] (Lemma41) at (17.7,-4.2) {
@@ -60,14 +60,14 @@
   strategy-proofness endpoint exposed as certificate
 };
 
-\node[dag_conditional, text width=4.8cm] (Prop42) at (23.6,-4.2) {
+\node[dag_partial, text width=4.8cm] (Prop42) at (23.6,-4.2) {
   \textbf{Proposition 4.2 (Sec. 4.1)}\\
-  not latent skill fair endpoint exposed as certificate
+  law-level four-group and Gaussian mean-gap core proved
 };
 
-\node[dag_conditional, text width=4.8cm] (Prop43) at (29.5,-4.2) {
+\node[dag_partial, text width=4.8cm] (Prop43) at (29.5,-4.2) {
   \textbf{Proposition 4.3 (Sec. 4.1)}\\
-  not observable/demographic fair endpoint exposed as certificate
+  law-level witness and Gaussian variance-gap cores proved
 };
 
 \node[dag_caveat, text width=4.0cm] (Def6) at (11.8,-8.6) {

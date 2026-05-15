@@ -1,7 +1,9 @@
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Real.Sqrt
 import Mathlib.Tactic
+import EconCSLib.Foundations.Math.AffineThreshold
 
 open scoped BigOperators
 
@@ -54,6 +56,10 @@ def standardize (L : GaussianScaleLaw) (x : ℝ) : ℝ :=
 def unstandardize (L : GaussianScaleLaw) (z : ℝ) : ℝ :=
   L.mean + L.scale * z
 
+@[simp] theorem standardize_mean (L : GaussianScaleLaw) :
+    L.standardize L.mean = 0 := by
+  simp [standardize]
+
 theorem standardize_unstandardize (L : GaussianScaleLaw) (z : ℝ) :
     L.standardize (L.unstandardize z) = z := by
   rw [standardize, unstandardize]
@@ -81,12 +87,38 @@ theorem standardize_mono (L : GaussianScaleLaw) :
   exact div_le_div_of_nonneg_right
     (sub_le_sub_right hxy L.mean) L.scale_pos.le
 
+theorem standardize_strictMono (L : GaussianScaleLaw) :
+    StrictMono L.standardize := by
+  intro x y hxy
+  exact div_lt_div_of_pos_right
+    (sub_lt_sub_right hxy L.mean) L.scale_pos
+
 theorem standardize_le_standardize_of_mean_le_same_scale
     {L1 L2 : GaussianScaleLaw} (hscale : L1.scale = L2.scale)
     (hmean : L1.mean ≤ L2.mean) (x : ℝ) :
     L2.standardize x ≤ L1.standardize x := by
   rw [standardize, standardize, hscale]
   exact div_le_div_of_nonneg_right (sub_le_sub_left hmean x) L2.scale_pos.le
+
+theorem standardize_le_standardize_of_same_mean_scale_le_of_mean_le
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {x : ℝ} (hx : Lsmall.mean ≤ x) :
+    Llarge.standardize x ≤ Lsmall.standardize x := by
+  rw [standardize, standardize, ← hmean]
+  exact div_le_div_of_nonneg_left
+    (sub_nonneg.mpr hx) Lsmall.scale_pos hscale
+
+theorem standardize_lt_standardize_of_same_mean_scale_lt_of_mean_lt
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {x : ℝ} (hx : Lsmall.mean < x) :
+    Llarge.standardize x < Lsmall.standardize x := by
+  rw [standardize, standardize, ← hmean]
+  exact div_lt_div_of_pos_left
+    (sub_pos.mpr hx) Lsmall.scale_pos hscale
 
 /-- Positive affine image of a Gaussian location-scale law. -/
 def affineImage (L : GaussianScaleLaw) (a b : ℝ) (hb : 0 < b) :
@@ -132,6 +164,8 @@ structure StandardGaussianCDFAPI where
   cdf : ℝ → ℝ
   density : ℝ → ℝ
   cdf_mono : Monotone cdf
+  cdf_strictMono : StrictMono cdf
+  cdf_zero_eq_half : cdf 0 = (1 / 2 : ℝ)
   density_nonneg : ∀ z, 0 ≤ density z
   cdf_nonneg : ∀ z, 0 ≤ cdf z
   cdf_le_one : ∀ z, cdf z ≤ 1
@@ -159,6 +193,12 @@ theorem normalCDF_mono (api : StandardGaussianCDFAPI)
   intro x y hxy
   exact api.cdf_mono (L.standardize_mono hxy)
 
+theorem normalCDF_strictMono (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) :
+    StrictMono (api.normalCDF L) := by
+  intro x y hxy
+  exact api.cdf_strictMono (L.standardize_strictMono hxy)
+
 theorem normalCDF_nonneg (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) (x : ℝ) :
     0 ≤ api.normalCDF L x :=
@@ -168,6 +208,11 @@ theorem normalCDF_le_one (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) (x : ℝ) :
     api.normalCDF L x ≤ 1 :=
   api.cdf_le_one (L.standardize x)
+
+theorem normalCDF_at_mean (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) :
+    api.normalCDF L L.mean = (1 / 2 : ℝ) := by
+  simp [normalCDF, api.cdf_zero_eq_half]
 
 theorem normalTail_nonneg (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) (x : ℝ) :
@@ -181,12 +226,26 @@ theorem normalTail_le_one (api : StandardGaussianCDFAPI)
   dsimp [normalTail]
   exact sub_le_self 1 (api.normalCDF_nonneg L x)
 
+theorem normalTail_at_mean (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) :
+    api.normalTail L L.mean = (1 / 2 : ℝ) := by
+  rw [normalTail, api.normalCDF_at_mean L]
+  norm_num
+
 theorem normalTail_antitone (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) :
     Antitone (api.normalTail L) := by
   intro x y hxy
   dsimp [normalTail, normalCDF]
   exact sub_le_sub_left (api.cdf_mono (L.standardize_mono hxy)) 1
+
+theorem normalTail_strictAnti (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) :
+    StrictAnti (api.normalTail L) := by
+  intro x y hxy
+  dsimp [normalTail, normalCDF]
+  exact sub_lt_sub_left
+    (api.cdf_strictMono (L.standardize_strictMono hxy)) 1
 
 theorem normalCDF_le_of_mean_le_same_scale (api : StandardGaussianCDFAPI)
     {L1 L2 : GaussianScaleLaw} (hscale : L1.scale = L2.scale)
@@ -204,15 +263,51 @@ theorem normalTail_le_of_mean_le_same_scale (api : StandardGaussianCDFAPI)
   exact sub_le_sub_left
     (api.normalCDF_le_of_mean_le_same_scale hscale hmean x) 1
 
+theorem normalTail_le_of_same_mean_scale_le_of_mean_le
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean ≤ threshold) :
+    api.normalTail Lsmall threshold ≤ api.normalTail Llarge threshold := by
+  dsimp [normalTail, normalCDF]
+  exact sub_le_sub_left
+    (api.cdf_mono
+      (GaussianScaleLaw.standardize_le_standardize_of_same_mean_scale_le_of_mean_le
+        hmean hscale hthreshold)) 1
+
+theorem normalTail_lt_of_same_mean_scale_lt_of_mean_lt
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean < threshold) :
+    api.normalTail Lsmall threshold < api.normalTail Llarge threshold := by
+  dsimp [normalTail, normalCDF]
+  exact sub_lt_sub_left
+    (api.cdf_strictMono
+      (GaussianScaleLaw.standardize_lt_standardize_of_same_mean_scale_lt_of_mean_lt
+        hmean hscale hthreshold)) 1
+
 /-- Pass probability above a threshold for a Gaussian location-scale law. -/
 def thresholdPassProb (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) (threshold : ℝ) : ℝ :=
   api.normalTail L threshold
 
+theorem thresholdPassProb_at_mean
+    (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
+    api.thresholdPassProb L L.mean = (1 / 2 : ℝ) :=
+  api.normalTail_at_mean L
+
 theorem thresholdPassProb_antitone_threshold
     (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
     Antitone (api.thresholdPassProb L) := by
   exact api.normalTail_antitone L
+
+theorem thresholdPassProb_strictAnti_threshold
+    (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
+    StrictAnti (api.thresholdPassProb L) := by
+  exact api.normalTail_strictAnti L
 
 theorem thresholdPassProb_le_of_mean_le_same_scale
     (api : StandardGaussianCDFAPI)
@@ -220,6 +315,28 @@ theorem thresholdPassProb_le_of_mean_le_same_scale
     (hmean : L1.mean ≤ L2.mean) (threshold : ℝ) :
     api.thresholdPassProb L1 threshold ≤ api.thresholdPassProb L2 threshold := by
   exact api.normalTail_le_of_mean_le_same_scale hscale hmean threshold
+
+theorem thresholdPassProb_le_of_same_mean_scale_le_of_mean_le
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean ≤ threshold) :
+    api.thresholdPassProb Lsmall threshold ≤
+      api.thresholdPassProb Llarge threshold := by
+  exact api.normalTail_le_of_same_mean_scale_le_of_mean_le
+    hmean hscale hthreshold
+
+theorem thresholdPassProb_lt_of_same_mean_scale_lt_of_mean_lt
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean < threshold) :
+    api.thresholdPassProb Lsmall threshold <
+      api.thresholdPassProb Llarge threshold := by
+  exact api.normalTail_lt_of_same_mean_scale_lt_of_mean_lt
+    hmean hscale hthreshold
 
 theorem normalCDF_affineImage_pos (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) (a : ℝ) {b : ℝ} (hb : 0 < b)
@@ -344,6 +461,34 @@ def affineImage (L : GaussianVarianceLaw) (a b : ℝ) (hb : b ≠ 0) :
 @[simp] theorem affineImage_variance (L : GaussianVarianceLaw)
     (a b : ℝ) (hb : b ≠ 0) :
     (L.affineImage a b hb).variance = b ^ 2 * L.variance := rfl
+
+theorem eq_of_mean_eq_variance {L₁ L₂ : GaussianVarianceLaw}
+    (hmean : L₁.mean = L₂.mean) (hvar : L₁.variance = L₂.variance) :
+    L₁ = L₂ := by
+  cases L₁
+  cases L₂
+  simp at hmean hvar
+  subst hmean
+  subst hvar
+  congr
+
+theorem ne_of_mean_ne {L₁ L₂ : GaussianVarianceLaw}
+    (h : L₁.mean ≠ L₂.mean) : L₁ ≠ L₂ := by
+  intro hEq
+  exact h (congrArg GaussianVarianceLaw.mean hEq)
+
+theorem ne_of_mean_lt {L₁ L₂ : GaussianVarianceLaw}
+    (h : L₁.mean < L₂.mean) : L₁ ≠ L₂ :=
+  ne_of_mean_ne (ne_of_lt h)
+
+theorem ne_of_variance_ne {L₁ L₂ : GaussianVarianceLaw}
+    (h : L₁.variance ≠ L₂.variance) : L₁ ≠ L₂ := by
+  intro hEq
+  exact h (congrArg GaussianVarianceLaw.variance hEq)
+
+theorem ne_of_variance_lt {L₁ L₂ : GaussianVarianceLaw}
+    (h : L₁.variance < L₂.variance) : L₁ ≠ L₂ :=
+  ne_of_variance_ne (ne_of_lt h)
 
 end GaussianVarianceLaw
 
@@ -870,6 +1015,13 @@ def posteriorMeanLaw [Nonempty ι]
   variance := M.posteriorMeanVariance
   variance_pos := M.posteriorMeanVariance_pos
 
+/-- Location-scale law of the finite-feature posterior mean. -/
+def posteriorMeanScaleLaw [Nonempty ι]
+    (M : GaussianSignalFamily ι) : GaussianScaleLaw where
+  mean := M.priorMean
+  scale := Real.sqrt M.posteriorMeanVariance
+  scale_pos := Real.sqrt_pos.mpr M.posteriorMeanVariance_pos
+
 theorem priorWeight_pos (M : GaussianSignalFamily ι) :
     0 < M.priorWeight := by
   exact mul_pos M.posteriorVariance_pos M.priorPrecision_pos
@@ -952,6 +1104,44 @@ theorem posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorP
   field_simp [hp, hpost, hden]
   ring
 
+theorem posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+    {Mlow Mhigh : GaussianSignalFamily ι}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ i : ι, Mlow.signalPrecision i) <
+        ∑ i : ι, Mhigh.signalPrecision i) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance := by
+  have hpriorPrecision :
+      Mlow.priorPrecision = Mhigh.priorPrecision := by
+    simp [priorPrecision, hpriorVar]
+  have hposteriorPrecision :
+      Mlow.posteriorPrecision < Mhigh.posteriorPrecision := by
+    dsimp [posteriorPrecision]
+    rw [hpriorPrecision]
+    simpa [add_comm, add_left_comm, add_assoc] using
+      add_lt_add_left hsum Mhigh.priorPrecision
+  have hposteriorVariance :
+      Mhigh.posteriorVariance < Mlow.posteriorVariance := by
+    have h := one_div_lt_one_div_of_lt
+      Mlow.posteriorPrecision_pos hposteriorPrecision
+    simpa [posteriorVariance, one_div] using h
+  dsimp [posteriorMeanVariance]
+  rw [hpriorVar]
+  linarith
+
+theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
+    [Nonempty ι]
+    {Mlow Mhigh : GaussianSignalFamily ι}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ i : ι, Mlow.signalPrecision i) <
+        ∑ i : ι, Mhigh.signalPrecision i) :
+    (Mlow.posteriorMeanScaleLaw).scale <
+      (Mhigh.posteriorMeanScaleLaw).scale := by
+  exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
+    (posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+      hpriorVar hsum)
+
 /-- The posterior mean is monotone in every observed signal coordinate. -/
 theorem posteriorMean_mono_of_pointwise_le
     (M : GaussianSignalFamily ι) {x y : ι → ℝ}
@@ -965,6 +1155,105 @@ theorem posteriorMean_mono_of_pointwise_le
         intro i _
         exact mul_le_mul_of_nonneg_left (hxy i) (M.signalPrecision_pos i).le))
       (M.priorPrecision * M.priorMean)
+
+/--
+The posterior mean is strictly increasing when all observed signals weakly
+increase and at least one signal strictly increases.
+-/
+theorem posteriorMean_lt_of_pointwise_le_exists_lt
+    (M : GaussianSignalFamily ι) {x y : ι → ℝ}
+    (hxy : ∀ i, x i ≤ y i) (j : ι) (hstrict : x j < y j) :
+    M.posteriorMean x < M.posteriorMean y := by
+  dsimp [posteriorMean]
+  refine mul_lt_mul_of_pos_left ?_ M.posteriorVariance_pos
+  have hsum_lt :
+      (∑ i : ι, M.signalPrecision i * x i) <
+        ∑ i : ι, M.signalPrecision i * y i := by
+    exact Finset.sum_lt_sum (by
+      intro i _
+      exact mul_le_mul_of_nonneg_left (hxy i) (M.signalPrecision_pos i).le)
+      ⟨j, ⟨Finset.mem_univ j,
+        mul_lt_mul_of_pos_left hstrict (M.signalPrecision_pos j)⟩⟩
+  simpa [add_comm, add_left_comm, add_assoc] using
+    add_lt_add_left hsum_lt (M.priorPrecision * M.priorMean)
+
+/-- Holding all other coordinates fixed, the posterior mean is strictly
+increasing in any one observed signal. -/
+theorem posteriorMean_update_strictMono [DecidableEq ι]
+    (M : GaussianSignalFamily ι) (x : ι → ℝ) (j : ι) :
+    StrictMono (fun z : ℝ => M.posteriorMean (Function.update x j z)) := by
+  intro a b hab
+  refine M.posteriorMean_lt_of_pointwise_le_exists_lt ?_ j ?_
+  · intro i
+    by_cases h : i = j
+    · subst h
+      simp [Function.update, hab.le]
+    · simp [Function.update, h]
+  · simp [Function.update, hab]
+
+/--
+Holding all other coordinates fixed, the posterior mean is an affine function
+of the selected coordinate, with slope equal to that coordinate's posterior
+weight.
+-/
+theorem posteriorMean_update_eq_base_add_weight_mul_sub [DecidableEq ι]
+    (M : GaussianSignalFamily ι) (x : ι → ℝ) (j : ι) (base z : ℝ) :
+    M.posteriorMean (Function.update x j z) =
+      M.posteriorMean (Function.update x j base) +
+        M.signalWeight j * (z - base) := by
+  classical
+  have hsum (t : ℝ) :
+      (∑ i : ι, M.signalWeight i * Function.update x j t i) =
+        M.signalWeight j * t +
+          ∑ i : ι, if i = j then 0 else M.signalWeight i * x i := by
+    calc
+      (∑ i : ι, M.signalWeight i * Function.update x j t i) =
+          ∑ i : ι,
+            ((if i = j then M.signalWeight i * t else 0) +
+              if i = j then 0 else M.signalWeight i * x i) := by
+        apply Finset.sum_congr rfl
+        intro i _
+        by_cases h : i = j <;> simp [Function.update, h]
+      _ = (∑ i : ι, if i = j then M.signalWeight i * t else 0) +
+            ∑ i : ι, if i = j then 0 else M.signalWeight i * x i := by
+        rw [Finset.sum_add_distrib]
+      _ = M.signalWeight j * t +
+            ∑ i : ι, if i = j then 0 else M.signalWeight i * x i := by
+        rw [Finset.sum_ite_eq']
+        simp
+  rw [M.posteriorMean_eq_weighted_sum, M.posteriorMean_eq_weighted_sum,
+    hsum z, hsum base]
+  ring
+
+theorem posteriorMean_update_eq_base_add_weight_mul [DecidableEq ι]
+    (M : GaussianSignalFamily ι) (x : ι → ℝ) (j : ι) (z : ℝ) :
+    M.posteriorMean (Function.update x j z) =
+      M.posteriorMean (Function.update x j 0) + M.signalWeight j * z := by
+  simpa using M.posteriorMean_update_eq_base_add_weight_mul_sub x j 0 z
+
+/--
+Coordinate-threshold form for finite Gaussian posterior means: after fixing
+all other signals, clearing a posterior-mean threshold is equivalent to the
+selected signal exceeding the induced affine cutoff.
+-/
+theorem threshold_le_posteriorMean_update_iff_cutoff_le [DecidableEq ι]
+    (M : GaussianSignalFamily ι) (x : ι → ℝ) (j : ι)
+    (base threshold z : ℝ) :
+    threshold ≤ M.posteriorMean (Function.update x j z) ↔
+      EconCSLib.affineCutoff
+        (M.posteriorMean (Function.update x j base) -
+          M.signalWeight j * base)
+        (M.signalWeight j) threshold ≤ z := by
+  rw [M.posteriorMean_update_eq_base_add_weight_mul_sub x j base z]
+  have hscore :
+      M.posteriorMean (Function.update x j base) +
+          M.signalWeight j * (z - base) =
+        (M.posteriorMean (Function.update x j base) -
+          M.signalWeight j * base) + M.signalWeight j * z := by
+    ring
+  rw [hscore]
+  exact EconCSLib.threshold_le_affine_iff_cutoff_le
+    (M.signalWeight_pos j)
 
 end GaussianSignalFamily
 
@@ -1035,6 +1324,13 @@ def posteriorMeanLaw [Nonempty ι]
   variance := M.posteriorMeanVariance
   variance_pos := M.posteriorMeanVariance_pos
 
+/-- Location-scale law of the offset-family posterior mean. -/
+def posteriorMeanScaleLaw [Nonempty ι]
+    (M : GaussianOffsetSignalFamily ι) : GaussianScaleLaw where
+  mean := M.priorMean
+  scale := Real.sqrt M.posteriorMeanVariance
+  scale_pos := Real.sqrt_pos.mpr M.posteriorMeanVariance_pos
+
 theorem posteriorMean_eq_weighted_sum
     (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) :
     M.posteriorMean x =
@@ -1071,6 +1367,30 @@ theorem posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorP
   exact M.centeredFamily
     |>.posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
 
+theorem posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+    {Mlow Mhigh : GaussianOffsetSignalFamily ι}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ i : ι, Mlow.centeredFamily.signalPrecision i) <
+        ∑ i : ι, Mhigh.centeredFamily.signalPrecision i) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance := by
+  exact GaussianSignalFamily.posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+    (Mlow := Mlow.centeredFamily) (Mhigh := Mhigh.centeredFamily)
+    hpriorVar hsum
+
+theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
+    [Nonempty ι]
+    {Mlow Mhigh : GaussianOffsetSignalFamily ι}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ i : ι, Mlow.centeredFamily.signalPrecision i) <
+        ∑ i : ι, Mhigh.centeredFamily.signalPrecision i) :
+    (Mlow.posteriorMeanScaleLaw).scale <
+      (Mhigh.posteriorMeanScaleLaw).scale := by
+  exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
+    (posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+      hpriorVar hsum)
+
 /-- The offset-family posterior mean is monotone in every raw signal coordinate. -/
 theorem posteriorMean_mono_of_pointwise_le
     (M : GaussianOffsetSignalFamily ι) {x y : ι → ℝ}
@@ -1079,6 +1399,87 @@ theorem posteriorMean_mono_of_pointwise_le
   rw [posteriorMean, posteriorMean]
   exact M.centeredFamily.posteriorMean_mono_of_pointwise_le
     (fun i => sub_le_sub_right (hxy i) (M.noiseMean i))
+
+/--
+The offset-family posterior mean is strictly increasing when all raw signals
+weakly increase and at least one raw signal strictly increases.
+-/
+theorem posteriorMean_lt_of_pointwise_le_exists_lt
+    (M : GaussianOffsetSignalFamily ι) {x y : ι → ℝ}
+    (hxy : ∀ i, x i ≤ y i) (j : ι) (hstrict : x j < y j) :
+    M.posteriorMean x < M.posteriorMean y := by
+  rw [posteriorMean, posteriorMean]
+  exact M.centeredFamily.posteriorMean_lt_of_pointwise_le_exists_lt
+    (fun i => sub_le_sub_right (hxy i) (M.noiseMean i)) j
+    (sub_lt_sub_right hstrict (M.noiseMean j))
+
+/-- Holding all other raw signals fixed, the offset-family posterior mean is
+strictly increasing in any one raw signal. -/
+theorem posteriorMean_update_strictMono [DecidableEq ι]
+    (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) (j : ι) :
+    StrictMono (fun z : ℝ => M.posteriorMean (Function.update x j z)) := by
+  intro a b hab
+  refine M.posteriorMean_lt_of_pointwise_le_exists_lt ?_ j ?_
+  · intro i
+    by_cases h : i = j
+    · subst h
+      simp [Function.update, hab.le]
+    · simp [Function.update, h]
+  · simp [Function.update, hab]
+
+/--
+Holding all other raw signals fixed, the offset-family posterior mean is an
+affine function of the selected raw signal.
+-/
+theorem posteriorMean_update_eq_base_add_weight_mul_sub [DecidableEq ι]
+    (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) (j : ι) (base z : ℝ) :
+    M.posteriorMean (Function.update x j z) =
+      M.posteriorMean (Function.update x j base) +
+        M.centeredFamily.signalWeight j * (z - base) := by
+  have hcenter (t : ℝ) :
+      M.centeredSignal (Function.update x j t) =
+        Function.update (M.centeredSignal x) j (t - M.noiseMean j) := by
+    ext i
+    by_cases h : i = j
+    · subst h
+      simp [centeredSignal, Function.update]
+    · simp [centeredSignal, Function.update, h]
+  rw [posteriorMean, posteriorMean, hcenter z, hcenter base,
+    M.centeredFamily.posteriorMean_update_eq_base_add_weight_mul_sub
+      (M.centeredSignal x) j (base - M.noiseMean j) (z - M.noiseMean j)]
+  ring
+
+theorem posteriorMean_update_eq_base_add_weight_mul [DecidableEq ι]
+    (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) (j : ι) (z : ℝ) :
+    M.posteriorMean (Function.update x j z) =
+      M.posteriorMean (Function.update x j 0) +
+        M.centeredFamily.signalWeight j * z := by
+  simpa using M.posteriorMean_update_eq_base_add_weight_mul_sub x j 0 z
+
+/--
+Coordinate-threshold form for offset Gaussian posterior means: after fixing
+all other raw signals, clearing a posterior-mean threshold is equivalent to the
+selected raw signal exceeding the induced affine cutoff.
+-/
+theorem threshold_le_posteriorMean_update_iff_cutoff_le [DecidableEq ι]
+    (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) (j : ι)
+    (base threshold z : ℝ) :
+    threshold ≤ M.posteriorMean (Function.update x j z) ↔
+      EconCSLib.affineCutoff
+        (M.posteriorMean (Function.update x j base) -
+          M.centeredFamily.signalWeight j * base)
+        (M.centeredFamily.signalWeight j) threshold ≤ z := by
+  rw [M.posteriorMean_update_eq_base_add_weight_mul_sub x j base z]
+  have hscore :
+      M.posteriorMean (Function.update x j base) +
+          M.centeredFamily.signalWeight j * (z - base) =
+        (M.posteriorMean (Function.update x j base) -
+          M.centeredFamily.signalWeight j * base) +
+          M.centeredFamily.signalWeight j * z := by
+    ring
+  rw [hscore]
+  exact EconCSLib.threshold_le_affine_iff_cutoff_le
+    (M.centeredFamily.signalWeight_pos j)
 
 end GaussianOffsetSignalFamily
 

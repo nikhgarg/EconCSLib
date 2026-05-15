@@ -3,6 +3,8 @@ import EconCSLib.Foundations.Math.FiniteRanking
 import EconCSLib.Foundations.Math.FiniteRounding
 import EconCSLib.Foundations.Math.FiniteSigns
 import EconCSLib.Foundations.Math.PositiveDenominator
+import EconCSLib.Foundations.Math.AffineThreshold
+import EconCSLib.Foundations.Math.ConvexCombination
 import EconCSLib.Foundations.Math.QuasiConvex
 import EconCSLib.Foundations.Math.Sequence
 import EconCSLib.Foundations.Math.Asymptotics

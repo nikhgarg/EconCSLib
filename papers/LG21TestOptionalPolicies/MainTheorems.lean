@@ -1,5 +1,6 @@
 import EconCSLib.Foundations.Probability.Admissions
 import EconCSLib.Foundations.Probability.Gaussian
+import EconCSLib.Foundations.Math.AffineThreshold
 
 open EconCSLib
 open EconCSLib.Probability
@@ -82,6 +83,142 @@ theorem paper_bayesian_optimal_estimator_gaussian
   · rfl
   · simpa [GaussianOffsetSignalFamily.posteriorMeanLaw] using
       M.posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
+
+/--
+Bayesian optimal estimator support for Lemma 4.1 and Theorem 3.1: holding all
+other information fixed, the estimated skill is strictly increasing in any one
+reported feature/test score.
+-/
+theorem paper_bayesian_optimal_estimator_strictMono_feature
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature) :
+    StrictMono (fun value : ℝ =>
+      M.posteriorMean (Function.update theta k value)) :=
+  M.posteriorMean_update_strictMono theta k
+
+/--
+Threshold support for reporting/taking decisions: a positive-slope affine
+Bayesian estimate clears a reporting threshold exactly above its cutoff.
+-/
+theorem paper_reporting_affine_estimate_threshold_iff_cutoff
+    {intercept slope threshold score : ℝ} (hslope : 0 < slope) :
+    threshold ≤ intercept + slope * score ↔
+      affineCutoff intercept slope threshold ≤ score :=
+  threshold_le_affine_iff_cutoff_le hslope
+
+/--
+Gaussian reporting-threshold support: with all other information fixed,
+crossing a Bayesian-estimate threshold is equivalent to the selected reported
+feature/test score clearing an explicit affine cutoff.
+-/
+theorem paper_reporting_gaussian_threshold_iff_cutoff
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (base threshold value : ℝ) :
+    threshold ≤ M.posteriorMean (Function.update theta k value) ↔
+      affineCutoff
+        (M.posteriorMean (Function.update theta k base) -
+          M.centeredFamily.signalWeight k * base)
+        (M.centeredFamily.signalWeight k) threshold ≤ value :=
+  M.threshold_le_posteriorMean_update_iff_cutoff_le theta k base threshold value
+
+/--
+Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different
+means are different distributions.
+-/
+theorem paper_gaussian_estimate_laws_differ_of_mean_lt
+    {Llow Lhigh : GaussianVarianceLaw} (hmean : Llow.mean < Lhigh.mean) :
+    Llow ≠ Lhigh :=
+  GaussianVarianceLaw.ne_of_mean_lt hmean
+
+/--
+Proposition 4.3 support: Gaussian estimate laws with strictly different
+variances are different distributions.
+-/
+theorem paper_gaussian_estimate_laws_differ_of_variance_lt
+    {Llow Lhigh : GaussianVarianceLaw} (hvar : Llow.variance < Lhigh.variance) :
+    Llow ≠ Lhigh :=
+  GaussianVarianceLaw.ne_of_variance_lt hvar
+
+/--
+Propositions 4.2--4.3 precision support: with the same prior variance, a
+strictly larger total signal precision gives a strictly larger marginal
+variance of the Bayesian estimated skill.
+-/
+theorem paper_gaussian_estimate_variance_lt_of_total_precision_lt
+    {Feature : Type*} [Fintype Feature]
+    {Mlow Mhigh : GaussianOffsetSignalFamily Feature}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ k : Feature, Mlow.centeredFamily.signalPrecision k) <
+        ∑ k : Feature, Mhigh.centeredFamily.signalPrecision k) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance :=
+  GaussianOffsetSignalFamily.posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+    hpriorVar hsum
+
+/--
+Propositions 4.2--4.3 precision support: with the same prior variance, a
+strictly larger total signal precision gives a strictly larger Gaussian scale
+for the Bayesian estimate.
+-/
+theorem paper_gaussian_estimate_scale_lt_of_total_precision_lt
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    {Mlow Mhigh : GaussianOffsetSignalFamily Feature}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ k : Feature, Mlow.centeredFamily.signalPrecision k) <
+        ∑ k : Feature, Mhigh.centeredFamily.signalPrecision k) :
+    (Mlow.posteriorMeanScaleLaw).scale <
+      (Mhigh.posteriorMeanScaleLaw).scale :=
+  GaussianOffsetSignalFamily.posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
+    hpriorVar hsum
+
+/--
+Propositions 4.2--4.3 precision support: a strict total-precision gap produces
+different Bayesian-estimate Gaussian laws.
+-/
+theorem paper_gaussian_estimate_laws_differ_of_total_precision_lt
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    {Mlow Mhigh : GaussianOffsetSignalFamily Feature}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      (∑ k : Feature, Mlow.centeredFamily.signalPrecision k) <
+        ∑ k : Feature, Mhigh.centeredFamily.signalPrecision k) :
+    Mlow.posteriorMeanLaw ≠ Mhigh.posteriorMeanLaw :=
+  GaussianVarianceLaw.ne_of_variance_lt
+    (paper_gaussian_estimate_variance_lt_of_total_precision_lt
+      hpriorVar hsum)
+
+/--
+Proposition 4.3 tail-comparison support: above the common mean, the larger-scale
+Gaussian estimate law has weakly larger upper-tail probability.
+-/
+theorem paper_gaussian_upper_tail_le_of_same_mean_scale_le_above_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean ≤ threshold) :
+    api.thresholdPassProb Lsmall threshold ≤
+      api.thresholdPassProb Llarge threshold :=
+  api.thresholdPassProb_le_of_same_mean_scale_le_of_mean_le
+    hmean hscale hthreshold
+
+/--
+Proposition 4.3 strict tail-comparison support: strictly above the common mean,
+the strictly larger-scale Gaussian estimate law has strictly larger upper-tail
+probability.
+-/
+theorem paper_gaussian_upper_tail_lt_of_same_mean_scale_lt_above_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean < threshold) :
+    api.thresholdPassProb Lsmall threshold <
+      api.thresholdPassProb Llarge threshold :=
+  api.thresholdPassProb_lt_of_same_mean_scale_lt_of_mean_lt
+    hmean hscale hthreshold
 
 /--
 Finite conditional-kernel form of the paper's Section 4.2 re-sampling policy.
@@ -176,6 +313,26 @@ structure LG21SourcePolicySurface
   baseOnlyEstimate : Equilibrium → Base → PMF Estimate
   fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate
 
+/--
+Continuous-law version of the source-facing policy surface.
+
+The finite `LG21SourcePolicySurface` above is used for PMF-based resampling
+proofs.  The paper's Gaussian impossibility propositions compare equality of
+continuous estimate laws, so this parallel surface abstracts over the law type
+directly.
+-/
+structure LG21SourceLawPolicySurface
+    (Skill Base Test Law : Type*) where
+  Equilibrium : Type*
+  latentAccessLaw : Equilibrium → Skill → Base → Law
+  latentNoAccessLaw : Equilibrium → Skill → Base → Law
+  observableAccessLaw : Equilibrium → Base → Law
+  observableNoAccessLaw : Equilibrium → Base → Law
+  demographicAccessLaw : Equilibrium → Law
+  demographicNoAccessLaw : Equilibrium → Law
+  baseOnlyLaw : Equilibrium → Base → Law
+  fullFeatureLaw : Equilibrium → Base → Test → Law
+
 /-- Definition 2: latent-skill fairness in every equilibrium. -/
 def lg21SourceLatentSkillFair
     {Skill Base Test Estimate : Type*}
@@ -202,6 +359,141 @@ def lg21SourceTestBlank
     (S : LG21SourcePolicySurface Skill Base Test Estimate) : Prop :=
   ∀ e base test, S.baseOnlyEstimate e base =
     S.fullFeatureEstimate e base test
+
+/-- Definition 2 over arbitrary law objects. -/
+def lg21SourceLawLatentSkillFair
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) : Prop :=
+  ∀ e q base, S.latentAccessLaw e q base =
+    S.latentNoAccessLaw e q base
+
+/-- Definition 3 over arbitrary law objects. -/
+def lg21SourceLawObservablyFair
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) : Prop :=
+  ∀ e base, S.observableAccessLaw e base =
+    S.observableNoAccessLaw e base
+
+/-- Definition 4 over arbitrary law objects. -/
+def lg21SourceLawDemographicallyFair
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) : Prop :=
+  ∀ e, S.demographicAccessLaw e = S.demographicNoAccessLaw e
+
+/-- Definition 5 over arbitrary law objects. -/
+def lg21SourceLawTestBlank
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) : Prop :=
+  ∀ e base test, S.baseOnlyLaw e base = S.fullFeatureLaw e base test
+
+theorem lg21_not_latentSkillFair_of_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium) (q : Skill) (base : Base)
+    (hne : S.latentAccessEstimate e q base ≠
+      S.latentNoAccessEstimate e q base) :
+    ¬ lg21SourceLatentSkillFair S := by
+  intro hfair
+  exact hne (hfair e q base)
+
+theorem lg21_not_lawLatentSkillFair_of_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (e : S.Equilibrium) (q : Skill) (base : Base)
+    (hne : S.latentAccessLaw e q base ≠ S.latentNoAccessLaw e q base) :
+    ¬ lg21SourceLawLatentSkillFair S := by
+  intro hfair
+  exact hne (hfair e q base)
+
+/--
+Proposition 4.2 four-group logical core: if no-access estimate laws are the
+same for two latent skills at a fixed base profile, but access estimate laws
+are different, then latent-skill fairness is impossible.
+-/
+theorem lg21_not_latentSkillFair_of_noAccess_same_access_ne
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    (hNoAccess :
+      S.latentNoAccessEstimate e qHigh base =
+        S.latentNoAccessEstimate e qLow base)
+    (hAccess :
+      S.latentAccessEstimate e qHigh base ≠
+        S.latentAccessEstimate e qLow base) :
+    ¬ lg21SourceLatentSkillFair S := by
+  intro hfair
+  have hHigh := hfair e qHigh base
+  have hLow := hfair e qLow base
+  exact hAccess (by
+    rw [hHigh, hLow, hNoAccess])
+
+/--
+Proposition 4.2 continuous-law four-group core: if no-access laws are the same
+for two latent skills at a fixed base profile, but access laws differ, then
+latent-skill fairness is impossible.
+-/
+theorem lg21_not_lawLatentSkillFair_of_noAccess_same_access_ne
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccess :
+      S.latentAccessLaw e qHigh base ≠
+        S.latentAccessLaw e qLow base) :
+    ¬ lg21SourceLawLatentSkillFair S := by
+  intro hfair
+  have hHigh := hfair e qHigh base
+  have hLow := hfair e qLow base
+  exact hAccess (by
+    rw [hHigh, hLow, hNoAccess])
+
+theorem lg21_not_observablyFair_of_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium) (base : Base)
+    (hne : S.observableAccessEstimate e base ≠
+      S.observableNoAccessEstimate e base) :
+    ¬ lg21SourceObservablyFair S := by
+  intro hfair
+  exact hne (hfair e base)
+
+theorem lg21_not_lawObservablyFair_of_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (e : S.Equilibrium) (base : Base)
+    (hne : S.observableAccessLaw e base ≠ S.observableNoAccessLaw e base) :
+    ¬ lg21SourceLawObservablyFair S := by
+  intro hfair
+  exact hne (hfair e base)
+
+theorem lg21_not_demographicallyFair_of_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium)
+    (hne : S.demographicAccessEstimate e ≠ S.demographicNoAccessEstimate e) :
+    ¬ lg21SourceDemographicallyFair S := by
+  intro hfair
+  exact hne (hfair e)
+
+theorem lg21_not_lawDemographicallyFair_of_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (e : S.Equilibrium)
+    (hne : S.demographicAccessLaw e ≠ S.demographicNoAccessLaw e) :
+    ¬ lg21SourceLawDemographicallyFair S := by
+  intro hfair
+  exact hne (hfair e)
+
+theorem lg21_not_testBlank_of_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium) (base : Base) (test : Test)
+    (hne : S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) :
+    ¬ lg21SourceTestBlank S := by
+  intro hblank
+  exact hne (hblank e base test)
 
 /-- Certificate for Theorem 3.1's strategic-withholding and unfairness endpoint. -/
 structure LG21StrategicWithholdingCertificate
@@ -279,6 +571,83 @@ theorem paper_proposition4_2_not_latent_skill_fair_of_certificate
     ¬ lg21SourceLatentSkillFair S := by
   exact C.not_latent_skill_fair
 
+/--
+Proposition 4.2 logical core: a single latent-skill fairness violation witness
+proves the policy is not latent-skill fair.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium) (q : Skill) (base : Base)
+    (hne : S.latentAccessEstimate e q base ≠
+      S.latentNoAccessEstimate e q base) :
+    ¬ lg21SourceLatentSkillFair S :=
+  lg21_not_latentSkillFair_of_witness e q base hne
+
+/--
+Proposition 4.2 paper proof core: two no-access groups with the same observed
+base profile cannot be distinguished, while two access groups with different
+latent skills have different Bayesian-optimal estimate laws.  Those two facts
+already contradict latent-skill fairness.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_four_group_core
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    (hNoAccess :
+      S.latentNoAccessEstimate e qHigh base =
+        S.latentNoAccessEstimate e qLow base)
+    (hAccess :
+      S.latentAccessEstimate e qHigh base ≠
+        S.latentAccessEstimate e qLow base) :
+    ¬ lg21SourceLatentSkillFair S :=
+  lg21_not_latentSkillFair_of_noAccess_same_access_ne
+    e qHigh qLow base hNoAccess hAccess
+
+/--
+Proposition 4.2 continuous-law proof core: two no-access groups with the same
+observed base profile cannot be distinguished, while two access groups have
+different Bayesian-optimal estimate laws.
+-/
+theorem paper_proposition4_2_not_law_latent_skill_fair_of_four_group_core
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccess :
+      S.latentAccessLaw e qHigh base ≠
+        S.latentAccessLaw e qLow base) :
+    ¬ lg21SourceLawLatentSkillFair S :=
+  lg21_not_lawLatentSkillFair_of_noAccess_same_access_ne
+    e qHigh qLow base hNoAccess hAccess
+
+/--
+Proposition 4.2 Gaussian-law proof core: if the two access-side estimated-skill
+laws have strictly ordered Gaussian means, then the access laws differ, so the
+four-group argument rules out latent-skill fairness.
+-/
+theorem paper_proposition4_2_not_law_latent_skill_fair_of_gaussian_mean_gap
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianVarianceLaw}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {Llow Lhigh : GaussianVarianceLaw}
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh : S.latentAccessLaw e qHigh base = Lhigh)
+    (hAccessLow : S.latentAccessLaw e qLow base = Llow)
+    (hmean : Llow.mean < Lhigh.mean) :
+    ¬ lg21SourceLawLatentSkillFair S := by
+  apply paper_proposition4_2_not_law_latent_skill_fair_of_four_group_core
+    e qHigh qLow base hNoAccess
+  intro hsame
+  have hLaw : Lhigh = Llow := by
+    rw [← hAccessHigh, ← hAccessLow]
+    exact hsame
+  exact (GaussianVarianceLaw.ne_of_mean_lt hmean) hLaw.symm
+
 /-- Certificate for Proposition 4.3. -/
 structure LG21NotObservableOrDemographicFairCertificate
     {Skill Base Test Estimate : Type*}
@@ -296,6 +665,79 @@ theorem paper_proposition4_3_not_observable_or_demographic_fair_of_certificate
     (C : LG21NotObservableOrDemographicFairCertificate S) :
     ¬ lg21SourceObservablyFair S ∧ ¬ lg21SourceDemographicallyFair S := by
   exact ⟨C.not_observably_fair, C.not_demographically_fair⟩
+
+/--
+Proposition 4.3 logical core: observable and demographic fairness both fail
+once concrete law-difference witnesses are supplied.
+-/
+theorem paper_proposition4_3_not_observable_or_demographic_fair_of_witnesses
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (eObs : S.Equilibrium) (base : Base)
+    (hobs : S.observableAccessEstimate eObs base ≠
+      S.observableNoAccessEstimate eObs base)
+    (eDemo : S.Equilibrium)
+    (hdemo : S.demographicAccessEstimate eDemo ≠
+      S.demographicNoAccessEstimate eDemo) :
+    ¬ lg21SourceObservablyFair S ∧ ¬ lg21SourceDemographicallyFair S := by
+  exact ⟨lg21_not_observablyFair_of_witness eObs base hobs,
+    lg21_not_demographicallyFair_of_witness eDemo hdemo⟩
+
+/--
+Proposition 4.3 continuous-law core: observable and demographic law-difference
+witnesses prove both source fairness definitions fail.
+-/
+theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_witnesses
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (eObs : S.Equilibrium) (base : Base)
+    (hobs : S.observableAccessLaw eObs base ≠ S.observableNoAccessLaw eObs base)
+    (eDemo : S.Equilibrium)
+    (hdemo : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    ¬ lg21SourceLawObservablyFair S ∧ ¬ lg21SourceLawDemographicallyFair S := by
+  exact ⟨lg21_not_lawObservablyFair_of_witness eObs base hobs,
+    lg21_not_lawDemographicallyFair_of_witness eDemo hdemo⟩
+
+/--
+Proposition 4.3 Gaussian observable-law core: a strict variance gap between
+the access and no-access Gaussian estimate laws proves observable fairness
+fails at the given base profile.
+-/
+theorem paper_proposition4_3_not_law_observable_fair_of_gaussian_variance_gap
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianVarianceLaw}
+    (e : S.Equilibrium) (base : Base)
+    {Llow Lhigh : GaussianVarianceLaw}
+    (hAccess : S.observableAccessLaw e base = Lhigh)
+    (hNoAccess : S.observableNoAccessLaw e base = Llow)
+    (hvar : Llow.variance < Lhigh.variance) :
+    ¬ lg21SourceLawObservablyFair S := by
+  apply lg21_not_lawObservablyFair_of_witness e base
+  intro hsame
+  have hLaw : Lhigh = Llow := by
+    rw [← hAccess, ← hNoAccess]
+    exact hsame
+  exact (GaussianVarianceLaw.ne_of_variance_lt hvar) hLaw.symm
+
+/--
+Proposition 4.3 Gaussian demographic-law core: a strict variance gap between
+the demographic Gaussian estimate laws proves demographic fairness fails.
+-/
+theorem paper_proposition4_3_not_law_demographic_fair_of_gaussian_variance_gap
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianVarianceLaw}
+    (e : S.Equilibrium)
+    {Llow Lhigh : GaussianVarianceLaw}
+    (hAccess : S.demographicAccessLaw e = Lhigh)
+    (hNoAccess : S.demographicNoAccessLaw e = Llow)
+    (hvar : Llow.variance < Lhigh.variance) :
+    ¬ lg21SourceLawDemographicallyFair S := by
+  apply lg21_not_lawDemographicallyFair_of_witness e
+  intro hsame
+  have hLaw : Lhigh = Llow := by
+    rw [← hAccess, ← hNoAccess]
+    exact hsame
+  exact (GaussianVarianceLaw.ne_of_variance_lt hvar) hLaw.symm
 
 /-- Observable fairness implies demographic fairness when the base-profile law is shared. -/
 theorem lg21_demographicallyFair_of_observableFair
