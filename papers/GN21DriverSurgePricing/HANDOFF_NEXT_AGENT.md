@@ -150,6 +150,8 @@ Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
 paper_theorem4_measurable_accept_all_unique_optimal_of_shape_replacement_statewise_improvements_unless
 Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessSourceAssumptions
 paper_theorem3_measured_structured_measurable_ic_prices_of_shape_replacement_statewise_improvements_unless_positive_source_assumptions
+Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_middle_reroute_positive_source_assumptions
 ```
 
 The lower-sign wrapper asks for:
@@ -256,12 +258,13 @@ The fixed-transfer regular endpoint packages are now threaded through
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_endpoint_current_bounds_selection_unless`
 and the two `..._via_selection_unless` Theorem 3 wrappers.
 
-The next useful Lean target is to weaken the source assumptions using the
-direct hnot-aware statewise interface.  In the surge reject-middle branch, split
-on `lo <= 0`: use
-`rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos` and
-`hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll` to route to the short-tail
-improvement; otherwise keep the upper-cutoff reject-middle endpoint route.
+The middle-reroute source boundary already performs the `lo <= 0` split for
+surge reject-middle shapes and routes that branch through the short-tail
+endpoint at cutoff `hi`.  The next useful Lean target is the lower
+fixed-transfer adapter that supplies
+`Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate`
+from fixed-state-by-policy-form data, so the source assumptions ask only for
+reject-middle endpoint data when `0 <= lo`.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:

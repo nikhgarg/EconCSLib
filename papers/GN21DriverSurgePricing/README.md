@@ -317,7 +317,13 @@ cache is `source.txt`.
   lets a proof normalize degenerate syntactic shape cases inside the
   non-accept-all branch and return the final feasible statewise improvement
   directly, rather than forcing every branch through a same-shape endpoint
-  data record.
+  data record.  The endpoint-data specialization
+  `Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate`
+  plus
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_middle_reroute_positive_source_assumptions`
+  implements the first such reroute: a surge reject-middle branch with
+  `lo <= 0` is discharged by the short-tail endpoint at cutoff `hi`, so source
+  proofs only need reject-middle endpoint data for the `0 <= lo` branch.
   The source-facing variant is now exposed as
   `Theorem4NonsurgeMeasurableReplacementData`,
   `Theorem4SurgeMeasurableReplacementData`,
