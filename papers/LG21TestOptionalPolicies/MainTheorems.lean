@@ -1,6 +1,8 @@
 import EconCSLib.Foundations.Probability.Admissions
+import EconCSLib.Foundations.Probability.Gaussian
 
 open EconCSLib
+open EconCSLib.Probability
 
 /-!
 # Paper-Facing Theorems: Test-optional Policies and Informational Gaps
@@ -53,6 +55,33 @@ def lg21TwoSignalAdmissionsModel
     leftKernel := m.baseKernel
     rightKernel := m.testKernel
     value := m.quality }
+
+/--
+Bayesian optimal Gaussian estimator used throughout Sections 3--4.
+
+For any observed feature family, the posterior estimate is the precision-weighted
+posterior mean.  The theorem also records the marginal law of that estimate.
+This is the shared Gaussian algebra used by Theorem 3.1, Lemma 4.1, and
+Propositions 4.2--4.3 before their strategic/threshold comparisons.
+-/
+theorem paper_bayesian_optimal_estimator_gaussian
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) :
+    M.posteriorMean theta =
+        (M.centeredFamily.priorPrecision * M.priorMean +
+          ∑ k : Feature,
+            M.centeredFamily.signalPrecision k * (theta k - M.noiseMean k)) /
+          M.centeredFamily.posteriorPrecision ∧
+      (M.posteriorMeanLaw).mean = M.priorMean ∧
+        (M.posteriorMeanLaw).variance =
+          M.priorVar *
+              (∑ k : Feature, M.centeredFamily.signalPrecision k) /
+            M.centeredFamily.posteriorPrecision := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact M.posteriorMean_eq_precision_weighted_div theta
+  · rfl
+  · simpa [GaussianOffsetSignalFamily.posteriorMeanLaw] using
+      M.posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
 
 /--
 Finite conditional-kernel form of the paper's Section 4.2 re-sampling policy.

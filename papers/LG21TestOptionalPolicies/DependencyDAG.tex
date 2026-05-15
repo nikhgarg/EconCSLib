@@ -2,8 +2,11 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=1.0cm and 2.1cm,
-  every node/.style={font=\sffamily\small}]
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt, font=\sffamily\small}
+]
 
 \dagPaperMetadata{Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps}{Zhi Liu and Nikhil Garg}{EAAMO 2021 version}{2021}{https://arxiv.org/pdf/2107.08922}
 \dagPaperLegendRightOfMetadata{
@@ -16,76 +19,81 @@
 \daglegend{(legAux)(legPartial)(legCav)(legCond)(legOpen)}{Legend}
 
 \begin{dagPaperBody}
-\begin{scope}[yshift=-1.15cm]
 
 \node[dag_result, text width=4.6cm] (AuxFinite) at (0,0) {
-  \textbf{Auxiliary finite admissions support}\\
+  \textbf{Finite admissions support}\\
   Base/test mass, selection, conditional-expectation decompositions
 };
 
-\node[dag_partial, text width=4.8cm] (Model) at (5.8,0) {
+\node[dag_partial, text width=4.8cm] (SharedProb) at (5.9,0) {
+  \textbf{Shared testing probability library}\\
+  posterior wrappers, Gaussian score algebra, and conditional resampling
+};
+
+\node[dag_partial, text width=4.8cm] (Model) at (11.8,0) {
   \textbf{Source model (Secs. 2--4)}\\
   finite kernels plus source policy surface; concrete Gaussian information sets remain open
 };
 
-\node[dag_caveat, text width=4.0cm] (Def1) at (11.6,0) {
+\node[dag_caveat, text width=4.0cm] (Def1) at (17.7,0) {
   \textbf{Definition 1 (Sec. 2)}\\
   abstract equilibrium predicate encoded; concrete action space open
 };
 
-\node[dag_conditional, text width=4.8cm] (Thm31) at (17.4,0) {
+\node[dag_conditional, text width=4.8cm] (Thm31) at (23.6,0) {
   \textbf{Theorem 3.1 (Sec. 3)}\\
   strategic withholding endpoint exposed as certificate
 };
 
-\node[dag_conditional, text width=4.8cm] (Thm32) at (23.2,0) {
+\node[dag_conditional, text width=4.8cm] (Thm32) at (29.5,0) {
   \textbf{Theorem 3.2 (Sec. 3)}\\
   fairness-impossibility endpoint exposed as certificate
 };
 
-\node[dag_caveat, text width=4.0cm] (FairDefs) at (11.6,-6.6) {
+\node[dag_caveat, text width=4.0cm] (FairDefs) at (11.8,-4.2) {
   \textbf{Definitions 2--5 (Sec. 2)}\\
   source fairness and test-blank predicates encoded with caveats
 };
 
-\node[dag_conditional, text width=4.8cm] (Lemma41) at (17.4,-6.6) {
+\node[dag_conditional, text width=4.8cm] (Lemma41) at (17.7,-4.2) {
   \textbf{Lemma 4.1 (Sec. 4)}\\
   strategy-proofness endpoint exposed as certificate
 };
 
-\node[dag_conditional, text width=4.8cm] (Prop42) at (23.2,-6.6) {
+\node[dag_conditional, text width=4.8cm] (Prop42) at (23.6,-4.2) {
   \textbf{Proposition 4.2 (Sec. 4.1)}\\
   not latent skill fair endpoint exposed as certificate
 };
 
-\node[dag_conditional, text width=4.8cm] (Prop43) at (23.2,-13.2) {
+\node[dag_conditional, text width=4.8cm] (Prop43) at (29.5,-4.2) {
   \textbf{Proposition 4.3 (Sec. 4.1)}\\
   not observable/demographic fair endpoint exposed as certificate
 };
 
-\node[dag_caveat, text width=4.0cm] (Def6) at (11.6,-13.2) {
+\node[dag_caveat, text width=4.0cm] (Def6) at (11.8,-8.6) {
   \textbf{Definition 6 (Sec. 4.2)}\\
   finite conditional-kernel re-sampling policy
 };
 
-\node[dag_caveat, text width=4.0cm] (Thm44) at (17.4,-13.2) {
+\node[dag_caveat, text width=4.0cm] (Thm44) at (17.7,-8.6) {
   \textbf{Theorem 4.4 (Sec. 4.2)}\\
   finite distributional core of observable and demographic fairness
 };
 
 % Edges: solid only for verified auxiliary support; dashed for source roadmap debt.
-\draw[dag_arrow] (AuxFinite.east) -- (Model.west);
+\draw[dag_arrow] (AuxFinite.east) -- (SharedProb.west);
+\draw[dag_dashed_arrow] (SharedProb.east) -- (Model.west);
+\draw[dag_arrow] (SharedProb.south) |- (Def6.west);
 \draw[dag_dashed_arrow] (Model.east) -- (Def1.west);
 \draw[dag_dashed_arrow] (Model.south) |- (FairDefs.west);
 \draw[dag_dashed_arrow] (Def1.east) -- (Thm31.west);
 \draw[dag_dashed_arrow] (Thm31.east) -- (Thm32.west);
 \draw[dag_dashed_arrow] (FairDefs.east) -- (Lemma41.west);
 \draw[dag_dashed_arrow] (Lemma41.east) -- (Prop42.west);
-\draw[dag_dashed_arrow] (Prop42.south) -- (Prop43.north);
+\draw[dag_dashed_arrow] (Prop42.east) -- (Prop43.west);
 \draw[dag_arrow] (Def6.east) -- (Thm44.west);
 \draw[dag_dashed_arrow] (Lemma41.south) -- (Thm44.north);
 
-\end{scope}
 \end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

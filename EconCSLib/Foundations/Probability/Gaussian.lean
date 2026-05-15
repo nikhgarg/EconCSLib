@@ -913,6 +913,45 @@ theorem posteriorMean_eq_weighted_sum
       intro i _
       ring)
 
+/--
+Posterior mean in the source-paper precision-weighted form:
+prior precision times prior mean plus signal precisions times observed signals,
+divided by total posterior precision.
+-/
+theorem posteriorMean_eq_precision_weighted_div
+    (M : GaussianSignalFamily ι) (x : ι → ℝ) :
+    M.posteriorMean x =
+      (M.priorPrecision * M.priorMean +
+        ∑ i : ι, M.signalPrecision i * x i) /
+          M.posteriorPrecision := by
+  rw [posteriorMean, posteriorVariance]
+  rw [div_eq_mul_inv]
+  ring
+
+/--
+Marginal variance of the posterior mean in the finite-feature source-paper
+form: prior variance times total signal precision over posterior precision.
+-/
+theorem posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
+    (M : GaussianSignalFamily ι) :
+    M.posteriorMeanVariance =
+      M.priorVar * (∑ i : ι, M.signalPrecision i) / M.posteriorPrecision := by
+  rw [posteriorMeanVariance, posteriorVariance, posteriorPrecision, priorPrecision]
+  have hp : M.priorVar ≠ 0 := ne_of_gt M.priorVar_pos
+  have hpost :
+      M.priorVar⁻¹ + ∑ i : ι, M.signalPrecision i ≠ 0 := by
+    exact ne_of_gt M.posteriorPrecision_pos
+  have hsum_nonneg : 0 ≤ ∑ i : ι, M.signalPrecision i := by
+    exact Finset.sum_nonneg (by
+      intro i _
+      exact (M.signalPrecision_pos i).le)
+  have hden :
+      1 + M.priorVar * (∑ i : ι, M.signalPrecision i) ≠ 0 := by
+    exact ne_of_gt (add_pos_of_pos_of_nonneg zero_lt_one
+      (mul_nonneg M.priorVar_pos.le hsum_nonneg))
+  field_simp [hp, hpost, hden]
+  ring
+
 /-- The posterior mean is monotone in every observed signal coordinate. -/
 theorem posteriorMean_mono_of_pointwise_le
     (M : GaussianSignalFamily ι) {x y : ι → ℝ}
@@ -1005,6 +1044,32 @@ theorem posteriorMean_eq_weighted_sum
             (x i - M.noiseMean i) := by
   rw [posteriorMean, GaussianSignalFamily.posteriorMean_eq_weighted_sum]
   rfl
+
+/--
+Posterior mean for offset signals in the source-paper precision-weighted form.
+Each raw signal is centered by its group-specific noise mean.
+-/
+theorem posteriorMean_eq_precision_weighted_div
+    (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) :
+    M.posteriorMean x =
+      (M.centeredFamily.priorPrecision * M.priorMean +
+        ∑ i : ι,
+          M.centeredFamily.signalPrecision i * (x i - M.noiseMean i)) /
+          M.centeredFamily.posteriorPrecision := by
+  rw [posteriorMean, GaussianSignalFamily.posteriorMean_eq_precision_weighted_div]
+  rfl
+
+/--
+Marginal variance of the offset-family posterior mean in source-paper
+precision notation.
+-/
+theorem posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
+    (M : GaussianOffsetSignalFamily ι) :
+    M.posteriorMeanVariance =
+      M.priorVar * (∑ i : ι, M.centeredFamily.signalPrecision i) /
+        M.centeredFamily.posteriorPrecision := by
+  exact M.centeredFamily
+    |>.posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
 
 /-- The offset-family posterior mean is monotone in every raw signal coordinate. -/
 theorem posteriorMean_mono_of_pointwise_le

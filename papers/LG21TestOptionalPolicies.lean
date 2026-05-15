@@ -1,1 +1,1 @@
-import LG21TestOptionalPolicies.MainTheorems
+import LG21TestOptionalPolicies.PaperInterface

@@ -17,6 +17,8 @@ cache is kept as `source.txt` for named-statement audits.
 ## Central Theorem File
 
 - `LG21TestOptionalPolicies/MainTheorems.lean`
+- Human-facing theorem ledger: `LG21TestOptionalPolicies/PaperInterface.lean`
+- Live proof plan: `LG21TestOptionalPolicies/FORMALIZATION_PLAN.md`
 
 ## Dependency DAG
 
@@ -25,7 +27,8 @@ cache is kept as `source.txt` for named-statement audits.
 ## Guideline Audit
 
 - Folder contract: satisfied (`.gitignore`, `README.md`, `DependencyDAG.tex`,
-  `MainTheorems.lean`, local PDF, and `source.txt` are present).
+  `MainTheorems.lean`, `PaperInterface.lean`, `FORMALIZATION_PLAN.md`, local
+  PDF, and `source.txt` are present).
 - README status vocabulary: updated to use the controlled statuses from
   `docs/STATUS.md`.
 - DAG status vocabulary: updated to use shared `docs/tikz/dag_preamble.tex`
@@ -40,6 +43,7 @@ cache is kept as `source.txt` for named-statement audits.
 | Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
 | Source model: access status, base/test features, reporting, and estimation policies | `LG21Model`, `lg21BaseModel`, `lg21TestModel`, `LG21SourcePolicySurface` | partially formalized | `MainTheorems.lean` | Finite base/test signal kernels, shared quality, and a source-facing distributional policy surface are encoded; the Gaussian posterior formulas and concrete access/report/take information sets are not yet source-faithfully instantiated. |
+| Bayesian optimal Gaussian estimator used by `P_BO` | `paper_bayesian_optimal_estimator_gaussian`, `paper_interface_bayesian_optimal_estimator_gaussian` | formalized with caveat | `MainTheorems.lean`, `PaperInterface.lean` | The shared Gaussian posterior-mean formula and marginal estimate law are proved using `GaussianOffsetSignalFamily`; the later strategic/fairness theorems still need concrete threshold and distribution-comparison instantiations. |
 | Definition 1, equilibrium | `LG21EquilibriumData`, `lg21Equilibrium` | formalized with caveat | `MainTheorems.lean` | Abstract feasible-action, best-response, and estimation-consistency predicate matching the source structure; not yet instantiated with the paper's concrete `(Y,X)` action space and Gaussian payoff. |
 | Definition 2, latent skill fairness | `lg21SourceLatentSkillFair` | formalized with caveat | `MainTheorems.lean` | Source equality of estimate laws conditional on equilibrium, skill, and observed base features is encoded over `LG21SourcePolicySurface`; concrete Gaussian estimate distributions remain open. |
 | Definition 3, observable fairness | `lg21SourceObservablyFair`, `lg21ObservableFair` | formalized with caveat | `MainTheorems.lean` | Source equilibrium-quantified definition and finite kernel equality are encoded. |
@@ -56,8 +60,9 @@ cache is kept as `source.txt` for named-statement audits.
 
 ## Source Notes
 
-The current Lean code closes finite admissions accounting identities and the
-finite conditional-kernel core of Definition 6 / Theorem 4.4. It does not yet
-formalize the paper's strategic equilibrium model, Lemma 4.1, the negative
-unraveling theorems, or the Gaussian posterior formulas used in the source
-proofs.
+The current Lean code closes finite admissions accounting identities, the
+finite conditional-kernel core of Definition 6 / Theorem 4.4, and the shared
+Gaussian posterior-mean algebra used by `P_BO`. It does not yet formalize the
+paper's strategic equilibrium model, Lemma 4.1, the negative unraveling
+theorems, or the concrete Gaussian threshold/distribution comparisons used in
+the source proofs.
