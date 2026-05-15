@@ -142,6 +142,16 @@ hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll
 rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos
 ```
 
+There is also a direct hnot-aware statewise route for cases where a degenerate
+syntactic shape should be rerouted before choosing endpoint data:
+
+```lean
+Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+paper_theorem4_measurable_accept_all_unique_optimal_of_shape_replacement_statewise_improvements_unless
+Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessSourceAssumptions
+paper_theorem3_measured_structured_measurable_ic_prices_of_shape_replacement_statewise_improvements_unless_positive_source_assumptions
+```
+
 The lower-sign wrapper asks for:
 
 - a signed reward-envelope choice:
@@ -241,12 +251,17 @@ Lemma 9 lower-slack route is suspect.  The next proof work should use the
 endpoint/allowed-policy route, not another attempt to prove the selected lower
 slack for arbitrary feasible positive-mass policies.
 
-The most useful next Lean target is a fixed-transfer regular endpoint wrapper
-that uses `Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate`
-internally.  The Theorem 3 source wrapper is already compiled.  The remaining
-work is to thread the existing fixed-transfer/local endpoint packages through
-the hnot-aware interface so cutoff nondegeneracy can be proved after the proof
-knows the policy branch is genuinely non-accept-all.
+The fixed-transfer regular endpoint packages are now threaded through
+`Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate`; see
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_endpoint_current_bounds_selection_unless`
+and the two `..._via_selection_unless` Theorem 3 wrappers.
+
+The next useful Lean target is to weaken the source assumptions using the
+direct hnot-aware statewise interface.  In the surge reject-middle branch, split
+on `lo <= 0`: use
+`rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos` and
+`hi_pos_of_rejectsMiddleTrips_of_not_acceptsAll` to route to the short-tail
+improvement; otherwise keep the upper-cutoff reject-middle endpoint route.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:

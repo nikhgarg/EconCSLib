@@ -308,6 +308,16 @@ cache is `source.txt`.
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions`
   plus
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_source_assumptions`.
+  The direct hnot-aware statewise route
+  `Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_shape_replacement_statewise_improvements_unless`,
+  `Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessSourceAssumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_shape_replacement_statewise_improvements_unless_positive_source_assumptions`
+  lets a proof normalize degenerate syntactic shape cases inside the
+  non-accept-all branch and return the final feasible statewise improvement
+  directly, rather than forcing every branch through a same-shape endpoint
+  data record.
   The source-facing variant is now exposed as
   `Theorem4NonsurgeMeasurableReplacementData`,
   `Theorem4SurgeMeasurableReplacementData`,
@@ -492,7 +502,16 @@ cache is `source.txt`.
   complement pointwise equality and reward-rate facts for each state, and
   ordinary surge cutoff bounds; Lean derives the branch-specific policy-form
   packages, surge moving-cutoff choice, and tail-integrability package
-  internally.  These adapters are strongest in accept-all fixed-state branches;
+  internally.  The hnot-aware fixed-transfer adapters
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_endpoint_current_bounds_selection_unless`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_fixed_transfer_allowed_policy_forms_of_shape_replacements`,
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless`
+  thread those existing packages through `SelectionUnless`; the remaining
+  closeout target is to weaken the endpoint source assumptions using the
+  branch-local `¬ acceptsAllTrips` facts.
+  These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.
   Its local records state the fixed-state structured-price accounting

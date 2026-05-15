@@ -33018,6 +33018,197 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
         μ arrival m z switch12 switch21 C)
 
 /--
+Hnot-aware statewise-improvement certificate from all-measurable Lemma 5
+replacement data.  Unlike the endpoint-data interface above, each shape case
+may return the final feasible statewise improvement directly.  This is useful
+when a degenerate syntactic shape should be normalized to a different endpoint
+move inside the non-accept-all branch.
+-/
+structure Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  all_measurable_shape_replacements :
+    Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+
+/--
+Direct hnot-aware statewise-improvement data instantiate the feasible
+statewise strict-local certificate.
+-/
+noncomputable def theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate_of_shape_replacement_statewise_improvements_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := C.all_measurable_shape_replacements.exists_optimal
+  statewise_strict_aggregate_improvement_unless := by
+    intro ρ hρ i hnot
+    let D :=
+      theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        C.all_measurable_shape_replacements
+    fin_cases i
+    · rcases D.only_policy_forms ρ hρ with
+        ⟨⟨nshape, hnallowed, hnform⟩, _⟩
+      have hshape : theorem4NonsurgeShape (ρ 0) :=
+        theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform
+      rcases theorem4NonsurgeShape_cases_of_not_acceptsAll hshape hnot with
+        hlong | hmiddle
+      · rcases hlong with ⟨t, ht⟩
+        exact C.nonsurge_reject_long_improvement ρ hρ hnot t ht
+      · rcases hmiddle with ⟨lo, hi, hmid⟩
+        exact C.nonsurge_accept_middle_improvement ρ hρ hnot lo hi hmid
+    · rcases D.only_policy_forms ρ hρ with
+        ⟨_, ⟨sshape, hsallowed, hsform⟩⟩
+      have hshape : theorem4SurgeShape (ρ 1) :=
+        theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform
+      rcases theorem4SurgeShape_cases_of_not_acceptsAll hshape hnot with
+        hshort | hmiddle
+      · rcases hshort with ⟨t, ht⟩
+        exact C.surge_reject_short_improvement ρ hρ hnot t ht
+      · rcases hmiddle with ⟨lo, hi, hmid⟩
+        exact C.surge_reject_middle_improvement ρ hρ hnot lo hi hmid
+
+/--
+Direct hnot-aware statewise-improvement data instantiate the feasible
+strict-local certificate consumed by the measurable Theorem 4 route.
+-/
+noncomputable def theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_shape_replacement_statewise_improvements_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+  theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_statewise_feasible_strict_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleStatewiseStrictLocalImprovementCertificate_of_shape_replacement_statewise_improvements_unless
+      μ arrival m z switch12 switch21 C)
+
+/--
+Endpoint current-bounds selections in the non-accept-all branch are a special
+case of the direct hnot-aware statewise-improvement interface.
+-/
+def Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+      μ arrival m z switch12 switch21 where
+  all_measurable_shape_replacements := C.all_measurable_shape_replacements
+  nonsurge_reject_long_improvement := by
+    intro ρ hρ hnot t hshape
+    exact
+      (C.nonsurge_reject_long_endpoint ρ hρ hnot t hshape).statewise_improvement
+        hρ hshape
+  nonsurge_accept_middle_improvement := by
+    intro ρ hρ hnot lo hi hshape
+    exact
+      (C.nonsurge_accept_middle_endpoint ρ hρ hnot lo hi hshape).statewise_improvement
+        hρ hshape
+  surge_reject_short_improvement := by
+    intro ρ hρ hnot t hshape
+    exact
+      (C.surge_reject_short_endpoint ρ hρ hnot t hshape).statewise_improvement
+        hρ hshape
+  surge_reject_middle_improvement := by
+    intro ρ hρ hnot lo hi hshape
+    exact
+      (C.surge_reject_middle_endpoint ρ hρ hnot lo hi hshape).statewise_improvement
+        hρ hshape
+
+/--
+Measurable Theorem 4 accept-all uniqueness from direct hnot-aware statewise
+improvement data.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_shape_replacement_statewise_improvements_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      (theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_shape_replacement_statewise_improvements_unless
+        μ arrival m z switch12 switch21 C)
+
+/--
 Source-facing current-bounds endpoint selection certificate.  It asks for
 ordinary allowed Lemma 5 replacement cases; feasible measurability of their
 canonical replacement policies is derived by
@@ -33674,6 +33865,47 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
       μ arrival m z switch12 switch21
       (Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
         μ arrival m z switch12 switch21 C)
+
+/--
+Regular endpoint data plus all-measurable shape replacements instantiate the
+hnot-aware endpoint-selection certificate.  This lets source routes that prove
+explicit Lemma 5 replacement data use the non-accept-all endpoint interface
+while reusing the already-verified regular endpoint packages.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate.of_regular_allowed_policy_forms_and_shape_replacements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (Creplacement :
+      Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+      μ arrival m z switch12 switch21 where
+  all_measurable_shape_replacements := Creplacement
+  nonsurge_reject_long_endpoint := by
+    intro ρ hρ _ u hshape
+    exact
+      (((C.nonsurge_reject_long_endpoint ρ hρ u hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1)
+  nonsurge_accept_middle_endpoint := by
+    intro ρ hρ _ lo hi hshape
+    exact
+      (((C.nonsurge_accept_middle_endpoint ρ hρ lo hi hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1)
+  surge_reject_short_endpoint := by
+    intro ρ hρ _ u hshape
+    exact
+      (((C.surge_reject_short_endpoint ρ hρ u hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1)
+  surge_reject_middle_endpoint := by
+    intro ρ hρ _ lo hi hshape
+    exact
+      (((C.surge_reject_middle_endpoint ρ hρ lo hi hshape).to_supported_endpoint_data
+          hρ.1).to_current_bounds_endpoint_data hρ.1)
 
 /--
 Surge reject-middle upper-cutoff bridge using accept-all Lemma 9 bounds.  The
@@ -46574,6 +46806,78 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndp
       Creplacement)
 
 /--
+Expand the source-facing fixed-state-by-policy-form cutoff-bounds certificate
+through the full fixed-transfer endpoint stack, using all-measurable Lemma 5
+replacement data to choose the allowed policy-form branches.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_fixed_transfer_allowed_policy_forms_of_shape_replacements
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (Creplacement :
+      Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+      μ arrival R1 R2 switch12 switch21 m z :=
+  let Cforms :
+      Theorem4AllMeasurableAllowedPolicyFormsCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :=
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
+      Creplacement
+  let LbyPolicy := C.to_derived_tail.to_positive_tail.to_uniform_tail.to_fixed_state_by_policy_form
+  let Lseparated := LbyPolicy.to_fixed_state_separated P.params Cforms
+  let LnoMass := Lseparated.to_no_mass
+  let Lmass :=
+    LnoMass.to_mass_separated
+      hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos Cforms
+  let Lpointwise := Lmass.to_pointwise_reward_rate
+  let Llocal := Lpointwise.to_positive_cutoff.to_local_endpoint
+  Llocal.of_shape_replacements P hR1_pos hR1_lt_R2 hR2_pos
+    hmeasure_surge_acceptAll_pos Creplacement
+
+/--
+Common fixed-state equality data expand to the same fixed-transfer endpoint
+stack by first deriving the policy-form fixed-state packages.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_fixed_transfer_allowed_policy_forms_of_shape_replacements
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (Creplacement :
+      Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+      μ arrival R1 R2 switch12 switch21 m z :=
+  C.to_fixed_state_by_policy_form.to_fixed_transfer_allowed_policy_forms_of_shape_replacements
+    P hR1_pos hR1_lt_R2 hR2_pos hmeasure_nonsurge_acceptAll_pos
+    hmeasure_surge_acceptAll_pos Creplacement
+
+/--
 Expand the Theorem 3 fixed-transfer source certificate to the existing regular
 allowed-policy-form endpoint certificate.
 -/
@@ -46725,6 +47029,27 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPo
               C.hmeasure_surge_acceptAll_pos Dhi.hfixed_lower_cross
               Dhi.hfixed_upper_cross Dhi.hmass_other_pos hmR_pos
               (le_of_lt C.hR1_pos) hfixed_reward_rate)
+
+/--
+Expand the fixed-transfer regular endpoint certificate directly to the
+hnot-aware endpoint-selection interface, using explicit all-measurable Lemma 5
+replacement data for the shape-replacement component.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_endpoint_current_bounds_selection_unless
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (Creplacement :
+      Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))) :
+    Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate
+      μ arrival m z switch12 switch21 :=
+  Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate.of_regular_allowed_policy_forms_and_shape_replacements
+    μ arrival m z switch12 switch21 Creplacement C.to_regular_allowed_policy_forms
 
 /--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured
@@ -49380,6 +49705,168 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_curr
             A.endpoint_current_bounds_selection_unless }
 
 /--
+Bundled source-level assumptions for direct hnot-aware statewise improvements.
+This boundary lets a source proof normalize degenerate syntactic shape cases
+inside the non-accept-all branch before returning the final feasible
+statewise improvement.
+-/
+structure Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  shape_replacement_statewise_improvements_unless :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from direct hnot-aware statewise improvement
+source assumptions.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_shape_replacement_statewise_improvements_unless_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        strict_local := by
+          intro m z hnonneg hparams
+          exact
+            theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_shape_replacement_statewise_improvements_unless
+              μ arrival m z switch12 switch21
+              (A.shape_replacement_statewise_improvements_unless
+                m z hnonneg hparams) }
+
+/--
+Positive-parameter version of the direct hnot-aware statewise source boundary,
+for fixed-transfer routes that need the constructed surge-ratio witness.
+-/
+structure Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessPositiveSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  shape_replacement_statewise_improvements_unless :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Paper-facing Theorem 3 wrapper from direct hnot-aware statewise improvement
+source assumptions with positive constructed-parameter evidence.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_shape_replacement_statewise_improvements_unless_positive_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableShapeReplacementStatewiseImprovementUnlessPositiveSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_shape_replacement_statewise_improvements_unless
+            μ arrival m z switch12 switch21
+            (A.shape_replacement_statewise_improvements_unless
+              m z hnonneg hparams))
+
+/--
 Source-level assumptions for the current-bounds endpoint route with
 source-facing allowed Lemma 5 replacement cases.  This is the current
 paper-facing continuous boundary: Lean derives measurable feasibility of the
@@ -51680,6 +52167,48 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
           exact ⟨Creplacement, L.to_derived_tail⟩ }
 
 /--
+Same source boundary as the cutoff-bounds fixed-transfer wrapper, routed
+through the hnot-aware endpoint-selection interface.  The source still supplies
+the existing cutoff-bounds endpoint package, but Lean now keeps the
+non-accept-all branch hypothesis available at the endpoint layer.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (by
+        intro m z hnonneg hparams
+        rcases
+            A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_selection
+              m z hnonneg hparams with
+          ⟨CreplacementData, L⟩
+        let Creplacement :=
+          CreplacementData.to_shape_replacements
+        let P :
+            Theorem3AcceptAllStructuredPositiveParameterData
+              μ arrival R1 R2 switch12 switch21 m z :=
+          Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams
+        exact
+          theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_endpoint_current_bounds_selection_unless
+            μ arrival m z switch12 switch21
+            ((L.to_fixed_transfer_allowed_policy_forms_of_shape_replacements
+              P A.hR1_pos A.hR1_lt_R2 A.hR2_pos A.hmeasure1_pos
+              A.hmeasure2_pos Creplacement).to_endpoint_current_bounds_selection_unless
+                Creplacement))
+
+/--
 Source-level assumptions for the allowed-replacement fixed-transfer route with
 ordinary cutoff bounds and common fixed-state equality data.  This is the
 lightest fixed-transfer endpoint boundary: Lean derives branch-indexed
@@ -51745,6 +52274,46 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
       μ arrival R1 R2 switch12 switch21 := by
   exact
     paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_selection := by
+          intro m z hnonneg hparams
+          rcases
+              A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_selection
+                m z hnonneg hparams with
+            ⟨Creplacement, L⟩
+          exact ⟨Creplacement, L.to_fixed_state_by_policy_form⟩ }
+
+/--
+Common fixed-state equality version of the cutoff-bounds wrapper, routed
+through the hnot-aware endpoint-selection interface.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless
       μ arrival rho R1 R2 switch12 switch21
       { hR1_eq := A.hR1_eq
         hR1_pos := A.hR1_pos

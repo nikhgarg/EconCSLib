@@ -362,6 +362,8 @@ Recommended proof order
      paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless
      Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessSourceAssumptions
      paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_source_assumptions
+     Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate
+     paper_theorem3_measured_structured_measurable_ic_prices_of_shape_replacement_statewise_improvements_unless_positive_source_assumptions
 
    Prefer this interface when constructing endpoint witnesses from Lemma 5
    policy forms.  It preserves the branch-local `not acceptsAllTrips` fact,
@@ -373,7 +375,12 @@ Recommended proof order
 
    This is the clean route for avoiding endpoint obligations on degenerate
    syntactic cutoff cases that are actually accept-all or reducible to a
-   simpler short-tail case on positive trip lengths.
+   simpler short-tail case on positive trip lengths.  The existing
+   fixed-transfer cutoff-bounds endpoint packages now have compiled
+   `..._via_selection_unless` Theorem 3 wrappers; the remaining reduction is
+   to use the direct hnot-aware statewise interface to split the surge
+   reject-middle case on `lo <= 0` and reroute that degenerate branch through
+   `rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos`.
 6. Prove or explicitly source-assume the exposed arrival/intercept bound
    `arrival0*z0 <= R2`.
 7. Prove the selected-price current lower interval slack, probably using the
