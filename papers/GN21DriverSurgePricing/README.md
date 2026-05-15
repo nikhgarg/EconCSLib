@@ -198,6 +198,22 @@ cache is `source.txt`.
   Lemma 9 interval-feasibility final line, which proves `lower < upper` rather
   than `lower <= 0`; if the sign condition is not implied, the next proof
   route should use a non-small-ratio Lemma 9 construction instead.
+  The current preferred interval route avoids that questionable current
+  lower-sign step.  The compiled constructors
+  `GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_interval_slack`,
+  `theorem3SurgeAggregate_ge_of_currentIntervalEnvelopeSlack`, and
+  `theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack` build the
+  effective Lemma 9 ratio from the exact inequalities
+  `current_lower*(m_2-r1_current)<z_2` and
+  `z_2<current_upper*(m_2-Rmax)`.  The selected-price wrappers
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_interval_slack_data_assumptions`,
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_data_assumptions`,
+  and
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions`
+  specialize this to the small-surge construction, derive the current upper
+  slack internally from the uniform `U` bound, and leave the selected-price
+  lower-slack inequality as the focused remaining policy-dependent Lemma 9
+  obligation.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

@@ -269,10 +269,20 @@ Recommended proof order
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_current_lower_data_assumptions
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
+     exists_effectiveRatio_lt_upperRatio_of_reward_le_envelope_interval_slack
+     GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_interval_slack
+     theorem3SurgeAggregate_ge_of_currentIntervalEnvelopeSlack
+     theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack
+     Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentSignedIntervalSlackDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_signed_interval_slack_data_assumptions
+     Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeCurrentIntervalSlackFinalSignDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
 
    The measured accept-all, current-lower, and final-sign wrappers are now
-   compiled.  The remaining measured-route scalar obligation in the newest
-   wrapper is to prove
+   compiled.  The newer interval-slack wrappers are also compiled and should be
+   preferred if the current lower endpoint is not actually nonpositive.  The
+   remaining measured-route scalar obligation in both newest wrappers is to
+   prove
 
      0 < R2 * T2 - Rmax * (T2 - 1)
 
@@ -283,16 +293,25 @@ Recommended proof order
 
    The small-slack positive-mass endpoint bridge already chooses the right
    prices and threads the sign-envelope/slack evidence into the weak-reward
-   certificate.  The accept-all measured wrapper specializes it and builds its
-   `hweak` argument from the existing sequential aggregate bridges; the
-   current-lower and lower-sign wrappers then derive the uniform-upper,
-   denominator, and lower-quotient work internally.  The next Lean step should
-   prove the lower-endpoint sign field from the regular source hypotheses, or
-   reduce it to the exact remaining paper inequality.  Do not cite the source
-   Lemma 9 interval-feasibility final line as proving this automatically: that
-   line proves `lower < upper`, not `lower <= 0`.
-6. Prove the current Lemma 9 lower endpoint scalar lemma.
-7. Instantiate the envelope/slack source wrapper.
+   certificate.  The interval final-sign wrapper now derives the uniform-upper
+   and accept-all denominator work internally.  Its one policy-dependent Lemma
+   9 obligation is the exact selected-price lower slack
+
+     current_lower * (m_2 - r1_current) < z_2
+
+   for the prices returned by the scalar small-surge construction.  This is
+   strictly better aligned with Lemma 9 than the old `current_lower <= 0`
+   staging condition.  Do not cite the source Lemma 9 interval-feasibility
+   final line as proving lower nonpositivity automatically: that line proves
+   `lower < upper`, not `lower <= 0`.
+6. Prove the zero-ratio numerator condition for the sign-selected `Rmax`, or
+   record the precise source-side regime condition for the positive `z0`
+   branch if it is not implied by `C < rho < 1`.
+7. Prove the selected-price current lower interval slack, probably using the
+   explicit small-ratio formula for `z_2,m_2` and the signed current reward
+   envelope.  If this fails, the paper needs an explicit uniform lower-bound
+   assumption rather than the old lower-nonpositive claim.
+8. Instantiate the interval source wrapper.
 
 
 What not to do

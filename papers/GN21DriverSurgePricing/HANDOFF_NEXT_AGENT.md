@@ -34,11 +34,13 @@ r1_current <= Rmax
 z_2 < current_Lemma9_upper * (m_2 - Rmax)
 ```
 
-together with current Lemma 9 lower-endpoint nonpositivity.  The compiled
-constructor that packages this is:
+together with either current Lemma 9 lower-endpoint nonpositivity or, more
+faithfully, exact lower interval slack.  The compiled constructors that package
+these routes are:
 
 ```lean
 GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_interval_slack
 ```
 
 ## Current Best Frontier
@@ -47,6 +49,7 @@ The newest source-facing endpoint is:
 
 ```lean
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
 ```
 
 It proves the positive-mass measurable Theorem 3 IC conclusion by choosing the
@@ -56,7 +59,11 @@ accept-all.  Compared with the signed-envelope wrapper, callers no longer
 provide data for every positive-parameter candidate; they provide the scalar
 `Rmax,U` slack package and the current-policy Lemma 9 lower/uniform-upper
 facts.  It still does not require either fixed-state cross-ratio comparison for
-the surge move and does not ask for `R1_current <= R1`.
+the surge move and does not ask for `R1_current <= R1`.  The interval variant
+is now the preferred frontier when the current lower endpoint may be positive:
+it asks for the selected-price inequality
+`lower_current * (m_2-r1_current) < z_2` instead of trying to prove
+`lower_current <= 0`.
 
 The key new infrastructure is:
 
@@ -72,6 +79,9 @@ theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
 theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10
 theorem3SurgeAggregate_ge_of_currentLowerEnvelopeSlack
 theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
+exists_effectiveRatio_lt_upperRatio_of_reward_le_envelope_interval_slack
+theorem3SurgeAggregate_ge_of_currentIntervalEnvelopeSlack
+theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack
 lemma9StructuredUpper_gt_uniform_of_switch_gap_pos
 lemma9StructuredUpperUniformBound_pos
 theorem3SurgeSlack_of_uniform_upper_lt_current
@@ -88,6 +98,8 @@ Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackCurrentL
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_current_lower_data_assumptions
 Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
+Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeCurrentIntervalSlackFinalSignDataAssumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
 ```
 
 ## Remaining Mathematical Work
@@ -96,9 +108,10 @@ The newest source wrapper is:
 
 ```lean
 paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
 ```
 
-It asks for:
+The lower-sign wrapper asks for:
 
 - a signed reward-envelope choice:
   `(z_0 <= 0 and Rmax = R2)` or
@@ -109,6 +122,18 @@ It asks for:
 - for every feasible measurable positive-mass policy `rho`, the current
   Lemma 9 lower-endpoint sign condition:
   `lowerNumerator * upperDenominator <= 0`.
+
+The interval wrapper asks for the same sign-selected `Rmax`, zero-ratio
+numerator, and accept-all final-sign certificate, but replaces the
+policy-dependent current lower-sign field by:
+
+```lean
+current_lower *
+  (m_2 - gn21MeasuredStateRewardRate ... current_non_surge_policy) < z_2
+```
+
+for the selected small-surge prices.  It derives the current upper slack
+internally from the uniform `U` bound and positive-mass Remark 4 facts.
 
 The wrapper itself derives:
 
@@ -129,6 +154,7 @@ main compiled bridges are:
 ```lean
 theorem3CurrentNonsurgePayment_nonneg_of_acceptAllLemma10
 theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack
+theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack
 ```
 
 The source-facing pointwise-nonnegativity field has already been removed by
@@ -142,11 +168,13 @@ Lean now has a compiled constructor for this route:
 
 ```lean
 GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_lower_upper_slack
+GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_interval_slack
 ```
 
-It combines `r1_current <= Rmax`, current lower-endpoint nonpositivity, and
-`z_2 < current_upper * (m_2 - Rmax)` to build the effective Lemma 9 ratio and
-the full aggregate reward-rate data.
+The interval constructor combines `r1_current <= Rmax`,
+`lower_current*(m_2-r1_current) < z_2`, and
+`z_2 < current_upper*(m_2-Rmax)` to build the effective Lemma 9 ratio and the
+full aggregate reward-rate data.
 
 ## Why This Route
 
