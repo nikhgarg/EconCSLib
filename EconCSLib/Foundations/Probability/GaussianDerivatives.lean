@@ -19,6 +19,8 @@ Derivative-facing wrappers for the abstract Gaussian CDF API.
 - `StandardGaussianDerivativeAPI.density_mul_slope_pos`
 - `StandardGaussianDerivativeAPI.affineUpperTail_continuous`
 - `StandardGaussianDerivativeAPI.affineUpperTail_hasDerivAt`
+- `StandardGaussianDerivativeAPI.affineUpperTail_gt_iff_standardized_lt`
+- `StandardGaussianDerivativeAPI.affineUpperTail_gt_iff_cutoff_lt_of_slope_lt`
 - `StandardGaussianDerivativeAPI.affineUpperTailDifference_continuous`
 - `StandardGaussianDerivativeAPI.affineUpperTailDifference_hasDerivAt`
 - `StandardGaussianDoubledLogDensityAPI`
@@ -45,6 +47,64 @@ namespace StandardGaussianDerivativeAPI
 def affineUpperTail (A : StandardGaussianDerivativeAPI)
     (intercept slope q : ℝ) : ℝ :=
   1 - A.api.cdf (intercept - slope * q)
+
+/--
+Affine upper-tail probabilities are larger exactly when their standardized
+cutoffs are smaller.
+-/
+theorem affineUpperTail_gt_iff_standardized_lt
+    (A : StandardGaussianDerivativeAPI)
+    {interceptA slopeA interceptB slopeB q : ℝ} :
+    A.affineUpperTail interceptA slopeA q >
+        A.affineUpperTail interceptB slopeB q ↔
+      interceptA - slopeA * q < interceptB - slopeB * q := by
+  constructor
+  · intro htail
+    have hcdf :
+        A.api.cdf (interceptA - slopeA * q) <
+          A.api.cdf (interceptB - slopeB * q) := by
+      dsimp [affineUpperTail] at htail
+      linarith
+    exact A.api.cdf_strictMono.lt_iff_lt.mp hcdf
+  · intro hstd
+    have hcdf :
+        A.api.cdf (interceptA - slopeA * q) <
+          A.api.cdf (interceptB - slopeB * q) :=
+      A.api.cdf_strictMono hstd
+    dsimp [affineUpperTail]
+    linarith
+
+/--
+Two affine standardized cutoffs with different slopes cross at the displayed
+cutoff.
+-/
+theorem affineStandardized_lt_iff_cutoff_lt_of_slope_lt
+    {interceptA slopeA interceptB slopeB q : ℝ}
+    (hslope : slopeB < slopeA) :
+    interceptA - slopeA * q < interceptB - slopeB * q ↔
+      (interceptA - interceptB) / (slopeA - slopeB) < q := by
+  have hden_pos : 0 < slopeA - slopeB := sub_pos.mpr hslope
+  constructor
+  · intro h
+    rw [div_lt_iff₀ hden_pos]
+    nlinarith
+  · intro h
+    rw [div_lt_iff₀ hden_pos] at h
+    nlinarith
+
+/--
+Affine upper-tail probabilities cross exactly above the affine cutoff when the
+first standardized cutoff has the larger skill slope.
+-/
+theorem affineUpperTail_gt_iff_cutoff_lt_of_slope_lt
+    (A : StandardGaussianDerivativeAPI)
+    {interceptA slopeA interceptB slopeB q : ℝ}
+    (hslope : slopeB < slopeA) :
+    A.affineUpperTail interceptA slopeA q >
+        A.affineUpperTail interceptB slopeB q ↔
+      (interceptA - interceptB) / (slopeA - slopeB) < q := by
+  rw [A.affineUpperTail_gt_iff_standardized_lt]
+  exact affineStandardized_lt_iff_cutoff_lt_of_slope_lt hslope
 
 /-- A positive affine slope gives a positive density-weighted derivative factor. -/
 theorem density_mul_slope_pos

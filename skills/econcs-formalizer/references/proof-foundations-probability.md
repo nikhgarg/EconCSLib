@@ -184,7 +184,10 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `StandardGaussianDerivativeAPI.affineUpperTail_hasDerivAt`,
   `StandardGaussianDerivativeAPI.affineUpperTailDifference_hasDerivAt`, and
   the corresponding continuity lemmas discharge raw derivative/continuity
-  premises quickly. When a paper compares normal-density terms by taking logs,
+  premises quickly. Use
+  `StandardGaussianDerivativeAPI.affineUpperTail_gt_iff_cutoff_lt_of_slope_lt`
+  when a paper states that one affine Gaussian admission probability exceeds
+  another exactly above a skill cutoff. When a paper compares normal-density terms by taking logs,
   check whether the source silently doubled logs and canceled the shared
   standard-normal normalizing constant; if so, use
   `StandardGaussianDoubledLogDensityAPI` and prove a doubled-log identity
