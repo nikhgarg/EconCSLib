@@ -1527,6 +1527,12 @@ structure GaussianHazardCertificate where
   tail_pos : ∀ z, 0 < 1 - api.cdf z
   hazard_eq : ∀ z, hazard z = api.density z / (1 - api.cdf z)
   hazard_mono : Monotone hazard
+  scaled_hazard_mono :
+    ∀ {a x y : ℝ}, 0 < a → 0 < x → x ≤ y →
+      x * hazard (a / x) ≤ y * hazard (a / y)
+  scaled_hazard_strictMono :
+    ∀ {a x y : ℝ}, 0 < a → 0 < x → x < y →
+      x * hazard (a / x) < y * hazard (a / y)
 
 namespace GaussianHazardCertificate
 
@@ -1565,6 +1571,42 @@ theorem normalUpperTailMean_mono_threshold
       (mul_le_mul_of_nonneg_left
         (C.hazard_mono (L.standardize_mono hxy)) L.scale_pos.le)
       L.mean
+
+theorem normalUpperTailMean_le_of_same_mean_scale_le_above_mean
+    (C : GaussianHazardCertificate)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean < threshold) :
+    C.normalUpperTailMean Lsmall threshold ≤
+      C.normalUpperTailMean Llarge threshold := by
+  have ha : 0 < threshold - Lsmall.mean := sub_pos.mpr hthreshold
+  have hscaled :
+      Lsmall.scale * C.hazard ((threshold - Lsmall.mean) / Lsmall.scale) ≤
+        Llarge.scale * C.hazard ((threshold - Lsmall.mean) / Llarge.scale) :=
+    C.scaled_hazard_mono ha Lsmall.scale_pos hscale
+  rw [normalUpperTailMean, normalUpperTailMean, GaussianScaleLaw.standardize,
+    GaussianScaleLaw.standardize, ← hmean]
+  simpa [add_comm, add_left_comm, add_assoc] using
+    add_le_add_left hscaled Lsmall.mean
+
+theorem normalUpperTailMean_lt_of_same_mean_scale_lt_above_mean
+    (C : GaussianHazardCertificate)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean < threshold) :
+    C.normalUpperTailMean Lsmall threshold <
+      C.normalUpperTailMean Llarge threshold := by
+  have ha : 0 < threshold - Lsmall.mean := sub_pos.mpr hthreshold
+  have hscaled :
+      Lsmall.scale * C.hazard ((threshold - Lsmall.mean) / Lsmall.scale) <
+        Llarge.scale * C.hazard ((threshold - Lsmall.mean) / Llarge.scale) :=
+    C.scaled_hazard_strictMono ha Lsmall.scale_pos hscale
+  rw [normalUpperTailMean, normalUpperTailMean, GaussianScaleLaw.standardize,
+    GaussianScaleLaw.standardize, ← hmean]
+  simpa [add_comm, add_left_comm, add_assoc] using
+    add_lt_add_left hscaled Lsmall.mean
 
 section Mixture
 
