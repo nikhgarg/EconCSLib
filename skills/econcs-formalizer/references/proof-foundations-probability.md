@@ -164,6 +164,9 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   when a paper conditions on true skill and writes the posterior-score
   admission probability as `1 - Phi((priorTerm - precision*(q-threshold)) /
   sqrt precision)`.
+  Use `StandardGaussianTailLimitAPI` when the paper concludes that a difference
+  of high-skill admission probabilities tends to zero because both affine
+  upper tails tend to one.
   Use
   `GaussianScaleLaw.affineImage` and
   `StandardGaussianCDFAPI.thresholdPassProb_affineImage_pos` when a paper

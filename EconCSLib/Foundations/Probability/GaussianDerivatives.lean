@@ -1,5 +1,7 @@
 import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Order.Filter.AtTopBot.Field
 import EconCSLib.Foundations.Probability.Gaussian
 
 namespace EconCSLib
@@ -21,6 +23,8 @@ Derivative-facing wrappers for the abstract Gaussian CDF API.
 - `StandardGaussianDerivativeAPI.affineUpperTailDifference_hasDerivAt`
 - `StandardGaussianDoubledLogDensityAPI`
 - `StandardGaussianDoubledLogDensityAPI.doubled_log_density_mul_slope_eq`
+- `StandardGaussianTailLimitAPI`
+- `StandardGaussianTailLimitAPI.affineUpperTail_tendsto_one_atTop_of_slope_pos`
 -/
 
 noncomputable section
@@ -147,6 +151,69 @@ theorem doubled_log_density_mul_slope_eq
           ring
 
 end StandardGaussianDoubledLogDensityAPI
+
+/--
+Standard Gaussian CDF tail-limit API.  For admissions threshold proofs, the
+needed analytic fact is that `cdf z -> 0` as `z -> -∞`, so affine upper-tail
+admission probabilities with positive skill slope tend to one.
+-/
+structure StandardGaussianTailLimitAPI where
+  derivativeAPI : StandardGaussianDerivativeAPI
+  cdf_tendsto_atBot_zero :
+    Filter.Tendsto derivativeAPI.api.cdf Filter.atBot (nhds 0)
+
+namespace StandardGaussianTailLimitAPI
+
+/-- Affine standardized upper-tail probabilities tend to one for high skill. -/
+theorem affineUpperTail_tendsto_one_atTop_of_slope_pos
+    (A : StandardGaussianTailLimitAPI)
+    {intercept slope : ℝ} (hslope : 0 < slope) :
+    Filter.Tendsto
+      (fun q : ℝ => A.derivativeAPI.affineUpperTail intercept slope q)
+      Filter.atTop (nhds 1) := by
+  have hneg : -slope < 0 := by
+    linarith
+  have hlin :
+      Filter.Tendsto (fun q : ℝ => intercept - slope * q)
+        Filter.atTop Filter.atBot := by
+    have hmul :
+        Filter.Tendsto (fun q : ℝ => (-slope) * q + intercept)
+          Filter.atTop Filter.atBot :=
+      (Filter.Tendsto.const_mul_atTop_of_neg hneg Filter.tendsto_id).atBot_add
+        tendsto_const_nhds
+    convert hmul using 1
+    ext q
+    ring
+  have hcdf :
+      Filter.Tendsto
+        (fun q : ℝ => A.derivativeAPI.api.cdf (intercept - slope * q))
+        Filter.atTop (nhds 0) :=
+    A.cdf_tendsto_atBot_zero.comp hlin
+  simpa [StandardGaussianDerivativeAPI.affineUpperTail] using
+    tendsto_const_nhds.sub hcdf
+
+/--
+The difference of two affine standardized upper-tail probabilities with
+positive skill slopes tends to zero for high skill.
+-/
+theorem affineUpperTailDifference_tendsto_zero_atTop_of_slope_pos
+    (A : StandardGaussianTailLimitAPI)
+    {interceptA slopeA interceptB slopeB : ℝ}
+    (hslopeA : 0 < slopeA) (hslopeB : 0 < slopeB) :
+    Filter.Tendsto
+      (fun q : ℝ =>
+        A.derivativeAPI.affineUpperTail interceptA slopeA q -
+          A.derivativeAPI.affineUpperTail interceptB slopeB q)
+      Filter.atTop (nhds 0) := by
+  have hA :=
+    A.affineUpperTail_tendsto_one_atTop_of_slope_pos
+      (intercept := interceptA) (slope := slopeA) hslopeA
+  have hB :=
+    A.affineUpperTail_tendsto_one_atTop_of_slope_pos
+      (intercept := interceptB) (slope := slopeB) hslopeB
+  simpa using hA.sub hB
+
+end StandardGaussianTailLimitAPI
 
 end
 
