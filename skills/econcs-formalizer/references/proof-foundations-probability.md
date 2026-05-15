@@ -210,11 +210,27 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `StandardGaussianDoubledLogDensityAPI` and prove a doubled-log identity
   instead of trying to force an impossible raw `log weighted = -z^2 + log
   precision` equality.
-  Keep hard analytic facts about normal tails,
-  inverse Mills ratios, hazard rates, and true truncated-normal expectation
-  derivations behind `StandardGaussianCDFAPI` or `GaussianHazardCertificate`
-  until a concrete normal-distribution measure/CDF library is available. Once a
-  hazard certificate is supplied, use
+  Mathlib has concrete real Gaussian measures and PDF facts in
+  `Mathlib.Probability.Distributions.Gaussian.Real` (`gaussianReal`,
+  `gaussianPDFReal`, Gaussian laws, affine transforms, moments). Use those
+  before creating any new primitive normal-distribution definitions. For the
+  concrete standard-normal CDF/density layer, use
+  `EconCSLib.Foundations.Probability.GaussianMathlib`: continuity is fastest
+  through `ProbabilityTheory.cdf` as a Stieltjes function plus `NoAtoms`,
+  strict monotonicity through positive Gaussian mass on `Ioc` via
+  `setLIntegral_pos_iff` and `support_gaussianPDF`, and the median through
+  `gaussianReal_map_neg` plus `probReal_compl_eq_one_sub`. For real
+  standard-normal quantiles, use `standardGaussianCDFOrderIso` and
+  `standardGaussianQuantileAPI`; remember that the true inverse CDF is
+  continuous on `(0,1)`, not globally on all real inputs, so paper proofs
+  should prove their quantile arguments lie in `(0,1)` from selectivity or
+  capacity assumptions. Keep hard analytic facts about inverse Mills ratios,
+  hazard rates,
+  scaled-hazard monotonicity, and true truncated-normal expectation
+  derivations behind `GaussianHazardCertificate` or
+  `GaussianHazardInverseCertificate` until the corresponding concrete
+  mathlib-backed bridge has been proved in `EconCSLib`. Once a hazard
+  certificate is supplied, use
   `GaussianHazardCertificate.normalTail_pos`,
   `GaussianHazardCertificate.normalDensity_div_normalTail_eq_hazard_div_scale`,
   `GaussianHazardCertificate.normalUpperTailMean_mono_threshold`,
@@ -667,6 +683,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   the paper's integrals, cycle probabilities, or time fractions; do not mark the
   stochastic theorem green until the process/renewal bridge is discharged or
   explicitly assumed in the theorem signature and status ledger.
+- For renewal-cycle CTMC wrappers, keep opaque algebraic side conditions out of
+  the main source model when they follow from primitive assumptions. Carry
+  arrival/switch positivity, feasible-policy measurability/subset facts, and
+  positive accepted mass, then derive denominator nonzero, cross-probability
+  nonzero, state-cycle-time nonzero, and total-cycle-time nonzero locally in
+  the theorem proof before invoking quotient/strong-law algebra.
 - Split continuous RUM proofs into layers: payoff/certificate algebra over
   rankings, continuous density/change-of-variables inequalities over scores,
   and concrete model instantiation proving support, positive source regions,

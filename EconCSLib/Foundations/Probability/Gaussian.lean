@@ -20,9 +20,10 @@ Reusable Gaussian-facing algebra for admissions/testing papers.
 This file deliberately separates two layers:
 
 1. exact conjugate-normal precision algebra, which is formalized here; and
-2. analytic normal CDF/density/hazard facts, which are exposed through an API
-   record because Mathlib does not currently provide a full normal-distribution
-   measure/CDF surface in this repository.
+2. analytic normal CDF/density/hazard facts, which are exposed through API
+   records. `GaussianMathlib` instantiates the basic CDF/density API from
+   mathlib's `ProbabilityTheory.gaussianReal` and Gaussian PDF facts; quantile
+   and inverse-Mills/hazard facts remain separate analytic interfaces.
 
 ## Main declarations
 
