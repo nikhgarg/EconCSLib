@@ -174,10 +174,30 @@ cache is `source.txt`.
   also derives the accept-all lower-endpoint nonpositivity from the paper's
   Lemma 9 final-sign line.  The current-lower/fixed-upper variant
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions`
-  is the newest reduced boundary: it replaces the lower fixed-state
+  was an intermediate reduced boundary: it replaces the lower fixed-state
   cross-ratio comparison by a direct current Lemma 9 lower-endpoint
   nonpositivity proof, keeps only the upper fixed-state comparison, and still
   constructs the effective current ratio internally.
+  The newer small-surge-slack wrapper
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions`
+  specializes the compiled scalar small-ratio construction to measured
+  accept-all primitives.  Its source-data structure
+  `Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackDataAssumptions`
+  replaces per-candidate positive-parameter obligations with a sign-selected
+  `Rmax`, a positive uniform lower bound `U` for current Lemma 9 upper
+  endpoints, accept-all Lemma 9 endpoint facts, the zero-ratio numerator
+  inequality, and current-policy lower/uniform-upper Lemma 9 facts.
+  Two thinner compiled variants,
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_current_lower_data_assumptions`
+  and
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions`,
+  derive the uniform-upper and lower-endpoint denominator work internally, so
+  the newest source boundary only asks for the sign-selected `Rmax`, the
+  zero-ratio numerator condition, and the current Lemma 9 lower-endpoint sign
+  condition.  This lower-endpoint sign condition is stronger than the source
+  Lemma 9 interval-feasibility final line, which proves `lower < upper` rather
+  than `lower <= 0`; if the sign condition is not implied, the next proof
+  route should use a non-small-ratio Lemma 9 construction instead.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

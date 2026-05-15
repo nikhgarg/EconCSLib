@@ -46,14 +46,17 @@ GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_curren
 The newest source-facing endpoint is:
 
 ```lean
-paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_signed_envelope_slack_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
 ```
 
-It proves the positive-mass measurable Theorem 3 IC conclusion by moving surge
-to accept-all first, then using Lemma 10 only after surge is fixed at
-accept-all.  Compared with the earlier final-sign/fixed-transfer route, it no
-longer requires either fixed-state cross-ratio comparison for the surge move,
-and it no longer asks for `R1_current <= R1`.
+It proves the positive-mass measurable Theorem 3 IC conclusion by choosing the
+small-surge-slack prices directly from measured accept-all primitives, moving
+surge to accept-all first, then using Lemma 10 only after surge is fixed at
+accept-all.  Compared with the signed-envelope wrapper, callers no longer
+provide data for every positive-parameter candidate; they provide the scalar
+`Rmax,U` slack package and the current-policy Lemma 9 lower/uniform-upper
+facts.  It still does not require either fixed-state cross-ratio comparison for
+the surge move and does not ask for `R1_current <= R1`.
 
 The key new infrastructure is:
 
@@ -79,19 +82,41 @@ theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
 paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerEnvelopeSlackDataAssumptions
 Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentLowerSignedEnvelopeSlackDataAssumptions
+Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackDataAssumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
+Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackCurrentLowerDataAssumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_current_lower_data_assumptions
+Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
 ```
 
 ## Remaining Mathematical Work
 
-For every feasible measurable positive-mass policy `rho`, the newest Lemma 9
-source field asks for:
+The newest source wrapper is:
+
+```lean
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
+```
+
+It asks for:
 
 - a signed reward-envelope choice:
-  `(z_0 <= 0 and Rmax = m_0)` or
-  `(0 <= z_0 and Rmax = m_0 + z_0 * switch12)`;
+  `(z_0 <= 0 and Rmax = R2)` or
+  `(0 <= z_0 and Rmax = R2 + z_0 * switch12)`, specialized to the
+  accept-all non-surge ratio;
+- the zero-ratio numerator condition
+  `0 < R2*T2 - Rmax*(T2 - 1)`;
+- for every feasible measurable positive-mass policy `rho`, the current
+  Lemma 9 lower-endpoint sign condition:
+  `lowerNumerator * upperDenominator <= 0`.
+
+The wrapper itself derives:
+
 - positivity of `m_2 - Rmax`;
-- current Lemma 9 lower-endpoint nonpositivity with fixed non-surge `T,Q` and
-  moving surge accept-all `Tbar,Qbar`;
+- accept-all and current Lemma 9 lower-endpoint nonpositivity;
+- accept-all Lemma 9 upper positivity;
+- a positive uniform lower bound `U` for current Lemma 9 upper endpoints;
+- `U < current_Lemma9_upper` for every positive-mass current policy;
 - surge-side slack
   `z_2 < current_Lemma9_upper * (m_2 - Rmax)`.
 
@@ -173,10 +198,23 @@ paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurabl
 
 This chooses the small-slack prices and then asks the weak-reward certificate
 only for those selected prices, with the envelope/slack evidence already
-threaded in.  The next source-facing wrapper should specialize this theorem to
-measured accept-all primitives and instantiate its `hweak` field from
-`theorem3SurgeAggregate_ge_of_currentLowerSignedEnvelopeSlack` plus
-`theorem3NonsurgeAfterSurgeAggregate_ge_of_acceptAllLemma10`.
+threaded in.  The source-facing measured wrapper is now compiled as:
+
+```lean
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
+```
+
+Next, prove a constructor for
+`Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions`
+from regular measured source hypotheses.  The uniform-upper and denominator
+work is already discharged by the wrapper; the remaining policy-dependent
+field is the lower-endpoint sign condition for the current fixed non-surge
+policy.  Be careful: the source text's Lemma 9 "left side non-positive/right
+side positive" final line proves interval feasibility, not this stronger lower
+endpoint sign condition.  If that lower sign condition is not implied, pivot to
+a non-small-ratio Lemma 9 construction instead of forcing this route.  Also
+close or precisely document the sign-envelope zero-ratio numerator condition
+in the `Rmax = R2 + z0*switch12` branch.
 
 Also prove a current-state version of the Lemma 9 final-sign/nonpositive
 lower endpoint under the regular source hypotheses.  The useful scalar lemma

@@ -263,8 +263,16 @@ Recommended proof order
      theorem3SurgeParameters_exist_small_slack_of_current_lower_nonpos
      theorem3StructuredParameters_exist_of_ratio_and_small_surge_slack
      paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
+     Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
+     Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackCurrentLowerDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_current_lower_data_assumptions
+     Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
 
-   The remaining measured-route obligation is to prove
+   The measured accept-all, current-lower, and final-sign wrappers are now
+   compiled.  The remaining measured-route scalar obligation in the newest
+   wrapper is to prove
 
      0 < R2 * T2 - Rmax * (T2 - 1)
 
@@ -275,9 +283,14 @@ Recommended proof order
 
    The small-slack positive-mass endpoint bridge already chooses the right
    prices and threads the sign-envelope/slack evidence into the weak-reward
-   certificate.  The next wrapper should specialize it to accept-all measured
-   primitives and build its `hweak` argument from the existing sequential
-   aggregate bridges.
+   certificate.  The accept-all measured wrapper specializes it and builds its
+   `hweak` argument from the existing sequential aggregate bridges; the
+   current-lower and lower-sign wrappers then derive the uniform-upper,
+   denominator, and lower-quotient work internally.  The next Lean step should
+   prove the lower-endpoint sign field from the regular source hypotheses, or
+   reduce it to the exact remaining paper inequality.  Do not cite the source
+   Lemma 9 interval-feasibility final line as proving this automatically: that
+   line proves `lower < upper`, not `lower <= 0`.
 6. Prove the current Lemma 9 lower endpoint scalar lemma.
 7. Instantiate the envelope/slack source wrapper.
 
