@@ -10,6 +10,7 @@ import EconCSLib.Foundations.Probability.Gaussian
 import EconCSLib.Foundations.Probability.GaussianDerivatives
 import EconCSLib.Foundations.Probability.GaussianHazardInverse
 import EconCSLib.Foundations.Probability.GaussianMathlib
+import EconCSLib.Foundations.Probability.GaussianMills
 import EconCSLib.Foundations.Probability.GaussianQuantile
 import EconCSLib.Foundations.Probability.Kernel
 import EconCSLib.Foundations.Probability.LargeDeviations
@@ -18,6 +19,7 @@ import EconCSLib.Foundations.Probability.MDP
 import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Probability.Occupancy
 import EconCSLib.Foundations.Probability.OrderStatistics
+import EconCSLib.Foundations.Probability.RandomUtility
 import EconCSLib.Foundations.Probability.RealDistribution
 import EconCSLib.Foundations.Probability.RenewalReward
 import EconCSLib.Foundations.Probability.StochasticDominance
@@ -60,8 +62,11 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.Admissions`,
   `EconCSLib.Foundations.Probability.Gaussian`,
   `EconCSLib.Foundations.Probability.GaussianMathlib`,
+  `EconCSLib.Foundations.Probability.GaussianMills`,
   `EconCSLib.Foundations.Probability.GaussianDerivatives`,
   `EconCSLib.Foundations.Probability.GaussianQuantile`,
   `EconCSLib.Foundations.Probability.GaussianHazardInverse`, and
   `EconCSLib.Foundations.Probability.StochasticDominance`.
+- Random-utility noise, contraction, and density-product inequalities:
+  `EconCSLib.Foundations.Probability.RandomUtility`.
 -/

@@ -224,13 +224,15 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `standardGaussianQuantileAPI`; remember that the true inverse CDF is
   continuous on `(0,1)`, not globally on all real inputs, so paper proofs
   should prove their quantile arguments lie in `(0,1)` from selectivity or
-  capacity assumptions. Keep hard analytic facts about inverse Mills ratios,
-  hazard rates,
-  scaled-hazard monotonicity, and true truncated-normal expectation
-  derivations behind `GaussianHazardCertificate` or
-  `GaussianHazardInverseCertificate` until the corresponding concrete
-  mathlib-backed bridge has been proved in `EconCSLib`. Once a hazard
-  certificate is supplied, use
+  capacity assumptions. The concrete standard-normal inverse-Mills/hazard
+  bridge now lives in `EconCSLib.Foundations.Probability.GaussianMills` and
+  `EconCSLib.Foundations.Probability.GaussianMathlib`: use
+  `standardGaussianHazardInverseCertificate` when a paper needs the real
+  standard-normal hazard, and remember the inverse law is only stated for
+  positive right-hand sides (`0 < y`) because the hazard is positive. Keep
+  paper-specific or nonstandard hazard/truncated-normal derivations behind
+  `GaussianHazardCertificate` or `GaussianHazardInverseCertificate` until their
+  concrete bridge is proved. Once a hazard certificate is supplied, use
   `GaussianHazardCertificate.normalTail_pos`,
   `GaussianHazardCertificate.normalDensity_div_normalTail_eq_hazard_div_scale`,
   `GaussianHazardCertificate.normalUpperTailMean_mono_threshold`,
@@ -693,6 +695,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   rankings, continuous density/change-of-variables inequalities over scores,
   and concrete model instantiation proving support, positive source regions,
   normalization, and score-to-ranking interface facts.
+- Upstream only paper-neutral RUM infrastructure. Good `EconCSLib` candidates
+  include additive noise well-ordering, Gaussian/Laplacian kernels, scalar
+  contraction geometry, and density-product swap inequalities; these live in
+  `EconCSLib.Foundations.Probability.RandomUtility`. Keep concrete ranking
+  encodings, six hard-coded three-candidate rankings, lambda/delta payoff
+  certificates, and theorem-number wrappers in the paper folder unless a second
+  paper actually needs that same abstraction.
 - For continuous distributional inputs that feed a finite theorem over
   rankings, push the measure through the ranking map and convert the finite
   pushforward to a `PMF`. Prove a bridge saying `pmfProb` equals the continuous

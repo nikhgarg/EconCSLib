@@ -1650,6 +1650,7 @@ structure GaussianHazardCertificate where
   hazard : ℝ → ℝ
   tail_pos : ∀ z, 0 < 1 - api.cdf z
   hazard_eq : ∀ z, hazard z = api.density z / (1 - api.cdf z)
+  hazard_pos : ∀ z, 0 < hazard z
   hazard_mono : Monotone hazard
   scaled_hazard_mono :
     ∀ {a x y : ℝ}, 0 < a → 0 < x → x ≤ y →

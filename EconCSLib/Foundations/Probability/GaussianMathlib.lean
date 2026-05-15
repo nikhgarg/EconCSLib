@@ -9,6 +9,7 @@ import Mathlib.Topology.Order.MonotoneContinuity
 import Mathlib.Tactic
 import EconCSLib.Foundations.Probability.Gaussian
 import EconCSLib.Foundations.Probability.GaussianHazardInverse
+import EconCSLib.Foundations.Probability.GaussianMills
 import EconCSLib.Foundations.Probability.GaussianQuantile
 
 /-!
@@ -187,6 +188,23 @@ theorem standardGaussianDensity_nonneg (z : ℝ) :
   unfold standardGaussianDensity
   exact ProbabilityTheory.gaussianPDFReal_nonneg 0 (1 : ℝ≥0) z
 
+/-- The mathlib-backed standard Gaussian density is strictly positive. -/
+theorem standardGaussianDensity_pos (z : ℝ) :
+    0 < standardGaussianDensity z := by
+  unfold standardGaussianDensity
+  exact ProbabilityTheory.gaussianPDFReal_pos
+    0 (1 : ℝ≥0) z standardGaussianVariance_ne_zero
+
+/--
+The mathlib-backed standard Gaussian density in elementary normalized form.
+-/
+theorem standardGaussianDensity_eq_mills_integrand (z : ℝ) :
+    standardGaussianDensity z =
+      (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(z ^ 2) / 2) := by
+  unfold standardGaussianDensity
+  rw [ProbabilityTheory.gaussianPDFReal_def]
+  simp
+
 /-- The mathlib-backed standard Gaussian CDF is nonnegative. -/
 theorem standardGaussianCDF_nonneg (z : ℝ) :
     0 ≤ standardGaussianCDF z := by
@@ -220,6 +238,48 @@ theorem standardGaussianTail_pos (z : ℝ) :
     0 < 1 - standardGaussianCDF z := by
   have hlt := standardGaussianCDF_lt_one z
   linarith
+
+/--
+The mathlib-backed standard Gaussian upper tail equals the normalized
+unnormalized tail integral used by the Mills ratio.
+-/
+theorem standardGaussianTail_eq_const_mul_millsTail (z : ℝ) :
+    1 - standardGaussianCDF z =
+      (Real.sqrt (2 * Real.pi))⁻¹ * gaussianMillsTail z := by
+  have hcompl :
+      standardGaussianMeasure.real (Ioi z) = 1 - standardGaussianCDF z := by
+    simpa [standardGaussianCDF, ProbabilityTheory.cdf_eq_real, compl_Iic] using
+      (MeasureTheory.probReal_compl_eq_one_sub
+        (μ := standardGaussianMeasure) (s := Iic z) measurableSet_Iic)
+  have hmeasure :
+      standardGaussianMeasure (Ioi z) =
+        ENNReal.ofReal (∫ x in Ioi z, standardGaussianDensity x) := by
+    unfold standardGaussianMeasure standardGaussianDensity
+    simpa using
+      (ProbabilityTheory.gaussianReal_apply_eq_integral
+        0 standardGaussianVariance_ne_zero (Ioi z))
+  have htail_integral :
+      standardGaussianMeasure.real (Ioi z) =
+        ∫ x in Ioi z, standardGaussianDensity x := by
+    rw [measureReal_def, hmeasure]
+    rw [ENNReal.toReal_ofReal]
+    exact MeasureTheory.setIntegral_nonneg measurableSet_Ioi
+      (fun x _hx => standardGaussianDensity_nonneg x)
+  have hintegral :
+      (∫ x in Ioi z, standardGaussianDensity x) =
+        (Real.sqrt (2 * Real.pi))⁻¹ * gaussianMillsTail z := by
+    calc
+      (∫ x in Ioi z, standardGaussianDensity x)
+          = ∫ x in Ioi z,
+              (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(x ^ 2) / 2) := by
+              exact MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+                (fun x _hx => standardGaussianDensity_eq_mills_integrand x)
+      _ = (Real.sqrt (2 * Real.pi))⁻¹ *
+            ∫ x in Ioi z, Real.exp (-(x ^ 2) / 2) := by
+              rw [integral_const_mul]
+      _ = (Real.sqrt (2 * Real.pi))⁻¹ * gaussianMillsTail z := by
+              rfl
+  rw [← hcompl, htail_integral, hintegral]
 
 /-- The mathlib-backed standard Gaussian CDF tends to zero at `-∞`. -/
 theorem standardGaussianCDF_tendsto_atBot :
@@ -361,27 +421,164 @@ def standardGaussianHazard (z : ℝ) : ℝ :=
     standardGaussianHazard z =
       standardGaussianDensity z / (1 - standardGaussianCDF z) := rfl
 
-/--
-The remaining analytic facts needed to turn the concrete standard-normal
-hazard into the paper-facing hazard-inverse certificate.
+/-- The mathlib-backed standard normal hazard rate is strictly positive. -/
+theorem standardGaussianHazard_pos (z : ℝ) :
+    0 < standardGaussianHazard z := by
+  rw [standardGaussianHazard_eq]
+  exact div_pos (standardGaussianDensity_pos z) (standardGaussianTail_pos z)
 
-All CDF, density, strict-tail-positivity, quantile, and definitional hazard
-facts are supplied by this file; these fields are the inverse-Mills monotonicity
-and inversion statements that still need a real analytic proof.
+/--
+The mathlib-backed standard-normal hazard is the reciprocal of the unnormalized
+Gaussian Mills ratio.
 -/
-structure StandardGaussianHazardInverseAnalyticFacts where
-  hazardInv : ℝ → ℝ
-  hazard_mono : Monotone standardGaussianHazard
-  scaled_hazard_mono :
-    ∀ {a x y : ℝ}, 0 < a → 0 < x → x ≤ y →
-      x * standardGaussianHazard (a / x) ≤
-        y * standardGaussianHazard (a / y)
-  scaled_hazard_strictMono :
-    ∀ {a x y : ℝ}, 0 < a → 0 < x → x < y →
-      x * standardGaussianHazard (a / x) <
-        y * standardGaussianHazard (a / y)
-  hazard_le_iff_le_inv :
-    ∀ {z y : ℝ}, standardGaussianHazard z ≤ y ↔ z ≤ hazardInv y
+theorem standardGaussianHazard_eq_millsHazard (z : ℝ) :
+    standardGaussianHazard z = gaussianMillsHazard z := by
+  rw [standardGaussianHazard_eq, standardGaussianDensity_eq_mills_integrand,
+    standardGaussianTail_eq_const_mul_millsTail]
+  unfold gaussianMillsHazard gaussianMillsRatio
+  field_simp [Real.sqrt_pos.mpr (by positivity : (0 : ℝ) < 2 * Real.pi),
+    gaussianMillsTail_pos z, Real.exp_pos (z ^ 2 / 2)]
+  rw [← Real.exp_add]
+  have hsum : -(z ^ 2 / 2) + z ^ 2 / 2 = 0 := by ring
+  rw [hsum, Real.exp_zero]
+
+/-- The mathlib-backed standard-normal hazard is strictly increasing. -/
+theorem standardGaussianHazard_strictMono :
+    StrictMono standardGaussianHazard := by
+  intro x y hxy
+  rw [standardGaussianHazard_eq_millsHazard x,
+    standardGaussianHazard_eq_millsHazard y]
+  exact gaussianMillsHazard_strictMono hxy
+
+/-- The mathlib-backed standard-normal hazard is monotone. -/
+theorem standardGaussianHazard_mono :
+    Monotone standardGaussianHazard :=
+  standardGaussianHazard_strictMono.monotone
+
+/-- The mathlib-backed standard Gaussian density is continuous. -/
+theorem standardGaussianDensity_continuous :
+    Continuous standardGaussianDensity := by
+  unfold standardGaussianDensity ProbabilityTheory.gaussianPDFReal
+  fun_prop
+
+/-- The mathlib-backed standard normal hazard rate is continuous. -/
+theorem standardGaussianHazard_continuous :
+    Continuous standardGaussianHazard := by
+  unfold standardGaussianHazard
+  exact standardGaussianDensity_continuous.div
+    (continuous_const.sub standardGaussianCDF_continuous)
+    (fun z => (standardGaussianTail_pos z).ne')
+
+/-- The standard Gaussian density tends to zero at `-∞`. -/
+theorem standardGaussianDensity_tendsto_atBot_zero :
+    Tendsto standardGaussianDensity atBot (𝓝 0) := by
+  have harg :
+      Tendsto (fun t : ℝ => Real.exp (-(t ^ 2) / 2)) atBot (𝓝 0) := by
+    have hcomp := gaussianExpFactor_tendsto_atTop_zero.comp tendsto_neg_atBot_atTop
+    refine hcomp.congr' ?_
+    filter_upwards with t
+    simp
+  have hconst :=
+    (tendsto_const_nhds
+      (x := (Real.sqrt (2 * Real.pi))⁻¹)).mul harg
+  have hdensity :
+      Tendsto standardGaussianDensity atBot
+        (𝓝 ((Real.sqrt (2 * Real.pi))⁻¹ * 0)) := by
+    refine hconst.congr' ?_
+    filter_upwards with t
+    rw [standardGaussianDensity_eq_mills_integrand]
+  simpa using hdensity
+
+/-- The standard normal hazard tends to zero at `-∞`. -/
+theorem standardGaussianHazard_tendsto_atBot_zero :
+    Tendsto standardGaussianHazard atBot (𝓝 0) := by
+  have htail :
+      Tendsto (fun z : ℝ => 1 - standardGaussianCDF z) atBot (𝓝 1) :=
+    by simpa using
+      (tendsto_const_nhds (x := (1 : ℝ))).sub
+        standardGaussianCDF_tendsto_atBot
+  have hdiv :=
+    standardGaussianDensity_tendsto_atBot_zero.div htail (by norm_num : (1 : ℝ) ≠ 0)
+  simpa [standardGaussianHazard_eq] using hdiv
+
+/-- The standard normal hazard tends to `+∞` at `+∞`. -/
+theorem standardGaussianHazard_tendsto_atTop_atTop :
+    Tendsto standardGaussianHazard atTop atTop := by
+  refine tendsto_atTop_mono' atTop ?_ tendsto_id
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with z hz
+  rw [standardGaussianHazard_eq_millsHazard z]
+  exact le_of_lt (gaussianMillsHazard_gt_arg_of_pos hz)
+
+/-- Every positive real is attained by the standard Gaussian hazard. -/
+theorem standardGaussianHazard_mem_range_of_pos {y : ℝ} (hy : 0 < y) :
+    y ∈ Set.range standardGaussianHazard := by
+  exact mem_range_of_exists_le_of_exists_ge standardGaussianHazard_continuous
+    (by
+      have hlt :
+          ∀ᶠ x in atBot, standardGaussianHazard x < y :=
+        standardGaussianHazard_tendsto_atBot_zero.eventually
+          (eventually_lt_nhds hy)
+      rcases hlt.exists with ⟨x, hx⟩
+      exact ⟨x, le_of_lt hx⟩)
+    (by
+      have hgt :
+          ∀ᶠ x in atTop, y < standardGaussianHazard x :=
+        standardGaussianHazard_tendsto_atTop_atTop.eventually
+          (eventually_gt_atTop y)
+      rcases hgt.exists with ⟨x, hx⟩
+      exact ⟨x, le_of_lt hx⟩)
+
+/-- The image of the standard Gaussian hazard is exactly `(0,∞)`. -/
+theorem standardGaussianHazard_image_univ :
+    standardGaussianHazard '' (Set.univ : Set ℝ) = Set.Ioi (0 : ℝ) := by
+  ext y
+  constructor
+  · rintro ⟨x, _hx, rfl⟩
+    exact standardGaussianHazard_pos x
+  · intro hy
+    rcases standardGaussianHazard_mem_range_of_pos hy with ⟨x, hx⟩
+    exact ⟨x, Set.mem_univ x, hx⟩
+
+/-- The standard Gaussian hazard as an order isomorphism from `ℝ` to `(0,∞)`. -/
+def standardGaussianHazardOrderIso : ℝ ≃o Set.Ioi (0 : ℝ) :=
+  (standardGaussianHazard_strictMono.orderIso standardGaussianHazard).trans
+    (OrderIso.setCongr _ _
+      (by simpa [Set.image_univ] using standardGaussianHazard_image_univ))
+
+/-- The concrete inverse of the standard Gaussian hazard on positive thresholds. -/
+def standardGaussianHazardInv (y : ℝ) : ℝ :=
+  if hy : y ∈ Set.Ioi (0 : ℝ) then
+    standardGaussianHazardOrderIso.symm ⟨y, hy⟩
+  else
+    0
+
+/-- Applying the concrete positive-threshold hazard inverse. -/
+theorem standardGaussianHazard_le_iff_le_inv
+    {z y : ℝ} (hy : 0 < y) :
+    standardGaussianHazard z ≤ y ↔ z ≤ standardGaussianHazardInv y := by
+  have hyIoi : y ∈ Set.Ioi (0 : ℝ) := hy
+  rw [standardGaussianHazardInv, dif_pos hyIoi]
+  change standardGaussianHazardOrderIso z ≤ (⟨y, hyIoi⟩ : Set.Ioi (0 : ℝ)) ↔
+    z ≤ standardGaussianHazardOrderIso.symm ⟨y, hyIoi⟩
+  exact (standardGaussianHazardOrderIso.le_symm_apply).symm
+
+/-- Scaled standard-normal hazard monotonicity, proved through the Mills ratio. -/
+theorem standardGaussian_scaled_hazard_mono
+    {a x y : ℝ} (ha : 0 < a) (hx : 0 < x) (hxy : x ≤ y) :
+    x * standardGaussianHazard (a / x) ≤
+      y * standardGaussianHazard (a / y) := by
+  rw [standardGaussianHazard_eq_millsHazard (a / x),
+    standardGaussianHazard_eq_millsHazard (a / y)]
+  exact gaussianMillsHazard_scaled_mono ha hx hxy
+
+/-- Strict scaled standard-normal hazard monotonicity, proved through the Mills ratio. -/
+theorem standardGaussian_scaled_hazard_strictMono
+    {a x y : ℝ} (ha : 0 < a) (hx : 0 < x) (hxy : x < y) :
+    x * standardGaussianHazard (a / x) <
+      y * standardGaussianHazard (a / y) := by
+  rw [standardGaussianHazard_eq_millsHazard (a / x),
+    standardGaussianHazard_eq_millsHazard (a / y)]
+  exact gaussianMillsHazard_scaled_strictMono ha hx hxy
 
 /--
 Concrete standard-normal CDF/density API backed by mathlib's `gaussianReal`
@@ -407,11 +604,11 @@ def standardGaussianQuantileAPI : StandardGaussianQuantileAPI where
   quantile_pos_of_half_lt := standardGaussianQuantile_pos_of_half_lt
 
 /--
-Concrete standard-normal hazard-inverse certificate, conditional only on the
-remaining inverse-Mills monotonicity and inversion facts.
+Concrete standard-normal hazard-inverse certificate backed by mathlib's
+`gaussianReal` CDF/PDF API and the Mills-ratio analytic facts in
+`GaussianMills`.
 -/
-def standardGaussianHazardInverseCertificate
-    (A : StandardGaussianHazardInverseAnalyticFacts) :
+def standardGaussianHazardInverseCertificate :
     GaussianHazardInverseCertificate where
   api := standardGaussianCDFAPI
   hazard := standardGaussianHazard
@@ -419,11 +616,12 @@ def standardGaussianHazardInverseCertificate
   hazard_eq := by
     intro z
     rfl
-  hazard_mono := A.hazard_mono
-  scaled_hazard_mono := A.scaled_hazard_mono
-  scaled_hazard_strictMono := A.scaled_hazard_strictMono
-  hazardInv := A.hazardInv
-  hazard_le_iff_le_inv := A.hazard_le_iff_le_inv
+  hazard_pos := standardGaussianHazard_pos
+  hazard_mono := standardGaussianHazard_mono
+  scaled_hazard_mono := standardGaussian_scaled_hazard_mono
+  scaled_hazard_strictMono := standardGaussian_scaled_hazard_strictMono
+  hazardInv := standardGaussianHazardInv
+  hazard_le_iff_le_inv := standardGaussianHazard_le_iff_le_inv
 
 end
 
