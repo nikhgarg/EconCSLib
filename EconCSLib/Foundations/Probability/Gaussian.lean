@@ -31,6 +31,7 @@ This file deliberately separates two layers:
 - `GaussianPriorSignal`
 - `GaussianSignalFamily`
 - `GaussianOffsetSignalFamily`
+- `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw`
 - `GaussianHazardCertificate`
 -/
 
@@ -978,6 +979,9 @@ def priorPrecision (M : GaussianSignalFamily ι) : ℝ :=
 def signalPrecision (M : GaussianSignalFamily ι) (i : ι) : ℝ :=
   (M.noiseVar i)⁻¹
 
+def signalPrecisionSum (M : GaussianSignalFamily ι) : ℝ :=
+  ∑ i : ι, M.signalPrecision i
+
 def posteriorPrecision (M : GaussianSignalFamily ι) : ℝ :=
   M.priorPrecision + ∑ i : ι, M.signalPrecision i
 
@@ -1004,13 +1008,23 @@ theorem signalPrecision_pos (M : GaussianSignalFamily ι) (i : ι) :
     0 < M.signalPrecision i := by
   exact inv_pos.mpr (M.noiseVar_pos i)
 
+theorem signalPrecisionSum_nonneg (M : GaussianSignalFamily ι) :
+    0 ≤ M.signalPrecisionSum := by
+  exact Finset.sum_nonneg (by
+    intro i _
+    exact (M.signalPrecision_pos i).le)
+
+theorem signalPrecisionSum_pos [Nonempty ι]
+    (M : GaussianSignalFamily ι) :
+    0 < M.signalPrecisionSum :=
+  Finset.sum_pos
+    (fun i _ => M.signalPrecision_pos i)
+    Finset.univ_nonempty
+
 theorem posteriorPrecision_pos (M : GaussianSignalFamily ι) :
     0 < M.posteriorPrecision := by
-  have hsum_nonneg : 0 ≤ ∑ i : ι, M.signalPrecision i := by
-    exact Finset.sum_nonneg (by
-      intro i _
-      exact (M.signalPrecision_pos i).le)
-  exact add_pos_of_pos_of_nonneg M.priorPrecision_pos hsum_nonneg
+  exact add_pos_of_pos_of_nonneg M.priorPrecision_pos
+    (by simpa [signalPrecisionSum] using M.signalPrecisionSum_nonneg)
 
 theorem posteriorVariance_pos (M : GaussianSignalFamily ι) :
     0 < M.posteriorVariance := by
@@ -1018,26 +1032,20 @@ theorem posteriorVariance_pos (M : GaussianSignalFamily ι) :
 
 theorem posteriorVariance_le_priorVar (M : GaussianSignalFamily ι) :
     M.posteriorVariance ≤ M.priorVar := by
-  have hsum_nonneg : 0 ≤ ∑ i : ι, M.signalPrecision i := by
-    exact Finset.sum_nonneg (by
-      intro i _
-      exact (M.signalPrecision_pos i).le)
   have hle : M.priorPrecision ≤ M.posteriorPrecision := by
     dsimp [posteriorPrecision]
-    exact le_add_of_nonneg_right hsum_nonneg
+    exact le_add_of_nonneg_right
+      (by simpa [signalPrecisionSum] using M.signalPrecisionSum_nonneg)
   have h := one_div_le_one_div_of_le M.priorPrecision_pos hle
   simpa [posteriorVariance, priorPrecision, one_div] using h
 
 theorem posteriorVariance_lt_priorVar [Nonempty ι]
     (M : GaussianSignalFamily ι) :
     M.posteriorVariance < M.priorVar := by
-  have hsum_pos : 0 < ∑ i : ι, M.signalPrecision i := by
-    exact Finset.sum_pos
-      (fun i _ => M.signalPrecision_pos i)
-      Finset.univ_nonempty
   have hlt : M.priorPrecision < M.posteriorPrecision := by
     dsimp [posteriorPrecision]
-    exact lt_add_of_pos_right M.priorPrecision hsum_pos
+    exact lt_add_of_pos_right M.priorPrecision
+      (by simpa [signalPrecisionSum] using M.signalPrecisionSum_pos)
   have h := one_div_lt_one_div_of_lt M.priorPrecision_pos hlt
   simpa [posteriorVariance, priorPrecision, one_div] using h
 
@@ -1379,6 +1387,22 @@ def posteriorMeanScaleLaw [Nonempty ι]
   scale := Real.sqrt M.posteriorMeanVariance
   scale_pos := Real.sqrt_pos.mpr M.posteriorMeanVariance_pos
 
+/--
+Conditional law of the posterior mean given true skill `q` for offset signals
+of the form `x i = q + noiseMean i + centered noise i`.
+-/
+def conditionalPosteriorMeanScaleLaw [Nonempty ι]
+    (M : GaussianOffsetSignalFamily ι) (q : ℝ) : GaussianScaleLaw where
+  mean :=
+    M.centeredFamily.priorWeight * M.priorMean +
+      (∑ i : ι, M.centeredFamily.signalWeight i) * q
+  scale :=
+    M.centeredFamily.posteriorVariance *
+      Real.sqrt M.centeredFamily.signalPrecisionSum
+  scale_pos := by
+    exact mul_pos M.centeredFamily.posteriorVariance_pos
+      (Real.sqrt_pos.mpr M.centeredFamily.signalPrecisionSum_pos)
+
 theorem posteriorMean_eq_weighted_sum
     (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) :
     M.posteriorMean x =
@@ -1528,6 +1552,68 @@ theorem threshold_le_posteriorMean_update_iff_cutoff_le [DecidableEq ι]
   rw [hscore]
   exact EconCSLib.threshold_le_affine_iff_cutoff_le
     (M.centeredFamily.signalWeight_pos j)
+
+/--
+Mean of the conditional posterior-score law in precision notation.
+-/
+theorem conditionalPosteriorMeanScaleLaw_mean_eq_precision_weighted_div
+    [Nonempty ι] (M : GaussianOffsetSignalFamily ι) (q : ℝ) :
+    (M.conditionalPosteriorMeanScaleLaw q).mean =
+      (M.centeredFamily.priorPrecision * M.priorMean +
+        M.centeredFamily.signalPrecisionSum * q) /
+        M.centeredFamily.posteriorPrecision := by
+  rw [conditionalPosteriorMeanScaleLaw]
+  change
+    M.centeredFamily.priorWeight * M.priorMean +
+        (∑ i : ι, M.centeredFamily.signalWeight i) * q =
+      (M.centeredFamily.priorPrecision * M.priorMean +
+        M.centeredFamily.signalPrecisionSum * q) /
+        M.centeredFamily.posteriorPrecision
+  have hsum_weights :
+      (∑ i : ι, M.centeredFamily.signalWeight i) =
+        M.centeredFamily.posteriorVariance *
+          M.centeredFamily.signalPrecisionSum := by
+    simp [GaussianSignalFamily.signalWeight,
+      GaussianSignalFamily.signalPrecisionSum, Finset.mul_sum]
+  rw [GaussianSignalFamily.priorWeight, hsum_weights,
+    GaussianSignalFamily.posteriorVariance]
+  rw [div_eq_mul_inv]
+  ring
+
+/--
+Scale of the conditional posterior-score law in precision notation.
+-/
+theorem conditionalPosteriorMeanScaleLaw_scale_eq
+    [Nonempty ι] (M : GaussianOffsetSignalFamily ι) (q : ℝ) :
+    (M.conditionalPosteriorMeanScaleLaw q).scale =
+      M.centeredFamily.posteriorVariance *
+        Real.sqrt M.centeredFamily.signalPrecisionSum := rfl
+
+/--
+Standardized threshold for the conditional posterior-score law.  This is the
+source-paper `numerator / sqrt(total signal precision)` expression.
+-/
+theorem conditionalPosteriorMeanScaleLaw_standardize_threshold
+    [Nonempty ι] (M : GaussianOffsetSignalFamily ι)
+    (threshold q : ℝ) :
+    (M.conditionalPosteriorMeanScaleLaw q).standardize threshold =
+      (M.centeredFamily.priorPrecision * (threshold - M.priorMean) -
+        M.centeredFamily.signalPrecisionSum * (q - threshold)) /
+        Real.sqrt M.centeredFamily.signalPrecisionSum := by
+  rw [GaussianScaleLaw.standardize,
+    M.conditionalPosteriorMeanScaleLaw_mean_eq_precision_weighted_div q,
+    M.conditionalPosteriorMeanScaleLaw_scale_eq q]
+  have hpost : M.centeredFamily.posteriorPrecision ≠ 0 :=
+    ne_of_gt M.centeredFamily.posteriorPrecision_pos
+  have hsqrt : Real.sqrt M.centeredFamily.signalPrecisionSum ≠ 0 :=
+    ne_of_gt (Real.sqrt_pos.mpr M.centeredFamily.signalPrecisionSum_pos)
+  have hvar : M.centeredFamily.posteriorVariance ≠ 0 :=
+    ne_of_gt M.centeredFamily.posteriorVariance_pos
+  rw [GaussianSignalFamily.posteriorVariance] at hvar ⊢
+  field_simp [hpost, hsqrt]
+  rw [GaussianSignalFamily.posteriorPrecision,
+    GaussianSignalFamily.signalPrecisionSum]
+  ring
 
 end GaussianOffsetSignalFamily
 

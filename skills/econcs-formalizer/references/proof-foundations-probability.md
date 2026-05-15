@@ -159,6 +159,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   distribution of estimated skill/posterior mean,
   and use `GaussianOffsetSignalFamily` when source features have the form
   `q + noiseMean k + centeredNoise k`. Use
+  `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw` and
+  `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw_standardize_threshold`
+  when a paper conditions on true skill and writes the posterior-score
+  admission probability as `1 - Phi((priorTerm - precision*(q-threshold)) /
+  sqrt precision)`.
+  Use
   `GaussianScaleLaw.affineImage` and
   `StandardGaussianCDFAPI.thresholdPassProb_affineImage_pos` when a paper
   pushes a Gaussian signal through a positive affine posterior-score map. Use
@@ -167,7 +173,18 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   cutoff/mean monotonicity. Use
   `StandardGaussianCDFAPI.mixtureTailMass_antitone_threshold` and
   `StandardGaussianCDFAPI.MixtureThresholdCertificate` for source equations
-  where a common admission cutoff realizes a finite group-mixture capacity.
+  where a common admission cutoff realizes a finite group-mixture capacity. Use
+  `EconCSLib.Foundations.Probability.GaussianDerivatives` for admissions
+  lemmas that differentiate affine standardized Gaussian upper tails:
+  `StandardGaussianDerivativeAPI.affineUpperTail_hasDerivAt`,
+  `StandardGaussianDerivativeAPI.affineUpperTailDifference_hasDerivAt`, and
+  the corresponding continuity lemmas discharge raw derivative/continuity
+  premises quickly. When a paper compares normal-density terms by taking logs,
+  check whether the source silently doubled logs and canceled the shared
+  standard-normal normalizing constant; if so, use
+  `StandardGaussianDoubledLogDensityAPI` and prove a doubled-log identity
+  instead of trying to force an impossible raw `log weighted = -z^2 + log
+  precision` equality.
   Keep hard analytic facts about normal tails,
   inverse Mills ratios, hazard rates, and true truncated-normal expectation
   derivations behind `StandardGaussianCDFAPI` or `GaussianHazardCertificate`
