@@ -6,9 +6,11 @@ import EconCSLib.Foundations.Math.PositiveDenominator
 import EconCSLib.Foundations.Math.AffineThreshold
 import EconCSLib.Foundations.Math.ConvexCombination
 import EconCSLib.Foundations.Math.SqrtComparisons
+import EconCSLib.Foundations.Math.FractionalSqrt
 import EconCSLib.Foundations.Math.QuasiConvex
 import EconCSLib.Foundations.Math.Sequence
 import EconCSLib.Foundations.Math.Asymptotics
 import EconCSLib.Foundations.Math.ExponentialBounds
 import EconCSLib.Foundations.Math.IntervalCrossing
 import EconCSLib.Foundations.Math.EpsilonContinuity
+import EconCSLib.Foundations.Math.ThresholdCharacterization

@@ -28,6 +28,14 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   the source proves it. Try replacing one direction with a direct endpoint
   sign proof; for GN21 Lemma 9, current lower-endpoint nonpositivity plus only
   the upper fixed-state comparison is enough.
+- For CTMC fixed-state complement comparisons, exploit the monotonicity of
+  `q(t)/t` before adding certificate fields. A reject-long policy has accepted
+  trips shorter than every rejected trip, so strict antitonicity of `q(t)/t`
+  gives the lower pointwise side after cross-multiplication and integration.
+  In Lean, prove the pointwise cross-product first, rewrite
+  `setIntegral_mono_on` with `integral_const_mul`, then scale by the
+  nonnegative arrival rate. This often turns a false-looking complement
+  equality assumption into a single remaining upper-inequality obligation.
 - Keep the paper-facing source boundary honest: denominator-valid reward-rate
   routes should quantify over feasible measurable policies with positive mass,
   while broader measurable wrappers should either keep explicit positive-mass
@@ -205,6 +213,20 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `GaussianHazardCertificate.mixtureUpperTailMean_mul_tailMass_eq_numerator`
   for location-scale tail, academic-merit, and finite-mixture admitted-mean
   comparisons.
+  For access-barrier threshold theorems that use `Φ⁻¹` or `HR⁻¹`, keep the
+  analytic inverse facts narrow: use `StandardGaussianQuantileAPI` for
+  quantile monotonicity/continuity/positivity above one half, and use
+  `GaussianHazardInverseCertificate` only for the order bridge
+  `HR(z) <= y ↔ z <= HR⁻¹(y)`. Then prove the paper's algebraic
+  monotonicity separately with scalar lemmas such as
+  `sqrt_fractionalLinear_const_mul_lt_of_rho_lt_one` and
+  `sqrt_fractionalLinear_mul_const_lt_of_one_lt_rho`, instead of assuming the
+  whole `β` or `η` characterization.
+  For diversity under fixed group-A access barriers, prefer the capacity
+  equation route to differentiating the displayed `η` formula: prove the
+  admission cutoff is strictly increasing in group-B access from the capacity
+  equations and positive tails, then infer diversity monotonicity from the
+  falling group-A tail share.
   For no-barrier Gaussian admissions comparisons, a fast threshold route is:
   prove the dropped-feature threshold is above the common mean from selective
   capacity, show the full-policy mixture tail at that lower threshold is

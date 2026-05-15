@@ -8,6 +8,8 @@ import EconCSLib.Foundations.Probability.FiniteSupportMGF
 import EconCSLib.Foundations.Probability.FinsetVariance
 import EconCSLib.Foundations.Probability.Gaussian
 import EconCSLib.Foundations.Probability.GaussianDerivatives
+import EconCSLib.Foundations.Probability.GaussianHazardInverse
+import EconCSLib.Foundations.Probability.GaussianQuantile
 import EconCSLib.Foundations.Probability.Kernel
 import EconCSLib.Foundations.Probability.LargeDeviations
 import EconCSLib.Foundations.Probability.MarkovChain
@@ -56,6 +58,8 @@ Aggregate import for reusable probability infrastructure.
 - Admissions/testing and stochastic-order wrappers:
   `EconCSLib.Foundations.Probability.Admissions`,
   `EconCSLib.Foundations.Probability.Gaussian`,
-  `EconCSLib.Foundations.Probability.GaussianDerivatives`, and
+  `EconCSLib.Foundations.Probability.GaussianDerivatives`,
+  `EconCSLib.Foundations.Probability.GaussianQuantile`,
+  `EconCSLib.Foundations.Probability.GaussianHazardInverse`, and
   `EconCSLib.Foundations.Probability.StochasticDominance`.
 -/
