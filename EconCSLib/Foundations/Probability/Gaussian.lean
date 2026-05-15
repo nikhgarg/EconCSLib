@@ -164,6 +164,7 @@ which normal facts they require without hiding them in theorem conclusions.
 structure StandardGaussianCDFAPI where
   cdf : ℝ → ℝ
   density : ℝ → ℝ
+  cdf_continuous : Continuous cdf
   cdf_mono : Monotone cdf
   cdf_strictMono : StrictMono cdf
   cdf_zero_eq_half : cdf 0 = (1 / 2 : ℝ)
@@ -199,6 +200,14 @@ theorem normalCDF_strictMono (api : StandardGaussianCDFAPI)
     StrictMono (api.normalCDF L) := by
   intro x y hxy
   exact api.cdf_strictMono (L.standardize_strictMono hxy)
+
+theorem normalCDF_continuous (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) :
+    Continuous (api.normalCDF L) := by
+  have hstd : Continuous L.standardize := by
+    unfold GaussianScaleLaw.standardize
+    fun_prop
+  exact api.cdf_continuous.comp hstd
 
 theorem normalCDF_nonneg (api : StandardGaussianCDFAPI)
     (L : GaussianScaleLaw) (x : ℝ) :
@@ -247,6 +256,12 @@ theorem normalTail_strictAnti (api : StandardGaussianCDFAPI)
   dsimp [normalTail, normalCDF]
   exact sub_lt_sub_left
     (api.cdf_strictMono (L.standardize_strictMono hxy)) 1
+
+theorem normalTail_continuous (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) :
+    Continuous (api.normalTail L) := by
+  unfold normalTail
+  exact continuous_const.sub (api.normalCDF_continuous L)
 
 theorem standardTail_gt_iff_lt (api : StandardGaussianCDFAPI)
     {z₁ z₂ : ℝ} :
@@ -341,6 +356,11 @@ theorem thresholdPassProb_strictAnti_threshold
     (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
     StrictAnti (api.thresholdPassProb L) := by
   exact api.normalTail_strictAnti L
+
+theorem thresholdPassProb_continuous
+    (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
+    Continuous (api.thresholdPassProb L) := by
+  exact api.normalTail_continuous L
 
 theorem thresholdPassProb_gt_iff_standardize_lt
     (api : StandardGaussianCDFAPI)

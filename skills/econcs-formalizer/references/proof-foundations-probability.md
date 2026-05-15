@@ -36,6 +36,15 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `setIntegral_mono_on` with `integral_const_mul`, then scale by the
   nonnegative arrival rate. This often turns a false-looking complement
   equality assumption into a single remaining upper-inequality obligation.
+- For renewal-reward papers, do not leave every stochastic step behind an
+  opaque "LLN certificate" if the source proof only needs IID cycle averages.
+  Mathlib has `ProbabilityTheory.strong_law_ae_real`; wrap it once for
+  empirical means and reward/time quotients, then define a paper-local
+  IID-cycle model whose fields are the cycle random variables, integrability,
+  pairwise independence, identical distribution, and the expected-cycle
+  identities from Wald/geometric calculations. This closes sample-path
+  ratio/time-fraction theorems with strong-law proof terms and keeps only the
+  source's actual cycle-construction assumptions in the theorem signature.
 - Keep the paper-facing source boundary honest: denominator-valid reward-rate
   routes should quantify over feasible measurable policies with positive mass,
   while broader measurable wrappers should either keep explicit positive-mass
@@ -237,6 +246,11 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   group-B share, first use the capacity equation to rewrite that direct share
   as the complement of admitted group-A mass over capacity; do this algebraic
   bridge once instead of carrying both diversity formulas through the proof.
+  Prefer one explicit metric-definition endpoint after proving the route:
+  define admitted-share diversity and Gaussian upper-tail academic merit in
+  Lean, then prove the paper theorem from those definitions. This is more
+  audit-friendly than a theorem whose hypotheses are already-expanded hazard
+  equations.
   For no-barrier Gaussian admissions comparisons, a fast threshold route is:
   prove the dropped-feature threshold is above the common mean from selective
   capacity, show the full-policy mixture tail at that lower threshold is
