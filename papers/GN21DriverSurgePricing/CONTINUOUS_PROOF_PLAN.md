@@ -3,6 +3,38 @@
 This note records the fastest route to closing the remaining GN21 proof, beyond
 the already-compiled wrappers.  The canonical broad measurable entry point is:
 
+## Section 3.1 Update
+
+Theorem 1 Step 2 is now compiled directly:
+
+```lean
+paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete
+paper_theorem1_complete_threshold_optimal_of_step1_step3_renewal_reward
+paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward
+```
+
+Do not ask future callers to provide Step 2 as a certificate field.  The
+remaining general Theorem 1 work is exactly the source selection/compactness
+work: construct the Step 1 measurable partial-threshold replacement for every
+policy and prove Step 3's complete-threshold maximizer.  Proposition 3.1 and
+the single-state multiplicative-pricing corollary are closed for the actual
+renewal reward on measurable feasible policies.
+
+## Lemmas 7-8 Update
+
+Lemmas 7-8 are closed as source-facing affine response-shape statements:
+
+```lean
+paper_lemma7_affine_positive_additive_response_strict_quasi_convex
+paper_lemma8_affine_negative_additive_response_strict_quasi_concave
+```
+
+The remaining work after these lemmas is not another affine-response calculus
+bridge.  It is the downstream Lemma 5/Theorem 4 selection problem: use the
+response shapes to choose valid endpoint replacements for arbitrary open
+measurable optimal policies and connect those replacements back to the
+set-valued reward functional.
+
 ```lean
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```

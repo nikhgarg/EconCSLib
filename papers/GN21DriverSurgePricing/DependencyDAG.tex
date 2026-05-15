@@ -7,35 +7,37 @@
 
 \dagPaperMetadata{Driver Surge Pricing}{Nikhil Garg and Hamid Nazerzadeh}{Management Science / arXiv v4}{2021}{https://arxiv.org/pdf/1905.07544}
 \dagPaperLegendRightOfMetadata{
-  \node[dag_result, dag_template_legend] (legAux) {formalized\\auxiliary};
-  \node[dag_caveat_legend, right=0.45cm of legAux] (legCaveat) {formalized\\with caveat};
-  \node[dag_partial, right=0.45cm of legCaveat, dag_template_legend] (legPartial) {partially\\formalized};
+  \node[dag_model, dag_template_legend] (legModel) {formalized\\model};
+  \node[dag_lemma, right=0.35cm of legModel, dag_template_legend] (legLemma) {formalized\\lemma};
+  \node[dag_result, right=0.35cm of legLemma, dag_template_legend] (legAux) {formalized\\result};
+  \node[dag_caveat_legend, right=0.35cm of legAux] (legCaveat) {formalized\\with caveat};
+  \node[dag_partial, right=0.35cm of legCaveat, dag_template_legend] (legPartial) {partially\\formalized};
   \node[dag_conditional, right=0.45cm of legPartial, dag_template_legend] (legCond) {conditional};
   \node[dag_unformalized, right=0.45cm of legCond, dag_template_legend] (legOpen) {not started};
 }
-\daglegend{(legAux)(legCaveat)(legPartial)(legCond)(legOpen)}{Legend}
+\daglegend{(legModel)(legLemma)(legAux)(legCaveat)(legPartial)(legCond)(legOpen)}{Legend}
 
 \begin{dagPaperBody}
 \begin{scope}[yshift=-1.2cm]
 
-\node[dag_partial, text width=4.9cm] (Model) at (0,0) {
+\node[dag_model, text width=4.9cm] (Model) at (0,0) {
   \textbf{Model and IC definitions (Sec. 2)}\\
-  continuous trip-length policies and abstract lifetime reward predicates
+  continuous trip-length policies, lifetime reward predicates, and IID renewal-cycle interfaces encoded
 };
 
-\node[dag_partial, text width=4.6cm] (Lemma1) at (5.9,0) {
+\node[dag_lemma, text width=4.6cm] (Lemma1) at (5.9,0) {
   \textbf{Lemma 1 (Sec. 2.2.2)}\\
-  measured dynamic reward, DynamicReward wrapper, aggregate QTW bridge, and interval nondegeneracy support closed; stochastic bridge open
+  measured dynamic reward, aggregate QTW bridge, and source-primitive IID-cycle strong-law decomposition closed
 };
 
 \node[dag_partial, text width=4.7cm] (Thm1) at (5.9,-3.3) {
   \textbf{Theorem 1 (Sec. 3.1)}\\
-  threshold sets, equal-utilization, boundary, and certificate assembly closed; existence open
+  threshold sets, Step 2 strict/complete dominance, and certificate assembly closed; Step 1/3 existence open
 };
 
-\node[dag_caveat, aspect=2.2, minimum width=5.4cm, text width=4.2cm] (Prop31) at (12.0,-4.2) {
+\node[dag_result, aspect=2.2, minimum width=5.4cm, text width=4.2cm] (Prop31) at (12.0,-4.2) {
   \textbf{Proposition 3.1 (Sec. 3.1)}\\
-  measurable affine IC closed; all-set caveat
+  measurable affine and multiplicative IC closed for the source renewal reward
 };
 
 \node[dag_conditional, text width=4.6cm] (Lemma4) at (0,-6.6) {
@@ -43,14 +45,14 @@
   unique threshold endpoint exposed as certificate
 };
 
-\node[dag_caveat, text width=3.5cm] (Lemma2) at (11.8,0) {
+\node[dag_lemma, text width=3.5cm] (Lemma2) at (11.8,0) {
   \textbf{Lemma 2 (Sec. 4.1)}\\
-  transition kernel, ODE, bounds, $q<\lambda t$, q/u and $\lambda t-q$ facts; CTMC construction open
+  transition kernel, ODE, bounds, $q<\lambda t$, q/u and $\lambda t-q$ facts closed
 };
 
-\node[dag_partial, text width=4.6cm] (Lemma3) at (17.7,0) {
+\node[dag_lemma, text width=4.6cm] (Lemma3) at (17.7,0) {
   \textbf{Lemma 3 (Sec. 4.1)}\\
-  measured time-fraction algebra closed; stochastic bridge open
+  measured time-fraction algebra and source-primitive IID renewal-cycle strong-law bridge closed
 };
 
 \node[dag_conditional, text width=4.6cm] (Lemma5) at (5.9,-6.6) {
@@ -63,14 +65,14 @@
   kernel, response, endpoint derivatives, measured realizations, pointwise-to-integrated aggregate bridges, and endpoint moves closed; open-set selection open
 };
 
-\node[dag_partial, text width=4.6cm] (Lemmas78) at (17.7,-6.6) {
+\node[dag_lemma, text width=4.6cm] (Lemmas78) at (17.7,-6.6) {
   \textbf{Lemmas 7--8 (App. D.3.3)}\\
-  affine response, derivative-numerator calculus, and canonical CTMC shapes closed; endpoint bridge open
+  affine response, derivative-numerator calculus, and source CTMC quasi-convex/concave wrappers closed
 };
 
 \node[dag_partial, text width=4.6cm] (Lemmas910) at (17.7,-9.9) {
   \textbf{Lemmas 9--10 (App. D.3.4)}\\
-  structured algebra, feasibility, tightening, positive-ratio/effective-ratio reduction, reward-rate-separated Lemma 10 endpoint terms, sequential current-bounds wrappers, pointwise kernel, aggregate current-bounds, source-data/accounting/reward-rate reductions, and endpoint bridges encoded
+  structured algebra, feasibility, tightening, positive-ratio/effective-ratio reduction, reward-rate-separated Lemma 10 endpoint terms, sequential current-bounds wrappers, pointwise kernel, aggregate current-bounds, reject-long fixed-state lower comparison, source-data/accounting/reward-rate reductions, and endpoint bridges encoded
 };
 
 \node[dag_result, text width=4.8cm] (EndpointFeasible) at (23.6,-9.9) {
@@ -105,15 +107,18 @@
 
 % Solid arrows are verified support. Dashed arrows are source-roadmap dependencies
 % whose continuous certificates are not yet formalized.
-\draw[dag_dashed_arrow] (Model.east) -- (Lemma1.west);
+\draw[dag_arrow] (Model.east) -- (Lemma1.west);
+\draw[dag_arrow] (Model.east) -- (Lemma2.west);
+\draw[dag_arrow] (Model.south east) -- (Prop31.west);
 \draw[dag_dashed_arrow] (Model.east) -- (Thm1.west);
-\draw[dag_dashed_arrow] (Thm1.east) -- (Prop31.west);
 \draw[dag_dashed_arrow] (Thm1.south west) -- (Lemma4.north east);
 \draw[dag_dashed_arrow] (Lemma4.east) -- (Lemma5.west);
-\draw[dag_dashed_arrow] (Lemma1.east) -- (Lemma2.west);
-\draw[dag_dashed_arrow] (Lemma2.east) -- (Lemma3.west);
+\draw[dag_arrow] (Lemma2.east) -- (Lemma3.west);
+\draw[dag_arrow] (Lemma3.south west) |- (Lemma1.south east);
+\draw[dag_arrow] (Lemma1.south east) |- (Lemma6.north west);
+\draw[dag_arrow] (Lemma3.south) |- (Lemma6.north east);
 \draw[dag_dashed_arrow] (Lemma5.east) -- (Lemma6.west);
-\draw[dag_dashed_arrow] (Lemma6.east) -- (Lemmas78.west);
+\draw[dag_arrow] (Lemma6.east) -- (Lemmas78.west);
 \draw[dag_dashed_arrow] (Lemma6.south) |- (Lemmas910.west);
 \draw[dag_dashed_arrow] (Lemmas78.north east) -- (Thm4.north west);
 \draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);

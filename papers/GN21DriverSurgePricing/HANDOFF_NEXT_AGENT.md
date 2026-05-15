@@ -7,9 +7,10 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 
 ## Build State
 
-As of this handoff, `lake build GN21DriverSurgePricing` passes after the newest
-Lemma 9 envelope/slack source-boundary reduction and the current payment
-nonnegativity derivation.  Re-run it before and after any edits.
+As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and
+`lake build GN21DriverSurgePricing` pass after the newest Lemma 1-3 IID-cycle
+strong-law work, Lemma 9 envelope/slack source-boundary reduction, and the
+current payment nonnegativity derivation.
 
 Useful checks:
 
@@ -18,6 +19,82 @@ lake build GN21DriverSurgePricing
 latexmk -pdf DependencyDAG.tex   # from papers/GN21DriverSurgePricing
 git diff --check -- papers/GN21DriverSurgePricing skills/econcs-formalizer
 ```
+
+## Lemmas 1-3 Status
+
+Lemmas 1-3 are no longer represented only by opaque stochastic certificates.
+The compiled declarations are:
+
+```lean
+SingleStateRenewalIIDCycleModel
+paper_section2_single_state_renewal_reward_iid_stochastic_bridge
+GN21TimeFractionIIDCycleModel
+paper_lemma3_stochastic_time_fraction_formula_of_iid_cycles
+GN21DynamicIIDCycleModel
+paper_lemma1_stochastic_dynamic_reward_decomposition_of_iid_cycles
+```
+
+The reusable library wrappers are in
+`EconCSLib/Foundations/Probability/RenewalReward.lean`:
+
+```lean
+ae_tendsto_empirical_mean_real_of_iid
+ae_tendsto_sum_ratio_of_iid
+```
+
+The theorem signatures encode the paper's IID renewal-cycle variables,
+source primitive positivity, feasible-policy assumptions,
+integrability/identical-distribution/pairwise-independence hypotheses, and the
+expected geometric-subcycle/Wald mean identities.  Lean now derives the
+cycle-denominator, cross-subcycle-probability, state-cycle-time, and total
+cycle-time nonzero side conditions internally instead of carrying them as
+opaque model fields.  Mathlib's strong law then proves the almost-sure sample
+average and quotient limits.  The DAG now has verified arrows
+`Lemma2 -> Lemma3`, `Lemma3 -> Lemma1`, and `Lemma1/Lemma3 -> Lemma6`; do not
+remove these, since Lemma 3 supplies the time fractions used by the aggregate
+dynamic reward formula.
+
+## Section 3.1 Status
+
+Proposition 3.1 is closed for the actual single-state renewal-reward
+functional on measurable feasible continuous policies.  The relevant endpoints
+are:
+
+```lean
+paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic
+paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic_of_standard_measure
+paper_corollary_single_state_multiplicative_pricing_measurable_ic
+paper_theorem1_multiplicative_threshold_best_response_measurable
+```
+
+Theorem 1's full general threshold-existence theorem is still partial, but
+Step 2 is no longer an assumption.  Lean now proves the partial-threshold
+strict/complete dominance theorem, including zero boundary-time cases, and the
+renewal-reward certificate constructor only asks for Step 1 selection and
+Step 3 threshold maximization:
+
+```lean
+paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete
+paper_theorem1_complete_threshold_optimal_of_step1_step3_renewal_reward
+paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward
+```
+
+## Lemmas 7-8 Status
+
+Lemmas 7-8 are closed as paper-facing affine response shape theorems.  The
+source wrappers are:
+
+```lean
+paper_lemma7_affine_positive_additive_response_strict_quasi_convex
+paper_lemma8_affine_negative_additive_response_strict_quasi_concave
+```
+
+These wrappers state the paper's affine-additive cases directly in terms of the
+Lemma 6 response expression and the sign of
+`Delta_ji = R_j - R_i`.  The older CTMC canonical/certificate declarations are
+still present and feed the Lemma 5 derivative-shape interface, but the remaining
+Lemma 5/Theorem 4 work is downstream optimizer/replacement selection, not a
+Lemma 7-8 gap.
 
 ## Important Conclusion
 
@@ -257,6 +334,22 @@ The fixed-transfer regular endpoint packages are now threaded through
 `Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessCertificate`; see
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_endpoint_current_bounds_selection_unless`
 and the two `..._via_selection_unless` Theorem 3 wrappers.
+
+The reject-long fixed-state lower comparison is no longer a source obligation.
+Use:
+
+```lean
+gn21FixedState_lower_pointwise_of_rejectsLongTrips
+GN21RegularEndpointSharedSourceData.nonsurge_lower_pointwise_of_rejectsLongTrips
+GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_ge_acceptAll_of_rejectsLongTrips
+GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsLongTrips_and_upper
+GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper
+```
+
+These prove the lower complement/cross-ratio side from `q(t)/t`
+monotonicity plus reject-long shape.  The remaining hard fixed-state fact for
+that branch is the opposite upper pointwise comparison (and the reward-rate
+identity/accounting), not equality on the rejected complement.
 
 The middle-reroute source boundary already performs the `lo <= 0` split for
 surge reject-middle shapes and routes that branch through the short-tail

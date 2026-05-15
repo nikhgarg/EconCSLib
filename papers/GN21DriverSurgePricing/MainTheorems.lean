@@ -8,7 +8,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 open EconCSLib
 open MeasureTheory
-open scoped Topology ENNReal
+open Filter
+open scoped Function ProbabilityTheory Topology ENNReal
 
 /-!
 # Paper-Facing Theorems: Driver Surge Pricing
@@ -44,6 +45,12 @@ the continuous CTMC source theorems.
 - `paper_theorem1_threshold_certificate_of_step_certificates`: constructor
   turning the Step 1/2/3 proof obligations into the standard threshold
   certificate interface.
+- `paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete`:
+  full Theorem 1 Step 2 dominance theorem from partial thresholds to strict or
+  complete thresholds, including zero boundary-time cases.
+- `paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward`:
+  reduced Theorem 1 certificate constructor for the actual renewal reward;
+  only Step 1 selection and Step 3 maximization remain as source obligations.
 - `dynamicOptimal`, `dynamicIncentiveCompatible`: dynamic-policy analogues for
   the two-state surge model.
 - `gn21SwitchProb`: Section 4.1 two-state CTMC transition probability formula.
@@ -162,8 +169,15 @@ the continuous CTMC source theorems.
   lemmas: finite accept-all density support supplies current/replacement
   finiteness and positive-density fields for feasible policies and endpoint
   moves.
-- `paper_proposition3_1_affine_single_state_measurable_ic`: Proposition 3.1
-  measurable-policy IC endpoint for the continuous single-state reward model.
+- `paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic`:
+  Proposition 3.1 measurable-policy IC endpoint for the actual continuous
+  single-state renewal reward model.
+- `paper_corollary_single_state_multiplicative_pricing_measurable_ic`:
+  single-state multiplicative-pricing IC corollary obtained by specializing
+  Proposition 3.1 to zero additive intercept.
+- `paper_theorem1_multiplicative_threshold_best_response_measurable`:
+  multiplicative-pricing special case of Theorem 1, with accept-all as the
+  complete threshold at rate `m`.
 - `paper_theorem1_single_state_threshold_best_response_of_certificate`,
   `paper_theorem2_multiplicative_not_ic_of_witness`, and
   `paper_theorem3_structured_prices_ic_of_certificate`: conditional
@@ -522,6 +536,161 @@ theorem singleStateRenewalReward_eq_renewalRewardRate
         (singleStateTripPayment μ w σ) (singleStateTripTime μ σ) := by
   rfl
 
+/-- Single-state renewal reward as expected payment divided by expected cycle time. -/
+theorem singleStateRenewalReward_eq_payment_div_wait_add_time
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ : TripPolicy)
+    (harrival_ne : arrivalRate ≠ 0) :
+    singleStateRenewalReward μ arrivalRate w σ =
+      singleStateTripPayment μ w σ /
+        (1 / arrivalRate + singleStateTripTime μ σ) := by
+  unfold singleStateRenewalReward
+  field_simp [harrival_ne]
+
+/--
+Stochastic renewal-reward certificate for the single-state source model.  The
+fields are the almost-sure renewal theorem/LLN conclusions for normalized
+cycle payment and normalized cycle time; the theorem below turns them into the
+paper's lifetime reward formula.
+-/
+structure SingleStateRenewalLLNCertificate
+    {Ω ι : Type*} [MeasurableSpace Ω]
+    (PΩ : Measure Ω) (l : Filter ι)
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ : TripPolicy) where
+  cyclePaymentAverage : Ω → ι → ℝ
+  cycleTimeAverage : Ω → ι → ℝ
+  arrival_ne_zero : arrivalRate ≠ 0
+  cycleTimeLimit_ne :
+    1 / arrivalRate + singleStateTripTime μ σ ≠ 0
+  payment_tendsto :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (cyclePaymentAverage ω) l
+        (nhds (singleStateTripPayment μ w σ))
+  cycleTime_tendsto :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (cycleTimeAverage ω) l
+        (nhds (1 / arrivalRate + singleStateTripTime μ σ))
+
+/--
+Section 2.2 stochastic renewal-reward bridge: once the renewal theorem/LLN has
+identified normalized cycle payment and cycle time, the sample-path long-run
+earnings rate converges almost surely to `singleStateRenewalReward`.
+-/
+theorem paper_section2_single_state_renewal_reward_stochastic_bridge
+    {Ω ι : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω} {l : Filter ι}
+    {μ : Measure TripLength} {arrivalRate : ℝ}
+    {w : PricingFunction} {σ : TripPolicy}
+    (C :
+      SingleStateRenewalLLNCertificate PΩ l μ arrivalRate w σ) :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto
+        (fun n => C.cyclePaymentAverage ω n / C.cycleTimeAverage ω n)
+        l (nhds (singleStateRenewalReward μ arrivalRate w σ)) := by
+  have hratio :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n => C.cyclePaymentAverage ω n / C.cycleTimeAverage ω n)
+          l
+          (nhds
+            (singleStateTripPayment μ w σ /
+              (1 / arrivalRate + singleStateTripTime μ σ))) :=
+    ae_tendsto_div_of_ae_tendsto_of_ne
+      C.payment_tendsto C.cycleTime_tendsto C.cycleTimeLimit_ne
+  simpa [singleStateRenewalReward_eq_payment_div_wait_add_time
+      μ arrivalRate w σ C.arrival_ne_zero] using hratio
+
+/--
+IID-cycle source model for Section 2.2's single-state renewal-reward theorem.
+The stochastic process is represented by one reward and one elapsed-time random
+variable per renewal cycle.  Mathlib's strong law discharges the sample-average
+limits; the remaining fields identify the cycle expectations with the paper's
+measured primitives.
+-/
+structure SingleStateRenewalIIDCycleModel
+    {Ω : Type*} [MeasurableSpace Ω]
+    (PΩ : Measure Ω)
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ : TripPolicy) where
+  cyclePayment : ℕ → Ω → ℝ
+  cycleTime : ℕ → Ω → ℝ
+  arrival_ne_zero : arrivalRate ≠ 0
+  cycleTimeMean_ne :
+    1 / arrivalRate + singleStateTripTime μ σ ≠ 0
+  payment_integrable : Integrable (cyclePayment 0) PΩ
+  time_integrable : Integrable (cycleTime 0) PΩ
+  payment_independent : Pairwise ((· ⟂ᵢ[PΩ] ·) on cyclePayment)
+  time_independent : Pairwise ((· ⟂ᵢ[PΩ] ·) on cycleTime)
+  payment_identDistrib :
+    ∀ n, ProbabilityTheory.IdentDistrib (cyclePayment n) (cyclePayment 0) PΩ PΩ
+  time_identDistrib :
+    ∀ n, ProbabilityTheory.IdentDistrib (cycleTime n) (cycleTime 0) PΩ PΩ
+  payment_mean_eq :
+    (∫ ω, cyclePayment 0 ω ∂PΩ) = singleStateTripPayment μ w σ
+  time_mean_eq :
+    (∫ ω, cycleTime 0 ω ∂PΩ) =
+      1 / arrivalRate + singleStateTripTime μ σ
+
+/--
+The IID-cycle model supplies the LLN certificate used by the paper-facing
+single-state renewal-reward bridge.
+-/
+def SingleStateRenewalIIDCycleModel.toLLNCertificate
+    {Ω : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω}
+    {μ : Measure TripLength} {arrivalRate : ℝ}
+    {w : PricingFunction} {σ : TripPolicy}
+    (C : SingleStateRenewalIIDCycleModel PΩ μ arrivalRate w σ) :
+    SingleStateRenewalLLNCertificate PΩ (atTop : Filter ℕ) μ arrivalRate w σ where
+  cyclePaymentAverage := fun ω n =>
+    (∑ k ∈ Finset.range n, C.cyclePayment k ω) / n
+  cycleTimeAverage := fun ω n =>
+    (∑ k ∈ Finset.range n, C.cycleTime k ω) / n
+  arrival_ne_zero := C.arrival_ne_zero
+  cycleTimeLimit_ne := C.cycleTimeMean_ne
+  payment_tendsto := by
+    simpa [C.payment_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.cyclePayment
+        C.payment_integrable C.payment_independent C.payment_identDistrib)
+  cycleTime_tendsto := by
+    simpa [C.time_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.cycleTime
+        C.time_integrable C.time_independent C.time_identDistrib)
+
+/--
+Section 2.2 single-state renewal-reward theorem from an explicit IID-cycle
+model, rather than an opaque limit certificate.
+-/
+theorem paper_section2_single_state_renewal_reward_iid_stochastic_bridge
+    {Ω : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω}
+    {μ : Measure TripLength} {arrivalRate : ℝ}
+    {w : PricingFunction} {σ : TripPolicy}
+    (C : SingleStateRenewalIIDCycleModel PΩ μ arrivalRate w σ) :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto
+        (fun n : ℕ =>
+          (∑ k ∈ Finset.range n, C.cyclePayment k ω) /
+            (∑ k ∈ Finset.range n, C.cycleTime k ω))
+        atTop (nhds (singleStateRenewalReward μ arrivalRate w σ)) := by
+  have htimeMean_ne :
+      (∫ ω, C.cycleTime 0 ω ∂PΩ) ≠ 0 := by
+    simpa [C.time_mean_eq] using C.cycleTimeMean_ne
+  have hratio :=
+    ae_tendsto_sum_ratio_of_iid C.cyclePayment C.cycleTime
+      C.payment_integrable C.time_integrable
+      C.payment_independent C.time_independent
+      C.payment_identDistrib C.time_identDistrib htimeMean_ne
+  have htarget :
+      (∫ ω, C.cyclePayment 0 ω ∂PΩ) /
+          (∫ ω, C.cycleTime 0 ω ∂PΩ) =
+        singleStateRenewalReward μ arrivalRate w σ := by
+    rw [C.payment_mean_eq, C.time_mean_eq,
+      singleStateRenewalReward_eq_payment_div_wait_add_time
+        μ arrivalRate w σ C.arrival_ne_zero]
+  simpa [htarget] using hratio
+
 /--
 If every trip in a positive-time set has payment at least `targetRate * τ`,
 then the set's average trip rate is at least `targetRate`.
@@ -830,6 +999,94 @@ theorem partialThresholdRatePolicy_completeThresholdPolicy
   · intro hmem
     simpa [completeThresholdPolicy, hτ] using hmem
 
+/-- Every partial-threshold policy contains the canonical strict-threshold set. -/
+theorem strictThresholdPolicy_subset_of_partialThresholdRatePolicy
+    (w : PricingFunction) (c : ℝ) (σ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c σ) :
+    strictThresholdPolicy w c ⊆ σ := by
+  intro τ hτ
+  exact (hpartial hτ.1).1 hτ.2
+
+/-- Every partial-threshold policy is contained in the canonical complete-threshold set. -/
+theorem partialThresholdRatePolicy_subset_completeThresholdPolicy
+    (w : PricingFunction) (c : ℝ) (σ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    σ ⊆ completeThresholdPolicy w c := by
+  intro τ hτ
+  exact ⟨hσ_subset hτ, (hpartial (hσ_subset hτ)).2 hτ⟩
+
+/--
+The accepted boundary part of a partial-threshold policy lies in the canonical
+threshold boundary.
+-/
+theorem partialThresholdRatePolicy_diff_strict_subset_boundary
+    (w : PricingFunction) (c : ℝ) (σ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    σ \ strictThresholdPolicy w c ⊆ thresholdBoundaryPolicy w c := by
+  intro τ hτ
+  have hτ_pos : 0 < τ := hσ_subset hτ.1
+  have hle : c ≤ w τ / τ := (hpartial hτ_pos).2 hτ.1
+  have hnlt : ¬ c < w τ / τ := by
+    intro hlt
+    exact hτ.2 ⟨hτ_pos, hlt⟩
+  exact ⟨hτ_pos, le_antisymm (not_lt.mp hnlt) hle⟩
+
+/--
+The missing boundary part between a partial-threshold policy and the complete
+threshold policy lies in the canonical threshold boundary.
+-/
+theorem completeThresholdPolicy_diff_partial_subset_boundary
+    (w : PricingFunction) (c : ℝ) (σ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c σ) :
+    completeThresholdPolicy w c \ σ ⊆ thresholdBoundaryPolicy w c := by
+  intro τ hτ
+  have hτ_pos : 0 < τ := hτ.1.1
+  have hle : c ≤ w τ / τ := hτ.1.2
+  have hnlt : ¬ c < w τ / τ := by
+    intro hlt
+    exact hτ.2 ((hpartial hτ_pos).1 hlt)
+  exact ⟨hτ_pos, le_antisymm (not_lt.mp hnlt) hle⟩
+
+/--
+Removing the accepted threshold-boundary part from a partial-threshold policy
+leaves the canonical strict-threshold policy.
+-/
+theorem partialThresholdRatePolicy_remove_boundary_eq_strict
+    (w : PricingFunction) (c : ℝ) (σ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c σ) :
+    σ \ (σ \ strictThresholdPolicy w c) = strictThresholdPolicy w c := by
+  apply Set.Subset.antisymm
+  · intro τ hτ
+    by_contra hnot
+    exact hτ.2 ⟨hτ.1, hnot⟩
+  · intro τ hτ
+    exact ⟨strictThresholdPolicy_subset_of_partialThresholdRatePolicy
+      w c σ hpartial hτ, by
+        intro hdiff
+        exact hdiff.2 hτ⟩
+
+/--
+Adding the missing threshold-boundary part to a partial-threshold policy gives
+the canonical complete-threshold policy.
+-/
+theorem partialThresholdRatePolicy_add_boundary_eq_complete
+    (w : PricingFunction) (c : ℝ) (σ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    σ ∪ (completeThresholdPolicy w c \ σ) = completeThresholdPolicy w c := by
+  apply Set.Subset.antisymm
+  · intro τ hτ
+    rcases hτ with hτ | hτ
+    · exact partialThresholdRatePolicy_subset_completeThresholdPolicy
+        w c σ hpartial hσ_subset hτ
+    · exact hτ.1
+  · intro τ hτ
+    by_cases hmem : τ ∈ σ
+    · exact Or.inl hmem
+    · exact Or.inr ⟨hτ, hmem⟩
+
 /-- Strict-threshold policies only accept positive trips. -/
 theorem strictThresholdPolicy_subset_acceptAll
     (w : PricingFunction) (c : ℝ) :
@@ -894,6 +1151,75 @@ theorem onTripRateEquals_thresholdBoundaryPolicy
     rw [hrate]
   field_simp [hτ_ne] at hmul
   simpa [mul_comm] using hmul
+
+/-- If all accepted trips have on-trip rate `c`, payment is `c` times trip time. -/
+theorem singleStateTripPayment_eq_rate_mul_time_of_onTripRateEquals
+    (μ : Measure TripLength) (w : PricingFunction) (σ : TripPolicy) (c : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (hboundary_rate : onTripRateEquals w c σ) :
+    singleStateTripPayment μ w σ = c * singleStateTripTime μ σ := by
+  unfold singleStateTripPayment singleStateTripTime
+  have h_ae :
+      w =ᵐ[μ.restrict σ] fun τ : TripLength => c * τ :=
+    (ae_restrict_iff' hσ_measurable).2
+      (Filter.Eventually.of_forall (fun τ hτ => hboundary_rate τ hτ))
+  rw [integral_congr_ae h_ae]
+  rw [integral_const_mul]
+
+/-- Removing a zero-time boundary component leaves single-state reward unchanged. -/
+theorem singleStateRenewalReward_diff_eq_self_of_zero_rate_component
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ removed : TripPolicy) (c : ℝ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hremoved_time_zero : singleStateTripTime μ removed = 0)
+    (hremoved_rate : onTripRateEquals w c removed) :
+    singleStateRenewalReward μ arrivalRate w (σ \ removed) =
+      singleStateRenewalReward μ arrivalRate w σ := by
+  have hpayment_zero :
+      singleStateTripPayment μ w removed = 0 := by
+    rw [singleStateTripPayment_eq_rate_mul_time_of_onTripRateEquals
+      μ w removed c hremoved_measurable hremoved_rate, hremoved_time_zero]
+    ring
+  unfold singleStateRenewalReward
+  rw [singleStateTripPayment_diff μ w σ removed hremoved_subset
+      hremoved_measurable hw_integrable_σ,
+    singleStateTripTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  rw [hpayment_zero, hremoved_time_zero]
+  ring
+
+/-- Adding a disjoint zero-time boundary component leaves single-state reward unchanged. -/
+theorem singleStateRenewalReward_union_eq_self_of_zero_rate_component
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ added : TripPolicy) (c : ℝ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hw_integrable_added : IntegrableOn w added μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hadded_time_zero : singleStateTripTime μ added = 0)
+    (hadded_rate : onTripRateEquals w c added) :
+    singleStateRenewalReward μ arrivalRate w (σ ∪ added) =
+      singleStateRenewalReward μ arrivalRate w σ := by
+  have hpayment_zero :
+      singleStateTripPayment μ w added = 0 := by
+    rw [singleStateTripPayment_eq_rate_mul_time_of_onTripRateEquals
+      μ w added c hadded_measurable hadded_rate, hadded_time_zero]
+    ring
+  unfold singleStateRenewalReward
+  rw [singleStateTripPayment_union μ w σ added hdisjoint hadded_measurable
+      hw_integrable_σ hw_integrable_added,
+    singleStateTripTime_union μ σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added]
+  rw [hpayment_zero, hadded_time_zero]
+  ring
 
 /--
 Theorem 1 marginal step, add version: adding a disjoint measurable set of
@@ -1174,6 +1500,330 @@ theorem paper_theorem1_step2_remove_boundary_set_if_threshold_le_current
       exact mul_le_mul_of_nonneg_right hc_le_current hτ_nonneg)
 
 /--
+Theorem 1 Step 2 assembled, positive-boundary case: a partial threshold policy
+is weakly dominated by either the canonical strict-threshold policy or the
+canonical complete-threshold policy.  This packages the source proof's
+case split `c <= R(σ)` versus `R(σ) <= c` using the concrete boundary
+add/remove lemmas above.
+-/
+theorem paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete_of_positive_boundary
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy) (c : ℝ)
+    (hpartial : partialThresholdRatePolicy w c σ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hremove_boundary_time_pos :
+      0 < singleStateTripTime μ (σ \ strictThresholdPolicy w c))
+    (hadd_boundary_time_pos :
+      0 < singleStateTripTime μ (completeThresholdPolicy w c \ σ)) :
+    singleStateRenewalReward μ arrivalRate w σ ≤
+      max
+        (singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w c))
+        (singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w c)) := by
+  have hstrict_measurable :
+      MeasurableSet (strictThresholdPolicy w c) :=
+    measurableSet_strictThresholdPolicy w c hrate_measurable
+  have hcomplete_measurable :
+      MeasurableSet (completeThresholdPolicy w c) :=
+    measurableSet_completeThresholdPolicy w c hrate_measurable
+  have hremoved_measurable :
+      MeasurableSet (σ \ strictThresholdPolicy w c) :=
+    hσ_measurable.diff hstrict_measurable
+  have hadded_measurable :
+      MeasurableSet (completeThresholdPolicy w c \ σ) :=
+    hcomplete_measurable.diff hσ_measurable
+  have htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ :=
+    htime_integrable_acceptAll.mono_set hσ_subset
+  have hw_integrable_σ : IntegrableOn w σ μ :=
+    hw_integrable_acceptAll.mono_set hσ_subset
+  have hremoved_subset_acceptAll :
+      σ \ strictThresholdPolicy w c ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hσ_subset hτ.1
+  have hadded_subset_acceptAll :
+      completeThresholdPolicy w c \ σ ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact completeThresholdPolicy_subset_acceptAll w c hτ.1
+  have htime_integrable_removed :
+      IntegrableOn (fun τ : TripLength => τ)
+        (σ \ strictThresholdPolicy w c) μ :=
+    htime_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+  have htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ)
+        (completeThresholdPolicy w c \ σ) μ :=
+    htime_integrable_acceptAll.mono_set hadded_subset_acceptAll
+  have hw_integrable_removed :
+      IntegrableOn w (σ \ strictThresholdPolicy w c) μ :=
+    hw_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+  have hw_integrable_added :
+      IntegrableOn w (completeThresholdPolicy w c \ σ) μ :=
+    hw_integrable_acceptAll.mono_set hadded_subset_acceptAll
+  have hσ_time_nonneg : 0 ≤ singleStateTripTime μ σ :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ σ
+      hσ_measurable hσ_subset
+  have hstrict_time_nonneg :
+      0 ≤ singleStateTripTime μ (strictThresholdPolicy w c) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (strictThresholdPolicy w c) hstrict_measurable
+      (strictThresholdPolicy_subset_acceptAll w c)
+  have hremove_eq :
+      σ \ (σ \ strictThresholdPolicy w c) =
+        strictThresholdPolicy w c :=
+    partialThresholdRatePolicy_remove_boundary_eq_strict w c σ hpartial
+  have hadd_eq :
+      σ ∪ (completeThresholdPolicy w c \ σ) =
+        completeThresholdPolicy w c :=
+    partialThresholdRatePolicy_add_boundary_eq_complete w c σ hpartial
+      hσ_subset
+  have hremoved_boundary_rate :
+      onTripRateEquals w c (σ \ strictThresholdPolicy w c) := by
+    intro τ hτ
+    exact onTripRateEquals_thresholdBoundaryPolicy w c τ
+      (partialThresholdRatePolicy_diff_strict_subset_boundary
+        w c σ hpartial hσ_subset hτ)
+  have hadded_boundary_rate :
+      onTripRateEquals w c (completeThresholdPolicy w c \ σ) := by
+    intro τ hτ
+    exact onTripRateEquals_thresholdBoundaryPolicy w c τ
+      (completeThresholdPolicy_diff_partial_subset_boundary
+        w c σ hpartial hτ)
+  by_cases hc_le_current :
+      c ≤ singleStateRenewalReward μ arrivalRate w σ
+  · have hremaining_nonneg :
+        0 ≤ singleStateTripTime μ σ -
+          singleStateTripTime μ (σ \ strictThresholdPolicy w c) := by
+      rw [← singleStateTripTime_diff μ σ (σ \ strictThresholdPolicy w c)
+        (fun _ hτ => hτ.1) hremoved_measurable htime_integrable_σ]
+      rw [hremove_eq]
+      exact hstrict_time_nonneg
+    have hle_strict :
+        singleStateRenewalReward μ arrivalRate w σ ≤
+          singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c) := by
+      simpa [hremove_eq] using
+        paper_theorem1_step2_remove_boundary_set_if_threshold_le_current
+          μ arrivalRate w σ (σ \ strictThresholdPolicy w c) c
+          (fun _ hτ => hτ.1) hremoved_measurable hw_integrable_σ
+          hw_integrable_removed htime_integrable_σ
+          htime_integrable_removed hlambda hremaining_nonneg
+          hremove_boundary_time_pos hremoved_subset_acceptAll
+          hremoved_boundary_rate hc_le_current
+    exact le_max_of_le_left hle_strict
+  · have hcurrent_le_c :
+        singleStateRenewalReward μ arrivalRate w σ ≤ c :=
+      le_of_lt (lt_of_not_ge hc_le_current)
+    have hdisjoint :
+        Disjoint σ (completeThresholdPolicy w c \ σ) := by
+      rw [Set.disjoint_left]
+      intro τ hσ hdiff
+      exact hdiff.2 hσ
+    have hle_complete :
+        singleStateRenewalReward μ arrivalRate w σ ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) := by
+      simpa [hadd_eq] using
+        paper_theorem1_step2_add_boundary_set_if_threshold_ge_current
+          μ arrivalRate w σ (completeThresholdPolicy w c \ σ) c
+          hdisjoint hadded_measurable hw_integrable_σ hw_integrable_added
+          htime_integrable_σ htime_integrable_added hlambda
+          hσ_time_nonneg hadd_boundary_time_pos hadded_subset_acceptAll
+          hadded_boundary_rate hcurrent_le_c
+    exact le_max_of_le_right hle_complete
+
+/--
+Theorem 1 Step 2 assembled: every measurable feasible partial-threshold policy
+is weakly dominated by either the canonical strict-threshold policy or the
+canonical complete-threshold policy.  Positive boundary-time cases use the
+paper's add/remove marginal reward inequalities; zero boundary-time cases use
+the fact that boundary payment is exactly `c` times boundary time.
+-/
+theorem paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy) (c : ℝ)
+    (hpartial : partialThresholdRatePolicy w c σ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    singleStateRenewalReward μ arrivalRate w σ ≤
+      max
+        (singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w c))
+        (singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w c)) := by
+  have hstrict_measurable :
+      MeasurableSet (strictThresholdPolicy w c) :=
+    measurableSet_strictThresholdPolicy w c hrate_measurable
+  have hcomplete_measurable :
+      MeasurableSet (completeThresholdPolicy w c) :=
+    measurableSet_completeThresholdPolicy w c hrate_measurable
+  have hremoved_measurable :
+      MeasurableSet (σ \ strictThresholdPolicy w c) :=
+    hσ_measurable.diff hstrict_measurable
+  have hadded_measurable :
+      MeasurableSet (completeThresholdPolicy w c \ σ) :=
+    hcomplete_measurable.diff hσ_measurable
+  have htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ :=
+    htime_integrable_acceptAll.mono_set hσ_subset
+  have hw_integrable_σ : IntegrableOn w σ μ :=
+    hw_integrable_acceptAll.mono_set hσ_subset
+  have hremoved_subset_acceptAll :
+      σ \ strictThresholdPolicy w c ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hσ_subset hτ.1
+  have hadded_subset_acceptAll :
+      completeThresholdPolicy w c \ σ ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact completeThresholdPolicy_subset_acceptAll w c hτ.1
+  have htime_integrable_removed :
+      IntegrableOn (fun τ : TripLength => τ)
+        (σ \ strictThresholdPolicy w c) μ :=
+    htime_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+  have htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ)
+        (completeThresholdPolicy w c \ σ) μ :=
+    htime_integrable_acceptAll.mono_set hadded_subset_acceptAll
+  have hw_integrable_removed :
+      IntegrableOn w (σ \ strictThresholdPolicy w c) μ :=
+    hw_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+  have hw_integrable_added :
+      IntegrableOn w (completeThresholdPolicy w c \ σ) μ :=
+    hw_integrable_acceptAll.mono_set hadded_subset_acceptAll
+  have hσ_time_nonneg : 0 ≤ singleStateTripTime μ σ :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ σ
+      hσ_measurable hσ_subset
+  have hstrict_time_nonneg :
+      0 ≤ singleStateTripTime μ (strictThresholdPolicy w c) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (strictThresholdPolicy w c) hstrict_measurable
+      (strictThresholdPolicy_subset_acceptAll w c)
+  have hremoved_time_nonneg :
+      0 ≤ singleStateTripTime μ (σ \ strictThresholdPolicy w c) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (σ \ strictThresholdPolicy w c) hremoved_measurable
+      hremoved_subset_acceptAll
+  have hadded_time_nonneg :
+      0 ≤ singleStateTripTime μ (completeThresholdPolicy w c \ σ) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (completeThresholdPolicy w c \ σ) hadded_measurable
+      hadded_subset_acceptAll
+  have hremove_eq :
+      σ \ (σ \ strictThresholdPolicy w c) =
+        strictThresholdPolicy w c :=
+    partialThresholdRatePolicy_remove_boundary_eq_strict w c σ hpartial
+  have hadd_eq :
+      σ ∪ (completeThresholdPolicy w c \ σ) =
+        completeThresholdPolicy w c :=
+    partialThresholdRatePolicy_add_boundary_eq_complete w c σ hpartial
+      hσ_subset
+  have hremoved_boundary_rate :
+      onTripRateEquals w c (σ \ strictThresholdPolicy w c) := by
+    intro τ hτ
+    exact onTripRateEquals_thresholdBoundaryPolicy w c τ
+      (partialThresholdRatePolicy_diff_strict_subset_boundary
+        w c σ hpartial hσ_subset hτ)
+  have hadded_boundary_rate :
+      onTripRateEquals w c (completeThresholdPolicy w c \ σ) := by
+    intro τ hτ
+    exact onTripRateEquals_thresholdBoundaryPolicy w c τ
+      (completeThresholdPolicy_diff_partial_subset_boundary
+        w c σ hpartial hτ)
+  have hdisjoint :
+      Disjoint σ (completeThresholdPolicy w c \ σ) := by
+    rw [Set.disjoint_left]
+    intro τ hσ hdiff
+    exact hdiff.2 hσ
+  by_cases hc_le_current :
+      c ≤ singleStateRenewalReward μ arrivalRate w σ
+  · by_cases hremove_pos :
+        0 < singleStateTripTime μ (σ \ strictThresholdPolicy w c)
+    · have hremaining_nonneg :
+          0 ≤ singleStateTripTime μ σ -
+            singleStateTripTime μ (σ \ strictThresholdPolicy w c) := by
+        rw [← singleStateTripTime_diff μ σ (σ \ strictThresholdPolicy w c)
+          (fun _ hτ => hτ.1) hremoved_measurable htime_integrable_σ]
+        rw [hremove_eq]
+        exact hstrict_time_nonneg
+      have hle_strict :
+          singleStateRenewalReward μ arrivalRate w σ ≤
+            singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c) := by
+        simpa [hremove_eq] using
+          paper_theorem1_step2_remove_boundary_set_if_threshold_le_current
+            μ arrivalRate w σ (σ \ strictThresholdPolicy w c) c
+            (fun _ hτ => hτ.1) hremoved_measurable hw_integrable_σ
+            hw_integrable_removed htime_integrable_σ
+            htime_integrable_removed hlambda hremaining_nonneg hremove_pos
+            hremoved_subset_acceptAll hremoved_boundary_rate hc_le_current
+      exact le_max_of_le_left hle_strict
+    · have hremove_zero :
+          singleStateTripTime μ (σ \ strictThresholdPolicy w c) = 0 :=
+        le_antisymm (not_lt.mp hremove_pos) hremoved_time_nonneg
+      have hstrict_reward_eq :
+          singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c) =
+            singleStateRenewalReward μ arrivalRate w σ := by
+        simpa [hremove_eq] using
+          singleStateRenewalReward_diff_eq_self_of_zero_rate_component
+            μ arrivalRate w σ (σ \ strictThresholdPolicy w c) c
+            (fun _ hτ => hτ.1) hremoved_measurable hw_integrable_σ
+            htime_integrable_σ hremove_zero hremoved_boundary_rate
+      have hle_strict :
+          singleStateRenewalReward μ arrivalRate w σ ≤
+            singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c) := by
+        rw [hstrict_reward_eq]
+      exact le_max_of_le_left hle_strict
+  · have hcurrent_le_c :
+        singleStateRenewalReward μ arrivalRate w σ ≤ c :=
+      le_of_lt (lt_of_not_ge hc_le_current)
+    by_cases hadd_pos :
+        0 < singleStateTripTime μ (completeThresholdPolicy w c \ σ)
+    · have hle_complete :
+          singleStateRenewalReward μ arrivalRate w σ ≤
+            singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c) := by
+        simpa [hadd_eq] using
+          paper_theorem1_step2_add_boundary_set_if_threshold_ge_current
+            μ arrivalRate w σ (completeThresholdPolicy w c \ σ) c
+            hdisjoint hadded_measurable hw_integrable_σ hw_integrable_added
+            htime_integrable_σ htime_integrable_added hlambda
+            hσ_time_nonneg hadd_pos hadded_subset_acceptAll
+            hadded_boundary_rate hcurrent_le_c
+      exact le_max_of_le_right hle_complete
+    · have hadd_zero :
+          singleStateTripTime μ (completeThresholdPolicy w c \ σ) = 0 :=
+        le_antisymm (not_lt.mp hadd_pos) hadded_time_nonneg
+      have hcomplete_reward_eq :
+          singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c) =
+            singleStateRenewalReward μ arrivalRate w σ := by
+        simpa [hadd_eq] using
+          singleStateRenewalReward_union_eq_self_of_zero_rate_component
+            μ arrivalRate w σ (completeThresholdPolicy w c \ σ) c
+            hdisjoint hadded_measurable hw_integrable_σ
+            hw_integrable_added htime_integrable_σ htime_integrable_added
+            hadd_zero hadded_boundary_rate
+      have hle_complete :
+          singleStateRenewalReward μ arrivalRate w σ ≤
+            singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c) := by
+        rw [hcomplete_reward_eq]
+      exact le_max_of_le_right hle_complete
+
+/--
 Theorem 1 proof assembly: if Step 1 sends every policy to a weakly better
 partial threshold, Step 2 sends every partial threshold to a weakly better
 strict or complete threshold, and Step 3 supplies a complete threshold that
@@ -1206,9 +1856,74 @@ theorem paper_theorem1_complete_threshold_optimal_of_step_certificates
     exact max_le (hstep3 c).1 (hstep3 c).2
   exact hσ_le_ρ.trans (hρ_le_max.trans hmax_le)
 
+/--
+Theorem 1 renewal-reward assembly after closing Step 2: if Step 1 sends every
+policy to a measurable feasible partial threshold and Step 3 supplies a
+complete threshold dominating all strict and complete thresholds, then that
+complete threshold is globally optimal for the single-state renewal reward.
+-/
+theorem paper_theorem1_complete_threshold_optimal_of_step1_step3_renewal_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (cstar : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hstep1 :
+      ∀ σ : TripPolicy, ∃ c : ℝ, ∃ ρ : TripPolicy,
+        partialThresholdRatePolicy w c ρ ∧
+          ρ ⊆ acceptAllPolicy ∧ MeasurableSet ρ ∧
+          singleStateRenewalReward μ arrivalRate w σ ≤
+            singleStateRenewalReward μ arrivalRate w ρ)
+    (hstep3 :
+      ∀ c : ℝ,
+        singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar) ∧
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar)) :
+    ∃ σ : TripPolicy,
+      thresholdRatePolicy w cstar σ ∧
+        singleStateOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  refine ⟨completeThresholdPolicy w cstar,
+    thresholdRatePolicy_completeThresholdPolicy w cstar, ?_⟩
+  intro σ
+  rcases hstep1 σ with
+    ⟨c, ρ, hpartial, hρ_subset, hρ_measurable, hσ_le_ρ⟩
+  have hρ_le_max :
+      singleStateRenewalReward μ arrivalRate w ρ ≤
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)) :=
+    paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete
+      μ arrivalRate w ρ c hpartial hrate_measurable hρ_subset
+      hρ_measurable hw_integrable_acceptAll htime_integrable_acceptAll
+      hlambda
+  have hmax_le :
+      max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)) ≤
+        singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w cstar) := by
+    exact max_le (hstep3 c).1 (hstep3 c).2
+  exact hσ_le_ρ.trans (hρ_le_max.trans hmax_le)
+
 /-- Affine pricing `w(τ)=mτ+a`. -/
 def affinePricing (m a : ℝ) : PricingFunction :=
   fun τ => m * τ + a
+
+/-- Multiplicative pricing `w(τ)=mτ`, the single-state special case discussed in Section 3.1. -/
+def multiplicativePricing (m : ℝ) : PricingFunction :=
+  fun τ => m * τ
 
 /-- The affine on-trip rate `w(τ)/τ` is measurable. -/
 theorem measurable_affinePricing_rate (m a : ℝ) :
@@ -1676,6 +2391,166 @@ theorem paper_proposition3_1_affine_single_state_measurable_ic_of_standard_measu
       hfinite_acceptAll htime_integrable_acceptAll)
     hlambda ha_nonneg ha_le_wait_value
 
+/--
+Proposition 3.1 source-facing renewal-reward endpoint: affine pricing
+`w(τ)=mτ+a` is incentive compatible among measurable feasible policies for the
+actual single-state renewal-reward functional whenever `0 <= a <= m/λ`.
+-/
+theorem paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic
+    (μ : Measure TripLength) (arrivalRate m a : ℝ)
+    (A : SingleStateTripMeasureAssumptions μ)
+    (hlambda : 0 < arrivalRate)
+    (ha_nonneg : 0 ≤ a)
+    (ha_le_wait_value : a ≤ m / arrivalRate) :
+    singleStateMeasurableIncentiveCompatible
+      (singleStateRenewalReward μ arrivalRate (affinePricing m a)) := by
+  intro σ hpolicy_subset hpolicy_measurable
+  have hσ_finite : μ σ ≠ ⊤ :=
+    ne_top_of_le_ne_top A.accept_all_finite (measure_mono hpolicy_subset)
+  have htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ :=
+    A.accept_all_time_integrable.mono_set hpolicy_subset
+  have hσ_eq :
+      affineSingleStateRenewalReward μ arrivalRate m a σ =
+        singleStateRenewalReward μ arrivalRate (affinePricing m a) σ :=
+    affineSingleStateRenewalReward_eq_singleStateRenewalReward
+      μ arrivalRate m a σ htime_integrable_σ hσ_finite
+  have haccept_eq :
+      affineSingleStateRenewalReward μ arrivalRate m a acceptAllPolicy =
+        singleStateRenewalReward μ arrivalRate (affinePricing m a)
+          acceptAllPolicy :=
+    affineSingleStateRenewalReward_eq_singleStateRenewalReward
+      μ arrivalRate m a acceptAllPolicy A.accept_all_time_integrable
+      A.accept_all_finite
+  have h_affine :
+      affineSingleStateRenewalReward μ arrivalRate m a σ ≤
+        affineSingleStateRenewalReward μ arrivalRate m a acceptAllPolicy :=
+    paper_proposition3_1_affine_single_state_measurable_ic
+      μ arrivalRate m a A hlambda ha_nonneg ha_le_wait_value
+      σ hpolicy_subset hpolicy_measurable
+  simpa [hσ_eq, haccept_eq] using h_affine
+
+/--
+Proposition 3.1 renewal-reward endpoint from standard trip-distribution facts.
+This is the no-caveat paper-facing single-state IC statement for measurable
+continuous policies.
+-/
+theorem paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic_of_standard_measure
+    (μ : Measure TripLength) (arrivalRate m a : ℝ)
+    (haccept_mass : singleStateTripMass μ acceptAllPolicy = 1)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (ha_nonneg : 0 ≤ a)
+    (ha_le_wait_value : a ≤ m / arrivalRate) :
+    singleStateMeasurableIncentiveCompatible
+      (singleStateRenewalReward μ arrivalRate (affinePricing m a)) := by
+  exact paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic
+    μ arrivalRate m a
+    (singleStateTripMeasureAssumptions_of_standard μ haccept_mass
+      hfinite_acceptAll htime_integrable_acceptAll)
+    hlambda ha_nonneg ha_le_wait_value
+
+/--
+Single-state multiplicative-pricing corollary from Proposition 3.1: with
+`w(τ)=mτ` and `m >= 0`, accepting all feasible trips is optimal among
+measurable policies in the actual renewal-reward model.
+-/
+theorem paper_corollary_single_state_multiplicative_pricing_measurable_ic
+    (μ : Measure TripLength) (arrivalRate m : ℝ)
+    (A : SingleStateTripMeasureAssumptions μ)
+    (hlambda : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m) :
+    singleStateMeasurableIncentiveCompatible
+      (singleStateRenewalReward μ arrivalRate (multiplicativePricing m)) := by
+  have h_affine :
+      singleStateMeasurableIncentiveCompatible
+        (singleStateRenewalReward μ arrivalRate (affinePricing m 0)) :=
+    paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic
+      μ arrivalRate m 0 A hlambda (by norm_num)
+      (div_nonneg hm_nonneg (le_of_lt hlambda))
+  have hprice : affinePricing m 0 = multiplicativePricing m := by
+    funext τ
+    simp [affinePricing, multiplicativePricing]
+  intro σ hpolicy_subset hpolicy_measurable
+  simpa [hprice] using
+    h_affine σ hpolicy_subset hpolicy_measurable
+
+/--
+Single-state multiplicative-pricing corollary from standard trip-distribution
+facts.
+-/
+theorem paper_corollary_single_state_multiplicative_pricing_measurable_ic_of_standard_measure
+    (μ : Measure TripLength) (arrivalRate m : ℝ)
+    (haccept_mass : singleStateTripMass μ acceptAllPolicy = 1)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m) :
+    singleStateMeasurableIncentiveCompatible
+      (singleStateRenewalReward μ arrivalRate (multiplicativePricing m)) := by
+  exact paper_corollary_single_state_multiplicative_pricing_measurable_ic
+    μ arrivalRate m
+    (singleStateTripMeasureAssumptions_of_standard μ haccept_mass
+      hfinite_acceptAll htime_integrable_acceptAll)
+    hlambda hm_nonneg
+
+/-- Under multiplicative pricing, accept-all is the complete threshold at rate `m`. -/
+theorem thresholdRatePolicy_multiplicative_acceptAll
+    (m : ℝ) :
+    thresholdRatePolicy (multiplicativePricing m) m acceptAllPolicy := by
+  intro τ hτ
+  constructor
+  · intro _hmem
+    have hτ_ne : τ ≠ 0 := ne_of_gt hτ
+    unfold multiplicativePricing
+    field_simp [hτ_ne]
+    exact le_rfl
+  · intro _hrate
+    simpa [acceptAllPolicy, positiveTripLengths] using hτ
+
+/--
+Theorem 1 multiplicative special case: for nonnegative multiplicative pricing,
+the accept-all policy is a threshold-form measurable best response in the
+single-state renewal-reward model.
+-/
+theorem paper_theorem1_multiplicative_threshold_best_response_measurable
+    (μ : Measure TripLength) (arrivalRate m : ℝ)
+    (A : SingleStateTripMeasureAssumptions μ)
+    (hlambda : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy (multiplicativePricing m) c σ ∧
+        singleStateMeasurableIncentiveCompatible
+          (singleStateRenewalReward μ arrivalRate (multiplicativePricing m)) := by
+  exact ⟨m, hm_nonneg, acceptAllPolicy,
+    thresholdRatePolicy_multiplicative_acceptAll m,
+    paper_corollary_single_state_multiplicative_pricing_measurable_ic
+      μ arrivalRate m A hlambda hm_nonneg⟩
+
+/--
+Theorem 1 multiplicative special case from standard trip-distribution facts.
+-/
+theorem paper_theorem1_multiplicative_threshold_best_response_measurable_of_standard_measure
+    (μ : Measure TripLength) (arrivalRate m : ℝ)
+    (haccept_mass : singleStateTripMass μ acceptAllPolicy = 1)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hm_nonneg : 0 ≤ m) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy (multiplicativePricing m) c σ ∧
+        singleStateMeasurableIncentiveCompatible
+          (singleStateRenewalReward μ arrivalRate (multiplicativePricing m)) := by
+  exact paper_theorem1_multiplicative_threshold_best_response_measurable
+    μ arrivalRate m
+    (singleStateTripMeasureAssumptions_of_standard μ haccept_mass
+      hfinite_acceptAll htime_integrable_acceptAll)
+    hlambda hm_nonneg
+
 /-- Policy that rejects sufficiently long trips, `σ = (0,t)`. -/
 def rejectsLongTrips (t : ℝ) (σ : TripPolicy) : Prop :=
   ∀ ⦃τ : TripLength⦄, 0 < τ → (τ ∈ σ ↔ τ < t)
@@ -1737,6 +2612,69 @@ def paper_theorem1_threshold_certificate_of_step_certificates
     have hρ_le_max := hstep2 c ρ hpartial
     have hmax_le :
         max (R (strict c)) (R (complete c)) ≤ R (complete cstar) := by
+      exact max_le (hstep3 c).1 (hstep3 c).2
+    exact hσ_le_ρ.trans (hρ_le_max.trans hmax_le)
+
+/--
+Theorem 1 certificate constructor after closing Step 2 for the concrete
+single-state renewal reward.  Callers now supply Step 1 measurable partial
+threshold selection and Step 3 complete-threshold maximization; Lean supplies
+the strict/complete Step 2 dominance theorem internally.
+-/
+def paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (cstar : ℝ)
+    (hcstar_nonneg : 0 ≤ cstar)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hstep1 :
+      ∀ σ : TripPolicy, ∃ c : ℝ, ∃ ρ : TripPolicy,
+        partialThresholdRatePolicy w c ρ ∧
+          ρ ⊆ acceptAllPolicy ∧ MeasurableSet ρ ∧
+          singleStateRenewalReward μ arrivalRate w σ ≤
+            singleStateRenewalReward μ arrivalRate w ρ)
+    (hstep3 :
+      ∀ c : ℝ,
+        singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar) ∧
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar)) :
+    SingleStateThresholdCertificate
+      (singleStateRenewalReward μ arrivalRate w) w where
+  policy := completeThresholdPolicy w cstar
+  threshold := cstar
+  threshold_nonneg := hcstar_nonneg
+  threshold_shape := thresholdRatePolicy_completeThresholdPolicy w cstar
+  optimal := by
+    intro σ
+    rcases hstep1 σ with
+      ⟨c, ρ, hpartial, hρ_subset, hρ_measurable, hσ_le_ρ⟩
+    have hρ_le_max :
+        singleStateRenewalReward μ arrivalRate w ρ ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) :=
+      paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete
+        μ arrivalRate w ρ c hpartial hrate_measurable hρ_subset
+        hρ_measurable hw_integrable_acceptAll htime_integrable_acceptAll
+        hlambda
+    have hmax_le :
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar) := by
       exact max_le (hstep3 c).1 (hstep3 c).2
     exact hσ_le_ρ.trans (hρ_le_max.trans hmax_le)
 
@@ -2502,6 +3440,42 @@ def gn21SubcycleLength
     (arrivalRate acceptProb switchRate stateCycleTime : ℝ) : ℝ :=
   (arrivalRate * acceptProb) / (arrivalRate * acceptProb + switchRate) *
     stateCycleTime
+
+/--
+The paper's competing-clock expression for expected sub-cycle length agrees
+with the scaled `T_i(σ_i)` form used in Lemma 3.
+-/
+theorem gn21SubcycleLength_eq_competing_clocks
+    (arrivalRate acceptProb switchRate tripTime : ℝ)
+    (haccept : acceptProb ≠ 0)
+    (harrivalAccept : arrivalRate * acceptProb ≠ 0)
+    (hden : arrivalRate * acceptProb + switchRate ≠ 0) :
+    gn21SubcycleLength arrivalRate acceptProb switchRate
+        (1 / (arrivalRate * acceptProb) + tripTime / acceptProb) =
+      1 / (arrivalRate * acceptProb + switchRate) +
+        (arrivalRate * acceptProb) /
+          (arrivalRate * acceptProb + switchRate) *
+          (tripTime / acceptProb) := by
+  have harrival : arrivalRate ≠ 0 := by
+    intro hzero
+    exact harrivalAccept (by simp [hzero])
+  unfold gn21SubcycleLength
+  field_simp [haccept, harrival, harrivalAccept, hden]
+
+/-- Sub-cycle length is positive under the source positive primitive conditions. -/
+theorem gn21SubcycleLength_pos_of_pos
+    (arrivalRate acceptProb switchRate stateCycleTime : ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (haccept_pos : 0 < acceptProb)
+    (hswitch_nonneg : 0 ≤ switchRate)
+    (hstateCycleTime_pos : 0 < stateCycleTime) :
+    0 < gn21SubcycleLength arrivalRate acceptProb switchRate stateCycleTime := by
+  unfold gn21SubcycleLength
+  have harrivalAccept_pos : 0 < arrivalRate * acceptProb :=
+    mul_pos harrival_pos haccept_pos
+  have hden_pos : 0 < arrivalRate * acceptProb + switchRate :=
+    add_pos_of_pos_of_nonneg harrivalAccept_pos hswitch_nonneg
+  exact mul_pos (div_pos harrivalAccept_pos hden_pos) hstateCycleTime_pos
 
 /-- Lemma 1/3 one-state cycle time `T_i(σ_i)` from the source paper. -/
 def gn21StateCycleTime
@@ -3738,6 +4712,103 @@ theorem paper_remark4_switch_time_minus_switch_probability_pos
     paper_remark4_switch_probability_lt_rate_mul_time
       lambdaIJ lambdaJI τ hlambdaIJ hsum hτ
   linarith
+
+/--
+Per-time monotonicity of the CTMC switch probability in cross-multiplied form:
+if `0 < s < t`, then `q(t) / t <= q(s) / s`.
+-/
+theorem gn21SwitchProb_mul_le_mul_of_pos_lt
+    (lambdaIJ lambdaJI s t : ℝ)
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (hs_pos : 0 < s)
+    (hst : s < t) :
+    s * gn21SwitchProb lambdaIJ lambdaJI t ≤
+      gn21SwitchProb lambdaIJ lambdaJI s * t := by
+  have ht_pos : 0 < t := lt_trans hs_pos hst
+  have hanti :=
+    paper_remark1_switch_probability_per_time_strictAntiOn
+      lambdaIJ lambdaJI hlambdaIJ hsum
+  have hratio_lt :
+      gn21SwitchProb lambdaIJ lambdaJI t / t <
+        gn21SwitchProb lambdaIJ lambdaJI s / s := by
+    exact hanti (by simpa [Set.mem_Ioi] using hs_pos)
+      (by simpa [Set.mem_Ioi] using ht_pos) hst
+  have hcross :
+      gn21SwitchProb lambdaIJ lambdaJI t * s <
+        gn21SwitchProb lambdaIJ lambdaJI s * t := by
+    rwa [div_lt_div_iff₀ ht_pos hs_pos] at hratio_lt
+  nlinarith
+
+/--
+Reject-long fixed-state pointwise comparison.  For a feasible policy accepting
+exactly trips below `u`, every rejected feasible trip has weakly lower CTMC
+switch probability per unit time than the current accepted-policy
+exit/time ratio.
+-/
+theorem gn21FixedState_lower_pointwise_of_rejectsLongTrips
+    (μ : Measure TripLength)
+    (arrivalRate switchIJ switchJI u : ℝ)
+    (σ : TripPolicy)
+    (harrival_nonneg : 0 ≤ arrivalRate)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hshape : rejectsLongTrips u σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ) :
+    ∀ τ ∈ acceptAllPolicy \ σ,
+      gn21ScaledStateTime μ arrivalRate σ *
+          gn21SwitchProb switchIJ switchJI τ ≤
+        gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ * τ := by
+  intro τ hτ
+  have hτ_pos : 0 < τ := hτ.1
+  have hτ_not_mem : τ ∉ σ := hτ.2
+  have hu_le_τ : u ≤ τ := by
+    by_contra hnot
+    exact hτ_not_mem ((hshape hτ_pos).mpr (lt_of_not_ge hnot))
+  have hbase :
+      gn21SwitchProb switchIJ switchJI τ ≤ switchIJ * τ :=
+    le_of_lt
+      (paper_remark4_switch_probability_lt_rate_mul_time
+        switchIJ switchJI τ hswitch_pos hsum hτ_pos)
+  have hintegrand :
+      ∀ s ∈ σ,
+        gn21SwitchProb switchIJ switchJI τ * s ≤
+          τ * gn21SwitchProb switchIJ switchJI s := by
+    intro s hs
+    have hs_pos : 0 < s := hσ_subset hs
+    have hs_lt_u : s < u := (hshape hs_pos).mp hs
+    have hs_lt_τ : s < τ := lt_of_lt_of_le hs_lt_u hu_le_τ
+    have hcross :=
+      gn21SwitchProb_mul_le_mul_of_pos_lt
+        switchIJ switchJI s τ hswitch_pos hsum hs_pos hs_lt_τ
+    nlinarith
+  have hintegral :
+      gn21SwitchProb switchIJ switchJI τ *
+          ∫ s in σ, s ∂μ ≤
+        τ * ∫ s in σ, gn21SwitchProb switchIJ switchJI s ∂μ := by
+    have hmono :
+        ∫ s in σ, gn21SwitchProb switchIJ switchJI τ * s ∂μ ≤
+          ∫ s in σ, τ * gn21SwitchProb switchIJ switchJI s ∂μ := by
+      exact setIntegral_mono_on
+        (htime_integrable.const_mul (gn21SwitchProb switchIJ switchJI τ))
+        (hq_integrable.const_mul τ) hσ_measurable hintegrand
+    rw [integral_const_mul, integral_const_mul] at hmono
+    simpa [mul_comm, mul_left_comm, mul_assoc] using hmono
+  have hscaled :
+      arrivalRate *
+          (gn21SwitchProb switchIJ switchJI τ *
+            ∫ s in σ, s ∂μ) ≤
+        arrivalRate *
+          (τ * ∫ s in σ, gn21SwitchProb switchIJ switchJI s ∂μ) :=
+    mul_le_mul_of_nonneg_left hintegral harrival_nonneg
+  unfold gn21ScaledStateTime gn21ExitWeightIntegral singleStateTripTime
+  nlinarith
 
 /--
 Remark 4 derivative calculation: `λ_{i→j}τ - q_{i→j}(τ)` has nonnegative
@@ -8328,6 +9399,58 @@ theorem paper_lemma8_affine_ctmc_response_quasi_concave
       lambdaIJ lambdaJI y m a Qi Qj Ti Tj Ri Rj
       (ne_of_gt hy) hTi hTj]
   exact hcanon x y θ hx hy hxy hθ_pos hθ_lt_one
+
+/--
+Lemma 7 source-facing endpoint: for affine pricing
+`w_i(τ)=mτ+a` with `m,a>0`, the Lemma 6 response is strictly
+quasi-convex in the endpoint length whenever the paper's
+`Delta_ji = R_j - R_i` is nonpositive.
+-/
+theorem paper_lemma7_affine_positive_additive_response_strict_quasi_convex
+    (m a Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI : ℝ)
+    (hm_pos : 0 < m)
+    (ha_pos : 0 < a)
+    (hdelta_ji_nonpos : Rj - Ri ≤ 0)
+    (hstate_weight_pos : 0 < Qi / Ti + Qj / Tj)
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (hTi : Ti ≠ 0)
+    (hTj : Tj ≠ 0) :
+    strictQuasiConvexOnPositive
+      (fun u : TripLength =>
+        gn21Lemma6Response
+          (gn21SwitchProb lambdaIJ lambdaJI u) u (m * u + a)
+          Qi Qj Ti Tj Ri Rj) := by
+  exact
+    paper_lemma7_affine_ctmc_response_quasi_convex
+      m a Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI
+      hstate_weight_pos ha_pos (by linarith) hlambdaIJ hsum hTi hTj
+
+/--
+Lemma 8 source-facing endpoint: for affine pricing
+`w_i(τ)=mτ+a` with `m>0` and `a<0`, the Lemma 6 response is strictly
+quasi-concave in the endpoint length whenever the paper's
+`Delta_ji = R_j - R_i` is nonnegative.
+-/
+theorem paper_lemma8_affine_negative_additive_response_strict_quasi_concave
+    (m a Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI : ℝ)
+    (hm_pos : 0 < m)
+    (ha_neg : a < 0)
+    (hdelta_ji_nonneg : 0 ≤ Rj - Ri)
+    (hstate_weight_pos : 0 < Qi / Ti + Qj / Tj)
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (hTi : Ti ≠ 0)
+    (hTj : Tj ≠ 0) :
+    strictQuasiConcaveOnPositive
+      (fun u : TripLength =>
+        gn21Lemma6Response
+          (gn21SwitchProb lambdaIJ lambdaJI u) u (m * u + a)
+          Qi Qj Ti Tj Ri Rj) := by
+  exact
+    paper_lemma8_affine_ctmc_response_quasi_concave
+      m a Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI
+      hstate_weight_pos ha_neg hdelta_ji_nonneg hlambdaIJ hsum hTi hTj
 
 /--
 Lemma 7 certificate: affine pricing with positive additive term gives a
@@ -15491,6 +16614,43 @@ def gn21CrossSubcycleProb
     (arrivalRate acceptProb switchRate exitWeight : ℝ) : ℝ :=
   exitWeight / (arrivalRate * acceptProb + switchRate)
 
+/-- Cross-state subcycle probabilities are positive under positive denominator and exit weight. -/
+theorem gn21CrossSubcycleProb_pos_of_pos
+    (arrivalRate acceptProb switchRate exitWeight : ℝ)
+    (hden_pos : 0 < arrivalRate * acceptProb + switchRate)
+    (hexit_pos : 0 < exitWeight) :
+    0 < gn21CrossSubcycleProb arrivalRate acceptProb switchRate exitWeight := by
+  unfold gn21CrossSubcycleProb
+  exact div_pos hexit_pos hden_pos
+
+/--
+The measured cross-subcycle probability is positive under the paper's positive
+arrival, accepted-mass, switch-rate, and feasible-policy hypotheses.
+-/
+theorem gn21CrossSubcycleProb_pos_of_primitives
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ) :
+    0 <
+      gn21CrossSubcycleProb arrivalRate (singleStateTripMass μ σ)
+        switchIJ (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ) := by
+  have hden_pos :
+      0 < arrivalRate * singleStateTripMass μ σ + switchIJ :=
+    add_pos (mul_pos harrival_pos hmass_pos) hswitch_pos
+  have hexit_pos :
+      0 < gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ :=
+    gn21ExitWeightIntegral_pos_of_switch_pos μ arrivalRate switchIJ switchJI σ
+      (le_of_lt harrival_pos) hswitch_pos hsum hσ_measurable hσ_subset
+  exact gn21CrossSubcycleProb_pos_of_pos arrivalRate
+    (singleStateTripMass μ σ) switchIJ
+    (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+    hden_pos hexit_pos
+
 /-- Time fraction from renewal-cycle subcycle probabilities and subcycle lengths. -/
 def gn21TimeFractionFromCycles
     (otherToThisProb thisSubcycleLength thisToOtherProb otherSubcycleLength : ℝ) : ℝ :=
@@ -15618,6 +16778,377 @@ theorem paper_lemma3_measured_time_fraction_formula_algebra
     (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
     hi hj
 
+/--
+Expected total time spent in one state during the larger renewal cycle from
+the Appendix proof: expected sub-cycle time divided by the probability that a
+sub-cycle exits to the other state.
+-/
+def gn21ExpectedStateTimeInRenewalCycle
+    (arrivalRate acceptProb switchRate stateCycleTime exitWeight : ℝ) : ℝ :=
+  gn21SubcycleLength arrivalRate acceptProb switchRate stateCycleTime /
+    gn21CrossSubcycleProb arrivalRate acceptProb switchRate exitWeight
+
+/-- Expected state time in the larger renewal cycle is positive from positive pieces. -/
+theorem gn21ExpectedStateTimeInRenewalCycle_pos_of_pos
+    (arrivalRate acceptProb switchRate stateCycleTime exitWeight : ℝ)
+    (hsubcycle_pos :
+      0 < gn21SubcycleLength arrivalRate acceptProb switchRate stateCycleTime)
+    (hcross_pos :
+      0 < gn21CrossSubcycleProb arrivalRate acceptProb switchRate exitWeight) :
+    0 <
+      gn21ExpectedStateTimeInRenewalCycle arrivalRate acceptProb switchRate
+        stateCycleTime exitWeight := by
+  unfold gn21ExpectedStateTimeInRenewalCycle
+  exact div_pos hsubcycle_pos hcross_pos
+
+/--
+Measured expected state time in the larger renewal cycle is positive under the
+source primitive positivity and feasible-policy hypotheses.
+-/
+theorem gn21ExpectedStateTimeInRenewalCycle_pos_of_primitives
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy)
+    (harrival_pos : 0 < arrivalRate)
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hmass_pos : 0 < singleStateTripMass μ σ) :
+    0 <
+      gn21ExpectedStateTimeInRenewalCycle arrivalRate
+        (singleStateTripMass μ σ) switchIJ
+        (gn21StateCycleTime μ arrivalRate σ)
+        (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ) := by
+  have hstateCycle_pos :
+      0 < gn21StateCycleTime μ arrivalRate σ :=
+    gn21StateCycleTime_pos_of_mass_pos μ arrivalRate σ harrival_pos
+      hσ_measurable hσ_subset hmass_pos
+  have hsubcycle_pos :
+      0 <
+        gn21SubcycleLength arrivalRate (singleStateTripMass μ σ) switchIJ
+          (gn21StateCycleTime μ arrivalRate σ) :=
+    gn21SubcycleLength_pos_of_pos arrivalRate (singleStateTripMass μ σ)
+      switchIJ (gn21StateCycleTime μ arrivalRate σ)
+      harrival_pos hmass_pos (le_of_lt hswitch_pos) hstateCycle_pos
+  have hcross_pos :
+      0 <
+        gn21CrossSubcycleProb arrivalRate (singleStateTripMass μ σ)
+          switchIJ
+          (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ) :=
+    gn21CrossSubcycleProb_pos_of_primitives μ arrivalRate switchIJ switchJI
+      σ harrival_pos hswitch_pos hsum hσ_measurable hσ_subset hmass_pos
+  exact
+    gn21ExpectedStateTimeInRenewalCycle_pos_of_pos arrivalRate
+      (singleStateTripMass μ σ) switchIJ
+      (gn21StateCycleTime μ arrivalRate σ)
+      (gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ)
+      hsubcycle_pos hcross_pos
+
+/--
+Cycle-mean time fractions agree with the paper's sub-cycle probability formula.
+If the expected number of same-state sub-cycles is `1 / p_ij`, the state-`i`
+share is `(S_i / p_ij)/(S_i / p_ij + S_j / p_ji)`, equivalently
+`p_ji S_i/(p_ji S_i + p_ij S_j)`.
+-/
+theorem gn21TimeFractionFromCycleMeans_eq_cycles
+    (thisToOtherProb otherToThisProb thisSubcycleLength
+      otherSubcycleLength : ℝ)
+    (hthis : thisToOtherProb ≠ 0)
+    (hother : otherToThisProb ≠ 0) :
+    thisSubcycleLength / thisToOtherProb /
+        (thisSubcycleLength / thisToOtherProb +
+          otherSubcycleLength / otherToThisProb) =
+      gn21TimeFractionFromCycles otherToThisProb thisSubcycleLength
+        thisToOtherProb otherSubcycleLength := by
+  unfold gn21TimeFractionFromCycles
+  field_simp [hthis, hother]
+
+/-- Expected cycle-time fractions reduce to Lemma 3's measured formula. -/
+theorem gn21ExpectedCycleTimeFraction_eq_measuredTimeFraction
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy)
+    (hi : arrivalI * singleStateTripMass μI σI + switchIJ ≠ 0)
+    (hj : arrivalJ * singleStateTripMass μJ σJ + switchJI ≠ 0)
+    (pIJ_ne :
+      gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI) switchIJ
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) ≠ 0)
+    (pJI_ne :
+      gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ) switchJI
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ) ≠ 0) :
+    gn21ExpectedStateTimeInRenewalCycle arrivalI
+          (singleStateTripMass μI σI) switchIJ
+          (gn21StateCycleTime μI arrivalI σI)
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) /
+        (gn21ExpectedStateTimeInRenewalCycle arrivalI
+            (singleStateTripMass μI σI) switchIJ
+            (gn21StateCycleTime μI arrivalI σI)
+            (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) +
+          gn21ExpectedStateTimeInRenewalCycle arrivalJ
+            (singleStateTripMass μJ σJ) switchJI
+            (gn21StateCycleTime μJ arrivalJ σJ)
+            (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)) =
+      gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+        σI σJ := by
+  unfold gn21ExpectedStateTimeInRenewalCycle
+  rw [gn21TimeFractionFromCycleMeans_eq_cycles
+    (gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI) switchIJ
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI))
+    (gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ) switchJI
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ))
+    (gn21SubcycleLength arrivalI (singleStateTripMass μI σI) switchIJ
+      (gn21StateCycleTime μI arrivalI σI))
+    (gn21SubcycleLength arrivalJ (singleStateTripMass μJ σJ) switchJI
+      (gn21StateCycleTime μJ arrivalJ σJ))
+    pIJ_ne pJI_ne]
+  exact paper_lemma3_measured_time_fraction_formula_algebra
+    μI μJ arrivalI arrivalJ switchIJ switchJI σI σJ hi hj
+
+/--
+IID-cycle source model for Lemma 3.  The random variables are the total time
+spent in state `i` and state `j` during each larger renewal cycle.  The strong
+law proves the sample time-fraction limit from these cycle variables; the mean
+identities are the paper's geometric/Wald calculation for the expected number
+of same-state sub-cycles.
+-/
+structure GN21TimeFractionIIDCycleModel
+    {Ω : Type*} [MeasurableSpace Ω]
+    (PΩ : Measure Ω)
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy) where
+  stateTimeI : ℕ → Ω → ℝ
+  stateTimeJ : ℕ → Ω → ℝ
+  arrivalI_pos : 0 < arrivalI
+  arrivalJ_pos : 0 < arrivalJ
+  switchIJ_pos : 0 < switchIJ
+  switchJI_pos : 0 < switchJI
+  σI_measurable : MeasurableSet σI
+  σJ_measurable : MeasurableSet σJ
+  σI_subset : σI ⊆ acceptAllPolicy
+  σJ_subset : σJ ⊆ acceptAllPolicy
+  massI_pos : 0 < singleStateTripMass μI σI
+  massJ_pos : 0 < singleStateTripMass μJ σJ
+  stateTimeI_integrable : Integrable (stateTimeI 0) PΩ
+  stateTimeJ_integrable : Integrable (stateTimeJ 0) PΩ
+  stateTimeI_independent : Pairwise ((· ⟂ᵢ[PΩ] ·) on stateTimeI)
+  stateTimeJ_independent : Pairwise ((· ⟂ᵢ[PΩ] ·) on stateTimeJ)
+  stateTimeI_identDistrib :
+    ∀ n, ProbabilityTheory.IdentDistrib (stateTimeI n) (stateTimeI 0) PΩ PΩ
+  stateTimeJ_identDistrib :
+    ∀ n, ProbabilityTheory.IdentDistrib (stateTimeJ n) (stateTimeJ 0) PΩ PΩ
+  stateTimeI_mean_eq :
+    (∫ ω, stateTimeI 0 ω ∂PΩ) =
+      gn21ExpectedStateTimeInRenewalCycle arrivalI
+        (singleStateTripMass μI σI) switchIJ
+        (gn21StateCycleTime μI arrivalI σI)
+        (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+  stateTimeJ_mean_eq :
+    (∫ ω, stateTimeJ 0 ω ∂PΩ) =
+      gn21ExpectedStateTimeInRenewalCycle arrivalJ
+        (singleStateTripMass μJ σJ) switchJI
+        (gn21StateCycleTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+
+/--
+Lemma 3 from explicit IID renewal-cycle state-time variables.  This replaces
+the opaque time-fraction limit assumption by mathlib's strong law plus the
+paper's expected-cycle identities.
+-/
+theorem paper_lemma3_stochastic_time_fraction_formula_of_iid_cycles
+    {Ω : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω}
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switchIJ switchJI : ℝ}
+    {σI σJ : TripPolicy}
+    (C :
+      GN21TimeFractionIIDCycleModel PΩ μI μJ arrivalI arrivalJ
+        switchIJ switchJI σI σJ) :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto
+        (fun n : ℕ =>
+          (∑ k ∈ Finset.range n, C.stateTimeI k ω) /
+            ((∑ k ∈ Finset.range n, C.stateTimeI k ω) +
+              (∑ k ∈ Finset.range n, C.stateTimeJ k ω)))
+        atTop
+        (nhds
+          (gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+            switchJI σI σJ)) := by
+  let meanI :=
+    gn21ExpectedStateTimeInRenewalCycle arrivalI
+      (singleStateTripMass μI σI) switchIJ
+      (gn21StateCycleTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+  let meanJ :=
+    gn21ExpectedStateTimeInRenewalCycle arrivalJ
+      (singleStateTripMass μJ σJ) switchJI
+      (gn21StateCycleTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+  have hsumIJ : 0 < switchIJ + switchJI :=
+    add_pos C.switchIJ_pos C.switchJI_pos
+  have hsumJI : 0 < switchJI + switchIJ :=
+    add_pos C.switchJI_pos C.switchIJ_pos
+  have hdenI_pos :
+      0 < arrivalI * singleStateTripMass μI σI + switchIJ :=
+    add_pos (mul_pos C.arrivalI_pos C.massI_pos) C.switchIJ_pos
+  have hdenJ_pos :
+      0 < arrivalJ * singleStateTripMass μJ σJ + switchJI :=
+    add_pos (mul_pos C.arrivalJ_pos C.massJ_pos) C.switchJI_pos
+  have hi : arrivalI * singleStateTripMass μI σI + switchIJ ≠ 0 :=
+    ne_of_gt hdenI_pos
+  have hj : arrivalJ * singleStateTripMass μJ σJ + switchJI ≠ 0 :=
+    ne_of_gt hdenJ_pos
+  have hpIJ_pos :
+      0 <
+        gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI)
+          switchIJ
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) :=
+    gn21CrossSubcycleProb_pos_of_primitives μI arrivalI switchIJ switchJI
+      σI C.arrivalI_pos C.switchIJ_pos hsumIJ C.σI_measurable
+      C.σI_subset C.massI_pos
+  have hpJI_pos :
+      0 <
+        gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ)
+          switchJI
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ) :=
+    gn21CrossSubcycleProb_pos_of_primitives μJ arrivalJ switchJI switchIJ
+      σJ C.arrivalJ_pos C.switchJI_pos hsumJI C.σJ_measurable
+      C.σJ_subset C.massJ_pos
+  have hpIJ_ne :
+      gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI)
+          switchIJ
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) ≠ 0 :=
+    ne_of_gt hpIJ_pos
+  have hpJI_ne :
+      gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ)
+          switchJI
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ) ≠ 0 :=
+    ne_of_gt hpJI_pos
+  have hmeanI_pos : 0 < meanI := by
+    simpa [meanI] using
+      gn21ExpectedStateTimeInRenewalCycle_pos_of_primitives μI arrivalI
+        switchIJ switchJI σI C.arrivalI_pos C.switchIJ_pos hsumIJ
+        C.σI_measurable C.σI_subset C.massI_pos
+  have hmeanJ_pos : 0 < meanJ := by
+    simpa [meanJ] using
+      gn21ExpectedStateTimeInRenewalCycle_pos_of_primitives μJ arrivalJ
+        switchJI switchIJ σJ C.arrivalJ_pos C.switchJI_pos hsumJI
+        C.σJ_measurable C.σJ_subset C.massJ_pos
+  have hmean_ne : meanI + meanJ ≠ 0 :=
+    ne_of_gt (add_pos hmeanI_pos hmeanJ_pos)
+  have hI :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n : ℕ =>
+            (∑ k ∈ Finset.range n, C.stateTimeI k ω) / n)
+          atTop (nhds meanI) := by
+    simpa [meanI, C.stateTimeI_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.stateTimeI
+        C.stateTimeI_integrable C.stateTimeI_independent
+        C.stateTimeI_identDistrib)
+  have hJ :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n : ℕ =>
+            (∑ k ∈ Finset.range n, C.stateTimeJ k ω) / n)
+          atTop (nhds meanJ) := by
+    simpa [meanJ, C.stateTimeJ_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.stateTimeJ
+        C.stateTimeJ_integrable C.stateTimeJ_independent
+        C.stateTimeJ_identDistrib)
+  filter_upwards [hI, hJ] with ω hIω hJω
+  have hfracAvg :
+      Tendsto
+        (fun n : ℕ =>
+          ((∑ k ∈ Finset.range n, C.stateTimeI k ω) / n) /
+            (((∑ k ∈ Finset.range n, C.stateTimeI k ω) / n) +
+              ((∑ k ∈ Finset.range n, C.stateTimeJ k ω) / n)))
+        atTop (nhds (meanI / (meanI + meanJ))) :=
+    hIω.div (hIω.add hJω) hmean_ne
+  have hfrac :
+      Tendsto
+        (fun n : ℕ =>
+          (∑ k ∈ Finset.range n, C.stateTimeI k ω) /
+            ((∑ k ∈ Finset.range n, C.stateTimeI k ω) +
+              (∑ k ∈ Finset.range n, C.stateTimeJ k ω)))
+        atTop (nhds (meanI / (meanI + meanJ))) := by
+    refine hfracAvg.congr' ?_
+    filter_upwards [eventually_ge_atTop 1] with n hn
+    have hn_ne : (n : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.ne_of_gt hn)
+    field_simp [hn_ne]
+  have htarget :
+      meanI / (meanI + meanJ) =
+        gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+          switchJI σI σJ := by
+    dsimp [meanI, meanJ, gn21ExpectedStateTimeInRenewalCycle]
+    rw [gn21TimeFractionFromCycleMeans_eq_cycles
+      (gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI) switchIJ
+        (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI))
+      (gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ) switchJI
+        (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ))
+      (gn21SubcycleLength arrivalI (singleStateTripMass μI σI) switchIJ
+        (gn21StateCycleTime μI arrivalI σI))
+      (gn21SubcycleLength arrivalJ (singleStateTripMass μJ σJ) switchJI
+        (gn21StateCycleTime μJ arrivalJ σJ))
+      hpIJ_ne hpJI_ne]
+    exact paper_lemma3_measured_time_fraction_formula_algebra
+      μI μJ arrivalI arrivalJ switchIJ switchJI σI σJ hi hj
+  simpa [htarget] using hfrac
+
+/--
+Stochastic renewal-cycle certificate for Lemma 3.  The stochastic part of the
+paper proof is the LLN assertion that the sample-path time fraction converges
+to the renewal-cycle expression built from cross-state subcycle probabilities
+and subcycle lengths.
+-/
+structure GN21TimeFractionCycleLLNCertificate
+    {Ω ι : Type*} [MeasurableSpace Ω]
+    (PΩ : Measure Ω) (l : Filter ι)
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy) where
+  timeFractionPath : Ω → ι → ℝ
+  hi : arrivalI * singleStateTripMass μI σI + switchIJ ≠ 0
+  hj : arrivalJ * singleStateTripMass μJ σJ + switchJI ≠ 0
+  timeFraction_tendsto_cycles :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (timeFractionPath ω) l
+        (nhds
+          (gn21TimeFractionFromCycles
+            (gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ)
+              switchJI
+              (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ))
+            (gn21SubcycleLength arrivalI (singleStateTripMass μI σI)
+              switchIJ (gn21StateCycleTime μI arrivalI σI))
+            (gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI)
+              switchIJ
+              (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI))
+            (gn21SubcycleLength arrivalJ (singleStateTripMass μJ σJ)
+              switchJI (gn21StateCycleTime μJ arrivalJ σJ))))
+
+/--
+Lemma 3 stochastic bridge: the renewal-cycle LLN limit for time spent in state
+`i` is exactly the paper's measured `T,Q` time-fraction formula.
+-/
+theorem paper_lemma3_stochastic_time_fraction_formula
+    {Ω ι : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω} {l : Filter ι}
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switchIJ switchJI : ℝ}
+    {σI σJ : TripPolicy}
+    (C :
+      GN21TimeFractionCycleLLNCertificate PΩ l μI μJ arrivalI arrivalJ
+        switchIJ switchJI σI σJ) :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (C.timeFractionPath ω) l
+        (nhds
+          (gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+            switchJI σI σJ)) := by
+  simpa [paper_lemma3_measured_time_fraction_formula_algebra
+      μI μJ arrivalI arrivalJ switchIJ switchJI σI σJ C.hi C.hj]
+    using C.timeFraction_tendsto_cycles
+
 /-!
 Lemma 1 decomposes dynamic earnings into state reward rates and time fractions.
 The continuous renewal-reward and CTMC cycle construction is still the source
@@ -15641,6 +17172,15 @@ def gn21StateMeanEarning
     (μ : Measure TripLength) (w : PricingFunction) (σ : TripPolicy) : ℝ :=
   singleStateTripPayment μ w σ / singleStateTripMass μ σ
 
+/--
+Expected total earning in one state during the larger renewal cycle from the
+Appendix proof.
+-/
+def gn21ExpectedStateEarningInRenewalCycle
+    (arrivalRate acceptProb switchRate meanEarning exitWeight : ℝ) : ℝ :=
+  gn21SubcycleEarning arrivalRate acceptProb switchRate meanEarning /
+    gn21CrossSubcycleProb arrivalRate acceptProb switchRate exitWeight
+
 /-- Lemma 1 measured state reward rate `R_i(w_i,σ_i)=W_i(σ_i)/T_i(σ_i)`. -/
 def gn21MeasuredStateRewardRate
     (μ : Measure TripLength) (arrivalRate : ℝ)
@@ -15648,6 +17188,26 @@ def gn21MeasuredStateRewardRate
   gn21StateRewardRate
     (gn21StateMeanEarning μ w σ)
     (gn21StateCycleTime μ arrivalRate σ)
+
+/--
+The Appendix cycle-earning mean is the cycle-time mean multiplied by the
+single-state reward rate.
+-/
+theorem gn21ExpectedStateEarningInRenewalCycle_eq_time_mul_rewardRate
+    (arrivalRate acceptProb switchRate stateCycleTime meanEarning
+      exitWeight : ℝ)
+    (hp :
+      gn21CrossSubcycleProb arrivalRate acceptProb switchRate exitWeight ≠ 0)
+    (htime : stateCycleTime ≠ 0) :
+    gn21ExpectedStateEarningInRenewalCycle arrivalRate acceptProb switchRate
+        meanEarning exitWeight =
+      gn21ExpectedStateTimeInRenewalCycle arrivalRate acceptProb switchRate
+        stateCycleTime exitWeight *
+        gn21StateRewardRate meanEarning stateCycleTime := by
+  unfold gn21ExpectedStateEarningInRenewalCycle
+    gn21ExpectedStateTimeInRenewalCycle gn21SubcycleEarning
+    gn21SubcycleLength gn21StateRewardRate
+  field_simp [hp, htime]
 
 /--
 Measured Lemma 1 state reward rates are nonnegative when accepted payments are
@@ -16044,6 +17604,385 @@ theorem paper_lemma1_measured_dynamic_reward_decomposition
         gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI switchIJ σJ σI *
           gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ := by
   rfl
+
+/--
+Stochastic renewal/CTMC-cycle certificate for Lemma 1.  These are exactly the
+almost-sure renewal theorem/LLN conclusions used in the paper proof: the
+sample-path time fractions and state reward rates converge to their measured
+counterparts, and the observed dynamic reward rate is eventually the weighted
+sum of those sample-path quantities.
+-/
+structure GN21DynamicRenewalLLNCertificate
+    {Ω ι : Type*} [MeasurableSpace Ω]
+    (PΩ : Measure Ω) (l : Filter ι)
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) where
+  dynamicRewardRate : Ω → ι → ℝ
+  timeFractionIPath : Ω → ι → ℝ
+  timeFractionJPath : Ω → ι → ℝ
+  stateRewardRateIPath : Ω → ι → ℝ
+  stateRewardRateJPath : Ω → ι → ℝ
+  dynamicReward_eq_weighted :
+    ∀ᵐ ω ∂PΩ,
+      (fun n => dynamicRewardRate ω n) =ᶠ[l]
+        (fun n =>
+          timeFractionIPath ω n * stateRewardRateIPath ω n +
+            timeFractionJPath ω n * stateRewardRateJPath ω n)
+  timeFractionI_tendsto :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (timeFractionIPath ω) l
+        (nhds
+          (gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+            switchJI σI σJ))
+  timeFractionJ_tendsto :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (timeFractionJPath ω) l
+        (nhds
+          (gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI
+            switchIJ σJ σI))
+  stateRewardRateI_tendsto :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (stateRewardRateIPath ω) l
+        (nhds (gn21MeasuredStateRewardRate μI arrivalI wI σI))
+  stateRewardRateJ_tendsto :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (stateRewardRateJPath ω) l
+        (nhds (gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ))
+
+/--
+Lemma 1 stochastic bridge: the CTMC-cycle renewal/LLN certificate implies that
+the sample-path dynamic reward rate converges almost surely to the measured
+dynamic reward formula.
+-/
+theorem paper_lemma1_stochastic_dynamic_reward_decomposition
+    {Ω ι : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω} {l : Filter ι}
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switchIJ switchJI : ℝ}
+    {wI wJ : PricingFunction} {σI σJ : TripPolicy}
+    (C :
+      GN21DynamicRenewalLLNCertificate PΩ l μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto (C.dynamicRewardRate ω) l
+        (nhds
+          (gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ
+            switchJI wI wJ σI σJ)) := by
+  have hweighted :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n =>
+            C.timeFractionIPath ω n * C.stateRewardRateIPath ω n +
+              C.timeFractionJPath ω n * C.stateRewardRateJPath ω n)
+          l
+          (nhds
+            (gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+                switchJI σI σJ *
+              gn21MeasuredStateRewardRate μI arrivalI wI σI +
+              gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI
+                switchIJ σJ σI *
+                gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ)) :=
+    ae_tendsto_two_state_weighted_reward_of_ae_tendsto
+      C.timeFractionI_tendsto C.timeFractionJ_tendsto
+      C.stateRewardRateI_tendsto C.stateRewardRateJ_tendsto
+  filter_upwards [C.dynamicReward_eq_weighted, hweighted] with ω heq hlim
+  have hlim' :
+      Tendsto
+        (fun n =>
+          C.timeFractionIPath ω n * C.stateRewardRateIPath ω n +
+            C.timeFractionJPath ω n * C.stateRewardRateJPath ω n)
+        l
+        (nhds
+          (gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ
+            switchJI wI wJ σI σJ)) := by
+    simpa [paper_lemma1_measured_dynamic_reward_decomposition]
+      using hlim
+  exact hlim'.congr' heq.symm
+
+/--
+IID-cycle source model for Lemma 1.  It extends the Lemma 3 cycle-time model
+with total state-specific earnings in each larger renewal cycle.  The theorem
+below proves the long-run dynamic reward decomposition from strong laws for
+these cycle variables and the paper's expected-cycle identities.
+-/
+structure GN21DynamicIIDCycleModel
+    {Ω : Type*} [MeasurableSpace Ω]
+    (PΩ : Measure Ω)
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    extends
+      GN21TimeFractionIIDCycleModel PΩ μI μJ arrivalI arrivalJ switchIJ
+        switchJI σI σJ where
+  stateEarningI : ℕ → Ω → ℝ
+  stateEarningJ : ℕ → Ω → ℝ
+  stateEarningI_integrable : Integrable (stateEarningI 0) PΩ
+  stateEarningJ_integrable : Integrable (stateEarningJ 0) PΩ
+  stateEarningI_independent : Pairwise ((· ⟂ᵢ[PΩ] ·) on stateEarningI)
+  stateEarningJ_independent : Pairwise ((· ⟂ᵢ[PΩ] ·) on stateEarningJ)
+  stateEarningI_identDistrib :
+    ∀ n, ProbabilityTheory.IdentDistrib (stateEarningI n) (stateEarningI 0) PΩ PΩ
+  stateEarningJ_identDistrib :
+    ∀ n, ProbabilityTheory.IdentDistrib (stateEarningJ n) (stateEarningJ 0) PΩ PΩ
+  stateEarningI_mean_eq :
+    (∫ ω, stateEarningI 0 ω ∂PΩ) =
+      gn21ExpectedStateEarningInRenewalCycle arrivalI
+        (singleStateTripMass μI σI) switchIJ
+        (gn21StateMeanEarning μI wI σI)
+        (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+  stateEarningJ_mean_eq :
+    (∫ ω, stateEarningJ 0 ω ∂PΩ) =
+      gn21ExpectedStateEarningInRenewalCycle arrivalJ
+        (singleStateTripMass μJ σJ) switchJI
+        (gn21StateMeanEarning μJ wJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+
+/--
+Lemma 1 from explicit IID renewal-cycle variables.  This closes the stochastic
+decomposition by strong laws for the per-cycle state times and earnings, then
+uses Lemma 3's measured time-fraction algebra to obtain
+`μ_i R_i + μ_j R_j`.
+-/
+theorem paper_lemma1_stochastic_dynamic_reward_decomposition_of_iid_cycles
+    {Ω : Type*} [MeasurableSpace Ω]
+    {PΩ : Measure Ω}
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switchIJ switchJI : ℝ}
+    {wI wJ : PricingFunction} {σI σJ : TripPolicy}
+    (C :
+      GN21DynamicIIDCycleModel PΩ μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) :
+    ∀ᵐ ω ∂PΩ,
+      Tendsto
+        (fun n : ℕ =>
+          ((∑ k ∈ Finset.range n, C.stateEarningI k ω) +
+              (∑ k ∈ Finset.range n, C.stateEarningJ k ω)) /
+            ((∑ k ∈ Finset.range n, C.stateTimeI k ω) +
+              (∑ k ∈ Finset.range n, C.stateTimeJ k ω)))
+        atTop
+        (nhds
+          (gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ
+            switchJI wI wJ σI σJ)) := by
+  let meanTimeI :=
+    gn21ExpectedStateTimeInRenewalCycle arrivalI
+      (singleStateTripMass μI σI) switchIJ
+      (gn21StateCycleTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+  let meanTimeJ :=
+    gn21ExpectedStateTimeInRenewalCycle arrivalJ
+      (singleStateTripMass μJ σJ) switchJI
+      (gn21StateCycleTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+  let meanEarningI :=
+    gn21ExpectedStateEarningInRenewalCycle arrivalI
+      (singleStateTripMass μI σI) switchIJ
+      (gn21StateMeanEarning μI wI σI)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+  let meanEarningJ :=
+    gn21ExpectedStateEarningInRenewalCycle arrivalJ
+      (singleStateTripMass μJ σJ) switchJI
+      (gn21StateMeanEarning μJ wJ σJ)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+  have hsumIJ : 0 < switchIJ + switchJI :=
+    add_pos C.switchIJ_pos C.switchJI_pos
+  have hsumJI : 0 < switchJI + switchIJ :=
+    add_pos C.switchJI_pos C.switchIJ_pos
+  have hdenI_pos :
+      0 < arrivalI * singleStateTripMass μI σI + switchIJ :=
+    add_pos (mul_pos C.arrivalI_pos C.massI_pos) C.switchIJ_pos
+  have hdenJ_pos :
+      0 < arrivalJ * singleStateTripMass μJ σJ + switchJI :=
+    add_pos (mul_pos C.arrivalJ_pos C.massJ_pos) C.switchJI_pos
+  have hi : arrivalI * singleStateTripMass μI σI + switchIJ ≠ 0 :=
+    ne_of_gt hdenI_pos
+  have hj : arrivalJ * singleStateTripMass μJ σJ + switchJI ≠ 0 :=
+    ne_of_gt hdenJ_pos
+  have hpIJ_pos :
+      0 <
+        gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI)
+          switchIJ
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) :=
+    gn21CrossSubcycleProb_pos_of_primitives μI arrivalI switchIJ switchJI
+      σI C.arrivalI_pos C.switchIJ_pos hsumIJ C.σI_measurable
+      C.σI_subset C.massI_pos
+  have hpJI_pos :
+      0 <
+        gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ)
+          switchJI
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ) :=
+    gn21CrossSubcycleProb_pos_of_primitives μJ arrivalJ switchJI switchIJ
+      σJ C.arrivalJ_pos C.switchJI_pos hsumJI C.σJ_measurable
+      C.σJ_subset C.massJ_pos
+  have hpIJ_ne :
+      gn21CrossSubcycleProb arrivalI (singleStateTripMass μI σI)
+          switchIJ
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI) ≠ 0 :=
+    ne_of_gt hpIJ_pos
+  have hpJI_ne :
+      gn21CrossSubcycleProb arrivalJ (singleStateTripMass μJ σJ)
+          switchJI
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ) ≠ 0 :=
+    ne_of_gt hpJI_pos
+  have hmeanTimeI_pos : 0 < meanTimeI := by
+    simpa [meanTimeI] using
+      gn21ExpectedStateTimeInRenewalCycle_pos_of_primitives μI arrivalI
+        switchIJ switchJI σI C.arrivalI_pos C.switchIJ_pos hsumIJ
+        C.σI_measurable C.σI_subset C.massI_pos
+  have hmeanTimeJ_pos : 0 < meanTimeJ := by
+    simpa [meanTimeJ] using
+      gn21ExpectedStateTimeInRenewalCycle_pos_of_primitives μJ arrivalJ
+        switchJI switchIJ σJ C.arrivalJ_pos C.switchJI_pos hsumJI
+        C.σJ_measurable C.σJ_subset C.massJ_pos
+  have htimeMean_ne : meanTimeI + meanTimeJ ≠ 0 :=
+    ne_of_gt (add_pos hmeanTimeI_pos hmeanTimeJ_pos)
+  have hstateCycleI_pos : 0 < gn21StateCycleTime μI arrivalI σI :=
+    gn21StateCycleTime_pos_of_mass_pos μI arrivalI σI C.arrivalI_pos
+      C.σI_measurable C.σI_subset C.massI_pos
+  have hstateCycleJ_pos : 0 < gn21StateCycleTime μJ arrivalJ σJ :=
+    gn21StateCycleTime_pos_of_mass_pos μJ arrivalJ σJ C.arrivalJ_pos
+      C.σJ_measurable C.σJ_subset C.massJ_pos
+  have hstateCycleI_ne : gn21StateCycleTime μI arrivalI σI ≠ 0 :=
+    ne_of_gt hstateCycleI_pos
+  have hstateCycleJ_ne : gn21StateCycleTime μJ arrivalJ σJ ≠ 0 :=
+    ne_of_gt hstateCycleJ_pos
+  have hTI :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n : ℕ =>
+            (∑ k ∈ Finset.range n, C.stateTimeI k ω) / n)
+          atTop (nhds meanTimeI) := by
+    simpa [meanTimeI, C.stateTimeI_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.stateTimeI
+        C.stateTimeI_integrable C.stateTimeI_independent
+        C.stateTimeI_identDistrib)
+  have hTJ :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n : ℕ =>
+            (∑ k ∈ Finset.range n, C.stateTimeJ k ω) / n)
+          atTop (nhds meanTimeJ) := by
+    simpa [meanTimeJ, C.stateTimeJ_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.stateTimeJ
+        C.stateTimeJ_integrable C.stateTimeJ_independent
+        C.stateTimeJ_identDistrib)
+  have hEI :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n : ℕ =>
+            (∑ k ∈ Finset.range n, C.stateEarningI k ω) / n)
+          atTop (nhds meanEarningI) := by
+    simpa [meanEarningI, C.stateEarningI_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.stateEarningI
+        C.stateEarningI_integrable C.stateEarningI_independent
+        C.stateEarningI_identDistrib)
+  have hEJ :
+      ∀ᵐ ω ∂PΩ,
+        Tendsto
+          (fun n : ℕ =>
+            (∑ k ∈ Finset.range n, C.stateEarningJ k ω) / n)
+          atTop (nhds meanEarningJ) := by
+    simpa [meanEarningJ, C.stateEarningJ_mean_eq] using
+      (ae_tendsto_empirical_mean_real_of_iid C.stateEarningJ
+        C.stateEarningJ_integrable C.stateEarningJ_independent
+        C.stateEarningJ_identDistrib)
+  filter_upwards [hTI, hTJ, hEI, hEJ] with ω hTIω hTJω hEIω hEJω
+  have hratioAvg :
+      Tendsto
+        (fun n : ℕ =>
+          (((∑ k ∈ Finset.range n, C.stateEarningI k ω) / n) +
+              ((∑ k ∈ Finset.range n, C.stateEarningJ k ω) / n)) /
+            (((∑ k ∈ Finset.range n, C.stateTimeI k ω) / n) +
+              ((∑ k ∈ Finset.range n, C.stateTimeJ k ω) / n)))
+        atTop (nhds ((meanEarningI + meanEarningJ) /
+          (meanTimeI + meanTimeJ))) :=
+    (hEIω.add hEJω).div (hTIω.add hTJω) htimeMean_ne
+  have hratio :
+      Tendsto
+        (fun n : ℕ =>
+          ((∑ k ∈ Finset.range n, C.stateEarningI k ω) +
+              (∑ k ∈ Finset.range n, C.stateEarningJ k ω)) /
+            ((∑ k ∈ Finset.range n, C.stateTimeI k ω) +
+              (∑ k ∈ Finset.range n, C.stateTimeJ k ω)))
+        atTop (nhds ((meanEarningI + meanEarningJ) /
+          (meanTimeI + meanTimeJ))) := by
+    refine hratioAvg.congr' ?_
+    filter_upwards [eventually_ge_atTop 1] with n hn
+    have hn_ne : (n : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.ne_of_gt hn)
+    field_simp [hn_ne]
+  have htarget :
+      (meanEarningI + meanEarningJ) / (meanTimeI + meanTimeJ) =
+        gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ
+          switchJI wI wJ σI σJ := by
+    have hEarnI :
+        meanEarningI =
+          meanTimeI *
+            gn21MeasuredStateRewardRate μI arrivalI wI σI := by
+      dsimp [meanEarningI, meanTimeI, gn21MeasuredStateRewardRate]
+      exact
+        gn21ExpectedStateEarningInRenewalCycle_eq_time_mul_rewardRate
+          arrivalI (singleStateTripMass μI σI) switchIJ
+          (gn21StateCycleTime μI arrivalI σI)
+          (gn21StateMeanEarning μI wI σI)
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+          hpIJ_ne hstateCycleI_ne
+    have hEarnJ :
+        meanEarningJ =
+          meanTimeJ *
+            gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ := by
+      dsimp [meanEarningJ, meanTimeJ, gn21MeasuredStateRewardRate]
+      exact
+        gn21ExpectedStateEarningInRenewalCycle_eq_time_mul_rewardRate
+          arrivalJ (singleStateTripMass μJ σJ) switchJI
+          (gn21StateCycleTime μJ arrivalJ σJ)
+          (gn21StateMeanEarning μJ wJ σJ)
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+          hpJI_ne hstateCycleJ_ne
+    have hfracI :
+        meanTimeI / (meanTimeI + meanTimeJ) =
+          gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+            switchJI σI σJ := by
+      simpa [meanTimeI, meanTimeJ] using
+        gn21ExpectedCycleTimeFraction_eq_measuredTimeFraction
+          μI μJ arrivalI arrivalJ switchIJ switchJI σI σJ
+          hi hj hpIJ_ne hpJI_ne
+    have hfracJ_swap :
+        meanTimeJ / (meanTimeJ + meanTimeI) =
+          gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI
+            switchIJ σJ σI := by
+      simpa [meanTimeI, meanTimeJ] using
+        gn21ExpectedCycleTimeFraction_eq_measuredTimeFraction
+          μJ μI arrivalJ arrivalI switchJI switchIJ σJ σI
+          hj hi hpJI_ne hpIJ_ne
+    have hfracJ :
+        meanTimeJ / (meanTimeI + meanTimeJ) =
+          gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI
+            switchIJ σJ σI := by
+      rw [add_comm meanTimeI meanTimeJ]
+      exact hfracJ_swap
+    calc
+      (meanEarningI + meanEarningJ) / (meanTimeI + meanTimeJ)
+          =
+        meanTimeI / (meanTimeI + meanTimeJ) *
+            gn21MeasuredStateRewardRate μI arrivalI wI σI +
+          meanTimeJ / (meanTimeI + meanTimeJ) *
+            gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ := by
+            rw [hEarnI, hEarnJ]
+            field_simp [htimeMean_ne]
+      _ =
+        gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ
+            switchJI σI σJ *
+            gn21MeasuredStateRewardRate μI arrivalI wI σI +
+          gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI
+            switchIJ σJ σI *
+            gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ := by
+            rw [hfracI, hfracJ]
+      _ =
+        gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ
+          switchJI wI wJ σI σJ := by
+            rw [paper_lemma1_measured_dynamic_reward_decomposition]
+  simpa [htarget] using hratio
 
 /--
 Measured one-state reward-rate algebra in Appendix-D scaled primitives:
@@ -32179,6 +34118,98 @@ theorem GN21RegularEndpointSharedSourceData.surge_fixed_cross_ge_acceptAll_of_co
       hpointwise
 
 /--
+Non-surge reject-long shape discharges the lower fixed-state pointwise
+comparison against every rejected feasible trip.
+-/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_lower_pointwise_of_rejectsLongTrips
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 0)) :
+    ∀ τ ∈ acceptAllPolicy \ ρ 0,
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+          gn21SwitchProb switch12 switch21 τ ≤
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          τ := by
+  have hsum12 : 0 < switch12 + switch21 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  exact
+    gn21FixedState_lower_pointwise_of_rejectsLongTrips
+      (μ 0) (arrival 0) switch12 switch21 u (ρ 0)
+      (le_of_lt S.harrival0_pos) S.hswitch12_pos hsum12
+      (hρ_feasible 0).2 (hρ_feasible 0).1 hshape
+      (S.htime0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+      (S.hq0_acceptAll_integrable.mono_set (hρ_feasible 0).1)
+
+/--
+Surge reject-long shape discharges the lower fixed-state pointwise comparison
+against every rejected feasible trip.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_lower_pointwise_of_rejectsLongTrips
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 1)) :
+    ∀ τ ∈ acceptAllPolicy \ ρ 1,
+      gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+          gn21SwitchProb switch21 switch12 τ ≤
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+          τ := by
+  have hsum21 : 0 < switch21 + switch12 := by
+    linarith [S.hswitch12_pos, S.hswitch21_pos]
+  exact
+    gn21FixedState_lower_pointwise_of_rejectsLongTrips
+      (μ 1) (arrival 1) switch21 switch12 u (ρ 1)
+      (le_of_lt S.harrival1_pos) S.hswitch21_pos hsum21
+      (hρ_feasible 1).2 (hρ_feasible 1).1 hshape
+      (S.htime1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+      (S.hq1_acceptAll_integrable.mono_set (hρ_feasible 1).1)
+
+/--
+Non-surge reject-long shape discharges the lower fixed-state cross-ratio
+comparison with accept-all.
+-/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_ge_acceptAll_of_rejectsLongTrips
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 0)) :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) :=
+  S.nonsurge_fixed_cross_ge_acceptAll_of_complement_pointwise hρ_feasible
+    (S.nonsurge_lower_pointwise_of_rejectsLongTrips hρ_feasible hshape)
+
+/--
+Surge reject-long shape discharges the lower fixed-state cross-ratio comparison
+with accept-all.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_fixed_cross_ge_acceptAll_of_rejectsLongTrips
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 1)) :
+    gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+        gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 ≤
+      gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) :=
+  S.surge_fixed_cross_ge_acceptAll_of_complement_pointwise hρ_feasible
+    (S.surge_lower_pointwise_of_rejectsLongTrips hρ_feasible hshape)
+
+/--
 Convert a non-surge fixed-state reward-rate identity into the structured
 fixed-state accounting equation used by the Theorem 3 fixed-transfer endpoint.
 -/
@@ -45198,6 +47229,37 @@ def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_
   · simpa [hother_eq, gn21AcceptAllScaledStateTime] using
       S.nonsurge_acceptAll_reward_rate_of_theorem3_parameter_data P
 
+/--
+Fixed-non-surge transfer data when the non-surge fixed policy rejects long
+trips.  The lower pointwise comparison is derived from CTMC per-time
+monotonicity; only the opposite upper comparison and reward-rate identity
+remain as source obligations.
+-/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsLongTrips_and_upper
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hshape : rejectsLongTrips u (ρ 0))
+    (hfixed_upper_pointwise :
+      ∀ τ ∈ acceptAllPolicy \ ρ 0,
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            τ ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+            gn21SwitchProb switch12 switch21 τ)
+    (hfixed_reward_rate :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R1 ρ where
+  hfixed_lower_pointwise :=
+    S.nonsurge_lower_pointwise_of_rejectsLongTrips hρ_feasible hshape
+  hfixed_upper_pointwise := hfixed_upper_pointwise
+  hfixed_reward_rate := hfixed_reward_rate
+
 /-- Feed reusable fixed-non-surge data to a surge reject-short endpoint. -/
 def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_surge_reject_short
     {μ : Fin 2 → Measure TripLength}
@@ -45417,6 +47479,56 @@ structure GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPo
         gn21ScaledStateEarning (μ 0) (arrival 0)
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
           R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+
+/--
+Build fixed-non-surge policy-form data with the reject-long equality reduced to
+the one remaining upper pointwise comparison.  The reverse comparison is
+derived from reject-long shape and CTMC per-time monotonicity.
+-/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (reject_long_upper :
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          ∀ τ ∈ acceptAllPolicy \ ρ 0,
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+                τ ≤
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                gn21SwitchProb switch12 switch21 τ)
+    (reject_long_reward_rate :
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21ScaledStateEarning (μ 0) (arrival 0)
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+            R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (accept_middle_pointwise_eq :
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          ∀ τ ∈ acceptAllPolicy \ ρ 0,
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+                τ =
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                gn21SwitchProb switch12 switch21 τ)
+    (accept_middle_reward_rate :
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21ScaledStateEarning (μ 0) (arrival 0)
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+            R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) :
+    GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+      S m z R1 ρ where
+  reject_long_pointwise_eq := by
+    intro u hshape τ hτ
+    exact le_antisymm (reject_long_upper u hshape τ hτ)
+      (S.nonsurge_lower_pointwise_of_rejectsLongTrips hρ_feasible hshape τ hτ)
+  reject_long_reward_rate := reject_long_reward_rate
+  accept_middle_pointwise_eq := accept_middle_pointwise_eq
+  accept_middle_reward_rate := accept_middle_reward_rate
 
 /-- Build fixed-non-surge transfer from its allowed Lemma 5 policy form. -/
 def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_fixed_state
@@ -47412,8 +49524,168 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPo
               Dhi.hlo_nonneg Dhi.hlo_le_hiδ Dhi.tail_integrability
               C.hmeasure_surge_acceptAll_pos Dhi.hfixed_lower_cross
               Dhi.hfixed_upper_cross Dhi.hmass_other_pos hmR_pos
-              (le_of_lt C.hR1_pos) hfixed_reward_rate).to_supported_endpoint_data
+            (le_of_lt C.hR1_pos) hfixed_reward_rate).to_supported_endpoint_data
                 hopt.1).to_current_bounds_endpoint_data hopt.1)
+
+/--
+Source-facing fixed-state-by-policy-form endpoint certificate for the
+middle-reroute path.  Surge short-cutoff positivity is intentionally absent:
+it is derived from the branch-local `¬ acceptsAllTrips` hypothesis.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteLocalEndpointCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_rejectLong_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ, rejectsLongTrips u (ρ 0) → 0 < u
+  nonsurge_acceptMiddle_bounds :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ, acceptsMiddleTrips lo hi (ρ 0) → 0 < lo ∧ lo < hi
+  surge_rejectMiddle_hi_bounds_of_nonneg_lo :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) → 0 ≤ lo → lo < hi
+  surge_fixed_state_by_policy_form :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+          shared m z R2 ρ
+  nonsurge_fixed_state_by_policy_form :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData
+          shared m z R1 ρ
+
+/--
+Derive the hnot-aware fixed-transfer middle-reroute certificate from
+by-policy-form fixed-state data and shared accept-all tail integrability.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteLocalEndpointCertificate.to_fixed_transfer_middle_reroute_of_shape_replacements
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (Creplacement :
+      Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate
+      μ arrival R1 R2 switch12 switch21 m z :=
+  let Cforms :
+      Theorem4AllMeasurableAllowedPolicyFormsCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :=
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
+      Creplacement
+  { shared := C.shared
+    params := P.params
+    hR1_pos := hR1_pos
+    hR1_lt_R2 := hR1_lt_R2
+    hR2_pos := hR2_pos
+    hmeasure_surge_acceptAll_pos := hmeasure_surge_acceptAll_pos
+    hsurgeRatio_pos := P.hsurgeRatio_pos
+    nonsurge_reject_long_local := by
+      intro ρ hopt hnot u hshape
+      let F :=
+        (C.surge_fixed_state_by_policy_form ρ hopt).to_fixed_state
+          P.params hopt.1 (Cforms.only_policy_forms ρ hopt).2
+      let hmass_other_pos :=
+        C.shared.surge_current_mass_pos_of_allowed_policy_form hopt.1
+          hmeasure_surge_acceptAll_pos (Cforms.only_policy_forms ρ hopt).2
+      exact
+        (((F.to_nonsurge_reject_long
+          (C.nonsurge_rejectLong_pos ρ hopt u hshape)).with_mass
+            hmass_other_pos).to_positive_cutoff hopt.1).to_local_data
+    nonsurge_accept_middle_local := by
+      intro ρ hopt hnot lo hi hshape
+      let F :=
+        (C.surge_fixed_state_by_policy_form ρ hopt).to_fixed_state
+          P.params hopt.1 (Cforms.only_policy_forms ρ hopt).2
+      let hmass_other_pos :=
+        C.shared.surge_current_mass_pos_of_allowed_policy_form hopt.1
+          hmeasure_surge_acceptAll_pos (Cforms.only_policy_forms ρ hopt).2
+      let B := C.nonsurge_acceptMiddle_bounds ρ hopt lo hi hshape
+      exact
+        (((F.to_nonsurge_accept_middle B.1 B.2 B.1 le_rfl).with_mass
+            hmass_other_pos).to_positive_cutoff hopt.1).to_local_data
+    surge_reject_short_local := by
+      intro ρ hopt hnot u hshape
+      let F :=
+        (C.nonsurge_fixed_state_by_policy_form ρ hopt).to_fixed_state
+          P.params hopt.1 (Cforms.only_policy_forms ρ hopt).1
+      let hmass_other_pos :=
+        C.shared.nonsurge_current_mass_pos_of_allowed_policy_form hopt.1
+          hmeasure_nonsurge_acceptAll_pos
+          (C.nonsurge_rejectLong_pos ρ hopt)
+          (C.nonsurge_acceptMiddle_bounds ρ hopt)
+          (Cforms.only_policy_forms ρ hopt).1
+      let surgeTail :=
+        (GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll
+          (m := m) (z := z) C.shared).to_uniform_tail
+      have hu : 0 < u :=
+        cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll hshape hnot
+      let M := surgeTail.to_reject_short_moving hu
+      exact
+        (((F.to_surge_reject_short M.tail_integrability M.hu M.hu le_rfl).with_mass
+            hmass_other_pos).to_positive_cutoff hopt.1).to_local_data
+    surge_reject_middle_local_of_nonneg_lo := by
+      intro ρ hopt hnot lo hi hshape hlo_nonneg
+      let F :=
+        (C.nonsurge_fixed_state_by_policy_form ρ hopt).to_fixed_state
+          P.params hopt.1 (Cforms.only_policy_forms ρ hopt).1
+      let hmass_other_pos :=
+        C.shared.nonsurge_current_mass_pos_of_allowed_policy_form hopt.1
+          hmeasure_nonsurge_acceptAll_pos
+          (C.nonsurge_rejectLong_pos ρ hopt)
+          (C.nonsurge_acceptMiddle_bounds ρ hopt)
+          (Cforms.only_policy_forms ρ hopt).1
+      let surgeTail :=
+        (GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll
+          (m := m) (z := z) C.shared).to_uniform_tail
+      have hlo_lt_hi : lo < hi :=
+        C.surge_rejectMiddle_hi_bounds_of_nonneg_lo ρ hopt lo hi hshape
+          hlo_nonneg
+      let M := surgeTail.to_reject_middle_hi_moving hlo_nonneg hlo_lt_hi
+      exact
+        .upper
+          ((((F.to_surge_reject_middle_hi
+            (δ := hi - lo)
+            M.derivative_tail_integrability M.hhi_pos
+            (sub_pos.mpr M.hlo_lt_hi)
+            M.hlo_nonneg (by linarith)
+            (by simpa [sub_sub_cancel] using M.tail_integrability)).with_mass
+              hmass_other_pos).to_positive_cutoff hopt.1).to_local_data) }
 
 /--
 Readable conclusion of the measured Theorem 3 endpoint: there are structured

@@ -17,6 +17,11 @@ This is a lightweight handoff document for source-to-Lean mapping.
 ## Notes
 
 - Date reviewed: 2026-05-05
+- Latest proof-state update: Lemmas 7-8 are now source-facing closed via
+  `paper_lemma7_affine_positive_additive_response_strict_quasi_convex` and
+  `paper_lemma8_affine_negative_additive_response_strict_quasi_concave`; the
+  remaining affine-response work is downstream Lemma 5/Theorem 4 optimizer
+  selection, not a Lemma 7-8 theorem gap.
 - Last theorem row verified: Theorem 1 measured marginal add/remove steps,
   Proposition 3.1 measured affine reward step, Lemma 2 CTMC closed form,
   Lemma 1/Lemma 3 measured algebra support, Appendix D derivative-kernel
@@ -484,7 +489,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
   and
   auxiliary finite dynamic policy support.
 - Outstanding assumptions / caveats: source theorems remain conditional on the
-  global Theorem 1 threshold-existence compactness/continuity argument, the
-  continuous renewal-reward cycle construction, CTMC stochastic-process bridge,
-  and the remaining analytic selection/regularity hypotheses listed in
-  `README.md`.
+  global Theorem 1 Step 1 selection and Step 3 threshold-maximizer
+  compactness/continuity argument, plus the remaining analytic
+  selection/regularity hypotheses listed in `README.md`.  Lemmas 1--3 now have
+  explicit IID-cycle strong-law bridges, Proposition 3.1 is closed for the
+  actual renewal reward on measurable feasible policies, and Theorem 1 Step 2
+  is closed directly rather than supplied as a certificate field.
