@@ -270,6 +270,15 @@ theorem normalTail_gt_iff_standardize_lt
   dsimp [normalTail, normalCDF]
   exact api.standardTail_gt_iff_lt
 
+/-- Cross-threshold version of the upper-tail comparison. -/
+theorem normalTail_gt_iff_standardize_lt_of_thresholds
+    (api : StandardGaussianCDFAPI)
+    {L₁ L₂ : GaussianScaleLaw} {threshold₁ threshold₂ : ℝ} :
+    api.normalTail L₁ threshold₁ > api.normalTail L₂ threshold₂ ↔
+      L₁.standardize threshold₁ < L₂.standardize threshold₂ := by
+  dsimp [normalTail, normalCDF]
+  exact api.standardTail_gt_iff_lt
+
 theorem normalCDF_le_of_mean_le_same_scale (api : StandardGaussianCDFAPI)
     {L1 L2 : GaussianScaleLaw} (hscale : L1.scale = L2.scale)
     (hmean : L1.mean ≤ L2.mean) (x : ℝ) :
@@ -339,6 +348,14 @@ theorem thresholdPassProb_gt_iff_standardize_lt
         api.thresholdPassProb L₂ threshold ↔
       L₁.standardize threshold < L₂.standardize threshold :=
   api.normalTail_gt_iff_standardize_lt
+
+theorem thresholdPassProb_gt_iff_standardize_lt_of_thresholds
+    (api : StandardGaussianCDFAPI)
+    {L₁ L₂ : GaussianScaleLaw} {threshold₁ threshold₂ : ℝ} :
+    api.thresholdPassProb L₁ threshold₁ >
+        api.thresholdPassProb L₂ threshold₂ ↔
+      L₁.standardize threshold₁ < L₂.standardize threshold₂ :=
+  api.normalTail_gt_iff_standardize_lt_of_thresholds
 
 theorem thresholdPassProb_le_of_mean_le_same_scale
     (api : StandardGaussianCDFAPI)
