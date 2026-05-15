@@ -25,6 +25,7 @@ Derivative-facing wrappers for the abstract Gaussian CDF API.
 - `StandardGaussianDoubledLogDensityAPI.doubled_log_density_mul_slope_eq`
 - `StandardGaussianTailLimitAPI`
 - `StandardGaussianTailLimitAPI.affineUpperTail_tendsto_one_atTop_of_slope_pos`
+- `StandardGaussianAnalyticAPI`
 -/
 
 noncomputable section
@@ -214,6 +215,26 @@ theorem affineUpperTailDifference_tendsto_zero_atTop_of_slope_pos
   simpa using hA.sub hB
 
 end StandardGaussianTailLimitAPI
+
+/--
+Combined standard Gaussian analytic API for threshold-admissions papers:
+differentiability, positive density, doubled-log density, and the left-tail CDF
+limit share the same CDF/density implementation.
+-/
+structure StandardGaussianAnalyticAPI where
+  logAPI : StandardGaussianDoubledLogDensityAPI
+  cdf_tendsto_atBot_zero :
+    Filter.Tendsto logAPI.derivativeAPI.api.cdf Filter.atBot (nhds 0)
+
+namespace StandardGaussianAnalyticAPI
+
+/-- Forget the doubled-log fields and expose the tail-limit API. -/
+def tailLimitAPI (A : StandardGaussianAnalyticAPI) :
+    StandardGaussianTailLimitAPI where
+  derivativeAPI := A.logAPI.derivativeAPI
+  cdf_tendsto_atBot_zero := A.cdf_tendsto_atBot_zero
+
+end StandardGaussianAnalyticAPI
 
 end
 

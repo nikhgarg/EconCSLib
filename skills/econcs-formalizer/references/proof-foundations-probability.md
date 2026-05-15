@@ -166,7 +166,9 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   sqrt precision)`.
   Use `StandardGaussianTailLimitAPI` when the paper concludes that a difference
   of high-skill admission probabilities tends to zero because both affine
-  upper tails tend to one.
+  upper tails tend to one. Use `StandardGaussianAnalyticAPI` when a paper lemma
+  needs the doubled-log density comparison and the high-skill CDF tail limit to
+  refer to the same abstract normal CDF/density implementation.
   Use
   `GaussianScaleLaw.affineImage` and
   `StandardGaussianCDFAPI.thresholdPassProb_affineImage_pos` when a paper
