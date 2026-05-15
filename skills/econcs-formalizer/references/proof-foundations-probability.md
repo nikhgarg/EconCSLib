@@ -205,6 +205,14 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `GaussianHazardCertificate.mixtureUpperTailMean_mul_tailMass_eq_numerator`
   for location-scale tail, academic-merit, and finite-mixture admitted-mean
   comparisons.
+  For no-barrier Gaussian admissions comparisons, a fast threshold route is:
+  prove the dropped-feature threshold is above the common mean from selective
+  capacity, show the full-policy mixture tail at that lower threshold is
+  strictly larger because both group scales increased, then use antitonicity of
+  the full-policy mixture tail to force `thresholdSub < thresholdFull`. For
+  group academic merit, combine the strict same-threshold scale comparison of
+  `normalUpperTailMean` with monotonicity in the threshold instead of trying to
+  prove a new two-parameter truncated-normal theorem.
 - For finite rating-scale large-deviation papers, start with
   `EconCSLib.Foundations.Probability.FiniteSupportMGF`: use `finiteMGF`,
   `finiteLogMGF`, `finiteLegendreValue`, `finiteRateFunction`, and
