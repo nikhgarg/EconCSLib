@@ -1,6 +1,7 @@
 import EconCSLib.Foundations.Probability.Admissions
 import EconCSLib.Foundations.Probability.Gaussian
 import EconCSLib.Foundations.Math.AffineThreshold
+import EconCSLib.Foundations.Math.ThresholdCharacterization
 
 open EconCSLib
 open EconCSLib.Probability
@@ -165,6 +166,166 @@ theorem paper_theorem3_1_reporting_threshold_of_gaussian_best_response
   intro value
   exact paper_reporting_gaussian_threshold_iff_cutoff
     M theta k base threshold value
+
+/--
+Lemma 4.1 scalar core: for a continuous strictly increasing reported-score
+estimate, if a non-report estimate lies strictly between the estimate at a
+below-cutoff score and the estimate at the cutoff, then some strictly
+below-cutoff score is indifferent, and every score from that point up to the
+cutoff weakly prefers reporting.
+-/
+theorem paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
+    {reportedEstimate : ℝ → ℝ} {scoreLow cutoff noReportEstimate : ℝ}
+    (hcont : ContinuousOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hmono : StrictMonoOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hscore_lt : scoreLow < cutoff)
+    (hlow : reportedEstimate scoreLow < noReportEstimate)
+    (hcutoff : noReportEstimate < reportedEstimate cutoff) :
+    ∃ indifferentScore : ℝ,
+      indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
+        reportedEstimate indifferentScore = noReportEstimate ∧
+          ∀ score ∈ Set.Icc indifferentScore cutoff,
+            noReportEstimate ≤ reportedEstimate score := by
+  have hlevel_mem :
+      noReportEstimate ∈
+        Set.Icc (reportedEstimate scoreLow) (reportedEstimate cutoff) :=
+    ⟨hlow.le, hcutoff.le⟩
+  rcases intermediate_value_Icc hscore_lt.le hcont hlevel_mem with
+    ⟨indifferentScore, hindiff_mem, hindiff_eq⟩
+  have hscoreLow_lt_indiff : scoreLow < indifferentScore := by
+    have hne : indifferentScore ≠ scoreLow := by
+      intro hEq
+      subst indifferentScore
+      linarith
+    exact lt_of_le_of_ne hindiff_mem.1 (Ne.symm hne)
+  have hindiff_lt_cutoff : indifferentScore < cutoff := by
+    have hne : indifferentScore ≠ cutoff := by
+      intro hEq
+      subst indifferentScore
+      linarith
+    exact lt_of_le_of_ne hindiff_mem.2 hne
+  refine ⟨indifferentScore,
+    ⟨hscoreLow_lt_indiff, hindiff_lt_cutoff⟩, hindiff_eq, ?_⟩
+  intro score hscore
+  rcases lt_or_eq_of_le hscore.1 with hindiff_lt_score | rfl
+  · have hstrict :
+        reportedEstimate indifferentScore < reportedEstimate score :=
+      hmono hindiff_mem ⟨hindiff_mem.1.trans hscore.1, hscore.2⟩
+        hindiff_lt_score
+    exact (by simpa [hindiff_eq] using hstrict.le)
+  · exact le_of_eq hindiff_eq.symm
+
+/--
+The Gaussian posterior score, as a function of one reported raw score while all
+other information is fixed, is continuous.
+-/
+theorem paper_gaussian_posteriorMean_update_continuous
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature) :
+    Continuous (fun value : ℝ =>
+      M.posteriorMean (Function.update theta k value)) := by
+  have hfun :
+      (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value)) =
+        fun value : ℝ =>
+          M.posteriorMean (Function.update theta k 0) +
+            M.centeredFamily.signalWeight k * value := by
+    funext value
+    exact M.posteriorMean_update_eq_base_add_weight_mul theta k value
+  rw [hfun]
+  exact continuous_const.add (continuous_const.mul continuous_id)
+
+/--
+Lemma 4.1 Gaussian reporting core: a nontrivial observed-access reporting
+cutoff is unstable whenever the no-report posterior estimate is strictly
+between the reported-score estimate at a lower score and the estimate at the
+cutoff.  The conclusion exhibits the paper's `θ̃_K` and the interval of
+withheld scores that weakly benefit from reporting.
+-/
+theorem paper_lemma4_1_gaussian_reporting_cutoff_has_profitable_deviation
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {scoreLow cutoff noReportEstimate : ℝ}
+    (hscore_lt : scoreLow < cutoff)
+    (hlow :
+      M.posteriorMean (Function.update theta k scoreLow) < noReportEstimate)
+    (hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff)) :
+    ∃ indifferentScore : ℝ,
+      indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
+        M.posteriorMean (Function.update theta k indifferentScore) =
+          noReportEstimate ∧
+          ∀ score ∈ Set.Icc indifferentScore cutoff,
+            noReportEstimate ≤
+              M.posteriorMean (Function.update theta k score) := by
+  exact paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
+    (reportedEstimate := fun value : ℝ =>
+      M.posteriorMean (Function.update theta k value))
+    ((paper_gaussian_posteriorMean_update_continuous M theta k).continuousOn)
+    (fun _ hx _ hy hxy =>
+      (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)
+    hscore_lt hlow hcutoff
+
+/-- Gaussian law of a raw test score conditional on latent skill. -/
+def lg21GaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
+    GaussianScaleLaw where
+  mean := skill
+  scale := scale
+  scale_pos := hscale
+
+/--
+Lemma 4.1 test-taking support: a Gaussian test score whose mean is at least a
+threshold clears that threshold with probability at least one half.
+-/
+theorem paper_lemma4_1_test_score_pass_prob_ge_half_of_skill_ge_cutoff
+    (api : StandardGaussianCDFAPI) {skill cutoff scale : ℝ} (hscale : 0 < scale)
+    (hskill : cutoff ≤ skill) :
+    (1 / 2 : ℝ) ≤
+      api.thresholdPassProb (lg21GaussianTestScoreLaw skill scale hscale) cutoff :=
+  api.thresholdPassProb_ge_half_of_threshold_le_mean
+    (L := lg21GaussianTestScoreLaw skill scale hscale)
+    (by simpa [lg21GaussianTestScoreLaw] using hskill)
+
+/--
+Lemma 4.1 test-taking support, strict form: if the skill/mean is strictly above
+the threshold, the probability of clearing the threshold is strictly more than
+one half.
+-/
+theorem paper_lemma4_1_test_score_pass_prob_gt_half_of_skill_gt_cutoff
+    (api : StandardGaussianCDFAPI) {skill cutoff scale : ℝ} (hscale : 0 < scale)
+    (hskill : cutoff < skill) :
+    (1 / 2 : ℝ) <
+      api.thresholdPassProb (lg21GaussianTestScoreLaw skill scale hscale) cutoff :=
+  api.thresholdPassProb_gt_half_of_threshold_lt_mean
+    (L := lg21GaussianTestScoreLaw skill scale hscale)
+    (by simpa [lg21GaussianTestScoreLaw] using hskill)
+
+/--
+Lemma 4.1 reporting-required core: if the no-test posterior skill estimate
+`q̃` is strictly below a proposed taking cutoff `q̄`, then there are skills
+strictly between them whose Gaussian test score clears `q̃` with probability
+strictly above one half.  These are the source proof's below-cutoff students
+who can benefit from taking the test.
+-/
+theorem paper_lemma4_1_take_test_cutoff_has_profitable_deviation
+    (api : StandardGaussianCDFAPI) {qTilde qBar scale : ℝ}
+    (hscale : 0 < scale) (hcutoff : qTilde < qBar) :
+    ∃ skill : ℝ,
+      skill ∈ Set.Ioo qTilde qBar ∧
+        (1 / 2 : ℝ) <
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill scale hscale) qTilde := by
+  let skill : ℝ := (qTilde + qBar) / 2
+  have hlow : qTilde < skill := by
+    dsimp [skill]
+    linarith
+  have hhigh : skill < qBar := by
+    dsimp [skill]
+    linarith
+  exact ⟨skill, ⟨hlow, hhigh⟩,
+    paper_lemma4_1_test_score_pass_prob_gt_half_of_skill_gt_cutoff
+      api hscale hlow⟩
 
 /--
 Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different

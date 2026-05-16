@@ -376,6 +376,20 @@ theorem thresholdPassProb_strictAnti_threshold
     StrictAnti (api.thresholdPassProb L) := by
   exact api.normalTail_strictAnti L
 
+theorem thresholdPassProb_ge_half_of_threshold_le_mean
+    (api : StandardGaussianCDFAPI) {L : GaussianScaleLaw} {threshold : ℝ}
+    (hthreshold : threshold ≤ L.mean) :
+    (1 / 2 : ℝ) ≤ api.thresholdPassProb L threshold := by
+  have htail := api.thresholdPassProb_antitone_threshold L hthreshold
+  simpa [api.thresholdPassProb_at_mean L] using htail
+
+theorem thresholdPassProb_gt_half_of_threshold_lt_mean
+    (api : StandardGaussianCDFAPI) {L : GaussianScaleLaw} {threshold : ℝ}
+    (hthreshold : threshold < L.mean) :
+    (1 / 2 : ℝ) < api.thresholdPassProb L threshold := by
+  have htail := api.thresholdPassProb_strictAnti_threshold L hthreshold
+  simpa [api.thresholdPassProb_at_mean L] using htail
+
 theorem thresholdPassProb_continuous
     (api : StandardGaussianCDFAPI) (L : GaussianScaleLaw) :
     Continuous (api.thresholdPassProb L) := by

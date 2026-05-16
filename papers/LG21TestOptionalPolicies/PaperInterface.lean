@@ -252,6 +252,99 @@ theorem paper_interface_monotone_of_lowerCutoffStrategy
   lg21_monotone_of_lowerCutoffStrategy hcutoff
 
 /--
+Lemma 4.1 optional-reporting core: a continuous strictly increasing reported
+estimate with a non-report estimate strictly between a lower score and the
+cutoff has a below-cutoff indifference point and a profitable-deviation
+interval.
+-/
+theorem paper_interface_lemma4_1_reporting_cutoff_has_profitable_deviation_core
+    {reportedEstimate : ℝ → ℝ} {scoreLow cutoff noReportEstimate : ℝ}
+    (hcont : ContinuousOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hmono : StrictMonoOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hscore_lt : scoreLow < cutoff)
+    (hlow : reportedEstimate scoreLow < noReportEstimate)
+    (hcutoff : noReportEstimate < reportedEstimate cutoff) :
+    ∃ indifferentScore : ℝ,
+      indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
+        reportedEstimate indifferentScore = noReportEstimate ∧
+          ∀ score ∈ Set.Icc indifferentScore cutoff,
+            noReportEstimate ≤ reportedEstimate score :=
+  paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
+    hcont hmono hscore_lt hlow hcutoff
+
+/--
+Lemma 4.1 Gaussian optional-reporting core: the reported Bayesian posterior
+score supplies the continuous strictly increasing estimate in the cutoff
+deviation argument.
+-/
+theorem paper_interface_lemma4_1_gaussian_reporting_cutoff_has_profitable_deviation
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {scoreLow cutoff noReportEstimate : ℝ}
+    (hscore_lt : scoreLow < cutoff)
+    (hlow :
+      M.posteriorMean (Function.update theta k scoreLow) < noReportEstimate)
+    (hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff)) :
+    ∃ indifferentScore : ℝ,
+      indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
+        M.posteriorMean (Function.update theta k indifferentScore) =
+          noReportEstimate ∧
+          ∀ score ∈ Set.Icc indifferentScore cutoff,
+            noReportEstimate ≤
+              M.posteriorMean (Function.update theta k score) :=
+  paper_lemma4_1_gaussian_reporting_cutoff_has_profitable_deviation
+    M theta k hscore_lt hlow hcutoff
+
+/-- Lemma 4.1 test-taking support: Gaussian score law conditional on skill. -/
+abbrev paperGaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
+    GaussianScaleLaw :=
+  lg21GaussianTestScoreLaw skill scale hscale
+
+/--
+Lemma 4.1 test-taking support: if skill is at least a cutoff, a Gaussian test
+score with that skill as mean clears the cutoff with probability at least one
+half.
+-/
+theorem paper_interface_lemma4_1_test_score_pass_prob_ge_half_of_skill_ge_cutoff
+    (api : StandardGaussianCDFAPI) {skill cutoff scale : ℝ} (hscale : 0 < scale)
+    (hskill : cutoff ≤ skill) :
+    (1 / 2 : ℝ) ≤
+      api.thresholdPassProb (paperGaussianTestScoreLaw skill scale hscale) cutoff :=
+  paper_lemma4_1_test_score_pass_prob_ge_half_of_skill_ge_cutoff
+    api hscale hskill
+
+/--
+Lemma 4.1 test-taking support, strict form: if skill is strictly above a
+cutoff, the Gaussian test score clears the cutoff with probability strictly
+above one half.
+-/
+theorem paper_interface_lemma4_1_test_score_pass_prob_gt_half_of_skill_gt_cutoff
+    (api : StandardGaussianCDFAPI) {skill cutoff scale : ℝ} (hscale : 0 < scale)
+    (hskill : cutoff < skill) :
+    (1 / 2 : ℝ) <
+      api.thresholdPassProb (paperGaussianTestScoreLaw skill scale hscale) cutoff :=
+  paper_lemma4_1_test_score_pass_prob_gt_half_of_skill_gt_cutoff
+    api hscale hskill
+
+/--
+Lemma 4.1 reporting-required core: if the no-test posterior skill estimate is
+strictly below a proposed taking cutoff, some strictly below-cutoff skill has
+strictly better-than-half chance to clear that estimate by taking the test.
+-/
+theorem paper_interface_lemma4_1_take_test_cutoff_has_profitable_deviation
+    (api : StandardGaussianCDFAPI) {qTilde qBar scale : ℝ}
+    (hscale : 0 < scale) (hcutoff : qTilde < qBar) :
+    ∃ skill : ℝ,
+      skill ∈ Set.Ioo qTilde qBar ∧
+        (1 / 2 : ℝ) <
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill scale hscale) qTilde :=
+  paper_lemma4_1_take_test_cutoff_has_profitable_deviation
+    api hscale hcutoff
+
+/--
 Propositions 4.2--4.3 Gaussian-law support: distinct means imply distinct
 estimate laws.
 -/
