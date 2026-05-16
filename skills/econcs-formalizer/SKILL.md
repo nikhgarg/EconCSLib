@@ -31,6 +31,11 @@ When another agent will pick up later, spend tokens on durable artifacts rather
 than chat: a paper-local handoff note, README/audit links, exact declaration
 names, validation status, and next command. Future agents should start from
 those files instead of reconstructing context from conversation history.
+If a paper is being paused for a stronger future model, say that explicitly in
+the paper README/handoff and in the front repository status entries. Name the
+three or fewer exact proof seams that remain and the strongest public wrapper or
+certificate for each. Do not leave vague optimistic status such as "one bridge
+remains" when multiple paper-level proof campaigns are still open.
 
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
@@ -698,7 +703,9 @@ search.
    proof-search capacity, make that explicit in the paper README and handoff:
    name the reduced target, record failed/counterexample-search evidence, and
    mark it as a future stronger-model pickup instead of leaving an ambiguous
-   stale conditional theorem.
+   stale conditional theorem. Also update the root `README.md` and
+   `docs/ECONCSLEAN_CURRENT_STATUS.md` in the same pass so the public project
+   front door matches the paper-local pause verdict.
 
 8. Verify narrowly, then broadly.
    First build the touched module. Then build the parent paper root. Run full

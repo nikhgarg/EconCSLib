@@ -72,10 +72,18 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   Instantiate the rank tail used by Lemma 4.3's lower-bound sum and prove the
   concrete tail negative-correlation or direct tail variance input.
 - For Algorithm 4.1 resumed DA traces, the useful interface is target divorce
-  plus arbitrary-start DA with target-exception invariants. Prove held-men
-  list nodup/order and final stable-except-target facts separately; the hard
-  bridge is usually the membership equality between the held-men set and the
-  target woman's stable-husband set.
+  plus arbitrary-start DA with target-exception invariants. In IM05, the
+  corrected source-facing endpoint is the target-divorcing accepted-men trace
+  `im05_algorithm41SourceDivorceTargetAcceptedMen`; the older non-divorcing
+  source-held-men trace is scaffold/proof infrastructure only. Prove accepted
+  list nodup/order and final stable-except-target facts separately, then target
+  the compact remaining certificate
+  `im05_Algorithm41SourcePairWitnessCompletionCertificate` and paper wrapper
+  `paper_im05_theorem4_1_from_algorithm41_sourceDivorceTargetAcceptedMen_of_pairWitnessCompletionCertificate_of_card_eq`.
+  Its real obligations are the non-target blocking-pair witness preference
+  condition and final target-removal for non-initial stable husbands. Do not
+  rebuild the trace or revert to the stale held-men/stable-husbands membership
+  equality description.
 - For Algorithm 4.2 fresh-list/deferred-decision arguments, prefer concrete
   prefix-set laws for the recursive weighted-without-replacement PMF over
   opaque "conditional law equals filtered draw" hypotheses. Build expectation
