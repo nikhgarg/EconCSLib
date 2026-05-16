@@ -183,10 +183,15 @@ Last updated: 2026-05-16
   `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
   and
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`.
-  Remaining Theorem 3.1 source work is deriving analogous PMF witnesses if a
-  finite PMF endpoint is desired and choosing the final paper-wide source
-  statement that combines the current regime-specific certificates with the
-  Section 3 information-set assumptions.  The
+  Theorem 3.1 now also has Section 3 hidden-access wrappers over PMF and
+  continuous-law regime-specific certificates, including every-equilibrium
+  certificate-family forms.  The access-status hypothesis is exposed as
+  `LG21SchoolInformationSet.fromAccessAction false ... = none`, and the
+  wrappers then return the optional-reporting or report-required
+  strategic-withholding/fairness conclusions.  Remaining Theorem 3.1 source
+  work is now mainly choosing the final paper-wide source statement to expose;
+  deriving analogous concrete finite PMF witnesses is optional if that
+  representation is desired.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff

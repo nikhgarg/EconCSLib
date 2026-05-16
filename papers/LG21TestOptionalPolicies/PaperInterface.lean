@@ -5738,6 +5738,156 @@ def paper_interface_theorem3_1_report_required_law_strategic_withholding_certifi
     W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
 
 /--
+Paper-facing Theorem 3.1 Section 3 optional-reporting endpoint from a
+regime-specific PMF certificate: access status is hidden in the information
+set, all access students take, some withhold scores, reporting is thresholded,
+and all three fairness criteria fail.
+-/
+theorem paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21OptionalReportingStrategicWithholdingCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      C.all_take ∧ C.some_access_students_do_not_report ∧
+        C.reporting_threshold ∧
+          ¬ lg21SourceLatentSkillFair S ∧
+            ¬ lg21SourceObservablyFair S ∧
+              ¬ lg21SourceDemographicallyFair S :=
+  paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_certificate C
+
+/--
+Paper-facing Theorem 3.1 Section 3 report-required endpoint from a
+regime-specific PMF certificate.
+-/
+theorem paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21ReportRequiredStrategicWithholdingCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      C.some_access_students_do_not_take ∧ C.taking_threshold ∧
+        ¬ lg21SourceLatentSkillFair S ∧
+          ¬ lg21SourceObservablyFair S ∧
+            ¬ lg21SourceDemographicallyFair S :=
+  paper_theorem3_1_section3_report_required_strategic_withholding_of_certificate C
+
+/--
+Paper-facing Theorem 3.1 Section 3 optional-reporting endpoint from a
+regime-specific continuous-law certificate.
+-/
+theorem paper_interface_theorem3_1_section3_optional_reporting_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawOptionalReportingStrategicWithholdingCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      C.all_take ∧ C.some_access_students_do_not_report ∧
+        C.reporting_threshold ∧
+          ¬ lg21SourceLawLatentSkillFair S ∧
+            ¬ lg21SourceLawObservablyFair S ∧
+              ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_of_certificate C
+
+/--
+Paper-facing Theorem 3.1 Section 3 report-required endpoint from a
+regime-specific continuous-law certificate.
+-/
+theorem paper_interface_theorem3_1_section3_report_required_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawReportRequiredStrategicWithholdingCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      C.some_access_students_do_not_take ∧ C.taking_threshold ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_section3_report_required_law_strategic_withholding_of_certificate C
+
+/--
+Paper-facing Theorem 3.1 Section 3 optional-reporting endpoint for every
+equilibrium from PMF certificates.
+-/
+theorem paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_certificates
+    {Skill Base Test Estimate Equilibrium : Type*}
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (C : ∀ e, LG21OptionalReportingStrategicWithholdingCertificate (S e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        (C e).all_take ∧ (C e).some_access_students_do_not_report ∧
+          (C e).reporting_threshold ∧
+            ¬ lg21SourceLatentSkillFair (S e) ∧
+              ¬ lg21SourceObservablyFair (S e) ∧
+                ¬ lg21SourceDemographicallyFair (S e) :=
+  paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_certificates
+    S C
+
+/--
+Paper-facing Theorem 3.1 Section 3 report-required endpoint for every
+equilibrium from PMF certificates.
+-/
+theorem paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_certificates
+    {Skill Base Test Estimate Equilibrium : Type*}
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (C : ∀ e, LG21ReportRequiredStrategicWithholdingCertificate (S e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        (C e).some_access_students_do_not_take ∧ (C e).taking_threshold ∧
+          ¬ lg21SourceLatentSkillFair (S e) ∧
+            ¬ lg21SourceObservablyFair (S e) ∧
+              ¬ lg21SourceDemographicallyFair (S e) :=
+  paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_certificates
+    S C
+
+/--
+Paper-facing Theorem 3.1 Section 3 optional-reporting endpoint for every
+equilibrium from continuous-law certificates.
+-/
+theorem paper_interface_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_certificates
+    {Skill Base Test Law Equilibrium : Type*}
+    (S : Equilibrium → LG21SourceLawPolicySurface Skill Base Test Law)
+    (C : ∀ e, LG21LawOptionalReportingStrategicWithholdingCertificate (S e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        (C e).all_take ∧ (C e).some_access_students_do_not_report ∧
+          (C e).reporting_threshold ∧
+            ¬ lg21SourceLawLatentSkillFair (S e) ∧
+              ¬ lg21SourceLawObservablyFair (S e) ∧
+                ¬ lg21SourceLawDemographicallyFair (S e) :=
+  paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_certificates
+    S C
+
+/--
+Paper-facing Theorem 3.1 Section 3 report-required endpoint for every
+equilibrium from continuous-law certificates.
+-/
+theorem paper_interface_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_certificates
+    {Skill Base Test Law Equilibrium : Type*}
+    (S : Equilibrium → LG21SourceLawPolicySurface Skill Base Test Law)
+    (C : ∀ e, LG21LawReportRequiredStrategicWithholdingCertificate (S e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        (C e).some_access_students_do_not_take ∧ (C e).taking_threshold ∧
+          ¬ lg21SourceLawLatentSkillFair (S e) ∧
+            ¬ lg21SourceLawObservablyFair (S e) ∧
+              ¬ lg21SourceLawDemographicallyFair (S e) :=
+  paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_certificates
+    S C
+
+/--
 Theorem 3.2: latent-skill or observable fairness implies test-blankness.
 
 Current Lean status: conditional on the fairness-impossibility certificate.
