@@ -172,7 +172,9 @@ Lemma 4.1 scalar core: for a continuous strictly increasing reported-score
 estimate, if a non-report estimate lies strictly between the estimate at a
 below-cutoff score and the estimate at the cutoff, then some strictly
 below-cutoff score is indifferent, and every score from that point up to the
-cutoff weakly prefers reporting.
+cutoff weakly prefers reporting.  Since the indifference point is strictly
+below the cutoff, there is also a strictly below-cutoff score that strictly
+prefers reporting.
 -/
 theorem paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
     {reportedEstimate : ℝ → ℝ} {scoreLow cutoff noReportEstimate : ℝ}
@@ -184,8 +186,11 @@ theorem paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
     ∃ indifferentScore : ℝ,
       indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
         reportedEstimate indifferentScore = noReportEstimate ∧
-          ∀ score ∈ Set.Icc indifferentScore cutoff,
-            noReportEstimate ≤ reportedEstimate score := by
+          (∀ score ∈ Set.Icc indifferentScore cutoff,
+            noReportEstimate ≤ reportedEstimate score) ∧
+              ∃ profitableScore : ℝ,
+                profitableScore ∈ Set.Ioo indifferentScore cutoff ∧
+                  noReportEstimate < reportedEstimate profitableScore := by
   have hlevel_mem :
       noReportEstimate ∈
         Set.Icc (reportedEstimate scoreLow) (reportedEstimate cutoff) :=
@@ -204,16 +209,34 @@ theorem paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
       subst indifferentScore
       linarith
     exact lt_of_le_of_ne hindiff_mem.2 hne
+  have hweak :
+      ∀ score ∈ Set.Icc indifferentScore cutoff,
+        noReportEstimate ≤ reportedEstimate score := by
+    intro score hscore
+    rcases lt_or_eq_of_le hscore.1 with hindiff_lt_score | rfl
+    · have hstrict :
+          reportedEstimate indifferentScore < reportedEstimate score :=
+        hmono hindiff_mem ⟨hindiff_mem.1.trans hscore.1, hscore.2⟩
+          hindiff_lt_score
+      exact (by simpa [hindiff_eq] using hstrict.le)
+    · exact le_of_eq hindiff_eq.symm
+  let profitableScore : ℝ := (indifferentScore + cutoff) / 2
+  have hprofitable_low : indifferentScore < profitableScore := by
+    dsimp [profitableScore]
+    linarith
+  have hprofitable_high : profitableScore < cutoff := by
+    dsimp [profitableScore]
+    linarith
+  have hprofitable_mem_big : profitableScore ∈ Set.Icc scoreLow cutoff :=
+    ⟨le_of_lt (hscoreLow_lt_indiff.trans hprofitable_low),
+      le_of_lt hprofitable_high⟩
+  have hprofitable_strict :
+      reportedEstimate indifferentScore < reportedEstimate profitableScore :=
+    hmono hindiff_mem hprofitable_mem_big hprofitable_low
   refine ⟨indifferentScore,
-    ⟨hscoreLow_lt_indiff, hindiff_lt_cutoff⟩, hindiff_eq, ?_⟩
-  intro score hscore
-  rcases lt_or_eq_of_le hscore.1 with hindiff_lt_score | rfl
-  · have hstrict :
-        reportedEstimate indifferentScore < reportedEstimate score :=
-      hmono hindiff_mem ⟨hindiff_mem.1.trans hscore.1, hscore.2⟩
-        hindiff_lt_score
-    exact (by simpa [hindiff_eq] using hstrict.le)
-  · exact le_of_eq hindiff_eq.symm
+    ⟨hscoreLow_lt_indiff, hindiff_lt_cutoff⟩, hindiff_eq, hweak,
+    profitableScore, ⟨hprofitable_low, hprofitable_high⟩, ?_⟩
+  simpa [hindiff_eq] using hprofitable_strict
 
 /--
 The Gaussian posterior score, as a function of one reported raw score while all
@@ -256,12 +279,88 @@ theorem paper_lemma4_1_gaussian_reporting_cutoff_has_profitable_deviation
       indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
         M.posteriorMean (Function.update theta k indifferentScore) =
           noReportEstimate ∧
-          ∀ score ∈ Set.Icc indifferentScore cutoff,
+          (∀ score ∈ Set.Icc indifferentScore cutoff,
             noReportEstimate ≤
-              M.posteriorMean (Function.update theta k score) := by
+              M.posteriorMean (Function.update theta k score)) ∧
+            ∃ profitableScore : ℝ,
+              profitableScore ∈ Set.Ioo indifferentScore cutoff ∧
+                noReportEstimate <
+                  M.posteriorMean
+                    (Function.update theta k profitableScore) := by
   exact paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
     (reportedEstimate := fun value : ℝ =>
       M.posteriorMean (Function.update theta k value))
+    ((paper_gaussian_posteriorMean_update_continuous M theta k).continuousOn)
+    (fun _ hx _ hy hxy =>
+      (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)
+    hscore_lt hlow hcutoff
+
+/--
+No-profitable-withholding condition for the optional-reporting part of Lemma
+4.1: any score that is currently withheld must weakly prefer withholding to
+reporting.
+-/
+def lg21NoProfitableWithholdingDeviation
+    (reports : ℝ → Prop) (reportedEstimate : ℝ → ℝ)
+    (noReportEstimate : ℝ) : Prop :=
+  ∀ score, ¬ reports score → reportedEstimate score ≤ noReportEstimate
+
+/--
+Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
+reporting strategy cannot satisfy no-profitable-withholding-deviation when the
+no-report estimate lies strictly inside the cutoff interval.
+-/
+theorem paper_lemma4_1_no_nontrivial_reporting_cutoff_of_no_profitable_withholding
+    {reports : ℝ → Prop} {reportedEstimate : ℝ → ℝ}
+    {scoreLow cutoff noReportEstimate : ℝ}
+    (hcutoffStrategy : ∀ score : ℝ, reports score ↔ cutoff ≤ score)
+    (hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports reportedEstimate noReportEstimate)
+    (hcont : ContinuousOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hmono : StrictMonoOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hscore_lt : scoreLow < cutoff)
+    (hlow : reportedEstimate scoreLow < noReportEstimate)
+    (hcutoff : noReportEstimate < reportedEstimate cutoff) :
+    False := by
+  rcases paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
+      hcont hmono hscore_lt hlow hcutoff with
+    ⟨indifferentScore, _hindiff_mem, _hindiff_eq, _hweak,
+      profitableScore, hprofitable_mem, hprofitable⟩
+  have hnotReport : ¬ reports profitableScore := by
+    intro hreport
+    have hcutoff_le : cutoff ≤ profitableScore :=
+      (hcutoffStrategy profitableScore).1 hreport
+    linarith [hprofitable_mem.2]
+  have hnoProfit := hnoDeviation profitableScore hnotReport
+  linarith
+
+/--
+Lemma 4.1 Gaussian optional-reporting equilibrium core: the Bayesian posterior
+score supplies the continuous strictly increasing reported estimate, so any
+nontrivial lower-cutoff reporting equilibrium with the inside-interval
+no-report estimate has a profitable withholding deviation.
+-/
+theorem paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {scoreLow cutoff noReportEstimate : ℝ}
+    (hcutoffStrategy : ∀ score : ℝ, reports score ↔ cutoff ≤ score)
+    (hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (hscore_lt : scoreLow < cutoff)
+    (hlow :
+      M.posteriorMean (Function.update theta k scoreLow) < noReportEstimate)
+    (hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff)) :
+    False :=
+  paper_lemma4_1_no_nontrivial_reporting_cutoff_of_no_profitable_withholding
+    hcutoffStrategy hnoDeviation
     ((paper_gaussian_posteriorMean_update_continuous M theta k).continuousOn)
     (fun _ hx _ hy hxy =>
       (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)

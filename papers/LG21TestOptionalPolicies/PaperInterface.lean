@@ -267,8 +267,11 @@ theorem paper_interface_lemma4_1_reporting_cutoff_has_profitable_deviation_core
     ∃ indifferentScore : ℝ,
       indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
         reportedEstimate indifferentScore = noReportEstimate ∧
-          ∀ score ∈ Set.Icc indifferentScore cutoff,
-            noReportEstimate ≤ reportedEstimate score :=
+          (∀ score ∈ Set.Icc indifferentScore cutoff,
+            noReportEstimate ≤ reportedEstimate score) ∧
+            ∃ profitableScore : ℝ,
+              profitableScore ∈ Set.Ioo indifferentScore cutoff ∧
+                noReportEstimate < reportedEstimate profitableScore :=
   paper_lemma4_1_reporting_cutoff_has_profitable_deviation_core
     hcont hmono hscore_lt hlow hcutoff
 
@@ -291,11 +294,69 @@ theorem paper_interface_lemma4_1_gaussian_reporting_cutoff_has_profitable_deviat
       indifferentScore ∈ Set.Ioo scoreLow cutoff ∧
         M.posteriorMean (Function.update theta k indifferentScore) =
           noReportEstimate ∧
-          ∀ score ∈ Set.Icc indifferentScore cutoff,
+          (∀ score ∈ Set.Icc indifferentScore cutoff,
             noReportEstimate ≤
-              M.posteriorMean (Function.update theta k score) :=
+              M.posteriorMean (Function.update theta k score)) ∧
+            ∃ profitableScore : ℝ,
+              profitableScore ∈ Set.Ioo indifferentScore cutoff ∧
+                noReportEstimate <
+                  M.posteriorMean
+                    (Function.update theta k profitableScore) :=
   paper_lemma4_1_gaussian_reporting_cutoff_has_profitable_deviation
     M theta k hscore_lt hlow hcutoff
+
+/-- Lemma 4.1 no-profitable-withholding condition. -/
+abbrev paperNoProfitableWithholdingDeviation
+    (reports : ℝ → Prop) (reportedEstimate : ℝ → ℝ)
+    (noReportEstimate : ℝ) : Prop :=
+  lg21NoProfitableWithholdingDeviation
+    reports reportedEstimate noReportEstimate
+
+/--
+Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
+reporting strategy cannot satisfy no-profitable-withholding-deviation.
+-/
+theorem paper_interface_lemma4_1_no_nontrivial_reporting_cutoff_of_no_profitable_withholding
+    {reports : ℝ → Prop} {reportedEstimate : ℝ → ℝ}
+    {scoreLow cutoff noReportEstimate : ℝ}
+    (hcutoffStrategy : ∀ score : ℝ, reports score ↔ cutoff ≤ score)
+    (hnoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports reportedEstimate noReportEstimate)
+    (hcont : ContinuousOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hmono : StrictMonoOn reportedEstimate (Set.Icc scoreLow cutoff))
+    (hscore_lt : scoreLow < cutoff)
+    (hlow : reportedEstimate scoreLow < noReportEstimate)
+    (hcutoff : noReportEstimate < reportedEstimate cutoff) :
+    False :=
+  paper_lemma4_1_no_nontrivial_reporting_cutoff_of_no_profitable_withholding
+    hcutoffStrategy hnoDeviation hcont hmono hscore_lt hlow hcutoff
+
+/--
+Lemma 4.1 Gaussian optional-reporting equilibrium core: a nontrivial
+lower-cutoff reporting strategy cannot satisfy no-profitable-withholding when
+the reported estimate is the Gaussian posterior score.
+-/
+theorem paper_interface_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {scoreLow cutoff noReportEstimate : ℝ}
+    (hcutoffStrategy : ∀ score : ℝ, reports score ↔ cutoff ≤ score)
+    (hnoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (hscore_lt : scoreLow < cutoff)
+    (hlow :
+      M.posteriorMean (Function.update theta k scoreLow) < noReportEstimate)
+    (hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff)) :
+    False :=
+  paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding
+    M theta k hcutoffStrategy hnoDeviation hscore_lt hlow hcutoff
 
 /-- Lemma 4.1 test-taking support: Gaussian score law conditional on skill. -/
 abbrev paperGaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
