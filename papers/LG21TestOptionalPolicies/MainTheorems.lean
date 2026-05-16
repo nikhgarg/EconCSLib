@@ -4470,6 +4470,106 @@ theorem paper_theorem3_2_law_observable_fair_positive_reporting_nondegenerate_ac
       hweight hdenom hbelow
 
 /--
+Theorem 3.2 no-nondegenerate-actor alternative for PMF laws.  If observable
+fairness holds and the reported/taken action is a two-sided best response, then
+the finite actor distribution cannot have positive mass above its mean; otherwise
+the nondegenerate-actor instability theorem gives a profitable deviation.
+-/
+theorem paper_theorem3_2_observable_fair_best_response_forces_no_above_mean_actor
+    {Skill Base Test Estimate Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hLawEq_of_pmfEq :
+      reporterPMF = noReporterPMF → reporterLaw = noReporterLaw)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ¬ ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor := by
+  intro habove
+  exact
+    (paper_theorem3_2_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+      hfair e base hlambda reporterPMF noReporterPMF reporterLaw noReporterLaw
+      hNoAccess hAccessMixture hLawEq_of_pmfEq
+      actorLaw actorValue hchooses_support habove
+      hchoosePayoff hotherPayoff_of_law_eq hweight hdenom) hbest
+
+/--
+Theorem 3.2 no-nondegenerate-actor alternative for abstract law objects.
+-/
+theorem paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor
+    {Skill Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hfair : lg21SourceLawObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ¬ ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor := by
+  intro habove
+  exact
+    (paper_theorem3_2_law_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+      mass law_ext hfair e base hlambda reporterLaw noReporterLaw
+      hNoAccess hAccessMixture actorLaw actorValue hchooses_support habove
+      hchoosePayoff hotherPayoff_of_law_eq hweight hdenom) hbest
+
+/--
 Theorem 3.2 latent-to-observable reduction.  If latent-skill fairness implies
 observable fairness, then it is enough to prove the test-blank implication for
 observable fairness.

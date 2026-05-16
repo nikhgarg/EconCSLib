@@ -174,11 +174,16 @@ Last updated: 2026-05-16
   caveat: strict profitable deviation needs a nondegenerate acting distribution
   with some positive-mass actor above the mean.  The nondegenerate actor
   distribution wrappers combine this support fact with the resampling
-  cancellation and payoff comparison.  The latent-skill branch is reduced to
-  the observable branch under the shared latent-skill mixture identities.  The
-  remaining source gap is deriving the final no-positive-share/test-blank
-  alternative from the full policy model and then closing the final test-blank
-  implication without a certificate.
+  cancellation and payoff comparison.  The best-response wrappers
+  `paper_theorem3_2_observable_fair_best_response_forces_no_above_mean_actor`
+  and
+  `paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor`
+  now turn that instability around: observable fairness plus two-sided best
+  response rules out positive mass above the acting distribution mean.  The
+  latent-skill branch is reduced to the observable branch under the shared
+  latent-skill mixture identities.  The remaining source gap is deriving the
+  paper's final no-positive-share/test-blank alternative from the full policy
+  model and then closing the final test-blank implication without a certificate.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff

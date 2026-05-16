@@ -58,6 +58,17 @@ cache is kept as `source.txt` for named-statement audits.
 | Theorem 4.4, re-sampling policy is observable and demographic fair | `paper_theorem4_4_resampling_policy_observably_fair`, `paper_theorem4_4_resampling_policy_demographically_fair`, `paper_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair`, `paper_theorem4_4_resampling_policy_source_strategy_proof_observable_and_demographic_fair`, `paper_interface_theorem4_4_resampling_policy_source_strategy_proof_observable_and_demographic_fair` | formalized | `MainTheorems.lean`, `PaperInterface.lean` | Finite distributional core is closed: access and no-access estimate laws are equal because they are pushforwards of the same conditional test-score law, and demographic fairness follows by mixing over the shared base-profile law. The source-model route now combines this resampling fairness core with the closed Lemma 4.1 observed-access action endpoint, yielding `(Y, X) = (1, 1)` plus observable and demographic fairness for the resampling policy. |
 | Auxiliary finite admissions accounting support | `lg21_base_exp_decompose`, `lg21_test_exp_decompose`, and the related `lg21_*` mass/selection/monotonicity wrappers | formalized | `MainTheorems.lean` | None; auxiliary finite-kernel support only, not a source theorem wrapper. |
 
+### Recent Theorem 3.2 Progress
+
+- `paper_theorem3_2_observable_fair_best_response_forces_no_above_mean_actor`
+  and
+  `paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor`
+  now prove the no-nondegenerate-actor alternative: under observable fairness
+  and two-sided best response, a positive-share acting distribution cannot put
+  positive mass above its mean.  The remaining source gap is deriving the
+  paper's final no-positive-share/test-blank alternative from the full policy
+  model.
+
 ## Source Notes
 
 The current Lean code closes finite admissions accounting identities, the
