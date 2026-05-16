@@ -1249,6 +1249,44 @@ theorem gaussian_ne_of_scale_lt {Lsmall Llarge : GaussianScaleLaw}
 end LG21EstimateLaw
 
 /--
+Paper-local representation of Gaussian estimate laws and finite mixtures over
+base profiles.  It is used for Proposition 4.3's demographic statement, where
+the paper integrates base-conditioned estimate laws over the common
+base-profile distribution.
+-/
+inductive LG21GaussianMixtureLaw (Base : Type*) where
+  | gaussian : GaussianScaleLaw → LG21GaussianMixtureLaw Base
+  | finiteMixture :
+      PMF Base → (Base → GaussianScaleLaw) → LG21GaussianMixtureLaw Base
+
+namespace LG21GaussianMixtureLaw
+
+theorem gaussian_ne_of_ne
+    {Base : Type*} {L₁ L₂ : GaussianScaleLaw} (hne : L₁ ≠ L₂) :
+    gaussian (Base := Base) L₁ ≠ gaussian L₂ := by
+  intro h
+  cases h
+  exact hne rfl
+
+theorem gaussian_ne_symm_of_scale_lt
+    {Base : Type*} {Lsmall Llarge : GaussianScaleLaw}
+    (hscale : Lsmall.scale < Llarge.scale) :
+    gaussian (Base := Base) Llarge ≠ gaussian Lsmall := by
+  exact gaussian_ne_of_ne
+    (fun h => (GaussianScaleLaw.ne_of_scale_lt hscale) h.symm)
+
+theorem finiteMixture_ne_of_component_ne
+    {Base : Type*} {baseProfile : PMF Base}
+    {access noAccess : Base → GaussianScaleLaw} (base : Base)
+    (hne : access base ≠ noAccess base) :
+    finiteMixture baseProfile access ≠ finiteMixture baseProfile noAccess := by
+  intro h
+  cases h
+  exact hne rfl
+
+end LG21GaussianMixtureLaw
+
+/--
 Finite conditional-kernel form of the paper's Section 4.2 re-sampling policy.
 
 The source proof of Theorem 4.4 only needs the distributional fact that, after
@@ -4867,6 +4905,210 @@ theorem paper_proposition4_3_not_law_demographic_fair_of_base_indexed_extra_sign
     PUnit.unit rfl rfl rfl
     (GaussianOffsetSignalFamily.signalPrecisionSum_lt_withExtraSignal
       (Mbase demoBase) extraNoiseMean extraNoiseVar hextraNoiseVar)
+
+/--
+Base-mixture source-law surface for Proposition 4.3.  Observable laws are
+base-conditioned Gaussian posterior-score laws, while demographic laws are
+finite mixtures over the common base-profile distribution.
+-/
+def lg21BaseMixedExtraSignalPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature]
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    LG21SourceLawPolicySurface ℝ Base ℝ (LG21GaussianMixtureLaw Base) where
+  Equilibrium := PUnit
+  latentAccessLaw := fun _ _ base =>
+    LG21GaussianMixtureLaw.gaussian
+      (((Mbase base).withExtraSignal
+        extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+  latentNoAccessLaw := fun _ _ base =>
+    LG21GaussianMixtureLaw.gaussian ((Mbase base).posteriorMeanScaleLaw)
+  observableAccessLaw := fun _ base =>
+    LG21GaussianMixtureLaw.gaussian
+      (((Mbase base).withExtraSignal
+        extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+  observableNoAccessLaw := fun _ base =>
+    LG21GaussianMixtureLaw.gaussian ((Mbase base).posteriorMeanScaleLaw)
+  demographicAccessLaw := fun _ =>
+    LG21GaussianMixtureLaw.finiteMixture baseProfile
+      (fun base =>
+        ((Mbase base).withExtraSignal
+          extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+  demographicNoAccessLaw := fun _ =>
+    LG21GaussianMixtureLaw.finiteMixture baseProfile
+      (fun base => (Mbase base).posteriorMeanScaleLaw)
+  baseOnlyLaw := fun _ base =>
+    LG21GaussianMixtureLaw.gaussian ((Mbase base).posteriorMeanScaleLaw)
+  fullFeatureLaw := fun _ base _ =>
+    LG21GaussianMixtureLaw.gaussian
+      (((Mbase base).withExtraSignal
+        extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+
+/--
+Proposition 4.3 base-mixture observable endpoint at a selected base profile:
+the access law has strictly larger signal precision than the no-access law, so
+observable fairness fails.
+-/
+theorem paper_proposition4_3_not_law_observable_fair_of_base_mixed_extra_signal_source_law_at_base
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature]
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (base : Base) :
+    ¬ lg21SourceLawObservablyFair
+      (lg21BaseMixedExtraSignalPosteriorLawSurface
+        baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) := by
+  apply lg21_not_lawObservablyFair_of_witness PUnit.unit base
+  change
+    LG21GaussianMixtureLaw.gaussian
+        (((Mbase base).withExtraSignal
+          extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw) ≠
+      LG21GaussianMixtureLaw.gaussian ((Mbase base).posteriorMeanScaleLaw)
+  have hscale :
+      (Mbase base).posteriorMeanScaleLaw.scale <
+        ((Mbase base).withExtraSignal
+          extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw.scale :=
+    paper_gaussian_estimate_scale_lt_of_signalPrecisionSum_lt
+      (Mlow := Mbase base)
+      (Mhigh :=
+        (Mbase base).withExtraSignal
+          extraNoiseMean extraNoiseVar hextraNoiseVar)
+      rfl
+      (GaussianOffsetSignalFamily.signalPrecisionSum_lt_withExtraSignal
+        (Mbase base) extraNoiseMean extraNoiseVar hextraNoiseVar)
+  exact LG21GaussianMixtureLaw.gaussian_ne_symm_of_scale_lt hscale
+
+/--
+Proposition 4.3 base-mixture demographic endpoint: the demographic laws are
+finite mixtures over the same base-profile distribution, but their component
+laws differ at any selected base profile because access adds an extra Gaussian
+test signal.
+-/
+theorem paper_proposition4_3_not_law_demographic_fair_of_base_mixed_extra_signal_source_law_at_base
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature]
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (base : Base) :
+    ¬ lg21SourceLawDemographicallyFair
+      (lg21BaseMixedExtraSignalPosteriorLawSurface
+        baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) := by
+  apply lg21_not_lawDemographicallyFair_of_witness PUnit.unit
+  change
+    LG21GaussianMixtureLaw.finiteMixture baseProfile
+        (fun base =>
+          ((Mbase base).withExtraSignal
+            extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw) ≠
+      LG21GaussianMixtureLaw.finiteMixture baseProfile
+        (fun base => (Mbase base).posteriorMeanScaleLaw)
+  have hscale :
+      (Mbase base).posteriorMeanScaleLaw.scale <
+        ((Mbase base).withExtraSignal
+          extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw.scale :=
+    paper_gaussian_estimate_scale_lt_of_signalPrecisionSum_lt
+      (Mlow := Mbase base)
+      (Mhigh :=
+        (Mbase base).withExtraSignal
+          extraNoiseMean extraNoiseVar hextraNoiseVar)
+      rfl
+      (GaussianOffsetSignalFamily.signalPrecisionSum_lt_withExtraSignal
+        (Mbase base) extraNoiseMean extraNoiseVar hextraNoiseVar)
+  exact
+    LG21GaussianMixtureLaw.finiteMixture_ne_of_component_ne base
+      (fun h =>
+        (GaussianScaleLaw.ne_of_scale_lt hscale) h.symm)
+
+/--
+Proposition 4.3 base-mixture source-law endpoint: any nonempty base-indexed
+extra-signal surface fails both observable and demographic fairness with the
+demographic laws represented as genuine finite base-profile mixtures.
+-/
+theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_base_mixed_extra_signal_source_law
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    ¬ lg21SourceLawObservablyFair
+        (lg21BaseMixedExtraSignalPosteriorLawSurface
+          baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+      ¬ lg21SourceLawDemographicallyFair
+        (lg21BaseMixedExtraSignalPosteriorLawSurface
+          baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) := by
+  let base : Base := Classical.choice inferInstance
+  exact
+    ⟨paper_proposition4_3_not_law_observable_fair_of_base_mixed_extra_signal_source_law_at_base
+        baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar base,
+      paper_proposition4_3_not_law_demographic_fair_of_base_mixed_extra_signal_source_law_at_base
+        baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar base⟩
+
+/--
+Proposition 4.3 source-model route with demographic mixtures: the closed
+observed-access source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the
+base-mixture extra-signal source-law surface is neither observable nor
+demographically fair.
+-/
+theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_base_mixed_extra_signal_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Feature Base : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (∀ info : LG21AccessStudentInfo OptionalSkill OptionalBase ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : LG21AccessStudentInfo ℝ RequiredBase RequiredTest,
+        LG21AccessStudentInfo.chosenAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawObservablyFair
+          (lg21BaseMixedExtraSignalPosteriorLawSurface
+            baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+          ¬ lg21SourceLawDemographicallyFair
+            (lg21BaseMixedExtraSignalPosteriorLawSurface
+              baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) := by
+  have hactions :=
+    paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+      C api Mstrategy theta k scoreLaw skillLaw takeDecision
+      reportRequiredDecision htestScale hReportEq hTakeEq
+  have hfair :=
+    paper_proposition4_3_not_law_observable_or_demographic_fair_of_base_mixed_extra_signal_source_law
+      baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+  exact ⟨hactions.1, hactions.2, hfair.1, hfair.2⟩
 
 /-- Observable fairness implies demographic fairness when the base-profile law is shared. -/
 theorem lg21_demographicallyFair_of_observableFair

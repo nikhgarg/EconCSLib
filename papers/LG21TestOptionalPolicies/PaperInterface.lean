@@ -3238,8 +3238,8 @@ theorem paper_interface_proposition4_3_not_law_observable_fair_of_base_indexed_e
 
 /--
 Proposition 4.3 chosen-base demographic endpoint for the base-indexed
-extra-signal surface.  The full paper-facing demographic mixture remains the
-next continuous-law lift.
+extra-signal surface.  The paper-facing mixture endpoint below supersedes this
+as the main demographic surface.
 -/
 theorem paper_interface_proposition4_3_not_law_demographic_fair_of_base_indexed_extra_signal_source_law_chosen_base
     {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
@@ -3251,6 +3251,99 @@ theorem paper_interface_proposition4_3_not_law_demographic_fair_of_base_indexed_
         Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase) :=
   paper_proposition4_3_not_law_demographic_fair_of_base_indexed_extra_signal_source_law_chosen_base
     Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase
+
+/-- Proposition 4.3 base-mixture extra-signal source-law surface. -/
+abbrev paperBaseMixedExtraSignalPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature]
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    LG21SourceLawPolicySurface ℝ Base ℝ (LG21GaussianMixtureLaw Base) :=
+  lg21BaseMixedExtraSignalPosteriorLawSurface
+    baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
+Proposition 4.3 base-mixture endpoint: access laws add one Gaussian test signal,
+and demographic laws are finite mixtures over the common base-profile
+distribution.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_base_mixed_extra_signal_source_law
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    ¬ lg21SourceLawObservablyFair
+        (paperBaseMixedExtraSignalPosteriorLawSurface
+          baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+      ¬ lg21SourceLawDemographicallyFair
+        (paperBaseMixedExtraSignalPosteriorLawSurface
+          baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_base_mixed_extra_signal_source_law
+    baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
+Proposition 4.3 concrete source-model endpoint with demographic mixtures: the
+closed observed-access source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`,
+and the base-mixture extra-signal source-law surface is neither observable nor
+demographically fair.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_base_mixed_extra_signal_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Feature Base : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (∀ info : paperAccessStudentInfo OptionalSkill OptionalBase ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : paperAccessStudentInfo ℝ RequiredBase RequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawObservablyFair
+          (paperBaseMixedExtraSignalPosteriorLawSurface
+            baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+          ¬ lg21SourceLawDemographicallyFair
+            (paperBaseMixedExtraSignalPosteriorLawSurface
+              baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_base_mixed_extra_signal_surface
+    C api Mstrategy theta k scoreLaw skillLaw takeDecision
+    reportRequiredDecision htestScale hReportEq hTakeEq baseProfile Mbase
+    extraNoiseMean extraNoiseVar hextraNoiseVar
 
 /--
 Definition 6: the re-sampling policy uses the conditional law of the optional

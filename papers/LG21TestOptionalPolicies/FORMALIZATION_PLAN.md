@@ -112,12 +112,15 @@ Last updated: 2026-05-16
   observable/demographic unfairness endpoint without law-equality assumptions.
   The base-indexed observable surface
   `lg21BaseIndexedExtraSignalPosteriorLawSurface` proves observable unfairness
-  at arbitrary nonempty base types; its demographic theorem still uses a chosen
-  base rather than a continuous mixture.
+  at arbitrary nonempty base types.  The stronger
+  `lg21BaseMixedExtraSignalPosteriorLawSurface` now represents demographic
+  laws as finite mixtures over the common base-profile distribution and closes
+  the observable/demographic unfairness endpoint through the fully specified
+  observed-access source models.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
-- Strategic withholding, fairness impossibility, observed-access
-  strategy-proofness, and the final concrete equilibrium instantiations remain
-  certificate-shaped.
+- Strategic withholding and fairness impossibility remain certificate-shaped;
+  observed-access strategy-proofness and Propositions 4.2--4.3 now route
+  through fully specified source models.
 
 ## Fastest Proof Route
 
@@ -156,9 +159,9 @@ Last updated: 2026-05-16
    source-law surface with definitional no-access/access laws.  Proposition 4.3
    now has the analogous extra-signal concrete source-law surface with access
    law equal to `withExtraSignal` and no-access law equal to the base posterior
-   law, plus a base-indexed observable-fairness endpoint.  The remaining
-   Proposition 4.3 work is lifting the chosen-base demographic surface to a full
-   multi-base Bayesian demographic mixture surface.
+   law, plus a base-mixture endpoint whose demographic laws are finite mixtures
+   over the shared base-profile distribution.  Proposition 4.3 should now be
+   treated as closed; the next theorem-level work is Theorem 3.1 or Theorem 3.2.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
