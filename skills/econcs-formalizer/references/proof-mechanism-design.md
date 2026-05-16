@@ -89,6 +89,15 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `paper_proposition5_twoFull_apply_payoff_cutoff_strictMonoOn_cost`).  This
   is the form needed for later monotone-composition and threshold-crossing
   arguments.
+- When a paper condition requires two ordered cost thresholds from related
+  monotone merit crossings, construct both roots in one wrapper and prove the
+  ordering there instead of passing a loose `lowRoot < highRoot` premise
+  through downstream statements.  For GLM20 Proposition 5(ii), the useful
+  pattern is
+  `paper_proposition5_low_and_high_cost_thresholds_of_merit_crossings`:
+  build both crossings, expose each side characterization, and prove
+  `c_hat'_g < c_hat''_g` from the high-threshold merit comparison at the
+  lower root.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
