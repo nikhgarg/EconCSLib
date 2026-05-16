@@ -804,6 +804,8 @@ calculus to the top-level routes without extra structure plumbing:
 `theorem4NonsurgeAEShape`,
 `theorem4SurgeAEShape`,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_shape_statewise_rejected_mass_improvements_unless`,
+`Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate`,
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_endpoint_current_bounds_selection_unless_middle_reroute`,
 `Theorem4NonsurgeAllowedReplacementData`,
 `Theorem4SurgeAllowedReplacementData`,
 `Theorem4AllOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data`,

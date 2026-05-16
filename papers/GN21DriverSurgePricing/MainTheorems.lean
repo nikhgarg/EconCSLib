@@ -44906,6 +44906,153 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_endpoint_curre
       μ arrival m z switch12 switch21 shared haccept C)
 
 /--
+AE-shape endpoint selection with middle-to-short rerouting.  This is the
+middle-reroute endpoint interface for the measure-theoretic Lemma 5 route:
+the caller supplies AE shape classification directly instead of exact
+all-measurable replacement certificates.
+-/
+structure Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  accept_all_optimal :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      acceptAllDynamicPolicy
+  only_ae_shapes :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        theorem4NonsurgeAEShape (μ 0) (ρ 0) ∧
+          theorem4SurgeAEShape (μ 1) (ρ 1)
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint_of_nonneg_lo :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          0 ≤ lo →
+          GN21SurgeRejectMiddleCurrentBoundsEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+AE endpoint selections with middle-to-short rerouting instantiate the AE-shape
+statewise-improvement interface.
+-/
+def Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate.of_ae_endpoint_current_bounds_selection_unless_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (C :
+      Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate
+      μ arrival m z switch12 switch21 where
+  accept_all_optimal := C.accept_all_optimal
+  only_ae_shapes := C.only_ae_shapes
+  nonsurge_reject_long_improvement := by
+    intro ρ hρ hnot hpos u hshape
+    exact
+      (C.nonsurge_reject_long_endpoint ρ hρ hnot u hshape).statewise_improvement
+        hρ hshape
+  nonsurge_accept_middle_improvement := by
+    intro ρ hρ hnot hpos lo hi hshape
+    exact
+      (C.nonsurge_accept_middle_endpoint ρ hρ hnot lo hi hshape).statewise_improvement
+        hρ hshape
+  surge_reject_short_improvement := by
+    intro ρ hρ hnot hpos u hshape
+    exact
+      (C.surge_reject_short_endpoint ρ hρ hnot u hshape).statewise_improvement
+        hρ hshape
+  surge_reject_middle_improvement := by
+    intro ρ hρ hnot hpos lo hi hshape
+    by_cases hlo_nonpos : lo ≤ 0
+    · have hshort : rejectsShortTrips hi (ρ 1) :=
+        rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos hshape hlo_nonpos
+      exact
+        (C.surge_reject_short_endpoint ρ hρ hnot hi hshort).statewise_improvement
+          hρ hshort
+    · have hlo_nonneg : 0 ≤ lo := le_of_lt (lt_of_not_ge hlo_nonpos)
+      have hlo_lt_hi : lo < hi :=
+        shared.surge_rejectMiddle_lo_lt_hi_of_rejected_mass_pos
+          hshape hρ.1 hpos
+      exact
+        (C.surge_reject_middle_endpoint_of_nonneg_lo ρ hρ hnot lo hi hshape
+          hlo_nonneg).statewise_improvement hρ hshape
+
+/--
+AE uniqueness from AE-shape endpoint selections with middle-to-short
+rerouting.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_endpoint_current_bounds_selection_unless_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (C :
+      Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_shape_statewise_rejected_mass_improvements_unless
+    μ arrival m z switch12 switch21
+    (Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate.of_ae_endpoint_current_bounds_selection_unless_middle_reroute
+      μ arrival m z switch12 switch21 shared C)
+
+/--
 Source-facing current-bounds endpoint selection certificate.  It asks for
 ordinary allowed Lemma 5 replacement cases; feasible measurability of their
 canonical replacement policies is derived by

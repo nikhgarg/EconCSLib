@@ -468,6 +468,11 @@ into the concrete endpoint policy data.
   branches but only an AE accept-all conclusion for the positive branch.  On a
   positive rejected-mass branch, the AE accept-all alternative is impossible,
   so endpoint selection still reduces to the long/middle cases.
+  `Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate`
+  and
+  `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_endpoint_current_bounds_selection_unless_middle_reroute`
+  thread the same AE shape classification through the preferred middle-reroute
+  endpoint-current-bounds route.
 - The nonlinear aggregate layer now has strict counterparts to the older weak
   add-set bridges:
   `gn21AggregateDynamicReward_lt_add_left_of_kernel_pos`,
