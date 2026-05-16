@@ -4584,6 +4584,92 @@ theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_fully_spe
       Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
   exact ⟨hactions.1, hactions.2, hfair.1, hfair.2⟩
 
+/--
+Base-indexed source-law surface for Proposition 4.3's observable extra-signal
+comparison.  At each base profile, access students' estimate law has one
+additional Gaussian signal relative to the no-access law.
+-/
+def lg21BaseIndexedExtraSignalPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase : Base) :
+    LG21SourceLawPolicySurface ℝ Base ℝ GaussianScaleLaw where
+  Equilibrium := PUnit
+  latentAccessLaw := fun _ _ base =>
+    ((Mbase base).withExtraSignal
+      extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw
+  latentNoAccessLaw := fun _ _ base => (Mbase base).posteriorMeanScaleLaw
+  observableAccessLaw := fun _ base =>
+    ((Mbase base).withExtraSignal
+      extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw
+  observableNoAccessLaw := fun _ base => (Mbase base).posteriorMeanScaleLaw
+  demographicAccessLaw := fun _ =>
+    ((Mbase demoBase).withExtraSignal
+      extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw
+  demographicNoAccessLaw := fun _ => (Mbase demoBase).posteriorMeanScaleLaw
+  baseOnlyLaw := fun _ base => (Mbase base).posteriorMeanScaleLaw
+  fullFeatureLaw := fun _ base _ =>
+    ((Mbase base).withExtraSignal
+      extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw
+
+/--
+Proposition 4.3 base-indexed observable endpoint at a selected base profile:
+the access law has strictly larger signal precision than the no-access law, so
+observable fairness fails.
+-/
+theorem paper_proposition4_3_not_law_observable_fair_of_base_indexed_extra_signal_source_law_at_base
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase base : Base) :
+    ¬ lg21SourceLawObservablyFair
+      (lg21BaseIndexedExtraSignalPosteriorLawSurface
+        Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase) :=
+  paper_proposition4_3_not_law_observable_fair_of_posterior_precision_gap
+    (S := lg21BaseIndexedExtraSignalPosteriorLawSurface
+      Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase)
+    PUnit.unit base rfl rfl rfl
+    (GaussianOffsetSignalFamily.signalPrecisionSum_lt_withExtraSignal
+      (Mbase base) extraNoiseMean extraNoiseVar hextraNoiseVar)
+
+/--
+Proposition 4.3 base-indexed source-law endpoint: any nonempty base-indexed
+extra-signal surface fails observable fairness.
+-/
+theorem paper_proposition4_3_not_law_observable_fair_of_base_indexed_extra_signal_source_law
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase : Base) :
+    ¬ lg21SourceLawObservablyFair
+      (lg21BaseIndexedExtraSignalPosteriorLawSurface
+        Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase) :=
+  paper_proposition4_3_not_law_observable_fair_of_base_indexed_extra_signal_source_law_at_base
+    Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase
+    (Classical.choice inferInstance)
+
+/--
+The chosen demographic laws of the base-indexed extra-signal source surface also
+fail demographic fairness.  This isolates the remaining paper-facing work:
+replace the chosen-base demographic laws here with a genuine continuous
+multi-base mixture law.
+-/
+theorem paper_proposition4_3_not_law_demographic_fair_of_base_indexed_extra_signal_source_law_chosen_base
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase : Base) :
+    ¬ lg21SourceLawDemographicallyFair
+      (lg21BaseIndexedExtraSignalPosteriorLawSurface
+        Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase) :=
+  paper_proposition4_3_not_law_demographic_fair_of_posterior_precision_gap
+    (S := lg21BaseIndexedExtraSignalPosteriorLawSurface
+      Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase)
+    PUnit.unit rfl rfl rfl
+    (GaussianOffsetSignalFamily.signalPrecisionSum_lt_withExtraSignal
+      (Mbase demoBase) extraNoiseMean extraNoiseVar hextraNoiseVar)
+
 /-- Observable fairness implies demographic fairness when the base-profile law is shared. -/
 theorem lg21_demographicallyFair_of_observableFair
     {ΩBase Estimate : Type*} (baseProfile : PMF ΩBase)

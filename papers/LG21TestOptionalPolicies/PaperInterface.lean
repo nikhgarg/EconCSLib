@@ -3123,6 +3123,47 @@ theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of
     reportRequiredDecision htestScale hReportEq hTakeEq Mbase
     extraNoiseMean extraNoiseVar hextraNoiseVar
 
+/-- Proposition 4.3 base-indexed extra-signal source-law surface. -/
+abbrev paperBaseIndexedExtraSignalPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase : Base) :
+    LG21SourceLawPolicySurface ℝ Base ℝ GaussianScaleLaw :=
+  lg21BaseIndexedExtraSignalPosteriorLawSurface
+    Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase
+
+/--
+Proposition 4.3 base-indexed observable endpoint: any nonempty base-indexed
+extra-signal surface fails observable fairness.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_fair_of_base_indexed_extra_signal_source_law
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase : Base) :
+    ¬ lg21SourceLawObservablyFair
+      (paperBaseIndexedExtraSignalPosteriorLawSurface
+        Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase) :=
+  paper_proposition4_3_not_law_observable_fair_of_base_indexed_extra_signal_source_law
+    Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase
+
+/--
+Proposition 4.3 chosen-base demographic endpoint for the base-indexed
+extra-signal surface.  The full paper-facing demographic mixture remains the
+next continuous-law lift.
+-/
+theorem paper_interface_proposition4_3_not_law_demographic_fair_of_base_indexed_extra_signal_source_law_chosen_base
+    {Feature Base : Type*} [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (demoBase : Base) :
+    ¬ lg21SourceLawDemographicallyFair
+      (paperBaseIndexedExtraSignalPosteriorLawSurface
+        Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase) :=
+  paper_proposition4_3_not_law_demographic_fair_of_base_indexed_extra_signal_source_law_chosen_base
+    Mbase extraNoiseMean extraNoiseVar hextraNoiseVar demoBase
+
 /--
 Definition 6: the re-sampling policy uses the conditional law of the optional
 test score given the non-test profile.

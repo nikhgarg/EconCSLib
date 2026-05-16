@@ -108,6 +108,10 @@ Last updated: 2026-05-16
   `lg21ExtraSignalPosteriorLawSurface` now makes the access and no-access
   observable/demographic laws definitional and proves the extra-signal
   observable/demographic unfairness endpoint without law-equality assumptions.
+  The base-indexed observable surface
+  `lg21BaseIndexedExtraSignalPosteriorLawSurface` proves observable unfairness
+  at arbitrary nonempty base types; its demographic theorem still uses a chosen
+  base rather than a continuous mixture.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
@@ -148,11 +152,11 @@ Last updated: 2026-05-16
    proved, and Propositions 4.2--4.3 are both routed through the closed Lemma
    4.1 source-action endpoint.  Proposition 4.2 now has a base-indexed concrete
    source-law surface with definitional no-access/access laws.  Proposition 4.3
-   now has the analogous extra-signal concrete
-   source-law surface with access law equal to `withExtraSignal` and no-access
-   law equal to the base posterior law.  The remaining Proposition 4.3 work is
-   lifting the one-base demographic surface to a full multi-base Bayesian
-   demographic mixture surface.
+   now has the analogous extra-signal concrete source-law surface with access
+   law equal to `withExtraSignal` and no-access law equal to the base posterior
+   law, plus a base-indexed observable-fairness endpoint.  The remaining
+   Proposition 4.3 work is lifting the chosen-base demographic surface to a full
+   multi-base Bayesian demographic mixture surface.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
