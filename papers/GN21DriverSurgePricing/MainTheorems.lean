@@ -83,6 +83,10 @@ the continuous CTMC source theorems.
   `endpoint_path_gt_of_hasDerivAt_neg_on_Icc`: global endpoint-path calculus
   used by Lemma 5 Step 2 to move an endpoint all the way to a collision or
   boundary without decreasing reward.
+- `continuousOn_endpoint_positive_or_first_zero`,
+  `continuousOn_endpoint_negative_or_last_zero`, and the stopped endpoint-path
+  wrappers: compactness/stopping calculus for moving until collision or first
+  sign change in Lemma 5 Step 2.
 - `exists_pos_right_improvement_of_hasDerivAt_pos`,
   `exists_pos_right_decrease_of_hasDerivAt_neg`: local calculus bridges from
   endpoint derivative sign to strict nearby endpoint reward comparisons.
@@ -124,6 +128,12 @@ the continuous CTMC source theorems.
   `lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path`: concrete
   endpoint-path instantiations for merging two intervals and collapsing an
   interval.
+- `lemma5_upper_endpoint_merge_or_first_zero_reward_gt_of_endpoint_path_with_context`,
+  `lemma5_lower_endpoint_merge_or_last_zero_reward_gt_of_endpoint_path_with_context`,
+  `lemma5_lower_endpoint_collapse_or_first_zero_reward_gt_of_endpoint_path_with_context`,
+  and `lemma5_upper_endpoint_collapse_or_last_zero_reward_gt_of_endpoint_path_with_context`:
+  stopped policy-level endpoint moves for the source's sign-change subcase
+  iteration.
 - `GN21GeneralizedIntervalPolicy.twoBounded` and
   `lemma5_twoBounded_upper_merge_step_of_endpoint_path`: a compiled
   generalized-policy complexity-lowering merge step for the two-interval case.
@@ -13278,6 +13288,282 @@ theorem continuousOn_endpoint_negative_or_exists_zero
     exact Or.inr ⟨c, hc, by linarith⟩
 
 /--
+First-hit version of the positive endpoint stopping dichotomy.  If a continuous
+sign proxy is positive at the left endpoint, then either it stays positive on
+the whole closed interval or there is a first zero; before that zero, the proxy
+is strictly positive.  This is the compactness/stopping primitive used by the
+paper's "move until collision or sign change" endpoint argument.
+-/
+theorem continuousOn_endpoint_positive_or_first_zero
+    {g : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hg : ContinuousOn g (Set.Icc a b))
+    (hga : 0 < g a) :
+    (∀ x ∈ Set.Icc a b, 0 < g x) ∨
+      ∃ c ∈ Set.Ioc a b, g c = 0 ∧
+        ∀ x ∈ Set.Ico a c, 0 < g x := by
+  by_cases hpos : ∀ x ∈ Set.Icc a b, 0 < g x
+  · exact Or.inl hpos
+  · refine Or.inr ?_
+    have hzero_exists :
+        ∃ z ∈ Set.Icc a b, g z = 0 := by
+      rcases continuousOn_endpoint_positive_or_exists_zero hab hg hga with hglobal | hzero
+      · exact False.elim (hpos hglobal)
+      · exact hzero
+    let zeroSet : Set ℝ := {z | z ∈ Set.Icc a b ∧ g z = 0}
+    have hzeroSet_nonempty : zeroSet.Nonempty := by
+      rcases hzero_exists with ⟨z, hz, hgz⟩
+      exact ⟨z, ⟨hz, hgz⟩⟩
+    have hclosed_pre :
+        IsClosed (Set.Icc a b ∩ g ⁻¹' ({0} : Set ℝ)) :=
+      hg.preimage_isClosed_of_isClosed isClosed_Icc isClosed_singleton
+    have hzeroSet_closed : IsClosed zeroSet := by
+      simpa [zeroSet, Set.preimage, Set.inter_def, Set.mem_setOf_eq] using hclosed_pre
+    have hzeroSet_bddBelow : BddBelow zeroSet := by
+      exact ⟨a, by
+        intro z hz
+        exact hz.1.1⟩
+    let c : ℝ := sInf zeroSet
+    have hc_least : IsLeast zeroSet c :=
+      hzeroSet_closed.isLeast_csInf hzeroSet_nonempty hzeroSet_bddBelow
+    have hc_mem : c ∈ zeroSet := hc_least.1
+    have hac : a < c := by
+      have hac_le : a ≤ c := hc_mem.1.1
+      refine lt_of_le_of_ne hac_le ?_
+      intro hac_eq
+      have hga_zero : g a = 0 := by
+        simpa [hac_eq] using hc_mem.2
+      linarith
+    have hcb : c ≤ b := hc_mem.1.2
+    have hgc : g c = 0 := hc_mem.2
+    have hprefix : ∀ x ∈ Set.Ico a c, 0 < g x := by
+      intro x hx
+      by_contra hx_not_pos
+      have hx_nonpos : g x ≤ 0 := le_of_not_gt hx_not_pos
+      have hax : a ≤ x := hx.1
+      have hxb : x ≤ b := (le_of_lt hx.2).trans hcb
+      have hg_ax : ContinuousOn g (Set.Icc a x) :=
+        hg.mono (Set.Icc_subset_Icc_right hxb)
+      have hzero_between : (0 : ℝ) ∈ Set.Icc (g x) (g a) :=
+        ⟨hx_nonpos, le_of_lt hga⟩
+      rcases intermediate_value_Icc' hax hg_ax hzero_between with
+        ⟨z, hz, hgz⟩
+      have hz_mem : z ∈ zeroSet :=
+        ⟨⟨hz.1, hz.2.trans hxb⟩, hgz⟩
+      have hcz : c ≤ z := hc_least.2 hz_mem
+      exact (not_lt_of_ge (hcz.trans hz.2)) hx.2
+    exact ⟨c, ⟨hac, hcb⟩, hgc, hprefix⟩
+
+/--
+First-hit version of the negative endpoint stopping dichotomy.
+-/
+theorem continuousOn_endpoint_negative_or_first_zero
+    {g : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hg : ContinuousOn g (Set.Icc a b))
+    (hga : g a < 0) :
+    (∀ x ∈ Set.Icc a b, g x < 0) ∨
+      ∃ c ∈ Set.Ioc a b, g c = 0 ∧
+        ∀ x ∈ Set.Ico a c, g x < 0 := by
+  have hpos_or_first :=
+    continuousOn_endpoint_positive_or_first_zero
+      (g := fun x => -g x) hab hg.neg (by simpa using neg_pos.mpr hga)
+  rcases hpos_or_first with hglobal | hfirst
+  · exact Or.inl (by
+      intro x hx
+      have hxneg := hglobal x hx
+      linarith)
+  · rcases hfirst with ⟨c, hc, hc_zero, hprefix⟩
+    exact Or.inr ⟨c, hc, by linarith, by
+      intro x hx
+      have hxneg := hprefix x hx
+      linarith⟩
+
+/--
+Endpoint-path stopping lemma for a positive derivative proxy.  If the
+derivative is positive at the left endpoint, then either the full endpoint move
+strictly improves the path, or the path strictly improves up to the first zero
+of the derivative proxy.
+-/
+theorem endpoint_path_lt_or_first_zero_of_derivative_pos_at_left
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hf' : ContinuousOn f' (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_a_pos : 0 < f' a) :
+    (f a < f b ∧ ∀ x ∈ Set.Icc a b, 0 < f' x) ∨
+      ∃ c ∈ Set.Ioc a b, f' c = 0 ∧
+        f a < f c ∧ ∀ x ∈ Set.Ico a c, 0 < f' x := by
+  rcases continuousOn_endpoint_positive_or_first_zero
+      (g := f') hab.le hf' hderiv_a_pos with hglobal | hfirst
+  · refine Or.inl ⟨?_, hglobal⟩
+    exact
+      endpoint_path_lt_of_hasDerivAt_pos_on_Icc hab hf hderiv
+        (by
+          intro x hx
+          exact hglobal x ⟨le_of_lt hx.1, le_of_lt hx.2⟩)
+  · rcases hfirst with ⟨c, hc, hfc_zero, hprefix⟩
+    refine Or.inr ⟨c, hc, hfc_zero, ?_, hprefix⟩
+    have hf_ac : ContinuousOn f (Set.Icc a c) :=
+      hf.mono (Set.Icc_subset_Icc_right hc.2)
+    have hderiv_ac :
+        ∀ x ∈ Set.Ioo a c, HasDerivAt f (f' x) x := by
+      intro x hx
+      exact hderiv x ⟨hx.1, hx.2.trans_le hc.2⟩
+    have hpos_ac : ∀ x ∈ Set.Ioo a c, 0 < f' x := by
+      intro x hx
+      exact hprefix x ⟨le_of_lt hx.1, hx.2⟩
+    exact
+      endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+        hc.1 hf_ac hderiv_ac hpos_ac
+
+/--
+Endpoint-path stopping lemma for a negative derivative proxy.
+-/
+theorem endpoint_path_gt_or_first_zero_of_derivative_neg_at_left
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hf' : ContinuousOn f' (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_a_neg : f' a < 0) :
+    (f b < f a ∧ ∀ x ∈ Set.Icc a b, f' x < 0) ∨
+      ∃ c ∈ Set.Ioc a b, f' c = 0 ∧
+        f c < f a ∧ ∀ x ∈ Set.Ico a c, f' x < 0 := by
+  rcases continuousOn_endpoint_negative_or_first_zero
+      (g := f') hab.le hf' hderiv_a_neg with hglobal | hfirst
+  · refine Or.inl ⟨?_, hglobal⟩
+    exact
+      endpoint_path_gt_of_hasDerivAt_neg_on_Icc hab hf hderiv
+        (by
+          intro x hx
+          exact hglobal x ⟨le_of_lt hx.1, le_of_lt hx.2⟩)
+  · rcases hfirst with ⟨c, hc, hfc_zero, hprefix⟩
+    refine Or.inr ⟨c, hc, hfc_zero, ?_, hprefix⟩
+    have hf_ac : ContinuousOn f (Set.Icc a c) :=
+      hf.mono (Set.Icc_subset_Icc_right hc.2)
+    have hderiv_ac :
+        ∀ x ∈ Set.Ioo a c, HasDerivAt f (f' x) x := by
+      intro x hx
+      exact hderiv x ⟨hx.1, hx.2.trans_le hc.2⟩
+    have hneg_ac : ∀ x ∈ Set.Ioo a c, f' x < 0 := by
+      intro x hx
+      exact hprefix x ⟨le_of_lt hx.1, hx.2⟩
+    exact
+      endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+        hc.1 hf_ac hderiv_ac hneg_ac
+
+/--
+Right-endpoint stopping dichotomy for a negative sign proxy.  If the proxy is
+negative at the right endpoint, then either it is negative on the whole closed
+interval or it has a last zero; after that zero, the proxy is strictly negative.
+-/
+theorem continuousOn_endpoint_negative_or_last_zero
+    {g : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hg : ContinuousOn g (Set.Icc a b))
+    (hgb : g b < 0) :
+    (∀ x ∈ Set.Icc a b, g x < 0) ∨
+      ∃ c ∈ Set.Ico a b, g c = 0 ∧
+        ∀ x ∈ Set.Ioc c b, g x < 0 := by
+  by_cases hneg : ∀ x ∈ Set.Icc a b, g x < 0
+  · exact Or.inl hneg
+  · refine Or.inr ?_
+    have hzero_exists :
+        ∃ z ∈ Set.Icc a b, g z = 0 := by
+      push Not at hneg
+      rcases hneg with ⟨x, hx, hx_nonneg⟩
+      have hg_xb : ContinuousOn g (Set.Icc x b) :=
+        hg.mono (Set.Icc_subset_Icc_left hx.1)
+      have hzero_between : (0 : ℝ) ∈ Set.Icc (g b) (g x) :=
+        ⟨le_of_lt hgb, hx_nonneg⟩
+      rcases intermediate_value_Icc' hx.2 hg_xb hzero_between with
+        ⟨z, hz, hgz⟩
+      exact ⟨z, ⟨hx.1.trans hz.1, hz.2⟩, hgz⟩
+    let zeroSet : Set ℝ := {z | z ∈ Set.Icc a b ∧ g z = 0}
+    have hzeroSet_nonempty : zeroSet.Nonempty := by
+      rcases hzero_exists with ⟨z, hz, hgz⟩
+      exact ⟨z, ⟨hz, hgz⟩⟩
+    have hclosed_pre :
+        IsClosed (Set.Icc a b ∩ g ⁻¹' ({0} : Set ℝ)) :=
+      hg.preimage_isClosed_of_isClosed isClosed_Icc isClosed_singleton
+    have hzeroSet_closed : IsClosed zeroSet := by
+      simpa [zeroSet, Set.preimage, Set.inter_def, Set.mem_setOf_eq] using hclosed_pre
+    have hzeroSet_bddAbove : BddAbove zeroSet := by
+      exact ⟨b, by
+        intro z hz
+        exact hz.1.2⟩
+    let c : ℝ := sSup zeroSet
+    have hc_greatest : IsGreatest zeroSet c :=
+      hzeroSet_closed.isGreatest_csSup hzeroSet_nonempty hzeroSet_bddAbove
+    have hc_mem : c ∈ zeroSet := hc_greatest.1
+    have hac : a ≤ c := hc_mem.1.1
+    have hcb : c < b := by
+      have hcb_le : c ≤ b := hc_mem.1.2
+      refine lt_of_le_of_ne hcb_le ?_
+      intro hcb_eq
+      have hgb_zero : g b = 0 := by
+        simpa [hcb_eq] using hc_mem.2
+      linarith
+    have hgc : g c = 0 := hc_mem.2
+    have hsuffix : ∀ x ∈ Set.Ioc c b, g x < 0 := by
+      intro x hx
+      by_contra hx_not_neg
+      have hx_nonneg : 0 ≤ g x := le_of_not_gt hx_not_neg
+      have hxb : x ≤ b := hx.2
+      have hax : a ≤ x := hac.trans (le_of_lt hx.1)
+      have hg_xb : ContinuousOn g (Set.Icc x b) :=
+        hg.mono (Set.Icc_subset_Icc_left hax)
+      have hzero_between : (0 : ℝ) ∈ Set.Icc (g b) (g x) :=
+        ⟨le_of_lt hgb, hx_nonneg⟩
+      rcases intermediate_value_Icc' hxb hg_xb hzero_between with
+        ⟨z, hz, hgz⟩
+      have hz_mem : z ∈ zeroSet :=
+        ⟨⟨hax.trans hz.1, hz.2⟩, hgz⟩
+      have hzc : z ≤ c := hc_greatest.2 hz_mem
+      exact (not_lt_of_ge (hz.1.trans hzc)) hx.1
+    exact ⟨c, ⟨hac, hcb⟩, hgc, hsuffix⟩
+
+/--
+Endpoint-path stopping lemma for a negative derivative proxy at the right
+endpoint.  This is the calculus form needed when the source proof moves an
+endpoint left until either collision or the last sign change.
+-/
+theorem endpoint_path_gt_or_last_zero_of_derivative_neg_at_right
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hf' : ContinuousOn f' (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_b_neg : f' b < 0) :
+    (f b < f a ∧ ∀ x ∈ Set.Icc a b, f' x < 0) ∨
+      ∃ c ∈ Set.Ico a b, f' c = 0 ∧
+        f b < f c ∧ ∀ x ∈ Set.Ioc c b, f' x < 0 := by
+  rcases continuousOn_endpoint_negative_or_last_zero
+      (g := f') hab.le hf' hderiv_b_neg with hglobal | hlast
+  · refine Or.inl ⟨?_, hglobal⟩
+    exact
+      endpoint_path_gt_of_hasDerivAt_neg_on_Icc hab hf hderiv
+        (by
+          intro x hx
+          exact hglobal x ⟨le_of_lt hx.1, le_of_lt hx.2⟩)
+  · rcases hlast with ⟨c, hc, hfc_zero, hsuffix⟩
+    refine Or.inr ⟨c, hc, hfc_zero, ?_, hsuffix⟩
+    have hf_cb : ContinuousOn f (Set.Icc c b) :=
+      hf.mono (Set.Icc_subset_Icc_left hc.1)
+    have hderiv_cb :
+        ∀ x ∈ Set.Ioo c b, HasDerivAt f (f' x) x := by
+      intro x hx
+      exact hderiv x ⟨hc.1.trans_lt hx.1, hx.2⟩
+    have hneg_cb : ∀ x ∈ Set.Ioo c b, f' x < 0 := by
+      intro x hx
+      exact hsuffix x ⟨hx.1, le_of_lt hx.2⟩
+    exact
+      endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+        hc.2 hf_cb hderiv_cb hneg_cb
+
+/--
 Local calculus bridge for endpoint-improvement arguments: a positive derivative
 at an endpoint gives a positive right move with strictly larger reward.
 -/
@@ -16230,6 +16516,84 @@ theorem lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path_with_context
   simpa [hmerge_eq] using hpath_lt
 
 /--
+Context-aware upper-endpoint stopping move.  Starting from a positive
+derivative at the current upper endpoint, either the endpoint reaches the next
+lower endpoint and merges the two accepted intervals, or it stops at the first
+zero of the derivative proxy.  In both cases the reward strictly improves, and
+the stopped branch records the sign-preserved prefix needed to continue the
+paper's subcase iteration.
+-/
+theorem lemma5_upper_endpoint_merge_or_first_zero_reward_gt_of_endpoint_path_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        path x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪
+              Set.Ioo rightLower rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_start_pos : 0 < derivative leftUpper) :
+    (Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat (context ∪ Set.Ioo leftLower rightUpper) ∧
+      ∀ x ∈ Set.Icc leftUpper rightLower, 0 < derivative x) ∨
+      ∃ c ∈ Set.Ioc leftUpper rightLower, derivative c = 0 ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat (context ∪
+            (Set.Ioo leftLower c ∪ Set.Ioo rightLower rightUpper)) ∧
+        ∀ x ∈ Set.Ico leftUpper c, 0 < derivative x := by
+  rcases endpoint_path_lt_or_first_zero_of_derivative_pos_at_left
+      hupper_right hpath_cont hderiv_cont hpath_deriv hderiv_start_pos with
+    hfull | hstop
+  · rcases hfull with ⟨hpath_lt, hglobal⟩
+    have hright_mem :
+        rightLower ∈ Set.Icc leftUpper rightLower :=
+      ⟨le_of_lt hupper_right, le_rfl⟩
+    rw [hpath_start, hpath_at rightLower hright_mem] at hpath_lt
+    have hleft_right : leftLower ≤ rightLower :=
+      hleft_upper.trans (le_of_lt hupper_right)
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context ∪
+            (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper))
+          (context ∪ Set.Ioo leftLower rightUpper) :=
+      policyAlmostEverywhereEq_union_left μ context
+        (policyAlmostEverywhereEq_ioo_union_touching μ
+          hleft_right hright_upper)
+    have hmerge_eq :
+        Rhat (context ∪
+            (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper)) =
+          Rhat (context ∪ Set.Ioo leftLower rightUpper) :=
+      hR_congr hmerge_ae
+    exact Or.inl ⟨by simpa [hmerge_eq] using hpath_lt, hglobal⟩
+  · rcases hstop with ⟨c, hc, hc_zero, hpath_lt, hprefix⟩
+    have hc_mem :
+        c ∈ Set.Icc leftUpper rightLower :=
+      ⟨le_of_lt hc.1, hc.2⟩
+    rw [hpath_start, hpath_at c hc_mem] at hpath_lt
+    exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hprefix⟩
+
+/--
 Context-aware lower-endpoint merge step.  Moving the lower endpoint of the
 right interval left to the preceding upper endpoint merges adjacent intervals,
 with all other intervals held fixed.
@@ -16344,6 +16708,82 @@ theorem lemma5_lower_endpoint_merge_reward_gt_of_endpoint_path_with_context
   simpa [hmerge_eq] using hpath_lt
 
 /--
+Context-aware lower-endpoint stopping move.  Starting from a negative
+derivative at the current lower endpoint of the right interval, either moving
+left reaches the preceding upper endpoint and merges the gap, or it stops at
+the last zero of the derivative proxy.  Both branches strictly improve reward.
+-/
+theorem lemma5_lower_endpoint_merge_or_last_zero_reward_gt_of_endpoint_path_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        path x =
+          Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪
+              Set.Ioo x rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_start_neg : derivative rightLower < 0) :
+    (Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat (context ∪ Set.Ioo leftLower rightUpper) ∧
+      ∀ x ∈ Set.Icc leftUpper rightLower, derivative x < 0) ∨
+      ∃ c ∈ Set.Ico leftUpper rightLower, derivative c = 0 ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪ Set.Ioo c rightUpper)) ∧
+        ∀ x ∈ Set.Ioc c rightLower, derivative x < 0 := by
+  rcases endpoint_path_gt_or_last_zero_of_derivative_neg_at_right
+      hupper_right hpath_cont hderiv_cont hpath_deriv hderiv_start_neg with
+    hfull | hstop
+  · rcases hfull with ⟨hpath_lt, hglobal⟩
+    have hleft_mem :
+        leftUpper ∈ Set.Icc leftUpper rightLower :=
+      ⟨le_rfl, le_of_lt hupper_right⟩
+    rw [hpath_start, hpath_at leftUpper hleft_mem] at hpath_lt
+    have hleft_rightUpper : leftUpper ≤ rightUpper :=
+      (le_of_lt hupper_right).trans hright_upper
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context ∪
+            (Set.Ioo leftLower leftUpper ∪ Set.Ioo leftUpper rightUpper))
+          (context ∪ Set.Ioo leftLower rightUpper) :=
+      policyAlmostEverywhereEq_union_left μ context
+        (policyAlmostEverywhereEq_ioo_union_touching μ
+          hleft_upper hleft_rightUpper)
+    have hmerge_eq :
+        Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪ Set.Ioo leftUpper rightUpper)) =
+          Rhat (context ∪ Set.Ioo leftLower rightUpper) :=
+      hR_congr hmerge_ae
+    exact Or.inl ⟨by simpa [hmerge_eq] using hpath_lt, hglobal⟩
+  · rcases hstop with ⟨c, hc, hc_zero, hpath_lt, hsuffix⟩
+    have hc_mem :
+        c ∈ Set.Icc leftUpper rightLower :=
+      ⟨hc.1, le_of_lt hc.2⟩
+    rw [hpath_start, hpath_at c hc_mem] at hpath_lt
+    exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hsuffix⟩
+
+/--
 Concrete Lemma 5 endpoint-path collapse step.  If moving a lower endpoint
 right until it reaches the upper endpoint has nonnegative derivative all along
 the path, then the interval is weakly dominated by deleting it.
@@ -16433,6 +16873,46 @@ theorem lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path_with_context
   simpa [hpath_start, hpath_end] using hpath_lt
 
 /--
+Context-aware lower-endpoint collapse stopping move.  Starting from a positive
+derivative at the lower endpoint, either moving right deletes the interval or
+stops at the first zero of the derivative proxy.  Both branches strictly
+improve reward.
+-/
+theorem lemma5_lower_endpoint_collapse_or_first_zero_reward_gt_of_endpoint_path_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path upper = Rhat context)
+    (hpath_at :
+      ∀ x ∈ Set.Icc lower upper,
+        path x = Rhat (context ∪ Set.Ioo x upper))
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_start_pos : 0 < derivative lower) :
+    (Rhat (context ∪ Set.Ioo lower upper) < Rhat context ∧
+      ∀ x ∈ Set.Icc lower upper, 0 < derivative x) ∨
+      ∃ c ∈ Set.Ioc lower upper, derivative c = 0 ∧
+        Rhat (context ∪ Set.Ioo lower upper) <
+          Rhat (context ∪ Set.Ioo c upper) ∧
+        ∀ x ∈ Set.Ico lower c, 0 < derivative x := by
+  rcases endpoint_path_lt_or_first_zero_of_derivative_pos_at_left
+      hlower_upper hpath_cont hderiv_cont hpath_deriv hderiv_start_pos with
+    hfull | hstop
+  · rcases hfull with ⟨hpath_lt, hglobal⟩
+    rw [hpath_start, hpath_end] at hpath_lt
+    exact Or.inl ⟨hpath_lt, hglobal⟩
+  · rcases hstop with ⟨c, hc, hc_zero, hpath_lt, hprefix⟩
+    have hc_mem : c ∈ Set.Icc lower upper :=
+      ⟨le_of_lt hc.1, hc.2⟩
+    rw [hpath_start, hpath_at c hc_mem] at hpath_lt
+    exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hprefix⟩
+
+/--
 Context-aware upper-endpoint collapse step.  Moving an interval's upper
 endpoint left to its lower endpoint deletes that interval while all other
 intervals remain fixed.
@@ -16477,6 +16957,46 @@ theorem lemma5_upper_endpoint_collapse_reward_gt_of_endpoint_path_with_context
     endpoint_path_gt_of_hasDerivAt_neg_on_Icc
       hlower_upper hpath_cont hpath_deriv hderiv_neg
   simpa [hpath_start, hpath_end] using hpath_lt
+
+/--
+Context-aware upper-endpoint collapse stopping move.  Starting from a negative
+derivative at the upper endpoint, either moving left deletes the interval or
+stops at the last zero of the derivative proxy.  Both branches strictly improve
+reward.
+-/
+theorem lemma5_upper_endpoint_collapse_or_last_zero_reward_gt_of_endpoint_path_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path upper = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path lower = Rhat context)
+    (hpath_at :
+      ∀ x ∈ Set.Icc lower upper,
+        path x = Rhat (context ∪ Set.Ioo lower x))
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_start_neg : derivative upper < 0) :
+    (Rhat (context ∪ Set.Ioo lower upper) < Rhat context ∧
+      ∀ x ∈ Set.Icc lower upper, derivative x < 0) ∨
+      ∃ c ∈ Set.Ico lower upper, derivative c = 0 ∧
+        Rhat (context ∪ Set.Ioo lower upper) <
+          Rhat (context ∪ Set.Ioo lower c) ∧
+        ∀ x ∈ Set.Ioc c upper, derivative x < 0 := by
+  rcases endpoint_path_gt_or_last_zero_of_derivative_neg_at_right
+      hlower_upper hpath_cont hderiv_cont hpath_deriv hderiv_start_neg with
+    hfull | hstop
+  · rcases hfull with ⟨hpath_lt, hglobal⟩
+    rw [hpath_start, hpath_end] at hpath_lt
+    exact Or.inl ⟨hpath_lt, hglobal⟩
+  · rcases hstop with ⟨c, hc, hc_zero, hpath_lt, hsuffix⟩
+    have hc_mem : c ∈ Set.Icc lower upper :=
+      ⟨hc.1, le_of_lt hc.2⟩
+    rw [hpath_start, hpath_at c hc_mem] at hpath_lt
+    exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hsuffix⟩
 
 /--
 Analytic witness behind each Lemma 5 derivative-shape case.  The policy-form

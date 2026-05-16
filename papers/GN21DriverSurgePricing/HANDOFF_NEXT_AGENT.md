@@ -259,11 +259,19 @@ persist over the movement interval.  The paper's missing formal step is a
 stopping/sign-persistence argument: move until collision or first sign-change,
 then re-enter the appropriate subcase, and prove this process eventually
 lowers component count.
-The weaker compactness dichotomy needed for this route is compiled as
-`continuousOn_endpoint_positive_or_exists_zero` and
-`continuousOn_endpoint_negative_or_exists_zero`; it still needs to be upgraded
-to a first-hit/prefix-sign lemma before it can drive a reward-improving partial
-move.
+The stopping layer needed for this route is now compiled.  The first-hit and
+last-zero lemmas
+`continuousOn_endpoint_positive_or_first_zero`,
+`continuousOn_endpoint_negative_or_first_zero`, and
+`continuousOn_endpoint_negative_or_last_zero` record sign persistence before or
+after the sign-change boundary.  The endpoint-path wrappers and the stopped
+upper/lower merge plus lower/upper collapse policy lemmas now give strict
+reward improvement whether the move reaches collision/deletion or stops at the
+sign-change boundary.  The remaining hard step is the finite hybrid iteration:
+after a stopped sign-change move, update the interval endpoint, re-enter the
+quasi-convex/quasi-concave selector, and prove the repeated stops cannot cycle
+without eventually reducing component count or reaching a canonical Lemma 5
+shape.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact

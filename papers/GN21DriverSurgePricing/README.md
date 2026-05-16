@@ -838,11 +838,19 @@ The remaining open part is the stopping argument behind the source's repeated
 subcase switches: a current endpoint sign must be converted, using continuity,
 into movement until either collision or first sign-change, and those partial
 moves must then be iterated until component count falls.
-The first compactness ingredient for that stopping argument is compiled:
-`continuousOn_endpoint_positive_or_exists_zero` and
-`continuousOn_endpoint_negative_or_exists_zero` show that a continuous endpoint
-sign proxy either keeps its sign over a closed movement interval or hits zero
-inside the interval.
+The stopping compactness and stopped reward-move layer is now compiled:
+`continuousOn_endpoint_positive_or_first_zero`,
+`continuousOn_endpoint_negative_or_first_zero`, and
+`continuousOn_endpoint_negative_or_last_zero` choose the first/last sign-change
+boundary with sign persistence on the relevant prefix/suffix; the corresponding
+endpoint-path lemmas turn those sign intervals into strict reward improvement.
+At the Lemma 5 policy level, upper/lower merge and lower/upper collapse moves
+now have stopped variants that either reach the collision/deletion boundary or
+stop at the sign-change boundary, with strict reward improvement in both
+branches.  The remaining open part is the finite hybrid iteration: thread these
+stopped moves through the quasi-convex/quasi-concave subcase selector and prove
+that repeated sign-change stops cannot cycle without eventually lowering
+component count or reaching a canonical Lemma 5 shape.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its

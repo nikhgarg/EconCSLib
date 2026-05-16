@@ -258,18 +258,19 @@ lower merge, and the one-leading-component bounded/right-ray lower merge.  The
 remaining nonlinear work is not another adjacent-merge normal form: endpoint
 signs at the current seed do not by themselves justify moving all the way to
 the next collision.  The source proof moves until either a collision occurs or
-the relevant derivative sign changes, then switches subcases.  Lean therefore
-still needs the stopping/sign-persistence lemma that turns a current endpoint
-sign plus continuity into a reward-improving partial move ending at a collision
-or sign-change boundary, and then an induction showing these partial moves
-cannot cycle without eventually lowering component count to a canonical Lemma
-5 shape.  The first compactness ingredient is now compiled:
-`continuousOn_endpoint_positive_or_exists_zero` and
-`continuousOn_endpoint_negative_or_exists_zero` prove that a continuous sign
-proxy either persists over the whole closed movement interval or has a zero
-inside it.  What remains is the stronger first-hit/prefix-positivity version
-needed to attach reward improvement to the partial move before switching
-subcases.
+the relevant derivative sign changes, then switches subcases.  The stopping
+layer is now compiled: `continuousOn_endpoint_positive_or_first_zero`,
+`continuousOn_endpoint_negative_or_first_zero`, and
+`continuousOn_endpoint_negative_or_last_zero` choose first/last sign-change
+boundaries with prefix/suffix sign persistence, and the corresponding
+endpoint-path wrappers turn those stopped sign intervals into strict reward
+improvement.  At the policy level, the upper/lower merge and lower/upper
+collapse stopped variants now either reach collision/deletion or stop at the
+sign-change boundary, improving reward in both branches.  What remains is the
+finite hybrid iteration: after a stopped sign-change move, thread the updated
+endpoint back through the quasi-convex or quasi-concave selector and prove
+repeated sign-change stops cannot cycle without eventually lowering component
+count or landing on a canonical Lemma 5 shape.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
