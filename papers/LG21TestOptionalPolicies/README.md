@@ -108,9 +108,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_law_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source`
   plus the optional-reporting analogues now derive the two-sided best-response
-  field from the concrete source equilibrium models.  The remaining source gap
-  is instantiating the mixture and affine-payoff identities from the policy
-  model.
+  field from the concrete source equilibrium models.  The PMF helper
+  `lg21BinaryMixturePMF` and wrapper
+  `paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_binary_mixture_point_estimate_source`
+  now discharge the positive-share mixture identity when the observable-access
+  law is built as a Bernoulli reporter/no-reporter mixture.  The remaining
+  source gap is instantiating the affine-payoff identities and routing concrete
+  policy surfaces through this mixture wrapper.
 
 ## Source Notes
 

@@ -6,6 +6,7 @@ import EconCSLib.Foundations.Math.ThresholdCharacterization
 
 open EconCSLib
 open EconCSLib.Probability
+open scoped ENNReal
 
 /-!
 # Paper-Facing Theorems: Test-optional Policies and Informational Gaps
@@ -3961,6 +3962,48 @@ theorem lg21_not_lawTestBlank_iff_exists_witness
     exact lg21_not_lawTestBlank_of_witness e base test hne
 
 /--
+Binary mixture of two finite estimate laws with reporter share `p`.
+
+This is the PMF-level version of the paper's Theorem 3.2 displayed mixture
+`D = λ D_1 + (1 - λ)D_0`.
+-/
+noncomputable def lg21BinaryMixturePMF
+    {Estimate : Type*} (p : NNReal) (hp : p ≤ 1)
+    (reporterPMF noReporterPMF : PMF Estimate) : PMF Estimate :=
+  (PMF.bernoulli p hp).bind
+    (fun reports => if reports then reporterPMF else noReporterPMF)
+
+/--
+Pointwise real-mass formula for `lg21BinaryMixturePMF`.
+-/
+theorem lg21BinaryMixturePMF_apply_toReal
+    {Estimate : Type*} (p : NNReal) (hp : p ≤ 1)
+    (reporterPMF noReporterPMF : PMF Estimate) (estimate : Estimate) :
+    (lg21BinaryMixturePMF p hp reporterPMF noReporterPMF estimate).toReal =
+      p.toReal * (reporterPMF estimate).toReal +
+        (1 - p.toReal) * (noReporterPMF estimate).toReal := by
+  rw [lg21BinaryMixturePMF, PMF.bind_apply]
+  rw [tsum_fintype, Fintype.sum_bool]
+  simp only [PMF.bernoulli_apply, Bool.cond_true, Bool.cond_false, if_true]
+  rw [if_neg (by decide : ¬ false = true)]
+  have hleft_ne :
+      ↑p * reporterPMF estimate ≠ (∞ : ℝ≥0∞) :=
+    ENNReal.mul_ne_top ENNReal.coe_ne_top
+      (reporterPMF.apply_ne_top estimate)
+  have hright_ne :
+      ↑(1 - p) * noReporterPMF estimate ≠ (∞ : ℝ≥0∞) :=
+    ENNReal.mul_ne_top ENNReal.coe_ne_top
+      (noReporterPMF.apply_ne_top estimate)
+  rw [ENNReal.toReal_add hleft_ne hright_ne]
+  rw [ENNReal.toReal_mul, ENNReal.toReal_mul]
+  have hsub_toReal :
+      (↑(1 - p) : ℝ≥0∞).toReal = 1 - p.toReal := by
+    change ((1 - p : NNReal) : ℝ) = 1 - (p : ℝ)
+    exact NNReal.coe_sub hp
+  rw [hsub_toReal]
+  simp
+
+/--
 Theorem 3.2 mixture-cancellation algebra for finite estimate laws.  This is
 the paper's displayed implication
 `D_{P,0} = λ D_{P,1} + (1 - λ) D_{P,0} ⇒ D_{P,1} = D_{P,0}` for a positive
@@ -5325,6 +5368,84 @@ theorem paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_poi
     signalWeight denom hchoosePayoff hotherPayoff_of_law_eq hweight hdenom
     (paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface
       actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass)
+
+/--
+Theorem 3.2 scalar point-estimate PMF endpoint when the observable access law is
+given by the binary reporter/no-reporter mixture `lg21BinaryMixturePMF`.
+-/
+theorem paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_binary_mixture_point_estimate_source
+    {Skill Base Test Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (chooses : S.Equilibrium → Base → ℝ → Prop)
+    (choosePayoff otherPayoff : S.Equilibrium → Base → ℝ → ℝ)
+    (hbest :
+      ∀ e base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (chooses e base) (choosePayoff e base) (otherPayoff e base))
+    (positiveShare : S.Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF ℝ)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (hLawEq_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          reporterLaw e base = noReporterLaw e base)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        chooses e base (actorValue e base actor))
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        choosePayoff e base actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base actor,
+        reporterLaw e base = noReporterLaw e base →
+          otherPayoff e base actor =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_point_estimate_source
+    chooses choosePayoff otherPayoff hbest
+    (fun e base => (positiveShare e base).toReal) hpositiveShare_pos
+    reporterPMF noReporterPMF reporterLaw noReporterLaw hNoAccess
+    (fun e base estimate => by
+      rw [hAccessMixtureDef e base]
+      exact
+        lg21BinaryMixturePMF_apply_toReal
+          (positiveShare e base) (hpositiveShare_le_one e base)
+          (reporterPMF e base) (noReporterPMF e base) estimate)
+    hLawEq_of_pmfEq actorLaw actorValue actorOfTest hchooses_support
+    baseTerm signalWeight denom hchoosePayoff hotherPayoff_of_law_eq
+    hweight hdenom hbasePoint hfullPoint hmass
 
 /--
 Theorem 3.2 abstract-law point-estimate source endpoint.

@@ -224,9 +224,12 @@ Last updated: 2026-05-16
   combine that constructor with the mixture, best-response, and affine-payoff
   bridge.  The optional-reporting and report-required point-estimate wrappers
   now derive the needed two-sided best-response predicate directly from the
-  concrete source equilibrium models.  The remaining source gap is
-  instantiating the mixture and affine-payoff identities from the full policy
-  model.
+  concrete source equilibrium models.  The PMF binary-mixture helper
+  `lg21BinaryMixturePMF` now supplies the positive-share reporter/no-reporter
+  mixture identity for source surfaces that define observable-access estimates
+  with a Bernoulli share.  The remaining source gap is instantiating the
+  affine-payoff identities from the full policy model and routing concrete
+  policy surfaces through the mixture wrapper.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -357,10 +360,12 @@ Last updated: 2026-05-16
    observable-to-test-blank bridge once mixture, best-response, and affine-payoff
    identities are supplied.  The optional-reporting and report-required
    point-estimate wrappers now derive the needed two-sided best-response
-   predicate directly from the concrete source equilibrium models; the next work
-   should instantiate the remaining mixture and affine-payoff identities from
-   the paper's full source policy model and then route them into the
-   point-estimate endpoint.
+   predicate directly from the concrete source equilibrium models.  The
+   PMF binary-mixture wrapper discharges the positive-share mixture identity
+   when observable-access estimates are built from `lg21BinaryMixturePMF`; the
+   next work should instantiate the remaining affine-payoff identities from the
+   paper's full source policy model and route concrete policy surfaces through
+   that wrapper.
 
 ## Reusable Library Seams
 
