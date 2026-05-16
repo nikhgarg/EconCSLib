@@ -386,7 +386,11 @@ cache is kept as `source.txt` for named-statement audits.
   endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
   specializes this further to the normalized payoff
-  `1 / 2 - upperTailMean + skill`, removing the slope parameter as well.
+  `1 / 2 - upperTailMean + skill`, removing the slope parameter as well.  The
+  companion implication wrapper
+  `paper_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  states the normalized report-required route directly as fairness implies
+  test-blankness.
 
 ## Source Notes
 

@@ -286,7 +286,11 @@ Last updated: 2026-05-16
   The unit-centered endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
   specializes further to source payoff
-  `1 / 2 - upperTailMean + skill`, removing the slope parameter too.
+  `1 / 2 - upperTailMean + skill`, removing the slope parameter too.  The
+  implication wrapper
+  `paper_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  presents this normalized report-required route directly in Theorem 3.2's
+  fairness-implies-test-blankness form.
   The
   finite acting-distribution
   lemmas
