@@ -249,8 +249,9 @@ Last updated: 2026-05-16
   these fairness-to-test-blank routes into direct latent-or-observable
   unfairness from an explicit off-mean test witness, and the optional-reporting
   concrete direct endpoint applies it to the optional binary-mixture surface.
-  The remaining source gap is discharging the final paper policy assumptions
-  for the concrete optional/report-required surfaces.
+  The report-required concrete direct endpoint applies it under the centered
+  outside-payoff identity.  The remaining source gap is discharging the final
+  paper policy assumptions for the concrete optional/report-required surfaces.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -399,9 +400,10 @@ Last updated: 2026-05-16
    point-estimate unfairness wrapper now turns these implications into direct
    unfairness from an off-mean point-estimate witness, with a concrete
    optional-reporting direct endpoint already routed through the optional
-   binary-mixture surface.  Next work should add the analogous concrete
-   report-required direct endpoint, then discharge the remaining paper policy
-   assumptions for the concrete optional/report-required surfaces.
+   binary-mixture surface and a report-required direct endpoint routed through
+   the centered outside-payoff variant.  Next work should discharge the
+   remaining paper policy assumptions for the concrete optional/report-required
+   surfaces.
 
 ## Reusable Library Seams
 

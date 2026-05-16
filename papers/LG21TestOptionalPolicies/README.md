@@ -148,8 +148,11 @@ cache is kept as `source.txt` for named-statement audits.
   explicit unfairness from a point-estimate test witness off the acting mean.
   The optional-reporting concrete endpoint
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_witness`
-  applies this directly to the optional binary-mixture surface.  The remaining
-  source gap is discharging the final paper policy assumptions for the concrete
+  applies this directly to the optional binary-mixture surface, and the
+  report-required analogue
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_witness_of_centered_outside`
+  applies it under the centered outside-payoff identity.  The remaining source
+  gap is discharging the final paper policy assumptions for the concrete
   optional/report-required surfaces.
 
 ## Source Notes
