@@ -41,6 +41,9 @@ Last updated: 2026-05-16
   `GaussianLowerTailMeanCertificate` lower-tail mean, the no-deviation
   contradictions imply all access students report and take.  These two cases
   are now combined in `paper_lemma4_1_strategy_proofness_of_lower_tail_thresholds`.
+  The reporting-side cutoff premise is discharged for explicit Gaussian
+  Bayesian threshold reporting policies by
+  `paper_lemma4_1_strategy_proofness_of_gaussian_reporting_threshold_and_lower_tail_taking`.
   The abstract lower-tail certificate has a concrete mathlib-backed
   standard-normal instantiation, `standardGaussianLowerTailMeanCertificate`.
 - The continuous-law fairness surface is added for the Gaussian negative
@@ -84,9 +87,11 @@ Last updated: 2026-05-16
    report-required scalar deviation witness is now connected to an explicit
    no-profitable-test-taking contradiction.  The current endpoint bridges prove
    all-report/all-take from the paper's "if not all, then finite cutoff" and
-   lower-tail-mean premises.  The remaining strategic bridge is to derive those
-   monotonicity-to-threshold/truncated-mean premises from the concrete
-   equilibrium predicate and close the endpoint.
+   lower-tail-mean premises; for Gaussian Bayesian threshold reporting, the
+   reporting cutoff is now produced directly by the affine threshold lemma.
+   The remaining strategic bridge is to derive the taking threshold and
+   lower-tail premises from the concrete equilibrium predicate and close the
+   endpoint.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
