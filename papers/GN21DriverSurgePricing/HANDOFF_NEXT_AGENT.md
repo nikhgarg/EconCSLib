@@ -48,6 +48,18 @@ Lemma5PositiveResponseShapeData.policyAlmostEverywhereEq_positiveResponse_of_can
 Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_candidate_le
 Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_feasible_optimal
 Lemma5PositiveResponseShapeData.marginalSetReward_lt_positiveResponsePolicy_of_not_policyFormAE
+measure_congr_policy_ae
+singleStateTripMass_congr_policy_ae
+singleStateTripTime_congr_policy_ae
+singleStateTripPayment_congr_policy_ae
+singleStateRenewalReward_congr_policy_ae
+gn21ExitWeightIntegral_congr_policy_ae
+gn21ScaledStateTime_congr_policy_ae
+gn21ScaledStateEarning_congr_policy_ae
+gn21MeasuredAggregateRewardPrimitives_congr_left_policy_ae
+gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
+theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE
+theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE
 paper_lemma5_fixed_response_policy_form_ae_of_response_shape
 paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape
 paper_lemma5_marginal_optimizer_replacement_of_response_shape
@@ -96,6 +108,15 @@ closed with the source a.e. strictness convention:
 `paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape` proves weak
 dominance by the positive-response policy and strict improvement unless the
 current feasible policy already has `lemma5PolicyFormAlmostEverywhere`.
+The a.e. convention is now backed by actual primitive congruence lemmas:
+single-state mass/time/payment/renewal reward, Lemma 3 `Q,T,W`, and
+`gn21MeasuredAggregateRewardPrimitives` are unchanged under
+`policyAlmostEverywhereEq`.  The bridge declarations
+`theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE` and
+`theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE` produce exact
+Theorem 4 interval-shape representatives from a.e. Lemma 5 forms, so endpoint
+work can switch to the exact representative and then use the primitive
+congruence lemmas to transfer the measured reward facts back.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical

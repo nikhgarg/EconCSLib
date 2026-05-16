@@ -97,13 +97,29 @@ The fixed-response part of Lemma 5 now has an a.e.-strict source endpoint:
 ```lean
 paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape
 paper_lemma5_fixed_response_policy_form_ae_of_response_shape
+theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE
+theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE
 ```
 
 The first theorem proves weak dominance by the positive-response policy and
 strict improvement unless the current feasible policy already has
 `lemma5PolicyFormAlmostEverywhere`; the second turns feasible optimality into
 the a.e. canonical form.  Do not reintroduce exact-boundary strictness as a
-separate assumption for this fixed-response variational step.
+separate assumption for this fixed-response variational step.  When a later
+endpoint proof needs exact interval syntax, use the two representative theorems
+above, then transfer measured facts back with:
+
+```lean
+singleStateTripMass_congr_policy_ae
+singleStateTripTime_congr_policy_ae
+singleStateTripPayment_congr_policy_ae
+singleStateRenewalReward_congr_policy_ae
+gn21ExitWeightIntegral_congr_policy_ae
+gn21ScaledStateTime_congr_policy_ae
+gn21ScaledStateEarning_congr_policy_ae
+gn21MeasuredAggregateRewardPrimitives_congr_left_policy_ae
+gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
+```
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

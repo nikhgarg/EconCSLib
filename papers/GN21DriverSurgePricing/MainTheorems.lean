@@ -18280,6 +18280,81 @@ theorem lemma5MarginalSetReward_congr_policy_ae
   exact setIntegral_congr_set
     (ae_eq_set_of_policyAlmostEverywhereEq μ hae)
 
+/-- Policy mass is invariant under null symmetric-difference equality. -/
+theorem measure_congr_policy_ae
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    μ σ = μ τ :=
+  measure_congr (ae_eq_set_of_policyAlmostEverywhereEq μ hae)
+
+/-- Accepted-trip mass is invariant under null symmetric-difference equality. -/
+theorem singleStateTripMass_congr_policy_ae
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    singleStateTripMass μ σ = singleStateTripMass μ τ := by
+  unfold singleStateTripMass
+  rw [measure_congr_policy_ae μ hae]
+
+/-- Accepted-trip time is invariant under null symmetric-difference equality. -/
+theorem singleStateTripTime_congr_policy_ae
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    singleStateTripTime μ σ = singleStateTripTime μ τ := by
+  unfold singleStateTripTime
+  exact setIntegral_congr_set
+    (ae_eq_set_of_policyAlmostEverywhereEq μ hae)
+
+/-- Accepted-trip payment is invariant under null symmetric-difference equality. -/
+theorem singleStateTripPayment_congr_policy_ae
+    (μ : Measure TripLength) (w : PricingFunction) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    singleStateTripPayment μ w σ = singleStateTripPayment μ w τ := by
+  unfold singleStateTripPayment
+  exact setIntegral_congr_set
+    (ae_eq_set_of_policyAlmostEverywhereEq μ hae)
+
+/-- Single-state renewal reward is invariant under null symmetric-difference equality. -/
+theorem singleStateRenewalReward_congr_policy_ae
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    singleStateRenewalReward μ arrivalRate w σ =
+      singleStateRenewalReward μ arrivalRate w τ := by
+  unfold singleStateRenewalReward
+  rw [singleStateTripPayment_congr_policy_ae μ w hae,
+    singleStateTripTime_congr_policy_ae μ hae]
+
+/-- Lemma 3 exit weight is invariant under null symmetric-difference equality. -/
+theorem gn21ExitWeightIntegral_congr_policy_ae
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ =
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI τ := by
+  unfold gn21ExitWeightIntegral
+  rw [setIntegral_congr_set
+    (ae_eq_set_of_policyAlmostEverywhereEq μ hae)]
+
+/-- Scaled state time is invariant under null symmetric-difference equality. -/
+theorem gn21ScaledStateTime_congr_policy_ae
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    gn21ScaledStateTime μ arrivalRate σ =
+      gn21ScaledStateTime μ arrivalRate τ := by
+  unfold gn21ScaledStateTime
+  rw [singleStateTripTime_congr_policy_ae μ hae]
+
+/-- Scaled state earning is invariant under null symmetric-difference equality. -/
+theorem gn21ScaledStateEarning_congr_policy_ae
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    gn21ScaledStateEarning μ arrivalRate w σ =
+      gn21ScaledStateEarning μ arrivalRate w τ := by
+  unfold gn21ScaledStateEarning
+  rw [singleStateTripPayment_congr_policy_ae μ w hae]
+
 /--
 For the linearized marginal reward associated with a fixed response, the policy
 that accepts exactly positive-response trips weakly dominates every measurable
@@ -24932,6 +25007,41 @@ theorem theorem4SurgeAEShape_of_allowed_lemma5_form
     (theorem4SurgeShape_of_allowed_lemma5_form hallowed hform)
 
 /--
+Allowed Lemma 5 non-surge forms modulo null sets have exact Theorem 4
+non-surge shape representatives.  This is the handoff from the source a.e.
+Lemma 5 conclusion to endpoint arguments that require exact interval syntax.
+-/
+theorem theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE
+    (μ : Measure TripLength) {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (hallowed : theorem4NonsurgeAllowedLemma5Shape shape)
+    (hform : lemma5PolicyFormAlmostEverywhere μ shape σ) :
+    ∃ σstar : TripPolicy,
+      theorem4NonsurgeShape σstar ∧ policyAlmostEverywhereEq μ σ σstar := by
+  rcases hform with ⟨σstar, hσstar_form, hσstar_ae⟩
+  exact
+    ⟨σstar,
+      theorem4NonsurgeShape_of_allowed_lemma5_form hallowed hσstar_form,
+      hσstar_ae⟩
+
+/--
+Allowed Lemma 5 surge forms modulo null sets have exact Theorem 4 surge shape
+representatives.
+-/
+theorem theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE
+    (μ : Measure TripLength) {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (hallowed : theorem4SurgeAllowedLemma5Shape shape)
+    (hform : lemma5PolicyFormAlmostEverywhere μ shape σ) :
+    ∃ σstar : TripPolicy,
+      theorem4SurgeShape σstar ∧ policyAlmostEverywhereEq μ σ σstar := by
+  rcases hform with ⟨σstar, hσstar_form, hσstar_ae⟩
+  exact
+    ⟨σstar,
+      theorem4SurgeShape_of_allowed_lemma5_form hallowed hσstar_form,
+      hσstar_ae⟩
+
+/--
 Theorem 4 certificate: an optimal dynamic policy with the paper's allowable
 non-surge and surge interval forms, plus necessity of those forms for any
 optimal policy.
@@ -28017,6 +28127,42 @@ def gn21MeasuredAggregateRewardPrimitives
     (gn21ScaledStateTime μJ arrivalJ σJ)
     (gn21ScaledStateEarning μI arrivalI wI σI)
     (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+
+/--
+The Appendix-D aggregate reward primitive is invariant when the left policy is
+changed only on a null symmetric difference.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_congr_left_policy_ae
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) {σI τI σJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μI σI τI) :
+    gn21MeasuredAggregateRewardPrimitives
+        μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ =
+      gn21MeasuredAggregateRewardPrimitives
+        μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ τI σJ := by
+  unfold gn21MeasuredAggregateRewardPrimitives
+  rw [gn21ExitWeightIntegral_congr_policy_ae μI arrivalI switchIJ switchJI hae,
+    gn21ScaledStateTime_congr_policy_ae μI arrivalI hae,
+    gn21ScaledStateEarning_congr_policy_ae μI arrivalI wI hae]
+
+/--
+The Appendix-D aggregate reward primitive is invariant when the right policy is
+changed only on a null symmetric difference.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) {σI σJ τJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μJ σJ τJ) :
+    gn21MeasuredAggregateRewardPrimitives
+        μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ =
+      gn21MeasuredAggregateRewardPrimitives
+        μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI τJ := by
+  unfold gn21MeasuredAggregateRewardPrimitives
+  rw [gn21ExitWeightIntegral_congr_policy_ae μJ arrivalJ switchJI switchIJ hae,
+    gn21ScaledStateTime_congr_policy_ae μJ arrivalJ hae,
+    gn21ScaledStateEarning_congr_policy_ae μJ arrivalJ wJ hae]
 
 /--
 If the left-state policy is a coincident-cutoff middle-rejection policy, then
