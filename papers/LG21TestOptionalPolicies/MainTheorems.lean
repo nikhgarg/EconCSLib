@@ -3462,6 +3462,103 @@ theorem paper_theorem3_1_report_required_source_witness_of_base_crossings
   · exact hthreshold
 
 /--
+Theorem 3.1 optional-reporting Gaussian crossing wrapper.  The reported-score
+estimate is the Bayesian posterior mean with one raw score updated, so its
+continuity and strict monotonicity are discharged by the Gaussian posterior
+algebra.  The remaining hypotheses are exactly the source proof's continuous
+no-report estimate and opposite endpoint comparisons.
+-/
+theorem paper_theorem3_1_optional_reporting_gaussian_source_witness_of_crossings
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (noReportEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontNoReport :
+      ∀ base, ContinuousOn (noReportEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base,
+        (M base).posteriorMean (Function.update (theta base) k (low base)) <
+          noReportEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base,
+        noReportEstimateAtCutoff base (high base) <
+          (M base).posteriorMean
+            (Function.update (theta base) k (high base))) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      ∃ reportCutoff : Base → ℝ,
+        (∀ base, reportCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            noReportEstimateAtCutoff base (reportCutoff base) =
+              (M base).posteriorMean
+                (Function.update (theta base) k (reportCutoff base))) ∧
+            (∀ base score,
+              W.reports base score ↔
+                noReportEstimateAtCutoff base (reportCutoff base) ≤
+                  (M base).posteriorMean
+                    (Function.update (theta base) k score)) ∧
+              (∀ base skill, W.takes base skill) ∧
+                (∀ base, ∃ cutoff : ℝ,
+                  ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_source_witness_of_base_crossings
+    (fun base score =>
+      (M base).posteriorMean (Function.update (theta base) k score))
+    noReportEstimateAtCutoff low high
+    (fun base =>
+      (paper_gaussian_posteriorMean_update_continuous
+        (M base) (theta base) k).continuousOn)
+    hcontNoReport
+    (fun base =>
+      paper_bayesian_optimal_estimator_strictMono_feature
+        (M base) (theta base) k)
+    hlow_high hleft hright
+
+/--
+Theorem 3.1 report-required affine crossing wrapper.  The expected estimate
+from taking/reporting is affine and strictly increasing in latent skill; the
+remaining hypotheses are the continuous no-take estimate and the source proof's
+opposite endpoint comparisons.
+-/
+theorem paper_theorem3_1_report_required_affine_source_witness_of_crossings
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (noTakeEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontNoTake :
+      ∀ base, ContinuousOn (noTakeEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, intercept base + slope base * low base <
+        noTakeEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base, noTakeEstimateAtCutoff base (high base) <
+        intercept base + slope base * high base) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      ∃ takeCutoff : Base → ℝ,
+        (∀ base, takeCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            noTakeEstimateAtCutoff base (takeCutoff base) =
+              intercept base + slope base * takeCutoff base) ∧
+            (∀ base skill,
+              W.takes base skill ↔
+                noTakeEstimateAtCutoff base (takeCutoff base) ≤
+                  intercept base + slope base * skill) ∧
+              (∀ base, ∃ qBar : ℝ,
+                ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
+  paper_theorem3_1_report_required_source_witness_of_base_crossings
+    (fun base skill => intercept base + slope base * skill)
+    noTakeEstimateAtCutoff low high
+    (fun _base => continuous_const.add
+      (continuous_const.mul continuous_id) |>.continuousOn)
+    hcontNoTake
+    (fun base => affine_strictMono (intercept base) (hslope base))
+    hlow_high hleft hright
+
+/--
 Source-shaped witness for Theorem 3.1's strategic-withholding threshold
 conclusions.  `Base` represents the paper's non-test feature vector
 `{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the

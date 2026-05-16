@@ -50,7 +50,14 @@ Last updated: 2026-05-16
   `paper_theorem3_1_report_required_threshold_equilibrium_exists_of_crossing`,
   and `paper_theorem3_1_report_required_source_witness_of_base_crossings`
   constructs a source-shaped finite skill-threshold witness for taking and
-  reporting.  The older combined threshold conclusions are also packaged in
+  reporting.  The wrappers
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_crossings`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_crossings`
+  discharge the generic continuity/strict-monotonicity hypotheses for the
+  optional Gaussian posterior estimate and the report-required affine expected
+  taking estimate, respectively.  The older combined threshold conclusions are
+  also packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
   functions now construct this witness via
   `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit
