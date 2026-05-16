@@ -3211,6 +3211,39 @@ theorem paper_theorem4_4_resampling_policy_demographically_fair
   exact lg21_demographicallyFair_of_observableFair e.baseProfile
     (paper_theorem4_4_resampling_policy_observably_fair e)
 
+/--
+Theorem 4.4 source-route wrapper with Lemma 4.1: when the source equilibrium
+has the packaged Gaussian threshold-equilibrium form, all access students take
+and report, while the re-sampling kernel is observably and demographically
+fair.
+-/
+theorem paper_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair
+    {Feature ΩBase ΩTest Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype ΩBase] [DecidableEq ΩBase]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {testScale : ℝ} (htestScale : 0 < testScale)
+    (K :
+      LG21GaussianThresholdEquilibriumCertificate
+        C api M theta k scoreLaw skillLaw htestScale)
+    (e : LG21ResamplingExperiment ΩBase ΩTest Estimate) :
+    (∀ score : ℝ, K.reports score) ∧
+      (∀ skill : ℝ, K.takes skill) ∧
+        lg21ObservableFair
+          (lg21AccessEstimateKernel e) (lg21ResamplingEstimateKernel e) ∧
+          lg21DemographicallyFair e.baseProfile
+            (lg21AccessEstimateKernel e) (lg21ResamplingEstimateKernel e) := by
+  have hstrategy :
+      (∀ score : ℝ, K.reports score) ∧ (∀ skill : ℝ, K.takes skill) :=
+    paper_lemma4_1_strategy_proofness_of_threshold_equilibrium_certificate
+      C api M theta k scoreLaw skillLaw htestScale K
+  exact ⟨hstrategy.1, hstrategy.2,
+    paper_theorem4_4_resampling_policy_observably_fair e,
+    paper_theorem4_4_resampling_policy_demographically_fair e⟩
+
 def lg21BaseModel {Θ ΩBase ΩTest : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩBase] [DecidableEq ΩBase] [Fintype ΩTest] [DecidableEq ΩTest]
     (m : LG21Model Θ ΩBase ΩTest) : AdmissionsModel Θ ΩBase :=

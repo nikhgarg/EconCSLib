@@ -11,7 +11,10 @@ Last updated: 2026-05-16
   Binary reporting and taking subgames now bridge `lg21Equilibrium` best
   responses to the no-profitable-deviation predicates used by Lemma 4.1.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
-  the shared conditional-resampling API.
+  the shared conditional-resampling API.  Theorem 4.4 also has a combined
+  source-route wrapper that pairs the finite resampling fairness proof with
+  Lemma 4.1's all-report/all-take conclusion from the packaged
+  threshold-equilibrium certificate.
 - The shared Bayesian Gaussian estimator algebra is proved:
   `paper_bayesian_optimal_estimator_gaussian` gives the precision-weighted
   posterior mean and marginal estimate law variance formula.
@@ -93,7 +96,9 @@ Last updated: 2026-05-16
    the next shared target is distribution-comparison lemmas.
 2. Preserve the existing resampling proof path:
    `ConditionalResamplingExperiment`, `resampling_observableFair`, and
-   `resampling_demographicallyFair`.
+   `resampling_demographicallyFair`.  The current combined Theorem 4.4 wrapper
+   should keep consuming `LG21GaussianThresholdEquilibriumCertificate` until
+   the full source-equilibrium derivation is available.
 3. Build an observed-access threshold best-response interface for Lemma 4.1
    only after the posterior score formula and threshold comparison facts are
    available.  The one-score reporting cutoff wrapper is now available; the
