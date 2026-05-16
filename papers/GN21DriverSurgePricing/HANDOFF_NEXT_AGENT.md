@@ -280,6 +280,17 @@ paths.  There is now an even shorter strict-local route through the matching
 one-sided `HasDerivAt` endpoint data and produce a small feasible endpoint
 move.  Prefer these local selectors for Theorem 4 optimal-policy exclusion
 unless the full Lemma 5 dominance/iteration statement is required.  The
+local selectors now have feasible-measurable counterparts whose conclusions
+are already in the source policy domain:
+`lemma5_strictlyIncreasing_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`,
+`lemma5_strictlyDecreasing_gap_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`,
+`lemma5_strictQuasiConvex_three_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`,
+and
+`lemma5_strictQuasiConcave_two_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`.
+Use `not_dynamicMeasurableOptimal_of_state_exists_strict_feasible_trip_policy_improvement`
+to convert one of these endpoint-selector outputs into a contradiction to
+dynamic measurable optimality.
+The
 replacement route now has a well-founded progress
 interface:
 `lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`

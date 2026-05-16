@@ -880,6 +880,18 @@ interface for Theorem 4-style optimal-policy exclusion, because a signed
 endpoint branch already produces some strictly better nearby policy without
 separately proving the full finite path to a canonical Lemma 5 form or a
 global stopped path.
+The local route now also has source-domain variants that keep the replacement
+policy feasible and measurable:
+`lemma5_strictlyIncreasing_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`,
+`lemma5_strictlyDecreasing_gap_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`,
+`lemma5_strictQuasiConvex_three_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`,
+and
+`lemma5_strictQuasiConcave_two_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context`.
+They are supported by reusable interval-union feasibility/measurability lemmas
+and the four feasible-measurable local endpoint primitives, then feed the
+compiled optimality bridges
+`not_singleStateMeasurableOptimal_of_exists_strict_feasible_improvement` and
+`not_dynamicMeasurableOptimal_of_state_exists_strict_feasible_trip_policy_improvement`.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its

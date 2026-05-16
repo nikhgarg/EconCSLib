@@ -300,6 +300,14 @@ The same four cases also have local
 one-sided `HasDerivAt` endpoint data and are now the shortest route to Theorem
 4 optimal-policy exclusion: supply the endpoint derivative identity for the
 selected branch, get a nearby strict improvement, and contradict optimality.
+This route is now source-domain compatible: each local selector has a
+`...exists_strict_feasible_measurable_improvement...` variant returning
+`∃ σ', σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧ R current < R σ'`.
+The four local endpoint primitives also have feasible-measurable versions, and
+the bridge
+`not_dynamicMeasurableOptimal_of_state_exists_strict_feasible_trip_policy_improvement`
+turns those one-state replacements into the existing dynamic feasible-update
+contradiction interface.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

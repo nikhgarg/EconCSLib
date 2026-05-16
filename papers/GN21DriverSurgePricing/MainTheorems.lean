@@ -1118,6 +1118,94 @@ theorem measurableSet_acceptAllPolicy : MeasurableSet acceptAllPolicy := by
   simpa [acceptAllPolicy, positiveTripLengths, Set.Ioi] using
     (measurableSet_Ioi (a := (0 : ℝ)))
 
+/-- An open interval whose left endpoint is nonnegative is feasible. -/
+theorem ioo_subset_acceptAllPolicy_of_left_nonneg
+    {lower upper : TripLength} (hlower_nonneg : 0 ≤ lower) :
+    Set.Ioo lower upper ⊆ acceptAllPolicy := by
+  intro τ hτ
+  exact lt_of_le_of_lt hlower_nonneg hτ.1
+
+/-- Unions of feasible trip policies are feasible. -/
+theorem union_subset_acceptAllPolicy
+    {σ τ : TripPolicy}
+    (hσ : σ ⊆ acceptAllPolicy)
+    (hτ : τ ⊆ acceptAllPolicy) :
+    σ ∪ τ ⊆ acceptAllPolicy := by
+  intro x hx
+  rcases hx with hx | hx
+  · exact hσ hx
+  · exact hτ hx
+
+/-- A feasible context plus one nonnegative-left open interval is feasible. -/
+theorem union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+    {context : TripPolicy}
+    (hcontext : context ⊆ acceptAllPolicy)
+    {lower upper : TripLength} (hlower_nonneg : 0 ≤ lower) :
+    context ∪ Set.Ioo lower upper ⊆ acceptAllPolicy :=
+  union_subset_acceptAllPolicy hcontext
+    (ioo_subset_acceptAllPolicy_of_left_nonneg hlower_nonneg)
+
+/-- A feasible context plus two nonnegative-left open intervals is feasible. -/
+theorem union_two_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+    {context : TripPolicy}
+    (hcontext : context ⊆ acceptAllPolicy)
+    {lower₁ upper₁ lower₂ upper₂ : TripLength}
+    (hlower₁_nonneg : 0 ≤ lower₁)
+    (hlower₂_nonneg : 0 ≤ lower₂) :
+    context ∪ (Set.Ioo lower₁ upper₁ ∪ Set.Ioo lower₂ upper₂) ⊆
+      acceptAllPolicy := by
+  exact
+    union_subset_acceptAllPolicy hcontext
+      (union_subset_acceptAllPolicy
+        (ioo_subset_acceptAllPolicy_of_left_nonneg hlower₁_nonneg)
+        (ioo_subset_acceptAllPolicy_of_left_nonneg hlower₂_nonneg))
+
+/-- A feasible context plus three nonnegative-left open intervals is feasible. -/
+theorem union_three_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+    {context : TripPolicy}
+    (hcontext : context ⊆ acceptAllPolicy)
+    {lower₁ upper₁ lower₂ upper₂ lower₃ upper₃ : TripLength}
+    (hlower₁_nonneg : 0 ≤ lower₁)
+    (hlower₂_nonneg : 0 ≤ lower₂)
+    (hlower₃_nonneg : 0 ≤ lower₃) :
+    context ∪
+        (Set.Ioo lower₁ upper₁ ∪
+          (Set.Ioo lower₂ upper₂ ∪ Set.Ioo lower₃ upper₃)) ⊆
+      acceptAllPolicy := by
+  exact
+    union_subset_acceptAllPolicy hcontext
+      (union_subset_acceptAllPolicy
+        (ioo_subset_acceptAllPolicy_of_left_nonneg hlower₁_nonneg)
+        (union_subset_acceptAllPolicy
+          (ioo_subset_acceptAllPolicy_of_left_nonneg hlower₂_nonneg)
+          (ioo_subset_acceptAllPolicy_of_left_nonneg hlower₃_nonneg)))
+
+/-- A measurable context plus one open interval is measurable. -/
+theorem measurableSet_union_ioo
+    {context : TripPolicy} (hcontext : MeasurableSet context)
+    (lower upper : TripLength) :
+    MeasurableSet (context ∪ Set.Ioo lower upper) :=
+  hcontext.union measurableSet_Ioo
+
+/-- A measurable context plus two open intervals is measurable. -/
+theorem measurableSet_union_two_ioo
+    {context : TripPolicy} (hcontext : MeasurableSet context)
+    (lower₁ upper₁ lower₂ upper₂ : TripLength) :
+    MeasurableSet
+      (context ∪ (Set.Ioo lower₁ upper₁ ∪ Set.Ioo lower₂ upper₂)) :=
+  hcontext.union (measurableSet_Ioo.union measurableSet_Ioo)
+
+/-- A measurable context plus three open intervals is measurable. -/
+theorem measurableSet_union_three_ioo
+    {context : TripPolicy} (hcontext : MeasurableSet context)
+    (lower₁ upper₁ lower₂ upper₂ lower₃ upper₃ : TripLength) :
+    MeasurableSet
+      (context ∪
+        (Set.Ioo lower₁ upper₁ ∪
+          (Set.Ioo lower₂ upper₂ ∪ Set.Ioo lower₃ upper₃))) :=
+  hcontext.union (measurableSet_Ioo.union
+    (measurableSet_Ioo.union measurableSet_Ioo))
+
 /-- Probability mass of a trip-length acceptance set under the trip distribution. -/
 def singleStateTripMass (μ : Measure TripLength) (σ : TripPolicy) : ℝ :=
   (μ σ).toReal
@@ -1555,6 +1643,22 @@ theorem not_singleStateMeasurableOptimal_of_strict_feasible_improvement
     ¬ singleStateMeasurableOptimal R σ := by
   intro hσ
   exact not_lt_of_ge (hσ.2.2 τ hτ_subset hτ_measurable) himprove
+
+/--
+Existential form of the measurable one-state optimality contradiction.  This
+matches endpoint selectors that return the improved feasible measurable policy
+as data.
+-/
+theorem not_singleStateMeasurableOptimal_of_exists_strict_feasible_improvement
+    (R : SingleStateReward) {σ : TripPolicy}
+    (himprove :
+      ∃ τ : TripPolicy, τ ⊆ acceptAllPolicy ∧ MeasurableSet τ ∧
+        R σ < R τ) :
+    ¬ singleStateMeasurableOptimal R σ := by
+  rcases himprove with ⟨τ, hτ_subset, hτ_measurable, hlt⟩
+  exact
+    not_singleStateMeasurableOptimal_of_strict_feasible_improvement
+      R hτ_subset hτ_measurable hlt
 
 /-- Accepted mass is nonnegative for any trip-length set. -/
 theorem singleStateTripMass_nonneg
@@ -8547,6 +8651,46 @@ theorem not_dynamicMeasurableOptimal_of_state_strict_feasible_improvement
   have hle :=
     dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hσ i hτ
   linarith
+
+/--
+Turn a one-state feasible measurable strict improvement into the dynamic
+feasible-update witness expected by the Theorem 4 strict-local interface.
+-/
+theorem exists_dynamic_state_strict_feasible_improvement_of_trip_policy_improvement
+    (R : DynamicReward) {σ : Fin 2 → TripPolicy} {i : Fin 2}
+    (hσ_feasible : dynamicFeasibleMeasurablePolicy σ)
+    (himprove :
+      ∃ τ : TripPolicy, τ ⊆ acceptAllPolicy ∧ MeasurableSet τ ∧
+        dynamicStateReward R σ i (σ i) < dynamicStateReward R σ i τ) :
+    ∃ τ : TripPolicy,
+      dynamicFeasibleMeasurablePolicy (Function.update σ i τ) ∧
+        dynamicStateReward R σ i (σ i) < dynamicStateReward R σ i τ := by
+  rcases himprove with ⟨τ, hτ_subset, hτ_measurable, hlt⟩
+  exact
+    ⟨τ,
+      dynamicFeasibleMeasurablePolicy_update
+        hσ_feasible i τ hτ_subset hτ_measurable,
+      hlt⟩
+
+/--
+Existential trip-policy form of the dynamic measurable-optimality
+contradiction.  Endpoint selectors can feed this directly after producing a
+feasible measurable one-state replacement.
+-/
+theorem not_dynamicMeasurableOptimal_of_state_exists_strict_feasible_trip_policy_improvement
+    (R : DynamicReward) {σ : Fin 2 → TripPolicy} {i : Fin 2}
+    (himprove :
+      ∃ τ : TripPolicy, τ ⊆ acceptAllPolicy ∧ MeasurableSet τ ∧
+        dynamicStateReward R σ i (σ i) < dynamicStateReward R σ i τ) :
+    ¬ dynamicMeasurableOptimal R σ := by
+  intro hσ
+  rcases
+      exists_dynamic_state_strict_feasible_improvement_of_trip_policy_improvement
+        R hσ.1 himprove with
+    ⟨τ, hτ_feasible, hlt⟩
+  exact
+    not_dynamicMeasurableOptimal_of_state_strict_feasible_improvement
+      R hτ_feasible hlt hσ
 
 /--
 If replacing either state's policy by accept-all weakly improves reward, then
@@ -17360,6 +17504,184 @@ theorem lemma5_upper_endpoint_collapse_exists_local_strict_improvement_with_cont
   exact ⟨context ∪ Set.Ioo lower x, hreward⟩
 
 /--
+Feasible-measurable local upper-endpoint merge.  This is the source-domain
+form needed to contradict measurable optimality: the nearby endpoint move
+stays inside `acceptAllPolicy` and remains measurable.
+-/
+theorem
+    lemma5_upper_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleftLower_nonneg : 0 ≤ leftLower)
+    (hrightLower_nonneg : 0 ≤ rightLower)
+    (hupper_right : leftUpper < rightLower)
+    {path : TripLength → ℝ} {derivativeValue : ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hpath_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        path x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪ Set.Ioo rightLower rightUpper)))
+    (hpath_deriv : HasDerivAt path derivativeValue leftUpper)
+    (hderiv_start_pos : 0 < derivativeValue) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat σ' := by
+  rcases exists_pos_right_improvement_of_hasDerivAt_pos_lt
+      hpath_deriv hderiv_start_pos (sub_pos.mpr hupper_right) with
+    ⟨ε, hε_pos, hε_lt, hreward⟩
+  let x : TripLength := leftUpper + ε
+  have hx_mem : x ∈ Set.Icc leftUpper rightLower := by
+    dsimp [x]
+    constructor <;> linarith
+  rw [hpath_start, hpath_at x hx_mem] at hreward
+  refine
+    ⟨context ∪ (Set.Ioo leftLower x ∪ Set.Ioo rightLower rightUpper),
+      ?_, ?_, hreward⟩
+  · exact
+      union_two_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+        hcontext_subset hleftLower_nonneg hrightLower_nonneg
+  · exact
+      measurableSet_union_two_ioo hcontext_measurable leftLower x
+        rightLower rightUpper
+
+/--
+Feasible-measurable local lower-endpoint merge.  The small left move remains
+positive because the new endpoint is still at least the left interval's upper
+endpoint.
+-/
+theorem
+    lemma5_lower_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleftLower_nonneg : 0 ≤ leftLower)
+    (hleftUpper_nonneg : 0 ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    {path : TripLength → ℝ} {derivativeValue : ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hpath_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        path x =
+          Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪ Set.Ioo x rightUpper)))
+    (hpath_deriv : HasDerivAt path derivativeValue rightLower)
+    (hderiv_start_neg : derivativeValue < 0) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat σ' := by
+  rcases exists_pos_left_improvement_of_hasDerivAt_neg_lt
+      hpath_deriv hderiv_start_neg (sub_pos.mpr hupper_right) with
+    ⟨ε, hε_pos, hε_lt, hreward⟩
+  let x : TripLength := rightLower - ε
+  have hx_mem : x ∈ Set.Icc leftUpper rightLower := by
+    dsimp [x]
+    constructor <;> linarith
+  have hx_nonneg : 0 ≤ x := le_trans hleftUpper_nonneg hx_mem.1
+  rw [hpath_start, hpath_at x hx_mem] at hreward
+  refine
+    ⟨context ∪ (Set.Ioo leftLower leftUpper ∪ Set.Ioo x rightUpper),
+      ?_, ?_, hreward⟩
+  · exact
+      union_two_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+        hcontext_subset hleftLower_nonneg hx_nonneg
+  · exact
+      measurableSet_union_two_ioo hcontext_measurable leftLower leftUpper
+        x rightUpper
+
+/--
+Feasible-measurable local lower-endpoint collapse.  A small inward move keeps
+the interval endpoint nonnegative and therefore feasible.
+-/
+theorem
+    lemma5_lower_endpoint_collapse_exists_local_strict_feasible_measurable_improvement_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    {lower upper : TripLength}
+    (hlower_nonneg : 0 ≤ lower)
+    (hlower_upper : lower < upper)
+    {path : TripLength → ℝ} {derivativeValue : ℝ}
+    (hpath_start :
+      path lower = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_at :
+      ∀ x ∈ Set.Icc lower upper,
+        path x = Rhat (context ∪ Set.Ioo x upper))
+    (hpath_deriv : HasDerivAt path derivativeValue lower)
+    (hderiv_start_pos : 0 < derivativeValue) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪ Set.Ioo lower upper) < Rhat σ' := by
+  rcases exists_pos_right_improvement_of_hasDerivAt_pos_lt
+      hpath_deriv hderiv_start_pos (sub_pos.mpr hlower_upper) with
+    ⟨ε, hε_pos, hε_lt, hreward⟩
+  let x : TripLength := lower + ε
+  have hx_mem : x ∈ Set.Icc lower upper := by
+    dsimp [x]
+    constructor <;> linarith
+  have hx_nonneg : 0 ≤ x := le_trans hlower_nonneg hx_mem.1
+  rw [hpath_start, hpath_at x hx_mem] at hreward
+  refine ⟨context ∪ Set.Ioo x upper, ?_, ?_, hreward⟩
+  · exact
+      union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+        hcontext_subset hx_nonneg
+  · exact measurableSet_union_ioo hcontext_measurable x upper
+
+/--
+Feasible-measurable local upper-endpoint collapse.  The fixed lower endpoint
+already controls feasibility of the shortened interval.
+-/
+theorem
+    lemma5_upper_endpoint_collapse_exists_local_strict_feasible_measurable_improvement_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    {lower upper : TripLength}
+    (hlower_nonneg : 0 ≤ lower)
+    (hlower_upper : lower < upper)
+    {path : TripLength → ℝ} {derivativeValue : ℝ}
+    (hpath_start :
+      path upper = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_at :
+      ∀ x ∈ Set.Icc lower upper,
+        path x = Rhat (context ∪ Set.Ioo lower x))
+    (hpath_deriv : HasDerivAt path derivativeValue upper)
+    (hderiv_start_neg : derivativeValue < 0) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪ Set.Ioo lower upper) < Rhat σ' := by
+  rcases exists_pos_left_improvement_of_hasDerivAt_neg_lt
+      hpath_deriv hderiv_start_neg (sub_pos.mpr hlower_upper) with
+    ⟨ε, hε_pos, hε_lt, hreward⟩
+  let x : TripLength := upper - ε
+  have hx_mem : x ∈ Set.Icc lower upper := by
+    dsimp [x]
+    constructor <;> linarith
+  rw [hpath_start, hpath_at x hx_mem] at hreward
+  refine ⟨context ∪ Set.Ioo lower x, ?_, ?_, hreward⟩
+  · exact
+      union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+        hcontext_subset hlower_nonneg
+  · exact measurableSet_union_ioo hcontext_measurable lower x
+
+/--
 Analytic witness behind each Lemma 5 derivative-shape case.  The policy-form
 predicate above records the optimizer shape; this predicate records the
 response-function shape that produces it in the source proof.
@@ -25019,6 +25341,660 @@ theorem
               (by simpa [hright_derivative_eq] using hright_deriv_pos) with
           ⟨σ', hσ'⟩
         exact ⟨σ', by simpa [hcurrent_right_eq] using hσ'⟩)
+
+/--
+Feasible-measurable strict-improvement selector for the strictly increasing
+case.  This is the measurable-domain counterpart of
+`lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves`.
+-/
+theorem
+    lemma5_strictlyIncreasing_interval_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hmono : StrictMonoOn response (Set.Ioi 0))
+    {lower upper : TripLength}
+    (hlower_pos : 0 < lower)
+    (hlower_upper : lower < upper)
+    (hupper_move :
+      0 < response upper →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ')
+    (hlower_move :
+      0 < -response lower →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+      Rhat σ < Rhat σ' := by
+  rcases lemma5_strictlyIncreasing_endpoint_sign_dichotomy
+      response hmono hlower_pos hlower_upper with hupper | hlower
+  · exact hupper_move hupper
+  · exact hlower_move hlower
+
+/--
+Feasible-measurable strict-improvement selector for the strictly decreasing
+adjacent-gap case.
+-/
+theorem
+    lemma5_strictlyDecreasing_gap_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hanti : StrictAntiOn response (Set.Ioi 0))
+    {upper nextLower : TripLength}
+    (hupper_pos : 0 < upper)
+    (hupper_next : upper < nextLower)
+    (hupper_move :
+      0 < response upper →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ')
+    (hnextLower_move :
+      0 < -response nextLower →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+      Rhat σ < Rhat σ' := by
+  rcases lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
+      response hanti hupper_pos hupper_next with hupper | hnextLower
+  · exact hupper_move hupper
+  · exact hnextLower_move hnextLower
+
+/--
+Feasible-measurable strict-improvement selector for the quasi-convex
+three-interval case.
+-/
+theorem
+    lemma5_strictQuasiConvex_three_interval_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConvexOnPositive response)
+    {leftUpper middleLower middleUpper rightLower : TripLength}
+    (hleft_pos : 0 < leftUpper)
+    (hleft_middleLower : leftUpper < middleLower)
+    (hmiddleLower_middleUpper : middleLower < middleUpper)
+    (hmiddleUpper_rightLower : middleUpper < rightLower)
+    (hleftUpper_move :
+      0 < response leftUpper →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ')
+    (hrightLower_move :
+      0 < response rightLower →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ')
+    (hmiddleLower_move :
+      0 < -response middleLower →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+      Rhat σ < Rhat σ' := by
+  rcases lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy
+      response hqc hleft_pos hleft_middleLower hmiddleLower_middleUpper
+      hmiddleUpper_rightLower with hleft | hright_or_middle
+  · exact hleftUpper_move hleft
+  · rcases hright_or_middle with hright | hmiddle
+    · exact hrightLower_move hright
+    · exact hmiddleLower_move hmiddle.1
+
+/--
+Feasible-measurable strict-improvement selector for the quasi-concave
+two-interval case.
+-/
+theorem
+    lemma5_strictQuasiConcave_two_interval_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConcaveOnPositive response)
+    {leftLower leftUpper rightLower : TripLength}
+    (hleftLower_pos : 0 < leftLower)
+    (hleftLower_leftUpper : leftLower < leftUpper)
+    (hleftUpper_rightLower : leftUpper < rightLower)
+    (hupper_move :
+      0 < response leftUpper →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ')
+    (hleftLower_move :
+      response leftLower < 0 →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ')
+    (hrightLower_move :
+      response rightLower < 0 →
+        ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+          Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+      Rhat σ < Rhat σ' := by
+  rcases lemma5_strictQuasiConcave_two_interval_endpoint_sign_trichotomy
+      response hqc hleftLower_pos hleftLower_leftUpper
+      hleftUpper_rightLower with hupper | hlower_or_right
+  · exact hupper_move hupper
+  · rcases hlower_or_right with hleft | hright
+    · exact hleftLower_move hleft
+    · exact hrightLower_move hright
+
+/--
+Strictly increasing interval selector from local endpoint derivatives, with
+the improving nearby policy kept in the feasible measurable source domain.
+-/
+theorem
+    lemma5_strictlyIncreasing_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    (response : TripLength → ℝ)
+    (hmono : StrictMonoOn response (Set.Ioi 0))
+    {lower upper rightLower rightUpper : TripLength}
+    (hlower_pos : 0 < lower)
+    (hlower_upper : lower < upper)
+    (hupper_right : upper < rightLower)
+    {upperPath lowerPath : TripLength → ℝ}
+    {upperDerivativeValue lowerDerivativeValue : ℝ}
+    (hupper_path_start :
+      upperPath upper =
+        Rhat (context ∪
+          (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_at :
+      ∀ x ∈ Set.Icc upper rightLower,
+        upperPath x =
+          Rhat (context ∪
+            (Set.Ioo lower x ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_deriv :
+      HasDerivAt upperPath upperDerivativeValue upper)
+    (hupper_derivative_eq :
+      upperDerivativeValue = response upper)
+    (hlower_path_start :
+      lowerPath lower =
+        Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo lower upper))
+    (hlower_path_at :
+      ∀ x ∈ Set.Icc lower upper,
+        lowerPath x =
+          Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+            Set.Ioo x upper))
+    (hlower_path_deriv :
+      HasDerivAt lowerPath lowerDerivativeValue lower)
+    (hlower_derivative_eq :
+      lowerDerivativeValue = -response lower) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪
+          (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat σ' := by
+  have hlower_nonneg : 0 ≤ lower := le_of_lt hlower_pos
+  have hrightLower_nonneg : 0 ≤ rightLower :=
+    le_of_lt (lt_trans (lt_trans hlower_pos hlower_upper) hupper_right)
+  have hcontext_right_subset :
+      context ∪ Set.Ioo rightLower rightUpper ⊆ acceptAllPolicy :=
+    union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+      hcontext_subset hrightLower_nonneg
+  have hcontext_right_measurable :
+      MeasurableSet (context ∪ Set.Ioo rightLower rightUpper) :=
+    measurableSet_union_ioo hcontext_measurable rightLower rightUpper
+  have hcurrent_eq :
+      Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo lower upper) =
+        Rhat (context ∪
+          (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper)) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  exact
+    lemma5_strictlyIncreasing_interval_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+      Rhat
+      (context ∪ (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper))
+      response hmono hlower_pos hlower_upper
+      (by
+        intro hresp_pos
+        exact
+          lemma5_upper_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+            Rhat context hcontext_subset hcontext_measurable hlower_nonneg
+            hrightLower_nonneg hupper_right hupper_path_start
+            hupper_path_at hupper_path_deriv
+            (by simpa [hupper_derivative_eq] using hresp_pos))
+      (by
+        intro hresp_pos
+        rcases
+            lemma5_lower_endpoint_collapse_exists_local_strict_feasible_measurable_improvement_with_context
+              Rhat (context ∪ Set.Ioo rightLower rightUpper)
+              hcontext_right_subset hcontext_right_measurable hlower_nonneg
+              hlower_upper hlower_path_start hlower_path_at
+              hlower_path_deriv
+              (by simpa [hlower_derivative_eq] using hresp_pos) with
+          ⟨σ', hσ'_subset, hσ'_measurable, hσ'⟩
+        exact
+          ⟨σ', hσ'_subset, hσ'_measurable,
+            by simpa [hcurrent_eq] using hσ'⟩)
+
+/--
+Strictly decreasing adjacent-gap selector from local endpoint derivatives, with
+the improving nearby policy feasible and measurable.
+-/
+theorem
+    lemma5_strictlyDecreasing_gap_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    (response : TripLength → ℝ)
+    (hanti : StrictAntiOn response (Set.Ioi 0))
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleftLower_nonneg : 0 ≤ leftLower)
+    (hleftUpper_pos : 0 < leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    {upperPath lowerPath : TripLength → ℝ}
+    {upperDerivativeValue lowerDerivativeValue : ℝ}
+    (hupper_path_start :
+      upperPath leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        upperPath x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_deriv :
+      HasDerivAt upperPath upperDerivativeValue leftUpper)
+    (hupper_derivative_eq :
+      upperDerivativeValue = response leftUpper)
+    (hlower_path_start :
+      lowerPath rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hlower_path_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        lowerPath x =
+          Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪ Set.Ioo x rightUpper)))
+    (hlower_path_deriv :
+      HasDerivAt lowerPath lowerDerivativeValue rightLower)
+    (hlower_derivative_eq :
+      lowerDerivativeValue = response rightLower) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat σ' := by
+  have hleftUpper_nonneg : 0 ≤ leftUpper := le_of_lt hleftUpper_pos
+  have hrightLower_nonneg : 0 ≤ rightLower :=
+    le_of_lt (lt_trans hleftUpper_pos hupper_right)
+  exact
+    lemma5_strictlyDecreasing_gap_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+      Rhat
+      (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper))
+      response hanti hleftUpper_pos hupper_right
+      (by
+        intro hresp_pos
+        exact
+          lemma5_upper_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+            Rhat context hcontext_subset hcontext_measurable
+            hleftLower_nonneg hrightLower_nonneg hupper_right
+            hupper_path_start hupper_path_at hupper_path_deriv
+            (by simpa [hupper_derivative_eq] using hresp_pos))
+      (by
+        intro hresp_neg
+        have hresponse_right_neg : response rightLower < 0 := by
+          linarith
+        exact
+          lemma5_lower_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+            Rhat context hcontext_subset hcontext_measurable
+            hleftLower_nonneg hleftUpper_nonneg hupper_right
+            hlower_path_start hlower_path_at hlower_path_deriv
+            (by simpa [hlower_derivative_eq] using hresponse_right_neg))
+
+/--
+Strict quasi-convex three-interval selector from local endpoint derivatives,
+with the selected endpoint move returned as a feasible measurable policy.
+-/
+theorem
+    lemma5_strictQuasiConvex_three_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConvexOnPositive response)
+    {leftLower leftUpper middleLower middleUpper rightLower rightUpper :
+      TripLength}
+    (hleftLower_nonneg : 0 ≤ leftLower)
+    (hleft_pos : 0 < leftUpper)
+    (hleft_middleLower : leftUpper < middleLower)
+    (hmiddleLower_middleUpper : middleLower < middleUpper)
+    (hmiddleUpper_rightLower : middleUpper < rightLower)
+    {leftPath rightPath middlePath : TripLength → ℝ}
+    {leftDerivativeValue rightDerivativeValue middleDerivativeValue : ℝ}
+    (hleft_path_start :
+      leftPath leftUpper =
+        Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo middleLower middleUpper)))
+    (hleft_path_at :
+      ∀ x ∈ Set.Icc leftUpper middleLower,
+        leftPath x =
+          Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+            (Set.Ioo leftLower x ∪
+              Set.Ioo middleLower middleUpper)))
+    (hleft_path_deriv :
+      HasDerivAt leftPath leftDerivativeValue leftUpper)
+    (hleft_derivative_eq :
+      leftDerivativeValue = response leftUpper)
+    (hright_path_start :
+      rightPath rightLower =
+        Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          (Set.Ioo middleLower middleUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hright_path_at :
+      ∀ x ∈ Set.Icc middleUpper rightLower,
+        rightPath x =
+          Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo x rightUpper)))
+    (hright_path_deriv :
+      HasDerivAt rightPath rightDerivativeValue rightLower)
+    (hright_derivative_eq :
+      rightDerivativeValue = -response rightLower)
+    (hmiddle_path_start :
+      middlePath middleLower =
+        Rhat ((context ∪
+            (Set.Ioo leftLower leftUpper ∪
+              Set.Ioo rightLower rightUpper)) ∪
+          Set.Ioo middleLower middleUpper))
+    (hmiddle_path_at :
+      ∀ x ∈ Set.Icc middleLower middleUpper,
+        middlePath x =
+          Rhat ((context ∪
+              (Set.Ioo leftLower leftUpper ∪
+                Set.Ioo rightLower rightUpper)) ∪
+            Set.Ioo x middleUpper))
+    (hmiddle_path_deriv :
+      HasDerivAt middlePath middleDerivativeValue middleLower)
+    (hmiddle_derivative_eq :
+      middleDerivativeValue = -response middleLower) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) <
+          Rhat σ' := by
+  have hmiddleLower_pos : 0 < middleLower :=
+    lt_trans hleft_pos hleft_middleLower
+  have hmiddleLower_nonneg : 0 ≤ middleLower :=
+    le_of_lt hmiddleLower_pos
+  have hmiddleUpper_pos : 0 < middleUpper :=
+    lt_trans hmiddleLower_pos hmiddleLower_middleUpper
+  have hmiddleUpper_nonneg : 0 ≤ middleUpper :=
+    le_of_lt hmiddleUpper_pos
+  have hrightLower_pos : 0 < rightLower :=
+    lt_trans hmiddleUpper_pos hmiddleUpper_rightLower
+  have hrightLower_nonneg : 0 ≤ rightLower :=
+    le_of_lt hrightLower_pos
+  have hcontext_right_subset :
+      context ∪ Set.Ioo rightLower rightUpper ⊆ acceptAllPolicy :=
+    union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+      hcontext_subset hrightLower_nonneg
+  have hcontext_right_measurable :
+      MeasurableSet (context ∪ Set.Ioo rightLower rightUpper) :=
+    measurableSet_union_ioo hcontext_measurable rightLower rightUpper
+  have hcontext_left_subset :
+      context ∪ Set.Ioo leftLower leftUpper ⊆ acceptAllPolicy :=
+    union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+      hcontext_subset hleftLower_nonneg
+  have hcontext_left_measurable :
+      MeasurableSet (context ∪ Set.Ioo leftLower leftUpper) :=
+    measurableSet_union_ioo hcontext_measurable leftLower leftUpper
+  have hcontext_left_right_subset :
+      context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper) ⊆
+        acceptAllPolicy :=
+    union_two_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+      hcontext_subset hleftLower_nonneg hrightLower_nonneg
+  have hcontext_left_right_measurable :
+      MeasurableSet
+        (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)) :=
+    measurableSet_union_two_ioo hcontext_measurable leftLower leftUpper
+      rightLower rightUpper
+  have hcurrent_left_eq :
+      Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo middleLower middleUpper)) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) := by
+    congr 1
+    ext x
+    simp [or_assoc, or_comm]
+  have hcurrent_right_eq :
+      Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          (Set.Ioo middleLower middleUpper ∪
+            Set.Ioo rightLower rightUpper)) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  have hcurrent_middle_eq :
+      Rhat ((context ∪
+            (Set.Ioo leftLower leftUpper ∪
+              Set.Ioo rightLower rightUpper)) ∪
+          Set.Ioo middleLower middleUpper) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  exact
+    lemma5_strictQuasiConvex_three_interval_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+      Rhat
+      (context ∪
+        (Set.Ioo leftLower leftUpper ∪
+          (Set.Ioo middleLower middleUpper ∪
+            Set.Ioo rightLower rightUpper)))
+      response hqc hleft_pos hleft_middleLower hmiddleLower_middleUpper
+      hmiddleUpper_rightLower
+      (by
+        intro hresp_pos
+        rcases
+            lemma5_upper_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+              Rhat (context ∪ Set.Ioo rightLower rightUpper)
+              hcontext_right_subset hcontext_right_measurable
+              hleftLower_nonneg hmiddleLower_nonneg hleft_middleLower
+              hleft_path_start hleft_path_at hleft_path_deriv
+              (by simpa [hleft_derivative_eq] using hresp_pos) with
+          ⟨σ', hσ'_subset, hσ'_measurable, hσ'⟩
+        exact
+          ⟨σ', hσ'_subset, hσ'_measurable,
+            by simpa [hcurrent_left_eq] using hσ'⟩)
+      (by
+        intro hresp_pos
+        have hright_deriv_neg : -response rightLower < 0 := by
+          linarith
+        rcases
+            lemma5_lower_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+              Rhat (context ∪ Set.Ioo leftLower leftUpper)
+              hcontext_left_subset hcontext_left_measurable
+              hmiddleLower_nonneg hmiddleUpper_nonneg
+              hmiddleUpper_rightLower hright_path_start hright_path_at
+              hright_path_deriv
+              (by simpa [hright_derivative_eq] using hright_deriv_neg) with
+          ⟨σ', hσ'_subset, hσ'_measurable, hσ'⟩
+        exact
+          ⟨σ', hσ'_subset, hσ'_measurable,
+            by simpa [hcurrent_right_eq] using hσ'⟩)
+      (by
+        intro hresp_pos
+        rcases
+            lemma5_lower_endpoint_collapse_exists_local_strict_feasible_measurable_improvement_with_context
+              Rhat
+              (context ∪
+                (Set.Ioo leftLower leftUpper ∪
+                  Set.Ioo rightLower rightUpper))
+              hcontext_left_right_subset hcontext_left_right_measurable
+              hmiddleLower_nonneg hmiddleLower_middleUpper
+              hmiddle_path_start hmiddle_path_at hmiddle_path_deriv
+              (by simpa [hmiddle_derivative_eq] using hresp_pos) with
+          ⟨σ', hσ'_subset, hσ'_measurable, hσ'⟩
+        exact
+          ⟨σ', hσ'_subset, hσ'_measurable,
+            by simpa [hcurrent_middle_eq] using hσ'⟩)
+
+/--
+Strict quasi-concave two-interval selector from local endpoint derivatives,
+with the selected endpoint move returned as a feasible measurable policy.
+-/
+theorem
+    lemma5_strictQuasiConcave_two_interval_exists_strict_feasible_measurable_improvement_of_local_endpoint_paths_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hcontext_subset : context ⊆ acceptAllPolicy)
+    (hcontext_measurable : MeasurableSet context)
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConcaveOnPositive response)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleftLower_pos : 0 < leftLower)
+    (hleftLower_leftUpper : leftLower < leftUpper)
+    (hleftUpper_rightLower : leftUpper < rightLower)
+    (hrightLower_rightUpper : rightLower < rightUpper)
+    {upperPath leftPath rightPath : TripLength → ℝ}
+    {upperDerivativeValue leftDerivativeValue rightDerivativeValue : ℝ}
+    (hupper_path_start :
+      upperPath leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        upperPath x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_deriv :
+      HasDerivAt upperPath upperDerivativeValue leftUpper)
+    (hupper_derivative_eq :
+      upperDerivativeValue = response leftUpper)
+    (hleft_path_start :
+      leftPath leftLower =
+        Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo leftLower leftUpper))
+    (hleft_path_at :
+      ∀ x ∈ Set.Icc leftLower leftUpper,
+        leftPath x =
+          Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+            Set.Ioo x leftUpper))
+    (hleft_path_deriv :
+      HasDerivAt leftPath leftDerivativeValue leftLower)
+    (hleft_derivative_eq :
+      leftDerivativeValue = -response leftLower)
+    (hright_path_start :
+      rightPath rightLower =
+        Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          Set.Ioo rightLower rightUpper))
+    (hright_path_at :
+      ∀ x ∈ Set.Icc rightLower rightUpper,
+        rightPath x =
+          Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+            Set.Ioo x rightUpper))
+    (hright_path_deriv :
+      HasDerivAt rightPath rightDerivativeValue rightLower)
+    (hright_derivative_eq :
+      rightDerivativeValue = -response rightLower) :
+    ∃ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy ∧ MeasurableSet σ' ∧
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+          Rhat σ' := by
+  have hleftLower_nonneg : 0 ≤ leftLower := le_of_lt hleftLower_pos
+  have hrightLower_pos : 0 < rightLower :=
+    lt_trans (lt_trans hleftLower_pos hleftLower_leftUpper)
+      hleftUpper_rightLower
+  have hrightLower_nonneg : 0 ≤ rightLower := le_of_lt hrightLower_pos
+  have hcontext_right_subset :
+      context ∪ Set.Ioo rightLower rightUpper ⊆ acceptAllPolicy :=
+    union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+      hcontext_subset hrightLower_nonneg
+  have hcontext_right_measurable :
+      MeasurableSet (context ∪ Set.Ioo rightLower rightUpper) :=
+    measurableSet_union_ioo hcontext_measurable rightLower rightUpper
+  have hcontext_left_subset :
+      context ∪ Set.Ioo leftLower leftUpper ⊆ acceptAllPolicy :=
+    union_ioo_subset_acceptAllPolicy_of_subset_of_left_nonneg
+      hcontext_subset hleftLower_nonneg
+  have hcontext_left_measurable :
+      MeasurableSet (context ∪ Set.Ioo leftLower leftUpper) :=
+    measurableSet_union_ioo hcontext_measurable leftLower leftUpper
+  have hcurrent_left_eq :
+      Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo leftLower leftUpper) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  have hcurrent_right_eq :
+      Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          Set.Ioo rightLower rightUpper) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  exact
+    lemma5_strictQuasiConcave_two_interval_exists_strict_feasible_measurable_improvement_of_endpoint_moves
+      Rhat
+      (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper))
+      response hqc hleftLower_pos hleftLower_leftUpper
+      hleftUpper_rightLower
+      (by
+        intro hresp_pos
+        exact
+          lemma5_upper_endpoint_merge_exists_local_strict_feasible_measurable_improvement_with_context
+            Rhat context hcontext_subset hcontext_measurable
+            hleftLower_nonneg hrightLower_nonneg hleftUpper_rightLower
+            hupper_path_start hupper_path_at hupper_path_deriv
+            (by simpa [hupper_derivative_eq] using hresp_pos))
+      (by
+        intro hresp_neg
+        have hleft_deriv_pos : 0 < -response leftLower := by
+          linarith
+        rcases
+            lemma5_lower_endpoint_collapse_exists_local_strict_feasible_measurable_improvement_with_context
+              Rhat (context ∪ Set.Ioo rightLower rightUpper)
+              hcontext_right_subset hcontext_right_measurable
+              hleftLower_nonneg hleftLower_leftUpper hleft_path_start
+              hleft_path_at hleft_path_deriv
+              (by simpa [hleft_derivative_eq] using hleft_deriv_pos) with
+          ⟨σ', hσ'_subset, hσ'_measurable, hσ'⟩
+        exact
+          ⟨σ', hσ'_subset, hσ'_measurable,
+            by simpa [hcurrent_left_eq] using hσ'⟩)
+      (by
+        intro hresp_neg
+        have hright_deriv_pos : 0 < -response rightLower := by
+          linarith
+        rcases
+            lemma5_lower_endpoint_collapse_exists_local_strict_feasible_measurable_improvement_with_context
+              Rhat (context ∪ Set.Ioo leftLower leftUpper)
+              hcontext_left_subset hcontext_left_measurable
+              hrightLower_nonneg hrightLower_rightUpper hright_path_start
+              hright_path_at hright_path_deriv
+              (by simpa [hright_derivative_eq] using hright_deriv_pos) with
+          ⟨σ', hσ'_subset, hσ'_measurable, hσ'⟩
+        exact
+          ⟨σ', hσ'_subset, hσ'_measurable,
+            by simpa [hcurrent_right_eq] using hσ'⟩)
 
 /--
 Policy that accepts exactly the positive trip lengths whose marginal response
