@@ -190,6 +190,8 @@ lemma5_list_bounded_lower_collapse_step_of_endpoint_path
 lemma5_list_bounded_lower_collapse_strict_step_of_endpoint_path
 lemma5_list_bounded_upper_collapse_step_of_endpoint_path
 lemma5_list_bounded_upper_collapse_strict_step_of_endpoint_path
+lemma5_list_bounded_rightRay_upper_merge_step_of_endpoint_path
+lemma5_list_bounded_rightRay_upper_merge_strict_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
 lemma5_withTwoBounded_upper_merge_step_of_endpoint_path
@@ -231,9 +233,11 @@ reach right tails, left tails, and accept-all from finite seeds.  Lean also has
 an ordered component-list policy domain and head/two-head decomposition lemmas
 that identify the source proof's first components with the compiled context
 seeds.  The first ordered bounded-bounded merge and bounded-interval collapse
-steps now produce a shorter ordered list directly, in weak and strict forms.
+steps now produce a shorter ordered list directly, in weak and strict forms;
+the ordered bounded-to-right-ray merge also reaches a shorter right-tail list.
 The remaining nonlinear work is selecting the appropriate local move
-inside an arbitrary ordered finite interval/ray seed, proving the source
+inside an arbitrary ordered finite interval/ray seed, adding the symmetric
+ordered left-ray and accept-all boundary list steps, proving the source
 derivative-sign hypothesis holds along the selected path, and iterating the
 component-count decrease to a canonical Lemma 5 shape.
 
