@@ -7,9 +7,12 @@ Last updated: 2026-05-16
 
 - Finite admissions decompositions are proved in `MainTheorems.lean`.
 - Definition 1 now has a concrete `(Y, X)` access-action object with `Y ≥ X`
-  feasibility and the optional-reporting/report-required regimes encoded.
-  Binary reporting and taking subgames now bridge `lg21Equilibrium` best
-  responses to the no-profitable-deviation predicates used by Lemma 4.1.
+  feasibility, optional-reporting/report-required regimes, source access
+  student information `(q, base, test)`, source decision functions
+  `Y(q, base)` and `X(base, test)`, and the feasibility/best-response/
+  estimation-consistency projections encoded.  Binary reporting and taking
+  subgames bridge `lg21Equilibrium` best responses to the
+  no-profitable-deviation predicates used by Lemma 4.1.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
   the shared conditional-resampling API.  Theorem 4.4 also has a combined
   source-route wrapper that pairs the finite resampling fairness proof with

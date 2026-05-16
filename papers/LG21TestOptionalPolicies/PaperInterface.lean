@@ -22,6 +22,43 @@ abbrev paperEquilibrium {StudentInfo Action : Type*}
   lg21Equilibrium E
 
 /--
+Definition 1 source equilibrium for the paper's test-access students, with
+decision functions `Y(q, base)` and `X(base, test)`.
+-/
+abbrev paperSourceEquilibrium {Skill Base Test : Type*}
+    (E : LG21SourceEquilibriumData Skill Base Test) : Prop :=
+  lg21SourceEquilibrium E
+
+/-- Definition 1 student information: latent skill, non-test profile, and test score. -/
+abbrev paperAccessStudentInfo (Skill Base Test : Type*) :=
+  LG21AccessStudentInfo Skill Base Test
+
+/-- Definition 1 chosen action `(Y(q, base), X(base, test))`. -/
+abbrev paperChosenAccessAction
+    {Skill Base Test : Type*}
+    (takeDecision : Skill → Base → Bool)
+    (reportDecision : Base → Test → Bool)
+    (info : paperAccessStudentInfo Skill Base Test) : LG21AccessAction :=
+  LG21AccessStudentInfo.chosenAction takeDecision reportDecision info
+
+/-- Definition 1 source equilibrium unfolded into feasibility, best response, and consistency. -/
+theorem paper_interface_definition1_source_equilibrium_iff
+    {Skill Base Test : Type*}
+    (E : LG21SourceEquilibriumData Skill Base Test) :
+    paperSourceEquilibrium E ↔
+      (∀ info,
+        LG21AccessAction.feasible E.requirement
+          (paperChosenAccessAction E.takeDecision E.reportDecision info)) ∧
+        (∀ info action,
+          LG21AccessAction.feasible E.requirement action →
+            E.payoff info action ≤
+              E.payoff info
+                (paperChosenAccessAction
+                  E.takeDecision E.reportDecision info)) ∧
+          E.estimationConsistent :=
+  lg21SourceEquilibrium_iff E
+
+/--
 Definition 1 bridge: in the binary reporting subgame, equilibrium implies the
 no-profitable-withholding condition used by Lemma 4.1.
 -/
@@ -89,6 +126,63 @@ theorem paper_interface_reportRequiredAfterTaking_reportImpliesTake
     {a : LG21AccessAction} (h : paperReportRequiredAfterTaking a) :
     LG21AccessAction.reportImpliesTake a :=
   LG21AccessAction.reportRequiredAfterTaking_reportImpliesTake h
+
+/-- Optional reporting feasibility is exactly the source condition `Y ≥ X`. -/
+theorem paper_interface_optional_reporting_feasible_iff_report_implies_take
+    (a : LG21AccessAction) :
+    paperAccessActionFeasible paperOptionalReportingRequirement a ↔
+      a.reportImpliesTake :=
+  LG21AccessAction.optionalReporting_feasible_iff_reportImpliesTake a
+
+/-- Under report-required policies, feasible actions are exactly those with `Y = X`. -/
+theorem paper_interface_report_required_feasible_iff
+    (a : LG21AccessAction) :
+    paperAccessActionFeasible paperReportRequiredAfterTaking a ↔
+      paperReportRequiredAfterTaking a :=
+  LG21AccessAction.reportRequiredAfterTaking_feasible_iff a
+
+/-- In the optional-reporting regime, taking and withholding is feasible. -/
+theorem paper_interface_take_and_withhold_optional_reporting_feasible :
+    paperAccessActionFeasible paperOptionalReportingRequirement
+      LG21AccessAction.takeAndWithhold :=
+  LG21AccessAction.takeAndWithhold_optionalReporting_feasible
+
+/-- In the report-required regime, taking and withholding is infeasible. -/
+theorem paper_interface_not_take_and_withhold_report_required_feasible :
+    ¬ paperAccessActionFeasible paperReportRequiredAfterTaking
+      LG21AccessAction.takeAndWithhold :=
+  LG21AccessAction.not_takeAndWithhold_reportRequiredAfterTaking_feasible
+
+/-- Definition 1 projection: source equilibria choose feasible actions. -/
+theorem paper_interface_definition1_source_equilibrium_feasible
+    {Skill Base Test : Type*}
+    {E : LG21SourceEquilibriumData Skill Base Test}
+    (hEq : paperSourceEquilibrium E)
+    (info : paperAccessStudentInfo Skill Base Test) :
+    paperAccessActionFeasible E.requirement
+      (paperChosenAccessAction E.takeDecision E.reportDecision info) :=
+  lg21SourceEquilibrium_feasible hEq info
+
+/-- Definition 1 projection: source equilibria satisfy the best-response condition. -/
+theorem paper_interface_definition1_source_equilibrium_best_response
+    {Skill Base Test : Type*}
+    {E : LG21SourceEquilibriumData Skill Base Test}
+    (hEq : paperSourceEquilibrium E)
+    (info : paperAccessStudentInfo Skill Base Test)
+    (action : LG21AccessAction)
+    (hfeasible : paperAccessActionFeasible E.requirement action) :
+    E.payoff info action ≤
+      E.payoff info
+        (paperChosenAccessAction E.takeDecision E.reportDecision info) :=
+  lg21SourceEquilibrium_best_response hEq info action hfeasible
+
+/-- Definition 1 projection: source equilibria satisfy estimation consistency. -/
+theorem paper_interface_definition1_source_equilibrium_estimation_consistent
+    {Skill Base Test : Type*}
+    {E : LG21SourceEquilibriumData Skill Base Test}
+    (hEq : paperSourceEquilibrium E) :
+    E.estimationConsistent :=
+  lg21SourceEquilibrium_estimationConsistent hEq
 
 /-- Definition 2: latent-skill fairness in every equilibrium. -/
 abbrev paperLatentSkillFair {Skill Base Test Estimate : Type*}

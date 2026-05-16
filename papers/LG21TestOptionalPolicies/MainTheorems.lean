@@ -1336,7 +1336,76 @@ theorem feasible_of_reportRequiredAfterTaking
     feasible requirement a :=
   ⟨reportRequiredAfterTaking_reportImpliesTake hreportRequired, hreq⟩
 
+theorem optionalReporting_feasible_iff_reportImpliesTake
+    (a : LG21AccessAction) :
+    feasible optionalReportingRequirement a ↔ a.reportImpliesTake := by
+  constructor
+  · intro h
+    exact h.1
+  · intro h
+    exact ⟨h, trivial⟩
+
+theorem reportRequiredAfterTaking_feasible_iff
+    (a : LG21AccessAction) :
+    feasible reportRequiredAfterTaking a ↔ reportRequiredAfterTaking a := by
+  constructor
+  · intro h
+    exact h.2
+  · intro h
+    exact ⟨reportRequiredAfterTaking_reportImpliesTake h, h⟩
+
+theorem noTake_optionalReporting_feasible :
+    feasible optionalReportingRequirement noTake := by
+  exact (optionalReporting_feasible_iff_reportImpliesTake noTake).2
+    noTake_reportImpliesTake
+
+theorem takeAndWithhold_optionalReporting_feasible :
+    feasible optionalReportingRequirement takeAndWithhold := by
+  exact (optionalReporting_feasible_iff_reportImpliesTake takeAndWithhold).2
+    takeAndWithhold_reportImpliesTake
+
+theorem takeAndReport_optionalReporting_feasible :
+    feasible optionalReportingRequirement takeAndReport := by
+  exact (optionalReporting_feasible_iff_reportImpliesTake takeAndReport).2
+    takeAndReport_reportImpliesTake
+
+theorem noTake_reportRequiredAfterTaking_feasible :
+    feasible reportRequiredAfterTaking noTake := by
+  exact (reportRequiredAfterTaking_feasible_iff noTake).2 rfl
+
+theorem takeAndReport_reportRequiredAfterTaking_feasible :
+    feasible reportRequiredAfterTaking takeAndReport := by
+  exact (reportRequiredAfterTaking_feasible_iff takeAndReport).2 rfl
+
+theorem not_takeAndWithhold_reportRequiredAfterTaking_feasible :
+    ¬ feasible reportRequiredAfterTaking takeAndWithhold := by
+  intro h
+  have heq := (reportRequiredAfterTaking_feasible_iff takeAndWithhold).1 h
+  cases heq
+
 end LG21AccessAction
+
+/--
+Definition 1 student information for a student with test access.  The `test`
+field is the realized optional test score that the reporting decision can use.
+-/
+structure LG21AccessStudentInfo (Skill Base Test : Type*) where
+  skill : Skill
+  base : Base
+  test : Test
+
+namespace LG21AccessStudentInfo
+
+/-- The paper's chosen action `(Y(q, base), X(base, test))`. -/
+def chosenAction
+    {Skill Base Test : Type*}
+    (takeDecision : Skill → Base → Bool)
+    (reportDecision : Base → Test → Bool)
+    (info : LG21AccessStudentInfo Skill Base Test) : LG21AccessAction where
+  takesTest := takeDecision info.skill info.base
+  reportsScore := reportDecision info.base info.test
+
+end LG21AccessStudentInfo
 
 /--
 Estimate law conditional on an observed base profile after mixing over the
@@ -1370,6 +1439,84 @@ def lg21Equilibrium {StudentInfo Action : Type*}
     (∀ info action, E.actionFeasible info action →
       E.payoff info action ≤ E.payoff info (E.chosenAction info)) ∧
       E.estimationConsistent
+
+/--
+Definition 1 source equilibrium data with the paper's decision functions.
+`takeDecision` is `Y(q, base, P)`, `reportDecision` is `X(base, test, P)`,
+and `payoff` represents the expected school estimate under a feasible action.
+-/
+structure LG21SourceEquilibriumData (Skill Base Test : Type*) where
+  requirement : LG21AccessAction → Prop
+  takeDecision : Skill → Base → Bool
+  reportDecision : Base → Test → Bool
+  payoff : LG21AccessStudentInfo Skill Base Test → LG21AccessAction → ℝ
+  estimationConsistent : Prop
+
+/-- Convert the source Definition 1 data into the generic equilibrium predicate. -/
+def LG21SourceEquilibriumData.toEquilibriumData
+    {Skill Base Test : Type*}
+    (E : LG21SourceEquilibriumData Skill Base Test) :
+    LG21EquilibriumData
+      (LG21AccessStudentInfo Skill Base Test) LG21AccessAction where
+  actionFeasible := fun _info action =>
+    LG21AccessAction.feasible E.requirement action
+  chosenAction :=
+    LG21AccessStudentInfo.chosenAction E.takeDecision E.reportDecision
+  payoff := E.payoff
+  estimationConsistent := E.estimationConsistent
+
+/-- Definition 1 source equilibrium predicate. -/
+def lg21SourceEquilibrium
+    {Skill Base Test : Type*}
+    (E : LG21SourceEquilibriumData Skill Base Test) : Prop :=
+  lg21Equilibrium E.toEquilibriumData
+
+theorem lg21SourceEquilibrium_iff
+    {Skill Base Test : Type*}
+    (E : LG21SourceEquilibriumData Skill Base Test) :
+    lg21SourceEquilibrium E ↔
+      (∀ info,
+        LG21AccessAction.feasible E.requirement
+          (LG21AccessStudentInfo.chosenAction
+            E.takeDecision E.reportDecision info)) ∧
+        (∀ info action,
+          LG21AccessAction.feasible E.requirement action →
+            E.payoff info action ≤
+              E.payoff info
+                (LG21AccessStudentInfo.chosenAction
+                  E.takeDecision E.reportDecision info)) ∧
+          E.estimationConsistent := by
+  rfl
+
+theorem lg21SourceEquilibrium_feasible
+    {Skill Base Test : Type*}
+    {E : LG21SourceEquilibriumData Skill Base Test}
+    (hEq : lg21SourceEquilibrium E)
+    (info : LG21AccessStudentInfo Skill Base Test) :
+    LG21AccessAction.feasible E.requirement
+      (LG21AccessStudentInfo.chosenAction
+        E.takeDecision E.reportDecision info) :=
+  hEq.1 info
+
+theorem lg21SourceEquilibrium_best_response
+    {Skill Base Test : Type*}
+    {E : LG21SourceEquilibriumData Skill Base Test}
+    (hEq : lg21SourceEquilibrium E)
+    (info : LG21AccessStudentInfo Skill Base Test)
+    (action : LG21AccessAction)
+    (hfeasible : LG21AccessAction.feasible E.requirement action) :
+    E.payoff info action ≤
+      E.payoff info
+        (LG21AccessStudentInfo.chosenAction
+          E.takeDecision E.reportDecision info) :=
+  hEq.2.1 info action hfeasible
+
+theorem lg21SourceEquilibrium_estimationConsistent
+    {Skill Base Test : Type*}
+    {E : LG21SourceEquilibriumData Skill Base Test}
+    (hEq : lg21SourceEquilibrium E) :
+    E.estimationConsistent :=
+  hEq.2.2
 
 /--
 Binary reporting subgame used to connect Definition 1-style best responses to
