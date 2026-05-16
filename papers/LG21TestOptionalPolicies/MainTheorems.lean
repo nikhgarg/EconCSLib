@@ -4842,6 +4842,160 @@ theorem paper_theorem3_2_law_observable_fair_best_response_forces_no_distinct_po
       hchoosePayoff hotherPayoff_of_law_eq hweight hdenom)
 
 /--
+Theorem 3.2 observable-fairness-to-test-blank bridge.  If every non-test-blank
+source witness supplies two positive-mass acting types with distinct actor
+values, then the no-distinct-values consequence of observable fairness and
+two-sided best response closes the paper's Definition 5 endpoint.
+-/
+theorem paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_witness
+    {Skill Base Test Estimate Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (chooses : S.Equilibrium → Base → ℝ → Prop)
+    (choosePayoff otherPayoff : S.Equilibrium → Base → ℝ → ℝ)
+    (hbest :
+      ∀ e base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (chooses e base) (choosePayoff e base) (otherPayoff e base))
+    (lambda : S.Equilibrium → Base → ℝ)
+    (hlambda : ∀ e base, 0 < lambda e base)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixture :
+      ∀ e base estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda e base * (reporterPMF e base estimate).toReal +
+            (1 - lambda e base) * (noReporterPMF e base estimate).toReal)
+    (hLawEq_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          reporterLaw e base = noReporterLaw e base)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        chooses e base (actorValue e base actor))
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        choosePayoff e base actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base actor,
+        reporterLaw e base = noReporterLaw e base →
+          otherPayoff e base actor =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hnonblank_distinct :
+      ∀ e base test,
+        S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test →
+          ∃ actor₁ actor₂,
+            0 < (actorLaw e base actor₁).toReal ∧
+              0 < (actorLaw e base actor₂).toReal ∧
+                actorValue e base actor₁ ≠ actorValue e base actor₂) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S := by
+  intro hfair e base test
+  by_contra hne
+  have hno_distinct :
+      ¬ ∃ actor₁ actor₂,
+          0 < (actorLaw e base actor₁).toReal ∧
+            0 < (actorLaw e base actor₂).toReal ∧
+              actorValue e base actor₁ ≠ actorValue e base actor₂ :=
+    paper_theorem3_2_observable_fair_best_response_forces_no_distinct_positive_mass_actor_values
+      (hbest e base) hfair e base (hlambda e base)
+      (reporterPMF e base) (noReporterPMF e base)
+      (reporterLaw e base) (noReporterLaw e base)
+      (hNoAccess e base)
+      (fun estimate => hAccessMixture e base estimate)
+      (hLawEq_of_pmfEq e base) (actorLaw e base) (actorValue e base)
+      (fun actor hmass => hchooses_support e base actor hmass)
+      (fun actor => hchoosePayoff e base actor)
+      (fun actor hLawEq => hotherPayoff_of_law_eq e base actor hLawEq)
+      (hweight e base) (hdenom e base)
+  exact hno_distinct (hnonblank_distinct e base test hne)
+
+/--
+Theorem 3.2 continuous-law observable-fairness-to-test-blank bridge with the
+same final source-model distinct-actor witness.
+-/
+theorem paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_witness
+    {Skill Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (chooses : S.Equilibrium → Base → ℝ → Prop)
+    (choosePayoff otherPayoff : S.Equilibrium → Base → ℝ → ℝ)
+    (hbest :
+      ∀ e base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (chooses e base) (choosePayoff e base) (otherPayoff e base))
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (lambda : S.Equilibrium → Base → ℝ)
+    (hlambda : ∀ e base, 0 < lambda e base)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base = noReporterLaw e base)
+    (hAccessMixture :
+      ∀ e base outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda e base * mass (reporterLaw e base) outcome +
+            (1 - lambda e base) * mass (noReporterLaw e base) outcome)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        chooses e base (actorValue e base actor))
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        choosePayoff e base actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base actor,
+        reporterLaw e base = noReporterLaw e base →
+          otherPayoff e base actor =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hnonblank_distinct :
+      ∀ e base test,
+        S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test →
+          ∃ actor₁ actor₂,
+            0 < (actorLaw e base actor₁).toReal ∧
+              0 < (actorLaw e base actor₂).toReal ∧
+                actorValue e base actor₁ ≠ actorValue e base actor₂) :
+    lg21SourceLawObservablyFair S → lg21SourceLawTestBlank S := by
+  intro hfair e base test
+  by_contra hne
+  have hno_distinct :
+      ¬ ∃ actor₁ actor₂,
+          0 < (actorLaw e base actor₁).toReal ∧
+            0 < (actorLaw e base actor₂).toReal ∧
+              actorValue e base actor₁ ≠ actorValue e base actor₂ :=
+    paper_theorem3_2_law_observable_fair_best_response_forces_no_distinct_positive_mass_actor_values
+      (hbest e base) mass law_ext hfair e base (hlambda e base)
+      (reporterLaw e base) (noReporterLaw e base)
+      (hNoAccess e base)
+      (fun outcome => hAccessMixture e base outcome)
+      (actorLaw e base) (actorValue e base)
+      (fun actor hmass => hchooses_support e base actor hmass)
+      (fun actor => hchoosePayoff e base actor)
+      (fun actor hLawEq => hotherPayoff_of_law_eq e base actor hLawEq)
+      (hweight e base) (hdenom e base)
+  exact hno_distinct (hnonblank_distinct e base test hne)
+
+/--
 Theorem 3.2 latent-to-observable reduction.  If latent-skill fairness implies
 observable fairness, then it is enough to prove the test-blank implication for
 observable fairness.
