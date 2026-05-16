@@ -739,6 +739,114 @@ theorem singleStateAverageTripRate_le_of_pointwise_le
   rw [integral_const_mul] at hmono
   exact hmono
 
+/--
+If every trip in a positive-time set has payment strictly above
+`targetRate * τ`, then the set's average trip rate is strictly above
+`targetRate`.
+-/
+theorem lt_singleStateAverageTripRate_of_pointwise_lt
+    (μ : Measure TripLength) (w : PricingFunction) (σ : TripPolicy)
+    (targetRate : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hw_integrable : IntegrableOn w σ μ)
+    (htime_pos : 0 < singleStateTripTime μ σ)
+    (hpointwise : ∀ τ ∈ σ, targetRate * τ < w τ) :
+    targetRate < singleStateAverageTripRate μ w σ := by
+  unfold singleStateAverageTripRate averageRewardRate
+  rw [lt_div_iff₀ htime_pos]
+  unfold singleStateTripPayment singleStateTripTime
+  have hdiff_integrable :
+      IntegrableOn (fun τ : TripLength => w τ - targetRate * τ) σ μ :=
+    hw_integrable.sub (htime_integrable.const_mul targetRate)
+  have hnonneg_ae :
+      0 ≤ᵐ[μ.restrict σ]
+        (fun τ : TripLength => w τ - targetRate * τ) :=
+    (ae_restrict_iff' hσ_measurable).2
+      (Filter.Eventually.of_forall (fun τ hτ =>
+        le_of_lt (sub_pos.mpr (hpointwise τ hτ))))
+  have hsupport :
+      Function.support (fun τ : TripLength => w τ - targetRate * τ) ∩ σ = σ := by
+    ext τ
+    constructor
+    · intro hτ
+      exact hτ.2
+    · intro hτ
+      exact ⟨by
+        exact ne_of_gt (sub_pos.mpr (hpointwise τ hτ)), hτ⟩
+  have hmeasure_pos : 0 < μ σ := by
+    by_contra hnot_pos
+    have hmeasure_zero : μ σ = 0 := by
+      exact le_antisymm (le_of_not_gt hnot_pos) (zero_le _)
+    have hrestrict_zero : μ.restrict σ = 0 :=
+      Measure.restrict_eq_zero.2 hmeasure_zero
+    unfold singleStateTripTime at htime_pos
+    rw [hrestrict_zero, integral_zero_measure] at htime_pos
+    exact (lt_irrefl (0 : ℝ)) htime_pos
+  have hdiff_pos :
+      0 < ∫ τ in σ, w τ - targetRate * τ ∂μ :=
+    (setIntegral_pos_iff_support_of_nonneg_ae
+      hnonneg_ae hdiff_integrable).2 (by
+        simpa [hsupport] using hmeasure_pos)
+  rw [integral_sub hw_integrable (htime_integrable.const_mul targetRate),
+    integral_const_mul] at hdiff_pos
+  linarith
+
+/--
+If every trip in a positive-time set has payment strictly below
+`targetRate * τ`, then the set's average trip rate is strictly below
+`targetRate`.
+-/
+theorem singleStateAverageTripRate_lt_of_pointwise_lt
+    (μ : Measure TripLength) (w : PricingFunction) (σ : TripPolicy)
+    (targetRate : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hw_integrable : IntegrableOn w σ μ)
+    (htime_pos : 0 < singleStateTripTime μ σ)
+    (hpointwise : ∀ τ ∈ σ, w τ < targetRate * τ) :
+    singleStateAverageTripRate μ w σ < targetRate := by
+  unfold singleStateAverageTripRate averageRewardRate
+  rw [div_lt_iff₀ htime_pos]
+  unfold singleStateTripPayment singleStateTripTime
+  have hdiff_integrable :
+      IntegrableOn (fun τ : TripLength => targetRate * τ - w τ) σ μ :=
+    (htime_integrable.const_mul targetRate).sub hw_integrable
+  have hnonneg_ae :
+      0 ≤ᵐ[μ.restrict σ]
+        (fun τ : TripLength => targetRate * τ - w τ) :=
+    (ae_restrict_iff' hσ_measurable).2
+      (Filter.Eventually.of_forall (fun τ hτ =>
+        le_of_lt (sub_pos.mpr (hpointwise τ hτ))))
+  have hsupport :
+      Function.support (fun τ : TripLength => targetRate * τ - w τ) ∩ σ = σ := by
+    ext τ
+    constructor
+    · intro hτ
+      exact hτ.2
+    · intro hτ
+      exact ⟨by
+        exact ne_of_gt (sub_pos.mpr (hpointwise τ hτ)), hτ⟩
+  have hmeasure_pos : 0 < μ σ := by
+    by_contra hnot_pos
+    have hmeasure_zero : μ σ = 0 := by
+      exact le_antisymm (le_of_not_gt hnot_pos) (zero_le _)
+    have hrestrict_zero : μ.restrict σ = 0 :=
+      Measure.restrict_eq_zero.2 hmeasure_zero
+    unfold singleStateTripTime at htime_pos
+    rw [hrestrict_zero, integral_zero_measure] at htime_pos
+    exact (lt_irrefl (0 : ℝ)) htime_pos
+  have hdiff_pos :
+      0 < ∫ τ in σ, targetRate * τ - w τ ∂μ :=
+    (setIntegral_pos_iff_support_of_nonneg_ae
+      hnonneg_ae hdiff_integrable).2 (by
+        simpa [hsupport] using hmeasure_pos)
+  rw [integral_sub (htime_integrable.const_mul targetRate) hw_integrable,
+    integral_const_mul] at hdiff_pos
+  linarith
+
 /-- Payment integral over a disjoint union of accepted trip-length sets. -/
 theorem singleStateTripPayment_union
     (μ : Measure TripLength) (w : PricingFunction) (σ added : TripPolicy)
@@ -3190,6 +3298,217 @@ theorem paper_lemma4_reward_cutoff_complete_threshold_optimal
     intro ρ
     exact (hoptimal ρ).trans (by simpa [r] using hreward_eq.symm.le)
   simpa [R, σc, r] using And.intro hreward_eq hoptimal_r
+
+/--
+Lemma 4 a.e. uniqueness support, rejected-above side: an optimal feasible
+policy with reward `c` cannot reject a positive-time set of trips whose
+on-trip rate is strictly above `c`.
+-/
+theorem paper_lemma4_rejected_strict_threshold_time_zero_of_optimal_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy) (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (hoptimal :
+      singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σ)
+    (hreward_eq : singleStateRenewalReward μ arrivalRate w σ = c) :
+    singleStateTripTime μ (strictThresholdPolicy w c \ σ) = 0 := by
+  let gap : TripPolicy := strictThresholdPolicy w c \ σ
+  have hstrict_measurable :
+      MeasurableSet (strictThresholdPolicy w c) :=
+    measurableSet_strictThresholdPolicy w c hrate_measurable
+  have hgap_measurable : MeasurableSet gap :=
+    hstrict_measurable.diff hσ_measurable
+  have hgap_subset_acceptAll : gap ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact strictThresholdPolicy_subset_acceptAll w c hτ.1
+  have hgap_time_nonneg : 0 ≤ singleStateTripTime μ gap :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ gap
+      hgap_measurable hgap_subset_acceptAll
+  by_contra htime_ne_zero
+  have hgap_time_pos : 0 < singleStateTripTime μ gap :=
+    lt_of_le_of_ne' hgap_time_nonneg htime_ne_zero
+  have hw_integrable_σ : IntegrableOn w σ μ :=
+    hw_integrable_acceptAll.mono_set hσ_subset
+  have hw_integrable_gap : IntegrableOn w gap μ :=
+    hw_integrable_acceptAll.mono_set hgap_subset_acceptAll
+  have htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ :=
+    htime_integrable_acceptAll.mono_set hσ_subset
+  have htime_integrable_gap :
+      IntegrableOn (fun τ : TripLength => τ) gap μ :=
+    htime_integrable_acceptAll.mono_set hgap_subset_acceptAll
+  have hσ_time_nonneg : 0 ≤ singleStateTripTime μ σ :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ σ
+      hσ_measurable hσ_subset
+  have hdisjoint : Disjoint σ gap := by
+    rw [Set.disjoint_left]
+    intro τ hσ hgap
+    exact hgap.2 hσ
+  have hno_add :
+      ¬ singleStateRenewalReward μ arrivalRate w σ <
+          singleStateAverageTripRate μ w gap :=
+    paper_theorem1_no_addable_positive_time_average_above_current_of_optimal
+      μ arrivalRate w σ gap hoptimal hdisjoint hgap_measurable
+      hw_integrable_σ hw_integrable_gap htime_integrable_σ
+      htime_integrable_gap hlambda hσ_time_nonneg hgap_time_pos
+  have havg_gt :
+      c < singleStateAverageTripRate μ w gap := by
+    exact lt_singleStateAverageTripRate_of_pointwise_lt
+      μ w gap c hgap_measurable htime_integrable_gap hw_integrable_gap
+      hgap_time_pos (fun τ hτ => by
+        have hτ_pos : 0 < τ := hgap_subset_acceptAll hτ
+        have hrate : c < w τ / τ := hτ.1.2
+        have hmul := mul_lt_mul_of_pos_right hrate hτ_pos
+        have hτ_ne : τ ≠ 0 := ne_of_gt hτ_pos
+        field_simp [hτ_ne] at hmul
+        simpa [mul_comm] using hmul)
+  exact hno_add (by simpa [hreward_eq] using havg_gt)
+
+/--
+Lemma 4 a.e. uniqueness support, accepted-below side: an optimal feasible
+policy with reward `c` cannot accept a positive-time set of trips whose
+on-trip rate is strictly below `c`.
+-/
+theorem paper_lemma4_accepted_below_complete_threshold_time_zero_of_optimal_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy) (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (hoptimal :
+      singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σ)
+    (hreward_eq : singleStateRenewalReward μ arrivalRate w σ = c) :
+    singleStateTripTime μ (σ \ completeThresholdPolicy w c) = 0 := by
+  let gap : TripPolicy := σ \ completeThresholdPolicy w c
+  have hcomplete_measurable :
+      MeasurableSet (completeThresholdPolicy w c) :=
+    measurableSet_completeThresholdPolicy w c hrate_measurable
+  have hgap_measurable : MeasurableSet gap :=
+    hσ_measurable.diff hcomplete_measurable
+  have hgap_subset : gap ⊆ σ := by
+    intro τ hτ
+    exact hτ.1
+  have hgap_subset_acceptAll : gap ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hσ_subset hτ.1
+  have hgap_time_nonneg : 0 ≤ singleStateTripTime μ gap :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ gap
+      hgap_measurable hgap_subset_acceptAll
+  by_contra htime_ne_zero
+  have hgap_time_pos : 0 < singleStateTripTime μ gap :=
+    lt_of_le_of_ne' hgap_time_nonneg htime_ne_zero
+  have hw_integrable_σ : IntegrableOn w σ μ :=
+    hw_integrable_acceptAll.mono_set hσ_subset
+  have htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ :=
+    htime_integrable_acceptAll.mono_set hσ_subset
+  have hw_integrable_gap : IntegrableOn w gap μ :=
+    hw_integrable_acceptAll.mono_set hgap_subset_acceptAll
+  have htime_integrable_gap :
+      IntegrableOn (fun τ : TripLength => τ) gap μ :=
+    htime_integrable_acceptAll.mono_set hgap_subset_acceptAll
+  have hremaining_subset_acceptAll : σ \ gap ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hσ_subset hτ.1
+  have hremaining_measurable : MeasurableSet (σ \ gap) :=
+    hσ_measurable.diff hgap_measurable
+  have hremaining_nonneg :
+      0 ≤ singleStateTripTime μ σ - singleStateTripTime μ gap := by
+    rw [← singleStateTripTime_diff μ σ gap hgap_subset
+      hgap_measurable htime_integrable_σ]
+    exact singleStateTripTime_nonneg_of_subset_acceptAll μ (σ \ gap)
+      hremaining_measurable hremaining_subset_acceptAll
+  have hno_remove :
+      ¬ singleStateAverageTripRate μ w gap <
+          singleStateRenewalReward μ arrivalRate w σ :=
+    paper_theorem1_no_removable_positive_time_average_below_current_of_optimal
+      μ arrivalRate w σ gap hoptimal hgap_subset hgap_measurable
+      hw_integrable_σ htime_integrable_σ hlambda hremaining_nonneg
+      hgap_time_pos
+  have havg_lt :
+      singleStateAverageTripRate μ w gap < c := by
+    exact singleStateAverageTripRate_lt_of_pointwise_lt
+      μ w gap c hgap_measurable htime_integrable_gap hw_integrable_gap
+      hgap_time_pos (fun τ hτ => by
+        have hτ_pos : 0 < τ := hgap_subset_acceptAll hτ
+        have hnot : ¬ c ≤ w τ / τ := by
+          intro hle
+          exact hτ.2 ⟨hτ_pos, hle⟩
+        have hrate : w τ / τ < c := lt_of_not_ge hnot
+        have hmul := mul_lt_mul_of_pos_right hrate hτ_pos
+        have hτ_ne : τ ≠ 0 := ne_of_gt hτ_pos
+        field_simp [hτ_ne] at hmul
+        simpa [mul_comm] using hmul)
+  exact hno_remove (by simpa [hreward_eq] using havg_lt)
+
+/--
+Lemma 4 source-facing measured uniqueness endpoint.  From any optimal complete
+threshold, Lean moves the cutoff to the realized reward and proves the
+paper's uniqueness conclusion in measured form: every feasible measurable
+optimal policy can only differ from that reward-cutoff complete threshold by
+zero trip-time sets away from the boundary `w(τ)/τ = c`.
+-/
+theorem paper_lemma4_single_state_threshold_time_zero_uniqueness_of_complete_threshold_optimal
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hthreshold_nonneg :
+      0 ≤ singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+    (hoptimal :
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w c)) :
+    ∃ cstar : ℝ, 0 ≤ cstar ∧ ∃ σstar : TripPolicy,
+      thresholdRatePolicy w cstar σstar ∧
+        singleStateRenewalReward μ arrivalRate w σstar = cstar ∧
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σstar ∧
+        ∀ ρ : TripPolicy, ρ ⊆ acceptAllPolicy → MeasurableSet ρ →
+          singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+            singleStateTripTime μ (strictThresholdPolicy w cstar \ ρ) = 0 ∧
+              singleStateTripTime μ (ρ \ completeThresholdPolicy w cstar) = 0 := by
+  let r :=
+    singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c)
+  have hcutoff :=
+    paper_lemma4_reward_cutoff_complete_threshold_optimal
+      μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
+      htime_integrable_acceptAll hlambda hoptimal
+  refine ⟨r, ?_, completeThresholdPolicy w r,
+    thresholdRatePolicy_completeThresholdPolicy w r, ?_, ?_, ?_⟩
+  · simpa [r] using hthreshold_nonneg
+  · simpa [r] using hcutoff.1
+  · simpa [r] using hcutoff.2
+  · intro ρ hρ_subset hρ_measurable hρ_optimal
+    have hρ_reward_eq :
+        singleStateRenewalReward μ arrivalRate w ρ = r := by
+      apply le_antisymm
+      · have hle := hcutoff.2 ρ
+        exact hle.trans hcutoff.1.le
+      · have hle := hρ_optimal (completeThresholdPolicy w r)
+        exact hcutoff.1.symm.le.trans hle
+    exact
+      ⟨paper_lemma4_rejected_strict_threshold_time_zero_of_optimal_reward
+          μ arrivalRate w ρ r hrate_measurable hw_integrable_acceptAll
+          htime_integrable_acceptAll hlambda hρ_subset hρ_measurable
+          hρ_optimal hρ_reward_eq,
+        paper_lemma4_accepted_below_complete_threshold_time_zero_of_optimal_reward
+          μ arrivalRate w ρ r hrate_measurable hw_integrable_acceptAll
+          htime_integrable_acceptAll hlambda hρ_subset hρ_measurable
+          hρ_optimal hρ_reward_eq⟩
 
 /-- Two threshold policies agree away from the boundary set `w(τ)/τ = c`. -/
 def agreesAwayFromThresholdBoundary
