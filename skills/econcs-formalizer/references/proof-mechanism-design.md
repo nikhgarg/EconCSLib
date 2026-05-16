@@ -64,6 +64,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
   one negative payoff point and one positive payoff point into a unique cutoff
   and an exact nonnegative upper-threshold region.
+- When a strategic proof says a mass inequality is "equivalent" to a cutoff
+  case, check whether the mass is simply a strictly antitone upper-tail
+  function evaluated at the cutoff. If so, prove a tiny paper-facing bridge
+  with `StrictAnti.lt_iff_gt`: `M = K cutoff` gives
+  `M < K reference ↔ reference < cutoff`, and
+  `M > K reference ↔ cutoff < reference`. This is much faster than expanding
+  Gaussian integrals or tail formulas again, and it keeps the paper statement
+  auditable.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,
