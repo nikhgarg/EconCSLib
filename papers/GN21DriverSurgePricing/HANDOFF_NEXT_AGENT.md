@@ -230,6 +230,13 @@ This pattern is also available as a compiled Theorem 4 bridge:
 turn all-optimal feasible AE Lemma 5 representative data and the four exact
 representative endpoint improvements into the positive rejected-mass strict
 local improvement certificate.
+The corresponding paper-facing endpoints are now compiled:
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_feasible_ae_forms_and_representative_improvements`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_ae_representative_source_assumptions`.
+Use this source boundary when Lemma 5 gives a feasible representative only
+modulo null sets; it avoids forcing the endpoint proof to operate on the
+original syntactic policy.
 The a.e. convention is now backed by actual primitive congruence lemmas:
 single-state mass/time/payment/renewal reward, Lemma 3 `Q,T,W`, and
 `gn21MeasuredAggregateRewardPrimitives` are unchanged under

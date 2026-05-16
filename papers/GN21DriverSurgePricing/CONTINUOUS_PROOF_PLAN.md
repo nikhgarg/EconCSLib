@@ -145,6 +145,13 @@ This route is now packaged at the Theorem 4 level by
 given all-optimal feasible AE Lemma 5 representatives and the four endpoint
 improvement facts on exact representatives, Lean builds the positive
 rejected-mass strict-local certificate for the original measurable policies.
+The compiled paper-facing consumers are
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_feasible_ae_forms_and_representative_improvements`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_ae_representative_source_assumptions`.
+This is the current cleanest Theorem 3 boundary for a direct Lemma 5 closeout:
+prove feasible AE representative forms for every optimal policy and prove the
+four endpoint-improvement cases on those exact representatives.
 
 The global calculus part of Lemma 5 Step 2 is now compiled:
 
