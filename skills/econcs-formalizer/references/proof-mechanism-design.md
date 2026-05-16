@@ -15,6 +15,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   not build a finite analogue as ritual if the paper statement or proof closes
   more directly through a certificate, threshold characterization, or
   expectation interface.
+- For admissions/testing strategic-threshold games, separate payoff
+  threshold algebra from endogenous equilibrium existence. First prove the
+  binary action payoff cutoff using the displayed probability law and inverse
+  CDF, then add a paper-facing wrapper that expands any projected Gaussian
+  scale into the source precision expression. Leave global fixed-point or
+  school-threshold uniqueness as the next explicit seam rather than hiding it
+  inside the cutoff lemma.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
