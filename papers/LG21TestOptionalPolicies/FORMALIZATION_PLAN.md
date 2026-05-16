@@ -100,7 +100,8 @@ Last updated: 2026-05-16
   demographic fairness.  The concrete one-extra-test-signal precision gap is
   closed by the shared `GaussianOffsetSignalFamily.withExtraSignal` helper,
   and the strongest wrappers use Lemma 4.1's explicit-threshold,
-  binary-equilibrium, and packaged threshold-equilibrium-certificate routes.
+  binary-equilibrium, packaged threshold-equilibrium-certificate, and fully
+  specified observed-access source-action routes.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
@@ -138,12 +139,11 @@ Last updated: 2026-05-16
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
-   proved, Proposition 4.2 is routed through the closed Lemma 4.1 source-action
-   endpoint, and Proposition 4.3 should be routed through the same endpoint next.
-   Proposition 4.3's one-extra-test-signal precision gap is no longer an
-   assumption.  The remaining work is to prove the concrete source-law
-   identities used by Propositions 4.2--4.3 instead of assuming them as law
-   equalities.
+   proved, and Propositions 4.2--4.3 are both routed through the closed Lemma
+   4.1 source-action endpoint.  Proposition 4.3's one-extra-test-signal
+   precision gap is no longer an assumption.  The remaining work is to prove the
+   concrete source-law identities used by Propositions 4.2--4.3 instead of
+   assuming them as law equalities.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
