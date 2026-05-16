@@ -5148,6 +5148,173 @@ theorem paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of
   exact hne_mean (hsupport actor hmass)
 
 /--
+Source-shaped witness for the remaining Theorem 3.2 PMF route.  It packages
+the positive-share mixture identities, two-sided best response, affine payoff
+link, and the final source-model fact that any non-test-blank witness produces
+a positive-mass acting type off the acting-distribution mean.
+-/
+structure LG21ObservableFairTestBlankSourceWitness
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) where
+  Actor : Type*
+  Law : Type*
+  actorFintype : Fintype Actor
+  actorDecidableEq : DecidableEq Actor
+  chooses : S.Equilibrium → Base → ℝ → Prop
+  choosePayoff : S.Equilibrium → Base → ℝ → ℝ
+  otherPayoff : S.Equilibrium → Base → ℝ → ℝ
+  bestResponse :
+    ∀ e base,
+      lg21NoProfitableBinaryChoiceDeviation
+        (chooses e base) (choosePayoff e base) (otherPayoff e base)
+  positiveShare : S.Equilibrium → Base → ℝ
+  positiveShare_pos : ∀ e base, 0 < positiveShare e base
+  reporterPMF : S.Equilibrium → Base → PMF Estimate
+  noReporterPMF : S.Equilibrium → Base → PMF Estimate
+  reporterLaw : S.Equilibrium → Base → Law
+  noReporterLaw : S.Equilibrium → Base → Law
+  observableNoAccess_eq :
+    ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base
+  observableAccess_mixture :
+    ∀ e base estimate,
+      (S.observableAccessEstimate e base estimate).toReal =
+        positiveShare e base * (reporterPMF e base estimate).toReal +
+          (1 - positiveShare e base) *
+            (noReporterPMF e base estimate).toReal
+  law_eq_of_pmf_eq :
+    ∀ e base,
+      reporterPMF e base = noReporterPMF e base →
+        reporterLaw e base = noReporterLaw e base
+  actorLaw : S.Equilibrium → Base → PMF Actor
+  actorValue : S.Equilibrium → Base → Actor → ℝ
+  chooses_support :
+    ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+      chooses e base (actorValue e base actor)
+  baseTerm : S.Equilibrium → Base → ℝ
+  signalWeight : S.Equilibrium → Base → ℝ
+  denom : S.Equilibrium → Base → ℝ
+  choosePayoff_eq :
+    ∀ e base actor,
+      choosePayoff e base actor =
+        (baseTerm e base + signalWeight e base * actor) / denom e base
+  otherPayoff_eq_of_law_eq :
+    ∀ e base actor,
+      reporterLaw e base = noReporterLaw e base →
+        otherPayoff e base actor =
+          (baseTerm e base +
+            signalWeight e base * pmfExp (actorLaw e base) (actorValue e base)) /
+            denom e base
+  signalWeight_pos : ∀ e base, 0 < signalWeight e base
+  denom_pos : ∀ e base, 0 < denom e base
+  nonblank_off_mean :
+    ∀ e base test,
+      S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test →
+        ∃ actor, 0 < (actorLaw e base actor).toReal ∧
+          actorValue e base actor ≠
+            pmfExp (actorLaw e base) (actorValue e base)
+
+/--
+Theorem 3.2 observable branch from the source-shaped PMF witness.
+-/
+theorem paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S := by
+  letI : Fintype W.Actor := W.actorFintype
+  letI : DecidableEq W.Actor := W.actorDecidableEq
+  exact
+    paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness
+      (S := S) (Law := W.Law) (Actor := W.Actor)
+      W.chooses W.choosePayoff W.otherPayoff W.bestResponse
+      W.positiveShare W.positiveShare_pos W.reporterPMF W.noReporterPMF
+      W.reporterLaw W.noReporterLaw W.observableNoAccess_eq
+      W.observableAccess_mixture W.law_eq_of_pmf_eq W.actorLaw W.actorValue
+      W.chooses_support W.baseTerm W.signalWeight W.denom W.choosePayoff_eq
+      W.otherPayoff_eq_of_law_eq W.signalWeight_pos W.denom_pos
+      W.nonblank_off_mean
+
+/--
+Source-shaped witness for the remaining Theorem 3.2 abstract-law route.
+-/
+structure LG21LawObservableFairTestBlankSourceWitness
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) where
+  Actor : Type*
+  Outcome : Type*
+  actorFintype : Fintype Actor
+  actorDecidableEq : DecidableEq Actor
+  chooses : S.Equilibrium → Base → ℝ → Prop
+  choosePayoff : S.Equilibrium → Base → ℝ → ℝ
+  otherPayoff : S.Equilibrium → Base → ℝ → ℝ
+  bestResponse :
+    ∀ e base,
+      lg21NoProfitableBinaryChoiceDeviation
+        (chooses e base) (choosePayoff e base) (otherPayoff e base)
+  mass : Law → Outcome → ℝ
+  law_ext :
+    ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+      L1 = L0
+  positiveShare : S.Equilibrium → Base → ℝ
+  positiveShare_pos : ∀ e base, 0 < positiveShare e base
+  reporterLaw : S.Equilibrium → Base → Law
+  noReporterLaw : S.Equilibrium → Base → Law
+  observableNoAccess_eq :
+    ∀ e base, S.observableNoAccessLaw e base = noReporterLaw e base
+  observableAccess_mixture :
+    ∀ e base outcome,
+      mass (S.observableAccessLaw e base) outcome =
+        positiveShare e base * mass (reporterLaw e base) outcome +
+          (1 - positiveShare e base) * mass (noReporterLaw e base) outcome
+  actorLaw : S.Equilibrium → Base → PMF Actor
+  actorValue : S.Equilibrium → Base → Actor → ℝ
+  chooses_support :
+    ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+      chooses e base (actorValue e base actor)
+  baseTerm : S.Equilibrium → Base → ℝ
+  signalWeight : S.Equilibrium → Base → ℝ
+  denom : S.Equilibrium → Base → ℝ
+  choosePayoff_eq :
+    ∀ e base actor,
+      choosePayoff e base actor =
+        (baseTerm e base + signalWeight e base * actor) / denom e base
+  otherPayoff_eq_of_law_eq :
+    ∀ e base actor,
+      reporterLaw e base = noReporterLaw e base →
+        otherPayoff e base actor =
+          (baseTerm e base +
+            signalWeight e base * pmfExp (actorLaw e base) (actorValue e base)) /
+            denom e base
+  signalWeight_pos : ∀ e base, 0 < signalWeight e base
+  denom_pos : ∀ e base, 0 < denom e base
+  nonblank_off_mean :
+    ∀ e base test,
+      S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test →
+        ∃ actor, 0 < (actorLaw e base actor).toReal ∧
+          actorValue e base actor ≠
+            pmfExp (actorLaw e base) (actorValue e base)
+
+/--
+Theorem 3.2 observable branch from the source-shaped abstract-law witness.
+-/
+theorem paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    lg21SourceLawObservablyFair S → lg21SourceLawTestBlank S := by
+  letI : Fintype W.Actor := W.actorFintype
+  letI : DecidableEq W.Actor := W.actorDecidableEq
+  exact
+    paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness
+      (S := S) (Outcome := W.Outcome) (Actor := W.Actor)
+      W.chooses W.choosePayoff W.otherPayoff W.bestResponse W.mass W.law_ext
+      W.positiveShare W.positiveShare_pos W.reporterLaw W.noReporterLaw
+      W.observableNoAccess_eq W.observableAccess_mixture W.actorLaw
+      W.actorValue W.chooses_support W.baseTerm W.signalWeight W.denom
+      W.choosePayoff_eq W.otherPayoff_eq_of_law_eq W.signalWeight_pos
+      W.denom_pos W.nonblank_off_mean
+
+/--
 Theorem 3.2 latent-to-observable reduction.  If latent-skill fairness implies
 observable fairness, then it is enough to prove the test-blank implication for
 observable fairness.
@@ -5194,6 +5361,30 @@ theorem paper_theorem3_2_fairness_impossibility_of_observable_implication_and_mi
     hobservable_to_test_blank
 
 /--
+Theorem 3.2 endpoint from the paper's latent-to-observable mixture identities
+and the source-shaped PMF witness, avoiding the old tautological certificate.
+-/
+theorem paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_impossibility_of_observable_implication_and_mixture
+    skillGivenBase hObsAccess hObsNoAccess
+    (paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_witness
+      W)
+
+/--
 Theorem 3.2 latent-to-observable reduction for abstract law surfaces.
 -/
 theorem paper_theorem3_2_law_fairness_impossibility_of_observable_implication
@@ -5211,6 +5402,23 @@ theorem paper_theorem3_2_law_fairness_impossibility_of_observable_implication
       exact hobservable_to_test_blank (hlatent_to_observable hlatent)
   | inr hobservable =>
       exact hobservable_to_test_blank hobservable
+
+/--
+Theorem 3.2 abstract-law endpoint from a latent-to-observable implication and
+the source-shaped abstract-law witness.
+-/
+theorem paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_impossibility_of_observable_implication
+    hlatent_to_observable
+    (paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_witness
+      W)
 
 /--
 Source-shaped witness for Theorem 3.1's optional-reporting case.  The paper's

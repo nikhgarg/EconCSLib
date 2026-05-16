@@ -3508,6 +3508,65 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_tes
     hotherPayoff_of_law_eq hweight hdenom hnonblank_off_mean
 
 /--
+Theorem 3.2 observable branch from the source-shaped PMF witness.
+-/
+theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_witness
+    W
+
+/--
+Theorem 3.2 endpoint from latent-to-observable mixture identities and the
+source-shaped PMF witness.
+-/
+theorem paper_interface_theorem3_2_fairness_impossibility_of_mixture_and_source_witness
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness
+    skillGivenBase hObsAccess hObsNoAccess W
+
+/--
+Theorem 3.2 abstract-law observable branch from the source-shaped witness.
+-/
+theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    lg21SourceLawObservablyFair S → lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_witness
+    W
+
+/--
+Theorem 3.2 abstract-law endpoint from a latent-to-observable implication and
+the source-shaped witness.
+-/
+theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness
+    hlatent_to_observable W
+
+/--
 Theorem 3.2 latent-skill branch reduction: under the paper's shared mixture
 identities, proving the test-blank implication for observable fairness also
 proves it for latent-skill fairness.

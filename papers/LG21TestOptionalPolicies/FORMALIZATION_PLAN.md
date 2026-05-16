@@ -202,10 +202,15 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness`
   reduce the final source obligation to one positive-mass acting type whose
-  value differs from the acting-distribution mean.  The latent-skill branch is
-  reduced to the observable branch under the shared latent-skill mixture
-  identities.  The remaining source gap is proving one of these final witnesses
-  from the full policy model and then removing the certificate-only endpoint.
+  value differs from the acting-distribution mean.  The source-shaped witness
+  structures `LG21ObservableFairTestBlankSourceWitness` and
+  `LG21LawObservableFairTestBlankSourceWitness` now package the mixture,
+  best-response, payoff, and off-mean obligations.  They feed
+  `paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness` and
+  `paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness`,
+  giving paper-facing Theorem 3.2 endpoints without the old tautological
+  fairness-impossibility certificate.  The remaining source gap is
+  instantiating one of these source witnesses from the full policy model.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -329,9 +334,10 @@ Last updated: 2026-05-16
    support-at-mean and no-distinct-positive-mass actor values under observable
    fairness plus two-sided best response, and now derives observable fairness
    implies test-blankness from either a final off-mean positive-mass acting
-   witness or the stronger two-distinct-positive-mass-values witness.  The next
-   work should prove one of those witnesses from the paper's full source policy
-   model, ideally via a clean policy-surface or equilibrium certificate.
+   witness or the stronger two-distinct-positive-mass-values witness.  The
+   source-shaped witness structures are the current non-certificate endpoints.
+   The next work should instantiate one of them from the paper's full source
+   policy model.
 
 ## Reusable Library Seams
 
