@@ -104,7 +104,14 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_cutoff_below_mean`
   connect threshold strategies to this branch by choosing the midpoint between
-  a below-mean cutoff and the resampling mean.  The witness-level bridges
+  a below-mean cutoff and the resampling mean.  The contrapositive cutoff
+  wrappers
+  `paper_theorem3_2_optional_reporting_base_affine_cutoff_ge_mean_of_fair`
+  and
+  `paper_theorem3_2_report_required_base_affine_cutoff_ge_mean_of_fair`
+  package the same argument as a source-facing necessary condition: any fair
+  stable threshold policy must have cutoff weakly above the acting mean.  The
+  witness-level bridges
   `paper_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter`
   and
   `paper_theorem3_2_report_required_threshold_witness_exists_below_mean_taker`
