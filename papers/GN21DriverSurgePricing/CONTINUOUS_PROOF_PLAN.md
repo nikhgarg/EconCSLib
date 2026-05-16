@@ -295,9 +295,11 @@ selectors as
 `lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
 and
 `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`.
-The remaining source work is to supply the concrete endpoint-path derivative
-identities for arbitrary feasible optimal policies and then connect these
-strict improvements to the Theorem 4 optimal-policy exclusion route.
+The same four cases also have local
+`..._of_local_endpoint_paths_with_context` instantiations.  These require only
+one-sided `HasDerivAt` endpoint data and are now the shortest route to Theorem
+4 optimal-policy exclusion: supply the endpoint derivative identity for the
+selected branch, get a nearby strict improvement, and contradict optimality.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

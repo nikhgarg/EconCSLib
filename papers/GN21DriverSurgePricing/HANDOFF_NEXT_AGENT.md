@@ -275,16 +275,21 @@ paper's source sign selectors:
 and
 `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`
 each produce an existential strict improvement from concrete stopped endpoint
-paths.  The replacement route now has a well-founded progress
+paths.  There is now an even shorter strict-local route through the matching
+`..._of_local_endpoint_paths_with_context` theorems, which require only
+one-sided `HasDerivAt` endpoint data and produce a small feasible endpoint
+move.  Prefer these local selectors for Theorem 4 optimal-policy exclusion
+unless the full Lemma 5 dominance/iteration statement is required.  The
+replacement route now has a well-founded progress
 interface:
 `lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
 and
 `Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`.  The
 remaining hard step is no longer the local selector glue.  It is to instantiate
-the endpoint-path derivative identities for arbitrary feasible optimal
-policies, then either define the finite hybrid well-founded progress relation
-or use the strict-local stopped selectors to rule out every noncanonical
-optimal configuration directly.
+the endpoint derivative identities for arbitrary feasible optimal policies,
+then either define the finite hybrid well-founded progress relation or use the
+strict-local local selectors to rule out every noncanonical optimal
+configuration directly.
 There is also a shorter strict-local route for optimality:
 `lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves`,
 `lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_moves`,
