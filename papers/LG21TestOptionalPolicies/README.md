@@ -400,7 +400,10 @@ cache is kept as `source.txt` for named-statement audits.
   states the normalized report-required route directly as fairness implies
   test-blankness; the matching no-relevance wrapper
   `paper_theorem3_2_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
-  rules out every base/test relevance witness.
+  rules out every base/test relevance witness.  The report-required
+  `_of_nonempty_equilibrium` variants now match the optional-reporting cleanup:
+  nonempty equilibrium/base spaces are enough to choose the taker-share
+  contradiction witness internally.
 
 ## Source Notes
 

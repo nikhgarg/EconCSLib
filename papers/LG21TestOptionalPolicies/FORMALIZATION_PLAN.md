@@ -582,7 +582,9 @@ Last updated: 2026-05-16
    out every base/test witness directly rather than only through the abstract
    test-blank predicate.  The optional posterior-payoff route also has
    `_of_nonempty_equilibrium` wrappers that choose the positive-share
-   contradiction witness internally from nonempty equilibrium/base spaces.
+   contradiction witness internally from nonempty equilibrium/base spaces; the
+   report-required unit-centered route now has the same nonempty-equilibrium
+   cleanup.
    This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
