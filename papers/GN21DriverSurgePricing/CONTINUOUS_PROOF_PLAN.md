@@ -472,7 +472,10 @@ into the concrete endpoint policy data.
   and
   `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_endpoint_current_bounds_selection_unless_middle_reroute`
   thread the same AE shape classification through the preferred middle-reroute
-  endpoint-current-bounds route.
+  endpoint-current-bounds route.  The adapter
+  `Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate.of_exact_endpoint_current_bounds_selection`
+  reuses existing exact endpoint data when exact replacement certificates are
+  still available.
 - The nonlinear aggregate layer now has strict counterparts to the older weak
   add-set bridges:
   `gn21AggregateDynamicReward_lt_add_left_of_kernel_pos`,

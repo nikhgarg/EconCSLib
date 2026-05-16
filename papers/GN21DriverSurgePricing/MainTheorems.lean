@@ -44979,6 +44979,46 @@ structure Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteC
             μ arrival m z switch12 switch21 ρ lo hi
 
 /--
+The exact middle-reroute endpoint certificate also supplies the AE endpoint
+certificate: exact Lemma 5 policy forms imply the corresponding AE shape
+classification, and the endpoint fields are reused unchanged.
+-/
+noncomputable def Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate.of_exact_endpoint_current_bounds_selection
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (haccept :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy)
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+      μ arrival m z switch12 switch21 where
+  accept_all_optimal := haccept
+  only_ae_shapes := by
+    intro ρ hρ
+    let D :=
+      theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        C.all_measurable_shape_replacements
+    rcases D.only_policy_forms ρ hρ with
+      ⟨⟨nshape, hnallowed, hnform⟩, ⟨sshape, hsallowed, hsform⟩⟩
+    exact
+      ⟨theorem4NonsurgeAEShape_of_allowed_lemma5_form
+          (μ 0) hnallowed hnform,
+        theorem4SurgeAEShape_of_allowed_lemma5_form
+          (μ 1) hsallowed hsform⟩
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint_of_nonneg_lo :=
+    C.surge_reject_middle_endpoint_of_nonneg_lo
+
+/--
 AE endpoint selections with middle-to-short rerouting instantiate the AE-shape
 statewise-improvement interface.
 -/
