@@ -59,6 +59,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `(q_i - q) / scale` strictly decreases in projected skill `q`; strict CDF
   monotonicity plus `0 < v2 < v1` closes the "student strategy is threshold
   form" monotonicity claim before any school fixed-point work.
+- After proving a strategic payoff is continuous and strictly increasing, use a
+  generic crossing lemma before specializing tail limits. The reusable theorem
+  `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
+  one negative payoff point and one positive payoff point into a unique cutoff
+  and an exact nonnegative upper-threshold region.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,

@@ -18,6 +18,8 @@ comparisons into threshold statements.
 - `exists_threshold_of_continuous_strictAntiOn_Icc_crossing`
 - `exists_threshold_gt_of_continuous_strictAntiOn_Icc`
 - `exists_threshold_le_of_continuous_strictAntiOn_Icc`
+- `existsUnique_eq_of_continuous_strictMono_tendsto_atBot_atTop`
+- `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing`
 - `existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop`
 -/
 
@@ -78,6 +80,84 @@ theorem existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop
   · have hstrict := hf_anti hgt
     rw [hcutoff', hcutoff] at hstrict
     exact (lt_irrefl level) hstrict
+
+/--
+Unbounded uniqueness cutoff for a continuous strictly increasing scalar
+function with opposite end limits.
+-/
+theorem existsUnique_eq_of_continuous_strictMono_tendsto_atBot_atTop
+    {f : ℝ → ℝ} {level low high : ℝ}
+    (hf_cont : Continuous f)
+    (hf_mono : StrictMono f)
+    (hatBot : Filter.Tendsto f Filter.atBot (nhds low))
+    (hatTop : Filter.Tendsto f Filter.atTop (nhds high))
+    (hlevel : level ∈ Ioo low high) :
+    ∃! cutoff : ℝ, f cutoff = level := by
+  have hneg_cont : Continuous (fun x : ℝ => -f x) := hf_cont.neg
+  have hneg_anti : StrictAnti (fun x : ℝ => -f x) := by
+    intro x y hxy
+    exact neg_lt_neg (hf_mono hxy)
+  have hneg_atBot :
+      Filter.Tendsto (fun x : ℝ => -f x) Filter.atBot (nhds (-low)) :=
+    hatBot.neg
+  have hneg_atTop :
+      Filter.Tendsto (fun x : ℝ => -f x) Filter.atTop (nhds (-high)) :=
+    hatTop.neg
+  have hlevel_neg : -level ∈ Ioo (-high) (-low) := by
+    constructor <;> linarith [hlevel.1, hlevel.2]
+  rcases
+    existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop
+      hneg_cont hneg_anti hneg_atBot hneg_atTop hlevel_neg with
+    ⟨cutoff, hcutoff, hunique⟩
+  refine ⟨cutoff, ?_, ?_⟩
+  · linarith
+  · intro cutoff' hcutoff'
+    exact hunique cutoff' (by linarith)
+
+/--
+Continuous strictly increasing crossing theorem for payoff cutoffs.  If a
+payoff is negative somewhere and positive somewhere, then it has a unique zero
+and its nonnegative set is exactly an upper threshold region.
+-/
+theorem existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing
+    {f : ℝ → ℝ}
+    (hf_cont : Continuous f) (hf_mono : StrictMono f)
+    (hneg : ∃ x : ℝ, f x < 0) (hpos : ∃ y : ℝ, 0 < f y) :
+    ∃! cutoff : ℝ,
+      f cutoff = 0 ∧ ∀ z : ℝ, 0 ≤ f z ↔ cutoff ≤ z := by
+  rcases hneg with ⟨x, hx⟩
+  rcases hpos with ⟨y, hy⟩
+  have hxy : x < y := by
+    by_contra hnot
+    have hyx : y ≤ x := le_of_not_gt hnot
+    have hfy_le_fx : f y ≤ f x := hf_mono.monotone hyx
+    linarith
+  have hzero_mem : (0 : ℝ) ∈ Icc (f x) (f y) :=
+    ⟨le_of_lt hx, le_of_lt hy⟩
+  rcases intermediate_value_Icc hxy.le hf_cont.continuousOn hzero_mem with
+    ⟨cutoff, _hcutoff_mem, hcutoff⟩
+  refine ⟨cutoff, ⟨hcutoff, ?_⟩, ?_⟩
+  · intro z
+    constructor
+    · intro hz_nonneg
+      by_contra hnot
+      have hz_lt : z < cutoff := lt_of_not_ge hnot
+      have hstrict : f z < f cutoff := hf_mono hz_lt
+      linarith
+    · intro hcutoff_le
+      rcases lt_or_eq_of_le hcutoff_le with hlt | rfl
+      · have hstrict : f cutoff < f z := hf_mono hlt
+        linarith
+      · linarith
+  · intro cutoff' hprops
+    by_contra hne
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · have hstrict : f cutoff' < f cutoff := hf_mono hlt
+      rw [hprops.1, hcutoff] at hstrict
+      exact (lt_irrefl (0 : ℝ)) hstrict
+    · have hstrict : f cutoff < f cutoff' := hf_mono hgt
+      rw [hcutoff, hprops.1] at hstrict
+      exact (lt_irrefl (0 : ℝ)) hstrict
 
 /--
 If a scalar function is continuous and strictly increasing on `[0, 1]`, and a
