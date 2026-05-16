@@ -206,8 +206,12 @@ Last updated: 2026-05-16
   available.  These certificate and no-relevance endpoints now also have
   Section 3 hidden-access wrappers over PMF and continuous-law surfaces, so the
   paper hypothesis that the school does not observe access status is exposed
-  directly beside the fairness-impossibility conclusion.  The source proof's
-  positive-share resampling algebra is also
+  directly beside the fairness-impossibility conclusion.  The
+  certificate-packaged optional-reporting and report-required event-share
+  source-equilibrium routes now have matching Section 3 implication and
+  no-relevance wrappers, which are the strongest current source-facing Theorem
+  3.2 endpoints before choosing a fully concrete event-share surface.  The
+  source proof's positive-share resampling algebra is also
   formalized: `lg21_pmf_mixture_cancel_right` and
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
   `D0 = λ D1 + (1 - λ) D0 ⇒ D1 = D0` step, and the theorem-facing wrappers turn

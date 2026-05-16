@@ -123,6 +123,11 @@ cache is kept as `source.txt` for named-statement audits.
   These endpoints make the paper hypothesis "the school does not know access
   status" a theorem conjunct before returning fairness-implies-test-blankness
   or the equivalent absence of concrete base/test relevance witnesses.
+- The certificate-packaged optional-reporting and report-required event-share
+  source-equilibrium routes now also have Section 3 hidden-access implication
+  and no-relevance wrappers, so the strongest current source-facing Theorem 3.2
+  route can be cited without separately combining the information-set lemma
+  with the upper-tail event-share theorem.
 - The concrete optional/report-required constant-latent event-share routes now
   also produce compact `LG21FairnessImpossibilityCertificate` values:
   `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
