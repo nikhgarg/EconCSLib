@@ -253,6 +253,12 @@ The quasi-convex boundary moves selected by those signs now include
 `lemma5_list_bounded_rightRay_lower_merge_step_of_endpoint_path`, and
 `lemma5_list_second_bounded_rightRay_lower_merge_step_of_endpoint_path`, with
 strict variants.
+Do not assume the endpoint-sign trichotomy alone closes the source induction:
+the all-the-way endpoint merge lemmas still require the derivative sign to
+persist over the movement interval.  The paper's missing formal step is a
+stopping/sign-persistence argument: move until collision or first sign-change,
+then re-enter the appropriate subcase, and prove this process eventually
+lowers component count.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact

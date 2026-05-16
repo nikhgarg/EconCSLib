@@ -254,11 +254,16 @@ three-interval case and quasi-concave two-interval case are compiled as
 endpoint-sign trichotomies matching Subcases 1A/1B/1C.  The ordered
 source-boundary moves used by the quasi-convex selector are also compiled:
 positive-left-ray upper expansion into a bounded component, bounded/right-ray
-lower merge, and the one-leading-component bounded/right-ray lower merge.  The remaining
-nonlinear work is selecting the appropriate local move inside an arbitrary
-ordered finite interval/ray seed, proving the source derivative-sign
-hypothesis holds along the selected path, and iterating the component-count
-decrease to a canonical Lemma 5 shape.
+lower merge, and the one-leading-component bounded/right-ray lower merge.  The
+remaining nonlinear work is not another adjacent-merge normal form: endpoint
+signs at the current seed do not by themselves justify moving all the way to
+the next collision.  The source proof moves until either a collision occurs or
+the relevant derivative sign changes, then switches subcases.  Lean therefore
+still needs the stopping/sign-persistence lemma that turns a current endpoint
+sign plus continuity into a reward-improving partial move ending at a collision
+or sign-change boundary, and then an induction showing these partial moves
+cannot cycle without eventually lowering component count to a canonical Lemma
+5 shape.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

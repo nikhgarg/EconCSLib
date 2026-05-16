@@ -834,9 +834,10 @@ covered too: a positive-left-ray component can expand into a following bounded
 component, and a bounded component can merge with a following right ray by
 moving the right ray's lower endpoint left, including the one-leading-component
 right-tail form.
-The remaining open part is selecting and iterating those local moves
-inside an arbitrary ordered finite
-interval/ray seed under the source derivative-sign hypotheses.
+The remaining open part is the stopping argument behind the source's repeated
+subcase switches: a current endpoint sign must be converted, using continuity,
+into movement until either collision or first sign-change, and those partial
+moves must then be iterated until component count falls.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its
