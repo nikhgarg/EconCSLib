@@ -82,6 +82,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   Since cost usually enters as `-c`, evaluate the higher-cost payoff at the
   lower-cost zero to get a negative value, then strict monotonicity in skill
   forces the higher-cost zero to lie to the right.
+- After the two-point cutoff-in-cost comparison is proved, immediately package
+  the function-level version: any selected cutoff function satisfying the
+  zero-payoff equation at each cost is `StrictMonoOn` over the cost domain
+  (for GLM20 this is
+  `paper_proposition5_twoFull_apply_payoff_cutoff_strictMonoOn_cost`).  This
+  is the form needed for later monotone-composition and threshold-crossing
+  arguments.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
