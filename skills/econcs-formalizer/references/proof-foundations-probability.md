@@ -250,6 +250,10 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `GaussianHazardCertificate.mixtureUpperTailMean_mul_tailMass_eq_numerator`
   for location-scale tail, academic-merit, and finite-mixture admitted-mean
   comparisons.
+  For no-barrier admissions cutoffs, prefer constructing thresholds with
+  `StandardGaussianCDFAPI.exists_mixtureTailMass_eq_of_capacity_mem_Ioo` plus
+  concrete `standardGaussianCDF_tendsto_atBot`/`standardGaussianCDF_tendsto_atTop`
+  instead of leaving separate capacity-equation assumptions for each policy.
   When a paper needs the concrete derivative of the standard-normal CDF, avoid
   leaving a derivative certificate in the paper folder.  In
   `GaussianMathlib`, prove `cdf x = ∫ y in Iic x, density y` with
