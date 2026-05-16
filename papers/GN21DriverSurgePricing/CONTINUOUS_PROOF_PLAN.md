@@ -92,6 +92,19 @@ response shapes to choose valid endpoint replacements for arbitrary open
 measurable optimal policies and connect those replacements back to the
 set-valued reward functional.
 
+The fixed-response part of Lemma 5 now has an a.e.-strict source endpoint:
+
+```lean
+paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape
+paper_lemma5_fixed_response_policy_form_ae_of_response_shape
+```
+
+The first theorem proves weak dominance by the positive-response policy and
+strict improvement unless the current feasible policy already has
+`lemma5PolicyFormAlmostEverywhere`; the second turns feasible optimality into
+the a.e. canonical form.  Do not reintroduce exact-boundary strictness as a
+separate assumption for this fixed-response variational step.
+
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
 

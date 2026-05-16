@@ -18258,6 +18258,28 @@ def lemma5MarginalSetReward
     (σ : TripPolicy) : ℝ :=
   ∫ τ in σ, response τ ∂μ
 
+/-- Null symmetric difference is the same as a.e. equality of policy sets. -/
+theorem ae_eq_set_of_policyAlmostEverywhereEq
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    σ =ᵐ[μ] τ := by
+  rw [policyAlmostEverywhereEq] at hae
+  exact measure_symmDiff_eq_zero_iff.mp hae
+
+/--
+The fixed-response marginal reward is invariant under the paper's
+almost-everywhere policy-equality convention.
+-/
+theorem lemma5MarginalSetReward_congr_policy_ae
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    lemma5MarginalSetReward μ response σ =
+      lemma5MarginalSetReward μ response τ := by
+  unfold lemma5MarginalSetReward
+  exact setIntegral_congr_set
+    (ae_eq_set_of_policyAlmostEverywhereEq μ hae)
+
 /--
 For the linearized marginal reward associated with a fixed response, the policy
 that accepts exactly positive-response trips weakly dominates every measurable
@@ -19255,6 +19277,73 @@ theorem paper_lemma5_fixed_response_policy_form_ae_of_response_shape
   D.policyFormAlmostEverywhere_of_feasible_optimal
     μ σ hresponse_measurable hresponse_integrable_acceptAll
     hσ_measurable hσ_subset hoptimal
+
+/--
+If a feasible policy is not already in the Lemma 5 canonical form modulo null
+endpoint sets, the fixed-response positive-response policy strictly improves
+the linearized marginal reward.  This is the strict part of the source
+variational argument with the paper's a.e. equality convention built in.
+-/
+theorem Lemma5PositiveResponseShapeData.marginalSetReward_lt_positiveResponsePolicy_of_not_policyFormAE
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hnot_ae :
+      ¬ lemma5PolicyFormAlmostEverywhere μ shape σ) :
+    lemma5MarginalSetReward μ response σ <
+      lemma5MarginalSetReward μ response
+        (lemma5PositiveResponsePolicy response) := by
+  by_contra hnot_lt
+  have hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ := le_of_not_gt hnot_lt
+  exact hnot_ae
+    (D.policyFormAlmostEverywhere_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate)
+
+/--
+Paper Lemma 5, fixed-response variational replacement with the source
+almost-everywhere convention: the positive-response policy weakly dominates
+every feasible measurable policy, and the domination is strict unless the
+initial policy already has the canonical Lemma 5 form modulo null endpoint
+sets.
+-/
+theorem paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape
+    (μ : Measure TripLength) [NoAtoms μ]
+    (response : TripLength → ℝ)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hshape : Lemma5PositiveResponseShapeData response shape) :
+    ∃ σstar : TripPolicy,
+      lemma5PolicyForm shape σstar ∧
+        lemma5MarginalSetReward μ response σ0 ≤
+          lemma5MarginalSetReward μ response σstar ∧
+        (¬ lemma5PolicyFormAlmostEverywhere μ shape σ0 →
+          lemma5MarginalSetReward μ response σ0 <
+            lemma5MarginalSetReward μ response σstar) := by
+  refine
+    ⟨lemma5PositiveResponsePolicy response, hshape.policyForm, ?_, ?_⟩
+  · exact
+      lemma5MarginalSetReward_le_positiveResponsePolicy
+        μ response σ0 hresponse_measurable
+        hresponse_integrable_acceptAll hσ0_measurable hσ0_subset
+  · intro hnot_ae
+    exact
+      hshape.marginalSetReward_lt_positiveResponsePolicy_of_not_policyFormAE
+        μ σ0 hresponse_measurable hresponse_integrable_acceptAll
+        hσ0_measurable hσ0_subset hnot_ae
 
 /--
 Lemma 5 certificate: a derivative-shape hypothesis lets one replace an open

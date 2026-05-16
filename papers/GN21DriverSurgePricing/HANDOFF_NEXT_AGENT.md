@@ -47,7 +47,9 @@ Lemma5PositiveResponseShapeData.positive_zero_set_null
 Lemma5PositiveResponseShapeData.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
 Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_candidate_le
 Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_feasible_optimal
+Lemma5PositiveResponseShapeData.marginalSetReward_lt_positiveResponsePolicy_of_not_policyFormAE
 paper_lemma5_fixed_response_policy_form_ae_of_response_shape
+paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape
 paper_lemma5_marginal_optimizer_replacement_of_response_shape
 Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
 Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
@@ -89,7 +91,11 @@ quasi cases by the strict quasi-convex/concave between-endpoint lemmas.
 paper-facing fixed-response Lemma 5 endpoint: feasible measurable optimality
 for `lemma5MarginalSetReward μ response` implies the canonical Lemma 5 policy
 form almost everywhere.  Start from this theorem rather than reproving the
-boundary-null argument.
+boundary-null argument.  The fixed-response variational replacement is also
+closed with the source a.e. strictness convention:
+`paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape` proves weak
+dominance by the positive-response policy and strict improvement unless the
+current feasible policy already has `lemma5PolicyFormAlmostEverywhere`.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical
