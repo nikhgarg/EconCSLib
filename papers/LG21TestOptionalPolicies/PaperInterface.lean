@@ -783,6 +783,24 @@ theorem paper_interface_theorem3_1_optional_no_report_mixture_standard_lower_tai
   paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous
     hC_nonneg hC_lt_one baseOnlyEstimate M theta k scoreLaw
 
+/--
+Theorem 3.1 report-required source formula support: the pooled no-take estimate
+is continuous for an affine Gaussian lower-tail skill component.
+-/
+theorem paper_interface_theorem3_1_report_required_no_take_mixture_standard_lower_tail_continuous
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate intercept slope : ℝ)
+    (skillLaw : GaussianScaleLaw) :
+    Continuous (fun qBar : ℝ =>
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate skillLaw
+        (fun qBar : ℝ =>
+          intercept + slope * standardGaussianLowerTailMean skillLaw qBar)
+        qBar) :=
+  paper_theorem3_1_report_required_no_take_mixture_standard_lower_tail_continuous
+    hC_nonneg hC_lt_one baseOnlyEstimate intercept slope skillLaw
+
 /-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
 theorem paper_interface_monotone_of_lowerCutoffStrategy
     {choose : ℝ → Prop} (hcutoff : lg21LowerCutoffStrategy choose) :

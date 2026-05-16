@@ -51,14 +51,23 @@ Last updated: 2026-05-16
   below the reporting cutoff, and
   `paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous`
   proves continuity for the Gaussian lower-tail posterior component under
-  `0 ≤ C < 1`.  The
+  `0 ≤ C < 1`; the specialized crossing wrapper
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture_crossings`
+  now consumes only the finite endpoint inequalities for that source formula.
+  The
   analogous report-required nontriviality step is
   `paper_theorem3_1_report_required_affine_best_response_nontrivial`, using
   positive-slope affine expected taking estimates to rule out both
   everyone taking/reporting and no one taking/reporting.  Its follow-on bridge
   `paper_theorem3_1_report_required_affine_source_witness_of_best_response_tiebreak`
   packages the take-at-indifference convention into a source-shaped finite
-  skill-cutoff witness.  The paper's
+  skill-cutoff witness.  The analogous no-take mixture continuity and crossing
+  wrapper are
+  `paper_theorem3_1_report_required_no_take_mixture_standard_lower_tail_continuous`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture_crossings`;
+  these leave only finite endpoint inequalities for the report-required source
+  formula.  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:

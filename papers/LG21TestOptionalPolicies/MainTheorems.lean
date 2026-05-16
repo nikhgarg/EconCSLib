@@ -743,6 +743,32 @@ theorem paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuo
       M theta k scoreLaw)
 
 /--
+Theorem 3.1 report-required source formula support: the pooled no-take estimate
+is continuous when the access lower-tail component is a positive-slope affine
+function of the Gaussian lower-tail skill mean.
+-/
+theorem paper_theorem3_1_report_required_no_take_mixture_standard_lower_tail_continuous
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate intercept slope : ℝ)
+    (skillLaw : GaussianScaleLaw) :
+    Continuous (fun qBar : ℝ =>
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate skillLaw
+        (fun qBar : ℝ =>
+          intercept + slope * standardGaussianLowerTailMean skillLaw qBar)
+        qBar) := by
+  have hcontAccess :
+      Continuous (fun qBar : ℝ =>
+        intercept + slope * standardGaussianLowerTailMean skillLaw qBar) :=
+    continuous_const.add
+      (continuous_const.mul
+        (standardGaussianLowerTailMean_continuous skillLaw))
+  exact
+    lg21OptionalNoReportMixtureEstimate_continuous
+      hC_nonneg hC_lt_one baseOnlyEstimate skillLaw hcontAccess
+
+/--
 Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
 reporting strategy cannot satisfy no-profitable-withholding-deviation when the
 no-report estimate lies strictly inside the cutoff interval.
@@ -4087,6 +4113,158 @@ theorem paper_theorem3_1_report_required_affine_source_witness_of_crossings
       (continuous_const.mul continuous_id) |>.continuousOn)
     hcontNoTake
     (fun base => affine_strictMono (intercept base) (hslope base))
+    hlow_high hleft hright
+
+/--
+Theorem 3.1 optional-reporting crossing wrapper specialized to the source
+no-report mixture formula.  The Gaussian lower-tail/CDF algebra proves the
+continuity premise; the remaining hypotheses are the finite endpoint
+comparisons used by the paper's intermediate-value argument.
+-/
+theorem paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture_crossings
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (low high : Base → ℝ)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1)
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base,
+        (M base).posteriorMean (Function.update (theta base) k (low base)) <
+          lg21OptionalNoReportMixtureEstimate
+            (accessFraction base) (baseOnlyEstimate base) (scoreLaw base)
+            (fun cutoff : ℝ =>
+              (M base).posteriorMean
+                (Function.update (theta base) k
+                  (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+            (low base))
+    (hright :
+      ∀ base,
+        lg21OptionalNoReportMixtureEstimate
+            (accessFraction base) (baseOnlyEstimate base) (scoreLaw base)
+            (fun cutoff : ℝ =>
+              (M base).posteriorMean
+                (Function.update (theta base) k
+                  (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+            (high base) <
+          (M base).posteriorMean
+            (Function.update (theta base) k (high base))) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      ∃ reportCutoff : Base → ℝ,
+        (∀ base, reportCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            lg21OptionalNoReportMixtureEstimate
+                (accessFraction base) (baseOnlyEstimate base) (scoreLaw base)
+                (fun cutoff : ℝ =>
+                  (M base).posteriorMean
+                    (Function.update (theta base) k
+                      (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+                (reportCutoff base) =
+              (M base).posteriorMean
+                (Function.update (theta base) k (reportCutoff base))) ∧
+            (∀ base score,
+              W.reports base score ↔
+                lg21OptionalNoReportMixtureEstimate
+                    (accessFraction base) (baseOnlyEstimate base) (scoreLaw base)
+                    (fun cutoff : ℝ =>
+                      (M base).posteriorMean
+                        (Function.update (theta base) k
+                          (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+                    (reportCutoff base) ≤
+                  (M base).posteriorMean
+                    (Function.update (theta base) k score)) ∧
+              (∀ base skill, W.takes base skill) ∧
+                (∀ base, ∃ cutoff : ℝ,
+                  ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_gaussian_source_witness_of_crossings
+    M theta k
+    (fun base cutoff =>
+      lg21OptionalNoReportMixtureEstimate
+        (accessFraction base) (baseOnlyEstimate base) (scoreLaw base)
+        (fun cutoff : ℝ =>
+          (M base).posteriorMean
+            (Function.update (theta base) k
+              (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+        cutoff)
+    low high
+    (fun base =>
+      (paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous
+        (hC_nonneg base) (hC_lt_one base) (baseOnlyEstimate base)
+        (M base) (theta base) k (scoreLaw base)).continuousOn)
+    hlow_high hleft hright
+
+/--
+Theorem 3.1 report-required crossing wrapper specialized to the source no-take
+mixture formula.  The Gaussian lower-tail/CDF algebra proves the continuity
+premise; the remaining hypotheses are the finite endpoint comparisons used by
+the paper's intermediate-value argument.
+-/
+theorem paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture_crossings
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (low high : Base → ℝ)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1)
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, intercept base + slope base * low base <
+        lg21OptionalNoReportMixtureEstimate
+          (accessFraction base) (baseOnlyEstimate base) (skillLaw base)
+          (fun qBar : ℝ =>
+            intercept base + slope base *
+              standardGaussianLowerTailMean (skillLaw base) qBar)
+          (low base))
+    (hright :
+      ∀ base,
+        lg21OptionalNoReportMixtureEstimate
+          (accessFraction base) (baseOnlyEstimate base) (skillLaw base)
+          (fun qBar : ℝ =>
+            intercept base + slope base *
+              standardGaussianLowerTailMean (skillLaw base) qBar)
+          (high base) <
+        intercept base + slope base * high base) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      ∃ takeCutoff : Base → ℝ,
+        (∀ base, takeCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            lg21OptionalNoReportMixtureEstimate
+                (accessFraction base) (baseOnlyEstimate base) (skillLaw base)
+                (fun qBar : ℝ =>
+                  intercept base + slope base *
+                    standardGaussianLowerTailMean (skillLaw base) qBar)
+                (takeCutoff base) =
+              intercept base + slope base * takeCutoff base) ∧
+            (∀ base skill,
+              W.takes base skill ↔
+                lg21OptionalNoReportMixtureEstimate
+                    (accessFraction base) (baseOnlyEstimate base) (skillLaw base)
+                    (fun qBar : ℝ =>
+                      intercept base + slope base *
+                        standardGaussianLowerTailMean (skillLaw base) qBar)
+                    (takeCutoff base) ≤
+                  intercept base + slope base * skill) ∧
+              (∀ base, ∃ qBar : ℝ,
+                ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
+  paper_theorem3_1_report_required_affine_source_witness_of_crossings
+    intercept slope hslope
+    (fun base qBar =>
+      lg21OptionalNoReportMixtureEstimate
+        (accessFraction base) (baseOnlyEstimate base) (skillLaw base)
+        (fun qBar : ℝ =>
+          intercept base + slope base *
+            standardGaussianLowerTailMean (skillLaw base) qBar)
+        qBar)
+    low high
+    (fun base =>
+      (paper_theorem3_1_report_required_no_take_mixture_standard_lower_tail_continuous
+        (hC_nonneg base) (hC_lt_one base) (baseOnlyEstimate base)
+        (intercept base) (slope base) (skillLaw base)).continuousOn)
     hlow_high hleft hright
 
 /--
