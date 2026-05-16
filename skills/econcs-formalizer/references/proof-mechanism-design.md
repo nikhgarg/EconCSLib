@@ -53,6 +53,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   is the role of
   `exists_threshold_of_continuous_strictAntiOn_Icc_crossing` and
   `exists_threshold_le_of_continuous_strictAntiOn_Icc`.
+- For two-school full-test application payoffs, encode the displayed CDF
+  expression first and prove monotonicity directly from signs. A typical term
+  has negative CDF coefficients, while each standardized cutoff
+  `(q_i - q) / scale` strictly decreases in projected skill `q`; strict CDF
+  monotonicity plus `0 < v2 < v1` closes the "student strategy is threshold
+  form" monotonicity claim before any school fixed-point work.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,
