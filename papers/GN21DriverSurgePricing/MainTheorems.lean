@@ -17869,6 +17869,127 @@ theorem lemma5MarginalSetReward_lt_positiveResponsePolicy_of_accepts_negative_ma
     hacceptedPositive_integrable hacceptedNonpositive_integrable]
   linarith
 
+/--
+If the positive-response policy is no better than the current policy, then the
+current policy cannot omit a positive-measure set of positive-response trips.
+This is the contrapositive form of the strict Lemma 5 dominance argument and is
+the useful zero-mass boundary for continuous policies.
+-/
+theorem lemma5_positiveResponse_omitted_mass_zero_of_candidate_le
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    μ (lemma5PositiveResponsePolicy response \ σ) = 0 := by
+  by_contra hmeasure_ne_zero
+  have hmeasure_pos :
+      0 < μ (lemma5PositiveResponsePolicy response \ σ) :=
+    pos_iff_ne_zero.2 hmeasure_ne_zero
+  have hstrict :=
+    lemma5MarginalSetReward_lt_positiveResponsePolicy_of_omits_positive_mass
+      μ response σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hmeasure_pos
+  linarith
+
+/--
+If the positive-response policy is no better than the current policy, then the
+current policy cannot accept positive-measure mass on which the response is
+nonzero but nonpositive.
+-/
+theorem lemma5_positiveResponse_negative_mass_zero_of_candidate_le
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    μ (Function.support response ∩
+        (σ \ lemma5PositiveResponsePolicy response)) = 0 := by
+  by_contra hmeasure_ne_zero
+  have hmeasure_pos :
+      0 <
+        μ (Function.support response ∩
+          (σ \ lemma5PositiveResponsePolicy response)) :=
+    pos_iff_ne_zero.2 hmeasure_ne_zero
+  have hstrict :=
+    lemma5MarginalSetReward_lt_positiveResponsePolicy_of_accepts_negative_mass
+      μ response σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hmeasure_pos
+  linarith
+
+/--
+Candidate optimality for the positive-response policy forces both strict
+Lemma 5 mass obstructions to vanish.  This packages the exact zero-mass
+information needed by almost-everywhere policy-form conclusions.
+-/
+theorem lemma5_positiveResponse_strict_masses_zero_of_candidate_le
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    μ (lemma5PositiveResponsePolicy response \ σ) = 0 ∧
+      μ (Function.support response ∩
+          (σ \ lemma5PositiveResponsePolicy response)) = 0 :=
+  ⟨lemma5_positiveResponse_omitted_mass_zero_of_candidate_le
+      μ response σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate,
+    lemma5_positiveResponse_negative_mass_zero_of_candidate_le
+      μ response σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate⟩
+
+/--
+Positive-response candidate optimality yields accept-all almost everywhere
+when the positive-response policy has the positive Lemma 5 form.  This is the
+measure-theoretic version of the exact positive-shape extraction used in
+Theorem 4.
+-/
+theorem acceptAllAlmostEverywhere_of_lemma5_positiveResponse_candidate_le
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hpositive_form :
+      lemma5PolicyForm .positive (lemma5PositiveResponsePolicy response))
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    acceptAllAlmostEverywhere μ σ := by
+  have hzero :
+      μ (lemma5PositiveResponsePolicy response \ σ) = 0 :=
+    lemma5_positiveResponse_omitted_mass_zero_of_candidate_le
+      μ response σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate
+  have hpositive_eq :
+      lemma5PositiveResponsePolicy response = acceptAllPolicy :=
+    eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+      (lemma5PositiveResponsePolicy_subset_acceptAll response)
+      hpositive_form
+  rw [acceptAllAlmostEverywhere]
+  simpa [hpositive_eq] using hzero
+
 /-- A positive marginal response produces the accept-all Lemma 5 form. -/
 theorem lemma5PolicyForm_positiveResponse_positive
     (response : TripLength → ℝ)
