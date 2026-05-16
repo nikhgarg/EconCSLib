@@ -3662,6 +3662,151 @@ theorem paper_proposition4_2_not_latent_skill_fair_of_fully_specified_source_mod
     paper_proposition4_2_not_latent_skill_fair_of_fixed_base_one_test_posterior_source_law
       hslope htestScale hskill
 
+/--
+Base-indexed source-law surface for Proposition 4.2.  At each non-test base
+profile, access estimate laws are one-test posterior-score Gaussian laws and
+no-access estimate laws are deterministic base-only estimates.
+-/
+def lg21BaseIndexedOneTestPosteriorLawSurface
+    {Base : Type*} [Nonempty Base]
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    LG21SourceLawPolicySurface ℝ Base ℝ LG21EstimateLaw where
+  Equilibrium := PUnit
+  latentAccessLaw := fun _ skill base =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        (intercept base) (slope base) (hslope base)
+        skill (testScale base) (htestScale base))
+  latentNoAccessLaw := fun _ _ base =>
+    LG21EstimateLaw.point (noAccessEstimate base)
+  observableAccessLaw := fun _ base =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        (intercept base) (slope base) (hslope base)
+        0 (testScale base) (htestScale base))
+  observableNoAccessLaw := fun _ base =>
+    LG21EstimateLaw.point (noAccessEstimate base)
+  demographicAccessLaw := fun _ =>
+    let base : Base := Classical.choice inferInstance
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        (intercept base) (slope base) (hslope base)
+        0 (testScale base) (htestScale base))
+  demographicNoAccessLaw := fun _ =>
+    let base : Base := Classical.choice inferInstance
+    LG21EstimateLaw.point (noAccessEstimate base)
+  baseOnlyLaw := fun _ base => LG21EstimateLaw.point (noAccessEstimate base)
+  fullFeatureLaw := fun _ base test =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        (intercept base) (slope base) (hslope base)
+        test (testScale base) (htestScale base))
+
+/--
+Proposition 4.2 base-indexed law endpoint at a selected base profile: strict
+latent-skill ordering at that base contradicts latent-skill fairness.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_posterior_source_law_at_base
+    {Base : Type*} [Nonempty Base]
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base)
+    (base : Base) {skillHigh skillLow : ℝ}
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair
+      (lg21BaseIndexedOneTestPosteriorLawSurface
+        intercept slope testScale noAccessEstimate hslope htestScale) :=
+  paper_proposition4_2_not_estimate_law_latent_skill_fair_of_one_test_posterior_law
+    (S := lg21BaseIndexedOneTestPosteriorLawSurface
+      intercept slope testScale noAccessEstimate hslope htestScale)
+    PUnit.unit skillHigh skillLow base
+    (hslope base) (htestScale base) rfl rfl rfl hskill
+
+/--
+Proposition 4.2 base-indexed law endpoint: any nonempty base-indexed one-test
+posterior source-law surface is not latent-skill fair.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_posterior_source_law
+    {Base : Type*} [Nonempty Base]
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawLatentSkillFair
+      (lg21BaseIndexedOneTestPosteriorLawSurface
+        intercept slope testScale noAccessEstimate hslope htestScale) := by
+  exact
+    paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_posterior_source_law_at_base
+      intercept slope testScale noAccessEstimate hslope htestScale
+      (Classical.choice inferInstance) (skillHigh := 1) (skillLow := 0)
+      zero_lt_one
+
+/--
+Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
+source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full
+base-indexed one-test posterior source-law surface is not latent-skill fair.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_fully_specified_source_models_and_base_indexed_one_test_posterior_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Base : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Nonempty Base]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (intercept slope lawTestScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (hlawTestScale : ∀ base : Base, 0 < lawTestScale base) :
+    (∀ info : LG21AccessStudentInfo OptionalSkill OptionalBase ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : LG21AccessStudentInfo ℝ RequiredBase RequiredTest,
+        LG21AccessStudentInfo.chosenAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawLatentSkillFair
+          (lg21BaseIndexedOneTestPosteriorLawSurface
+            intercept slope lawTestScale noAccessEstimate
+            hslope hlawTestScale) := by
+  have hactions :=
+    paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+      C api Mstrategy theta k scoreLaw skillLaw takeDecision
+      reportRequiredDecision htestScale hReportEq hTakeEq
+  refine ⟨hactions.1, hactions.2, ?_⟩
+  exact
+    paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_posterior_source_law
+      intercept slope lawTestScale noAccessEstimate hslope hlawTestScale
+
 /-- Certificate for Proposition 4.3. -/
 structure LG21NotObservableOrDemographicFairCertificate
     {Skill Base Test Estimate : Type*}
