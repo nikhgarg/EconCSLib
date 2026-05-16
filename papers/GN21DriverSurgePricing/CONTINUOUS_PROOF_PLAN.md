@@ -440,7 +440,12 @@ into the concrete endpoint policy data.
   sign-to-shape part of Lemma 5 directly: positive responses give accept-all,
   monotone responses with a positive zero crossing give tail/head policies, and
   quasi-convex/quasi-concave responses with boundary zeros give middle
-  rejection/acceptance.  `lemma5MarginalSetReward_le_positiveResponsePolicy`
+  rejection/acceptance.  `Lemma5PositiveResponseShapeData` is the compiled
+  five-case source table: it exposes both
+  `.derivativeShapeWitness` and `.policyForm`, and
+  `paper_lemma5_marginal_optimizer_replacement_of_response_shape` turns those
+  cases into the fixed-response optimizer-replacement statement.
+  `lemma5MarginalSetReward_le_positiveResponsePolicy`
   also proves the fixed-response variational comparison: for the linearized
   set-integral reward, the positive-response policy weakly dominates every
   measurable feasible policy; the strict theorem

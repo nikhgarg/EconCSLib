@@ -55,9 +55,9 @@
   long-run state-time fractions equal the renewal-cycle time-fraction formula
 };
 
-\node[dag_conditional, text width=4.6cm] (Lemma5) at (5.9,-8.2) {
+\node[dag_partial, text width=4.6cm] (Lemma5) at (5.9,-8.2) {
   \textbf{Lemma 5 (App. D.2)}\\
-  generalized interval/ray domain, descent termination, limit/maximizer bridge, and fixed-response replacement proved; endpoint-step certificates still open
+  fixed-response five-case sign-to-shape and variational replacement proved; finite approximation/descent bridge proved; arbitrary-endpoint descent lift open
 };
 
 \node[dag_lemma, text width=4.6cm] (Lemma6) at (11.8,-8.2) {
@@ -124,7 +124,7 @@
 \draw[dag_arrow, rounded corners=6pt]
   (Lemma3.south west) -- ++(0.55,-1.25) |- (Lemma6.north east);
 \draw[dag_arrow] (Lemma6.east) -- (Lemmas78.west);
-\draw[dag_arrow] (Lemma6.west) -- (Lemma5.east);
+\draw[dag_dashed_arrow] (Lemma6.west) -- (Lemma5.east);
 \draw[dag_arrow] (Lemma6.south) |- (Lemmas910.west);
 \draw[dag_dashed_arrow] (Lemmas78.north east) -- (Thm4.north west);
 \draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);

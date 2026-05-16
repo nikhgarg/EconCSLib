@@ -18876,6 +18876,108 @@ theorem lemma5PolicyForm_positiveResponse_strictlyQuasiConcave_of_boundary_zeros
     exact ⟨hτ_pos, hresp_pos⟩
 
 /--
+Paper Lemma 5's five response-shape cases, specialized to the
+positive-response variational policy.  Each constructor contains the analytic
+shape/boundary facts needed to identify `{τ > 0 | 0 < response τ}` with the
+corresponding canonical Lemma 5 policy form.
+-/
+inductive Lemma5PositiveResponseShapeData
+    (response : TripLength → ℝ) : Lemma5DerivativeShape → Prop where
+  | positive
+      (hpositive : ∀ τ : TripLength, 0 < τ → 0 < response τ) :
+      Lemma5PositiveResponseShapeData response .positive
+  | strictlyIncreasing
+      (t : ℝ)
+      (ht_pos : 0 < t)
+      (hmono : StrictMonoOn response (Set.Ioi 0))
+      (hzero : response t = 0) :
+      Lemma5PositiveResponseShapeData response .strictlyIncreasing
+  | strictlyDecreasing
+      (t : ℝ)
+      (ht_pos : 0 < t)
+      (hanti : StrictAntiOn response (Set.Ioi 0))
+      (hzero : response t = 0) :
+      Lemma5PositiveResponseShapeData response .strictlyDecreasing
+  | strictlyQuasiConvex
+      (lo hi : ℝ)
+      (hlo_pos : 0 < lo)
+      (hlo_hi : lo < hi)
+      (hqc : strictQuasiConvexOnPositive response)
+      (hlo_zero : response lo = 0)
+      (hhi_zero : response hi = 0)
+      (hleft_pos :
+        ∀ τ : TripLength, 0 < τ → τ < lo → 0 < response τ)
+      (hright_pos :
+        ∀ τ : TripLength, hi < τ → 0 < response τ) :
+      Lemma5PositiveResponseShapeData response .strictlyQuasiConvex
+  | strictlyQuasiConcave
+      (lo hi : ℝ)
+      (hlo_pos : 0 < lo)
+      (hlo_hi : lo < hi)
+      (hqc : strictQuasiConcaveOnPositive response)
+      (hlo_zero : response lo = 0)
+      (hhi_zero : response hi = 0)
+      (hleft_nonpos :
+        ∀ τ : TripLength, 0 < τ → τ < lo → response τ ≤ 0)
+      (hright_nonpos :
+        ∀ τ : TripLength, hi < τ → response τ ≤ 0) :
+      Lemma5PositiveResponseShapeData response .strictlyQuasiConcave
+
+/--
+The response-shape data imply the corresponding source derivative-shape
+witness in Lemma 5's property table.
+-/
+theorem Lemma5PositiveResponseShapeData.derivativeShapeWitness
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape) :
+    lemma5DerivativeShapeWitness response shape := by
+  cases D with
+  | positive hpositive =>
+      exact hpositive
+  | strictlyIncreasing t ht_pos hmono hzero =>
+      exact hmono
+  | strictlyDecreasing t ht_pos hanti hzero =>
+      exact hanti
+  | strictlyQuasiConvex lo hi hlo_pos hlo_hi hqc hlo_zero hhi_zero
+      hleft_pos hright_pos =>
+      exact hqc
+  | strictlyQuasiConcave lo hi hlo_pos hlo_hi hqc hlo_zero hhi_zero
+      hleft_nonpos hright_nonpos =>
+      exact hqc
+
+/--
+The response-shape data identify the positive-response policy with the
+canonical policy form promised by Lemma 5.
+-/
+theorem Lemma5PositiveResponseShapeData.policyForm
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape) :
+    lemma5PolicyForm shape (lemma5PositiveResponsePolicy response) := by
+  cases D with
+  | positive hpositive =>
+      exact lemma5PolicyForm_positiveResponse_positive response hpositive
+  | strictlyIncreasing t ht_pos hmono hzero =>
+      exact
+        lemma5PolicyForm_positiveResponse_strictlyIncreasing_of_zero
+          response ht_pos hmono hzero
+  | strictlyDecreasing t ht_pos hanti hzero =>
+      exact
+        lemma5PolicyForm_positiveResponse_strictlyDecreasing_of_zero
+          response ht_pos hanti hzero
+  | strictlyQuasiConvex lo hi hlo_pos hlo_hi hqc hlo_zero hhi_zero
+      hleft_pos hright_pos =>
+      exact
+        lemma5PolicyForm_positiveResponse_strictlyQuasiConvex_of_boundary_zeros
+          response hlo_pos hlo_hi hqc hlo_zero hhi_zero
+          hleft_pos hright_pos
+  | strictlyQuasiConcave lo hi hlo_pos hlo_hi hqc hlo_zero hhi_zero
+      hleft_nonpos hright_nonpos =>
+      exact
+        lemma5PolicyForm_positiveResponse_strictlyQuasiConcave_of_boundary_zeros
+          response hlo_pos hlo_hi hqc hlo_zero hhi_zero
+          hleft_nonpos hright_nonpos
+
+/--
 Lemma 5 certificate: a derivative-shape hypothesis lets one replace an open
 measurable policy by a policy of the corresponding interval form without
 decreasing reward.
@@ -19621,6 +19723,348 @@ theorem Lemma5PolicyCanonicalDominanceMaximizerData.to_optimizer_replacement_mea
   exact (Classical.choose_spec D.canonicalPolicyMax).2.1
 
 /--
+Feasible generalized interval/ray policies.  This is the source-faithful
+finite seed domain for Lemma 5: interval/ray codes are only used for policies
+contained in the positive feasible-trip domain.
+-/
+structure GN21FeasibleGeneralizedIntervalPolicy where
+  toGeneralized : GN21GeneralizedIntervalPolicy
+  subset_acceptAll : toGeneralized.policy ⊆ acceptAllPolicy
+
+/-- The trip-policy represented by a feasible generalized interval/ray code. -/
+def GN21FeasibleGeneralizedIntervalPolicy.policy
+    (P : GN21FeasibleGeneralizedIntervalPolicy) : TripPolicy :=
+  P.toGeneralized.policy
+
+/-- Feasible generalized interval/ray policies are measurable. -/
+theorem GN21FeasibleGeneralizedIntervalPolicy.measurableSet_policy
+    (P : GN21FeasibleGeneralizedIntervalPolicy) :
+    MeasurableSet P.policy := by
+  simpa [GN21FeasibleGeneralizedIntervalPolicy.policy] using
+    P.toGeneralized.measurableSet_policy
+
+/-- Shape-specific complexity inherited from the underlying generalized code. -/
+noncomputable def GN21FeasibleGeneralizedIntervalPolicy.lemma5ShapeComplexity
+    (shape : Lemma5DerivativeShape)
+    (P : GN21FeasibleGeneralizedIntervalPolicy) : Nat :=
+  P.toGeneralized.lemma5ShapeComplexity shape
+
+/--
+Feasible generalized seeds approximate a feasible open source policy from
+below in reward.
+-/
+theorem exists_gn21FeasibleGeneralizedIntervalPolicy_reward_close_below
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : TripPolicy → ℝ) {σ : TripPolicy}
+    (hσ_open : IsOpen σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ) :
+    ∀ εReward : ℝ, 0 < εReward →
+      ∃ P : GN21FeasibleGeneralizedIntervalPolicy,
+        Rhat σ - εReward < Rhat P.policy := by
+  intro εReward hεReward
+  rcases exists_gn21GeneralizedIntervalPolicy_reward_close
+      μ Rhat hσ_open hcont hεReward with
+    ⟨P, hP_subset, hclose⟩
+  have hclose_left : -(εReward) < Rhat P.policy - Rhat σ :=
+    (abs_lt.1 hclose).1
+  refine
+    ⟨{ toGeneralized := P
+       subset_acceptAll := fun τ hτ => hσ_subset (hP_subset hτ) },
+      ?_⟩
+  simpa [GN21FeasibleGeneralizedIntervalPolicy.policy] using
+    (show Rhat σ - εReward < Rhat P.policy by linarith)
+
+/--
+Policy-level canonical-dominance constructor over feasible generalized seeds.
+This avoids asking endpoint proofs to reason about syntactically possible but
+source-infeasible interval components outside the positive trip domain.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_feasible_policy_canonical_dominance_and_maximizer
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : SingleStateReward) {σ0 : TripPolicy}
+    (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ0)
+    (canonicalPolicyMax :
+      ∃ σmax : TripPolicy,
+        σmax ⊆ acceptAllPolicy ∧
+          MeasurableSet σmax ∧
+            lemma5PolicyForm shape σmax ∧
+              ∀ seed : GN21FeasibleGeneralizedIntervalPolicy,
+                lemma5PolicyForm shape seed.policy →
+                  Rhat seed.policy ≤ Rhat σmax)
+    (policyCanonicalDominance :
+      ∀ seed : GN21FeasibleGeneralizedIntervalPolicy,
+        ¬ lemma5PolicyForm shape seed.policy →
+          ∃ σstar : TripPolicy,
+            σstar ⊆ acceptAllPolicy ∧
+              lemma5PolicyForm shape σstar ∧
+                Rhat seed.policy ≤ Rhat σstar)
+    (policyStrictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ σstar : TripPolicy,
+          σstar ⊆ acceptAllPolicy ∧
+            lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  classical
+  let σmax := Classical.choose canonicalPolicyMax
+  have hσmax_spec := Classical.choose_spec canonicalPolicyMax
+  have hσmax_subset : σmax ⊆ acceptAllPolicy := hσmax_spec.1
+  have hσmax_form : lemma5PolicyForm shape σmax := hσmax_spec.2.2.1
+  have hσmax_bound :
+      ∀ seed : GN21FeasibleGeneralizedIntervalPolicy,
+        lemma5PolicyForm shape seed.policy →
+          Rhat seed.policy ≤ Rhat σmax := hσmax_spec.2.2.2
+  have hseed_le_max :
+      ∀ seed : GN21FeasibleGeneralizedIntervalPolicy,
+        Rhat seed.policy ≤ Rhat σmax := by
+    intro seed
+    by_cases hseed_form : lemma5PolicyForm shape seed.policy
+    · exact hσmax_bound seed hseed_form
+    · rcases policyCanonicalDominance seed hseed_form with
+        ⟨σstar, hσstar_subset, hσstar_form, hseed_le_star⟩
+      rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+          hσstar_subset hσstar_form with
+        ⟨Pstar, hPstar_eq, hPstar_form⟩
+      let Fstar : GN21FeasibleGeneralizedIntervalPolicy :=
+        { toGeneralized := Pstar
+          subset_acceptAll := by
+            intro τ hτ
+            rw [hPstar_eq] at hτ
+            exact hσstar_subset hτ }
+      have hFstar_form : lemma5PolicyForm shape Fstar.policy := by
+        simpa [Fstar, GN21FeasibleGeneralizedIntervalPolicy.policy] using
+          hPstar_form
+      have hstar_le : Rhat Fstar.policy ≤ Rhat σmax :=
+        hσmax_bound Fstar hFstar_form
+      have hσstar_le : Rhat σstar ≤ Rhat σmax := by
+        simpa [Fstar, GN21FeasibleGeneralizedIntervalPolicy.policy,
+          hPstar_eq] using hstar_le
+      exact hseed_le_star.trans hσstar_le
+  have hclose_to_max :
+      ∀ ε : ℝ, 0 < ε → Rhat σ0 - ε < Rhat σmax := by
+    intro ε hε
+    rcases exists_gn21FeasibleGeneralizedIntervalPolicy_reward_close_below
+        μ Rhat hσ0_open hσ0_subset hcont ε hε with
+      ⟨seed, hseed_close⟩
+    exact hseed_close.trans_le (hseed_le_max seed)
+  have hreward_ge : Rhat σ0 ≤ Rhat σmax := by
+    by_contra hnot
+    have hlt : Rhat σmax < Rhat σ0 := lt_of_not_ge hnot
+    let ε : ℝ := Rhat σ0 - Rhat σmax
+    have hε : 0 < ε := sub_pos.2 hlt
+    have hclose := hclose_to_max ε hε
+    dsimp [ε] at hclose
+    linarith
+  exact
+    { policy := σmax
+      policy_form := hσmax_form
+      reward_ge := hreward_ge
+      strict_unless_initial_form := by
+        intro hnot
+        rcases policyStrictWitness hnot with
+          ⟨σstar, hσstar_subset, hσstar_form, hstrict⟩
+        rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+            hσstar_subset hσstar_form with
+          ⟨Pstar, hPstar_eq, hPstar_form⟩
+        let Fstar : GN21FeasibleGeneralizedIntervalPolicy :=
+          { toGeneralized := Pstar
+            subset_acceptAll := by
+              intro τ hτ
+              rw [hPstar_eq] at hτ
+              exact hσstar_subset hτ }
+        have hFstar_form : lemma5PolicyForm shape Fstar.policy := by
+          simpa [Fstar, GN21FeasibleGeneralizedIntervalPolicy.policy] using
+            hPstar_form
+        have hstar_le : Rhat Fstar.policy ≤ Rhat σmax :=
+          hσmax_bound Fstar hFstar_form
+        have hσstar_le : Rhat σstar ≤ Rhat σmax := by
+          simpa [Fstar, GN21FeasibleGeneralizedIntervalPolicy.policy,
+            hPstar_eq] using hstar_le
+        exact hstrict.trans_le hσstar_le }
+
+/--
+Source data for the feasible policy-level canonical-dominance route.  This is
+the preferred Lemma 5 target when the source proof only considers feasible
+trip policies.
+-/
+structure Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+    (μ : Measure TripLength) (Rhat : SingleStateReward)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape) where
+  hσ0_open : IsOpen σ0
+  hσ0_subset : σ0 ⊆ acceptAllPolicy
+  hcont : GN21SymmDiffContinuousAt μ Rhat σ0
+  canonicalPolicyMax :
+    ∃ σmax : TripPolicy,
+      σmax ⊆ acceptAllPolicy ∧
+        MeasurableSet σmax ∧
+          lemma5PolicyForm shape σmax ∧
+            ∀ seed : GN21FeasibleGeneralizedIntervalPolicy,
+              lemma5PolicyForm shape seed.policy →
+                Rhat seed.policy ≤ Rhat σmax
+  policyCanonicalDominance :
+    ∀ seed : GN21FeasibleGeneralizedIntervalPolicy,
+      ¬ lemma5PolicyForm shape seed.policy →
+        ∃ σstar : TripPolicy,
+          σstar ⊆ acceptAllPolicy ∧
+            lemma5PolicyForm shape σstar ∧
+              Rhat seed.policy ≤ Rhat σstar
+  policyStrictWitness :
+    ¬ lemma5PolicyForm shape σ0 →
+      ∃ σstar : TripPolicy,
+        σstar ⊆ acceptAllPolicy ∧
+          lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar
+
+/-- Feasible policy-level canonical-dominance data produce the replacement certificate. -/
+noncomputable def Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_feasible_policy_canonical_dominance_and_maximizer
+    μ Rhat shape D.hσ0_open D.hσ0_subset D.hcont D.canonicalPolicyMax
+    D.policyCanonicalDominance D.policyStrictWitness
+
+/-- The feasible policy-level replacement remains feasible. -/
+theorem Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.to_optimizer_replacement_subset
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape) :
+    D.to_optimizer_replacement.policy ⊆ acceptAllPolicy := by
+  classical
+  unfold Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+  unfold lemma5OptimizerReplacementCertificate_of_feasible_policy_canonical_dominance_and_maximizer
+  exact (Classical.choose_spec D.canonicalPolicyMax).1
+
+/-- The feasible policy-level replacement is measurable. -/
+theorem Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.to_optimizer_replacement_measurable
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape) :
+    MeasurableSet D.to_optimizer_replacement.policy := by
+  classical
+  unfold Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+  unfold lemma5OptimizerReplacementCertificate_of_feasible_policy_canonical_dominance_and_maximizer
+  exact (Classical.choose_spec D.canonicalPolicyMax).2.1
+
+/--
+Feasible policy-level canonical-dominance data force the current policy form
+under unrestricted optimality.
+-/
+theorem Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.policyForm_of_optimal
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape)
+    (hoptimal : ∀ σ : TripPolicy, Rhat σ ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  by_contra hnot_form
+  have hlt : Rhat σ0 < Rhat D.to_optimizer_replacement.policy :=
+    D.to_optimizer_replacement.strict_unless_initial_form hnot_form
+  have hle : Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0 :=
+    hoptimal D.to_optimizer_replacement.policy
+  linarith
+
+/--
+Restricted candidate comparison variant for feasible policy-level
+canonical-dominance data.
+-/
+theorem Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.policyForm_of_candidate_le
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape)
+    (hcandidate :
+      Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  by_contra hnot_form
+  have hlt : Rhat σ0 < Rhat D.to_optimizer_replacement.policy :=
+    D.to_optimizer_replacement.strict_unless_initial_form hnot_form
+  linarith
+
+/--
+Positive-response marginal dominance generates feasible policy-level
+canonical-dominance data directly.
+-/
+noncomputable def Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.of_positiveResponse_marginal
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hcont :
+      GN21SymmDiffContinuousAt μ (lemma5MarginalSetReward μ response) σ0)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hpositive_form :
+      lemma5PolicyForm shape (lemma5PositiveResponsePolicy response))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape σ0 →
+        0 < μ (lemma5PositiveResponsePolicy response \ σ0) ∨
+        0 <
+          μ (Function.support response ∩
+            (σ0 \ lemma5PositiveResponsePolicy response))) :
+    Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+      μ (lemma5MarginalSetReward μ response) σ0 shape where
+  hσ0_open := hσ0_open
+  hσ0_subset := hσ0_subset
+  hcont := hcont
+  canonicalPolicyMax := by
+    refine
+      ⟨lemma5PositiveResponsePolicy response,
+        lemma5PositiveResponsePolicy_subset_acceptAll response,
+        measurableSet_lemma5PositiveResponsePolicy response
+          hresponse_measurable,
+        hpositive_form, ?_⟩
+    intro seed hseed_form
+    exact
+      lemma5MarginalSetReward_le_positiveResponsePolicy
+        μ response seed.policy hresponse_measurable
+        hresponse_integrable_acceptAll seed.measurableSet_policy
+        seed.subset_acceptAll
+  policyCanonicalDominance := by
+    intro seed hnot
+    refine
+      ⟨lemma5PositiveResponsePolicy response,
+        lemma5PositiveResponsePolicy_subset_acceptAll response,
+        hpositive_form, ?_⟩
+    exact
+      lemma5MarginalSetReward_le_positiveResponsePolicy
+        μ response seed.policy hresponse_measurable
+        hresponse_integrable_acceptAll seed.measurableSet_policy
+        seed.subset_acceptAll
+  policyStrictWitness := by
+    intro hnot
+    refine
+      ⟨lemma5PositiveResponsePolicy response,
+        lemma5PositiveResponsePolicy_subset_acceptAll response,
+        hpositive_form, ?_⟩
+    rcases hstrict_mass hnot with homitted | hnegative
+    · exact
+        lemma5MarginalSetReward_lt_positiveResponsePolicy_of_omits_positive_mass
+          μ response σ0 hresponse_measurable hresponse_integrable_acceptAll
+          hσ0_open.measurableSet hσ0_subset homitted
+    · exact
+        lemma5MarginalSetReward_lt_positiveResponsePolicy_of_accepts_negative_mass
+          μ response σ0 hresponse_measurable hresponse_integrable_acceptAll
+          hσ0_open.measurableSet hσ0_subset hnegative
+
+/--
 Positive-case Lemma 5 replacement constructor using accept-all as the
 replacement policy.
 -/
@@ -19966,6 +20410,41 @@ theorem paper_lemma5_marginal_optimizer_replacement_of_positiveResponse
         μ response σ0 shape hresponse_measurable
         hresponse_integrable_acceptAll hσ0_measurable hσ0_subset
         hpositive_form hstrict_mass)
+
+/--
+Paper Lemma 5, fixed-response variational form.  The five response-shape
+cases in `Lemma5PositiveResponseShapeData` identify the positive-response
+policy with the canonical Lemma 5 form; the integral sign comparison then
+proves weak improvement, with strict improvement under the source
+mass-strictness alternatives.
+-/
+theorem paper_lemma5_marginal_optimizer_replacement_of_response_shape
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hshape : Lemma5PositiveResponseShapeData response shape)
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape σ0 →
+        0 < μ (lemma5PositiveResponsePolicy response \ σ0) ∨
+        0 <
+          μ (Function.support response ∩
+            (σ0 \ lemma5PositiveResponsePolicy response))) :
+    ∃ σstar : TripPolicy,
+      lemma5PolicyForm shape σstar ∧
+        lemma5MarginalSetReward μ response σ0 ≤
+          lemma5MarginalSetReward μ response σstar ∧
+        (¬ lemma5PolicyForm shape σ0 →
+          lemma5MarginalSetReward μ response σ0 <
+            lemma5MarginalSetReward μ response σstar) := by
+  exact
+    paper_lemma5_marginal_optimizer_replacement_of_positiveResponse
+      μ response σ0 shape hresponse_measurable
+      hresponse_integrable_acceptAll hσ0_measurable hσ0_subset
+      hshape.policyForm hstrict_mass
 
 /-- Lemma 9 lower-bound numerator for the structured-price ratio. -/
 def lemma9StructuredLowerNumerator

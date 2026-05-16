@@ -40,6 +40,10 @@ Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
 lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canonical_dominance_and_maximizer
 lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
 Lemma5PolicyCanonicalDominanceMaximizerData
+Lemma5PositiveResponseShapeData
+Lemma5PositiveResponseShapeData.derivativeShapeWitness
+Lemma5PositiveResponseShapeData.policyForm
+paper_lemma5_marginal_optimizer_replacement_of_response_shape
 Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
 Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
 Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance
@@ -59,8 +63,18 @@ paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_cu
 
 This matters because the canonical Lemma 5 outputs include accept-all and
 unbounded positive tails.  Bounded intervals alone cannot be the final descent
-domain for the positive, short-rejection, or middle-rejection cases.  The next
-hard proof target is the paper-specific endpoint-step field on
+domain for the positive, short-rejection, or middle-rejection cases.
+
+The fixed-response part of Lemma 5 is now compiled as a direct five-case
+source table, not just downstream wrappers.  Use
+`Lemma5PositiveResponseShapeData` to supply the positive, monotone, or
+quasi-convex/quasi-concave response case; `.policyForm` identifies the
+positive-response policy with the paper's canonical form, and
+`paper_lemma5_marginal_optimizer_replacement_of_response_shape` proves weak
+and strict variational replacement for `lemma5MarginalSetReward` under the
+mass-strictness alternatives.
+
+The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical
 generalized finite interval/ray policy, construct a weakly improving endpoint
 move that strictly lowers complexity and identify that move with the existing
