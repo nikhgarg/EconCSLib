@@ -59,6 +59,14 @@ The fixed-transfer local endpoint feed into this AE layer is now compiled as:
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate.to_shape_replacement_rejected_mass_improvements_of_shape_replacements
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_ae_local_endpoint
 
+The corresponding Theorem 3 AE wrappers are now compiled as:
+
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_rejected_mass_strict_local_positive_parameters
+  GN21Theorem3MiddleRerouteAEPolicyFormSourceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions
+  GN21Theorem3MiddleRerouteAEEqSourceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions
+
 This does not mean the paper proof is wrong.  It means the paper's notation
 compresses the bridge from current fixed-state reward/accounting data to the
 endpoint current-bounds certificate, and Lean now expands that bridge.  The
@@ -80,10 +88,13 @@ non-surge policy:
 It is not a raw expected payment.  It is W_1(σ_1) / T_1(σ_1), where W_1 is
 average payment per accepted trip and T_1 is the state cycle time.
 
-The paper's Lemma 9 fixes arbitrary σ_1, and thus Q_1, T_1, R_1.  In the
-Theorem 3 proof that fixed-state reward rate is this current policy-dependent
-r1_current, not the target accept-all R1 unless σ_1 is already accept-all or a
-separate equality has been proved.
+The paper's Lemma 9 fixes arbitrary σ_1, and thus local Q_1, T_1, R_1
+(`source.txt:3809`).  The Theorem 3 statement separately uses target earning
+rates R_1 < R_2 (`source.txt:3944`).  In formal names and scratch work, call
+the Lemma 9 local quantity `r1_current` or `R1_current`, and reserve `R1` /
+`targetR1` for the Theorem 3 target rate.  The local fixed-state reward rate
+is not the target accept-all R1 unless σ_1 is already accept-all or a separate
+equality has been proved.
 
 Important conclusion from the source proof
 ------------------------------------------

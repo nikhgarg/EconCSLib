@@ -424,13 +424,23 @@ Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByP
 Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_ae_local_endpoint
 ```
 
+The corresponding Theorem 3 AE source wrappers are also compiled:
+
+```lean
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_rejected_mass_strict_local_positive_parameters
+GN21Theorem3MiddleRerouteAEPolicyFormSourceData
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions
+GN21Theorem3MiddleRerouteAEEqSourceData
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions
+```
+
 This is the paper-proof bridge for the collapsed-gap convention: positive
 rejected mass supplies `lo < hi`; when there is no positive rejected mass, the
 AE uniqueness theorem treats the branch as already accept-all almost
-everywhere.  The next integration target is to build the fixed-state local
-endpoint fields from the paper's regularity hypotheses and, for a pure
-positive-rejected-mass route, identify the intended source of accept-all
-optimality.
+everywhere.  The next integration target is to build the source-data records
+from the paper's regularity hypotheses.  Use `R1_current`/`r1_current` for
+Lemma 9's locally fixed non-surge reward rate and reserve `R1`/`targetR1` for
+Theorem 3's target rate; the paper locally reuses `R1` in Lemma 9.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:

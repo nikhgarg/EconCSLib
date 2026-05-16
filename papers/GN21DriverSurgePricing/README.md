@@ -582,6 +582,16 @@ cache is `source.txt`.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_ae_local_endpoint`;
   this is the Lean bridge corresponding to the paper's equality-up-to-null-sets
   convention for collapsed middle-rejection gaps.
+  The Theorem 3 wrappers that consume this AE boundary are now compiled as
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_rejected_mass_strict_local_positive_parameters`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions`.
+  These use source-data records
+  `GN21Theorem3MiddleRerouteAEPolicyFormSourceData` and
+  `GN21Theorem3MiddleRerouteAEEqSourceData` so the proof can separately supply
+  Lemma 5 replacement data, accept-all optimality, and the local fixed-state
+  endpoint package.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.
