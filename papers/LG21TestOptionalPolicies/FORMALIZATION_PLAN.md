@@ -178,11 +178,13 @@ Last updated: 2026-05-16
   `paper_theorem3_2_not_law_latent_or_observable_fair_of_observable_implication_and_below_mean_actor`
   expose this branch without requiring finite atoms; the optional-reporting
   and report-required source-model wrappers derive the two-sided best-response
-  field from concrete Definition 1 equilibria.  The Gaussian/all-report and
-  Gaussian/all-take wrappers instantiate the paper's "such a student always
-  exists" sentence by selecting `mean - scale` from a nondegenerate
-  `GaussianScaleLaw`, avoiding point-mass assumptions in the continuous route.
-  The finite acting-distribution
+  field from concrete Definition 1 equilibria.  The cutoff-midpoint wrappers
+  connect the existing threshold-strategy infrastructure to this direct branch:
+  if the acting cutoff is below the resampling mean, the midpoint reports/takes
+  and is still below mean.  The Gaussian/all-report and Gaussian/all-take
+  wrappers instantiate the paper's "such a student always exists" sentence by
+  selecting `mean - scale` from a nondegenerate `GaussianScaleLaw`, avoiding
+  point-mass assumptions in the continuous route.  The finite acting-distribution
   lemmas
   `paper_theorem3_2_exists_support_actor_le_mean` and
   `paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor`
