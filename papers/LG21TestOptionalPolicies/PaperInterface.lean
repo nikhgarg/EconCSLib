@@ -49,6 +49,24 @@ theorem paper_interface_no_profitable_test_taking_of_taking_equilibrium
     lg21NoProfitableTestTakingDeviation takes testBenefitProb :=
   lg21NoProfitableTestTakingDeviation_of_taking_equilibrium hEq
 
+/--
+Lemma 4.1 source-equilibrium bridge: a packaged Gaussian threshold-equilibrium
+certificate implies all access students report and take the test.
+-/
+theorem paper_interface_lemma4_1_strategy_proofness_of_threshold_equilibrium_certificate
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {testScale : ℝ} (htestScale : 0 < testScale)
+    (K :
+      LG21GaussianThresholdEquilibriumCertificate
+        C api M theta k scoreLaw skillLaw htestScale) :
+    (∀ score : ℝ, K.reports score) ∧ (∀ skill : ℝ, K.takes skill) :=
+  paper_lemma4_1_strategy_proofness_of_threshold_equilibrium_certificate
+    C api M theta k scoreLaw skillLaw htestScale K
+
 /-- Definition 1 action object for students with test access: `(Y, X)`. -/
 abbrev paperAccessAction : Type :=
   LG21AccessAction
@@ -1505,6 +1523,46 @@ theorem paper_interface_proposition4_2_not_latent_skill_fair_of_threshold_equili
     hNoAccess hAccessHigh hAccessLow hskill
 
 /--
+Proposition 4.2 source-route wrapper from the packaged threshold-equilibrium
+certificate: the certificate supplies Lemma 4.1, and the fixed-base one-test
+posterior law gives the latent-skill fairness contradiction.
+-/
+theorem paper_interface_proposition4_2_not_latent_skill_fair_of_threshold_equilibrium_certificate_and_one_test_posterior_law
+    {Feature Skill Base Test : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (K :
+      LG21GaussianThresholdEquilibriumCertificate
+        C api M theta k scoreLaw skillLaw htestScale)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    (∀ score : ℝ, K.reports score) ∧
+      (∀ skill : ℝ, K.takes skill) ∧
+        ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_latent_skill_fair_of_threshold_equilibrium_certificate_and_one_test_posterior_law
+    C api M theta k scoreLaw skillLaw e qHigh qLow base hslope htestScale K
+    hNoAccess hAccessHigh hAccessLow hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 
@@ -1968,6 +2026,46 @@ theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of
   paper_proposition4_3_not_law_observable_or_demographic_fair_of_threshold_equilibria_and_extra_signal
     C api Mstrategy theta k scoreLaw skillLaw htestScale
     hreports hnoReport hreportEq htakes hqTilde htakeEq
+    eObs base eDemo Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+    hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
+
+/--
+Proposition 4.3 source-route wrapper from the packaged threshold-equilibrium
+certificate and the paper's concrete extra-test-signal posterior-precision gap.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_threshold_equilibrium_certificate_and_extra_signal
+    {StrategyFeature Skill Base Test Feature : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {testScale : ℝ} (htestScale : 0 < testScale)
+    (K :
+      LG21GaussianThresholdEquilibriumCertificate
+        C api Mstrategy theta k scoreLaw skillLaw htestScale)
+    (eObs : S.Equilibrium) (base : Base) (eDemo : S.Equilibrium)
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (hAccessObs :
+      S.observableAccessLaw eObs base =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessObs :
+      S.observableNoAccessLaw eObs base = Mbase.posteriorMeanScaleLaw)
+    (hAccessDemo :
+      S.demographicAccessLaw eDemo =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessDemo :
+      S.demographicNoAccessLaw eDemo = Mbase.posteriorMeanScaleLaw) :
+    (∀ score : ℝ, K.reports score) ∧
+      (∀ skill : ℝ, K.takes skill) ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_threshold_equilibrium_certificate_and_extra_signal
+    C api Mstrategy theta k scoreLaw skillLaw htestScale K
     eObs base eDemo Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
     hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
 

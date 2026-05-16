@@ -63,7 +63,8 @@ Last updated: 2026-05-16
   is now bridged as well: the Lemma 4.1 lower-tail all-report/all-take theorem
   feeds the fixed-base one-test posterior law to produce the Proposition 4.2
   latent-skill-fairness contradiction; the stronger wrappers use Lemma 4.1's
-  explicit-threshold and binary-equilibrium routes.
+  explicit-threshold, binary-equilibrium, and packaged threshold-equilibrium
+  certificate routes.
 - Proposition 4.3 now has concrete Gaussian posterior-score scale-gap
   instantiations over possibly different observed-feature sets, using the
   shared signal-precision-sum comparison from `GaussianOffsetSignalFamily`.
@@ -73,8 +74,8 @@ Last updated: 2026-05-16
   and all-take feed the posterior-precision gap to rule out both observable and
   demographic fairness.  The concrete one-extra-test-signal precision gap is
   closed by the shared `GaussianOffsetSignalFamily.withExtraSignal` helper,
-  and the strongest wrappers use Lemma 4.1's explicit-threshold and
-  binary-equilibrium routes.
+  and the strongest wrappers use Lemma 4.1's explicit-threshold,
+  binary-equilibrium, and packaged threshold-equilibrium-certificate routes.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
@@ -98,19 +99,20 @@ Last updated: 2026-05-16
    lower-tail-mean premises; for Gaussian Bayesian threshold reporting, the
    reporting cutoff is now produced directly by the affine threshold lemma, and
   explicit lower-tail taking thresholds are supported.  The no-deviation facts
-   now follow from binary subgame equilibria, and Lemma 4.1 has a combined
-   endpoint consuming those binary equilibria directly.  The remaining
-   strategic bridge is to map the full source equilibrium to those binary
-   subgames and threshold shapes, then close the endpoint.
+   now follow from binary subgame equilibria.  Lemma 4.1 has a combined
+   endpoint consuming those binary equilibria directly, plus a one-stop
+   `LG21GaussianThresholdEquilibriumCertificate` that packages the threshold
+   shapes and binary equilibria.  The remaining strategic bridge is to derive
+   that certificate from the full source equilibrium.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
    proved, and Propositions 4.2--4.3 are routed through Lemma 4.1's lower-tail
    bridge.  Proposition 4.3's one-extra-test-signal precision gap is no longer
-   an assumption.  The strongest Proposition 4.2--4.3 wrappers now use binary
-   reporting/taking equilibria for explicit threshold policies.  The remaining
-   work is to map the full source equilibrium into those binary threshold
-   subgames.
+   an assumption.  The strongest Proposition 4.2--4.3 wrappers now use the
+   packaged threshold-equilibrium certificate, so the remaining work is to map
+   the full source equilibrium into that certificate once and reuse it across
+   Lemma 4.1 and Propositions 4.2--4.3.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
