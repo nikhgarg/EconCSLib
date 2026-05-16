@@ -272,9 +272,12 @@ Last updated: 2026-05-16
   identities for the concrete optional/report-required surfaces when the
   latent kernels are skill-independent copies of the observable laws.  The
   remaining concrete policy obligations are the two displayed support facts
-  and the report-required centered base-term identity; a stricter
-  skill-dependent conditional-kernel route remains optional if the final
-  source-facing statement needs true conditional-on-skill laws.
+  and the report-required centered base-term identity.  The mapped-actor-law
+  event-share endpoints further reduce those displayed support facts to
+  positive mass of the displayed concrete test/skill values under a
+  pushforward acting law.  A stricter skill-dependent conditional-kernel route
+  remains optional if the final source-facing statement needs true
+  conditional-on-skill laws.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -437,10 +440,12 @@ Last updated: 2026-05-16
    outside-payoff algebra a source-formula identity rather than a centered
    numerator equality.  The constant-latent event-share endpoints remove the
    abstract latent-to-observable mixture assumptions for the corresponding
-   concrete surfaces.  Next work should discharge the two displayed support
-   facts and the report-required centered base-term identity, then decide
-   whether to add a skill-dependent conditional-kernel version for the final
-   paper-facing theorem statement.
+   concrete surfaces, and the mapped-actor-law variants reduce the displayed
+   support facts to positive mass of the displayed concrete test/skill values.
+   Next work should discharge the report-required centered base-term identity
+   and instantiate the concrete positive-mass facts, then decide whether to add
+   a skill-dependent conditional-kernel version for the final paper-facing
+   theorem statement.
 
 ## Reusable Library Seams
 
