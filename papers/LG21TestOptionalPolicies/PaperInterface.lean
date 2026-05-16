@@ -1344,6 +1344,68 @@ theorem paper_interface_proposition4_3_not_law_demographic_fair_of_posterior_pre
     e hAccess hNoAccess hpriorVar hsum
 
 /--
+Proposition 4.3 source-route wrapper: Lemma 4.1 first supplies
+all-report/all-take, and the posterior-precision gap then rules out observable
+and demographic fairness.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_posterior_precision_gap
+    {Feature Skill Base Test FeatureLow FeatureHigh : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype FeatureLow] [Nonempty FeatureLow]
+    [Fintype FeatureHigh] [Nonempty FeatureHigh]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill testScale htestScale) qTilde))
+    (eObs : S.Equilibrium) (base : Base) (eDemo : S.Equilibrium)
+    {Mlow : GaussianOffsetSignalFamily FeatureLow}
+    {Mhigh : GaussianOffsetSignalFamily FeatureHigh}
+    (hAccessObs : S.observableAccessLaw eObs base = Mhigh.posteriorMeanScaleLaw)
+    (hNoAccessObs : S.observableNoAccessLaw eObs base = Mlow.posteriorMeanScaleLaw)
+    (hAccessDemo : S.demographicAccessLaw eDemo = Mhigh.posteriorMeanScaleLaw)
+    (hNoAccessDemo : S.demographicNoAccessLaw eDemo = Mlow.posteriorMeanScaleLaw)
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_posterior_precision_gap
+    C api M theta k scoreLaw skillLaw htestScale
+    hreportCutoffIfNotAll hreportNoDeviation
+    htakeCutoffIfNotAll htakeNoDeviation
+    eObs base eDemo hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
+    hpriorVar hsum
+
+/--
 Definition 6: the re-sampling policy uses the conditional law of the optional
 test score given the non-test profile.
 -/

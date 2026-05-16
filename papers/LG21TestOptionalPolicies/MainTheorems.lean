@@ -2109,6 +2109,75 @@ theorem paper_proposition4_3_not_law_demographic_fair_of_posterior_precision_gap
     e hAccess hNoAccess
     (paper_gaussian_estimate_scale_lt_of_signalPrecisionSum_lt hpriorVar hsum)
 
+/--
+Proposition 4.3 source-route wrapper: Lemma 4.1 removes the strategic
+reporting/taking concern, and the posterior-precision gap then gives both the
+observable- and demographic-fairness contradictions.
+-/
+theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_posterior_precision_gap
+    {Feature Skill Base Test FeatureLow FeatureHigh : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype FeatureLow] [Nonempty FeatureLow]
+    [Fintype FeatureHigh] [Nonempty FeatureHigh]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde))
+    (eObs : S.Equilibrium) (base : Base) (eDemo : S.Equilibrium)
+    {Mlow : GaussianOffsetSignalFamily FeatureLow}
+    {Mhigh : GaussianOffsetSignalFamily FeatureHigh}
+    (hAccessObs : S.observableAccessLaw eObs base = Mhigh.posteriorMeanScaleLaw)
+    (hNoAccessObs : S.observableNoAccessLaw eObs base = Mlow.posteriorMeanScaleLaw)
+    (hAccessDemo : S.demographicAccessLaw eDemo = Mhigh.posteriorMeanScaleLaw)
+    (hNoAccessDemo : S.demographicNoAccessLaw eDemo = Mlow.posteriorMeanScaleLaw)
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S := by
+  have hstrategy :
+      (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+    paper_lemma4_1_strategy_proofness_of_lower_tail_thresholds
+      C api M theta k scoreLaw skillLaw htestScale
+      hreportCutoffIfNotAll hreportNoDeviation
+      htakeCutoffIfNotAll htakeNoDeviation
+  refine ⟨hstrategy.1, hstrategy.2, ?_, ?_⟩
+  · exact
+      paper_proposition4_3_not_law_observable_fair_of_posterior_precision_gap
+        eObs base hAccessObs hNoAccessObs hpriorVar hsum
+  · exact
+      paper_proposition4_3_not_law_demographic_fair_of_posterior_precision_gap
+        eDemo hAccessDemo hNoAccessDemo hpriorVar hsum
+
 /-- Observable fairness implies demographic fairness when the base-profile law is shared. -/
 theorem lg21_demographicallyFair_of_observableFair
     {ΩBase Estimate : Type*} (baseProfile : PMF ΩBase)

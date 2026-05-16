@@ -60,6 +60,9 @@ Last updated: 2026-05-16
   shared signal-precision-sum comparison from `GaussianOffsetSignalFamily`.
   Its observable-fairness failure also has the source-shaped point-vs-Gaussian
   conditional law wrapper and fixed-base one-random-test posterior-law form.
+  The paper's named route is now bridged through Lemma 4.1 as well: all-report
+  and all-take feed the posterior-precision gap to rule out both observable and
+  demographic fairness.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
@@ -86,9 +89,9 @@ Last updated: 2026-05-16
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
-   proved, and Proposition 4.2 is routed through Lemma 4.1's lower-tail bridge;
-   the remaining work is to give Proposition 4.3 the same named-route wrapper
-   and then connect both to the concrete equilibrium and reporting model.
+   proved, and Propositions 4.2--4.3 are routed through Lemma 4.1's lower-tail
+   bridge; the remaining work is to connect both routes to the concrete
+   equilibrium, threshold, lower-tail, and feature-set precision assumptions.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
