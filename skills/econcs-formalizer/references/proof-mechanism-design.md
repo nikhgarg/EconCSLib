@@ -98,6 +98,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   build both crossings, expose each side characterization, and prove
   `c_hat'_g < c_hat''_g` from the high-threshold merit comparison at the
   lower root.
+- After constructing ordered thresholds, immediately compose them with the
+  paper's mass/cutoff equivalences and companion school objective split if
+  this yields a named condition bundle.  This avoids leaving a green threshold
+  lemma disconnected from the paper theorem.  For GLM20, the follow-on wrapper
+  is
+  `paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings`.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
