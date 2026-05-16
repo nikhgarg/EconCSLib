@@ -1303,6 +1303,160 @@ theorem paper_theorem1_remove_positive_time_set_if_average_below_current
         renewalRewardRate] using hremoved_average_le_current)
 
 /--
+Theorem 1 marginal add step without a positive-time side condition.  It uses
+the cross-multiplied form of the source inequality, so zero-time added sets are
+handled by the same algebra.
+-/
+theorem paper_theorem1_add_set_if_pointwise_rate_above_current
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hw_integrable_added : IntegrableOn w added μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ singleStateTripTime μ σ)
+    (hadded_time_nonneg : 0 ≤ singleStateTripTime μ added)
+    (hpointwise :
+      ∀ τ ∈ added, singleStateRenewalReward μ arrivalRate w σ * τ ≤ w τ) :
+    singleStateRenewalReward μ arrivalRate w σ ≤
+      singleStateRenewalReward μ arrivalRate w (σ ∪ added) := by
+  have hcross :
+      singleStateRenewalReward μ arrivalRate w σ *
+          singleStateTripTime μ added ≤
+        singleStateTripPayment μ w added := by
+    unfold singleStateRenewalReward singleStateTripTime singleStateTripPayment
+    have hmono :
+        ∫ τ in added,
+            (arrivalRate * singleStateTripPayment μ w σ /
+                (1 + arrivalRate * singleStateTripTime μ σ)) * τ ∂μ ≤
+          ∫ τ in added, w τ ∂μ := by
+      exact setIntegral_mono_on
+        (htime_integrable_added.const_mul
+          (arrivalRate * singleStateTripPayment μ w σ /
+            (1 + arrivalRate * singleStateTripTime μ σ)))
+        hw_integrable_added hadded_measurable hpointwise
+    rw [integral_const_mul] at hmono
+    simpa [mul_assoc] using hmono
+  change
+    renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w σ) (singleStateTripTime μ σ) ≤
+      renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w (σ ∪ added))
+        (singleStateTripTime μ (σ ∪ added))
+  rw [singleStateTripPayment_union μ w σ added hdisjoint hadded_measurable
+      hw_integrable_σ hw_integrable_added,
+    singleStateTripTime_union μ σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added]
+  unfold renewalRewardRate at hcross ⊢
+  have hden_current :
+      0 < 1 + arrivalRate * singleStateTripTime μ σ := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  have hden_added :
+      0 < 1 + arrivalRate *
+        (singleStateTripTime μ σ + singleStateTripTime μ added) := by
+    nlinarith [mul_nonneg (le_of_lt hlambda)
+      (add_nonneg htime_nonneg hadded_time_nonneg)]
+  have hcross' :
+      arrivalRate * singleStateTripPayment μ w σ *
+          singleStateTripTime μ added ≤
+        singleStateTripPayment μ w added *
+          (1 + arrivalRate * singleStateTripTime μ σ) := by
+    have hcross_unfolded :
+        (arrivalRate * singleStateTripPayment μ w σ /
+            (1 + arrivalRate * singleStateTripTime μ σ)) *
+            singleStateTripTime μ added ≤
+          singleStateTripPayment μ w added := by
+      simpa [singleStateRenewalReward] using hcross
+    have hmul := mul_le_mul_of_nonneg_right hcross_unfolded
+      (le_of_lt hden_current)
+    field_simp [ne_of_gt hden_current] at hmul
+    nlinarith
+  rw [div_le_div_iff₀ hden_current hden_added]
+  nlinarith
+
+/--
+Theorem 1 marginal remove step without a positive-time side condition.  It is
+the zero-time-compatible form needed when a threshold cutoff is moved to the
+current reward rate in Lemma 4.
+-/
+theorem paper_theorem1_remove_set_if_pointwise_rate_below_current
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ removed : TripPolicy)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hw_integrable_removed : IntegrableOn w removed μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_removed :
+      IntegrableOn (fun τ : TripLength => τ) removed μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ singleStateTripTime μ σ)
+    (htime_remaining_nonneg :
+      0 ≤ singleStateTripTime μ σ - singleStateTripTime μ removed)
+    (hpointwise :
+      ∀ τ ∈ removed, w τ ≤ singleStateRenewalReward μ arrivalRate w σ * τ) :
+    singleStateRenewalReward μ arrivalRate w σ ≤
+      singleStateRenewalReward μ arrivalRate w (σ \ removed) := by
+  have hcross :
+      singleStateTripPayment μ w removed ≤
+        singleStateRenewalReward μ arrivalRate w σ *
+          singleStateTripTime μ removed := by
+    unfold singleStateRenewalReward singleStateTripTime singleStateTripPayment
+    have hmono :
+        ∫ τ in removed, w τ ∂μ ≤
+          ∫ τ in removed,
+            (arrivalRate * singleStateTripPayment μ w σ /
+                (1 + arrivalRate * singleStateTripTime μ σ)) * τ ∂μ := by
+      exact setIntegral_mono_on hw_integrable_removed
+        (htime_integrable_removed.const_mul
+          (arrivalRate * singleStateTripPayment μ w σ /
+            (1 + arrivalRate * singleStateTripTime μ σ)))
+        hremoved_measurable hpointwise
+    rw [integral_const_mul] at hmono
+    simpa [mul_assoc] using hmono
+  change
+    renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w σ) (singleStateTripTime μ σ) ≤
+      renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w (σ \ removed))
+        (singleStateTripTime μ (σ \ removed))
+  rw [singleStateTripPayment_diff μ w σ removed hremoved_subset
+      hremoved_measurable hw_integrable_σ,
+    singleStateTripTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  unfold renewalRewardRate at hcross ⊢
+  have hden_current :
+      0 < 1 + arrivalRate * singleStateTripTime μ σ := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  have hden_remaining :
+      0 < 1 + arrivalRate *
+        (singleStateTripTime μ σ - singleStateTripTime μ removed) := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_remaining_nonneg]
+  have hcross' :
+      singleStateTripPayment μ w removed *
+          (1 + arrivalRate * singleStateTripTime μ σ) ≤
+        arrivalRate * singleStateTripPayment μ w σ *
+          singleStateTripTime μ removed := by
+    have hcross_unfolded :
+        singleStateTripPayment μ w removed ≤
+          (arrivalRate * singleStateTripPayment μ w σ /
+              (1 + arrivalRate * singleStateTripTime μ σ)) *
+            singleStateTripTime μ removed := by
+      simpa [singleStateRenewalReward] using hcross
+    have hmul := mul_le_mul_of_nonneg_right hcross_unfolded
+      (le_of_lt hden_current)
+    field_simp [ne_of_gt hden_current] at hmul
+    nlinarith
+  rw [div_le_div_iff₀ hden_current hden_remaining]
+  nlinarith
+
+/--
 Theorem 1 pointwise add step: adding a disjoint measurable positive-time set
 whose every trip pays at least the current renewal-reward rate per unit time
 cannot reduce reward.
@@ -2689,6 +2843,183 @@ theorem paper_theorem1_single_state_threshold_best_response_of_certificate
       thresholdRatePolicy w c σ ∧ singleStateOptimal R σ := by
   exact ⟨C.threshold, C.threshold_nonneg, C.policy, C.threshold_shape, C.optimal⟩
 
+/--
+Lemma 4, first source step: if a complete-threshold policy is optimal, then
+the complete-threshold policy whose cutoff is the realized reward rate is also
+optimal and has reward exactly equal to its cutoff.
+
+This is the formal version of the paper's argument comparing an optimal
+threshold cutoff `c` with `c* = R(σ*)`: if `c* > c`, remove trips with rates
+between `c` and `c*`; if `c* < c`, add trips with rates between `c*` and `c`.
+The zero-time cases are handled by the weak marginal add/remove lemmas above.
+-/
+theorem paper_lemma4_reward_cutoff_complete_threshold_optimal
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hoptimal :
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w c)) :
+    let r :=
+      singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c)
+    singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w r) = r ∧
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w r) := by
+  classical
+  let R : SingleStateReward := singleStateRenewalReward μ arrivalRate w
+  let σc : TripPolicy := completeThresholdPolicy w c
+  let r : ℝ := R σc
+  have hσc_subset : σc ⊆ acceptAllPolicy :=
+    completeThresholdPolicy_subset_acceptAll w c
+  have hσr_subset : completeThresholdPolicy w r ⊆ acceptAllPolicy :=
+    completeThresholdPolicy_subset_acceptAll w r
+  have hσc_measurable : MeasurableSet σc :=
+    measurableSet_completeThresholdPolicy w c hrate_measurable
+  have hσr_measurable : MeasurableSet (completeThresholdPolicy w r) :=
+    measurableSet_completeThresholdPolicy w r hrate_measurable
+  have hw_integrable_σc : IntegrableOn w σc μ :=
+    hw_integrable_acceptAll.mono_set hσc_subset
+  have hw_integrable_σr :
+      IntegrableOn w (completeThresholdPolicy w r) μ :=
+    hw_integrable_acceptAll.mono_set hσr_subset
+  have htime_integrable_σc :
+      IntegrableOn (fun τ : TripLength => τ) σc μ :=
+    htime_integrable_acceptAll.mono_set hσc_subset
+  have htime_integrable_σr :
+      IntegrableOn (fun τ : TripLength => τ)
+        (completeThresholdPolicy w r) μ :=
+    htime_integrable_acceptAll.mono_set hσr_subset
+  have hσc_time_nonneg : 0 ≤ singleStateTripTime μ σc :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ σc hσc_measurable hσc_subset
+  have hσr_time_nonneg :
+      0 ≤ singleStateTripTime μ (completeThresholdPolicy w r) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (completeThresholdPolicy w r) hσr_measurable hσr_subset
+  have hσr_le_σc :
+      R (completeThresholdPolicy w r) ≤ R σc :=
+    hoptimal (completeThresholdPolicy w r)
+  have hσc_le_σr :
+      R σc ≤ R (completeThresholdPolicy w r) := by
+    rcases lt_trichotomy c r with hcr | hcr | hrc
+    · -- The reward cutoff is higher, so remove the newly sub-threshold trips.
+      have hsubset : completeThresholdPolicy w r ⊆ σc := by
+        intro τ hτ
+        exact ⟨hτ.1, (le_of_lt hcr).trans hτ.2⟩
+      let removed : TripPolicy := σc \ completeThresholdPolicy w r
+      have hremoved_subset : removed ⊆ σc := by
+        intro τ hτ
+        exact hτ.1
+      have hremoved_measurable : MeasurableSet removed :=
+        hσc_measurable.diff hσr_measurable
+      have hremoved_subset_acceptAll : removed ⊆ acceptAllPolicy := by
+        intro τ hτ
+        exact hσc_subset hτ.1
+      have hw_integrable_removed : IntegrableOn w removed μ :=
+        hw_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+      have htime_integrable_removed :
+          IntegrableOn (fun τ : TripLength => τ) removed μ :=
+        htime_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+      have hremove_eq :
+          σc \ removed = completeThresholdPolicy w r := by
+        apply Set.Subset.antisymm
+        · intro τ hτ
+          by_contra hnot
+          exact hτ.2 ⟨hτ.1, hnot⟩
+        · intro τ hτ
+          exact ⟨hsubset hτ, by
+            intro hremoved
+            exact hremoved.2 hτ⟩
+      have hremaining_nonneg :
+          0 ≤ singleStateTripTime μ σc -
+            singleStateTripTime μ removed := by
+        rw [← singleStateTripTime_diff μ σc removed hremoved_subset
+          hremoved_measurable htime_integrable_σc, hremove_eq]
+        exact hσr_time_nonneg
+      have hpointwise :
+          ∀ τ ∈ removed, w τ ≤ R σc * τ := by
+        intro τ hτ
+        have hτ_pos : 0 < τ := hremoved_subset_acceptAll hτ
+        have hnot : ¬ r ≤ w τ / τ := by
+          intro hr_le
+          exact hτ.2 ⟨hτ_pos, hr_le⟩
+        have hlt : w τ / τ < r := lt_of_not_ge hnot
+        have hmul := mul_lt_mul_of_pos_right hlt hτ_pos
+        have hτ_ne : τ ≠ 0 := ne_of_gt hτ_pos
+        field_simp [hτ_ne] at hmul
+        change w τ ≤ r * τ
+        linarith
+      simpa [R, σc, removed, hremove_eq] using
+        paper_theorem1_remove_set_if_pointwise_rate_below_current
+          μ arrivalRate w σc removed hremoved_subset hremoved_measurable
+          hw_integrable_σc hw_integrable_removed htime_integrable_σc
+          htime_integrable_removed hlambda hσc_time_nonneg
+          hremaining_nonneg hpointwise
+    · -- Same cutoff.
+      simpa [σc, hcr]
+    · -- The reward cutoff is lower, so add the newly above-reward trips.
+      have hsubset : σc ⊆ completeThresholdPolicy w r := by
+        intro τ hτ
+        exact ⟨hτ.1, (le_of_lt hrc).trans hτ.2⟩
+      let added : TripPolicy := completeThresholdPolicy w r \ σc
+      have hadded_measurable : MeasurableSet added :=
+        hσr_measurable.diff hσc_measurable
+      have hadded_subset_acceptAll : added ⊆ acceptAllPolicy := by
+        intro τ hτ
+        exact hσr_subset hτ.1
+      have hw_integrable_added : IntegrableOn w added μ :=
+        hw_integrable_acceptAll.mono_set hadded_subset_acceptAll
+      have htime_integrable_added :
+          IntegrableOn (fun τ : TripLength => τ) added μ :=
+        htime_integrable_acceptAll.mono_set hadded_subset_acceptAll
+      have hadded_time_nonneg : 0 ≤ singleStateTripTime μ added :=
+        singleStateTripTime_nonneg_of_subset_acceptAll μ added
+          hadded_measurable hadded_subset_acceptAll
+      have hdisjoint : Disjoint σc added := by
+        rw [Set.disjoint_left]
+        intro τ hτ hadded
+        exact hadded.2 hτ
+      have hadd_eq : σc ∪ added = completeThresholdPolicy w r := by
+        apply Set.Subset.antisymm
+        · intro τ hτ
+          rcases hτ with hτ | hτ
+          · exact hsubset hτ
+          · exact hτ.1
+        · intro τ hτ
+          by_cases hτc : τ ∈ σc
+          · exact Or.inl hτc
+          · exact Or.inr ⟨hτ, hτc⟩
+      have hpointwise :
+          ∀ τ ∈ added, R σc * τ ≤ w τ := by
+        intro τ hτ
+        have hτ_pos : 0 < τ := hadded_subset_acceptAll hτ
+        have hle : r ≤ w τ / τ := hτ.1.2
+        have hmul := mul_le_mul_of_nonneg_right hle (le_of_lt hτ_pos)
+        have hτ_ne : τ ≠ 0 := ne_of_gt hτ_pos
+        field_simp [hτ_ne] at hmul
+        change r * τ ≤ w τ
+        linarith
+      simpa [R, σc, added, hadd_eq] using
+        paper_theorem1_add_set_if_pointwise_rate_above_current
+          μ arrivalRate w σc added hdisjoint hadded_measurable
+          hw_integrable_σc hw_integrable_added htime_integrable_σc
+          htime_integrable_added hlambda hσc_time_nonneg
+          hadded_time_nonneg hpointwise
+  have hreward_eq : R (completeThresholdPolicy w r) = r := by
+    exact le_antisymm hσr_le_σc hσc_le_σr
+  have hoptimal_r :
+      singleStateOptimal R (completeThresholdPolicy w r) := by
+    intro ρ
+    exact (hoptimal ρ).trans (by simpa [r] using hreward_eq.symm.le)
+  simpa [R, σc, r] using And.intro hreward_eq hoptimal_r
+
 /-- Two threshold policies agree away from the boundary set `w(τ)/τ = c`. -/
 def agreesAwayFromThresholdBoundary
     (w : PricingFunction) (c : ℝ) (σ ρ : TripPolicy) : Prop :=
@@ -2720,6 +3051,104 @@ theorem paper_lemma4_single_state_unique_threshold_of_certificate
           agreesAwayFromThresholdBoundary w c σ ρ := by
   exact ⟨C.threshold, C.threshold_nonneg, C.policy, C.threshold_shape,
     C.reward_eq_threshold, C.optimal, C.unique_away_boundary⟩
+
+/--
+Lemma 4 constructor from the first source step.  Starting with any optimal
+complete-threshold policy, Lean moves the threshold to the policy's realized
+reward and proves both reward-threshold equality and optimality for the new
+complete-threshold policy.  The remaining source obligation is only the final
+uniqueness-away-from-boundary argument.
+-/
+noncomputable def paper_lemma4_unique_threshold_certificate_of_complete_threshold_optimal
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hthreshold_nonneg :
+      0 ≤ singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+    (hoptimal :
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w c))
+    (hunique_away_boundary :
+      ∀ ρ : TripPolicy,
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+          agreesAwayFromThresholdBoundary w
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c))
+            (completeThresholdPolicy w
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+            ρ) :
+    SingleStateUniqueThresholdCertificate
+      (singleStateRenewalReward μ arrivalRate w) w := by
+  let r :=
+    singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c)
+  have hcutoff :=
+    paper_lemma4_reward_cutoff_complete_threshold_optimal
+      μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
+      htime_integrable_acceptAll hlambda hoptimal
+  refine
+    { policy := completeThresholdPolicy w r
+      threshold := r
+      threshold_nonneg := by
+        simpa [r] using hthreshold_nonneg
+      threshold_shape := thresholdRatePolicy_completeThresholdPolicy w r
+      reward_eq_threshold := ?_
+      optimal := ?_
+      unique_away_boundary := ?_ }
+  · simpa [r] using hcutoff.1
+  · simpa [r] using hcutoff.2
+  · simpa [r] using hunique_away_boundary
+
+/--
+Lemma 4 source-facing wrapper after discharging the reward-cutoff part of the
+paper proof from a complete-threshold optimum.  Only the uniqueness-up-to-
+boundary source argument is still supplied as an explicit hypothesis.
+-/
+theorem paper_lemma4_single_state_unique_threshold_of_complete_threshold_optimal
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hthreshold_nonneg :
+      0 ≤ singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+    (hoptimal :
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w c))
+    (hunique_away_boundary :
+      ∀ ρ : TripPolicy,
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+          agreesAwayFromThresholdBoundary w
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c))
+            (completeThresholdPolicy w
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+            ρ) :
+    ∃ cstar : ℝ, 0 ≤ cstar ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w cstar σ ∧
+        singleStateRenewalReward μ arrivalRate w σ = cstar ∧
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σ ∧
+        ∀ ρ : TripPolicy,
+          singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+            agreesAwayFromThresholdBoundary w cstar σ ρ := by
+  exact
+    paper_lemma4_single_state_unique_threshold_of_certificate
+      (singleStateRenewalReward μ arrivalRate w) w
+      (paper_lemma4_unique_threshold_certificate_of_complete_threshold_optimal
+        μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda hthreshold_nonneg hoptimal
+        hunique_away_boundary)
 
 /--
 Paper Proposition 3.1 certificate: in the one-state model, affine pricing
