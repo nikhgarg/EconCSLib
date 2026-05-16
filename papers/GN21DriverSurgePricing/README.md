@@ -949,6 +949,11 @@ left/right score identities
 Lemma 5 closeout can target response shape/measurability/integrability and the
 standard nondegeneracy/denominator positivity inputs rather than assuming the
 dynamic reward is a positive affine transform of the marginal integral.
+There is also a weaker fixed-response endpoint,
+`paper_lemma5_fixed_response_feasible_policy_form_ae_of_positive_response_policy_form`,
+for scaled responses where the positive set has the desired Lemma 5 policy
+form and the positive zero set is null, but proving the stronger analytic
+`Lemma5PositiveResponseShapeData` for the scaled function would duplicate work.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

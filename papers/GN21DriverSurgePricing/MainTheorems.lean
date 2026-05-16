@@ -27191,6 +27191,187 @@ theorem Lemma5PositiveResponseShapeData.positive_zero_set_null
           (measure_union_null (measure_singleton lo) (measure_singleton hi))
 
 /--
+Minimal fixed-response shape data for Lemma 5 after the positive-response
+policy has already been identified.  This separates the set-shape and null
+boundary obligations from stronger analytic monotonicity/quasi-convexity facts.
+-/
+structure Lemma5PositiveResponsePolicyFormData
+    (response : TripLength → ℝ) (shape : Lemma5DerivativeShape) : Prop where
+  policy_form :
+    lemma5PolicyForm shape (lemma5PositiveResponsePolicy response)
+  positive_zero_set_null :
+    ∀ (μ : Measure TripLength) [NoAtoms μ],
+      μ ({τ : TripLength | 0 < τ ∧ response τ = 0}) = 0
+
+/-- The existing analytic response-shape package implies the smaller policy-form package. -/
+def Lemma5PositiveResponsePolicyFormData.of_shapeData
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape) :
+    Lemma5PositiveResponsePolicyFormData response shape where
+  policy_form := D.policyForm
+  positive_zero_set_null := by
+    intro μ hμ
+    exact D.positive_zero_set_null μ
+
+/--
+Candidate optimality for the positive-response policy identifies the current
+policy with that canonical policy up to null zero-response boundaries, using
+only the positive-response policy form and null zero-boundary facts.
+-/
+theorem Lemma5PositiveResponsePolicyFormData.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    policyAlmostEverywhereEq μ σ
+      (lemma5PositiveResponsePolicy response) := by
+  let P : TripPolicy := lemma5PositiveResponsePolicy response
+  have hPσ : μ (P \ σ) = 0 := by
+    simpa [P] using
+      lemma5_positiveResponse_omitted_mass_zero_of_candidate_le
+        μ response σ hresponse_measurable hresponse_integrable_acceptAll
+        hσ_measurable hσ_subset hcandidate
+  have hstrict_negative :
+      μ (Function.support response ∩ (σ \ P)) = 0 := by
+    simpa [P] using
+      lemma5_positiveResponse_negative_mass_zero_of_candidate_le
+        μ response σ hresponse_measurable hresponse_integrable_acceptAll
+        hσ_measurable hσ_subset hcandidate
+  have hzero_response :
+      μ ({τ : TripLength | 0 < τ ∧ response τ = 0}) = 0 :=
+    D.positive_zero_set_null μ
+  have hσP_subset :
+      σ \ P ⊆
+        Function.support response ∩ (σ \ P) ∪
+          {τ : TripLength | 0 < τ ∧ response τ = 0} := by
+    intro τ hτ
+    by_cases hresp_zero : response τ = 0
+    · exact Or.inr ⟨hσ_subset hτ.1, hresp_zero⟩
+    · exact Or.inl ⟨hresp_zero, hτ⟩
+  have hσP : μ (σ \ P) = 0 :=
+    measure_mono_null hσP_subset
+      (measure_union_null hstrict_negative hzero_response)
+  exact policyAlmostEverywhereEq_of_diff_null μ hσP hPσ
+
+/--
+Full fixed-response Lemma 5 conclusion from the smaller policy-form package:
+a candidate that is at least as good as the positive-response policy has the
+canonical policy form almost everywhere.
+-/
+theorem Lemma5PositiveResponsePolicyFormData.policyFormAlmostEverywhere_of_candidate_le
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    lemma5PolicyFormAlmostEverywhere μ shape σ := by
+  refine ⟨lemma5PositiveResponsePolicy response, D.policy_form, ?_⟩
+  exact
+    D.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate
+
+/--
+Feasible exact representative form of the smaller policy-form Lemma 5 endpoint.
+-/
+def Lemma5PositiveResponsePolicyFormData.feasiblePolicyFormAlmostEverywhere_of_candidate_le
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ where
+  policy := lemma5PositiveResponsePolicy response
+  policy_subset := lemma5PositiveResponsePolicy_subset_acceptAll response
+  policy_measurable :=
+    measurableSet_lemma5PositiveResponsePolicy response hresponse_measurable
+  policy_form := D.policy_form
+  policy_ae :=
+    D.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate
+
+/--
+Feasible optimality for the fixed marginal-response reward gives the Lemma 5
+canonical policy form a.e. with an explicit feasible measurable representative,
+using only the smaller positive-response policy-form data.
+-/
+def Lemma5PositiveResponsePolicyFormData.feasiblePolicyFormAlmostEverywhere_of_feasible_optimal
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ :=
+  D.feasiblePolicyFormAlmostEverywhere_of_candidate_le
+    μ σ hresponse_measurable hresponse_integrable_acceptAll
+    hσ_measurable hσ_subset
+    (hoptimal (lemma5PositiveResponsePolicy response)
+      (lemma5PositiveResponsePolicy_subset_acceptAll response)
+      (measurableSet_lemma5PositiveResponsePolicy response
+        hresponse_measurable))
+
+/--
+Paper-facing fixed-response Lemma 5 endpoint from positive-response
+policy-form data instead of stronger analytic response-shape data.
+-/
+def paper_lemma5_fixed_response_feasible_policy_form_ae_of_positive_response_policy_form
+    (μ : Measure TripLength) [NoAtoms μ]
+    (response : TripLength → ℝ) {shape : Lemma5DerivativeShape}
+    (σ : TripPolicy)
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ :=
+  D.feasiblePolicyFormAlmostEverywhere_of_feasible_optimal
+    μ σ hresponse_measurable hresponse_integrable_acceptAll
+    hσ_measurable hσ_subset hoptimal
+
+/--
 Candidate optimality for the positive-response policy identifies the current
 policy with that canonical policy up to null zero-response boundaries.
 -/

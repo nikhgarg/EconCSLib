@@ -242,6 +242,15 @@ For the fixed-response Lemma 5 portion, target
 `Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms`
 turns per-optimum response-shape data, response measurability/integrability,
 and fixed-state marginal optimality into the feasible AE representative forms.
+For scaled responses where only the positive-response set shape is stable, use
+`Lemma5PositiveResponsePolicyFormData` and
+`paper_lemma5_fixed_response_feasible_policy_form_ae_of_positive_response_policy_form`.
+This endpoint asks for `lemma5PolicyForm shape
+(lemma5PositiveResponsePolicy response)` plus nullity of
+`{τ | 0 < τ ∧ response τ = 0}`, then gives the same feasible a.e.
+representative conclusion.  It should speed up the measured quotient response,
+which is a positive scaling of the Lemma 6 normalized response on positive
+trip lengths.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

@@ -159,6 +159,14 @@ fixed-response variational part: for each measurable optimum and state, supply
 the response function, `Lemma5PositiveResponseShapeData`, response
 measurability/integrability, and marginal optimality.  Lean then produces the
 feasible AE representative data automatically.
+If the response is a positive scaling of a normalized paper response, use the
+weaker compiled endpoint
+`paper_lemma5_fixed_response_feasible_policy_form_ae_of_positive_response_policy_form`
+instead.  It only needs `Lemma5PositiveResponsePolicyFormData`: the canonical
+policy form of the positive-response set plus nullity of the positive zero
+set.  This avoids reproving monotonicity/quasi-convexity after a positive
+state-dependent scaling that preserves signs but may not preserve the stronger
+analytic shape predicate.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
