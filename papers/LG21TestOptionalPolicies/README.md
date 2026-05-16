@@ -103,8 +103,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_point_estimate_source`
   combine that constructor with the mixture, best-response, and affine-payoff
-  bridge.  The remaining source gap is instantiating those remaining identities
-  from the policy model.
+  bridge.  The report-required wrappers
+  `paper_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source`
+  and
+  `paper_theorem3_2_law_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source`
+  now derive the two-sided best-response field from the concrete source
+  equilibrium model.  The remaining source gap is instantiating the mixture and
+  affine-payoff identities from the policy model.
 
 ## Source Notes
 

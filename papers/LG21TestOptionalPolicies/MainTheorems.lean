@@ -5396,6 +5396,170 @@ theorem paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of
       pointLaw actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass)
 
 /--
+Theorem 3.2 report-required point-estimate PMF endpoint with the two-sided
+best-response condition derived from the paper's concrete source equilibrium
+model.  The remaining assumptions are the source mixture identities, the
+support fact for currently acting types, and the affine payoff identities.
+-/
+theorem paper_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source
+    {Base Test Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface ℝ Base Test ℝ}
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (testBenefitProb : S.Equilibrium → ℝ → ℝ)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredSourceEquilibriumData
+            (takeDecision e) (reportDecision e) (testBenefitProb e)
+            (estimationConsistent e)))
+    (referenceTest : S.Equilibrium → Base → Test)
+    (lambda : S.Equilibrium → Base → ℝ)
+    (hlambda : ∀ e base, 0 < lambda e base)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF ℝ)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixture :
+      ∀ e base estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda e base * (reporterPMF e base estimate).toReal +
+            (1 - lambda e base) * (noReporterPMF e base estimate).toReal)
+    (hLawEq_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          reporterLaw e base = noReporterLaw e base)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        testBenefitProb e actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base (actor : ℝ),
+        reporterLaw e base = noReporterLaw e base →
+          (1 / 2 : ℝ) =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_point_estimate_source
+    (S := S) (Law := Law) (Actor := Actor)
+    (fun e base actor => takeDecision e actor base = true)
+    (fun e _base actor => testBenefitProb e actor)
+    (fun _e _base _actor => (1 / 2 : ℝ))
+    (fun e base =>
+      lg21NoProfitableBinaryChoiceDeviation_of_report_required_source_model
+        (hEq e) base (referenceTest e base))
+    lambda hlambda reporterPMF noReporterPMF reporterLaw noReporterLaw
+    hNoAccess hAccessMixture hLawEq_of_pmfEq actorLaw actorValue actorOfTest
+    hchooses_support baseTerm signalWeight denom hchoosePayoff
+    hotherPayoff_of_law_eq hweight hdenom hbasePoint hfullPoint hmass
+
+/--
+Theorem 3.2 report-required point-estimate abstract-law endpoint with the
+two-sided best-response condition derived from the paper's concrete source
+equilibrium model.
+-/
+theorem paper_theorem3_2_law_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source
+    {Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface ℝ Base Test Law}
+    (pointLaw : ℝ → Law)
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (testBenefitProb : S.Equilibrium → ℝ → ℝ)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredSourceEquilibriumData
+            (takeDecision e) (reportDecision e) (testBenefitProb e)
+            (estimationConsistent e)))
+    (referenceTest : S.Equilibrium → Base → Test)
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (lambda : S.Equilibrium → Base → ℝ)
+    (hlambda : ∀ e base, 0 < lambda e base)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base = noReporterLaw e base)
+    (hAccessMixture :
+      ∀ e base outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda e base * mass (reporterLaw e base) outcome +
+            (1 - lambda e base) * mass (noReporterLaw e base) outcome)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        testBenefitProb e actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base (actor : ℝ),
+        reporterLaw e base = noReporterLaw e base →
+          (1 / 2 : ℝ) =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyLaw e base =
+          pointLaw (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureLaw e base test =
+          pointLaw (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceLawObservablyFair S → lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_point_estimate_source
+    (S := S) (Outcome := Outcome) (Actor := Actor)
+    pointLaw
+    (fun e base actor => takeDecision e actor base = true)
+    (fun e _base actor => testBenefitProb e actor)
+    (fun _e _base _actor => (1 / 2 : ℝ))
+    (fun e base =>
+      lg21NoProfitableBinaryChoiceDeviation_of_report_required_source_model
+        (hEq e) base (referenceTest e base))
+    mass law_ext lambda hlambda reporterLaw noReporterLaw hNoAccess
+    hAccessMixture actorLaw actorValue actorOfTest hchooses_support baseTerm
+    signalWeight denom hchoosePayoff hotherPayoff_of_law_eq hweight hdenom
+    hbasePoint hfullPoint hmass
+
+/--
 Source-shaped witness for the remaining Theorem 3.2 PMF route.  It packages
 the positive-share mixture identities, two-sided best response, affine payoff
 link, and the final source-model fact that any non-test-blank witness produces
