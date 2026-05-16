@@ -17729,6 +17729,85 @@ theorem acceptsAllTrips_of_positive_optimizer_replacement_certificate_of_optimal
   exact lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
     Rhat σ0 .positive C hoptimal
 
+/--
+Fixed-response Lemma 5 replacement certificate.  Once the positive-response
+policy has the required shape, and every non-shaped current policy either
+omits positive-response mass or accepts genuinely negative-response mass, the
+linearized marginal reward satisfies the full weak/strict replacement
+interface used by later Theorem 4 code.
+-/
+def lemma5MarginalOptimizerReplacementCertificate_positiveResponse
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hpositive_form :
+      lemma5PolicyForm shape (lemma5PositiveResponsePolicy response))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape σ0 →
+        0 < μ (lemma5PositiveResponsePolicy response \ σ0) ∨
+        0 <
+          μ (Function.support response ∩
+            (σ0 \ lemma5PositiveResponsePolicy response))) :
+    Lemma5OptimizerReplacementCertificate
+      (lemma5MarginalSetReward μ response) σ0 shape where
+  policy := lemma5PositiveResponsePolicy response
+  policy_form := hpositive_form
+  reward_ge :=
+    lemma5MarginalSetReward_le_positiveResponsePolicy
+      μ response σ0 hresponse_measurable hresponse_integrable_acceptAll
+      hσ0_measurable hσ0_subset
+  strict_unless_initial_form := by
+    intro hnot_form
+    rcases hstrict_mass hnot_form with homitted | hnegative
+    · exact
+        lemma5MarginalSetReward_lt_positiveResponsePolicy_of_omits_positive_mass
+          μ response σ0 hresponse_measurable hresponse_integrable_acceptAll
+          hσ0_measurable hσ0_subset homitted
+    · exact
+        lemma5MarginalSetReward_lt_positiveResponsePolicy_of_accepts_negative_mass
+          μ response σ0 hresponse_measurable hresponse_integrable_acceptAll
+          hσ0_measurable hσ0_subset hnegative
+
+/--
+Paper-facing fixed-response Lemma 5 endpoint: the positive-response policy is
+the optimizer replacement for the linearized marginal reward under the proved
+mass-strictness alternatives.
+-/
+theorem paper_lemma5_marginal_optimizer_replacement_of_positiveResponse
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hpositive_form :
+      lemma5PolicyForm shape (lemma5PositiveResponsePolicy response))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape σ0 →
+        0 < μ (lemma5PositiveResponsePolicy response \ σ0) ∨
+        0 <
+          μ (Function.support response ∩
+            (σ0 \ lemma5PositiveResponsePolicy response))) :
+    ∃ σstar : TripPolicy,
+      lemma5PolicyForm shape σstar ∧
+        lemma5MarginalSetReward μ response σ0 ≤
+          lemma5MarginalSetReward μ response σstar ∧
+        (¬ lemma5PolicyForm shape σ0 →
+          lemma5MarginalSetReward μ response σ0 <
+            lemma5MarginalSetReward μ response σstar) := by
+  exact
+    paper_lemma5_optimizer_replacement_of_certificate
+      (lemma5MarginalSetReward μ response) σ0 shape
+      (lemma5MarginalOptimizerReplacementCertificate_positiveResponse
+        μ response σ0 shape hresponse_measurable
+        hresponse_integrable_acceptAll hσ0_measurable hσ0_subset
+        hpositive_form hstrict_mass)
+
 /-- Lemma 9 lower-bound numerator for the structured-price ratio. -/
 def lemma9StructuredLowerNumerator
     (T1 Q1 Tbar2 Qbar2 switch21 : ℝ) : ℝ :=
