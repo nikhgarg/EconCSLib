@@ -404,11 +404,13 @@ cache is kept as `source.txt` for named-statement audits.
   `_of_nonempty_equilibrium` variants now match the optional-reporting cleanup:
   nonempty equilibrium/base spaces are enough to choose the taker-share
   contradiction witness internally.  The compact certificate-level event-share
-  endpoints now also have nonempty-equilibrium variants, so future final
-  statements can route through
+  endpoints now also have nonempty-equilibrium implication and no-relevance
+  variants, so future final statements can route through
   `LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate` and
   `LG21ReportRequiredUpperTailSourceEquilibriumCertificate` without carrying an
-  explicit selected equilibrium/base pair.
+  explicit selected equilibrium/base pair while still stating Theorem 3.2 as
+  fairness implies test-blankness or as absence of any concrete base/test
+  relevance witness.
 
 ## Source Notes
 

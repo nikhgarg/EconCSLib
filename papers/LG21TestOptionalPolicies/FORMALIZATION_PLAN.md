@@ -586,8 +586,10 @@ Last updated: 2026-05-16
    report-required unit-centered route now has the same nonempty-equilibrium
    cleanup.  The compact certificate-level event-share source-equilibrium
    endpoints also now choose the equilibrium/base contradiction witness
-   internally, reducing the final source-facing route to certificate,
-   positive-share, mixture-definition, and payoff-normalization data.
+   internally and expose implication/no-relevance wrappers, reducing the final
+   source-facing route to certificate, positive-share, mixture-definition, and
+   payoff-normalization data while preserving Theorem 3.2's exact conclusion
+   shape.
    This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
