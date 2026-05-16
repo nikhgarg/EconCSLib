@@ -53,6 +53,10 @@ endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
 endpoint_path_lt_of_hasDerivAt_pos_on_Icc
 endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
 endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+lemma5_strictlyIncreasing_endpoint_sign_dichotomy
+lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
+lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
+lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
 measure_congr_policy_ae
 singleStateTripMass_congr_policy_ae
 singleStateTripTime_congr_policy_ae
@@ -130,6 +134,14 @@ ordering between the two endpoint policies.  This is the source Step 2 move
 needed after choosing the next collision or boundary; future work should
 instantiate these lemmas with the concrete endpoint path instead of returning
 to infinitesimal-only wrappers.
+
+The paper's Step 2 sign choices are also formalized for the monotone and quasi
+cases.  The `lemma5_strictlyIncreasing_*` and `lemma5_strictlyDecreasing_*`
+lemmas prove the upper-vs-lower endpoint dichotomies.  The quasi-convex lemma
+shows that nonpositive outer endpoint responses force both middle endpoints to
+move in reward-improving directions, and the quasi-concave lemma shows that
+nonnegative lower endpoint responses force the gap-closing upper endpoint to
+have positive response.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical

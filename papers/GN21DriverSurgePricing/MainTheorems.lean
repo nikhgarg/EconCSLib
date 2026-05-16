@@ -109,6 +109,12 @@ the continuous CTMC source theorems.
 - `paper_lemma5_strictQuasiConvex_response_lt_of_between`,
   `paper_lemma5_strictQuasiConcave_response_lt_between`: source-facing
   between-endpoint shape facts used in Lemma 5 interval arguments.
+- `lemma5_strictlyIncreasing_endpoint_sign_dichotomy`,
+  `lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy`,
+  `lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos`, and
+  `lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg`: source
+  Step 2 sign implications that choose improving endpoint directions in the
+  monotone and quasi cases.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
@@ -18337,6 +18343,114 @@ theorem paper_lemma5_strictQuasiConcave_response_lt_between
   exact
     EconCSLib.StrictQuasiConcaveOnPositive.lt_between
       (f := response) hqc hx hxz hzy
+
+/--
+Lemma 5 Step 2, strictly increasing case: for a positive interval endpoint
+pair `lower < upper`, either expanding the upper endpoint has positive
+response or shrinking from the lower endpoint has positive lower-endpoint
+response `-response lower`.
+-/
+theorem lemma5_strictlyIncreasing_endpoint_sign_dichotomy
+    (response : TripLength → ℝ)
+    (hmono : StrictMonoOn response (Set.Ioi 0))
+    {lower upper : TripLength}
+    (hlower_pos : 0 < lower)
+    (hlower_upper : lower < upper) :
+    0 < response upper ∨ 0 < -response lower := by
+  by_cases hupper_pos : 0 < response upper
+  · exact Or.inl hupper_pos
+  · right
+    have hupper_nonpos : response upper ≤ 0 := le_of_not_gt hupper_pos
+    have hupper_pos_length : 0 < upper := lt_trans hlower_pos hlower_upper
+    have hresp_lt : response lower < response upper :=
+      hmono hlower_pos hupper_pos_length hlower_upper
+    linarith
+
+/--
+Lemma 5 Step 2, strictly decreasing case: across a positive gap
+`upper < nextLower`, either expanding the preceding upper endpoint has positive
+response or shrinking the next interval from its lower endpoint has positive
+lower-endpoint response `-response nextLower`.
+-/
+theorem lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
+    (response : TripLength → ℝ)
+    (hanti : StrictAntiOn response (Set.Ioi 0))
+    {upper nextLower : TripLength}
+    (hupper_pos : 0 < upper)
+    (hupper_next : upper < nextLower) :
+    0 < response upper ∨ 0 < -response nextLower := by
+  by_cases hresp_upper_pos : 0 < response upper
+  · exact Or.inl hresp_upper_pos
+  · right
+    have hresp_upper_nonpos : response upper ≤ 0 :=
+      le_of_not_gt hresp_upper_pos
+    have hnext_pos : 0 < nextLower := lt_trans hupper_pos hupper_next
+    have hresp_lt : response nextLower < response upper :=
+      hanti hupper_pos hnext_pos hupper_next
+    linarith
+
+/--
+Lemma 5 Step 2, strictly quasi-convex case: if the two outer endpoint
+responses are nonpositive, then both endpoints of the middle accepted interval
+have negative response.  Equivalently, moving the middle lower endpoint right
+and the middle upper endpoint left are both reward-improving directions.
+-/
+theorem lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConvexOnPositive response)
+    {leftUpper middleLower middleUpper rightLower : TripLength}
+    (hleft_pos : 0 < leftUpper)
+    (hleft_middleLower : leftUpper < middleLower)
+    (hmiddleLower_middleUpper : middleLower < middleUpper)
+    (hmiddleUpper_rightLower : middleUpper < rightLower)
+    (hleft_nonpos : response leftUpper ≤ 0)
+    (hright_nonpos : response rightLower ≤ 0) :
+    0 < -response middleLower ∧ response middleUpper < 0 := by
+  have hmiddleLower_right : middleLower < rightLower :=
+    lt_trans hmiddleLower_middleUpper hmiddleUpper_rightLower
+  have hmax_nonpos :
+      max (response leftUpper) (response rightLower) ≤ 0 :=
+    max_le hleft_nonpos hright_nonpos
+  have hmiddleLower_lt :
+      response middleLower <
+        max (response leftUpper) (response rightLower) :=
+    paper_lemma5_strictQuasiConvex_response_lt_of_between
+      response hqc hleft_pos hleft_middleLower hmiddleLower_right
+  have hmiddleUpper_lt :
+      response middleUpper <
+        max (response leftUpper) (response rightLower) :=
+    paper_lemma5_strictQuasiConvex_response_lt_of_between
+      response hqc hleft_pos
+      (lt_trans hleft_middleLower hmiddleLower_middleUpper)
+      hmiddleUpper_rightLower
+  constructor <;> linarith
+
+/--
+Lemma 5 Step 2, strictly quasi-concave case: if the lower-endpoint responses
+on two adjacent intervals are nonnegative, then the upper endpoint before the
+gap has positive response, so expanding that interval toward the gap is an
+improving direction.
+-/
+theorem lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConcaveOnPositive response)
+    {leftLower leftUpper rightLower : TripLength}
+    (hleftLower_pos : 0 < leftLower)
+    (hleftLower_leftUpper : leftLower < leftUpper)
+    (hleftUpper_rightLower : leftUpper < rightLower)
+    (hleft_nonneg : 0 ≤ response leftLower)
+    (hright_nonneg : 0 ≤ response rightLower) :
+    0 < response leftUpper := by
+  have hmin_nonneg :
+      0 ≤ min (response leftLower) (response rightLower) :=
+    le_min hleft_nonneg hright_nonneg
+  have hmin_lt :
+      min (response leftLower) (response rightLower) <
+        response leftUpper :=
+    paper_lemma5_strictQuasiConcave_response_lt_between
+      response hqc hleftLower_pos hleftLower_leftUpper
+      hleftUpper_rightLower
+  linarith
 
 /--
 Policy that accepts exactly the positive trip lengths whose marginal response

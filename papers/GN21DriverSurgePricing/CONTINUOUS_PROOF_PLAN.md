@@ -128,16 +128,21 @@ endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
 endpoint_path_lt_of_hasDerivAt_pos_on_Icc
 endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
 endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+lemma5_strictlyIncreasing_endpoint_sign_dichotomy
+lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
+lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
+lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
 ```
 
 These lemmas prove that derivative sign on the whole interval between two
 endpoint positions gives the corresponding weak or strict reward ordering
-after moving the endpoint all the way to the next collision or boundary.  The
-remaining nonlinear work is therefore not calculus; it is selecting the
-concrete endpoint path for each noncanonical generalized interval/ray seed,
-proving the source derivative-sign hypothesis holds along that path, and
-showing the resulting collision/canonical-boundary policy lowers finite
-complexity.
+after moving the endpoint all the way to the next collision or boundary, and
+they prove the paper's monotone/quasi sign choices used to decide which
+endpoint should move.  The remaining nonlinear work is therefore not calculus
+or source sign algebra; it is selecting the concrete endpoint path for each
+noncanonical generalized interval/ray seed, proving the source derivative-sign
+hypothesis holds along that path, and showing the resulting
+collision/canonical-boundary policy lowers finite complexity.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
