@@ -4809,6 +4809,238 @@ theorem paper_theorem3_2_law_observable_fair_positive_reporting_below_mean_actor
       hLawEq
 
 /--
+Direct Theorem 3.2 contradiction from one below-mean acting score/skill.  This
+is the source proof's profitable-deviation branch without the finite
+positive-mass support wrapper: latent fairness is first reduced to observable
+fairness by the paper's shared-mixture identities, observable fairness forces
+`D1 = D0`, and a currently acting value below the resampling mean contradicts
+two-sided best response.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor
+    {Skill Base Test Estimate Law : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hLawEq_of_pmfEq :
+      reporterPMF = noReporterPMF → reporterLaw = noReporterLaw)
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hchosen : chooses actor)
+    (hchoosePayoff :
+      choosePayoff actor =
+        (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      reporterLaw = noReporterLaw →
+        otherPayoff actor =
+          (baseTerm + signalWeight * mean) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom)
+    (hactor : actor < mean) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  intro hfair
+  have hobservable : lg21SourceObservablyFair S := by
+    cases hfair with
+    | inl hlatent =>
+        exact
+          lg21_sourceObservablyFair_of_latentSkillFair_of_mixture
+            skillGivenBase hObsAccess hObsNoAccess hlatent
+    | inr hobs => exact hobs
+  exact
+    (paper_theorem3_2_observable_fair_positive_reporting_below_mean_actor_unstable
+      hobservable e base hlambda reporterPMF noReporterPMF reporterLaw
+      noReporterLaw hNoAccess hAccessMixture hLawEq_of_pmfEq hchosen
+      hchoosePayoff hotherPayoff_of_law_eq hweight hdenom hactor) hbest
+
+/--
+Direct abstract-law Theorem 3.2 contradiction from one below-mean acting
+score/skill.  The law surface version takes the latent-to-observable
+implication as an explicit assumption because the arbitrary law interface does
+not encode a canonical skill-mixture operator.
+-/
+theorem paper_theorem3_2_not_law_latent_or_observable_fair_of_observable_implication_and_below_mean_actor
+    {Skill Base Test Outcome Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome)
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hchosen : chooses actor)
+    (hchoosePayoff :
+      choosePayoff actor =
+        (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      reporterLaw = noReporterLaw →
+        otherPayoff actor =
+          (baseTerm + signalWeight * mean) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom)
+    (hactor : actor < mean) :
+    ¬ (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) := by
+  intro hfair
+  have hobservable : lg21SourceLawObservablyFair S := by
+    cases hfair with
+    | inl hlatent => exact hlatent_to_observable hlatent
+    | inr hobs => exact hobs
+  exact
+    (paper_theorem3_2_law_observable_fair_positive_reporting_below_mean_actor_unstable
+      mass law_ext hobservable e base hlambda reporterLaw noReporterLaw
+      hNoAccess hAccessMixture hchosen hchoosePayoff
+      hotherPayoff_of_law_eq hweight hdenom hactor) hbest
+
+/--
+Optional-reporting source-model specialization of the direct below-mean
+Theorem 3.2 branch.  The concrete Definition 1 source equilibrium supplies the
+two-sided report/no-report best-response condition, so the only source-specific
+instability witness is a reported score below the no-report/resampling mean.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_below_mean_actor
+    {Skill Base Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → Skill → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceSkill : S.Equilibrium → Base → Skill)
+    (baseTerm signalWeight denom actorMean : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base + signalWeight e base * actorMean e base) /
+                denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (actor : ℝ)
+    (hchosen : reportDecision e base actor = true)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base)
+    (hactor : actor < actorMean e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor
+    skillGivenBase hObsAccess hObsNoAccess
+    (lg21NoProfitableBinaryChoiceDeviation_of_base_optional_reporting_source_model
+      (hEq e) (referenceSkill e base) base)
+    e base hlambda reporterPMF noReporterPMF reporterPMF noReporterPMF
+    hNoAccess hAccessMixture (fun hPMF => hPMF) hchosen rfl
+    (fun _hLawEq => rfl) hweight hdenom hactor
+
+/--
+Report-required source-model specialization of the direct below-mean
+Theorem 3.2 branch.  Observable fairness identifies the taker and no-taker
+laws; the supplied outside-payoff equality is the paper's resampling-mean
+payoff identity for the no-take action.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_below_mean_actor
+    {Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF ℝ)
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceTest : S.Equilibrium → Base → Test)
+    (baseTerm signalWeight denom actorMean : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (houtsidePayoff_of_pmfEq :
+      reporterPMF = noReporterPMF →
+        (1 / 2 : ℝ) =
+          (baseTerm e base + signalWeight e base * actorMean e base) /
+            denom e base)
+    (actor : ℝ)
+    (hchosen : takeDecision e actor base = true)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base)
+    (hactor : actor < actorMean e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor
+    skillGivenBase hObsAccess hObsNoAccess
+    (lg21NoProfitableBinaryChoiceDeviation_of_base_report_required_source_model
+      (hEq e) base (referenceTest e base))
+    e base hlambda reporterPMF noReporterPMF reporterPMF noReporterPMF
+    hNoAccess hAccessMixture (fun hPMF => hPMF) hchosen rfl
+    (fun hPMF => houtsidePayoff_of_pmfEq hPMF) hweight hdenom hactor
+
+/--
 Theorem 3.2 finite-mean support fact: every finite acting distribution has a
 positive-mass actor whose score/skill is weakly below its mean.
 -/

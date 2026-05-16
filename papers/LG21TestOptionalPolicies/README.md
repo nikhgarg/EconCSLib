@@ -87,7 +87,19 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness`
   reduce that last witness to one positive-mass acting type whose value differs
-  from the acting-distribution mean.  The source-shaped structures
+  from the acting-distribution mean.  The direct below-mean branch
+  `paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor`
+  and its law analogue
+  `paper_theorem3_2_not_law_latent_or_observable_fair_of_observable_implication_and_below_mean_actor`
+  now expose the paper proof's profitable-deviation step without any finite
+  support or atom assumption: a source model can instead supply one currently
+  acting score/skill below the resampling mean.  The optional-reporting and
+  report-required source-model wrappers
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_below_mean_actor`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_below_mean_actor`
+  derive the two-sided best-response premise directly from the concrete
+  Definition 1 source equilibria.  The source-shaped structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
   and `paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness`

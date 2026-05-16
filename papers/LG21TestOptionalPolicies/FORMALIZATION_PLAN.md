@@ -172,7 +172,14 @@ Last updated: 2026-05-16
   `paper_theorem3_2_affine_resampling_mean_payoff_lt` and the below-mean actor
   wrappers now prove the profitable-deviation contradiction whenever the full
   policy model supplies a currently acting score/skill below the resampling
-  mean.  The finite acting-distribution lemmas
+  mean.  The direct unfairness wrappers
+  `paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor`
+  and
+  `paper_theorem3_2_not_law_latent_or_observable_fair_of_observable_implication_and_below_mean_actor`
+  expose this branch without requiring finite atoms; the optional-reporting
+  and report-required source-model wrappers derive the two-sided best-response
+  field from concrete Definition 1 equilibria.  The finite acting-distribution
+  lemmas
   `paper_theorem3_2_exists_support_actor_le_mean` and
   `paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor`
   formalize the paper's mean-existence claim, with the important strictness
