@@ -159,7 +159,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_gaussian_upper_tail_cutoff`
   now cover thresholded Gaussian acting cohorts by proving that their
-  upper-tail conditional mean is strictly above the cutoff.  The source-shaped
+  upper-tail conditional mean is strictly above the cutoff.  The witness-level
+  bridges
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_threshold_witness_gaussian_upper_tail_cutoff`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_threshold_witness_gaussian_upper_tail_cutoff`
+  connect Theorem 3.1 threshold witnesses to those continuous Gaussian
+  upper-tail branches.  The source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,

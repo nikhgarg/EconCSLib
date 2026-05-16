@@ -203,6 +203,10 @@ Last updated: 2026-05-16
   upper-tail wrappers now cover thresholded Gaussian acting cohorts directly:
   the Mills/hazard proof shows the upper-tail conditional mean at a cutoff is
   strictly above that cutoff, so the cutoff-midpoint branch applies.  The
+  witness-level upper-tail wrappers connect the Theorem 3.1 optional-reporting
+  and report-required threshold witnesses back to concrete source decisions and
+  discharge the same impossibility branch for continuous Gaussian acting
+  cohorts.  The
   finite acting-distribution
   lemmas
   `paper_theorem3_2_exists_support_actor_le_mean` and
