@@ -53,9 +53,18 @@ The reusable AE endpoint layer is now compiled as:
   theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_shape_replacement_statewise_rejected_mass_improvements_unless
   paper_theorem4_measurable_accept_all_ae_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute
 
-The remaining step is to feed this AE layer from the fixed-transfer
-by-policy-form/equality local endpoint data without reintroducing global
-nondegenerate middle-cutoff assumptions.
+The fixed-transfer local endpoint feed into this AE layer is now compiled as:
+
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate.to_shape_replacement_rejected_mass_improvements_of_shape_replacements
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_ae_local_endpoint
+
+This does not mean the paper proof is wrong.  It means the paper's notation
+compresses the bridge from current fixed-state reward/accounting data to the
+endpoint current-bounds certificate, and Lean now expands that bridge.  The
+remaining source work is to build the fixed-state local endpoint fields from
+the paper's regularity hypotheses and to supply accept-all optimality for any
+route that uses only positive-rejected-mass AE uniqueness.
 
 
 Meaning of r1_current

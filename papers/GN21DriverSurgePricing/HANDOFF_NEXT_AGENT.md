@@ -416,9 +416,21 @@ theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_o
 paper_theorem4_measurable_accept_all_ae_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute
 ```
 
-The next integration target is a fixed-transfer local endpoint adapter that
-uses positive rejected mass to derive the middle-gap `lo < hi` only on the
-strict-improvement branch.
+The fixed-transfer local endpoint adapter into this AE layer is now compiled:
+
+```lean
+Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate
+Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate.to_shape_replacement_rejected_mass_improvements_of_shape_replacements
+Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_ae_local_endpoint
+```
+
+This is the paper-proof bridge for the collapsed-gap convention: positive
+rejected mass supplies `lo < hi`; when there is no positive rejected mass, the
+AE uniqueness theorem treats the branch as already accept-all almost
+everywhere.  The next integration target is to build the fixed-state local
+endpoint fields from the paper's regularity hypotheses and, for a pure
+positive-rejected-mass route, identify the intended source of accept-all
+optimality.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:
