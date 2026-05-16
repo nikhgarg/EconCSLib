@@ -177,7 +177,14 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_affine_best_response_source_witness_upper_tail`
   build those source witnesses from the concrete reporting/taking decisions
   using the Theorem 3.1 best-response and tie-breaking constructors, discharging
-  the witness-to-decision identification premise.  The source-shaped
+  the witness-to-decision identification premise.  The threshold-actor-mean
+  endpoints
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_best_response_upper_tail_threshold_actor_mean`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_affine_best_response_upper_tail_threshold_actor_mean`
+  use the reusable uniqueness of real lower cutoffs to close the
+  upper-tail-mean identification as well, for source models whose acting mean
+  is defined from the concrete reporting/taking threshold.  The source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,

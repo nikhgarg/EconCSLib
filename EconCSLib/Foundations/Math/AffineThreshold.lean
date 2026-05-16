@@ -12,6 +12,7 @@ Reusable one-dimensional threshold algebra for positive-slope affine scores.
 - `threshold_le_affine_iff_cutoff_le`
 - `affine_le_threshold_iff_le_cutoff`
 - `affine_strictMono`
+- `lowerThresholdCutoff_unique`
 - `exists_affine_lt`
 - `exists_lt_affine`
 - `exists_affine_lt_before`
@@ -75,6 +76,17 @@ theorem affine_strictMono (intercept : ℝ) {slope : ℝ}
   intro x y hxy
   simpa [add_comm, add_left_comm, add_assoc] using
     add_lt_add_left (mul_lt_mul_of_pos_left hxy hslope) intercept
+
+/--
+A lower-threshold predicate on the real line has a unique cutoff: if two
+cutoffs generate the same weak upper ray, then the cutoffs are equal.
+-/
+theorem lowerThresholdCutoff_unique {cutoff₁ cutoff₂ : ℝ}
+    (h : ∀ x : ℝ, cutoff₁ ≤ x ↔ cutoff₂ ≤ x) :
+    cutoff₁ = cutoff₂ := by
+  apply le_antisymm
+  · exact (h cutoff₂).2 le_rfl
+  · exact (h cutoff₁).1 le_rfl
 
 /-- A positive-slope affine score eventually falls below any finite level. -/
 theorem exists_affine_lt (intercept threshold : ℝ) {slope : ℝ}

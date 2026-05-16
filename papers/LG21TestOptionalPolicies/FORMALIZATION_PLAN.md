@@ -214,6 +214,10 @@ Last updated: 2026-05-16
   best-response and tie-breaking constructors, so the decision-identification
   side is closed for that route.  The remaining continuous-route source
   obligation is the policy-specific actor-mean/upper-tail-mean identification.
+  The threshold-actor-mean endpoints close that obligation for normalized
+  source models whose acting mean is definitionally the Gaussian upper-tail
+  mean at a concrete reporting/taking threshold, using the reusable
+  `lowerThresholdCutoff_unique` lemma from `EconCSLib`.
   The
   finite acting-distribution
   lemmas
