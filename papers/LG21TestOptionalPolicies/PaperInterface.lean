@@ -7829,6 +7829,28 @@ abbrev paperBaseIndexedOneTestPosteriorLawSurface
   lg21BaseIndexedOneTestPosteriorLawSurface
     intercept slope testScale noAccessEstimate hslope htestScale
 
+/-- Theorem 3.1 optional-reporting concrete Gaussian posterior-law surface. -/
+abbrev paperBaseIndexedGaussianPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourceLawPolicySurface ℝ Base ℝ LG21EstimateLaw :=
+  lg21BaseIndexedGaussianPosteriorLawSurface
+    M theta k scoreLaw noAccessEstimate
+
+/-- Theorem 3.1 report-required concrete affine-skill posterior-law surface. -/
+abbrev paperBaseIndexedAffineSkillPosteriorLawSurface
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (skillLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourceLawPolicySurface ℝ Base ℝ LG21EstimateLaw :=
+  lg21BaseIndexedAffineSkillPosteriorLawSurface
+    intercept slope hslope skillLaw noAccessEstimate
+
 /--
 Proposition 4.2 base-indexed law endpoint: any nonempty base-indexed one-test
 posterior source-law surface is not latent-skill fair.
@@ -7946,6 +7968,63 @@ theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_
   paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_indexed_one_test_posterior_surface
     intercept slope hslope accessFraction baseOnlyEstimate skillLaw
     hC_nonneg hC_lt_one posteriorTestScale hposteriorTestScale
+
+/--
+Theorem 3.1 optional-reporting concrete Gaussian posterior-law surface
+interface.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_gaussian_posterior_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill) ∧
+        (∃ base score, ¬ W.reports base score) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+            ¬ lg21SourceLawLatentSkillFair
+              (paperBaseIndexedGaussianPosteriorLawSurface
+                M theta k scoreLaw baseOnlyEstimate) ∧
+              ¬ lg21SourceLawObservablyFair
+                (paperBaseIndexedGaussianPosteriorLawSurface
+                  M theta k scoreLaw baseOnlyEstimate) ∧
+                ¬ lg21SourceLawDemographicallyFair
+                  (paperBaseIndexedGaussianPosteriorLawSurface
+                    M theta k scoreLaw baseOnlyEstimate) :=
+  paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_gaussian_posterior_surface
+    M theta k accessFraction baseOnlyEstimate scoreLaw hC_nonneg hC_lt_one
+
+/--
+Theorem 3.1 report-required concrete affine-skill posterior-law surface
+interface.
+-/
+theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_affine_skill_posterior_surface
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∃ base skill, ¬ W.takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLawLatentSkillFair
+            (paperBaseIndexedAffineSkillPosteriorLawSurface
+              intercept slope hslope skillLaw baseOnlyEstimate) ∧
+            ¬ lg21SourceLawObservablyFair
+              (paperBaseIndexedAffineSkillPosteriorLawSurface
+                intercept slope hslope skillLaw baseOnlyEstimate) ∧
+              ¬ lg21SourceLawDemographicallyFair
+                (paperBaseIndexedAffineSkillPosteriorLawSurface
+                  intercept slope hslope skillLaw baseOnlyEstimate) :=
+  paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_affine_skill_posterior_surface
+    intercept slope hslope accessFraction baseOnlyEstimate skillLaw
+    hC_nonneg hC_lt_one
 
 /--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access

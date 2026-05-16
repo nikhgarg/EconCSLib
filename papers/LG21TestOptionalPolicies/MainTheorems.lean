@@ -12226,6 +12226,44 @@ def lg21BaseIndexedOneTestPosteriorLawSurface
         test (testScale base) (htestScale base))
 
 /--
+Concrete base-indexed posterior-law surface for the optional-reporting
+Theorem 3.1 route.  The affine posterior score map is derived from the same
+base-indexed Gaussian posterior model used to construct the reporting
+threshold.
+-/
+def lg21BaseIndexedGaussianPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourceLawPolicySurface ℝ Base ℝ LG21EstimateLaw :=
+  lg21BaseIndexedOneTestPosteriorLawSurface
+    (fun base => (M base).posteriorMean (Function.update (theta base) k 0))
+    (fun base => (M base).centeredFamily.signalWeight k)
+    (fun base => (scoreLaw base).scale)
+    noAccessEstimate
+    (fun base => (M base).centeredFamily.signalWeight_pos k)
+    (fun base => (scoreLaw base).scale_pos)
+
+/--
+Concrete base-indexed posterior-law surface for the report-required Theorem 3.1
+route when the posterior estimate is already given as a positive-slope affine
+function of latent skill and the one-test posterior scale is inherited from
+the base-indexed skill law.
+-/
+def lg21BaseIndexedAffineSkillPosteriorLawSurface
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (skillLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourceLawPolicySurface ℝ Base ℝ LG21EstimateLaw :=
+  lg21BaseIndexedOneTestPosteriorLawSurface
+    intercept slope (fun base => (skillLaw base).scale) noAccessEstimate
+    hslope (fun base => (skillLaw base).scale_pos)
+
+/--
 Proposition 4.2 base-indexed law endpoint at a selected base profile: strict
 latent-skill ordering at that base contradicts latent-skill fairness.
 -/
@@ -12403,6 +12441,75 @@ theorem paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mi
       paper_base_indexed_one_test_posterior_source_law_not_demographically_fair
         intercept slope posteriorTestScale baseOnlyEstimate
         hslope hposteriorTestScale
+
+/--
+Theorem 3.1 optional-reporting law endpoint with the concrete Gaussian
+posterior-law surface whose affine posterior map is derived from the same
+base-indexed posterior model used in the source-mixture cutoff proof.
+-/
+theorem paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_gaussian_posterior_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill) ∧
+        (∃ base score, ¬ W.reports base score) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+            ¬ lg21SourceLawLatentSkillFair
+              (lg21BaseIndexedGaussianPosteriorLawSurface
+                M theta k scoreLaw baseOnlyEstimate) ∧
+              ¬ lg21SourceLawObservablyFair
+                (lg21BaseIndexedGaussianPosteriorLawSurface
+                  M theta k scoreLaw baseOnlyEstimate) ∧
+                ¬ lg21SourceLawDemographicallyFair
+                  (lg21BaseIndexedGaussianPosteriorLawSurface
+                    M theta k scoreLaw baseOnlyEstimate) := by
+  simpa [lg21BaseIndexedGaussianPosteriorLawSurface] using
+    (paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_base_indexed_one_test_posterior_surface
+      M theta k accessFraction baseOnlyEstimate scoreLaw hC_nonneg hC_lt_one
+      (fun base => (M base).posteriorMean (Function.update (theta base) k 0))
+      (fun base => (M base).centeredFamily.signalWeight k)
+      (fun base => (scoreLaw base).scale)
+      baseOnlyEstimate
+      (fun base => (M base).centeredFamily.signalWeight_pos k)
+      (fun base => (scoreLaw base).scale_pos))
+
+/--
+Theorem 3.1 report-required law endpoint with the concrete affine-skill
+posterior-law surface whose one-test posterior scale is inherited from the
+base-indexed skill law.
+-/
+theorem paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_affine_skill_posterior_surface
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∃ base skill, ¬ W.takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLawLatentSkillFair
+            (lg21BaseIndexedAffineSkillPosteriorLawSurface
+              intercept slope hslope skillLaw baseOnlyEstimate) ∧
+            ¬ lg21SourceLawObservablyFair
+              (lg21BaseIndexedAffineSkillPosteriorLawSurface
+                intercept slope hslope skillLaw baseOnlyEstimate) ∧
+              ¬ lg21SourceLawDemographicallyFair
+                (lg21BaseIndexedAffineSkillPosteriorLawSurface
+                  intercept slope hslope skillLaw baseOnlyEstimate) := by
+  simpa [lg21BaseIndexedAffineSkillPosteriorLawSurface] using
+    (paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_indexed_one_test_posterior_surface
+      intercept slope hslope accessFraction baseOnlyEstimate skillLaw
+      hC_nonneg hC_lt_one
+      (fun base => (skillLaw base).scale)
+      (fun base => (skillLaw base).scale_pos))
 
 /--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
