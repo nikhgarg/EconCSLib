@@ -463,6 +463,7 @@ into the concrete endpoint policy data.
   positive-response dominance.
 - The Theorem 4 endpoint layer now has AE shape predicates
   `theorem4NonsurgeAEShape` and `theorem4SurgeAEShape`, plus
+  `Theorem4AllMeasurableAllowedPolicyFormsCertificate.only_ae_shapes` and
   `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_shape_statewise_rejected_mass_improvements_unless`.
   Use this route when Lemma 5 gives exact endpoint forms for the nonpositive
   branches but only an AE accept-all conclusion for the positive branch.  On a

@@ -23006,6 +23006,26 @@ def Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
             (dynamicStateReward_optimal_of_dynamicMeasurableOptimal
               R hρ 1 hsfeasible.1)⟩⟩
 
+/--
+Exact all-measurable allowed Lemma 5 policy forms imply the AE shape
+classification used by the measure-theoretic endpoint route.
+-/
+def Theorem4AllMeasurableAllowedPolicyFormsCertificate.only_ae_shapes
+    {R : DynamicReward}
+    (μ : Fin 2 → Measure TripLength)
+    (C : Theorem4AllMeasurableAllowedPolicyFormsCertificate R) :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      theorem4NonsurgeAEShape (μ 0) (ρ 0) ∧
+        theorem4SurgeAEShape (μ 1) (ρ 1) := by
+  intro ρ hρ
+  rcases C.only_policy_forms ρ hρ with
+    ⟨⟨nshape, hnallowed, hnform⟩, ⟨sshape, hsallowed, hsform⟩⟩
+  exact
+    ⟨theorem4NonsurgeAEShape_of_allowed_lemma5_form
+        (μ 0) hnallowed hnform,
+      theorem4SurgeAEShape_of_allowed_lemma5_form
+        (μ 1) hsallowed hsform⟩
+
 /-- Measurable shape derivation implies the source Theorem 4 shape predicates. -/
 theorem paper_theorem4_measurable_dynamic_structural_policy_of_shape_derivation
     (R : DynamicReward)
@@ -45000,18 +45020,13 @@ noncomputable def Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddle
   accept_all_optimal := haccept
   only_ae_shapes := by
     intro ρ hρ
-    let D :=
-      theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
-        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
-          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+    let Cforms :
+        Theorem4AllMeasurableAllowedPolicyFormsCertificate
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :=
+      Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
         C.all_measurable_shape_replacements
-    rcases D.only_policy_forms ρ hρ with
-      ⟨⟨nshape, hnallowed, hnform⟩, ⟨sshape, hsallowed, hsform⟩⟩
-    exact
-      ⟨theorem4NonsurgeAEShape_of_allowed_lemma5_form
-          (μ 0) hnallowed hnform,
-        theorem4SurgeAEShape_of_allowed_lemma5_form
-          (μ 1) hsallowed hsform⟩
+    exact Cforms.only_ae_shapes μ ρ hρ
   nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
   nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
   surge_reject_short_endpoint := C.surge_reject_short_endpoint
