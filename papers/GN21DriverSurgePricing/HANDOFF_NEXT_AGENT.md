@@ -250,7 +250,8 @@ This endpoint asks for `lemma5PolicyForm shape
 `{τ | 0 < τ ∧ response τ = 0}`, then gives the same feasible a.e.
 representative conclusion.  It should speed up the measured quotient response,
 which is a positive scaling of the Lemma 6 normalized response on positive
-trip lengths.
+trip lengths.  Use `Lemma5PositiveResponsePolicyFormData.of_positive_scaling`
+to transfer the policy-form/null-zero package through such a positive scaling.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

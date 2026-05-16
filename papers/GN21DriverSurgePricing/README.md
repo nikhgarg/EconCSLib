@@ -954,6 +954,8 @@ There is also a weaker fixed-response endpoint,
 for scaled responses where the positive set has the desired Lemma 5 policy
 form and the positive zero set is null, but proving the stronger analytic
 `Lemma5PositiveResponseShapeData` for the scaled function would duplicate work.
+`Lemma5PositiveResponsePolicyFormData.of_positive_scaling` transfers this
+package through positive pointwise scalings on positive trip lengths.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

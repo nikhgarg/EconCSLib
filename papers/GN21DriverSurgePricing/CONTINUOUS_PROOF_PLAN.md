@@ -167,6 +167,8 @@ policy form of the positive-response set plus nullity of the positive zero
 set.  This avoids reproving monotonicity/quasi-convexity after a positive
 state-dependent scaling that preserves signs but may not preserve the stronger
 analytic shape predicate.
+`Lemma5PositiveResponsePolicyFormData.of_positive_scaling` transfers this data
+across positive pointwise scalings on positive trip lengths.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

@@ -27214,6 +27214,48 @@ def Lemma5PositiveResponsePolicyFormData.of_shapeData
     exact D.positive_zero_set_null μ
 
 /--
+Positive pointwise scaling on feasible trip lengths preserves the
+positive-response policy and its null zero-boundary package.
+-/
+def Lemma5PositiveResponsePolicyFormData.of_positive_scaling
+    {base response scale : TripLength → ℝ}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData base shape)
+    (hscale_pos : ∀ τ : TripLength, 0 < τ → 0 < scale τ)
+    (hresponse_eq :
+      ∀ τ : TripLength, 0 < τ → response τ = scale τ * base τ) :
+    Lemma5PositiveResponsePolicyFormData response shape where
+  policy_form := by
+    have hpolicy_eq :
+        lemma5PositiveResponsePolicy response =
+          lemma5PositiveResponsePolicy base := by
+      ext τ
+      constructor
+      · intro hτ
+        rcases hτ with ⟨hτ_pos, hresp_pos⟩
+        have hscale := hscale_pos τ hτ_pos
+        have heq := hresponse_eq τ hτ_pos
+        rw [heq] at hresp_pos
+        exact ⟨hτ_pos, by nlinarith⟩
+      · intro hτ
+        have hscale := hscale_pos τ hτ.1
+        have heq := hresponse_eq τ hτ.1
+        exact ⟨hτ.1, by rw [heq]; exact mul_pos hscale hτ.2⟩
+    simpa [hpolicy_eq] using D.policy_form
+  positive_zero_set_null := by
+    intro μ hμ
+    have hsubset :
+        {τ : TripLength | 0 < τ ∧ response τ = 0} ⊆
+          {τ : TripLength | 0 < τ ∧ base τ = 0} := by
+      intro τ hτ
+      rcases hτ with ⟨hτ_pos, hresp_zero⟩
+      have hscale := hscale_pos τ hτ_pos
+      have heq := hresponse_eq τ hτ_pos
+      rw [heq] at hresp_zero
+      exact ⟨hτ_pos, by nlinarith⟩
+    exact measure_mono_null hsubset (D.positive_zero_set_null μ)
+
+/--
 Candidate optimality for the positive-response policy identifies the current
 policy with that canonical policy up to null zero-response boundaries, using
 only the positive-response policy form and null zero-boundary facts.
