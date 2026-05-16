@@ -271,7 +271,11 @@ Last updated: 2026-05-16
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
   closes the outside-payoff equality by defining the report-required base term
-  as `denom / 2 - signalWeight * upperTailMean`.
+  as `denom / 2 - signalWeight * upperTailMean`.  The report-required
+  affine-centered-payoff endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_affine_centered_payoff`
+  specializes this to denominator `1`, with source payoff stated directly as
+  `1 / 2 - slope * upperTailMean + slope * skill`.
   The
   finite acting-distribution
   lemmas

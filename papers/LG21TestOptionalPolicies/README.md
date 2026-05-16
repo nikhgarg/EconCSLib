@@ -366,7 +366,11 @@ cache is kept as `source.txt` for named-statement audits.
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
   closes the remaining outside-payoff equality when the report-required base
-  term is normalized as `denom / 2 - signalWeight * upperTailMean`.
+  term is normalized as `denom / 2 - signalWeight * upperTailMean`.  The
+  report-required affine-centered-payoff endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_affine_centered_payoff`
+  further specializes this branch to denominator `1`, with the source payoff
+  stated directly as `1 / 2 - slope * upperTailMean + slope * skill`.
 
 ## Source Notes
 
@@ -396,4 +400,6 @@ their strongest current routes derive source witnesses and upper-tail
 impossibility from concrete source equilibria under explicit payoff,
 tie-breaking, threshold, and mixture hypotheses.  In the optional-reporting
 continuous upper-tail route, the concrete Gaussian posterior-payoff
-specialization now removes the separate affine-payoff identity hypothesis.
+specialization now removes the separate affine-payoff identity hypothesis.  In
+the report-required continuous upper-tail route, the affine-centered-payoff
+specialization now removes the separate denominator/base-term bookkeeping.
