@@ -3026,6 +3026,25 @@ def agreesAwayFromThresholdBoundary
   ∀ ⦃τ : TripLength⦄, 0 < τ → w τ / τ ≠ c → (τ ∈ σ ↔ τ ∈ ρ)
 
 /--
+A complete-threshold policy and any partial-threshold policy at the same cutoff
+agree on every non-boundary positive trip.
+-/
+theorem agreesAwayFromThresholdBoundary_completeThresholdPolicy_of_partial
+    (w : PricingFunction) (c : ℝ) (ρ : TripPolicy)
+    (hpartial : partialThresholdRatePolicy w c ρ) :
+    agreesAwayFromThresholdBoundary w c (completeThresholdPolicy w c) ρ := by
+  intro τ hτ hnonboundary
+  constructor
+  · intro hcomplete
+    have hle : c ≤ w τ / τ := by
+      simpa [completeThresholdPolicy, hτ] using hcomplete
+    have hlt : c < w τ / τ :=
+      lt_of_le_of_ne hle hnonboundary.symm
+    exact (hpartial hτ).1 hlt
+  · intro hρ
+    exact ⟨hτ, (hpartial hτ).2 hρ⟩
+
+/--
 Lemma 4 certificate: a single-state optimal threshold policy can be chosen
 with reward equal to the threshold and is unique away from boundary trips.
 -/
@@ -3149,6 +3168,87 @@ theorem paper_lemma4_single_state_unique_threshold_of_complete_threshold_optimal
         μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
         htime_integrable_acceptAll hlambda hthreshold_nonneg hoptimal
         hunique_away_boundary)
+
+/--
+Lemma 4 constructor with the exact remaining uniqueness obligation stated in
+the paper's threshold language: every optimal policy is a partial threshold at
+the reward cutoff.  Lean then proves exact agreement away from the boundary
+`w(τ)/τ = c`.
+-/
+noncomputable def paper_lemma4_unique_threshold_certificate_of_complete_threshold_optimal_and_partial_optima
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hthreshold_nonneg :
+      0 ≤ singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+    (hoptimal :
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w c))
+    (hoptimal_partial_at_reward :
+      ∀ ρ : TripPolicy,
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+          partialThresholdRatePolicy w
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c))
+            ρ) :
+    SingleStateUniqueThresholdCertificate
+      (singleStateRenewalReward μ arrivalRate w) w :=
+  paper_lemma4_unique_threshold_certificate_of_complete_threshold_optimal
+    μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
+    htime_integrable_acceptAll hlambda hthreshold_nonneg hoptimal
+    (fun ρ hρ_opt =>
+      agreesAwayFromThresholdBoundary_completeThresholdPolicy_of_partial
+        w
+        (singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w c))
+        ρ (hoptimal_partial_at_reward ρ hρ_opt))
+
+/--
+Lemma 4 source-facing wrapper with only the partial-threshold-at-reward-cutoff
+obligation left explicit.
+-/
+theorem paper_lemma4_single_state_unique_threshold_of_complete_threshold_optimal_and_partial_optima
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hthreshold_nonneg :
+      0 ≤ singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+    (hoptimal :
+      singleStateOptimal
+        (singleStateRenewalReward μ arrivalRate w)
+        (completeThresholdPolicy w c))
+    (hoptimal_partial_at_reward :
+      ∀ ρ : TripPolicy,
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+          partialThresholdRatePolicy w
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c))
+            ρ) :
+    ∃ cstar : ℝ, 0 ≤ cstar ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w cstar σ ∧
+        singleStateRenewalReward μ arrivalRate w σ = cstar ∧
+        singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σ ∧
+        ∀ ρ : TripPolicy,
+          singleStateOptimal (singleStateRenewalReward μ arrivalRate w) ρ →
+            agreesAwayFromThresholdBoundary w cstar σ ρ := by
+  exact
+    paper_lemma4_single_state_unique_threshold_of_certificate
+      (singleStateRenewalReward μ arrivalRate w) w
+      (paper_lemma4_unique_threshold_certificate_of_complete_threshold_optimal_and_partial_optima
+        μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda hthreshold_nonneg hoptimal
+        hoptimal_partial_at_reward)
 
 /--
 Paper Proposition 3.1 certificate: in the one-state model, affine pricing
