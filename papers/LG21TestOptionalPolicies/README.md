@@ -111,6 +111,15 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_report_required_base_affine_cutoff_ge_mean_of_fair`
   package the same argument as a source-facing necessary condition: any fair
   stable threshold policy must have cutoff weakly above the acting mean.  The
+  finite actor-support lemma
+  `paper_theorem3_2_cutoff_lt_actor_mean_of_all_ge_exists_gt` and the
+  optional/report-required wrappers
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_finite_actor_cutoff_support`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_finite_actor_cutoff_support`
+  formalize the finite version of the paper's "such a student always exists by
+  the mean" step: a finite acting cohort supported weakly above the cutoff and
+  with positive mass strictly above it has mean strictly above the cutoff.  The
   witness-level bridges
   `paper_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter`
   and

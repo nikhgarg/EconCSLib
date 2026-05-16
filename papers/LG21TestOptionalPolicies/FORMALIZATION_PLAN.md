@@ -184,7 +184,10 @@ Last updated: 2026-05-16
   and is still below mean.  The contrapositive cutoff wrappers now record the
   resulting necessary condition: under the source payoff/mixture hypotheses and
   latent-or-observable fairness, any stable threshold cutoff is weakly above
-  the acting mean.  The witness-level midpoint bridges prove the same
+  the acting mean.  The finite actor-support branch now proves cutoff below
+  the acting mean from the paper's finite "exists by the mean" intuition when
+  all positive acting support lies weakly above the cutoff and some positive
+  mass lies strictly above it.  The witness-level midpoint bridges prove the same
   below-mean reporter/taker existence fact directly for the Theorem 3.1
   optional-reporting and report-required threshold source witnesses, and the
   witness-level cutoff lower-bound wrappers connect those witnesses back to the

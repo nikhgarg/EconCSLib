@@ -3587,6 +3587,131 @@ theorem paper_interface_theorem3_2_report_required_base_affine_cutoff_ge_mean_of
     houtsidePayoff_of_pmfEq cutoff htakes_above_cutoff hfair hweight hdenom
 
 /--
+Optional-reporting finite acting-law cutoff-support interface for the direct
+Theorem 3.2 branch.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_finite_actor_cutoff_support
+    {Skill Base Estimate Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → Skill → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceSkill : S.Equilibrium → Base → Skill)
+    (baseTerm signalWeight denom actorMean : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base + signalWeight e base * actorMean e base) /
+                denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hactorMean : pmfExp actorLaw actorValue = actorMean e base)
+    (cutoff : ℝ)
+    (hactor_ge_cutoff : ∀ actor, cutoff ≤ actorValue actor)
+    (hexists_actor_gt_cutoff :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        cutoff < actorValue actor)
+    (hreports_above_cutoff :
+      ∀ actor, cutoff ≤ actor → reportDecision e base actor = true)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_finite_actor_cutoff_support
+    skillGivenBase hObsAccess hObsNoAccess takeDecision reportDecision
+    estimationConsistent referenceSkill baseTerm signalWeight denom
+    actorMean hEq e base hlambda reporterPMF noReporterPMF hNoAccess
+    hAccessMixture actorLaw actorValue hactorMean cutoff hactor_ge_cutoff
+    hexists_actor_gt_cutoff hreports_above_cutoff hweight hdenom
+
+/--
+Report-required finite acting-law cutoff-support interface for the direct
+Theorem 3.2 branch.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_finite_actor_cutoff_support
+    {Base Test Estimate Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (skillGivenBase : Base → PMF ℝ)
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceTest : S.Equilibrium → Base → Test)
+    (baseTerm signalWeight denom actorMean : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (houtsidePayoff_of_pmfEq :
+      reporterPMF = noReporterPMF →
+        (1 / 2 : ℝ) =
+          (baseTerm e base + signalWeight e base * actorMean e base) /
+            denom e base)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hactorMean : pmfExp actorLaw actorValue = actorMean e base)
+    (cutoff : ℝ)
+    (hactor_ge_cutoff : ∀ actor, cutoff ≤ actorValue actor)
+    (hexists_actor_gt_cutoff :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        cutoff < actorValue actor)
+    (htakes_above_cutoff :
+      ∀ actor, cutoff ≤ actor → takeDecision e actor base = true)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_finite_actor_cutoff_support
+    skillGivenBase hObsAccess hObsNoAccess takeDecision reportDecision
+    estimationConsistent referenceTest baseTerm signalWeight denom actorMean
+    hEq e base hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
+    houtsidePayoff_of_pmfEq actorLaw actorValue hactorMean cutoff
+    hactor_ge_cutoff hexists_actor_gt_cutoff htakes_above_cutoff hweight
+    hdenom
+
+/--
 Optional-reporting Gaussian/all-report interface for the direct below-mean
 Theorem 3.2 branch.
 -/
