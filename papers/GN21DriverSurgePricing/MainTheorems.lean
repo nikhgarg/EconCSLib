@@ -60639,6 +60639,110 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_stri
       hswitch21_lt_Q2 hstrict
 
 /--
+Accept-all-primitive Theorem 3 endpoint from feasible measurable strict-local
+improvements, preserving positive constructed-parameter evidence and returning
+the paper's almost-everywhere uniqueness convention for measurable optima.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_strict_local_positive_parameters
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmeasure1_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < μ 1 acceptAllPolicy)
+    (hstrict :
+      theorem3AcceptAllFeasibleStrictLocalPositiveParameterCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 harrival1_pos harrival2_pos
+      hswitch12_pos hswitch21_pos htime1_integrable htime2_integrable
+      hq1_integrable hq2_integrable hmeasure1_pos hmeasure2_pos with
+    ⟨hT1_pos, hQ1_pos, hQ1_sub_switch12_pos, hden_theorem3_pos,
+      hgap2_nonneg, hT2_ge_one, hswitch21_lt_Q2⟩
+  rcases
+      theorem3StructuredParameters_exist_of_ratio_and_lemma9_positive_primitives_positive_evidence
+        rho R1 R2
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 switch21 hR1_eq hR1_pos hR1_lt_R2 hR2_pos
+        hC_lt_rho hrho_lt_one hT1_pos hQ1_pos hQ1_sub_switch12_pos
+        hden_theorem3_pos hswitch21_pos hgap2_nonneg hT2_ge_one
+        hswitch21_lt_Q2 with
+    ⟨m, z, hnonneg, nonsurgeRatio, surgeRatio, hsurgeRatio_pos,
+      hnBounds, hsBounds, hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount,
+      hsAccount⟩
+  have hparams_pos :
+      theorem3AcceptAllStructuredPositiveParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z := by
+    exact ⟨nonsurgeRatio, surgeRatio, hsurgeRatio_pos, hnBounds, hsBounds,
+      hm0_eq, hz0_eq, hm1_eq, hz1_eq, hnAccount, hsAccount⟩
+  have hparams :
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z :=
+    theorem3AcceptAllStructuredParameterEvidence_of_positive hparams_pos
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+  have hstrictC :
+      Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) :=
+    hstrict m z hnonneg hparams_pos
+  have H :
+      dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal R ρ → ρ = acceptAllDynamicPolicy := by
+    simpa [R, gn21MeasuredCTMCStructuredDynamicReward] using
+      paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+        μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) hstrictC
+  have hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+    intro ρ hρ
+    have hρR : dynamicMeasurableOptimal R ρ := by
+      simpa [R] using hρ
+    exact dynamicAcceptAllAlmostEverywhere_of_eq_acceptAllDynamicPolicy
+      μ (H.2 ρ hρR)
+  exact
+    ⟨m, z, hnonneg, by simpa [R] using H.1, hAE,
+      ⟨ctmcDynamicSwitchProb switch12 switch21, by intro i τ; rfl⟩,
+      hparams⟩
+
+/--
 Bundled source-level assumptions for the feasible strict-local Theorem 3
 route.  All scalar CTMC and accept-all measure obligations are proved inside
 Lean; the remaining field is exactly the paper's source-domain local
@@ -62192,6 +62296,37 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
       μ arrival R1 R2 switch12 switch21 := by
   exact
     paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_strict_local_positive_parameters
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (by
+        intro m z hnonneg hparams
+        exact
+          theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_regular_shape_derivation_endpoint_data
+            μ arrival m z switch12 switch21
+            (Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
+              μ arrival m z switch12 switch21
+              ((A.endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection
+                m z hnonneg hparams).to_regular_allowed_policy_forms)))
+
+/--
+Paper-facing Theorem 3 wrapper from the positive-evidence fixed-transfer
+regular endpoint certificate, returning almost-everywhere uniqueness of
+measurable optima.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedPolicyFormsPositiveSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_strict_local_positive_parameters
       μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
       A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
       A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
