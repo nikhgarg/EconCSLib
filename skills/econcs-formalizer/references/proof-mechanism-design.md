@@ -104,6 +104,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   lemma disconnected from the paper theorem.  For GLM20, the follow-on wrapper
   is
   `paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings`.
+  Apply the same pattern to one-threshold cases: after constructing a
+  condition threshold, compose it with mass/cutoff identities and weighted
+  objective bookkeeping in the same session when that closes a named condition
+  bundle, as in
+  `paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings`.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
