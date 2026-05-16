@@ -81,8 +81,21 @@ paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward
 
 ## Lemmas 7-8 Status
 
-Lemmas 7-8 are closed as paper-facing affine response shape theorems.  The
-source wrappers are:
+Lemma 6 is now closed for the local density upper-endpoint response formula
+that Lemmas 7-8 depend on.  The direct source wrapper is:
+
+```lean
+paper_lemma6_upper_endpoint_interval_density_response_formula
+```
+
+It proves existence of the aggregate reward derivative and its same-strict-sign
+relation with the paper's normalized response `r(u,i,w,sigma)` after
+state-reward-rate substitution.  Lower, tail, and reject-middle endpoint
+variants remain available for Theorem 4 shape arguments, but the named Lemma 6
+derivative formula should no longer be treated as a gap.
+
+Lemmas 7-8 are therefore closed as paper-facing affine response shape
+theorems.  The source wrappers are:
 
 ```lean
 paper_lemma7_affine_positive_additive_response_strict_quasi_convex

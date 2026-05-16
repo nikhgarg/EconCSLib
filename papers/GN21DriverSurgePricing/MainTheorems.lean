@@ -7680,6 +7680,154 @@ theorem paper_lemma6_derivative_formula_of_interval_density_paths
   exact (lemma6DerivativeFormulaCertificate_of_endpoint_data D).same_sign
 
 /--
+Lemma 6 source upper-endpoint formula in the paper's normalized-response form.
+Under local density/continuity hypotheses at an upper endpoint, the derivative
+of the aggregate dynamic reward quotient exists and has the same strict sign
+as the displayed response `r(u,i,w,sigma)` after substituting state reward
+rates `W_i = R_i T_i` and `W_j = R_j T_j`.
+-/
+theorem paper_lemma6_upper_endpoint_interval_density_response_formula
+    (arrivalRate switchRate lowerEndpoint u Qj Tj Wj Ri Rj : ℝ)
+    (density switchProb payment : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hu : 0 < u)
+    (hQj_pos : 0 < Qj)
+    (hTi_pos :
+      0 < gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+    (hTj_pos : 0 < Tj)
+    (hWi :
+      gn21EndpointWiPath arrivalRate lowerEndpoint density payment u =
+        Ri * gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+    (hWj : Wj = Rj * Tj)
+    (hden :
+      gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+          switchProb u * Tj +
+        Qj *
+          gn21EndpointTiPath arrivalRate lowerEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable (fun τ => switchProb τ * density τ) volume
+        lowerEndpoint u)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => switchProb τ * density τ) (𝓝 u))
+    (hq_cont : ContinuousAt (fun τ => switchProb τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable (fun τ => payment τ * density τ) volume
+        lowerEndpoint u)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => payment τ * density τ) (𝓝 u))
+    (hw_cont : ContinuousAt (fun τ => payment τ * density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u) :
+    HasDerivAt
+        (fun x =>
+          gn21AggregateDynamicReward
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+              switchProb x)
+            Qj
+            (gn21EndpointTiPath arrivalRate lowerEndpoint density x)
+            Tj
+            (gn21EndpointWiPath arrivalRate lowerEndpoint density payment x)
+            Wj)
+        ((arrivalRate * density u) * Qj *
+          gn21DerivativeSignKernel (switchProb u) u (payment u)
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+              switchProb u)
+            Qj
+            (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+            Tj
+            (gn21EndpointWiPath arrivalRate lowerEndpoint density payment u)
+            Wj /
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+                switchProb u * Tj +
+              Qj *
+                gn21EndpointTiPath arrivalRate lowerEndpoint density u) ^ 2)
+        u ∧
+      sameStrictSign
+        ((arrivalRate * density u) * Qj *
+          gn21DerivativeSignKernel (switchProb u) u (payment u)
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+              switchProb u)
+            Qj
+            (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+            Tj
+            (gn21EndpointWiPath arrivalRate lowerEndpoint density payment u)
+            Wj /
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+                switchProb u * Tj +
+              Qj *
+                gn21EndpointTiPath arrivalRate lowerEndpoint density u) ^ 2)
+        (gn21Lemma6Response (switchProb u) u (payment u)
+          (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+            switchProb u)
+          Qj
+          (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+          Tj Ri Rj) := by
+  let D :=
+    lemma6EndpointDerivativeData_of_interval_density_paths
+      arrivalRate switchRate lowerEndpoint u Qj Tj Wj density switchProb
+      payment harrival_pos hdensity_pos hQj_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont
+  constructor
+  · exact D.has_derivative
+  · have hkernel :
+        sameStrictSign
+          ((arrivalRate * density u) * Qj *
+            gn21DerivativeSignKernel (switchProb u) u (payment u)
+              (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+                switchProb u)
+              Qj
+              (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+              Tj
+              (gn21EndpointWiPath arrivalRate lowerEndpoint density payment u)
+              Wj /
+              (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+                  switchProb u * Tj +
+                Qj *
+                  gn21EndpointTiPath arrivalRate lowerEndpoint density u) ^ 2)
+          (gn21DerivativeSignKernel (switchProb u) u (payment u)
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+              switchProb u)
+            Qj
+            (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+            Tj
+            (gn21EndpointWiPath arrivalRate lowerEndpoint density payment u)
+            Wj) := by
+      simpa [D] using
+        (lemma6DerivativeFormulaCertificate_of_endpoint_data D).same_sign
+    have hresponse :
+        sameStrictSign
+          (gn21DerivativeSignKernel (switchProb u) u (payment u)
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+              switchProb u)
+            Qj
+            (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+            Tj
+            (gn21EndpointWiPath arrivalRate lowerEndpoint density payment u)
+            Wj)
+          (gn21Lemma6Response (switchProb u) u (payment u)
+            (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+              switchProb u)
+            Qj
+            (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+            Tj Ri Rj) := by
+      have hbase :=
+        paper_lemma6_derivative_kernel_same_sign_response
+          (switchProb u) u (payment u)
+          (gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density
+            switchProb u)
+          Qj
+          (gn21EndpointTiPath arrivalRate lowerEndpoint density u)
+          Tj Ri Rj hu hTi_pos hTj_pos
+      simpa [hWi, hWj] using hbase
+    exact sameStrictSign_trans hkernel hresponse
+
+/--
 Interval-density lower-endpoint form of Lemma 6.  Under the source density
 assumptions for a moving lower endpoint, the aggregate reward derivative has
 the same strict sign as the negative displayed Lemma 6 kernel.

@@ -22,7 +22,15 @@ renewal reward on measurable feasible policies.
 
 ## Lemmas 7-8 Update
 
-Lemmas 7-8 are closed as source-facing affine response-shape statements:
+Lemma 6 is closed for the source upper-endpoint density formula that identifies
+the dynamic reward derivative's sign with the paper's normalized response:
+
+```lean
+paper_lemma6_upper_endpoint_interval_density_response_formula
+```
+
+Lemmas 7-8 can therefore be treated as closed source-facing affine
+response-shape statements:
 
 ```lean
 paper_lemma7_affine_positive_additive_response_strict_quasi_convex
