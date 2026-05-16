@@ -113,7 +113,16 @@ Last updated: 2026-05-16
   and contrapositive wrappers: test-blankness is equivalent to absence of a
   concrete base/test relevance witness, and such a witness rules out
   latent-skill or observable fairness once the source unraveling implication is
-  available.
+  available.  The source proof's positive-share resampling algebra is also
+  formalized: `lg21_pmf_mixture_cancel_right` and
+  `lg21_extensional_law_mixture_cancel_right` prove the displayed
+  `D0 = λ D1 + (1 - λ) D0 ⇒ D1 = D0` step, and the theorem-facing wrappers turn
+  observable fairness plus the access/no-access mixture identities into the
+  reporter/no-reporter law equality.  The latent-skill branch is reduced to the
+  observable branch under the shared latent-skill mixture identities.  The
+  remaining source gap is the profitable-deviation instability bridge that turns
+  `D1 = D0` into no stable positive-share resampling, and then into the final
+  test-blank implication without a certificate.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff

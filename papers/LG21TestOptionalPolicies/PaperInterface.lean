@@ -2483,6 +2483,107 @@ theorem paper_interface_theorem3_2_fairness_impossibility
   paper_theorem3_2_fairness_impossibility_of_certificate C
 
 /--
+Theorem 3.2 source proof line: observable fairness plus the paper's
+positive-share resampling identity forces the reporter/taker law `D1` to equal
+the no-reporter/no-taker law `D0`.
+-/
+theorem paper_interface_theorem3_2_observable_fair_resampling_forces_reporter_no_reporter_law_eq
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterLaw estimate).toReal +
+            (1 - lambda) * (noReporterLaw estimate).toReal) :
+    reporterLaw = noReporterLaw :=
+  paper_theorem3_2_observable_fair_resampling_forces_reporter_no_reporter_law_eq
+    hfair e base hlambda reporterLaw noReporterLaw hNoAccess hAccessMixture
+
+/--
+Theorem 3.2 source proof line over abstract law objects: the same positive-share
+resampling identity forces equality of reporter/taker and no-reporter/no-taker
+laws under an extensional mass functional.
+-/
+theorem paper_interface_theorem3_2_law_observable_fair_resampling_forces_reporter_no_reporter_law_eq
+    {Skill Base Test Outcome Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hfair : lg21SourceLawObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome) :
+    reporterLaw = noReporterLaw :=
+  paper_theorem3_2_law_observable_fair_resampling_forces_reporter_no_reporter_law_eq
+    mass law_ext hfair e base hlambda reporterLaw noReporterLaw
+    hNoAccess hAccessMixture
+
+/--
+Theorem 3.2 resampling-instability branch: if equality of `D1` and `D0`
+triggers the paper's profitable-deviation contradiction, then a positive-share
+observably fair resampling policy is unstable.
+-/
+theorem paper_interface_theorem3_2_observable_fair_positive_reporting_resampling_unstable
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (StableAt : S.Equilibrium → Base → Prop)
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterLaw estimate).toReal +
+            (1 - lambda) * (noReporterLaw estimate).toReal)
+    (hLawEqualityUnstable :
+      reporterLaw = noReporterLaw → ¬ StableAt e base) :
+    ¬ StableAt e base :=
+  paper_theorem3_2_observable_fair_positive_reporting_resampling_unstable
+    StableAt hfair e base hlambda reporterLaw noReporterLaw
+    hNoAccess hAccessMixture hLawEqualityUnstable
+
+/--
+Theorem 3.2 latent-skill branch reduction: under the paper's shared mixture
+identities, proving the test-blank implication for observable fairness also
+proves it for latent-skill fairness.
+-/
+theorem paper_interface_theorem3_2_fairness_impossibility_of_observable_implication_and_mixture
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (hobservable_to_test_blank :
+      lg21SourceObservablyFair S → lg21SourceTestBlank S) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_impossibility_of_observable_implication_and_mixture
+    skillGivenBase hObsAccess hObsNoAccess hobservable_to_test_blank
+
+/--
 Theorem 3.2 no-relevance form: latent or observable fairness rules out every
 concrete base/test relevance witness.
 -/
@@ -2520,6 +2621,23 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility
     lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
       lg21SourceLawTestBlank S :=
   paper_theorem3_2_law_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 continuous-law latent-skill branch reduction: once latent-skill
+fairness implies observable fairness, it is enough to prove the test-blank
+implication for observable fairness.
+-/
+theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_implication
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (hobservable_to_test_blank :
+      lg21SourceLawObservablyFair S → lg21SourceLawTestBlank S) :
+    lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_impossibility_of_observable_implication
+    hlatent_to_observable hobservable_to_test_blank
 
 /--
 Theorem 3.2 continuous-law no-relevance form: latent or observable fairness
