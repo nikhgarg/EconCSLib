@@ -829,6 +829,11 @@ has been peeled off.
 The quasi-convex three-interval and quasi-concave two-interval source case
 splits are now formalized as endpoint-sign trichotomies, matching the paper's
 Subcases 1A/1B/1C before the selected move is threaded to an endpoint path.
+The ordered source-boundary moves for quasi-convex Subcases 1B/1C are now
+covered too: a positive-left-ray component can expand into a following bounded
+component, and a bounded component can merge with a following right ray by
+moving the right ray's lower endpoint left, including the one-leading-component
+right-tail form.
 The remaining open part is selecting and iterating those local moves
 inside an arbitrary ordered finite
 interval/ray seed under the source derivative-sign hypotheses.

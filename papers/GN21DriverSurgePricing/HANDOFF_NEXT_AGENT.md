@@ -248,6 +248,11 @@ connect that selection to the shape-case sign lemmas.
 The source Subcases 1A/1B/1C are now available as pure sign selectors:
 `lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy` and
 `lemma5_strictQuasiConcave_two_interval_endpoint_sign_trichotomy`.
+The quasi-convex boundary moves selected by those signs now include
+`lemma5_list_leftRay_bounded_upper_merge_step_of_endpoint_path`,
+`lemma5_list_bounded_rightRay_lower_merge_step_of_endpoint_path`, and
+`lemma5_list_second_bounded_rightRay_lower_merge_step_of_endpoint_path`, with
+strict variants.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact

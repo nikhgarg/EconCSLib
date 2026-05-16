@@ -251,7 +251,10 @@ upper/lower merge primitives and the ordered second-component
 bounded-to-right-ray merge, each in weak and strict forms.  The remaining
 source sign-selection facts are no longer informal: the quasi-convex
 three-interval case and quasi-concave two-interval case are compiled as
-endpoint-sign trichotomies matching Subcases 1A/1B/1C.  The remaining
+endpoint-sign trichotomies matching Subcases 1A/1B/1C.  The ordered
+source-boundary moves used by the quasi-convex selector are also compiled:
+positive-left-ray upper expansion into a bounded component, bounded/right-ray
+lower merge, and the one-leading-component bounded/right-ray lower merge.  The remaining
 nonlinear work is selecting the appropriate local move inside an arbitrary
 ordered finite interval/ray seed, proving the source derivative-sign
 hypothesis holds along the selected path, and iterating the component-count
