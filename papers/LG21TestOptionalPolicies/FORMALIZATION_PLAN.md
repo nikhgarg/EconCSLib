@@ -236,6 +236,11 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium`
   derive the displayed mixture comparison directly from `lg21BinaryMixturePMF`.
+  The event-share variants
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_source_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium`
+  derive `λ > 0` from a finite positive-mass reporter/taker event.
   The
   finite acting-distribution
   lemmas
@@ -517,9 +522,9 @@ Last updated: 2026-05-16
    positive-mass/support facts.  The active continuous/source route should now
    use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
    work is to decide the final paper-facing theorem statement: either expose
-   the current source certificates plus binary-mixture/no-access/outside-payoff
-   hypotheses directly, or instantiate a stricter conditional-kernel version if the
-   statement should quantify over conditional-on-skill Gaussian laws.
+   the current source certificates plus event-share/no-access/outside-payoff
+   hypotheses directly, or instantiate a stricter conditional-kernel version if
+   the statement should quantify over conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 

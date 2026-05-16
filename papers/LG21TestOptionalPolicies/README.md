@@ -205,7 +205,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium`
   discharge that displayed mixture equality from `lg21BinaryMixturePMF`, so the
   concrete PMF route only needs the share positivity/no-access law and, in the
-  report-required case, the outside-payoff equality.  The source-shaped
+  report-required case, the outside-payoff equality.  The event-share
+  specializations
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_source_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium`
+  derive positive share from a finite positive-mass reporter/taker event.  The
+  source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
@@ -328,10 +334,11 @@ cache is kept as `source.txt` for named-statement audits.
   certificate-packaged source-equilibrium endpoints that derive best responses
   from the concrete optional/report-required source games.  For concrete
   binary-mixture observable-access laws, the mixture identity is now
-  definitionally discharged; remaining theorem-local assumptions are the
-  positive share/no-access law and the report-required outside-payoff equality,
-  plus any stricter conditional-kernel instantiation wanted for the final
-  source statement.
+  definitionally discharged; event-share variants also derive share positivity
+  from a finite positive-mass reporter/taker event.  Remaining theorem-local
+  assumptions are the no-access law and the report-required outside-payoff
+  equality, plus any stricter conditional-kernel instantiation wanted for the
+  final source statement.
 
 ## Source Notes
 
