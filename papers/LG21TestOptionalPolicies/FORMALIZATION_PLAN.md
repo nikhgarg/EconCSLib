@@ -39,7 +39,8 @@ Last updated: 2026-05-16
   a finite cutoff whenever not everyone reports or takes, and the
   no-report/no-test estimate is identified with the shared
   `GaussianLowerTailMeanCertificate` lower-tail mean, the no-deviation
-  contradictions imply all access students report and take.
+  contradictions imply all access students report and take.  These two cases
+  are now combined in `paper_lemma4_1_strategy_proofness_of_lower_tail_thresholds`.
 - The continuous-law fairness surface is added for the Gaussian negative
   results, and the proof cores for Propositions 4.2--4.3 are proved from
   law-difference witnesses plus Gaussian mean/variance gaps.

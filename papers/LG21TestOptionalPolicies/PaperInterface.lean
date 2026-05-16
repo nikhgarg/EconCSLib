@@ -615,6 +615,48 @@ theorem paper_interface_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_
     C api skillLaw hscale hcutoffIfNotAll hnoDeviation
 
 /--
+Lemma 4.1 lower-tail strategy-proofness bridge: the optional-reporting and
+report-required lower-tail threshold arguments together imply all relevant
+observed-access cohorts report and take.
+-/
+theorem paper_interface_lemma4_1_strategy_proofness_of_lower_tail_thresholds
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill testScale htestScale) qTilde)) :
+    (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+  paper_lemma4_1_strategy_proofness_of_lower_tail_thresholds
+    C api M theta k scoreLaw skillLaw htestScale
+    hreportCutoffIfNotAll hreportNoDeviation
+    htakeCutoffIfNotAll htakeNoDeviation
+
+/--
 Fixed-base posterior-score law: all non-test information is fixed and the
 Bayesian estimate is a positive-slope affine function of the optional test
 score.

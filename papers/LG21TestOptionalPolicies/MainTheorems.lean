@@ -794,6 +794,49 @@ theorem paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable
     hnoDeviation
 
 /--
+Lemma 4.1 lower-tail strategy-proofness bridge: combining the optional-reporting
+and report-required lower-tail arguments gives the source-shaped conclusion
+that the relevant observed-access cohorts all report and all take, conditional
+only on the paper's remaining threshold-if-not-all premises.
+-/
+theorem paper_lemma4_1_strategy_proofness_of_lower_tail_thresholds
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde)) :
+    (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+  ⟨paper_lemma4_1_all_report_of_gaussian_lower_tail_certificate_no_profitable_withholding
+      C M theta k scoreLaw hreportCutoffIfNotAll hreportNoDeviation,
+    paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable_test_taking
+      C api skillLaw htestScale htakeCutoffIfNotAll htakeNoDeviation⟩
+
+/--
 Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different
 means are different distributions.
 -/
