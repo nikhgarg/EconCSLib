@@ -1967,6 +1967,65 @@ theorem paper_lemma4_1_strategy_proofness_of_concrete_threshold_source_models
     · simp [h]
 
 /--
+Lemma 4.1 route from fully specified threshold source models: reporting and
+taking are threshold policies, and the no-report/no-test estimates are the
+paper's lower-tail expressions by definition.  The only remaining inputs are
+source equilibrium proofs for those two source games.
+-/
+theorem paper_lemma4_1_strategy_proofness_of_fully_specified_threshold_source_models
+    {Feature ReportSkill ReportBase TakeBase TakeTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {takeDecisionReport : ReportSkill → ReportBase → Bool}
+    {reportRequiredDecision : TakeBase → TakeTest → Bool}
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    {reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21OptionalReportingSourceEquilibriumData
+          takeDecisionReport
+          (fun _base score =>
+            if threshold ≤ M.posteriorMean (Function.update theta k score) then
+              true
+            else
+              false)
+          (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+          (M.posteriorMean
+            (Function.update theta k
+              (C.lowerTailMean scoreLaw
+                (affineCutoff
+                  (M.posteriorMean (Function.update theta k reportingBase) -
+                    M.centeredFamily.signalWeight k * reportingBase)
+                  (M.centeredFamily.signalWeight k) threshold))))
+          reportEstimationConsistent))
+    (reportSkill : ReportSkill) (reportBase : ReportBase)
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21ReportRequiredSourceEquilibriumData
+          (fun skill _base => if qBar ≤ skill then true else false)
+          reportRequiredDecision
+          (fun skill : ℝ =>
+            api.thresholdPassProb
+              (lg21GaussianTestScoreLaw skill testScale htestScale)
+              (C.lowerTailMean skillLaw qBar))
+          takeEstimationConsistent))
+    (takeBase : TakeBase) (takeTest : TakeTest) :
+    (∀ score : ℝ,
+        (if threshold ≤ M.posteriorMean (Function.update theta k score) then
+          true
+        else
+          false) = true) ∧
+      (∀ skill : ℝ, (if qBar ≤ skill then true else false) = true) :=
+  paper_lemma4_1_strategy_proofness_of_concrete_threshold_source_models
+    C api M theta k scoreLaw skillLaw htestScale
+    hReportEq reportSkill reportBase rfl
+    hTakeEq takeBase takeTest rfl
+
+/--
 Lemma 4.1 route from explicit threshold policies and binary subgame
 equilibria: the equilibrium best-response fields supply the no-profitable
 reporting and taking deviation predicates.
