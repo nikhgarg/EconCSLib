@@ -462,7 +462,11 @@ into the concrete endpoint policy data.
   `gn21AggregateDynamicReward_lt_add_right_of_kernel_pos`,
   `gn21PrimitiveKernel_pos_of_pointwise_derivative_kernel_nonneg`,
   `gn21MeasuredAggregateRewardPrimitives_lt_union_left_of_kernel_pos`, and
-  `gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_kernel_pos`.
+  `gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_kernel_pos`, plus
+  the pointwise support variants
+  `gn21MeasuredAggregateRewardPrimitives_lt_union_left_of_pointwise_kernel_nonneg`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_pointwise_kernel_nonneg`.
   These are the useful bridge from "positive derivative kernel on positive
   mass" to an actual strict reward improvement for the quotient reward, and
   should be preferred over building more abstract wrappers when closing the
