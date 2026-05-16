@@ -458,9 +458,14 @@ into the concrete endpoint policy data.
   packages the same bridge at the two-state Theorem 4 level.  The remaining
   Lemma 5 work is no longer this interval geometry, fixed-response set
   comparison, restricted-optimality plumbing, or fixed-response certificate
-  plumbing; it is the source open-set approximation plus endpoint-continuity
-  argument that identifies the nonlinear endpoint path with this
-  positive-response dominance.
+  plumbing.  The first inner-regularity part of source Step 1 is also now
+  compiled as `GN21FiniteOpenBallApproximation` and
+  `exists_gn21FiniteOpenBallApproximation_of_isOpen`: every open trip policy
+  under a finite regular measure has a finite open-ball subpolicy with
+  arbitrarily small omitted mass.  The remaining Lemma 5 work is the source
+  symmetric-difference/tail-normal open-set approximation plus
+  endpoint-continuity argument that identifies the nonlinear endpoint path with
+  this positive-response dominance.
 - The Theorem 4 endpoint layer now has AE shape predicates
   `theorem4NonsurgeAEShape` and `theorem4SurgeAEShape`, plus
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.only_ae_shapes` and
@@ -477,6 +482,15 @@ into the concrete endpoint policy data.
   `Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate.of_exact_endpoint_current_bounds_selection`
   reuses existing exact endpoint data when exact replacement certificates are
   still available.
+- The Theorem 3 side now consumes that AE endpoint route directly through
+  `GN21Theorem3MiddleRerouteAEEndpointSourceData`,
+  `theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_ae_endpoint_middle_reroute`,
+  `Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions`, and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions`.
+  This is the current cleanest source boundary for finishing the measurable
+  AE-unique version of Theorem 3: provide shared endpoint regularity plus the
+  AE endpoint certificate for the constructed positive-parameter prices, and
+  Lean supplies the positive-rejected-mass strict-local and IC routing.
 - The nonlinear aggregate layer now has strict counterparts to the older weak
   add-set bridges:
   `gn21AggregateDynamicReward_lt_add_left_of_kernel_pos`,

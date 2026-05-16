@@ -3,6 +3,7 @@ import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.MDP
 import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Probability.RenewalReward
+import Mathlib.MeasureTheory.Measure.RegularityCompacts
 import Mathlib.MeasureTheory.Measure.WithDensity
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 
@@ -427,6 +428,79 @@ abbrev TripPolicy := Set TripLength
 
 /-- Driver pricing/payment as a function of trip length. -/
 abbrev PricingFunction := TripLength → ℝ
+
+/--
+Finite open-ball approximation of an open trip policy under a measure.  This
+is the measure-theoretic object used in Lemma 5 Step 1 before endpoint
+modifications are applied to the resulting finite family.
+-/
+structure GN21FiniteOpenBallApproximation
+    (μ : Measure TripLength) (σ : TripPolicy) (ε : ℝ≥0∞) where
+  index : Type
+  finite_index : Fintype index
+  center : index → TripLength
+  radius : index → ℝ
+  radius_pos : ∀ i, 0 < radius i
+  ball_subset : ∀ i, Metric.ball (center i) (radius i) ⊆ σ
+  measure_omitted_lt :
+    μ (σ \ ⋃ i : index, Metric.ball (center i) (radius i)) < ε
+
+/--
+Lemma 5 Step 1, in the form needed by the continuous proof: every open
+measurable trip policy with finite mass can be approximated from inside by a
+finite union of open intervals/balls, with arbitrarily small omitted mass.
+-/
+theorem exists_gn21FiniteOpenBallApproximation_of_isOpen
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {σ : TripPolicy} (hσ_open : IsOpen σ)
+    {ε : ℝ≥0∞} (hε : ε ≠ 0) :
+    Nonempty (GN21FiniteOpenBallApproximation μ σ ε) := by
+  classical
+  have hσ_measurable : MeasurableSet σ := hσ_open.measurableSet
+  have hσ_finite : μ σ ≠ ∞ := measure_ne_top μ σ
+  rcases hσ_measurable.exists_isCompact_diff_lt hσ_finite hε with
+    ⟨K, hKσ, hK_compact, hKdiff⟩
+  let localRadius : K → ℝ := fun x =>
+    Classical.choose (Metric.isOpen_iff.1 hσ_open x.1 (hKσ x.2))
+  have localRadius_pos : ∀ x : K, 0 < localRadius x := by
+    intro x
+    exact (Classical.choose_spec
+      (Metric.isOpen_iff.1 hσ_open x.1 (hKσ x.2))).1
+  have localBall_subset :
+      ∀ x : K, Metric.ball x.1 (localRadius x) ⊆ σ := by
+    intro x
+    exact (Classical.choose_spec
+      (Metric.isOpen_iff.1 hσ_open x.1 (hKσ x.2))).2
+  have hcover : K ⊆ ⋃ x : K, Metric.ball x.1 (localRadius x) := by
+    intro y hy
+    exact Set.mem_iUnion.2
+      ⟨⟨y, hy⟩, Metric.mem_ball_self (localRadius_pos ⟨y, hy⟩)⟩
+  rcases hK_compact.elim_finite_subcover
+      (fun x : K => Metric.ball x.1 (localRadius x))
+      (fun _ => Metric.isOpen_ball) hcover with
+    ⟨t, ht⟩
+  let ι : Type := {x : K // x ∈ t}
+  have hK_subset_union :
+      K ⊆ ⋃ i : ι, Metric.ball i.1.1 (localRadius i.1) := by
+    intro y hy
+    rcases Set.mem_iUnion₂.1 (ht hy) with ⟨x, hxt, hyx⟩
+    exact Set.mem_iUnion.2 ⟨⟨x, hxt⟩, hyx⟩
+  refine ⟨
+    { index := ι
+      finite_index := inferInstance
+      center := fun i => i.1.1
+      radius := fun i => localRadius i.1
+      radius_pos := ?_
+      ball_subset := ?_
+      measure_omitted_lt := ?_ }⟩
+  · intro i
+    exact localRadius_pos i.1
+  · intro i
+    exact localBall_subset i.1
+  · exact (measure_mono (by
+        intro y hy
+        exact ⟨hy.1, fun hyK => hy.2 (hK_subset_union hyK)⟩)).trans_lt
+      hKdiff
 
 /-- Lifetime earnings-rate functional for a one-state policy. -/
 abbrev SingleStateReward := TripPolicy → ℝ
@@ -66156,6 +66230,121 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_end
               μ arrival m z switch12 switch21
               (Cmiddle.to_endpoint_current_bounds_selection_unless_middle_reroute
                 CreplacementData.to_shape_replacements)))
+
+/--
+Direct source data for the AE middle-reroute endpoint boundary.  This is the
+measure-theoretic Theorem 4 interface needed by Theorem 3: shared regularity
+rules out collapsed reject-middle endpoints on positive-rejected-mass branches,
+while the endpoint certificate supplies AE shape classification and local
+endpoint moves.
+-/
+structure GN21Theorem3MiddleRerouteAEEndpointSourceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  endpoint :
+    Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate
+      μ arrival m z switch12 switch21
+
+/--
+AE endpoint selections for the constructed positive-parameter prices instantiate
+the positive-rejected-mass strict-local boundary used by the source-facing
+Theorem 3 AE uniqueness wrapper.
+-/
+def theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_ae_endpoint_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3MiddleRerouteAEEndpointSourceData
+            μ arrival switch12 switch21 m z) :
+    theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  let D := C m z hnonneg hparams
+  exact
+    theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_ae_shape_statewise_rejected_mass_improvements_unless
+      μ arrival m z switch12 switch21
+      (Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate.of_ae_endpoint_current_bounds_selection_unless_middle_reroute
+        μ arrival m z switch12 switch21 D.shared D.endpoint)
+
+/--
+Source-level assumptions for the direct AE endpoint middle-reroute Theorem 3
+route.  Compared with the older by-policy-form AE boundary, the final field is
+the actual measure-theoretic endpoint selection data and no longer asks for an
+exact all-measurable Lemma 5 replacement certificate.
+-/
+structure Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  ae_endpoint_middle_reroute_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3MiddleRerouteAEEndpointSourceData
+            μ arrival switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 AE wrapper from the direct AE endpoint middle-reroute
+source boundary.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_rejected_mass_strict_local_positive_parameters
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_ae_endpoint_middle_reroute
+        μ arrival R1 R2 switch12 switch21
+        A.ae_endpoint_middle_reroute_selection)
 
 /--
 Source data for the by-policy-form AE middle-reroute endpoint boundary.  This
