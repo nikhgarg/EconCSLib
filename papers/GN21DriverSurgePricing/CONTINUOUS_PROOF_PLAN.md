@@ -132,17 +132,22 @@ lemma5_strictlyIncreasing_endpoint_sign_dichotomy
 lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
 lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
 lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
+symmDiff_ioo_union_touching_subset_singleton
+policyAlmostEverywhereEq_ioo_union_touching
 ```
 
 These lemmas prove that derivative sign on the whole interval between two
 endpoint positions gives the corresponding weak or strict reward ordering
 after moving the endpoint all the way to the next collision or boundary, and
 they prove the paper's monotone/quasi sign choices used to decide which
-endpoint should move.  The remaining nonlinear work is therefore not calculus
-or source sign algebra; it is selecting the concrete endpoint path for each
-noncanonical generalized interval/ray seed, proving the source derivative-sign
-hypothesis holds along that path, and showing the resulting
-collision/canonical-boundary policy lowers finite complexity.
+endpoint should move.  The touching-interval merge fact proves the paper's
+zero-measure collision step: `(a,b) ∪ (b,c)` is a.e. equal to `(a,c)` under
+nonatomic trip-length measures.  The remaining nonlinear work is therefore
+not calculus, source sign algebra, or endpoint-collision measure theory; it is
+selecting the concrete endpoint path for each noncanonical generalized
+interval/ray seed, proving the source derivative-sign hypothesis holds along
+that path, and showing the resulting collision/canonical-boundary policy
+lowers finite complexity.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

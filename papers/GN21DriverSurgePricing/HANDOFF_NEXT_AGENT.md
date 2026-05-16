@@ -57,6 +57,8 @@ lemma5_strictlyIncreasing_endpoint_sign_dichotomy
 lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
 lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
 lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
+symmDiff_ioo_union_touching_subset_singleton
+policyAlmostEverywhereEq_ioo_union_touching
 measure_congr_policy_ae
 singleStateTripMass_congr_policy_ae
 singleStateTripTime_congr_policy_ae
@@ -142,6 +144,12 @@ shows that nonpositive outer endpoint responses force both middle endpoints to
 move in reward-improving directions, and the quasi-concave lemma shows that
 nonnegative lower endpoint responses force the gap-closing upper endpoint to
 have positive response.
+
+The collision merge step is also formalized:
+`policyAlmostEverywhereEq_ioo_union_touching` proves that
+`(a,b) ∪ (b,c)` and `(a,c)` differ only on the singleton `{b}` under `[NoAtoms
+μ]`.  This is the exact measure-theoretic fact behind the source instruction
+to combine intervals after an endpoint reaches the next lower endpoint.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical

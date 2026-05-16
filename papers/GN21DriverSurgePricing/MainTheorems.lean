@@ -115,6 +115,9 @@ the continuous CTMC source theorems.
   `lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg`: source
   Step 2 sign implications that choose improving endpoint directions in the
   monotone and quasi cases.
+- `symmDiff_ioo_union_touching_subset_singleton` and
+  `policyAlmostEverywhereEq_ioo_union_touching`: the measure-zero collision
+  merge fact used when an endpoint move joins two open intervals.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
@@ -15595,6 +15598,50 @@ theorem policyAlmostEverywhereEq_of_diff_null
     policyAlmostEverywhereEq μ σ τ := by
   rw [policyAlmostEverywhereEq, Set.symmDiff_def]
   exact measure_union_null hστ hτσ
+
+/--
+When two open intervals touch at `b`, their union differs from the merged open
+interval only at the touching endpoint.  This is the set-theoretic core of the
+Lemma 5 Step 2 merge operation after an endpoint path reaches the next
+collision.
+-/
+theorem symmDiff_ioo_union_touching_subset_singleton
+    {a b c : TripLength} (hab : a ≤ b) (hbc : b ≤ c) :
+    ((Set.Ioo a b ∪ Set.Ioo b c) ∆ Set.Ioo a c) ⊆
+      ({b} : Set TripLength) := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_union, hx_not⟩
+    rcases hx_union with hx_left | hx_right
+    · have hx_ac : x ∈ Set.Ioo a c := by
+        exact ⟨hx_left.1, lt_of_lt_of_le hx_left.2 hbc⟩
+      exact False.elim (hx_not hx_ac)
+    · have hx_ac : x ∈ Set.Ioo a c := by
+        exact ⟨lt_of_le_of_lt hab hx_right.1, hx_right.2⟩
+      exact False.elim (hx_not hx_ac)
+  · rcases hx with ⟨hx_ac, hx_not_union⟩
+    by_cases hxb : x = b
+    · simpa [hxb]
+    · exfalso
+      rcases lt_or_gt_of_ne hxb with hx_lt_b | hb_lt_x
+      · exact hx_not_union (Or.inl ⟨hx_ac.1, hx_lt_b⟩)
+      · exact hx_not_union (Or.inr ⟨hb_lt_x, hx_ac.2⟩)
+
+/--
+Under a nonatomic trip-length measure, touching open intervals are equivalent
+to the merged open interval in the paper's a.e. policy convention.
+-/
+theorem policyAlmostEverywhereEq_ioo_union_touching
+    (μ : Measure TripLength) [NoAtoms μ]
+    {a b c : TripLength} (hab : a ≤ b) (hbc : b ≤ c) :
+    policyAlmostEverywhereEq μ
+      (Set.Ioo a b ∪ Set.Ioo b c) (Set.Ioo a c) := by
+  rw [policyAlmostEverywhereEq]
+  exact measure_mono_null
+    (symmDiff_ioo_union_touching_subset_singleton
+      (a := a) (b := b) (c := c) hab hbc)
+    (measure_singleton b)
 
 /--
 Analytic witness behind each Lemma 5 derivative-shape case.  The policy-form
