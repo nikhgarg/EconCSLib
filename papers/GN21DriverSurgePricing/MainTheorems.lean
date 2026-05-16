@@ -2672,6 +2672,69 @@ theorem paper_theorem1_strict_threshold_reward_lt_higher_strict_threshold_of_pos
   simpa [strictc, strictB, removed, hdiff_eq] using himprove
 
 /--
+Theorem 1 Step 3 gap case: if `c < B` and the gap between the strict cutoff at
+`c` and the complete cutoff at `B` has zero measure, then the two threshold
+policies have the same renewal reward.
+-/
+theorem paper_theorem1_strict_threshold_reward_eq_complete_threshold_of_gap_measure_zero
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c B : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hcB : c < B)
+    (hgap_zero :
+      μ (strictThresholdPolicy w c \ completeThresholdPolicy w B) = 0) :
+    singleStateRenewalReward μ arrivalRate w
+        (strictThresholdPolicy w c) =
+      singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w B) := by
+  let strictc : TripPolicy := strictThresholdPolicy w c
+  let completeB : TripPolicy := completeThresholdPolicy w B
+  let removed : TripPolicy := strictc \ completeB
+  have hstrictc_subset : strictc ⊆ acceptAllPolicy := by
+    simpa [strictc] using strictThresholdPolicy_subset_acceptAll w c
+  have hcompleteB_subset : completeB ⊆ acceptAllPolicy := by
+    simpa [completeB] using completeThresholdPolicy_subset_acceptAll w B
+  have hcompleteB_subset_strictc : completeB ⊆ strictc := by
+    intro τ hτ
+    have hτ_pos : 0 < τ := hτ.1
+    have hrate : B ≤ w τ / τ := hτ.2
+    exact ⟨hτ_pos, lt_of_lt_of_le hcB hrate⟩
+  have hstrictc_measurable : MeasurableSet strictc := by
+    simpa [strictc] using
+      measurableSet_strictThresholdPolicy w c hrate_measurable
+  have hcompleteB_measurable : MeasurableSet completeB := by
+    simpa [completeB] using
+      measurableSet_completeThresholdPolicy w B hrate_measurable
+  have hremoved_measurable : MeasurableSet removed :=
+    hstrictc_measurable.diff hcompleteB_measurable
+  have hstrictc_w_integrable : IntegrableOn w strictc μ :=
+    hw_integrable_acceptAll.mono_set hstrictc_subset
+  have hstrictc_time_integrable :
+      IntegrableOn (fun τ : TripLength => τ) strictc μ :=
+    htime_integrable_acceptAll.mono_set hstrictc_subset
+  have hdiff_eq : strictc \ removed = completeB := by
+    apply Set.Subset.antisymm
+    · intro τ hτ
+      by_contra hτ_not_B
+      exact hτ.2 ⟨hτ.1, hτ_not_B⟩
+    · intro τ hτ
+      exact ⟨hcompleteB_subset_strictc hτ, by
+        intro hremoved
+        exact hremoved.2 hτ⟩
+  have hreward_eq :
+      singleStateRenewalReward μ arrivalRate w (strictc \ removed) =
+        singleStateRenewalReward μ arrivalRate w strictc :=
+    singleStateRenewalReward_diff_eq_self_of_measure_zero_component
+      μ arrivalRate w strictc removed (fun _ hτ => hτ.1)
+      hremoved_measurable hstrictc_w_integrable hstrictc_time_integrable
+      (by simpa [strictc, completeB, removed] using hgap_zero)
+  rw [← hreward_eq]
+  simp [hdiff_eq, strictc, completeB, removed]
+
+/--
 Theorem 1 proof assembly: if Step 1 sends every policy to a weakly better
 partial threshold, Step 2 sends every partial threshold to a weakly better
 strict or complete threshold, and Step 3 supplies a complete threshold that
@@ -3701,6 +3764,82 @@ theorem paper_theorem1_complete_ge_strict_at_max_of_positive_band_resolution
   exact not_lt_of_ge hstrictB_le himprove
 
 /--
+Theorem 1 Step 3 gap resolution: if a maximizing cutoff has strict reward above
+complete reward but its strict threshold agrees in reward with a higher complete
+threshold, then that higher complete threshold is a valid Step 3 maximizer.
+-/
+theorem paper_theorem1_step3_dominated_of_gap_resolution_at_max
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (cstar B : ℝ)
+    (hcstar_nonneg : 0 ≤ cstar)
+    (hcB : cstar < B)
+    (hmax :
+      ∀ c : ℝ,
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w cstar))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w cstar)))
+    (hcomplete_lt_strict :
+      singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w cstar) <
+        singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w cstar))
+    (hgap_reward_eq :
+      singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w cstar) =
+        singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w B)) :
+    ∃ cfinal : ℝ, 0 ≤ cfinal ∧
+      ∀ c : ℝ,
+        singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cfinal) ∧
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cfinal) := by
+  have hB_nonneg : 0 ≤ B := le_trans hcstar_nonneg (le_of_lt hcB)
+  have hmax_at :
+      max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w cstar))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar)) =
+        singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w cstar) :=
+    max_eq_left hcomplete_lt_strict.le
+  refine ⟨B, hB_nonneg, ?_⟩
+  intro c
+  constructor
+  · have hle_max_c :
+        singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) :=
+      le_max_left _ _
+    exact hle_max_c.trans ((hmax c).trans (by rw [hmax_at, hgap_reward_eq]))
+  · have hle_max_c :
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) :=
+      le_max_right _ _
+    exact hle_max_c.trans ((hmax c).trans (by rw [hmax_at, hgap_reward_eq]))
+
+/--
 Theorem 1 Step 3 margin resolution at a maximizing cutoff.  The low-reward
 case is proved by adding boundary trips; the high-reward case is discharged by
 a positive-band local-improvement witness.
@@ -3905,6 +4044,163 @@ theorem paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemiconti
           (hpositive_band_when_high cstar hcstar_nonneg hcstar_le_C hmax))
 
 /--
+Paper Theorem 1 Step 3 from compact upper-semicontinuity plus the two source
+high-reward alternatives: either there is a positive band `(cstar,B]`, giving a
+strict improvement contradiction, or there is a zero-measure gap to a higher
+complete threshold, which becomes the complete-threshold maximizer.
+-/
+theorem paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity_band_or_gap_resolution
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hobjective_upper :
+      UpperSemicontinuousOn
+        (fun c : ℝ =>
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)))
+        (Set.Icc 0 C))
+    (hleft_bound :
+      ∀ c : ℝ, c < 0 →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0)))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0)))
+    (hband_or_gap_when_high :
+      ∀ cstar : ℝ,
+        0 ≤ cstar → cstar ≤ C →
+          (∀ c : ℝ,
+            max
+                (singleStateRenewalReward μ arrivalRate w
+                  (strictThresholdPolicy w c))
+                (singleStateRenewalReward μ arrivalRate w
+                  (completeThresholdPolicy w c)) ≤
+              max
+                (singleStateRenewalReward μ arrivalRate w
+                  (strictThresholdPolicy w cstar))
+                (singleStateRenewalReward μ arrivalRate w
+                  (completeThresholdPolicy w cstar))) →
+          cstar <
+              singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w cstar) →
+            (∃ B : ℝ,
+              cstar < B ∧
+                B <
+                  singleStateRenewalReward μ arrivalRate w
+                    (strictThresholdPolicy w cstar) ∧
+                0 <
+                  singleStateTripTime μ
+                    (strictThresholdPolicy w cstar \ strictThresholdPolicy w B)) ∨
+            (∃ B : ℝ,
+              cstar < B ∧
+                μ (strictThresholdPolicy w cstar \ completeThresholdPolicy w B) = 0)) :
+    ∃ cfinal : ℝ, 0 ≤ cfinal ∧
+      ∀ c : ℝ,
+        singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cfinal) ∧
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cfinal) := by
+  let f : ℝ → ℝ := fun c =>
+    max
+      (singleStateRenewalReward μ arrivalRate w
+        (strictThresholdPolicy w c))
+      (singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+  rcases
+      paper_theorem1_cutoff_maximizer_of_compact_upperSemicontinuity
+        f C hC_nonneg hobjective_upper hleft_bound hright_bound with
+    ⟨cstar, hcstar_nonneg, hcstar_le_C, hmax⟩
+  by_cases hstrict_reward_le_cutoff :
+      singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w cstar) ≤ cstar
+  · have hcomplete_ge :
+        singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w cstar) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar) :=
+      paper_theorem1_complete_threshold_ge_strict_threshold_of_cutoff_ge_strict_reward
+        μ arrivalRate w cstar hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda hstrict_reward_le_cutoff
+    exact ⟨cstar, hcstar_nonneg,
+      paper_theorem1_step3_strict_complete_dominated_of_maximizer
+        (singleStateRenewalReward μ arrivalRate w) w cstar hmax hcomplete_ge⟩
+  · have hcutoff_lt_reward :
+        cstar <
+          singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w cstar) :=
+      lt_of_not_ge hstrict_reward_le_cutoff
+    rcases hband_or_gap_when_high cstar hcstar_nonneg hcstar_le_C hmax
+        hcutoff_lt_reward with hband | hgap
+    · have hcomplete_ge :
+          singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w cstar) ≤
+            singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w cstar) :=
+        paper_theorem1_complete_ge_strict_at_max_of_positive_band_resolution
+          μ arrivalRate w cstar hrate_measurable hw_integrable_acceptAll
+          htime_integrable_acceptAll hlambda hmax hband
+      exact ⟨cstar, hcstar_nonneg,
+        paper_theorem1_step3_strict_complete_dominated_of_maximizer
+          (singleStateRenewalReward μ arrivalRate w) w cstar hmax
+          hcomplete_ge⟩
+    · by_cases hcomplete_ge :
+          singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w cstar) ≤
+            singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w cstar)
+      · exact ⟨cstar, hcstar_nonneg,
+          paper_theorem1_step3_strict_complete_dominated_of_maximizer
+            (singleStateRenewalReward μ arrivalRate w) w cstar hmax
+            hcomplete_ge⟩
+      · have hcomplete_lt_strict :
+            singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w cstar) <
+              singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w cstar) :=
+          lt_of_not_ge hcomplete_ge
+        rcases hgap with ⟨B, hcB, hgap_zero⟩
+        have hgap_reward_eq :
+            singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w cstar) =
+              singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w B) :=
+          paper_theorem1_strict_threshold_reward_eq_complete_threshold_of_gap_measure_zero
+            μ arrivalRate w cstar B hrate_measurable hw_integrable_acceptAll
+            htime_integrable_acceptAll hcB hgap_zero
+        exact
+          paper_theorem1_step3_dominated_of_gap_resolution_at_max
+            μ arrivalRate w cstar B hcstar_nonneg hcB hmax
+            hcomplete_lt_strict hgap_reward_eq
+
+/--
 Theorem 1 measurable certificate after closing Step 1.  Once a complete
 threshold maximizer is supplied, Lean proves that the maximizing complete
 threshold is optimal among all measurable feasible policies: Step 1 sends an
@@ -4069,6 +4365,97 @@ theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compac
     ⟨Cth, hCth_le_C⟩
   exact ⟨Cth.threshold, Cth.threshold_nonneg, hCth_le_C, Cth.policy,
     Cth.threshold_shape, Cth.measurable_optimal⟩
+
+/--
+Theorem 1 measurable best-response endpoint from the paper's compact
+strict/complete objective plus the positive-band-or-zero-gap high-reward
+resolution.  Step 1 is proved internally by
+`paper_theorem1_policy_le_complete_threshold_at_own_reward`.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_band_or_gap
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hobjective_upper :
+      UpperSemicontinuousOn
+        (fun c : ℝ =>
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)))
+        (Set.Icc 0 C))
+    (hleft_bound :
+      ∀ c : ℝ, c < 0 →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0)))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0)))
+    (hband_or_gap_when_high :
+      ∀ cstar : ℝ,
+        0 ≤ cstar → cstar ≤ C →
+          (∀ c : ℝ,
+            max
+                (singleStateRenewalReward μ arrivalRate w
+                  (strictThresholdPolicy w c))
+                (singleStateRenewalReward μ arrivalRate w
+                  (completeThresholdPolicy w c)) ≤
+              max
+                (singleStateRenewalReward μ arrivalRate w
+                  (strictThresholdPolicy w cstar))
+                (singleStateRenewalReward μ arrivalRate w
+                  (completeThresholdPolicy w cstar))) →
+          cstar <
+              singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w cstar) →
+            (∃ B : ℝ,
+              cstar < B ∧
+                B <
+                  singleStateRenewalReward μ arrivalRate w
+                    (strictThresholdPolicy w cstar) ∧
+                0 <
+                  singleStateTripTime μ
+                    (strictThresholdPolicy w cstar \ strictThresholdPolicy w B)) ∨
+            (∃ B : ℝ,
+              cstar < B ∧
+                μ (strictThresholdPolicy w cstar \ completeThresholdPolicy w B) = 0)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  rcases
+      paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity_band_or_gap_resolution
+        μ arrivalRate w C hC_nonneg hrate_measurable
+        hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+        hobjective_upper hleft_bound hright_bound hband_or_gap_when_high with
+    ⟨cfinal, hcfinal_nonneg, hdominated⟩
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_complete_maximizer
+      μ arrivalRate w cfinal hcfinal_nonneg hrate_measurable
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      (fun c => (hdominated c).2)
 
 /--
 Theorem 1, conditional source-facing wrapper: given the continuous
