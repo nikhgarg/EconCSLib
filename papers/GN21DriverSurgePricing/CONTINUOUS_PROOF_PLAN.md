@@ -188,6 +188,13 @@ measured marginal response.  Their supporting definitions are
 `gn21MeasuredLeftLemma6ScaleAtCurrent`, and
 `gn21MeasuredRightLemma6ScaleAtCurrent`; their positivity lemmas discharge the
 scale side condition for positive current `Q,T` primitives.
+At the all-optima boundary, use
+`Theorem4AllMeasurableFixedResponsePolicyFormData` when these smaller
+policy-form packages are available for both states; its
+`.to_feasible_ae_policy_forms` method feeds the existing Theorem 4 feasible
+a.e. representative route.  The older stronger
+`Theorem4AllMeasurableFixedResponseShapeData` can be converted to this smaller
+boundary by `.to_policy_form_data`.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

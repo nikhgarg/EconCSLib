@@ -276,6 +276,12 @@ marginal responses.  Their helper definitions
 `gn21MeasuredLeftLemma6ScaleAtCurrent`, and
 `gn21MeasuredRightLemma6ScaleAtCurrent` keep the base response and positive
 scale explicit.
+The all-optima handoff boundary for this lighter route is
+`Theorem4AllMeasurableFixedResponsePolicyFormData`; call
+`.to_feasible_ae_policy_forms` to enter the existing feasible a.e. Theorem 4
+representative pipeline.  If stronger analytic shape data are already
+available, `Theorem4AllMeasurableFixedResponseShapeData.to_policy_form_data`
+converts them to this lighter boundary.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

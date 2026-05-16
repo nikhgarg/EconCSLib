@@ -46102,6 +46102,124 @@ def Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms
           D.optimal⟩
 
 /--
+Fixed-response Lemma 5 hypotheses when the source proof has already
+identified the positive-response policy form, but not necessarily the stronger
+analytic response-shape data after a positive state-dependent scaling.
+-/
+structure Lemma5FixedResponsePolicyFormFeasibleOptimalData
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (shape : Lemma5DerivativeShape) (σ : TripPolicy) where
+  marker : Unit := ()
+  policy_form_data : Lemma5PositiveResponsePolicyFormData response shape
+  response_measurable : Measurable response
+  response_integrable_acceptAll :
+    IntegrableOn response acceptAllPolicy μ
+  optimal :
+    ∀ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy →
+      MeasurableSet σ' →
+        lemma5MarginalSetReward μ response σ' ≤
+          lemma5MarginalSetReward μ response σ
+
+/-- Stronger analytic shape data imply the smaller policy-form fixed-response package. -/
+def Lemma5FixedResponsePolicyFormFeasibleOptimalData.of_shapeData
+    {μ : Measure TripLength} {response : TripLength → ℝ}
+    {shape : Lemma5DerivativeShape} {σ : TripPolicy}
+    (D : Lemma5FixedResponseFeasibleOptimalData μ response shape σ) :
+    Lemma5FixedResponsePolicyFormFeasibleOptimalData μ response shape σ where
+  policy_form_data :=
+    Lemma5PositiveResponsePolicyFormData.of_shapeData D.shape_data
+  response_measurable := D.response_measurable
+  response_integrable_acceptAll := D.response_integrable_acceptAll
+  optimal := D.optimal
+
+/--
+The smaller policy-form fixed-response package produces the feasible a.e.
+Lemma 5 representative.
+-/
+def Lemma5FixedResponsePolicyFormFeasibleOptimalData.to_feasiblePolicyFormAlmostEverywhere
+    {μ : Measure TripLength} [NoAtoms μ]
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (D : Lemma5FixedResponsePolicyFormFeasibleOptimalData μ response shape σ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ :=
+  paper_lemma5_fixed_response_feasible_policy_form_ae_of_positive_response_policy_form
+    μ response σ D.policy_form_data D.response_measurable
+    D.response_integrable_acceptAll hσ_measurable hσ_subset D.optimal
+
+/--
+All measurable optima satisfy the smaller fixed-response Lemma 5
+policy-form hypotheses in both states.  This is the preferred boundary when
+measured quotient responses are only known to be positive scalings of the
+normalized Lemma 6 response.
+-/
+structure Theorem4AllMeasurableFixedResponsePolicyFormData
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Σ response : TripLength → ℝ,
+          Lemma5FixedResponsePolicyFormFeasibleOptimalData
+            (μ 0) response shape.1 (ρ 0)
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Σ response : TripLength → ℝ,
+          Lemma5FixedResponsePolicyFormFeasibleOptimalData
+            (μ 1) response shape.1 (ρ 1)
+
+/-- Stronger all-optimum response-shape data imply the smaller policy-form data. -/
+def Theorem4AllMeasurableFixedResponseShapeData.to_policy_form_data
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    (C : Theorem4AllMeasurableFixedResponseShapeData μ R) :
+    Theorem4AllMeasurableFixedResponsePolicyFormData μ R where
+  exists_optimal := C.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    rcases C.nonsurge ρ hρ with ⟨shape, response, D⟩
+    exact
+      ⟨shape, response,
+        Lemma5FixedResponsePolicyFormFeasibleOptimalData.of_shapeData D⟩
+  surge := by
+    intro ρ hρ
+    rcases C.surge ρ hρ with ⟨shape, response, D⟩
+    exact
+      ⟨shape, response,
+        Lemma5FixedResponsePolicyFormFeasibleOptimalData.of_shapeData D⟩
+
+/--
+Policy-form fixed-response Lemma 5 hypotheses for every measurable optimum
+produce the feasible a.e. representative policy-form data consumed by the
+Theorem 4 endpoint bridge.
+-/
+def Theorem4AllMeasurableFixedResponsePolicyFormData.to_feasible_ae_policy_forms
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (C : Theorem4AllMeasurableFixedResponsePolicyFormData μ R) :
+    Theorem4AllMeasurableFeasibleAEPolicyFormData μ R where
+  exists_optimal := C.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    rcases C.nonsurge ρ hρ with ⟨shape, response, D⟩
+    exact
+      ⟨shape,
+        D.to_feasiblePolicyFormAlmostEverywhere (hρ.1 0).2 (hρ.1 0).1⟩
+  surge := by
+    intro ρ hρ
+    rcases C.surge ρ hρ with ⟨shape, response, D⟩
+    exact
+      ⟨shape,
+        D.to_feasiblePolicyFormAlmostEverywhere (hρ.1 1).2 (hρ.1 1).1⟩
+
+/--
 Feasible a.e. Lemma 5 representatives plus endpoint improvements on the exact
 representatives instantiate the rejected-mass strict-local certificate.
 -/

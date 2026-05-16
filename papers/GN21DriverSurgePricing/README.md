@@ -970,6 +970,9 @@ The next layer is also packaged:
 `gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`
 transfer normalized Lemma 6 positive-response policy-form data through those
 positive scalings to the measured marginal responses.
+`Theorem4AllMeasurableFixedResponsePolicyFormData` is the matching all-optima
+boundary for this lighter route, with `.to_feasible_ae_policy_forms` feeding
+the existing feasible a.e. representative machinery.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:
