@@ -12609,16 +12609,6 @@ theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_ev
                         (actorLaw e base) (decisionThreshold e base)) +
                   slope e base * actor)
             (estimationConsistent e)))
-    (htie :
-      ∀ e base skill,
-        ((1 / 2 : ℝ) -
-              slope e base *
-                GaussianHazardCertificate.normalUpperTailMean
-                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-                  (actorLaw e base) (decisionThreshold e base)) +
-            slope e base * skill =
-            (1 / 2 : ℝ) →
-          takeDecision e skill base = true)
     (hthreshold :
       ∀ e base actor, takeDecision e actor base = true ↔
         decisionThreshold e base ≤ actor)
@@ -12671,8 +12661,28 @@ theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_ev
   · intro e
     simpa [div_one] using hEq e
   · intro e base skill h
-    exact htie e base skill (by
-      simpa [div_one] using h)
+    let upper : ℝ :=
+      GaussianHazardCertificate.normalUpperTailMean
+        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+        (actorLaw e base) (decisionThreshold e base)
+    have h' :
+        ((1 / 2 : ℝ) - slope e base * upper) +
+            slope e base * skill = (1 / 2 : ℝ) := by
+      simpa [upper, div_one] using h
+    have hmul : slope e base * (skill - upper) = 0 := by
+      nlinarith
+    have hdiff : skill - upper = 0 := by
+      rcases mul_eq_zero.mp hmul with hslope_zero | hdiff
+      · exact False.elim ((ne_of_gt (hslope e base)) hslope_zero)
+      · exact hdiff
+    have hskill_eq : skill = upper := by
+      linarith
+    have hupper_gt : decisionThreshold e base < upper := by
+      exact
+        paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
+          (actorLaw e base) (decisionThreshold e base)
+    exact (hthreshold e base skill).2 (le_of_lt (by
+      simpa [hskill_eq] using hupper_gt))
   · intro _e _base
     norm_num
 

@@ -3812,16 +3812,6 @@ theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upp
                         (actorLaw e base) (decisionThreshold e base)) +
                   slope e base * actor)
             (estimationConsistent e)))
-    (htie :
-      ∀ e base skill,
-        ((1 / 2 : ℝ) -
-              slope e base *
-                GaussianHazardCertificate.normalUpperTailMean
-                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-                  (actorLaw e base) (decisionThreshold e base)) +
-            slope e base * skill =
-            (1 / 2 : ℝ) →
-          takeDecision e skill base = true)
     (hthreshold :
       ∀ e base actor, takeDecision e actor base = true ↔
         decisionThreshold e base ≤ actor)
@@ -3869,7 +3859,7 @@ theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upp
     studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
     baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
     estimationConsistent referenceTest slope actorLaw decisionThreshold hEq
-    htie hthreshold hslope hwitness e base
+    hthreshold hslope hwitness e base
 
 /--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed

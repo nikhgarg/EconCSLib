@@ -275,7 +275,9 @@ Last updated: 2026-05-16
   affine-centered-payoff endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_affine_centered_payoff`
   specializes this to denominator `1`, with source payoff stated directly as
-  `1 / 2 - slope * upperTailMean + slope * skill`.
+  `1 / 2 - slope * upperTailMean + slope * skill`.  Its tie-at-indifference
+  step is now proved internally: indifference forces `skill = upperTailMean`,
+  and the Gaussian upper-tail mean is strictly above the decision threshold.
   The
   finite acting-distribution
   lemmas
