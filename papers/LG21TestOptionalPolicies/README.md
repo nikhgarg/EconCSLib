@@ -172,6 +172,12 @@ cache is kept as `source.txt` for named-statement audits.
   `lg21PMFEventShare_pos_of_mass` package finite reporter/taker event
   probabilities as `NNReal` shares, discharging the `positiveShare ≤ 1` and
   `0 < positiveShare` bookkeeping from ordinary positive-mass event witnesses.
+  The event-share concrete endpoints
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_outside`
+  wire those shares directly into the optional-reporting and report-required
+  binary-mixture surfaces.
 
 ## Source Notes
 

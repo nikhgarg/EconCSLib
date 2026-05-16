@@ -262,7 +262,9 @@ Last updated: 2026-05-16
   `lg21PMFEventShare_le_one`, and `lg21PMFEventShare_pos_of_mass` now turn
   finite reporter/taker event probabilities into the `NNReal` shares used by
   the binary-mixture surface, so the share upper bound and strict positivity
-  reduce to ordinary finite event-mass facts.  The remaining source gap is
+  reduce to ordinary finite event-mass facts.  The event-share concrete
+  endpoints wire those shares directly into the optional-reporting and
+  report-required binary-mixture surfaces.  The remaining source gap is
   discharging the final paper policy assumptions for the concrete
   optional/report-required surfaces, especially the latent-to-observable
   mixture identities, the two displayed support facts, and centered
@@ -424,10 +426,11 @@ Last updated: 2026-05-16
    premise by requiring positive actor mass only for the two displayed tests.
    Finite event-share helpers now package reporter/taker shares as `NNReal`
    values and prove the `≤ 1` and strict-positivity obligations from
-   `pmfProb` facts.  Next work should discharge the remaining paper policy
-   assumptions for the concrete optional/report-required surfaces, especially
-   the latent-to-observable mixture identities, the two displayed support
-   facts, and centered outside-payoff identity.
+   `pmfProb` facts; the event-share concrete endpoints now use those shares
+   directly.  Next work should discharge the remaining paper policy assumptions
+   for the concrete optional/report-required surfaces, especially the
+   latent-to-observable mixture identities, the two displayed support facts,
+   and centered outside-payoff identity.
 
 ## Reusable Library Seams
 
