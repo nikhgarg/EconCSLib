@@ -498,6 +498,11 @@ into the concrete endpoint policy data.
   and `Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData` let the
   endpoint proof supply a weakly improving canonical representative directly,
   without separately proving that raw interval-component count decreases.
+  The policy-level wrapper
+  `lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canonical_dominance_and_maximizer`
+  is now the preferred target for endpoint calculus: it accepts ordinary
+  feasible canonical `TripPolicy` replacements and uses the exact-representation
+  bridge above to enter the generalized finite domain.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and

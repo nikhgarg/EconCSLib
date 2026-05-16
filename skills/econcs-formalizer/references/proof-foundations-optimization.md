@@ -93,6 +93,11 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   and positive on noncanonical ones; this turns canonical dominance into a
   terminating finite-descent step without manufacturing artificial endpoint
   count decreases.
+- When source endpoint lemmas naturally produce ordinary policies rather than
+  elements of the finite coded domain, add a narrow conversion wrapper from
+  those source policies into equal coded representatives.  This keeps the hard
+  calculus in source language and avoids forcing every endpoint proof to build
+  interval/ray codes manually.
 
 ## Lean Patterns
 

@@ -37,6 +37,7 @@ exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
 GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity
 lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
 Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
+lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canonical_dominance_and_maximizer
 ```
 
 This matters because the canonical Lemma 5 outputs include accept-all and
@@ -50,7 +51,10 @@ nonlinear endpoint derivative lemmas.  If the endpoint argument can instead
 produce a weakly improving canonical representative directly, use
 `Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData`; its
 shape-specific complexity discharges the termination/decrease proof
-automatically.
+automatically.  If the endpoint argument naturally produces ordinary feasible
+canonical `TripPolicy` replacements, use the policy-level constructor above; it
+converts those replacements into equal generalized interval/ray codes before
+applying the same finite-domain descent bridge.
 
 ## Lemmas 1-3 Status
 

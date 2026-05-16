@@ -801,10 +801,14 @@ The Lemma 5 generalized interval/ray route now also exposes
 `GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity` and
 `lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer`,
 with source data packaged as
-`Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData`.  This route
-lets the endpoint proof supply a weakly improving canonical representative
-directly; Lean handles the finite-descent decrease through the shape-specific
-complexity rather than raw component count.
+`Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData`.  The
+endpoint-facing wrapper
+`lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canonical_dominance_and_maximizer`
+lets the paper proof supply ordinary feasible canonical `TripPolicy`
+replacements; Lean converts those policies to equal generalized interval/ray
+representatives.  This route lets the endpoint proof supply a weakly improving
+canonical representative directly, while Lean handles the finite-descent
+decrease through the shape-specific complexity rather than raw component count.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

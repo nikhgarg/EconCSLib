@@ -19278,6 +19278,71 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_generalizedIntervalPo
     strictWitness
 
 /--
+Policy-level version of the generalized canonical-dominance constructor.  This
+is the endpoint-calculus-facing form: source endpoint lemmas may produce an
+ordinary feasible canonical `TripPolicy`; Lean then chooses the equal
+generalized interval/ray representative and applies the finite-domain bridge.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canonical_dominance_and_maximizer
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : SingleStateReward) {σ0 : TripPolicy}
+    (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ0)
+    (canonicalPolicyMax :
+      ∃ σmax : TripPolicy,
+        σmax ⊆ acceptAllPolicy ∧
+          lemma5PolicyForm shape σmax ∧
+            ∀ seed : GN21GeneralizedIntervalPolicy,
+              lemma5PolicyForm shape seed.policy →
+                Rhat seed.policy ≤ Rhat σmax)
+    (policyCanonicalDominance :
+      ∀ seed : GN21GeneralizedIntervalPolicy,
+        ¬ lemma5PolicyForm shape seed.policy →
+          ∃ σstar : TripPolicy,
+            σstar ⊆ acceptAllPolicy ∧
+              lemma5PolicyForm shape σstar ∧
+                Rhat seed.policy ≤ Rhat σstar)
+    (policyStrictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ σstar : TripPolicy,
+          σstar ⊆ acceptAllPolicy ∧
+            lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
+    μ Rhat shape hσ0_open hcont
+    (by
+      rcases canonicalPolicyMax with
+        ⟨σmax, hσmax_subset, hσmax_form, hσmax_bound⟩
+      rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+          hσmax_subset hσmax_form with
+        ⟨Pmax, hPmax_eq, hPmax_form⟩
+      refine ⟨Pmax, hPmax_form, ?_⟩
+      intro seed hseed_form
+      rw [hPmax_eq]
+      exact hσmax_bound seed hseed_form)
+    (by
+      intro seed hnot
+      rcases policyCanonicalDominance seed hnot with
+        ⟨σstar, hσstar_subset, hσstar_form, hreward⟩
+      rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+          hσstar_subset hσstar_form with
+        ⟨Pstar, hPstar_eq, hPstar_form⟩
+      refine ⟨Pstar, hPstar_form, ?_⟩
+      rw [hPstar_eq]
+      exact hreward)
+    (by
+      intro hnot
+      rcases policyStrictWitness hnot with
+        ⟨σstar, hσstar_subset, hσstar_form, hstrict⟩
+      rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+          hσstar_subset hσstar_form with
+        ⟨Pstar, hPstar_eq, hPstar_form⟩
+      refine ⟨Pstar, hPstar_form, ?_⟩
+      rw [hPstar_eq]
+      exact hstrict)
+
+/--
 Named finite-interval Lemma 5 source data.  This is the current precise target
 for closing the nonlinear endpoint-selection proof: source regularity gives
 `hσ0_open` and `hcont`; the finite endpoint argument must provide a canonical
