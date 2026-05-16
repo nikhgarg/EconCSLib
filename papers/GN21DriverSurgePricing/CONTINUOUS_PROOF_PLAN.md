@@ -440,10 +440,13 @@ into the concrete endpoint policy data.
   sign-to-shape part of Lemma 5 directly: positive responses give accept-all,
   monotone responses with a positive zero crossing give tail/head policies, and
   quasi-convex/quasi-concave responses with boundary zeros give middle
-  rejection/acceptance.  The remaining Lemma 5 work is no longer this interval
-  geometry; it is the source open-set approximation plus endpoint-continuity
-  argument that justifies replacing an arbitrary feasible open policy by the
-  positive-response policy without losing reward.
+  rejection/acceptance.  `lemma5MarginalSetReward_le_positiveResponsePolicy`
+  also proves the fixed-response variational comparison: for the linearized
+  set-integral reward, the positive-response policy weakly dominates every
+  measurable feasible policy.  The remaining Lemma 5 work is no longer this
+  interval geometry or fixed-response set comparison; it is the source open-set
+  approximation plus endpoint-continuity argument that identifies the nonlinear
+  endpoint path with this positive-response dominance.
 - For the fixed-transfer route, the lightest compiled fixed-state adapter is
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,
