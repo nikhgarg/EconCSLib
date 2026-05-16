@@ -288,6 +288,16 @@ These selectors combine the source sign dichotomies/trichotomies with stopped
 endpoint-move improvement premises and can rule out the noncanonical Case 1
 configurations without first constructing a complete finite path to the
 canonical form.
+The stopped endpoint moves have now been instantiated directly for those
+selectors as
+`lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
+`lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
+`lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
+and
+`lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`.
+The remaining source work is to supply the concrete endpoint-path derivative
+identities for arbitrary feasible optimal policies and then connect these
+strict improvements to the Theorem 4 optimal-policy exclusion route.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

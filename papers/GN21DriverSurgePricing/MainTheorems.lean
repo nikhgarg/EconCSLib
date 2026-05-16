@@ -126,6 +126,10 @@ the continuous CTMC source theorems.
   `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`:
   strict-local improvement selectors for ruling out noncanonical Lemma 5 shape
   optima once stopped endpoint moves are supplied.
+- The matching `..._of_stopped_endpoint_paths_with_context` selectors:
+  compiled instantiations of those sign splits with the stopped upper/lower
+  merge and lower-collapse endpoint calculus, including the needed context
+  normalization for collapse branches.
 - `symmDiff_ioo_union_touching_subset_singleton` and
   `policyAlmostEverywhereEq_ioo_union_touching`: the measure-zero collision
   merge fact used when an endpoint move joins two open intervals.
@@ -16605,6 +16609,56 @@ theorem lemma5_upper_endpoint_merge_or_first_zero_reward_gt_of_endpoint_path_wit
     exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hprefix⟩
 
 /--
+Existential strict-improvement form of the stopped upper-endpoint merge.  This
+is the strict-local version used to rule out an optimal noncanonical policy:
+the proof need not distinguish whether the endpoint reaches the collision or
+stops at the first derivative sign change.
+-/
+theorem lemma5_upper_endpoint_merge_or_first_zero_exists_strict_improvement_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        path x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪
+              Set.Ioo rightLower rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_start_pos : 0 < derivative leftUpper) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat σ' := by
+  rcases
+      lemma5_upper_endpoint_merge_or_first_zero_reward_gt_of_endpoint_path_with_context
+        μ Rhat context hR_congr hleft_upper hupper_right hright_upper
+        hpath_start hpath_at hpath_cont hderiv_cont hpath_deriv
+        hderiv_start_pos with hfull | hstop
+  · exact ⟨context ∪ Set.Ioo leftLower rightUpper, hfull.1⟩
+  · rcases hstop with ⟨c, _hc, _hc_zero, hreward, _hprefix⟩
+    exact
+      ⟨context ∪ (Set.Ioo leftLower c ∪ Set.Ioo rightLower rightUpper),
+        hreward⟩
+
+/--
 Context-aware lower-endpoint merge step.  Moving the lower endpoint of the
 right interval left to the preceding upper endpoint merges adjacent intervals,
 with all other intervals held fixed.
@@ -16795,6 +16849,55 @@ theorem lemma5_lower_endpoint_merge_or_last_zero_reward_gt_of_endpoint_path_with
     exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hsuffix⟩
 
 /--
+Existential strict-improvement form of the stopped lower-endpoint merge.  It
+packages the collision and last-zero branches into the single object needed by
+strict-local optimality arguments.
+-/
+theorem lemma5_lower_endpoint_merge_or_last_zero_exists_strict_improvement_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        path x =
+          Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪
+              Set.Ioo x rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_start_neg : derivative rightLower < 0) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat σ' := by
+  rcases
+      lemma5_lower_endpoint_merge_or_last_zero_reward_gt_of_endpoint_path_with_context
+        μ Rhat context hR_congr hleft_upper hupper_right hright_upper
+        hpath_start hpath_at hpath_cont hderiv_cont hpath_deriv
+        hderiv_start_neg with hfull | hstop
+  · exact ⟨context ∪ Set.Ioo leftLower rightUpper, hfull.1⟩
+  · rcases hstop with ⟨c, _hc, _hc_zero, hreward, _hsuffix⟩
+    exact
+      ⟨context ∪ (Set.Ioo leftLower leftUpper ∪ Set.Ioo c rightUpper),
+        hreward⟩
+
+/--
 Concrete Lemma 5 endpoint-path collapse step.  If moving a lower endpoint
 right until it reaches the upper endpoint has nonnegative derivative all along
 the path, then the interval is weakly dominated by deleting it.
@@ -16924,6 +17027,38 @@ theorem lemma5_lower_endpoint_collapse_or_first_zero_reward_gt_of_endpoint_path_
     exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hprefix⟩
 
 /--
+Existential strict-improvement form of the stopped lower-endpoint collapse.
+The improving policy is either the context with the interval deleted, or the
+same context with the lower endpoint stopped at the first sign-change point.
+-/
+theorem lemma5_lower_endpoint_collapse_or_first_zero_exists_strict_improvement_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path upper = Rhat context)
+    (hpath_at :
+      ∀ x ∈ Set.Icc lower upper,
+        path x = Rhat (context ∪ Set.Ioo x upper))
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_start_pos : 0 < derivative lower) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪ Set.Ioo lower upper) < Rhat σ' := by
+  rcases
+      lemma5_lower_endpoint_collapse_or_first_zero_reward_gt_of_endpoint_path_with_context
+        Rhat context hlower_upper hpath_start hpath_end hpath_at
+        hpath_cont hderiv_cont hpath_deriv hderiv_start_pos with
+    hfull | hstop
+  · exact ⟨context, hfull.1⟩
+  · rcases hstop with ⟨c, _hc, _hc_zero, hreward, _hprefix⟩
+    exact ⟨context ∪ Set.Ioo c upper, hreward⟩
+
+/--
 Context-aware upper-endpoint collapse step.  Moving an interval's upper
 endpoint left to its lower endpoint deletes that interval while all other
 intervals remain fixed.
@@ -17008,6 +17143,38 @@ theorem lemma5_upper_endpoint_collapse_or_last_zero_reward_gt_of_endpoint_path_w
       ⟨hc.1, le_of_lt hc.2⟩
     rw [hpath_start, hpath_at c hc_mem] at hpath_lt
     exact Or.inr ⟨c, hc, hc_zero, hpath_lt, hsuffix⟩
+
+/--
+Existential strict-improvement form of the stopped upper-endpoint collapse.
+The improving policy is either the context with the interval deleted, or the
+same context with the upper endpoint stopped at the last sign-change point.
+-/
+theorem lemma5_upper_endpoint_collapse_or_last_zero_exists_strict_improvement_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path upper = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path lower = Rhat context)
+    (hpath_at :
+      ∀ x ∈ Set.Icc lower upper,
+        path x = Rhat (context ∪ Set.Ioo lower x))
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hderiv_cont : ContinuousOn derivative (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_start_neg : derivative upper < 0) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪ Set.Ioo lower upper) < Rhat σ' := by
+  rcases
+      lemma5_upper_endpoint_collapse_or_last_zero_reward_gt_of_endpoint_path_with_context
+        Rhat context hlower_upper hpath_start hpath_end hpath_at
+        hpath_cont hderiv_cont hpath_deriv hderiv_start_neg with
+    hfull | hstop
+  · exact ⟨context, hfull.1⟩
+  · rcases hstop with ⟨c, _hc, _hc_zero, hreward, _hsuffix⟩
+    exact ⟨context ∪ Set.Ioo lower c, hreward⟩
 
 /--
 Analytic witness behind each Lemma 5 derivative-shape case.  The policy-form
@@ -23527,6 +23694,105 @@ theorem lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint
   · exact hlower_move hlower
 
 /--
+Strictly increasing interval selector instantiated with stopped endpoint
+paths.  In a policy with an accepted interval followed by a later accepted
+interval, either the first interval's upper endpoint can move right, or its
+lower endpoint can move right and collapse/shorten the interval, producing a
+strict reward improvement.
+-/
+theorem
+    lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (response : TripLength → ℝ)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    (hmono : StrictMonoOn response (Set.Ioi 0))
+    {lower upper rightLower rightUpper : TripLength}
+    (hlower_pos : 0 < lower)
+    (hlower_upper : lower < upper)
+    (hupper_right : upper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {upperPath upperDerivative lowerPath lowerDerivative : TripLength → ℝ}
+    (hupper_path_start :
+      upperPath upper =
+        Rhat (context ∪
+          (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_at :
+      ∀ x ∈ Set.Icc upper rightLower,
+        upperPath x =
+          Rhat (context ∪
+            (Set.Ioo lower x ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_cont :
+      ContinuousOn upperPath (Set.Icc upper rightLower))
+    (hupper_deriv_cont :
+      ContinuousOn upperDerivative (Set.Icc upper rightLower))
+    (hupper_path_deriv :
+      ∀ x ∈ Set.Ioo upper rightLower,
+        HasDerivAt upperPath (upperDerivative x) x)
+    (hupper_derivative_eq :
+      upperDerivative upper = response upper)
+    (hlower_path_start :
+      lowerPath lower =
+        Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo lower upper))
+    (hlower_path_end :
+      lowerPath upper =
+        Rhat (context ∪ Set.Ioo rightLower rightUpper))
+    (hlower_path_at :
+      ∀ x ∈ Set.Icc lower upper,
+        lowerPath x =
+          Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+            Set.Ioo x upper))
+    (hlower_path_cont :
+      ContinuousOn lowerPath (Set.Icc lower upper))
+    (hlower_deriv_cont :
+      ContinuousOn lowerDerivative (Set.Icc lower upper))
+    (hlower_path_deriv :
+      ∀ x ∈ Set.Ioo lower upper,
+        HasDerivAt lowerPath (lowerDerivative x) x)
+    (hlower_derivative_eq :
+      lowerDerivative lower = -response lower) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪
+        (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat σ' := by
+  have hcurrent_eq :
+      Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo lower upper) =
+        Rhat (context ∪
+          (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper)) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  exact
+    lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves
+      Rhat
+      (context ∪ (Set.Ioo lower upper ∪ Set.Ioo rightLower rightUpper))
+      response hmono hlower_pos hlower_upper
+      (by
+        intro hresp_pos
+        exact
+          lemma5_upper_endpoint_merge_or_first_zero_exists_strict_improvement_with_context
+            μ Rhat context hR_congr (le_of_lt hlower_upper) hupper_right
+            hright_upper hupper_path_start hupper_path_at hupper_path_cont
+            hupper_deriv_cont hupper_path_deriv
+            (by simpa [hupper_derivative_eq] using hresp_pos))
+      (by
+        intro hresp_pos
+        rcases
+            lemma5_lower_endpoint_collapse_or_first_zero_exists_strict_improvement_with_context
+              Rhat (context ∪ Set.Ioo rightLower rightUpper) hlower_upper
+              hlower_path_start hlower_path_end hlower_path_at
+              hlower_path_cont hlower_deriv_cont hlower_path_deriv
+              (by simpa [hlower_derivative_eq] using hresp_pos) with
+          ⟨σ', hσ'⟩
+        exact ⟨σ', by simpa [hcurrent_eq] using hσ'⟩)
+
+/--
 Lemma 5 Step 2, strictly decreasing case: across a positive gap
 `upper < nextLower`, either expanding the preceding upper endpoint has positive
 response or shrinking the next interval from its lower endpoint has positive
@@ -23569,6 +23835,95 @@ theorem lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_move
       response hanti hupper_pos hupper_next with hupper | hnextLower
   · exact hupper_move hupper
   · exact hnextLower_move hnextLower
+
+/--
+Strictly decreasing adjacent-gap selector instantiated with the stopped
+endpoint calculus.  If the marginal response is strictly decreasing across a
+positive gap, then the policy with the two neighboring accepted intervals has
+some strict local improvement: either move the left upper endpoint right, or
+move the right lower endpoint left, stopping early at the first/last zero when
+the endpoint derivative changes sign before collision.
+-/
+theorem
+    lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_stopped_endpoint_paths_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (response : TripLength → ℝ)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    (hanti : StrictAntiOn response (Set.Ioi 0))
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hleftUpper_pos : 0 < leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {upperPath upperDerivative lowerPath lowerDerivative : TripLength → ℝ}
+    (hupper_path_start :
+      upperPath leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        upperPath x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_cont :
+      ContinuousOn upperPath (Set.Icc leftUpper rightLower))
+    (hupper_deriv_cont :
+      ContinuousOn upperDerivative (Set.Icc leftUpper rightLower))
+    (hupper_path_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt upperPath (upperDerivative x) x)
+    (hupper_derivative_eq :
+      upperDerivative leftUpper = response leftUpper)
+    (hlower_path_start :
+      lowerPath rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hlower_path_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        lowerPath x =
+          Rhat (context ∪
+            (Set.Ioo leftLower leftUpper ∪ Set.Ioo x rightUpper)))
+    (hlower_path_cont :
+      ContinuousOn lowerPath (Set.Icc leftUpper rightLower))
+    (hlower_deriv_cont :
+      ContinuousOn lowerDerivative (Set.Icc leftUpper rightLower))
+    (hlower_path_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt lowerPath (lowerDerivative x) x)
+    (hlower_derivative_eq :
+      lowerDerivative rightLower = response rightLower) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat σ' := by
+  exact
+    lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_moves
+      Rhat
+      (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper))
+      response hanti hleftUpper_pos hupper_right
+      (by
+        intro hresp_pos
+        exact
+          lemma5_upper_endpoint_merge_or_first_zero_exists_strict_improvement_with_context
+            μ Rhat context hR_congr hleft_upper hupper_right hright_upper
+            hupper_path_start hupper_path_at hupper_path_cont
+            hupper_deriv_cont hupper_path_deriv
+            (by simpa [hupper_derivative_eq] using hresp_pos))
+      (by
+        intro hresp_neg
+        have hresponse_right_neg : response rightLower < 0 := by
+          linarith
+        exact
+          lemma5_lower_endpoint_merge_or_last_zero_exists_strict_improvement_with_context
+            μ Rhat context hR_congr hleft_upper hupper_right hright_upper
+            hlower_path_start hlower_path_at hlower_path_cont
+            hlower_deriv_cont hlower_path_deriv
+            (by simpa [hlower_derivative_eq] using hresponse_right_neg))
 
 /--
 Lemma 5 Step 2, strictly quasi-convex case: if the two outer endpoint
@@ -23669,6 +24024,180 @@ theorem lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_end
     · exact hmiddleLower_move hmiddle.1
 
 /--
+Strict quasi-convex three-interval selector instantiated with stopped endpoint
+paths.  The three branches match the paper proof: expand the left interval
+right, expand the right interval left, or collapse/shorten the middle interval.
+Each branch is discharged by the stopped endpoint calculus, with set-union
+normalization used only to align the branch-local context with the displayed
+three-interval policy.
+-/
+theorem
+    lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (response : TripLength → ℝ)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    (hqc : strictQuasiConvexOnPositive response)
+    {leftLower leftUpper middleLower middleUpper rightLower rightUpper :
+      TripLength}
+    (hleft_lower_upper : leftLower ≤ leftUpper)
+    (hleft_pos : 0 < leftUpper)
+    (hleft_middleLower : leftUpper < middleLower)
+    (hmiddleLower_middleUpper : middleLower < middleUpper)
+    (hmiddleUpper_rightLower : middleUpper < rightLower)
+    (hright_lower_upper : rightLower ≤ rightUpper)
+    {leftPath leftDerivative rightPath rightDerivative
+      middlePath middleDerivative : TripLength → ℝ}
+    (hleft_path_start :
+      leftPath leftUpper =
+        Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo middleLower middleUpper)))
+    (hleft_path_at :
+      ∀ x ∈ Set.Icc leftUpper middleLower,
+        leftPath x =
+          Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+            (Set.Ioo leftLower x ∪
+              Set.Ioo middleLower middleUpper)))
+    (hleft_path_cont :
+      ContinuousOn leftPath (Set.Icc leftUpper middleLower))
+    (hleft_deriv_cont :
+      ContinuousOn leftDerivative (Set.Icc leftUpper middleLower))
+    (hleft_path_deriv :
+      ∀ x ∈ Set.Ioo leftUpper middleLower,
+        HasDerivAt leftPath (leftDerivative x) x)
+    (hleft_derivative_eq :
+      leftDerivative leftUpper = response leftUpper)
+    (hright_path_start :
+      rightPath rightLower =
+        Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          (Set.Ioo middleLower middleUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hright_path_at :
+      ∀ x ∈ Set.Icc middleUpper rightLower,
+        rightPath x =
+          Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo x rightUpper)))
+    (hright_path_cont :
+      ContinuousOn rightPath (Set.Icc middleUpper rightLower))
+    (hright_deriv_cont :
+      ContinuousOn rightDerivative (Set.Icc middleUpper rightLower))
+    (hright_path_deriv :
+      ∀ x ∈ Set.Ioo middleUpper rightLower,
+        HasDerivAt rightPath (rightDerivative x) x)
+    (hright_derivative_eq :
+      rightDerivative rightLower = -response rightLower)
+    (hmiddle_path_start :
+      middlePath middleLower =
+        Rhat ((context ∪
+            (Set.Ioo leftLower leftUpper ∪
+              Set.Ioo rightLower rightUpper)) ∪
+          Set.Ioo middleLower middleUpper))
+    (hmiddle_path_end :
+      middlePath middleUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hmiddle_path_at :
+      ∀ x ∈ Set.Icc middleLower middleUpper,
+        middlePath x =
+          Rhat ((context ∪
+              (Set.Ioo leftLower leftUpper ∪
+                Set.Ioo rightLower rightUpper)) ∪
+            Set.Ioo x middleUpper))
+    (hmiddle_path_cont :
+      ContinuousOn middlePath (Set.Icc middleLower middleUpper))
+    (hmiddle_deriv_cont :
+      ContinuousOn middleDerivative (Set.Icc middleLower middleUpper))
+    (hmiddle_path_deriv :
+      ∀ x ∈ Set.Ioo middleLower middleUpper,
+        HasDerivAt middlePath (middleDerivative x) x)
+    (hmiddle_derivative_eq :
+      middleDerivative middleLower = -response middleLower) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪
+          (Set.Ioo middleLower middleUpper ∪
+            Set.Ioo rightLower rightUpper))) <
+        Rhat σ' := by
+  have hcurrent_left_eq :
+      Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo middleLower middleUpper)) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) := by
+    congr 1
+    ext x
+    simp [or_assoc, or_comm]
+  have hcurrent_right_eq :
+      Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          (Set.Ioo middleLower middleUpper ∪
+            Set.Ioo rightLower rightUpper)) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  have hcurrent_middle_eq :
+      Rhat ((context ∪
+            (Set.Ioo leftLower leftUpper ∪
+              Set.Ioo rightLower rightUpper)) ∪
+          Set.Ioo middleLower middleUpper) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            (Set.Ioo middleLower middleUpper ∪
+              Set.Ioo rightLower rightUpper))) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  rcases lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy
+      response hqc hleft_pos hleft_middleLower hmiddleLower_middleUpper
+      hmiddleUpper_rightLower with hleft | hright_or_middle
+  · rcases
+        lemma5_upper_endpoint_merge_or_first_zero_exists_strict_improvement_with_context
+          μ Rhat (context ∪ Set.Ioo rightLower rightUpper) hR_congr
+          hleft_lower_upper hleft_middleLower
+          (le_of_lt hmiddleLower_middleUpper) hleft_path_start
+          hleft_path_at hleft_path_cont hleft_deriv_cont
+          hleft_path_deriv
+          (by simpa [hleft_derivative_eq] using hleft) with
+      ⟨σ', hσ'⟩
+    exact ⟨σ', by simpa [hcurrent_left_eq] using hσ'⟩
+  · rcases hright_or_middle with hright | hmiddle
+    · have hright_deriv_neg : -response rightLower < 0 := by
+        linarith
+      rcases
+          lemma5_lower_endpoint_merge_or_last_zero_exists_strict_improvement_with_context
+            μ Rhat (context ∪ Set.Ioo leftLower leftUpper) hR_congr
+            (le_of_lt hmiddleLower_middleUpper) hmiddleUpper_rightLower
+            hright_lower_upper hright_path_start hright_path_at
+            hright_path_cont hright_deriv_cont hright_path_deriv
+            (by simpa [hright_derivative_eq] using hright_deriv_neg) with
+        ⟨σ', hσ'⟩
+      exact ⟨σ', by simpa [hcurrent_right_eq] using hσ'⟩
+    · rcases
+          lemma5_lower_endpoint_collapse_or_first_zero_exists_strict_improvement_with_context
+            Rhat
+            (context ∪
+              (Set.Ioo leftLower leftUpper ∪
+                Set.Ioo rightLower rightUpper))
+            hmiddleLower_middleUpper hmiddle_path_start hmiddle_path_end
+            hmiddle_path_at hmiddle_path_cont hmiddle_deriv_cont
+            hmiddle_path_deriv
+            (by simpa [hmiddle_derivative_eq] using hmiddle.1) with
+        ⟨σ', hσ'⟩
+      exact ⟨σ', by simpa [hcurrent_middle_eq] using hσ'⟩
+
+/--
 Lemma 5 Step 2, strictly quasi-concave case: if the lower-endpoint responses
 on two adjacent intervals are nonnegative, then the upper endpoint before the
 gap has positive response, so expanding that interval toward the gap is an
@@ -23750,6 +24279,155 @@ theorem lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endp
   · rcases hlower_or_right with hleft | hright
     · exact hleftLower_move hleft
     · exact hrightLower_move hright
+
+/--
+Strict quasi-concave two-interval selector instantiated with stopped endpoint
+paths.  The branch split is the paper's two-interval quasi-concave case:
+expand the left interval into the gap, collapse/shorten the left interval from
+its lower endpoint, or collapse/shorten the right interval from its lower
+endpoint.
+-/
+theorem
+    lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (response : TripLength → ℝ)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    (hqc : strictQuasiConcaveOnPositive response)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleftLower_pos : 0 < leftLower)
+    (hleftLower_leftUpper : leftLower < leftUpper)
+    (hleftUpper_rightLower : leftUpper < rightLower)
+    (hrightLower_rightUpper : rightLower < rightUpper)
+    {upperPath upperDerivative leftPath leftDerivative
+      rightPath rightDerivative : TripLength → ℝ}
+    (hupper_path_start :
+      upperPath leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_at :
+      ∀ x ∈ Set.Icc leftUpper rightLower,
+        upperPath x =
+          Rhat (context ∪
+            (Set.Ioo leftLower x ∪ Set.Ioo rightLower rightUpper)))
+    (hupper_path_cont :
+      ContinuousOn upperPath (Set.Icc leftUpper rightLower))
+    (hupper_deriv_cont :
+      ContinuousOn upperDerivative (Set.Icc leftUpper rightLower))
+    (hupper_path_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt upperPath (upperDerivative x) x)
+    (hupper_derivative_eq :
+      upperDerivative leftUpper = response leftUpper)
+    (hleft_path_start :
+      leftPath leftLower =
+        Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo leftLower leftUpper))
+    (hleft_path_end :
+      leftPath leftUpper =
+        Rhat (context ∪ Set.Ioo rightLower rightUpper))
+    (hleft_path_at :
+      ∀ x ∈ Set.Icc leftLower leftUpper,
+        leftPath x =
+          Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+            Set.Ioo x leftUpper))
+    (hleft_path_cont :
+      ContinuousOn leftPath (Set.Icc leftLower leftUpper))
+    (hleft_deriv_cont :
+      ContinuousOn leftDerivative (Set.Icc leftLower leftUpper))
+    (hleft_path_deriv :
+      ∀ x ∈ Set.Ioo leftLower leftUpper,
+        HasDerivAt leftPath (leftDerivative x) x)
+    (hleft_derivative_eq :
+      leftDerivative leftLower = -response leftLower)
+    (hright_path_start :
+      rightPath rightLower =
+        Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          Set.Ioo rightLower rightUpper))
+    (hright_path_end :
+      rightPath rightUpper =
+        Rhat (context ∪ Set.Ioo leftLower leftUpper))
+    (hright_path_at :
+      ∀ x ∈ Set.Icc rightLower rightUpper,
+        rightPath x =
+          Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+            Set.Ioo x rightUpper))
+    (hright_path_cont :
+      ContinuousOn rightPath (Set.Icc rightLower rightUpper))
+    (hright_deriv_cont :
+      ContinuousOn rightDerivative (Set.Icc rightLower rightUpper))
+    (hright_path_deriv :
+      ∀ x ∈ Set.Ioo rightLower rightUpper,
+        HasDerivAt rightPath (rightDerivative x) x)
+    (hright_derivative_eq :
+      rightDerivative rightLower = -response rightLower) :
+    ∃ σ' : TripPolicy,
+      Rhat (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+        Rhat σ' := by
+  have hcurrent_left_eq :
+      Rhat ((context ∪ Set.Ioo rightLower rightUpper) ∪
+          Set.Ioo leftLower leftUpper) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  have hcurrent_right_eq :
+      Rhat ((context ∪ Set.Ioo leftLower leftUpper) ∪
+          Set.Ioo rightLower rightUpper) =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) := by
+    congr 1
+    ext x
+    simp only [Set.mem_union, Set.mem_Ioo]
+    tauto
+  exact
+    lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves
+      Rhat
+      (context ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper))
+      response hqc hleftLower_pos hleftLower_leftUpper
+      hleftUpper_rightLower
+      (by
+        intro hresp_pos
+        exact
+          lemma5_upper_endpoint_merge_or_first_zero_exists_strict_improvement_with_context
+            μ Rhat context hR_congr (le_of_lt hleftLower_leftUpper)
+            hleftUpper_rightLower (le_of_lt hrightLower_rightUpper)
+            hupper_path_start hupper_path_at hupper_path_cont
+            hupper_deriv_cont hupper_path_deriv
+            (by simpa [hupper_derivative_eq] using hresp_pos))
+      (by
+        intro hresp_neg
+        have hleft_deriv_pos : 0 < -response leftLower := by
+          linarith
+        rcases
+            lemma5_lower_endpoint_collapse_or_first_zero_exists_strict_improvement_with_context
+              Rhat (context ∪ Set.Ioo rightLower rightUpper)
+              hleftLower_leftUpper hleft_path_start hleft_path_end
+              hleft_path_at hleft_path_cont hleft_deriv_cont
+              hleft_path_deriv
+              (by simpa [hleft_derivative_eq] using hleft_deriv_pos) with
+          ⟨σ', hσ'⟩
+        exact ⟨σ', by simpa [hcurrent_left_eq] using hσ'⟩)
+      (by
+        intro hresp_neg
+        have hright_deriv_pos : 0 < -response rightLower := by
+          linarith
+        rcases
+            lemma5_lower_endpoint_collapse_or_first_zero_exists_strict_improvement_with_context
+              Rhat (context ∪ Set.Ioo leftLower leftUpper)
+              hrightLower_rightUpper hright_path_start hright_path_end
+              hright_path_at hright_path_cont hright_deriv_cont
+              hright_path_deriv
+              (by simpa [hright_derivative_eq] using hright_deriv_pos) with
+          ⟨σ', hσ'⟩
+        exact ⟨σ', by simpa [hcurrent_right_eq] using hσ'⟩)
 
 /--
 Policy that accepts exactly the positive trip lengths whose marginal response

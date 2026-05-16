@@ -847,16 +847,21 @@ endpoint-path lemmas turn those sign intervals into strict reward improvement.
 At the Lemma 5 policy level, upper/lower merge and lower/upper collapse moves
 now have stopped variants that either reach the collision/deletion boundary or
 stop at the sign-change boundary, with strict reward improvement in both
-branches.  Lean also has the well-founded replacement constructor
+branches.  The stopped layer is now threaded through the four source sign
+selectors: the strictly increasing interval, strictly decreasing adjacent-gap,
+strictly quasi-convex three-interval, and strictly quasi-concave two-interval
+cases each have a compiled
+`..._of_stopped_endpoint_paths_with_context` theorem producing an existential
+strict local improvement from concrete stopped endpoint paths.  Lean also has
+the well-founded replacement constructor
 `lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
 and the generalized-policy source data
 `Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`, so the
 remaining iteration no longer has to force every stopped move to lower raw
-component count immediately.  The remaining open part is to define the
-paper-specific well-founded progress relation, thread stopped moves through the
-quasi-convex/quasi-concave selector, and prove that repeated sign-change stops
-cannot cycle without eventually lowering component count or reaching a
-canonical Lemma 5 shape.
+component count immediately.  The remaining open part is to instantiate the
+endpoint-path derivative identities for arbitrary feasible optimal policies and
+then either define the paper-specific well-founded progress relation or use the
+strict-local route to rule out every noncanonical optimal configuration.
 For optimality arguments there is also a shorter strict-local route now
 compiled for all nonpositive derivative-shape cases:
 `lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves`,
@@ -866,6 +871,10 @@ and
 `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`
 combine the source sign dichotomies/trichotomies with stopped endpoint-move
 improvement premises to rule out noncanonical interval configurations directly.
+Their stopped-path instantiations are the preferred next interface for Theorem
+4-style optimal-policy exclusion, because a signed endpoint branch already
+produces some strictly better policy without separately proving the full
+finite path to a canonical Lemma 5 form.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its

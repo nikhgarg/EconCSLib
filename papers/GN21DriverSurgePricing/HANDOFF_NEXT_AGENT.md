@@ -267,16 +267,24 @@ last-zero lemmas
 after the sign-change boundary.  The endpoint-path wrappers and the stopped
 upper/lower merge plus lower/upper collapse policy lemmas now give strict
 reward improvement whether the move reaches collision/deletion or stops at the
-sign-change boundary.  The replacement route now has a well-founded progress
+sign-change boundary.  The stopped moves are also now threaded through the
+paper's source sign selectors:
+`lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
+`lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
+`lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`,
+and
+`lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_stopped_endpoint_paths_with_context`
+each produce an existential strict improvement from concrete stopped endpoint
+paths.  The replacement route now has a well-founded progress
 interface:
 `lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
 and
 `Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`.  The
-remaining hard step is the finite hybrid iteration: after a stopped sign-change
-move, update the interval endpoint, re-enter the quasi-convex/quasi-concave
-selector, define a well-founded progress relation, and prove the repeated
-stops cannot cycle without eventually reducing component count or reaching a
-canonical Lemma 5 shape.
+remaining hard step is no longer the local selector glue.  It is to instantiate
+the endpoint-path derivative identities for arbitrary feasible optimal
+policies, then either define the finite hybrid well-founded progress relation
+or use the strict-local stopped selectors to rule out every noncanonical
+optimal configuration directly.
 There is also a shorter strict-local route for optimality:
 `lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves`,
 `lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_moves`,
