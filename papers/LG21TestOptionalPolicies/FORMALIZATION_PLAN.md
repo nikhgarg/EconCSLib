@@ -186,7 +186,9 @@ Last updated: 2026-05-16
   latent-or-observable fairness, any stable threshold cutoff is weakly above
   the acting mean.  The witness-level midpoint bridges prove the same
   below-mean reporter/taker existence fact directly for the Theorem 3.1
-  optional-reporting and report-required threshold source witnesses.  The
+  optional-reporting and report-required threshold source witnesses, and the
+  witness-level cutoff lower-bound wrappers connect those witnesses back to the
+  concrete source decisions to derive the same necessary condition.  The
   Gaussian/all-report and Gaussian/all-take
   wrappers instantiate the paper's "such a student always exists" sentence by
   selecting `mean - scale` from a nondegenerate `GaussianScaleLaw`, avoiding

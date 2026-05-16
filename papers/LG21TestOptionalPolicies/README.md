@@ -116,7 +116,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_report_required_threshold_witness_exists_below_mean_taker`
   make the same midpoint argument directly for the Theorem 3.1 threshold
-  source-witness structures.  The Gaussian/all-acting wrappers
+  source-witness structures.  The witness-level cutoff lower-bound wrappers
+  `paper_theorem3_2_optional_reporting_threshold_witness_cutoff_ge_mean_of_fair`
+  and
+  `paper_theorem3_2_report_required_threshold_witness_cutoff_ge_mean_of_fair`
+  now connect those Theorem 3.1 witnesses back to the concrete source decision
+  functions and prove the same cutoff-above-mean necessary condition.  The
+  Gaussian/all-acting wrappers
   `paper_theorem3_2_gaussianScaleLaw_exists_below_mean`,
   `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_gaussian_all_report`,
   and
