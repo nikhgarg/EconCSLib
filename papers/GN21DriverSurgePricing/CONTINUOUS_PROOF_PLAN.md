@@ -64,6 +64,10 @@ they converge to the strict-threshold reward; therefore the strict/complete
 max cutoff objective is upper-semicontinuous on every compact interval.
 Proposition 3.1 and the single-state multiplicative-pricing corollary are
 closed for the actual renewal reward on measurable feasible policies.
+Lemma 4 is also closed in the source measurable domain:
+`paper_lemma4_single_state_threshold_mass_zero_uniqueness_measurable` combines
+Theorem 1 with the reward-cutoff move and converts the zero-time off-boundary
+gaps to zero mass.
 
 ## Lemmas 6-10 Update
 
