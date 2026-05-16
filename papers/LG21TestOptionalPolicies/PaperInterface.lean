@@ -1086,6 +1086,69 @@ theorem paper_interface_proposition4_2_not_estimate_law_latent_skill_fair_of_one
     hskill
 
 /--
+Proposition 4.2 source-route wrapper: Lemma 4.1 lower-tail strategy-proofness
+first gives all-report/all-take, then the fixed-base one-test posterior law
+gives the latent-skill fairness contradiction.
+-/
+theorem paper_interface_proposition4_2_not_latent_skill_fair_of_lemma4_1_lower_tail_and_one_test_posterior_law
+    {Feature Skill Base Test : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde : ℝ}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill testScale htestScale) qTilde))
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_latent_skill_fair_of_lemma4_1_lower_tail_and_one_test_posterior_law
+    C api M theta k scoreLaw skillLaw e qHigh qLow base hslope htestScale
+    hreportCutoffIfNotAll hreportNoDeviation
+    htakeCutoffIfNotAll htakeNoDeviation
+    hNoAccess hAccessHigh hAccessLow hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 
