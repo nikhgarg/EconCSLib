@@ -197,10 +197,15 @@ Last updated: 2026-05-16
   `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_witness`
   now turn this into observable fairness implies test-blankness once the full
   source model supplies the final non-test-blank-to-distinct-positive-mass-actor
-  witness.  The latent-skill branch is reduced to the observable branch under
-  the shared latent-skill mixture identities.  The remaining source gap is
-  proving that final distinct-positive-mass witness from the full policy model
-  and then removing the certificate-only endpoint.
+  witness.  The off-mean variants
+  `paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness`
+  and
+  `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness`
+  reduce the final source obligation to one positive-mass acting type whose
+  value differs from the acting-distribution mean.  The latent-skill branch is
+  reduced to the observable branch under the shared latent-skill mixture
+  identities.  The remaining source gap is proving one of these final witnesses
+  from the full policy model and then removing the certificate-only endpoint.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -323,10 +328,10 @@ Last updated: 2026-05-16
    it separate from Gaussian calculus.  The current closed seam reaches
    support-at-mean and no-distinct-positive-mass actor values under observable
    fairness plus two-sided best response, and now derives observable fairness
-   implies test-blankness from a final source witness that every non-test-blank
-   policy has two distinct positive-mass acting values.  The next work should
-   prove that witness from the paper's full source policy model, ideally via a
-   clean policy-surface or equilibrium certificate.
+   implies test-blankness from either a final off-mean positive-mass acting
+   witness or the stronger two-distinct-positive-mass-values witness.  The next
+   work should prove one of those witnesses from the paper's full source policy
+   model, ideally via a clean policy-surface or equilibrium certificate.
 
 ## Reusable Library Seams
 
