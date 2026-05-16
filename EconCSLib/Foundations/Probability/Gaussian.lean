@@ -1224,6 +1224,30 @@ theorem posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
   rw [hpriorVar]
   linarith
 
+theorem posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
+    {κ : Type*} [Fintype κ]
+    {Mlow : GaussianSignalFamily ι} {Mhigh : GaussianSignalFamily κ}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum : Mlow.signalPrecisionSum < Mhigh.signalPrecisionSum) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance := by
+  have hpriorPrecision :
+      Mlow.priorPrecision = Mhigh.priorPrecision := by
+    simp [priorPrecision, hpriorVar]
+  have hposteriorPrecision :
+      Mlow.posteriorPrecision < Mhigh.posteriorPrecision := by
+    dsimp [posteriorPrecision]
+    rw [hpriorPrecision]
+    simpa [signalPrecisionSum, add_comm, add_left_comm, add_assoc] using
+      add_lt_add_left hsum Mhigh.priorPrecision
+  have hposteriorVariance :
+      Mhigh.posteriorVariance < Mlow.posteriorVariance := by
+    have h := one_div_lt_one_div_of_lt
+      Mlow.posteriorPrecision_pos hposteriorPrecision
+    simpa [posteriorVariance, one_div] using h
+  dsimp [posteriorMeanVariance]
+  rw [hpriorVar]
+  linarith
+
 theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
     [Nonempty ι]
     {Mlow Mhigh : GaussianSignalFamily ι}
@@ -1235,6 +1259,17 @@ theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
       (Mhigh.posteriorMeanScaleLaw).scale := by
   exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
     (posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+      hpriorVar hsum)
+
+theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_signalPrecisionSum_lt
+    [Nonempty ι] {κ : Type*} [Fintype κ] [Nonempty κ]
+    {Mlow : GaussianSignalFamily ι} {Mhigh : GaussianSignalFamily κ}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum : Mlow.signalPrecisionSum < Mhigh.signalPrecisionSum) :
+    (Mlow.posteriorMeanScaleLaw).scale <
+      (Mhigh.posteriorMeanScaleLaw).scale := by
+  exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
+    (posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
       hpriorVar hsum)
 
 /-- The posterior mean is monotone in every observed signal coordinate. -/
@@ -1489,6 +1524,18 @@ theorem posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
     (Mlow := Mlow.centeredFamily) (Mhigh := Mhigh.centeredFamily)
     hpriorVar hsum
 
+theorem posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
+    {κ : Type*} [Fintype κ]
+    {Mlow : GaussianOffsetSignalFamily ι} {Mhigh : GaussianOffsetSignalFamily κ}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance := by
+  exact GaussianSignalFamily.posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
+    (Mlow := Mlow.centeredFamily) (Mhigh := Mhigh.centeredFamily)
+    hpriorVar hsum
+
 theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
     [Nonempty ι]
     {Mlow Mhigh : GaussianOffsetSignalFamily ι}
@@ -1500,6 +1547,19 @@ theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_sum_signalPrecision_lt
       (Mhigh.posteriorMeanScaleLaw).scale := by
   exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
     (posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+      hpriorVar hsum)
+
+theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_signalPrecisionSum_lt
+    [Nonempty ι] {κ : Type*} [Fintype κ] [Nonempty κ]
+    {Mlow : GaussianOffsetSignalFamily ι} {Mhigh : GaussianOffsetSignalFamily κ}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    (Mlow.posteriorMeanScaleLaw).scale <
+      (Mhigh.posteriorMeanScaleLaw).scale := by
+  exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
+    (posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
       hpriorVar hsum)
 
 /-- The offset-family posterior mean is monotone in every raw signal coordinate. -/

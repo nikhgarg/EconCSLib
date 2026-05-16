@@ -176,6 +176,11 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   distribution of estimated skill/posterior mean,
   and use `GaussianOffsetSignalFamily` when source features have the form
   `q + noiseMean k + centeredNoise k`. Use
+  `GaussianOffsetSignalFamily.posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_signalPrecisionSum_lt`
+  when a testing paper compares posterior-score marginal scales across
+  different feature sets; this avoids forcing full/test-free features into the
+  same finite index type just to reuse same-index precision lemmas.
+  Use
   `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw` and
   `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw_standardize_threshold`
   when a paper conditions on true skill and writes the posterior-score
