@@ -22,6 +22,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   scale into the source precision expression. Leave global fixed-point or
   school-threshold uniqueness as the next explicit seam rather than hiding it
   inside the cutoff lemma.
+- For strategic threshold uniqueness proofs, strengthen weak cutoff
+  best-response statements to strict payoff order away from the cutoff before
+  attacking the fixed point. The reusable route is: strict inverse-CDF tail
+  lemmas in `StandardGaussianQuantileAPI`, strict payoff/probability algebra,
+  then a paper-facing theorem saying apply strictly dominates above the cutoff
+  and not applying strictly dominates below it.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.

@@ -88,6 +88,52 @@ theorem le_standardTail_iff_le_quantile_one_sub
       Q.cdf_le_iff_le_quantile hone_sub_mem
 
 /--
+Strict upper-tail inverse-CDF form: an upper-tail probability is strictly above
+`α` iff the standardized cutoff lies strictly below `Φ⁻¹(1 - α)`.
+-/
+theorem lt_standardTail_iff_lt_quantile_one_sub
+    (Q : StandardGaussianQuantileAPI)
+    {alpha z : ℝ} (halpha : alpha ∈ Set.Ioo (0 : ℝ) 1) :
+    alpha < 1 - Q.cdfAPI.cdf z ↔ z < Q.quantile (1 - alpha) := by
+  have halpha_pos : 0 < alpha := halpha.1
+  have halpha_lt_one : alpha < 1 := halpha.2
+  have hone_sub_mem : 1 - alpha ∈ Set.Ioo (0 : ℝ) 1 :=
+    ⟨by linarith, by linarith⟩
+  have hquantile : Q.cdfAPI.cdf (Q.quantile (1 - alpha)) = 1 - alpha :=
+    Q.cdf_quantile hone_sub_mem
+  calc
+    alpha < 1 - Q.cdfAPI.cdf z ↔
+        Q.cdfAPI.cdf z < 1 - alpha := by
+      constructor <;> intro h <;> linarith
+    _ ↔ Q.cdfAPI.cdf z < Q.cdfAPI.cdf (Q.quantile (1 - alpha)) := by
+      rw [hquantile]
+    _ ↔ z < Q.quantile (1 - alpha) :=
+      Q.cdfAPI.cdf_strictMono.lt_iff_lt
+
+/--
+Strict lower-tail counterpart: an upper-tail probability is strictly below
+`α` iff `Φ⁻¹(1 - α)` lies strictly below the standardized cutoff.
+-/
+theorem standardTail_lt_iff_quantile_one_sub_lt
+    (Q : StandardGaussianQuantileAPI)
+    {alpha z : ℝ} (halpha : alpha ∈ Set.Ioo (0 : ℝ) 1) :
+    1 - Q.cdfAPI.cdf z < alpha ↔ Q.quantile (1 - alpha) < z := by
+  have halpha_pos : 0 < alpha := halpha.1
+  have halpha_lt_one : alpha < 1 := halpha.2
+  have hone_sub_mem : 1 - alpha ∈ Set.Ioo (0 : ℝ) 1 :=
+    ⟨by linarith, by linarith⟩
+  have hquantile : Q.cdfAPI.cdf (Q.quantile (1 - alpha)) = 1 - alpha :=
+    Q.cdf_quantile hone_sub_mem
+  calc
+    1 - Q.cdfAPI.cdf z < alpha ↔
+        1 - alpha < Q.cdfAPI.cdf z := by
+      constructor <;> intro h <;> linarith
+    _ ↔ Q.cdfAPI.cdf (Q.quantile (1 - alpha)) < Q.cdfAPI.cdf z := by
+      rw [hquantile]
+    _ ↔ Q.quantile (1 - alpha) < z :=
+      Q.cdfAPI.cdf_strictMono.lt_iff_lt
+
+/--
 The paper's selectivity condition relative to an eligible mass,
 `2 * capacity < mass`, makes the upper-tail quantile
 `Φ⁻¹(1 - capacity / mass)` positive.

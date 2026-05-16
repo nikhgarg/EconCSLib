@@ -198,6 +198,11 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `StandardGaussianCDFAPI.thresholdPassProb_antitone_threshold` and
   `StandardGaussianCDFAPI.thresholdPassProb_le_of_mean_le_same_scale` for
   cutoff/mean monotonicity. Use
+  `StandardGaussianQuantileAPI.lt_standardTail_iff_lt_quantile_one_sub` and
+  `StandardGaussianQuantileAPI.standardTail_lt_iff_quantile_one_sub_lt` for
+  strict best-response or threshold-uniqueness arguments around an inverse-CDF
+  cutoff; prove strict payoff order from these lemmas instead of duplicating
+  CDF algebra in a paper file. Use
   `StandardGaussianCDFAPI.mixtureTailMass_antitone_threshold` and
   `StandardGaussianCDFAPI.MixtureThresholdCertificate` for source equations
   where a common admission cutoff realizes a finite group-mixture capacity.
