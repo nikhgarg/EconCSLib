@@ -2511,6 +2511,31 @@ noncomputable def lg21LatentSkillEstimateDistribution
   (skillGivenBase base).bind (fun q => latentEstimate q base)
 
 /--
+A skill-independent latent estimate law mixes back to itself.  This discharges
+the latent-to-observable mixture identity for concrete surfaces where the
+paper-facing observable law is encoded directly as the latent law at every
+skill value.
+-/
+theorem lg21LatentSkillEstimateDistribution_const
+    {Skill Base Estimate : Type*} (skillGivenBase : Base → PMF Skill)
+    (estimateLaw : Base → PMF Estimate) (base : Base) :
+    lg21LatentSkillEstimateDistribution skillGivenBase
+      (fun _ base => estimateLaw base) base = estimateLaw base := by
+  simp [lg21LatentSkillEstimateDistribution]
+
+/-- Equilibrium-indexed version of `lg21LatentSkillEstimateDistribution_const`. -/
+theorem lg21LatentSkillEstimateDistribution_const_indexed
+    {Equilibrium Skill Base Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    (estimateLaw : Equilibrium → Base → PMF Estimate) :
+    ∀ e base,
+      lg21LatentSkillEstimateDistribution skillGivenBase
+        (fun _ base => estimateLaw e base) base = estimateLaw e base := by
+  intro e base
+  exact lg21LatentSkillEstimateDistribution_const skillGivenBase
+    (estimateLaw e) base
+
+/--
 Definition 1 equilibrium data, abstracted from the paper's test-taking and
 reporting action space.  `StudentInfo` packages the student's true skill and
 observed non-test features, while `Action` packages the `(Y,X)` decision.
@@ -7542,6 +7567,109 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base
     hdenom e base test₁ test₂ hmass₁ hmass₂ hne
 
 /--
+Localized direct Theorem 3.2 unfairness for the concrete optional-reporting
+binary-mixture point-estimate surface with event-share reporter mass and
+skill-independent latent estimate kernels.  The latent-to-observable mixture
+identities are discharged by `lg21LatentSkillEstimateDistribution_const`.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_constant_latent
+    {Equilibrium Skill Base Actor Student : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    [Fintype Student] [DecidableEq Student]
+    (skillGivenBase : Base → PMF Skill)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → Skill → Base → Bool)
+    (reportDecision : Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceSkill : Equilibrium → Base → Skill)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (reporterEvent : Equilibrium → Base → Student → Prop)
+    (decReporterEvent : ∀ e base, DecidablePred (reporterEvent e base))
+    (hreporterEvent_pos :
+      ∀ e base, ∃ student, reporterEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → ℝ → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        reportDecision e base (actorValue e base actor) = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base +
+                signalWeight e base *
+                  pmfExp (actorLaw e base) (actorValue e base)) /
+                denom e base)
+            (estimationConsistent e)))
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (e : Equilibrium) (base : Base) (test₁ test₂ : ℝ)
+    (hmass₁ :
+      0 < (actorLaw e base (actorOfTest e base test₁)).toReal)
+    (hmass₂ :
+      0 < (actorLaw e base (actorOfTest e base test₂)).toReal)
+    (hne :
+      actorValue e base (actorOfTest e base test₁) ≠
+        actorValue e base (actorOfTest e base test₂)) :
+    let positiveShare :=
+      lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent
+    let hpositiveShare_le_one :=
+      lg21PMFEventShareFn_le_one studentLaw reporterEvent decReporterEvent
+    let latentAccessEstimate : Equilibrium → Skill → Base → PMF ℝ :=
+      fun e _ base =>
+        lg21BinaryMixturePMF
+          (positiveShare e base) (hpositiveShare_le_one e base)
+          (reporterPMF e base) (noReporterPMF e base)
+    let latentNoAccessEstimate : Equilibrium → Skill → Base → PMF ℝ :=
+      fun e _ base => noReporterPMF e base
+    let S :=
+      lg21BinaryMixturePointEstimateSurface
+        (Skill := Skill) (Base := Base) (Test := ℝ) (Actor := Actor)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate positiveShare
+        hpositiveShare_le_one reporterPMF noReporterPMF actorLaw actorValue
+        actorOfTest
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share
+    skillGivenBase
+    (fun e _ base =>
+      lg21BinaryMixturePMF
+        (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent
+          e base)
+        (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+          decReporterEvent e base)
+        (reporterPMF e base) (noReporterPMF e base))
+    (fun e _ base => noReporterPMF e base)
+    demographicAccessEstimate demographicNoAccessEstimate takeDecision
+    reportDecision estimationConsistent referenceSkill studentLaw
+    reporterEvent decReporterEvent hreporterEvent_pos reporterPMF
+    noReporterPMF
+    (fun e base =>
+      (lg21LatentSkillEstimateDistribution_const_indexed skillGivenBase
+        (fun e base =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent
+              decReporterEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        e base).symm)
+    (fun e base =>
+      (lg21LatentSkillEstimateDistribution_const_indexed skillGivenBase
+        noReporterPMF e base).symm)
+    actorLaw actorValue actorOfTest hchooses_support baseTerm signalWeight
+    denom hEq hweight hdenom e base test₁ test₂ hmass₁ hmass₂ hne
+
+/--
 Theorem 3.2 concrete report-required PMF endpoint.  The binary-mixture
 point-estimate surface and base-indexed affine source model make the surface
 identities and taking payoff definitional; the remaining report-required
@@ -8234,6 +8362,110 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_requir
       paper_theorem3_2_centered_numerator_of_baseTerm_eq_half_denom_sub_signal_mean
         (houtside_baseTerm_of_pmfEq e base hPMF))
     hweight hdenom e base test₁ test₂ hmass₁ hmass₂ hne
+
+/--
+Localized direct Theorem 3.2 unfairness for the concrete report-required
+binary-mixture point-estimate surface with event-share taker mass,
+skill-independent latent estimate kernels, and the outside-payoff premise
+stated as the base-term identity.  The latent-to-observable mixture identities
+are discharged by `lg21LatentSkillEstimateDistribution_const`.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent
+    {Equilibrium Base Test Actor Student : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    [Fintype Student] [DecidableEq Student]
+    (skillGivenBase : Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (takerEvent : Equilibrium → Base → Student → Prop)
+    (decTakerEvent : ∀ e base, DecidablePred (takerEvent e base))
+    (htakerEvent_pos :
+      ∀ e base, ∃ student, takerEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (houtside_baseTerm_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          baseTerm e base =
+            denom e base / 2 -
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base))
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (e : Equilibrium) (base : Base) (test₁ test₂ : Test)
+    (hmass₁ :
+      0 < (actorLaw e base (actorOfTest e base test₁)).toReal)
+    (hmass₂ :
+      0 < (actorLaw e base (actorOfTest e base test₂)).toReal)
+    (hne :
+      actorValue e base (actorOfTest e base test₁) ≠
+        actorValue e base (actorOfTest e base test₂)) :
+    let positiveShare :=
+      lg21PMFEventShareFn studentLaw takerEvent decTakerEvent
+    let hpositiveShare_le_one :=
+      lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+    let latentAccessEstimate : Equilibrium → ℝ → Base → PMF ℝ :=
+      fun e _ base =>
+        lg21BinaryMixturePMF
+          (positiveShare e base) (hpositiveShare_le_one e base)
+          (reporterPMF e base) (noReporterPMF e base)
+    let latentNoAccessEstimate : Equilibrium → ℝ → Base → PMF ℝ :=
+      fun e _ base => noReporterPMF e base
+    let S :=
+      lg21BinaryMixturePointEstimateSurface
+        (Skill := ℝ) (Base := Base) (Test := Test) (Actor := Actor)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate positiveShare
+        hpositiveShare_le_one reporterPMF noReporterPMF actorLaw actorValue
+        actorOfTest
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm
+    skillGivenBase
+    (fun e _ base =>
+      lg21BinaryMixturePMF
+        (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+        (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+          e base)
+        (reporterPMF e base) (noReporterPMF e base))
+    (fun e _ base => noReporterPMF e base)
+    demographicAccessEstimate demographicNoAccessEstimate takeDecision
+    reportDecision estimationConsistent referenceTest studentLaw takerEvent
+    decTakerEvent htakerEvent_pos reporterPMF noReporterPMF
+    (fun e base =>
+      (lg21LatentSkillEstimateDistribution_const_indexed skillGivenBase
+        (fun e base =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+              e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        e base).symm)
+    (fun e base =>
+      (lg21LatentSkillEstimateDistribution_const_indexed skillGivenBase
+        noReporterPMF e base).symm)
+    actorLaw actorValue actorOfTest hchooses_support baseTerm signalWeight
+    denom hEq houtside_baseTerm_of_pmfEq hweight hdenom e base test₁ test₂
+    hmass₁ hmass₂ hne
 
 /--
 Theorem 3.2 endpoint from the paper's latent-to-observable mixture identities

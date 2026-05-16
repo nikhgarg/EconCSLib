@@ -267,11 +267,14 @@ Last updated: 2026-05-16
   report-required binary-mixture surfaces.  The report-required centered
   base-term endpoint replaces the centered-numerator outside-payoff premise
   with the auditable identity
-  `baseTerm = denom / 2 - signalWeight * mean`.  The remaining source gap is
-  discharging the final paper policy assumptions for the concrete
-  optional/report-required surfaces, especially the latent-to-observable
-  mixture identities, the two displayed support facts, and this centered
-  base-term identity.
+  `baseTerm = denom / 2 - signalWeight * mean`.  The constant-latent
+  event-share endpoints now discharge the latent-to-observable mixture
+  identities for the concrete optional/report-required surfaces when the
+  latent kernels are skill-independent copies of the observable laws.  The
+  remaining concrete policy obligations are the two displayed support facts
+  and the report-required centered base-term identity; a stricter
+  skill-dependent conditional-kernel route remains optional if the final
+  source-facing statement needs true conditional-on-skill laws.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -432,10 +435,12 @@ Last updated: 2026-05-16
    `pmfProb` facts; the event-share concrete endpoints now use those shares
    directly.  The report-required centered base-term endpoint makes the
    outside-payoff algebra a source-formula identity rather than a centered
-   numerator equality.  Next work should discharge the remaining paper policy
-   assumptions for the concrete optional/report-required surfaces, especially
-   the latent-to-observable mixture identities, the two displayed support facts,
-   and that centered base-term identity.
+   numerator equality.  The constant-latent event-share endpoints remove the
+   abstract latent-to-observable mixture assumptions for the corresponding
+   concrete surfaces.  Next work should discharge the two displayed support
+   facts and the report-required centered base-term identity, then decide
+   whether to add a skill-dependent conditional-kernel version for the final
+   paper-facing theorem statement.
 
 ## Reusable Library Seams
 
