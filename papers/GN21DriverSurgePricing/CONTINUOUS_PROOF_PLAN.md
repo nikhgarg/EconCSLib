@@ -435,6 +435,15 @@ into the concrete endpoint policy data.
   fields supply the realized endpoint moves.  If the source proof instead
   produces all-measurable Lemma 5 replacement data, it feeds this target through
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements`.
+- `lemma5PositiveResponsePolicy` and the
+  `lemma5PolicyForm_positiveResponse_*` theorems now prove the core
+  sign-to-shape part of Lemma 5 directly: positive responses give accept-all,
+  monotone responses with a positive zero crossing give tail/head policies, and
+  quasi-convex/quasi-concave responses with boundary zeros give middle
+  rejection/acceptance.  The remaining Lemma 5 work is no longer this interval
+  geometry; it is the source open-set approximation plus endpoint-continuity
+  argument that justifies replacing an arbitrary feasible open policy by the
+  positive-response policy without losing reward.
 - For the fixed-transfer route, the lightest compiled fixed-state adapter is
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,

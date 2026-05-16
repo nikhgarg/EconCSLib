@@ -17050,6 +17050,186 @@ theorem paper_lemma5_strictQuasiConcave_response_lt_between
       (f := response) hqc hx hxz hzy
 
 /--
+Policy that accepts exactly the positive trip lengths whose marginal response
+is strictly positive.  This is the source proof's local-improvement target in
+Lemma 5 after the derivative sign has been reduced to a response function.
+-/
+def lemma5PositiveResponsePolicy (response : TripLength → ℝ) : TripPolicy :=
+  {τ | 0 < τ ∧ 0 < response τ}
+
+/-- A positive marginal response produces the accept-all Lemma 5 form. -/
+theorem lemma5PolicyForm_positiveResponse_positive
+    (response : TripLength → ℝ)
+    (hpositive : ∀ τ : TripLength, 0 < τ → 0 < response τ) :
+    lemma5PolicyForm .positive (lemma5PositiveResponsePolicy response) := by
+  intro τ hτ
+  exact ⟨hτ, hpositive τ hτ⟩
+
+/--
+A strictly increasing response with a positive zero crossing has the
+short-trip-rejection Lemma 5 form.
+-/
+theorem lemma5PolicyForm_positiveResponse_strictlyIncreasing_of_zero
+    (response : TripLength → ℝ) {t : ℝ}
+    (ht_pos : 0 < t)
+    (hmono : StrictMonoOn response (Set.Ioi 0))
+    (hzero : response t = 0) :
+    lemma5PolicyForm .strictlyIncreasing
+      (lemma5PositiveResponsePolicy response) := by
+  refine ⟨t, ?_⟩
+  intro τ hτ_pos
+  constructor
+  · intro hτ_mem
+    have hτ_response_pos : 0 < response τ := hτ_mem.2
+    by_contra hnot_lt
+    have hτ_le_t : τ ≤ t := le_of_not_gt hnot_lt
+    rcases lt_or_eq_of_le hτ_le_t with hτ_lt_t | hτ_eq_t
+    · have hresp_lt : response τ < response t :=
+        hmono hτ_pos ht_pos hτ_lt_t
+      linarith
+    · have hresp_eq : response τ = 0 := by
+        simpa [hτ_eq_t] using hzero
+      linarith
+  · intro ht_lt_τ
+    have hresp_lt : response t < response τ :=
+      hmono ht_pos hτ_pos ht_lt_τ
+    exact ⟨hτ_pos, by linarith⟩
+
+/--
+A strictly decreasing response with a positive zero crossing has the
+long-trip-rejection Lemma 5 form.
+-/
+theorem lemma5PolicyForm_positiveResponse_strictlyDecreasing_of_zero
+    (response : TripLength → ℝ) {t : ℝ}
+    (ht_pos : 0 < t)
+    (hanti : StrictAntiOn response (Set.Ioi 0))
+    (hzero : response t = 0) :
+    lemma5PolicyForm .strictlyDecreasing
+      (lemma5PositiveResponsePolicy response) := by
+  refine ⟨t, ?_⟩
+  intro τ hτ_pos
+  constructor
+  · intro hτ_mem
+    have hτ_response_pos : 0 < response τ := hτ_mem.2
+    by_contra hnot_lt
+    have ht_le_τ : t ≤ τ := le_of_not_gt hnot_lt
+    rcases lt_or_eq_of_le ht_le_τ with ht_lt_τ | ht_eq_τ
+    · have hresp_lt : response τ < response t :=
+        hanti ht_pos hτ_pos ht_lt_τ
+      linarith
+    · have hresp_eq : response τ = 0 := by
+        simpa [← ht_eq_τ] using hzero
+      linarith
+  · intro hτ_lt_t
+    have hresp_lt : response t < response τ :=
+      hanti hτ_pos ht_pos hτ_lt_t
+    exact ⟨hτ_pos, by linarith⟩
+
+/--
+A strictly quasi-convex response with two positive zero crossings, positive
+outside the crossings, has the middle-rejection Lemma 5 form.  The strict
+quasi-convexity supplies the strict negativity between the two zeros.
+-/
+theorem lemma5PolicyForm_positiveResponse_strictlyQuasiConvex_of_boundary_zeros
+    (response : TripLength → ℝ) {lo hi : ℝ}
+    (hlo_pos : 0 < lo)
+    (hlo_hi : lo < hi)
+    (hqc : strictQuasiConvexOnPositive response)
+    (hlo_zero : response lo = 0)
+    (hhi_zero : response hi = 0)
+    (hleft_pos :
+      ∀ τ : TripLength, 0 < τ → τ < lo → 0 < response τ)
+    (hright_pos :
+      ∀ τ : TripLength, hi < τ → 0 < response τ) :
+    lemma5PolicyForm .strictlyQuasiConvex
+      (lemma5PositiveResponsePolicy response) := by
+  refine ⟨lo, hi, ?_⟩
+  intro τ hτ_pos
+  constructor
+  · intro hτ_mem
+    have hτ_response_pos : 0 < response τ := hτ_mem.2
+    by_cases hτ_lo : τ < lo
+    · exact Or.inl hτ_lo
+    by_cases hhi_τ : hi < τ
+    · exact Or.inr hhi_τ
+    have hlo_le_τ : lo ≤ τ := le_of_not_gt hτ_lo
+    have hτ_le_hi : τ ≤ hi := le_of_not_gt hhi_τ
+    have hlo_lt_τ : lo < τ := by
+      rcases lt_or_eq_of_le hlo_le_τ with hlo_lt | hτ_eq
+      · exact hlo_lt
+      · have hresp_eq : response τ = 0 := by
+          simpa [← hτ_eq] using hlo_zero
+        linarith
+    have hτ_lt_hi : τ < hi := by
+      rcases lt_or_eq_of_le hτ_le_hi with hτ_lt | hτ_eq
+      · exact hτ_lt
+      · have hresp_eq : response τ = 0 := by
+          simpa [hτ_eq] using hhi_zero
+        linarith
+    have hresp_lt :
+        response τ < max (response lo) (response hi) :=
+      paper_lemma5_strictQuasiConvex_response_lt_of_between
+        response hqc hlo_pos hlo_lt_τ hτ_lt_hi
+    rw [hlo_zero, hhi_zero] at hresp_lt
+    norm_num at hresp_lt
+    linarith
+  · intro hτ_out
+    rcases hτ_out with hτ_lo | hhi_τ
+    · exact ⟨hτ_pos, hleft_pos τ hτ_pos hτ_lo⟩
+    · exact ⟨hτ_pos, hright_pos τ hhi_τ⟩
+
+/--
+A strictly quasi-concave response with two positive zero crossings, nonpositive
+outside the crossings, has the middle-acceptance Lemma 5 form.  The strict
+quasi-concavity supplies the strict positivity between the two zeros.
+-/
+theorem lemma5PolicyForm_positiveResponse_strictlyQuasiConcave_of_boundary_zeros
+    (response : TripLength → ℝ) {lo hi : ℝ}
+    (hlo_pos : 0 < lo)
+    (hlo_hi : lo < hi)
+    (hqc : strictQuasiConcaveOnPositive response)
+    (hlo_zero : response lo = 0)
+    (hhi_zero : response hi = 0)
+    (hleft_nonpos :
+      ∀ τ : TripLength, 0 < τ → τ < lo → response τ ≤ 0)
+    (hright_nonpos :
+      ∀ τ : TripLength, hi < τ → response τ ≤ 0) :
+    lemma5PolicyForm .strictlyQuasiConcave
+      (lemma5PositiveResponsePolicy response) := by
+  refine ⟨lo, hi, ?_⟩
+  intro τ hτ_pos
+  constructor
+  · intro hτ_mem
+    have hτ_response_pos : 0 < response τ := hτ_mem.2
+    have hlo_lt_τ : lo < τ := by
+      by_contra hnot_lt
+      have hτ_le_lo : τ ≤ lo := le_of_not_gt hnot_lt
+      rcases lt_or_eq_of_le hτ_le_lo with hτ_lt_lo | hτ_eq_lo
+      · have hnonpos := hleft_nonpos τ hτ_pos hτ_lt_lo
+        linarith
+      · have hresp_eq : response τ = 0 := by
+          simpa [hτ_eq_lo] using hlo_zero
+        linarith
+    have hτ_lt_hi : τ < hi := by
+      by_contra hnot_lt
+      have hhi_le_τ : hi ≤ τ := le_of_not_gt hnot_lt
+      rcases lt_or_eq_of_le hhi_le_τ with hhi_lt_τ | hhi_eq_τ
+      · have hnonpos := hright_nonpos τ hhi_lt_τ
+        linarith
+      · have hresp_eq : response τ = 0 := by
+          simpa [← hhi_eq_τ] using hhi_zero
+        linarith
+    exact ⟨hlo_lt_τ, hτ_lt_hi⟩
+  · intro hbetween
+    have hresp_pos :
+        min (response lo) (response hi) < response τ :=
+      paper_lemma5_strictQuasiConcave_response_lt_between
+        response hqc hlo_pos hbetween.1 hbetween.2
+    rw [hlo_zero, hhi_zero] at hresp_pos
+    norm_num at hresp_pos
+    exact ⟨hτ_pos, hresp_pos⟩
+
+/--
 Lemma 5 certificate: a derivative-shape hypothesis lets one replace an open
 measurable policy by a policy of the corresponding interval form without
 decreasing reward.
