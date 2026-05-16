@@ -85,6 +85,15 @@ cache is kept as `source.txt` for named-statement audits.
   those compact strategic-withholding certificates directly, so the top-level
   Theorem 3.1 certificate interface can consume source witnesses plus concrete
   unfairness witnesses without manual certificate assembly.
+- Theorem 3.1 now also has regime-specific optional-reporting and
+  report-required certificates over both PMF and continuous-law surfaces:
+  `LG21OptionalReportingStrategicWithholdingCertificate`,
+  `LG21LawOptionalReportingStrategicWithholdingCertificate`,
+  `LG21ReportRequiredStrategicWithholdingCertificate`, and
+  `LG21LawReportRequiredStrategicWithholdingCertificate`.  These keep the
+  optional-reporting conclusion as the paper states it, namely all access
+  students take the test plus score-threshold reporting, rather than forcing it
+  into the generic finite taking-threshold shape.
 
 ### Recent Theorem 3.2 Progress
 

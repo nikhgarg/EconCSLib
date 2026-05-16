@@ -14908,6 +14908,270 @@ def paper_theorem3_1_law_strategic_withholding_certificate_of_source_witness
   not_demographically_fair :=
     lg21_not_lawDemographicallyFair_of_witness eDemo hDemoNe
 
+/--
+Regime-specific certificate for Theorem 3.1's optional-reporting conclusion:
+all access students take the test, some access students withhold scores,
+reporting follows finite score cutoffs, and all three fairness notions fail.
+-/
+structure LG21OptionalReportingStrategicWithholdingCertificate
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) where
+  all_take : Prop
+  some_access_students_do_not_report : Prop
+  reporting_threshold : Prop
+  all_take_holds : all_take
+  some_access_students_do_not_report_holds :
+    some_access_students_do_not_report
+  reporting_threshold_holds : reporting_threshold
+  not_latent_skill_fair : ¬ lg21SourceLatentSkillFair S
+  not_observably_fair : ¬ lg21SourceObservablyFair S
+  not_demographically_fair : ¬ lg21SourceDemographicallyFair S
+
+/--
+Theorem 3.1 optional-reporting endpoint, conditional on the regime-specific
+strategic-withholding certificate.
+-/
+theorem paper_theorem3_1_optional_reporting_strategic_withholding_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21OptionalReportingStrategicWithholdingCertificate S) :
+    C.all_take ∧ C.some_access_students_do_not_report ∧
+      C.reporting_threshold ∧
+        ¬ lg21SourceLatentSkillFair S ∧
+          ¬ lg21SourceObservablyFair S ∧
+            ¬ lg21SourceDemographicallyFair S := by
+  exact ⟨C.all_take_holds, C.some_access_students_do_not_report_holds,
+    C.reporting_threshold_holds, C.not_latent_skill_fair,
+    C.not_observably_fair, C.not_demographically_fair⟩
+
+/--
+Optional-reporting source-witness route packaged as the regime-specific
+Theorem 3.1 PMF certificate.
+-/
+def paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    LG21OptionalReportingStrategicWithholdingCertificate S where
+  all_take := ∀ base skill, W.takes base skill
+  some_access_students_do_not_report :=
+    ∃ base score, ¬ W.reports base score
+  reporting_threshold :=
+    ∀ base, ∃ cutoff : ℝ,
+      ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score
+  all_take_holds := W.all_take
+  some_access_students_do_not_report_holds :=
+    W.some_access_students_do_not_report
+  reporting_threshold_holds := W.reporting_threshold
+  not_latent_skill_fair :=
+    lg21_not_latentSkillFair_of_witness eLat q baseLat hLatNe
+  not_observably_fair :=
+    lg21_not_observablyFair_of_witness eObs baseObs hObsNe
+  not_demographically_fair :=
+    lg21_not_demographicallyFair_of_witness eDemo hDemoNe
+
+/--
+Continuous-law version of the optional-reporting regime-specific Theorem 3.1
+certificate.
+-/
+structure LG21LawOptionalReportingStrategicWithholdingCertificate
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) where
+  all_take : Prop
+  some_access_students_do_not_report : Prop
+  reporting_threshold : Prop
+  all_take_holds : all_take
+  some_access_students_do_not_report_holds :
+    some_access_students_do_not_report
+  reporting_threshold_holds : reporting_threshold
+  not_latent_skill_fair : ¬ lg21SourceLawLatentSkillFair S
+  not_observably_fair : ¬ lg21SourceLawObservablyFair S
+  not_demographically_fair : ¬ lg21SourceLawDemographicallyFair S
+
+/-- Optional-reporting Theorem 3.1 endpoint over continuous-law surfaces. -/
+theorem paper_theorem3_1_optional_reporting_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawOptionalReportingStrategicWithholdingCertificate S) :
+    C.all_take ∧ C.some_access_students_do_not_report ∧
+      C.reporting_threshold ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S := by
+  exact ⟨C.all_take_holds, C.some_access_students_do_not_report_holds,
+    C.reporting_threshold_holds, C.not_latent_skill_fair,
+    C.not_observably_fair, C.not_demographically_fair⟩
+
+/--
+Optional-reporting source-witness route packaged as the regime-specific
+Theorem 3.1 continuous-law certificate.
+-/
+def paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    LG21LawOptionalReportingStrategicWithholdingCertificate S where
+  all_take := ∀ base skill, W.takes base skill
+  some_access_students_do_not_report :=
+    ∃ base score, ¬ W.reports base score
+  reporting_threshold :=
+    ∀ base, ∃ cutoff : ℝ,
+      ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score
+  all_take_holds := W.all_take
+  some_access_students_do_not_report_holds :=
+    W.some_access_students_do_not_report
+  reporting_threshold_holds := W.reporting_threshold
+  not_latent_skill_fair :=
+    lg21_not_lawLatentSkillFair_of_witness eLat q baseLat hLatNe
+  not_observably_fair :=
+    lg21_not_lawObservablyFair_of_witness eObs baseObs hObsNe
+  not_demographically_fair :=
+    lg21_not_lawDemographicallyFair_of_witness eDemo hDemoNe
+
+/--
+Regime-specific certificate for Theorem 3.1's report-required conclusion:
+some access students do not take/report, taking follows finite skill cutoffs,
+and all three fairness notions fail.
+-/
+structure LG21ReportRequiredStrategicWithholdingCertificate
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) where
+  some_access_students_do_not_take : Prop
+  taking_threshold : Prop
+  some_access_students_do_not_take_holds :
+    some_access_students_do_not_take
+  taking_threshold_holds : taking_threshold
+  not_latent_skill_fair : ¬ lg21SourceLatentSkillFair S
+  not_observably_fair : ¬ lg21SourceObservablyFair S
+  not_demographically_fair : ¬ lg21SourceDemographicallyFair S
+
+/-- Theorem 3.1 report-required endpoint from its regime-specific certificate. -/
+theorem paper_theorem3_1_report_required_strategic_withholding_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21ReportRequiredStrategicWithholdingCertificate S) :
+    C.some_access_students_do_not_take ∧ C.taking_threshold ∧
+      ¬ lg21SourceLatentSkillFair S ∧
+        ¬ lg21SourceObservablyFair S ∧
+          ¬ lg21SourceDemographicallyFair S := by
+  exact ⟨C.some_access_students_do_not_take_holds,
+    C.taking_threshold_holds, C.not_latent_skill_fair,
+    C.not_observably_fair, C.not_demographically_fair⟩
+
+/--
+Report-required source-witness route packaged as the regime-specific
+Theorem 3.1 PMF certificate.
+-/
+def paper_theorem3_1_report_required_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    LG21ReportRequiredStrategicWithholdingCertificate S where
+  some_access_students_do_not_take :=
+    ∃ base skill, ¬ W.takes base skill
+  taking_threshold :=
+    ∀ base, ∃ qBar : ℝ,
+      ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill
+  some_access_students_do_not_take_holds :=
+    W.some_access_students_do_not_take
+  taking_threshold_holds := W.taking_threshold
+  not_latent_skill_fair :=
+    lg21_not_latentSkillFair_of_witness eLat q baseLat hLatNe
+  not_observably_fair :=
+    lg21_not_observablyFair_of_witness eObs baseObs hObsNe
+  not_demographically_fair :=
+    lg21_not_demographicallyFair_of_witness eDemo hDemoNe
+
+/-- Continuous-law report-required Theorem 3.1 certificate. -/
+structure LG21LawReportRequiredStrategicWithholdingCertificate
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) where
+  some_access_students_do_not_take : Prop
+  taking_threshold : Prop
+  some_access_students_do_not_take_holds :
+    some_access_students_do_not_take
+  taking_threshold_holds : taking_threshold
+  not_latent_skill_fair : ¬ lg21SourceLawLatentSkillFair S
+  not_observably_fair : ¬ lg21SourceLawObservablyFair S
+  not_demographically_fair : ¬ lg21SourceLawDemographicallyFair S
+
+/-- Report-required Theorem 3.1 endpoint over continuous-law surfaces. -/
+theorem paper_theorem3_1_report_required_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawReportRequiredStrategicWithholdingCertificate S) :
+    C.some_access_students_do_not_take ∧ C.taking_threshold ∧
+      ¬ lg21SourceLawLatentSkillFair S ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S := by
+  exact ⟨C.some_access_students_do_not_take_holds,
+    C.taking_threshold_holds, C.not_latent_skill_fair,
+    C.not_observably_fair, C.not_demographically_fair⟩
+
+/--
+Report-required source-witness route packaged as the regime-specific
+Theorem 3.1 continuous-law certificate.
+-/
+def paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    LG21LawReportRequiredStrategicWithholdingCertificate S where
+  some_access_students_do_not_take :=
+    ∃ base skill, ¬ W.takes base skill
+  taking_threshold :=
+    ∀ base, ∃ qBar : ℝ,
+      ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill
+  some_access_students_do_not_take_holds :=
+    W.some_access_students_do_not_take
+  taking_threshold_holds := W.taking_threshold
+  not_latent_skill_fair :=
+    lg21_not_lawLatentSkillFair_of_witness eLat q baseLat hLatNe
+  not_observably_fair :=
+    lg21_not_lawObservablyFair_of_witness eObs baseObs hObsNe
+  not_demographically_fair :=
+    lg21_not_lawDemographicallyFair_of_witness eDemo hDemoNe
+
 /-- Certificate for Theorem 3.2's fairness-impossibility implication. -/
 structure LG21FairnessImpossibilityCertificate
     {Skill Base Test Estimate : Type*}

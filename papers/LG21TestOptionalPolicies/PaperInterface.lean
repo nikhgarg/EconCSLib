@@ -5592,6 +5592,152 @@ def paper_interface_theorem3_1_law_strategic_withholding_certificate_of_source_w
     W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
 
 /--
+Paper-facing Theorem 3.1 optional-reporting endpoint from its regime-specific
+PMF certificate.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_strategic_withholding_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21OptionalReportingStrategicWithholdingCertificate S) :
+    C.all_take ∧ C.some_access_students_do_not_report ∧
+      C.reporting_threshold ∧
+        ¬ lg21SourceLatentSkillFair S ∧
+          ¬ lg21SourceObservablyFair S ∧
+            ¬ lg21SourceDemographicallyFair S :=
+  paper_theorem3_1_optional_reporting_strategic_withholding_of_certificate C
+
+/--
+Paper-facing optional-reporting source-witness route packaged as the
+regime-specific Theorem 3.1 PMF certificate.
+-/
+def paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    LG21OptionalReportingStrategicWithholdingCertificate S :=
+  paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
+Paper-facing Theorem 3.1 optional-reporting endpoint from its regime-specific
+continuous-law certificate.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawOptionalReportingStrategicWithholdingCertificate S) :
+    C.all_take ∧ C.some_access_students_do_not_report ∧
+      C.reporting_threshold ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_optional_reporting_law_strategic_withholding_of_certificate C
+
+/--
+Paper-facing optional-reporting source-witness route packaged as the
+regime-specific Theorem 3.1 continuous-law certificate.
+-/
+def paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    LG21LawOptionalReportingStrategicWithholdingCertificate S :=
+  paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
+Paper-facing Theorem 3.1 report-required endpoint from its regime-specific PMF
+certificate.
+-/
+theorem paper_interface_theorem3_1_report_required_strategic_withholding_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21ReportRequiredStrategicWithholdingCertificate S) :
+    C.some_access_students_do_not_take ∧ C.taking_threshold ∧
+      ¬ lg21SourceLatentSkillFair S ∧
+        ¬ lg21SourceObservablyFair S ∧
+          ¬ lg21SourceDemographicallyFair S :=
+  paper_theorem3_1_report_required_strategic_withholding_of_certificate C
+
+/--
+Paper-facing report-required source-witness route packaged as the
+regime-specific Theorem 3.1 PMF certificate.
+-/
+def paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    LG21ReportRequiredStrategicWithholdingCertificate S :=
+  paper_theorem3_1_report_required_strategic_withholding_certificate_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
+Paper-facing Theorem 3.1 report-required endpoint from its regime-specific
+continuous-law certificate.
+-/
+theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawReportRequiredStrategicWithholdingCertificate S) :
+    C.some_access_students_do_not_take ∧ C.taking_threshold ∧
+      ¬ lg21SourceLawLatentSkillFair S ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_report_required_law_strategic_withholding_of_certificate C
+
+/--
+Paper-facing report-required source-witness route packaged as the
+regime-specific Theorem 3.1 continuous-law certificate.
+-/
+def paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    LG21LawReportRequiredStrategicWithholdingCertificate S :=
+  paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
 Theorem 3.2: latent-skill or observable fairness implies test-blankness.
 
 Current Lean status: conditional on the fairness-impossibility certificate.

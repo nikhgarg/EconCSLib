@@ -164,6 +164,15 @@ Last updated: 2026-05-16
   certificate endpoint for these continuous-law routes.  The generic PMF and
   continuous-law source-witness routes now build the corresponding compact
   strategic-withholding certificates directly.
+  Theorem 3.1 now also has regime-specific optional-reporting and
+  report-required PMF/law certificates:
+  `LG21OptionalReportingStrategicWithholdingCertificate`,
+  `LG21LawOptionalReportingStrategicWithholdingCertificate`,
+  `LG21ReportRequiredStrategicWithholdingCertificate`, and
+  `LG21LawReportRequiredStrategicWithholdingCertificate`.  These preserve the
+  paper's exact optional-reporting conclusion, all access students take and
+  reporting is thresholded, instead of routing optional reporting through the
+  generic finite-taking-threshold certificate.
   Remaining Theorem 3.1 source work is deriving analogous PMF witnesses if a
   finite PMF endpoint is desired and, if needed later, strengthening the current
   closed source-mixture endpoint to match the paper's exact "every equilibrium"
