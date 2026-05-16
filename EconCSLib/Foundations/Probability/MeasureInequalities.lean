@@ -583,6 +583,30 @@ theorem measurableSet_verticalUpperStrip (x y : ℝ) :
     (isClosed_le continuous_fst continuous_const).measurableSet.inter
       (isClosed_le continuous_const continuous_snd).measurableSet
 
+/-- A vertical upper strip has positive mass under a finite open-positive joint law. -/
+theorem verticalUpperStripMass_pos_of_isOpenPosMeasure
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ]
+    [Measure.IsOpenPosMeasure μ] (x y : ℝ) :
+    0 < verticalUpperStripMass μ x y := by
+  let openStrip : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 < x ∧ y < p.2}
+  have hopen : IsOpen openStrip := by
+    have hleft : IsOpen ({p : ℝ × ℝ | p.1 < x}) :=
+      isOpen_lt continuous_fst continuous_const
+    have hright : IsOpen ({p : ℝ × ℝ | y < p.2}) :=
+      isOpen_lt continuous_const continuous_snd
+    simpa [openStrip, Set.setOf_and] using hleft.inter hright
+  have hnonempty : openStrip.Nonempty := by
+    refine ⟨(x - 1, y + 1), ?_⟩
+    simp [openStrip]
+  have hsubset :
+      openStrip ⊆ {p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2} := by
+    intro p hp
+    exact ⟨hp.1.le, hp.2.le⟩
+  have hpos :
+      0 < μ {p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2} :=
+    lt_of_lt_of_le (hopen.measure_pos μ hnonempty) (measure_mono hsubset)
+  exact ENNReal.toReal_pos (ne_of_gt hpos) (measure_ne_top μ _)
+
 theorem measurableSet_horizontalBoundaryLeft (x y : ℝ) :
     MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ p.2 = y}) := by
   exact

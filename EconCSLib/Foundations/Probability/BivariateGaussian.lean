@@ -18,6 +18,7 @@ bookkeeping.
 - `correlatedStandardGaussianLaw_isOpenPosMeasure`
 - `standardBivariateGaussianCDF_continuous_of_rho_sq_le_one`
 - `correlatedStandardGaussianLaw_firstCoordinateLowerMass`
+- `correlatedStandardGaussianLaw_verticalUpperStripMass_pos`
 - `correlatedStandardGaussianLaw_verticalBoundaryLeft_real_eq_zero`
 - `correlatedStandardGaussianLaw_horizontalBoundaryLeft_real_eq_zero`
 -/
@@ -281,6 +282,17 @@ theorem correlatedStandardGaussianLaw_firstCoordinateLowerMass
     hpre, Measure.prod_prod, standardGaussianCDF,
     ProbabilityTheory.cdf_eq_real]
   simp [measureReal_def]
+
+/-- Nondegenerate correlated standard-Gaussian laws give positive mass to every vertical upper strip. -/
+theorem correlatedStandardGaussianLaw_verticalUpperStripMass_pos
+    {rho : ℝ} (hrho : rho ^ 2 < 1) (x y : ℝ) :
+    0 < EconCSLib.verticalUpperStripMass
+      (correlatedStandardGaussianLaw rho) x y := by
+  letI : Measure.IsOpenPosMeasure (correlatedStandardGaussianLaw rho) :=
+    correlatedStandardGaussianLaw_isOpenPosMeasure hrho
+  exact
+    EconCSLib.verticalUpperStripMass_pos_of_isOpenPosMeasure
+      (correlatedStandardGaussianLaw rho) x y
 
 /--
 The correlated standard-Gaussian law assigns zero mass to every vertical

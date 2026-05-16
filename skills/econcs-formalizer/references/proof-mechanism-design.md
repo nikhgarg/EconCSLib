@@ -196,6 +196,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   CDF, and zero horizontal-boundary mass are known.  Prove this generic strip
   identity first, then separately prove the transformed Gaussian law supplies
   the advertised CDFs.
+- When a later algebraic theorem assumes these selection cores are positive,
+  avoid carrying positivity as a paper premise for concrete bivariate normals.
+  Prove a reusable open-positive-measure lemma that every nonempty vertical
+  upper strip has positive mass, then instantiate it for the nondegenerate
+  correlated Gaussian law. This usually removes two noisy hypotheses from the
+  paper-facing ratio/comparison theorem.
 - When closing a bivariate-normal CDF seam, do not leave `Phi_2` as a bare
   function longer than necessary.  Define the correlated standard-Gaussian law
   as the pushforward of independent standard normals by
