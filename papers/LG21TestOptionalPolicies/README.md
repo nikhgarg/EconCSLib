@@ -107,9 +107,10 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source`
   and
   `paper_theorem3_2_law_observable_fair_report_required_source_equilibrium_implies_test_blank_of_point_estimate_source`
-  now derive the two-sided best-response field from the concrete source
-  equilibrium model.  The remaining source gap is instantiating the mixture and
-  affine-payoff identities from the policy model.
+  plus the optional-reporting analogues now derive the two-sided best-response
+  field from the concrete source equilibrium models.  The remaining source gap
+  is instantiating the mixture and affine-payoff identities from the policy
+  model.
 
 ## Source Notes
 

@@ -222,10 +222,11 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_point_estimate_source`
   combine that constructor with the mixture, best-response, and affine-payoff
-  bridge.  The report-required point-estimate wrappers now derive the needed
-  two-sided best-response predicate directly from the concrete source
-  equilibrium model.  The remaining source gap is instantiating the mixture and
-  affine-payoff identities from the full policy model.
+  bridge.  The optional-reporting and report-required point-estimate wrappers
+  now derive the needed two-sided best-response predicate directly from the
+  concrete source equilibrium models.  The remaining source gap is
+  instantiating the mixture and affine-payoff identities from the full policy
+  model.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -354,11 +355,12 @@ Last updated: 2026-05-16
    The point-estimate constructors now close the off-mean field for deterministic
    scalar estimate surfaces, and the direct point-estimate endpoints close the
    observable-to-test-blank bridge once mixture, best-response, and affine-payoff
-   identities are supplied.  The report-required point-estimate wrappers now
-   derive the needed two-sided best-response predicate directly from the
-   concrete source equilibrium model; the next work should instantiate the
-   remaining mixture and affine-payoff identities from the paper's full source
-   policy model and then route them into the point-estimate endpoint.
+   identities are supplied.  The optional-reporting and report-required
+   point-estimate wrappers now derive the needed two-sided best-response
+   predicate directly from the concrete source equilibrium models; the next work
+   should instantiate the remaining mixture and affine-payoff identities from
+   the paper's full source policy model and then route them into the
+   point-estimate endpoint.
 
 ## Reusable Library Seams
 
