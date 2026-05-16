@@ -156,6 +156,11 @@ the continuous CTMC source theorems.
   and `paper_theorem4_accept_all_unique_optimal_of_allowed_replacement_data`:
   packaged Theorem 4 boundary combining all-optimal replacement case data,
   feasibility, and the four statewise endpoint improvements.
+- `Lemma5PolicyCanonicalDominanceMaximizerData`,
+  `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`,
+  and `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms`:
+  policy-level canonical-dominance route from the continuous Lemma 5 endpoint
+  proof to the measurable Theorem 4 allowed-policy-form certificate.
 - `paper_proposition3_1_affine_accept_all_ge_complement_reward_of_rejected_set`:
   direct measure/integral affine-pricing reward step from Proposition 3.1.
 - `paper_proposition3_1_affine_accept_all_ge_rejecting_measurable_set`:
@@ -19343,6 +19348,95 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_generalizedIntervalPo
       exact hstrict)
 
 /--
+Policy-level canonical-dominance constructor whose final replacement is the
+ordinary canonical policy chosen by the source proof.  Generalized interval/ray
+policies are used only as the finite approximation/descent domain; the returned
+certificate exposes the source-level policy, preserving feasibility and
+measurability information for restricted optimality arguments.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : SingleStateReward) {σ0 : TripPolicy}
+    (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ0)
+    (canonicalPolicyMax :
+      ∃ σmax : TripPolicy,
+        σmax ⊆ acceptAllPolicy ∧
+          MeasurableSet σmax ∧
+            lemma5PolicyForm shape σmax ∧
+              ∀ seed : GN21GeneralizedIntervalPolicy,
+                lemma5PolicyForm shape seed.policy →
+                  Rhat seed.policy ≤ Rhat σmax)
+    (policyCanonicalDominance :
+      ∀ seed : GN21GeneralizedIntervalPolicy,
+        ¬ lemma5PolicyForm shape seed.policy →
+          ∃ σstar : TripPolicy,
+            σstar ⊆ acceptAllPolicy ∧
+              lemma5PolicyForm shape σstar ∧
+                Rhat seed.policy ≤ Rhat σstar)
+    (policyStrictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ σstar : TripPolicy,
+          σstar ⊆ acceptAllPolicy ∧
+            lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  classical
+  let σmax := Classical.choose canonicalPolicyMax
+  have hσmax_spec := Classical.choose_spec canonicalPolicyMax
+  have hσmax_subset : σmax ⊆ acceptAllPolicy := hσmax_spec.1
+  have hσmax_form : lemma5PolicyForm shape σmax := hσmax_spec.2.2.1
+  have hσmax_bound :
+      ∀ seed : GN21GeneralizedIntervalPolicy,
+        lemma5PolicyForm shape seed.policy →
+          Rhat seed.policy ≤ Rhat σmax := hσmax_spec.2.2.2
+  have hseed_le_max :
+      ∀ seed : GN21GeneralizedIntervalPolicy,
+        Rhat seed.policy ≤ Rhat σmax := by
+    intro seed
+    by_cases hseed_form : lemma5PolicyForm shape seed.policy
+    · exact hσmax_bound seed hseed_form
+    · rcases policyCanonicalDominance seed hseed_form with
+        ⟨σstar, hσstar_subset, hσstar_form, hseed_le_star⟩
+      rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+          hσstar_subset hσstar_form with
+        ⟨Pstar, hPstar_eq, hPstar_form⟩
+      have hstar_le : Rhat Pstar.policy ≤ Rhat σmax :=
+        hσmax_bound Pstar hPstar_form
+      rw [hPstar_eq] at hstar_le
+      exact hseed_le_star.trans hstar_le
+  have hclose_to_max :
+      ∀ ε : ℝ, 0 < ε → Rhat σ0 - ε < Rhat σmax := by
+    intro ε hε
+    rcases exists_gn21GeneralizedIntervalPolicy_reward_close_below
+        μ Rhat hσ0_open hcont ε hε with
+      ⟨seed, hseed_close⟩
+    exact hseed_close.trans_le (hseed_le_max seed)
+  have hreward_ge : Rhat σ0 ≤ Rhat σmax := by
+    by_contra hnot
+    have hlt : Rhat σmax < Rhat σ0 := lt_of_not_ge hnot
+    let ε : ℝ := Rhat σ0 - Rhat σmax
+    have hε : 0 < ε := sub_pos.2 hlt
+    have hclose := hclose_to_max ε hε
+    dsimp [ε] at hclose
+    linarith
+  exact
+    { policy := σmax
+      policy_form := hσmax_form
+      reward_ge := hreward_ge
+      strict_unless_initial_form := by
+        intro hnot
+        rcases policyStrictWitness hnot with
+          ⟨σstar, hσstar_subset, hσstar_form, hstrict⟩
+        rcases exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+            hσstar_subset hσstar_form with
+          ⟨Pstar, hPstar_eq, hPstar_form⟩
+        have hstar_le : Rhat Pstar.policy ≤ Rhat σmax :=
+          hσmax_bound Pstar hPstar_form
+        rw [hPstar_eq] at hstar_le
+        exact hstrict.trans_le hstar_le }
+
+/--
 Named finite-interval Lemma 5 source data.  This is the current precise target
 for closing the nonlinear endpoint-selection proof: source regularity gives
 `hσ0_open` and `hcont`; the finite endpoint argument must provide a canonical
@@ -19458,6 +19552,73 @@ noncomputable def Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
   lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
     μ Rhat shape D.hσ0_open D.hcont D.canonicalMax
     D.canonicalDominance D.strictWitness
+
+/--
+Named source data for the policy-level canonical-dominance route.  This is the
+preferred endpoint-calculus boundary: the hard analysis can produce ordinary
+feasible canonical policies, while Lean uses generalized interval/ray seeds
+only for approximation and finite-domain comparison.
+-/
+structure Lemma5PolicyCanonicalDominanceMaximizerData
+    (μ : Measure TripLength) (Rhat : SingleStateReward)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape) where
+  hσ0_open : IsOpen σ0
+  hcont : GN21SymmDiffContinuousAt μ Rhat σ0
+  canonicalPolicyMax :
+    ∃ σmax : TripPolicy,
+      σmax ⊆ acceptAllPolicy ∧
+        MeasurableSet σmax ∧
+          lemma5PolicyForm shape σmax ∧
+            ∀ seed : GN21GeneralizedIntervalPolicy,
+              lemma5PolicyForm shape seed.policy →
+                Rhat seed.policy ≤ Rhat σmax
+  policyCanonicalDominance :
+    ∀ seed : GN21GeneralizedIntervalPolicy,
+      ¬ lemma5PolicyForm shape seed.policy →
+        ∃ σstar : TripPolicy,
+          σstar ⊆ acceptAllPolicy ∧
+            lemma5PolicyForm shape σstar ∧
+              Rhat seed.policy ≤ Rhat σstar
+  policyStrictWitness :
+    ¬ lemma5PolicyForm shape σ0 →
+      ∃ σstar : TripPolicy,
+        σstar ⊆ acceptAllPolicy ∧
+          lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar
+
+/-- Policy-level canonical-dominance data produce the optimizer replacement certificate. -/
+noncomputable def Lemma5PolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
+    μ Rhat shape D.hσ0_open D.hcont D.canonicalPolicyMax
+    D.policyCanonicalDominance D.policyStrictWitness
+
+/-- The policy-level canonical-dominance replacement remains feasible. -/
+theorem Lemma5PolicyCanonicalDominanceMaximizerData.to_optimizer_replacement_subset
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape) :
+    D.to_optimizer_replacement.policy ⊆ acceptAllPolicy := by
+  classical
+  unfold Lemma5PolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+  unfold lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
+  exact (Classical.choose_spec D.canonicalPolicyMax).1
+
+/-- The policy-level canonical-dominance replacement is measurable. -/
+theorem Lemma5PolicyCanonicalDominanceMaximizerData.to_optimizer_replacement_measurable
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape) :
+    MeasurableSet D.to_optimizer_replacement.policy := by
+  classical
+  unfold Lemma5PolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+  unfold lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
+  exact (Classical.choose_spec D.canonicalPolicyMax).2.1
 
 /--
 Positive-case Lemma 5 replacement constructor using accept-all as the
@@ -19677,6 +19838,37 @@ theorem Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData.policyFor
     (D :
       Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
         μ Rhat σ0 shape)
+    (hcandidate :
+      Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+      Rhat σ0 shape D.to_optimizer_replacement hcandidate
+
+/--
+Policy-level canonical-dominance data force the current policy form under
+unrestricted optimality.
+-/
+theorem Lemma5PolicyCanonicalDominanceMaximizerData.policyForm_of_optimal
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape)
+    (hoptimal : ∀ σ : TripPolicy, Rhat σ ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+      Rhat σ0 shape D.to_optimizer_replacement hoptimal
+
+/--
+Restricted candidate comparison variant for policy-level canonical-dominance
+data.
+-/
+theorem Lemma5PolicyCanonicalDominanceMaximizerData.policyForm_of_candidate_le
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape)
     (hcandidate :
       Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
     lemma5PolicyForm shape σ0 := by
@@ -24055,6 +24247,90 @@ noncomputable def theorem4MeasurableShapeDerivationCertificate_of_all_measurable
       nonsurge_form := hnshape.2
       surge_form := hsshape.2
       only_policy_forms := C.only_policy_forms }
+
+/--
+All-measurable-optimal policy-level canonical-dominance data.  This is the
+Theorem 4 entry point closest to the continuous Lemma 5 proof after the
+generalized interval/ray reduction: for each optimal dynamic policy and each
+state, provide a policy-level canonical dominance/maximizer certificate in an
+allowed Lemma 5 shape.
+-/
+structure Theorem4AllMeasurablePolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+      ∃ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Lemma5PolicyCanonicalDominanceMaximizerData
+          (μ 0) (dynamicStateReward R ρ 0) (ρ 0) shape.1
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+      ∃ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Lemma5PolicyCanonicalDominanceMaximizerData
+          (μ 1) (dynamicStateReward R ρ 1) (ρ 1) shape.1
+
+/--
+Policy-level canonical-dominance data classify every measurable optimum into
+the allowed Lemma 5 policy forms.  Restricted optimality is enough because the
+chosen canonical replacement policy is exposed as a feasible measurable policy.
+-/
+noncomputable def Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurablePolicyCanonicalDominanceData μ R) :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate R where
+  exists_optimal := D.exists_optimal
+  only_policy_forms := by
+    intro ρ hρ
+    rcases D.nonsurge ρ hρ with ⟨nshape, ndata⟩
+    rcases D.surge ρ hρ with ⟨sshape, sdata⟩
+    have hnfeasible :
+        dynamicFeasibleMeasurablePolicy
+          (Function.update ρ 0 ndata.to_optimizer_replacement.policy) :=
+      dynamicFeasibleMeasurablePolicy_update hρ.1 0
+        ndata.to_optimizer_replacement.policy
+        ndata.to_optimizer_replacement_subset
+        ndata.to_optimizer_replacement_measurable
+    have hsfeasible :
+        dynamicFeasibleMeasurablePolicy
+          (Function.update ρ 1 sdata.to_optimizer_replacement.policy) :=
+      dynamicFeasibleMeasurablePolicy_update hρ.1 1
+        sdata.to_optimizer_replacement.policy
+        sdata.to_optimizer_replacement_subset
+        sdata.to_optimizer_replacement_measurable
+    have hnle :
+        dynamicStateReward R ρ 0 ndata.to_optimizer_replacement.policy ≤
+          dynamicStateReward R ρ 0 (ρ 0) :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hρ 0
+        hnfeasible
+    have hsle :
+        dynamicStateReward R ρ 1 sdata.to_optimizer_replacement.policy ≤
+          dynamicStateReward R ρ 1 (ρ 1) :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hρ 1
+        hsfeasible
+    exact
+      ⟨⟨nshape.1, nshape.2,
+          ndata.policyForm_of_candidate_le hnle⟩,
+        ⟨sshape.1, sshape.2,
+          sdata.policyForm_of_candidate_le hsle⟩⟩
+
+/--
+Paper-facing Theorem 4 measurable policy-form classification from
+policy-level Lemma 5 canonical-dominance data.
+-/
+noncomputable def paper_theorem4_measurable_allowed_policy_forms_of_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurablePolicyCanonicalDominanceData μ R) :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate R :=
+  D.to_allowed_policy_forms
 
 /--
 All-measurable-optimal replacement certificate.  The Lemma 5 replacement

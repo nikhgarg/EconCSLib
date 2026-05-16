@@ -503,6 +503,15 @@ into the concrete endpoint policy data.
   is now the preferred target for endpoint calculus: it accepts ordinary
   feasible canonical `TripPolicy` replacements and uses the exact-representation
   bridge above to enter the generalized finite domain.
+  The direct source-policy variant
+  `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
+  returns the ordinary canonical replacement itself and records
+  feasibility/measurability through
+  `Lemma5PolicyCanonicalDominanceMaximizerData`.  At the two-state layer,
+  `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms`
+  turns those per-state certificates into the all-optimal measurable
+  allowed-policy-form certificate, so future work should target policy-level
+  dominance data rather than older opaque replacement packages.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and

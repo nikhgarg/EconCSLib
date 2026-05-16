@@ -98,6 +98,10 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   those source policies into equal coded representatives.  This keeps the hard
   calculus in source language and avoids forcing every endpoint proof to build
   interval/ray codes manually.
+- If the source-facing certificate is proof-valued, avoid packing it under
+  `Sigma`; Lean expects a `Type` there and proof-valued structures may live in
+  `Prop`.  Use ordinary `Exists` fields for proof-only choices, then `rcases`
+  them at the use site.
 
 ## Lean Patterns
 

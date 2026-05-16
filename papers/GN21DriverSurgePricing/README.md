@@ -809,6 +809,15 @@ replacements; Lean converts those policies to equal generalized interval/ray
 representatives.  This route lets the endpoint proof supply a weakly improving
 canonical representative directly, while Lean handles the finite-descent
 decrease through the shape-specific complexity rather than raw component count.
+The stronger policy-level constructor
+`lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
+returns the ordinary canonical source policy as the replacement and exposes its
+feasibility/measurability through
+`Lemma5PolicyCanonicalDominanceMaximizerData`.  The Theorem 4 bridge
+`Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms`
+now converts per-state policy-level Lemma 5 dominance data into the measurable
+all-optimal allowed-policy-form certificate used by the endpoint-selection
+wrappers.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

@@ -38,6 +38,9 @@ GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity
 lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
 Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
 lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canonical_dominance_and_maximizer
+lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
+Lemma5PolicyCanonicalDominanceMaximizerData
+Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms
 ```
 
 This matters because the canonical Lemma 5 outputs include accept-all and
@@ -55,6 +58,11 @@ automatically.  If the endpoint argument naturally produces ordinary feasible
 canonical `TripPolicy` replacements, use the policy-level constructor above; it
 converts those replacements into equal generalized interval/ray codes before
 applying the same finite-domain descent bridge.
+If the final Theorem 4 target is the measurable all-optimal allowed-policy-form
+certificate, prefer `Theorem4AllMeasurablePolicyCanonicalDominanceData`: it
+uses the direct source-policy constructor, proves the canonical replacement is
+feasible/measurable, and applies restricted measurable optimality to extract
+the current policy form.
 
 ## Lemmas 1-3 Status
 
