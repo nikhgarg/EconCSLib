@@ -1019,6 +1019,11 @@ the shared density-support package via
 the residual exact-uniqueness geometry is the nondegenerate surge
 middle-rejection gap, because a collapsed one-point gap has zero continuous
 mass and belongs in an almost-everywhere uniqueness route.
+That paper-faithful route is now compiled as
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source`:
+from the structured current-bound source data it proves accept-all measurable
+optimality and that every measurable optimum agrees with accept-all up to
+statewise rejected-trip measure zero.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

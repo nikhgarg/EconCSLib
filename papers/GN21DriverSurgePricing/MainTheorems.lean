@@ -8273,6 +8273,70 @@ theorem acceptAllDynamic_measurable_unique_optimal_of_strict_local_improvements
     simpa [hstar_eq] using hσstar
   exact ⟨haccept, hunique⟩
 
+/--
+Measurable almost-everywhere uniqueness certificate.  This matches the paper's
+convention that dynamic policy equalities are up to measure-zero changes:
+accept-all is optimal, and any optimal policy with positive rejected feasible
+mass in a state has a strict feasible local improvement.
+-/
+structure Theorem4MeasurableAlmostEverywhereLocalImprovementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward) where
+  accept_all_optimal : dynamicMeasurableOptimal R acceptAllDynamicPolicy
+  nonsurge_strict_improvement_of_rejected_mass_pos :
+    ∀ σ : Fin 2 → TripPolicy,
+      (hσ : dynamicMeasurableOptimal R σ) →
+        0 < (μ 0) (acceptAllPolicy \ σ 0) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update σ 0 τ) ∧
+              dynamicStateReward R σ 0 (σ 0) <
+                dynamicStateReward R σ 0 τ
+  surge_strict_improvement_of_rejected_mass_pos :
+    ∀ σ : Fin 2 → TripPolicy,
+      (hσ : dynamicMeasurableOptimal R σ) →
+        0 < (μ 1) (acceptAllPolicy \ σ 1) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update σ 1 τ) ∧
+              dynamicStateReward R σ 1 (σ 1) <
+                dynamicStateReward R σ 1 τ
+
+/--
+Positive rejected-mass local improvements rule out all positive-measure
+departures from accept-all among measurable optima.  The conclusion is exactly
+the source paper's equality-up-to-measure-zero convention.
+-/
+theorem acceptAllDynamic_measurable_almostEverywhere_unique_of_rejected_mass_strict_local_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward)
+    (C : Theorem4MeasurableAlmostEverywhereLocalImprovementCertificate μ R) :
+    dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal R σ →
+          dynamicAcceptAllAlmostEverywhere μ σ := by
+  refine ⟨C.accept_all_optimal, ?_⟩
+  intro σ hσ i
+  fin_cases i
+  · rw [acceptAllAlmostEverywhere]
+    by_contra hne
+    have hpos : 0 < (μ 0) (acceptAllPolicy \ σ 0) :=
+      pos_iff_ne_zero.mpr hne
+    rcases C.nonsurge_strict_improvement_of_rejected_mass_pos σ hσ hpos with
+      ⟨τ, hτ_feasible, hlt⟩
+    have hlocal :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+        R hσ 0 hτ_feasible
+    linarith
+  · rw [acceptAllAlmostEverywhere]
+    by_contra hne
+    have hpos : 0 < (μ 1) (acceptAllPolicy \ σ 1) :=
+      pos_iff_ne_zero.mpr hne
+    rcases C.surge_strict_improvement_of_rejected_mass_pos σ hσ hpos with
+      ⟨τ, hτ_feasible, hlt⟩
+    have hlocal :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+        R hσ 1 hτ_feasible
+    linarith
+
 /-- Concrete dynamic profitable-deviation witness against accept-all behavior. -/
 def dynamicProfitableDeviation (R : DynamicReward) (ρ : Fin 2 → TripPolicy) : Prop :=
   R acceptAllDynamicPolicy < R ρ
@@ -31992,6 +32056,119 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregat
       μ arrival switch12 switch21 w C)
 
 /--
+Measured aggregate rejected-mass strict-local-improvement certificate on the
+source feasible measurable domain.  This is the measure-zero version of the
+strict-local endpoint: a strict improvement is required only when the current
+policy rejects a positive-measure subset of feasible trips.
+-/
+structure Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  accept_all_optimal :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+      acceptAllDynamicPolicy
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update ρ 0 τ) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) (ρ 1) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 τ (ρ 1) ∧
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) τ (ρ 1)
+  surge_strict_aggregate_improvement_of_rejected_mass_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update ρ 1 τ) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) (ρ 1) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) τ ∧
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) τ
+
+/--
+Measured aggregate positive-rejected-mass improvements instantiate the generic
+almost-everywhere uniqueness interface.
+-/
+def theorem4MeasurableAlmostEverywhereLocalImprovementCertificate_of_measured_aggregate_feasible_rejected_mass_strict_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C :
+      Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+        μ arrival switch12 switch21 w) :
+    Theorem4MeasurableAlmostEverywhereLocalImprovementCertificate μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) where
+  accept_all_optimal := C.accept_all_optimal
+  nonsurge_strict_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    rcases C.nonsurge_strict_aggregate_improvement_of_rejected_mass_pos
+        ρ hρ hpos with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    refine ⟨τ, hτ_feasible, ?_⟩
+    have hlt :=
+      paper_lemma1_measured_dynamic_reward_lt_of_aggregate_pair_lt_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) τ (ρ 1) Hcur Hrep hagg
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero] using hlt
+  surge_strict_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    rcases C.surge_strict_aggregate_improvement_of_rejected_mass_pos
+        ρ hρ hpos with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    refine ⟨τ, hτ_feasible, ?_⟩
+    have hlt :=
+      paper_lemma1_measured_dynamic_reward_lt_of_aggregate_pair_lt_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) (ρ 0) τ Hcur Hrep hagg
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_one] using hlt
+
+/--
+Feasible measured aggregate positive-rejected-mass improvements imply
+accept-all measurable optimality and almost-everywhere uniqueness.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C :
+      Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+        μ arrival switch12 switch21 w) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  acceptAllDynamic_measurable_almostEverywhere_unique_of_rejected_mass_strict_local_improvements
+    μ (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+    (theorem4MeasurableAlmostEverywhereLocalImprovementCertificate_of_measured_aggregate_feasible_rejected_mass_strict_improvements
+      μ arrival switch12 switch21 w C)
+
+/--
 Source current-bounds data plus strict kernel support instantiate the feasible
 measurable strict-local aggregate certificate, using accept-all itself as the
 profitable replacement in the deviating state.
@@ -32150,6 +32327,92 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_structured_curren
     μ arrival switch12 switch21
     (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
     (theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_structured_current_bounds_source_rejected_mass
+      μ arrival R1 R2 switch12 switch21 m z C)
+
+/--
+Source current-bounds data instantiate the feasible measurable aggregate
+positive-rejected-mass certificate.  Unlike the exact strict-local route, this
+does not require a syntactic `¬ acceptsAllTrips` witness; positive rejected
+measure is the only strictness trigger.
+-/
+def theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_structured_current_bounds_source
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  accept_all_optimal := by
+    exact
+      paper_theorem4_measurable_accept_all_optimal_of_statewise_accept_all_weak_reward
+        (gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z)
+        (theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_source
+          μ arrival R1 R2 switch12 switch21 m z C)
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hrejected_pos
+    rcases C.nonsurge_data ρ hρ.1 with ⟨ratio, D⟩
+    let W :=
+      Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate.of_source
+        μ arrival R1 R2 switch12 switch21 m z C
+    refine ⟨acceptAllPolicy, ?_, W.current_nondegenerate ρ hρ.1,
+      W.nonsurge_accept_all_nondegenerate ρ hρ.1, ?_⟩
+    · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ.1 0
+    · have hlt :=
+        GN21NonsurgeLemma10AcceptAllAggregateSourceData.aggregate_lt_acceptAll_of_rejected_measure_pos
+          (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+          C.arrival1_pos C.arrival2_pos C.switch12_pos
+          C.switch21_pos C.time1_acceptAll_integrable
+          C.q1_acceptAll_integrable D hrejected_pos
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        C.m0_eq] using hlt
+  surge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hrejected_pos
+    rcases C.surge_data ρ hρ.1 with ⟨ratio, D⟩
+    let W :=
+      Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate.of_source
+        μ arrival R1 R2 switch12 switch21 m z C
+    refine ⟨acceptAllPolicy, ?_, W.current_nondegenerate ρ hρ.1,
+      W.surge_accept_all_nondegenerate ρ hρ.1, ?_⟩
+    · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ.1 1
+    · have hlt :=
+        GN21SurgeLemma9AcceptAllAggregateSourceData.aggregate_lt_acceptAll_of_rejected_measure_pos
+          (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+          C.arrival1_pos C.arrival2_pos C.switch12_pos
+          C.switch21_pos C.time2_acceptAll_integrable
+          C.q2_acceptAll_integrable D hrejected_pos
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        C.m0_eq] using hlt
+
+/--
+Source current-bounds data imply accept-all measurable optimality and
+almost-everywhere uniqueness, matching the paper's policy-equality convention.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_structured_current_bounds_source
       μ arrival R1 R2 switch12 switch21 m z C)
 
 /--
