@@ -1344,6 +1344,19 @@ theorem paper_interface_proposition4_3_not_law_demographic_fair_of_posterior_pre
     e hAccess hNoAccess hpriorVar hsum
 
 /--
+Proposition 4.3 precision support: adding one extra Gaussian signal strictly
+increases the Bayesian posterior-mean law's scale.
+-/
+theorem paper_interface_gaussian_estimate_scale_lt_of_extra_signal
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    (M : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (M.posteriorMeanScaleLaw).scale <
+      ((M.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw).scale :=
+  paper_gaussian_estimate_scale_lt_of_extra_signal
+    M extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
 Proposition 4.3 source-route wrapper: Lemma 4.1 first supplies
 all-report/all-take, and the posterior-precision gap then rules out observable
 and demographic fairness.
@@ -1404,6 +1417,70 @@ theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of
     htakeCutoffIfNotAll htakeNoDeviation
     eObs base eDemo hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
     hpriorVar hsum
+
+/--
+Proposition 4.3 source-route wrapper for the paper's extra-test-signal case:
+Lemma 4.1 gives all-report/all-take, and the added Gaussian test signal gives
+the posterior-precision gap.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_extra_signal
+    {StrategyFeature Skill Base Test Feature : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              Mstrategy.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          Mstrategy.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill testScale htestScale) qTilde))
+    (eObs : S.Equilibrium) (base : Base) (eDemo : S.Equilibrium)
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (hAccessObs :
+      S.observableAccessLaw eObs base =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessObs :
+      S.observableNoAccessLaw eObs base = Mbase.posteriorMeanScaleLaw)
+    (hAccessDemo :
+      S.demographicAccessLaw eDemo =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessDemo :
+      S.demographicNoAccessLaw eDemo = Mbase.posteriorMeanScaleLaw) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_extra_signal
+    C api Mstrategy theta k scoreLaw skillLaw htestScale
+    hreportCutoffIfNotAll hreportNoDeviation
+    htakeCutoffIfNotAll htakeNoDeviation
+    eObs base eDemo Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+    hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
 
 /--
 Definition 6: the re-sampling policy uses the conditional law of the optional

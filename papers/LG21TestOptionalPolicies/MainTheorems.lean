@@ -927,6 +927,19 @@ theorem paper_gaussian_estimate_scale_lt_of_signalPrecisionSum_lt
     hpriorVar hsum
 
 /--
+Proposition 4.3 precision support: adding one extra Gaussian signal strictly
+increases the scale of the Bayesian posterior-mean law.
+-/
+theorem paper_gaussian_estimate_scale_lt_of_extra_signal
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    (M : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (M.posteriorMeanScaleLaw).scale <
+      ((M.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw).scale :=
+  GaussianOffsetSignalFamily.posteriorMeanScaleLaw_scale_lt_withExtraSignal
+    M extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
 Propositions 4.2--4.3 precision support: a strict total-precision gap produces
 different Bayesian-estimate Gaussian laws.
 -/
@@ -2177,6 +2190,74 @@ theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_
   · exact
       paper_proposition4_3_not_law_demographic_fair_of_posterior_precision_gap
         eDemo hAccessDemo hNoAccessDemo hpriorVar hsum
+
+/--
+Proposition 4.3 source-route wrapper for the paper's concrete extra-test-signal
+shape: Lemma 4.1 removes strategic concerns, and adding the observed test score
+as one extra Gaussian signal gives the posterior-precision gap.
+-/
+theorem paper_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_extra_signal
+    {StrategyFeature Skill Base Test Feature : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} {noReportEstimate qTilde testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreportCutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              Mstrategy.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hreportNoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          Mstrategy.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakeCutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde))
+    (eObs : S.Equilibrium) (base : Base) (eDemo : S.Equilibrium)
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (hAccessObs :
+      S.observableAccessLaw eObs base =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessObs :
+      S.observableNoAccessLaw eObs base = Mbase.posteriorMeanScaleLaw)
+    (hAccessDemo :
+      S.demographicAccessLaw eDemo =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessDemo :
+      S.demographicNoAccessLaw eDemo = Mbase.posteriorMeanScaleLaw) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_lemma4_1_lower_tail_and_posterior_precision_gap
+    C api Mstrategy theta k scoreLaw skillLaw htestScale
+    hreportCutoffIfNotAll hreportNoDeviation
+    htakeCutoffIfNotAll htakeNoDeviation
+    eObs base eDemo
+    (Mlow := Mbase)
+    (Mhigh := Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar)
+    hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo rfl
+    (GaussianOffsetSignalFamily.signalPrecisionSum_lt_withExtraSignal
+      Mbase extraNoiseMean extraNoiseVar hextraNoiseVar)
 
 /-- Observable fairness implies demographic fairness when the base-profile law is shared. -/
 theorem lg21_demographicallyFair_of_observableFair

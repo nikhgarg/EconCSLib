@@ -1464,6 +1464,22 @@ namespace GaussianOffsetSignalFamily
 
 variable {ι : Type*} [Fintype ι]
 
+def withExtraSignal (M : GaussianOffsetSignalFamily ι)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    GaussianOffsetSignalFamily (Option ι) where
+  priorMean := M.priorMean
+  priorVar := M.priorVar
+  noiseMean
+    | none => extraNoiseMean
+    | some i => M.noiseMean i
+  noiseVar
+    | none => extraNoiseVar
+    | some i => M.noiseVar i
+  priorVar_pos := M.priorVar_pos
+  noiseVar_pos
+    | none => hextraNoiseVar
+    | some i => M.noiseVar_pos i
+
 def centeredFamily (M : GaussianOffsetSignalFamily ι) :
     GaussianSignalFamily ι where
   priorMean := M.priorMean
@@ -1619,6 +1635,35 @@ theorem posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_signalPrecisionSum_lt
   exact Real.sqrt_lt_sqrt Mlow.posteriorMeanVariance_nonneg
     (posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
       hpriorVar hsum)
+
+theorem withExtraSignal_signalPrecisionSum_eq
+    (M : GaussianOffsetSignalFamily ι)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    ((M.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).centeredFamily).signalPrecisionSum =
+      M.centeredFamily.signalPrecisionSum + extraNoiseVar⁻¹ := by
+  simp [withExtraSignal, centeredFamily, GaussianSignalFamily.signalPrecisionSum,
+    GaussianSignalFamily.signalPrecision, add_comm]
+
+theorem signalPrecisionSum_lt_withExtraSignal
+    (M : GaussianOffsetSignalFamily ι)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    M.centeredFamily.signalPrecisionSum <
+      ((M.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).centeredFamily).signalPrecisionSum := by
+  rw [withExtraSignal_signalPrecisionSum_eq]
+  exact lt_add_of_pos_right _
+    (inv_pos.mpr hextraNoiseVar)
+
+theorem posteriorMeanScaleLaw_scale_lt_withExtraSignal
+    [Nonempty ι] (M : GaussianOffsetSignalFamily ι)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (M.posteriorMeanScaleLaw).scale <
+      ((M.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw).scale :=
+  posteriorMeanScaleLaw_scale_lt_of_priorVar_eq_signalPrecisionSum_lt
+    (Mlow := M)
+    (Mhigh := M.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar)
+    rfl
+    (signalPrecisionSum_lt_withExtraSignal M extraNoiseMean extraNoiseVar
+      hextraNoiseVar)
 
 /-- The offset-family posterior mean is monotone in every raw signal coordinate. -/
 theorem posteriorMean_mono_of_pointwise_le

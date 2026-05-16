@@ -62,7 +62,8 @@ Last updated: 2026-05-16
   conditional law wrapper and fixed-base one-random-test posterior-law form.
   The paper's named route is now bridged through Lemma 4.1 as well: all-report
   and all-take feed the posterior-precision gap to rule out both observable and
-  demographic fairness.
+  demographic fairness.  The concrete one-extra-test-signal precision gap is
+  closed by the shared `GaussianOffsetSignalFamily.withExtraSignal` helper.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
@@ -90,8 +91,9 @@ Last updated: 2026-05-16
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
    proved, and Propositions 4.2--4.3 are routed through Lemma 4.1's lower-tail
-   bridge; the remaining work is to connect both routes to the concrete
-   equilibrium, threshold, lower-tail, and feature-set precision assumptions.
+   bridge.  Proposition 4.3's one-extra-test-signal precision gap is no longer
+   an assumption.  The remaining work is to connect both routes to the concrete
+   equilibrium, threshold, and lower-tail assumptions.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
