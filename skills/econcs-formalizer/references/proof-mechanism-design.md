@@ -57,6 +57,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `exists_threshold_of_continuous_strictAntiOn_Icc_crossing_interval` or the
   paper wrapper over normalizing to `[0,1]` unless normalization makes the
   concrete algebra easier.
+- If the source derives cost-monotonicity indirectly, keep that structure in
+  Lean. Prove the cost-to-cutoff map is continuous/strictly increasing, prove
+  the cutoff-to-merit map is continuous/strictly decreasing, and compose them
+  via `continuousOn_comp_of_mapsTo`, `strictAntiOn_comp_strictMonoOn`, or the
+  paper wrapper
+  `paper_proposition5_cost_merit_continuous_strictAntiOn_of_cutoff_strictMono`.
+  This is usually faster and more auditable than assuming a black-box
+  cost-to-merit monotonicity fact.
 - For two-school full-test application payoffs, encode the displayed CDF
   expression first and prove monotonicity directly from signs. A typical term
   has negative CDF coefficients, while each standardized cutoff

@@ -31,6 +31,31 @@ noncomputable section
 open Set
 
 /--
+Continuity of a scalar merit term after a cutoff transformation.
+
+This small wrapper is useful in threshold proofs where cost first determines a
+cutoff and merit is then evaluated at that cutoff.
+-/
+theorem continuousOn_comp_of_mapsTo
+    {f g : ℝ → ℝ} {s t : Set ℝ}
+    (hf : ContinuousOn f t) (hg : ContinuousOn g s)
+    (hmap : MapsTo g s t) :
+    ContinuousOn (fun x => f (g x)) s :=
+  hf.comp hg hmap
+
+/--
+If a cutoff is strictly increasing in cost and merit is strictly decreasing in
+the cutoff, then merit is strictly decreasing in cost.
+-/
+theorem strictAntiOn_comp_strictMonoOn
+    {f g : ℝ → ℝ} {s t : Set ℝ}
+    (hf : StrictAntiOn f t) (hg : StrictMonoOn g s)
+    (hmap : MapsTo g s t) :
+    StrictAntiOn (fun x => f (g x)) s := by
+  intro x hx y hy hxy
+  exact hf (hmap hx) (hmap hy) (hg hx hy hxy)
+
+/--
 Unbounded intermediate-value cutoff for a continuous scalar function with
 opposite end limits.  If `f` tends to `high` at `-∞`, tends to `low` at `+∞`,
 and `level` lies strictly between them, then some real cutoff attains `level`.
