@@ -9783,6 +9783,50 @@ theorem paper_theorem3_1_report_required_threshold_conclusions_of_source_witness
   ⟨W.some_access_students_do_not_take, W.taking_threshold⟩
 
 /--
+Theorem 3.2 threshold-witness bridge for optional reporting: if a reporting
+threshold lies strictly below the resampling mean, then the source witness has
+a currently reporting score strictly below that mean.
+-/
+theorem paper_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter
+    {Base : Type*}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    {base : Base} {cutoff mean : ℝ}
+    (hthreshold :
+      ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score)
+    (hcutoff : cutoff < mean) :
+    ∃ score : ℝ, W.reports base score ∧ score < mean := by
+  let score : ℝ := (cutoff + mean) / 2
+  have hcutoff_le_score : cutoff ≤ score := by
+    dsimp [score]
+    linarith
+  have hscore_lt_mean : score < mean := by
+    dsimp [score]
+    linarith
+  exact ⟨score, (hthreshold score).2 hcutoff_le_score, hscore_lt_mean⟩
+
+/--
+Theorem 3.2 threshold-witness bridge for report-required testing: if a taking
+threshold lies strictly below the resampling mean, then the source witness has
+a currently taking skill strictly below that mean.
+-/
+theorem paper_theorem3_2_report_required_threshold_witness_exists_below_mean_taker
+    {Base : Type*}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    {base : Base} {cutoff mean : ℝ}
+    (hthreshold :
+      ∀ skill : ℝ, W.takes base skill ↔ cutoff ≤ skill)
+    (hcutoff : cutoff < mean) :
+    ∃ skill : ℝ, W.takes base skill ∧ skill < mean := by
+  let skill : ℝ := (cutoff + mean) / 2
+  have hcutoff_le_skill : cutoff ≤ skill := by
+    dsimp [skill]
+    linarith
+  have hskill_lt_mean : skill < mean := by
+    dsimp [skill]
+    linarith
+  exact ⟨skill, (hthreshold skill).2 hcutoff_le_skill, hskill_lt_mean⟩
+
+/--
 Theorem 3.1 report-required source witness from two-sided best response and
 the paper's take-at-indifference convention.  This packages the source proof
 step that any nondegenerate positive-slope affine best-response equilibrium

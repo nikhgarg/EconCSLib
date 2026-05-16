@@ -104,7 +104,12 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_cutoff_below_mean`
   connect threshold strategies to this branch by choosing the midpoint between
-  a below-mean cutoff and the resampling mean.  The Gaussian/all-acting wrappers
+  a below-mean cutoff and the resampling mean.  The witness-level bridges
+  `paper_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter`
+  and
+  `paper_theorem3_2_report_required_threshold_witness_exists_below_mean_taker`
+  make the same midpoint argument directly for the Theorem 3.1 threshold
+  source-witness structures.  The Gaussian/all-acting wrappers
   `paper_theorem3_2_gaussianScaleLaw_exists_below_mean`,
   `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_gaussian_all_report`,
   and

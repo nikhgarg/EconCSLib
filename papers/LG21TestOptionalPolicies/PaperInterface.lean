@@ -2183,6 +2183,36 @@ theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_s
   paper_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness W
 
 /--
+Theorem 3.2 bridge: an optional-reporting threshold witness has a reporting
+score below the resampling mean whenever its cutoff is below that mean.
+-/
+theorem paper_interface_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter
+    {Base : Type*}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    {base : Base} {cutoff mean : ℝ}
+    (hthreshold :
+      ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score)
+    (hcutoff : cutoff < mean) :
+    ∃ score : ℝ, W.reports base score ∧ score < mean :=
+  paper_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter
+    W hthreshold hcutoff
+
+/--
+Theorem 3.2 bridge: a report-required threshold witness has a taking skill
+below the resampling mean whenever its cutoff is below that mean.
+-/
+theorem paper_interface_theorem3_2_report_required_threshold_witness_exists_below_mean_taker
+    {Base : Type*}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    {base : Base} {cutoff mean : ℝ}
+    (hthreshold :
+      ∀ skill : ℝ, W.takes base skill ↔ cutoff ≤ skill)
+    (hcutoff : cutoff < mean) :
+    ∃ skill : ℝ, W.takes base skill ∧ skill < mean :=
+  paper_theorem3_2_report_required_threshold_witness_exists_below_mean_taker
+    W hthreshold hcutoff
+
+/--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed
 Bayesian posterior-threshold reporting gives the paper's all-take conclusion
 and finite score-threshold reporting at every base profile.
