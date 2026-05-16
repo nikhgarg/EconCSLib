@@ -96,10 +96,11 @@ Last updated: 2026-05-16
    all-report/all-take from the paper's "if not all, then finite cutoff" and
    lower-tail-mean premises; for Gaussian Bayesian threshold reporting, the
    reporting cutoff is now produced directly by the affine threshold lemma, and
-   explicit lower-tail taking thresholds are supported.  The no-deviation facts
-   now follow from binary subgame equilibria.  The remaining strategic bridge is
-   to map the full source equilibrium to those binary subgames and threshold
-   shapes, then close the endpoint.
+  explicit lower-tail taking thresholds are supported.  The no-deviation facts
+   now follow from binary subgame equilibria, and Lemma 4.1 has a combined
+   endpoint consuming those binary equilibria directly.  The remaining
+   strategic bridge is to map the full source equilibrium to those binary
+   subgames and threshold shapes, then close the endpoint.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now

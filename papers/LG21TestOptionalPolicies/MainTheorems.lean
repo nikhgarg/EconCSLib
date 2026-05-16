@@ -1422,6 +1422,54 @@ theorem lg21NoProfitableTestTakingDeviation_of_taking_equilibrium
   simpa [hntake] using hbest
 
 /--
+Lemma 4.1 route from explicit threshold policies and binary subgame
+equilibria: the equilibrium best-response fields supply the no-profitable
+reporting and taking deviation predicates.
+-/
+theorem paper_lemma4_1_strategy_proofness_of_explicit_threshold_equilibria
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} [DecidablePred reports] [DecidablePred takes]
+    {noReportEstimate qTilde reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreports :
+      ∀ score : ℝ,
+        reports score ↔
+          threshold ≤ M.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (hreportEq :
+      lg21Equilibrium
+        (lg21ReportingEquilibriumData
+          reports
+          (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+          noReportEstimate))
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeEq :
+      lg21Equilibrium
+        (lg21TestTakingEquilibriumData takes
+          (fun skill : ℝ =>
+            api.thresholdPassProb
+              (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde))) :
+    (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+  paper_lemma4_1_strategy_proofness_of_gaussian_reporting_threshold_and_explicit_taking_threshold
+    C api M theta k scoreLaw skillLaw htestScale hreports hnoReport
+    (lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium hreportEq)
+    htakes hqTilde
+    (lg21NoProfitableTestTakingDeviation_of_taking_equilibrium htakeEq)
+
+/--
 Source-facing policy surface for Definitions 2--5.  The fields expose exactly
 the estimate distributions whose equality the paper's fairness definitions
 compare, quantified over every equilibrium in the surface.
