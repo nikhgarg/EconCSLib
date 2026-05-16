@@ -25,6 +25,7 @@ standard-normal interfaces used by admissions and testing formalizations.
 - `standardGaussianMeasure`
 - `standardGaussianCDFAPI`
 - `standardGaussianCDFOrderIso`
+- `standardGaussianLowerTailMeanCertificate`
 - `standardGaussianHazardInverseCertificate`
 -/
 
@@ -449,6 +450,60 @@ theorem standardGaussianHazard_eq_millsHazard (z : ℝ) :
   rw [← Real.exp_add]
   have hsum : -(z ^ 2 / 2) + z ^ 2 / 2 = 0 := by ring
   rw [hsum, Real.exp_zero]
+
+/--
+Concrete lower-tail conditional mean for a location-scale standard-normal law,
+expressed by symmetry through the upper-tail hazard.
+-/
+def standardGaussianLowerTailMean
+    (L : GaussianScaleLaw) (threshold : ℝ) : ℝ :=
+  L.mean - L.scale * standardGaussianHazard (-(L.standardize threshold))
+
+/--
+The concrete Gaussian lower-tail mean is strictly below the threshold.
+-/
+theorem standardGaussianLowerTailMean_lt_threshold
+    (L : GaussianScaleLaw) (threshold : ℝ) :
+    standardGaussianLowerTailMean L threshold < threshold := by
+  let z : ℝ := L.standardize threshold
+  have hthreshold_std :
+      L.mean + L.scale * L.standardize threshold = threshold := by
+    simpa [GaussianScaleLaw.unstandardize] using
+      L.unstandardize_standardize threshold
+  have hcore : -standardGaussianHazard (-z) < z := by
+    by_cases hz_nonneg : 0 ≤ z
+    · have hhaz_pos : 0 < standardGaussianHazard (-z) :=
+        standardGaussianHazard_pos (-z)
+      linarith
+    · have hz_neg : z < 0 := lt_of_not_ge hz_nonneg
+      have hneg_pos : 0 < -z := by linarith
+      have hhaz_gt : -z < standardGaussianHazard (-z) := by
+        rw [standardGaussianHazard_eq_millsHazard]
+        exact gaussianMillsHazard_gt_arg_of_pos hneg_pos
+      linarith
+  have hmul :
+      L.scale * (-standardGaussianHazard (-z)) < L.scale * z :=
+    mul_lt_mul_of_pos_left hcore L.scale_pos
+  calc
+    standardGaussianLowerTailMean L threshold =
+        L.mean + L.scale * (-standardGaussianHazard (-z)) := by
+      dsimp [standardGaussianLowerTailMean, z]
+      ring
+    _ < L.mean + L.scale * z := by
+      simpa [add_comm, add_left_comm, add_assoc] using
+        add_lt_add_left hmul L.mean
+    _ = threshold := by
+      dsimp [z]
+      exact hthreshold_std
+
+/--
+Concrete Gaussian lower-tail mean certificate backed by mathlib's Gaussian CDF
+and the Mills-ratio hazard facts.
+-/
+def standardGaussianLowerTailMeanCertificate :
+    GaussianLowerTailMeanCertificate where
+  lowerTailMean := standardGaussianLowerTailMean
+  lowerTailMean_lt_threshold := standardGaussianLowerTailMean_lt_threshold
 
 /-- The mathlib-backed standard-normal hazard is strictly increasing. -/
 theorem standardGaussianHazard_strictMono :

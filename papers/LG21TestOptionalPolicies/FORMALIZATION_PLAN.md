@@ -41,6 +41,8 @@ Last updated: 2026-05-16
   `GaussianLowerTailMeanCertificate` lower-tail mean, the no-deviation
   contradictions imply all access students report and take.  These two cases
   are now combined in `paper_lemma4_1_strategy_proofness_of_lower_tail_thresholds`.
+  The abstract lower-tail certificate has a concrete mathlib-backed
+  standard-normal instantiation, `standardGaussianLowerTailMeanCertificate`.
 - The continuous-law fairness surface is added for the Gaussian negative
   results, and the proof cores for Propositions 4.2--4.3 are proved from
   law-difference witnesses plus Gaussian mean/variance gaps.
@@ -92,7 +94,9 @@ Last updated: 2026-05-16
 - Conditional-kernel pushforward and demographic mixing facts already live in
   `EconCSLib.Foundations.Probability.Admissions`.
 - Shared Gaussian posterior-score laws and lower-tail conditional-mean
-  interfaces should live in `EconCSLib.Foundations.Probability.Gaussian`.
+  interfaces should live in `EconCSLib.Foundations.Probability.Gaussian`;
+  mathlib-backed standard-normal instantiations live in
+  `EconCSLib.Foundations.Probability.GaussianMathlib`.
 - Threshold best-response facts should be generic over one-dimensional scores
   and payoffs, then specialized in this paper.
 
