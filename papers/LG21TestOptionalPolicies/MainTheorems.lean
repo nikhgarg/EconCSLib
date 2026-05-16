@@ -3472,6 +3472,84 @@ theorem paper_proposition4_2_not_latent_skill_fair_of_threshold_equilibrium_cert
       e qHigh qLow base hslope htestScale hNoAccess
       hAccessHigh hAccessLow hskill
 
+/--
+Proposition 4.2 source-model route: the fully specified observed-access source
+games first give the paper's `(Y, X) = (1, 1)` Lemma 4.1 conclusion, and the
+fixed-base one-test posterior law then gives the latent-skill fairness
+contradiction.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_fully_specified_observed_access_source_models_and_one_test_posterior_law
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Skill Base Test : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow : ℝ}
+    (hslope : 0 < slope)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    (∀ info : LG21AccessStudentInfo OptionalSkill OptionalBase ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : LG21AccessStudentInfo ℝ RequiredBase RequiredTest,
+        LG21AccessStudentInfo.chosenAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawLatentSkillFair S := by
+  have hactions :=
+    paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+      C api Mstrategy theta k scoreLaw skillLaw takeDecision
+      reportRequiredDecision htestScale hReportEq hTakeEq
+  refine ⟨hactions.1, hactions.2, ?_⟩
+  exact
+    paper_proposition4_2_not_estimate_law_latent_skill_fair_of_one_test_posterior_law
+      e qHigh qLow base hslope htestScale hNoAccess
+      hAccessHigh hAccessLow hskill
+
 /-- Certificate for Proposition 4.3. -/
 structure LG21NotObservableOrDemographicFairCertificate
     {Skill Base Test Estimate : Type*}

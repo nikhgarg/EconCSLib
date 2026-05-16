@@ -2212,6 +2212,78 @@ theorem paper_interface_proposition4_2_not_latent_skill_fair_of_threshold_equili
     hNoAccess hAccessHigh hAccessLow hskill
 
 /--
+Proposition 4.2 source-model route: the closed observed-access Lemma 4.1
+source endpoint supplies `(Y, X) = (1, 1)`, and the fixed-base one-test
+posterior law gives the latent-skill fairness contradiction.
+-/
+theorem paper_interface_proposition4_2_not_latent_skill_fair_of_fully_specified_observed_access_source_models_and_one_test_posterior_law
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Skill Base Test : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow : ℝ}
+    (hslope : 0 < slope)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    (∀ info : paperAccessStudentInfo OptionalSkill OptionalBase ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : paperAccessStudentInfo ℝ RequiredBase RequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_latent_skill_fair_of_fully_specified_observed_access_source_models_and_one_test_posterior_law
+    C api Mstrategy theta k scoreLaw skillLaw takeDecision
+    reportRequiredDecision htestScale hReportEq hTakeEq e qHigh qLow base
+    hslope hNoAccess hAccessHigh hAccessLow hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 

@@ -88,8 +88,8 @@ Last updated: 2026-05-16
   is now bridged as well: the Lemma 4.1 lower-tail all-report/all-take theorem
   feeds the fixed-base one-test posterior law to produce the Proposition 4.2
   latent-skill-fairness contradiction; the stronger wrappers use Lemma 4.1's
-  explicit-threshold, binary-equilibrium, and packaged threshold-equilibrium
-  certificate routes.
+  explicit-threshold, binary-equilibrium, packaged threshold-equilibrium
+  certificate, and fully specified observed-access source-action routes.
 - Proposition 4.3 now has concrete Gaussian posterior-score scale-gap
   instantiations over possibly different observed-feature sets, using the
   shared signal-precision-sum comparison from `GaussianOffsetSignalFamily`.
@@ -138,12 +138,12 @@ Last updated: 2026-05-16
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
-   proved, and Propositions 4.2--4.3 are routed through Lemma 4.1's lower-tail
-   bridge.  Proposition 4.3's one-extra-test-signal precision gap is no longer
-   an assumption.  The strongest Proposition 4.2--4.3 wrappers now use the
-   packaged threshold-equilibrium certificate, so the remaining work is to map
-   the full source equilibrium into that certificate once and reuse it across
-   Lemma 4.1 and Propositions 4.2--4.3.
+   proved, Proposition 4.2 is routed through the closed Lemma 4.1 source-action
+   endpoint, and Proposition 4.3 should be routed through the same endpoint next.
+   Proposition 4.3's one-extra-test-signal precision gap is no longer an
+   assumption.  The remaining work is to prove the concrete source-law
+   identities used by Propositions 4.2--4.3 instead of assuming them as law
+   equalities.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
