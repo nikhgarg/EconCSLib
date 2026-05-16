@@ -34,9 +34,11 @@ Last updated: 2026-05-16
   the Gaussian reporting decision as a finite lower-cutoff rule and proves the
   monotonicity consequence for any such cutoff rule.  Its source-facing
   threshold conclusions are now packaged in
-  `LG21StrategicWithholdingSourceWitness`, and PMF/law wrappers prove failure
-  of all three fairness criteria from concrete distribution-difference
-  witnesses.
+  `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
+  functions now construct this witness via
+  `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit
+  below-cutoff non-reporting score, and PMF/law wrappers prove failure of all
+  three fairness criteria from concrete distribution-difference witnesses.
 - Theorem 3.2 now has PMF and continuous-law endpoints, no-relevance forms,
   and contrapositive wrappers: test-blankness is equivalent to absence of a
   concrete base/test relevance witness, and such a witness rules out

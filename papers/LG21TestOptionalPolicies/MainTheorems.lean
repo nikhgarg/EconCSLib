@@ -2776,6 +2776,48 @@ structure LG21StrategicWithholdingSourceWitness (Base : Type*) where
     ∀ base, ∃ qBar : ℝ, ∀ skill : ℝ, takes base skill ↔ qBar ≤ skill
 
 /--
+Concrete threshold witness for Theorem 3.1.  Reporting and taking are lower
+threshold rules at each base profile, and any nonempty base space has an
+explicit score one unit below its reporting cutoff that is withheld.
+-/
+def lg21ThresholdStrategicWithholdingSourceWitness
+    {Base : Type*} [Nonempty Base]
+    (reportCutoff takeCutoff : Base → ℝ) :
+    LG21StrategicWithholdingSourceWitness Base where
+  reports := fun base score => reportCutoff base ≤ score
+  takes := fun base skill => takeCutoff base ≤ skill
+  some_access_students_do_not_report := by
+    let base : Base := Classical.choice inferInstance
+    refine ⟨base, reportCutoff base - 1, ?_⟩
+    exact not_le.mpr (sub_one_lt (reportCutoff base))
+  reporting_threshold := by
+    intro base
+    exact ⟨reportCutoff base, fun score => Iff.rfl⟩
+  taking_threshold := by
+    intro base
+    exact ⟨takeCutoff base, fun skill => Iff.rfl⟩
+
+/--
+Theorem 3.1 threshold conclusions for explicit base-indexed reporting and
+taking cutoffs.
+-/
+theorem paper_theorem3_1_threshold_conclusions_of_cutoff_functions
+    {Base : Type*} [Nonempty Base]
+    (reportCutoff takeCutoff : Base → ℝ) :
+    (∃ base score, ¬ reportCutoff base ≤ score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, (reportCutoff base ≤ score) ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, (takeCutoff base ≤ skill) ↔ qBar ≤ skill) := by
+  let base : Base := Classical.choice inferInstance
+  refine ⟨⟨base, reportCutoff base - 1,
+    not_le.mpr (sub_one_lt (reportCutoff base))⟩, ?_, ?_⟩
+  · intro base
+    exact ⟨reportCutoff base, fun score => Iff.rfl⟩
+  · intro base
+    exact ⟨takeCutoff base, fun skill => Iff.rfl⟩
+
+/--
 Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding
 witness.
 -/
