@@ -121,11 +121,12 @@ Last updated: 2026-05-16
    now follow either from binary subgame equilibria, directly from source
    Definition 1 best-response projections, or from concrete source payoff
    models where the optional-reporting and report-required payoff identities
-   are definitional.  Lemma 4.1 has a combined endpoint consuming those
-   concrete source models, plus a one-stop
+   are definitional.  Concrete threshold source models also make the reporting
+   and taking threshold shapes definitional.  Lemma 4.1 has a combined endpoint
+   consuming those concrete threshold source models, plus a one-stop
    `LG21GaussianThresholdEquilibriumCertificate` that packages the remaining
-   threshold shapes.  The remaining strategic bridge is to prove the Gaussian
-   threshold/no-report lower-tail identities from the full source game.
+   bridge.  The remaining strategic bridge is to prove the no-report and
+   no-test lower-tail identities from the full source game.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now

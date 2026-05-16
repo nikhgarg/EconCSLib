@@ -1281,6 +1281,65 @@ theorem paper_interface_lemma4_1_strategy_proofness_of_concrete_source_models
     hTakeEq takeBase takeTest htakes hqTilde
 
 /--
+Lemma 4.1 route from concrete threshold source models: reporting and taking
+decisions are threshold policies by definition.
+-/
+theorem paper_interface_lemma4_1_strategy_proofness_of_concrete_threshold_source_models
+    {Feature ReportSkill ReportBase TakeBase TakeTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {takeDecisionReport : ReportSkill → ReportBase → Bool}
+    {reportRequiredDecision : TakeBase → TakeTest → Bool}
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    {noReportEstimate qTilde reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21OptionalReportingSourceEquilibriumData
+          takeDecisionReport
+          (fun _base score =>
+            if threshold ≤ M.posteriorMean (Function.update theta k score) then
+              true
+            else
+              false)
+          (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+          noReportEstimate reportEstimationConsistent))
+    (reportSkill : ReportSkill) (reportBase : ReportBase)
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (EconCSLib.affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21ReportRequiredSourceEquilibriumData
+          (fun skill _base => if qBar ≤ skill then true else false)
+          reportRequiredDecision
+          (fun skill : ℝ =>
+            api.thresholdPassProb
+              (paperGaussianTestScoreLaw skill testScale htestScale) qTilde)
+          takeEstimationConsistent))
+    (takeBase : TakeBase) (takeTest : TakeTest)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar) :
+    (∀ score : ℝ,
+        (if threshold ≤ M.posteriorMean (Function.update theta k score) then
+          true
+        else
+          false) = true) ∧
+      (∀ skill : ℝ, (if qBar ≤ skill then true else false) = true) :=
+  paper_lemma4_1_strategy_proofness_of_concrete_threshold_source_models
+    C api M theta k scoreLaw skillLaw htestScale
+    hReportEq reportSkill reportBase hnoReport
+    hTakeEq takeBase takeTest hqTilde
+
+/--
 Fixed-base posterior-score law: all non-test information is fixed and the
 Bayesian estimate is a positive-slope affine function of the optional test
 score.
