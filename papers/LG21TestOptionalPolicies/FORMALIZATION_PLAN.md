@@ -70,8 +70,13 @@ Last updated: 2026-05-16
   formula.  The generic mixture endpoint algebra
   `lt_lg21OptionalNoReportMixtureEstimate_of_lt_components` and
   `lg21OptionalNoReportMixtureEstimate_lt_of_components_lt` now reduces those
-  finite endpoint comparisons to component-wise comparisons against the
-  base-only estimate and access lower-tail estimate.  The paper's
+  finite endpoint comparisons to component-wise comparisons when both
+  components are on the same side of the target.  The exact weighted-gap
+  variants
+  `lt_lg21OptionalNoReportMixtureEstimate_of_weighted_gap_pos` and
+  `lg21OptionalNoReportMixtureEstimate_lt_of_weighted_gap_neg` handle the
+  low-endpoint case where the access lower-tail component can be below the
+  target but has small Gaussian mass.  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:

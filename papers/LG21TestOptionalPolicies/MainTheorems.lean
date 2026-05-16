@@ -732,6 +732,53 @@ theorem lt_lg21OptionalNoReportMixtureEstimate_of_lt_components
       simp [lg21OptionalNoReportMixtureEstimate, w0, w1, F, mul_assoc]
 
 /--
+Exact finite-endpoint algebra for the unobserved-access no-action pool: if the
+weighted component gap above the target is positive, then the pooled estimate
+is above the target.  This handles the low-endpoint case where the access
+lower-tail component may be below the target but has small probability weight.
+-/
+theorem lt_lg21OptionalNoReportMixtureEstimate_of_weighted_gap_pos
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hgap :
+      0 <
+        (1 - accessFraction) * (baseOnlyEstimate - target) +
+          (accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff) *
+            (accessLowerTailEstimate cutoff - target)) :
+    target <
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff := by
+  let F : ℝ := standardGaussianCDFAPI.normalCDF scoreLaw cutoff
+  let w0 : ℝ := 1 - accessFraction
+  let w1 : ℝ := accessFraction * F
+  have hdenom_pos : 0 < w0 + w1 := by
+    dsimp [w0, w1, F]
+    exact lg21OptionalNoReportMixtureEstimate_denominator_pos
+      hC_nonneg hC_lt_one scoreLaw cutoff
+  have hgap' :
+      0 < w0 * (baseOnlyEstimate - target) +
+          w1 * (accessLowerTailEstimate cutoff - target) := by
+    simpa [w0, w1, F] using hgap
+  have hnum :
+      (w0 + w1) * target <
+        w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff := by
+    nlinarith
+  calc
+    target = ((w0 + w1) * target) / (w0 + w1) := by
+      rw [mul_div_cancel_left₀ target (ne_of_gt hdenom_pos)]
+    _ <
+        (w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff) /
+          (w0 + w1) :=
+      div_lt_div_of_pos_right hnum hdenom_pos
+    _ =
+        lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff := by
+      simp [lg21OptionalNoReportMixtureEstimate, w0, w1, F, mul_assoc]
+
+/--
 If both source components in the unobserved-access no-action pool are strictly
 below a finite target, then the pooled estimate is below that target.
 -/
@@ -765,6 +812,51 @@ theorem lg21OptionalNoReportMixtureEstimate_lt_of_components_lt
       mul_lt_mul_of_pos_left hbase hw0_pos
     have h1 : w1 * accessLowerTailEstimate cutoff ≤ w1 * target :=
       mul_le_mul_of_nonneg_left haccess.le hw1_nonneg
+    nlinarith
+  calc
+    lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff =
+        (w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff) /
+          (w0 + w1) := by
+      simp [lg21OptionalNoReportMixtureEstimate, w0, w1, F, mul_assoc]
+    _ < ((w0 + w1) * target) / (w0 + w1) :=
+      div_lt_div_of_pos_right hnum hdenom_pos
+    _ = target := by
+      rw [mul_div_cancel_left₀ target (ne_of_gt hdenom_pos)]
+
+/--
+Exact finite-endpoint algebra for the unobserved-access no-action pool: if the
+weighted component gap above the target is negative, then the pooled estimate
+is below the target.
+-/
+theorem lg21OptionalNoReportMixtureEstimate_lt_of_weighted_gap_neg
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hgap :
+      (1 - accessFraction) * (baseOnlyEstimate - target) +
+          (accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff) *
+            (accessLowerTailEstimate cutoff - target) <
+        0) :
+    lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff <
+      target := by
+  let F : ℝ := standardGaussianCDFAPI.normalCDF scoreLaw cutoff
+  let w0 : ℝ := 1 - accessFraction
+  let w1 : ℝ := accessFraction * F
+  have hdenom_pos : 0 < w0 + w1 := by
+    dsimp [w0, w1, F]
+    exact lg21OptionalNoReportMixtureEstimate_denominator_pos
+      hC_nonneg hC_lt_one scoreLaw cutoff
+  have hgap' :
+      w0 * (baseOnlyEstimate - target) +
+          w1 * (accessLowerTailEstimate cutoff - target) < 0 := by
+    simpa [w0, w1, F] using hgap
+  have hnum :
+      w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff <
+        (w0 + w1) * target := by
     nlinarith
   calc
     lg21OptionalNoReportMixtureEstimate

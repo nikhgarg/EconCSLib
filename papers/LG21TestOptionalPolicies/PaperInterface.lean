@@ -780,6 +780,27 @@ theorem paper_interface_lt_optional_no_report_mixture_of_lt_components
     hC_nonneg hC_lt_one hbase haccess
 
 /--
+Theorem 3.1 source mixture endpoint support: a positive weighted component gap
+puts the pooled estimate above the target.
+-/
+theorem paper_interface_lt_optional_no_report_mixture_of_weighted_gap_pos
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hgap :
+      0 <
+        (1 - accessFraction) * (baseOnlyEstimate - target) +
+          (accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff) *
+            (accessLowerTailEstimate cutoff - target)) :
+    target <
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff :=
+  lt_lg21OptionalNoReportMixtureEstimate_of_weighted_gap_pos
+    hC_nonneg hC_lt_one hgap
+
+/--
 Theorem 3.1 source mixture endpoint support: if both no-action pool components
 are below a target, the pooled estimate is below it.
 -/
@@ -796,6 +817,27 @@ theorem paper_interface_optional_no_report_mixture_lt_of_components_lt
       target :=
   lg21OptionalNoReportMixtureEstimate_lt_of_components_lt
     hC_nonneg hC_lt_one hbase haccess
+
+/--
+Theorem 3.1 source mixture endpoint support: a negative weighted component gap
+puts the pooled estimate below the target.
+-/
+theorem paper_interface_optional_no_report_mixture_lt_of_weighted_gap_neg
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hgap :
+      (1 - accessFraction) * (baseOnlyEstimate - target) +
+          (accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff) *
+            (accessLowerTailEstimate cutoff - target) <
+        0) :
+    lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff <
+      target :=
+  lg21OptionalNoReportMixtureEstimate_lt_of_weighted_gap_neg
+    hC_nonneg hC_lt_one hgap
 
 /--
 Theorem 3.1 optional-reporting source formula support specialized to the
