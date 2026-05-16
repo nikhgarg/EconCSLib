@@ -187,11 +187,15 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_law_observable_fair_best_response_forces_actor_support_at_mean`
   strengthen this to: every positive-mass actor must sit exactly at the acting
-  distribution mean.  The latent-skill branch is reduced to the observable
-  branch under the shared latent-skill mixture identities.  The remaining
-  source gap is deriving the paper's final support-at-mean/test-blank
-  alternative from the full policy model and then closing the final test-blank
-  implication without a certificate.
+  distribution mean.  The finite bridge
+  `paper_theorem3_2_support_at_mean_forces_no_distinct_positive_mass_actor_values`
+  and its PMF/law wrappers now additionally prove that observable fairness plus
+  two-sided best response rules out two positive-mass actors with distinct
+  values.  The latent-skill branch is reduced to the observable branch under the
+  shared latent-skill mixture identities.  The remaining source gap is deriving
+  the paper's final support-at-mean/test-blank alternative from the full policy
+  model and then closing the final test-blank implication without a
+  certificate.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -311,8 +315,12 @@ Last updated: 2026-05-16
    over the shared base-profile distribution.  Proposition 4.3 should now be
    treated as closed; the next theorem-level work is Theorem 3.1 or Theorem 3.2.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
-   it separate from Gaussian calculus; it should consume a clean policy-surface
-   or equilibrium certificate.
+   it separate from Gaussian calculus.  The current closed seam reaches
+   support-at-mean and no-distinct-positive-mass actor values under observable
+   fairness plus two-sided best response; the next work should connect that
+   degeneracy alternative to the paper's full source policy model and
+   test-blankness, ideally via a clean policy-surface or equilibrium
+   certificate.
 
 ## Reusable Library Seams
 
