@@ -87,6 +87,12 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   the full feasible domain, then state descent and maximizer data over that
   larger domain.  This prevents a later impossible maximizer/canonical-shape
   obligation for accept-all or tail policies.
+- Do not assume raw component count is the right descent measure.  If a proof
+  step can jump directly from a noncanonical finite object to a canonical one,
+  use a shape-specific "badness" complexity that is zero on canonical objects
+  and positive on noncanonical ones; this turns canonical dominance into a
+  terminating finite-descent step without manufacturing artificial endpoint
+  count decreases.
 
 ## Lean Patterns
 

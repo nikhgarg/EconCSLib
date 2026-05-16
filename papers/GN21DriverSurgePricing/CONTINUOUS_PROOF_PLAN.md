@@ -490,6 +490,14 @@ into the concrete endpoint policy data.
   `exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll`
   proves that every feasible policy already classified by Lemma 5 has an
   exactly equal representative in this generalized domain.
+  The shape-specific complexity
+  `GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity` assigns complexity
+  zero to already-canonical policies and a positive successor value to
+  noncanonical policies.  Therefore
+  `lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer`
+  and `Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData` let the
+  endpoint proof supply a weakly improving canonical representative directly,
+  without separately proving that raw interval-component count decreases.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and

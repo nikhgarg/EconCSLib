@@ -18117,6 +18117,49 @@ theorem exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_accept
       · exact lemma5PolicyForm_generalized_acceptMiddle lo hi
 
 /--
+Shape-specific descent complexity for generalized interval/ray policies.
+Canonical policies have complexity zero; noncanonical policies get a positive
+successor value.  This is often the right measure when the endpoint proof
+jumps directly to a canonical tail or accept-all policy, whose raw component
+count need not be smaller than the starting bounded seed.
+-/
+noncomputable def GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity
+    (shape : Lemma5DerivativeShape)
+    (P : GN21GeneralizedIntervalPolicy) : Nat := by
+  classical
+  exact if lemma5PolicyForm shape P.policy then 0 else P.complexity + 1
+
+/-- Canonical generalized interval/ray policies have shape complexity zero. -/
+theorem GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity_eq_zero_of_form
+    {shape : Lemma5DerivativeShape} {P : GN21GeneralizedIntervalPolicy}
+    (hform : lemma5PolicyForm shape P.policy) :
+    P.lemma5ShapeComplexity shape = 0 := by
+  classical
+  simp [GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity, hform]
+
+/-- Noncanonical generalized interval/ray policies have positive shape complexity. -/
+theorem GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity_eq_succ_of_not_form
+    {shape : Lemma5DerivativeShape} {P : GN21GeneralizedIntervalPolicy}
+    (hnot : ¬ lemma5PolicyForm shape P.policy) :
+    P.lemma5ShapeComplexity shape = P.complexity + 1 := by
+  classical
+  simp [GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity, hnot]
+
+/--
+Moving from a noncanonical generalized interval/ray policy to any canonical
+one strictly lowers the shape-specific complexity.
+-/
+theorem GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity_lt_of_form_of_not_form
+    {shape : Lemma5DerivativeShape}
+    {P P' : GN21GeneralizedIntervalPolicy}
+    (hform' : lemma5PolicyForm shape P'.policy)
+    (hnot : ¬ lemma5PolicyForm shape P.policy) :
+    P'.lemma5ShapeComplexity shape < P.lemma5ShapeComplexity shape := by
+  rw [GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity_eq_zero_of_form hform',
+    GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity_eq_succ_of_not_form hnot]
+  exact Nat.zero_lt_succ P.complexity
+
+/--
 Lemma 5 quasi-convex interval fact: for a strictly quasi-convex endpoint
 response, any positive interior point has response below the larger endpoint
 response.
@@ -19188,6 +19231,53 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_generalizedIntervalPo
     canonicalMax step strictWitness
 
 /--
+Generalized interval/ray Lemma 5 constructor from canonical dominance rather
+than a hand-built component-count descent.  If every noncanonical finite
+generalized seed is weakly dominated by some canonical generalized seed, then
+the shape-specific complexity turns that dominance statement into a finite
+descent step automatically.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : SingleStateReward) {σ0 : TripPolicy}
+    (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ0)
+    (canonicalMax :
+      ∃ maximizer : GN21GeneralizedIntervalPolicy,
+        lemma5PolicyForm shape maximizer.policy ∧
+          ∀ seed : GN21GeneralizedIntervalPolicy,
+            lemma5PolicyForm shape seed.policy →
+              Rhat seed.policy ≤ Rhat maximizer.policy)
+    (canonicalDominance :
+      ∀ seed : GN21GeneralizedIntervalPolicy,
+        ¬ lemma5PolicyForm shape seed.policy →
+          ∃ seed' : GN21GeneralizedIntervalPolicy,
+            lemma5PolicyForm shape seed'.policy ∧
+              Rhat seed.policy ≤ Rhat seed'.policy)
+    (strictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ seed : GN21GeneralizedIntervalPolicy,
+          lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer
+    Rhat σ0 shape
+    (fun seed : GN21GeneralizedIntervalPolicy => seed.policy)
+    (GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity shape)
+    (exists_gn21GeneralizedIntervalPolicy_reward_close_below
+      μ Rhat hσ0_open hcont)
+    canonicalMax
+    (by
+      intro seed hnot
+      rcases canonicalDominance seed hnot with
+        ⟨seed', hseed'_form, hreward⟩
+      exact
+        ⟨seed', hreward,
+          GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity_lt_of_form_of_not_form
+            hseed'_form hnot⟩)
+    strictWitness
+
+/--
 Named finite-interval Lemma 5 source data.  This is the current precise target
 for closing the nonlinear endpoint-selection proof: source regularity gives
 `hσ0_open` and `hcont`; the finite endpoint argument must provide a canonical
@@ -19262,6 +19352,47 @@ noncomputable def Lemma5GeneralizedIntervalPolicyDescentMaximizerData.to_optimiz
     Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
   lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer
     μ Rhat shape D.hσ0_open D.hcont D.canonicalMax D.step D.strictWitness
+
+/--
+Named source data for the common direct-canonical-dominance route.  This is
+lighter than providing an explicit natural-valued endpoint descent: the
+shape-specific complexity makes any weak improvement to a canonical generalized
+policy into a terminating descent step.
+-/
+structure Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
+    (μ : Measure TripLength) (Rhat : SingleStateReward)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape) where
+  hσ0_open : IsOpen σ0
+  hcont : GN21SymmDiffContinuousAt μ Rhat σ0
+  canonicalMax :
+    ∃ maximizer : GN21GeneralizedIntervalPolicy,
+      lemma5PolicyForm shape maximizer.policy ∧
+        ∀ seed : GN21GeneralizedIntervalPolicy,
+          lemma5PolicyForm shape seed.policy →
+            Rhat seed.policy ≤ Rhat maximizer.policy
+  canonicalDominance :
+    ∀ seed : GN21GeneralizedIntervalPolicy,
+      ¬ lemma5PolicyForm shape seed.policy →
+        ∃ seed' : GN21GeneralizedIntervalPolicy,
+          lemma5PolicyForm shape seed'.policy ∧
+            Rhat seed.policy ≤ Rhat seed'.policy
+  strictWitness :
+    ¬ lemma5PolicyForm shape σ0 →
+      ∃ seed : GN21GeneralizedIntervalPolicy,
+        lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy
+
+/-- Canonical-dominance Lemma 5 data produce the optimizer replacement certificate. -/
+noncomputable def Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData.to_optimizer_replacement
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
+    μ Rhat shape D.hσ0_open D.hcont D.canonicalMax
+    D.canonicalDominance D.strictWitness
 
 /--
 Positive-case Lemma 5 replacement constructor using accept-all as the
@@ -19447,6 +19578,40 @@ theorem Lemma5GeneralizedIntervalPolicyDescentMaximizerData.policyForm_of_candid
     {Rhat : SingleStateReward} {σ0 : TripPolicy}
     {shape : Lemma5DerivativeShape}
     (D : Lemma5GeneralizedIntervalPolicyDescentMaximizerData μ Rhat σ0 shape)
+    (hcandidate :
+      Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+      Rhat σ0 shape D.to_optimizer_replacement hcandidate
+
+/--
+Canonical-dominance data also force the current policy form under unrestricted
+optimality.
+-/
+theorem Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData.policyForm_of_optimal
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape)
+    (hoptimal : ∀ σ : TripPolicy, Rhat σ ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+      Rhat σ0 shape D.to_optimizer_replacement hoptimal
+
+/--
+Restricted candidate comparison variant for canonical-dominance Lemma 5 data.
+-/
+theorem Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData.policyForm_of_candidate_le
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
+        μ Rhat σ0 shape)
     (hcandidate :
       Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
     lemma5PolicyForm shape σ0 := by

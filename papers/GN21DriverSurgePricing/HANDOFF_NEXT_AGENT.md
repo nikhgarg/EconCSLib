@@ -34,6 +34,9 @@ exists_gn21GeneralizedIntervalPolicy_reward_close_below
 lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer
 Lemma5GeneralizedIntervalPolicyDescentMaximizerData
 exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity
+lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer
+Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData
 ```
 
 This matters because the canonical Lemma 5 outputs include accept-all and
@@ -43,7 +46,11 @@ hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical
 generalized finite interval/ray policy, construct a weakly improving endpoint
 move that strictly lowers complexity and identify that move with the existing
-nonlinear endpoint derivative lemmas.
+nonlinear endpoint derivative lemmas.  If the endpoint argument can instead
+produce a weakly improving canonical representative directly, use
+`Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData`; its
+shape-specific complexity discharges the termination/decrease proof
+automatically.
 
 ## Lemmas 1-3 Status
 
