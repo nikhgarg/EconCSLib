@@ -93,6 +93,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   logic as an exact-one propositional bridge. Then plug in the economic
   qualifiers and mass/cutoff translations separately. This avoids duplicating
   symmetric case analysis inside every paper-facing objective theorem.
+- When a school-deviation objective premise includes a displayed weighted
+  academic-merit inequality plus a separate mass feasibility condition, split
+  the bridge into bookkeeping facts instead of assuming the whole iff. First
+  rewrite each objective value to the source weighted-merit expression, carry
+  the mass feasibility hypothesis separately, and add a no-tie premise if the
+  source uses a strict inequality but the game objective is weak preference.
+  Then compose that smaller bridge into the paper-facing equilibrium wrapper.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,
