@@ -45,6 +45,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `totalMass` at `-∞` and `0` at `+∞` has a unique capacity cutoff and sublevel
   region. Then instantiate continuity, monotonicity, and limits from the
   paper's Gaussian or strategic applicant-mass expression.
+- For strategic admissions equilibrium theorems that are still certificate
+  based, make the certificate target source-shaped before doing fixed-point
+  work. Define the paper's displayed inequalities, exactly-one-group clauses,
+  policy-pair notation, and threshold-mass functions as Lean `Prop`/`def`
+  declarations, then let the certificate prove the concrete game satisfies
+  those definitions. This makes the human-facing theorem auditable and prevents
+  opaque fields like `subFullEquilibriumIff : Prop` from hiding whether the
+  Lean statement actually matches the paper.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
