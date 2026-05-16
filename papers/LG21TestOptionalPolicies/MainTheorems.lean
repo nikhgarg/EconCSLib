@@ -529,6 +529,41 @@ theorem paper_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_profitable_wi
     (paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
       M theta k hcutoffStrategy hnoDeviation hcutoff)
 
+/--
+Lemma 4.1 optional-reporting endpoint bridge using the shared Gaussian
+lower-tail-mean certificate.  This is the source proof's no-report estimate
+shape: the school imputes a score equal to the Gaussian mean conditional on
+falling below the reporting cutoff.
+-/
+theorem paper_lemma4_1_all_report_of_gaussian_lower_tail_certificate_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hcutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate) :
+    ∀ score : ℝ, reports score :=
+  paper_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_profitable_withholding
+    M theta k
+    (fun hnotAll => by
+      rcases hcutoffIfNotAll hnotAll with
+        ⟨cutoff, hcutoffStrategy, hnoReport⟩
+      exact ⟨cutoff, C.lowerTailMean scoreLaw cutoff,
+        hcutoffStrategy, C.lowerTailMean_lt scoreLaw cutoff, hnoReport⟩)
+    hnoDeviation
+
 /-- Gaussian law of a raw test score conditional on latent skill. -/
 def lg21GaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw where
@@ -726,6 +761,37 @@ theorem paper_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_test_taking
   exact False.elim
     (paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
       api hscale hcutoffStrategy hnoDeviation hcutoff)
+
+/--
+Lemma 4.1 report-required endpoint bridge using the shared Gaussian
+lower-tail-mean certificate.  This is the source proof's no-test estimate
+shape: the school imputes skill equal to the Gaussian mean conditional on
+falling below the taking cutoff.
+-/
+theorem paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable_test_taking
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI) (skillLaw : GaussianScaleLaw)
+    {takes : ℝ → Prop} {qTilde scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (hnoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill :=
+  paper_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_test_taking
+    api hscale
+    (fun hnotAll => by
+      rcases hcutoffIfNotAll hnotAll with
+        ⟨qBar, hcutoffStrategy, hqTilde⟩
+      exact ⟨qBar, C.lowerTailMean skillLaw qBar,
+        hcutoffStrategy, C.lowerTailMean_lt skillLaw qBar, hqTilde⟩)
+    hnoDeviation
 
 /--
 Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different

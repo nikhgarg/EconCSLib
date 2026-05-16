@@ -449,6 +449,34 @@ theorem paper_interface_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_pro
   paper_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_profitable_withholding
     M theta k hcutoffIfNotAll hnoDeviation
 
+/--
+Lemma 4.1 optional-reporting endpoint bridge with a shared Gaussian
+lower-tail-mean certificate: the no-report estimate is the posterior at the
+mean score below the reporting cutoff.
+-/
+theorem paper_interface_lemma4_1_all_report_of_gaussian_lower_tail_certificate_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hcutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate =
+              M.posteriorMean
+                (Function.update theta k (C.lowerTailMean scoreLaw cutoff)))
+    (hnoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate) :
+    ∀ score : ℝ, reports score :=
+  paper_lemma4_1_all_report_of_gaussian_lower_tail_certificate_no_profitable_withholding
+    C M theta k scoreLaw hcutoffIfNotAll hnoDeviation
+
 /-- Lemma 4.1 test-taking support: Gaussian score law conditional on skill. -/
 abbrev paperGaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw :=
@@ -561,6 +589,30 @@ theorem paper_interface_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_tes
     ∀ skill : ℝ, takes skill :=
   paper_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_test_taking
     api hscale hcutoffIfNotAll hnoDeviation
+
+/--
+Lemma 4.1 reporting-required endpoint bridge with a shared Gaussian
+lower-tail-mean certificate: the no-test estimate is the mean skill below the
+taking cutoff.
+-/
+theorem paper_interface_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable_test_taking
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI) (skillLaw : GaussianScaleLaw)
+    {takes : ℝ → Prop} {qTilde scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            qTilde = C.lowerTailMean skillLaw qBar)
+    (hnoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill :=
+  paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable_test_taking
+    C api skillLaw hscale hcutoffIfNotAll hnoDeviation
 
 /--
 Fixed-base posterior-score law: all non-test information is fixed and the

@@ -37,9 +37,9 @@ Last updated: 2026-05-16
   contradicts no-profitable-test-taking.  Both cases now have conditional
   lower-tail endpoint bridges: if the source proof's monotonicity step supplies
   a finite cutoff whenever not everyone reports or takes, and the
-  no-report/no-test estimate is identified with a lower-tail mean below that
-  cutoff, the no-deviation contradictions imply all access students report and
-  take.
+  no-report/no-test estimate is identified with the shared
+  `GaussianLowerTailMeanCertificate` lower-tail mean, the no-deviation
+  contradictions imply all access students report and take.
 - The continuous-law fairness surface is added for the Gaussian negative
   results, and the proof cores for Propositions 4.2--4.3 are proved from
   law-difference witnesses plus Gaussian mean/variance gaps.
@@ -90,8 +90,8 @@ Last updated: 2026-05-16
 
 - Conditional-kernel pushforward and demographic mixing facts already live in
   `EconCSLib.Foundations.Probability.Admissions`.
-- Shared Gaussian posterior-score laws should live in
-  `EconCSLib.Foundations.Probability.Gaussian`.
+- Shared Gaussian posterior-score laws and lower-tail conditional-mean
+  interfaces should live in `EconCSLib.Foundations.Probability.Gaussian`.
 - Threshold best-response facts should be generic over one-dimensional scores
   and payoffs, then specialized in this paper.
 

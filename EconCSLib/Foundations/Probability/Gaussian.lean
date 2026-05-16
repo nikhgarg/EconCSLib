@@ -29,6 +29,7 @@ This file deliberately separates two layers:
 
 - `GaussianVarianceLaw`, `GaussianScaleLaw`
 - `StandardGaussianCDFAPI`
+- `GaussianLowerTailMeanCertificate`
 - `GaussianPriorSignal`
 - `GaussianSignalFamily`
 - `GaussianOffsetSignalFamily`
@@ -563,6 +564,31 @@ theorem normalDensity_nonneg (api : StandardGaussianCDFAPI)
   exact div_nonneg (api.density_nonneg (L.standardize x)) L.scale_pos.le
 
 end StandardGaussianCDFAPI
+
+/--
+Certificate-level interface for the conditional mean below a threshold for a
+location-scale Gaussian.
+
+The concrete formula can be instantiated from a normal CDF/density library.
+Many admissions/testing proofs only need the order fact that a nondegenerate
+Gaussian conditional mean below a finite threshold lies strictly below that
+threshold, so this lightweight certificate keeps those paper proofs independent
+of the analytic lower-tail formula.
+-/
+structure GaussianLowerTailMeanCertificate where
+  lowerTailMean : GaussianScaleLaw → ℝ → ℝ
+  lowerTailMean_lt_threshold :
+    ∀ (L : GaussianScaleLaw) (threshold : ℝ),
+      lowerTailMean L threshold < threshold
+
+namespace GaussianLowerTailMeanCertificate
+
+theorem lowerTailMean_lt (C : GaussianLowerTailMeanCertificate)
+    (L : GaussianScaleLaw) (threshold : ℝ) :
+    C.lowerTailMean L threshold < threshold :=
+  C.lowerTailMean_lt_threshold L threshold
+
+end GaussianLowerTailMeanCertificate
 
 namespace GaussianVarianceLaw
 
