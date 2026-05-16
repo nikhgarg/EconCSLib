@@ -482,6 +482,11 @@ into the concrete endpoint policy data.
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData.aggregate_lt_acceptAll` /
   `GN21SurgeLemma9AcceptAllAggregateSourceData.aggregate_lt_acceptAll`
   methods.
+  Positive rejected-complement mass can now discharge the support condition at
+  the full-data level through `measure_support_inter_pos_of_pos_on`,
+  `GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`,
+  and
+  `GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`.
   These now feed the source-facing Theorem 4 strict-local route through
   `Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleStrictCertificate`,
   `theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_structured_current_bounds_source_support`,

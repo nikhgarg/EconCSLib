@@ -10606,6 +10606,37 @@ theorem gn21PrimitiveKernel_nonneg_of_pointwise_derivative_kernel_nonneg
   rwa [heq] at hscaled_nonneg
 
 /--
+If a function is nonzero on a positive-measure set, then its support has
+positive measure on that set.  This packages the support-side measure argument
+used by strict aggregate comparisons.
+-/
+theorem measure_support_inter_pos_of_ne_on
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) (f : α → ℝ) (s : Set α)
+    (hmeasure_pos : 0 < μ s)
+    (hne : ∀ x : α, x ∈ s → f x ≠ 0) :
+    0 < μ (Function.support f ∩ s) := by
+  have hsupport : Function.support f ∩ s = s := by
+    ext x
+    constructor
+    · intro hx
+      exact hx.2
+    · intro hx
+      exact ⟨hne x hx, hx⟩
+  simpa [hsupport] using hmeasure_pos
+
+/--
+Pointwise strict positivity on a positive-measure set gives positive support
+measure on that set.
+-/
+theorem measure_support_inter_pos_of_pos_on
+    {α : Type*} [MeasurableSpace α] (μ : Measure α) (f : α → ℝ) (s : Set α)
+    (hmeasure_pos : 0 < μ s)
+    (hpos : ∀ x : α, x ∈ s → 0 < f x) :
+    0 < μ (Function.support f ∩ s) :=
+  measure_support_inter_pos_of_ne_on μ f s hmeasure_pos
+    (fun x hx => ne_of_gt (hpos x hx))
+
+/--
 Pointwise nonnegativity plus positive support of the derivative-sign kernel on
 the added set implies a strictly positive integrated primitive kernel.
 -/
@@ -26543,6 +26574,52 @@ theorem GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_lt_acceptAll
     D.fixed_reward_rate hsupport_pos
 
 /--
+The non-surge current-bounds data package proves strict accept-all aggregate
+improvement from positive rejected-complement measure.  Lemma 10 supplies
+strict pointwise kernel positivity on feasible rejected trips, so positive
+rejected mass gives the support condition needed by
+`aggregate_lt_acceptAll`.
+-/
+theorem GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio : ℝ}
+    {wJ : PricingFunction} {σI σJ : TripPolicy}
+    (D :
+      GN21NonsurgeLemma10AcceptAllAggregateData μI μJ arrivalI arrivalJ
+        switch12 switch21 R2 z ratio wJ σI σJ)
+    (harrivalI_pos : 0 < arrivalI)
+    (hrejected_pos : 0 < μI (acceptAllPolicy \ σI)) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ σI σJ <
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) wJ
+        acceptAllPolicy σJ := by
+  refine D.aggregate_lt_acceptAll harrivalI_pos ?_
+  exact
+    measure_support_inter_pos_of_pos_on μI
+      (fun τ : TripLength =>
+        gn21DerivativeSignKernel
+          (gn21SwitchProb switch12 switch21 τ) τ
+          (ctmcStructuredSurgePrice R2 z switch12 switch21 τ)
+          (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+          (gn21ScaledStateTime μI arrivalI σI)
+          (gn21ScaledStateTime μJ arrivalJ σJ)
+          (gn21ScaledStateEarning μI arrivalI
+            (ctmcStructuredSurgePrice R2 z switch12 switch21) σI)
+          (gn21ScaledStateEarning μJ arrivalJ wJ σJ))
+      (acceptAllPolicy \ σI) hrejected_pos
+      (fun τ hτ =>
+        paper_lemma10_measured_derivative_sign_kernel_pos_of_current_bounds
+          μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio τ wJ
+          σI σJ D.bounds D.z_eq D.R2_pos D.fixed_exit_pos D.switch_pos
+          D.switch_sum_pos hτ.1 D.switch_lt_current_exit
+          D.current_gap_nonneg D.lower_numerator_pos D.time_integrable_current
+          D.q_integrable_current D.fixed_reward_rate)
+
+/--
 One-policy data package for the surge Lemma 9 current-bounds route into
 accept-all aggregate improvement.
 -/
@@ -26686,6 +26763,52 @@ theorem GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll
     D.m_sub_R1_pos D.R1_nonneg D.fixed_time_nonneg D.fixed_exit_pos
     D.switch_pos D.switch_sum_pos D.switch_lt_current_exit
     D.current_gap_nonneg D.fixed_reward_rate hsupport_pos
+
+/--
+The surge current-bounds data package proves strict accept-all aggregate
+improvement from positive rejected-complement measure.  Lemma 9 supplies
+strict pointwise kernel positivity on feasible rejected trips, so positive
+rejected mass gives the support condition needed by
+`aggregate_lt_acceptAll`.
+-/
+theorem GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 m R1 z ratio : ℝ}
+    {wI : PricingFunction} {σI σJ : TripPolicy}
+    (D :
+      GN21SurgeLemma9AcceptAllAggregateData μI μJ arrivalI arrivalJ
+        switch12 switch21 m R1 z ratio wI σI σJ)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hrejected_pos : 0 < μJ (acceptAllPolicy \ σJ)) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21 wI
+        (ctmcStructuredSurgePrice m z switch21 switch12) σI σJ <
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switch12 switch21 wI
+        (ctmcStructuredSurgePrice m z switch21 switch12) σI
+        acceptAllPolicy := by
+  refine D.aggregate_lt_acceptAll harrivalJ_pos ?_
+  exact
+    measure_support_inter_pos_of_pos_on μJ
+      (fun τ : TripLength =>
+        gn21DerivativeSignKernel
+          (gn21SwitchProb switch21 switch12 τ) τ
+          (ctmcStructuredSurgePrice m z switch21 switch12 τ)
+          (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+          (gn21ExitWeightIntegral μI arrivalI switch12 switch21 σI)
+          (gn21ScaledStateTime μJ arrivalJ σJ)
+          (gn21ScaledStateTime μI arrivalI σI)
+          (gn21ScaledStateEarning μJ arrivalJ
+            (ctmcStructuredSurgePrice m z switch21 switch12) σJ)
+          (gn21ScaledStateEarning μI arrivalI wI σI))
+      (acceptAllPolicy \ σJ) hrejected_pos
+      (fun τ hτ =>
+        paper_lemma9_measured_derivative_sign_kernel_pos_of_current_bounds
+          μI μJ arrivalI arrivalJ switch12 switch21 m R1 z ratio τ wI
+          σI σJ D.bounds D.z_eq D.m_sub_R1_pos D.R1_nonneg
+          D.fixed_time_nonneg D.fixed_exit_pos D.switch_pos D.switch_sum_pos
+          hτ.1 D.switch_lt_current_exit D.current_gap_nonneg
+          D.time_integrable_current D.q_integrable_current D.fixed_reward_rate)
 
 /--
 One-policy data package for the non-surge Lemma 10 endpoint-term route into

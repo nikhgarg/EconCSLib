@@ -999,6 +999,11 @@ The direct current-bounds strict route is now
 it consumes the source current-bound data plus positive Lemma 6 kernel support
 on the rejected complement and uses accept-all itself as the strict local
 replacement.
+The full-data Lemma 9/10 packages also now have rejected-mass variants,
+`GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`
+and
+`GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`,
+which derive positive kernel support from positive rejected-complement measure.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
