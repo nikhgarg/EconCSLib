@@ -36,12 +36,13 @@ Last updated: 2026-05-15
   instantiation: strictly ordered latent skills give strictly ordered
   conditional posterior-score means.  It also has a source-shaped
   `LG21EstimateLaw` wrapper for the point/Gaussian law surface used by the
-  paper's distributional notation.
+  paper's distributional notation, plus the fixed-base one-random-test
+  posterior law matching the displayed proof formula.
 - Proposition 4.3 now has concrete Gaussian posterior-score scale-gap
   instantiations over possibly different observed-feature sets, using the
   shared signal-precision-sum comparison from `GaussianOffsetSignalFamily`.
   Its observable-fairness failure also has the source-shaped point-vs-Gaussian
-  conditional law wrapper.
+  conditional law wrapper and fixed-base one-random-test posterior-law form.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain

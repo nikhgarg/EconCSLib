@@ -345,6 +345,33 @@ theorem paper_interface_lemma4_1_take_test_cutoff_has_profitable_deviation
     api hscale hcutoff
 
 /--
+Fixed-base posterior-score law: all non-test information is fixed and the
+Bayesian estimate is a positive-slope affine function of the optional test
+score.
+-/
+abbrev paperOneTestPosteriorScoreLaw
+    (intercept slope : ℝ) (hslope : 0 < slope)
+    (skill testScale : ℝ) (htestScale : 0 < testScale) :
+    GaussianScaleLaw :=
+  lg21OneTestPosteriorScoreLaw
+    intercept slope hslope skill testScale htestScale
+
+/--
+Proposition 4.2 fixed-base Gaussian support: the one-random-test posterior
+score law has strictly larger mean for strictly larger latent skill.
+-/
+theorem paper_interface_one_test_posterior_score_law_mean_lt_of_skill_lt
+    {intercept slope skillLow skillHigh testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hskill : skillLow < skillHigh) :
+    (paperOneTestPosteriorScoreLaw
+      intercept slope hslope skillLow testScale htestScale).mean <
+      (paperOneTestPosteriorScoreLaw
+        intercept slope hslope skillHigh testScale htestScale).mean :=
+  paper_one_test_posterior_score_law_mean_lt_of_skill_lt
+    hslope htestScale hskill
+
+/--
 Propositions 4.2--4.3 Gaussian-law support: distinct means imply distinct
 estimate laws.
 -/
@@ -717,6 +744,36 @@ theorem paper_interface_proposition4_2_not_estimate_law_latent_skill_fair_of_con
     M e qHigh qLow base hNoAccess hAccessHigh hAccessLow hskill
 
 /--
+Proposition 4.2 fixed-base source instantiation: the access-side law is the
+affine image of one random optional test score, so two ordered latent skills
+give different Gaussian estimate laws.
+-/
+theorem paper_interface_proposition4_2_not_estimate_law_latent_skill_fair_of_one_test_posterior_law
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_estimate_law_latent_skill_fair_of_one_test_posterior_law
+    e qHigh qLow base hslope htestScale hNoAccess hAccessHigh hAccessLow
+    hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 
@@ -842,6 +899,28 @@ theorem paper_interface_proposition4_3_not_estimate_law_observable_fair_of_acces
     ¬ lg21SourceLawObservablyFair S :=
   paper_proposition4_3_not_estimate_law_observable_fair_of_access_gaussian_no_access_point
     e base estimate Laccess hAccess hNoAccess
+
+/--
+Proposition 4.3 fixed-base source instantiation: the access-side law is the
+one-random-test posterior law and the no-access law is a point estimate.
+-/
+theorem paper_interface_proposition4_3_not_estimate_law_observable_fair_of_one_test_posterior_law_vs_point
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (e : S.Equilibrium) (base : Base)
+    {intercept slope conditionalTestMean testScale noAccessEstimate : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hAccess :
+      S.observableAccessLaw e base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope conditionalTestMean testScale htestScale))
+    (hNoAccess :
+      S.observableNoAccessLaw e base =
+        LG21EstimateLaw.point noAccessEstimate) :
+    ¬ lg21SourceLawObservablyFair S :=
+  paper_proposition4_3_not_estimate_law_observable_fair_of_one_test_posterior_law_vs_point
+    e base hslope htestScale hAccess hNoAccess
 
 /--
 Proposition 4.3 posterior-law observable-fairness instantiation: a strict

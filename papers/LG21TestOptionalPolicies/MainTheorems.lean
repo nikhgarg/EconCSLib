@@ -275,6 +275,50 @@ def lg21GaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
   scale_pos := hscale
 
 /--
+Posterior-score law when all non-test features are fixed and the only random
+input is one Gaussian test score.  `intercept + slope * testScore` is the
+Bayesian posterior estimate as an affine function of the test score.
+-/
+def lg21OneTestPosteriorScoreLaw
+    (intercept slope : ℝ) (hslope : 0 < slope)
+    (skill testScale : ℝ) (htestScale : 0 < testScale) :
+    GaussianScaleLaw :=
+  (lg21GaussianTestScoreLaw skill testScale htestScale).affineImage
+    intercept slope hslope
+
+@[simp] theorem lg21OneTestPosteriorScoreLaw_mean
+    (intercept slope : ℝ) (hslope : 0 < slope)
+    (skill testScale : ℝ) (htestScale : 0 < testScale) :
+    (lg21OneTestPosteriorScoreLaw
+      intercept slope hslope skill testScale htestScale).mean =
+      intercept + slope * skill := by
+  rfl
+
+@[simp] theorem lg21OneTestPosteriorScoreLaw_scale
+    (intercept slope : ℝ) (hslope : 0 < slope)
+    (skill testScale : ℝ) (htestScale : 0 < testScale) :
+    (lg21OneTestPosteriorScoreLaw
+      intercept slope hslope skill testScale htestScale).scale =
+      slope * testScale := by
+  rfl
+
+/--
+Proposition 4.2 Gaussian support in the paper's fixed-base form: with fixed
+non-test features, the posterior-score law induced by the optional test has
+strictly larger mean for strictly larger latent skill.
+-/
+theorem paper_one_test_posterior_score_law_mean_lt_of_skill_lt
+    {intercept slope skillLow skillHigh testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hskill : skillLow < skillHigh) :
+      (lg21OneTestPosteriorScoreLaw
+      intercept slope hslope skillLow testScale htestScale).mean <
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope skillHigh testScale htestScale).mean := by
+  simpa [add_comm] using
+    add_lt_add_left (mul_lt_mul_of_pos_left hskill hslope) intercept
+
+/--
 Lemma 4.1 test-taking support: a Gaussian test score whose mean is at least a
 threshold clears that threshold with probability at least one half.
 -/
@@ -1251,6 +1295,54 @@ theorem paper_proposition4_2_not_estimate_law_latent_skill_fair_of_conditional_p
     paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt M hskill
   exact (LG21EstimateLaw.gaussian_ne_of_mean_lt hmean) hLaw.symm
 
+/--
+Proposition 4.2 source fixed-base instantiation: when non-test features are
+fixed, the access-side posterior-score law is the affine image of the one
+random optional test score.  Strictly ordered latent skills give different
+Gaussian laws, and the four-group proof rules out latent-skill fairness.
+-/
+theorem paper_proposition4_2_not_estimate_law_latent_skill_fair_of_one_test_posterior_law
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair S := by
+  apply paper_proposition4_2_not_law_latent_skill_fair_of_four_group_core
+    e qHigh qLow base hNoAccess
+  intro hsame
+  have hLaw :
+      LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale) =
+        LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale) := by
+    rw [← hAccessHigh, ← hAccessLow]
+    exact hsame
+  have hmean :
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope skillLow testScale htestScale).mean <
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope skillHigh testScale htestScale).mean :=
+    paper_one_test_posterior_score_law_mean_lt_of_skill_lt
+      hslope htestScale hskill
+  exact (LG21EstimateLaw.gaussian_ne_of_mean_lt hmean) hLaw.symm
+
 /-- Certificate for Proposition 4.3. -/
 structure LG21NotObservableOrDemographicFairCertificate
     {Skill Base Test Estimate : Type*}
@@ -1407,6 +1499,32 @@ theorem paper_proposition4_3_not_estimate_law_observable_fair_of_access_gaussian
     rw [← hAccess, ← hNoAccess]
     exact hsame
   exact (LG21EstimateLaw.gaussian_ne_point Laccess estimate) hLaw
+
+/--
+Proposition 4.3 fixed-base instantiation: after Lemma 4.1 makes access
+students report, the access-side Bayesian estimate is the one-random-test
+posterior-score law, while the no-access estimate is fixed by the base profile.
+-/
+theorem paper_proposition4_3_not_estimate_law_observable_fair_of_one_test_posterior_law_vs_point
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (e : S.Equilibrium) (base : Base)
+    {intercept slope conditionalTestMean testScale noAccessEstimate : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hAccess :
+      S.observableAccessLaw e base =
+        LG21EstimateLaw.gaussian
+          (lg21OneTestPosteriorScoreLaw
+            intercept slope hslope conditionalTestMean testScale htestScale))
+    (hNoAccess :
+      S.observableNoAccessLaw e base =
+        LG21EstimateLaw.point noAccessEstimate) :
+    ¬ lg21SourceLawObservablyFair S :=
+  paper_proposition4_3_not_estimate_law_observable_fair_of_access_gaussian_no_access_point
+    e base noAccessEstimate
+    (lg21OneTestPosteriorScoreLaw
+      intercept slope hslope conditionalTestMean testScale htestScale)
+    hAccess hNoAccess
 
 /--
 Proposition 4.3 posterior-law instantiation: if the access policy observes a

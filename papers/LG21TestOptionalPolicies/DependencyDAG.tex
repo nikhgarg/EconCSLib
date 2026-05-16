@@ -27,47 +27,47 @@
 
 \node[dag_partial, text width=4.8cm] (SharedProb) at (5.9,0) {
   \textbf{Shared testing probability library}\\
-  posterior wrappers, Gaussian law comparison, and conditional resampling
+  posterior wrappers, Gaussian law comparison, cutoff deviations, and conditional resampling
 };
 
 \node[dag_partial, text width=4.8cm] (Model) at (11.8,0) {
   \textbf{Source model (Secs. 2--4)}\\
-  finite kernels plus source policy surface; concrete Gaussian information sets remain open
+  finite kernels, $(Y,X)$ action object, and PMF/law policy surfaces; concrete Gaussian payoff wiring remains open
 };
 
 \node[dag_caveat, text width=4.0cm] (Def1) at (17.7,0) {
   \textbf{Definition 1 (Sec. 2)}\\
-  abstract equilibrium predicate encoded; concrete action space open
+  concrete access action space and abstract equilibrium predicate encoded
 };
 
-\node[dag_conditional, text width=4.8cm] (Thm31) at (23.6,0) {
+\node[dag_partial, text width=4.8cm] (Thm31) at (23.6,0) {
   \textbf{Theorem 3.1 (Sec. 3)}\\
-  strategic withholding endpoint exposed as certificate
+  reporting-threshold support proved; strategic withholding endpoint remains conditional
 };
 
 \node[dag_conditional, text width=4.8cm] (Thm32) at (29.5,0) {
   \textbf{Theorem 3.2 (Sec. 3)}\\
-  fairness-impossibility endpoint exposed as certificate
+  PMF/law endpoint and contrapositive wrappers; source implication remains conditional
 };
 
 \node[dag_caveat, text width=4.0cm] (FairDefs) at (11.8,-4.2) {
   \textbf{Definitions 2--5 (Sec. 2)}\\
-  PMF and continuous-law fairness/test-blank predicates encoded
+  PMF/law fairness and test-blank predicates; mixture implication chain proved
 };
 
-\node[dag_conditional, text width=4.8cm] (Lemma41) at (17.7,-4.2) {
+\node[dag_partial, text width=4.8cm] (Lemma41) at (17.7,-4.2) {
   \textbf{Lemma 4.1 (Sec. 4)}\\
-  strategy-proofness endpoint exposed as certificate
+  optional-reporting and report-required deviation cores proved; endpoint bridge remains
 };
 
 \node[dag_partial, text width=4.8cm] (Prop42) at (23.6,-4.2) {
   \textbf{Proposition 4.2 (Sec. 4.1)}\\
-  law-level four-group and Gaussian mean-gap core proved
+  four-group, fixed-base posterior law, and source-shaped Gaussian-law cores proved
 };
 
 \node[dag_partial, text width=4.8cm] (Prop43) at (29.5,-4.2) {
   \textbf{Proposition 4.3 (Sec. 4.1)}\\
-  law-level witness and Gaussian variance-gap cores proved
+  witness, posterior-precision, fixed-base posterior, and point-vs-Gaussian cores proved
 };
 
 \node[dag_caveat, text width=4.0cm] (Def6) at (11.8,-8.6) {
