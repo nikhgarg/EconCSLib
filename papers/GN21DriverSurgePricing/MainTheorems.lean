@@ -119,10 +119,12 @@ the continuous CTMC source theorems.
   `lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg`: source
   Step 2 sign implications that choose improving endpoint directions in the
   monotone and quasi cases.
-- `lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves`
+- `lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves`,
+  `lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_moves`,
+  `lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves`,
   and
   `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`:
-  strict-local improvement selectors for ruling out noncanonical quasi-case
+  strict-local improvement selectors for ruling out noncanonical Lemma 5 shape
   optima once stopped endpoint moves are supplied.
 - `symmDiff_ioo_union_touching_subset_singleton` and
   `policyAlmostEverywhereEq_ioo_union_touching`: the measure-zero collision
@@ -23502,6 +23504,29 @@ theorem lemma5_strictlyIncreasing_endpoint_sign_dichotomy
     linarith
 
 /--
+Strict-improvement selector for the strictly increasing case.  A positive
+upper-endpoint response expands the interval; otherwise the lower-endpoint
+collapse direction is improving.
+-/
+theorem lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hmono : StrictMonoOn response (Set.Ioi 0))
+    {lower upper : TripLength}
+    (hlower_pos : 0 < lower)
+    (hlower_upper : lower < upper)
+    (hupper_move :
+      0 < response upper → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (hlower_move :
+      0 < -response lower → ∃ σ' : TripPolicy, Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, Rhat σ < Rhat σ' := by
+  rcases lemma5_strictlyIncreasing_endpoint_sign_dichotomy
+      response hmono hlower_pos hlower_upper with hupper | hlower
+  · exact hupper_move hupper
+  · exact hlower_move hlower
+
+/--
 Lemma 5 Step 2, strictly decreasing case: across a positive gap
 `upper < nextLower`, either expanding the preceding upper endpoint has positive
 response or shrinking the next interval from its lower endpoint has positive
@@ -23523,6 +23548,27 @@ theorem lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
     have hresp_lt : response nextLower < response upper :=
       hanti hupper_pos hnext_pos hupper_next
     linarith
+
+/--
+Strict-improvement selector for the strictly decreasing gap case.
+-/
+theorem lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hanti : StrictAntiOn response (Set.Ioi 0))
+    {upper nextLower : TripLength}
+    (hupper_pos : 0 < upper)
+    (hupper_next : upper < nextLower)
+    (hupper_move :
+      0 < response upper → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (hnextLower_move :
+      0 < -response nextLower → ∃ σ' : TripPolicy, Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, Rhat σ < Rhat σ' := by
+  rcases lemma5_strictlyDecreasing_gap_endpoint_sign_dichotomy
+      response hanti hupper_pos hupper_next with hupper | hnextLower
+  · exact hupper_move hupper
+  · exact hnextLower_move hnextLower
 
 /--
 Lemma 5 Step 2, strictly quasi-convex case: if the two outer endpoint

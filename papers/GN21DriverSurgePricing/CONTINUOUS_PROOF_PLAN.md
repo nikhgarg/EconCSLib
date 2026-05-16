@@ -278,13 +278,16 @@ sign-change stops cannot cycle without eventually lowering component count or
 landing on a canonical Lemma 5 shape.
 
 For the optimal-policy branch, Lean now also exposes a shorter strict-local
-route:
+route for all nonpositive derivative-shape cases:
+`lemma5_strictlyIncreasing_interval_exists_strict_improvement_of_endpoint_moves`,
+`lemma5_strictlyDecreasing_gap_exists_strict_improvement_of_endpoint_moves`,
 `lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves`
 and
 `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`.
-These selectors combine the source sign trichotomies with stopped endpoint-move
-improvement premises and can rule out the noncanonical Case 1 configurations
-without first constructing a complete finite path to the canonical form.
+These selectors combine the source sign dichotomies/trichotomies with stopped
+endpoint-move improvement premises and can rule out the noncanonical Case 1
+configurations without first constructing a complete finite path to the
+canonical form.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
