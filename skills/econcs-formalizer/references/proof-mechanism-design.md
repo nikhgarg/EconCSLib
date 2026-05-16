@@ -182,6 +182,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   normalized positive Lebesgue densities, mark the named lemma green there, and
   track the Owen/CDF identity under the proposition that actually uses the
   displayed formula.
+- For strategic diversity criteria that compare two schools' group shares,
+  split the proof into mass bookkeeping before analytic identities.  First
+  define the paper's displayed group masses (`D_g`, tail mass, and case-split
+  combinations) and prove the reusable algebra
+  `mass_1 / C_1 > mass_2 / C_2 ↔ mass_1 / mass_2 > C_1 / C_2` under positive
+  capacities and positive denominator mass.  Then leave only the model-side
+  Gaussian/Owen integral identities as the concrete analytic seam.
 - When a paper theorem is group-indexed, avoid stopping at a one-representative
   type theorem. After the single-group payoff/cutoff calculation is green,
   immediately package the group-indexed equilibrium object with common school
