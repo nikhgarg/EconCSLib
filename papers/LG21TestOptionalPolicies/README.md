@@ -146,8 +146,11 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness`
   now converts any latent-or-observable-fairness-to-test-blank route into
   explicit unfairness from a point-estimate test witness off the acting mean.
-  The remaining source gap is discharging the final paper policy assumptions
-  for the concrete optional/report-required surfaces.
+  The optional-reporting concrete endpoint
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_witness`
+  applies this directly to the optional binary-mixture surface.  The remaining
+  source gap is discharging the final paper policy assumptions for the concrete
+  optional/report-required surfaces.
 
 ## Source Notes
 
