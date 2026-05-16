@@ -414,6 +414,13 @@ theorem standardGaussianQuantile_pos_of_half_lt
   exact standardGaussianQuantileIoo_pos_of_half_lt
     (p := ⟨p, hp01⟩) hp.1
 
+/-- The extended true standard-normal quantile inverts the CDF on `(0,1)`. -/
+theorem standardGaussianCDF_standardGaussianQuantile
+    {p : ℝ} (hp : p ∈ Ioo (0 : ℝ) 1) :
+    standardGaussianCDF (standardGaussianQuantile p) = p := by
+  rw [standardGaussianQuantile_of_mem_Ioo hp]
+  exact standardGaussianCDF_quantileIoo ⟨p, hp⟩
+
 /-- The standard normal hazard rate using the mathlib-backed CDF and PDF. -/
 def standardGaussianHazard (z : ℝ) : ℝ :=
   standardGaussianDensity z / (1 - standardGaussianCDF z)
@@ -693,6 +700,7 @@ def standardGaussianAnalyticAPI : StandardGaussianAnalyticAPI where
 def standardGaussianQuantileAPI : StandardGaussianQuantileAPI where
   cdfAPI := standardGaussianCDFAPI
   quantile := standardGaussianQuantile
+  cdf_quantile := standardGaussianCDF_standardGaussianQuantile
   quantile_mono := standardGaussianQuantile_monoOn
   quantile_continuous := standardGaussianQuantile_continuousOn
   quantile_pos_of_half_lt := standardGaussianQuantile_pos_of_half_lt

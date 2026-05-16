@@ -27,12 +27,65 @@ continuity, and positivity above the median.
 structure StandardGaussianQuantileAPI where
   cdfAPI : StandardGaussianCDFAPI
   quantile : ℝ → ℝ
+  cdf_quantile :
+    ∀ {p : ℝ}, p ∈ Set.Ioo (0 : ℝ) 1 → cdfAPI.cdf (quantile p) = p
   quantile_mono : MonotoneOn quantile (Set.Ioo (0 : ℝ) 1)
   quantile_continuous : ContinuousOn quantile (Set.Ioo (0 : ℝ) 1)
   quantile_pos_of_half_lt :
     ∀ {p : ℝ}, p ∈ Set.Ioo (1 / 2 : ℝ) 1 → 0 < quantile p
 
 namespace StandardGaussianQuantileAPI
+
+/--
+The quantile converts CDF upper sets into probability upper sets on `(0,1)`.
+This is the reusable inverse-CDF bridge used by threshold-strategy proofs.
+-/
+theorem cdf_le_iff_le_quantile
+    (Q : StandardGaussianQuantileAPI)
+    {z p : ℝ} (hp : p ∈ Set.Ioo (0 : ℝ) 1) :
+    Q.cdfAPI.cdf z ≤ p ↔ z ≤ Q.quantile p := by
+  have hquantile : Q.cdfAPI.cdf (Q.quantile p) = p :=
+    Q.cdf_quantile hp
+  constructor
+  · intro h
+    have hcdf : Q.cdfAPI.cdf z ≤ Q.cdfAPI.cdf (Q.quantile p) := by
+      simpa [hquantile] using h
+    exact Q.cdfAPI.cdf_strictMono.le_iff_le.mp hcdf
+  · intro h
+    have hcdf : Q.cdfAPI.cdf z ≤ Q.cdfAPI.cdf (Q.quantile p) :=
+      Q.cdfAPI.cdf_strictMono.le_iff_le.mpr h
+    simpa [hquantile] using hcdf
+
+/-- The inverse CDF is strictly increasing on `(0,1)`. -/
+theorem quantile_strictMonoOn
+    (Q : StandardGaussianQuantileAPI) :
+    StrictMonoOn Q.quantile (Set.Ioo (0 : ℝ) 1) := by
+  intro p hp q hq hpq
+  by_contra hnot
+  have hle : Q.quantile q ≤ Q.quantile p := le_of_not_gt hnot
+  have hcdf_le :
+      Q.cdfAPI.cdf (Q.quantile q) ≤ Q.cdfAPI.cdf (Q.quantile p) :=
+    Q.cdfAPI.cdf_mono hle
+  rw [Q.cdf_quantile hq, Q.cdf_quantile hp] at hcdf_le
+  linarith
+
+/--
+Equivalently, a standard-normal upper-tail probability is at least `α` iff the
+standardized cutoff lies below `Φ⁻¹(1 - α)`.
+-/
+theorem le_standardTail_iff_le_quantile_one_sub
+    (Q : StandardGaussianQuantileAPI)
+    {alpha z : ℝ} (halpha : alpha ∈ Set.Ioo (0 : ℝ) 1) :
+    alpha ≤ 1 - Q.cdfAPI.cdf z ↔ z ≤ Q.quantile (1 - alpha) := by
+  have halpha_pos : 0 < alpha := halpha.1
+  have halpha_lt_one : alpha < 1 := halpha.2
+  have hone_sub_mem : 1 - alpha ∈ Set.Ioo (0 : ℝ) 1 :=
+    ⟨by linarith, by linarith⟩
+  calc
+    alpha ≤ 1 - Q.cdfAPI.cdf z ↔ Q.cdfAPI.cdf z ≤ 1 - alpha := by
+      constructor <;> intro h <;> linarith
+    _ ↔ z ≤ Q.quantile (1 - alpha) :=
+      Q.cdf_le_iff_le_quantile hone_sub_mem
 
 /--
 The paper's selectivity condition relative to an eligible mass,
