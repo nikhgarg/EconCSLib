@@ -37,6 +37,16 @@ policies that are not known to be optimal under the constructed prices.
 The remaining work is therefore not a global Theorem 4 audit and not an
 arbitrary-policy Lemma 9 proof.  It is the source endpoint-selection proof for
 the shape cases that can actually occur in an optimal non-accept-all policy.
+The collapsed surge middle-rejection case should be handled through the
+paper's almost-everywhere convention: Lean now has
+
+  GN21WithDensityAcceptAllSupport.lo_lt_hi_of_rejectsMiddleTrips_of_rejected_mass_pos
+  GN21RegularEndpointSharedSourceData.surge_rejectMiddle_lo_lt_hi_of_rejected_mass_pos
+  GN21RegularEndpointSharedSourceData.surge_acceptAllAlmostEverywhere_of_rejectsMiddle_self
+
+so future AE endpoint certificates can use positive rejected mass to get the
+strict gap, and otherwise treat the singleton rejection as already
+accept-all almost everywhere.
 
 
 Meaning of r1_current

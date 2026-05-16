@@ -564,6 +564,12 @@ cache is `source.txt`.
   reward and GN21 `Q,T,W` primitives unchanged after removing that
   measure-zero component; left- and right-state aggregate-reward wrappers expose
   this directly for Theorem 4/Theorem 3 weak branches.
+  The source with-density support package now also exposes this as
+  `GN21WithDensityAcceptAllSupport.lo_lt_hi_of_rejectsMiddleTrips_of_rejected_mass_pos`
+  and
+  `GN21RegularEndpointSharedSourceData.surge_rejectMiddle_lo_lt_hi_of_rejected_mass_pos`:
+  positive rejected mass rules out the collapsed surge middle-rejection gap,
+  while the collapsed branch is accepted as almost-everywhere accept-all.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.

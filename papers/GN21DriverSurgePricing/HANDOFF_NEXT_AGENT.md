@@ -397,6 +397,17 @@ The next useful Lean target is to build the fields of the fixed-state-equality
 middle-reroute source assumption from the paper's regularity hypotheses and
 the Lemma 5 all-optimal shape classification, rather than reverting to global
 `surge_rejectShort_pos` or all-branch `surge_rejectMiddle_bounds` fields.
+For an AE-faithful route, use the compiled collapsed-gap bridge:
+
+```lean
+GN21WithDensityAcceptAllSupport.lo_lt_hi_of_rejectsMiddleTrips_of_rejected_mass_pos
+GN21RegularEndpointSharedSourceData.surge_rejectMiddle_lo_lt_hi_of_rejected_mass_pos
+GN21RegularEndpointSharedSourceData.surge_acceptAllAlmostEverywhere_of_rejectsMiddle_self
+```
+
+These let a future positive-rejected-mass endpoint certificate obtain
+`lo < hi` only when strict improvement is actually needed; the `lo = hi`
+branch should be treated as accept-all almost everywhere.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:

@@ -16672,6 +16672,14 @@ structure GN21WithDensityAcceptAllSupport
     (volume.withDensity fun τ => (densityNN τ : ℝ≥0∞)) acceptAllPolicy ≠ ∞
   hpos_acceptAll : ∀ τ, τ ∈ acceptAllPolicy → densityNN τ ≠ 0
 
+/-- A with-density support package is nonatomic because it is absolutely continuous to volume. -/
+theorem GN21WithDensityAcceptAllSupport.noAtoms
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ) :
+    NoAtoms μ := by
+  rw [D.hμ]
+  infer_instance
+
 /-- The accept-all support package gives finite mass to every feasible subset. -/
 theorem GN21WithDensityAcceptAllSupport.finite_of_subset
     {μ : Measure TripLength}
@@ -16851,6 +16859,53 @@ theorem GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsMiddleTrips
   change volume (Set.Ioo lo hi) ≠ 0
   rw [Real.volume_Ioo]
   exact ne_of_gt (ENNReal.ofReal_pos.mpr (sub_pos.mpr hlo_lt_hi))
+
+/--
+Under the with-density source support, coincident middle-rejection cutoffs
+reject only a null singleton and hence agree with accept-all almost everywhere.
+-/
+theorem GN21WithDensityAcceptAllSupport.acceptAllAlmostEverywhere_of_rejectsMiddleTrips_self
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    acceptAllAlmostEverywhere μ σ := by
+  haveI : NoAtoms μ := D.noAtoms
+  exact
+    acceptAllAlmostEverywhere_of_rejectsMiddleTrips_self_of_subsetAcceptAll
+      μ hshape hsub
+
+/--
+Positive rejected mass rules out the collapsed or inverted middle-rejection
+gap under the source with-density support.
+-/
+theorem GN21WithDensityAcceptAllSupport.lo_lt_hi_of_rejectsMiddleTrips_of_rejected_mass_pos
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hpos : 0 < μ (acceptAllPolicy \ σ)) :
+    lo < hi := by
+  by_contra hnot_lt
+  have hhi_le_lo : hi ≤ lo := le_of_not_gt hnot_lt
+  by_cases hhi_lt_lo : hi < lo
+  · have hall : acceptsAllTrips σ :=
+      acceptsAllTrips_of_rejectsMiddleTrips_of_hi_lt_lo hshape hhi_lt_lo
+    have hzero : μ (acceptAllPolicy \ σ) = 0 := by
+      simpa [acceptAllAlmostEverywhere] using
+        acceptAllAlmostEverywhere_of_acceptsAllTrips μ hall
+    rw [hzero] at hpos
+    exact (lt_irrefl (0 : ℝ≥0∞) hpos)
+  · have hlo_le_hi : lo ≤ hi := le_of_not_gt hhi_lt_lo
+    have hlo_eq_hi : lo = hi := le_antisymm hlo_le_hi hhi_le_lo
+    subst hi
+    have hzero : μ (acceptAllPolicy \ σ) = 0 := by
+      simpa [acceptAllAlmostEverywhere] using
+        D.acceptAllAlmostEverywhere_of_rejectsMiddleTrips_self hshape hsub
+    rw [hzero] at hpos
+    exact (lt_irrefl (0 : ℝ≥0∞) hpos)
 
 /-- Feasible measurable dynamic policies have finite current mass under the support package. -/
 theorem GN21WithDensityAcceptAllSupport.finite_current_of_feasible
@@ -42281,6 +42336,40 @@ theorem GN21RegularEndpointSharedSourceData.surge_rejectMiddle_rejected_mass_pos
   exact
     S.surge_support.rejected_mass_pos_of_rejectsMiddleTrips hshape
       hlo_nonneg hlo_lt_hi
+
+/--
+In the source surge support package, positive rejected mass rules out the
+collapsed middle-rejection gap.  This is the branch needed by AE uniqueness:
+the collapsed case is already accept-all up to a null singleton.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_rejectMiddle_lo_lt_hi_of_rejected_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 lo hi : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ)
+    (hpos : 0 < (μ 1) (acceptAllPolicy \ ρ 1)) :
+    lo < hi :=
+  S.surge_support.lo_lt_hi_of_rejectsMiddleTrips_of_rejected_mass_pos
+    hshape (hρ_feasible 1).1 hpos
+
+/--
+The collapsed surge middle-rejection branch agrees with accept-all almost
+everywhere under the source density package.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_acceptAllAlmostEverywhere_of_rejectsMiddle_self
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 t : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hshape : rejectsMiddleTrips t t (ρ 1))
+    (hρ_feasible : dynamicFeasibleMeasurablePolicy ρ) :
+    acceptAllAlmostEverywhere (μ 1) (ρ 1) :=
+  S.surge_support.acceptAllAlmostEverywhere_of_rejectsMiddleTrips_self
+    hshape (hρ_feasible 1).1
 
 /--
 Shared regular support plus the allowed non-surge Lemma 5 policy-form
