@@ -461,6 +461,38 @@ structure GN21FiniteOpenIntervalApproximation
   measure_omitted_lt :
     μ (σ \ ⋃ i : index, Set.Ioo (lower i) (upper i)) < ε
 
+/--
+Paper-local finite interval policy domain used by Lemma 5 Step 2.  Unlike
+`GN21FiniteOpenIntervalApproximation`, this structure is independent of the
+source measure and approximation error, so endpoint-descent arguments can use
+it as their finite domain.
+-/
+structure GN21FiniteIntervalPolicy where
+  index : Type
+  finite_index : Fintype index
+  lower : index → ℝ
+  upper : index → ℝ
+  lower_lt_upper : ∀ i, lower i < upper i
+
+/-- The trip-policy set represented by a finite interval policy. -/
+def GN21FiniteIntervalPolicy.policy
+    (P : GN21FiniteIntervalPolicy) : TripPolicy :=
+  ⋃ i : P.index, Set.Ioo (P.lower i) (P.upper i)
+
+/-- A finite interval policy is measurable. -/
+theorem GN21FiniteIntervalPolicy.measurableSet_policy
+    (P : GN21FiniteIntervalPolicy) :
+    MeasurableSet P.policy := by
+  classical
+  letI := P.finite_index
+  unfold GN21FiniteIntervalPolicy.policy
+  exact MeasurableSet.iUnion (fun _ => measurableSet_Ioo)
+
+/-- Natural endpoint complexity of a finite interval policy. -/
+noncomputable def GN21FiniteIntervalPolicy.complexity
+    (P : GN21FiniteIntervalPolicy) : Nat :=
+  @Fintype.card P.index P.finite_index
+
 /-- Convert a finite open-ball approximation on `ℝ` into endpoint intervals. -/
 noncomputable def GN21FiniteOpenBallApproximation.to_interval
     {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
@@ -584,6 +616,32 @@ theorem GN21FiniteOpenIntervalApproximation.policy_subset
   rcases Set.mem_iUnion.1 hx with ⟨i, hxi⟩
   exact A.interval_subset i hxi
 
+/-- Forget the measure/error bookkeeping and keep only the finite interval policy. -/
+noncomputable def GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenIntervalApproximation μ σ ε) :
+    GN21FiniteIntervalPolicy where
+  index := A.index
+  finite_index := A.finite_index
+  lower := A.lower
+  upper := A.upper
+  lower_lt_upper := A.lower_lt_upper
+
+/-- The policy represented by the forgotten finite interval data is the approximant policy. -/
+theorem GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_policy
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenIntervalApproximation μ σ ε) :
+    A.toFiniteIntervalPolicy.policy = A.policy := by
+  rfl
+
+/-- The forgotten finite interval policy is still an internal approximation. -/
+theorem GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_subset
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenIntervalApproximation μ σ ε) :
+    A.toFiniteIntervalPolicy.policy ⊆ σ := by
+  simpa [GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_policy] using
+    A.policy_subset
+
 /--
 Continuity of a set functional in the symmetric-difference measure at a source
 policy.  This is the precise continuity input used by Lemma 5 after replacing
@@ -617,6 +675,49 @@ theorem exists_gn21FiniteOpenIntervalApproximation_reward_close
     simpa [GN21FiniteOpenIntervalApproximation.policy] using
       A.measure_symmDiff_lt)⟩
 
+/--
+Finite-interval policy-domain form of Lemma 5 Step 1 plus continuity.  This
+is the seed theorem consumed by the finite descent/maximizer bridge.
+-/
+theorem exists_gn21FiniteIntervalPolicy_reward_close
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : TripPolicy → ℝ) {σ : TripPolicy}
+    (hσ_open : IsOpen σ)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ)
+    {εReward : ℝ} (hεReward : 0 < εReward) :
+    ∃ P : GN21FiniteIntervalPolicy,
+      P.policy ⊆ σ ∧ |Rhat P.policy - Rhat σ| < εReward := by
+  rcases exists_gn21FiniteOpenIntervalApproximation_reward_close
+      μ Rhat hσ_open hcont hεReward with
+    ⟨δ, A, hclose⟩
+  refine ⟨A.toFiniteIntervalPolicy, ?_, ?_⟩
+  · intro τ hτ
+    exact A.policy_subset (by
+      simpa [GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_policy]
+        using hτ)
+  · simpa [GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_policy]
+      using hclose
+
+/--
+Reward-close finite interval seeds approximate the source reward from below.
+This is the exact `seedClose` input for
+`lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer`.
+-/
+theorem exists_gn21FiniteIntervalPolicy_reward_close_below
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : TripPolicy → ℝ) {σ : TripPolicy}
+    (hσ_open : IsOpen σ)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ) :
+    ∀ εReward : ℝ, 0 < εReward →
+      ∃ P : GN21FiniteIntervalPolicy, Rhat σ - εReward < Rhat P.policy := by
+  intro εReward hεReward
+  rcases exists_gn21FiniteIntervalPolicy_reward_close
+      μ Rhat hσ_open hcont hεReward with
+    ⟨P, hP_subset, hclose⟩
+  have hclose_left : -(εReward) < Rhat P.policy - Rhat σ :=
+    (abs_lt.1 hclose).1
+  exact ⟨P, by linarith⟩
+
 /-- Lifetime earnings-rate functional for a one-state policy. -/
 abbrev SingleStateReward := TripPolicy → ℝ
 
@@ -640,6 +741,16 @@ theorem acceptsAllTrips_acceptAllPolicy :
     acceptsAllTrips acceptAllPolicy := by
   intro τ hτ
   exact hτ
+
+/-- Interval-level feasibility implies feasibility of the finite interval policy. -/
+theorem GN21FiniteIntervalPolicy.policy_subset_acceptAll_of_intervals
+    (P : GN21FiniteIntervalPolicy)
+    (hintervals :
+      ∀ i : P.index, Set.Ioo (P.lower i) (P.upper i) ⊆ acceptAllPolicy) :
+    P.policy ⊆ acceptAllPolicy := by
+  intro τ hτ
+  rcases Set.mem_iUnion.1 hτ with ⟨i, hτi⟩
+  exact hintervals i hτi
 
 /-- A policy fails to accept all feasible trips iff it misses some positive trip length. -/
 theorem not_acceptsAllTrips_iff_exists_pos_not_mem
@@ -18668,6 +18779,44 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_domain_finite_descent
         have hstrict : Rhat σ0 < Rdom maximizer := by
           exact hseed_strict.trans_le (by simpa [Rdom] using hseed_le)
         simpa [Rdom] using hstrict }
+
+/--
+Finite-interval-policy specialization of the Lemma 5 descent/maximizer
+constructor.  This is the continuous proof seam after Step 1: regularity and
+symmetric-difference continuity supply finite interval seeds; the remaining
+paper-specific obligation is a one-step endpoint move on
+`GN21FiniteIntervalPolicy` lowering `complexity`.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_descent_and_maximizer
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : SingleStateReward) {σ0 : TripPolicy}
+    (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ0)
+    (canonicalMax :
+      ∃ maximizer : GN21FiniteIntervalPolicy,
+        lemma5PolicyForm shape maximizer.policy ∧
+          ∀ seed : GN21FiniteIntervalPolicy,
+            lemma5PolicyForm shape seed.policy →
+              Rhat seed.policy ≤ Rhat maximizer.policy)
+    (step :
+      ∀ seed : GN21FiniteIntervalPolicy,
+        ¬ lemma5PolicyForm shape seed.policy →
+          ∃ seed' : GN21FiniteIntervalPolicy,
+            Rhat seed.policy ≤ Rhat seed'.policy ∧
+              seed'.complexity < seed.complexity)
+    (strictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ seed : GN21FiniteIntervalPolicy,
+          lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer
+    Rhat σ0 shape
+    (fun seed : GN21FiniteIntervalPolicy => seed.policy)
+    GN21FiniteIntervalPolicy.complexity
+    (exists_gn21FiniteIntervalPolicy_reward_close_below
+      μ Rhat hσ0_open hcont)
+    canonicalMax step strictWitness
 
 /--
 Positive-case Lemma 5 replacement constructor using accept-all as the

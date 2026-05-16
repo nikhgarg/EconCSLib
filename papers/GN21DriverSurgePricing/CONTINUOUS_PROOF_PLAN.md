@@ -461,6 +461,9 @@ into the concrete endpoint policy data.
   plumbing.  The first inner-regularity part of source Step 1 is also now
   compiled as `GN21FiniteOpenBallApproximation`,
   `GN21FiniteOpenIntervalApproximation`,
+  `GN21FiniteIntervalPolicy`, `GN21FiniteIntervalPolicy.policy`,
+  `GN21FiniteIntervalPolicy.measurableSet_policy`,
+  `GN21FiniteIntervalPolicy.complexity`,
   `exists_gn21FiniteOpenBallApproximation_of_isOpen`,
   `GN21FiniteOpenBallApproximation.to_interval`,
   `exists_gn21FiniteOpenIntervalApproximation_of_isOpen`, and
@@ -468,11 +471,17 @@ into the concrete endpoint policy data.
   policy under a finite regular measure has a finite open-interval subpolicy
   with arbitrarily small omitted mass, and its symmetric-difference error is
   the same omitted mass because it is an inner approximation.
+  `GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy` and
+  `GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_subset` forget
+  the measure bookkeeping while preserving the internal finite interval seed.
   `GN21SymmDiffContinuousAt` and
-  `exists_gn21FiniteOpenIntervalApproximation_reward_close` now compose this
-  approximation with the source continuity assumption to choose a finite
-  interval approximant whose reward is arbitrarily close to the original open
-  policy.  The finite-family descent and compactness handoff is also now
+  `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
+  `exists_gn21FiniteIntervalPolicy_reward_close`, and
+  `exists_gn21FiniteIntervalPolicy_reward_close_below` now compose this
+  approximation with the source continuity assumption to choose a concrete
+  finite interval policy seed whose reward is arbitrarily close to the
+  original open policy.  The finite-family descent and compactness handoff is
+  also now
   compiled as `exists_canonical_ge_of_finite_descent`,
   `exists_canonical_gt_of_finite_descent`,
   `exists_canonical_arbitrarily_close_of_seed_finite_descent`,
@@ -480,7 +489,9 @@ into the concrete endpoint policy data.
   `exists_canonical_ge_of_arbitrarily_close_and_maximizer`,
   `lemma5OptimizerReplacementCertificate_of_finite_descent`,
   `lemma5OptimizerReplacementCertificate_of_seed_finite_descent`, and
-  `lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer`.
+  `lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer`,
+  with the concrete finite-interval specialization
+  `lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_descent_and_maximizer`.
   These theorems prove the source proof's termination and limit/maximizer
   bridge for any finite-policy domain with a natural-valued endpoint
   complexity.  The remaining Lemma 5 work is now the paper-specific endpoint
