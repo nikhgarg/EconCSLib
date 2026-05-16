@@ -445,12 +445,13 @@ into the concrete endpoint policy data.
   set-integral reward, the positive-response policy weakly dominates every
   measurable feasible policy; the strict theorem
   `lemma5MarginalSetReward_lt_positiveResponsePolicy_of_omits_positive_mass`
-  covers policies that omit positive-measure positive-response trips.  The
-  remaining Lemma 5 work is no longer this interval geometry or fixed-response
-  set comparison; it is the source open-set approximation plus
-  endpoint-continuity argument that identifies the nonlinear endpoint path with
-  this positive-response dominance, plus the symmetric strictness case for
-  policies that accept genuinely negative-response mass.
+  covers policies that omit positive-measure positive-response trips, and
+  `lemma5MarginalSetReward_lt_positiveResponsePolicy_of_accepts_negative_mass`
+  covers policies that accept genuinely negative-response mass.  The remaining
+  Lemma 5 work is no longer this interval geometry or fixed-response set
+  comparison; it is the source open-set approximation plus endpoint-continuity
+  argument that identifies the nonlinear endpoint path with this
+  positive-response dominance.
 - For the fixed-transfer route, the lightest compiled fixed-state adapter is
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,

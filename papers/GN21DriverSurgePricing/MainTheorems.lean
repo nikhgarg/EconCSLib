@@ -17295,6 +17295,117 @@ theorem lemma5MarginalSetReward_lt_positiveResponsePolicy_of_omits_positive_mass
     hacceptedPositive_integrable homittedPositive_integrable]
   linarith
 
+/--
+Strict version of the positive-response dominance for the opposite deviation:
+if the current policy accepts positive-measure mass on which the response is
+nonzero but not positive, then it accepts genuinely negative-response mass, so
+the fixed-response linearized reward strictly increases by switching to the
+positive-response policy.
+-/
+theorem lemma5MarginalSetReward_lt_positiveResponsePolicy_of_accepts_negative_mass
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hnegative_mass_pos :
+      0 <
+        μ (Function.support response ∩
+          (σ \ lemma5PositiveResponsePolicy response))) :
+    lemma5MarginalSetReward μ response σ <
+      lemma5MarginalSetReward μ response
+        (lemma5PositiveResponsePolicy response) := by
+  let P : TripPolicy := lemma5PositiveResponsePolicy response
+  have hP_measurable : MeasurableSet P :=
+    measurableSet_lemma5PositiveResponsePolicy response hresponse_measurable
+  have hP_subset : P ⊆ acceptAllPolicy :=
+    lemma5PositiveResponsePolicy_subset_acceptAll response
+  have hP_integrable : IntegrableOn response P μ :=
+    hresponse_integrable_acceptAll.mono_set hP_subset
+  let acceptedPositive : TripPolicy := σ ∩ P
+  let acceptedNonpositive : TripPolicy := σ \ P
+  have hacceptedPositive_subset : acceptedPositive ⊆ P := by
+    intro τ hτ
+    exact hτ.2
+  have hacceptedPositive_acceptAll : acceptedPositive ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hσ_subset hτ.1
+  have hacceptedNonpositive_acceptAll :
+      acceptedNonpositive ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hσ_subset hτ.1
+  have hacceptedPositive_integrable :
+      IntegrableOn response acceptedPositive μ :=
+    hresponse_integrable_acceptAll.mono_set hacceptedPositive_acceptAll
+  have hacceptedNonpositive_integrable :
+      IntegrableOn response acceptedNonpositive μ :=
+    hresponse_integrable_acceptAll.mono_set hacceptedNonpositive_acceptAll
+  have hnonneg_on_P :
+      0 ≤ᵐ[μ.restrict P] response :=
+    (ae_restrict_iff' hP_measurable).2
+      (Filter.Eventually.of_forall (fun τ hτ => le_of_lt hτ.2))
+  have hpositive_le :
+      ∫ τ in acceptedPositive, response τ ∂μ ≤
+        ∫ τ in P, response τ ∂μ := by
+    apply setIntegral_mono_set hP_integrable hnonneg_on_P
+    exact Filter.Eventually.of_forall
+      (fun τ hτ => hacceptedPositive_subset hτ)
+  have hacceptedNonpositive_measurable :
+      MeasurableSet acceptedNonpositive := by
+    exact hσ_measurable.diff hP_measurable
+  have hneg_nonneg_ae :
+      0 ≤ᵐ[μ.restrict acceptedNonpositive]
+        (fun τ : TripLength => -response τ) :=
+    (ae_restrict_iff' hacceptedNonpositive_measurable).2
+      (Filter.Eventually.of_forall (fun τ hτ => by
+        have hτ_acceptAll : 0 < τ := hσ_subset hτ.1
+        have hnot_pos : ¬ 0 < response τ := by
+          intro hpos
+          exact hτ.2 ⟨hτ_acceptAll, hpos⟩
+        exact neg_nonneg.mpr (le_of_not_gt hnot_pos)))
+  have hneg_support :
+      Function.support (fun τ : TripLength => -response τ) ∩
+          acceptedNonpositive =
+        Function.support response ∩ acceptedNonpositive := by
+    ext τ
+    simp [Function.support]
+  have hneg_integral_pos :
+      0 < ∫ τ in acceptedNonpositive, -response τ ∂μ :=
+    (setIntegral_pos_iff_support_of_nonneg_ae
+      hneg_nonneg_ae hacceptedNonpositive_integrable.neg).2 (by
+        simpa [P, acceptedNonpositive, hneg_support] using
+          hnegative_mass_pos)
+  have hnonpositive_part_lt_zero :
+      ∫ τ in acceptedNonpositive, response τ ∂μ < 0 := by
+    rw [integral_neg] at hneg_integral_pos
+    linarith
+  have hdisjoint :
+      Disjoint acceptedPositive acceptedNonpositive := by
+    exact Set.disjoint_left.2 (by
+      intro τ hτ_pos hτ_nonpos
+      exact hτ_nonpos.2 hτ_pos.2)
+  have hσ_decomp : σ = acceptedPositive ∪ acceptedNonpositive := by
+    ext τ
+    constructor
+    · intro hτ
+      by_cases hτP : τ ∈ P
+      · exact Or.inl ⟨hτ, hτP⟩
+      · exact Or.inr ⟨hτ, hτP⟩
+    · intro hτ
+      rcases hτ with hτ | hτ
+      · exact hτ.1
+      · exact hτ.1
+  unfold lemma5MarginalSetReward
+  change
+    (∫ τ in σ, response τ ∂μ) <
+      ∫ τ in P, response τ ∂μ
+  rw [hσ_decomp]
+  rw [setIntegral_union hdisjoint hacceptedNonpositive_measurable
+    hacceptedPositive_integrable hacceptedNonpositive_integrable]
+  linarith
+
 /-- A positive marginal response produces the accept-all Lemma 5 form. -/
 theorem lemma5PolicyForm_positiveResponse_positive
     (response : TripLength → ℝ)
