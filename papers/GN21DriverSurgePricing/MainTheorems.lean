@@ -599,6 +599,114 @@ noncomputable def GN21GeneralizedIntervalPolicy.complexity
     (P : GN21GeneralizedIntervalPolicy) : Nat :=
   @Fintype.card P.index P.finite_index
 
+/--
+Ordered finite generalized interval/ray policy.  The source proof of Lemma 5
+talks about the first, second, and third disjoint components; this list domain
+records that ordering explicitly and converts back to the unordered finite
+generalized-policy domain used by the existing approximation/descent bridge.
+-/
+structure GN21GeneralizedIntervalListPolicy where
+  components : List GN21GeneralizedIntervalComponent
+
+/-- Convert an ordered component list to the finite generalized-policy domain. -/
+def GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy
+    (P : GN21GeneralizedIntervalListPolicy) :
+    GN21GeneralizedIntervalPolicy where
+  index := Fin P.components.length
+  finite_index := inferInstance
+  component := fun i => P.components.get i
+
+/-- The trip-policy represented by an ordered component list. -/
+def GN21GeneralizedIntervalListPolicy.policy
+    (P : GN21GeneralizedIntervalListPolicy) : TripPolicy :=
+  P.toGeneralizedIntervalPolicy.policy
+
+/-- Ordered-list component complexity is list length. -/
+def GN21GeneralizedIntervalListPolicy.complexity
+    (P : GN21GeneralizedIntervalListPolicy) : Nat :=
+  P.components.length
+
+/-- The generalized conversion preserves the ordered-list policy set. -/
+theorem GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy_policy
+    (P : GN21GeneralizedIntervalListPolicy) :
+    P.toGeneralizedIntervalPolicy.policy = P.policy := by
+  rfl
+
+/-- The generalized conversion has the same component complexity as the list. -/
+theorem GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy_complexity
+    (P : GN21GeneralizedIntervalListPolicy) :
+    P.toGeneralizedIntervalPolicy.complexity = P.complexity := by
+  change Fintype.card (Fin P.components.length) = P.components.length
+  exact Fintype.card_fin P.components.length
+
+/-- Empty ordered component lists represent the empty policy. -/
+theorem GN21GeneralizedIntervalListPolicy.policy_nil :
+    (GN21GeneralizedIntervalListPolicy.mk []).policy = (∅ : TripPolicy) := by
+  ext τ
+  simp [GN21GeneralizedIntervalListPolicy.policy,
+    GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy,
+    GN21GeneralizedIntervalPolicy.policy]
+
+/--
+Policy decomposition for a nonempty ordered component list: the head component
+plus the tail context.
+-/
+theorem GN21GeneralizedIntervalListPolicy.policy_cons
+    (head : GN21GeneralizedIntervalComponent)
+    (tail : List GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalListPolicy.mk (head :: tail)).policy =
+      (GN21GeneralizedIntervalListPolicy.mk tail).policy ∪ head.policy := by
+  ext τ
+  simp [GN21GeneralizedIntervalListPolicy.policy,
+    GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy,
+    GN21GeneralizedIntervalPolicy.policy]
+  constructor
+  · rintro ⟨i, hi⟩
+    rcases i with ⟨n, hn⟩
+    cases n with
+    | zero =>
+        exact Or.inr (by simpa using hi)
+    | succ n =>
+        have hn_tail : n < tail.length := by
+          exact Nat.succ_lt_succ_iff.mp (by simpa using hn)
+        exact Or.inl ⟨⟨n, hn_tail⟩, by simpa using hi⟩
+  · rintro (htail | hhead)
+    · rcases htail with ⟨i, hi⟩
+      exact ⟨Fin.succ i, hi⟩
+    · exact ⟨0, hhead⟩
+
+/-- Ordered-list complexity of a cons is one plus tail complexity. -/
+theorem GN21GeneralizedIntervalListPolicy.complexity_cons
+    (head : GN21GeneralizedIntervalComponent)
+    (tail : List GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalListPolicy.mk (head :: tail)).complexity =
+      (GN21GeneralizedIntervalListPolicy.mk tail).complexity + 1 := by
+  simp [GN21GeneralizedIntervalListPolicy.complexity]
+
+/--
+Policy decomposition for the first two ordered components plus the remaining
+tail context.
+-/
+theorem GN21GeneralizedIntervalListPolicy.policy_pair_cons
+    (left right : GN21GeneralizedIntervalComponent)
+    (tail : List GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalListPolicy.mk (left :: right :: tail)).policy =
+      (GN21GeneralizedIntervalListPolicy.mk tail).policy ∪
+        (left.policy ∪ right.policy) := by
+  rw [GN21GeneralizedIntervalListPolicy.policy_cons left (right :: tail),
+    GN21GeneralizedIntervalListPolicy.policy_cons right tail]
+  ext τ
+  simp
+  tauto
+
+/-- Ordered-list complexity for two head components plus a tail. -/
+theorem GN21GeneralizedIntervalListPolicy.complexity_pair_cons
+    (left right : GN21GeneralizedIntervalComponent)
+    (tail : List GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalListPolicy.mk (left :: right :: tail)).complexity =
+      (GN21GeneralizedIntervalListPolicy.mk tail).complexity + 2 := by
+  simp [GN21GeneralizedIntervalListPolicy.complexity, Nat.add_assoc]
+
 /-- Embed a bounded finite interval policy in the generalized interval/ray domain. -/
 noncomputable def GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy
     (P : GN21FiniteIntervalPolicy) : GN21GeneralizedIntervalPolicy where
@@ -16605,6 +16713,36 @@ theorem GN21GeneralizedIntervalPolicy.policy_withTwoComponents
   simp [GN21GeneralizedIntervalPolicy.withTwoComponents,
     GN21GeneralizedIntervalPolicy.policy]
   tauto
+
+/--
+The first two components of an ordered list are exactly the `withTwoComponents`
+context seed used by the endpoint-reduction lemmas.
+-/
+theorem GN21GeneralizedIntervalListPolicy.policy_pair_cons_eq_withTwoComponents
+    (left right : GN21GeneralizedIntervalComponent)
+    (tail : List GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalListPolicy.mk (left :: right :: tail)).policy =
+      (GN21GeneralizedIntervalPolicy.withTwoComponents
+        (GN21GeneralizedIntervalListPolicy.mk tail).toGeneralizedIntervalPolicy
+        left right).policy := by
+  rw [GN21GeneralizedIntervalListPolicy.policy_pair_cons,
+    GN21GeneralizedIntervalPolicy.policy_withTwoComponents]
+  rfl
+
+/--
+The first component of an ordered list is exactly the `withComponent` context
+seed used by one-component endpoint-collapse lemmas.
+-/
+theorem GN21GeneralizedIntervalListPolicy.policy_cons_eq_withComponent
+    (head : GN21GeneralizedIntervalComponent)
+    (tail : List GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalListPolicy.mk (head :: tail)).policy =
+      (GN21GeneralizedIntervalPolicy.withComponent
+        (GN21GeneralizedIntervalListPolicy.mk tail).toGeneralizedIntervalPolicy
+        head).policy := by
+  rw [GN21GeneralizedIntervalListPolicy.policy_cons,
+    GN21GeneralizedIntervalPolicy.policy_withComponent]
+  rfl
 
 /-- Policy set of a context plus one bounded interval. -/
 theorem GN21GeneralizedIntervalPolicy.policy_withSingleBounded

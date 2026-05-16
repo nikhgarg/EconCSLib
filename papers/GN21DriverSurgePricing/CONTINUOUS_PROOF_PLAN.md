@@ -171,6 +171,17 @@ GN21GeneralizedIntervalPolicy.complexity_withComponent
 GN21GeneralizedIntervalPolicy.complexity_withTwoComponents
 GN21GeneralizedIntervalPolicy.complexity_withSingleBounded
 GN21GeneralizedIntervalPolicy.complexity_withTwoBounded
+GN21GeneralizedIntervalListPolicy
+GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy
+GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy_policy
+GN21GeneralizedIntervalListPolicy.toGeneralizedIntervalPolicy_complexity
+GN21GeneralizedIntervalListPolicy.policy_nil
+GN21GeneralizedIntervalListPolicy.policy_cons
+GN21GeneralizedIntervalListPolicy.policy_pair_cons
+GN21GeneralizedIntervalListPolicy.complexity_cons
+GN21GeneralizedIntervalListPolicy.complexity_pair_cons
+GN21GeneralizedIntervalListPolicy.policy_cons_eq_withComponent
+GN21GeneralizedIntervalListPolicy.policy_pair_cons_eq_withTwoComponents
 lemma5_twoBounded_upper_merge_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
 lemma5_withTwoBounded_upper_merge_step_of_endpoint_path
@@ -208,11 +219,13 @@ the way to a lower-complexity one-bounded seed, and the one-bounded lower
 collapse case is threaded to the explicit empty generalized seed.  The
 threading now works inside an arbitrary fixed generalized-policy context, in
 both endpoint directions, and includes the boundary/ray reductions needed to
-reach right tails, left tails, and accept-all from finite seeds.  The remaining
-nonlinear work is selecting these local moves inside an arbitrary ordered
-finite generalized interval/ray seed, proving the source derivative-sign
-hypothesis holds along the selected path, and iterating the component-count
-decrease to a canonical Lemma 5 shape.
+reach right tails, left tails, and accept-all from finite seeds.  Lean also has
+an ordered component-list policy domain and head/two-head decomposition lemmas
+that identify the source proof's first components with the compiled context
+seeds.  The remaining nonlinear work is selecting the appropriate local move
+inside that ordered finite interval/ray seed, proving the source
+derivative-sign hypothesis holds along the selected path, and iterating the
+component-count decrease to a canonical Lemma 5 shape.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
