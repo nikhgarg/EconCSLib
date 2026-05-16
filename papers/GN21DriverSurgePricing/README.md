@@ -652,6 +652,13 @@ cache is `source.txt`.
   `Q > lambda` / `lambda*T-Q >= 0` side conditions from global accept-all
   integrability, positive rates, feasible measurability, and positive current
   mass.
+  The same source-data route now also exposes the paper's measure-zero policy
+  equality convention via
+  `theorem3MeasuredStructuredMeasurableICAEUniqueConclusion` and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions`:
+  constructed structured CTMC prices are measurable IC, and every measurable
+  optimum rejects only a zero-measure subset of the feasible accept-all trips
+  in each state.
   The accounting-form wrapper,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions`,
   further replaces fixed-state reward-rate identities with the structured
@@ -1024,6 +1031,9 @@ That paper-faithful route is now compiled as
 from the structured current-bound source data it proves accept-all measurable
 optimality and that every measurable optimum agrees with accept-all up to
 statewise rejected-trip measure zero.
+The Theorem 3 source-current-bounds wrapper now threads this conclusion through
+the constructed price parameters as
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions`.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

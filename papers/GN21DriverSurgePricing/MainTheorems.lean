@@ -58326,6 +58326,33 @@ def theorem3MeasuredStructuredMeasurableICConclusion
         μ arrival R1 R2 switch12 switch21 m z
 
 /--
+Readable source-domain conclusion of Theorem 3 with the paper's uniqueness
+convention exposed: constructed structured CTMC prices are IC among feasible
+measurable dynamic policies, and every measurable optimum agrees with
+accept-all up to null feasible-trip sets in both states.
+-/
+def theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∃ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+      dynamicMeasurableIncentiveCompatible
+        (gn21MeasuredCTMCStructuredDynamicReward
+          μ arrival switch12 switch21 m z) ∧
+      (∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ) ∧
+      (∃ q : Fin 2 → TripLength → ℝ,
+        ∀ i τ,
+          ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+            structuredSurgePrice (m i) (z i) (q i) τ) ∧
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z
+
+/--
 Readable nondegenerate source-domain conclusion of the measured Theorem 3
 endpoint: the constructed structured CTMC prices are IC among feasible
 measurable policies with positive accepted trip mass in both states.
@@ -70655,6 +70682,43 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_cu
       A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
       (theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_source
         μ arrival R1 R2 switch12 switch21 A.current_bounds)
+
+/--
+Paper-facing Theorem 3 wrapper at the source-data feasible current-bounds
+boundary, including the paper's policy-equality convention: any measurable
+optimum agrees statewise with accept-all up to rejected sets of measure zero.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases
+      paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_source_feasible_source_assumptions
+        μ arrival rho R1 R2 switch12 switch21 A with
+    ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source
+      μ arrival R1 R2 switch12 switch21 m z
+      (A.current_bounds m z hsigns hparams)
+  have hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+    intro ρ hρ
+    have hρ' :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ρ := by
+      simpa [gn21MeasuredCTMCStructuredDynamicReward] using hρ
+    exact H.2 ρ hρ'
+  exact ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
 
 /--
 Bundled source-level assumptions for the accounting-form feasible
