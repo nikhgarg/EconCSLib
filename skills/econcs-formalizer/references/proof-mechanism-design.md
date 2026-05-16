@@ -196,6 +196,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   CDF, and zero horizontal-boundary mass are known.  Prove this generic strip
   identity first, then separately prove the transformed Gaussian law supplies
   the advertised CDFs.
+- When closing a bivariate-normal CDF seam, do not leave `Phi_2` as a bare
+  function longer than necessary.  Define the correlated standard-Gaussian law
+  as the pushforward of independent standard normals by
+  `(U,V) ↦ (U, rho * U + sqrt(1-rho^2) * V)`, define
+  `Phi_2(x,y;rho)` as its lower-left rectangle mass, and prove the easy source
+  facts immediately: the first marginal is standard normal, clipped horizontal
+  boundaries are null for `rho^2 < 1`, and paper correlation parameters such as
+  `-z / sqrt(1+z^2)` satisfy `rho^2 < 1`.
 - When a paper theorem is group-indexed, avoid stopping at a one-representative
   type theorem. After the single-group payoff/cutoff calculation is green,
   immediately package the group-indexed equilibrium object with common school

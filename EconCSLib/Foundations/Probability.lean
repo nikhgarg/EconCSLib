@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Probability.Admissions
+import EconCSLib.Foundations.Probability.BivariateGaussian
 import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.Conditional
 import EconCSLib.Foundations.Probability.FairCoin
@@ -60,6 +61,7 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.Occupancy`.
 - Admissions/testing and stochastic-order wrappers:
   `EconCSLib.Foundations.Probability.Admissions`,
+  `EconCSLib.Foundations.Probability.BivariateGaussian`,
   `EconCSLib.Foundations.Probability.Gaussian`,
   `EconCSLib.Foundations.Probability.GaussianMathlib`,
   `EconCSLib.Foundations.Probability.GaussianMills`,
