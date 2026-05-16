@@ -472,9 +472,22 @@ into the concrete endpoint policy data.
   `exists_gn21FiniteOpenIntervalApproximation_reward_close` now compose this
   approximation with the source continuity assumption to choose a finite
   interval approximant whose reward is arbitrarily close to the original open
-  policy.  The remaining Lemma 5 work is the finite-family
-  endpoint-modification/dominance argument that identifies the nonlinear
-  endpoint path with this positive-response dominance.
+  policy.  The finite-family descent and compactness handoff is also now
+  compiled as `exists_canonical_ge_of_finite_descent`,
+  `exists_canonical_gt_of_finite_descent`,
+  `exists_canonical_arbitrarily_close_of_seed_finite_descent`,
+  `target_le_canonical_maximizer_of_arbitrarily_close`,
+  `exists_canonical_ge_of_arbitrarily_close_and_maximizer`,
+  `lemma5OptimizerReplacementCertificate_of_finite_descent`,
+  `lemma5OptimizerReplacementCertificate_of_seed_finite_descent`, and
+  `lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer`.
+  These theorems prove the source proof's termination and limit/maximizer
+  bridge for any finite-policy domain with a natural-valued endpoint
+  complexity.  The remaining Lemma 5 work is now the paper-specific endpoint
+  step certificate for each derivative-shape case: given a noncanonical finite
+  interval policy, construct a reward-improving endpoint move that lowers the
+  chosen finite complexity and identify it with the nonlinear endpoint
+  derivative path.
 - The Theorem 4 endpoint layer now has AE shape predicates
   `theorem4NonsurgeAEShape` and `theorem4SurgeAEShape`, plus
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.only_ae_shapes` and

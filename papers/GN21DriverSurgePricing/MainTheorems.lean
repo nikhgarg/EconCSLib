@@ -18398,6 +18398,278 @@ structure Lemma5OptimizerReplacementCertificate
   strict_unless_initial_form : ¬ lemma5PolicyForm shape σ0 → Rhat σ0 < Rhat policy
 
 /--
+Generic finite descent principle used by Lemma 5.  If every noncanonical
+object admits a weakly reward-improving move that strictly lowers a natural
+complexity measure, then every starting object is weakly dominated by a
+canonical one.
+-/
+theorem exists_canonical_ge_of_finite_descent
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (complexity : α → Nat)
+    (step :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x ≤ R y ∧ complexity y < complexity x)
+    (x : α) :
+    ∃ y : α, canonical y ∧ R x ≤ R y := by
+  induction hn : complexity x using Nat.strong_induction_on generalizing x with
+  | h n ih =>
+      by_cases hcanonical : canonical x
+      · exact ⟨x, hcanonical, le_rfl⟩
+      · rcases step x hcanonical with ⟨y, hreward, hcomplexity⟩
+        have hy_lt_n : complexity y < n := by
+          simpa [hn] using hcomplexity
+        rcases ih (complexity y) hy_lt_n y rfl with
+          ⟨z, hz_canonical, hz_reward⟩
+        exact ⟨z, hz_canonical, hreward.trans hz_reward⟩
+
+/--
+Strict finite descent variant.  If the first noncanonical move can be made
+strictly reward-improving and the weak descent process always reaches a
+canonical object, then every noncanonical starting object is strictly dominated
+by some canonical object.
+-/
+theorem exists_canonical_gt_of_finite_descent
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (complexity : α → Nat)
+    (step :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x ≤ R y ∧ complexity y < complexity x)
+    (strictStep :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x < R y ∧ complexity y < complexity x)
+    {x : α} (hnot : ¬ canonical x) :
+    ∃ y : α, canonical y ∧ R x < R y := by
+  rcases strictStep x hnot with ⟨y, hreward, hcomplexity⟩
+  rcases exists_canonical_ge_of_finite_descent
+      R canonical complexity step y with
+    ⟨z, hz_canonical, hz_reward⟩
+  exact ⟨z, hz_canonical, hreward.trans_le hz_reward⟩
+
+/--
+Finite descent preserves arbitrary closeness to a target value.  This is the
+formal version of Lemma 5's Step 1/Step 2 handoff: approximate the original
+open policy by a finite seed, then run endpoint descent on that finite seed.
+-/
+theorem exists_canonical_arbitrarily_close_of_seed_finite_descent
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (complexity : α → Nat) (target : ℝ)
+    (seedClose :
+      ∀ ε : ℝ, 0 < ε → ∃ seed : α, target - ε < R seed)
+    (step :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x ≤ R y ∧ complexity y < complexity x) :
+    ∀ ε : ℝ, 0 < ε → ∃ y : α, canonical y ∧ target - ε < R y := by
+  intro ε hε
+  rcases seedClose ε hε with ⟨seed, hseed⟩
+  rcases exists_canonical_ge_of_finite_descent
+      R canonical complexity step seed with
+    ⟨y, hy_canonical, hy_reward⟩
+  exact ⟨y, hy_canonical, hseed.trans_le hy_reward⟩
+
+/--
+If canonical finite policies can approximate a target value from below
+arbitrarily well, then any maximizer over the canonical family attains at
+least that target value.
+-/
+theorem target_le_canonical_maximizer_of_arbitrarily_close
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (target : ℝ) {maximizer : α}
+    (hclose :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ y : α, canonical y ∧ target - ε < R y)
+    (hmax :
+      canonical maximizer ∧
+        ∀ y : α, canonical y → R y ≤ R maximizer) :
+    target ≤ R maximizer := by
+  by_contra hnot
+  have hlt : R maximizer < target := lt_of_not_ge hnot
+  let ε : ℝ := target - R maximizer
+  have hε : 0 < ε := sub_pos.2 hlt
+  rcases hclose ε hε with ⟨y, hy_canonical, hy_close⟩
+  have hy_le : R y ≤ R maximizer := hmax.2 y hy_canonical
+  have hmax_lt_y : R maximizer < R y := by
+    dsimp [ε] at hy_close
+    linarith
+  linarith
+
+/--
+Existential form of `target_le_canonical_maximizer_of_arbitrarily_close`.
+-/
+theorem exists_canonical_ge_of_arbitrarily_close_and_maximizer
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (target : ℝ)
+    (hclose :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ y : α, canonical y ∧ target - ε < R y)
+    (hmax :
+      ∃ maximizer : α,
+        canonical maximizer ∧
+          ∀ y : α, canonical y → R y ≤ R maximizer) :
+    ∃ maximizer : α, canonical maximizer ∧ target ≤ R maximizer := by
+  rcases hmax with ⟨maximizer, hmaximizer⟩
+  exact
+    ⟨maximizer, hmaximizer.1,
+      target_le_canonical_maximizer_of_arbitrarily_close
+        R canonical target hclose hmaximizer⟩
+
+/--
+Finite endpoint-modification certificate for Lemma 5.  The source proof's
+finite-interval step repeatedly changes one endpoint until the policy has the
+canonical shape.  This constructor isolates the Lean obligation: provide a
+natural-valued complexity and weak/strict endpoint moves that lower it.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_finite_descent
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (shape : Lemma5DerivativeShape)
+    (complexity : TripPolicy → Nat)
+    (step :
+      ∀ σ : TripPolicy, ¬ lemma5PolicyForm shape σ →
+        ∃ σ' : TripPolicy, Rhat σ ≤ Rhat σ' ∧
+          complexity σ' < complexity σ)
+    (strictStep :
+      ∀ σ : TripPolicy, ¬ lemma5PolicyForm shape σ →
+        ∃ σ' : TripPolicy, Rhat σ < Rhat σ' ∧
+          complexity σ' < complexity σ) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  classical
+  by_cases hform : lemma5PolicyForm shape σ0
+  · exact
+      { policy := σ0
+        policy_form := hform
+        reward_ge := le_rfl
+        strict_unless_initial_form := by
+          intro hnot
+          exact False.elim (hnot hform) }
+  · let hcanonical :
+        ∃ σstar : TripPolicy,
+          lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar :=
+        exists_canonical_gt_of_finite_descent
+          Rhat (lemma5PolicyForm shape) complexity step strictStep hform
+    exact
+      { policy := Classical.choose hcanonical
+        policy_form := (Classical.choose_spec hcanonical).1
+        reward_ge := le_of_lt (Classical.choose_spec hcanonical).2
+        strict_unless_initial_form := by
+          intro hnot
+          exact (Classical.choose_spec hcanonical).2 }
+
+/--
+Seeded finite endpoint-modification certificate for Lemma 5.  This is the
+form used after the continuous approximation step: first replace the original
+open policy by a finite-interval seed, then run the finite descent to a
+canonical Lemma 5 policy.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_seed_finite_descent
+    (Rhat : SingleStateReward) (σ0 seed : TripPolicy)
+    (shape : Lemma5DerivativeShape)
+    (complexity : TripPolicy → Nat)
+    (seed_reward_ge : Rhat σ0 ≤ Rhat seed)
+    (seed_strict_or_seed_noncanonical :
+      ¬ lemma5PolicyForm shape σ0 →
+        Rhat σ0 < Rhat seed ∨ ¬ lemma5PolicyForm shape seed)
+    (step :
+      ∀ σ : TripPolicy, ¬ lemma5PolicyForm shape σ →
+        ∃ σ' : TripPolicy, Rhat σ ≤ Rhat σ' ∧
+          complexity σ' < complexity σ)
+    (strictStep :
+      ∀ σ : TripPolicy, ¬ lemma5PolicyForm shape σ →
+        ∃ σ' : TripPolicy, Rhat σ < Rhat σ' ∧
+          complexity σ' < complexity σ) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  let seedCert :=
+    lemma5OptimizerReplacementCertificate_of_finite_descent
+      Rhat seed shape complexity step strictStep
+  exact
+    { policy := seedCert.policy
+      policy_form := seedCert.policy_form
+      reward_ge := seed_reward_ge.trans seedCert.reward_ge
+      strict_unless_initial_form := by
+        intro hnot
+        rcases seed_strict_or_seed_noncanonical hnot with
+          hseed_strict | hseed_noncanonical
+        · exact hseed_strict.trans_le seedCert.reward_ge
+        · exact seed_reward_ge.trans_lt
+            (seedCert.strict_unless_initial_form hseed_noncanonical) }
+
+/--
+Lemma 5 replacement constructor for an arbitrary finite-domain model.  The
+domain `α` can be a subtype of finite interval policies with its own complexity
+measure.  The hypotheses mirror the paper proof:
+
+* finite seeds approximate the original policy's reward from below;
+* finite endpoint descent weakly improves every noncanonical seed and lowers
+  complexity;
+* the canonical finite family has a reward maximizer;
+* noncanonical original policies have a strict canonical improvement witness.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer
+    {α : Type*}
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (shape : Lemma5DerivativeShape)
+    (policyOf : α → TripPolicy)
+    (complexity : α → Nat)
+    (seedClose :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ seed : α, Rhat σ0 - ε < Rhat (policyOf seed))
+    (canonicalMax :
+      ∃ maximizer : α,
+        lemma5PolicyForm shape (policyOf maximizer) ∧
+          ∀ seed : α,
+            lemma5PolicyForm shape (policyOf seed) →
+              Rhat (policyOf seed) ≤ Rhat (policyOf maximizer))
+    (step :
+      ∀ seed : α, ¬ lemma5PolicyForm shape (policyOf seed) →
+        ∃ seed' : α, Rhat (policyOf seed) ≤ Rhat (policyOf seed') ∧
+          complexity seed' < complexity seed)
+    (strictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ seed : α, lemma5PolicyForm shape (policyOf seed) ∧
+          Rhat σ0 < Rhat (policyOf seed)) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  classical
+  let Rdom : α → ℝ := fun seed => Rhat (policyOf seed)
+  let canonicalDom : α → Prop :=
+    fun seed => lemma5PolicyForm shape (policyOf seed)
+  let maximizer := Classical.choose canonicalMax
+  have hmax :
+      canonicalDom maximizer ∧
+        ∀ seed : α, canonicalDom seed → Rdom seed ≤ Rdom maximizer := by
+    simpa [Rdom, canonicalDom, maximizer] using
+      Classical.choose_spec canonicalMax
+  have hclose_canonical :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ seed : α, canonicalDom seed ∧ Rhat σ0 - ε < Rdom seed := by
+    exact
+      exists_canonical_arbitrarily_close_of_seed_finite_descent
+        Rdom canonicalDom complexity (Rhat σ0)
+        (by
+          intro ε hε
+          rcases seedClose ε hε with ⟨seed, hseed⟩
+          exact ⟨seed, by simpa [Rdom] using hseed⟩)
+        (by
+          intro seed hnot
+          rcases step seed (by simpa [canonicalDom] using hnot) with
+            ⟨seed', hreward, hcomplexity⟩
+          exact ⟨seed', by simpa [Rdom] using hreward, hcomplexity⟩)
+  have hreward_ge : Rhat σ0 ≤ Rdom maximizer :=
+    target_le_canonical_maximizer_of_arbitrarily_close
+      Rdom canonicalDom (Rhat σ0) hclose_canonical hmax
+  exact
+    { policy := policyOf maximizer
+      policy_form := by
+        simpa [canonicalDom, maximizer] using hmax.1
+      reward_ge := by
+        simpa [Rdom] using hreward_ge
+      strict_unless_initial_form := by
+        intro hnot
+        rcases strictWitness hnot with ⟨seed, hseed_canonical, hseed_strict⟩
+        have hseed_le : Rdom seed ≤ Rdom maximizer :=
+          hmax.2 seed (by simpa [canonicalDom] using hseed_canonical)
+        have hstrict : Rhat σ0 < Rdom maximizer := by
+          exact hseed_strict.trans_le (by simpa [Rdom] using hseed_le)
+        simpa [Rdom] using hstrict }
+
+/--
 Positive-case Lemma 5 replacement constructor using accept-all as the
 replacement policy.
 -/

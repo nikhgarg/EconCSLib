@@ -73,6 +73,14 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   feasible move graph is connected by those moves. Once reachability is
   available, finish with `isMaximizerOn_of_reachable_nonincreasing` or
   `isMinimizerOn_of_reachable_nondecreasing`.
+- For continuous-paper proofs that say "approximate by a finite object, apply
+  local endpoint/exchange moves until a canonical object remains, then pass to
+  a limit", split the seam into three reusable facts instead of repeatedly
+  unfolding the source prose: a finite descent theorem over a natural-valued
+  complexity, an arbitrary-close finite-seed bridge, and a compact/canonical
+  maximizer bridge showing the original target value is attained or exceeded.
+  Keep the paper-specific work in the one-step move certificate; this avoids
+  token-heavy rewrites of the same termination and epsilon/maximizer argument.
 
 ## Lean Patterns
 
