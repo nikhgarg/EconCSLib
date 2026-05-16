@@ -63,6 +63,14 @@ lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path
 lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
 lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path
 lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
+GN21GeneralizedIntervalPolicy.singleBounded
+GN21GeneralizedIntervalPolicy.twoBounded
+GN21GeneralizedIntervalPolicy.policy_singleBounded
+GN21GeneralizedIntervalPolicy.policy_twoBounded
+GN21GeneralizedIntervalPolicy.complexity_singleBounded
+GN21GeneralizedIntervalPolicy.complexity_twoBounded
+lemma5_twoBounded_upper_merge_step_of_endpoint_path
+lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
 measure_congr_policy_ae
 singleStateTripMass_congr_policy_ae
 singleStateTripTime_congr_policy_ae
@@ -163,6 +171,11 @@ the same for moving a lower endpoint until the interval becomes empty.  These
 are the first real finite-policy endpoint moves; the remaining work is to
 thread them through arbitrary finite generalized policies and the shape-case
 sign lemmas.
+
+One finite-domain threading instance is closed: the two-bounded-interval
+generalized policy has explicit one/two component representatives, exact
+policy-set lemmas, complexity lemmas, and weak/strict upper-endpoint merge
+steps that return a one-bounded-interval seed with lower complexity.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical

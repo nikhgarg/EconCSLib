@@ -124,6 +124,9 @@ the continuous CTMC source theorems.
   `lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path`: concrete
   endpoint-path instantiations for merging two intervals and collapsing an
   interval.
+- `GN21GeneralizedIntervalPolicy.twoBounded` and
+  `lemma5_twoBounded_upper_merge_step_of_endpoint_path`: a compiled
+  generalized-policy complexity-lowering merge step for the two-interval case.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
@@ -15868,6 +15871,25 @@ def GN21GeneralizedIntervalPolicy.acceptAll :
   finite_index := inferInstance
   component := fun _ => GN21GeneralizedIntervalComponent.positiveAll
 
+/-- Generalized one-component bounded-open-interval representative. -/
+def GN21GeneralizedIntervalPolicy.singleBounded (lower upper : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit
+  finite_index := inferInstance
+  component := fun _ => GN21GeneralizedIntervalComponent.bounded lower upper
+
+/-- Generalized two-component bounded-open-interval representative. -/
+def GN21GeneralizedIntervalPolicy.twoBounded
+    (leftLower leftUpper rightLower rightUpper : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Bool
+  finite_index := inferInstance
+  component := fun side =>
+    if side then
+      GN21GeneralizedIntervalComponent.bounded leftLower leftUpper
+    else
+      GN21GeneralizedIntervalComponent.bounded rightLower rightUpper
+
 /-- Generalized one-component representative of long-trip rejection. -/
 def GN21GeneralizedIntervalPolicy.rejectLong (t : ℝ) :
     GN21GeneralizedIntervalPolicy where
@@ -15909,6 +15931,151 @@ theorem GN21GeneralizedIntervalPolicy.policy_acceptAll :
     GN21GeneralizedIntervalPolicy.policy,
     GN21GeneralizedIntervalComponent.policy,
     acceptAllPolicy, positiveTripLengths]
+
+/-- The one-component bounded representative has the expected open interval. -/
+theorem GN21GeneralizedIntervalPolicy.policy_singleBounded
+    (lower upper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.singleBounded lower upper).policy =
+      Set.Ioo lower upper := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.singleBounded,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy]
+
+/-- The two-component bounded representative has the expected union of intervals. -/
+theorem GN21GeneralizedIntervalPolicy.policy_twoBounded
+    (leftLower leftUpper rightLower rightUpper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.twoBounded
+      leftLower leftUpper rightLower rightUpper).policy =
+      Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.twoBounded,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy]
+  constructor
+  · rintro (h | h)
+    · exact Or.inr h
+    · exact Or.inl h
+  · rintro (h | h)
+    · exact Or.inr h
+    · exact Or.inl h
+
+/-- The one-component bounded representative has endpoint complexity one. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_singleBounded
+    (lower upper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.singleBounded lower upper).complexity = 1 := by
+  rfl
+
+/-- The two-component bounded representative has endpoint complexity two. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_twoBounded
+    (leftLower leftUpper rightLower rightUpper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.twoBounded
+      leftLower leftUpper rightLower rightUpper).complexity = 2 := by
+  rfl
+
+/--
+Concrete generalized-policy Step 2 merge move.  For a two-bounded-interval
+seed, a nonnegative derivative path moving the first upper endpoint to the
+second lower endpoint produces a weakly better one-bounded-interval seed with
+strictly smaller endpoint complexity.
+-/
+theorem lemma5_twoBounded_upper_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.twoBounded
+          leftLower leftUpper rightLower rightUpper).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (Set.Ioo leftLower rightLower ∪
+          Set.Ioo rightLower rightUpper))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 ≤ derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.twoBounded
+        leftLower leftUpper rightLower rightUpper).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.twoBounded
+          leftLower leftUpper rightLower rightUpper).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.singleBounded leftLower rightUpper, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_twoBounded,
+      GN21GeneralizedIntervalPolicy.policy_singleBounded]
+    exact
+      lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path
+        μ Rhat hR_congr hleft_upper hupper_right hright_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_twoBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_nonneg
+  · rw [GN21GeneralizedIntervalPolicy.complexity_singleBounded,
+      GN21GeneralizedIntervalPolicy.complexity_twoBounded]
+    norm_num
+
+/--
+Strict generalized-policy version of
+`lemma5_twoBounded_upper_merge_step_of_endpoint_path`.
+-/
+theorem lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.twoBounded
+          leftLower leftUpper rightLower rightUpper).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (Set.Ioo leftLower rightLower ∪
+          Set.Ioo rightLower rightUpper))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 < derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.twoBounded
+        leftLower leftUpper rightLower rightUpper).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.twoBounded
+          leftLower leftUpper rightLower rightUpper).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.singleBounded leftLower rightUpper, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_twoBounded,
+      GN21GeneralizedIntervalPolicy.policy_singleBounded]
+    exact
+      lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
+        μ Rhat hR_congr hleft_upper hupper_right hright_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_twoBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_pos
+  · rw [GN21GeneralizedIntervalPolicy.complexity_singleBounded,
+      GN21GeneralizedIntervalPolicy.complexity_twoBounded]
+    norm_num
 
 /-- The generalized long-trip representative has the canonical long-rejection policy. -/
 theorem GN21GeneralizedIntervalPolicy.policy_rejectLong (t : ℝ) :

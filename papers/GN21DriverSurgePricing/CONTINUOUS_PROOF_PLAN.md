@@ -138,6 +138,14 @@ lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path
 lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
 lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path
 lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
+GN21GeneralizedIntervalPolicy.singleBounded
+GN21GeneralizedIntervalPolicy.twoBounded
+GN21GeneralizedIntervalPolicy.policy_singleBounded
+GN21GeneralizedIntervalPolicy.policy_twoBounded
+GN21GeneralizedIntervalPolicy.complexity_singleBounded
+GN21GeneralizedIntervalPolicy.complexity_twoBounded
+lemma5_twoBounded_upper_merge_step_of_endpoint_path
+lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
 ```
 
 These lemmas prove that derivative sign on the whole interval between two
@@ -150,10 +158,12 @@ nonatomic trip-length measures.  The remaining nonlinear work is therefore
 not calculus, source sign algebra, or endpoint-collision measure theory.
 Lean also has direct reward-comparison lemmas for the two basic finite moves:
 upper-endpoint merge and lower-endpoint collapse, each in weak and strict
-form.  The remaining nonlinear work is threading these moves through arbitrary
-finite generalized interval/ray seeds, proving the source derivative-sign
-hypothesis holds along the selected path, and showing the resulting
-collision/canonical-boundary policy lowers finite complexity.
+form.  The two-bounded-interval generalized-policy merge case is threaded all
+the way to a lower-complexity one-bounded seed.  The remaining nonlinear work
+is generalizing that threading to arbitrary finite generalized interval/ray
+seeds, proving the source derivative-sign hypothesis holds along the selected
+path, and showing the resulting collision/canonical-boundary policy lowers
+finite complexity.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
