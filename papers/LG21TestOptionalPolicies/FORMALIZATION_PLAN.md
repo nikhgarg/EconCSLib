@@ -237,9 +237,11 @@ Last updated: 2026-05-16
   point-estimate surface now makes the observable mixture, no-access,
   base-only, and full-feature point-estimate identities definitional too.  The
   concrete fairness endpoint now combines this surface route with the
-  latent-to-observable mixture reduction.  The remaining source gap is
-  discharging the final paper policy assumptions for this surface and proving
-  the analogous report-required outside-payoff identity.
+  latent-to-observable mixture reduction, and the `_self_law` wrapper uses the
+  reporter/no-reporter PMFs themselves to eliminate the redundant abstract-law
+  equality bridge.  The remaining source gap is discharging the final paper
+  policy assumptions for this surface and proving the analogous report-required
+  outside-payoff identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -378,7 +380,8 @@ Last updated: 2026-05-16
    affine endpoint now makes the paper's reported-score and no-report payoff
    formulas definitional, and the concrete binary-mixture point-estimate
    surface removes the remaining surface identity hypotheses.  The concrete
-   fairness endpoint adds the latent-to-observable mixture reduction.  Next
+   fairness endpoint adds the latent-to-observable mixture reduction, and the
+   `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  Next
    work should discharge the remaining paper policy assumptions for this
    surface, then prove the report-required affine outside-payoff identity.
 

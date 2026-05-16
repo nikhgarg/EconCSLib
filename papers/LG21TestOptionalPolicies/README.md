@@ -131,9 +131,11 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_fairness_impossibility_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface`
   adds the paper's latent-to-observable mixture reduction, so latent fairness
   or observable fairness forces test-blankness for this concrete optional
-  surface.  The remaining source gap is discharging the final paper policy
-  assumptions for this surface and, for report-required policy, proving the
-  analogous affine outside-payoff identity.
+  surface.  The `_self_law` version uses the reporter/no-reporter PMFs
+  themselves as the finite law objects, removing the redundant abstract
+  PMF-to-law equality bridge from this route.  The remaining source gap is
+  discharging the final paper policy assumptions for this surface and, for
+  report-required policy, proving the analogous affine outside-payoff identity.
 
 ## Source Notes
 
