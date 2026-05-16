@@ -1729,6 +1729,72 @@ theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_g
     M theta k reportingBase threshold
 
 /--
+Theorem 3.1 optional-reporting crossing step: continuity plus opposite endpoint
+comparisons produce a finite cutoff where reporting at the cutoff is indifferent
+and reporting is optimal exactly above the cutoff score.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing
+    {reportedEstimate noReportEstimateAtCutoff : ℝ → ℝ} {low high : ℝ}
+    (hcontReported :
+      ContinuousOn reportedEstimate (Set.Icc low high))
+    (hcontNoReport :
+      ContinuousOn noReportEstimateAtCutoff (Set.Icc low high))
+    (hmonoReported : StrictMono reportedEstimate)
+    (hlow_high : low < high)
+    (hleft : reportedEstimate low < noReportEstimateAtCutoff low)
+    (hright : noReportEstimateAtCutoff high < reportedEstimate high) :
+    ∃ cutoff : ℝ,
+      cutoff ∈ Set.Ioo low high ∧
+        noReportEstimateAtCutoff cutoff = reportedEstimate cutoff ∧
+          (∀ score : ℝ,
+            noReportEstimateAtCutoff cutoff ≤ reportedEstimate score ↔
+              cutoff ≤ score) ∧
+            (∀ score : ℝ,
+              reportedEstimate score < noReportEstimateAtCutoff cutoff ↔
+                score < cutoff) :=
+  paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing
+    hcontReported hcontNoReport hmonoReported hlow_high hleft hright
+
+/--
+Theorem 3.1 optional-reporting source witness from the paper's crossing
+argument, applied independently at every base profile.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_source_witness_of_base_crossings
+    {Base : Type*} [Nonempty Base]
+    (reportedEstimate noReportEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontReported :
+      ∀ base, ContinuousOn (reportedEstimate base)
+        (Set.Icc (low base) (high base)))
+    (hcontNoReport :
+      ∀ base, ContinuousOn (noReportEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hmonoReported : ∀ base, StrictMono (reportedEstimate base))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, reportedEstimate base (low base) <
+        noReportEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base, noReportEstimateAtCutoff base (high base) <
+        reportedEstimate base (high base)) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      ∃ reportCutoff : Base → ℝ,
+        (∀ base, reportCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            noReportEstimateAtCutoff base (reportCutoff base) =
+              reportedEstimate base (reportCutoff base)) ∧
+            (∀ base score,
+              W.reports base score ↔
+                noReportEstimateAtCutoff base (reportCutoff base) ≤
+                  reportedEstimate base score) ∧
+              (∀ base skill, W.takes base skill) ∧
+                (∀ base, ∃ cutoff : ℝ,
+                  ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_source_witness_of_base_crossings
+    reportedEstimate noReportEstimateAtCutoff low high hcontReported
+    hcontNoReport hmonoReported hlow_high hleft hright
+
+/--
 Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding
 witness.
 -/

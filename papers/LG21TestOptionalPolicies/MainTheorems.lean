@@ -3083,6 +3083,221 @@ theorem paper_theorem3_1_optional_reporting_threshold_conclusions_of_gaussian_be
       M theta k reportingBase threshold)
 
 /--
+Theorem 3.1 optional-reporting crossing step.  If the reported-score estimate
+is strictly increasing and a candidate no-report estimate varies continuously
+with the cutoff, then opposite endpoint comparisons produce a finite cutoff
+where reporting at the cutoff is indifferent.  At that cutoff, reporting is
+optimal exactly above the cutoff score.
+-/
+theorem paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing
+    {reportedEstimate noReportEstimateAtCutoff : ℝ → ℝ} {low high : ℝ}
+    (hcontReported :
+      ContinuousOn reportedEstimate (Set.Icc low high))
+    (hcontNoReport :
+      ContinuousOn noReportEstimateAtCutoff (Set.Icc low high))
+    (hmonoReported : StrictMono reportedEstimate)
+    (hlow_high : low < high)
+    (hleft : reportedEstimate low < noReportEstimateAtCutoff low)
+    (hright : noReportEstimateAtCutoff high < reportedEstimate high) :
+    ∃ cutoff : ℝ,
+      cutoff ∈ Set.Ioo low high ∧
+        noReportEstimateAtCutoff cutoff = reportedEstimate cutoff ∧
+          (∀ score : ℝ,
+            noReportEstimateAtCutoff cutoff ≤ reportedEstimate score ↔
+              cutoff ≤ score) ∧
+            (∀ score : ℝ,
+              reportedEstimate score < noReportEstimateAtCutoff cutoff ↔
+                score < cutoff) := by
+  let gap : ℝ → ℝ :=
+    fun cutoff => reportedEstimate cutoff - noReportEstimateAtCutoff cutoff
+  have hgap_cont : ContinuousOn gap (Set.Icc low high) :=
+    hcontReported.sub hcontNoReport
+  have hzero_mem : (0 : ℝ) ∈ Set.Icc (gap low) (gap high) := by
+    constructor <;> dsimp [gap] <;> linarith
+  rcases intermediate_value_Icc hlow_high.le hgap_cont hzero_mem with
+    ⟨cutoff, hcutoff_mem, hgap_zero⟩
+  have hlow_lt_cutoff : low < cutoff := by
+    have hne : cutoff ≠ low := by
+      intro h
+      subst cutoff
+      dsimp [gap] at hgap_zero
+      linarith
+    exact lt_of_le_of_ne hcutoff_mem.1 (Ne.symm hne)
+  have hcutoff_lt_high : cutoff < high := by
+    have hne : cutoff ≠ high := by
+      intro h
+      subst cutoff
+      dsimp [gap] at hgap_zero
+      linarith
+    exact lt_of_le_of_ne hcutoff_mem.2 hne
+  have hindiff :
+      noReportEstimateAtCutoff cutoff = reportedEstimate cutoff := by
+    dsimp [gap] at hgap_zero
+    linarith
+  refine ⟨cutoff, ⟨hlow_lt_cutoff, hcutoff_lt_high⟩,
+    hindiff, ?_, ?_⟩
+  · intro score
+    constructor
+    · intro hbest
+      by_contra hnot
+      have hscore_lt : score < cutoff := lt_of_not_ge hnot
+      have hstrict : reportedEstimate score < reportedEstimate cutoff :=
+        hmonoReported hscore_lt
+      rw [← hindiff] at hstrict
+      linarith
+    · intro hcutoff_le_score
+      rcases lt_or_eq_of_le hcutoff_le_score with hlt | rfl
+      · have hstrict : reportedEstimate cutoff < reportedEstimate score :=
+          hmonoReported hlt
+        rw [hindiff]
+        exact le_of_lt hstrict
+      · rw [hindiff]
+  · intro score
+    constructor
+    · intro hstrict
+      by_contra hnot
+      have hcutoff_le_score : cutoff ≤ score := le_of_not_gt hnot
+      have hbest :
+          noReportEstimateAtCutoff cutoff ≤ reportedEstimate score := by
+        rcases lt_or_eq_of_le hcutoff_le_score with hlt | rfl
+        · have hmono : reportedEstimate cutoff < reportedEstimate score :=
+            hmonoReported hlt
+          rw [hindiff]
+          exact le_of_lt hmono
+        · rw [hindiff]
+      linarith
+    · intro hscore_lt
+      have hmono : reportedEstimate score < reportedEstimate cutoff :=
+        hmonoReported hscore_lt
+      rw [← hindiff] at hmono
+      exact hmono
+
+/--
+Base-indexed version of the Theorem 3.1 optional-reporting crossing step.  It
+constructs a finite reporting cutoff at every base profile and records the
+paper's threshold best-response form.
+-/
+theorem paper_theorem3_1_optional_reporting_threshold_cutoffs_of_base_crossings
+    {Base : Type*} [Nonempty Base]
+    (reportedEstimate noReportEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontReported :
+      ∀ base, ContinuousOn (reportedEstimate base)
+        (Set.Icc (low base) (high base)))
+    (hcontNoReport :
+      ∀ base, ContinuousOn (noReportEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hmonoReported : ∀ base, StrictMono (reportedEstimate base))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, reportedEstimate base (low base) <
+        noReportEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base, noReportEstimateAtCutoff base (high base) <
+        reportedEstimate base (high base)) :
+    ∃ reportCutoff : Base → ℝ,
+      (∀ base, reportCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+        (∀ base,
+          noReportEstimateAtCutoff base (reportCutoff base) =
+            reportedEstimate base (reportCutoff base)) ∧
+          (∀ base score,
+            noReportEstimateAtCutoff base (reportCutoff base) ≤
+                reportedEstimate base score ↔
+              reportCutoff base ≤ score) ∧
+            (∃ base score,
+              ¬ noReportEstimateAtCutoff base (reportCutoff base) ≤
+                  reportedEstimate base score) ∧
+              (∀ base, ∃ cutoff : ℝ, ∀ score : ℝ,
+                noReportEstimateAtCutoff base (reportCutoff base) ≤
+                    reportedEstimate base score ↔
+                  cutoff ≤ score) := by
+  have hcutoff_exists :
+      ∀ base, ∃ cutoff : ℝ,
+        cutoff ∈ Set.Ioo (low base) (high base) ∧
+          noReportEstimateAtCutoff base cutoff =
+            reportedEstimate base cutoff ∧
+            (∀ score : ℝ,
+              noReportEstimateAtCutoff base cutoff ≤
+                  reportedEstimate base score ↔
+                cutoff ≤ score) ∧
+              (∀ score : ℝ,
+                reportedEstimate base score <
+                    noReportEstimateAtCutoff base cutoff ↔
+                  score < cutoff) := by
+    intro base
+    exact
+      paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing
+        (hcontReported base) (hcontNoReport base) (hmonoReported base)
+        (hlow_high base) (hleft base) (hright base)
+  choose reportCutoff hmem hindiff hbest hbelow using hcutoff_exists
+  refine ⟨reportCutoff, hmem, hindiff, hbest, ?_, ?_⟩
+  · let base : Base := Classical.choice inferInstance
+    refine ⟨base, low base, ?_⟩
+    rw [hbest base (low base)]
+    exact not_le.mpr (hmem base).1
+  · intro base
+    exact ⟨reportCutoff base, hbest base⟩
+
+/--
+Theorem 3.1 optional-reporting source witness from the paper's crossing
+argument: continuity plus opposite endpoint comparisons produce threshold
+reporting strategies; taking is identically true in the optional-reporting
+case.
+-/
+theorem paper_theorem3_1_optional_reporting_source_witness_of_base_crossings
+    {Base : Type*} [Nonempty Base]
+    (reportedEstimate noReportEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontReported :
+      ∀ base, ContinuousOn (reportedEstimate base)
+        (Set.Icc (low base) (high base)))
+    (hcontNoReport :
+      ∀ base, ContinuousOn (noReportEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hmonoReported : ∀ base, StrictMono (reportedEstimate base))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, reportedEstimate base (low base) <
+        noReportEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base, noReportEstimateAtCutoff base (high base) <
+        reportedEstimate base (high base)) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      ∃ reportCutoff : Base → ℝ,
+        (∀ base, reportCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            noReportEstimateAtCutoff base (reportCutoff base) =
+              reportedEstimate base (reportCutoff base)) ∧
+            (∀ base score,
+              W.reports base score ↔
+                noReportEstimateAtCutoff base (reportCutoff base) ≤
+                  reportedEstimate base score) ∧
+              (∀ base skill, W.takes base skill) ∧
+                (∀ base, ∃ cutoff : ℝ,
+                  ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) := by
+  rcases
+    paper_theorem3_1_optional_reporting_threshold_cutoffs_of_base_crossings
+      reportedEstimate noReportEstimateAtCutoff low high hcontReported
+      hcontNoReport hmonoReported hlow_high hleft hright with
+    ⟨reportCutoff, hmem, hindiff, hbest, hsome, hthreshold⟩
+  let W : LG21OptionalReportingStrategicWithholdingSourceWitness Base :=
+    { reports := fun base score =>
+        noReportEstimateAtCutoff base (reportCutoff base) ≤
+          reportedEstimate base score
+      takes := fun _base _skill => True
+      all_take := by
+        intro _base _skill
+        trivial
+      some_access_students_do_not_report := hsome
+      reporting_threshold := hthreshold }
+  refine ⟨W, reportCutoff, hmem, hindiff, ?_, ?_, ?_⟩
+  · intro _base _score
+    rfl
+  · intro _base _skill
+    trivial
+  · exact hthreshold
+
+/--
 Source-shaped witness for Theorem 3.1's strategic-withholding threshold
 conclusions.  `Base` represents the paper's non-test feature vector
 `{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the

@@ -37,7 +37,15 @@ Last updated: 2026-05-16
   `LG21OptionalReportingStrategicWithholdingSourceWitness`, including the
   paper's all-take conclusion, finite score-threshold reporting at each base
   profile, and an explicit below-cutoff non-reporting score for base-indexed
-  Gaussian posterior-threshold reporting.  Its report-required threshold
+  Gaussian posterior-threshold reporting.  The paper's optional-reporting
+  fixed-point/crossing step is now formalized by
+  `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:
+  continuity plus opposite endpoint comparisons produce a finite indifferent
+  reporting cutoff, and strict monotonicity proves reporting is optimal exactly
+  above that cutoff.  The base-indexed wrapper
+  `paper_theorem3_1_optional_reporting_source_witness_of_base_crossings`
+  constructs the source-shaped all-take/threshold-reporting witness from these
+  crossing hypotheses.  Its report-required threshold
   conclusions are packaged in `LG21StrategicWithholdingSourceWitness`.
   Explicit base-indexed cutoff functions now construct this witness via
   `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit
