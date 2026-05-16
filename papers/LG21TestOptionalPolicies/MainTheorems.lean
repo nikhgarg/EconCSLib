@@ -4387,6 +4387,26 @@ theorem paper_theorem3_2_affine_resampling_mean_payoff_lt
   exact (div_lt_div_iff_of_pos_right hdenom).2 hnum
 
 /--
+Report-required affine outside-payoff algebra: if the posterior numerator at
+the resampling mean is exactly half the positive denominator, then the
+corresponding affine payoff is the report-required outside payoff `1 / 2`.
+-/
+theorem paper_theorem3_2_affine_outside_payoff_eq_half_of_centered_numerator
+    {baseTerm signalWeight denom mean : ℝ}
+    (hdenom_ne : denom ≠ 0)
+    (hcenter :
+      2 * (baseTerm + signalWeight * mean) = denom) :
+    (1 / 2 : ℝ) =
+      (baseTerm + signalWeight * mean) / denom := by
+  have hn_ne : baseTerm + signalWeight * mean ≠ 0 := by
+    intro hn
+    apply hdenom_ne
+    rw [← hcenter, hn]
+    norm_num
+  rw [← hcenter]
+  field_simp [hn_ne]
+
+/--
 Theorem 3.2 best-response contradiction from a below-mean actor.  If equality
 of the reporter/taker and no-reporter/no-taker laws makes the outside payoff
 equal to the affine posterior evaluated at the resampling mean, then any
@@ -6954,6 +6974,89 @@ theorem paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base
           dsimp [lg21BinaryMixturePointEstimateSurface])
         (fun _e _base _test => rfl)
         hmass)
+
+/--
+Theorem 3.2 concrete report-required PMF endpoint using the centered-numerator
+form of the outside-payoff identity.  This is often the more natural algebraic
+obligation for the paper's affine posterior formula.
+-/
+theorem paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside
+    {Equilibrium Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    (skillGivenBase : Base → PMF ℝ)
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → ℝ → Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (positiveShare : Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (hObsAccess :
+      ∀ e base,
+        lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base) =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base,
+        noReporterPMF e base =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentNoAccessEstimate e) base)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (houtside_center_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          2 *
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) =
+            denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    let S :=
+      lg21BinaryMixturePointEstimateSurface
+        (Skill := ℝ) (Base := Base) (Test := Test) (Actor := Actor)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate positiveShare
+        hpositiveShare_le_one reporterPMF noReporterPMF actorLaw actorValue
+        actorOfTest
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law
+    skillGivenBase latentAccessEstimate latentNoAccessEstimate
+    demographicAccessEstimate demographicNoAccessEstimate takeDecision
+    reportDecision estimationConsistent referenceTest positiveShare
+    hpositiveShare_le_one hpositiveShare_pos reporterPMF noReporterPMF
+    hObsAccess hObsNoAccess actorLaw actorValue actorOfTest hchooses_support
+    baseTerm signalWeight denom hEq
+    (fun e base hPMF =>
+      paper_theorem3_2_affine_outside_payoff_eq_half_of_centered_numerator
+        (ne_of_gt (hdenom e base))
+        (houtside_center_of_pmfEq e base hPMF))
+    hweight hdenom hmass
 
 /--
 Theorem 3.2 endpoint from the paper's latent-to-observable mixture identities

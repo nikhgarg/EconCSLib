@@ -243,9 +243,10 @@ Last updated: 2026-05-16
   the paper's taking payoff formula definitional, and the concrete
   report-required fairness endpoint routes it through the same binary-mixture
   point-estimate surface and latent-to-observable mixture reduction.  The
-  remaining report-required-specific source gap is the outside-payoff identity.
-  The remaining optional-reporting source gap is discharging the final paper
-  policy assumptions for the concrete surface.
+  centered-outside variant reduces the report-required outside-payoff identity
+  to the algebraic condition that the affine numerator at the resampling mean
+  is half the denominator.  The remaining source gap is discharging the final
+  paper policy assumptions for the concrete optional/report-required surfaces.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -389,9 +390,10 @@ Last updated: 2026-05-16
    base-indexed report-required affine endpoint now makes the taking payoff
    formula definitional, and the concrete report-required fairness endpoint
    adds the corresponding binary-mixture surface and latent-to-observable
-   reduction.  Next work should discharge the remaining optional paper policy
-   assumptions for the concrete surface, then prove the report-required affine
-   outside-payoff identity.
+   reduction.  The centered-outside variant reduces the report-required
+   outside payoff to a numerator-equals-half-denominator identity.  Next work
+   should discharge the remaining paper policy assumptions for the concrete
+   optional/report-required surfaces.
 
 ## Reusable Library Seams
 

@@ -138,9 +138,12 @@ cache is kept as `source.txt` for named-statement audits.
   now makes the base-indexed affine taking payoff definitional too, and
   `paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law`
   routes this through the same concrete binary-mixture point-estimate surface
-  and latent-to-observable mixture reduction.  The remaining source gap is
-  discharging the final paper policy assumptions for the optional surface and,
-  for report-required policy, proving the affine outside-payoff identity.
+  and latent-to-observable mixture reduction.  The centered-outside variant
+  `paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside`
+  reduces the report-required outside-payoff identity to the algebraic
+  condition that the affine numerator at the resampling mean is half the
+  denominator.  The remaining source gap is discharging the final paper policy
+  assumptions for the concrete optional/report-required surfaces.
 
 ## Source Notes
 
