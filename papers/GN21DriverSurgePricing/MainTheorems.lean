@@ -21873,6 +21873,88 @@ theorem theorem4SurgeShape_cases_of_not_acceptsAll
     · exact Or.inr hmiddle
     · exact False.elim (hnot hall)
 
+/--
+AE Theorem 4 non-surge shape: exact long rejection, exact middle acceptance,
+or accept-all up to a null feasible-trip set.
+-/
+def theorem4NonsurgeAEShape (μ : Measure TripLength) (σ : TripPolicy) : Prop :=
+  (∃ t : ℝ, rejectsLongTrips t σ) ∨
+    (∃ lo hi : ℝ, acceptsMiddleTrips lo hi σ) ∨
+      acceptAllAlmostEverywhere μ σ
+
+/--
+AE Theorem 4 surge shape: exact short rejection, exact middle rejection, or
+accept-all up to a null feasible-trip set.
+-/
+def theorem4SurgeAEShape (μ : Measure TripLength) (σ : TripPolicy) : Prop :=
+  (∃ t : ℝ, rejectsShortTrips t σ) ∨
+    (∃ lo hi : ℝ, rejectsMiddleTrips lo hi σ) ∨
+      acceptAllAlmostEverywhere μ σ
+
+/-- Exact non-surge shapes are AE non-surge shapes. -/
+theorem theorem4NonsurgeAEShape_of_theorem4NonsurgeShape
+    (μ : Measure TripLength) {σ : TripPolicy}
+    (hshape : theorem4NonsurgeShape σ) :
+    theorem4NonsurgeAEShape μ σ := by
+  rcases hshape with hlong | hmiddle_or_all
+  · exact Or.inl hlong
+  · rcases hmiddle_or_all with hmiddle | hall
+    · exact Or.inr (Or.inl hmiddle)
+    · exact Or.inr (Or.inr
+        (acceptAllAlmostEverywhere_of_acceptsAllTrips μ hall))
+
+/-- Exact surge shapes are AE surge shapes. -/
+theorem theorem4SurgeAEShape_of_theorem4SurgeShape
+    (μ : Measure TripLength) {σ : TripPolicy}
+    (hshape : theorem4SurgeShape σ) :
+    theorem4SurgeAEShape μ σ := by
+  rcases hshape with hshort | hmiddle_or_all
+  · exact Or.inl hshort
+  · rcases hmiddle_or_all with hmiddle | hall
+    · exact Or.inr (Or.inl hmiddle)
+    · exact Or.inr (Or.inr
+        (acceptAllAlmostEverywhere_of_acceptsAllTrips μ hall))
+
+/--
+AE non-surge shape elimination on a positive-rejected-mass branch.  The AE
+accept-all alternative contradicts the positive rejected mass, leaving only
+the endpoint cases.
+-/
+theorem theorem4NonsurgeAEShape_cases_of_rejected_mass_pos
+    (μ : Measure TripLength) {σ : TripPolicy}
+    (hshape : theorem4NonsurgeAEShape μ σ)
+    (hpos : 0 < μ (acceptAllPolicy \ σ)) :
+    (∃ t : ℝ, rejectsLongTrips t σ) ∨
+      ∃ lo hi : ℝ, acceptsMiddleTrips lo hi σ := by
+  rcases hshape with hlong | hmiddle_or_ae
+  · exact Or.inl hlong
+  · rcases hmiddle_or_ae with hmiddle | hae
+    · exact Or.inr hmiddle
+    · have hzero : μ (acceptAllPolicy \ σ) = 0 := by
+        simpa [acceptAllAlmostEverywhere] using hae
+      rw [hzero] at hpos
+      exact False.elim (lt_irrefl (0 : ℝ≥0∞) hpos)
+
+/--
+AE surge shape elimination on a positive-rejected-mass branch.  The AE
+accept-all alternative contradicts the positive rejected mass, leaving only
+the endpoint cases.
+-/
+theorem theorem4SurgeAEShape_cases_of_rejected_mass_pos
+    (μ : Measure TripLength) {σ : TripPolicy}
+    (hshape : theorem4SurgeAEShape μ σ)
+    (hpos : 0 < μ (acceptAllPolicy \ σ)) :
+    (∃ t : ℝ, rejectsShortTrips t σ) ∨
+      ∃ lo hi : ℝ, rejectsMiddleTrips lo hi σ := by
+  rcases hshape with hshort | hmiddle_or_ae
+  · exact Or.inl hshort
+  · rcases hmiddle_or_ae with hmiddle | hae
+    · exact Or.inr hmiddle
+    · have hzero : μ (acceptAllPolicy \ σ) = 0 := by
+        simpa [acceptAllAlmostEverywhere] using hae
+      rw [hzero] at hpos
+      exact False.elim (lt_irrefl (0 : ℝ≥0∞) hpos)
+
 /-- Lemma 5 derivative-shape outcomes admissible for Theorem 4 non-surge states. -/
 def theorem4NonsurgeAllowedLemma5Shape : Lemma5DerivativeShape → Prop
   | .positive => True
@@ -22221,6 +22303,26 @@ theorem theorem4SurgeShape_of_allowed_lemma5_form
       exact theorem4SurgeShape_of_lemma5_strictlyQuasiConvex hform
   | strictlyQuasiConcave =>
       exact False.elim hallowed
+
+/-- Allowed exact Lemma 5 non-surge forms imply the AE non-surge shape predicate. -/
+theorem theorem4NonsurgeAEShape_of_allowed_lemma5_form
+    (μ : Measure TripLength) {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (hallowed : theorem4NonsurgeAllowedLemma5Shape shape)
+    (hform : lemma5PolicyForm shape σ) :
+    theorem4NonsurgeAEShape μ σ :=
+  theorem4NonsurgeAEShape_of_theorem4NonsurgeShape μ
+    (theorem4NonsurgeShape_of_allowed_lemma5_form hallowed hform)
+
+/-- Allowed exact Lemma 5 surge forms imply the AE surge shape predicate. -/
+theorem theorem4SurgeAEShape_of_allowed_lemma5_form
+    (μ : Measure TripLength) {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (hallowed : theorem4SurgeAllowedLemma5Shape shape)
+    (hform : lemma5PolicyForm shape σ) :
+    theorem4SurgeAEShape μ σ :=
+  theorem4SurgeAEShape_of_theorem4SurgeShape μ
+    (theorem4SurgeShape_of_allowed_lemma5_form hallowed hform)
 
 /--
 Theorem 4 certificate: an optimal dynamic policy with the paper's allowable
@@ -44419,6 +44521,167 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_shape_replacem
     μ arrival switch12 switch21
     (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
     (theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_shape_replacement_statewise_rejected_mass_improvements_unless
+      μ arrival m z switch12 switch21 C)
+
+/--
+AE-shape hnot-aware statewise-improvement data.  This weakens the shape input
+from exact Lemma 5 policy forms to endpoint shapes plus an AE accept-all
+alternative, so the positive Lemma 5 branch can be used modulo null sets.
+-/
+structure Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  accept_all_optimal :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      acceptAllDynamicPolicy
+  only_ae_shapes :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        theorem4NonsurgeAEShape (μ 0) (ρ 0) ∧
+          theorem4SurgeAEShape (μ 1) (ρ 1)
+  nonsurge_reject_long_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 0)) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 0)) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 1)) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 1)) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+
+/--
+AE-shape statewise data instantiate the measured aggregate
+positive-rejected-mass strict-local certificate.
+-/
+def theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_ae_shape_statewise_rejected_mass_improvements_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  accept_all_optimal := C.accept_all_optimal
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    have hnot : ¬ acceptsAllTrips (ρ 0) :=
+      not_acceptsAllTrips_of_rejected_mass_pos (μ 0) hpos
+    rcases theorem4NonsurgeAEShape_cases_of_rejected_mass_pos
+        (μ 0) (C.only_ae_shapes ρ hρ).1 hpos with
+      hlong | hmiddle
+    · rcases hlong with ⟨t, ht⟩
+      rcases C.nonsurge_reject_long_improvement ρ hρ hnot hpos t ht with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+    · rcases hmiddle with ⟨lo, hi, hmid⟩
+      rcases C.nonsurge_accept_middle_improvement ρ hρ hnot hpos lo hi hmid with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+  surge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    have hnot : ¬ acceptsAllTrips (ρ 1) :=
+      not_acceptsAllTrips_of_rejected_mass_pos (μ 1) hpos
+    rcases theorem4SurgeAEShape_cases_of_rejected_mass_pos
+        (μ 1) (C.only_ae_shapes ρ hρ).2 hpos with
+      hshort | hmiddle
+    · rcases hshort with ⟨t, ht⟩
+      rcases C.surge_reject_short_improvement ρ hρ hnot hpos t ht with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+    · rcases hmiddle with ⟨lo, hi, hmid⟩
+      rcases C.surge_reject_middle_improvement ρ hρ hnot hpos lo hi hmid with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+
+/--
+AE uniqueness from AE-shape hnot-aware statewise improvements.  This is the
+measured Theorem 4 endpoint to use when Lemma 5 provides exact endpoint forms
+for nonpositive branches and only AE accept-all for the positive branch.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_shape_statewise_rejected_mass_improvements_unless
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (C :
+      Theorem4MeasurableAEShapeStatewiseRejectedMassImprovementUnlessCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_ae_shape_statewise_rejected_mass_improvements_unless
       μ arrival m z switch12 switch21 C)
 
 /--

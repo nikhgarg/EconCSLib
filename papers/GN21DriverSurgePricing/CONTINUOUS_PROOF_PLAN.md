@@ -461,6 +461,13 @@ into the concrete endpoint policy data.
   plumbing; it is the source open-set approximation plus endpoint-continuity
   argument that identifies the nonlinear endpoint path with this
   positive-response dominance.
+- The Theorem 4 endpoint layer now has AE shape predicates
+  `theorem4NonsurgeAEShape` and `theorem4SurgeAEShape`, plus
+  `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_ae_shape_statewise_rejected_mass_improvements_unless`.
+  Use this route when Lemma 5 gives exact endpoint forms for the nonpositive
+  branches but only an AE accept-all conclusion for the positive branch.  On a
+  positive rejected-mass branch, the AE accept-all alternative is impossible,
+  so endpoint selection still reduces to the long/middle cases.
 - The nonlinear aggregate layer now has strict counterparts to the older weak
   add-set bridges:
   `gn21AggregateDynamicReward_lt_add_left_of_kernel_pos`,
