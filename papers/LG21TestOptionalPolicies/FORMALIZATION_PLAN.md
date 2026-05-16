@@ -461,10 +461,15 @@ Last updated: 2026-05-16
    concrete surfaces, and the mapped-actor-law variants reduce the displayed
    support facts to positive mass of the displayed concrete test/skill values.
    The centered-base-term-by-definition variant closes the report-required
-   outside-payoff algebra for the normalized affine source model.  Next work
-   should instantiate the concrete positive-mass facts and decide whether to
-   add a skill-dependent conditional-kernel version for the final paper-facing
-   theorem statement.
+   outside-payoff algebra for the normalized affine source model.  This finite
+   binary-mixture route remains available if the final statement wants those
+   exact point-mass endpoints; its remaining obligations are the displayed
+   positive-mass/support facts.  The active continuous/source route is now the
+   direct below-mean actor branch: cutoff-midpoint and Gaussian all-acting
+   wrappers avoid point-mass assumptions, so next work should connect the
+   paper's final policy assumptions to one of those branches and decide whether
+   a skill-dependent conditional-kernel version is needed for the final
+   paper-facing theorem statement.
 
 ## Reusable Library Seams
 
