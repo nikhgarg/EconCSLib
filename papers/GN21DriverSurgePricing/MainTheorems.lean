@@ -32756,6 +32756,48 @@ noncomputable def Theorem4SurgeAllowedReplacementData.of_policy_canonical_domina
       hallowed C hsubset
 
 /--
+Feasible policy-level canonical-dominance Lemma 5 data produce the concrete
+non-surge allowed replacement cases used by the older Theorem 4 routes.  This
+is the source-domain variant of `of_policy_canonical_dominance`: endpoint
+descent only has to compare feasible generalized interval/ray seeds.
+-/
+noncomputable def Theorem4NonsurgeAllowedReplacementData.of_feasible_policy_canonical_dominance
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4NonsurgeAllowedLemma5Shape shape)
+    (D : Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+      μ Rhat σ0 shape) :
+    Theorem4NonsurgeAllowedReplacementData Rhat σ0 := by
+  classical
+  let C := D.to_optimizer_replacement
+  have hsubset : C.policy ⊆ acceptAllPolicy := by
+    simpa [C] using D.to_optimizer_replacement_subset
+  exact
+    Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
+      hallowed C hsubset
+
+/--
+Feasible policy-level canonical-dominance Lemma 5 data produce the concrete
+surge allowed replacement cases used by the older Theorem 4 routes.
+-/
+noncomputable def Theorem4SurgeAllowedReplacementData.of_feasible_policy_canonical_dominance
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4SurgeAllowedLemma5Shape shape)
+    (D : Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+      μ Rhat σ0 shape) :
+    Theorem4SurgeAllowedReplacementData Rhat σ0 := by
+  classical
+  let C := D.to_optimizer_replacement
+  have hsubset : C.policy ⊆ acceptAllPolicy := by
+    simpa [C] using D.to_optimizer_replacement_subset
+  exact
+    Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
+      hallowed C hsubset
+
+/--
 Positive-response marginal Lemma 5 data produce concrete non-surge allowed
 replacement cases whenever the positive-response policy has an allowed
 non-surge form.
@@ -33744,6 +33786,116 @@ noncomputable def Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_r
     have sdata := Classical.choose_spec (D.surge ρ hρ)
     exact
       Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance
+        sshape.2 sdata
+
+/--
+All-measurable-optimal feasible policy-level canonical-dominance data.  This
+is the source-faithful Theorem 4 Lemma 5 boundary when finite interval/ray
+seeds are restricted to the feasible positive-trip domain.
+-/
+structure Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+      ∃ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+          (μ 0) (dynamicStateReward R ρ 0) (ρ 0) shape.1
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicMeasurableOptimal R ρ) →
+      ∃ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+          (μ 1) (dynamicStateReward R ρ 1) (ρ 1) shape.1
+
+/--
+Feasible-seed policy canonical dominance classifies every measurable optimum
+into the allowed Lemma 5 forms.  The replacement candidate is feasible and
+measurable by construction, so restricted measurable optimality supplies the
+needed comparison.
+-/
+noncomputable def Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData.to_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ R) :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate R where
+  exists_optimal := D.exists_optimal
+  only_policy_forms := by
+    intro ρ hρ
+    rcases D.nonsurge ρ hρ with ⟨nshape, ndata⟩
+    rcases D.surge ρ hρ with ⟨sshape, sdata⟩
+    have hnfeasible :
+        dynamicFeasibleMeasurablePolicy
+          (Function.update ρ 0 ndata.to_optimizer_replacement.policy) :=
+      dynamicFeasibleMeasurablePolicy_update hρ.1 0
+        ndata.to_optimizer_replacement.policy
+        ndata.to_optimizer_replacement_subset
+        ndata.to_optimizer_replacement_measurable
+    have hsfeasible :
+        dynamicFeasibleMeasurablePolicy
+          (Function.update ρ 1 sdata.to_optimizer_replacement.policy) :=
+      dynamicFeasibleMeasurablePolicy_update hρ.1 1
+        sdata.to_optimizer_replacement.policy
+        sdata.to_optimizer_replacement_subset
+        sdata.to_optimizer_replacement_measurable
+    have hnle :
+        dynamicStateReward R ρ 0 ndata.to_optimizer_replacement.policy ≤
+          dynamicStateReward R ρ 0 (ρ 0) :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hρ 0
+        hnfeasible
+    have hsle :
+        dynamicStateReward R ρ 1 sdata.to_optimizer_replacement.policy ≤
+          dynamicStateReward R ρ 1 (ρ 1) :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hρ 1
+        hsfeasible
+    exact
+      ⟨⟨nshape.1, nshape.2,
+          ndata.policyForm_of_candidate_le hnle⟩,
+        ⟨sshape.1, sshape.2,
+          sdata.policyForm_of_candidate_le hsle⟩⟩
+
+/--
+Paper-facing Theorem 4 measurable policy-form classification from feasible
+policy-level Lemma 5 canonical-dominance data.
+-/
+noncomputable def paper_theorem4_measurable_allowed_policy_forms_of_feasible_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ R) :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate R :=
+  D.to_allowed_policy_forms
+
+/--
+Feasible-seed policy-level canonical-dominance data also provide the older
+all-optimal allowed-replacement boundary, for endpoint-selection and
+middle-reroute routes that need concrete replacement cases.
+-/
+noncomputable def Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData.to_allowed_replacement_data
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ R) :
+    Theorem4AllMeasurableOptimalAllowedReplacementData R where
+  exists_optimal := D.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    let nshape := Classical.choose (D.nonsurge ρ hρ)
+    have ndata := Classical.choose_spec (D.nonsurge ρ hρ)
+    exact
+      Theorem4NonsurgeAllowedReplacementData.of_feasible_policy_canonical_dominance
+        nshape.2 ndata
+  surge := by
+    intro ρ hρ
+    let sshape := Classical.choose (D.surge ρ hρ)
+    have sdata := Classical.choose_spec (D.surge ρ hρ)
+    exact
+      Theorem4SurgeAllowedReplacementData.of_feasible_policy_canonical_dominance
         sshape.2 sdata
 
 /--
@@ -56760,6 +56912,139 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
       μ arrival m z switch12 switch21 C.to_allowed_policy_forms
 
 /--
+Regular endpoint data attached to feasible policy-level canonical-dominance
+Lemma 5 data.  This keeps the remaining continuous Lemma 5 proof inside the
+source-feasible generalized interval/ray seed domain.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  feasible_policy_canonical_dominance :
+    Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+Convert feasible policy-level canonical-dominance endpoint data to the regular
+allowed-policy-form endpoint package.
+-/
+noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate.to_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ} {switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+      μ arrival m z switch12 switch21 where
+  allowed_policy_forms :=
+    C.feasible_policy_canonical_dominance.to_allowed_policy_forms
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
+
+/--
+Convert feasible policy-level canonical-dominance endpoint data to the older
+regular endpoint-selection package by recovering concrete allowed replacement
+cases internally.
+-/
+noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate.to_regular_selection
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ} {switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := C.feasible_policy_canonical_dominance.exists_optimal
+  nonsurge_replacement_data := by
+    intro ρ hρ
+    exact
+      C.feasible_policy_canonical_dominance.to_allowed_replacement_data.nonsurge
+        ρ hρ
+  surge_replacement_data := by
+    intro ρ hρ
+    exact
+      C.feasible_policy_canonical_dominance.to_allowed_replacement_data.surge
+        ρ hρ
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
+
+/--
+Measurable Theorem 4 accept-all uniqueness from feasible policy-level
+canonical dominance and regular endpoint data.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_feasible_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_allowed_policy_forms
+      μ arrival m z switch12 switch21 C.to_allowed_policy_forms
+
+/--
 Regular endpoint data plus all-measurable shape replacements instantiate the
 hnot-aware endpoint-selection certificate.  This lets source routes that prove
 explicit Lemma 5 replacement data use the non-accept-all endpoint interface
@@ -74907,6 +75192,164 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_end
     [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
     (A :
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    A.to_allowed_policy_forms_source_assumptions
+
+/--
+Source-level assumptions for the regular endpoint route when the Lemma 5 input
+is supplied as feasible policy-level canonical-dominance data.  This is the
+source-domain variant: interval/ray seed comparisons only range over feasible
+trip policies contained in `acceptAllPolicy`.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_regular_feasible_policy_canonical_dominance_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate
+            μ arrival m z switch12 switch21
+
+/--
+Convert feasible policy-canonical-dominance source assumptions to the regular
+allowed-policy-form boundary.
+-/
+noncomputable def Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions.to_allowed_policy_forms_source_assumptions
+    {μ : Fin 2 → Measure TripLength} {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_current_bounds_regular_allowed_policy_forms_selection := by
+    intro m z hnonneg hparams
+    exact
+      (A.endpoint_current_bounds_regular_feasible_policy_canonical_dominance_selection
+        m z hnonneg hparams).to_allowed_policy_forms
+
+/--
+Convert feasible policy-canonical-dominance source assumptions to the older
+regular endpoint-selection boundary.
+-/
+noncomputable def Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions.to_regular_source_assumptions
+    {μ : Fin 2 → Measure TripLength} {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_current_bounds_regular_selection := by
+    intro m z hnonneg hparams
+    exact
+      (A.endpoint_current_bounds_regular_feasible_policy_canonical_dominance_selection
+        m z hnonneg hparams).to_regular_selection
+
+/--
+Paper-facing Theorem 3 wrapper from feasible policy-level
+canonical-dominance Lemma 5 data plus regular endpoint data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_feasible_policy_canonical_dominance_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    A.to_allowed_policy_forms_source_assumptions
+
+/--
+AE-unique version of the feasible policy-level canonical-dominance Theorem 3
+wrapper.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_feasible_policy_canonical_dominance_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
       μ arrival R1 R2 switch12 switch21 :=

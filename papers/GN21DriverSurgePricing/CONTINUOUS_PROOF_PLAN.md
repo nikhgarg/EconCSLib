@@ -767,12 +767,24 @@ into the concrete endpoint policy data.
   with regular endpoint data without first hand-building an allowed-policy-form
   certificate.  The same package also has `.to_regular_selection` for older
   endpoint-selection routes that require explicit allowed replacement data.
+  The feasible-seed version is also compiled:
+  `Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData`,
+  `Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate`,
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_feasible_policy_canonical_dominance`,
+  and the concrete replacement adapters
+  `Theorem4NonsurgeAllowedReplacementData.of_feasible_policy_canonical_dominance`
+  / `Theorem4SurgeAllowedReplacementData.of_feasible_policy_canonical_dominance`.
+  Prefer this feasible version if the remaining endpoint argument only proves
+  dominance for generalized interval/ray seeds contained in `acceptAllPolicy`.
   At the Theorem 3 boundary, use
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions`
   and the paired `paper_theorem3_measured_structured_measurable_ic...` wrappers
   when the source proof supplies policy-level Lemma 5 dominance plus the regular
   endpoint families; use `.to_regular_source_assumptions` to feed the older
-  regular selection boundary.
+  regular selection boundary.  The analogous feasible-seed Theorem 3 boundary
+  is
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions`,
+  with IC and AE wrappers and `.to_regular_source_assumptions`.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and

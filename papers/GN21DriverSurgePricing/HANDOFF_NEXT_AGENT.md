@@ -338,6 +338,13 @@ certificate, prefer `Theorem4AllMeasurablePolicyCanonicalDominanceData`: it
 uses the direct source-policy constructor, proves the canonical replacement is
 feasible/measurable, and applies restricted measurable optimality to extract
 the current policy form.
+If the endpoint proof only ranges over interval/ray seeds that are already
+source-feasible, use the feasible-seed version instead:
+`Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData`,
+`Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData.to_allowed_policy_forms`,
+and `.to_allowed_replacement_data`.  It consumes
+`Lemma5FeasiblePolicyCanonicalDominanceMaximizerData` and avoids proving
+dominance for syntactically possible but infeasible generalized seeds.
 If a source route already has a feasible Lemma 5 optimizer-replacement
 certificate, use `Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset`
 or `Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset` to get
@@ -351,11 +358,18 @@ families and feeds the existing allowed-policy-form route internally.  It now
 also recovers the concrete allowed replacement cases through
 `.to_regular_selection`, so older endpoint-selection and middle-reroute routes
 can consume the same policy-level source data without a second Lemma 5 proof.
+The feasible-seed counterpart is
+`Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate`
+with the paper-facing theorem
+`paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_feasible_policy_canonical_dominance`.
 For the structured-price top-level statement, the matching source-assumption
 bundle is
 `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions`;
 use `.to_regular_source_assumptions` when a downstream route wants the older
 regular selection boundary.
+The feasible-seed top-level bundle is
+`Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions`,
+with IC and AE wrappers and `.to_regular_source_assumptions`.
 
 ## Lemmas 1-3 Status
 

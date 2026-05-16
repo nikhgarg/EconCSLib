@@ -924,6 +924,18 @@ and
 now expose the same route at the structured-price source boundary; use
 `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions.to_regular_source_assumptions`
 to feed the older regular selection boundary.
+The source-feasible version is now compiled too:
+`Lemma5FeasiblePolicyCanonicalDominanceMaximizerData`,
+`Theorem4NonsurgeAllowedReplacementData.of_feasible_policy_canonical_dominance`,
+`Theorem4SurgeAllowedReplacementData.of_feasible_policy_canonical_dominance`,
+`Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData.to_allowed_policy_forms`,
+`Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData.to_allowed_replacement_data`,
+`Theorem4MeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceCertificate`,
+`paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_feasible_policy_canonical_dominance`,
+`Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularFeasiblePolicyCanonicalDominanceSourceAssumptions`,
+and the paired Theorem 3 IC/AE wrappers.  Prefer this route for final Lemma 5
+closeout when the endpoint descent only compares interval/ray seeds contained
+in the feasible positive-trip domain.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:
