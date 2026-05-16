@@ -30,9 +30,9 @@
   posterior wrappers, Gaussian laws, concrete lower-tail API, cutoff deviations, resampling
 };
 
-\node[dag_partial, text width=4.8cm] (Model) at (11.8,0) {
+\node[dag_result, text width=4.8cm] (Model) at (11.8,0) {
   \textbf{Source model (Secs. 2--4)}\\
-  finite kernels, $(Y,X)$ action object, and PMF/law policy surfaces; concrete Gaussian payoff wiring remains open
+  finite kernels, access status $Z$, information sets, requirement policies, $(Y,X)$ actions, PMF/law surfaces
 };
 
 \node[dag_result, text width=4.0cm] (Def1) at (17.7,0) {
@@ -82,10 +82,10 @@
 
 % Edges: solid only for verified auxiliary support; dashed for source roadmap debt.
 \draw[dag_arrow] (AuxFinite.east) -- (SharedProb.west);
-\draw[dag_dashed_arrow] (SharedProb.east) -- (Model.west);
+\draw[dag_arrow] (SharedProb.east) -- (Model.west);
 \draw[dag_arrow] (SharedProb.south) |- (Def6.west);
-\draw[dag_dashed_arrow] (Model.east) -- (Def1.west);
-\draw[dag_dashed_arrow] (Model.south) |- (FairDefs.west);
+\draw[dag_arrow] (Model.east) -- (Def1.west);
+\draw[dag_arrow] (Model.south) |- (FairDefs.west);
 \draw[dag_dashed_arrow] (Def1.east) -- (Thm31.west);
 \draw[dag_dashed_arrow] (Thm31.east) -- (Thm32.west);
 \draw[dag_dashed_arrow] (FairDefs.east) -- (Lemma41.west);

@@ -15,7 +15,9 @@ support for the future source-faithful formalization of
 
 ## Main declarations
 
-- `LG21Model`: shared finite prior with base and test signal kernels.
+- `LG21Model`, `LG21AccessStatus`, `LG21SchoolInformationSet`, and
+  `LG21RequirementPolicy`: source model primitives for access status,
+  information sets, and test-taking/reporting requirements.
 - `lg21TwoSignalAdmissionsModel`: adapter to the reusable two-signal
   admissions comparison interface.
 - `lg21BaseModel`, `lg21TestModel`: wrappers into the reusable
@@ -51,6 +53,36 @@ structure LG21Model (Θ ΩBase ΩTest : Type*) [Fintype Θ] [DecidableEq Θ]
   (baseKernel : Θ → PMF ΩBase)
   (testKernel : Θ → PMF ΩTest)
   (quality : Θ → ℝ)
+
+/-- Source access indicator `Z`: a student either has access to the test or not. -/
+inductive LG21AccessStatus where
+  | noAccess
+  | access
+deriving DecidableEq
+
+namespace LG21AccessStatus
+
+/-- Boolean form of the source indicator `Z`. -/
+def toBool : LG21AccessStatus → Bool
+  | noAccess => false
+  | access => true
+
+@[simp] theorem toBool_noAccess : toBool noAccess = false := rfl
+@[simp] theorem toBool_access : toBool access = true := rfl
+
+end LG21AccessStatus
+
+/--
+The school's information set in Sections 3--4.  `accessStatus = none` is the
+Section 3 case where the school does not observe `Z`; `some z` is the Section 4
+case where `Z` is included in the information set.  The test score is present
+exactly when the student reports it.
+-/
+structure LG21SchoolInformationSet (Base Test : Type*) where
+  accessStatus : Option LG21AccessStatus
+  baseProfile : Base
+  reportsScore : Bool
+  reportedTestScore : Option Test
 
 def lg21TwoSignalAdmissionsModel
     {Θ ΩBase ΩTest : Type*} [Fintype Θ] [DecidableEq Θ]
@@ -1392,6 +1424,130 @@ theorem not_takeAndWithhold_reportRequiredAfterTaking_feasible :
   cases heq
 
 end LG21AccessAction
+
+namespace LG21SchoolInformationSet
+
+/--
+Information set induced by an access student's action.  This encodes the paper's
+`I = ({θ_k}_{k<K}, X, θ_K 1_X)` in Section 3 and
+`I = (Z, {θ_k}_{k<K}, X, θ_K 1_X)` in Section 4.
+-/
+def fromAccessAction
+    {Base Test : Type*}
+    (observesAccess : Bool) (base : Base) (test : Test)
+    (action : LG21AccessAction) : LG21SchoolInformationSet Base Test where
+  accessStatus :=
+    if observesAccess then some LG21AccessStatus.access else none
+  baseProfile := base
+  reportsScore := action.reportsScore
+  reportedTestScore := if action.reportsScore then some test else none
+
+@[simp] theorem fromAccessAction_accessStatus_of_observed
+    {Base Test : Type*} (base : Base) (test : Test)
+    (action : LG21AccessAction) :
+    (fromAccessAction true base test action).accessStatus =
+      some LG21AccessStatus.access := by
+  rfl
+
+@[simp] theorem fromAccessAction_accessStatus_of_unobserved
+    {Base Test : Type*} (base : Base) (test : Test)
+    (action : LG21AccessAction) :
+    (fromAccessAction false base test action).accessStatus = none := by
+  rfl
+
+@[simp] theorem fromAccessAction_baseProfile
+    {Base Test : Type*} (observesAccess : Bool) (base : Base) (test : Test)
+    (action : LG21AccessAction) :
+    (fromAccessAction observesAccess base test action).baseProfile = base := by
+  rfl
+
+@[simp] theorem fromAccessAction_reportsScore
+    {Base Test : Type*} (observesAccess : Bool) (base : Base) (test : Test)
+    (action : LG21AccessAction) :
+    (fromAccessAction observesAccess base test action).reportsScore =
+      action.reportsScore := by
+  rfl
+
+@[simp] theorem fromAccessAction_reportedTestScore_of_report
+    {Base Test : Type*} (observesAccess : Bool) (base : Base) (test : Test)
+    {action : LG21AccessAction} (hreport : action.reportsScore = true) :
+    (fromAccessAction observesAccess base test action).reportedTestScore =
+      some test := by
+  simp [fromAccessAction, hreport]
+
+@[simp] theorem fromAccessAction_reportedTestScore_of_no_report
+    {Base Test : Type*} (observesAccess : Bool) (base : Base) (test : Test)
+    {action : LG21AccessAction} (hreport : action.reportsScore = false) :
+    (fromAccessAction observesAccess base test action).reportedTestScore =
+      none := by
+  simp [fromAccessAction, hreport]
+
+end LG21SchoolInformationSet
+
+/--
+The three source requirement policies: no additional reporting requirement,
+reporting required conditional on taking, and reporting required given access.
+-/
+inductive LG21RequirementPolicy where
+  | noRequirements
+  | reportRequiredConditionalTaking
+  | reportRequiredGivenAccess
+deriving DecidableEq
+
+namespace LG21RequirementPolicy
+
+/-- The requirement predicate on access-student actions. -/
+def accessRequirement : LG21RequirementPolicy → LG21AccessAction → Prop
+  | noRequirements => LG21AccessAction.optionalReportingRequirement
+  | reportRequiredConditionalTaking => LG21AccessAction.reportRequiredAfterTaking
+  | reportRequiredGivenAccess => fun action =>
+      action = LG21AccessAction.takeAndReport
+
+/--
+Full source feasibility for `(Z, Y, X)`: students without access cannot take or
+report, and access students must satisfy `Y ≥ X` plus the requirement policy.
+-/
+def feasibleAction
+    (policy : LG21RequirementPolicy) (accessStatus : LG21AccessStatus)
+    (action : LG21AccessAction) : Prop :=
+  match accessStatus with
+  | LG21AccessStatus.noAccess => action = LG21AccessAction.noTake
+  | LG21AccessStatus.access =>
+      LG21AccessAction.feasible (accessRequirement policy) action
+
+@[simp] theorem feasibleAction_noAccess_iff
+    (policy : LG21RequirementPolicy) (action : LG21AccessAction) :
+    feasibleAction policy LG21AccessStatus.noAccess action ↔
+      action = LG21AccessAction.noTake := by
+  rfl
+
+theorem feasibleAction_access_noRequirements_iff
+    (action : LG21AccessAction) :
+    feasibleAction noRequirements LG21AccessStatus.access action ↔
+      LG21AccessAction.feasible
+        LG21AccessAction.optionalReportingRequirement action := by
+  rfl
+
+theorem feasibleAction_access_reportRequiredConditionalTaking_iff
+    (action : LG21AccessAction) :
+    feasibleAction reportRequiredConditionalTaking
+        LG21AccessStatus.access action ↔
+      LG21AccessAction.feasible
+        LG21AccessAction.reportRequiredAfterTaking action := by
+  rfl
+
+theorem feasibleAction_access_reportRequiredGivenAccess_iff
+    (action : LG21AccessAction) :
+    feasibleAction reportRequiredGivenAccess LG21AccessStatus.access action ↔
+      action = LG21AccessAction.takeAndReport := by
+  constructor
+  · intro h
+    exact h.2
+  · intro h
+    subst h
+    exact ⟨LG21AccessAction.takeAndReport_reportImpliesTake, rfl⟩
+
+end LG21RequirementPolicy
 
 /--
 Definition 1 student information for a student with test access.  The `test`
