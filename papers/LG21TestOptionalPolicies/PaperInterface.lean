@@ -21,6 +21,29 @@ abbrev paperEquilibrium {StudentInfo Action : Type*}
     (E : LG21EquilibriumData StudentInfo Action) : Prop :=
   lg21Equilibrium E
 
+/-- Definition 1 action object for students with test access: `(Y, X)`. -/
+abbrev paperAccessAction : Type :=
+  LG21AccessAction
+
+/-- Definition 1 feasibility condition: `Y ≥ X` plus the requirement policy. -/
+abbrev paperAccessActionFeasible
+    (requirement : LG21AccessAction → Prop) (a : LG21AccessAction) : Prop :=
+  LG21AccessAction.feasible requirement a
+
+/-- Source regime with optional reporting after taking the test. -/
+abbrev paperOptionalReportingRequirement (a : LG21AccessAction) : Prop :=
+  LG21AccessAction.optionalReportingRequirement a
+
+/-- Source regime where reporting is required conditional on taking the test. -/
+abbrev paperReportRequiredAfterTaking (a : LG21AccessAction) : Prop :=
+  LG21AccessAction.reportRequiredAfterTaking a
+
+/-- Under `Y = X`, the source feasibility condition `Y ≥ X` holds. -/
+theorem paper_interface_reportRequiredAfterTaking_reportImpliesTake
+    {a : LG21AccessAction} (h : paperReportRequiredAfterTaking a) :
+    LG21AccessAction.reportImpliesTake a :=
+  LG21AccessAction.reportRequiredAfterTaking_reportImpliesTake h
+
 /-- Definition 2: latent-skill fairness in every equilibrium. -/
 abbrev paperLatentSkillFair {Skill Base Test Estimate : Type*}
     (S : LG21SourcePolicySurface Skill Base Test Estimate) : Prop :=
@@ -60,6 +83,81 @@ abbrev paperTestBlank {Skill Base Test Estimate : Type*}
 abbrev paperLawTestBlank {Skill Base Test Law : Type*}
     (S : LG21SourceLawPolicySurface Skill Base Test Law) : Prop :=
   lg21SourceLawTestBlank S
+
+/--
+Definitions 2--3 implication, with the source's mixture interpretation made
+explicit: latent-skill fairness implies observable fairness when observable
+laws are the shared-skill-law mixtures of latent-skill-conditioned laws.
+-/
+theorem paper_interface_definition2_implies_definition3_of_mixture
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (hlatent : paperLatentSkillFair S) :
+    paperObservablyFair S :=
+  lg21_sourceObservablyFair_of_latentSkillFair_of_mixture
+    skillGivenBase hAccess hNoAccess hlatent
+
+/--
+Definitions 3--4 implication, with the source's mixture interpretation made
+explicit: observable fairness implies demographic fairness when demographic
+laws are the shared-base-profile mixtures of observable laws.
+-/
+theorem paper_interface_definition3_implies_definition4_of_mixture
+    {Skill Base Test Estimate : Type*}
+    (baseProfile : PMF Base)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hAccess :
+      ∀ e, S.demographicAccessEstimate e =
+        lg21DemographicEstimateDistribution baseProfile
+          (S.observableAccessEstimate e))
+    (hNoAccess :
+      ∀ e, S.demographicNoAccessEstimate e =
+        lg21DemographicEstimateDistribution baseProfile
+          (S.observableNoAccessEstimate e))
+    (hobs : paperObservablyFair S) :
+    paperDemographicallyFair S :=
+  lg21_sourceDemographicallyFair_of_observablyFair_of_mixture
+    baseProfile hAccess hNoAccess hobs
+
+/--
+Definitions 2--4 implication chain: under the shared latent-skill and
+base-profile mixture identities, latent-skill fairness implies demographic
+fairness.
+-/
+theorem paper_interface_definition2_implies_definition4_of_mixture
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill) (baseProfile : PMF Base)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (hDemoAccess :
+      ∀ e, S.demographicAccessEstimate e =
+        lg21DemographicEstimateDistribution baseProfile
+          (S.observableAccessEstimate e))
+    (hDemoNoAccess :
+      ∀ e, S.demographicNoAccessEstimate e =
+        lg21DemographicEstimateDistribution baseProfile
+          (S.observableNoAccessEstimate e))
+    (hlatent : paperLatentSkillFair S) :
+    paperDemographicallyFair S :=
+  lg21_sourceDemographicallyFair_of_latentSkillFair_of_mixture
+    skillGivenBase baseProfile hObsAccess hObsNoAccess hDemoAccess hDemoNoAccess
+    hlatent
 
 /--
 Bayesian optimal Gaussian estimator used in Sections 3--4.
@@ -123,6 +221,37 @@ theorem paper_interface_reporting_gaussian_threshold_iff_cutoff
   paper_reporting_gaussian_threshold_iff_cutoff M theta k base threshold value
 
 /--
+Theorem 3.1 cutoff support: a positive-slope affine comparison induces a
+finite lower-cutoff strategy.
+-/
+theorem paper_interface_lower_cutoff_strategy_of_affine_threshold
+    {intercept slope threshold : ℝ} (hslope : 0 < slope) :
+    lg21LowerCutoffStrategy
+      (fun value : ℝ => threshold ≤ intercept + slope * value) :=
+  paper_lower_cutoff_strategy_of_affine_threshold hslope
+
+/--
+Theorem 3.1 reporting-threshold support: with all other information fixed, a
+Bayesian-optimal reporting decision based on an estimate threshold is a finite
+lower-cutoff rule in the reported test score.
+-/
+theorem paper_interface_theorem3_1_reporting_threshold_of_gaussian_best_response
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (base threshold : ℝ) :
+    lg21LowerCutoffStrategy
+      (fun value : ℝ =>
+        threshold ≤ M.posteriorMean (Function.update theta k value)) :=
+  paper_theorem3_1_reporting_threshold_of_gaussian_best_response
+    M theta k base threshold
+
+/-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
+theorem paper_interface_monotone_of_lowerCutoffStrategy
+    {choose : ℝ → Prop} (hcutoff : lg21LowerCutoffStrategy choose) :
+    ∀ {low high : ℝ}, low ≤ high → choose low → choose high :=
+  lg21_monotone_of_lowerCutoffStrategy hcutoff
+
+/--
 Propositions 4.2--4.3 Gaussian-law support: distinct means imply distinct
 estimate laws.
 -/
@@ -136,6 +265,24 @@ theorem paper_interface_gaussian_estimate_laws_differ_of_variance_lt
     {Llow Lhigh : GaussianVarianceLaw} (hvar : Llow.variance < Lhigh.variance) :
     Llow ≠ Lhigh :=
   paper_gaussian_estimate_laws_differ_of_variance_lt hvar
+
+/--
+Propositions 4.2--4.3 Gaussian location-scale support: distinct means imply
+distinct estimate laws.
+-/
+theorem paper_interface_gaussian_scale_laws_differ_of_mean_lt
+    {Llow Lhigh : GaussianScaleLaw} (hmean : Llow.mean < Lhigh.mean) :
+    Llow ≠ Lhigh :=
+  paper_gaussian_scale_laws_differ_of_mean_lt hmean
+
+/--
+Proposition 4.3 Gaussian location-scale support: distinct scales imply
+distinct estimate laws.
+-/
+theorem paper_interface_gaussian_scale_laws_differ_of_scale_lt
+    {Llow Lhigh : GaussianScaleLaw} (hscale : Llow.scale < Lhigh.scale) :
+    Llow ≠ Lhigh :=
+  paper_gaussian_scale_laws_differ_of_scale_lt hscale
 
 /--
 Propositions 4.2--4.3 precision support: a strict total-precision gap gives a
@@ -165,6 +312,24 @@ theorem paper_interface_gaussian_estimate_scale_lt_of_total_precision_lt
     (Mlow.posteriorMeanScaleLaw).scale <
       (Mhigh.posteriorMeanScaleLaw).scale :=
   paper_gaussian_estimate_scale_lt_of_total_precision_lt hpriorVar hsum
+
+/--
+Propositions 4.2--4.3 precision support across different observed-feature
+sets: a strict signal-precision gap gives a strict posterior-score scale gap.
+-/
+theorem paper_interface_gaussian_estimate_scale_lt_of_signalPrecisionSum_lt
+    {FeatureLow FeatureHigh : Type*}
+    [Fintype FeatureLow] [Nonempty FeatureLow]
+    [Fintype FeatureHigh] [Nonempty FeatureHigh]
+    {Mlow : GaussianOffsetSignalFamily FeatureLow}
+    {Mhigh : GaussianOffsetSignalFamily FeatureHigh}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    (Mlow.posteriorMeanScaleLaw).scale <
+      (Mhigh.posteriorMeanScaleLaw).scale :=
+  paper_gaussian_estimate_scale_lt_of_signalPrecisionSum_lt hpriorVar hsum
 
 /--
 Propositions 4.2--4.3 precision support: a strict total-precision gap produces
@@ -212,6 +377,18 @@ theorem paper_interface_gaussian_upper_tail_lt_of_same_mean_scale_lt_above_mean
     api hmean hscale hthreshold
 
 /--
+Proposition 4.2 Gaussian support: the conditional posterior-score law has
+strictly larger mean for strictly larger latent skill.
+-/
+theorem paper_interface_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    (M : GaussianOffsetSignalFamily Feature) {qLow qHigh : ℝ}
+    (hq : qLow < qHigh) :
+    (M.conditionalPosteriorMeanScaleLaw qLow).mean <
+      (M.conditionalPosteriorMeanScaleLaw qHigh).mean :=
+  paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt M hq
+
+/--
 Theorem 3.1: strategic withholding and failure of latent-skill, observable,
 and demographic fairness.
 
@@ -240,6 +417,46 @@ theorem paper_interface_theorem3_2_fairness_impossibility
     lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
       lg21SourceTestBlank S :=
   paper_theorem3_2_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 contrapositive core: under the source implication, a concrete
+test-relevance witness rules out latent-skill or observable fairness.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_test_relevance_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (e : S.Equilibrium) (base : Base) (test : Test)
+    (hne : S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_test_relevance_witness
+    C e base test hne
+
+/--
+Theorem 3.2 continuous-law endpoint: latent-skill or observable fairness
+implies test-blankness over arbitrary law objects.
+-/
+theorem paper_interface_theorem3_2_law_fairness_impossibility
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S) :
+    lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 continuous-law contrapositive core: under the source implication, a
+test-relevance law witness rules out latent-skill or observable fairness.
+-/
+theorem paper_interface_theorem3_2_not_law_latent_or_observable_fair_of_test_relevance_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (e : S.Equilibrium) (base : Base) (test : Test)
+    (hne : S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test) :
+    ¬ (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :=
+  paper_theorem3_2_not_law_latent_or_observable_fair_of_test_relevance_witness
+    C e base test hne
 
 /--
 Lemma 4.1: when access is observed, all access students take and report the
@@ -339,6 +556,31 @@ theorem paper_interface_proposition4_2_not_law_latent_skill_fair_of_gaussian_mea
     e qHigh qLow base hNoAccess hAccessHigh hAccessLow hmean
 
 /--
+Proposition 4.2 posterior-law instantiation: conditional Gaussian posterior
+laws for two ordered latent skills supply the access-side law difference in
+the four-group proof.
+-/
+theorem paper_interface_proposition4_2_not_law_latent_skill_fair_of_conditional_posterior_mean_gap
+    {Skill Base Test Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (M : GaussianOffsetSignalFamily Feature)
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {skillHigh skillLow : ℝ}
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        M.conditionalPosteriorMeanScaleLaw skillHigh)
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        M.conditionalPosteriorMeanScaleLaw skillLow)
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_law_latent_skill_fair_of_conditional_posterior_mean_gap
+    M e qHigh qLow base hNoAccess hAccessHigh hAccessLow hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 
@@ -415,6 +657,84 @@ theorem paper_interface_proposition4_3_not_law_demographic_fair_of_gaussian_vari
     ¬ lg21SourceLawDemographicallyFair S :=
   paper_proposition4_3_not_law_demographic_fair_of_gaussian_variance_gap
     e hAccess hNoAccess hvar
+
+/--
+Proposition 4.3 Gaussian observable-law core for location-scale laws: a strict
+scale gap proves observable fairness fails.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_fair_of_gaussian_scale_gap
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (e : S.Equilibrium) (base : Base)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hAccess : S.observableAccessLaw e base = Llarge)
+    (hNoAccess : S.observableNoAccessLaw e base = Lsmall)
+    (hscale : Lsmall.scale < Llarge.scale) :
+    ¬ lg21SourceLawObservablyFair S :=
+  paper_proposition4_3_not_law_observable_fair_of_gaussian_scale_gap
+    e base hAccess hNoAccess hscale
+
+/--
+Proposition 4.3 Gaussian demographic-law core for location-scale laws: a strict
+scale gap proves demographic fairness fails.
+-/
+theorem paper_interface_proposition4_3_not_law_demographic_fair_of_gaussian_scale_gap
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (e : S.Equilibrium)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hAccess : S.demographicAccessLaw e = Llarge)
+    (hNoAccess : S.demographicNoAccessLaw e = Lsmall)
+    (hscale : Lsmall.scale < Llarge.scale) :
+    ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_demographic_fair_of_gaussian_scale_gap
+    e hAccess hNoAccess hscale
+
+/--
+Proposition 4.3 posterior-law observable-fairness instantiation: a strict
+signal-precision gap between no-access and access posterior-score laws rules
+out observable fairness.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_fair_of_posterior_precision_gap
+    {Skill Base Test FeatureLow FeatureHigh : Type*}
+    [Fintype FeatureLow] [Nonempty FeatureLow]
+    [Fintype FeatureHigh] [Nonempty FeatureHigh]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (e : S.Equilibrium) (base : Base)
+    {Mlow : GaussianOffsetSignalFamily FeatureLow}
+    {Mhigh : GaussianOffsetSignalFamily FeatureHigh}
+    (hAccess : S.observableAccessLaw e base = Mhigh.posteriorMeanScaleLaw)
+    (hNoAccess : S.observableNoAccessLaw e base = Mlow.posteriorMeanScaleLaw)
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    ¬ lg21SourceLawObservablyFair S :=
+  paper_proposition4_3_not_law_observable_fair_of_posterior_precision_gap
+    e base hAccess hNoAccess hpriorVar hsum
+
+/--
+Proposition 4.3 posterior-law demographic-fairness instantiation: a strict
+signal-precision gap between no-access and access posterior-score laws rules
+out demographic fairness.
+-/
+theorem paper_interface_proposition4_3_not_law_demographic_fair_of_posterior_precision_gap
+    {Skill Base Test FeatureLow FeatureHigh : Type*}
+    [Fintype FeatureLow] [Nonempty FeatureLow]
+    [Fintype FeatureHigh] [Nonempty FeatureHigh]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (e : S.Equilibrium)
+    {Mlow : GaussianOffsetSignalFamily FeatureLow}
+    {Mhigh : GaussianOffsetSignalFamily FeatureHigh}
+    (hAccess : S.demographicAccessLaw e = Mhigh.posteriorMeanScaleLaw)
+    (hNoAccess : S.demographicNoAccessLaw e = Mlow.posteriorMeanScaleLaw)
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar)
+    (hsum :
+      Mlow.centeredFamily.signalPrecisionSum <
+        Mhigh.centeredFamily.signalPrecisionSum) :
+    ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_demographic_fair_of_posterior_precision_gap
+    e hAccess hNoAccess hpriorVar hsum
 
 /--
 Definition 6: the re-sampling policy uses the conditional law of the optional

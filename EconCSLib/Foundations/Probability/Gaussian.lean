@@ -83,6 +83,24 @@ theorem unstandardize_standardize (L : GaussianScaleLaw) (x : ℝ) :
     _ = x := by
       ring
 
+theorem ne_of_mean_ne {L₁ L₂ : GaussianScaleLaw}
+    (h : L₁.mean ≠ L₂.mean) : L₁ ≠ L₂ := by
+  intro hEq
+  exact h (congrArg GaussianScaleLaw.mean hEq)
+
+theorem ne_of_mean_lt {L₁ L₂ : GaussianScaleLaw}
+    (h : L₁.mean < L₂.mean) : L₁ ≠ L₂ :=
+  ne_of_mean_ne (ne_of_lt h)
+
+theorem ne_of_scale_ne {L₁ L₂ : GaussianScaleLaw}
+    (h : L₁.scale ≠ L₂.scale) : L₁ ≠ L₂ := by
+  intro hEq
+  exact h (congrArg GaussianScaleLaw.scale hEq)
+
+theorem ne_of_scale_lt {L₁ L₂ : GaussianScaleLaw}
+    (h : L₁.scale < L₂.scale) : L₁ ≠ L₂ :=
+  ne_of_scale_ne (ne_of_lt h)
+
 theorem standardize_mono (L : GaussianScaleLaw) :
     Monotone L.standardize := by
   intro x y hxy
