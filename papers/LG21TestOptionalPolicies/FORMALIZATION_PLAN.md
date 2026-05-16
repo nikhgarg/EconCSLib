@@ -240,10 +240,12 @@ Last updated: 2026-05-16
   latent-to-observable mixture reduction, and the `_self_law` wrapper uses the
   reporter/no-reporter PMFs themselves to eliminate the redundant abstract-law
   equality bridge.  The base-indexed report-required affine endpoint now makes
-  the paper's taking payoff formula definitional; the remaining
-  report-required-specific source gap is the outside-payoff identity.  The
-  remaining optional-reporting source gap is discharging the final paper policy
-  assumptions for the concrete surface.
+  the paper's taking payoff formula definitional, and the concrete
+  report-required fairness endpoint routes it through the same binary-mixture
+  point-estimate surface and latent-to-observable mixture reduction.  The
+  remaining report-required-specific source gap is the outside-payoff identity.
+  The remaining optional-reporting source gap is discharging the final paper
+  policy assumptions for the concrete surface.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -385,9 +387,11 @@ Last updated: 2026-05-16
    fairness endpoint adds the latent-to-observable mixture reduction, and the
    `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  The
    base-indexed report-required affine endpoint now makes the taking payoff
-   formula definitional.  Next work should discharge the remaining optional
-   paper policy assumptions for the concrete surface, then prove the
-   report-required affine outside-payoff identity.
+   formula definitional, and the concrete report-required fairness endpoint
+   adds the corresponding binary-mixture surface and latent-to-observable
+   reduction.  Next work should discharge the remaining optional paper policy
+   assumptions for the concrete surface, then prove the report-required affine
+   outside-payoff identity.
 
 ## Reusable Library Seams
 

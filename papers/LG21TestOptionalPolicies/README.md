@@ -135,10 +135,12 @@ cache is kept as `source.txt` for named-statement audits.
   themselves as the finite law objects, removing the redundant abstract
   PMF-to-law equality bridge from this route.  The report-required endpoint
   `paper_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_base_affine_binary_mixture_point_estimate_source`
-  now makes the base-indexed affine taking payoff definitional too.  The
-  remaining source gap is discharging the final paper policy assumptions for
-  the optional surface and, for report-required policy, proving the analogous
-  affine outside-payoff identity.
+  now makes the base-indexed affine taking payoff definitional too, and
+  `paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law`
+  routes this through the same concrete binary-mixture point-estimate surface
+  and latent-to-observable mixture reduction.  The remaining source gap is
+  discharging the final paper policy assumptions for the optional surface and,
+  for report-required policy, proving the affine outside-payoff identity.
 
 ## Source Notes
 
