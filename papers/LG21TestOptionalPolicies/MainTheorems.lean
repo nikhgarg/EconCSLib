@@ -259,6 +259,55 @@ theorem paper_gaussian_posteriorMean_update_continuous
   exact continuous_const.add (continuous_const.mul continuous_id)
 
 /--
+Gaussian posterior-score support for Lemma 4.1: because the reported score
+enters the Bayesian posterior estimate with positive slope, for every cutoff
+and no-report estimate there is a sufficiently low reported score whose
+posterior estimate is below the no-report estimate.
+-/
+theorem paper_gaussian_posteriorMean_update_exists_low
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (cutoff noReportEstimate : ℝ) :
+    ∃ scoreLow : ℝ,
+      scoreLow < cutoff ∧
+        M.posteriorMean (Function.update theta k scoreLow) < noReportEstimate := by
+  let base0 : ℝ := M.posteriorMean (Function.update theta k 0)
+  let weight : ℝ := M.centeredFamily.signalWeight k
+  let scoreLow : ℝ := min cutoff ((noReportEstimate - base0) / weight) - 1
+  have hweight : 0 < weight := by
+    simpa [weight] using M.centeredFamily.signalWeight_pos k
+  have hmin_cutoff :
+      min cutoff ((noReportEstimate - base0) / weight) ≤ cutoff :=
+    min_le_left _ _
+  have hscore_lt_cutoff : scoreLow < cutoff := by
+    dsimp [scoreLow]
+    linarith
+  have hmin_level :
+      min cutoff ((noReportEstimate - base0) / weight) ≤
+        (noReportEstimate - base0) / weight :=
+    min_le_right _ _
+  have hscore_lt_level :
+      scoreLow < (noReportEstimate - base0) / weight := by
+    dsimp [scoreLow]
+    linarith
+  have hmul :
+      weight * scoreLow < noReportEstimate - base0 := by
+    have hmul' := mul_lt_mul_of_pos_left hscore_lt_level hweight
+    have hcancel :
+        weight * ((noReportEstimate - base0) / weight) =
+          noReportEstimate - base0 :=
+      mul_div_cancel₀ _ (ne_of_gt hweight)
+    linarith
+  refine ⟨scoreLow, hscore_lt_cutoff, ?_⟩
+  calc
+    M.posteriorMean (Function.update theta k scoreLow) =
+        base0 + weight * scoreLow := by
+      simpa [base0, weight] using
+        M.posteriorMean_update_eq_base_add_weight_mul theta k scoreLow
+    _ < noReportEstimate := by
+      linarith
+
+/--
 Lemma 4.1 Gaussian reporting core: a nontrivial observed-access reporting
 cutoff is unstable whenever the no-report posterior estimate is strictly
 between the reported-score estimate at a lower score and the estimate at the
@@ -363,8 +412,36 @@ theorem paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_
     hcutoffStrategy hnoDeviation
     ((paper_gaussian_posteriorMean_update_continuous M theta k).continuousOn)
     (fun _ hx _ hy hxy =>
-      (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)
+    (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)
     hscore_lt hlow hcutoff
+
+/--
+Lemma 4.1 Gaussian optional-reporting equilibrium core, source-shaped form:
+once the no-report estimate is strictly below the reported estimate at the
+reporting cutoff, positive-slope Gaussian posterior algebra supplies the
+low-score side of the source proof automatically.
+-/
+theorem paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {cutoff noReportEstimate : ℝ}
+    (hcutoffStrategy : ∀ score : ℝ, reports score ↔ cutoff ≤ score)
+    (hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff)) :
+    False := by
+  rcases paper_gaussian_posteriorMean_update_exists_low
+      M theta k cutoff noReportEstimate with
+    ⟨scoreLow, hscore_lt, hlow⟩
+  exact
+    paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding
+      M theta k hcutoffStrategy hnoDeviation hscore_lt hlow hcutoff
 
 /-- Gaussian law of a raw test score conditional on latent skill. -/
 def lg21GaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :

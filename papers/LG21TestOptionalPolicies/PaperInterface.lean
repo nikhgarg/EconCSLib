@@ -358,6 +358,29 @@ theorem paper_interface_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_p
   paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding
     M theta k hcutoffStrategy hnoDeviation hscore_lt hlow hcutoff
 
+/--
+Lemma 4.1 Gaussian optional-reporting equilibrium core, source-shaped form:
+the positive-slope Gaussian posterior estimate supplies the low-score side of
+the cutoff argument automatically.
+-/
+theorem paper_interface_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {cutoff noReportEstimate : ℝ}
+    (hcutoffStrategy : ∀ score : ℝ, reports score ↔ cutoff ≤ score)
+    (hnoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff)) :
+    False :=
+  paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
+    M theta k hcutoffStrategy hnoDeviation hcutoff
+
 /-- Lemma 4.1 test-taking support: Gaussian score law conditional on skill. -/
 abbrev paperGaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw :=

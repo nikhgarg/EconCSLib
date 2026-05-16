@@ -27,11 +27,14 @@ Last updated: 2026-05-16
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
   interval yields an indifference score and a strictly profitable withheld
-  score; this feeds a theorem that a nontrivial Gaussian reporting cutoff
-  contradicts no-profitable-withholding.  For report-required testing, if
-  `q̃ < q̄`, a Gaussian test score for some skill strictly between them clears
-  `q̃` with probability strictly above one half; this now feeds the analogous
-  theorem that a nontrivial taking cutoff contradicts no-profitable-test-taking.
+  score.  The Gaussian specialization now uses positive-slope posterior algebra
+  to supply the low-score side automatically, so a nontrivial Gaussian
+  reporting cutoff contradicts no-profitable-withholding as soon as the
+  no-report estimate lies below the reported estimate at the cutoff.  For
+  report-required testing, if `q̃ < q̄`, a Gaussian test score for some skill
+  strictly between them clears `q̃` with probability strictly above one half;
+  this now feeds the analogous theorem that a nontrivial taking cutoff
+  contradicts no-profitable-test-taking.
 - The continuous-law fairness surface is added for the Gaussian negative
   results, and the proof cores for Propositions 4.2--4.3 are proved from
   law-difference witnesses plus Gaussian mean/variance gaps.
@@ -62,10 +65,11 @@ Last updated: 2026-05-16
    only after the posterior score formula and threshold comparison facts are
    available.  The one-score reporting cutoff wrapper is now available; the
    optional-reporting scalar deviation core is now connected to an explicit
-   no-profitable-withholding contradiction, and the report-required scalar
-   deviation witness is now connected to an explicit no-profitable-test-taking
-   contradiction.  The remaining strategic bridge is to put both contradictions
-   behind the concrete equilibrium predicate and close the endpoint.
+   source-shaped no-profitable-withholding contradiction, and the
+   report-required scalar deviation witness is now connected to an explicit
+   no-profitable-test-taking contradiction.  The remaining strategic bridge is
+   to put both contradictions behind the concrete equilibrium predicate and
+   close the endpoint.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
