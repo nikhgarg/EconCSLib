@@ -491,6 +491,44 @@ theorem paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt
   exact div_lt_div_of_pos_right hadd M.centeredFamily.posteriorPrecision_pos
 
 /--
+Paper-local law type for LG21 statements that compare deterministic
+Bayesian estimates with genuinely Gaussian posterior-score laws.
+-/
+inductive LG21EstimateLaw where
+  | point : ℝ → LG21EstimateLaw
+  | gaussian : GaussianScaleLaw → LG21EstimateLaw
+
+namespace LG21EstimateLaw
+
+theorem point_ne_gaussian (estimate : ℝ) (law : GaussianScaleLaw) :
+    point estimate ≠ gaussian law := by
+  intro h
+  cases h
+
+theorem gaussian_ne_point (law : GaussianScaleLaw) (estimate : ℝ) :
+    gaussian law ≠ point estimate := by
+  intro h
+  cases h
+
+theorem gaussian_ne_of_ne {L₁ L₂ : GaussianScaleLaw} (hne : L₁ ≠ L₂) :
+    gaussian L₁ ≠ gaussian L₂ := by
+  intro h
+  cases h
+  exact hne rfl
+
+theorem gaussian_ne_of_mean_lt {Llow Lhigh : GaussianScaleLaw}
+    (hmean : Llow.mean < Lhigh.mean) :
+    gaussian Llow ≠ gaussian Lhigh :=
+  gaussian_ne_of_ne (GaussianScaleLaw.ne_of_mean_lt hmean)
+
+theorem gaussian_ne_of_scale_lt {Lsmall Llarge : GaussianScaleLaw}
+    (hscale : Lsmall.scale < Llarge.scale) :
+    gaussian Lsmall ≠ gaussian Llarge :=
+  gaussian_ne_of_ne (GaussianScaleLaw.ne_of_scale_lt hscale)
+
+end LG21EstimateLaw
+
+/--
 Finite conditional-kernel form of the paper's Section 4.2 re-sampling policy.
 
 The source proof of Theorem 4.4 only needs the distributional fact that, after
@@ -1173,6 +1211,46 @@ theorem paper_proposition4_2_not_law_latent_skill_fair_of_conditional_posterior_
     paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt M hskill
   exact (GaussianScaleLaw.ne_of_mean_lt hmean) hLaw.symm
 
+/--
+Proposition 4.2 source-shaped law instantiation: no-access groups share the
+same observed information, while access groups receive conditional Gaussian
+posterior-score laws with different means.
+-/
+theorem paper_proposition4_2_not_estimate_law_latent_skill_fair_of_conditional_posterior_mean_gap
+    {Skill Base Test Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (M : GaussianOffsetSignalFamily Feature)
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {skillHigh skillLow : ℝ}
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (M.conditionalPosteriorMeanScaleLaw skillHigh))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (M.conditionalPosteriorMeanScaleLaw skillLow))
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair S := by
+  apply paper_proposition4_2_not_law_latent_skill_fair_of_four_group_core
+    e qHigh qLow base hNoAccess
+  intro hsame
+  have hLaw :
+      LG21EstimateLaw.gaussian
+          (M.conditionalPosteriorMeanScaleLaw skillHigh) =
+        LG21EstimateLaw.gaussian
+          (M.conditionalPosteriorMeanScaleLaw skillLow) := by
+    rw [← hAccessHigh, ← hAccessLow]
+    exact hsame
+  have hmean :
+      (M.conditionalPosteriorMeanScaleLaw skillLow).mean <
+        (M.conditionalPosteriorMeanScaleLaw skillHigh).mean :=
+    paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt M hskill
+  exact (LG21EstimateLaw.gaussian_ne_of_mean_lt hmean) hLaw.symm
+
 /-- Certificate for Proposition 4.3. -/
 structure LG21NotObservableOrDemographicFairCertificate
     {Skill Base Test Estimate : Type*}
@@ -1305,6 +1383,30 @@ theorem paper_proposition4_3_not_law_demographic_fair_of_gaussian_scale_gap
     rw [← hAccess, ← hNoAccess]
     exact hsame
   exact (GaussianScaleLaw.ne_of_scale_lt hscale) hLaw.symm
+
+/--
+Proposition 4.3 source-shaped observable-law core: conditional on a base
+profile, Bayesian optimality gives a genuinely Gaussian access-side posterior
+law, while the no-access estimate is fixed by the base profile.  A point law
+and a Gaussian law cannot be equal, so observable fairness fails.
+-/
+theorem paper_proposition4_3_not_estimate_law_observable_fair_of_access_gaussian_no_access_point
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (e : S.Equilibrium) (base : Base)
+    (estimate : ℝ) (Laccess : GaussianScaleLaw)
+    (hAccess :
+      S.observableAccessLaw e base = LG21EstimateLaw.gaussian Laccess)
+    (hNoAccess :
+      S.observableNoAccessLaw e base = LG21EstimateLaw.point estimate) :
+    ¬ lg21SourceLawObservablyFair S := by
+  apply lg21_not_lawObservablyFair_of_witness e base
+  intro hsame
+  have hLaw :
+      LG21EstimateLaw.gaussian Laccess = LG21EstimateLaw.point estimate := by
+    rw [← hAccess, ← hNoAccess]
+    exact hsame
+  exact (LG21EstimateLaw.gaussian_ne_point Laccess estimate) hLaw
 
 /--
 Proposition 4.3 posterior-law instantiation: if the access policy observes a

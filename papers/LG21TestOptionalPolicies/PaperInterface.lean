@@ -377,6 +377,22 @@ theorem paper_interface_gaussian_scale_laws_differ_of_scale_lt
     Llow ≠ Lhigh :=
   paper_gaussian_scale_laws_differ_of_scale_lt hscale
 
+/-- Paper-local law object for deterministic or Gaussian estimated-skill laws. -/
+abbrev paperEstimateLaw : Type :=
+  LG21EstimateLaw
+
+/-- Point laws and Gaussian laws are distinct in the paper-local law object. -/
+theorem paper_interface_estimate_law_point_ne_gaussian
+    (estimate : ℝ) (law : GaussianScaleLaw) :
+    LG21EstimateLaw.point estimate ≠ LG21EstimateLaw.gaussian law :=
+  LG21EstimateLaw.point_ne_gaussian estimate law
+
+/-- Gaussian laws with strictly ordered means are distinct paper-local laws. -/
+theorem paper_interface_estimate_law_gaussian_ne_of_mean_lt
+    {Llow Lhigh : GaussianScaleLaw} (hmean : Llow.mean < Lhigh.mean) :
+    LG21EstimateLaw.gaussian Llow ≠ LG21EstimateLaw.gaussian Lhigh :=
+  LG21EstimateLaw.gaussian_ne_of_mean_lt hmean
+
 /--
 Propositions 4.2--4.3 precision support: a strict total-precision gap gives a
 strict gap in marginal Bayesian-estimate variance.
@@ -674,6 +690,33 @@ theorem paper_interface_proposition4_2_not_law_latent_skill_fair_of_conditional_
     M e qHigh qLow base hNoAccess hAccessHigh hAccessLow hskill
 
 /--
+Proposition 4.2 source-shaped law instantiation: no-access groups share the
+same observed information, while access groups receive conditional Gaussian
+posterior-score laws with different means.
+-/
+theorem paper_interface_proposition4_2_not_estimate_law_latent_skill_fair_of_conditional_posterior_mean_gap
+    {Skill Base Test Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (M : GaussianOffsetSignalFamily Feature)
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {skillHigh skillLow : ℝ}
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (M.conditionalPosteriorMeanScaleLaw skillHigh))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (M.conditionalPosteriorMeanScaleLaw skillLow))
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_estimate_law_latent_skill_fair_of_conditional_posterior_mean_gap
+    M e qHigh qLow base hNoAccess hAccessHigh hAccessLow hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 
@@ -782,6 +825,23 @@ theorem paper_interface_proposition4_3_not_law_demographic_fair_of_gaussian_scal
     ¬ lg21SourceLawDemographicallyFair S :=
   paper_proposition4_3_not_law_demographic_fair_of_gaussian_scale_gap
     e hAccess hNoAccess hscale
+
+/--
+Proposition 4.3 source-shaped observable-law core: an access-side Gaussian
+posterior-score law cannot equal a no-access point estimate law.
+-/
+theorem paper_interface_proposition4_3_not_estimate_law_observable_fair_of_access_gaussian_no_access_point
+    {Skill Base Test : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (e : S.Equilibrium) (base : Base)
+    (estimate : ℝ) (Laccess : GaussianScaleLaw)
+    (hAccess :
+      S.observableAccessLaw e base = LG21EstimateLaw.gaussian Laccess)
+    (hNoAccess :
+      S.observableNoAccessLaw e base = LG21EstimateLaw.point estimate) :
+    ¬ lg21SourceLawObservablyFair S :=
+  paper_proposition4_3_not_estimate_law_observable_fair_of_access_gaussian_no_access_point
+    e base estimate Laccess hAccess hNoAccess
 
 /--
 Proposition 4.3 posterior-law observable-fairness instantiation: a strict

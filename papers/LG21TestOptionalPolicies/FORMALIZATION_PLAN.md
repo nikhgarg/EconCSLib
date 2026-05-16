@@ -34,10 +34,14 @@ Last updated: 2026-05-15
   law-difference witnesses plus Gaussian mean/variance gaps.
 - Proposition 4.2 now has a concrete conditional Gaussian posterior-score
   instantiation: strictly ordered latent skills give strictly ordered
-  conditional posterior-score means.
+  conditional posterior-score means.  It also has a source-shaped
+  `LG21EstimateLaw` wrapper for the point/Gaussian law surface used by the
+  paper's distributional notation.
 - Proposition 4.3 now has concrete Gaussian posterior-score scale-gap
   instantiations over possibly different observed-feature sets, using the
   shared signal-precision-sum comparison from `GaussianOffsetSignalFamily`.
+  Its observable-fairness failure also has the source-shaped point-vs-Gaussian
+  conditional law wrapper.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
