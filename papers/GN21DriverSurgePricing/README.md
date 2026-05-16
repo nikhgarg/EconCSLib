@@ -817,16 +817,23 @@ feasibility/measurability through
 `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms`
 now converts per-state policy-level Lemma 5 dominance data into the measurable
 all-optimal allowed-policy-form certificate used by the endpoint-selection
-wrappers.  The regular endpoint package
+wrappers.  When a route needs the concrete allowed replacement cases,
+`Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance`,
+`Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance`, and
+`Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_replacement_data`
+recover them noncomputably from the policy-form proofs.  The regular endpoint package
 `Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
 and theorem
 `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance`
 feed that classification directly into the current-bounds regular Theorem 4
-route.  The top-level Theorem 3 wrappers
+route, and `.to_regular_selection` feeds older concrete-replacement
+endpoint-selection routes.  The top-level Theorem 3 wrappers
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_policy_canonical_dominance_source_assumptions`
 and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_policy_canonical_dominance_source_assumptions`
-now expose the same route at the structured-price source boundary.
+now expose the same route at the structured-price source boundary; use
+`Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions.to_regular_source_assumptions`
+to feed the older regular selection boundary.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

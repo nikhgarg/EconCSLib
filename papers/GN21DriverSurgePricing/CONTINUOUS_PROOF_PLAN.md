@@ -512,18 +512,27 @@ into the concrete endpoint policy data.
   turns those per-state certificates into the all-optimal measurable
   allowed-policy-form certificate, so future work should target policy-level
   dominance data rather than older opaque replacement packages.
+  When a downstream route needs concrete canonical replacement cases instead
+  of only policy-form classification, use
+  `Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance`,
+  `Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance`, and
+  `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_replacement_data`.
+  These wrappers are noncomputable because they choose threshold parameters
+  from Prop-valued Lemma 5 policy-form proofs.
   The regular endpoint layer now has
   `Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
   and
   `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance`,
   so the source closeout can combine policy-level Lemma 5 canonical dominance
   with regular endpoint data without first hand-building an allowed-policy-form
-  certificate.
+  certificate.  The same package also has `.to_regular_selection` for older
+  endpoint-selection routes that require explicit allowed replacement data.
   At the Theorem 3 boundary, use
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions`
   and the paired `paper_theorem3_measured_structured_measurable_ic...` wrappers
   when the source proof supplies policy-level Lemma 5 dominance plus the regular
-  endpoint families.
+  endpoint families; use `.to_regular_source_assumptions` to feed the older
+  regular selection boundary.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and

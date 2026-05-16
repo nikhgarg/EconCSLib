@@ -23696,6 +23696,128 @@ inductive Theorem4SurgeAllowedReplacementData
         ¬ lemma5PolicyForm .strictlyQuasiConvex σ0 →
           Rhat σ0 < Rhat (rejectMiddleTripsPolicy lo hi))
 
+/--
+Policy-level canonical-dominance Lemma 5 data produce the concrete non-surge
+allowed replacement cases used by the older Theorem 4 middle-reroute routes.
+-/
+noncomputable def Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4NonsurgeAllowedLemma5Shape shape)
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape) :
+    Theorem4NonsurgeAllowedReplacementData Rhat σ0 := by
+  classical
+  let C := D.to_optimizer_replacement
+  have hsubset : C.policy ⊆ acceptAllPolicy := by
+    simpa [C] using D.to_optimizer_replacement_subset
+  cases shape with
+  | positive =>
+      have hpolicy_eq : C.policy = acceptAllPolicy :=
+        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+          hsubset C.policy_form
+      exact
+        .positive
+          (by simpa [C, hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [C, hpolicy_eq] using
+              C.strict_unless_initial_form hnot)
+  | strictlyIncreasing =>
+      exact False.elim hallowed
+  | strictlyDecreasing =>
+      let t := Classical.choose C.policy_form
+      have ht : rejectsLongTrips t C.policy :=
+        Classical.choose_spec C.policy_form
+      have hpolicy_eq : C.policy = rejectLongTripsPolicy t :=
+        eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+          ht hsubset
+      exact
+        .rejectLong t
+          (by simpa [C, hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [C, hpolicy_eq] using
+              C.strict_unless_initial_form hnot)
+  | strictlyQuasiConvex =>
+      exact False.elim hallowed
+  | strictlyQuasiConcave =>
+      let lo := Classical.choose C.policy_form
+      let hi := Classical.choose (Classical.choose_spec C.policy_form)
+      have hmiddle : acceptsMiddleTrips lo hi C.policy :=
+        Classical.choose_spec (Classical.choose_spec C.policy_form)
+      have hpolicy_eq : C.policy = acceptMiddleTripsPolicy lo hi :=
+        eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+          hmiddle hsubset
+      exact
+        .acceptMiddle lo hi
+          (by simpa [C, hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [C, hpolicy_eq] using
+              C.strict_unless_initial_form hnot)
+
+/--
+Policy-level canonical-dominance Lemma 5 data produce the concrete surge
+allowed replacement cases used by the older Theorem 4 middle-reroute routes.
+-/
+noncomputable def Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4SurgeAllowedLemma5Shape shape)
+    (D : Lemma5PolicyCanonicalDominanceMaximizerData μ Rhat σ0 shape) :
+    Theorem4SurgeAllowedReplacementData Rhat σ0 := by
+  classical
+  let C := D.to_optimizer_replacement
+  have hsubset : C.policy ⊆ acceptAllPolicy := by
+    simpa [C] using D.to_optimizer_replacement_subset
+  cases shape with
+  | positive =>
+      have hpolicy_eq : C.policy = acceptAllPolicy :=
+        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+          hsubset C.policy_form
+      exact
+        .positive
+          (by simpa [C, hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [C, hpolicy_eq] using
+              C.strict_unless_initial_form hnot)
+  | strictlyIncreasing =>
+      let t := Classical.choose C.policy_form
+      have ht : rejectsShortTrips t C.policy :=
+        Classical.choose_spec C.policy_form
+      have hpolicy_eq : C.policy = rejectShortTripsPolicy t :=
+        eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+          ht hsubset
+      exact
+        .rejectShort t
+          (by simpa [C, hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [C, hpolicy_eq] using
+              C.strict_unless_initial_form hnot)
+  | strictlyDecreasing =>
+      exact False.elim hallowed
+  | strictlyQuasiConvex =>
+      let lo := Classical.choose C.policy_form
+      let hi := Classical.choose (Classical.choose_spec C.policy_form)
+      have hmiddle : rejectsMiddleTrips lo hi C.policy :=
+        Classical.choose_spec (Classical.choose_spec C.policy_form)
+      have hpolicy_eq : C.policy = rejectMiddleTripsPolicy lo hi :=
+        eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+          hmiddle hsubset
+      exact
+        .rejectMiddle lo hi
+          (by simpa [C, hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [C, hpolicy_eq] using
+              C.strict_unless_initial_form hnot)
+  | strictlyQuasiConcave =>
+      exact False.elim hallowed
+
 /-- Convert source-facing non-surge replacement data into Theorem 4's dependent shape data. -/
 def Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement
     {Rhat : SingleStateReward} {σ0 : TripPolicy} :
@@ -24553,6 +24675,34 @@ def Theorem4AllMeasurableOptimalAllowedReplacementData.to_shape_replacements
     Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate R :=
   Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate.of_allowed_replacement_data
     R D.exists_optimal D.nonsurge D.surge
+
+/--
+Policy-level canonical-dominance Lemma 5 data also provide the older
+all-optimal allowed-replacement boundary.  This is useful for routes that need
+the concrete replacement shapes, such as the endpoint-selection and
+middle-reroute Theorem 4 layers.
+-/
+noncomputable def Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_replacement_data
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurablePolicyCanonicalDominanceData μ R) :
+    Theorem4AllMeasurableOptimalAllowedReplacementData R where
+  exists_optimal := D.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    let nshape := Classical.choose (D.nonsurge ρ hρ)
+    have ndata := Classical.choose_spec (D.nonsurge ρ hρ)
+    exact
+      Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance
+        nshape.2 ndata
+  surge := by
+    intro ρ hρ
+    let sshape := Classical.choose (D.surge ρ hρ)
+    have sdata := Classical.choose_spec (D.surge ρ hρ)
+    exact
+      Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance
+        sshape.2 sdata
 
 /--
 Convert all-measurable-optimal Lemma 5 replacement data into the measurable
@@ -47420,6 +47570,43 @@ noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalD
   surge_reject_short_endpoint := C.surge_reject_short_endpoint
   surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
 
+/--
+Convert regular policy-level canonical-dominance endpoint data to the older
+regular endpoint-selection package that expects concrete allowed replacement
+cases.
+-/
+noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate.to_regular_selection
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ} {switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsRegularSelectionCertificate
+      μ arrival m z switch12 switch21 where
+  exists_optimal := C.policy_canonical_dominance.exists_optimal
+  nonsurge_replacement_data := by
+    intro ρ hρ
+    let nshape := Classical.choose (C.policy_canonical_dominance.nonsurge ρ hρ)
+    have ndata :=
+      Classical.choose_spec (C.policy_canonical_dominance.nonsurge ρ hρ)
+    exact
+      Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance
+        nshape.2 ndata
+  surge_replacement_data := by
+    intro ρ hρ
+    let sshape := Classical.choose (C.policy_canonical_dominance.surge ρ hρ)
+    have sdata :=
+      Classical.choose_spec (C.policy_canonical_dominance.surge ρ hρ)
+    exact
+      Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance
+        sshape.2 sdata
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
+
 /-- Convert all-optimal allowed policy forms plus regular endpoints to the regular-shape route. -/
 noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
     (μ : Fin 2 → Measure TripLength)
@@ -65574,6 +65761,43 @@ noncomputable def Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyC
     exact
       (A.endpoint_current_bounds_regular_policy_canonical_dominance_selection
         m z hnonneg hparams).to_allowed_policy_forms
+
+/--
+Convert policy-canonical-dominance source assumptions to the older regular
+endpoint-selection boundary, recovering the concrete allowed replacement cases
+internally.
+-/
+noncomputable def Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions.to_regular_source_assumptions
+    {μ : Fin 2 → Measure TripLength} {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_current_bounds_regular_selection := by
+    intro m z hnonneg hparams
+    exact
+      (A.endpoint_current_bounds_regular_policy_canonical_dominance_selection
+        m z hnonneg hparams).to_regular_selection
 
 /--
 Paper-facing Theorem 3 wrapper from policy-level canonical-dominance Lemma 5
