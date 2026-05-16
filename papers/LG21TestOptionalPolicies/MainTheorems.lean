@@ -4121,6 +4121,37 @@ noncomputable def lg21BinaryMixturePMF
     (fun reports => if reports then reporterPMF else noReporterPMF)
 
 /--
+Finite event share as an `NNReal`, for supplying the paper's positive reporter
+or taker share in binary-mixture routes.
+-/
+noncomputable def lg21PMFEventShare
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] : NNReal :=
+  ⟨pmfProb μ p, pmfProb_nonneg μ p⟩
+
+@[simp] theorem lg21PMFEventShare_toReal
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    (lg21PMFEventShare μ p).toReal = pmfProb μ p :=
+  rfl
+
+/-- A finite PMF event share is at most one. -/
+theorem lg21PMFEventShare_le_one
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    lg21PMFEventShare μ p ≤ 1 := by
+  change pmfProb μ p ≤ (1 : ℝ)
+  exact pmfProb_le_one μ p
+
+/-- A finite PMF event share is positive when the event contains a positive-mass atom. -/
+theorem lg21PMFEventShare_pos_of_mass
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : p a₀) (hmass : 0 < (μ a₀).toReal) :
+    0 < (lg21PMFEventShare μ p).toReal := by
+  simpa using pmfProb_pos_of_mass μ p a₀ hp hmass
+
+/--
 Pointwise real-mass formula for `lg21BinaryMixturePMF`.
 -/
 theorem lg21BinaryMixturePMF_apply_toReal

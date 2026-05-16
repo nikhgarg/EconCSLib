@@ -167,7 +167,11 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_centered_outside`
   reduce the support obligation to the two displayed tests rather than all
-  tests in the feature space.
+  tests in the feature space.  The event-share helpers
+  `lg21PMFEventShare`, `lg21PMFEventShare_le_one`, and
+  `lg21PMFEventShare_pos_of_mass` package finite reporter/taker event
+  probabilities as `NNReal` shares, discharging the `positiveShare ≤ 1` and
+  `0 < positiveShare` bookkeeping from ordinary positive-mass event witnesses.
 
 ## Source Notes
 

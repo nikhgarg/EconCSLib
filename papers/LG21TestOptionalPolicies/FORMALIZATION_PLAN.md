@@ -258,10 +258,15 @@ Last updated: 2026-05-16
   localized supported-test variants now use the no-distinct-positive-mass
   actor route directly, reducing the actor-support obligation to the two
   displayed tests rather than requiring every test in the feature space to map
-  to a positive-mass actor.  The remaining source gap is discharging the final
-  paper policy assumptions for the concrete optional/report-required surfaces,
-  especially the latent-to-observable mixture identities, positive-share facts,
-  the two displayed support facts, and centered outside-payoff identity.
+  to a positive-mass actor.  The event-share helpers `lg21PMFEventShare`,
+  `lg21PMFEventShare_le_one`, and `lg21PMFEventShare_pos_of_mass` now turn
+  finite reporter/taker event probabilities into the `NNReal` shares used by
+  the binary-mixture surface, so the share upper bound and strict positivity
+  reduce to ordinary finite event-mass facts.  The remaining source gap is
+  discharging the final paper policy assumptions for the concrete
+  optional/report-required surfaces, especially the latent-to-observable
+  mixture identities, the two displayed support facts, and centered
+  outside-payoff identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -417,10 +422,12 @@ Last updated: 2026-05-16
    report-required wrappers now state that condition directly.  The localized
    supported-test wrappers additionally avoid the global all-tests support
    premise by requiring positive actor mass only for the two displayed tests.
-   Next work should discharge the remaining paper policy assumptions for the
-   concrete optional/report-required surfaces, especially the
-   latent-to-observable mixture identities, positive-share facts, the two
-   displayed support facts, and centered outside-payoff identity.
+   Finite event-share helpers now package reporter/taker shares as `NNReal`
+   values and prove the `≤ 1` and strict-positivity obligations from
+   `pmfProb` facts.  Next work should discharge the remaining paper policy
+   assumptions for the concrete optional/report-required surfaces, especially
+   the latent-to-observable mixture identities, the two displayed support
+   facts, and centered outside-payoff identity.
 
 ## Reusable Library Seams
 

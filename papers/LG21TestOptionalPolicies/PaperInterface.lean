@@ -2723,6 +2723,36 @@ theorem paper_interface_theorem3_2_binary_mixture_pmf_apply_toReal
         (1 - p.toReal) * (noReporterPMF estimate).toReal :=
   lg21BinaryMixturePMF_apply_toReal p hp reporterPMF noReporterPMF estimate
 
+/-- Theorem 3.2 helper: finite event share as an `NNReal`. -/
+noncomputable def paper_interface_theorem3_2_pmf_event_share
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] : NNReal :=
+  lg21PMFEventShare μ p
+
+@[simp] theorem paper_interface_theorem3_2_pmf_event_share_toReal
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    (paper_interface_theorem3_2_pmf_event_share μ p).toReal = pmfProb μ p :=
+  rfl
+
+/-- Theorem 3.2 helper: finite event shares are at most one. -/
+theorem paper_interface_theorem3_2_pmf_event_share_le_one
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    paper_interface_theorem3_2_pmf_event_share μ p ≤ 1 :=
+  lg21PMFEventShare_le_one μ p
+
+/--
+Theorem 3.2 helper: a positive-mass atom in the event gives a positive finite
+event share.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_pos_of_mass
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : p a₀) (hmass : 0 < (μ a₀).toReal) :
+    0 < (paper_interface_theorem3_2_pmf_event_share μ p).toReal :=
+  lg21PMFEventShare_pos_of_mass μ p a₀ hp hmass
+
 /--
 Theorem 3.2 source proof line: observable fairness plus the paper's
 positive-share resampling identity forces the reporter/taker law `D1` to equal
