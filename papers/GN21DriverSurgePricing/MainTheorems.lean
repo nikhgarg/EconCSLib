@@ -19991,6 +19991,68 @@ def gn21MeasuredAggregateRewardPrimitives
     (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
 
 /--
+If the left-state policy is a coincident-cutoff middle-rejection policy, then
+under a nonatomic left trip-length measure the aggregate primitives agree with
+accept-all in that state.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_rejectsMiddle_self_eq_acceptAll_left_of_noAtoms
+    (μI μJ : Measure TripLength) [NoAtoms μI]
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) (t : ℝ)
+    (hshape : rejectsMiddleTrips t t σI)
+    (hsub : σI ⊆ acceptAllPolicy)
+    (hq_integrable_acceptAll :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        acceptAllPolicy μI)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μI)
+    (hw_integrable_acceptAll : IntegrableOn wI acceptAllPolicy μI) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ =
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ acceptAllPolicy σJ := by
+  unfold gn21MeasuredAggregateRewardPrimitives
+  rw [gn21ExitWeightIntegral_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+      μI arrivalI switchIJ switchJI σI t hshape hsub
+      hq_integrable_acceptAll,
+    gn21ScaledStateTime_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+      μI arrivalI σI t hshape hsub htime_integrable_acceptAll,
+    gn21ScaledStateEarning_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+      μI arrivalI wI σI t hshape hsub hw_integrable_acceptAll]
+
+/--
+If the right-state policy is a coincident-cutoff middle-rejection policy, then
+under a nonatomic right trip-length measure the aggregate primitives agree with
+accept-all in that state.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_rejectsMiddle_self_eq_acceptAll_right_of_noAtoms
+    (μI μJ : Measure TripLength) [NoAtoms μJ]
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) (t : ℝ)
+    (hshape : rejectsMiddleTrips t t σJ)
+    (hsub : σJ ⊆ acceptAllPolicy)
+    (hq_integrable_acceptAll :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ)
+        acceptAllPolicy μJ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μJ)
+    (hw_integrable_acceptAll : IntegrableOn wJ acceptAllPolicy μJ) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ =
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI acceptAllPolicy := by
+  unfold gn21MeasuredAggregateRewardPrimitives
+  rw [gn21ExitWeightIntegral_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+      μJ arrivalJ switchJI switchIJ σJ t hshape hsub
+      hq_integrable_acceptAll,
+    gn21ScaledStateTime_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+      μJ arrivalJ σJ t hshape hsub htime_integrable_acceptAll,
+    gn21ScaledStateEarning_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+      μJ arrivalJ wJ σJ t hshape hsub hw_integrable_acceptAll]
+
+/--
 Measured aggregate weak improvement from adding a disjoint left-state accepted
 set whose primitive increments have nonnegative integrated Lemma 6 kernel.
 -/

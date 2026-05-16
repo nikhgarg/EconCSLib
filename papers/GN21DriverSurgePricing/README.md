@@ -549,7 +549,8 @@ cache is `source.txt`.
   showing that a reject-middle policy with coincident cutoffs (`lo = hi`)
   differs from accept-all only by one trip length and leaves the single-state
   reward and GN21 `Q,T,W` primitives unchanged after removing that
-  measure-zero component.
+  measure-zero component; left- and right-state aggregate-reward wrappers expose
+  this directly for Theorem 4/Theorem 3 weak branches.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.
