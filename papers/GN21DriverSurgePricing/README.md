@@ -847,10 +847,16 @@ endpoint-path lemmas turn those sign intervals into strict reward improvement.
 At the Lemma 5 policy level, upper/lower merge and lower/upper collapse moves
 now have stopped variants that either reach the collision/deletion boundary or
 stop at the sign-change boundary, with strict reward improvement in both
-branches.  The remaining open part is the finite hybrid iteration: thread these
-stopped moves through the quasi-convex/quasi-concave subcase selector and prove
-that repeated sign-change stops cannot cycle without eventually lowering
-component count or reaching a canonical Lemma 5 shape.
+branches.  Lean also has the well-founded replacement constructor
+`lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
+and the generalized-policy source data
+`Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`, so the
+remaining iteration no longer has to force every stopped move to lower raw
+component count immediately.  The remaining open part is to define the
+paper-specific well-founded progress relation, thread stopped moves through the
+quasi-convex/quasi-concave selector, and prove that repeated sign-change stops
+cannot cycle without eventually lowering component count or reaching a
+canonical Lemma 5 shape.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its

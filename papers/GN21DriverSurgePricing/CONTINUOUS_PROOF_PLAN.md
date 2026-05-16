@@ -266,11 +266,16 @@ boundaries with prefix/suffix sign persistence, and the corresponding
 endpoint-path wrappers turn those stopped sign intervals into strict reward
 improvement.  At the policy level, the upper/lower merge and lower/upper
 collapse stopped variants now either reach collision/deletion or stop at the
-sign-change boundary, improving reward in both branches.  What remains is the
-finite hybrid iteration: after a stopped sign-change move, thread the updated
-endpoint back through the quasi-convex or quasi-concave selector and prove
-repeated sign-change stops cannot cycle without eventually lowering component
-count or landing on a canonical Lemma 5 shape.
+sign-change boundary, improving reward in both branches.  The replacement
+certificate route now also accepts a well-founded progress relation via
+`lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
+and
+`Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`.  What
+remains is the finite hybrid iteration: after a stopped sign-change move,
+thread the updated endpoint back through the quasi-convex or quasi-concave
+selector, define the well-founded progress relation, and prove repeated
+sign-change stops cannot cycle without eventually lowering component count or
+landing on a canonical Lemma 5 shape.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

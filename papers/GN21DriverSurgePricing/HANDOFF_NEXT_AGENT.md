@@ -267,11 +267,16 @@ last-zero lemmas
 after the sign-change boundary.  The endpoint-path wrappers and the stopped
 upper/lower merge plus lower/upper collapse policy lemmas now give strict
 reward improvement whether the move reaches collision/deletion or stops at the
-sign-change boundary.  The remaining hard step is the finite hybrid iteration:
-after a stopped sign-change move, update the interval endpoint, re-enter the
-quasi-convex/quasi-concave selector, and prove the repeated stops cannot cycle
-without eventually reducing component count or reaching a canonical Lemma 5
-shape.
+sign-change boundary.  The replacement route now has a well-founded progress
+interface:
+`lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
+and
+`Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`.  The
+remaining hard step is the finite hybrid iteration: after a stopped sign-change
+move, update the interval endpoint, re-enter the quasi-convex/quasi-concave
+selector, define a well-founded progress relation, and prove the repeated
+stops cannot cycle without eventually reducing component count or reaching a
+canonical Lemma 5 shape.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact

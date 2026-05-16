@@ -141,6 +141,10 @@ the continuous CTMC source theorems.
   `lemma5_singleBounded_lower_collapse_step_of_endpoint_path`: a compiled
   generalized-policy complexity-lowering collapse step for the one-interval
   case.
+- `lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer`
+  and `Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData`: Lemma
+  5 replacement constructors for stopped endpoint loops whose progress relation
+  is well-founded but not raw component-count descent at every step.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
@@ -24840,6 +24844,48 @@ structure Lemma5OptimizerReplacementCertificate
   strict_unless_initial_form : ¬ lemma5PolicyForm shape σ0 → Rhat σ0 < Rhat policy
 
 /--
+Well-founded descent principle used when the source endpoint argument has
+finite intermediate sign-change moves before raw component complexity falls.
+The relation `rel y x` is the proof-specific progress order.
+-/
+theorem exists_canonical_ge_of_wellFounded_descent
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (rel : α → α → Prop) (hrel : WellFounded rel)
+    (step :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x ≤ R y ∧ rel y x)
+    (x : α) :
+    ∃ y : α, canonical y ∧ R x ≤ R y := by
+  induction x using hrel.induction with
+  | h x ih =>
+      by_cases hcanonical : canonical x
+      · exact ⟨x, hcanonical, le_rfl⟩
+      · rcases step x hcanonical with ⟨y, hreward, hyrel⟩
+        rcases ih y hyrel with ⟨z, hz_canonical, hz_reward⟩
+        exact ⟨z, hz_canonical, hreward.trans hz_reward⟩
+
+/--
+Strict well-founded descent variant.  A strict first progress move plus weak
+well-founded descent afterwards strictly dominates any noncanonical start.
+-/
+theorem exists_canonical_gt_of_wellFounded_descent
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (rel : α → α → Prop) (hrel : WellFounded rel)
+    (step :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x ≤ R y ∧ rel y x)
+    (strictStep :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x < R y ∧ rel y x)
+    {x : α} (hnot : ¬ canonical x) :
+    ∃ y : α, canonical y ∧ R x < R y := by
+  rcases strictStep x hnot with ⟨y, hreward, hyrel⟩
+  rcases exists_canonical_ge_of_wellFounded_descent
+      R canonical rel hrel step y with
+    ⟨z, hz_canonical, hz_reward⟩
+  exact ⟨z, hz_canonical, hreward.trans_le hz_reward⟩
+
+/--
 Generic finite descent principle used by Lemma 5.  If every noncanonical
 object admits a weakly reward-improving move that strictly lowers a natural
 complexity measure, then every starting object is weakly dominated by a
@@ -24905,6 +24951,27 @@ theorem exists_canonical_arbitrarily_close_of_seed_finite_descent
   rcases seedClose ε hε with ⟨seed, hseed⟩
   rcases exists_canonical_ge_of_finite_descent
       R canonical complexity step seed with
+    ⟨y, hy_canonical, hy_reward⟩
+  exact ⟨y, hy_canonical, hseed.trans_le hy_reward⟩
+
+/--
+Well-founded version of the finite-seed handoff: approximate the original open
+policy by a seed, then run any well-founded reward-nondecreasing progress
+relation to a canonical seed.
+-/
+theorem exists_canonical_arbitrarily_close_of_seed_wellFounded_descent
+    {α : Type*} (R : α → ℝ) (canonical : α → Prop)
+    (rel : α → α → Prop) (hrel : WellFounded rel) (target : ℝ)
+    (seedClose :
+      ∀ ε : ℝ, 0 < ε → ∃ seed : α, target - ε < R seed)
+    (step :
+      ∀ x : α, ¬ canonical x →
+        ∃ y : α, R x ≤ R y ∧ rel y x) :
+    ∀ ε : ℝ, 0 < ε → ∃ y : α, canonical y ∧ target - ε < R y := by
+  intro ε hε
+  rcases seedClose ε hε with ⟨seed, hseed⟩
+  rcases exists_canonical_ge_of_wellFounded_descent
+      R canonical rel hrel step seed with
     ⟨y, hy_canonical, hy_reward⟩
   exact ⟨y, hy_canonical, hseed.trans_le hy_reward⟩
 
@@ -25034,6 +25101,45 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_seed_finite_descent
             (seedCert.strict_unless_initial_form hseed_noncanonical) }
 
 /--
+Lemma 5 replacement constructor for well-founded endpoint progress.  Use this
+when the source proof has stopped sign-change moves that do not immediately
+lower raw interval count, but do decrease a proof-specific well-founded
+progress relation.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_wellFounded_descent
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (shape : Lemma5DerivativeShape)
+    (rel : TripPolicy → TripPolicy → Prop) (hrel : WellFounded rel)
+    (step :
+      ∀ σ : TripPolicy, ¬ lemma5PolicyForm shape σ →
+        ∃ σ' : TripPolicy, Rhat σ ≤ Rhat σ' ∧ rel σ' σ)
+    (strictStep :
+      ∀ σ : TripPolicy, ¬ lemma5PolicyForm shape σ →
+        ∃ σ' : TripPolicy, Rhat σ < Rhat σ' ∧ rel σ' σ) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  classical
+  by_cases hform : lemma5PolicyForm shape σ0
+  · exact
+      { policy := σ0
+        policy_form := hform
+        reward_ge := le_rfl
+        strict_unless_initial_form := by
+          intro hnot
+          exact False.elim (hnot hform) }
+  · let hcanonical :
+        ∃ σstar : TripPolicy,
+          lemma5PolicyForm shape σstar ∧ Rhat σ0 < Rhat σstar :=
+        exists_canonical_gt_of_wellFounded_descent
+          Rhat (lemma5PolicyForm shape) rel hrel step strictStep hform
+    exact
+      { policy := Classical.choose hcanonical
+        policy_form := (Classical.choose_spec hcanonical).1
+        reward_ge := le_of_lt (Classical.choose_spec hcanonical).2
+        strict_unless_initial_form := by
+          intro hnot
+          exact (Classical.choose_spec hcanonical).2 }
+
+/--
 Lemma 5 replacement constructor for an arbitrary finite-domain model.  The
 domain `α` can be a subtype of finite interval policies with its own complexity
 measure.  The hypotheses mirror the paper proof:
@@ -25093,6 +25199,79 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_domain_finite_descent
           rcases step seed (by simpa [canonicalDom] using hnot) with
             ⟨seed', hreward, hcomplexity⟩
           exact ⟨seed', by simpa [Rdom] using hreward, hcomplexity⟩)
+  have hreward_ge : Rhat σ0 ≤ Rdom maximizer :=
+    target_le_canonical_maximizer_of_arbitrarily_close
+      Rdom canonicalDom (Rhat σ0) hclose_canonical hmax
+  exact
+    { policy := policyOf maximizer
+      policy_form := by
+        simpa [canonicalDom, maximizer] using hmax.1
+      reward_ge := by
+        simpa [Rdom] using hreward_ge
+      strict_unless_initial_form := by
+        intro hnot
+        rcases strictWitness hnot with ⟨seed, hseed_canonical, hseed_strict⟩
+        have hseed_le : Rdom seed ≤ Rdom maximizer :=
+          hmax.2 seed (by simpa [canonicalDom] using hseed_canonical)
+        have hstrict : Rhat σ0 < Rdom maximizer := by
+          exact hseed_strict.trans_le (by simpa [Rdom] using hseed_le)
+        simpa [Rdom] using hstrict }
+
+/--
+Well-founded-domain version of the Lemma 5 descent/maximizer constructor.
+This is the intended endpoint for the stopped sign-change proof: the domain
+can be generalized interval/ray seeds, and `rel` can encode a hybrid progress
+order that decreases through sign-change moves before component count falls.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer
+    {α : Type*}
+    (Rhat : SingleStateReward) (σ0 : TripPolicy)
+    (shape : Lemma5DerivativeShape)
+    (policyOf : α → TripPolicy)
+    (rel : α → α → Prop) (hrel : WellFounded rel)
+    (seedClose :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ seed : α, Rhat σ0 - ε < Rhat (policyOf seed))
+    (canonicalMax :
+      ∃ maximizer : α,
+        lemma5PolicyForm shape (policyOf maximizer) ∧
+          ∀ seed : α,
+            lemma5PolicyForm shape (policyOf seed) →
+              Rhat (policyOf seed) ≤ Rhat (policyOf maximizer))
+    (step :
+      ∀ seed : α, ¬ lemma5PolicyForm shape (policyOf seed) →
+        ∃ seed' : α, Rhat (policyOf seed) ≤ Rhat (policyOf seed') ∧
+          rel seed' seed)
+    (strictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ seed : α, lemma5PolicyForm shape (policyOf seed) ∧
+          Rhat σ0 < Rhat (policyOf seed)) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape := by
+  classical
+  let Rdom : α → ℝ := fun seed => Rhat (policyOf seed)
+  let canonicalDom : α → Prop :=
+    fun seed => lemma5PolicyForm shape (policyOf seed)
+  let maximizer := Classical.choose canonicalMax
+  have hmax :
+      canonicalDom maximizer ∧
+        ∀ seed : α, canonicalDom seed → Rdom seed ≤ Rdom maximizer := by
+    simpa [Rdom, canonicalDom, maximizer] using
+      Classical.choose_spec canonicalMax
+  have hclose_canonical :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ seed : α, canonicalDom seed ∧ Rhat σ0 - ε < Rdom seed := by
+    exact
+      exists_canonical_arbitrarily_close_of_seed_wellFounded_descent
+        Rdom canonicalDom rel hrel (Rhat σ0)
+        (by
+          intro ε hε
+          rcases seedClose ε hε with ⟨seed, hseed⟩
+          exact ⟨seed, by simpa [Rdom] using hseed⟩)
+        (by
+          intro seed hnot
+          rcases step seed (by simpa [canonicalDom] using hnot) with
+            ⟨seed', hreward, hprogress⟩
+          exact ⟨seed', by simpa [Rdom] using hreward, hprogress⟩)
   have hreward_ge : Rhat σ0 ≤ Rdom maximizer :=
     target_le_canonical_maximizer_of_arbitrarily_close
       Rdom canonicalDom (Rhat σ0) hclose_canonical hmax
@@ -25462,6 +25641,52 @@ noncomputable def Lemma5GeneralizedIntervalPolicyDescentMaximizerData.to_optimiz
     Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
   lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer
     μ Rhat shape D.hσ0_open D.hcont D.canonicalMax D.step D.strictWitness
+
+/--
+Well-founded generalized interval/ray Lemma 5 source data.  This is the
+stopped-move target for quasi-convex/quasi-concave cases: `rel` can count
+hybrid progress through sign-change boundaries before raw component complexity
+falls.
+-/
+structure Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData
+    (μ : Measure TripLength) (Rhat : SingleStateReward)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape) where
+  hσ0_open : IsOpen σ0
+  hcont : GN21SymmDiffContinuousAt μ Rhat σ0
+  rel : GN21GeneralizedIntervalPolicy → GN21GeneralizedIntervalPolicy → Prop
+  rel_wf : WellFounded rel
+  canonicalMax :
+    ∃ maximizer : GN21GeneralizedIntervalPolicy,
+      lemma5PolicyForm shape maximizer.policy ∧
+        ∀ seed : GN21GeneralizedIntervalPolicy,
+          lemma5PolicyForm shape seed.policy →
+            Rhat seed.policy ≤ Rhat maximizer.policy
+  step :
+    ∀ seed : GN21GeneralizedIntervalPolicy,
+      ¬ lemma5PolicyForm shape seed.policy →
+        ∃ seed' : GN21GeneralizedIntervalPolicy,
+          Rhat seed.policy ≤ Rhat seed'.policy ∧ rel seed' seed
+  strictWitness :
+    ¬ lemma5PolicyForm shape σ0 →
+      ∃ seed : GN21GeneralizedIntervalPolicy,
+        lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy
+
+/-- Well-founded generalized interval/ray Lemma 5 data produce the replacement certificate. -/
+noncomputable def Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData.to_optimizer_replacement
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5GeneralizedIntervalPolicyWellFoundedDescentMaximizerData
+        μ Rhat σ0 shape) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_domain_wellFounded_descent_and_maximizer
+    Rhat σ0 shape
+    (fun seed : GN21GeneralizedIntervalPolicy => seed.policy)
+    D.rel D.rel_wf
+    (exists_gn21GeneralizedIntervalPolicy_reward_close_below
+      μ Rhat D.hσ0_open D.hcont)
+    D.canonicalMax D.step D.strictWitness
 
 /--
 Named source data for the common direct-canonical-dominance route.  This is
