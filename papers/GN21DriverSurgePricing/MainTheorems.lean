@@ -1303,6 +1303,177 @@ theorem paper_theorem1_remove_positive_time_set_if_average_below_current
         renewalRewardRate] using hremoved_average_le_current)
 
 /--
+Strict Theorem 1 marginal add algebra: adding a positive-time set whose average
+payment rate is strictly above the current renewal reward strictly improves the
+single-state reward.
+-/
+theorem paper_theorem1_add_positive_time_set_if_average_strictly_above_current
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ added : TripPolicy)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hw_integrable_added : IntegrableOn w added μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ singleStateTripTime μ σ)
+    (hadded_time_pos : 0 < singleStateTripTime μ added)
+    (hcurrent_lt_added_average :
+      singleStateRenewalReward μ arrivalRate w σ <
+        singleStateAverageTripRate μ w added) :
+    singleStateRenewalReward μ arrivalRate w σ <
+      singleStateRenewalReward μ arrivalRate w (σ ∪ added) := by
+  change
+    renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w σ) (singleStateTripTime μ σ) <
+      renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w (σ ∪ added))
+        (singleStateTripTime μ (σ ∪ added))
+  rw [singleStateTripPayment_union μ w σ added hdisjoint hadded_measurable
+      hw_integrable_σ hw_integrable_added,
+    singleStateTripTime_union μ σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added]
+  simp [singleStateRenewalReward, singleStateAverageTripRate, averageRewardRate]
+    at hcurrent_lt_added_average
+  unfold renewalRewardRate
+  have hden_current :
+      0 < 1 + arrivalRate * singleStateTripTime μ σ := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  have hden_added :
+      0 < 1 + arrivalRate *
+        (singleStateTripTime μ σ + singleStateTripTime μ added) := by
+    nlinarith [mul_pos hlambda hadded_time_pos]
+  have hcross :
+      arrivalRate * singleStateTripPayment μ w σ *
+          singleStateTripTime μ added <
+        singleStateTripPayment μ w added *
+          (1 + arrivalRate * singleStateTripTime μ σ) := by
+    rw [div_lt_div_iff₀ hden_current hadded_time_pos]
+      at hcurrent_lt_added_average
+    nlinarith
+  rw [div_lt_div_iff₀ hden_current hden_added]
+  nlinarith
+
+/--
+Strict Theorem 1 marginal remove algebra: removing a positive-time accepted set
+whose average payment rate is strictly below the current renewal reward strictly
+improves the single-state reward.
+-/
+theorem paper_theorem1_remove_positive_time_set_if_average_strictly_below_current
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ removed : TripPolicy)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_remaining_nonneg : 0 ≤ singleStateTripTime μ σ - singleStateTripTime μ removed)
+    (hremoved_time_pos : 0 < singleStateTripTime μ removed)
+    (hremoved_average_lt_current :
+      singleStateAverageTripRate μ w removed <
+        singleStateRenewalReward μ arrivalRate w σ) :
+    singleStateRenewalReward μ arrivalRate w σ <
+      singleStateRenewalReward μ arrivalRate w (σ \ removed) := by
+  change
+    renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w σ) (singleStateTripTime μ σ) <
+      renewalRewardRate arrivalRate
+        (singleStateTripPayment μ w (σ \ removed))
+        (singleStateTripTime μ (σ \ removed))
+  rw [singleStateTripPayment_diff μ w σ removed hremoved_subset hremoved_measurable
+      hw_integrable_σ,
+    singleStateTripTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  simp [singleStateRenewalReward, singleStateAverageTripRate, averageRewardRate]
+    at hremoved_average_lt_current
+  unfold renewalRewardRate
+  have htime_nonneg : 0 ≤ singleStateTripTime μ σ := by
+    linarith [le_of_lt hremoved_time_pos]
+  have hden_current :
+      0 < 1 + arrivalRate * singleStateTripTime μ σ := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  have hden_remaining :
+      0 < 1 + arrivalRate *
+        (singleStateTripTime μ σ - singleStateTripTime μ removed) := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_remaining_nonneg]
+  have hcross :
+      singleStateTripPayment μ w removed *
+          (1 + arrivalRate * singleStateTripTime μ σ) <
+        arrivalRate * singleStateTripPayment μ w σ *
+          singleStateTripTime μ removed := by
+    rw [div_lt_div_iff₀ hremoved_time_pos hden_current]
+      at hremoved_average_lt_current
+    nlinarith
+  rw [div_lt_div_iff₀ hden_current hden_remaining]
+  nlinarith
+
+/--
+Optimal-policy exclusion, add side: no disjoint positive-time block can have
+average payment rate strictly above an optimal policy's current renewal reward.
+-/
+theorem paper_theorem1_no_addable_positive_time_average_above_current_of_optimal
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ added : TripPolicy)
+    (hoptimal :
+      singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hw_integrable_added : IntegrableOn w added μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (htime_integrable_added :
+      IntegrableOn (fun τ : TripLength => τ) added μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ singleStateTripTime μ σ)
+    (hadded_time_pos : 0 < singleStateTripTime μ added) :
+    ¬ singleStateRenewalReward μ arrivalRate w σ <
+        singleStateAverageTripRate μ w added := by
+  intro hlt
+  have himprove :
+      singleStateRenewalReward μ arrivalRate w σ <
+        singleStateRenewalReward μ arrivalRate w (σ ∪ added) :=
+    paper_theorem1_add_positive_time_set_if_average_strictly_above_current
+      μ arrivalRate w σ added hdisjoint hadded_measurable
+      hw_integrable_σ hw_integrable_added htime_integrable_σ
+      htime_integrable_added hlambda htime_nonneg hadded_time_pos hlt
+  exact not_lt_of_ge (hoptimal (σ ∪ added)) himprove
+
+/--
+Optimal-policy exclusion, remove side: no positive-time accepted block can have
+average payment rate strictly below an optimal policy's current renewal reward.
+-/
+theorem paper_theorem1_no_removable_positive_time_average_below_current_of_optimal
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ removed : TripPolicy)
+    (hoptimal :
+      singleStateOptimal (singleStateRenewalReward μ arrivalRate w) σ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_remaining_nonneg :
+      0 ≤ singleStateTripTime μ σ - singleStateTripTime μ removed)
+    (hremoved_time_pos : 0 < singleStateTripTime μ removed) :
+    ¬ singleStateAverageTripRate μ w removed <
+        singleStateRenewalReward μ arrivalRate w σ := by
+  intro hlt
+  have himprove :
+      singleStateRenewalReward μ arrivalRate w σ <
+        singleStateRenewalReward μ arrivalRate w (σ \ removed) :=
+    paper_theorem1_remove_positive_time_set_if_average_strictly_below_current
+      μ arrivalRate w σ removed hremoved_subset hremoved_measurable
+      hw_integrable_σ htime_integrable_σ hlambda htime_remaining_nonneg
+      hremoved_time_pos hlt
+  exact not_lt_of_ge (hoptimal (σ \ removed)) himprove
+
+/--
 Theorem 1 marginal add step without a positive-time side condition.  It uses
 the cross-multiplied form of the source inequality, so zero-time added sets are
 handled by the same algebra.
