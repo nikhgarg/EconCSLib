@@ -246,10 +246,13 @@ the ordered bounded/right-ray, left-ray/bounded, and left/right-ray boundary
 merges now reach shorter right-tail, left-tail, and accept-all lists.  The
 second-component bounded lower-collapse also removes a middle component while
 preserving the leading component and tail, and the symmetric upper-collapse is
-also compiled.  The remaining nonlinear work is selecting the appropriate
-local move inside an arbitrary ordered finite interval/ray seed, proving the source
-derivative-sign hypothesis holds along the selected path, and iterating the
-component-count decrease to a canonical Lemma 5 shape.
+also compiled.  Lean now also has the ordered second/third bounded-component
+upper/lower merge primitives and the ordered second-component
+bounded-to-right-ray merge, each in weak and strict forms.  The remaining
+nonlinear work is selecting the appropriate local move inside an arbitrary
+ordered finite interval/ray seed, proving the source derivative-sign
+hypothesis holds along the selected path, and iterating the component-count
+decrease to a canonical Lemma 5 shape.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:

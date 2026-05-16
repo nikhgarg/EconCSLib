@@ -821,7 +821,11 @@ bounded-interval collapse reductions now return shorter ordered lists directly,
 and the ordered boundary merges now reach the canonical right-tail, left-tail,
 and accept-all families.  The second-component lower-collapse reduction now
 removes a middle bounded component while preserving a leading component and
-tail, and the symmetric second-component upper-collapse is also compiled.
+tail, and the symmetric second-component upper-collapse is also compiled.  The
+second/third bounded-component upper/lower merges and the second-component
+bounded-to-right-ray merge are compiled in weak and strict forms, so ordered
+descent can now reduce adjacent middle components after one leading component
+has been peeled off.
 The remaining open part is selecting and iterating those local moves
 inside an arbitrary ordered finite
 interval/ray seed under the source derivative-sign hypotheses.

@@ -238,9 +238,13 @@ Two concrete endpoint-path instantiations are compiled:
 variant turn a nonnegative/positive derivative path for an upper endpoint into
 a reward comparison against the merged interval.  The lower-collapse pair does
 the same for moving a lower endpoint until the interval becomes empty.  These
-are the first real finite-policy endpoint moves; the remaining work is to
-thread them through arbitrary finite generalized policies and the shape-case
-sign lemmas.
+are the base finite-policy endpoint moves.  The contextual and ordered-list
+threading now covers bounded-bounded upper/lower merges, bounded collapses,
+bounded-to-right-ray, left-ray-to-bounded, and left/right-ray boundary merges,
+including the second/third bounded merge and second bounded-to-right-ray cases
+after one leading component has been peeled off.  The remaining work is to
+select the correct move in an arbitrary ordered finite generalized policy and
+connect that selection to the shape-case sign lemmas.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact
