@@ -746,6 +746,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   finite-source-integral bridges. Align product nesting with Mathlib's product
   measure conventions, for example `(ℝ × ℝ) × ℝ`, so later instantiations do
   not waste time on associativity rewrites.
+- When a paper-facing probability theorem is stuck with a premise like
+  "source metric field equals the displayed probability formula," close it with
+  a canonical source surface when possible. Define the surface so the metric
+  field unfolds to the tail probability, expectation, or integral appearing in
+  the paper, prove a thin source-surface endpoint, and make the DAG/README point
+  to that endpoint rather than to the older abstract formula-premise theorem.
 
 ## Lean Patterns
 
