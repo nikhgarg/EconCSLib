@@ -236,9 +236,10 @@ Last updated: 2026-05-16
   and no-report payoff identities definitional.  The concrete binary-mixture
   point-estimate surface now makes the observable mixture, no-access,
   base-only, and full-feature point-estimate identities definitional too.  The
-  remaining source gap is routing the final paper policy assumptions through
-  this surface and proving the analogous report-required outside-payoff
-  identity.
+  concrete fairness endpoint now combines this surface route with the
+  latent-to-observable mixture reduction.  The remaining source gap is
+  discharging the final paper policy assumptions for this surface and proving
+  the analogous report-required outside-payoff identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -376,9 +377,10 @@ Last updated: 2026-05-16
    concrete Definition 1 best response.  The base-indexed optional-reporting
    affine endpoint now makes the paper's reported-score and no-report payoff
    formulas definitional, and the concrete binary-mixture point-estimate
-   surface removes the remaining surface identity hypotheses.  Next work should
-   route the final paper policy assumptions through that surface, then prove the
-   remaining report-required affine outside-payoff identity.
+   surface removes the remaining surface identity hypotheses.  The concrete
+   fairness endpoint adds the latent-to-observable mixture reduction.  Next
+   work should discharge the remaining paper policy assumptions for this
+   surface, then prove the report-required affine outside-payoff identity.
 
 ## Reusable Library Seams
 
