@@ -209,7 +209,12 @@ Last updated: 2026-05-16
   cohorts.  The source-witness upper-tail wrappers now extract the relevant
   finite cutoff from the witness itself, reducing the remaining policy-specific
   assumptions to decision identification and actor-mean/upper-tail-mean
-  identification.  The
+  identification.  The best-response source-witness wrappers now build those
+  witnesses from the concrete reporting/taking decisions via the Theorem 3.1
+  best-response and tie-breaking constructors, so the decision-identification
+  side is closed for that route.  The remaining continuous-route source
+  obligation is the policy-specific actor-mean/upper-tail-mean identification.
+  The
   finite acting-distribution
   lemmas
   `paper_theorem3_2_exists_support_actor_le_mean` and
