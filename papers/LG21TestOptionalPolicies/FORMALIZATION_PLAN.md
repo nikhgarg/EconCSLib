@@ -253,7 +253,11 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface`
   further discharge the latent-to-observable identities via
-  `lg21LatentSkillEstimateDistribution_const_indexed`.
+  `lg21LatentSkillEstimateDistribution_const_indexed`.  The report-required
+  centered-base-term endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
+  closes the outside-payoff equality by defining the report-required base term
+  as `denom / 2 - signalWeight * upperTailMean`.
   The
   finite acting-distribution
   lemmas
@@ -535,10 +539,10 @@ Last updated: 2026-05-16
    positive-mass/support facts.  The active continuous/source route should now
    use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
    work is to decide the final paper-facing theorem statement: either expose
-   the current event-share constant-latent surface endpoints plus the
-   report-required outside-payoff hypothesis, or instantiate a stricter
-   conditional-kernel version if the statement should quantify over
-   conditional-on-skill Gaussian laws.
+   the current event-share constant-latent surface endpoints, using the
+   centered-base-term report-required normalization when appropriate, or
+   instantiate a stricter conditional-kernel version if the statement should
+   quantify over conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 

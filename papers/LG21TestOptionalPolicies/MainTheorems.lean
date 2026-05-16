@@ -12228,6 +12228,116 @@ theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_ev
     exact houtsidePayoff_of_pmfEq e base
 
 /--
+Report-required constant-latent upper-tail endpoint with the report-required
+base term normalized as `denom / 2 - signalWeight * upperTailMean`.  This
+closes the outside-payoff equality by algebra.
+-/
+theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm
+    {Base Test Estimate Student Equilibrium : Type*} [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    (skillGivenBase : Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (takerEvent : Equilibrium → Base → Student → Prop)
+    (decTakerEvent :
+      ∀ e base, DecidablePred (takerEvent e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (signalWeight denom : Equilibrium → Base → ℝ)
+    (actorLaw : Equilibrium → Base → GaussianScaleLaw)
+    (decisionThreshold : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              ((denom e base / 2 -
+                    signalWeight e base *
+                      GaussianHazardCertificate.normalUpperTailMean
+                        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                        (actorLaw e base) (decisionThreshold e base)) +
+                  signalWeight e base * actor) /
+                denom e base)
+            (estimationConsistent e)))
+    (htie :
+      ∀ e base skill,
+        ((denom e base / 2 -
+              signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (actorLaw e base) (decisionThreshold e base)) +
+            signalWeight e base * skill) / denom e base =
+            (1 / 2 : ℝ) →
+          takeDecision e skill base = true)
+    (hthreshold :
+      ∀ e base actor, takeDecision e actor base = true ↔
+        decisionThreshold e base ≤ actor)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hwitness :
+      ∀ e base, ∃ student, takerEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (e : Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            (Skill := ℝ) (Base := Base) (Test := Test)
+            (Estimate := Estimate) (Student := Student)
+            Equilibrium
+            (fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+              lg21BinaryMixturePMF
+                (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent
+                  e base)
+                (lg21PMFEventShareFn_le_one studentLaw takerEvent
+                  decTakerEvent e base)
+                (reporterPMF e base) (noReporterPMF e base))
+            (fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+              noReporterPMF e base)
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            takerEvent decTakerEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate) ∨
+        lg21SourceObservablyFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            (Skill := ℝ) (Base := Base) (Test := Test)
+            (Estimate := Estimate) (Student := Student)
+            Equilibrium
+            (fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+              lg21BinaryMixturePMF
+                (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent
+                  e base)
+                (lg21PMFEventShareFn_le_one studentLaw takerEvent
+                  decTakerEvent e base)
+                (reporterPMF e base) (noReporterPMF e base))
+            (fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+              noReporterPMF e base)
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            takerEvent decTakerEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate)) :=
+  paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface
+    skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
+    studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
+    baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
+    estimationConsistent referenceTest
+    (fun e base =>
+      denom e base / 2 -
+        signalWeight e base *
+          GaussianHazardCertificate.normalUpperTailMean
+            standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+            (actorLaw e base) (decisionThreshold e base))
+    signalWeight denom actorLaw decisionThreshold hEq htie hthreshold hweight
+    hdenom hwitness
+    (fun e base _hPMF =>
+      paper_theorem3_2_affine_outside_payoff_eq_half_of_baseTerm_eq_half_denom_sub_signal_mean
+        (ne_of_gt (hdenom e base)) rfl)
+    e base
+
+/--
 Theorem 3.1 report-required crossing step.  The expected estimate from
 taking/reporting is strictly increasing in latent skill, while the no-take
 estimate varies continuously with the candidate skill cutoff.  Opposite

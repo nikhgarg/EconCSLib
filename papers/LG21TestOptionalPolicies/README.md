@@ -350,7 +350,11 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface`
   also discharge the latent-to-observable identities by making latent kernels
-  skill-independent copies of the observable laws.
+  skill-independent copies of the observable laws.  The report-required
+  centered-base-term endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
+  closes the remaining outside-payoff equality when the report-required base
+  term is normalized as `denom / 2 - signalWeight * upperTailMean`.
 
 ## Source Notes
 
