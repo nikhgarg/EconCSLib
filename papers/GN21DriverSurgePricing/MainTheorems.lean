@@ -1521,6 +1521,14 @@ theorem singleStateTripTime_diff
 def singleStateOptimal (R : SingleStateReward) (σ : TripPolicy) : Prop :=
   ∀ ρ : TripPolicy, R ρ ≤ R σ
 
+/-- A strict one-state improvement contradicts one-state optimality. -/
+theorem not_singleStateOptimal_of_strict_improvement
+    (R : SingleStateReward) {σ τ : TripPolicy}
+    (himprove : R σ < R τ) :
+    ¬ singleStateOptimal R σ := by
+  intro hσ
+  exact not_lt_of_ge (hσ τ) himprove
+
 /-- Source IC predicate: accepting every positive-length trip is optimal. -/
 def singleStateIncentiveCompatible (R : SingleStateReward) : Prop :=
   singleStateOptimal R acceptAllPolicy
@@ -1537,6 +1545,16 @@ positive-trip domain, not arbitrary sets of real trip lengths.
 def singleStateMeasurableOptimal (R : SingleStateReward) (σ : TripPolicy) : Prop :=
   σ ⊆ acceptAllPolicy ∧ MeasurableSet σ ∧
     ∀ ρ : TripPolicy, ρ ⊆ acceptAllPolicy → MeasurableSet ρ → R ρ ≤ R σ
+
+/-- A strict feasible measurable one-state improvement contradicts measurable optimality. -/
+theorem not_singleStateMeasurableOptimal_of_strict_feasible_improvement
+    (R : SingleStateReward) {σ τ : TripPolicy}
+    (hτ_subset : τ ⊆ acceptAllPolicy)
+    (hτ_measurable : MeasurableSet τ)
+    (himprove : R σ < R τ) :
+    ¬ singleStateMeasurableOptimal R σ := by
+  intro hσ
+  exact not_lt_of_ge (hσ.2.2 τ hτ_subset hτ_measurable) himprove
 
 /-- Accepted mass is nonnegative for any trip-length set. -/
 theorem singleStateTripMass_nonneg
@@ -8502,6 +8520,33 @@ theorem dynamicStateReward_optimal_of_dynamicMeasurableOptimal
     dynamicStateReward R σ i τ ≤ dynamicStateReward R σ i (σ i) := by
   unfold dynamicStateReward
   simpa [Function.update_eq_self] using hσ.2 (Function.update σ i τ) hτ
+
+/-- A strict one-state improvement contradicts unrestricted dynamic optimality. -/
+theorem not_dynamicOptimal_of_state_strict_improvement
+    (R : DynamicReward) {σ : Fin 2 → TripPolicy} {i : Fin 2}
+    {τ : TripPolicy}
+    (himprove :
+      dynamicStateReward R σ i (σ i) < dynamicStateReward R σ i τ) :
+    ¬ dynamicOptimal R σ := by
+  intro hσ
+  have hle := dynamicStateReward_optimal_of_dynamicOptimal R hσ i τ
+  linarith
+
+/--
+A strict feasible measurable one-state improvement contradicts measurable
+dynamic optimality.
+-/
+theorem not_dynamicMeasurableOptimal_of_state_strict_feasible_improvement
+    (R : DynamicReward) {σ : Fin 2 → TripPolicy} {i : Fin 2}
+    {τ : TripPolicy}
+    (hτ : dynamicFeasibleMeasurablePolicy (Function.update σ i τ))
+    (himprove :
+      dynamicStateReward R σ i (σ i) < dynamicStateReward R σ i τ) :
+    ¬ dynamicMeasurableOptimal R σ := by
+  intro hσ
+  have hle :=
+    dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hσ i hτ
+  linarith
 
 /--
 If replacing either state's policy by accept-all weakly improves reward, then
