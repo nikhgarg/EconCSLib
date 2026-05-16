@@ -45,6 +45,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `totalMass` at `-∞` and `0` at `+∞` has a unique capacity cutoff and sublevel
   region. Then instantiate continuity, monotonicity, and limits from the
   paper's Gaussian or strategic applicant-mass expression.
+- For strategic admissions cost-threshold arguments, do not hide the
+  intermediate-value step inside an opaque certificate. Prove or reuse a
+  one-dimensional decreasing-crossing theorem first: a continuous strictly
+  decreasing merit term with opposite endpoint comparisons gives a positive
+  threshold and exact weak/strict side characterizations. In `EconCSLib` this
+  is the role of
+  `exists_threshold_of_continuous_strictAntiOn_Icc_crossing` and
+  `exists_threshold_le_of_continuous_strictAntiOn_Icc`.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,

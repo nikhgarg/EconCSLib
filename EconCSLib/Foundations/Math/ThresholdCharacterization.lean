@@ -15,6 +15,9 @@ comparisons into threshold statements.
 - `exists_threshold_of_continuous_strictMonoOn_Icc_crossing`
 - `exists_threshold_of_continuous_strictMonoOn_Icc`
 - `exists_threshold_le_of_continuous_strictMonoOn_Icc`
+- `exists_threshold_of_continuous_strictAntiOn_Icc_crossing`
+- `exists_threshold_gt_of_continuous_strictAntiOn_Icc`
+- `exists_threshold_le_of_continuous_strictAntiOn_Icc`
 - `existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop`
 -/
 
@@ -304,6 +307,127 @@ theorem exists_threshold_le_of_continuous_strictMonoOn_Icc
           have hx_eq : x = 0 := le_antisymm hx_le_zero hx.1
           subst x
           linarith
+
+/--
+If a scalar function is continuous and strictly decreasing on `[0, 1]`, and a
+level lies strictly between the endpoint values, then there is an interior
+threshold where the function equals `level`.  On `[0, 1]`, comparison to the
+level is equivalent to being on the corresponding side of the threshold.
+-/
+theorem exists_threshold_of_continuous_strictAntiOn_Icc_crossing
+    {f : ℝ → ℝ} {level : ℝ}
+    (hf_cont : ContinuousOn f (Icc 0 1))
+    (hf_anti : StrictAntiOn f (Icc 0 1))
+    (hleft : level < f 0) (hright : f 1 < level) :
+    ∃ threshold : ℝ, threshold ∈ Ioo 0 1 ∧ f threshold = level ∧
+      (∀ x ∈ Icc 0 1, level < f x ↔ x < threshold) ∧
+      (∀ x ∈ Icc 0 1, f x < level ↔ threshold < x) ∧
+      (∀ x ∈ Icc 0 1, level ≤ f x ↔ x ≤ threshold) ∧
+      (∀ x ∈ Icc 0 1, f x ≤ level ↔ threshold ≤ x) := by
+  have hneg_cont : ContinuousOn (fun x : ℝ => -f x) (Icc 0 1) :=
+    hf_cont.neg
+  have hneg_mono : StrictMonoOn (fun x : ℝ => -f x) (Icc 0 1) := by
+    intro x hx y hy hxy
+    exact neg_lt_neg (hf_anti hx hy hxy)
+  have hneg_left : -f 0 < -level := by linarith
+  have hneg_right : -level < -f 1 := by linarith
+  rcases
+    exists_threshold_of_continuous_strictMonoOn_Icc_crossing
+      (f := fun x : ℝ => -f x) (level := -level)
+      hneg_cont hneg_mono hneg_left hneg_right with
+    ⟨threshold, hthreshold_mem, hthreshold_eq,
+      hneg_lt, hneg_gt, hneg_le, hneg_ge⟩
+  refine ⟨threshold, hthreshold_mem, ?_, ?_, ?_, ?_, ?_⟩
+  · linarith
+  · intro x hx
+    constructor
+    · intro hlevel
+      exact (hneg_lt x hx).mp (by linarith)
+    · intro hx_threshold
+      have hneg := (hneg_lt x hx).mpr hx_threshold
+      linarith
+  · intro x hx
+    constructor
+    · intro hfx
+      exact (hneg_gt x hx).mp (by linarith)
+    · intro hthreshold_x
+      have hneg := (hneg_gt x hx).mpr hthreshold_x
+      linarith
+  · intro x hx
+    constructor
+    · intro hlevel
+      exact (hneg_le x hx).mp (by linarith)
+    · intro hx_threshold
+      have hneg := (hneg_le x hx).mpr hx_threshold
+      linarith
+  · intro x hx
+    constructor
+    · intro hfx
+      exact (hneg_ge x hx).mp (by linarith)
+    · intro hthreshold_x
+      have hneg := (hneg_ge x hx).mpr hthreshold_x
+      linarith
+
+/--
+If a scalar function is continuous and strictly decreasing on `[0, 1]`, then
+for any level there is a real threshold whose strict upper set on `[0, 1]` is
+exactly `{x | level < f x}`.
+-/
+theorem exists_threshold_gt_of_continuous_strictAntiOn_Icc
+    {f : ℝ → ℝ} {level : ℝ}
+    (hf_cont : ContinuousOn f (Icc 0 1))
+    (hf_anti : StrictAntiOn f (Icc 0 1)) :
+    ∃ threshold : ℝ,
+      ∀ x ∈ Icc 0 1, level < f x ↔ x < threshold := by
+  have hneg_cont : ContinuousOn (fun x : ℝ => -f x) (Icc 0 1) :=
+    hf_cont.neg
+  have hneg_mono : StrictMonoOn (fun x : ℝ => -f x) (Icc 0 1) := by
+    intro x hx y hy hxy
+    exact neg_lt_neg (hf_anti hx hy hxy)
+  rcases
+    exists_threshold_of_continuous_strictMonoOn_Icc
+      (f := fun x : ℝ => -f x) (level := -level)
+      hneg_cont hneg_mono with
+    ⟨threshold, hthreshold⟩
+  refine ⟨threshold, ?_⟩
+  intro x hx
+  constructor
+  · intro hlevel
+    exact hthreshold x hx |>.mp (by linarith)
+  · intro hx_threshold
+    have hneg := hthreshold x hx |>.mpr hx_threshold
+    linarith
+
+/--
+If a scalar function is continuous and strictly decreasing on `[0, 1]`, then
+for any level there is a real threshold whose weak lower set on `[0, 1]` is
+exactly `{x | f x ≤ level}`.
+-/
+theorem exists_threshold_le_of_continuous_strictAntiOn_Icc
+    {f : ℝ → ℝ} {level : ℝ}
+    (hf_cont : ContinuousOn f (Icc 0 1))
+    (hf_anti : StrictAntiOn f (Icc 0 1)) :
+    ∃ threshold : ℝ,
+      ∀ x ∈ Icc 0 1, f x ≤ level ↔ threshold ≤ x := by
+  rcases
+    exists_threshold_gt_of_continuous_strictAntiOn_Icc
+      (f := f) (level := level) hf_cont hf_anti with
+    ⟨threshold, hthreshold⟩
+  refine ⟨threshold, ?_⟩
+  intro x hx
+  constructor
+  · intro hfx
+    by_contra hnot
+    have hx_lt_threshold : x < threshold := lt_of_not_ge hnot
+    have hlevel_lt : level < f x :=
+      (hthreshold x hx).mpr hx_lt_threshold
+    linarith
+  · intro htx
+    by_contra hnot
+    have hlevel_lt : level < f x := lt_of_not_ge hnot
+    have hx_lt_threshold : x < threshold :=
+      (hthreshold x hx).mp hlevel_lt
+    linarith
 
 end
 
