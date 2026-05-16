@@ -86,11 +86,14 @@ cache is `source.txt`.
   4 positivity wrappers,
   aggregate quotient-calculus derivative bridge, aggregate quotient
   monotonicity for left/right accepted-trip additions from nonnegative
-  integrated Lemma 6 kernels, measured `Q,T,W` union additivity and measured
-  left/right aggregate weak-improvement bridges for adding accepted sets,
+  integrated Lemma 6 kernels, strict left/right aggregate quotient
+  improvement from positive integrated Lemma 6 kernels, measured `Q,T,W`
+  union additivity and measured left/right aggregate weak/strict-improvement
+  bridges for adding accepted sets,
   including accept-all-complement specializations for rejected feasible sets,
   plus pointwise-to-integrated kernel bridges that turn nonnegative Lemma 6
   derivative kernels on an added set into the aggregate primitive side
+  condition and positive kernel support into a strict primitive side
   condition,
   endpoint-data-to-Lemma-6 derivative certificate bridge,
   structured-kernel-to-Lemma-6 derivative certificate bridge, structured-price

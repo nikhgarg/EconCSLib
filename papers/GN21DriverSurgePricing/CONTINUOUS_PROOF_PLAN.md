@@ -456,6 +456,17 @@ into the concrete endpoint policy data.
   the source open-set approximation plus endpoint-continuity argument that
   identifies the nonlinear endpoint path with this positive-response
   dominance.
+- The nonlinear aggregate layer now has strict counterparts to the older weak
+  add-set bridges:
+  `gn21AggregateDynamicReward_lt_add_left_of_kernel_pos`,
+  `gn21AggregateDynamicReward_lt_add_right_of_kernel_pos`,
+  `gn21PrimitiveKernel_pos_of_pointwise_derivative_kernel_nonneg`,
+  `gn21MeasuredAggregateRewardPrimitives_lt_union_left_of_kernel_pos`, and
+  `gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_kernel_pos`.
+  These are the useful bridge from "positive derivative kernel on positive
+  mass" to an actual strict reward improvement for the quotient reward, and
+  should be preferred over building more abstract wrappers when closing the
+  remaining Lemma 5 endpoint step.
 - For the fixed-transfer route, the lightest compiled fixed-state adapter is
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`:
   it derives the constructed parameter data, surge-ratio positivity,
