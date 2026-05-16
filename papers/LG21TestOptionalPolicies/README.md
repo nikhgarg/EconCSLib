@@ -118,6 +118,11 @@ cache is kept as `source.txt` for named-statement audits.
 
 ### Recent Theorem 3.2 Progress
 
+- Theorem 3.2 now has Section 3 hidden-access wrappers over PMF and
+  continuous-law fairness-impossibility certificates, plus no-relevance forms.
+  These endpoints make the paper hypothesis "the school does not know access
+  status" a theorem conjunct before returning fairness-implies-test-blankness
+  or the equivalent absence of concrete base/test relevance witnesses.
 - The concrete optional/report-required constant-latent event-share routes now
   also produce compact `LG21FairnessImpossibilityCertificate` values:
   `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`

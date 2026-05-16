@@ -15394,6 +15394,49 @@ theorem paper_theorem3_2_no_test_relevance_of_fairness
     (C.latent_or_observable_implies_test_blank hfair)
 
 /--
+Theorem 3.2 Section 3 endpoint from a PMF certificate: if the school
+information set does not reveal access status, then latent-skill or observable
+fairness implies test-blankness.
+-/
+theorem paper_theorem3_2_section3_fairness_impossibility_of_certificate
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · exact paper_theorem3_2_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 Section 3 no-relevance form: under the source implication,
+latent-skill or observable fairness rules out every concrete base/test
+relevance witness.
+-/
+theorem paper_theorem3_2_section3_no_test_relevance_of_fairness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · exact paper_theorem3_2_no_test_relevance_of_fairness C hfair
+
+/--
 Theorem 3.2 optional-reporting source route packaged as the paper's compact
 fairness-impossibility certificate.
 -/
@@ -15662,6 +15705,46 @@ theorem paper_theorem3_2_law_no_test_relevance_of_fairness
   intro hrel
   exact (lg21_not_lawTestBlank_iff_exists_witness.mpr hrel)
     (C.latent_or_observable_implies_test_blank hfair)
+
+/--
+Theorem 3.2 Section 3 endpoint over arbitrary law objects: if the school
+information set does not reveal access status, then latent-skill or observable
+fairness implies test-blankness.
+-/
+theorem paper_theorem3_2_section3_law_fairness_impossibility_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+        lg21SourceLawTestBlank S) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · exact paper_theorem3_2_law_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 Section 3 continuous-law no-relevance form.
+-/
+theorem paper_theorem3_2_section3_law_no_test_relevance_of_fairness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · exact paper_theorem3_2_law_no_test_relevance_of_fairness C hfair
 
 /--
 Theorem 3.2 continuous-law contrapositive core: a concrete test-relevance

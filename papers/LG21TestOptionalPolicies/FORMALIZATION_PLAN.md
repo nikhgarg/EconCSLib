@@ -203,7 +203,11 @@ Last updated: 2026-05-16
   and contrapositive wrappers: test-blankness is equivalent to absence of a
   concrete base/test relevance witness, and such a witness rules out
   latent-skill or observable fairness once the source unraveling implication is
-  available.  The source proof's positive-share resampling algebra is also
+  available.  These certificate and no-relevance endpoints now also have
+  Section 3 hidden-access wrappers over PMF and continuous-law surfaces, so the
+  paper hypothesis that the school does not observe access status is exposed
+  directly beside the fairness-impossibility conclusion.  The source proof's
+  positive-share resampling algebra is also
   formalized: `lg21_pmf_mixture_cancel_right` and
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
   `D0 = λ D1 + (1 - λ) D0 ⇒ D1 = D0` step, and the theorem-facing wrappers turn

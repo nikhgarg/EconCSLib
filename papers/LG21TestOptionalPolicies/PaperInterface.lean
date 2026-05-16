@@ -5901,6 +5901,38 @@ theorem paper_interface_theorem3_2_fairness_impossibility
   paper_theorem3_2_fairness_impossibility_of_certificate C
 
 /--
+Theorem 3.2 Section 3 endpoint: access status is hidden in the school
+information set, and latent-skill or observable fairness implies
+test-blankness.
+-/
+theorem paper_interface_theorem3_2_section3_fairness_impossibility
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 Section 3 no-relevance form: under latent-skill or observable
+fairness, every concrete base/test relevance witness is ruled out.
+-/
+theorem paper_interface_theorem3_2_section3_no_test_relevance_of_fairness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_section3_no_test_relevance_of_fairness C hfair
+
+/--
 Theorem 3.2 source mixture helper: the binary reporter/no-reporter PMF has the
 paper's pointwise mixture masses.
 -/
@@ -10376,6 +10408,22 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility
   paper_theorem3_2_law_fairness_impossibility_of_certificate C
 
 /--
+Theorem 3.2 Section 3 continuous-law endpoint: access status is hidden in the
+school information set, and latent-skill or observable fairness implies
+test-blankness.
+-/
+theorem paper_interface_theorem3_2_section3_law_fairness_impossibility
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+        lg21SourceLawTestBlank S) :=
+  paper_theorem3_2_section3_law_fairness_impossibility_of_certificate C
+
+/--
 Theorem 3.2 continuous-law latent-skill branch reduction: once latent-skill
 fairness implies observable fairness, it is enough to prove the test-blank
 implication for observable fairness.
@@ -10403,6 +10451,20 @@ theorem paper_interface_theorem3_2_law_no_test_relevance_of_fairness
     (hfair : lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
     ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
   paper_theorem3_2_law_no_test_relevance_of_fairness C hfair
+
+/--
+Theorem 3.2 Section 3 continuous-law no-relevance form.
+-/
+theorem paper_interface_theorem3_2_section3_law_no_test_relevance_of_fairness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_section3_law_no_test_relevance_of_fairness C hfair
 
 /--
 Theorem 3.2 continuous-law contrapositive core: under the source implication, a
