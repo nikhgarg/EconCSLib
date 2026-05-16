@@ -126,7 +126,7 @@ cache is kept as `source.txt` for named-statement audits.
   package the same argument as a source-facing necessary condition: any fair
   stable threshold policy must have cutoff weakly above the acting mean.  The
   finite actor-support lemma
-  `paper_theorem3_2_cutoff_lt_actor_mean_of_all_ge_exists_gt` and the
+  `paper_theorem3_2_cutoff_lt_actor_mean_of_support_ge_exists_gt` and the
   optional/report-required wrappers
   `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_finite_actor_cutoff_support`
   and

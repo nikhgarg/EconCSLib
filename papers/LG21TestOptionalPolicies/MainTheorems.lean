@@ -5509,6 +5509,51 @@ theorem paper_theorem3_2_cutoff_lt_actor_mean_of_all_ge_exists_gt
   linarith
 
 /--
+Theorem 3.2 finite cutoff support fact, support-only form.  Zero-mass actors
+need not satisfy the cutoff inequality: it is enough that every positive-mass
+acting value is weakly above the cutoff and that one positive-mass acting value
+is strictly above it.
+-/
+theorem paper_theorem3_2_cutoff_lt_actor_mean_of_support_ge_exists_gt
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ) (cutoff : ℝ)
+    (hge :
+      ∀ actor, 0 < (actorLaw actor).toReal → cutoff ≤ actorValue actor)
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        cutoff < actorValue actor) :
+    cutoff < pmfExp actorLaw actorValue := by
+  classical
+  let supportValue : Actor → ℝ :=
+    fun actor =>
+      if (actorLaw actor).toReal = 0 then cutoff else actorValue actor
+  have hExpEq :
+      pmfExp actorLaw actorValue = pmfExp actorLaw supportValue := by
+    unfold pmfExp supportValue
+    refine Finset.sum_congr rfl ?_
+    intro actor _ha
+    by_cases hzero : (actorLaw actor).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hsupport_ge : ∀ actor, cutoff ≤ supportValue actor := by
+    intro actor
+    by_cases hzero : (actorLaw actor).toReal = 0
+    · simp [supportValue, hzero]
+    · have hmass : 0 < (actorLaw actor).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      simpa [supportValue, hzero] using hge actor hmass
+  have hsupport_above :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        cutoff < supportValue actor := by
+    rcases habove with ⟨actor, hmass, hgt⟩
+    have hzero : (actorLaw actor).toReal ≠ 0 := ne_of_gt hmass
+    exact ⟨actor, hmass, by simpa [supportValue, hzero] using hgt⟩
+  rw [hExpEq]
+  exact
+    paper_theorem3_2_cutoff_lt_actor_mean_of_all_ge_exists_gt
+      actorLaw supportValue cutoff hsupport_ge hsupport_above
+
+/--
 Optional-reporting finite acting-law specialization of the direct Theorem 3.2
 branch.  A finite reported-score cohort whose support lies weakly above the
 reporting cutoff and has some positive-mass score strictly above the cutoff has
@@ -5555,7 +5600,8 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_bas
     (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
     (hactorMean : pmfExp actorLaw actorValue = actorMean e base)
     (cutoff : ℝ)
-    (hactor_ge_cutoff : ∀ actor, cutoff ≤ actorValue actor)
+    (hactor_ge_cutoff :
+      ∀ actor, 0 < (actorLaw actor).toReal → cutoff ≤ actorValue actor)
     (hexists_actor_gt_cutoff :
       ∃ actor, 0 < (actorLaw actor).toReal ∧
         cutoff < actorValue actor)
@@ -5567,7 +5613,7 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_bas
   have hcutoff : cutoff < actorMean e base := by
     rw [← hactorMean]
     exact
-      paper_theorem3_2_cutoff_lt_actor_mean_of_all_ge_exists_gt
+      paper_theorem3_2_cutoff_lt_actor_mean_of_support_ge_exists_gt
         actorLaw actorValue cutoff hactor_ge_cutoff hexists_actor_gt_cutoff
   exact
     paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_cutoff_below_mean
@@ -5625,7 +5671,8 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_a
     (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
     (hactorMean : pmfExp actorLaw actorValue = actorMean e base)
     (cutoff : ℝ)
-    (hactor_ge_cutoff : ∀ actor, cutoff ≤ actorValue actor)
+    (hactor_ge_cutoff :
+      ∀ actor, 0 < (actorLaw actor).toReal → cutoff ≤ actorValue actor)
     (hexists_actor_gt_cutoff :
       ∃ actor, 0 < (actorLaw actor).toReal ∧
         cutoff < actorValue actor)
@@ -5637,7 +5684,7 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_a
   have hcutoff : cutoff < actorMean e base := by
     rw [← hactorMean]
     exact
-      paper_theorem3_2_cutoff_lt_actor_mean_of_all_ge_exists_gt
+      paper_theorem3_2_cutoff_lt_actor_mean_of_support_ge_exists_gt
         actorLaw actorValue cutoff hactor_ge_cutoff hexists_actor_gt_cutoff
   exact
     paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_cutoff_below_mean

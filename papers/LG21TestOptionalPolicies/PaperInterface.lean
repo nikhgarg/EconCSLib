@@ -3631,7 +3631,8 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_rep
     (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
     (hactorMean : pmfExp actorLaw actorValue = actorMean e base)
     (cutoff : ℝ)
-    (hactor_ge_cutoff : ∀ actor, cutoff ≤ actorValue actor)
+    (hactor_ge_cutoff :
+      ∀ actor, 0 < (actorLaw actor).toReal → cutoff ≤ actorValue actor)
     (hexists_actor_gt_cutoff :
       ∃ actor, 0 < (actorLaw actor).toReal ∧
         cutoff < actorValue actor)
@@ -3694,7 +3695,8 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_requi
     (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
     (hactorMean : pmfExp actorLaw actorValue = actorMean e base)
     (cutoff : ℝ)
-    (hactor_ge_cutoff : ∀ actor, cutoff ≤ actorValue actor)
+    (hactor_ge_cutoff :
+      ∀ actor, 0 < (actorLaw actor).toReal → cutoff ≤ actorValue actor)
     (hexists_actor_gt_cutoff :
       ∃ actor, 0 < (actorLaw actor).toReal ∧
         cutoff < actorValue actor)
