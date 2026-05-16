@@ -52,13 +52,23 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   threshold and exact weak/strict side characterizations. In `EconCSLib` this
   is the role of
   `exists_threshold_of_continuous_strictAntiOn_Icc_crossing` and
-  `exists_threshold_le_of_continuous_strictAntiOn_Icc`.
+  `exists_threshold_le_of_continuous_strictAntiOn_Icc`. When the source proof
+  uses an actual cost interval such as `[0,v]`, prefer the interval theorem
+  `exists_threshold_of_continuous_strictAntiOn_Icc_crossing_interval` or the
+  paper wrapper over normalizing to `[0,1]` unless normalization makes the
+  concrete algebra easier.
 - For two-school full-test application payoffs, encode the displayed CDF
   expression first and prove monotonicity directly from signs. A typical term
   has negative CDF coefficients, while each standardized cutoff
   `(q_i - q) / scale` strictly decreases in projected skill `q`; strict CDF
   monotonicity plus `0 < v2 < v1` closes the "student strategy is threshold
   form" monotonicity claim before any school fixed-point work.
+- When the paper solves an indifference equation with an inverse CDF, first
+  prove the algebraic CDF equation from the zero-payoff equation, then apply the
+  quantile API with the probability-domain premise explicit. Do not spend time
+  deriving `(0,1)` membership from economic assumptions until the formula
+  theorem itself is green; expose that domain as the next paper-facing
+  obligation.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns

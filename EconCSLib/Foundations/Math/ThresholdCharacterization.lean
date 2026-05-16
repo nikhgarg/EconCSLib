@@ -16,6 +16,7 @@ comparisons into threshold statements.
 - `exists_threshold_of_continuous_strictMonoOn_Icc`
 - `exists_threshold_le_of_continuous_strictMonoOn_Icc`
 - `exists_threshold_of_continuous_strictAntiOn_Icc_crossing`
+- `exists_threshold_of_continuous_strictAntiOn_Icc_crossing_interval`
 - `exists_threshold_gt_of_continuous_strictAntiOn_Icc`
 - `exists_threshold_le_of_continuous_strictAntiOn_Icc`
 - `existsUnique_eq_of_continuous_strictMono_tendsto_atBot_atTop`
@@ -447,6 +448,113 @@ theorem exists_threshold_of_continuous_strictAntiOn_Icc_crossing
     · intro hthreshold_x
       have hneg := (hneg_ge x hx).mpr hthreshold_x
       linarith
+
+/--
+Interval version of
+`exists_threshold_of_continuous_strictAntiOn_Icc_crossing`.
+
+If a scalar function is continuous and strictly decreasing on `[left, right]`,
+with the level strictly between its endpoint values, then the threshold lies in
+the interval interior and comparisons to the level are exactly comparisons to
+that threshold.
+-/
+theorem exists_threshold_of_continuous_strictAntiOn_Icc_crossing_interval
+    {f : ℝ → ℝ} {level left right : ℝ}
+    (hleft_right : left < right)
+    (hf_cont : ContinuousOn f (Icc left right))
+    (hf_anti : StrictAntiOn f (Icc left right))
+    (hleft : level < f left) (hright : f right < level) :
+    ∃ threshold : ℝ, threshold ∈ Ioo left right ∧ f threshold = level ∧
+      (∀ x ∈ Icc left right, level < f x ↔ x < threshold) ∧
+      (∀ x ∈ Icc left right, f x < level ↔ threshold < x) ∧
+      (∀ x ∈ Icc left right, level ≤ f x ↔ x ≤ threshold) ∧
+      (∀ x ∈ Icc left right, f x ≤ level ↔ threshold ≤ x) := by
+  have hlevel_mem : level ∈ Icc (f right) (f left) :=
+    ⟨hright.le, hleft.le⟩
+  rcases intermediate_value_Icc' hleft_right.le hf_cont hlevel_mem with
+    ⟨threshold, hthreshold_mem, hthreshold_eq⟩
+  have hthreshold_gt_left : left < threshold := by
+    have hne : threshold ≠ left := by
+      intro h
+      subst threshold
+      linarith
+    exact lt_of_le_of_ne hthreshold_mem.1 (Ne.symm hne)
+  have hthreshold_lt_right : threshold < right := by
+    have hne : threshold ≠ right := by
+      intro h
+      subst threshold
+      linarith
+    exact lt_of_le_of_ne hthreshold_mem.2 hne
+  have hlevel_lt :
+      ∀ x ∈ Icc left right, level < f x ↔ x < threshold := by
+    intro x hx
+    constructor
+    · intro hlevel_x
+      by_contra hnot
+      have htx : threshold ≤ x := le_of_not_gt hnot
+      have hx_eq : x = threshold := by
+        by_contra hx_ne
+        have htx_strict : threshold < x := lt_of_le_of_ne htx (Ne.symm hx_ne)
+        have hfx_lt : f x < f threshold :=
+          hf_anti hthreshold_mem hx htx_strict
+        linarith
+      subst x
+      linarith
+    · intro hx_threshold
+      have hfx : f threshold < f x :=
+        hf_anti hx hthreshold_mem hx_threshold
+      linarith
+  have hlt_level :
+      ∀ x ∈ Icc left right, f x < level ↔ threshold < x := by
+    intro x hx
+    constructor
+    · intro hfx_level
+      by_contra hnot
+      have hxt : x ≤ threshold := le_of_not_gt hnot
+      have hx_eq : x = threshold := by
+        by_contra hx_ne
+        have hxt_strict : x < threshold := lt_of_le_of_ne hxt hx_ne
+        have hthreshold_lt_fx : f threshold < f x :=
+          hf_anti hx hthreshold_mem hxt_strict
+        linarith
+      subst x
+      linarith
+    · intro hthreshold_x
+      have hfx : f x < f threshold :=
+        hf_anti hthreshold_mem hx hthreshold_x
+      linarith
+  have hlevel_le :
+      ∀ x ∈ Icc left right, level ≤ f x ↔ x ≤ threshold := by
+    intro x hx
+    constructor
+    · intro hlevel_x
+      by_contra hnot
+      have hthreshold_x : threshold < x := lt_of_not_ge hnot
+      have hfx_lt : f x < level := (hlt_level x hx).mpr hthreshold_x
+      linarith
+    · intro hx_threshold
+      rcases lt_or_eq_of_le hx_threshold with hlt | rfl
+      · have hlevel_x : level < f x := (hlevel_lt x hx).mpr hlt
+        exact le_of_lt hlevel_x
+      · linarith
+  have hle_level :
+      ∀ x ∈ Icc left right, f x ≤ level ↔ threshold ≤ x := by
+    intro x hx
+    constructor
+    · intro hfx_level
+      by_contra hnot
+      have hx_threshold : x < threshold := lt_of_not_ge hnot
+      have hlevel_x : level < f x := (hlevel_lt x hx).mpr hx_threshold
+      linarith
+    · intro hthreshold_x
+      rcases lt_or_eq_of_le hthreshold_x with hlt | hEq
+      · have hfx_level : f x < level := (hlt_level x hx).mpr hlt
+        exact le_of_lt hfx_level
+      · subst x
+        linarith
+  exact
+    ⟨threshold, ⟨hthreshold_gt_left, hthreshold_lt_right⟩,
+      hthreshold_eq, hlevel_lt, hlt_level, hlevel_le, hle_level⟩
 
 /--
 If a scalar function is continuous and strictly decreasing on `[0, 1]`, then
