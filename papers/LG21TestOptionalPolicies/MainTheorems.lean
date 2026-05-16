@@ -3630,6 +3630,130 @@ theorem paper_theorem3_1_threshold_conclusions_of_source_witness
     W.reporting_threshold, W.taking_threshold⟩
 
 /--
+Theorem 3.1 optional-reporting endpoint over PMF estimate surfaces: the
+optional-reporting source witness gives the paper's all-take and
+score-threshold conclusions, while concrete distribution-difference witnesses
+give failure of all three fairness criteria.
+-/
+theorem paper_theorem3_1_optional_reporting_strategic_withholding_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    (∀ base skill, W.takes base skill) ∧
+      (∃ base score, ¬ W.reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+          ¬ lg21SourceLatentSkillFair S ∧
+            ¬ lg21SourceObservablyFair S ∧
+              ¬ lg21SourceDemographicallyFair S := by
+  refine ⟨W.all_take, W.some_access_students_do_not_report,
+    W.reporting_threshold, ?_, ?_, ?_⟩
+  · exact lg21_not_latentSkillFair_of_witness eLat q baseLat hLatNe
+  · exact lg21_not_observablyFair_of_witness eObs baseObs hObsNe
+  · exact lg21_not_demographicallyFair_of_witness eDemo hDemoNe
+
+/--
+Theorem 3.1 optional-reporting endpoint over arbitrary estimate-law objects.
+-/
+theorem paper_theorem3_1_optional_reporting_law_strategic_withholding_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    (∀ base skill, W.takes base skill) ∧
+      (∃ base score, ¬ W.reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+          ¬ lg21SourceLawLatentSkillFair S ∧
+            ¬ lg21SourceLawObservablyFair S ∧
+              ¬ lg21SourceLawDemographicallyFair S := by
+  refine ⟨W.all_take, W.some_access_students_do_not_report,
+    W.reporting_threshold, ?_, ?_, ?_⟩
+  · exact lg21_not_lawLatentSkillFair_of_witness eLat q baseLat hLatNe
+  · exact lg21_not_lawObservablyFair_of_witness eObs baseObs hObsNe
+  · exact lg21_not_lawDemographicallyFair_of_witness eDemo hDemoNe
+
+/--
+Theorem 3.1 report-required endpoint over PMF estimate surfaces: the
+report-required source witness gives the paper's skill-threshold conclusion,
+while concrete distribution-difference witnesses give failure of all three
+fairness criteria.
+-/
+theorem paper_theorem3_1_report_required_strategic_withholding_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    (∃ base skill, ¬ W.takes base skill) ∧
+      (∀ base, ∃ qBar : ℝ,
+        ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+        ¬ lg21SourceLatentSkillFair S ∧
+          ¬ lg21SourceObservablyFair S ∧
+            ¬ lg21SourceDemographicallyFair S := by
+  refine ⟨W.some_access_students_do_not_take, W.taking_threshold,
+    ?_, ?_, ?_⟩
+  · exact lg21_not_latentSkillFair_of_witness eLat q baseLat hLatNe
+  · exact lg21_not_observablyFair_of_witness eObs baseObs hObsNe
+  · exact lg21_not_demographicallyFair_of_witness eDemo hDemoNe
+
+/--
+Theorem 3.1 report-required endpoint over arbitrary estimate-law objects.
+-/
+theorem paper_theorem3_1_report_required_law_strategic_withholding_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    (∃ base skill, ¬ W.takes base skill) ∧
+      (∀ base, ∃ qBar : ℝ,
+        ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S := by
+  refine ⟨W.some_access_students_do_not_take, W.taking_threshold,
+    ?_, ?_, ?_⟩
+  · exact lg21_not_lawLatentSkillFair_of_witness eLat q baseLat hLatNe
+  · exact lg21_not_lawObservablyFair_of_witness eObs baseObs hObsNe
+  · exact lg21_not_lawDemographicallyFair_of_witness eDemo hDemoNe
+
+/--
 Theorem 3.1 source-facing endpoint over PMF estimate surfaces: strategic
 threshold behavior plus concrete fairness-violation witnesses imply the
 paper's withholding/threshold conclusions and failure of all three fairness

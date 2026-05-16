@@ -56,8 +56,14 @@ Last updated: 2026-05-16
   `paper_theorem3_1_report_required_affine_source_witness_of_crossings`
   discharge the generic continuity/strict-monotonicity hypotheses for the
   optional Gaussian posterior estimate and the report-required affine expected
-  taking estimate, respectively.  The older combined threshold conclusions are
-  also packaged in
+  taking estimate, respectively.  The policy-specific endpoints
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_of_source_witness`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_of_source_witness`
+  now combine those optional-reporting/report-required source witnesses with
+  concrete law-difference witnesses to rule out latent-skill, observable, and
+  demographic fairness.  The older combined threshold conclusions are also
+  packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
   functions now construct this witness via
   `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit

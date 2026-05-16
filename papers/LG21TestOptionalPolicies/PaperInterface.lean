@@ -1980,6 +1980,59 @@ theorem paper_interface_theorem3_1_threshold_conclusions_of_cutoff_functions
     reportCutoff takeCutoff
 
 /--
+Theorem 3.1 optional-reporting endpoint over arbitrary estimate-law objects:
+all access students take the test, reporting follows a finite score cutoff, and
+all three fairness notions fail.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    (∀ base skill, W.takes base skill) ∧
+      (∃ base score, ¬ W.reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+          ¬ lg21SourceLawLatentSkillFair S ∧
+            ¬ lg21SourceLawObservablyFair S ∧
+              ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_optional_reporting_law_strategic_withholding_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
+Theorem 3.1 report-required endpoint over arbitrary estimate-law objects:
+taking/reporting follows a finite skill cutoff and all three fairness notions
+fail.
+-/
+theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    (∃ base skill, ¬ W.takes base skill) ∧
+      (∀ base, ∃ qBar : ℝ,
+        ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_report_required_law_strategic_withholding_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
 Theorem 3.1: strategic withholding and failure of latent-skill, observable,
 and demographic fairness.
 
