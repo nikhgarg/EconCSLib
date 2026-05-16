@@ -77,6 +77,12 @@ the continuous CTMC source theorems.
 - `paper_lemma6_derivative_kernel_same_sign_response`: sign transfer from
   the Lemma 6 polynomial kernel to the normalized response after substituting
   state reward rates.
+- `endpoint_path_le_of_hasDerivAt_nonneg_on_Icc`,
+  `endpoint_path_lt_of_hasDerivAt_pos_on_Icc`,
+  `endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc`, and
+  `endpoint_path_gt_of_hasDerivAt_neg_on_Icc`: global endpoint-path calculus
+  used by Lemma 5 Step 2 to move an endpoint all the way to a collision or
+  boundary without decreasing reward.
 - `exists_pos_right_improvement_of_hasDerivAt_pos`,
   `exists_pos_right_decrease_of_hasDerivAt_neg`: local calculus bridges from
   endpoint derivative sign to strict nearby endpoint reward comparisons.
@@ -12988,6 +12994,110 @@ theorem paper_lemma6_endpoint_hasDerivAt_of_data
     (D : Lemma6EndpointDerivativeData) :
     HasDerivAt D.rewardAlongEndpoint D.derivativeValue D.u :=
   D.has_derivative
+
+/--
+Global endpoint calculus bridge: if a path has nonnegative derivative
+throughout the open interval between two endpoint positions, moving from the
+left endpoint to the right endpoint weakly improves the path value.
+-/
+theorem endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_nonneg : ∀ x ∈ Set.Ioo a b, 0 ≤ f' x) :
+    f a ≤ f b := by
+  by_cases hab_eq : a = b
+  · simp [hab_eq]
+  have hab_lt : a < b := lt_of_le_of_ne hab hab_eq
+  have hmono : MonotoneOn f (Set.Icc a b) := by
+    refine monotoneOn_of_hasDerivWithinAt_nonneg
+      (f' := f')
+      (convex_Icc a b) hf ?_ ?_
+    · intro x hx
+      have hxIoo : x ∈ Set.Ioo a b := by
+        simpa [interior_Icc] using hx
+      exact (hderiv x hxIoo).hasDerivWithinAt
+    · intro x hx
+      have hxIoo : x ∈ Set.Ioo a b := by
+        simpa [interior_Icc] using hx
+      exact hderiv_nonneg x hxIoo
+  exact hmono (by simp [hab]) (by simp [hab]) hab
+
+/--
+Strict global endpoint calculus bridge: if a path has strictly positive
+derivative throughout the open interval between two distinct endpoint
+positions, moving from the left endpoint to the right endpoint strictly
+improves the path value.
+-/
+theorem endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_pos : ∀ x ∈ Set.Ioo a b, 0 < f' x) :
+    f a < f b := by
+  have hmono : StrictMonoOn f (Set.Icc a b) := by
+    refine strictMonoOn_of_hasDerivWithinAt_pos
+      (f' := f')
+      (convex_Icc a b) hf ?_ ?_
+    · intro x hx
+      have hxIoo : x ∈ Set.Ioo a b := by
+        simpa [interior_Icc] using hx
+      exact (hderiv x hxIoo).hasDerivWithinAt
+    · intro x hx
+      have hxIoo : x ∈ Set.Ioo a b := by
+        simpa [interior_Icc] using hx
+      exact hderiv_pos x hxIoo
+  exact hmono (by simp [le_of_lt hab]) (by simp [le_of_lt hab]) hab
+
+/--
+Global endpoint calculus bridge for nonpositive derivative: moving from the
+left endpoint to the right endpoint weakly decreases the path value.
+-/
+theorem endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_nonpos : ∀ x ∈ Set.Ioo a b, f' x ≤ 0) :
+    f b ≤ f a := by
+  have hle :
+      (fun x => -f x) a ≤ (fun x => -f x) b :=
+    endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+      (f := fun x => -f x) (f' := fun x => -f' x)
+      hab hf.neg
+      (by
+        intro x hx
+        exact (hderiv x hx).neg)
+      (by
+        intro x hx
+        exact neg_nonneg.mpr (hderiv_nonpos x hx))
+  linarith
+
+/--
+Strict global endpoint calculus bridge for negative derivative: moving from
+the left endpoint to the right endpoint strictly decreases the path value.
+-/
+theorem endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+    {f f' : ℝ → ℝ} {a b : ℝ}
+    (hab : a < b)
+    (hf : ContinuousOn f (Set.Icc a b))
+    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
+    (hderiv_neg : ∀ x ∈ Set.Ioo a b, f' x < 0) :
+    f b < f a := by
+  have hlt :
+      (fun x => -f x) a < (fun x => -f x) b :=
+    endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+      (f := fun x => -f x) (f' := fun x => -f' x)
+      hab hf.neg
+      (by
+        intro x hx
+        exact (hderiv x hx).neg)
+      (by
+        intro x hx
+        exact neg_pos.mpr (hderiv_neg x hx))
+  linarith
 
 /--
 Local calculus bridge for endpoint-improvement arguments: a positive derivative

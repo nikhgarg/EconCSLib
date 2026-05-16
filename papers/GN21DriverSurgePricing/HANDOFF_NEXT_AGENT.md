@@ -11,7 +11,8 @@ As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and
 `lake build GN21DriverSurgePricing` pass after the newest Lemma 1-3 IID-cycle
 strong-law work, Lemma 9 envelope/slack source-boundary reduction, and the
 current payment nonnegativity derivation.  The latest checked build also passes
-after adding the generalized interval/ray Lemma 5 descent domain.
+after adding the generalized interval/ray Lemma 5 descent domain and the
+global endpoint-path calculus used by Lemma 5 Step 2.
 
 Useful checks:
 
@@ -48,6 +49,10 @@ Lemma5PositiveResponseShapeData.policyAlmostEverywhereEq_positiveResponse_of_can
 Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_candidate_le
 Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_feasible_optimal
 Lemma5PositiveResponseShapeData.marginalSetReward_lt_positiveResponsePolicy_of_not_policyFormAE
+endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+endpoint_path_gt_of_hasDerivAt_neg_on_Icc
 measure_congr_policy_ae
 singleStateTripMass_congr_policy_ae
 singleStateTripTime_congr_policy_ae
@@ -118,12 +123,21 @@ Theorem 4 interval-shape representatives from a.e. Lemma 5 forms, so endpoint
 work can switch to the exact representative and then use the primitive
 congruence lemmas to transfer the measured reward facts back.
 
+The global endpoint-path calculus is now proved.  The four
+`endpoint_path_*_of_hasDerivAt_*_on_Icc` lemmas turn derivative sign on the
+entire interval between two endpoint positions into weak or strict reward
+ordering between the two endpoint policies.  This is the source Step 2 move
+needed after choosing the next collision or boundary; future work should
+instantiate these lemmas with the concrete endpoint path instead of returning
+to infinitesimal-only wrappers.
+
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical
 generalized finite interval/ray policy, construct a weakly improving endpoint
-move that strictly lowers complexity and identify that move with the existing
-nonlinear endpoint derivative lemmas.  If the endpoint argument can instead
-produce a weakly improving canonical representative directly, use
+move to the next collision/canonical boundary that strictly lowers complexity,
+and identify that move with the global endpoint-path lemmas.  If the endpoint
+argument can instead produce a weakly improving canonical representative
+directly, use
 `Lemma5GeneralizedIntervalPolicyCanonicalDominanceMaximizerData`; its
 shape-specific complexity discharges the termination/decrease proof
 automatically.  If the endpoint argument naturally produces ordinary feasible

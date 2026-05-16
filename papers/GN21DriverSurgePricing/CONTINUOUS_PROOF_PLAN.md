@@ -121,6 +121,24 @@ gn21MeasuredAggregateRewardPrimitives_congr_left_policy_ae
 gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
 ```
 
+The global calculus part of Lemma 5 Step 2 is now compiled:
+
+```lean
+endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+```
+
+These lemmas prove that derivative sign on the whole interval between two
+endpoint positions gives the corresponding weak or strict reward ordering
+after moving the endpoint all the way to the next collision or boundary.  The
+remaining nonlinear work is therefore not calculus; it is selecting the
+concrete endpoint path for each noncanonical generalized interval/ray seed,
+proving the source derivative-sign hypothesis holds along that path, and
+showing the resulting collision/canonical-boundary policy lowers finite
+complexity.
+
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
 
@@ -620,9 +638,10 @@ into the concrete endpoint policy data.
   bridge for any finite-policy domain with a natural-valued endpoint
   complexity.  The remaining Lemma 5 work is now the paper-specific endpoint
   step certificate for each derivative-shape case: given a noncanonical finite
-  interval policy, construct a reward-improving endpoint move that lowers the
-  chosen finite complexity and identify it with the nonlinear endpoint
-  derivative path.
+  interval policy, construct the endpoint path to the next collision or
+  canonical boundary, use the global endpoint-path calculus above to prove the
+  weak or strict reward comparison, and show the moved policy lowers the
+  chosen finite complexity.
 - The Theorem 4 endpoint layer now has AE shape predicates
   `theorem4NonsurgeAEShape` and `theorem4SurgeAEShape`, plus
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.only_ae_shapes` and
