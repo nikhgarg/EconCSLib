@@ -994,6 +994,11 @@ from the Theorem 3 target rate, and this route reaches the weak Theorem 3
 accept-all boundary through a current-rate aggregate certificate;
 `LEMMA9_10_REWARD_RATE_AUDIT.md` records why a one-sided reward comparison alone
 is not enough.
+The direct current-bounds strict route is now
+`paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_support`:
+it consumes the source current-bound data plus positive Lemma 6 kernel support
+on the rejected complement and uses accept-all itself as the strict local
+replacement.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

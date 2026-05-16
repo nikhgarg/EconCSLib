@@ -482,6 +482,14 @@ into the concrete endpoint policy data.
   `GN21NonsurgeLemma10AcceptAllAggregateSourceData.aggregate_lt_acceptAll` /
   `GN21SurgeLemma9AcceptAllAggregateSourceData.aggregate_lt_acceptAll`
   methods.
+  These now feed the source-facing Theorem 4 strict-local route through
+  `Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleStrictCertificate`,
+  `theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_structured_current_bounds_source_support`,
+  and
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_support`.
+  That endpoint uses accept-all itself as the profitable replacement once the
+  source current-bound data and positive kernel support on the rejected
+  complement are supplied.
   These are the useful bridge from "positive derivative kernel on positive
   mass" to an actual strict reward improvement for the quotient reward, and
   should be preferred over building more abstract wrappers when closing the

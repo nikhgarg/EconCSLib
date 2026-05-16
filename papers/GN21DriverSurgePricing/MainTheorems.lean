@@ -30892,6 +30892,89 @@ def theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_curr
       μ arrival R1 R2 switch12 switch21 m z C)
 
 /--
+Source-facing feasible current-bounds certificate with strict kernel support.
+The common source-data certificate supplies the routine feasible-domain,
+integrability, nondegeneracy, and Lemma 9/10 current-bound data.  The two
+strict fields add exactly the missing mass condition: if an optimal policy does
+not accept all trips in a state, the rejected complement has positive measure
+where the corresponding Lemma 6 derivative kernel is nonzero.
+-/
+structure Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleStrictCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  source :
+    Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+      μ arrival R1 R2 switch12 switch21 m z
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ
+  nonsurge_strict_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ¬ acceptsAllTrips (ρ 0) →
+        ∃ ratio : ℝ,
+          ∃ D :
+            GN21NonsurgeLemma10AcceptAllAggregateSourceData
+              (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+              R2 (z 0) ratio
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+              (ρ 0) (ρ 1),
+            0 <
+              (μ 0) (Function.support
+                (fun τ : TripLength =>
+                  gn21DerivativeSignKernel
+                    (gn21SwitchProb switch12 switch21 τ) τ
+                    (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21 τ)
+                    (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+                    (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+                    (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+                    (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+                    (gn21ScaledStateEarning (μ 0) (arrival 0)
+                      (ctmcStructuredSurgePrice R2 (z 0) switch12 switch21) (ρ 0))
+                    (gn21ScaledStateEarning (μ 1) (arrival 1)
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                      (ρ 1))) ∩
+                  (acceptAllPolicy \ ρ 0))
+  surge_strict_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ¬ acceptsAllTrips (ρ 1) →
+        ∃ ratio : ℝ,
+          ∃ D :
+            GN21SurgeLemma9AcceptAllAggregateSourceData
+              (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+              (m 1) R1 (z 1) ratio
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+              (ρ 0) (ρ 1),
+            0 <
+              (μ 1) (Function.support
+                (fun τ : TripLength =>
+                  gn21DerivativeSignKernel
+                    (gn21SwitchProb switch21 switch12 τ) τ
+                    (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12 τ)
+                    (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+                    (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+                    (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+                    (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+                    (gn21ScaledStateEarning (μ 1) (arrival 1)
+                      (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12) (ρ 1))
+                    (gn21ScaledStateEarning (μ 0) (arrival 0)
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+                      (ρ 0))) ∩
+                  (acceptAllPolicy \ ρ 1))
+
+/--
 Feasible current-bounds certificate with fixed-state source data stated through
 structured-price accounting equations.
 -/
@@ -31458,6 +31541,86 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregat
     (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
     (theorem4MeasurableStrictLocalImprovementCertificate_of_measured_aggregate_feasible_strict_improvements
       μ arrival switch12 switch21 w C)
+
+/--
+Source current-bounds data plus strict kernel support instantiate the feasible
+measurable strict-local aggregate certificate, using accept-all itself as the
+profitable replacement in the deviating state.
+-/
+def theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_structured_current_bounds_source_support
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleStrictCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := C.exists_optimal
+  nonsurge_strict_aggregate_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.nonsurge_strict_data ρ hρ hnot with ⟨ratio, D, hsupport_pos⟩
+    let W :=
+      Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate.of_source
+        μ arrival R1 R2 switch12 switch21 m z C.source
+    refine ⟨acceptAllPolicy, ?_, W.current_nondegenerate ρ hρ.1,
+      W.nonsurge_accept_all_nondegenerate ρ hρ.1, ?_⟩
+    · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ.1 0
+    · have hlt :=
+        GN21NonsurgeLemma10AcceptAllAggregateSourceData.aggregate_lt_acceptAll
+          (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+          C.source.arrival1_pos C.source.arrival2_pos C.source.switch12_pos
+          C.source.switch21_pos C.source.time1_acceptAll_integrable
+          C.source.q1_acceptAll_integrable D hsupport_pos
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        C.source.m0_eq] using hlt
+  surge_strict_aggregate_improvement_unless := by
+    intro ρ hρ hnot
+    rcases C.surge_strict_data ρ hρ hnot with ⟨ratio, D, hsupport_pos⟩
+    let W :=
+      Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate.of_source
+        μ arrival R1 R2 switch12 switch21 m z C.source
+    refine ⟨acceptAllPolicy, ?_, W.current_nondegenerate ρ hρ.1,
+      W.surge_accept_all_nondegenerate ρ hρ.1, ?_⟩
+    · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ.1 1
+    · have hlt :=
+        GN21SurgeLemma9AcceptAllAggregateSourceData.aggregate_lt_acceptAll
+          (hρ.1 0).1 (hρ.1 0).2 (hρ.1 1).1 (hρ.1 1).2
+          C.source.arrival1_pos C.source.arrival2_pos C.source.switch12_pos
+          C.source.switch21_pos C.source.time2_acceptAll_integrable
+          C.source.q2_acceptAll_integrable D hsupport_pos
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        C.source.m0_eq] using hlt
+
+/--
+Source current-bounds data plus strict kernel support imply accept-all
+measurable optimality and uniqueness inside the feasible measurable domain.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_support
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleStrictCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy :=
+  paper_theorem4_measurable_accept_all_unique_optimal_of_measured_aggregate_feasible_strict_local_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_structured_current_bounds_source_support
+      μ arrival R1 R2 switch12 switch21 m z C)
 
 /--
 State-1 raw strict aggregate improvement proposition.  The concrete endpoint
