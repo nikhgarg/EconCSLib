@@ -17,10 +17,12 @@ Last updated: 2026-05-16
   plus paper-interface unfold lemmas.  Definition 5 also has equivalent
   witness forms for concrete base/test relevance.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
-  the shared conditional-resampling API.  Theorem 4.4 also has a combined
-  source-route wrapper that pairs the finite resampling fairness proof with
-  Lemma 4.1's all-report/all-take conclusion from the packaged
-  threshold-equilibrium certificate.
+  the shared conditional-resampling API.  Definition 6 now explicitly unfolds
+  both access and re-sampled no-access estimate laws as the same conditional
+  test-score-law pushforward through the common estimate map.  Theorem 4.4
+  also has a combined source-route wrapper that pairs the finite resampling
+  fairness proof with Lemma 4.1's all-report/all-take conclusion from the
+  packaged threshold-equilibrium certificate.
 - The shared Bayesian Gaussian estimator algebra is proved:
   `paper_bayesian_optimal_estimator_gaussian` gives the precision-weighted
   posterior mean and marginal estimate law variance formula.

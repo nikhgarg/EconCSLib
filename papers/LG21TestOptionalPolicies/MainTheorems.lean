@@ -3331,6 +3331,40 @@ theorem paper_definition6_resampling_policy_observable_kernel
   exact resamplingSignalKernel_eq_signalGivenBase e
 
 /--
+Definition 6 access-side estimate law: access students' estimates are obtained
+by pushing the observed conditional test-score law through the common
+estimation map.
+-/
+theorem paper_definition6_access_estimate_kernel_eq_map
+    {ΩBase ΩTest Estimate : Type*} [Fintype ΩBase] [DecidableEq ΩBase]
+    (e : LG21ResamplingExperiment ΩBase ΩTest Estimate) (base : ΩBase) :
+    lg21AccessEstimateKernel e base =
+      (e.signalGivenBase base).map (fun test => e.estimate base test) := by
+  rfl
+
+/--
+Definition 6 no-access estimate law: the re-sampled test score is drawn from
+the same conditional law and then passed through the same estimation map.
+-/
+theorem paper_definition6_resampling_estimate_kernel_eq_map
+    {ΩBase ΩTest Estimate : Type*} [Fintype ΩBase] [DecidableEq ΩBase]
+    (e : LG21ResamplingExperiment ΩBase ΩTest Estimate) (base : ΩBase) :
+    lg21ResamplingEstimateKernel e base =
+      (e.signalGivenBase base).map (fun test => e.estimate base test) := by
+  rfl
+
+/--
+Definition 6 immediate distributional identity: conditional on a base profile,
+access and re-sampled no-access estimates use the same test-score law and
+estimation map.
+-/
+theorem paper_definition6_access_estimate_kernel_eq_resampling_estimate_kernel
+    {ΩBase ΩTest Estimate : Type*} [Fintype ΩBase] [DecidableEq ΩBase]
+    (e : LG21ResamplingExperiment ΩBase ΩTest Estimate) (base : ΩBase) :
+    lg21AccessEstimateKernel e base = lg21ResamplingEstimateKernel e base := by
+  rfl
+
+/--
 Theorem 4.4, observable-fairness core.
 
 Conditional on each non-test base profile, the access estimate and the
