@@ -20,7 +20,7 @@ policy and prove Step 3's complete-threshold maximizer.  Proposition 3.1 and
 the single-state multiplicative-pricing corollary are closed for the actual
 renewal reward on measurable feasible policies.
 
-## Lemmas 7-8 Update
+## Lemmas 6-10 Update
 
 Lemma 6 is closed for the source upper-endpoint density formula that identifies
 the dynamic reward derivative's sign with the paper's normalized response:
@@ -43,6 +43,20 @@ response shapes to choose valid endpoint replacements for arbitrary open
 measurable optimal policies and connect those replacements back to the
 set-valued reward functional.
 
+Lemmas 9-10 are also closed for their named derivative-sign and
+ratio-feasibility statements.  The source-shaped wrappers are:
+
+```lean
+paper_lemma9_surge_derivative_positive_of_acceptAll_bounds
+paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds
+```
+
+These start from the paper's accept-all ratio bounds, apply the formal
+tightening bridge to the current `Q,T` primitives, and then use Lemma 6 to
+prove positive upper-endpoint reward derivatives.  Arbitrary open-policy
+endpoint selection remains a Lemma 5/Theorem 4 obligation, not a Lemma 9/10
+gap.
+
 ```lean
 paper_theorem3_measured_structured_measurable_ic_prices_of_source_assumptions
 ```
@@ -58,7 +72,8 @@ accept-all move first, using Lemma 9 with the current fixed non-surge reward
 rate, and then proves the non-surge accept-all move only after surge is already
 fixed at accept-all, where Lemma 10 can use the Theorem 3 target surge reward
 rate.  The current-lower/fixed-upper frontier is the best handoff target for
-closing the remaining Lemma 9 source field.  The older fixed-transfer adapter
+closing the remaining Theorem 3 source boundary that consumes the Lemma 9
+move.  The older fixed-transfer adapter
 remains useful for branch bookkeeping,
 but it should not be treated as the final source-faithful closure route unless
 the source proof also establishes the target reward-rate/equality facts for

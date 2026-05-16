@@ -12868,6 +12868,49 @@ theorem paper_lemma9_derivative_value_pos_of_current_bounds_certificate
     hgap_nonneg
 
 /--
+Source-shaped Lemma 9 derivative statement: the displayed accept-all ratio
+bounds imply a positive surge-state upper-endpoint derivative for every
+current moving-state policy whose `Q,T` primitives are tightened by the
+accept-all primitives.
+-/
+theorem paper_lemma9_surge_derivative_positive_of_acceptAll_bounds
+    (C : Lemma6DerivativeFormulaCertificate)
+    (ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z : ℝ)
+    (hq : C.q = gn21SwitchProb switch21 switch12 u)
+    (hu_eq : C.u = u)
+    (hwi : C.wi = m * u + z * gn21SwitchProb switch21 switch12 u)
+    (hQi : C.Qi = Q2)
+    (hQj : C.Qj = Q1)
+    (hTi : C.Ti = T2)
+    (hTj : C.Tj = T1)
+    (hWi : C.Wi = m * (T2 - 1) + z * (Q2 - switch21))
+    (hWj : C.Wj = R1 * T1)
+    (hbounds_bar : lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hgap_le : switch21 * T2 - Q2 ≤ switch21 * Tbar2 - Qbar2)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hQ2_le : Q2 ≤ Qbar2) :
+    0 < C.derivativeValue := by
+  have hbounds_current :
+      lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21 :=
+    lemma9StructuredBounds_of_acceptAll_tightening
+      ratio T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 hbounds_bar
+      hT1_nonneg hQ1_pos hswitch21_pos hgap_nonneg hgap_le
+      hswitch_lt_Q2 hQ2_le
+  exact paper_lemma9_derivative_value_pos_of_current_bounds_certificate
+    C ratio u T1 Q1 T2 Q2 switch21 switch12 m R1 z hq hu_eq hwi
+    hQi hQj hTi hTj hWi hWj hbounds_current hz hmR_pos hR1_nonneg
+    hT1_nonneg hQ1_pos hswitch21_pos hsum hu hswitch_lt_Q2 hgap_nonneg
+
+/--
 Lemma 9 endpoint-improvement bridge: current structured ratio bounds and
 endpoint derivative data produce a nearby right endpoint move with strictly
 larger aggregate reward.
@@ -14713,6 +14756,48 @@ theorem paper_lemma10_derivative_value_pos_of_current_bounds_certificate
   exact paper_lemma10_structured_derivative_kernel_pos_of_current_bounds
     ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z hbounds hz hR2_pos
     hQ2_pos hswitch12_pos hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
+
+/--
+Source-shaped Lemma 10 derivative statement: the displayed accept-all ratio
+bounds imply a positive non-surge upper-endpoint derivative for every current
+moving-state policy whose `Q,T` primitives are tightened by the accept-all
+primitives.
+-/
+theorem paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds
+    (C : Lemma6DerivativeFormulaCertificate)
+    (ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z : ℝ)
+    (hq : C.q = gn21SwitchProb switch12 switch21 u)
+    (hu_eq : C.u = u)
+    (hwi : C.wi = R2 * u + z * gn21SwitchProb switch12 switch21 u)
+    (hQi : C.Qi = Q1)
+    (hQj : C.Qj = Q2)
+    (hTi : C.Ti = T1)
+    (hTj : C.Tj = T2)
+    (hWi : C.Wi = R2 * (T1 - 1) + z * (Q1 - switch12))
+    (hWj : C.Wj = R2 * T2)
+    (hbounds_bar : lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hQ2_pos : 0 < Q2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hgap_le : switch12 * T1 - Q1 ≤ switch12 * Tbar1 - Qbar1)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hQ1_le : Q1 ≤ Qbar1) :
+    0 < C.derivativeValue := by
+  have hbounds_current :
+      lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12 :=
+    lemma10StructuredBounds_of_acceptAll_tightening
+      ratio T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 hbounds_bar hA_pos
+      (le_of_lt hQ2_pos) hswitch12_pos hgap_nonneg hgap_le
+      hswitch_lt_Q1 hQ1_le
+  exact paper_lemma10_derivative_value_pos_of_current_bounds_certificate
+    C ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z hq hu_eq hwi
+    hQi hQj hTi hTj hWi hWj hbounds_current hz hR2_pos hQ2_pos
+    hswitch12_pos hsum hu hswitch_lt_Q1 hgap_nonneg hA_pos
 
 /--
 Lemma 10 endpoint-improvement bridge: current structured ratio bounds and

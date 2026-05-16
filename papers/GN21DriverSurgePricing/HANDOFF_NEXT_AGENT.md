@@ -109,9 +109,23 @@ still present and feed the Lemma 5 derivative-shape interface, but the remaining
 Lemma 5/Theorem 4 work is downstream optimizer/replacement selection, not a
 Lemma 7-8 gap.
 
+Lemmas 9-10 are now closed for their paper-facing derivative-sign and
+ratio-feasibility statements.  The direct source-shaped wrappers are:
+
+```lean
+paper_lemma9_surge_derivative_positive_of_acceptAll_bounds
+paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds
+```
+
+They start from the paper's accept-all structured ratio bounds, apply the
+compiled tightening lemmas to current `Q,T` primitives, and then use the Lemma
+6 derivative-value bridge to prove positive upper-endpoint derivatives.  Do not
+track arbitrary open-policy endpoint selection as a Lemma 9/10 gap; that work
+belongs to Lemma 5/Theorem 4.
+
 ## Important Conclusion
 
-Do not try to finish Lemma 9 by proving a universal arbitrary-policy bound
+Do not try to finish Theorem 3 by proving a universal arbitrary-policy bound
 `r1_current <= R1`.  That is not the invariant used by the source proof and can
 be false for arbitrary current non-surge policies.
 
