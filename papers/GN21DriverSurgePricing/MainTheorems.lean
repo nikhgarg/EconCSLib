@@ -44617,6 +44617,74 @@ structure Lemma5FixedResponseFeasibleOptimalData
           lemma5MarginalSetReward μ response σ
 
 /--
+Positive affine transfer from dynamic local optimality to Lemma 5 marginal
+optimality.  If the fixed-state continuation reward is a positive affine
+transform of the fixed-response marginal integral on feasible measurable
+policies, then a dynamically measurable optimum is also marginally optimal.
+-/
+theorem lemma5MarginalSetReward_optimal_of_dynamicStateReward_positive_affine
+    (R : DynamicReward) {ρ : Fin 2 → TripPolicy}
+    (hρ : dynamicMeasurableOptimal R ρ)
+    (i : Fin 2) (μ : Measure TripLength)
+    (response : TripLength → ℝ) (scale offset : ℝ)
+    (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          dynamicStateReward R ρ i σ =
+            scale * lemma5MarginalSetReward μ response σ + offset) :
+    ∀ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy →
+      MeasurableSet σ' →
+        lemma5MarginalSetReward μ response σ' ≤
+          lemma5MarginalSetReward μ response (ρ i) := by
+  intro σ' hσ'_subset hσ'_measurable
+  have hupdate :
+      dynamicFeasibleMeasurablePolicy (Function.update ρ i σ') :=
+    dynamicFeasibleMeasurablePolicy_update hρ.1 i σ'
+      hσ'_subset hσ'_measurable
+  have hstate_le :
+      dynamicStateReward R ρ i σ' ≤ dynamicStateReward R ρ i (ρ i) :=
+    dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hρ i hupdate
+  have hσ'_eq :=
+    haffine σ' hσ'_subset hσ'_measurable
+  have hcurrent_eq :=
+    haffine (ρ i) (hρ.1 i).1 (hρ.1 i).2
+  rw [hσ'_eq, hcurrent_eq] at hstate_le
+  nlinarith [hscale_pos, hstate_le]
+
+/--
+Constructor for fixed-response Lemma 5 data from a positive-affine
+identification of the fixed-state dynamic continuation reward with the
+linearized marginal set reward.
+-/
+def Lemma5FixedResponseFeasibleOptimalData.of_dynamicStateReward_positive_affine
+    (R : DynamicReward) {ρ : Fin 2 → TripPolicy}
+    (hρ : dynamicMeasurableOptimal R ρ)
+    (i : Fin 2) (μ : Measure TripLength)
+    (response : TripLength → ℝ) (shape : Lemma5DerivativeShape)
+    (shape_data : Lemma5PositiveResponseShapeData response shape)
+    (response_measurable : Measurable response)
+    (response_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (scale offset : ℝ)
+    (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          dynamicStateReward R ρ i σ =
+            scale * lemma5MarginalSetReward μ response σ + offset) :
+    Lemma5FixedResponseFeasibleOptimalData μ response shape (ρ i) where
+  shape_data := shape_data
+  response_measurable := response_measurable
+  response_integrable_acceptAll := response_integrable_acceptAll
+  optimal :=
+    lemma5MarginalSetReward_optimal_of_dynamicStateReward_positive_affine
+      R hρ i μ response scale offset hscale_pos haffine
+
+/--
 All measurable optima satisfy the fixed-response Lemma 5 hypotheses in both
 states.  This is the paper-facing Lemma 5 boundary just before applying the
 a.e. representative endpoint: provide the response function, its source shape,

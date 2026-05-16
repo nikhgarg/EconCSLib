@@ -159,6 +159,14 @@ fixed-response variational part: for each measurable optimum and state, supply
 the response function, `Lemma5PositiveResponseShapeData`, response
 measurability/integrability, and marginal optimality.  Lean then produces the
 feasible AE representative data automatically.
+If the remaining work has dynamic local optimality but not marginal optimality
+yet, use
+`Lemma5FixedResponseFeasibleOptimalData.of_dynamicStateReward_positive_affine`
+or
+`lemma5MarginalSetReward_optimal_of_dynamicStateReward_positive_affine`.
+They transfer optimality from the fixed-state continuation reward to the
+Lemma 5 marginal integral once the continuation reward is identified as a
+positive affine transform of that integral.
 
 The global calculus part of Lemma 5 Step 2 is now compiled:
 

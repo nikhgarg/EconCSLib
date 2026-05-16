@@ -242,6 +242,13 @@ For the fixed-response Lemma 5 portion, target
 `Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms`
 turns per-optimum response-shape data, response measurability/integrability,
 and fixed-state marginal optimality into the feasible AE representative forms.
+When only dynamic local optimality is available, use
+`Lemma5FixedResponseFeasibleOptimalData.of_dynamicStateReward_positive_affine`
+or
+`lemma5MarginalSetReward_optimal_of_dynamicStateReward_positive_affine`: after
+proving the fixed-state continuation reward equals a positive affine transform
+of the Lemma 5 marginal integral on feasible measurable policies, these derive
+the marginal optimality field automatically.
 The a.e. convention is now backed by actual primitive congruence lemmas:
 single-state mass/time/payment/renewal reward, Lemma 3 `Q,T,W`, and
 `gn21MeasuredAggregateRewardPrimitives` are unchanged under
