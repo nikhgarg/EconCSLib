@@ -28,6 +28,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   lemmas in `StandardGaussianQuantileAPI`, strict payoff/probability algebra,
   then a paper-facing theorem saying apply strictly dominates above the cutoff
   and not applying strictly dominates below it.
+- For two-school strategic application regions, define the incremental payoff
+  explicitly before proving best response: below the fallback school's cutoff
+  the value is the preferred-school value, while above it the incremental value
+  is the value difference. Prove the low/high cutoff region iff nonnegative
+  incremental payoff, then separately prove the region indicator pointwise
+  maximizes the binary apply/not-apply payoff.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
