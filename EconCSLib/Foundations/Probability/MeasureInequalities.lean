@@ -607,6 +607,30 @@ theorem verticalUpperStripMass_pos_of_isOpenPosMeasure
     lt_of_lt_of_le (hopen.measure_pos μ hnonempty) (measure_mono hsubset)
   exact ENNReal.toReal_pos (ne_of_gt hpos) (measure_ne_top μ _)
 
+/-- A lower-left rectangle has positive mass under a finite open-positive joint law. -/
+theorem lowerLeftRectangleMass_pos_of_isOpenPosMeasure
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ]
+    [Measure.IsOpenPosMeasure μ] (x y : ℝ) :
+    0 < lowerLeftRectangleMass μ x y := by
+  let openRect : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 < x ∧ p.2 < y}
+  have hopen : IsOpen openRect := by
+    have hleft : IsOpen ({p : ℝ × ℝ | p.1 < x}) :=
+      isOpen_lt continuous_fst continuous_const
+    have hright : IsOpen ({p : ℝ × ℝ | p.2 < y}) :=
+      isOpen_lt continuous_snd continuous_const
+    simpa [openRect, Set.setOf_and] using hleft.inter hright
+  have hnonempty : openRect.Nonempty := by
+    refine ⟨(x - 1, y - 1), ?_⟩
+    simp [openRect]
+  have hsubset :
+      openRect ⊆ {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 ≤ y} := by
+    intro p hp
+    exact ⟨hp.1.le, hp.2.le⟩
+  have hpos :
+      0 < μ {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 ≤ y} :=
+    lt_of_lt_of_le (hopen.measure_pos μ hnonempty) (measure_mono hsubset)
+  exact ENNReal.toReal_pos (ne_of_gt hpos) (measure_ne_top μ _)
+
 theorem measurableSet_horizontalBoundaryLeft (x y : ℝ) :
     MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ p.2 = y}) := by
   exact

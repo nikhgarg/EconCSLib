@@ -234,6 +234,40 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   paper formula to pretend every density argument is already standardized.
   In Lean statements, parenthesize `c * (∫ ...) - boundary`; otherwise the
   parser may absorb the subtraction into the integrand and waste a proof loop.
+- Keep lower-tail selection masses separate from lower-tail product-density
+  terms. In integration-by-parts proofs, `∫ phi(z) * phi(offset+c*z)` is only
+  the derivative/product term, while the admitted/enrolled mass is
+  `∫ phi(z) * Phi(offset+c*z)`. If the paper's normalized merit formula has a
+  `mu * mass / tau` term, the mass premise must refer to the affine-CDF
+  selection integral or its measure-event wrapper, not the product-density
+  integral. A fast audit is to name both declarations explicitly, e.g.
+  `OwenProductLowerTail` versus `OwenSelectionLowerTail`, before wiring the
+  final `kappa` bridge.
+- When a two-school proof writes the nonpreferred school's mass as
+  `eligible tail - D_g`, first prove the algebraic CDF bookkeeping before
+  attacking source densities: if the eligible tail is
+  `pi * sigmaTilde * Phi(A)` and `D_g = pi * sigmaTilde * (Phi(A)-Phi_2)`,
+  then the residual is `pi * sigmaTilde * Phi_2`. This often turns a confusing
+  "lower-tail mass" obligation into two smaller seams: the affine total-mass
+  substitution and the integral/event identity for the lower rectangle.
+- When a residual mass is a lower-left rectangle under a nondegenerate
+  Gaussian law, discharge positivity immediately from open-positive measure
+  support instead of carrying a loose positivity premise through diversity
+  ratio theorems. The reusable lemma is
+  `lowerLeftRectangleMass_pos_of_isOpenPosMeasure`; for correlated Gaussians,
+  combine it with the existing `correlatedStandardGaussianLaw_isOpenPosMeasure`
+  proof and the paper's automatic `rho^2 < 1` algebra.
+- For complementary two-school residual masses, look for a decomposition into
+  `lowerLeft + (Phi(A_new)-Phi(A_old))`. Once the affine-argument order is
+  explicit, positivity follows from lower-left positivity plus CDF monotonicity;
+  this is usually faster than expanding all source density integrals again.
+- For a lower-tail affine-CDF integral, the direct product-measure route is
+  usually faster than another Owen-table lookup. Define the affine lower event
+  `P(X <= A*D+c*Z, Z <= B)`, use `Measure.prod_apply_symm` to condition on
+  `Z`, rewrite the section as `Phi(A*D+c*z)`, and then use
+  `integral_gaussianReal_eq_integral_smul` to convert the outer standard
+  Gaussian measure to `phi(z) dz`. Compose this with the existing affine
+  standardization map to get the lower-left bivariate rectangle.
 - When a later algebraic theorem assumes these selection cores are positive,
   avoid carrying positivity as a paper premise for concrete bivariate normals.
   Prove a reusable open-positive-measure lemma that every nonempty vertical
