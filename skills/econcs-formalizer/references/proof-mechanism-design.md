@@ -53,6 +53,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   those definitions. This makes the human-facing theorem auditable and prevents
   opaque fields like `subFullEquilibriumIff : Prop` from hiding whether the
   Lean statement actually matches the paper.
+- For two-school, two-policy admissions games, prove the normal-form
+  unilateral-deviation bridge before the source inequalities. Each candidate
+  pair `(P_sub,P_full)`, `(P_full,P_sub)`, and `(P_full,P_full)` should reduce
+  to the two objective comparisons obtained by switching one school while
+  holding the other fixed. Then connect the paper's analytic inequalities to
+  those objective comparisons.
 - Audit existential cost-boundary statements before treating them as substantive
   strategic conclusions. If a theorem only says there exist positive functions
   characterizing an equilibrium region, the bare existential may be provable by
