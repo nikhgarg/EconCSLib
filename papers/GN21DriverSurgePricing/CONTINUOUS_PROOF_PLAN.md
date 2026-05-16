@@ -5,20 +5,37 @@ the already-compiled wrappers.  The canonical broad measurable entry point is:
 
 ## Section 3.1 Update
 
-Theorem 1 Step 2 is now compiled directly:
+Theorem 1 Step 1 and Step 2 are now compiled directly:
 
 ```lean
+paper_theorem1_policy_le_complete_threshold_at_own_reward
 paper_theorem1_step2_partial_threshold_dominated_by_strict_or_complete
 paper_theorem1_complete_threshold_optimal_of_step1_step3_renewal_reward
 paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward
 ```
 
-Do not ask future callers to provide Step 2 as a certificate field.  The
-remaining general Theorem 1 work is exactly the source selection/compactness
-work: construct the Step 1 measurable partial-threshold replacement for every
-policy and prove Step 3's complete-threshold maximizer.  Proposition 3.1 and
-the single-state multiplicative-pricing corollary are closed for the actual
-renewal reward on measurable feasible policies.
+Do not ask future callers to provide Step 1 or Step 2 as certificate fields for
+measurable feasible policies.  The direct Step 1 route sends any measurable
+feasible policy to the complete threshold at its own renewal reward rate.  Step
+3 now has compiled compact upper-semicontinuity and margin-resolution
+reductions:
+
+```lean
+paper_theorem1_cutoff_maximizer_of_compact_upperSemicontinuity
+paper_theorem1_complete_threshold_ge_strict_threshold_of_cutoff_ge_strict_reward
+paper_theorem1_strict_threshold_reward_lt_higher_strict_threshold_of_positive_band
+paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity_band_resolution
+paper_theorem1_single_state_threshold_best_response_measurable_of_complete_maximizer
+paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuity
+```
+
+The remaining general Theorem 1 work is now exactly the source Step 3 analytic
+tail/gap work: prove the compact upper-semicontinuity/tail-bound hypotheses for
+the strict/complete cutoff objective, and prove the source no-mass-gap
+alternative that replaces a high-reward maximizer with a higher complete
+threshold when no positive band exists.  Proposition 3.1 and the single-state
+multiplicative-pricing corollary are closed for the actual renewal reward on
+measurable feasible policies.
 
 ## Lemmas 6-10 Update
 
