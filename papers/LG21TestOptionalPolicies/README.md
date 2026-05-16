@@ -177,7 +177,11 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_outside`
   wire those shares directly into the optional-reporting and report-required
-  binary-mixture surfaces.
+  binary-mixture surfaces.  The report-required
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm`
+  endpoint replaces the centered-numerator outside-payoff premise with the
+  auditable base-term identity
+  `baseTerm = denom / 2 - signalWeight * mean`.
 
 ## Source Notes
 

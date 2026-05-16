@@ -264,11 +264,14 @@ Last updated: 2026-05-16
   the binary-mixture surface, so the share upper bound and strict positivity
   reduce to ordinary finite event-mass facts.  The event-share concrete
   endpoints wire those shares directly into the optional-reporting and
-  report-required binary-mixture surfaces.  The remaining source gap is
+  report-required binary-mixture surfaces.  The report-required centered
+  base-term endpoint replaces the centered-numerator outside-payoff premise
+  with the auditable identity
+  `baseTerm = denom / 2 - signalWeight * mean`.  The remaining source gap is
   discharging the final paper policy assumptions for the concrete
   optional/report-required surfaces, especially the latent-to-observable
-  mixture identities, the two displayed support facts, and centered
-  outside-payoff identity.
+  mixture identities, the two displayed support facts, and this centered
+  base-term identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -427,10 +430,12 @@ Last updated: 2026-05-16
    Finite event-share helpers now package reporter/taker shares as `NNReal`
    values and prove the `≤ 1` and strict-positivity obligations from
    `pmfProb` facts; the event-share concrete endpoints now use those shares
-   directly.  Next work should discharge the remaining paper policy assumptions
-   for the concrete optional/report-required surfaces, especially the
-   latent-to-observable mixture identities, the two displayed support facts,
-   and centered outside-payoff identity.
+   directly.  The report-required centered base-term endpoint makes the
+   outside-payoff algebra a source-formula identity rather than a centered
+   numerator equality.  Next work should discharge the remaining paper policy
+   assumptions for the concrete optional/report-required surfaces, especially
+   the latent-to-observable mixture identities, the two displayed support facts,
+   and that centered base-term identity.
 
 ## Reusable Library Seams
 
