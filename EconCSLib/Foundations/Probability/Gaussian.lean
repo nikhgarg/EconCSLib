@@ -474,6 +474,24 @@ theorem mixtureTailMass_antitone_threshold (api : StandardGaussianCDFAPI)
       (api.thresholdPassProb_antitone_threshold (law g) hxy)
       (hweight g))
 
+theorem mixtureTailMass_strictAnti_threshold (api : StandardGaussianCDFAPI)
+    {weight : γ → ℝ} {law : γ → GaussianScaleLaw}
+    (hweight : ∀ g, 0 ≤ weight g) (hpos : ∃ g, 0 < weight g) :
+    StrictAnti (api.mixtureTailMass weight law) := by
+  intro x y hxy
+  dsimp [mixtureTailMass]
+  exact Finset.sum_lt_sum
+    (by
+      intro g _hg
+      exact mul_le_mul_of_nonneg_left
+        (api.thresholdPassProb_antitone_threshold (law g) hxy.le)
+        (hweight g))
+    (by
+      rcases hpos with ⟨g, hg⟩
+      refine ⟨g, Finset.mem_univ g, ?_⟩
+      exact mul_lt_mul_of_pos_left
+        (api.thresholdPassProb_strictAnti_threshold (law g) hxy) hg)
+
 /--
 Certificate that a common Gaussian admission threshold realizes a target
 capacity for a finite mixture of group score laws.

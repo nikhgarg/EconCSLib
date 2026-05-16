@@ -2,6 +2,7 @@ import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Order.Filter.AtTopBot.Field
+import Mathlib.Topology.Order.IntermediateValue
 import EconCSLib.Foundations.Probability.Gaussian
 
 namespace EconCSLib
@@ -275,6 +276,149 @@ theorem affineUpperTailDifference_tendsto_zero_atTop_of_slope_pos
   simpa using hA.sub hB
 
 end StandardGaussianTailLimitAPI
+
+namespace StandardGaussianCDFAPI
+
+theorem thresholdPassProb_tendsto_atBot_one
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atBot : Filter.Tendsto api.cdf Filter.atBot (nhds 0))
+    (L : GaussianScaleLaw) :
+    Filter.Tendsto (api.thresholdPassProb L) Filter.atBot (nhds 1) := by
+  have hlin :
+      Filter.Tendsto (fun threshold : ℝ => L.standardize threshold)
+        Filter.atBot Filter.atBot := by
+    have hscale_inv_pos : 0 < L.scale⁻¹ := inv_pos.mpr L.scale_pos
+    have hmul :
+        Filter.Tendsto (fun threshold : ℝ => L.scale⁻¹ * threshold + (-L.mean / L.scale))
+          Filter.atBot Filter.atBot :=
+      ((Filter.tendsto_const_mul_atBot_of_pos hscale_inv_pos).2 Filter.tendsto_id).atBot_add
+        tendsto_const_nhds
+    convert hmul using 1
+    ext threshold
+    rw [GaussianScaleLaw.standardize]
+    field_simp [ne_of_gt L.scale_pos]
+    ring
+  have hcdf :
+      Filter.Tendsto (fun threshold : ℝ => api.cdf (L.standardize threshold))
+        Filter.atBot (nhds 0) :=
+    hcdf_atBot.comp hlin
+  simpa [thresholdPassProb, normalTail, normalCDF] using
+    (tendsto_const_nhds (x := (1 : ℝ))).sub hcdf
+
+theorem thresholdPassProb_tendsto_atTop_zero
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atTop : Filter.Tendsto api.cdf Filter.atTop (nhds 1))
+    (L : GaussianScaleLaw) :
+    Filter.Tendsto (api.thresholdPassProb L) Filter.atTop (nhds 0) := by
+  have hlin :
+      Filter.Tendsto (fun threshold : ℝ => L.standardize threshold)
+        Filter.atTop Filter.atTop := by
+    have hscale_inv_pos : 0 < L.scale⁻¹ := inv_pos.mpr L.scale_pos
+    have hmul :
+        Filter.Tendsto (fun threshold : ℝ => L.scale⁻¹ * threshold + (-L.mean / L.scale))
+          Filter.atTop Filter.atTop :=
+      ((Filter.tendsto_const_mul_atTop_of_pos hscale_inv_pos).2 Filter.tendsto_id).atTop_add
+        tendsto_const_nhds
+    convert hmul using 1
+    ext threshold
+    rw [GaussianScaleLaw.standardize]
+    field_simp [ne_of_gt L.scale_pos]
+    ring
+  have hcdf :
+      Filter.Tendsto (fun threshold : ℝ => api.cdf (L.standardize threshold))
+        Filter.atTop (nhds 1) :=
+    hcdf_atTop.comp hlin
+  have htail :
+      Filter.Tendsto (fun threshold : ℝ => 1 - api.cdf (L.standardize threshold))
+        Filter.atTop (nhds (1 - 1)) :=
+    (tendsto_const_nhds (x := (1 : ℝ))).sub hcdf
+  simpa [thresholdPassProb, normalTail, normalCDF] using htail
+
+theorem mixtureTailMass_continuous
+    (api : StandardGaussianCDFAPI)
+    {γ : Type*} [Fintype γ]
+    (weight : γ → ℝ) (law : γ → GaussianScaleLaw) :
+    Continuous (api.mixtureTailMass weight law) := by
+  change Continuous
+    (fun threshold : ℝ => ∑ g : γ, weight g * api.thresholdPassProb (law g) threshold)
+  exact continuous_finset_sum Finset.univ (by
+    intro g _hg
+    exact continuous_const.mul (api.thresholdPassProb_continuous (law g)))
+
+theorem mixtureTailMass_tendsto_atBot_sum_weights
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atBot : Filter.Tendsto api.cdf Filter.atBot (nhds 0))
+    {γ : Type*} [Fintype γ]
+    (weight : γ → ℝ) (law : γ → GaussianScaleLaw) :
+    Filter.Tendsto (api.mixtureTailMass weight law) Filter.atBot
+      (nhds (∑ g : γ, weight g)) := by
+  simpa [mixtureTailMass] using
+    tendsto_finset_sum Finset.univ (fun g _hg =>
+      (tendsto_const_nhds (x := weight g)).mul
+        (api.thresholdPassProb_tendsto_atBot_one hcdf_atBot (law g)))
+
+theorem mixtureTailMass_tendsto_atTop_zero
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atTop : Filter.Tendsto api.cdf Filter.atTop (nhds 1))
+    {γ : Type*} [Fintype γ]
+    (weight : γ → ℝ) (law : γ → GaussianScaleLaw) :
+    Filter.Tendsto (api.mixtureTailMass weight law) Filter.atTop (nhds 0) := by
+  simpa [mixtureTailMass] using
+    tendsto_finset_sum Finset.univ (fun g _hg =>
+      (tendsto_const_nhds (x := weight g)).mul
+        (api.thresholdPassProb_tendsto_atTop_zero hcdf_atTop (law g)))
+
+theorem exists_mixtureTailMass_eq_of_capacity_mem_Ioo
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atBot : Filter.Tendsto api.cdf Filter.atBot (nhds 0))
+    (hcdf_atTop : Filter.Tendsto api.cdf Filter.atTop (nhds 1))
+    {γ : Type*} [Fintype γ]
+    {weight : γ → ℝ} {law : γ → GaussianScaleLaw} {capacity : ℝ}
+    (hcapacity : capacity ∈ Set.Ioo (0 : ℝ) (∑ g : γ, weight g)) :
+    ∃ threshold : ℝ, api.mixtureTailMass weight law threshold = capacity := by
+  have htop :
+      ∀ᶠ threshold in Filter.atTop,
+        api.mixtureTailMass weight law threshold < capacity :=
+    (api.mixtureTailMass_tendsto_atTop_zero hcdf_atTop weight law).eventually
+      (eventually_lt_nhds hcapacity.1)
+  have hbot :
+      ∀ᶠ threshold in Filter.atBot,
+        capacity < api.mixtureTailMass weight law threshold :=
+    (api.mixtureTailMass_tendsto_atBot_sum_weights hcdf_atBot weight law).eventually
+      (eventually_gt_nhds hcapacity.2)
+  rcases htop.exists with ⟨thresholdTop, hthresholdTop⟩
+  rcases hbot.exists with ⟨thresholdBot, hthresholdBot⟩
+  rcases mem_range_of_exists_le_of_exists_ge
+      (api.mixtureTailMass_continuous weight law)
+      ⟨thresholdTop, le_of_lt hthresholdTop⟩
+      ⟨thresholdBot, le_of_lt hthresholdBot⟩ with ⟨threshold, hthreshold⟩
+  exact ⟨threshold, hthreshold⟩
+
+theorem existsUnique_mixtureTailMass_eq_of_capacity_mem_Ioo
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atBot : Filter.Tendsto api.cdf Filter.atBot (nhds 0))
+    (hcdf_atTop : Filter.Tendsto api.cdf Filter.atTop (nhds 1))
+    {γ : Type*} [Fintype γ]
+    {weight : γ → ℝ} {law : γ → GaussianScaleLaw} {capacity : ℝ}
+    (hweight : ∀ g, 0 ≤ weight g) (hpos : ∃ g, 0 < weight g)
+    (hcapacity : capacity ∈ Set.Ioo (0 : ℝ) (∑ g : γ, weight g)) :
+    ∃! threshold : ℝ, api.mixtureTailMass weight law threshold = capacity := by
+  rcases api.exists_mixtureTailMass_eq_of_capacity_mem_Ioo
+      hcdf_atBot hcdf_atTop hcapacity with ⟨threshold, hthreshold⟩
+  refine ⟨threshold, hthreshold, ?_⟩
+  intro threshold' hthreshold'
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hstrict :=
+      api.mixtureTailMass_strictAnti_threshold (law := law) hweight hpos hlt
+    rw [hthreshold, hthreshold'] at hstrict
+    exact (lt_irrefl capacity) hstrict
+  · have hstrict :=
+      api.mixtureTailMass_strictAnti_threshold (law := law) hweight hpos hgt
+    rw [hthreshold', hthreshold] at hstrict
+    exact (lt_irrefl capacity) hstrict
+
+end StandardGaussianCDFAPI
 
 /--
 Combined standard Gaussian analytic API for threshold-admissions papers:

@@ -8,6 +8,7 @@ import Mathlib.Topology.Order.LeftRightLim
 import Mathlib.Topology.Order.MonotoneContinuity
 import Mathlib.Tactic
 import EconCSLib.Foundations.Probability.Gaussian
+import EconCSLib.Foundations.Probability.GaussianDerivatives
 import EconCSLib.Foundations.Probability.GaussianHazardInverse
 import EconCSLib.Foundations.Probability.GaussianMills
 import EconCSLib.Foundations.Probability.GaussianQuantile
@@ -461,6 +462,82 @@ theorem standardGaussianDensity_continuous :
   unfold standardGaussianDensity ProbabilityTheory.gaussianPDFReal
   fun_prop
 
+/-- The standard Gaussian probability of `(-∞, x]` is the integral of its density. -/
+theorem standardGaussianMeasure_real_Iic_eq_integral_density (x : ℝ) :
+    standardGaussianMeasure.real (Iic x) =
+      ∫ y in Iic x, standardGaussianDensity y := by
+  have hmeasure :
+      standardGaussianMeasure (Iic x) =
+        ENNReal.ofReal (∫ y in Iic x, standardGaussianDensity y) := by
+    unfold standardGaussianMeasure standardGaussianDensity
+    simpa using
+      (ProbabilityTheory.gaussianReal_apply_eq_integral
+        0 standardGaussianVariance_ne_zero (Iic x))
+  rw [measureReal_def, hmeasure]
+  rw [ENNReal.toReal_ofReal]
+  exact MeasureTheory.setIntegral_nonneg measurableSet_Iic
+    (fun y _hy => standardGaussianDensity_nonneg y)
+
+/-- The mathlib-backed standard Gaussian CDF is the integral of its density. -/
+theorem standardGaussianCDF_eq_integral_Iic (x : ℝ) :
+    standardGaussianCDF x =
+      ∫ y in Iic x, standardGaussianDensity y := by
+  rw [standardGaussianCDF, ProbabilityTheory.cdf_eq_real]
+  exact standardGaussianMeasure_real_Iic_eq_integral_density x
+
+/-- Derivative of the mathlib-backed standard Gaussian CDF. -/
+theorem standardGaussianCDF_hasDerivAt_density (x : ℝ) :
+    HasDerivAt standardGaussianCDF (standardGaussianDensity x) x := by
+  let f : ℝ → ℝ := standardGaussianDensity
+  have hfint : Integrable f := by
+    simpa [f, standardGaussianDensity] using
+      (ProbabilityTheory.integrable_gaussianPDFReal 0 (1 : ℝ≥0))
+  have hcont : Continuous f := by
+    simpa [f] using standardGaussianDensity_continuous
+  have hIic_eq (u : ℝ) :
+      (∫ y : ℝ in Iic u, f y) =
+        (∫ y : ℝ in Iic (0 : ℝ), f y) + ∫ y : ℝ in (0 : ℝ)..u, f y := by
+    have hfi0 : IntegrableOn f (Iic (0 : ℝ)) := hfint.integrableOn
+    have hfiu : IntegrableOn f (Iic u) := hfint.integrableOn
+    have hsub := intervalIntegral.integral_Iic_sub_Iic
+      (f := f) (a := (0 : ℝ)) (b := u) hfi0 hfiu
+    linarith
+  have hIic_deriv :
+      HasDerivAt (fun u : ℝ => ∫ y : ℝ in Iic u, f y) (f x) x := by
+    have hderiv : HasDerivAt
+        (fun u : ℝ =>
+          (∫ y : ℝ in Iic (0 : ℝ), f y) + ∫ y : ℝ in (0 : ℝ)..u, f y)
+        (f x) x := by
+      exact (hcont.integral_hasStrictDerivAt (0 : ℝ) x).hasDerivAt.const_add
+        (∫ y : ℝ in Iic (0 : ℝ), f y)
+    refine hderiv.congr_of_eventuallyEq ?_
+    exact Eventually.of_forall fun u => hIic_eq u
+  refine hIic_deriv.congr_of_eventuallyEq ?_
+  exact Eventually.of_forall fun u => by
+    simp [standardGaussianCDF_eq_integral_Iic, f]
+
+/-- Doubled-log elementary form of the mathlib-backed standard Gaussian density. -/
+theorem standardGaussianDoubledLogDensity_eq (z : ℝ) :
+    2 * Real.log (standardGaussianDensity z) =
+      - z ^ 2 + 2 * Real.log ((Real.sqrt (2 * Real.pi))⁻¹) := by
+  let c : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hcpos : 0 < c := by
+    dsimp [c]
+    exact inv_pos.mpr (Real.sqrt_pos.mpr (by positivity : (0 : ℝ) < 2 * Real.pi))
+  have hexppos : 0 < Real.exp (-(z ^ 2) / 2) := Real.exp_pos _
+  have hlog :
+      Real.log (standardGaussianDensity z) =
+        Real.log c + (-(z ^ 2) / 2) := by
+    rw [standardGaussianDensity_eq_mills_integrand]
+    dsimp [c]
+    rw [Real.log_mul hcpos.ne' hexppos.ne']
+    rw [Real.log_exp]
+  calc
+    2 * Real.log (standardGaussianDensity z)
+        = 2 * (Real.log c + (-(z ^ 2) / 2)) := by rw [hlog]
+    _ = - z ^ 2 + 2 * Real.log c := by ring
+    _ = - z ^ 2 + 2 * Real.log ((Real.sqrt (2 * Real.pi))⁻¹) := by rfl
+
 /-- The mathlib-backed standard normal hazard rate is continuous. -/
 theorem standardGaussianHazard_continuous :
     Continuous standardGaussianHazard := by
@@ -594,6 +671,23 @@ def standardGaussianCDFAPI : StandardGaussianCDFAPI where
   density_nonneg := standardGaussianDensity_nonneg
   cdf_nonneg := standardGaussianCDF_nonneg
   cdf_le_one := standardGaussianCDF_le_one
+
+/-- Concrete standard-normal derivative API backed by mathlib's Gaussian CDF/PDF. -/
+def standardGaussianDerivativeAPI : StandardGaussianDerivativeAPI where
+  api := standardGaussianCDFAPI
+  cdf_hasDerivAt_density := standardGaussianCDF_hasDerivAt_density
+  density_pos := standardGaussianDensity_pos
+
+/-- Concrete standard-normal doubled-log-density API. -/
+def standardGaussianDoubledLogDensityAPI : StandardGaussianDoubledLogDensityAPI where
+  derivativeAPI := standardGaussianDerivativeAPI
+  logDensityConstant := 2 * Real.log ((Real.sqrt (2 * Real.pi))⁻¹)
+  doubled_log_density_eq := standardGaussianDoubledLogDensity_eq
+
+/-- Concrete standard-normal analytic API used by admissions threshold proofs. -/
+def standardGaussianAnalyticAPI : StandardGaussianAnalyticAPI where
+  logAPI := standardGaussianDoubledLogDensityAPI
+  cdf_tendsto_atBot_zero := standardGaussianCDF_tendsto_atBot
 
 /-- Concrete standard-normal quantile API backed by the mathlib CDF bridge. -/
 def standardGaussianQuantileAPI : StandardGaussianQuantileAPI where

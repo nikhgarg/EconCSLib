@@ -245,6 +245,16 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `GaussianHazardCertificate.mixtureUpperTailMean_mul_tailMass_eq_numerator`
   for location-scale tail, academic-merit, and finite-mixture admitted-mean
   comparisons.
+  When a paper needs the concrete derivative of the standard-normal CDF, avoid
+  leaving a derivative certificate in the paper folder.  In
+  `GaussianMathlib`, prove `cdf x = ∫ y in Iic x, density y` with
+  `ProbabilityTheory.gaussianReal_apply_eq_integral`, convert `measureReal`
+  via `ENNReal.toReal_ofReal` using density nonnegativity, and then apply the
+  interval-integral fundamental theorem to `u ↦ ∫ y in Iic u, density y`.
+  This gives `standardGaussianCDF_hasDerivAt_density` and the reusable
+  `standardGaussianAnalyticAPI`.  For doubled-log density comparisons, prove
+  the standard-normal elementary density formula once and set the constant to
+  `2 * log ((sqrt (2*pi))⁻¹)`.
   For admissions threshold statements, distinguish the main-body real-threshold
   claim from stronger appendix interior-threshold claims. A continuous strictly
   monotone scalar score on `[0,1]` has a real cutoff for its strict or weak lower
