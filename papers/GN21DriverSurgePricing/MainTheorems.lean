@@ -16629,6 +16629,155 @@ theorem GN21WithDensityAcceptAllSupport.density_pos_of_pos
   have hpos : 0 < D.densityNN u := pos_iff_ne_zero.mpr (D.hpos_acceptAll u hu)
   exact_mod_cast hpos
 
+/--
+If a positive-volume measurable set lies inside a target set and inside
+accept-all, then the support package gives positive target measure.
+-/
+theorem GN21WithDensityAcceptAllSupport.measure_pos_of_volume_subset
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {s t : TripPolicy}
+    (hs_meas : MeasurableSet s)
+    (hs_acceptAll : s ⊆ acceptAllPolicy)
+    (hst : s ⊆ t)
+    (hvolume_ne_zero : volume s ≠ 0) :
+    0 < μ t := by
+  rw [D.hμ]
+  exact
+    measure_pos_of_superset hst
+      (withDensity_measure_ne_zero_of_pos_on volume
+        (fun τ => (D.densityNN τ : ℝ≥0∞))
+        (measurable_coe_nnreal_ennreal.comp D.hdensity_meas)
+        hs_meas hvolume_ne_zero
+        (fun τ hτ => by
+          simpa using D.hpos_acceptAll τ (hs_acceptAll hτ)))
+
+/--
+A long-trip-rejection shape rejects a positive-measure feasible tail under
+accept-all density support.
+-/
+theorem GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsLongTrips
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsLongTrips t σ) :
+    0 < μ (acceptAllPolicy \ σ) := by
+  let tail : TripPolicy := Set.Ioi (max t 0)
+  have htail_meas : MeasurableSet tail := measurableSet_Ioi
+  have htail_acceptAll : tail ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact lt_of_le_of_lt (le_max_right t 0) hτ
+  have htail_rejected : tail ⊆ acceptAllPolicy \ σ := by
+    intro τ hτ
+    refine ⟨htail_acceptAll hτ, ?_⟩
+    intro hmem
+    have hτ_lt_t : τ < t := (hshape (htail_acceptAll hτ)).mp hmem
+    have ht_lt_τ : t < τ := lt_of_le_of_lt (le_max_left t 0) hτ
+    exact (not_lt_of_ge (le_of_lt ht_lt_τ)) hτ_lt_t
+  refine
+    D.measure_pos_of_volume_subset htail_meas htail_acceptAll htail_rejected ?_
+  simp [tail, Real.volume_Ioi]
+
+/--
+A positive short-trip-rejection cutoff rejects a positive-measure feasible
+lower interval under accept-all density support.
+-/
+theorem GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsShortTrips
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsShortTrips t σ)
+    (ht_pos : 0 < t) :
+    0 < μ (acceptAllPolicy \ σ) := by
+  let lower : TripPolicy := Set.Ioo (0 : ℝ) t
+  have hlower_meas : MeasurableSet lower := measurableSet_Ioo
+  have hlower_acceptAll : lower ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hτ.1
+  have hlower_rejected : lower ⊆ acceptAllPolicy \ σ := by
+    intro τ hτ
+    refine ⟨hτ.1, ?_⟩
+    intro hmem
+    have ht_lt_τ : t < τ := (hshape hτ.1).mp hmem
+    exact (not_lt_of_ge (le_of_lt hτ.2)) ht_lt_τ
+  refine
+    D.measure_pos_of_volume_subset hlower_meas hlower_acceptAll
+      hlower_rejected ?_
+  change volume (Set.Ioo (0 : ℝ) t) ≠ 0
+  rw [Real.volume_Ioo]
+  exact ne_of_gt (ENNReal.ofReal_pos.mpr (by linarith))
+
+/--
+In a non-accept-all branch, a short-trip-rejection shape has positive rejected
+mass under accept-all density support.
+-/
+theorem GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsShortTrips_of_not_acceptsAll
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsShortTrips t σ)
+    (hnot : ¬ acceptsAllTrips σ) :
+    0 < μ (acceptAllPolicy \ σ) :=
+  D.rejected_mass_pos_of_rejectsShortTrips hshape
+    (cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll hshape hnot)
+
+/--
+A middle-acceptance shape rejects a positive-measure feasible tail under
+accept-all density support.
+-/
+theorem GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_acceptsMiddleTrips
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : acceptsMiddleTrips lo hi σ) :
+    0 < μ (acceptAllPolicy \ σ) := by
+  let tail : TripPolicy := Set.Ioi (max hi 0)
+  have htail_meas : MeasurableSet tail := measurableSet_Ioi
+  have htail_acceptAll : tail ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact lt_of_le_of_lt (le_max_right hi 0) hτ
+  have htail_rejected : tail ⊆ acceptAllPolicy \ σ := by
+    intro τ hτ
+    refine ⟨htail_acceptAll hτ, ?_⟩
+    intro hmem
+    rcases (hshape (htail_acceptAll hτ)).mp hmem with ⟨hlo, hτ_lt_hi⟩
+    have hhi_lt_τ : hi < τ := lt_of_le_of_lt (le_max_left hi 0) hτ
+    exact (not_lt_of_ge (le_of_lt hhi_lt_τ)) hτ_lt_hi
+  refine
+    D.measure_pos_of_volume_subset htail_meas htail_acceptAll htail_rejected ?_
+  simp [tail, Real.volume_Ioi]
+
+/--
+A nondegenerate middle-rejection gap rejects a positive-measure feasible
+interval under accept-all density support.
+-/
+theorem GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsMiddleTrips
+    {μ : Measure TripLength}
+    (D : GN21WithDensityAcceptAllSupport μ)
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_lt_hi : lo < hi) :
+    0 < μ (acceptAllPolicy \ σ) := by
+  let gap : TripPolicy := Set.Ioo lo hi
+  have hgap_meas : MeasurableSet gap := measurableSet_Ioo
+  have hgap_acceptAll : gap ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact lt_of_le_of_lt hlo_nonneg hτ.1
+  have hgap_rejected : gap ⊆ acceptAllPolicy \ σ := by
+    intro τ hτ
+    have hτ_pos : 0 < τ := hgap_acceptAll hτ
+    refine ⟨hτ_pos, ?_⟩
+    intro hmem
+    rcases (hshape hτ_pos).mp hmem with hτ_lt_lo | hhi_lt_τ
+    · exact (not_lt_of_ge (le_of_lt hτ.1)) hτ_lt_lo
+    · exact (not_lt_of_ge (le_of_lt hτ.2)) hhi_lt_τ
+  refine
+    D.measure_pos_of_volume_subset hgap_meas hgap_acceptAll hgap_rejected ?_
+  change volume (Set.Ioo lo hi) ≠ 0
+  rw [Real.volume_Ioo]
+  exact ne_of_gt (ENNReal.ofReal_pos.mpr (sub_pos.mpr hlo_lt_hi))
+
 /-- Feasible measurable dynamic policies have finite current mass under the support package. -/
 theorem GN21WithDensityAcceptAllSupport.finite_current_of_feasible
     {μ : Measure TripLength}
@@ -41721,6 +41870,228 @@ theorem GN21RegularEndpointSharedSourceData.surge_rejectMiddle_current_mass_pos
       hshape (hρ_feasible 1).1
       (S.surge_support.finite_current_of_feasible hρ_feasible 1)
       (S.surge_support.pos_current_of_feasible hρ_feasible 1)
+
+/-- Shared regular support gives positive non-surge rejected mass for reject-long shapes. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_rejectLong_rejected_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hshape : rejectsLongTrips u (ρ 0)) :
+    0 < (μ 0) (acceptAllPolicy \ ρ 0) := by
+  exact S.nonsurge_support.rejected_mass_pos_of_rejectsLongTrips hshape
+
+/-- Shared regular support gives positive non-surge rejected mass for middle-acceptance shapes. -/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_acceptMiddle_rejected_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 lo hi : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hshape : acceptsMiddleTrips lo hi (ρ 0)) :
+    0 < (μ 0) (acceptAllPolicy \ ρ 0) := by
+  exact S.nonsurge_support.rejected_mass_pos_of_acceptsMiddleTrips hshape
+
+/-- Shared regular support gives positive surge rejected mass for short-rejection shapes. -/
+theorem GN21RegularEndpointSharedSourceData.surge_rejectShort_rejected_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 u : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hshape : rejectsShortTrips u (ρ 1))
+    (hu_pos : 0 < u) :
+    0 < (μ 1) (acceptAllPolicy \ ρ 1) := by
+  exact S.surge_support.rejected_mass_pos_of_rejectsShortTrips hshape hu_pos
+
+/--
+Shared regular support gives positive surge rejected mass for nondegenerate
+middle-rejection shapes.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_rejectMiddle_rejected_mass_pos
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 lo hi : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hshape : rejectsMiddleTrips lo hi (ρ 1))
+    (hlo_nonneg : 0 ≤ lo)
+    (hlo_lt_hi : lo < hi) :
+    0 < (μ 1) (acceptAllPolicy \ ρ 1) := by
+  exact
+    S.surge_support.rejected_mass_pos_of_rejectsMiddleTrips hshape
+      hlo_nonneg hlo_lt_hi
+
+/--
+Shared regular support plus the allowed non-surge Lemma 5 policy-form
+classification gives positive rejected mass in every non-accept-all non-surge
+branch.
+-/
+theorem GN21RegularEndpointSharedSourceData.nonsurge_rejected_mass_pos_of_allowed_policy_form
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hnot : ¬ acceptsAllTrips (ρ 0))
+    (hform :
+      ∃ shape : Lemma5DerivativeShape,
+        theorem4NonsurgeAllowedLemma5Shape shape ∧
+          lemma5PolicyForm shape (ρ 0)) :
+    0 < (μ 0) (acceptAllPolicy \ ρ 0) := by
+  rcases hform with ⟨shape, hallowed, hpolicy⟩
+  cases shape with
+  | positive =>
+      change acceptsAllTrips (ρ 0) at hpolicy
+      exact False.elim (hnot hpolicy)
+  | strictlyIncreasing =>
+      exact False.elim
+        (by simpa [theorem4NonsurgeAllowedLemma5Shape] using hallowed)
+  | strictlyDecreasing =>
+      change ∃ u : ℝ, rejectsLongTrips u (ρ 0) at hpolicy
+      rcases hpolicy with ⟨u, hshape⟩
+      exact S.nonsurge_rejectLong_rejected_mass_pos hshape
+  | strictlyQuasiConvex =>
+      exact False.elim
+        (by simpa [theorem4NonsurgeAllowedLemma5Shape] using hallowed)
+  | strictlyQuasiConcave =>
+      change ∃ lo hi : ℝ, acceptsMiddleTrips lo hi (ρ 0) at hpolicy
+      rcases hpolicy with ⟨lo, hi, hshape⟩
+      exact S.nonsurge_acceptMiddle_rejected_mass_pos hshape
+
+/--
+Shared regular support plus the allowed surge Lemma 5 policy-form
+classification gives positive rejected mass in every non-accept-all surge
+branch, once middle-rejection cutoffs are known to be nondegenerate.
+-/
+theorem GN21RegularEndpointSharedSourceData.surge_rejected_mass_pos_of_allowed_policy_form
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (hnot : ¬ acceptsAllTrips (ρ 1))
+    (hrejectMiddle_bounds :
+      ∀ lo hi : ℝ, rejectsMiddleTrips lo hi (ρ 1) → 0 ≤ lo ∧ lo < hi)
+    (hform :
+      ∃ shape : Lemma5DerivativeShape,
+        theorem4SurgeAllowedLemma5Shape shape ∧
+          lemma5PolicyForm shape (ρ 1)) :
+    0 < (μ 1) (acceptAllPolicy \ ρ 1) := by
+  rcases hform with ⟨shape, hallowed, hpolicy⟩
+  cases shape with
+  | positive =>
+      change acceptsAllTrips (ρ 1) at hpolicy
+      exact False.elim (hnot hpolicy)
+  | strictlyIncreasing =>
+      change ∃ u : ℝ, rejectsShortTrips u (ρ 1) at hpolicy
+      rcases hpolicy with ⟨u, hshape⟩
+      exact
+        S.surge_rejectShort_rejected_mass_pos hshape
+          (cutoff_pos_of_rejectsShortTrips_of_not_acceptsAll hshape hnot)
+  | strictlyDecreasing =>
+      exact False.elim
+        (by simpa [theorem4SurgeAllowedLemma5Shape] using hallowed)
+  | strictlyQuasiConvex =>
+      change ∃ lo hi : ℝ, rejectsMiddleTrips lo hi (ρ 1) at hpolicy
+      rcases hpolicy with ⟨lo, hi, hshape⟩
+      exact
+        S.surge_rejectMiddle_rejected_mass_pos hshape
+          (hrejectMiddle_bounds lo hi hshape).1
+          (hrejectMiddle_bounds lo hi hshape).2
+  | strictlyQuasiConcave =>
+      exact False.elim
+        (by simpa [theorem4SurgeAllowedLemma5Shape] using hallowed)
+
+/--
+All-optimal allowed policy forms and shared density support instantiate the
+source current-bounds strict certificate with positive rejected mass.  The only
+remaining geometric side condition is that surge middle-rejection gaps are
+nondegenerate on every non-accept-all optimum.
+-/
+noncomputable def Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleRejectedMassStrictCertificate.of_allowed_policy_forms
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (source :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (forms :
+      Theorem4AllMeasurableAllowedPolicyFormsCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (surge_rejectMiddle_bounds :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) → 0 ≤ lo ∧ lo < hi) :
+    Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleRejectedMassStrictCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  source := source
+  exists_optimal := forms.exists_optimal
+  nonsurge_strict_data := by
+    intro ρ hρ hnot
+    rcases source.nonsurge_data ρ hρ.1 with ⟨ratio, D⟩
+    exact
+      ⟨ratio, D,
+        shared.nonsurge_rejected_mass_pos_of_allowed_policy_form hnot
+          (forms.only_policy_forms ρ hρ).1⟩
+  surge_strict_data := by
+    intro ρ hρ hnot
+    rcases source.surge_data ρ hρ.1 with ⟨ratio, D⟩
+    exact
+      ⟨ratio, D,
+        shared.surge_rejected_mass_pos_of_allowed_policy_form hnot
+          (surge_rejectMiddle_bounds ρ hρ)
+          (forms.only_policy_forms ρ hρ).2⟩
+
+/--
+Source current-bounds data plus all-optimal allowed policy forms imply
+accept-all measurable optimality and uniqueness, once surge middle-rejection
+gaps are known to be nondegenerate.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_allowed_policy_forms
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (source :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+        μ arrival R1 R2 switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (forms :
+      Theorem4AllMeasurableAllowedPolicyFormsCertificate
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (surge_rejectMiddle_bounds :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) → 0 ≤ lo ∧ lo < hi) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy :=
+  paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_rejected_mass
+    μ arrival R1 R2 switch12 switch21 m z
+    (Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleRejectedMassStrictCertificate.of_allowed_policy_forms
+      μ arrival R1 R2 switch12 switch21 m z source shared forms
+      surge_rejectMiddle_bounds)
 
 /--
 Shared regular support gives positive surge current mass from the allowed

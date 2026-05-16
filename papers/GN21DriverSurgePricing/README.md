@@ -1009,6 +1009,16 @@ The source-facing endpoint
 uses those wrappers directly, so the remaining exact-uniqueness task can be
 phrased as positive rejected-trip mass for every non-accept-all optimum; the
 zero-mass alternative points toward an almost-everywhere uniqueness statement.
+Lean now derives this rejected mass from the allowed Lemma 5 policy forms under
+the shared density-support package via
+`GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsLongTrips`,
+`GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsShortTrips`,
+`GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_acceptsMiddleTrips`,
+`GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsMiddleTrips`, and
+`paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_allowed_policy_forms`;
+the residual exact-uniqueness geometry is the nondegenerate surge
+middle-rejection gap, because a collapsed one-point gap has zero continuous
+mass and belongs in an almost-everywhere uniqueness route.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,
