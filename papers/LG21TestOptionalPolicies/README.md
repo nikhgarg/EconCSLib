@@ -162,6 +162,12 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_tests_of_centered_outside`
   expose this condition directly on the binary-mixture point-estimate surfaces.
+  The localized supported-test variants
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_centered_outside`
+  reduce the support obligation to the two displayed tests rather than all
+  tests in the feature space.
 
 ## Source Notes
 
