@@ -451,11 +451,16 @@ into the concrete endpoint policy data.
   `lemma5MarginalOptimizerReplacementCertificate_positiveResponse` and
   `paper_lemma5_marginal_optimizer_replacement_of_positiveResponse` package
   this into the same optimizer-replacement interface used by later Theorem 4
-  code.  The remaining Lemma 5 work is no longer this interval geometry,
-  fixed-response set comparison, or fixed-response certificate plumbing; it is
-  the source open-set approximation plus endpoint-continuity argument that
-  identifies the nonlinear endpoint path with this positive-response
-  dominance.
+  code.  `acceptAllAlmostEverywhere_of_lemma5_positiveResponse_feasible_optimal`
+  now derives the positive-case AE conclusion directly from restricted
+  feasible optimality, and
+  `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_positive_response_marginal_optima`
+  packages the same bridge at the two-state Theorem 4 level.  The remaining
+  Lemma 5 work is no longer this interval geometry, fixed-response set
+  comparison, restricted-optimality plumbing, or fixed-response certificate
+  plumbing; it is the source open-set approximation plus endpoint-continuity
+  argument that identifies the nonlinear endpoint path with this
+  positive-response dominance.
 - The nonlinear aggregate layer now has strict counterparts to the older weak
   add-set bridges:
   `gn21AggregateDynamicReward_lt_add_left_of_kernel_pos`,

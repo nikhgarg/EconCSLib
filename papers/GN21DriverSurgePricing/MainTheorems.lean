@@ -17990,6 +17990,39 @@ theorem acceptAllAlmostEverywhere_of_lemma5_positiveResponse_candidate_le
   rw [acceptAllAlmostEverywhere]
   simpa [hpositive_eq] using hzero
 
+/--
+Positive-response local optimality yields accept-all almost everywhere.  This
+is the direct Lemma 5 optimizer form used on feasible measurable domains:
+local optimality supplies the candidate comparison for the positive-response
+policy, and the zero-mass bridge converts it to the paper's AE equality
+convention.
+-/
+theorem acceptAllAlmostEverywhere_of_lemma5_positiveResponse_feasible_optimal
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hpositive_form :
+      lemma5PolicyForm .positive (lemma5PositiveResponsePolicy response))
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    acceptAllAlmostEverywhere μ σ := by
+  exact
+    acceptAllAlmostEverywhere_of_lemma5_positiveResponse_candidate_le
+      μ response σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hpositive_form
+      (hoptimal (lemma5PositiveResponsePolicy response)
+        (lemma5PositiveResponsePolicy_subset_acceptAll response)
+        (measurableSet_lemma5PositiveResponsePolicy response
+          hresponse_measurable))
+
 /-- A positive marginal response produces the accept-all Lemma 5 form. -/
 theorem lemma5PolicyForm_positiveResponse_positive
     (response : TripLength → ℝ)
@@ -23016,6 +23049,70 @@ structure Theorem4PositiveReplacementDerivationCertificate
     ∀ ρ : Fin 2 → TripPolicy, (hρ : dynamicOptimal R ρ) →
       Lemma5OptimizerReplacementCertificate
         (dynamicStateReward R ρ 1) (ρ 1) .positive
+
+/--
+Measurable-domain positive-response marginal certificate.  This is the
+measure-theoretic version of the positive Lemma 5 branch: for each measurable
+optimum, the endpoint-continuity argument has reduced the local continuation
+problem to a fixed positive-response marginal objective whose feasible optimum
+is the current state policy.
+-/
+structure Theorem4MeasurablePositiveResponseAEMarginalCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward) where
+  accept_all_optimal : dynamicMeasurableOptimal R acceptAllDynamicPolicy
+  nonsurge_marginal_optimal :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      ∃ response : TripLength → ℝ,
+        Measurable response ∧
+          IntegrableOn response acceptAllPolicy (μ 0) ∧
+          lemma5PolicyForm .positive
+            (lemma5PositiveResponsePolicy response) ∧
+          (∀ τ : TripPolicy,
+            τ ⊆ acceptAllPolicy →
+            MeasurableSet τ →
+              lemma5MarginalSetReward (μ 0) response τ ≤
+                lemma5MarginalSetReward (μ 0) response (ρ 0))
+  surge_marginal_optimal :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      ∃ response : TripLength → ℝ,
+        Measurable response ∧
+          IntegrableOn response acceptAllPolicy (μ 1) ∧
+          lemma5PolicyForm .positive
+            (lemma5PositiveResponsePolicy response) ∧
+          (∀ τ : TripPolicy,
+            τ ⊆ acceptAllPolicy →
+            MeasurableSet τ →
+              lemma5MarginalSetReward (μ 1) response τ ≤
+                lemma5MarginalSetReward (μ 1) response (ρ 1))
+
+/--
+Positive-response marginal optimality in both states gives Theorem 4's
+accept-all conclusion up to null feasible-trip sets.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_positive_response_marginal_optima
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward)
+    (C : Theorem4MeasurablePositiveResponseAEMarginalCertificate μ R) :
+    dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal R ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  refine ⟨C.accept_all_optimal, ?_⟩
+  intro ρ hρ i
+  fin_cases i
+  · rcases C.nonsurge_marginal_optimal ρ hρ with
+      ⟨response, hmeas, hint, hpositive, hoptimal⟩
+    exact
+      acceptAllAlmostEverywhere_of_lemma5_positiveResponse_feasible_optimal
+        (μ 0) response (ρ 0) hmeas hint (hρ.1 0).2 (hρ.1 0).1
+        hpositive hoptimal
+  · rcases C.surge_marginal_optimal ρ hρ with
+      ⟨response, hmeas, hint, hpositive, hoptimal⟩
+    exact
+      acceptAllAlmostEverywhere_of_lemma5_positiveResponse_feasible_optimal
+        (μ 1) response (ρ 1) hmeas hint (hρ.1 1).2 (hρ.1 1).1
+        hpositive hoptimal
 
 /--
 Theorem 4 statewise accept-all reward certificate: the endpoint-improvement
