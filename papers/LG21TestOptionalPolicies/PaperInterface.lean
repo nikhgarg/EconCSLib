@@ -2895,6 +2895,153 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_requi
     hNoAccess hAccessMixture houtsidePayoff_of_pmfEq hweight hdenom
 
 /--
+Theorem 3.2 optional-reporting Gaussian source-equilibrium upper-tail
+interface.  The source equilibrium supplies the reporting best-response
+premise.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_source_equilibrium_upper_tail_threshold_actor_mean
+    {Feature Skill Base Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → Skill → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceSkill : S.Equilibrium → Base → Skill)
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (actorLaw : S.Equilibrium → Base → GaussianScaleLaw)
+    (decisionThreshold : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base +
+                signalWeight e base *
+                  GaussianHazardCertificate.normalUpperTailMean
+                    standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                    (actorLaw e base) (decisionThreshold e base)) /
+                denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    (hposterior_eq :
+      ∀ base score,
+        (M base).posteriorMean (Function.update (theta base) k score) =
+          (baseTerm e base + signalWeight e base * score) / denom e base)
+    (htie :
+      ∀ base score,
+        (M base).posteriorMean (Function.update (theta base) k score) =
+            (baseTerm e base +
+              signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (actorLaw e base) (decisionThreshold e base)) /
+              denom e base →
+          reportDecision e base score = true)
+    (hdecision_threshold :
+      ∀ actor : ℝ, reportDecision e base actor = true ↔
+        decisionThreshold e base ≤ actor)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_source_equilibrium_upper_tail_threshold_actor_mean
+    M theta k skillGivenBase hObsAccess hObsNoAccess takeDecision
+    reportDecision estimationConsistent referenceSkill baseTerm signalWeight
+    denom actorLaw decisionThreshold hEq e base hposterior_eq htie
+    hdecision_threshold hlambda reporterPMF noReporterPMF hNoAccess
+    hAccessMixture hweight hdenom
+
+/--
+Theorem 3.2 report-required source-equilibrium upper-tail interface.  The
+source equilibrium supplies the taking best-response premise.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_source_equilibrium_upper_tail_threshold_actor_mean
+    {Base Test Estimate : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ)
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceTest : S.Equilibrium → Base → Test)
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (actorLaw : S.Equilibrium → Base → GaussianScaleLaw)
+    (decisionThreshold : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    (hweight_all : ∀ base, 0 < signalWeight e base)
+    (hdenom_all : ∀ base, 0 < denom e base)
+    (htie :
+      ∀ base skill,
+        (baseTerm e base + signalWeight e base * skill) / denom e base =
+            (1 / 2 : ℝ) →
+          takeDecision e skill base = true)
+    (hdecision_threshold :
+      ∀ actor : ℝ, takeDecision e actor base = true ↔
+        decisionThreshold e base ≤ actor)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (houtsidePayoff_of_pmfEq :
+      reporterPMF = noReporterPMF →
+        (1 / 2 : ℝ) =
+          (baseTerm e base +
+            signalWeight e base *
+              GaussianHazardCertificate.normalUpperTailMean
+                standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                (actorLaw e base) (decisionThreshold e base)) /
+            denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_report_required_source_equilibrium_upper_tail_threshold_actor_mean
+    skillGivenBase hObsAccess hObsNoAccess takeDecision reportDecision
+    estimationConsistent referenceTest baseTerm signalWeight denom actorLaw
+    decisionThreshold hEq e base hweight_all hdenom_all htie
+    hdecision_threshold hlambda reporterPMF noReporterPMF hNoAccess
+    hAccessMixture houtsidePayoff_of_pmfEq
+
+/--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed
 Bayesian posterior-threshold reporting gives the paper's all-take conclusion
 and finite score-threshold reporting at every base profile.

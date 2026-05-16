@@ -217,7 +217,11 @@ Last updated: 2026-05-16
   The threshold-actor-mean endpoints close that obligation for normalized
   source models whose acting mean is definitionally the Gaussian upper-tail
   mean at a concrete reporting/taking threshold, using the reusable
-  `lowerThresholdCutoff_unique` lemma from `EconCSLib`.
+  `lowerThresholdCutoff_unique` lemma from `EconCSLib`.  The source-equilibrium
+  upper-tail wrappers now derive the best-response premises from the concrete
+  base-indexed optional/report-required source games, leaving the Gaussian
+  payoff identity, tie-breaking convention, threshold shape, and mixture
+  identities as the visible source assumptions for this route.
   The
   finite acting-distribution
   lemmas
@@ -496,12 +500,12 @@ Last updated: 2026-05-16
    outside-payoff algebra for the normalized affine source model.  This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
-   positive-mass/support facts.  The active continuous/source route is now the
-   direct below-mean actor branch: cutoff-midpoint and Gaussian all-acting
-   wrappers avoid point-mass assumptions, so next work should connect the
-   paper's final policy assumptions to one of those branches and decide whether
-   a skill-dependent conditional-kernel version is needed for the final
-   paper-facing theorem statement.
+   positive-mass/support facts.  The active continuous/source route should now
+   use the source-equilibrium upper-tail endpoints.  Next work is to decide the
+   final paper-facing theorem statement: either expose the current payoff,
+   tie-breaking, threshold, and mixture hypotheses directly, or instantiate a
+   stricter conditional-kernel version if the statement should quantify over
+   conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 

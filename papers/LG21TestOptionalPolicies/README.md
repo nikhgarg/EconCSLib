@@ -184,7 +184,15 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_affine_best_response_upper_tail_threshold_actor_mean`
   use the reusable uniqueness of real lower cutoffs to close the
   upper-tail-mean identification as well, for source models whose acting mean
-  is defined from the concrete reporting/taking threshold.  The source-shaped
+  is defined from the concrete reporting/taking threshold.  The
+  source-equilibrium wrappers
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_source_equilibrium_upper_tail_threshold_actor_mean`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_source_equilibrium_upper_tail_threshold_actor_mean`
+  derive the Theorem 3.1 best-response premises directly from the concrete
+  base-indexed source equilibria, leaving only the Gaussian payoff identity,
+  tie-breaking, threshold shape, and mixture/fairness-surface assumptions
+  explicit.  The source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
@@ -303,7 +311,12 @@ cache is kept as `source.txt` for named-statement audits.
   stricter
   skill-dependent latent-kernel instantiation can be added later if the final
   statement insists on conditional-on-skill laws rather than this direct
-  constant-kernel specialization.
+  constant-kernel specialization.  The continuous upper-tail route now has
+  source-equilibrium endpoints that derive best responses from the concrete
+  optional/report-required source games; its remaining assumptions are the
+  paper-facing payoff identities, tie-breaking convention, threshold shape,
+  mixture identities, and any stricter conditional-kernel instantiation wanted
+  for the final source statement.
 
 ## Source Notes
 
@@ -326,4 +339,7 @@ strategy-proofness bridge and a packaged Gaussian threshold-equilibrium
 certificate. Lemma 4.1's own observed-access source endpoint is now closed, and
 Propositions 4.2--4.3 both have direct wrappers that consume this source action
 endpoint rather than the older packaged certificate. Theorem 3.1/3.2 remain
-open strategic-equilibrium campaigns.
+open only at the level of choosing the final source-facing theorem statement;
+their strongest current routes derive source witnesses and upper-tail
+impossibility from concrete source equilibria under explicit payoff,
+tie-breaking, threshold, and mixture hypotheses.
