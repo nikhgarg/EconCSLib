@@ -183,6 +183,9 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   before staging. If Git cannot create `.git/index.lock` because another agent
   is using Git or the filesystem is temporarily read-only, pause; once clear,
   retry the same scoped path list. Never use broad `git add .` in this repo.
+  Do not use `git reset` to repair staging or commits in a shared worktree;
+  it can move or unstage other agents' work. Recover with scoped staging,
+  follow-up commits, or explicit coordination instead.
 
 ### 1.2.1 Paper Link Intake Protocol
 
@@ -228,6 +231,13 @@ the Lean statements against the paper.
 - **Reproducible PDF and text cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF changes.
 - **README Requirements:** The `README.md` must clearly identify the exact
   source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
+- **DAG Node Wording:** `DependencyDAG.tex` is a proof roadmap for humans, not
+  a formalization changelog. Once a node is marked formalized, its text should
+  state or briefly summarize the paper claim. Do not fill green nodes with
+  implementation notes such as helper families, algebra rewrites, or "closed"
+  status language; keep those details in the README status table, proof notes,
+  or handoff files. Partial/conditional nodes may mention the missing proof
+  obligation, but should still foreground the paper statement.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
@@ -245,6 +255,28 @@ the Lean statements against the paper.
 - For new papers, create `PaperInterface.lean` during intake from the scaffold,
   not only after the proof is complete. Keep it synchronized with the proof plan
   and DAG so the eventual human review file grows with the formalization.
+- When scaffolding a paper (for example through `scripts/new_paper.py`), run
+  `python3 scripts/review_dashboard.py --paper <paper-folder> --refresh-cache`
+  once so the dashboard snapshot is generated before the first review workflow.
+- After declaration-level edits in `PaperInterface.lean` (especially theorem
+  statement changes), run the paper-local review launcher (`./review-dashboard.sh`)
+  before relying on the trace for those statements.
+- The launcher checks freshness against the logged trace on startup; if an old
+  check is out of date, it warns you and you can immediately re-save checks.
+- It also shows compact paper-source action links (open PDF/text file), so the
+  reviewer can quickly jump back to source wording when needed.
+- Paper-facing formulas that look like LaTeX are rendered in the dashboard so
+  theorem statements are easier to read without full Lean familiarity.
+- `./review-dashboard.sh` always regenerates the lightweight Lean→TeX preview from
+  the current declarations on launch, so you do not need a separate “translation”
+  step.
+- On WSL2, if the browser does not open automatically, add `--host 0.0.0.0` and
+  open the printed URL first (normally localhost/127.0.0.1). If that fails, try
+  the additional host URL if printed.
+- To add `review-dashboard.sh` to existing paper folders that already have
+  `PaperInterface.lean` but not the launcher yet, run:
+
+  `python3 scripts/bootstrap_review_launchers.py --write`
 - **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLib.Statistics.priorWeightedVariance`). The `PaperInterface.lean` file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the interface that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements or prove they equal the generic terms. A reviewer must see the actual math equations inside this single file without needing to open imported generic modules. Keep `PostPaperAudit.lean` for theorem endpoint aliases and proof-seam coverage, not standalone proof-facing formula duplicates.
   Include for each entry:
   1. the declaration name,
@@ -304,6 +336,12 @@ the Lean statements against the paper.
     conditional/caveated, not green.
 - **DAG Formatting and Clarity Mandates:**
   - **Visual Iteration Requirement:** After every substantive DAG edit, render the DAG, inspect the visual output, and keep adjusting layout until you can explicitly confirm that it looks clean with no box, legend, note, edge, or label overlap. Do not claim the DAG is done if you have not visually checked it or if any overlap remains.
+  - **Minimum Node Spacing:** Keep visible whitespace between neighboring DAG
+    nodes. As a default floor, leave at least about `0.6cm` between node
+    bounding boxes and use larger gaps for dense text boxes, long labels, or
+    high-traffic edge lanes. If arrows must pass between nodes, reserve a clear
+    routing lane rather than squeezing the arrow through text or nearly touching
+    boxes.
   - **Stable Topology Requirement:** The initial DAG should contain the paper's full named-result structure: all named Definitions, Lemmas, Propositions, Theorems, Corollaries, and appendix results, with dependency arrows reflecting the paper proof architecture. After that initial roadmap is created, routine progress updates should normally change only node status/style/text, not add new boxes or arrows. Add or remove boxes/arrows only when the initial named-result inventory was incomplete or a genuine paper dependency was discovered to be missing/wrong; if topology changes, rerender and re-check for overlap.
   - The DAG must encode formalization status and node type explicitly by using the preamble styles.
   - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
@@ -313,6 +351,11 @@ the Lean statements against the paper.
     helper names, certificate layers, construction details, or a list of every
     bridge lemma. Put those details in the README status row, final report, or
     proof comments.
+    Include the actual source-facing conclusion or a faithful short formula
+    summary in the DAG node itself so a human can recognize the paper result
+    without opening the Lean file. For example, a closed Gaussian lemma node
+    should say that the posterior estimate has the displayed weighted-mean
+    formula and normal law, not merely that "Gaussian algebra was proved."
   - **Keep theorem families together:** Parts of the same source theorem
     (`Theorem 2(i)`, `Theorem 2(ii)`, `Theorem 2(iii)`) should be visually
     grouped in the same column, row, or labeled cluster. Do not scatter theorem
@@ -681,6 +724,10 @@ search.
 **CRITICAL MANDATE - CONCURRENT AGENT SAFETY:**
 - Assume there could be other agents or human users simultaneously working on different files within the same repository.
 - **NEVER** use aggressive global resets like `git reset --hard`, `git clean -fd`, or `git checkout .` unless explicitly instructed to do so by the user. These commands will permanently destroy work being done by other concurrent agents.
+- **NEVER** use `git reset` of any kind in a dirty shared worktree unless the
+  user explicitly requests that exact operation. Even soft or mixed resets can
+  disturb other agents' staged work or branch position. Use scoped `git add`,
+  path-limited commits, or follow-up corrective commits instead.
 - Always scope your git operations (e.g., `git checkout <specific_file>`, `git restore <specific_file>`) strictly to the files you are actively modifying.
 - Use the native `apply_patch` editing tool for manual source edits. Do not
   invoke `apply_patch` through a shell command, and do not use heredoc/sed/perl
@@ -809,6 +856,12 @@ validation pass:
 - Re-read the paper-facing theorem ledger file (for example,
   `PaperInterface.lean` or the named human-facing theorem file) and check
   each named definition/theorem/corollary against the paper statement.
+- Run the paper-local review workflow from within the paper folder:
+  `./review-dashboard.sh` and record checks/note any uncertain matches in the
+  dashboard before finalizing. If you changed interface statements after earlier
+  checks, the launcher surfaces stale warnings so you can refresh only the affected
+  items. Use `./review-dashboard.sh --check` to run the precheck step in CI-like,
+  non-interactive mode before handoff.
 - Confirm every final paper-facing declaration is fully formalized with no
   hidden placeholders; no unresolved `sorry`, scaffold wrappers, or unnamed
   gaps should remain in the claimed result chain.
