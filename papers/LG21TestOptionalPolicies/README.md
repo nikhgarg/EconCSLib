@@ -339,6 +339,13 @@ cache is kept as `source.txt` for named-statement audits.
   assumptions are the no-access law and the report-required outside-payoff
   equality, plus any stricter conditional-kernel instantiation wanted for the
   final source statement.
+  The concrete event-share surface endpoints
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_surface`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_surface`
+  make the no-access and mixture identities definitional for those surfaces,
+  leaving only the source certificate, a positive-mass event witness, and the
+  report-required outside-payoff equality.
 
 ## Source Notes
 
@@ -346,7 +353,9 @@ The current Lean code closes finite admissions accounting identities, the
 source-level model primitives for access status, school information sets, and
 requirement-policy feasibility, the finite conditional-kernel core of
 Definition 6 / Theorem 4.4, the shared Gaussian posterior-mean algebra used by
-`P_BO`, the two main Lemma 4.1 scalar
+`P_BO`, generic binary-mixture PMF policy surfaces
+`lg21BinaryMixtureEstimateSurface` and
+`lg21EventShareBinaryMixtureEstimateSurface`, the two main Lemma 4.1 scalar
 no-deviation contradictions, the fully specified observed-access
 source-equilibrium endpoint `(Y, X) = (1, 1)`, and the law-level fairness
 contradiction cores plus concrete one-base source-law surfaces for Propositions

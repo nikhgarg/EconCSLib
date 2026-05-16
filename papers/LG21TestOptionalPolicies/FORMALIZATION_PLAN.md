@@ -240,7 +240,14 @@ Last updated: 2026-05-16
   `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_source_equilibrium`
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium`
-  derive `λ > 0` from a finite positive-mass reporter/taker event.
+  derive `λ > 0` from a finite positive-mass reporter/taker event.  The generic
+  surfaces `lg21BinaryMixtureEstimateSurface` and
+  `lg21EventShareBinaryMixtureEstimateSurface`, together with
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_surface`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_surface`,
+  make the no-access and observable-access mixture identities definitional for
+  arbitrary PMF-valued base-only/full-feature estimates.
   The
   finite acting-distribution
   lemmas
@@ -522,9 +529,10 @@ Last updated: 2026-05-16
    positive-mass/support facts.  The active continuous/source route should now
    use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
    work is to decide the final paper-facing theorem statement: either expose
-   the current source certificates plus event-share/no-access/outside-payoff
-   hypotheses directly, or instantiate a stricter conditional-kernel version if
-   the statement should quantify over conditional-on-skill Gaussian laws.
+   the current source certificates plus event-share/outside-payoff hypotheses
+   directly on the concrete binary-mixture surface, or instantiate a stricter
+   conditional-kernel version if the statement should quantify over
+   conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 

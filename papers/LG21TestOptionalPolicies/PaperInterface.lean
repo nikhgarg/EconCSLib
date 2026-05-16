@@ -3142,6 +3142,58 @@ theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_
     noReporterPMF hNoAccess hAccessMixtureDef e base
 
 /--
+Paper-facing optional-reporting upper-tail endpoint on the concrete
+event-share binary-mixture policy surface.
+-/
+theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_surface
+    {Feature Skill Base Estimate Student Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → Skill → Base → PMF Estimate)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (reporterEvent : Equilibrium → Base → Student → Prop)
+    (decReporterEvent :
+      ∀ e base, DecidablePred (reporterEvent e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → ℝ → PMF Estimate)
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase
+        (lg21EventShareBinaryMixtureEstimateSurface
+          Equilibrium latentAccessEstimate latentNoAccessEstimate
+          demographicAccessEstimate demographicNoAccessEstimate studentLaw
+          reporterEvent decReporterEvent reporterPMF noReporterPMF
+          baseOnlyEstimate fullFeatureEstimate))
+    (hwitness :
+      ∀ e base, ∃ student, reporterEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (e : Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            Equilibrium latentAccessEstimate latentNoAccessEstimate
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            reporterEvent decReporterEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate) ∨
+        lg21SourceObservablyFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            Equilibrium latentAccessEstimate latentNoAccessEstimate
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            reporterEvent decReporterEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate)) :=
+  paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_surface
+    latentAccessEstimate latentNoAccessEstimate demographicAccessEstimate
+    demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
+    reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate C
+    hwitness e base
+
+/--
 Paper-facing Theorem 3.2 report-required continuous upper-tail endpoint, with
 the source-equilibrium and threshold obligations packaged in one auditable
 certificate.
@@ -3260,6 +3312,65 @@ theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upp
   paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium
     C studentLaw takerEvent decTakerEvent hwitness reporterPMF noReporterPMF
     hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq e base
+
+/--
+Paper-facing report-required upper-tail endpoint on the concrete event-share
+binary-mixture policy surface.
+-/
+theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_surface
+    {Base Test Estimate Student Equilibrium : Type*} [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {skillGivenBase : Base → PMF ℝ}
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → ℝ → Base → PMF Estimate)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (takerEvent : Equilibrium → Base → Student → Prop)
+    (decTakerEvent :
+      ∀ e base, DecidablePred (takerEvent e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase
+        (lg21EventShareBinaryMixtureEstimateSurface
+          Equilibrium latentAccessEstimate latentNoAccessEstimate
+          demographicAccessEstimate demographicNoAccessEstimate studentLaw
+          takerEvent decTakerEvent reporterPMF noReporterPMF
+          baseOnlyEstimate fullFeatureEstimate))
+    (hwitness :
+      ∀ e base, ∃ student, takerEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (C.baseTerm e base +
+              C.signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (C.actorLaw e base) (C.decisionThreshold e base)) /
+              C.denom e base)
+    (e : Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            Equilibrium latentAccessEstimate latentNoAccessEstimate
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            takerEvent decTakerEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate) ∨
+        lg21SourceObservablyFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            Equilibrium latentAccessEstimate latentNoAccessEstimate
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            takerEvent decTakerEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate)) :=
+  paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_surface
+    latentAccessEstimate latentNoAccessEstimate demographicAccessEstimate
+    demographicNoAccessEstimate studentLaw takerEvent decTakerEvent reporterPMF
+    noReporterPMF baseOnlyEstimate fullFeatureEstimate C hwitness
+    houtsidePayoff_of_pmfEq e base
 
 /--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed
