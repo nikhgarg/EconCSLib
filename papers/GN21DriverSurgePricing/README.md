@@ -1004,6 +1004,11 @@ The full-data Lemma 9/10 packages also now have rejected-mass variants,
 and
 `GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`,
 which derive positive kernel support from positive rejected-complement measure.
+The source-facing endpoint
+`paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_rejected_mass`
+uses those wrappers directly, so the remaining exact-uniqueness task can be
+phrased as positive rejected-trip mass for every non-accept-all optimum; the
+zero-mass alternative points toward an almost-everywhere uniqueness statement.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

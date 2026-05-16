@@ -487,14 +487,18 @@ into the concrete endpoint policy data.
   `GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`,
   and
   `GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll_of_rejected_measure_pos`.
+  Primitive/source variants and the source-facing rejected-mass endpoint
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_rejected_mass`
+  are also compiled, so the final paper-facing task can use positive measure of
+  the rejected trips rather than the lower-level support expression.
   These now feed the source-facing Theorem 4 strict-local route through
   `Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleStrictCertificate`,
   `theorem4MeasuredAggregateFeasibleStrictLocalImprovementCertificate_of_structured_current_bounds_source_support`,
   and
   `paper_theorem4_measurable_accept_all_unique_optimal_of_structured_current_bounds_source_support`.
   That endpoint uses accept-all itself as the profitable replacement once the
-  source current-bound data and positive kernel support on the rejected
-  complement are supplied.
+  source current-bound data and either positive kernel support or positive
+  rejected-complement mass are supplied.
   These are the useful bridge from "positive derivative kernel on positive
   mass" to an actual strict reward improvement for the quotient reward, and
   should be preferred over building more abstract wrappers when closing the
