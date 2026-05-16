@@ -3298,6 +3298,170 @@ theorem paper_theorem3_1_optional_reporting_source_witness_of_base_crossings
   · exact hthreshold
 
 /--
+Source-shaped witness for Theorem 3.1's report-required case.  The paper's
+second bullet says taking-and-reporting is a finite lower cutoff in latent skill
+at each base profile.
+-/
+structure LG21ReportRequiredStrategicWithholdingSourceWitness
+    (Base : Type*) where
+  takes : Base → ℝ → Prop
+  some_access_students_do_not_take : ∃ base skill, ¬ takes base skill
+  taking_threshold :
+    ∀ base, ∃ qBar : ℝ, ∀ skill : ℝ, takes base skill ↔ qBar ≤ skill
+
+/--
+Concrete report-required witness from base-indexed skill cutoffs.  Each base
+profile has a skill one unit below its cutoff that does not take/report.
+-/
+def lg21ReportRequiredThresholdStrategicWithholdingSourceWitness
+    {Base : Type*} [Nonempty Base] (takeCutoff : Base → ℝ) :
+    LG21ReportRequiredStrategicWithholdingSourceWitness Base where
+  takes := fun base skill => takeCutoff base ≤ skill
+  some_access_students_do_not_take := by
+    let base : Base := Classical.choice inferInstance
+    refine ⟨base, takeCutoff base - 1, ?_⟩
+    exact not_le.mpr (sub_one_lt (takeCutoff base))
+  taking_threshold := by
+    intro base
+    exact ⟨takeCutoff base, fun skill => Iff.rfl⟩
+
+/--
+Theorem 3.1 report-required threshold conclusions from a source-shaped witness:
+some access student does not take/report, and taking/reporting is a finite
+skill-threshold rule at each base profile.
+-/
+theorem paper_theorem3_1_report_required_threshold_conclusions_of_source_witness
+    {Base : Type*}
+    (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base) :
+    (∃ base skill, ¬ W.takes base skill) ∧
+      (∀ base, ∃ qBar : ℝ,
+        ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
+  ⟨W.some_access_students_do_not_take, W.taking_threshold⟩
+
+/--
+Theorem 3.1 report-required crossing step.  The expected estimate from
+taking/reporting is strictly increasing in latent skill, while the no-take
+estimate varies continuously with the candidate skill cutoff.  Opposite
+endpoint comparisons produce a finite indifferent skill cutoff, and
+taking/reporting is optimal exactly above that cutoff.
+-/
+theorem paper_theorem3_1_report_required_threshold_equilibrium_exists_of_crossing
+    {takeEstimate noTakeEstimateAtCutoff : ℝ → ℝ} {low high : ℝ}
+    (hcontTake : ContinuousOn takeEstimate (Set.Icc low high))
+    (hcontNoTake :
+      ContinuousOn noTakeEstimateAtCutoff (Set.Icc low high))
+    (hmonoTake : StrictMono takeEstimate)
+    (hlow_high : low < high)
+    (hleft : takeEstimate low < noTakeEstimateAtCutoff low)
+    (hright : noTakeEstimateAtCutoff high < takeEstimate high) :
+    ∃ qBar : ℝ,
+      qBar ∈ Set.Ioo low high ∧
+        noTakeEstimateAtCutoff qBar = takeEstimate qBar ∧
+          (∀ skill : ℝ,
+            noTakeEstimateAtCutoff qBar ≤ takeEstimate skill ↔
+              qBar ≤ skill) ∧
+            (∀ skill : ℝ,
+              takeEstimate skill < noTakeEstimateAtCutoff qBar ↔
+                skill < qBar) :=
+  paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing
+    hcontTake hcontNoTake hmonoTake hlow_high hleft hright
+
+/--
+Base-indexed report-required crossing step.  It constructs a finite skill
+cutoff at every base profile and records the paper's taking/reporting
+best-response form.
+-/
+theorem paper_theorem3_1_report_required_threshold_cutoffs_of_base_crossings
+    {Base : Type*} [Nonempty Base]
+    (takeEstimate noTakeEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontTake :
+      ∀ base, ContinuousOn (takeEstimate base)
+        (Set.Icc (low base) (high base)))
+    (hcontNoTake :
+      ∀ base, ContinuousOn (noTakeEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hmonoTake : ∀ base, StrictMono (takeEstimate base))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, takeEstimate base (low base) <
+        noTakeEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base, noTakeEstimateAtCutoff base (high base) <
+        takeEstimate base (high base)) :
+    ∃ takeCutoff : Base → ℝ,
+      (∀ base, takeCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+        (∀ base,
+          noTakeEstimateAtCutoff base (takeCutoff base) =
+            takeEstimate base (takeCutoff base)) ∧
+          (∀ base skill,
+            noTakeEstimateAtCutoff base (takeCutoff base) ≤
+                takeEstimate base skill ↔
+              takeCutoff base ≤ skill) ∧
+            (∃ base skill,
+              ¬ noTakeEstimateAtCutoff base (takeCutoff base) ≤
+                  takeEstimate base skill) ∧
+              (∀ base, ∃ qBar : ℝ, ∀ skill : ℝ,
+                noTakeEstimateAtCutoff base (takeCutoff base) ≤
+                    takeEstimate base skill ↔
+                  qBar ≤ skill) := by
+  exact
+    paper_theorem3_1_optional_reporting_threshold_cutoffs_of_base_crossings
+      takeEstimate noTakeEstimateAtCutoff low high hcontTake hcontNoTake
+      hmonoTake hlow_high hleft hright
+
+/--
+Theorem 3.1 report-required source witness from the paper's crossing argument:
+continuity plus opposite endpoint comparisons produce threshold
+taking/reporting strategies.
+-/
+theorem paper_theorem3_1_report_required_source_witness_of_base_crossings
+    {Base : Type*} [Nonempty Base]
+    (takeEstimate noTakeEstimateAtCutoff : Base → ℝ → ℝ)
+    (low high : Base → ℝ)
+    (hcontTake :
+      ∀ base, ContinuousOn (takeEstimate base)
+        (Set.Icc (low base) (high base)))
+    (hcontNoTake :
+      ∀ base, ContinuousOn (noTakeEstimateAtCutoff base)
+        (Set.Icc (low base) (high base)))
+    (hmonoTake : ∀ base, StrictMono (takeEstimate base))
+    (hlow_high : ∀ base, low base < high base)
+    (hleft :
+      ∀ base, takeEstimate base (low base) <
+        noTakeEstimateAtCutoff base (low base))
+    (hright :
+      ∀ base, noTakeEstimateAtCutoff base (high base) <
+        takeEstimate base (high base)) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      ∃ takeCutoff : Base → ℝ,
+        (∀ base, takeCutoff base ∈ Set.Ioo (low base) (high base)) ∧
+          (∀ base,
+            noTakeEstimateAtCutoff base (takeCutoff base) =
+              takeEstimate base (takeCutoff base)) ∧
+            (∀ base skill,
+              W.takes base skill ↔
+                noTakeEstimateAtCutoff base (takeCutoff base) ≤
+                  takeEstimate base skill) ∧
+              (∀ base, ∃ qBar : ℝ,
+                ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) := by
+  rcases
+    paper_theorem3_1_report_required_threshold_cutoffs_of_base_crossings
+      takeEstimate noTakeEstimateAtCutoff low high hcontTake hcontNoTake
+      hmonoTake hlow_high hleft hright with
+    ⟨takeCutoff, hmem, hindiff, hbest, hsome, hthreshold⟩
+  let W : LG21ReportRequiredStrategicWithholdingSourceWitness Base :=
+    { takes := fun base skill =>
+        noTakeEstimateAtCutoff base (takeCutoff base) ≤
+          takeEstimate base skill
+      some_access_students_do_not_take := hsome
+      taking_threshold := hthreshold }
+  refine ⟨W, takeCutoff, hmem, hindiff, ?_, ?_⟩
+  · intro _base _skill
+    rfl
+  · exact hthreshold
+
+/--
 Source-shaped witness for Theorem 3.1's strategic-withholding threshold
 conclusions.  `Base` represents the paper's non-test feature vector
 `{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the

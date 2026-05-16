@@ -45,9 +45,14 @@ Last updated: 2026-05-16
   above that cutoff.  The base-indexed wrapper
   `paper_theorem3_1_optional_reporting_source_witness_of_base_crossings`
   constructs the source-shaped all-take/threshold-reporting witness from these
-  crossing hypotheses.  Its report-required threshold
-  conclusions are packaged in `LG21StrategicWithholdingSourceWitness`.
-  Explicit base-indexed cutoff functions now construct this witness via
+  crossing hypotheses.  The analogous report-required crossing step is
+  formalized by
+  `paper_theorem3_1_report_required_threshold_equilibrium_exists_of_crossing`,
+  and `paper_theorem3_1_report_required_source_witness_of_base_crossings`
+  constructs a source-shaped finite skill-threshold witness for taking and
+  reporting.  The older combined threshold conclusions are also packaged in
+  `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
+  functions now construct this witness via
   `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit
   below-cutoff non-reporting score, and PMF/law wrappers prove failure of all
   three fairness criteria from concrete distribution-difference witnesses.
