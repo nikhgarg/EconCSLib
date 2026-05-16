@@ -3761,6 +3761,168 @@ theorem paper_theorem3_2_law_observable_fair_positive_reporting_resampling_unsta
       hNoAccess hAccessMixture)
 
 /--
+Theorem 3.2 affine payoff comparison: in the paper's posterior-mean formula,
+replacing a reported score/skill by a weakly larger resampling mean weakly
+raises the estimate.
+-/
+theorem paper_theorem3_2_affine_resampling_mean_payoff_le
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hweight : 0 ≤ signalWeight) (hdenom : 0 < denom)
+    (hactor : actor ≤ mean) :
+    (baseTerm + signalWeight * actor) / denom ≤
+      (baseTerm + signalWeight * mean) / denom := by
+  have hnum :
+      baseTerm + signalWeight * actor ≤
+        baseTerm + signalWeight * mean := by
+    simpa [add_comm, add_left_comm, add_assoc] using
+      add_le_add_left (mul_le_mul_of_nonneg_left hactor hweight) baseTerm
+  exact (div_le_div_iff_of_pos_right hdenom).2 hnum
+
+/--
+Theorem 3.2 strict affine payoff comparison: a strictly below-mean
+reporter/taker strictly benefits from switching to the no-report/no-take payoff
+computed with the resampling mean.
+-/
+theorem paper_theorem3_2_affine_resampling_mean_payoff_lt
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom)
+    (hactor : actor < mean) :
+    (baseTerm + signalWeight * actor) / denom <
+      (baseTerm + signalWeight * mean) / denom := by
+  have hnum :
+      baseTerm + signalWeight * actor <
+        baseTerm + signalWeight * mean := by
+    simpa [add_comm, add_left_comm, add_assoc] using
+      add_lt_add_left (mul_lt_mul_of_pos_left hactor hweight) baseTerm
+  exact (div_lt_div_iff_of_pos_right hdenom).2 hnum
+
+/--
+Theorem 3.2 best-response contradiction from a below-mean actor.  If equality
+of the reporter/taker and no-reporter/no-taker laws makes the outside payoff
+equal to the affine posterior evaluated at the resampling mean, then any
+currently acting score/skill strictly below that mean violates two-sided best
+response.
+-/
+theorem paper_theorem3_2_resampling_law_equality_unstable_of_below_mean_actor
+    {Law : Type*} {reporterLaw noReporterLaw : Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hchosen : chooses actor)
+    (hchoosePayoff :
+      choosePayoff actor =
+        (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      reporterLaw = noReporterLaw →
+        otherPayoff actor =
+          (baseTerm + signalWeight * mean) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom)
+    (hactor : actor < mean) :
+    reporterLaw = noReporterLaw →
+      ¬ lg21NoProfitableBinaryChoiceDeviation
+          chooses choosePayoff otherPayoff := by
+  intro hLawEq hbest
+  have hbest_actor := hbest.1 actor hchosen
+  have hstrict :
+      (baseTerm + signalWeight * actor) / denom <
+        (baseTerm + signalWeight * mean) / denom :=
+    paper_theorem3_2_affine_resampling_mean_payoff_lt
+      hweight hdenom hactor
+  rw [hchoosePayoff, hotherPayoff_of_law_eq hLawEq] at hbest_actor
+  linarith
+
+/--
+Theorem 3.2 positive-share PMF resampling instability with the below-mean
+actor supplied explicitly.  Observable fairness first forces `D1 = D0`; the
+affine payoff comparison then shows that a currently acting score/skill below
+the resampling mean has a profitable deviation.
+-/
+theorem paper_theorem3_2_observable_fair_positive_reporting_below_mean_actor_unstable
+    {Skill Base Test Estimate Law : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hLawEq_of_pmfEq :
+      reporterPMF = noReporterPMF → reporterLaw = noReporterLaw)
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hchosen : chooses actor)
+    (hchoosePayoff :
+      choosePayoff actor =
+        (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      reporterLaw = noReporterLaw →
+        otherPayoff actor =
+          (baseTerm + signalWeight * mean) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom)
+    (hactor : actor < mean) :
+    ¬ lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff := by
+  have hPMFEq :
+      reporterPMF = noReporterPMF :=
+    paper_theorem3_2_observable_fair_resampling_forces_reporter_no_reporter_law_eq
+      hfair e base hlambda reporterPMF noReporterPMF hNoAccess
+      hAccessMixture
+  exact
+    paper_theorem3_2_resampling_law_equality_unstable_of_below_mean_actor
+      hchosen hchoosePayoff hotherPayoff_of_law_eq hweight hdenom hactor
+      (hLawEq_of_pmfEq hPMFEq)
+
+/--
+Theorem 3.2 positive-share abstract-law resampling instability with the
+below-mean actor supplied explicitly.
+-/
+theorem paper_theorem3_2_law_observable_fair_positive_reporting_below_mean_actor_unstable
+    {Skill Base Test Outcome Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hfair : lg21SourceLawObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome)
+    {baseTerm signalWeight denom actor mean : ℝ}
+    (hchosen : chooses actor)
+    (hchoosePayoff :
+      choosePayoff actor =
+        (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      reporterLaw = noReporterLaw →
+        otherPayoff actor =
+          (baseTerm + signalWeight * mean) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom)
+    (hactor : actor < mean) :
+    ¬ lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff := by
+  have hLawEq :
+      reporterLaw = noReporterLaw :=
+    paper_theorem3_2_law_observable_fair_resampling_forces_reporter_no_reporter_law_eq
+      mass law_ext hfair e base hlambda reporterLaw noReporterLaw
+      hNoAccess hAccessMixture
+  exact
+    paper_theorem3_2_resampling_law_equality_unstable_of_below_mean_actor
+      hchosen hchoosePayoff hotherPayoff_of_law_eq hweight hdenom hactor
+      hLawEq
+
+/--
 Theorem 3.2 latent-to-observable reduction.  If latent-skill fairness implies
 observable fairness, then it is enough to prove the test-blank implication for
 observable fairness.

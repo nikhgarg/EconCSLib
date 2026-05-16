@@ -118,11 +118,15 @@ Last updated: 2026-05-16
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
   `D0 = λ D1 + (1 - λ) D0 ⇒ D1 = D0` step, and the theorem-facing wrappers turn
   observable fairness plus the access/no-access mixture identities into the
-  reporter/no-reporter law equality.  The latent-skill branch is reduced to the
-  observable branch under the shared latent-skill mixture identities.  The
-  remaining source gap is the profitable-deviation instability bridge that turns
-  `D1 = D0` into no stable positive-share resampling, and then into the final
-  test-blank implication without a certificate.
+  reporter/no-reporter law equality.  The affine payoff comparison
+  `paper_theorem3_2_affine_resampling_mean_payoff_lt` and the below-mean actor
+  wrappers now prove the profitable-deviation contradiction whenever the full
+  policy model supplies a currently acting score/skill below the resampling
+  mean.  The latent-skill branch is reduced to the observable branch under the
+  shared latent-skill mixture identities.  The remaining source gap is deriving
+  that below-mean acting witness, or the no-positive-share alternative, from the
+  full policy model and then closing the final test-blank implication without a
+  certificate.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
