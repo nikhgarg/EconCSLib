@@ -182,6 +182,14 @@ GN21GeneralizedIntervalListPolicy.complexity_cons
 GN21GeneralizedIntervalListPolicy.complexity_pair_cons
 GN21GeneralizedIntervalListPolicy.policy_cons_eq_withComponent
 GN21GeneralizedIntervalListPolicy.policy_pair_cons_eq_withTwoComponents
+lemma5_list_bounded_bounded_upper_merge_step_of_endpoint_path
+lemma5_list_bounded_bounded_upper_merge_strict_step_of_endpoint_path
+lemma5_list_bounded_bounded_lower_merge_step_of_endpoint_path
+lemma5_list_bounded_bounded_lower_merge_strict_step_of_endpoint_path
+lemma5_list_bounded_lower_collapse_step_of_endpoint_path
+lemma5_list_bounded_lower_collapse_strict_step_of_endpoint_path
+lemma5_list_bounded_upper_collapse_step_of_endpoint_path
+lemma5_list_bounded_upper_collapse_strict_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
 lemma5_withTwoBounded_upper_merge_step_of_endpoint_path
@@ -222,8 +230,10 @@ both endpoint directions, and includes the boundary/ray reductions needed to
 reach right tails, left tails, and accept-all from finite seeds.  Lean also has
 an ordered component-list policy domain and head/two-head decomposition lemmas
 that identify the source proof's first components with the compiled context
-seeds.  The remaining nonlinear work is selecting the appropriate local move
-inside that ordered finite interval/ray seed, proving the source
+seeds.  The first ordered bounded-bounded merge and bounded-interval collapse
+steps now produce a shorter ordered list directly, in weak and strict forms.
+The remaining nonlinear work is selecting the appropriate local move
+inside an arbitrary ordered finite interval/ray seed, proving the source
 derivative-sign hypothesis holds along the selected path, and iterating the
 component-count decrease to a canonical Lemma 5 shape.
 

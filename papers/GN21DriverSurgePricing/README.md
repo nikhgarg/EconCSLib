@@ -816,8 +816,10 @@ left-ray-to-bounded merge, and left/right-ray-to-accept-all merge are all
 compiled in weak and strict forms.  An ordered generalized interval/ray list
 domain now converts to the existing generalized finite-policy domain and
 proves that the first one or two source-ordered components are exactly the
-compiled context seeds.  The remaining open part is selecting and iterating
-those local moves inside an arbitrary ordered finite
+compiled context seeds.  The first ordered-list bounded-bounded merge and
+bounded-interval collapse reductions now return shorter ordered lists directly.
+The remaining open part is selecting and iterating those local moves inside an
+arbitrary ordered finite
 interval/ray seed under the source derivative-sign hypotheses.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
