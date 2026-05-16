@@ -414,7 +414,10 @@ cache is kept as `source.txt` for named-statement audits.
   `LG21ReportRequiredUpperTailSourceEquilibriumCertificate` without carrying an
   explicit selected equilibrium/base pair while still stating Theorem 3.2 as
   fairness implies test-blankness or as absence of any concrete base/test
-  relevance witness.
+  relevance witness.  The same source-equilibrium routes now also construct the
+  compact `LG21FairnessImpossibilityCertificate`, so the top-level Theorem 3.2
+  interface can consume the closed optional-reporting and report-required
+  source assumptions directly.
 
 ## Source Notes
 

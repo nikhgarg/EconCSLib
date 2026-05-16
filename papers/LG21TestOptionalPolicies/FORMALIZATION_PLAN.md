@@ -591,7 +591,9 @@ Last updated: 2026-05-16
    internally and expose implication/no-relevance wrappers, reducing the final
    source-facing route to certificate, positive-share, mixture-definition, and
    payoff-normalization data while preserving Theorem 3.2's exact conclusion
-   shape.
+   shape.  They also now build the compact
+   `LG21FairnessImpossibilityCertificate` consumed by the top-level paper
+   interface theorem.
    This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
