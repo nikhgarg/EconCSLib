@@ -30,12 +30,23 @@ paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity_ba
 paper_theorem1_single_state_threshold_best_response_measurable_of_complete_maximizer
 paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuity
 paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_band_or_gap
+paper_theorem1_high_reward_band_or_gap
+paper_theorem1_left_tail_bound_of_nonnegative_rate
+singleStateTripPayment_strictThresholdPolicy_tendsto_zero
+singleStateTripTime_strictThresholdPolicy_tendsto_zero
+singleStateTripPayment_completeThresholdPolicy_tendsto_zero
+singleStateTripTime_completeThresholdPolicy_tendsto_zero
+paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity
+paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuous_objective
 ```
 
-The remaining general Theorem 1 work is now exactly the source Step 3 analytic
-tail/gap work: prove the compact upper-semicontinuity/tail-bound hypotheses for
-the strict/complete cutoff objective, and prove the high-reward band-or-gap
-dichotomy from the paper's continuity/asymptotic-boundedness assumptions.
+The remaining general Theorem 1 work is now exactly the source Step 3 compact
+upper-semicontinuity work: prove compact upper-semicontinuity of the
+strict/complete cutoff objective from the paper's continuity/distribution
+assumptions.  Lean now proves the high-reward band/gap dichotomy internally,
+derives the negative-cutoff left tail from nonnegative on-trip rates, and
+derives the high-cutoff right tail from antitone threshold-set convergence plus
+accept-all payment/time integrability.
 Proposition 3.1 and the single-state multiplicative-pricing corollary are
 closed for the actual renewal reward on measurable feasible policies.
 

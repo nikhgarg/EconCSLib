@@ -964,6 +964,58 @@ theorem singleStateTripPayment_nonneg_of_pointwise_nonneg
   unfold singleStateTripPayment
   exact setIntegral_nonneg hσ_measurable hpayment_nonneg
 
+/-- Renewal reward is positive when arrival rate and expected accepted payment are positive. -/
+theorem singleStateRenewalReward_pos_of_payment_pos
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ singleStateTripTime μ σ)
+    (hpayment_pos : 0 < singleStateTripPayment μ w σ) :
+    0 < singleStateRenewalReward μ arrivalRate w σ := by
+  unfold singleStateRenewalReward
+  have hnum_pos :
+      0 < arrivalRate * singleStateTripPayment μ w σ :=
+    mul_pos hlambda hpayment_pos
+  have hden_pos :
+      0 < 1 + arrivalRate * singleStateTripTime μ σ := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  exact div_pos hnum_pos hden_pos
+
+/--
+If the accepted payment and accepted time of a policy family vanish along a
+filter, then its single-state renewal reward vanishes along that filter.
+-/
+theorem singleStateRenewalReward_tendsto_zero_of_payment_time_tendsto_zero
+    {ι : Type*} (l : Filter ι)
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : ι → TripPolicy)
+    (hpayment_tendsto_zero :
+      Tendsto (fun i => singleStateTripPayment μ w (σ i)) l (𝓝 0))
+    (htime_tendsto_zero :
+      Tendsto (fun i => singleStateTripTime μ (σ i)) l (𝓝 0)) :
+    Tendsto
+      (fun i => singleStateRenewalReward μ arrivalRate w (σ i))
+      l (𝓝 0) := by
+  unfold singleStateRenewalReward
+  have hnum :
+      Tendsto
+        (fun i => arrivalRate * singleStateTripPayment μ w (σ i))
+        l (𝓝 (arrivalRate * 0)) :=
+    tendsto_const_nhds.mul hpayment_tendsto_zero
+  have hden :
+      Tendsto
+        (fun i => 1 + arrivalRate * singleStateTripTime μ (σ i))
+        l (𝓝 (1 + arrivalRate * 0)) :=
+    tendsto_const_nhds.add (tendsto_const_nhds.mul htime_tendsto_zero)
+  have hdiv :
+      Tendsto
+        (fun i =>
+          (arrivalRate * singleStateTripPayment μ w (σ i)) /
+            (1 + arrivalRate * singleStateTripTime μ (σ i)))
+        l (𝓝 ((arrivalRate * 0) / (1 + arrivalRate * 0))) :=
+    hnum.div hden (by norm_num)
+  simpa using hdiv
+
 /-- Accepted trip time is monotone among feasible policies. -/
 theorem singleStateTripTime_le_acceptAll_of_subset
     (μ : Measure TripLength) (σ : TripPolicy)
@@ -978,6 +1030,21 @@ theorem singleStateTripTime_le_acceptAll_of_subset
         le_of_lt (by
           simpa [acceptAllPolicy, positiveTripLengths] using hτ)))
   · exact Filter.Eventually.of_forall (fun _ hτ => hσ_subset hτ)
+
+/-- Accepted trip time is monotone among measurable feasible policies. -/
+theorem singleStateTripTime_le_of_subset
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hsubset : σ ⊆ τ)
+    (hτ_measurable : MeasurableSet τ)
+    (htime_integrable_τ :
+      IntegrableOn (fun x : TripLength => x) τ μ)
+    (hτ_subset : τ ⊆ acceptAllPolicy) :
+    singleStateTripTime μ σ ≤ singleStateTripTime μ τ := by
+  unfold singleStateTripTime
+  apply setIntegral_mono_set htime_integrable_τ
+  · exact (ae_restrict_iff' hτ_measurable).2
+      (Filter.Eventually.of_forall (fun x hx => le_of_lt (hτ_subset hx)))
+  · exact Filter.Eventually.of_forall (fun _ hσ => hsubset hσ)
 
 /-- Rejected mass is nonnegative for any feasible policy. -/
 theorem singleStateTripMass_acceptAll_diff_nonneg
@@ -1218,6 +1285,28 @@ theorem completeThresholdPolicy_subset_acceptAll
   intro τ hτ
   exact hτ.1
 
+/-- With nonnegative on-trip rates, every negative strict threshold accepts all feasible trips. -/
+theorem strictThresholdPolicy_eq_acceptAll_of_nonneg_rate_of_neg
+    (w : PricingFunction) (c : ℝ)
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hc_neg : c < 0) :
+    strictThresholdPolicy w c = acceptAllPolicy := by
+  apply Set.Subset.antisymm
+  · exact strictThresholdPolicy_subset_acceptAll w c
+  · intro τ hτ
+    exact ⟨hτ, lt_of_lt_of_le hc_neg (hrate_nonneg τ hτ)⟩
+
+/-- With nonnegative on-trip rates, every nonpositive complete threshold accepts all feasible trips. -/
+theorem completeThresholdPolicy_eq_acceptAll_of_nonneg_rate_of_nonpos
+    (w : PricingFunction) (c : ℝ)
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hc_nonpos : c ≤ 0) :
+    completeThresholdPolicy w c = acceptAllPolicy := by
+  apply Set.Subset.antisymm
+  · exact completeThresholdPolicy_subset_acceptAll w c
+  · intro τ hτ
+    exact ⟨hτ, le_trans hc_nonpos (hrate_nonneg τ hτ)⟩
+
 /-- Threshold-boundary policies only contain positive trips. -/
 theorem thresholdBoundaryPolicy_subset_acceptAll
     (w : PricingFunction) (c : ℝ) :
@@ -1251,6 +1340,135 @@ theorem measurableSet_thresholdBoundaryPolicy
   unfold thresholdBoundaryPolicy
   exact (measurableSet_Ioi (a := (0 : ℝ))).inter
     (hrate_measurable (measurableSet_singleton c))
+
+/-- Strict thresholds shrink as the cutoff rises. -/
+theorem antitone_strictThresholdPolicy
+    (w : PricingFunction) :
+    Antitone (fun c : ℝ => strictThresholdPolicy w c) := by
+  intro c d hcd τ hτ
+  exact ⟨hτ.1, lt_of_le_of_lt hcd hτ.2⟩
+
+/-- Complete thresholds shrink as the cutoff rises. -/
+theorem antitone_completeThresholdPolicy
+    (w : PricingFunction) :
+    Antitone (fun c : ℝ => completeThresholdPolicy w c) := by
+  intro c d hcd τ hτ
+  exact ⟨hτ.1, le_trans hcd hτ.2⟩
+
+/-- No positive trip length is accepted by every strict threshold. -/
+theorem iInter_strictThresholdPolicy_eq_empty
+    (w : PricingFunction) :
+    (⋂ c : ℝ, strictThresholdPolicy w c) = ∅ := by
+  ext τ
+  constructor
+  · intro hτ
+    have hmem :
+        τ ∈ strictThresholdPolicy w (w τ / τ) :=
+      Set.mem_iInter.mp hτ (w τ / τ)
+    exact False.elim (lt_irrefl (w τ / τ) hmem.2)
+  · intro hτ
+    exact False.elim hτ
+
+/-- No positive trip length is accepted by every complete threshold. -/
+theorem iInter_completeThresholdPolicy_eq_empty
+    (w : PricingFunction) :
+    (⋂ c : ℝ, completeThresholdPolicy w c) = ∅ := by
+  ext τ
+  constructor
+  · intro hτ
+    have hmem :
+        τ ∈ completeThresholdPolicy w (w τ / τ + 1) :=
+      Set.mem_iInter.mp hτ (w τ / τ + 1)
+    have hle : w τ / τ + 1 ≤ w τ / τ := hmem.2
+    linarith
+  · intro hτ
+    exact False.elim hτ
+
+/-- Expected payment of strict thresholds vanishes in the high-cutoff tail. -/
+theorem singleStateTripPayment_strictThresholdPolicy_tendsto_zero
+    (μ : Measure TripLength) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripPayment μ w (strictThresholdPolicy w c))
+      atTop (𝓝 0) := by
+  have htendsto :
+      Tendsto
+        (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, w τ ∂μ)
+        atTop
+        (𝓝 (∫ τ in ⋂ c : ℝ, strictThresholdPolicy w c, w τ ∂μ)) :=
+    tendsto_setIntegral_of_antitone
+      (fun c => measurableSet_strictThresholdPolicy w c hrate_measurable)
+      (antitone_strictThresholdPolicy w)
+      ⟨0, hw_integrable_acceptAll.mono_set
+        (strictThresholdPolicy_subset_acceptAll w 0)⟩
+  simpa [singleStateTripPayment, iInter_strictThresholdPolicy_eq_empty w]
+    using htendsto
+
+/-- Expected trip time of strict thresholds vanishes in the high-cutoff tail. -/
+theorem singleStateTripTime_strictThresholdPolicy_tendsto_zero
+    (μ : Measure TripLength) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripTime μ (strictThresholdPolicy w c))
+      atTop (𝓝 0) := by
+  have htendsto :
+      Tendsto
+        (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, τ ∂μ)
+        atTop
+        (𝓝 (∫ τ in ⋂ c : ℝ, strictThresholdPolicy w c, τ ∂μ)) :=
+    tendsto_setIntegral_of_antitone
+      (fun c => measurableSet_strictThresholdPolicy w c hrate_measurable)
+      (antitone_strictThresholdPolicy w)
+      ⟨0, htime_integrable_acceptAll.mono_set
+        (strictThresholdPolicy_subset_acceptAll w 0)⟩
+  simpa [singleStateTripTime, iInter_strictThresholdPolicy_eq_empty w]
+    using htendsto
+
+/-- Expected payment of complete thresholds vanishes in the high-cutoff tail. -/
+theorem singleStateTripPayment_completeThresholdPolicy_tendsto_zero
+    (μ : Measure TripLength) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripPayment μ w (completeThresholdPolicy w c))
+      atTop (𝓝 0) := by
+  have htendsto :
+      Tendsto
+        (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, w τ ∂μ)
+        atTop
+        (𝓝 (∫ τ in ⋂ c : ℝ, completeThresholdPolicy w c, w τ ∂μ)) :=
+    tendsto_setIntegral_of_antitone
+      (fun c => measurableSet_completeThresholdPolicy w c hrate_measurable)
+      (antitone_completeThresholdPolicy w)
+      ⟨0, hw_integrable_acceptAll.mono_set
+        (completeThresholdPolicy_subset_acceptAll w 0)⟩
+  simpa [singleStateTripPayment, iInter_completeThresholdPolicy_eq_empty w]
+    using htendsto
+
+/-- Expected trip time of complete thresholds vanishes in the high-cutoff tail. -/
+theorem singleStateTripTime_completeThresholdPolicy_tendsto_zero
+    (μ : Measure TripLength) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripTime μ (completeThresholdPolicy w c))
+      atTop (𝓝 0) := by
+  have htendsto :
+      Tendsto
+        (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, τ ∂μ)
+        atTop
+        (𝓝 (∫ τ in ⋂ c : ℝ, completeThresholdPolicy w c, τ ∂μ)) :=
+    tendsto_setIntegral_of_antitone
+      (fun c => measurableSet_completeThresholdPolicy w c hrate_measurable)
+      (antitone_completeThresholdPolicy w)
+      ⟨0, htime_integrable_acceptAll.mono_set
+        (completeThresholdPolicy_subset_acceptAll w 0)⟩
+  simpa [singleStateTripTime, iInter_completeThresholdPolicy_eq_empty w]
+    using htendsto
 
 /-- A set of trip lengths all has on-trip earning rate exactly `c`. -/
 def onTripRateEquals (w : PricingFunction) (c : ℝ) (σ : TripPolicy) : Prop :=
@@ -2733,6 +2951,119 @@ theorem paper_theorem1_strict_threshold_reward_eq_complete_threshold_of_gap_meas
       (by simpa [strictc, completeB, removed] using hgap_zero)
   rw [← hreward_eq]
   simp [hdiff_eq, strictc, completeB, removed]
+
+/--
+Theorem 1 Step 3 high-reward dichotomy.  If the strict-threshold reward is
+above the cutoff, then for the midpoint cutoff either the removed band has
+positive trip time, or the open gap to the corresponding complete threshold has
+zero measure.  This is the formal version of the source proof's
+positive-mass-vs-gap split.
+-/
+theorem paper_theorem1_high_reward_band_or_gap
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (cstar : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hcutoff_lt_reward :
+      cstar <
+        singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w cstar)) :
+    (∃ B : ℝ,
+      cstar < B ∧
+        B <
+          singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w cstar) ∧
+        0 <
+          singleStateTripTime μ
+            (strictThresholdPolicy w cstar \ strictThresholdPolicy w B)) ∨
+      (∃ B : ℝ,
+        cstar < B ∧
+          μ (strictThresholdPolicy w cstar \ completeThresholdPolicy w B) = 0) := by
+  let Rstrict : ℝ :=
+    singleStateRenewalReward μ arrivalRate w (strictThresholdPolicy w cstar)
+  let B : ℝ := (cstar + Rstrict) / 2
+  have hcB : cstar < B := by
+    dsimp [B, Rstrict]
+    linarith
+  have hB_lt_reward : B < Rstrict := by
+    dsimp [B, Rstrict]
+    linarith
+  by_cases hband_pos :
+      0 <
+        singleStateTripTime μ
+          (strictThresholdPolicy w cstar \ strictThresholdPolicy w B)
+  · exact Or.inl ⟨B, hcB, by simpa [Rstrict] using hB_lt_reward, hband_pos⟩
+  · right
+    let band : TripPolicy := strictThresholdPolicy w cstar \ strictThresholdPolicy w B
+    let gap : TripPolicy := strictThresholdPolicy w cstar \ completeThresholdPolicy w B
+    have hstrict_measurable :
+        MeasurableSet (strictThresholdPolicy w cstar) :=
+      measurableSet_strictThresholdPolicy w cstar hrate_measurable
+    have hstrictB_measurable :
+        MeasurableSet (strictThresholdPolicy w B) :=
+      measurableSet_strictThresholdPolicy w B hrate_measurable
+    have hcompleteB_measurable :
+        MeasurableSet (completeThresholdPolicy w B) :=
+      measurableSet_completeThresholdPolicy w B hrate_measurable
+    have hband_measurable : MeasurableSet band := by
+      simpa [band] using hstrict_measurable.diff hstrictB_measurable
+    have hgap_measurable : MeasurableSet gap := by
+      simpa [gap] using hstrict_measurable.diff hcompleteB_measurable
+    have hband_subset_acceptAll : band ⊆ acceptAllPolicy := by
+      intro τ hτ
+      exact strictThresholdPolicy_subset_acceptAll w cstar hτ.1
+    have hgap_subset_acceptAll : gap ⊆ acceptAllPolicy := by
+      intro τ hτ
+      exact strictThresholdPolicy_subset_acceptAll w cstar hτ.1
+    have hgap_subset_band : gap ⊆ band := by
+      intro τ hτ
+      have hτ_pos : 0 < τ := hgap_subset_acceptAll hτ
+      have hnot_complete : τ ∉ completeThresholdPolicy w B := hτ.2
+      have hnot_strict : τ ∉ strictThresholdPolicy w B := by
+        intro hstrictB
+        have hrate_lt : B < w τ / τ := by
+          simpa [strictThresholdPolicy] using hstrictB.2
+        exact hnot_complete ⟨hτ_pos, by
+          simpa [completeThresholdPolicy] using le_of_lt hrate_lt⟩
+      exact ⟨hτ.1, hnot_strict⟩
+    have hband_time_nonneg : 0 ≤ singleStateTripTime μ band :=
+      singleStateTripTime_nonneg_of_subset_acceptAll μ band
+        hband_measurable hband_subset_acceptAll
+    have hband_time_zero : singleStateTripTime μ band = 0 :=
+      le_antisymm (not_lt.mp (by simpa [band] using hband_pos))
+        hband_time_nonneg
+    have hband_time_integrable :
+        IntegrableOn (fun τ : TripLength => τ) band μ :=
+      htime_integrable_acceptAll.mono_set hband_subset_acceptAll
+    have hgap_time_le_band :
+        singleStateTripTime μ gap ≤ singleStateTripTime μ band :=
+      singleStateTripTime_le_of_subset μ hgap_subset_band hband_measurable
+        hband_time_integrable hband_subset_acceptAll
+    have hgap_time_nonneg : 0 ≤ singleStateTripTime μ gap :=
+      singleStateTripTime_nonneg_of_subset_acceptAll μ gap
+        hgap_measurable hgap_subset_acceptAll
+    have hgap_time_zero : singleStateTripTime μ gap = 0 :=
+      le_antisymm (by linarith [hgap_time_le_band, hband_time_zero])
+        hgap_time_nonneg
+    have hgap_mass_zero :
+        singleStateTripMass μ gap = 0 :=
+      singleStateTripMass_eq_zero_of_time_zero_subset_acceptAll
+        μ gap hgap_measurable hgap_subset_acceptAll
+        htime_integrable_acceptAll hgap_time_zero
+    have hgap_ne_top : μ gap ≠ ⊤ :=
+      ne_top_of_le_ne_top hfinite_acceptAll
+        (measure_mono hgap_subset_acceptAll)
+    have hμ_gap_zero : μ gap = 0 := by
+      have hzero_or_top :
+          μ gap = 0 ∨ μ gap = ⊤ := by
+        simpa [singleStateTripMass] using
+          (ENNReal.toReal_eq_zero_iff (μ gap)).mp hgap_mass_zero
+      rcases hzero_or_top with hzero | htop
+      · exact hzero
+      · exact False.elim (hgap_ne_top htop)
+    exact ⟨B, hcB, by simpa [gap] using hμ_gap_zero⟩
 
 /--
 Theorem 1 proof assembly: if Step 1 sends every policy to a weakly better
@@ -4456,6 +4787,553 @@ theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compac
       μ arrivalRate w cfinal hcfinal_nonneg hrate_measurable
       hw_integrable_acceptAll htime_integrable_acceptAll hlambda
       (fun c => (hdominated c).2)
+
+/--
+Theorem 1 source left-tail bound.  Under the paper's nonnegative on-trip-rate
+assumption, every negative cutoff accepts the whole feasible domain, while the
+complete threshold at zero also accepts the whole feasible domain.  Therefore
+the strict/complete objective at any negative cutoff is bounded by the objective
+at cutoff zero.
+-/
+theorem paper_theorem1_left_tail_bound_of_nonnegative_rate
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ) :
+    ∀ c : ℝ, c < 0 →
+      max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)) ≤
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w 0))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0)) := by
+  intro c hc_neg
+  have hstrict_eq :
+      strictThresholdPolicy w c = acceptAllPolicy :=
+    strictThresholdPolicy_eq_acceptAll_of_nonneg_rate_of_neg
+      w c hrate_nonneg hc_neg
+  have hcomplete_eq :
+      completeThresholdPolicy w c = acceptAllPolicy :=
+    completeThresholdPolicy_eq_acceptAll_of_nonneg_rate_of_nonpos
+      w c hrate_nonneg (le_of_lt hc_neg)
+  have hcomplete_zero_eq :
+      completeThresholdPolicy w 0 = acceptAllPolicy :=
+    completeThresholdPolicy_eq_acceptAll_of_nonneg_rate_of_nonpos
+      w 0 hrate_nonneg le_rfl
+  calc
+    max
+        (singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w c))
+        (singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w c))
+        = singleStateRenewalReward μ arrivalRate w acceptAllPolicy := by
+          rw [hstrict_eq, hcomplete_eq, max_self]
+    _ ≤
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w 0))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0)) := by
+          rw [hcomplete_zero_eq]
+          exact le_max_right _ _
+
+/--
+If the strict/complete cutoff objective tends to zero at infinity and is
+positive at cutoff zero, then there is a nonnegative right-tail cutoff beyond
+which every objective value is bounded by the cutoff-zero objective.  This is
+the compact-domain reduction used in Theorem 1 Step 3.
+-/
+theorem paper_theorem1_exists_right_tail_bound_of_tendsto_zero
+    (objective : ℝ → ℝ)
+    (hobjective_zero_pos : 0 < objective 0)
+    (hobjective_tendsto_zero : Tendsto objective atTop (𝓝 0)) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ c : ℝ, C < c → objective c ≤ objective 0 := by
+  have heventually_lt :
+      ∀ᶠ c in atTop, objective c < objective 0 :=
+    hobjective_tendsto_zero
+      (isOpen_Iio.mem_nhds hobjective_zero_pos)
+  rw [eventually_atTop] at heventually_lt
+  rcases heventually_lt with ⟨C0, hC0⟩
+  refine ⟨max 0 C0, le_max_left 0 C0, ?_⟩
+  intro c hc
+  exact le_of_lt (hC0 c ((le_max_right 0 C0).trans (le_of_lt hc)))
+
+/--
+Theorem 1 source positivity at cutoff zero.  If accept-all has positive
+expected payment and on-trip rates are nonnegative, then the strict/complete
+cutoff objective is positive at zero because the complete zero threshold is
+accept-all.
+-/
+theorem paper_theorem1_objective_zero_pos_of_acceptAll_payment_pos
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy) :
+    0 <
+      max
+        (singleStateRenewalReward μ arrivalRate w
+          (strictThresholdPolicy w 0))
+        (singleStateRenewalReward μ arrivalRate w
+          (completeThresholdPolicy w 0)) := by
+  have htime_acceptAll_nonneg :
+      0 ≤ singleStateTripTime μ acceptAllPolicy :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ acceptAllPolicy
+      measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+  have hacceptAll_reward_pos :
+      0 < singleStateRenewalReward μ arrivalRate w acceptAllPolicy :=
+    singleStateRenewalReward_pos_of_payment_pos
+      μ arrivalRate w acceptAllPolicy hlambda htime_acceptAll_nonneg
+      hpayment_acceptAll_pos
+  have hcomplete_zero_eq :
+      completeThresholdPolicy w 0 = acceptAllPolicy :=
+    completeThresholdPolicy_eq_acceptAll_of_nonneg_rate_of_nonpos
+      w 0 hrate_nonneg le_rfl
+  exact hacceptAll_reward_pos.trans_le (by
+    rw [← hcomplete_zero_eq]
+    exact le_max_right _ _)
+
+/--
+The strict/complete cutoff objective tends to zero when both the strict and
+complete threshold rewards tend to zero.
+-/
+theorem paper_theorem1_objective_tendsto_zero_of_threshold_rewards_tendsto_zero
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hstrict_reward_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hcomplete_reward_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c))
+        atTop (𝓝 0)) :
+    Tendsto
+      (fun c : ℝ =>
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)))
+      atTop (𝓝 0) := by
+  simpa using hstrict_reward_tendsto_zero.max hcomplete_reward_tendsto_zero
+
+/--
+The strict/complete cutoff objective tends to zero when the payment and time
+integrals of both canonical threshold families vanish in the high-cutoff tail.
+-/
+theorem paper_theorem1_objective_tendsto_zero_of_threshold_payment_time_tails
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hstrict_payment_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripPayment μ w (strictThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hstrict_time_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripTime μ (strictThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hcomplete_payment_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripPayment μ w (completeThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hcomplete_time_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripTime μ (completeThresholdPolicy w c))
+        atTop (𝓝 0)) :
+    Tendsto
+      (fun c : ℝ =>
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)))
+      atTop (𝓝 0) := by
+  exact
+    paper_theorem1_objective_tendsto_zero_of_threshold_rewards_tendsto_zero
+      μ arrivalRate w
+      (singleStateRenewalReward_tendsto_zero_of_payment_time_tendsto_zero
+        atTop μ arrivalRate w (fun c : ℝ => strictThresholdPolicy w c)
+        hstrict_payment_tendsto_zero hstrict_time_tendsto_zero)
+      (singleStateRenewalReward_tendsto_zero_of_payment_time_tendsto_zero
+        atTop μ arrivalRate w (fun c : ℝ => completeThresholdPolicy w c)
+        hcomplete_payment_tendsto_zero hcomplete_time_tendsto_zero)
+
+/--
+Theorem 1 measurable best-response endpoint from compact upper-semicontinuity
+and tail bounds for the strict/complete cutoff objective.  The high-reward
+band-or-gap split is proved internally by the midpoint dichotomy.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_tail_bounds
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hobjective_upper :
+      UpperSemicontinuousOn
+        (fun c : ℝ =>
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)))
+        (Set.Icc 0 C))
+    (hleft_bound :
+      ∀ c : ℝ, c < 0 →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0)))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0))) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_band_or_gap
+      μ arrivalRate w C hC_nonneg hrate_measurable hw_integrable_acceptAll
+      htime_integrable_acceptAll hlambda hobjective_upper hleft_bound
+      hright_bound
+      (fun cstar _hcstar_nonneg _hcstar_le_C _hmax hhigh =>
+        paper_theorem1_high_reward_band_or_gap
+          μ arrivalRate w cstar hrate_measurable hfinite_acceptAll
+          htime_integrable_acceptAll hhigh)
+
+/--
+Theorem 1 measurable best-response endpoint with the source left-tail fact
+proved from nonnegative on-trip rates.  The remaining analytic assumptions are
+exactly the compact upper-semicontinuity of the strict/complete cutoff
+objective on `[0,C]` and the source right-tail bound beyond `C`.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_right_tail
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hobjective_upper :
+      UpperSemicontinuousOn
+        (fun c : ℝ =>
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)))
+        (Set.Icc 0 C))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)) ≤
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w 0))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w 0))) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_tail_bounds
+      μ arrivalRate w C hC_nonneg hrate_measurable hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hobjective_upper
+      (paper_theorem1_left_tail_bound_of_nonnegative_rate
+        μ arrivalRate w hrate_nonneg)
+      hright_bound
+
+/--
+Theorem 1 measurable best-response endpoint with the source compact-domain
+reduction derived from a limit at infinity.  The inputs match the paper's
+Step 3 compactness outline: nonnegative rates handle negative cutoffs, the
+objective tends to zero for very high cutoffs, cutoff zero has positive value,
+and the objective is upper-semicontinuous on every compact interval.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_limit_tail
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hobjective_upper_all :
+      ∀ C : ℝ, 0 ≤ C →
+        UpperSemicontinuousOn
+          (fun c : ℝ =>
+            max
+              (singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w c))
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+          (Set.Icc 0 C))
+    (hobjective_zero_pos :
+      0 <
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w 0))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0)))
+    (hobjective_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)))
+        atTop (𝓝 0)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  let objective : ℝ → ℝ := fun c =>
+    max
+      (singleStateRenewalReward μ arrivalRate w
+        (strictThresholdPolicy w c))
+      (singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c))
+  rcases
+      paper_theorem1_exists_right_tail_bound_of_tendsto_zero
+        objective hobjective_zero_pos hobjective_tendsto_zero with
+    ⟨C, hC_nonneg, hright_bound⟩
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_right_tail
+      μ arrivalRate w C hC_nonneg hrate_measurable hrate_nonneg
+      hfinite_acceptAll hw_integrable_acceptAll htime_integrable_acceptAll
+      hlambda (hobjective_upper_all C hC_nonneg) hright_bound
+
+/--
+Theorem 1 measurable best-response endpoint with cutoff-zero positivity derived
+from positive accept-all expected payment.  The remaining analytic source
+assumptions are compact upper-semicontinuity of the cutoff objective and its
+limit to zero at high cutoffs.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_limit_tail_acceptAll_positive
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy)
+    (hobjective_upper_all :
+      ∀ C : ℝ, 0 ≤ C →
+        UpperSemicontinuousOn
+          (fun c : ℝ =>
+            max
+              (singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w c))
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+          (Set.Icc 0 C))
+    (hobjective_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          max
+            (singleStateRenewalReward μ arrivalRate w
+              (strictThresholdPolicy w c))
+            (singleStateRenewalReward μ arrivalRate w
+              (completeThresholdPolicy w c)))
+        atTop (𝓝 0)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_limit_tail
+      μ arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hobjective_upper_all
+      (paper_theorem1_objective_zero_pos_of_acceptAll_payment_pos
+        μ arrivalRate w hrate_nonneg hlambda hpayment_acceptAll_pos)
+      hobjective_tendsto_zero
+
+/--
+Theorem 1 measurable best-response endpoint where the high-cutoff tail limit is
+given at the primitive integral level.  The remaining analytic source
+assumption is compact upper-semicontinuity of the strict/complete cutoff
+objective on every compact interval.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_integral_tails
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy)
+    (hobjective_upper_all :
+      ∀ C : ℝ, 0 ≤ C →
+        UpperSemicontinuousOn
+          (fun c : ℝ =>
+            max
+              (singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w c))
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+          (Set.Icc 0 C))
+    (hstrict_payment_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripPayment μ w (strictThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hstrict_time_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripTime μ (strictThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hcomplete_payment_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripPayment μ w (completeThresholdPolicy w c))
+        atTop (𝓝 0))
+    (hcomplete_time_tendsto_zero :
+      Tendsto
+        (fun c : ℝ =>
+          singleStateTripTime μ (completeThresholdPolicy w c))
+        atTop (𝓝 0)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_limit_tail_acceptAll_positive
+      μ arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hpayment_acceptAll_pos hobjective_upper_all
+      (paper_theorem1_objective_tendsto_zero_of_threshold_payment_time_tails
+        μ arrivalRate w hstrict_payment_tendsto_zero hstrict_time_tendsto_zero
+        hcomplete_payment_tendsto_zero hcomplete_time_tendsto_zero)
+
+/--
+Theorem 1 measurable best-response endpoint after discharging the high-cutoff
+tail from monotone threshold-set convergence.  The only remaining analytic
+compactness input is upper-semicontinuity of the strict/complete cutoff
+objective on every compact interval.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy)
+    (hobjective_upper_all :
+      ∀ C : ℝ, 0 ≤ C →
+        UpperSemicontinuousOn
+          (fun c : ℝ =>
+            max
+              (singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w c))
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+          (Set.Icc 0 C)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_integral_tails
+      μ arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hpayment_acceptAll_pos hobjective_upper_all
+      (singleStateTripPayment_strictThresholdPolicy_tendsto_zero
+        μ w hrate_measurable hw_integrable_acceptAll)
+      (singleStateTripTime_strictThresholdPolicy_tendsto_zero
+        μ w hrate_measurable htime_integrable_acceptAll)
+      (singleStateTripPayment_completeThresholdPolicy_tendsto_zero
+        μ w hrate_measurable hw_integrable_acceptAll)
+      (singleStateTripTime_completeThresholdPolicy_tendsto_zero
+        μ w hrate_measurable htime_integrable_acceptAll)
+
+/--
+Theorem 1 measurable best-response endpoint from compact continuity of the
+strict/complete cutoff objective.  The high-cutoff tail, left tail,
+cutoff-zero positivity, and high-reward band/gap split are all proved
+internally; compact continuity is used only to provide upper-semicontinuity on
+the compact maximization interval.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuous_objective
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy)
+    (hobjective_continuous_all :
+      ∀ C : ℝ, 0 ≤ C →
+        ContinuousOn
+          (fun c : ℝ =>
+            max
+              (singleStateRenewalReward μ arrivalRate w
+                (strictThresholdPolicy w c))
+              (singleStateRenewalReward μ arrivalRate w
+                (completeThresholdPolicy w c)))
+          (Set.Icc 0 C)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity
+      μ arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hpayment_acceptAll_pos
+      (fun C hC =>
+        (hobjective_continuous_all C hC).upperSemicontinuousOn)
 
 /--
 Theorem 1, conditional source-facing wrapper: given the continuous
