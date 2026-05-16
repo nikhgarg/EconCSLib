@@ -580,7 +580,10 @@ Last updated: 2026-05-16
    posterior-payoff and report-required unit-centered continuous routes now
    also have concrete no-relevance wrappers, so their fairness hypotheses rule
    out every base/test witness directly rather than only through the abstract
-   test-blank predicate.  This finite
+   test-blank predicate.  The optional posterior-payoff route also has
+   `_of_nonempty_equilibrium` wrappers that choose the positive-share
+   contradiction witness internally from nonempty equilibrium/base spaces.
+   This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now

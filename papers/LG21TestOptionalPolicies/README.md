@@ -376,7 +376,10 @@ cache is kept as `source.txt` for named-statement audits.
   fairness-implies-test-blankness form, and the no-relevance wrapper
   `paper_theorem3_2_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
   states the corresponding Definition 5 conclusion that no base/test
-  relevance witness exists.
+  relevance witness exists.  The `_of_nonempty_equilibrium` variants choose
+  the reporter witness internally from nonempty equilibrium/base spaces, so
+  callers no longer need to supply a distinguished equilibrium and base
+  profile for this optional-reporting route.
   The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
