@@ -18055,6 +18055,68 @@ theorem lemma5PolicyForm_generalized_acceptMiddle (lo hi : ℝ) :
   exact lemma5PolicyForm_strictlyQuasiConcave_acceptMiddleTripsPolicy lo hi
 
 /--
+Every feasible policy already in a Lemma 5 canonical form is represented
+exactly by the generalized interval/ray domain.  This is the converse side of
+the generalized-domain correction: the domain contains the source canonical
+sets, including accept-all and unbounded tails.
+-/
+theorem exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll
+    {shape : Lemma5DerivativeShape} {σ : TripPolicy}
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hform : lemma5PolicyForm shape σ) :
+    ∃ P : GN21GeneralizedIntervalPolicy,
+      P.policy = σ ∧ lemma5PolicyForm shape P.policy := by
+  cases shape with
+  | positive =>
+      have hσ :
+          σ = acceptAllPolicy :=
+        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll hsub hform
+      refine ⟨GN21GeneralizedIntervalPolicy.acceptAll, ?_, ?_⟩
+      · rw [GN21GeneralizedIntervalPolicy.policy_acceptAll]
+        exact hσ.symm
+      · exact lemma5PolicyForm_generalized_acceptAll
+  | strictlyIncreasing =>
+      rcases hform with ⟨t, hshape⟩
+      have hσ :
+          σ = rejectShortTripsPolicy t :=
+        eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+          hshape hsub
+      refine ⟨GN21GeneralizedIntervalPolicy.rejectShort t, ?_, ?_⟩
+      · rw [GN21GeneralizedIntervalPolicy.policy_rejectShort]
+        exact hσ.symm
+      · exact lemma5PolicyForm_generalized_rejectShort t
+  | strictlyDecreasing =>
+      rcases hform with ⟨t, hshape⟩
+      have hσ :
+          σ = rejectLongTripsPolicy t :=
+        eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+          hshape hsub
+      refine ⟨GN21GeneralizedIntervalPolicy.rejectLong t, ?_, ?_⟩
+      · rw [GN21GeneralizedIntervalPolicy.policy_rejectLong]
+        exact hσ.symm
+      · exact lemma5PolicyForm_generalized_rejectLong t
+  | strictlyQuasiConvex =>
+      rcases hform with ⟨lo, hi, hshape⟩
+      have hσ :
+          σ = rejectMiddleTripsPolicy lo hi :=
+        eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+          hshape hsub
+      refine ⟨GN21GeneralizedIntervalPolicy.rejectMiddle lo hi, ?_, ?_⟩
+      · rw [GN21GeneralizedIntervalPolicy.policy_rejectMiddle]
+        exact hσ.symm
+      · exact lemma5PolicyForm_generalized_rejectMiddle lo hi
+  | strictlyQuasiConcave =>
+      rcases hform with ⟨lo, hi, hshape⟩
+      have hσ :
+          σ = acceptMiddleTripsPolicy lo hi :=
+        eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+          hshape hsub
+      refine ⟨GN21GeneralizedIntervalPolicy.acceptMiddle lo hi, ?_, ?_⟩
+      · rw [GN21GeneralizedIntervalPolicy.policy_acceptMiddle]
+        exact hσ.symm
+      · exact lemma5PolicyForm_generalized_acceptMiddle lo hi
+
+/--
 Lemma 5 quasi-convex interval fact: for a strictly quasi-convex endpoint
 response, any positive interior point has response below the larger endpoint
 response.

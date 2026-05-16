@@ -486,7 +486,10 @@ into the concrete endpoint policy data.
   reward-close seed theorems
   `exists_gn21GeneralizedIntervalPolicy_reward_close` and
   `exists_gn21GeneralizedIntervalPolicy_reward_close_below`, and canonical
-  representatives for all five Lemma 5 policy forms.
+  representatives for all five Lemma 5 policy forms.  The converse bridge
+  `exists_generalizedIntervalPolicy_eq_of_lemma5PolicyForm_of_subset_acceptAll`
+  proves that every feasible policy already classified by Lemma 5 has an
+  exactly equal representative in this generalized domain.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and
