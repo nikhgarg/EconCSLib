@@ -116,6 +116,10 @@ Lemma5FeasiblePolicyFormAlmostEverywhereData.to_policyFormAlmostEverywhere
 Lemma5FeasiblePolicyFormAlmostEverywhereData.acceptAllAlmostEverywhere_of_positive
 GN21MeasuredPairNondegenerate.congr_left_policy_ae
 GN21MeasuredPairNondegenerate.congr_right_policy_ae
+gn21MeasuredDynamicRewardFunctional_congr_left_policy_ae
+gn21MeasuredDynamicRewardFunctional_congr_right_policy_ae
+dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_zero_of_policy_ae
+dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_one_of_policy_ae
 gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
 gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
 singleStateTripMass_congr_policy_ae
@@ -130,9 +134,11 @@ gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
 ```
 
 The feasible a.e. representative is now the preferred handoff object for
-Theorem 4 endpoint moves: prove the concrete endpoint improvement on
-`D.policy`, then use the two `...congr_current_ae` lemmas to move the feasible
-strict aggregate improvement back to the original optimal policy.
+Theorem 4 endpoint moves: use the `dynamicMeasurableOptimal...update...`
+lemmas to treat the updated exact representative as an optimal current policy,
+prove the concrete endpoint improvement on `D.policy`, then use the two
+`...congr_current_ae` lemmas to move the feasible strict aggregate improvement
+back to the original optimal policy.
 
 The global calculus part of Lemma 5 Step 2 is now compiled:
 

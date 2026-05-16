@@ -35712,6 +35712,103 @@ theorem paper_lemma1_measured_dynamic_reward_decomposition
           gn21MeasuredStateRewardRate μJ arrivalJ wJ σJ := by
   rfl
 
+/-- Lemma 1 state-cycle time is invariant under null symmetric-difference equality. -/
+theorem gn21StateCycleTime_congr_policy_ae
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    gn21StateCycleTime μ arrivalRate σ =
+      gn21StateCycleTime μ arrivalRate τ := by
+  unfold gn21StateCycleTime
+  rw [singleStateTripMass_congr_policy_ae μ hae,
+    singleStateTripTime_congr_policy_ae μ hae]
+
+/-- Lemma 1 mean accepted-trip earning is invariant under null policy changes. -/
+theorem gn21StateMeanEarning_congr_policy_ae
+    (μ : Measure TripLength) (w : PricingFunction)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    gn21StateMeanEarning μ w σ =
+      gn21StateMeanEarning μ w τ := by
+  unfold gn21StateMeanEarning
+  rw [singleStateTripPayment_congr_policy_ae μ w hae,
+    singleStateTripMass_congr_policy_ae μ hae]
+
+/-- Lemma 1 measured state reward rates are invariant under null policy changes. -/
+theorem gn21MeasuredStateRewardRate_congr_policy_ae
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    gn21MeasuredStateRewardRate μ arrivalRate w σ =
+      gn21MeasuredStateRewardRate μ arrivalRate w τ := by
+  unfold gn21MeasuredStateRewardRate gn21StateRewardRate
+  rw [gn21StateMeanEarning_congr_policy_ae μ w hae,
+    gn21StateCycleTime_congr_policy_ae μ arrivalRate hae]
+
+/-- Lemma 3 measured time fraction is invariant under null changes to the left policy. -/
+theorem gn21MeasuredTimeFraction_congr_left_policy_ae
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    {σI τI σJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μI σI τI) :
+    gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+        σI σJ =
+      gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+        τI σJ := by
+  unfold gn21MeasuredTimeFraction gn21TimeFractionFormula
+  rw [singleStateTripMass_congr_policy_ae μI hae,
+    gn21StateCycleTime_congr_policy_ae μI arrivalI hae,
+    gn21ExitWeightIntegral_congr_policy_ae μI arrivalI switchIJ switchJI hae]
+
+/-- Lemma 3 measured time fraction is invariant under null changes to the right policy. -/
+theorem gn21MeasuredTimeFraction_congr_right_policy_ae
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    {σI σJ τJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μJ σJ τJ) :
+    gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+        σI σJ =
+      gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+        σI τJ := by
+  unfold gn21MeasuredTimeFraction gn21TimeFractionFormula
+  rw [singleStateTripMass_congr_policy_ae μJ hae,
+    gn21StateCycleTime_congr_policy_ae μJ arrivalJ hae,
+    gn21ExitWeightIntegral_congr_policy_ae μJ arrivalJ switchJI switchIJ hae]
+
+/-- Lemma 1 measured dynamic reward is invariant under null changes to the left policy. -/
+theorem gn21MeasuredDynamicReward_congr_left_policy_ae
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) {σI τI σJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μI σI τI) :
+    gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ σI σJ =
+      gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ τI σJ := by
+  unfold gn21MeasuredDynamicReward gn21DynamicRewardFormula
+  rw [gn21MeasuredTimeFraction_congr_left_policy_ae
+      μI μJ arrivalI arrivalJ switchIJ switchJI hae,
+    gn21MeasuredStateRewardRate_congr_policy_ae μI arrivalI wI hae,
+    gn21MeasuredTimeFraction_congr_right_policy_ae
+      μJ μI arrivalJ arrivalI switchJI switchIJ hae]
+
+/-- Lemma 1 measured dynamic reward is invariant under null changes to the right policy. -/
+theorem gn21MeasuredDynamicReward_congr_right_policy_ae
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) {σI σJ τJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μJ σJ τJ) :
+    gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ σI σJ =
+      gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ σI τJ := by
+  unfold gn21MeasuredDynamicReward gn21DynamicRewardFormula
+  rw [gn21MeasuredTimeFraction_congr_right_policy_ae
+      μI μJ arrivalI arrivalJ switchIJ switchJI hae,
+    gn21MeasuredStateRewardRate_congr_policy_ae μJ arrivalJ wJ hae,
+    gn21MeasuredTimeFraction_congr_left_policy_ae
+      μJ μI arrivalJ arrivalI switchJI switchIJ hae]
+
 /--
 Stochastic renewal/CTMC-cycle certificate for Lemma 1.  These are exactly the
 almost-sure renewal theorem/LLN conclusions used in the paper proof: the
@@ -41708,6 +41805,96 @@ theorem gn21MeasuredDynamicRewardFunctional_apply
       gn21MeasuredDynamicReward (μ 0) (μ 1) (arrival 0) (arrival 1)
         switch12 switch21 (w 0) (w 1) (σ 0) (σ 1) := by
   rfl
+
+/-- The measured dynamic reward functional is invariant under a null non-surge policy change. -/
+theorem gn21MeasuredDynamicRewardFunctional_congr_left_policy_ae
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy} {σ0 : TripPolicy}
+    (hae : policyAlmostEverywhereEq (μ 0) (ρ 0) σ0) :
+    gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w ρ =
+      gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w
+        (Function.update ρ 0 σ0) := by
+  simpa [gn21MeasuredDynamicRewardFunctional, Function.update]
+    using
+      gn21MeasuredDynamicReward_congr_left_policy_ae
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (σJ := ρ 1) hae
+
+/-- The measured dynamic reward functional is invariant under a null surge policy change. -/
+theorem gn21MeasuredDynamicRewardFunctional_congr_right_policy_ae
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy} {σ1 : TripPolicy}
+    (hae : policyAlmostEverywhereEq (μ 1) (ρ 1) σ1) :
+    gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w ρ =
+      gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w
+        (Function.update ρ 1 σ1) := by
+  simpa [gn21MeasuredDynamicRewardFunctional, Function.update]
+    using
+      gn21MeasuredDynamicReward_congr_right_policy_ae
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (σI := ρ 0) hae
+
+/--
+Measured dynamic optimality is preserved when the non-surge state is replaced
+by a feasible measurable policy that is a.e. equal to the current one.
+-/
+theorem dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_zero_of_policy_ae
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy} {σ0 : TripPolicy}
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) ρ)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hae : policyAlmostEverywhereEq (μ 0) (ρ 0) σ0) :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+      (Function.update ρ 0 σ0) := by
+  constructor
+  · exact dynamicFeasibleMeasurablePolicy_update hρ.1 0 σ0
+      hσ0_subset hσ0_measurable
+  · intro κ hκ
+    have heq :=
+      gn21MeasuredDynamicRewardFunctional_congr_left_policy_ae
+        μ arrival switch12 switch21 w hae
+    simpa [← heq] using hρ.2 κ hκ
+
+/--
+Measured dynamic optimality is preserved when the surge state is replaced by a
+feasible measurable policy that is a.e. equal to the current one.
+-/
+theorem dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_one_of_policy_ae
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy} {σ1 : TripPolicy}
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) ρ)
+    (hσ1_subset : σ1 ⊆ acceptAllPolicy)
+    (hσ1_measurable : MeasurableSet σ1)
+    (hae : policyAlmostEverywhereEq (μ 1) (ρ 1) σ1) :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+      (Function.update ρ 1 σ1) := by
+  constructor
+  · exact dynamicFeasibleMeasurablePolicy_update hρ.1 1 σ1
+      hσ1_subset hσ1_measurable
+  · intro κ hκ
+    have heq :=
+      gn21MeasuredDynamicRewardFunctional_congr_right_policy_ae
+        μ arrival switch12 switch21 w hae
+    simpa [← heq] using hρ.2 κ hκ
 
 /-- Measured dynamic reward specialized to the CTMC structured price family. -/
 def gn21MeasuredCTMCStructuredDynamicReward
