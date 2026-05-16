@@ -122,10 +122,13 @@ cache is kept as `source.txt` for named-statement audits.
   concrete payoff bridge, and
   `paper_theorem3_2_observable_fair_optional_reporting_source_equilibrium_implies_test_blank_of_base_affine_binary_mixture_point_estimate_source`
   uses it to make the paper's affine reported-score and no-report estimates
-  definitional in the optional-reporting binary-mixture endpoint.  The
-  remaining source gap is routing the paper's concrete policy surfaces through
-  these wrappers and, for report-required policy, proving the analogous
-  affine outside-payoff identity.
+  definitional in the optional-reporting binary-mixture endpoint.  The concrete
+  surface constructor `lg21BinaryMixturePointEstimateSurface` and endpoint
+  `paper_theorem3_2_observable_fair_optional_reporting_source_equilibrium_implies_test_blank_of_concrete_base_affine_binary_mixture_point_estimate_surface`
+  now make the observable mixture, no-access, base-only, and full-feature
+  point-estimate identities definitional as well.  The remaining source gap is
+  routing the final paper policy assumptions through this surface and, for
+  report-required policy, proving the analogous affine outside-payoff identity.
 
 ## Source Notes
 

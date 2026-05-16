@@ -4288,6 +4288,77 @@ theorem paper_interface_theorem3_2_observable_fair_optional_reporting_source_equ
     hmass
 
 /--
+Theorem 3.2 optional-reporting endpoint for the concrete binary-mixture
+point-estimate surface with base-indexed affine source payoffs.
+-/
+theorem paper_interface_theorem3_2_observable_fair_optional_reporting_source_equilibrium_implies_test_blank_of_concrete_base_affine_binary_mixture_point_estimate_surface
+    {Equilibrium Skill Base Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → Skill → Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → Skill → Base → Bool)
+    (reportDecision : Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceSkill : Equilibrium → Base → Skill)
+    (positiveShare : Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (reporterLaw noReporterLaw : Equilibrium → Base → Law)
+    (hLawEq_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          reporterLaw e base = noReporterLaw e base)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → ℝ → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        reportDecision e base (actorValue e base actor) = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        paperSourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base +
+                signalWeight e base *
+                  pmfExp (actorLaw e base) (actorValue e base)) /
+                denom e base)
+            (estimationConsistent e)))
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceObservablyFair
+        (lg21BinaryMixturePointEstimateSurface
+          (Skill := Skill) (Base := Base) (Actor := Actor)
+          Equilibrium latentAccessEstimate latentNoAccessEstimate
+          demographicAccessEstimate demographicNoAccessEstimate positiveShare
+          hpositiveShare_le_one reporterPMF noReporterPMF actorLaw
+          actorValue actorOfTest) →
+      lg21SourceTestBlank
+        (lg21BinaryMixturePointEstimateSurface
+          (Skill := Skill) (Base := Base) (Actor := Actor)
+          Equilibrium latentAccessEstimate latentNoAccessEstimate
+          demographicAccessEstimate demographicNoAccessEstimate positiveShare
+          hpositiveShare_le_one reporterPMF noReporterPMF actorLaw
+          actorValue actorOfTest) :=
+  paper_theorem3_2_observable_fair_optional_reporting_source_equilibrium_implies_test_blank_of_concrete_base_affine_binary_mixture_point_estimate_surface
+    latentAccessEstimate latentNoAccessEstimate demographicAccessEstimate
+    demographicNoAccessEstimate takeDecision reportDecision
+    estimationConsistent referenceSkill positiveShare hpositiveShare_le_one
+    hpositiveShare_pos reporterPMF noReporterPMF reporterLaw noReporterLaw
+    hLawEq_of_pmfEq actorLaw actorValue actorOfTest hchooses_support
+    baseTerm signalWeight denom hEq hweight hdenom hmass
+
+/--
 Theorem 3.2 optional-reporting point-estimate abstract-law endpoint with the
 two-sided best-response condition supplied by the concrete source-equilibrium
 model.

@@ -233,9 +233,12 @@ Last updated: 2026-05-16
   point-estimate endpoints now combine this binary-mixture wrapper with the
   concrete Definition 1 best-response bridge.  The base-indexed
   optional-reporting affine endpoint now also makes the paper's reported-score
-  and no-report payoff identities definitional.  The remaining source gap is
-  routing concrete policy surfaces through these wrappers and proving the
-  analogous report-required outside-payoff identity.
+  and no-report payoff identities definitional.  The concrete binary-mixture
+  point-estimate surface now makes the observable mixture, no-access,
+  base-only, and full-feature point-estimate identities definitional too.  The
+  remaining source gap is routing the final paper policy assumptions through
+  this surface and proving the analogous report-required outside-payoff
+  identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -372,9 +375,10 @@ Last updated: 2026-05-16
    the optional-reporting and report-required endpoints now combine this with
    concrete Definition 1 best response.  The base-indexed optional-reporting
    affine endpoint now makes the paper's reported-score and no-report payoff
-   formulas definitional.  Next work should route a concrete optional-reporting
-   policy surface through that endpoint, then prove the remaining
-   report-required affine outside-payoff identity.
+   formulas definitional, and the concrete binary-mixture point-estimate
+   surface removes the remaining surface identity hypotheses.  Next work should
+   route the final paper policy assumptions through that surface, then prove the
+   remaining report-required affine outside-payoff identity.
 
 ## Reusable Library Seams
 
