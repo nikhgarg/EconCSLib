@@ -405,6 +405,30 @@ theorem paper_interface_lemma4_1_take_test_cutoff_has_profitable_deviation
   paper_lemma4_1_take_test_cutoff_has_profitable_deviation
     api hscale hcutoff
 
+/-- Lemma 4.1 no-profitable-test-taking condition. -/
+abbrev paperNoProfitableTestTakingDeviation
+    (takes : ℝ → Prop) (testBenefitProb : ℝ → ℝ) : Prop :=
+  lg21NoProfitableTestTakingDeviation takes testBenefitProb
+
+/--
+Lemma 4.1 reporting-required equilibrium core: a nontrivial lower-cutoff
+test-taking strategy cannot satisfy no-profitable-test-taking-deviation when
+the no-test estimate is strictly below the taking cutoff.
+-/
+theorem paper_interface_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
+    (api : StandardGaussianCDFAPI) {takes : ℝ → Prop} {qTilde qBar scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffStrategy : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hnoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill scale hscale) qTilde))
+    (hcutoff : qTilde < qBar) :
+    False :=
+  paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
+    api hscale hcutoffStrategy hnoDeviation hcutoff
+
 /--
 Fixed-base posterior-score law: all non-test information is fixed and the
 Bayesian estimate is a positive-slope affine function of the optional test

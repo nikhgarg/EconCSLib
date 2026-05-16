@@ -471,6 +471,43 @@ theorem paper_lemma4_1_take_test_cutoff_has_profitable_deviation
       api hscale hlow⟩
 
 /--
+No-profitable-test-taking condition for the report-required part of Lemma 4.1:
+any student who currently does not take the test must have at most one-half
+chance of obtaining a score that would improve the school estimate.
+-/
+def lg21NoProfitableTestTakingDeviation
+    (takes : ℝ → Prop) (testBenefitProb : ℝ → ℝ) : Prop :=
+  ∀ skill, ¬ takes skill → testBenefitProb skill ≤ (1 / 2 : ℝ)
+
+/--
+Lemma 4.1 report-required equilibrium core: a nontrivial lower-cutoff
+test-taking strategy cannot satisfy no-profitable-test-taking-deviation when
+the no-test posterior skill estimate `q̃` lies strictly below the taking cutoff
+`q̄`.
+-/
+theorem paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
+    (api : StandardGaussianCDFAPI) {takes : ℝ → Prop} {qTilde qBar scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffStrategy : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hnoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill scale hscale) qTilde))
+    (hcutoff : qTilde < qBar) :
+    False := by
+  rcases paper_lemma4_1_take_test_cutoff_has_profitable_deviation
+      api hscale hcutoff with
+    ⟨skill, hskill_mem, hprofitable⟩
+  have hnotTake : ¬ takes skill := by
+    intro htake
+    have hqBar_le_skill : qBar ≤ skill :=
+      (hcutoffStrategy skill).1 htake
+    linarith [hskill_mem.2]
+  have hnoProfit := hnoDeviation skill hnotTake
+  linarith
+
+/--
 Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different
 means are different distributions.
 -/
