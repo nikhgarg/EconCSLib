@@ -122,6 +122,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
   one negative payoff point and one positive payoff point into a unique cutoff
   and an exact nonnegative upper-threshold region.
+- When a condition wrapper assumes an objective comparison is equivalent to a
+  merit inequality, immediately add the formula-level version if the source
+  proof actually identifies the two objective values separately.  The proof is
+  usually just `glm20_policy_pair_objective_le_iff_of_value_eq`, and it keeps
+  the remaining concrete-model target as value equalities rather than custom
+  iff lemmas.  For GLM20 this closed the ordered P5(ii) school-`J2` branch via
+  `paper_proposition5_part_ii_school2_cutoff_objective_iff_exactly_one_cost_case_of_low_and_high_merit_formulas`.
 - When a strategic proof says a mass inequality is "equivalent" to a cutoff
   case, check whether the mass is simply a strictly antitone upper-tail
   function evaluated at the cutoff. If so, prove a tiny paper-facing bridge
@@ -151,6 +158,21 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   those definitions. This makes the human-facing theorem auditable and prevents
   opaque fields like `subFullEquilibriumIff : Prop` from hiding whether the
   Lean statement actually matches the paper.
+- For strategic applicant-pool fixed points, do not treat applicant mass as an
+  exogenous scalar function if the paper's capacity equation first substitutes
+  student application thresholds. Define the self-consistent mass map explicitly
+  (for GLM20, `glm20Lemma3StrategicApplicantMass`: plug the Equation (7)
+  group cutoff into the application-gated joint applicant mass before solving
+  capacity), then prove the `∃!` equilibrium against that map. This keeps the
+  remaining analytic seam precise: bivariate Gaussian identification and
+  regularity of the application-gated mass, rather than vague "equilibrium
+  consistency".
+- When a paper theorem is group-indexed, avoid stopping at a one-representative
+  type theorem. After the single-group payoff/cutoff calculation is green,
+  immediately package the group-indexed equilibrium object with common school
+  cutoffs and per-group costs/precision scales. This prevents the DAG from
+  looking greener than the paper and avoids redoing the same wrapper work
+  later.
 - For two-school, two-policy admissions games, prove the normal-form
   unilateral-deviation bridge before the source inequalities. Each candidate
   pair `(P_sub,P_full)`, `(P_full,P_sub)`, and `(P_full,P_full)` should reduce
