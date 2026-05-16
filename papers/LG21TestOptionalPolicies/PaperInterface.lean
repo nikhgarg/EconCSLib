@@ -3019,6 +3019,130 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_forces_no_a
     hchoosePayoff hotherPayoff_of_law_eq hweight hdenom
 
 /--
+Theorem 3.2 finite mean support fact, converse direction: a positive-mass actor
+below the mean forces a positive-mass actor above the mean.
+-/
+theorem paper_interface_theorem3_2_exists_support_actor_gt_mean_of_exists_actor_lt_mean
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hbelow :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        actorValue actor < pmfExp actorLaw actorValue) :
+    ∃ actor, 0 < (actorLaw actor).toReal ∧
+      pmfExp actorLaw actorValue < actorValue actor :=
+  paper_theorem3_2_exists_support_actor_gt_mean_of_exists_actor_lt_mean
+    actorLaw actorValue hbelow
+
+/--
+Theorem 3.2 finite degeneracy bridge: no positive-mass actor above the mean
+forces every positive-mass actor to equal the mean.
+-/
+theorem paper_interface_theorem3_2_no_above_mean_actor_forces_support_at_mean
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hno_above :
+      ¬ ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor) :
+    ∀ actor, 0 < (actorLaw actor).toReal →
+      actorValue actor = pmfExp actorLaw actorValue :=
+  paper_theorem3_2_no_above_mean_actor_forces_support_at_mean
+    actorLaw actorValue hno_above
+
+/--
+Theorem 3.2 PMF support-at-mean consequence under observable fairness and best
+response.
+-/
+theorem paper_interface_theorem3_2_observable_fair_best_response_forces_actor_support_at_mean
+    {Skill Base Test Estimate Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hLawEq_of_pmfEq :
+      reporterPMF = noReporterPMF → reporterLaw = noReporterLaw)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ∀ actor, 0 < (actorLaw actor).toReal →
+      actorValue actor = pmfExp actorLaw actorValue :=
+  paper_theorem3_2_observable_fair_best_response_forces_actor_support_at_mean
+    hbest hfair e base hlambda reporterPMF noReporterPMF reporterLaw
+    noReporterLaw hNoAccess hAccessMixture hLawEq_of_pmfEq actorLaw
+    actorValue hchooses_support hchoosePayoff hotherPayoff_of_law_eq
+    hweight hdenom
+
+/--
+Theorem 3.2 abstract-law support-at-mean consequence.
+-/
+theorem paper_interface_theorem3_2_law_observable_fair_best_response_forces_actor_support_at_mean
+    {Skill Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hfair : lg21SourceLawObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ∀ actor, 0 < (actorLaw actor).toReal →
+      actorValue actor = pmfExp actorLaw actorValue :=
+  paper_theorem3_2_law_observable_fair_best_response_forces_actor_support_at_mean
+    hbest mass law_ext hfair e base hlambda reporterLaw noReporterLaw
+    hNoAccess hAccessMixture actorLaw actorValue hchooses_support
+    hchoosePayoff hotherPayoff_of_law_eq hweight hdenom
+
+/--
 Theorem 3.2 latent-skill branch reduction: under the paper's shared mixture
 identities, proving the test-blank implication for observable fairness also
 proves it for latent-skill fairness.

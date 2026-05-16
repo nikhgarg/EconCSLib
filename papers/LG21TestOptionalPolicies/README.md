@@ -65,8 +65,15 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor`
   now prove the no-nondegenerate-actor alternative: under observable fairness
   and two-sided best response, a positive-share acting distribution cannot put
-  positive mass above its mean.  The remaining source gap is deriving the
-  paper's final no-positive-share/test-blank alternative from the full policy
+  positive mass above its mean.  The finite support bridge
+  `paper_theorem3_2_no_above_mean_actor_forces_support_at_mean` and the PMF/law
+  wrappers
+  `paper_theorem3_2_observable_fair_best_response_forces_actor_support_at_mean`
+  and
+  `paper_theorem3_2_law_observable_fair_best_response_forces_actor_support_at_mean`
+  now strengthen this to support-at-mean: every positive-mass actor must equal
+  the acting distribution mean.  The remaining source gap is deriving the
+  paper's final support-at-mean/test-blank alternative from the full policy
   model.
 
 ## Source Notes

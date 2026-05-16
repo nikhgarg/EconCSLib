@@ -180,10 +180,18 @@ Last updated: 2026-05-16
   `paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor`
   now turn that instability around: observable fairness plus two-sided best
   response rules out positive mass above the acting distribution mean.  The
-  latent-skill branch is reduced to the observable branch under the shared
-  latent-skill mixture identities.  The remaining source gap is deriving the
-  paper's final no-positive-share/test-blank alternative from the full policy
-  model and then closing the final test-blank implication without a certificate.
+  companion finite support bridge
+  `paper_theorem3_2_no_above_mean_actor_forces_support_at_mean` and the PMF/law
+  wrappers
+  `paper_theorem3_2_observable_fair_best_response_forces_actor_support_at_mean`
+  and
+  `paper_theorem3_2_law_observable_fair_best_response_forces_actor_support_at_mean`
+  strengthen this to: every positive-mass actor must sit exactly at the acting
+  distribution mean.  The latent-skill branch is reduced to the observable
+  branch under the shared latent-skill mixture identities.  The remaining
+  source gap is deriving the paper's final support-at-mean/test-blank
+  alternative from the full policy model and then closing the final test-blank
+  implication without a certificate.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
