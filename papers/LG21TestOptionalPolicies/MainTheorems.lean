@@ -5217,6 +5217,147 @@ theorem paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
   rw [hbasePoint e base, hfullPoint e base test, hmean]
 
 /--
+Theorem 3.2 observable-fairness-to-test-blank endpoint for scalar
+point-estimate PMF surfaces.  This combines the point-estimate off-mean witness
+constructor with the source proof's mixture, best-response, and affine-payoff
+bridge.
+-/
+theorem paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_point_estimate_source
+    {Skill Base Test Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (chooses : S.Equilibrium → Base → ℝ → Prop)
+    (choosePayoff otherPayoff : S.Equilibrium → Base → ℝ → ℝ)
+    (hbest :
+      ∀ e base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (chooses e base) (choosePayoff e base) (otherPayoff e base))
+    (lambda : S.Equilibrium → Base → ℝ)
+    (hlambda : ∀ e base, 0 < lambda e base)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF ℝ)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixture :
+      ∀ e base estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda e base * (reporterPMF e base estimate).toReal +
+            (1 - lambda e base) * (noReporterPMF e base estimate).toReal)
+    (hLawEq_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          reporterLaw e base = noReporterLaw e base)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        chooses e base (actorValue e base actor))
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        choosePayoff e base actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base actor,
+        reporterLaw e base = noReporterLaw e base →
+          otherPayoff e base actor =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness
+    chooses choosePayoff otherPayoff hbest lambda hlambda reporterPMF
+    noReporterPMF reporterLaw noReporterLaw hNoAccess hAccessMixture
+    hLawEq_of_pmfEq actorLaw actorValue hchooses_support baseTerm
+    signalWeight denom hchoosePayoff hotherPayoff_of_law_eq hweight hdenom
+    (paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface
+      actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass)
+
+/--
+Theorem 3.2 abstract-law point-estimate source endpoint.
+-/
+theorem paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_point_estimate_source
+    {Skill Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (pointLaw : ℝ → Law)
+    (chooses : S.Equilibrium → Base → ℝ → Prop)
+    (choosePayoff otherPayoff : S.Equilibrium → Base → ℝ → ℝ)
+    (hbest :
+      ∀ e base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (chooses e base) (choosePayoff e base) (otherPayoff e base))
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (lambda : S.Equilibrium → Base → ℝ)
+    (hlambda : ∀ e base, 0 < lambda e base)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base = noReporterLaw e base)
+    (hAccessMixture :
+      ∀ e base outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda e base * mass (reporterLaw e base) outcome +
+            (1 - lambda e base) * mass (noReporterLaw e base) outcome)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        chooses e base (actorValue e base actor))
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hchoosePayoff :
+      ∀ e base actor,
+        choosePayoff e base actor =
+          (baseTerm e base + signalWeight e base * actor) / denom e base)
+    (hotherPayoff_of_law_eq :
+      ∀ e base actor,
+        reporterLaw e base = noReporterLaw e base →
+          otherPayoff e base actor =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyLaw e base =
+          pointLaw (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureLaw e base test =
+          pointLaw (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceLawObservablyFair S → lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness
+    chooses choosePayoff otherPayoff hbest mass law_ext lambda hlambda
+    reporterLaw noReporterLaw hNoAccess hAccessMixture actorLaw actorValue
+    hchooses_support baseTerm signalWeight denom hchoosePayoff
+    hotherPayoff_of_law_eq hweight hdenom
+    (paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
+      pointLaw actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass)
+
+/--
 Source-shaped witness for the remaining Theorem 3.2 PMF route.  It packages
 the positive-share mixture identities, two-sided best response, affine payoff
 link, and the final source-model fact that any non-test-blank witness produces

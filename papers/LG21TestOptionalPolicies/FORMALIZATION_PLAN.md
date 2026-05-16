@@ -214,8 +214,13 @@ Last updated: 2026-05-16
   `paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface`
   discharge the off-mean field for deterministic scalar PMF/point-law surfaces
   where the base-only estimate is the acting mean and the full-feature estimate
-  is the selected actor value.  The remaining source gap is instantiating the
-  rest of one source witness from the full policy model.
+  is the selected actor value.  The direct point-estimate endpoints
+  `paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_point_estimate_source`
+  and
+  `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_point_estimate_source`
+  combine that constructor with the mixture, best-response, and affine-payoff
+  bridge.  The remaining source gap is instantiating those remaining identities
+  from the full policy model.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -342,8 +347,10 @@ Last updated: 2026-05-16
    witness or the stronger two-distinct-positive-mass-values witness.  The
    source-shaped witness structures are the current non-certificate endpoints.
    The point-estimate constructors now close the off-mean field for deterministic
-   scalar estimate surfaces.  The next work should instantiate the remaining
-   mixture and best-response fields from the paper's full source policy model.
+   scalar estimate surfaces, and the direct point-estimate endpoints close the
+   observable-to-test-blank bridge once mixture, best-response, and affine-payoff
+   identities are supplied.  The next work should instantiate those remaining
+   identities from the paper's full source policy model.
 
 ## Reusable Library Seams
 
