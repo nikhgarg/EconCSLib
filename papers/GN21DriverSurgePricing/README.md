@@ -838,6 +838,11 @@ The remaining open part is the stopping argument behind the source's repeated
 subcase switches: a current endpoint sign must be converted, using continuity,
 into movement until either collision or first sign-change, and those partial
 moves must then be iterated until component count falls.
+The first compactness ingredient for that stopping argument is compiled:
+`continuousOn_endpoint_positive_or_exists_zero` and
+`continuousOn_endpoint_negative_or_exists_zero` show that a continuous endpoint
+sign proxy either keeps its sign over a closed movement interval or hits zero
+inside the interval.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its

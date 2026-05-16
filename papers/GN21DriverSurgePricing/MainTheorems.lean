@@ -13230,6 +13230,54 @@ theorem endpoint_path_gt_of_hasDerivAt_neg_on_Icc
   linarith
 
 /--
+Continuity stopping dichotomy for endpoint moves.  If an endpoint derivative
+proxy is positive at the left endpoint of a closed interval, then either it
+stays positive throughout the interval or it hits zero somewhere before the
+right endpoint.  This is the first compactness ingredient behind the paper's
+"move until collision or sign change" argument.
+-/
+theorem continuousOn_endpoint_positive_or_exists_zero
+    {g : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hg : ContinuousOn g (Set.Icc a b))
+    (hga : 0 < g a) :
+    (∀ x ∈ Set.Icc a b, 0 < g x) ∨
+      ∃ c ∈ Set.Icc a b, g c = 0 := by
+  by_cases hpos : ∀ x ∈ Set.Icc a b, 0 < g x
+  · exact Or.inl hpos
+  · push Not at hpos
+    rcases hpos with ⟨x, hx, hx_nonpos⟩
+    have hax : a ≤ x := hx.1
+    have hg_ax : ContinuousOn g (Set.Icc a x) :=
+      hg.mono (Set.Icc_subset_Icc_right hx.2)
+    have hzero_between : (0 : ℝ) ∈ Set.Icc (g x) (g a) :=
+      ⟨hx_nonpos, le_of_lt hga⟩
+    rcases intermediate_value_Icc' hax hg_ax hzero_between with
+      ⟨c, hc, hgc⟩
+    exact Or.inr ⟨c, ⟨hc.1, hc.2.trans hx.2⟩, hgc⟩
+
+/--
+Negative-sign version of `continuousOn_endpoint_positive_or_exists_zero`.
+-/
+theorem continuousOn_endpoint_negative_or_exists_zero
+    {g : ℝ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hg : ContinuousOn g (Set.Icc a b))
+    (hga : g a < 0) :
+    (∀ x ∈ Set.Icc a b, g x < 0) ∨
+      ∃ c ∈ Set.Icc a b, g c = 0 := by
+  have hpos_or_zero :=
+    continuousOn_endpoint_positive_or_exists_zero
+      (g := fun x => -g x) hab hg.neg (by simpa using neg_pos.mpr hga)
+  rcases hpos_or_zero with hneg | hzero
+  · exact Or.inl (by
+      intro x hx
+      have hxneg := hneg x hx
+      linarith)
+  · rcases hzero with ⟨c, hc, hc_zero⟩
+    exact Or.inr ⟨c, hc, by linarith⟩
+
+/--
 Local calculus bridge for endpoint-improvement arguments: a positive derivative
 at an endpoint gives a positive right move with strictly larger reward.
 -/

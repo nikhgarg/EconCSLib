@@ -259,6 +259,11 @@ persist over the movement interval.  The paper's missing formal step is a
 stopping/sign-persistence argument: move until collision or first sign-change,
 then re-enter the appropriate subcase, and prove this process eventually
 lowers component count.
+The weaker compactness dichotomy needed for this route is compiled as
+`continuousOn_endpoint_positive_or_exists_zero` and
+`continuousOn_endpoint_negative_or_exists_zero`; it still needs to be upgraded
+to a first-hit/prefix-sign lemma before it can drive a reward-improving partial
+move.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact
