@@ -569,6 +569,54 @@ theorem GN21FiniteOpenIntervalApproximation.measure_symmDiff_lt
     rw [Set.symmDiff_def, Set.diff_eq_empty.2 hV_subset, Set.union_empty]
   simpa [V, hsymm] using A.measure_omitted_lt
 
+/-- The finite interval policy represented by an approximation certificate. -/
+def GN21FiniteOpenIntervalApproximation.policy
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenIntervalApproximation μ σ ε) : TripPolicy :=
+  ⋃ i : A.index, Set.Ioo (A.lower i) (A.upper i)
+
+/-- The finite interval approximation is a feasible subpolicy of the source policy. -/
+theorem GN21FiniteOpenIntervalApproximation.policy_subset
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenIntervalApproximation μ σ ε) :
+    A.policy ⊆ σ := by
+  intro x hx
+  rcases Set.mem_iUnion.1 hx with ⟨i, hxi⟩
+  exact A.interval_subset i hxi
+
+/--
+Continuity of a set functional in the symmetric-difference measure at a source
+policy.  This is the precise continuity input used by Lemma 5 after replacing
+an arbitrary open policy by a finite interval approximation.
+-/
+def GN21SymmDiffContinuousAt
+    (μ : Measure TripLength) (Rhat : TripPolicy → ℝ) (σ : TripPolicy) : Prop :=
+  ∀ ε : ℝ, 0 < ε →
+    ∃ δ : ℝ≥0∞, δ ≠ 0 ∧
+      ∀ τ : TripPolicy, μ (σ ∆ τ) < δ → |Rhat τ - Rhat σ| < ε
+
+/--
+Lemma 5 Step 1 plus symmetric-difference continuity: the finite interval
+approximant can be chosen so its reward is arbitrarily close to the original
+open policy's reward.
+-/
+theorem exists_gn21FiniteOpenIntervalApproximation_reward_close
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : TripPolicy → ℝ) {σ : TripPolicy}
+    (hσ_open : IsOpen σ)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ)
+    {εReward : ℝ} (hεReward : 0 < εReward) :
+    ∃ δ : ℝ≥0∞,
+      ∃ A : GN21FiniteOpenIntervalApproximation μ σ δ,
+        |Rhat A.policy - Rhat σ| < εReward := by
+  rcases hcont εReward hεReward with ⟨δ, hδ_pos, hδ⟩
+  rcases exists_gn21FiniteOpenIntervalApproximation_of_isOpen
+      μ hσ_open hδ_pos with
+    ⟨A⟩
+  exact ⟨δ, A, hδ A.policy (by
+    simpa [GN21FiniteOpenIntervalApproximation.policy] using
+      A.measure_symmDiff_lt)⟩
+
 /-- Lifetime earnings-rate functional for a one-state policy. -/
 abbrev SingleStateReward := TripPolicy → ℝ
 

@@ -467,10 +467,14 @@ into the concrete endpoint policy data.
   `GN21FiniteOpenIntervalApproximation.measure_symmDiff_lt`: every open trip
   policy under a finite regular measure has a finite open-interval subpolicy
   with arbitrarily small omitted mass, and its symmetric-difference error is
-  the same omitted mass because it is an inner approximation.  The remaining
-  Lemma 5 work is the source tail-normal finite-interval normalization plus
-  endpoint-continuity argument that identifies the nonlinear endpoint path with
-  this positive-response dominance.
+  the same omitted mass because it is an inner approximation.
+  `GN21SymmDiffContinuousAt` and
+  `exists_gn21FiniteOpenIntervalApproximation_reward_close` now compose this
+  approximation with the source continuity assumption to choose a finite
+  interval approximant whose reward is arbitrarily close to the original open
+  policy.  The remaining Lemma 5 work is the finite-family
+  endpoint-modification/dominance argument that identifies the nonlinear
+  endpoint path with this positive-response dominance.
 - The Theorem 4 endpoint layer now has AE shape predicates
   `theorem4NonsurgeAEShape` and `theorem4SurgeAEShape`, plus
   `Theorem4AllMeasurableAllowedPolicyFormsCertificate.only_ae_shapes` and

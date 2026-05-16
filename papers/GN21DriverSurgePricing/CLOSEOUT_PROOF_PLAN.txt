@@ -58,6 +58,10 @@ The reusable AE endpoint layer is now compiled as:
   GN21FiniteOpenBallApproximation.to_interval
   exists_gn21FiniteOpenIntervalApproximation_of_isOpen
   GN21FiniteOpenIntervalApproximation.measure_symmDiff_lt
+  GN21FiniteOpenIntervalApproximation.policy
+  GN21FiniteOpenIntervalApproximation.policy_subset
+  GN21SymmDiffContinuousAt
+  exists_gn21FiniteOpenIntervalApproximation_reward_close
   acceptAllAlmostEverywhere_of_lemma5_positiveResponse_feasible_optimal
   paper_theorem4_measurable_accept_all_ae_unique_optimal_of_positive_response_marginal_optima
   theorem4NonsurgeAEShape
