@@ -732,6 +732,19 @@ theorem paper_interface_gaussian_posteriorMean_update_exists_above
   paper_gaussian_posteriorMean_update_exists_above M theta k level
 
 /--
+Theorem 3.1 support: above any finite lower bound, a positive-slope Gaussian
+reported-score estimate has a score above any finite comparison level.
+-/
+theorem paper_interface_gaussian_posteriorMean_update_exists_above_after
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (lower level : ℝ) :
+    ∃ score : ℝ,
+      lower < score ∧
+        level < M.posteriorMean (Function.update theta k score) :=
+  paper_gaussian_posteriorMean_update_exists_above_after M theta k lower level
+
+/--
 Theorem 3.1 Gaussian lower-tail support: the lower-tail posterior update is
 continuous in the finite cutoff.
 -/
@@ -904,6 +917,30 @@ theorem paper_interface_theorem3_1_optional_no_report_mixture_high_endpoint_exis
     hC_nonneg hC_lt_one baseOnlyEstimate M theta k scoreLaw
 
 /--
+Theorem 3.1 optional-reporting high endpoint after a supplied finite low
+cutoff.
+-/
+theorem paper_interface_theorem3_1_optional_no_report_mixture_high_endpoint_exists_after
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) (low : ℝ) :
+    ∃ high : ℝ,
+      low < high ∧
+        lg21OptionalNoReportMixtureEstimate
+            accessFraction baseOnlyEstimate scoreLaw
+            (fun cutoff : ℝ =>
+              M.posteriorMean
+                (Function.update theta k
+                  (standardGaussianLowerTailMean scoreLaw cutoff)))
+            high <
+          M.posteriorMean (Function.update theta k high) :=
+  paper_theorem3_1_optional_no_report_mixture_high_endpoint_exists_after
+    hC_nonneg hC_lt_one baseOnlyEstimate M theta k scoreLaw low
+
+/--
 Theorem 3.1 report-required high endpoint: the source no-take mixture is below
 the take/report affine estimate at some finite high cutoff.
 -/
@@ -921,6 +958,25 @@ theorem paper_interface_theorem3_1_report_required_no_take_mixture_high_endpoint
         intercept + slope * high :=
   paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists
     hC_nonneg hC_lt_one baseOnlyEstimate intercept hslope skillLaw
+
+/--
+Theorem 3.1 report-required high endpoint after a supplied finite low cutoff.
+-/
+theorem paper_interface_theorem3_1_report_required_no_take_mixture_high_endpoint_exists_after
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    (skillLaw : GaussianScaleLaw) (low : ℝ) :
+    ∃ high : ℝ,
+      low < high ∧
+        lg21OptionalNoReportMixtureEstimate
+            accessFraction baseOnlyEstimate skillLaw
+            (fun qBar : ℝ =>
+              intercept + slope * standardGaussianLowerTailMean skillLaw qBar)
+            high <
+          intercept + slope * high :=
+  paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists_after
+    hC_nonneg hC_lt_one baseOnlyEstimate intercept hslope skillLaw low
 
 /-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
 theorem paper_interface_monotone_of_lowerCutoffStrategy

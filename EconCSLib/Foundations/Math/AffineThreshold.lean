@@ -14,6 +14,8 @@ Reusable one-dimensional threshold algebra for positive-slope affine scores.
 - `affine_strictMono`
 - `exists_affine_lt`
 - `exists_lt_affine`
+- `exists_affine_lt_before`
+- `exists_lt_affine_after`
 -/
 
 namespace EconCSLib
@@ -107,6 +109,50 @@ theorem exists_lt_affine (intercept threshold : ℝ) {slope : ℝ}
         (slope := slope) (threshold := threshold) (x := cutoff + 1)
         hslope).1 h)
   exact lt_of_not_ge hnot_affine
+
+/-- A positive-slope affine score falls below any finite level before any finite bound. -/
+theorem exists_affine_lt_before (upper intercept threshold : ℝ) {slope : ℝ}
+    (hslope : 0 < slope) :
+    ∃ x : ℝ, x < upper ∧ intercept + slope * x < threshold := by
+  let cutoff : ℝ := affineCutoff intercept slope threshold
+  let x : ℝ := min upper cutoff - 1
+  have hx_upper : x < upper := by
+    dsimp [x]
+    exact (sub_lt_self _ zero_lt_one).trans_le (min_le_left _ _)
+  have hx_cutoff : x < cutoff := by
+    dsimp [x]
+    exact (sub_lt_self _ zero_lt_one).trans_le (min_le_right _ _)
+  have hnot_threshold :
+      ¬ threshold ≤ intercept + slope * x := by
+    intro h
+    have hcutoff_le_x :
+        affineCutoff intercept slope threshold ≤ x :=
+      (threshold_le_affine_iff_cutoff_le (intercept := intercept)
+        (slope := slope) (threshold := threshold) (x := x) hslope).1 h
+    linarith
+  exact ⟨x, hx_upper, lt_of_not_ge hnot_threshold⟩
+
+/-- A positive-slope affine score exceeds any finite level after any finite bound. -/
+theorem exists_lt_affine_after (lower intercept threshold : ℝ) {slope : ℝ}
+    (hslope : 0 < slope) :
+    ∃ x : ℝ, lower < x ∧ threshold < intercept + slope * x := by
+  let cutoff : ℝ := affineCutoff intercept slope threshold
+  let x : ℝ := max lower cutoff + 1
+  have hlower_x : lower < x := by
+    dsimp [x]
+    exact (le_max_left _ _).trans_lt (lt_add_one _)
+  have hcutoff_x : cutoff < x := by
+    dsimp [x]
+    exact (le_max_right _ _).trans_lt (lt_add_one _)
+  have hnot_affine :
+      ¬ intercept + slope * x ≤ threshold := by
+    intro h
+    have hx_le_cutoff :
+        x ≤ affineCutoff intercept slope threshold :=
+      (affine_le_threshold_iff_le_cutoff (intercept := intercept)
+        (slope := slope) (threshold := threshold) (x := x) hslope).1 h
+    linarith
+  exact ⟨x, hlower_x, lt_of_not_ge hnot_affine⟩
 
 end
 

@@ -82,7 +82,16 @@ Last updated: 2026-05-16
   `paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists`:
   the reported/take payoff eventually exceeds the base-only component, and the
   Gaussian lower-tail component is always strictly below the cutoff payoff.
-  The paper's
+  The after-low variants
+  `paper_theorem3_1_optional_no_report_mixture_high_endpoint_exists_after` and
+  `paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists_after`
+  show that this high endpoint can be chosen above any supplied finite low
+  cutoff.  Consequently the source-mixture wrappers
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture_low_endpoint`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture_low_endpoint`
+  now leave only the low-endpoint weighted-gap comparison as an external
+  endpoint hypothesis.  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:
