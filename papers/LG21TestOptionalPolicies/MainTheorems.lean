@@ -2923,6 +2923,44 @@ theorem lg21NoProfitableTestTakingDeviation_of_report_required_source_model
     · simp [htake]
 
 /--
+Concrete report-required source game gives the full two-sided best-response
+condition: students who take weakly prefer taking/reporting to not taking, and
+students who do not take weakly prefer not taking.
+-/
+theorem lg21NoProfitableBinaryChoiceDeviation_of_report_required_source_model
+    {Base Test : Type*}
+    {takeDecision : ℝ → Base → Bool}
+    {reportDecision : Base → Test → Bool}
+    {testBenefitProb : ℝ → ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21ReportRequiredSourceEquilibriumData
+          takeDecision reportDecision testBenefitProb estimationConsistent))
+    (base : Base) (test : Test) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun skill : ℝ => takeDecision skill base = true)
+      testBenefitProb (fun _skill : ℝ => (1 / 2 : ℝ)) := by
+  constructor
+  · intro skill htake
+    let info : LG21AccessStudentInfo ℝ Base Test :=
+      { skill := skill, base := base, test := test }
+    have hfeasible :
+        LG21AccessAction.feasible
+          LG21AccessAction.reportRequiredAfterTaking
+          LG21AccessAction.noTake :=
+      LG21AccessAction.noTake_reportRequiredAfterTaking_feasible
+    have hbest :=
+      lg21SourceEquilibrium_best_response hEq info
+        LG21AccessAction.noTake hfeasible
+    dsimp [lg21ReportRequiredSourceEquilibriumData,
+      LG21AccessStudentInfo.chosenAction] at hbest
+    simpa [LG21AccessAction.noTake, info, htake] using hbest
+  · exact
+      lg21NoProfitableTestTakingDeviation_of_report_required_source_model
+        hEq base test
+
+/--
 Lemma 4.1 route from source Definition 1 equilibria: source best responses in
 the optional-reporting and report-required games supply the two no-profitable
 deviation predicates, and the Gaussian threshold proof then gives all-report

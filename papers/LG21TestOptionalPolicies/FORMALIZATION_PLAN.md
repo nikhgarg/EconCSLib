@@ -12,7 +12,10 @@ Last updated: 2026-05-16
   `Y(q, base)` and `X(base, test)`, and the feasibility/best-response/
   estimation-consistency projections encoded.  Binary reporting and taking
   subgames bridge `lg21Equilibrium` best responses to the
-  no-profitable-deviation predicates used by Lemma 4.1.
+  no-profitable-deviation predicates used by Lemma 4.1.  The concrete
+  optional-reporting and report-required source payoff models also now supply
+  full two-sided binary best-response predicates for Theorem 3.1 and
+  Theorem 3.2.
 - Definitions 2--5 now have direct PMF and continuous-law source predicates
   plus paper-interface unfold lemmas.  Definition 5 also has equivalent
   witness forms for concrete base/test relevance.
@@ -219,8 +222,10 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_point_estimate_source`
   combine that constructor with the mixture, best-response, and affine-payoff
-  bridge.  The remaining source gap is instantiating those remaining identities
-  from the full policy model.
+  bridge.  The report-required source payoff model now supplies the needed
+  two-sided best-response predicate directly.  The remaining source gap is
+  instantiating the mixture and affine-payoff identities from the full policy
+  model.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -349,8 +354,11 @@ Last updated: 2026-05-16
    The point-estimate constructors now close the off-mean field for deterministic
    scalar estimate surfaces, and the direct point-estimate endpoints close the
    observable-to-test-blank bridge once mixture, best-response, and affine-payoff
-   identities are supplied.  The next work should instantiate those remaining
-   identities from the paper's full source policy model.
+   identities are supplied.  The report-required source payoff model now
+   supplies the needed two-sided best-response predicate directly; the next work
+   should instantiate the remaining mixture and affine-payoff identities from
+   the paper's full source policy model and then route them into the
+   point-estimate endpoint.
 
 ## Reusable Library Seams
 

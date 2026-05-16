@@ -265,6 +265,28 @@ theorem paper_interface_no_profitable_test_taking_of_source_report_required_equi
     hEq hrequirement base test htakePayoff hnoTakeChosenPayoff
 
 /--
+Definition 1 source report-required bridge for the concrete payoff model:
+source best response implies the full two-sided binary take/no-take condition
+used by the report-required Theorem 3.1 and Theorem 3.2 routes.
+-/
+theorem paper_interface_no_profitable_binary_choice_of_report_required_source_model
+    {Base Test : Type*}
+    {takeDecision : ℝ → Base → Bool}
+    {reportDecision : Base → Test → Bool}
+    {testBenefitProb : ℝ → ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      paperSourceEquilibrium
+        (lg21ReportRequiredSourceEquilibriumData
+          takeDecision reportDecision testBenefitProb estimationConsistent))
+    (base : Base) (test : Test) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun skill : ℝ => takeDecision skill base = true)
+      testBenefitProb (fun _skill : ℝ => (1 / 2 : ℝ)) :=
+  lg21NoProfitableBinaryChoiceDeviation_of_report_required_source_model
+    hEq base test
+
+/--
 Lemma 4.1 source-equilibrium bridge: a packaged Gaussian threshold-equilibrium
 certificate implies all access students report and take the test.
 -/
