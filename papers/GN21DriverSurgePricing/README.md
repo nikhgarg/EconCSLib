@@ -822,7 +822,11 @@ wrappers.  The regular endpoint package
 and theorem
 `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance`
 feed that classification directly into the current-bounds regular Theorem 4
-route.
+route.  The top-level Theorem 3 wrappers
+`paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_policy_canonical_dominance_source_assumptions`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_policy_canonical_dominance_source_assumptions`
+now expose the same route at the structured-price source boundary.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

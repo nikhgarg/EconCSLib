@@ -65495,6 +65495,124 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_end
                 m z hnonneg hparams) }
 
 /--
+Source-level assumptions for the regular endpoint route when the Lemma 5 input
+is supplied as policy-level canonical-dominance data.  This is closer to the
+continuous proof than the older allowed-policy-form source boundary: Lean
+derives the all-optimal allowed policy forms internally.
+-/
+structure Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  endpoint_current_bounds_regular_policy_canonical_dominance_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate
+            μ arrival m z switch12 switch21
+
+/-- Convert policy-canonical-dominance source assumptions to the older allowed-form boundary. -/
+noncomputable def Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions.to_allowed_policy_forms_source_assumptions
+    {μ : Fin 2 → Measure TripLength} {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_current_bounds_regular_allowed_policy_forms_selection := by
+    intro m z hnonneg hparams
+    exact
+      (A.endpoint_current_bounds_regular_policy_canonical_dominance_selection
+        m z hnonneg hparams).to_allowed_policy_forms
+
+/--
+Paper-facing Theorem 3 wrapper from policy-level canonical-dominance Lemma 5
+data plus regular endpoint data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_policy_canonical_dominance_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    A.to_allowed_policy_forms_source_assumptions
+
+/--
+AE-unique version of the policy-level canonical-dominance Theorem 3 wrapper.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_policy_canonical_dominance_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    A.to_allowed_policy_forms_source_assumptions
+
+/--
 Source-level assumptions for the Theorem 3 fixed-transfer regular endpoint
 route.  This is the current closest source boundary for the paper's continuous
 Theorem 4 argument: scalar accept-all primitives are discharged internally,

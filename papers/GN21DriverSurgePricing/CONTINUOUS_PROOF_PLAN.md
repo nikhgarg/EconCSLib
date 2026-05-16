@@ -519,6 +519,11 @@ into the concrete endpoint policy data.
   so the source closeout can combine policy-level Lemma 5 canonical dominance
   with regular endpoint data without first hand-building an allowed-policy-form
   certificate.
+  At the Theorem 3 boundary, use
+  `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceSourceAssumptions`
+  and the paired `paper_theorem3_measured_structured_measurable_ic...` wrappers
+  when the source proof supplies policy-level Lemma 5 dominance plus the regular
+  endpoint families.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and
