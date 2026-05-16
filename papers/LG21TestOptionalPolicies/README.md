@@ -99,7 +99,14 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_below_mean_actor`
   derive the two-sided best-response premise directly from the concrete
-  Definition 1 source equilibria.  The source-shaped structures
+  Definition 1 source equilibria.  The Gaussian/all-acting wrappers
+  `paper_theorem3_2_gaussianScaleLaw_exists_below_mean`,
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_gaussian_all_report`,
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_gaussian_all_take`
+  instantiate the paper's "such a student always exists" line by choosing
+  `mean - scale` from a nondegenerate Gaussian acting cohort, without requiring
+  positive point mass.  The source-shaped structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
   and `paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness`
