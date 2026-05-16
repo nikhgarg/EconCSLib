@@ -195,7 +195,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   cutoff/mean monotonicity. Use
   `StandardGaussianCDFAPI.mixtureTailMass_antitone_threshold` and
   `StandardGaussianCDFAPI.MixtureThresholdCertificate` for source equations
-  where a common admission cutoff realizes a finite group-mixture capacity. Use
+  where a common admission cutoff realizes a finite group-mixture capacity.
+  When a paper assumes a cutoff family continuously clears fixed capacity, first
+  try proving continuity from the capacity equation itself: a finite Gaussian
+  mixture mass is continuous in the access parameter and strictly antitone in
+  the cutoff, so the level-set squeeze often removes a standalone continuity
+  hypothesis from the paper-facing theorem. Use
   `EconCSLib.Foundations.Probability.GaussianDerivatives` for admissions
   lemmas that differentiate affine standardized Gaussian upper tails:
   `StandardGaussianDerivativeAPI.affineUpperTail_hasDerivAt`,
