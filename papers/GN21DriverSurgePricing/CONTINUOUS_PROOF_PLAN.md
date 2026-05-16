@@ -492,6 +492,13 @@ into the concrete endpoint policy data.
   `lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer`,
   with the concrete finite-interval specialization
   `lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_descent_and_maximizer`.
+  The source-facing finite-interval data target is now named
+  `Lemma5FiniteIntervalPolicyDescentMaximizerData`, with
+  `Lemma5FiniteIntervalPolicyDescentMaximizerData.to_optimizer_replacement`,
+  `Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_optimal`, and
+  `Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_candidate_le`
+  converting that data into the exact optimizer-replacement and policy-form
+  conclusions needed by Theorem 4.
   These theorems prove the source proof's termination and limit/maximizer
   bridge for any finite-policy domain with a natural-valued endpoint
   complexity.  The remaining Lemma 5 work is now the paper-specific endpoint

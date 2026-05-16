@@ -18819,6 +18819,45 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_
     canonicalMax step strictWitness
 
 /--
+Named finite-interval Lemma 5 source data.  This is the current precise target
+for closing the nonlinear endpoint-selection proof: source regularity gives
+`hσ0_open` and `hcont`; the finite endpoint argument must provide a canonical
+maximizer, a complexity-lowering endpoint step, and a strict canonical witness
+when the original policy is noncanonical.
+-/
+structure Lemma5FiniteIntervalPolicyDescentMaximizerData
+    (μ : Measure TripLength) (Rhat : SingleStateReward)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape) where
+  hσ0_open : IsOpen σ0
+  hcont : GN21SymmDiffContinuousAt μ Rhat σ0
+  canonicalMax :
+    ∃ maximizer : GN21FiniteIntervalPolicy,
+      lemma5PolicyForm shape maximizer.policy ∧
+        ∀ seed : GN21FiniteIntervalPolicy,
+          lemma5PolicyForm shape seed.policy →
+            Rhat seed.policy ≤ Rhat maximizer.policy
+  step :
+    ∀ seed : GN21FiniteIntervalPolicy,
+      ¬ lemma5PolicyForm shape seed.policy →
+        ∃ seed' : GN21FiniteIntervalPolicy,
+          Rhat seed.policy ≤ Rhat seed'.policy ∧
+            seed'.complexity < seed.complexity
+  strictWitness :
+    ¬ lemma5PolicyForm shape σ0 →
+      ∃ seed : GN21FiniteIntervalPolicy,
+        lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy
+
+/-- Finite-interval Lemma 5 source data produce the optimizer replacement certificate. -/
+noncomputable def Lemma5FiniteIntervalPolicyDescentMaximizerData.to_optimizer_replacement
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5FiniteIntervalPolicyDescentMaximizerData μ Rhat σ0 shape) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_descent_and_maximizer
+    μ Rhat shape D.hσ0_open D.hcont D.canonicalMax D.step D.strictWitness
+
+/--
 Positive-case Lemma 5 replacement constructor using accept-all as the
 replacement policy.
 -/
@@ -18943,6 +18982,39 @@ theorem lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
   have hlt : Rhat σ0 < Rhat C.policy :=
     C.strict_unless_initial_form hnot_form
   linarith
+
+/--
+If the current policy is globally optimal for the single-state continuation
+problem, finite-interval Lemma 5 source data force the current policy itself
+to have the corresponding Lemma 5 form.
+-/
+theorem Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_optimal
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5FiniteIntervalPolicyDescentMaximizerData μ Rhat σ0 shape)
+    (hoptimal : ∀ σ : TripPolicy, Rhat σ ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+      Rhat σ0 shape D.to_optimizer_replacement hoptimal
+
+/--
+Restricted-domain variant: if local optimality gives the comparison against
+the concrete finite-interval replacement policy produced by the data, the
+current policy has the Lemma 5 form.
+-/
+theorem Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_candidate_le
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5FiniteIntervalPolicyDescentMaximizerData μ Rhat σ0 shape)
+    (hcandidate :
+      Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+      Rhat σ0 shape D.to_optimizer_replacement hcandidate
 
 /--
 Positive-derivative Lemma 5 replacement plus local optimality gives
