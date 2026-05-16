@@ -69,6 +69,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   deriving `(0,1)` membership from economic assumptions until the formula
   theorem itself is green; expose that domain as the next paper-facing
   obligation.
+- To prove a cutoff increases in cost, use zero comparison and strict payoff
+  monotonicity rather than differentiating the implicit inverse-CDF formula.
+  Since cost usually enters as `-c`, evaluate the higher-cost payoff at the
+  lower-cost zero to get a negative value, then strict monotonicity in skill
+  forces the higher-cost zero to lie to the right.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
