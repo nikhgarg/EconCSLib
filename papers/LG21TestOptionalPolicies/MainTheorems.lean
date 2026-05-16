@@ -11930,15 +11930,6 @@ theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_u
                     standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
                     (actorLaw e base) (decisionThreshold e base))))
             (estimationConsistent e)))
-    (htie :
-      ∀ e base score,
-        (M base).posteriorMean (Function.update (theta base) k score) =
-            (M base).posteriorMean
-              (Function.update (theta base) k
-                (GaussianHazardCertificate.normalUpperTailMean
-                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-                  (actorLaw e base) (decisionThreshold e base))) →
-          reportDecision e base score = true)
     (hthreshold :
       ∀ e base actor, reportDecision e base actor = true ↔
         decisionThreshold e base ≤ actor)
@@ -12059,15 +12050,27 @@ theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_u
   · intro e base score
     simpa [div_one] using
       (M base).posteriorMean_update_eq_base_add_weight_mul
-        (theta base) k score
+          (theta base) k score
   · intro e base score h
-    exact htie e base score (by
-      simpa [div_one,
+    let upper : ℝ :=
+      GaussianHazardCertificate.normalUpperTailMean
+        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+        (actorLaw e base) (decisionThreshold e base)
+    have hpost :
+        (M base).posteriorMean (Function.update (theta base) k score) =
+          (M base).posteriorMean (Function.update (theta base) k upper) := by
+      simpa [upper, div_one,
         (M base).posteriorMean_update_eq_base_add_weight_mul
-          (theta base) k
-          (GaussianHazardCertificate.normalUpperTailMean
-            standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-            (actorLaw e base) (decisionThreshold e base))] using h)
+          (theta base) k upper] using h
+    have hscore_eq : score = upper :=
+      (paper_bayesian_optimal_estimator_strictMono_feature
+        (M base) (theta base) k).injective hpost
+    have hupper_gt : decisionThreshold e base < upper := by
+      exact
+        paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
+          (actorLaw e base) (decisionThreshold e base)
+    exact (hthreshold e base score).2 (le_of_lt (by
+      simpa [hscore_eq] using hupper_gt))
   · intro _e base
     exact (M base).centeredFamily.signalWeight_pos k
   · intro _e _base

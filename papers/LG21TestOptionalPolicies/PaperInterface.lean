@@ -3341,15 +3341,6 @@ theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_
                     standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
                     (actorLaw e base) (decisionThreshold e base))))
             (estimationConsistent e)))
-    (htie :
-      ∀ e base score,
-        (M base).posteriorMean (Function.update (theta base) k score) =
-            (M base).posteriorMean
-              (Function.update (theta base) k
-                (GaussianHazardCertificate.normalUpperTailMean
-                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-                  (actorLaw e base) (decisionThreshold e base))) →
-          reportDecision e base score = true)
     (hthreshold :
       ∀ e base actor, reportDecision e base actor = true ↔
         decisionThreshold e base ≤ actor)
@@ -3396,7 +3387,7 @@ theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_
     demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
     reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate takeDecision
     reportDecision estimationConsistent referenceSkill actorLaw
-    decisionThreshold hEq htie hthreshold hwitness e base
+    decisionThreshold hEq hthreshold hwitness e base
 
 /--
 Paper-facing Theorem 3.2 report-required continuous upper-tail endpoint, with
