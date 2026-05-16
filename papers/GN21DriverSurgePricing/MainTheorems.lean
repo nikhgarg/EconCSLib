@@ -127,6 +127,10 @@ the continuous CTMC source theorems.
 - `GN21GeneralizedIntervalPolicy.twoBounded` and
   `lemma5_twoBounded_upper_merge_step_of_endpoint_path`: a compiled
   generalized-policy complexity-lowering merge step for the two-interval case.
+- `GN21GeneralizedIntervalPolicy.empty` and
+  `lemma5_singleBounded_lower_collapse_step_of_endpoint_path`: a compiled
+  generalized-policy complexity-lowering collapse step for the one-interval
+  case.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
@@ -15871,6 +15875,13 @@ def GN21GeneralizedIntervalPolicy.acceptAll :
   finite_index := inferInstance
   component := fun _ => GN21GeneralizedIntervalComponent.positiveAll
 
+/-- Empty generalized interval policy. -/
+def GN21GeneralizedIntervalPolicy.empty :
+    GN21GeneralizedIntervalPolicy where
+  index := Empty
+  finite_index := inferInstance
+  component := fun i => Empty.elim i
+
 /-- Generalized one-component bounded-open-interval representative. -/
 def GN21GeneralizedIntervalPolicy.singleBounded (lower upper : ℝ) :
     GN21GeneralizedIntervalPolicy where
@@ -15932,6 +15943,13 @@ theorem GN21GeneralizedIntervalPolicy.policy_acceptAll :
     GN21GeneralizedIntervalComponent.policy,
     acceptAllPolicy, positiveTripLengths]
 
+/-- The empty generalized policy has empty policy set. -/
+theorem GN21GeneralizedIntervalPolicy.policy_empty :
+    GN21GeneralizedIntervalPolicy.empty.policy = (∅ : TripPolicy) := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.empty,
+    GN21GeneralizedIntervalPolicy.policy]
+
 /-- The one-component bounded representative has the expected open interval. -/
 theorem GN21GeneralizedIntervalPolicy.policy_singleBounded
     (lower upper : ℝ) :
@@ -15964,6 +15982,11 @@ theorem GN21GeneralizedIntervalPolicy.policy_twoBounded
 theorem GN21GeneralizedIntervalPolicy.complexity_singleBounded
     (lower upper : ℝ) :
     (GN21GeneralizedIntervalPolicy.singleBounded lower upper).complexity = 1 := by
+  rfl
+
+/-- The empty generalized policy has endpoint complexity zero. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_empty :
+    GN21GeneralizedIntervalPolicy.empty.complexity = 0 := by
   rfl
 
 /-- The two-component bounded representative has endpoint complexity two. -/
@@ -16075,6 +16098,86 @@ theorem lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
         hpath_end hpath_cont hpath_deriv hderiv_pos
   · rw [GN21GeneralizedIntervalPolicy.complexity_singleBounded,
       GN21GeneralizedIntervalPolicy.complexity_twoBounded]
+    norm_num
+
+/--
+Concrete generalized-policy Step 2 collapse move.  For a one-bounded-interval
+seed, a nonnegative derivative path moving its lower endpoint to its upper
+endpoint produces a weakly better empty seed with strictly smaller endpoint
+complexity.
+-/
+theorem lemma5_singleBounded_lower_collapse_step_of_endpoint_path
+    (Rhat : SingleStateReward)
+    {lower upper : TripLength} (hlower_upper : lower ≤ upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower =
+        Rhat (GN21GeneralizedIntervalPolicy.singleBounded lower upper).policy)
+    (hpath_end :
+      path upper = Rhat GN21GeneralizedIntervalPolicy.empty.policy)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo lower upper, 0 ≤ derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.singleBounded lower upper).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.singleBounded lower upper).complexity := by
+  refine ⟨GN21GeneralizedIntervalPolicy.empty, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_singleBounded,
+      GN21GeneralizedIntervalPolicy.policy_empty]
+    exact
+      lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path
+        Rhat hlower_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_singleBounded] using
+            hpath_start)
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_empty] using hpath_end)
+        hpath_cont hpath_deriv hderiv_nonneg
+  · rw [GN21GeneralizedIntervalPolicy.complexity_empty,
+      GN21GeneralizedIntervalPolicy.complexity_singleBounded]
+    norm_num
+
+/--
+Strict generalized-policy version of
+`lemma5_singleBounded_lower_collapse_step_of_endpoint_path`.
+-/
+theorem lemma5_singleBounded_lower_collapse_strict_step_of_endpoint_path
+    (Rhat : SingleStateReward)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower =
+        Rhat (GN21GeneralizedIntervalPolicy.singleBounded lower upper).policy)
+    (hpath_end :
+      path upper = Rhat GN21GeneralizedIntervalPolicy.empty.policy)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo lower upper, 0 < derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.singleBounded lower upper).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.singleBounded lower upper).complexity := by
+  refine ⟨GN21GeneralizedIntervalPolicy.empty, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_singleBounded,
+      GN21GeneralizedIntervalPolicy.policy_empty]
+    exact
+      lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
+        Rhat hlower_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_singleBounded] using
+            hpath_start)
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_empty] using hpath_end)
+        hpath_cont hpath_deriv hderiv_pos
+  · rw [GN21GeneralizedIntervalPolicy.complexity_empty,
+      GN21GeneralizedIntervalPolicy.complexity_singleBounded]
     norm_num
 
 /-- The generalized long-trip representative has the canonical long-rejection policy. -/
