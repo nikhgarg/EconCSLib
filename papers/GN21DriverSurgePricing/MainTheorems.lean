@@ -65539,6 +65539,79 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_end
               D.replacement.to_shape_replacements))
 
 /--
+The exact middle-reroute source boundary implies the AE middle-reroute source
+boundary.  Lean derives the separate accept-all optimality field through the
+already compiled Theorem 4 endpoint route, then forgets the all-branch
+reject-middle gap from the local endpoint package.
+-/
+def Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteAESourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_selection := by
+    intro m z hnonneg hparams
+    rcases
+        A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_selection
+          m z hnonneg hparams with
+      ⟨CreplacementData, L⟩
+    let P :
+        Theorem3AcceptAllStructuredPositiveParameterData
+          μ arrival R1 R2 switch12 switch21 m z :=
+      Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams
+    let Cmiddle :
+        Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate
+          μ arrival R1 R2 switch12 switch21 m z :=
+      L.to_fixed_transfer_middle_reroute_of_shape_replacements
+        P A.hR1_pos A.hR1_lt_R2 A.hR2_pos A.hmeasure1_pos
+        A.hmeasure2_pos CreplacementData.to_shape_replacements
+    have H :=
+      paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute
+        μ arrival m z switch12 switch21
+        (Cmiddle.to_endpoint_current_bounds_selection_unless_middle_reroute
+          CreplacementData.to_shape_replacements)
+    exact
+      { replacement := CreplacementData
+        accept_all_optimal := H.1
+        local_endpoint := L.to_ae_local_endpoint }
+
+/--
+The stronger by-policy-form middle-reroute source boundary can be consumed
+through the positive-rejected-mass AE route.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A.to_ae_source_assumptions
+
+/--
 Source-level assumptions for the branch-local middle-reroute route with common
 fixed-state equality data.  Lean expands the equality data into the
 by-policy-form fixed-state packages internally.
@@ -65779,6 +65852,80 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_end
             { replacement := D.replacement
               accept_all_optimal := D.accept_all_optimal
               local_endpoint := D.local_endpoint.to_ae_local_endpoint } }
+
+/--
+The exact common-fixed-state middle-reroute boundary implies its AE version.
+The accept-all optimality field is derived from the same Theorem 4
+middle-reroute endpoint proof used by the exact route.
+-/
+def Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteAESourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_selection := by
+    intro m z hnonneg hparams
+    rcases
+        A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_selection
+          m z hnonneg hparams with
+      ⟨CreplacementData, L⟩
+    let P :
+        Theorem3AcceptAllStructuredPositiveParameterData
+          μ arrival R1 R2 switch12 switch21 m z :=
+      Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams
+    let LbyPolicy :=
+      L.to_fixed_state_by_policy_form
+    let Cmiddle :
+        Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate
+          μ arrival R1 R2 switch12 switch21 m z :=
+      LbyPolicy.to_fixed_transfer_middle_reroute_of_shape_replacements
+        P A.hR1_pos A.hR1_lt_R2 A.hR2_pos A.hmeasure1_pos
+        A.hmeasure2_pos CreplacementData.to_shape_replacements
+    have H :=
+      paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute
+        μ arrival m z switch12 switch21
+        (Cmiddle.to_endpoint_current_bounds_selection_unless_middle_reroute
+          CreplacementData.to_shape_replacements)
+    exact
+      { replacement := CreplacementData
+        accept_all_optimal := H.1
+        local_endpoint := L }
+
+/--
+The stronger common-fixed-state middle-reroute source boundary can be consumed
+through the positive-rejected-mass AE route.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions_via_ae
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A.to_ae_source_assumptions
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is

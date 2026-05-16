@@ -591,7 +591,16 @@ cache is `source.txt`.
   `GN21Theorem3MiddleRerouteAEPolicyFormSourceData` and
   `GN21Theorem3MiddleRerouteAEEqSourceData` so the proof can separately supply
   Lemma 5 replacement data, accept-all optimality, and the local fixed-state
-  endpoint package.
+  endpoint package.  The stronger exact middle-reroute source boundaries now
+  feed this AE route directly through
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae`,
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions_via_ae`.
+  These adapters derive the separate accept-all optimality field from the
+  compiled Theorem 4 middle-reroute endpoint proof, then forget the all-branch
+  reject-middle gap assumption to the positive-rejected-mass AE local endpoint.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.
