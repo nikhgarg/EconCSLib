@@ -203,6 +203,11 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   strict best-response or threshold-uniqueness arguments around an inverse-CDF
   cutoff; prove strict payoff order from these lemmas instead of duplicating
   CDF algebra in a paper file. Use
+  high-skill affine-tail delta wrappers only after auditing the exact slope
+  order they require. A source phrase like "unequal precision" may give only a
+  full-policy ordering, while an eventual comparison of full-minus-sub upper
+  tails can require a separate test-free slope ordering; keep that extra
+  premise explicit unless it is actually derived from the raw model. Use
   `StandardGaussianCDFAPI.mixtureTailMass_antitone_threshold` and
   `StandardGaussianCDFAPI.MixtureThresholdCertificate` for source equations
   where a common admission cutoff realizes a finite group-mixture capacity.
