@@ -42,10 +42,17 @@ Last updated: 2026-05-16
   `paper_theorem3_1_optional_reporting_gaussian_best_response_nontrivial`:
   two-sided best response plus the positive-slope Gaussian reported-score
   estimate rules out both everyone reporting and no one reporting.  The
+  follow-on bridge
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_best_response_tiebreak`
+  packages the report-at-indifference convention into a source-shaped finite
+  reporting-cutoff witness.  The
   analogous report-required nontriviality step is
   `paper_theorem3_1_report_required_affine_best_response_nontrivial`, using
   positive-slope affine expected taking estimates to rule out both
-  everyone taking/reporting and no one taking/reporting.  The paper's
+  everyone taking/reporting and no one taking/reporting.  Its follow-on bridge
+  `paper_theorem3_1_report_required_affine_source_witness_of_best_response_tiebreak`
+  packages the take-at-indifference convention into a source-shaped finite
+  skill-cutoff witness.  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:

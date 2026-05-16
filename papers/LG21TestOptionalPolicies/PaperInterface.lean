@@ -2000,6 +2000,59 @@ theorem paper_interface_theorem3_1_optional_reporting_gaussian_best_response_non
     M theta k hbest
 
 /--
+Theorem 3.1 optional-reporting threshold step from best response and the
+paper's report-at-indifference convention.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_gaussian_threshold_of_best_response_tiebreak
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        reports
+        (fun score : ℝ =>
+          M.posteriorMean (Function.update theta k score))
+        (fun _score : ℝ => noReportEstimate))
+    (htie :
+      ∀ score : ℝ,
+        M.posteriorMean (Function.update theta k score) = noReportEstimate →
+          reports score) :
+    ∃ cutoff : ℝ, ∀ score : ℝ, reports score ↔ cutoff ≤ score :=
+  paper_theorem3_1_optional_reporting_gaussian_threshold_of_best_response_tiebreak
+    M theta k hbest htie
+
+/--
+Theorem 3.1 optional-reporting source witness from base-indexed two-sided best
+responses and the report-at-indifference convention.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_gaussian_source_witness_of_best_response_tiebreak
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (reports : Base → ℝ → Prop) (noReportEstimate : Base → ℝ)
+    (hbest :
+      ∀ base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (reports base)
+          (fun score : ℝ =>
+            (M base).posteriorMean
+              (Function.update (theta base) k score))
+          (fun _score : ℝ => noReportEstimate base))
+    (htie :
+      ∀ base score,
+        (M base).posteriorMean (Function.update (theta base) k score) =
+            noReportEstimate base →
+          reports base score) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base score, W.reports base score ↔ reports base score) ∧
+        (∀ base skill, W.takes base skill) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_gaussian_source_witness_of_best_response_tiebreak
+    M theta k reports noReportEstimate hbest htie
+
+/--
 Theorem 3.1 report-required affine crossing wrapper: affine positive-slope
 expected taking/reporting estimates discharge continuity and strict
 monotonicity, leaving the source proof's no-take continuity and endpoint
@@ -2053,6 +2106,50 @@ theorem paper_interface_theorem3_1_report_required_affine_best_response_nontrivi
       (∃ skill : ℝ, ¬ takes skill) :=
   paper_theorem3_1_report_required_affine_best_response_nontrivial
     intercept hslope hbest
+
+/--
+Theorem 3.1 report-required threshold step from best response and the paper's
+take-at-indifference convention.
+-/
+theorem paper_interface_theorem3_1_report_required_affine_threshold_of_best_response_tiebreak
+    (intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    {takes : ℝ → Prop} {noTakeEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        takes
+        (fun skill : ℝ => intercept + slope * skill)
+        (fun _skill : ℝ => noTakeEstimate))
+    (htie :
+      ∀ skill : ℝ,
+        intercept + slope * skill = noTakeEstimate → takes skill) :
+    ∃ qBar : ℝ, ∀ skill : ℝ, takes skill ↔ qBar ≤ skill :=
+  paper_theorem3_1_report_required_affine_threshold_of_best_response_tiebreak
+    intercept hslope hbest htie
+
+/--
+Theorem 3.1 report-required source witness from base-indexed two-sided best
+responses and the take-at-indifference convention.
+-/
+theorem paper_interface_theorem3_1_report_required_affine_source_witness_of_best_response_tiebreak
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (takes : Base → ℝ → Prop) (noTakeEstimate : Base → ℝ)
+    (hbest :
+      ∀ base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (takes base)
+          (fun skill : ℝ => intercept base + slope base * skill)
+          (fun _skill : ℝ => noTakeEstimate base))
+    (htie :
+      ∀ base skill,
+        intercept base + slope base * skill = noTakeEstimate base →
+          takes base skill) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill ↔ takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
+  paper_theorem3_1_report_required_affine_source_witness_of_best_response_tiebreak
+    intercept slope hslope takes noTakeEstimate hbest htie
 
 /--
 Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding

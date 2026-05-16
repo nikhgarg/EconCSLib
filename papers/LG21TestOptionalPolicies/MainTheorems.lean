@@ -546,6 +546,97 @@ theorem paper_theorem3_1_report_required_affine_best_response_nontrivial
       exact hnoExists ⟨skill, hntake⟩)
 
 /--
+Theorem 3.1 optional-reporting threshold step from best response: for a fixed
+candidate no-report estimate, two-sided best response against the Gaussian
+reported-score estimate plus the paper's report-at-indifference convention
+gives an exact finite lower cutoff.
+-/
+theorem paper_theorem3_1_optional_reporting_gaussian_threshold_of_best_response_tiebreak
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        reports
+        (fun score : ℝ =>
+          M.posteriorMean (Function.update theta k score))
+        (fun _score : ℝ => noReportEstimate))
+    (htie :
+      ∀ score : ℝ,
+        M.posteriorMean (Function.update theta k score) = noReportEstimate →
+          reports score) :
+    ∃ cutoff : ℝ, ∀ score : ℝ, reports score ↔ cutoff ≤ score := by
+  let cutoff : ℝ :=
+    affineCutoff
+      (M.posteriorMean (Function.update theta k 0) -
+        M.centeredFamily.signalWeight k * 0)
+      (M.centeredFamily.signalWeight k) noReportEstimate
+  refine ⟨cutoff, ?_⟩
+  intro score
+  have hthreshold :
+      noReportEstimate ≤ M.posteriorMean (Function.update theta k score) ↔
+        cutoff ≤ score := by
+    simpa [cutoff] using
+      paper_reporting_gaussian_threshold_iff_cutoff
+        M theta k 0 noReportEstimate score
+  constructor
+  · intro hreport
+    exact hthreshold.1 (hbest.1 score hreport)
+  · intro hcutoff
+    have hle :
+        noReportEstimate ≤
+          M.posteriorMean (Function.update theta k score) :=
+      hthreshold.2 hcutoff
+    by_cases hreport : reports score
+    · exact hreport
+    · have hother := hbest.2 score hreport
+      have heq :
+          M.posteriorMean (Function.update theta k score) =
+            noReportEstimate :=
+        le_antisymm hother hle
+      exact htie score heq
+
+/--
+Theorem 3.1 report-required threshold step from best response: for a fixed
+candidate no-take estimate, two-sided best response against a positive-slope
+affine taking estimate plus the paper's take-at-indifference convention gives
+an exact finite lower cutoff in latent skill.
+-/
+theorem paper_theorem3_1_report_required_affine_threshold_of_best_response_tiebreak
+    (intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    {takes : ℝ → Prop} {noTakeEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        takes
+        (fun skill : ℝ => intercept + slope * skill)
+        (fun _skill : ℝ => noTakeEstimate))
+    (htie :
+      ∀ skill : ℝ,
+        intercept + slope * skill = noTakeEstimate → takes skill) :
+    ∃ qBar : ℝ, ∀ skill : ℝ, takes skill ↔ qBar ≤ skill := by
+  let qBar : ℝ := affineCutoff intercept slope noTakeEstimate
+  refine ⟨qBar, ?_⟩
+  intro skill
+  have hthreshold :
+      noTakeEstimate ≤ intercept + slope * skill ↔ qBar ≤ skill := by
+    simpa [qBar] using
+      paper_reporting_affine_estimate_threshold_iff_cutoff
+        (intercept := intercept) (slope := slope)
+        (threshold := noTakeEstimate) (score := skill) hslope
+  constructor
+  · intro htake
+    exact hthreshold.1 (hbest.1 skill htake)
+  · intro hqBar
+    have hle : noTakeEstimate ≤ intercept + slope * skill :=
+      hthreshold.2 hqBar
+    by_cases htake : takes skill
+    · exact htake
+    · have hother := hbest.2 skill htake
+      have heq : intercept + slope * skill = noTakeEstimate :=
+        le_antisymm hother hle
+      exact htie skill heq
+
+/--
 Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
 reporting strategy cannot satisfy no-profitable-withholding-deviation when the
 no-report estimate lies strictly inside the cutoff interval.
@@ -3316,6 +3407,62 @@ theorem paper_theorem3_1_optional_reporting_threshold_conclusions_of_gaussian_be
       M theta k reportingBase threshold)
 
 /--
+Theorem 3.1 optional-reporting source witness from two-sided best response and
+the paper's report-at-indifference convention.  This packages the source proof
+step that any nondegenerate Gaussian best-response equilibrium has both
+reported and withheld scores, and reporting is a finite lower-cutoff rule.
+-/
+theorem paper_theorem3_1_optional_reporting_gaussian_source_witness_of_best_response_tiebreak
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (reports : Base → ℝ → Prop) (noReportEstimate : Base → ℝ)
+    (hbest :
+      ∀ base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (reports base)
+          (fun score : ℝ =>
+            (M base).posteriorMean
+              (Function.update (theta base) k score))
+          (fun _score : ℝ => noReportEstimate base))
+    (htie :
+      ∀ base score,
+        (M base).posteriorMean (Function.update (theta base) k score) =
+            noReportEstimate base →
+          reports base score) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base score, W.reports base score ↔ reports base score) ∧
+        (∀ base skill, W.takes base skill) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) := by
+  let W : LG21OptionalReportingStrategicWithholdingSourceWitness Base :=
+    { reports := reports
+      takes := fun _base _skill => True
+      all_take := by
+        intro _base _skill
+        trivial
+      some_access_students_do_not_report := by
+        let base : Base := Classical.choice inferInstance
+        rcases
+          paper_theorem3_1_optional_reporting_gaussian_best_response_nontrivial
+            (M base) (theta base) k (hbest base) with
+          ⟨_hsomeReport, hsomeNoReport⟩
+        rcases hsomeNoReport with ⟨score, hnreport⟩
+        exact ⟨base, score, hnreport⟩
+      reporting_threshold := by
+        intro base
+        exact
+          paper_theorem3_1_optional_reporting_gaussian_threshold_of_best_response_tiebreak
+            (M base) (theta base) k (hbest base) (htie base) }
+  refine ⟨W, ?_, ?_, ?_⟩
+  · intro _base _score
+    rfl
+  · intro _base _skill
+    trivial
+  · exact W.reporting_threshold
+
+/--
 Theorem 3.1 optional-reporting crossing step.  If the reported-score estimate
 is strictly increasing and a candidate no-report estimate varies continuously
 with the cutoff, then opposite endpoint comparisons produce a finite cutoff
@@ -3570,6 +3717,51 @@ theorem paper_theorem3_1_report_required_threshold_conclusions_of_source_witness
       (∀ base, ∃ qBar : ℝ,
         ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
   ⟨W.some_access_students_do_not_take, W.taking_threshold⟩
+
+/--
+Theorem 3.1 report-required source witness from two-sided best response and
+the paper's take-at-indifference convention.  This packages the source proof
+step that any nondegenerate positive-slope affine best-response equilibrium
+has both taking and non-taking types, and taking/reporting is a finite lower
+cutoff in latent skill.
+-/
+theorem paper_theorem3_1_report_required_affine_source_witness_of_best_response_tiebreak
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (takes : Base → ℝ → Prop) (noTakeEstimate : Base → ℝ)
+    (hbest :
+      ∀ base,
+        lg21NoProfitableBinaryChoiceDeviation
+          (takes base)
+          (fun skill : ℝ => intercept base + slope base * skill)
+          (fun _skill : ℝ => noTakeEstimate base))
+    (htie :
+      ∀ base skill,
+        intercept base + slope base * skill = noTakeEstimate base →
+          takes base skill) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill ↔ takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) := by
+  let W : LG21ReportRequiredStrategicWithholdingSourceWitness Base :=
+    { takes := takes
+      some_access_students_do_not_take := by
+        let base : Base := Classical.choice inferInstance
+        rcases
+          paper_theorem3_1_report_required_affine_best_response_nontrivial
+            (intercept base) (hslope base) (hbest base) with
+          ⟨_hsomeTake, hsomeNoTake⟩
+        rcases hsomeNoTake with ⟨skill, hntake⟩
+        exact ⟨base, skill, hntake⟩
+      taking_threshold := by
+        intro base
+        exact
+          paper_theorem3_1_report_required_affine_threshold_of_best_response_tiebreak
+            (intercept base) (hslope base) (hbest base) (htie base) }
+  refine ⟨W, ?_, ?_⟩
+  · intro _base _skill
+    rfl
+  · exact W.taking_threshold
 
 /--
 Theorem 3.1 report-required crossing step.  The expected estimate from
