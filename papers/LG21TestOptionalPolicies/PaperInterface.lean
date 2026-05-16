@@ -941,6 +941,49 @@ theorem paper_interface_theorem3_1_optional_no_report_mixture_high_endpoint_exis
     hC_nonneg hC_lt_one baseOnlyEstimate M theta k scoreLaw low
 
 /--
+Theorem 3.1 low endpoint support: far enough in the left tail, an affine
+reported/take payoff is below the source mixture with a Gaussian lower-tail
+component.
+-/
+theorem paper_interface_theorem3_1_affine_lower_tail_mixture_low_endpoint_exists
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    (scoreLaw : GaussianScaleLaw) :
+    ∃ low : ℝ,
+      intercept + slope * low <
+        lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate scoreLaw
+          (fun cutoff : ℝ =>
+            intercept + slope * standardGaussianLowerTailMean scoreLaw cutoff)
+          low :=
+  paper_theorem3_1_affine_lower_tail_mixture_low_endpoint_exists
+    hC_nonneg hC_lt_one baseOnlyEstimate intercept hslope scoreLaw
+
+/--
+Theorem 3.1 optional-reporting low endpoint for the paper's Gaussian posterior
+no-report mixture.
+-/
+theorem paper_interface_theorem3_1_optional_no_report_mixture_low_endpoint_exists
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) :
+    ∃ low : ℝ,
+      M.posteriorMean (Function.update theta k low) <
+        lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate scoreLaw
+          (fun cutoff : ℝ =>
+            M.posteriorMean
+              (Function.update theta k
+                (standardGaussianLowerTailMean scoreLaw cutoff)))
+          low :=
+  paper_theorem3_1_optional_no_report_mixture_low_endpoint_exists
+    hC_nonneg hC_lt_one baseOnlyEstimate M theta k scoreLaw
+
+/--
 Theorem 3.1 report-required high endpoint: the source no-take mixture is below
 the take/report affine estimate at some finite high cutoff.
 -/
@@ -977,6 +1020,25 @@ theorem paper_interface_theorem3_1_report_required_no_take_mixture_high_endpoint
           intercept + slope * high :=
   paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists_after
     hC_nonneg hC_lt_one baseOnlyEstimate intercept hslope skillLaw low
+
+/--
+Theorem 3.1 report-required low endpoint for the paper's affine no-take
+mixture.
+-/
+theorem paper_interface_theorem3_1_report_required_no_take_mixture_low_endpoint_exists
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    (skillLaw : GaussianScaleLaw) :
+    ∃ low : ℝ,
+      intercept + slope * low <
+        lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate skillLaw
+          (fun qBar : ℝ =>
+            intercept + slope * standardGaussianLowerTailMean skillLaw qBar)
+          low :=
+  paper_theorem3_1_report_required_no_take_mixture_low_endpoint_exists
+    hC_nonneg hC_lt_one baseOnlyEstimate intercept hslope skillLaw
 
 /-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
 theorem paper_interface_monotone_of_lowerCutoffStrategy

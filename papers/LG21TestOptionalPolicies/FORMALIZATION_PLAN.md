@@ -76,8 +76,15 @@ Last updated: 2026-05-16
   `lt_lg21OptionalNoReportMixtureEstimate_of_weighted_gap_pos` and
   `lg21OptionalNoReportMixtureEstimate_lt_of_weighted_gap_neg` handle the
   low-endpoint case where the access lower-tail component can be below the
-  target but has small Gaussian mass.  The high-endpoint inequalities for both
-  policy regimes are now closed by
+  target but has small Gaussian mass.  The Gaussian Mills/symmetry bridge
+  `standardGaussian_normalCDF_mul_lowerTailMean_sub_tendsto_atBot` proves that
+  this CDF-weighted lower-tail correction vanishes in the far left tail, and
+  `paper_theorem3_1_affine_lower_tail_mixture_low_endpoint_exists` closes the
+  generic affine low endpoint.  Its optional/report-required specializations
+  are
+  `paper_theorem3_1_optional_no_report_mixture_low_endpoint_exists` and
+  `paper_theorem3_1_report_required_no_take_mixture_low_endpoint_exists`.
+  The high-endpoint inequalities for both policy regimes are closed by
   `paper_theorem3_1_optional_no_report_mixture_high_endpoint_exists` and
   `paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists`:
   the reported/take payoff eventually exceeds the base-only component, and the
@@ -90,8 +97,11 @@ Last updated: 2026-05-16
   `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture_low_endpoint`
   and
   `paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture_low_endpoint`
-  now leave only the low-endpoint weighted-gap comparison as an external
-  endpoint hypothesis.  The paper's
+  expose the former low-endpoint-only boundary, while
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture`
+  now choose both endpoints automatically.  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:

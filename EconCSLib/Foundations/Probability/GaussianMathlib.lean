@@ -23,9 +23,11 @@ standard-normal interfaces used by admissions and testing formalizations.
 
 - `continuous_cdf_of_noAtoms`
 - `standardGaussianMeasure`
+- `standardGaussianCDF_neg_eq_one_sub`
 - `standardGaussianCDFAPI`
 - `standardGaussianCDFOrderIso`
 - `standardGaussianLowerTailMeanCertificate`
+- `standardGaussian_normalCDF_mul_lowerTailMean_sub_tendsto_atBot`
 - `standardGaussianHazardInverseCertificate`
 -/
 
@@ -213,6 +215,45 @@ theorem standardGaussianCDF_zero_eq_half :
         (μ := standardGaussianMeasure) (s := Iic (0 : ℝ)) measurableSet_Iic)
   linarith
 
+/-- Symmetry of the mathlib-backed standard Gaussian CDF. -/
+theorem standardGaussianCDF_neg_eq_one_sub (z : ℝ) :
+    standardGaussianCDF (-z) = 1 - standardGaussianCDF z := by
+  unfold standardGaussianCDF
+  rw [ProbabilityTheory.cdf_eq_real, ProbabilityTheory.cdf_eq_real]
+  have hIicIci_measure :
+      standardGaussianMeasure (Iic (-z)) =
+        standardGaussianMeasure (Ici z) := by
+    calc
+      standardGaussianMeasure (Iic (-z))
+          = (standardGaussianMeasure.map (fun x : ℝ => -x)) (Iic (-z)) := by
+              rw [standardGaussianMeasure_map_neg]
+      _ = standardGaussianMeasure
+          ((fun x : ℝ => -x) ⁻¹' Iic (-z)) := by
+              rw [Measure.map_apply (by fun_prop) measurableSet_Iic]
+      _ = standardGaussianMeasure (Ici z) := by
+              congr 1
+              ext x
+              simp
+  have hIicIci_real :
+      standardGaussianMeasure.real (Iic (-z)) =
+        standardGaussianMeasure.real (Ici z) := by
+    simp [measureReal_def, hIicIci_measure]
+  have hIciIoi_real :
+      standardGaussianMeasure.real (Ici z) =
+        standardGaussianMeasure.real (Ioi z) := by
+    simpa using
+      (MeasureTheory.measureReal_congr
+        (μ := standardGaussianMeasure)
+        ((MeasureTheory.Ioi_ae_eq_Ici
+          (μ := standardGaussianMeasure) (a := z)).symm))
+  have hcompl :
+      standardGaussianMeasure.real (Ioi z) =
+        1 - standardGaussianMeasure.real (Iic z) := by
+    simpa using
+      (MeasureTheory.probReal_compl_eq_one_sub
+        (μ := standardGaussianMeasure) (s := Iic z) measurableSet_Iic)
+  linarith
+
 /-- The mathlib-backed standard Gaussian density is nonnegative. -/
 theorem standardGaussianDensity_nonneg (z : ℝ) :
     0 ≤ standardGaussianDensity z := by
@@ -235,6 +276,13 @@ theorem standardGaussianDensity_eq_mills_integrand (z : ℝ) :
   unfold standardGaussianDensity
   rw [ProbabilityTheory.gaussianPDFReal_def]
   simp
+
+/-- Symmetry of the mathlib-backed standard Gaussian density. -/
+theorem standardGaussianDensity_neg (z : ℝ) :
+    standardGaussianDensity (-z) = standardGaussianDensity z := by
+  rw [standardGaussianDensity_eq_mills_integrand,
+    standardGaussianDensity_eq_mills_integrand]
+  ring_nf
 
 /-- The mathlib-backed standard Gaussian CDF is nonnegative. -/
 theorem standardGaussianCDF_nonneg (z : ℝ) :
@@ -459,6 +507,16 @@ def standardGaussianHazard (z : ℝ) : ℝ :=
     standardGaussianHazard z =
       standardGaussianDensity z / (1 - standardGaussianCDF z) := rfl
 
+/--
+Left-tail CDF times right-tail hazard equals the density.  This is the
+Gaussian symmetry identity used to control lower-tail conditional means.
+-/
+theorem standardGaussianCDF_neg_mul_hazard (t : ℝ) :
+    standardGaussianCDF (-t) * standardGaussianHazard t =
+      standardGaussianDensity t := by
+  rw [standardGaussianCDF_neg_eq_one_sub, standardGaussianHazard_eq]
+  field_simp [(standardGaussianTail_pos t).ne']
+
 /-- The mathlib-backed standard normal hazard rate is strictly positive. -/
 theorem standardGaussianHazard_pos (z : ℝ) :
     0 < standardGaussianHazard z := by
@@ -670,6 +728,167 @@ theorem standardGaussianDensity_tendsto_atBot_zero :
     filter_upwards with t
     rw [standardGaussianDensity_eq_mills_integrand]
   simpa using hdensity
+
+/-- The standard Gaussian density tends to zero at `+∞`. -/
+theorem standardGaussianDensity_tendsto_atTop_zero :
+    Tendsto standardGaussianDensity atTop (𝓝 0) := by
+  have hconst :=
+    (tendsto_const_nhds
+      (x := (Real.sqrt (2 * Real.pi))⁻¹)).mul
+        gaussianExpFactor_tendsto_atTop_zero
+  have hdensity :
+      Tendsto standardGaussianDensity atTop
+        (𝓝 ((Real.sqrt (2 * Real.pi))⁻¹ * 0)) := by
+    refine hconst.congr' ?_
+    filter_upwards with t
+    rw [standardGaussianDensity_eq_mills_integrand]
+  simpa using hdensity
+
+/-- The left-tail probability times the positive tail coordinate tends to zero. -/
+theorem standardGaussianCDF_neg_mul_id_tendsto_atTop_zero :
+    Tendsto (fun t : ℝ => standardGaussianCDF (-t) * t) atTop (𝓝 0) := by
+  let normalizingConst : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hconst_nonneg : 0 ≤ normalizingConst := by
+    dsimp [normalizingConst]
+    exact inv_nonneg.mpr
+      (Real.sqrt_nonneg (2 * Real.pi))
+  have hconst_exp :
+      Tendsto (fun t : ℝ =>
+          normalizingConst * Real.exp (-(t ^ 2) / 2))
+        atTop (𝓝 0) := by
+    simpa using
+      (tendsto_const_nhds (x := normalizingConst)).mul
+        gaussianExpFactor_tendsto_atTop_zero
+  refine squeeze_zero' ?_ ?_ hconst_exp
+  · filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
+    exact mul_nonneg (standardGaussianCDF_nonneg (-t)) ht
+  · filter_upwards [eventually_gt_atTop (0 : ℝ)] with t ht
+    have htail_lt :
+        gaussianMillsTail t < Real.exp (-(t ^ 2) / 2) / t := by
+      simpa [gaussianMillsUpperGap, sub_pos] using
+        gaussianMillsUpperGap_pos_of_pos ht
+    have htail_mul_le :
+        gaussianMillsTail t * t ≤ Real.exp (-(t ^ 2) / 2) := by
+      have hmul := mul_lt_mul_of_pos_right htail_lt ht
+      have hright :
+          (Real.exp (-(t ^ 2) / 2) / t) * t =
+            Real.exp (-(t ^ 2) / 2) := by
+        field_simp [ht.ne']
+      exact le_of_lt (by simpa [hright] using hmul)
+    calc
+      standardGaussianCDF (-t) * t =
+          (1 - standardGaussianCDF t) * t := by
+            rw [standardGaussianCDF_neg_eq_one_sub]
+      _ = (normalizingConst * gaussianMillsTail t) * t := by
+            rw [standardGaussianTail_eq_const_mul_millsTail]
+      _ = normalizingConst * (gaussianMillsTail t * t) := by ring
+      _ ≤ normalizingConst * Real.exp (-(t ^ 2) / 2) :=
+            mul_le_mul_of_nonneg_left htail_mul_le hconst_nonneg
+
+/--
+The product of a left-tail probability with the lower-tail hazard gap tends to
+zero.  Equivalently, `Φ(-t) * (t - h(t)) -> 0` for the standard normal hazard
+`h`.
+-/
+theorem standardGaussianCDF_neg_mul_hazard_gap_tendsto_atTop_zero :
+    Tendsto
+      (fun t : ℝ =>
+        standardGaussianCDF (-t) * (t - standardGaussianHazard t))
+      atTop (𝓝 0) := by
+  have hdiff :=
+    standardGaussianCDF_neg_mul_id_tendsto_atTop_zero.sub
+      standardGaussianDensity_tendsto_atTop_zero
+  have hdiff_zero :
+      Tendsto
+        (fun t : ℝ => standardGaussianCDF (-t) * t - standardGaussianDensity t)
+        atTop (𝓝 0) := by
+    simpa using hdiff
+  refine hdiff_zero.congr' ?_
+  filter_upwards with t
+  rw [mul_sub, standardGaussianCDF_neg_mul_hazard]
+
+/--
+For any Gaussian location-scale law, the lower-tail conditional-mean gap is
+small after multiplying by the left-tail mass.
+-/
+theorem standardGaussian_normalCDF_mul_lowerTailMean_sub_tendsto_atBot
+    (L : GaussianScaleLaw) :
+    Tendsto
+      (fun cutoff : ℝ =>
+        standardGaussianCDF (L.standardize cutoff) *
+          (standardGaussianLowerTailMean L cutoff - cutoff))
+      atBot (𝓝 0) := by
+  have hstd :
+      Tendsto (fun cutoff : ℝ => L.standardize cutoff) atBot atBot := by
+    have hscale_inv_pos : 0 < L.scale⁻¹ := inv_pos.mpr L.scale_pos
+    have hmul :
+        Tendsto
+          (fun cutoff : ℝ =>
+            L.scale⁻¹ * cutoff + (-L.mean / L.scale))
+          atBot atBot :=
+      ((Filter.tendsto_const_mul_atBot_of_pos hscale_inv_pos).2
+        Filter.tendsto_id).atBot_add tendsto_const_nhds
+    convert hmul using 1
+    ext cutoff
+    rw [GaussianScaleLaw.standardize]
+    field_simp [ne_of_gt L.scale_pos]
+    ring
+  have hneg :
+      Tendsto (fun cutoff : ℝ => -L.standardize cutoff) atBot atTop :=
+    tendsto_neg_atBot_atTop.comp hstd
+  have htail :=
+    standardGaussianCDF_neg_mul_hazard_gap_tendsto_atTop_zero.comp hneg
+  have hscaled :=
+    (tendsto_const_nhds (x := L.scale)).mul htail
+  have hscaled_zero :
+      Tendsto
+        (fun cutoff : ℝ =>
+          L.scale *
+            (standardGaussianCDF (-(-L.standardize cutoff)) *
+              ((-L.standardize cutoff) -
+                standardGaussianHazard (-L.standardize cutoff))))
+        atBot (𝓝 (L.scale * 0)) := by
+    simpa using hscaled
+  have hscaled_zero' :
+      Tendsto
+        (fun cutoff : ℝ =>
+          L.scale *
+            (standardGaussianCDF (-(-L.standardize cutoff)) *
+              ((-L.standardize cutoff) -
+                standardGaussianHazard (-L.standardize cutoff))))
+        atBot (𝓝 0) := by
+    simpa only [mul_zero] using hscaled_zero
+  refine hscaled_zero'.congr' ?_
+  filter_upwards with cutoff
+  have hcutoff :
+      L.mean + L.scale * L.standardize cutoff = cutoff := by
+    simpa [GaussianScaleLaw.unstandardize] using
+      L.unstandardize_standardize cutoff
+  have hsub :
+      standardGaussianLowerTailMean L cutoff - cutoff =
+        L.scale *
+          ((-L.standardize cutoff) -
+            standardGaussianHazard (-L.standardize cutoff)) := by
+    have hscale_std : L.scale * L.standardize cutoff = cutoff - L.mean := by
+      linarith
+    dsimp [standardGaussianLowerTailMean]
+    nlinarith
+  calc
+    L.scale *
+        (standardGaussianCDF (-(-L.standardize cutoff)) *
+          ((-L.standardize cutoff) -
+            standardGaussianHazard (-L.standardize cutoff)))
+        =
+      L.scale *
+        (standardGaussianCDF (L.standardize cutoff) *
+          ((-L.standardize cutoff) -
+            standardGaussianHazard (-L.standardize cutoff))) := by
+          ring_nf
+    _ =
+      standardGaussianCDF (L.standardize cutoff) *
+        (standardGaussianLowerTailMean L cutoff - cutoff) := by
+          rw [hsub]
+          ring
 
 /-- The standard normal hazard tends to zero at `-∞`. -/
 theorem standardGaussianHazard_tendsto_atBot_zero :
