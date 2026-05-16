@@ -113,12 +113,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_binary_mixture_point_estimate_source`
   now discharge the positive-share mixture identity when the observable-access
   law is built as a Bernoulli reporter/no-reporter mixture.  The report-required
-  endpoint
+  and optional-reporting endpoints
   `paper_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_binary_mixture_point_estimate_source`
-  now combines that mixture wrapper with the concrete Definition 1
-  best-response bridge.  The remaining source gap is instantiating the
-  affine-payoff identities and routing concrete policy surfaces through this
-  mixture wrapper.
+  and
+  `paper_theorem3_2_observable_fair_optional_reporting_source_equilibrium_implies_test_blank_of_binary_mixture_point_estimate_source`
+  now combine that mixture wrapper with the concrete Definition 1 best-response
+  bridges.  The remaining source gap is instantiating the affine-payoff
+  identities and routing concrete policy surfaces through these wrappers.
 
 ## Source Notes
 

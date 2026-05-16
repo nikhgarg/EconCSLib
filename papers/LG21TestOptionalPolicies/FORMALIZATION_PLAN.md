@@ -227,11 +227,12 @@ Last updated: 2026-05-16
   concrete source equilibrium models.  The PMF binary-mixture helper
   `lg21BinaryMixturePMF` now supplies the positive-share reporter/no-reporter
   mixture identity for source surfaces that define observable-access estimates
-  with a Bernoulli share.  The report-required point-estimate endpoint now
-  combines this binary-mixture wrapper with the concrete Definition 1
-  best-response bridge.  The remaining source gap is instantiating the
+  with a Bernoulli share.  The optional-reporting and report-required
+  point-estimate endpoints now combine this binary-mixture wrapper with the
+  concrete Definition 1 best-response bridge.  The remaining source gap is
+  instantiating the
   affine-payoff identities from the full policy model and routing concrete
-  policy surfaces through the mixture wrapper.
+  policy surfaces through these wrappers.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -365,10 +366,9 @@ Last updated: 2026-05-16
    predicate directly from the concrete source equilibrium models.  The
    PMF binary-mixture wrapper discharges the positive-share mixture identity
    when observable-access estimates are built from `lg21BinaryMixturePMF`, and
-   the report-required endpoint now combines this with concrete Definition 1
-   best response.  The next work should instantiate the optional-reporting
-   binary-mixture analogue and then the remaining affine-payoff identities from
-   the paper's full source policy model.
+   the optional-reporting and report-required endpoints now combine this with
+   concrete Definition 1 best response.  The next work should instantiate the
+   remaining affine-payoff identities from the paper's full source policy model.
 
 ## Reusable Library Seams
 
