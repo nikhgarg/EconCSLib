@@ -443,6 +443,36 @@ theorem paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_
     paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding
       M theta k hcutoffStrategy hnoDeviation hscore_lt hlow hcutoff
 
+/--
+Lemma 4.1 optional-reporting endpoint bridge: if every non-all-reporting
+candidate equilibrium yields the finite cutoff and cutoff-estimate inequality
+used in the source proof, then no-profitable-withholding forces all scores to
+be reported.
+-/
+theorem paper_lemma4_1_all_report_of_gaussian_cutoff_if_not_all_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hcutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate <
+              M.posteriorMean (Function.update theta k cutoff))
+    (hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate) :
+    ∀ score : ℝ, reports score := by
+  by_contra hnotAll
+  rcases hcutoffIfNotAll hnotAll with
+    ⟨cutoff, hcutoffStrategy, hcutoff⟩
+  exact False.elim
+    (paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
+      M theta k hcutoffStrategy hnoDeviation hcutoff)
+
 /-- Gaussian law of a raw test score conditional on latent skill. -/
 def lg21GaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw where
@@ -583,6 +613,32 @@ theorem paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
     linarith [hskill_mem.2]
   have hnoProfit := hnoDeviation skill hnotTake
   linarith
+
+/--
+Lemma 4.1 report-required endpoint bridge: if every non-all-taking candidate
+equilibrium yields the finite taking cutoff and `q̃ < q̄` inequality used in
+the source proof, then no-profitable-test-taking forces all access students to
+take the test.
+-/
+theorem paper_lemma4_1_all_take_of_cutoff_if_not_all_no_profitable_test_taking
+    (api : StandardGaussianCDFAPI) {takes : ℝ → Prop} {qTilde scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧ qTilde < qBar)
+    (hnoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill := by
+  by_contra hnotAll
+  rcases hcutoffIfNotAll hnotAll with
+    ⟨qBar, hcutoffStrategy, hcutoff⟩
+  exact False.elim
+    (paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
+      api hscale hcutoffStrategy hnoDeviation hcutoff)
 
 /--
 Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different

@@ -381,6 +381,30 @@ theorem paper_interface_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_p
   paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
     M theta k hcutoffStrategy hnoDeviation hcutoff
 
+/--
+Lemma 4.1 optional-reporting endpoint bridge: threshold-if-not-all plus
+no-profitable-withholding implies all scores are reported.
+-/
+theorem paper_interface_lemma4_1_all_report_of_gaussian_cutoff_if_not_all_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hcutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            noReportEstimate <
+              M.posteriorMean (Function.update theta k cutoff))
+    (hnoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate) :
+    ∀ score : ℝ, reports score :=
+  paper_lemma4_1_all_report_of_gaussian_cutoff_if_not_all_no_profitable_withholding
+    M theta k hcutoffIfNotAll hnoDeviation
+
 /-- Lemma 4.1 test-taking support: Gaussian score law conditional on skill. -/
 abbrev paperGaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw :=
@@ -451,6 +475,26 @@ theorem paper_interface_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable
     False :=
   paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
     api hscale hcutoffStrategy hnoDeviation hcutoff
+
+/--
+Lemma 4.1 reporting-required endpoint bridge: threshold-if-not-all plus
+no-profitable-test-taking implies all access students take the test.
+-/
+theorem paper_interface_lemma4_1_all_take_of_cutoff_if_not_all_no_profitable_test_taking
+    (api : StandardGaussianCDFAPI) {takes : ℝ → Prop} {qTilde scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧ qTilde < qBar)
+    (hnoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill :=
+  paper_lemma4_1_all_take_of_cutoff_if_not_all_no_profitable_test_taking
+    api hscale hcutoffIfNotAll hnoDeviation
 
 /--
 Fixed-base posterior-score law: all non-test information is fixed and the
