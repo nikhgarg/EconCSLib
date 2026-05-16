@@ -97,6 +97,7 @@ The fixed-response part of Lemma 5 now has an a.e.-strict source endpoint:
 ```lean
 paper_lemma5_marginal_optimizer_replacement_ae_of_response_shape
 paper_lemma5_fixed_response_policy_form_ae_of_response_shape
+paper_lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
 theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE
 theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE
 ```
@@ -110,6 +111,13 @@ endpoint proof needs exact interval syntax, use the two representative theorems
 above, then transfer measured facts back with:
 
 ```lean
+Lemma5FeasiblePolicyFormAlmostEverywhereData
+Lemma5FeasiblePolicyFormAlmostEverywhereData.to_policyFormAlmostEverywhere
+Lemma5FeasiblePolicyFormAlmostEverywhereData.acceptAllAlmostEverywhere_of_positive
+GN21MeasuredPairNondegenerate.congr_left_policy_ae
+GN21MeasuredPairNondegenerate.congr_right_policy_ae
+gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
 singleStateTripMass_congr_policy_ae
 singleStateTripTime_congr_policy_ae
 singleStateTripPayment_congr_policy_ae
@@ -120,6 +128,11 @@ gn21ScaledStateEarning_congr_policy_ae
 gn21MeasuredAggregateRewardPrimitives_congr_left_policy_ae
 gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
 ```
+
+The feasible a.e. representative is now the preferred handoff object for
+Theorem 4 endpoint moves: prove the concrete endpoint improvement on
+`D.policy`, then use the two `...congr_current_ae` lemmas to move the feasible
+strict aggregate improvement back to the original optimal policy.
 
 The global calculus part of Lemma 5 Step 2 is now compiled:
 

@@ -16242,6 +16242,29 @@ def lemma5PolicyFormAlmostEverywhere
   ∃ σstar : TripPolicy,
     lemma5PolicyForm shape σstar ∧ policyAlmostEverywhereEq μ σ σstar
 
+/--
+Feasible representative version of the Lemma 5 almost-everywhere policy-form
+conclusion.  The source proof eventually applies endpoint calculus to the
+exact interval/ray representative, so this package keeps its feasibility and
+measurability available instead of hiding them behind an existential.
+-/
+structure Lemma5FeasiblePolicyFormAlmostEverywhereData
+    (μ : Measure TripLength) (shape : Lemma5DerivativeShape)
+    (σ : TripPolicy) where
+  policy : TripPolicy
+  policy_subset : policy ⊆ acceptAllPolicy
+  policy_measurable : MeasurableSet policy
+  policy_form : lemma5PolicyForm shape policy
+  policy_ae : policyAlmostEverywhereEq μ σ policy
+
+/-- Forget the feasible representative data to the source a.e. policy-form predicate. -/
+def Lemma5FeasiblePolicyFormAlmostEverywhereData.to_policyFormAlmostEverywhere
+    {μ : Measure TripLength} {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (D : Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ) :
+    lemma5PolicyFormAlmostEverywhere μ shape σ :=
+  ⟨D.policy, D.policy_form, D.policy_ae⟩
+
 /-- Exact Lemma 5 policy form immediately gives the AE policy-form version. -/
 theorem lemma5PolicyFormAlmostEverywhere_of_policyForm
     (μ : Measure TripLength) {shape : Lemma5DerivativeShape}
@@ -16261,6 +16284,67 @@ theorem policyAlmostEverywhereEq_of_diff_null
     policyAlmostEverywhereEq μ σ τ := by
   rw [policyAlmostEverywhereEq, Set.symmDiff_def]
   exact measure_union_null hστ hτσ
+
+/-- Null symmetric-difference policy equality is symmetric. -/
+theorem policyAlmostEverywhereEq.symm
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    policyAlmostEverywhereEq μ τ σ := by
+  rw [policyAlmostEverywhereEq, Set.symmDiff_def] at hae
+  exact policyAlmostEverywhereEq_of_diff_null μ
+    (measure_mono_null (by intro x hx; exact Or.inr hx) hae)
+    (measure_mono_null (by intro x hx; exact Or.inl hx) hae)
+
+/-- Intersecting the same left set with two a.e. equal policies preserves a.e. equality. -/
+theorem policyAlmostEverywhereEq.diff_left
+    (μ : Measure TripLength) (A : Set TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    policyAlmostEverywhereEq μ (A \ σ) (A \ τ) := by
+  rw [policyAlmostEverywhereEq] at hae ⊢
+  refine measure_mono_null ?_ hae
+  intro x hx
+  rw [Set.mem_symmDiff] at hx ⊢
+  rcases hx with hx | hx
+  · rcases hx with ⟨hxAσ, hnotAτ⟩
+    have hτ : x ∈ τ := by
+      by_contra hτ
+      exact hnotAτ ⟨hxAσ.1, hτ⟩
+    exact Or.inr ⟨hτ, hxAσ.2⟩
+  · rcases hx with ⟨hxAτ, hnotAσ⟩
+    have hσ : x ∈ σ := by
+      by_contra hσ
+      exact hnotAσ ⟨hxAτ.1, hσ⟩
+    exact Or.inl ⟨hσ, hxAτ.2⟩
+
+/-- Rejected feasible-trip mass is invariant under null symmetric-difference equality. -/
+theorem acceptAllDiff_measure_congr_policy_ae
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    μ (acceptAllPolicy \ σ) = μ (acceptAllPolicy \ τ) :=
+  measure_congr
+    (measure_symmDiff_eq_zero_iff.mp
+      (policyAlmostEverywhereEq.diff_left μ acceptAllPolicy hae))
+
+/--
+If a policy is a.e. equal to an exact accept-all policy, then it is
+accept-all almost everywhere in the source convention.
+-/
+theorem acceptAllAlmostEverywhere_of_policyAlmostEverywhereEq_acceptsAll
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ)
+    (hall : acceptsAllTrips τ) :
+    acceptAllAlmostEverywhere μ σ := by
+  rw [acceptAllAlmostEverywhere]
+  rw [acceptAllDiff_measure_congr_policy_ae μ hae]
+  exact acceptAllAlmostEverywhere_of_acceptsAllTrips μ hall
+
+/-- The positive Lemma 5 feasible representative gives accept-all almost everywhere. -/
+theorem Lemma5FeasiblePolicyFormAlmostEverywhereData.acceptAllAlmostEverywhere_of_positive
+    {μ : Measure TripLength} {σ : TripPolicy}
+    (D : Lemma5FeasiblePolicyFormAlmostEverywhereData μ .positive σ) :
+    acceptAllAlmostEverywhere μ σ :=
+  acceptAllAlmostEverywhere_of_policyAlmostEverywhereEq_acceptsAll
+    μ D.policy_ae D.policy_form
 
 /--
 Adding the same fixed context to both policies cannot create new
@@ -27065,6 +27149,37 @@ theorem Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_candidate_
       hσ_measurable hσ_subset hcandidate
 
 /--
+Candidate optimality for the positive-response policy identifies the current
+policy with a feasible measurable canonical representative.  This strengthened
+form is the one needed by Theorem 4 endpoint arguments that operate on exact
+interval/ray syntax after quotienting away null endpoint boundaries.
+-/
+def Lemma5PositiveResponseShapeData.feasiblePolicyFormAlmostEverywhere_of_candidate_le
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ where
+  policy := lemma5PositiveResponsePolicy response
+  policy_subset := lemma5PositiveResponsePolicy_subset_acceptAll response
+  policy_measurable :=
+    measurableSet_lemma5PositiveResponsePolicy response hresponse_measurable
+  policy_form := D.policyForm
+  policy_ae :=
+    D.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate
+
+/--
 Feasible optimality for the fixed marginal-response reward gives the Lemma 5
 canonical policy form almost everywhere.
 -/
@@ -27095,6 +27210,35 @@ theorem Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_feasible_o
           hresponse_measurable))
 
 /--
+Feasible optimality for the fixed marginal-response reward gives the Lemma 5
+canonical policy form a.e. with an explicit feasible measurable representative.
+-/
+def Lemma5PositiveResponseShapeData.feasiblePolicyFormAlmostEverywhere_of_feasible_optimal
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ :=
+  D.feasiblePolicyFormAlmostEverywhere_of_candidate_le
+    μ σ hresponse_measurable hresponse_integrable_acceptAll
+    hσ_measurable hσ_subset
+    (hoptimal (lemma5PositiveResponsePolicy response)
+      (lemma5PositiveResponsePolicy_subset_acceptAll response)
+      (measurableSet_lemma5PositiveResponsePolicy response
+        hresponse_measurable))
+
+/--
 Paper-facing fixed-response version of Lemma 5: once Lemma 6 has reduced an
 endpoint derivative to a response function in one of the five source shapes,
 every measurable feasible maximizer of the corresponding marginal reward has
@@ -27118,6 +27262,31 @@ theorem paper_lemma5_fixed_response_policy_form_ae_of_response_shape
             lemma5MarginalSetReward μ response σ) :
     lemma5PolicyFormAlmostEverywhere μ shape σ :=
   D.policyFormAlmostEverywhere_of_feasible_optimal
+    μ σ hresponse_measurable hresponse_integrable_acceptAll
+    hσ_measurable hσ_subset hoptimal
+
+/--
+Paper-facing fixed-response Lemma 5 with the feasible exact representative
+kept explicit for downstream Theorem 4 endpoint moves.
+-/
+def paper_lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
+    (μ : Measure TripLength) [NoAtoms μ]
+    (response : TripLength → ℝ) {shape : Lemma5DerivativeShape}
+    (σ : TripPolicy)
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ :=
+  D.feasiblePolicyFormAlmostEverywhere_of_feasible_optimal
     μ σ hresponse_measurable hresponse_integrable_acceptAll
     hσ_measurable hσ_subset hoptimal
 
@@ -40470,9 +40639,67 @@ structure GN21MeasuredPairNondegenerate
   scaledTimeJ_ne : gn21ScaledStateTime μJ arrivalJ σJ ≠ 0
   denominator_ne :
     gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
-        gn21ScaledStateTime μJ arrivalJ σJ +
+      gn21ScaledStateTime μJ arrivalJ σJ +
       gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
         gn21ScaledStateTime μI arrivalI σI ≠ 0
+
+/-- Pair nondegeneracy is invariant under a null change to the left policy. -/
+theorem GN21MeasuredPairNondegenerate.congr_left_policy_ae
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switchIJ switchJI : ℝ}
+    {σI τI σJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μI σI τI)
+    (H :
+      GN21MeasuredPairNondegenerate μI μJ arrivalI arrivalJ switchIJ switchJI
+        σI σJ) :
+    GN21MeasuredPairNondegenerate μI μJ arrivalI arrivalJ switchIJ switchJI
+      τI σJ where
+  massI_ne := by
+    have hmass := singleStateTripMass_congr_policy_ae μI hae
+    simpa [← hmass] using H.massI_ne
+  massJ_ne := H.massJ_ne
+  arrivalMassI_ne := by
+    have hmass := singleStateTripMass_congr_policy_ae μI hae
+    simpa [← hmass] using H.arrivalMassI_ne
+  arrivalMassJ_ne := H.arrivalMassJ_ne
+  scaledTimeI_ne := by
+    have htime := gn21ScaledStateTime_congr_policy_ae μI arrivalI hae
+    simpa [← htime] using H.scaledTimeI_ne
+  scaledTimeJ_ne := H.scaledTimeJ_ne
+  denominator_ne := by
+    have hq := gn21ExitWeightIntegral_congr_policy_ae
+      μI arrivalI switchIJ switchJI hae
+    have htime := gn21ScaledStateTime_congr_policy_ae μI arrivalI hae
+    simpa [← hq, ← htime] using H.denominator_ne
+
+/-- Pair nondegeneracy is invariant under a null change to the right policy. -/
+theorem GN21MeasuredPairNondegenerate.congr_right_policy_ae
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switchIJ switchJI : ℝ}
+    {σI σJ τJ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μJ σJ τJ)
+    (H :
+      GN21MeasuredPairNondegenerate μI μJ arrivalI arrivalJ switchIJ switchJI
+        σI σJ) :
+    GN21MeasuredPairNondegenerate μI μJ arrivalI arrivalJ switchIJ switchJI
+      σI τJ where
+  massI_ne := H.massI_ne
+  massJ_ne := by
+    have hmass := singleStateTripMass_congr_policy_ae μJ hae
+    simpa [← hmass] using H.massJ_ne
+  arrivalMassI_ne := H.arrivalMassI_ne
+  arrivalMassJ_ne := by
+    have hmass := singleStateTripMass_congr_policy_ae μJ hae
+    simpa [← hmass] using H.arrivalMassJ_ne
+  scaledTimeI_ne := H.scaledTimeI_ne
+  scaledTimeJ_ne := by
+    have htime := gn21ScaledStateTime_congr_policy_ae μJ arrivalJ hae
+    simpa [← htime] using H.scaledTimeJ_ne
+  denominator_ne := by
+    have hq := gn21ExitWeightIntegral_congr_policy_ae
+      μJ arrivalJ switchJI switchIJ hae
+    have htime := gn21ScaledStateTime_congr_policy_ae μJ arrivalJ hae
+    simpa [← hq, ← htime] using H.denominator_ne
 
 /-- Positive primitive conditions imply the measured pair is nondegenerate. -/
 theorem gn21MeasuredPairNondegenerate_of_positive_primitives
@@ -44011,6 +44238,108 @@ abbrev gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
       gn21MeasuredAggregateDynamicStateReward
         μ arrival switch12 switch21
         (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ 0 τ
+
+/--
+Move a non-surge feasible strict aggregate improvement proved on an exact
+a.e. representative back to the original current policy.
+-/
+theorem gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ} {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy} {σ0 : TripPolicy}
+    (hae : policyAlmostEverywhereEq (μ 0) (ρ 0) σ0)
+    (H :
+      gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+        μ arrival m z switch12 switch21 (Function.update ρ 0 σ0)) :
+    gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+      μ arrival m z switch12 switch21 ρ := by
+  rcases H with ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+  refine ⟨τ, ?_, ?_, ?_, ?_⟩
+  · simpa [Function.update] using hτ_feasible
+  · have hae_symm := policyAlmostEverywhereEq.symm (μ 0) hae
+    simpa [Function.update] using
+      GN21MeasuredPairNondegenerate.congr_left_policy_ae hae_symm Hcur
+  · simpa [Function.update, replaceDynamicPolicyState] using Hrep
+  · have hleft :
+        gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            ρ 0 (ρ 0) =
+          gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            (Function.update ρ 0 σ0) 0
+            ((Function.update ρ 0 σ0) 0) := by
+      simpa [gn21MeasuredAggregateDynamicStateReward_zero, Function.update]
+        using
+          gn21MeasuredAggregateRewardPrimitives_congr_left_policy_ae
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            ((ctmcStructuredDynamicSurgePrice m z switch12 switch21) 0)
+            ((ctmcStructuredDynamicSurgePrice m z switch12 switch21) 1)
+            (σJ := ρ 1) hae
+    have hright :
+        gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            (Function.update ρ 0 σ0) 0 τ =
+          gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            ρ 0 τ := by
+      simp [gn21MeasuredAggregateDynamicStateReward_zero, Function.update]
+    rw [hleft, ← hright]
+    exact hagg
+
+/--
+Move a surge feasible strict aggregate improvement proved on an exact
+a.e. representative back to the original current policy.
+-/
+theorem gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ} {switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy} {σ1 : TripPolicy}
+    (hae : policyAlmostEverywhereEq (μ 1) (ρ 1) σ1)
+    (H :
+      gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+        μ arrival m z switch12 switch21 (Function.update ρ 1 σ1)) :
+    gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+      μ arrival m z switch12 switch21 ρ := by
+  rcases H with ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+  refine ⟨τ, ?_, ?_, ?_, ?_⟩
+  · simpa [Function.update] using hτ_feasible
+  · have hae_symm := policyAlmostEverywhereEq.symm (μ 1) hae
+    simpa [Function.update] using
+      GN21MeasuredPairNondegenerate.congr_right_policy_ae hae_symm Hcur
+  · simpa [Function.update, replaceDynamicPolicyState] using Hrep
+  · have hleft :
+        gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            ρ 1 (ρ 1) =
+          gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            (Function.update ρ 1 σ1) 1
+            ((Function.update ρ 1 σ1) 1) := by
+      simpa [gn21MeasuredAggregateDynamicStateReward_one, Function.update]
+        using
+          gn21MeasuredAggregateRewardPrimitives_congr_right_policy_ae
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            ((ctmcStructuredDynamicSurgePrice m z switch12 switch21) 0)
+            ((ctmcStructuredDynamicSurgePrice m z switch12 switch21) 1)
+            (σI := ρ 0) hae
+    have hright :
+        gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            (Function.update ρ 1 σ1) 1 τ =
+          gn21MeasuredAggregateDynamicStateReward
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            ρ 1 τ := by
+      simp [gn21MeasuredAggregateDynamicStateReward_one, Function.update]
+    rw [hleft, ← hright]
+    exact hagg
 
 /--
 Uniform feasible-measurable statewise strict-local aggregate certificate.  This
@@ -52734,10 +53063,11 @@ def GN21SurgeRejectMiddleCurrentBoundsEndpointData.statewise_improvement
         ρ)
     (hshape : rejectsMiddleTrips lo hi (ρ 1)) :
     gn21SurgeFeasibleStatewiseStrictAggregateImprovement
-      μ arrival m z switch12 switch21 ρ := by
-  cases D with
-  | lower Dlo => exact Dlo.statewise_improvement hρ hshape
-  | upper Dhi => exact Dhi.statewise_improvement hρ hshape
+      μ arrival m z switch12 switch21 ρ :=
+  by
+    cases D with
+    | lower Dlo => exact Dlo.statewise_improvement hρ hshape
+    | upper Dhi => exact Dhi.statewise_improvement hρ hshape
 
 /--
 Source-facing supported endpoint data for non-surge reject-long moves.  The
