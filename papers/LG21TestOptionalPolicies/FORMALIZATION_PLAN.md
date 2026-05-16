@@ -268,7 +268,10 @@ Last updated: 2026-05-16
   posterior means and derives the affine certificate fields internally from
   `GaussianOffsetSignalFamily.posteriorMean_update_eq_base_add_weight_mul`.
   Its tie-at-indifference step is now proved internally from strict posterior
-  monotonicity and the Gaussian upper-tail-mean-above-threshold lemma.
+  monotonicity and the Gaussian upper-tail-mean-above-threshold lemma.  The
+  companion implication wrapper
+  `paper_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  presents this continuous route directly as fairness implies test-blankness.
   The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`

@@ -368,6 +368,10 @@ cache is kept as `source.txt` for named-statement audits.
   `GaussianOffsetSignalFamily.posteriorMean_update_eq_base_add_weight_mul`;
   its indifference/tie step is now derived internally from strict posterior
   monotonicity and the strict Gaussian upper-tail-mean-above-threshold lemma.
+  The companion implication wrapper
+  `paper_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  states the same continuous route in the paper's exact Theorem 3.2
+  fairness-implies-test-blankness form.
   The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
