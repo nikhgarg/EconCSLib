@@ -231,10 +231,11 @@ Last updated: 2026-05-16
   mixture identity for source surfaces that define observable-access estimates
   with a Bernoulli share.  The optional-reporting and report-required
   point-estimate endpoints now combine this binary-mixture wrapper with the
-  concrete Definition 1 best-response bridge.  The remaining source gap is
-  instantiating the
-  affine-payoff identities from the full policy model and routing concrete
-  policy surfaces through these wrappers.
+  concrete Definition 1 best-response bridge.  The base-indexed
+  optional-reporting affine endpoint now also makes the paper's reported-score
+  and no-report payoff identities definitional.  The remaining source gap is
+  routing concrete policy surfaces through these wrappers and proving the
+  analogous report-required outside-payoff identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -369,10 +370,11 @@ Last updated: 2026-05-16
    PMF binary-mixture wrapper discharges the positive-share mixture identity
    when observable-access estimates are built from `lg21BinaryMixturePMF`, and
    the optional-reporting and report-required endpoints now combine this with
-   concrete Definition 1 best response.  The next work should instantiate the
-   optional-reporting affine endpoint using the base-indexed source payoff
-   model, then instantiate the remaining affine-payoff identities from the
-   paper's full source policy model.
+   concrete Definition 1 best response.  The base-indexed optional-reporting
+   affine endpoint now makes the paper's reported-score and no-report payoff
+   formulas definitional.  Next work should route a concrete optional-reporting
+   policy surface through that endpoint, then prove the remaining
+   report-required affine outside-payoff identity.
 
 ## Reusable Library Seams
 
