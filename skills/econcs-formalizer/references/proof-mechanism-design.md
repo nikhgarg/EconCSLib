@@ -204,6 +204,16 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   facts immediately: the first marginal is standard normal, clipped horizontal
   boundaries are null for `rho^2 < 1`, and paper correlation parameters such as
   `-z / sqrt(1+z^2)` satisfy `rho^2 < 1`.
+- After that first bivariate-CDF seam is in place, keep pushing generic law
+  facts before returning to paper algebra.  The useful reusable sequence is:
+  prove the second marginal is standard normal using mathlib Gaussian scaling
+  plus convolution; derive nonatomic marginals; prove lower-left rectangle/CDF
+  continuity from zero vertical/horizontal boundary mass; and prove
+  open-positivity for nondegenerate correlations by showing the source affine
+  map is continuous and surjective from the product of open-positive standard
+  Gaussian measures.  These facts then discharge continuity, strict monotonicity
+  via open-positive upper-orthant lemmas, and endpoint regularity without
+  repeating bivariate density calculations in paper files.
 - When a paper theorem is group-indexed, avoid stopping at a one-representative
   type theorem. After the single-group payoff/cutoff calculation is green,
   immediately package the group-indexed equilibrium object with common school

@@ -111,6 +111,35 @@ theorem standardGaussianMeasure_Ioc_pos {x y : ℝ} (hxy : x < y) :
   rw [univ_inter, Real.volume_Ioc]
   exact ENNReal.ofReal_pos.mpr (sub_pos.mpr hxy)
 
+/-- The standard Gaussian measure gives positive mass to every nonempty open set. -/
+instance standardGaussianMeasure_isOpenPosMeasure :
+    Measure.IsOpenPosMeasure standardGaussianMeasure := by
+  refine ⟨fun U hU hUne hzero => ?_⟩
+  rcases hUne with ⟨x, hxU⟩
+  rcases Metric.isOpen_iff.1 hU x hxU with ⟨ε, hε_pos, hball⟩
+  let a : ℝ := x - ε / 2
+  let b : ℝ := x + ε / 2
+  have hab : a < b := by
+    dsimp [a, b]
+    linarith
+  have hIoc_subset : Set.Ioc a b ⊆ U := by
+    intro y hy
+    apply hball
+    rw [Metric.mem_ball, Real.dist_eq]
+    have hleft : x - ε / 2 < y := by
+      simpa [a] using hy.1
+    have hright : y ≤ x + ε / 2 := by
+      simpa [b] using hy.2
+    have h_abs : |y - x| ≤ ε / 2 := by
+      rw [abs_le]
+      constructor <;> linarith
+    have hhalf_lt : ε / 2 < ε := by
+      linarith
+    exact lt_of_le_of_lt h_abs hhalf_lt
+  have hpos : 0 < standardGaussianMeasure (Set.Ioc a b) :=
+    standardGaussianMeasure_Ioc_pos hab
+  exact (ne_of_gt (hpos.trans_le (measure_mono hIoc_subset))) hzero
+
 /-- The mathlib-backed standard Gaussian CDF is strictly monotone. -/
 theorem standardGaussianCDF_strictMono : StrictMono standardGaussianCDF := by
   intro x y hxy

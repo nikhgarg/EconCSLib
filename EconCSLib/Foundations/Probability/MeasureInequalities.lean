@@ -661,6 +661,117 @@ theorem verticalUpperStripMass_eq_firstCoordinateLowerMass_sub_lowerLeftRectangl
     _ = μ.real left - μ.real lower := hstrict_mass
     _ = firstCoordinateLowerMass μ x - lowerLeftRectangleMass μ x y := rfl
 
+/--
+Continuity of lower-left rectangle mass when the joint law puts zero mass on
+every vertical or horizontal boundary.
+-/
+theorem lowerLeftRectangleMass_continuous_of_boundary_null
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ]
+    (hboundary :
+      ∀ x y : ℝ,
+        μ ({p : ℝ × ℝ | p.1 = x} ∪ {p : ℝ × ℝ | p.2 = y}) = 0) :
+    Continuous fun q : ℝ × ℝ => lowerLeftRectangleMass μ q.1 q.2 := by
+  refine continuous_iff_continuousAt.2 ?_
+  intro q₀
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ × ℝ =>
+          μ {p : ℝ × ℝ | p.1 ≤ q.1 ∧ p.2 ≤ q.2})
+        (nhds q₀)
+        (nhds (μ {p : ℝ × ℝ | p.1 ≤ q₀.1 ∧ p.2 ≤ q₀.2})) := by
+    refine
+      MeasureTheory.tendsto_measure_of_ae_tendsto_indicator_of_isFiniteMeasure
+        (L := nhds q₀) (μ := μ)
+        (A := {p : ℝ × ℝ | p.1 ≤ q₀.1 ∧ p.2 ≤ q₀.2})
+        (As := fun q : ℝ × ℝ =>
+          {p : ℝ × ℝ | p.1 ≤ q.1 ∧ p.2 ≤ q.2})
+        (measurableSet_lowerLeftRectangle q₀.1 q₀.2)
+        (fun q => measurableSet_lowerLeftRectangle q.1 q.2) ?_
+    have hboundary_ae :
+        ∀ᵐ p ∂μ, p.1 ≠ q₀.1 ∧ p.2 ≠ q₀.2 := by
+      refine (measure_eq_zero_iff_ae_notMem.1 (hboundary q₀.1 q₀.2)).mono ?_
+      intro p hp
+      constructor
+      · intro h
+        exact hp (Or.inl h)
+      · intro h
+        exact hp (Or.inr h)
+    filter_upwards [hboundary_ae] with p hp
+    have hfst_tend :
+        Filter.Tendsto (fun q : ℝ × ℝ => q.1) (nhds q₀) (nhds q₀.1) :=
+      continuous_fst.tendsto q₀
+    have hsnd_tend :
+        Filter.Tendsto (fun q : ℝ × ℝ => q.2) (nhds q₀) (nhds q₀.2) :=
+      continuous_snd.tendsto q₀
+    by_cases hfst_pos : p.1 < q₀.1
+    · have hfst_event :
+          ∀ᶠ q in nhds q₀, p.1 ≤ q.1 :=
+        (hfst_tend.eventually (Ioi_mem_nhds hfst_pos)).mono
+          (fun _ hlt => hlt.le)
+      by_cases hsnd_pos : p.2 < q₀.2
+      · have hsnd_event :
+            ∀ᶠ q in nhds q₀, p.2 ≤ q.2 :=
+          (hsnd_tend.eventually (Ioi_mem_nhds hsnd_pos)).mono
+            (fun _ hlt => hlt.le)
+        filter_upwards [hfst_event, hsnd_event] with q hqfst hqsnd
+        simp [hqfst, hqsnd, hfst_pos.le, hsnd_pos.le]
+      · have hsnd_neg : q₀.2 < p.2 :=
+          lt_of_le_of_ne (le_of_not_gt hsnd_pos) hp.2.symm
+        have hsnd_event :
+            ∀ᶠ q in nhds q₀, ¬ p.2 ≤ q.2 :=
+          (hsnd_tend.eventually (Iio_mem_nhds hsnd_neg)).mono
+            (fun _ hlt => not_le_of_gt hlt)
+        filter_upwards [hsnd_event] with q hqsnd
+        simp [hqsnd, hsnd_neg.not_ge]
+    · have hfst_neg : q₀.1 < p.1 :=
+        lt_of_le_of_ne (le_of_not_gt hfst_pos) hp.1.symm
+      have hfst_event :
+          ∀ᶠ q in nhds q₀, ¬ p.1 ≤ q.1 :=
+        (hfst_tend.eventually (Iio_mem_nhds hfst_neg)).mono
+          (fun _ hlt => not_le_of_gt hlt)
+      filter_upwards [hfst_event] with q hqfst
+      simp [hqfst, hfst_neg.not_ge]
+  change
+    Filter.Tendsto
+      (fun q : ℝ × ℝ =>
+        (μ {p : ℝ × ℝ | p.1 ≤ q.1 ∧ p.2 ≤ q.2}).toReal)
+      (nhds q₀)
+      (nhds ((μ {p : ℝ × ℝ | p.1 ≤ q₀.1 ∧ p.2 ≤ q₀.2}).toReal))
+  exact
+    (ENNReal.tendsto_toReal
+      (measure_ne_top μ {p : ℝ × ℝ | p.1 ≤ q₀.1 ∧ p.2 ≤ q₀.2})).comp
+      hmeasure
+
+/--
+Continuity of lower-left rectangle mass from nonatomic first and second
+marginals.
+-/
+theorem lowerLeftRectangleMass_continuous_of_noAtoms_marginals
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ]
+    [NoAtoms (μ.map Prod.fst)] [NoAtoms (μ.map Prod.snd)] :
+    Continuous fun q : ℝ × ℝ => lowerLeftRectangleMass μ q.1 q.2 := by
+  refine lowerLeftRectangleMass_continuous_of_boundary_null μ ?_
+  intro x y
+  have hleft : μ {p : ℝ × ℝ | p.1 = x} = 0 := by
+    calc
+      μ {p : ℝ × ℝ | p.1 = x}
+          = μ (Prod.fst ⁻¹' ({x} : Set ℝ)) := by
+              rfl
+      _ = (μ.map Prod.fst) ({x} : Set ℝ) := by
+              rw [Measure.map_apply measurable_fst (measurableSet_singleton x)]
+      _ = 0 := by
+              exact measure_singleton x
+  have hright : μ {p : ℝ × ℝ | p.2 = y} = 0 := by
+    calc
+      μ {p : ℝ × ℝ | p.2 = y}
+          = μ (Prod.snd ⁻¹' ({y} : Set ℝ)) := by
+              rfl
+      _ = (μ.map Prod.snd) ({y} : Set ℝ) := by
+              rw [Measure.map_apply measurable_snd (measurableSet_singleton y)]
+      _ = 0 := by
+              exact measure_singleton y
+  exact measure_union_null hleft hright
+
 /-- Real-valued mass of the upper orthant `{(u,v) : x <= u, y <= v}`. -/
 noncomputable def upperOrthantMass (μ : Measure (ℝ × ℝ)) (x y : ℝ) : ℝ :=
   μ.real {p : ℝ × ℝ | x ≤ p.1 ∧ y ≤ p.2}
