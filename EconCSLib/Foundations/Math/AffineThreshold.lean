@@ -12,6 +12,8 @@ Reusable one-dimensional threshold algebra for positive-slope affine scores.
 - `threshold_le_affine_iff_cutoff_le`
 - `affine_le_threshold_iff_le_cutoff`
 - `affine_strictMono`
+- `exists_affine_lt`
+- `exists_lt_affine`
 -/
 
 namespace EconCSLib
@@ -71,6 +73,40 @@ theorem affine_strictMono (intercept : ℝ) {slope : ℝ}
   intro x y hxy
   simpa [add_comm, add_left_comm, add_assoc] using
     add_lt_add_left (mul_lt_mul_of_pos_left hxy hslope) intercept
+
+/-- A positive-slope affine score eventually falls below any finite level. -/
+theorem exists_affine_lt (intercept threshold : ℝ) {slope : ℝ}
+    (hslope : 0 < slope) :
+    ∃ x : ℝ, intercept + slope * x < threshold := by
+  let cutoff : ℝ := affineCutoff intercept slope threshold
+  refine ⟨cutoff - 1, ?_⟩
+  have hnot_cutoff : ¬ cutoff ≤ cutoff - 1 := by
+    linarith
+  have hnot_threshold :
+      ¬ threshold ≤ intercept + slope * (cutoff - 1) := by
+    intro h
+    exact hnot_cutoff
+      ((threshold_le_affine_iff_cutoff_le (intercept := intercept)
+        (slope := slope) (threshold := threshold) (x := cutoff - 1)
+        hslope).1 h)
+  exact lt_of_not_ge hnot_threshold
+
+/-- A positive-slope affine score eventually exceeds any finite level. -/
+theorem exists_lt_affine (intercept threshold : ℝ) {slope : ℝ}
+    (hslope : 0 < slope) :
+    ∃ x : ℝ, threshold < intercept + slope * x := by
+  let cutoff : ℝ := affineCutoff intercept slope threshold
+  refine ⟨cutoff + 1, ?_⟩
+  have hnot_cutoff : ¬ cutoff + 1 ≤ cutoff := by
+    linarith
+  have hnot_affine :
+      ¬ intercept + slope * (cutoff + 1) ≤ threshold := by
+    intro h
+    exact hnot_cutoff
+      ((affine_le_threshold_iff_le_cutoff (intercept := intercept)
+        (slope := slope) (threshold := threshold) (x := cutoff + 1)
+        hslope).1 h)
+  exact lt_of_not_ge hnot_affine
 
 end
 

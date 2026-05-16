@@ -38,6 +38,15 @@ Last updated: 2026-05-16
   paper's all-take conclusion, finite score-threshold reporting at each base
   profile, and an explicit below-cutoff non-reporting score for base-indexed
   Gaussian posterior-threshold reporting.  The paper's optional-reporting
+  nontriviality step is now formalized by
+  `paper_theorem3_1_optional_reporting_gaussian_best_response_nontrivial`:
+  two-sided best response plus the positive-slope Gaussian reported-score
+  estimate rules out both everyone reporting and no one reporting.  The
+  analogous report-required nontriviality step is
+  `paper_theorem3_1_report_required_affine_best_response_nontrivial`, using
+  positive-slope affine expected taking estimates to rule out both
+  everyone taking/reporting and no one taking/reporting.  The paper's
+  optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:
   continuity plus opposite endpoint comparisons produce a finite indifferent

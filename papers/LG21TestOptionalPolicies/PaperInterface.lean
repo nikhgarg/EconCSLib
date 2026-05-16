@@ -137,6 +137,21 @@ theorem paper_interface_no_profitable_withholding_of_reporting_equilibrium
   lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium hEq
 
 /--
+Definition 1 bridge: binary reporting equilibrium implies the full two-sided
+best-response condition used by Theorem 3.1.
+-/
+theorem paper_interface_no_profitable_binary_choice_of_reporting_equilibrium
+    {reports : ℝ → Prop} [DecidablePred reports]
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    (hEq :
+      paperEquilibrium
+        (lg21ReportingEquilibriumData
+          reports reportedEstimate noReportEstimate)) :
+    lg21NoProfitableBinaryChoiceDeviation
+      reports reportedEstimate (fun _score : ℝ => noReportEstimate) :=
+  lg21NoProfitableBinaryChoiceDeviation_of_reporting_equilibrium hEq
+
+/--
 Definition 1 source optional-reporting bridge: source best response implies
 the no-profitable-withholding condition used by Lemma 4.1.
 -/
@@ -169,6 +184,29 @@ theorem paper_interface_no_profitable_withholding_of_source_optional_equilibrium
     hEq hrequirement skill base hreportPayoff hnoReportChosenPayoff
 
 /--
+Definition 1 source optional-reporting bridge for the concrete payoff model:
+source best response implies the full two-sided binary report/no-report
+condition used by Theorem 3.1's nontriviality step.
+-/
+theorem paper_interface_no_profitable_binary_choice_of_optional_reporting_source_model
+    {Skill Base : Type*}
+    {takeDecision : Skill → Base → Bool}
+    {reportDecision : Base → ℝ → Bool}
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      paperSourceEquilibrium
+        (lg21OptionalReportingSourceEquilibriumData
+          takeDecision reportDecision reportedEstimate
+          noReportEstimate estimationConsistent))
+    (skill : Skill) (base : Base) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun score : ℝ => reportDecision base score = true)
+      reportedEstimate (fun _score : ℝ => noReportEstimate) :=
+  lg21NoProfitableBinaryChoiceDeviation_of_optional_reporting_source_model
+    hEq skill base
+
+/--
 Definition 1 bridge: in the binary test-taking subgame, equilibrium implies
 the no-profitable-test-taking condition used by Lemma 4.1.
 -/
@@ -180,6 +218,20 @@ theorem paper_interface_no_profitable_test_taking_of_taking_equilibrium
         (lg21TestTakingEquilibriumData takes testBenefitProb)) :
     lg21NoProfitableTestTakingDeviation takes testBenefitProb :=
   lg21NoProfitableTestTakingDeviation_of_taking_equilibrium hEq
+
+/--
+Definition 1 bridge: binary test-taking equilibrium implies the full two-sided
+best-response condition used by Theorem 3.1's report-required case.
+-/
+theorem paper_interface_no_profitable_binary_choice_of_taking_equilibrium
+    {takes : ℝ → Prop} [DecidablePred takes]
+    {testBenefitProb : ℝ → ℝ}
+    (hEq :
+      paperEquilibrium
+        (lg21TestTakingEquilibriumData takes testBenefitProb)) :
+    lg21NoProfitableBinaryChoiceDeviation
+      takes testBenefitProb (fun _skill : ℝ => (1 / 2 : ℝ)) :=
+  lg21NoProfitableBinaryChoiceDeviation_of_taking_equilibrium hEq
 
 /--
 Definition 1 source report-required bridge: source best response implies the
@@ -653,6 +705,30 @@ theorem paper_interface_theorem3_1_reporting_threshold_of_gaussian_best_response
         threshold ≤ M.posteriorMean (Function.update theta k value)) :=
   paper_theorem3_1_reporting_threshold_of_gaussian_best_response
     M theta k base threshold
+
+/--
+Theorem 3.1 support: a positive-slope Gaussian reported-score estimate has a
+finite score below any finite comparison level.
+-/
+theorem paper_interface_gaussian_posteriorMean_update_exists_below
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (level : ℝ) :
+    ∃ score : ℝ,
+      M.posteriorMean (Function.update theta k score) < level :=
+  paper_gaussian_posteriorMean_update_exists_below M theta k level
+
+/--
+Theorem 3.1 support: a positive-slope Gaussian reported-score estimate has a
+finite score above any finite comparison level.
+-/
+theorem paper_interface_gaussian_posteriorMean_update_exists_above
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (level : ℝ) :
+    ∃ score : ℝ,
+      level < M.posteriorMean (Function.update theta k score) :=
+  paper_gaussian_posteriorMean_update_exists_above M theta k level
 
 /-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
 theorem paper_interface_monotone_of_lowerCutoffStrategy
@@ -1904,6 +1980,26 @@ theorem paper_interface_theorem3_1_optional_reporting_gaussian_source_witness_of
     hleft hright
 
 /--
+Theorem 3.1 optional-reporting nontriviality step: a two-sided best response
+against the Gaussian reported-score estimate cannot have everyone report or no
+one report.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_gaussian_best_response_nontrivial
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        reports
+        (fun score : ℝ =>
+          M.posteriorMean (Function.update theta k score))
+        (fun _score : ℝ => noReportEstimate)) :
+    (∃ score : ℝ, reports score) ∧
+      (∃ score : ℝ, ¬ reports score) :=
+  paper_theorem3_1_optional_reporting_gaussian_best_response_nontrivial
+    M theta k hbest
+
+/--
 Theorem 3.1 report-required affine crossing wrapper: affine positive-slope
 expected taking/reporting estimates discharge continuity and strict
 monotonicity, leaving the source proof's no-take continuity and endpoint
@@ -1939,6 +2035,24 @@ theorem paper_interface_theorem3_1_report_required_affine_source_witness_of_cros
   paper_theorem3_1_report_required_affine_source_witness_of_crossings
     intercept slope hslope noTakeEstimateAtCutoff low high hcontNoTake
     hlow_high hleft hright
+
+/--
+Theorem 3.1 report-required nontriviality step: a two-sided best response
+against a positive-slope affine taking estimate cannot have everyone
+take/report or no one take/report.
+-/
+theorem paper_interface_theorem3_1_report_required_affine_best_response_nontrivial
+    (intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    {takes : ℝ → Prop} {noTakeEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        takes
+        (fun skill : ℝ => intercept + slope * skill)
+        (fun _skill : ℝ => noTakeEstimate)) :
+    (∃ skill : ℝ, takes skill) ∧
+      (∃ skill : ℝ, ¬ takes skill) :=
+  paper_theorem3_1_report_required_affine_best_response_nontrivial
+    intercept hslope hbest
 
 /--
 Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding

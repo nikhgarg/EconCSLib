@@ -344,6 +344,46 @@ theorem paper_gaussian_posteriorMean_update_exists_low
       linarith
 
 /--
+Gaussian posterior-score support for Theorem 3.1's "not everyone reports"
+step: because the reported score enters with positive slope, some finite score
+has posterior estimate below any finite no-report estimate.
+-/
+theorem paper_gaussian_posteriorMean_update_exists_below
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (level : ℝ) :
+    ∃ score : ℝ,
+      M.posteriorMean (Function.update theta k score) < level := by
+  rcases paper_gaussian_posteriorMean_update_exists_low
+      M theta k 0 level with
+    ⟨score, _hscore_lt, hscore⟩
+  exact ⟨score, hscore⟩
+
+/--
+Gaussian posterior-score support for Theorem 3.1's "not no one reports" step:
+because the reported score enters with positive slope, some finite score has
+posterior estimate above any finite no-report estimate.
+-/
+theorem paper_gaussian_posteriorMean_update_exists_above
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (level : ℝ) :
+    ∃ score : ℝ,
+      level < M.posteriorMean (Function.update theta k score) := by
+  let base0 : ℝ := M.posteriorMean (Function.update theta k 0)
+  let weight : ℝ := M.centeredFamily.signalWeight k
+  have hweight : 0 < weight := by
+    simpa [weight] using M.centeredFamily.signalWeight_pos k
+  rcases exists_lt_affine base0 level hweight with
+    ⟨score, hscore⟩
+  refine ⟨score, ?_⟩
+  calc
+    level < base0 + weight * score := hscore
+    _ = M.posteriorMean (Function.update theta k score) := by
+      simpa [base0, weight] using
+        (M.posteriorMean_update_eq_base_add_weight_mul theta k score).symm
+
+/--
 Lemma 4.1 Gaussian reporting core: a nontrivial observed-access reporting
 cutoff is unstable whenever the no-report posterior estimate is strictly
 between the reported-score estimate at a lower score and the estimate at the
@@ -389,6 +429,121 @@ def lg21NoProfitableWithholdingDeviation
     (reports : ℝ → Prop) (reportedEstimate : ℝ → ℝ)
     (noReportEstimate : ℝ) : Prop :=
   ∀ score, ¬ reports score → reportedEstimate score ≤ noReportEstimate
+
+/--
+Two-sided binary best-response condition used in Theorem 3.1: choosing the
+action must weakly dominate not choosing it, and not choosing it must weakly
+dominate choosing it.
+-/
+def lg21NoProfitableBinaryChoiceDeviation
+    (chooses : ℝ → Prop) (choosePayoff otherPayoff : ℝ → ℝ) : Prop :=
+  (∀ value, chooses value → otherPayoff value ≤ choosePayoff value) ∧
+    (∀ value, ¬ chooses value → choosePayoff value ≤ otherPayoff value)
+
+/--
+If some type has a value where the outside option strictly beats the chosen
+action, then a two-sided best response cannot choose the action everywhere.
+-/
+theorem lg21_not_all_choose_of_binaryChoiceDeviation_exists_other_better
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (hbetter : ∃ value, choosePayoff value < otherPayoff value) :
+    ¬ ∀ value, chooses value := by
+  rintro hall
+  rcases hbetter with ⟨value, hvalue⟩
+  have hbest_value := hbest.1 value (hall value)
+  linarith
+
+/--
+If some type has a value where the chosen action strictly beats the outside
+option, then a two-sided best response cannot choose the outside option
+everywhere.
+-/
+theorem lg21_not_no_choose_of_binaryChoiceDeviation_exists_choose_better
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff)
+    (hbetter : ∃ value, otherPayoff value < choosePayoff value) :
+    ¬ ∀ value, ¬ chooses value := by
+  rintro hnone
+  rcases hbetter with ⟨value, hvalue⟩
+  have hbest_value := hbest.2 value (hnone value)
+  linarith
+
+/--
+Theorem 3.1 optional-reporting proof step: a two-sided best response against a
+positive-slope Gaussian reported-score estimate cannot have everyone report or
+no one report.  Thus any equilibrium best-response surface has both a reported
+score and a withheld score.
+-/
+theorem paper_theorem3_1_optional_reporting_gaussian_best_response_nontrivial
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        reports
+        (fun score : ℝ =>
+          M.posteriorMean (Function.update theta k score))
+        (fun _score : ℝ => noReportEstimate)) :
+    (∃ score : ℝ, reports score) ∧
+      (∃ score : ℝ, ¬ reports score) := by
+  have hnotAll : ¬ ∀ score : ℝ, reports score := by
+    exact
+      lg21_not_all_choose_of_binaryChoiceDeviation_exists_other_better
+        hbest
+        (paper_gaussian_posteriorMean_update_exists_below
+          M theta k noReportEstimate)
+  have hnotNone : ¬ ∀ score : ℝ, ¬ reports score := by
+    exact
+      lg21_not_no_choose_of_binaryChoiceDeviation_exists_choose_better
+        hbest
+        (paper_gaussian_posteriorMean_update_exists_above
+          M theta k noReportEstimate)
+  constructor
+  · by_contra hnoExists
+    exact hnotNone (fun score hreport => hnoExists ⟨score, hreport⟩)
+  · by_contra hnoExists
+    exact hnotAll (fun score => by
+      by_contra hnreport
+      exact hnoExists ⟨score, hnreport⟩)
+
+/--
+Theorem 3.1 report-required proof step: a two-sided best response against a
+positive-slope affine taking estimate cannot have everyone take/report or no
+one take/report.  Thus any such equilibrium best-response surface has both a
+taking type and a non-taking type.
+-/
+theorem paper_theorem3_1_report_required_affine_best_response_nontrivial
+    (intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    {takes : ℝ → Prop} {noTakeEstimate : ℝ}
+    (hbest :
+      lg21NoProfitableBinaryChoiceDeviation
+        takes
+        (fun skill : ℝ => intercept + slope * skill)
+        (fun _skill : ℝ => noTakeEstimate)) :
+    (∃ skill : ℝ, takes skill) ∧
+      (∃ skill : ℝ, ¬ takes skill) := by
+  have hnotAll : ¬ ∀ skill : ℝ, takes skill := by
+    exact
+      lg21_not_all_choose_of_binaryChoiceDeviation_exists_other_better
+        hbest
+        (exists_affine_lt intercept noTakeEstimate hslope)
+  have hnotNone : ¬ ∀ skill : ℝ, ¬ takes skill := by
+    exact
+      lg21_not_no_choose_of_binaryChoiceDeviation_exists_choose_better
+        hbest
+        (exists_lt_affine intercept noTakeEstimate hslope)
+  constructor
+  · by_contra hnoExists
+    exact hnotNone (fun skill htake => hnoExists ⟨skill, htake⟩)
+  · by_contra hnoExists
+    exact hnotAll (fun skill => by
+      by_contra hntake
+      exact hnoExists ⟨skill, hntake⟩)
 
 /--
 Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
@@ -1749,6 +1904,27 @@ theorem lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium
   simpa [hnreport] using hbest
 
 /--
+Binary reporting equilibrium gives the full two-sided best-response condition:
+reported scores weakly prefer reporting, and withheld scores weakly prefer not
+reporting.
+-/
+theorem lg21NoProfitableBinaryChoiceDeviation_of_reporting_equilibrium
+    {reports : ℝ → Prop} [DecidablePred reports]
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    (hEq :
+      lg21Equilibrium
+        (lg21ReportingEquilibriumData
+          reports reportedEstimate noReportEstimate)) :
+    lg21NoProfitableBinaryChoiceDeviation
+      reports reportedEstimate (fun _score : ℝ => noReportEstimate) := by
+  constructor
+  · intro score hreport
+    have hbest := hEq.2.1 score false trivial
+    dsimp [lg21ReportingEquilibriumData] at hbest
+    simpa [hreport] using hbest
+  · exact lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium hEq
+
+/--
 Source Definition 1 optional-reporting projection: if a source equilibrium's
 payoff for deviating to `(Y, X) = (1, 1)` is the reported-score estimate, and
 the chosen non-report payoff is the no-report estimate, then source
@@ -1841,6 +2017,44 @@ theorem lg21NoProfitableWithholdingDeviation_of_optional_reporting_source_model
     · simp [hreport]
 
 /--
+Concrete optional-reporting source game gives the full two-sided best-response
+condition used by Theorem 3.1's "neither everyone nor no one reports" step.
+-/
+theorem lg21NoProfitableBinaryChoiceDeviation_of_optional_reporting_source_model
+    {Skill Base : Type*}
+    {takeDecision : Skill → Base → Bool}
+    {reportDecision : Base → ℝ → Bool}
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21OptionalReportingSourceEquilibriumData
+          takeDecision reportDecision reportedEstimate
+          noReportEstimate estimationConsistent))
+    (skill : Skill) (base : Base) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun score : ℝ => reportDecision base score = true)
+      reportedEstimate (fun _score : ℝ => noReportEstimate) := by
+  constructor
+  · intro score hreport
+    let info : LG21AccessStudentInfo Skill Base ℝ :=
+      { skill := skill, base := base, test := score }
+    have hfeasible :
+        LG21AccessAction.feasible
+          LG21AccessAction.optionalReportingRequirement
+          LG21AccessAction.takeAndWithhold :=
+      LG21AccessAction.takeAndWithhold_optionalReporting_feasible
+    have hbest :=
+      lg21SourceEquilibrium_best_response hEq info
+        LG21AccessAction.takeAndWithhold hfeasible
+    dsimp [lg21OptionalReportingSourceEquilibriumData,
+      LG21AccessStudentInfo.chosenAction] at hbest
+    simpa [LG21AccessAction.takeAndWithhold, info, hreport] using hbest
+  · exact
+      lg21NoProfitableWithholdingDeviation_of_optional_reporting_source_model
+        hEq skill base
+
+/--
 Binary test-taking subgame used to connect Definition 1-style best responses
 to the no-profitable-test-taking predicate in Lemma 4.1.
 -/
@@ -1865,6 +2079,25 @@ theorem lg21NoProfitableTestTakingDeviation_of_taking_equilibrium
   have hbest := hEq.2.1 skill true trivial
   dsimp [lg21TestTakingEquilibriumData] at hbest
   simpa [hntake] using hbest
+
+/--
+Binary test-taking equilibrium gives the full two-sided best-response condition:
+takers weakly prefer taking/reporting, and non-takers weakly prefer not taking.
+-/
+theorem lg21NoProfitableBinaryChoiceDeviation_of_taking_equilibrium
+    {takes : ℝ → Prop} [DecidablePred takes]
+    {testBenefitProb : ℝ → ℝ}
+    (hEq :
+      lg21Equilibrium
+        (lg21TestTakingEquilibriumData takes testBenefitProb)) :
+    lg21NoProfitableBinaryChoiceDeviation
+      takes testBenefitProb (fun _skill : ℝ => (1 / 2 : ℝ)) := by
+  constructor
+  · intro skill htake
+    have hbest := hEq.2.1 skill false trivial
+    dsimp [lg21TestTakingEquilibriumData] at hbest
+    simpa [htake] using hbest
+  · exact lg21NoProfitableTestTakingDeviation_of_taking_equilibrium hEq
 
 /--
 Source Definition 1 report-required projection: if deviating to
