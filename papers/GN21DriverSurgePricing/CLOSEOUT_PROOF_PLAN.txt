@@ -47,6 +47,15 @@ paper's almost-everywhere convention: Lean now has
 so future AE endpoint certificates can use positive rejected mass to get the
 strict gap, and otherwise treat the singleton rejection as already
 accept-all almost everywhere.
+The reusable AE endpoint layer is now compiled as:
+
+  Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessCertificate
+  theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_shape_replacement_statewise_rejected_mass_improvements_unless
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute
+
+The remaining step is to feed this AE layer from the fixed-transfer
+by-policy-form/equality local endpoint data without reintroducing global
+nondegenerate middle-cutoff assumptions.
 
 
 Meaning of r1_current

@@ -408,6 +408,17 @@ GN21RegularEndpointSharedSourceData.surge_acceptAllAlmostEverywhere_of_rejectsMi
 These let a future positive-rejected-mass endpoint certificate obtain
 `lo < hi` only when strict improvement is actually needed; the `lo = hi`
 branch should be treated as accept-all almost everywhere.
+That future certificate layer is now started and compiled:
+
+```lean
+Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessCertificate
+theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_shape_replacement_statewise_rejected_mass_improvements_unless
+paper_theorem4_measurable_accept_all_ae_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute
+```
+
+The next integration target is a fixed-transfer local endpoint adapter that
+uses positive rejected mass to derive the middle-gap `lo < hi` only on the
+strict-improvement branch.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:

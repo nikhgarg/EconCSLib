@@ -570,6 +570,11 @@ cache is `source.txt`.
   `GN21RegularEndpointSharedSourceData.surge_rejectMiddle_lo_lt_hi_of_rejected_mass_pos`:
   positive rejected mass rules out the collapsed surge middle-rejection gap,
   while the collapsed branch is accepted as almost-everywhere accept-all.
+  The reusable AE endpoint layer is now compiled as
+  `Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessCertificate`,
+  `theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_shape_replacement_statewise_rejected_mass_improvements_unless`,
+  and
+  `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_endpoint_current_bounds_selection_unless_middle_reroute`.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.
