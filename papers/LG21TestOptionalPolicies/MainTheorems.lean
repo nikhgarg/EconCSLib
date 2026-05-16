@@ -473,6 +473,62 @@ theorem paper_lemma4_1_all_report_of_gaussian_cutoff_if_not_all_no_profitable_wi
     (paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
       M theta k hcutoffStrategy hnoDeviation hcutoff)
 
+/--
+Lemma 4.1 optional-reporting lower-tail support: if the no-report estimate is
+the Bayesian posterior estimate evaluated at a lower-tail mean score below the
+reporting cutoff, then the no-report estimate is strictly below the reported
+estimate at the cutoff.
+-/
+theorem paper_lemma4_1_report_cutoff_estimate_lt_of_lower_tail_score
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {lowerTailScore cutoff noReportEstimate : ℝ}
+    (hlower : lowerTailScore < cutoff)
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean (Function.update theta k lowerTailScore)) :
+    noReportEstimate <
+      M.posteriorMean (Function.update theta k cutoff) := by
+  rw [hnoReport]
+  exact paper_bayesian_optimal_estimator_strictMono_feature
+    M theta k hlower
+
+/--
+Lemma 4.1 optional-reporting endpoint bridge in the paper's lower-tail form:
+if every non-all-reporting candidate equilibrium yields a finite reporting
+cutoff and identifies the no-report estimate with a lower-tail mean score below
+that cutoff, then no-profitable-withholding forces all scores to be reported.
+-/
+theorem paper_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hcutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff lowerTailScore : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            lowerTailScore < cutoff ∧
+              noReportEstimate =
+                M.posteriorMean (Function.update theta k lowerTailScore))
+    (hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate) :
+    ∀ score : ℝ, reports score := by
+  by_contra hnotAll
+  rcases hcutoffIfNotAll hnotAll with
+    ⟨cutoff, lowerTailScore, hcutoffStrategy, hlower, hnoReport⟩
+  have hcutoff :
+      noReportEstimate <
+        M.posteriorMean (Function.update theta k cutoff) :=
+    paper_lemma4_1_report_cutoff_estimate_lt_of_lower_tail_score
+      M theta k hlower hnoReport
+  exact False.elim
+    (paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_withholding_from_cutoff
+      M theta k hcutoffStrategy hnoDeviation hcutoff)
+
 /-- Gaussian law of a raw test score conditional on latent skill. -/
 def lg21GaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw where
@@ -636,6 +692,37 @@ theorem paper_lemma4_1_all_take_of_cutoff_if_not_all_no_profitable_test_taking
   by_contra hnotAll
   rcases hcutoffIfNotAll hnotAll with
     ⟨qBar, hcutoffStrategy, hcutoff⟩
+  exact False.elim
+    (paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
+      api hscale hcutoffStrategy hnoDeviation hcutoff)
+
+/--
+Lemma 4.1 report-required endpoint bridge in the paper's lower-tail form: if
+every non-all-taking candidate equilibrium yields a finite taking cutoff and
+identifies the no-test estimate `q̃` with a lower-tail skill mean below that
+cutoff, then no-profitable-test-taking forces all access students to take the
+test.
+-/
+theorem paper_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_test_taking
+    (api : StandardGaussianCDFAPI) {takes : ℝ → Prop} {qTilde scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar lowerTailSkill : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            lowerTailSkill < qBar ∧ qTilde = lowerTailSkill)
+    (hnoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill := by
+  by_contra hnotAll
+  rcases hcutoffIfNotAll hnotAll with
+    ⟨qBar, lowerTailSkill, hcutoffStrategy, hlower, hqTilde⟩
+  have hcutoff : qTilde < qBar := by
+    rw [hqTilde]
+    exact hlower
   exact False.elim
     (paper_lemma4_1_no_nontrivial_take_test_cutoff_of_no_profitable_deviation
       api hscale hcutoffStrategy hnoDeviation hcutoff)

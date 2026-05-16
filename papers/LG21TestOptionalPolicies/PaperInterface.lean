@@ -405,6 +405,50 @@ theorem paper_interface_lemma4_1_all_report_of_gaussian_cutoff_if_not_all_no_pro
   paper_lemma4_1_all_report_of_gaussian_cutoff_if_not_all_no_profitable_withholding
     M theta k hcutoffIfNotAll hnoDeviation
 
+/--
+Lemma 4.1 optional-reporting lower-tail support: a no-report estimate computed
+from a lower-tail mean score below the reporting cutoff is strictly below the
+reported estimate at that cutoff.
+-/
+theorem paper_interface_lemma4_1_report_cutoff_estimate_lt_of_lower_tail_score
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {lowerTailScore cutoff noReportEstimate : ℝ}
+    (hlower : lowerTailScore < cutoff)
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean (Function.update theta k lowerTailScore)) :
+    noReportEstimate <
+      M.posteriorMean (Function.update theta k cutoff) :=
+  paper_lemma4_1_report_cutoff_estimate_lt_of_lower_tail_score
+    M theta k hlower hnoReport
+
+/--
+Lemma 4.1 optional-reporting endpoint bridge in lower-tail form:
+threshold-if-not-all plus the paper's lower-tail no-report estimate identity
+and no-profitable-withholding imply all scores are reported.
+-/
+theorem paper_interface_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_profitable_withholding
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    {reports : ℝ → Prop} {noReportEstimate : ℝ}
+    (hcutoffIfNotAll :
+      ¬ (∀ score : ℝ, reports score) →
+        ∃ cutoff lowerTailScore : ℝ,
+          (∀ score : ℝ, reports score ↔ cutoff ≤ score) ∧
+            lowerTailScore < cutoff ∧
+              noReportEstimate =
+                M.posteriorMean (Function.update theta k lowerTailScore))
+    (hnoDeviation :
+      paperNoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate) :
+    ∀ score : ℝ, reports score :=
+  paper_lemma4_1_all_report_of_gaussian_lower_tail_cutoff_no_profitable_withholding
+    M theta k hcutoffIfNotAll hnoDeviation
+
 /-- Lemma 4.1 test-taking support: Gaussian score law conditional on skill. -/
 abbrev paperGaussianTestScoreLaw (skill scale : ℝ) (hscale : 0 < scale) :
     GaussianScaleLaw :=
@@ -494,6 +538,28 @@ theorem paper_interface_lemma4_1_all_take_of_cutoff_if_not_all_no_profitable_tes
             (paperGaussianTestScoreLaw skill scale hscale) qTilde)) :
     ∀ skill : ℝ, takes skill :=
   paper_lemma4_1_all_take_of_cutoff_if_not_all_no_profitable_test_taking
+    api hscale hcutoffIfNotAll hnoDeviation
+
+/--
+Lemma 4.1 reporting-required endpoint bridge in lower-tail form:
+threshold-if-not-all plus the paper's lower-tail no-test estimate identity and
+no-profitable-test-taking imply all access students take the test.
+-/
+theorem paper_interface_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_test_taking
+    (api : StandardGaussianCDFAPI) {takes : ℝ → Prop} {qTilde scale : ℝ}
+    (hscale : 0 < scale)
+    (hcutoffIfNotAll :
+      ¬ (∀ skill : ℝ, takes skill) →
+        ∃ qBar lowerTailSkill : ℝ,
+          (∀ skill : ℝ, takes skill ↔ qBar ≤ skill) ∧
+            lowerTailSkill < qBar ∧ qTilde = lowerTailSkill)
+    (hnoDeviation :
+      paperNoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (paperGaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill :=
+  paper_lemma4_1_all_take_of_lower_tail_cutoff_no_profitable_test_taking
     api hscale hcutoffIfNotAll hnoDeviation
 
 /--

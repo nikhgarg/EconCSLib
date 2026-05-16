@@ -35,9 +35,11 @@ Last updated: 2026-05-16
   strictly between them clears `q̃` with probability strictly above one half;
   this now feeds the analogous theorem that a nontrivial taking cutoff
   contradicts no-profitable-test-taking.  Both cases now have conditional
-  endpoint bridges: if the source proof's monotonicity step supplies a finite
-  cutoff whenever not everyone reports or takes, the no-deviation
-  contradictions imply all access students report and take.
+  lower-tail endpoint bridges: if the source proof's monotonicity step supplies
+  a finite cutoff whenever not everyone reports or takes, and the
+  no-report/no-test estimate is identified with a lower-tail mean below that
+  cutoff, the no-deviation contradictions imply all access students report and
+  take.
 - The continuous-law fairness surface is added for the Gaussian negative
   results, and the proof cores for Propositions 4.2--4.3 are proved from
   law-difference witnesses plus Gaussian mean/variance gaps.
@@ -71,10 +73,10 @@ Last updated: 2026-05-16
    source-shaped no-profitable-withholding contradiction, and the
    report-required scalar deviation witness is now connected to an explicit
    no-profitable-test-taking contradiction.  The current endpoint bridges prove
-   all-report/all-take from the paper's "if not all, then finite cutoff"
-   monotonicity premise.  The remaining strategic bridge is to derive those
-   monotonicity-to-threshold premises from the concrete equilibrium predicate
-   and close the endpoint.
+   all-report/all-take from the paper's "if not all, then finite cutoff" and
+   lower-tail-mean premises.  The remaining strategic bridge is to derive those
+   monotonicity-to-threshold/truncated-mean premises from the concrete
+   equilibrium predicate and close the endpoint.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
