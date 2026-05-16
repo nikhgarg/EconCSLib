@@ -160,7 +160,22 @@ the response function, `Lemma5PositiveResponseShapeData`, response
 measurability/integrability, and marginal optimality.  Lean then produces the
 feasible AE representative data automatically.
 If the remaining work has dynamic local optimality but not marginal optimality
-yet, use
+yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
+`gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
+`gn21AggregateDynamicReward_candidate_right_linear_score_le_current_of_le`,
+`gn21MeasuredLeftMarginalResponseAtCurrent`,
+`gn21MeasuredRightMarginalResponseAtCurrent`,
+`gn21MeasuredLeftLinearScore_eq_const_add_marginalSetReward`,
+`gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward`,
+`lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_zero`,
+and
+`lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_one`.
+These prove the paper's actual cross-multiplication step: restricted dynamic
+optimality for the measured aggregate quotient implies feasible marginal
+optimality for the fixed Lemma 5 response, after the Lemma 1 aggregate
+identification, denominator positivity, nondegeneracy, and integrability
+inputs are supplied.
+For non-GN21 rewards, the older generic affine bridge is still available:
 `Lemma5FixedResponseFeasibleOptimalData.of_dynamicStateReward_positive_affine`
 or
 `lemma5MarginalSetReward_optimal_of_dynamicStateReward_positive_affine`.

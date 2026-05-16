@@ -243,6 +243,22 @@ For the fixed-response Lemma 5 portion, target
 turns per-optimum response-shape data, response measurability/integrability,
 and fixed-state marginal optimality into the feasible AE representative forms.
 When only dynamic local optimality is available, use
+the measured GN21 quotient bridge first:
+`gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
+`gn21AggregateDynamicReward_candidate_right_linear_score_le_current_of_le`,
+`gn21MeasuredLeftMarginalResponseAtCurrent`,
+`gn21MeasuredRightMarginalResponseAtCurrent`,
+`gn21MeasuredLeftLinearScore_eq_const_add_marginalSetReward`,
+`gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward`,
+`lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_zero`,
+and
+`lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_one`.
+These are the source-paper cross-multiplication step: dynamic optimality of
+the measured two-state reward becomes a fixed-response Lemma 5 marginal
+optimality inequality under Lemma 1 nondegeneracy, positive denominators,
+positive arrival rate, and the usual feasible-policy integrability inputs.
+Only use the older generic affine bridge for reward models that are actually
+positive affine transforms of the marginal integral:
 `Lemma5FixedResponseFeasibleOptimalData.of_dynamicStateReward_positive_affine`
 or
 `lemma5MarginalSetReward_optimal_of_dynamicStateReward_positive_affine`: after

@@ -11259,6 +11259,103 @@ theorem gn21AggregateDynamicReward_swap
   ring
 
 /--
+At the current aggregate quotient, the left-state linearized marginal score of
+the current primitives is zero.  This is the cross-multiplied baseline used in
+the Lemma 5 optimality bridge.
+-/
+theorem gn21AggregateDynamicReward_current_left_linear_score_eq_zero
+    (Qi Qj Ti Tj Wi Wj : ℝ)
+    (hden_pos : 0 < Qi * Tj + Qj * Ti) :
+    Qj * (Wi - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Ti) +
+        (Wj - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj) * Qi =
+      0 := by
+  unfold gn21AggregateDynamicReward
+  field_simp [ne_of_gt hden_pos]
+  ring
+
+/--
+At the current aggregate quotient, the right-state linearized marginal score
+of the current primitives is zero.  This is the state-swapped counterpart of
+`gn21AggregateDynamicReward_current_left_linear_score_eq_zero`.
+-/
+theorem gn21AggregateDynamicReward_current_right_linear_score_eq_zero
+    (Qi Qj Ti Tj Wi Wj : ℝ)
+    (hden_pos : 0 < Qi * Tj + Qj * Ti) :
+    Qi * (Wj - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj) +
+        (Wi - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Ti) * Qj =
+      0 := by
+  unfold gn21AggregateDynamicReward
+  field_simp [ne_of_gt hden_pos]
+  ring
+
+/--
+Quotient-to-linearization bridge for a left-state candidate.  If the candidate
+left policy gives no larger aggregate dynamic reward than the current left
+policy, then its fixed-current-reward linear score is no larger than the
+current score.  This is the finite-dimensional algebra behind the paper's
+passage from dynamic optimality to the Lemma 5 marginal objective.
+-/
+theorem gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le
+    (Qi Qj Ti Tj Wi Wj Qi' Ti' Wi' : ℝ)
+    (hden_pos : 0 < Qi * Tj + Qj * Ti)
+    (hden'_pos : 0 < Qi' * Tj + Qj * Ti')
+    (hle :
+      gn21AggregateDynamicReward Qi' Qj Ti' Tj Wi' Wj ≤
+        gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj) :
+    Qj * (Wi' - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Ti') +
+        (Wj - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj) * Qi' ≤
+      Qj * (Wi - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Ti) +
+        (Wj - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj) * Qi := by
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  have hnum_le :
+      Qi' * Wj + Qj * Wi' ≤ r * (Qi' * Tj + Qj * Ti') := by
+    unfold r at *
+    unfold gn21AggregateDynamicReward at hle
+    exact (div_le_iff₀ hden'_pos).mp hle
+  have hcandidate_eq :
+      Qj * (Wi' - r * Ti') + (Wj - r * Tj) * Qi' =
+        (Qi' * Wj + Qj * Wi') - r * (Qi' * Tj + Qj * Ti') := by
+    ring
+  have hcurrent_zero :
+      Qj * (Wi - r * Ti) + (Wj - r * Tj) * Qi = 0 := by
+    unfold r
+    exact
+      gn21AggregateDynamicReward_current_left_linear_score_eq_zero
+        Qi Qj Ti Tj Wi Wj hden_pos
+  rw [hcandidate_eq, hcurrent_zero]
+  linarith
+
+/--
+Quotient-to-linearization bridge for a right-state candidate.  This is the
+state-swapped form of
+`gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`.
+-/
+theorem gn21AggregateDynamicReward_candidate_right_linear_score_le_current_of_le
+    (Qi Qj Ti Tj Wi Wj Qj' Tj' Wj' : ℝ)
+    (hden_pos : 0 < Qi * Tj + Qj * Ti)
+    (hden'_pos : 0 < Qi * Tj' + Qj' * Ti)
+    (hle :
+      gn21AggregateDynamicReward Qi Qj' Ti Tj' Wi Wj' ≤
+        gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj) :
+    Qi * (Wj' - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj') +
+        (Wi - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Ti) * Qj' ≤
+      Qi * (Wj - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj) +
+        (Wi - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Ti) * Qj := by
+  have hden_pos_swap : 0 < Qj * Ti + Qi * Tj := by
+    simpa [add_comm, mul_comm, mul_left_comm, mul_assoc] using hden_pos
+  have hden'_pos_swap : 0 < Qj' * Ti + Qi * Tj' := by
+    simpa [add_comm, mul_comm, mul_left_comm, mul_assoc] using hden'_pos
+  have hle_swap :
+      gn21AggregateDynamicReward Qj' Qi Tj' Ti Wj' Wi ≤
+        gn21AggregateDynamicReward Qj Qi Tj Ti Wj Wi := by
+    simpa [gn21AggregateDynamicReward_swap] using hle
+  simpa [gn21AggregateDynamicReward_swap, add_comm, mul_comm, mul_left_comm,
+      mul_assoc] using
+    gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le
+      Qj Qi Tj Ti Wj Wi Qj' Tj' Wj'
+      hden_pos_swap hden'_pos_swap hle_swap
+
+/--
 Aggregate quotient monotonicity for adding accepted trips to the left state.
 The sufficient condition is exactly the integrated Lemma 6 derivative kernel
 for the added primitive increments `(dQ,dT,dW)`.
@@ -44615,6 +44712,604 @@ structure Lemma5FixedResponseFeasibleOptimalData
       MeasurableSet σ' →
         lemma5MarginalSetReward μ response σ' ≤
           lemma5MarginalSetReward μ response σ
+
+/--
+Left-state fixed marginal response obtained by cross-multiplying the measured
+aggregate quotient at the current two-state policy.  Its set integral differs
+from the left linearized aggregate score only by a policy-independent constant
+and the positive arrival-rate scale.
+-/
+def gn21MeasuredLeftMarginalResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) :
+    TripLength → ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  fun τ =>
+    (wI τ - r * τ) * Qj +
+      gn21SwitchProb switchIJ switchJI τ * (Wj - r * Tj)
+
+/--
+Right-state fixed marginal response obtained by cross-multiplying the measured
+aggregate quotient at the current two-state policy.
+-/
+def gn21MeasuredRightMarginalResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) :
+    TripLength → ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  fun τ =>
+    (wJ τ - r * τ) * Qi +
+      gn21SwitchProb switchJI switchIJ τ * (Wi - r * Ti)
+
+/-- Left-state aggregate linear score at the current quotient. -/
+def gn21MeasuredLeftLinearScoreAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ τI : TripPolicy) : ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  Qj * (gn21ScaledStateEarning μI arrivalI wI τI -
+      r * gn21ScaledStateTime μI arrivalI τI) +
+    (Wj - r * Tj) *
+      gn21ExitWeightIntegral μI arrivalI switchIJ switchJI τI
+
+/-- Right-state aggregate linear score at the current quotient. -/
+def gn21MeasuredRightLinearScoreAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ τJ : TripPolicy) : ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  Qi * (gn21ScaledStateEarning μJ arrivalJ wJ τJ -
+      r * gn21ScaledStateTime μJ arrivalJ τJ) +
+    (Wi - r * Ti) *
+      gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ τJ
+
+/-- Policy-independent constant in the left score/integral identity. -/
+def gn21MeasuredLeftLinearScoreConstantAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) : ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  Qj * (-r) + (Wj - r * Tj) * switchIJ
+
+/-- Policy-independent constant in the right score/integral identity. -/
+def gn21MeasuredRightLinearScoreConstantAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy) : ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  Qi * (-r) + (Wi - r * Ti) * switchJI
+
+/--
+Integral identity for the left fixed response: the aggregate linear score is a
+constant plus `arrivalI` times the Lemma 5 marginal set reward.
+-/
+theorem gn21MeasuredLeftLinearScore_eq_const_add_marginalSetReward
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ τI : TripPolicy)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) τI μI)
+    (hw_integrable : IntegrableOn wI τI μI)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) τI μI) :
+    gn21MeasuredLeftLinearScoreAtCurrent μI μJ arrivalI arrivalJ switchIJ
+        switchJI wI wJ σI σJ τI =
+      gn21MeasuredLeftLinearScoreConstantAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI wI wJ σI σJ +
+        arrivalI *
+          lemma5MarginalSetReward μI
+            (gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+              switchIJ switchJI wI wJ σI σJ) τI := by
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  let q : TripLength → ℝ := fun τ => gn21SwitchProb switchIJ switchJI τ
+  have hrt_integrable : IntegrableOn (fun τ : TripLength => r * τ) τI μI := by
+    exact htime_integrable.const_mul r
+  have hdiff_integrable :
+      IntegrableOn (fun τ : TripLength => wI τ - r * τ) τI μI :=
+    hw_integrable.sub hrt_integrable
+  have hdiffQ_integrable :
+      IntegrableOn (fun τ : TripLength => (wI τ - r * τ) * Qj) τI μI :=
+    hdiff_integrable.mul_const Qj
+  have hqD_integrable :
+      IntegrableOn (fun τ : TripLength => q τ * (Wj - r * Tj)) τI μI :=
+    hq_integrable.mul_const (Wj - r * Tj)
+  have hresp :
+      lemma5MarginalSetReward μI
+          (gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+            switchIJ switchJI wI wJ σI σJ) τI =
+        (singleStateTripPayment μI wI τI - r * singleStateTripTime μI τI) *
+            Qj +
+          (∫ τ in τI, q τ ∂μI) * (Wj - r * Tj) := by
+    unfold lemma5MarginalSetReward gn21MeasuredLeftMarginalResponseAtCurrent
+    simp only [Qi, Qj, Ti, Tj, Wi, Wj, r, q]
+    have hadd :
+        ∫ τ in τI, (wI τ - r * τ) * Qj + q τ * (Wj - r * Tj) ∂μI =
+          ∫ τ in τI, (wI τ - r * τ) * Qj ∂μI +
+            ∫ τ in τI, q τ * (Wj - r * Tj) ∂μI := by
+      simpa only [Pi.add_apply] using
+        integral_add (μ := μI.restrict τI)
+          (f := fun τ : TripLength => (wI τ - r * τ) * Qj)
+          (g := fun τ : TripLength => q τ * (Wj - r * Tj))
+          hdiffQ_integrable hqD_integrable
+    have hsub :
+        ∫ τ in τI, wI τ - r * τ ∂μI =
+          ∫ τ in τI, wI τ ∂μI -
+            ∫ τ in τI, r * τ ∂μI := by
+      simpa only [Pi.sub_apply] using
+        integral_sub (μ := μI.restrict τI)
+          (f := wI) (g := fun τ : TripLength => r * τ)
+          hw_integrable hrt_integrable
+    rw [hadd, integral_mul_const, integral_mul_const, hsub,
+      integral_const_mul]
+    unfold singleStateTripPayment singleStateTripTime
+    ring
+  unfold gn21MeasuredLeftLinearScoreAtCurrent
+    gn21MeasuredLeftLinearScoreConstantAtCurrent
+  change
+    Qj * (gn21ScaledStateEarning μI arrivalI wI τI -
+        r * gn21ScaledStateTime μI arrivalI τI) +
+        (Wj - r * Tj) *
+          gn21ExitWeightIntegral μI arrivalI switchIJ switchJI τI =
+      Qj * (-r) + (Wj - r * Tj) * switchIJ +
+        arrivalI *
+          lemma5MarginalSetReward μI
+            (gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+              switchIJ switchJI wI wJ σI σJ) τI
+  rw [hresp]
+  unfold gn21ScaledStateEarning gn21ScaledStateTime gn21ExitWeightIntegral
+    singleStateTripPayment singleStateTripTime
+  simp only [q]
+  ring_nf
+
+/--
+Integral identity for the right fixed response: the aggregate linear score is a
+constant plus `arrivalJ` times the Lemma 5 marginal set reward.
+-/
+theorem gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ τJ : TripPolicy)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ) τJ μJ)
+    (hw_integrable : IntegrableOn wJ τJ μJ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) τJ μJ) :
+    gn21MeasuredRightLinearScoreAtCurrent μI μJ arrivalI arrivalJ switchIJ
+        switchJI wI wJ σI σJ τJ =
+      gn21MeasuredRightLinearScoreConstantAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI wI wJ σI σJ +
+        arrivalJ *
+          lemma5MarginalSetReward μJ
+            (gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+              switchIJ switchJI wI wJ σI σJ) τJ := by
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  let q : TripLength → ℝ := fun τ => gn21SwitchProb switchJI switchIJ τ
+  have hrt_integrable : IntegrableOn (fun τ : TripLength => r * τ) τJ μJ := by
+    exact htime_integrable.const_mul r
+  have hdiff_integrable :
+      IntegrableOn (fun τ : TripLength => wJ τ - r * τ) τJ μJ :=
+    hw_integrable.sub hrt_integrable
+  have hdiffQ_integrable :
+      IntegrableOn (fun τ : TripLength => (wJ τ - r * τ) * Qi) τJ μJ :=
+    hdiff_integrable.mul_const Qi
+  have hqD_integrable :
+      IntegrableOn (fun τ : TripLength => q τ * (Wi - r * Ti)) τJ μJ :=
+    hq_integrable.mul_const (Wi - r * Ti)
+  have hresp :
+      lemma5MarginalSetReward μJ
+          (gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+            switchIJ switchJI wI wJ σI σJ) τJ =
+        (singleStateTripPayment μJ wJ τJ - r * singleStateTripTime μJ τJ) *
+            Qi +
+          (∫ τ in τJ, q τ ∂μJ) * (Wi - r * Ti) := by
+    unfold lemma5MarginalSetReward gn21MeasuredRightMarginalResponseAtCurrent
+    simp only [Qi, Qj, Ti, Tj, Wi, Wj, r, q]
+    have hadd :
+        ∫ τ in τJ, (wJ τ - r * τ) * Qi + q τ * (Wi - r * Ti) ∂μJ =
+          ∫ τ in τJ, (wJ τ - r * τ) * Qi ∂μJ +
+            ∫ τ in τJ, q τ * (Wi - r * Ti) ∂μJ := by
+      simpa only [Pi.add_apply] using
+        integral_add (μ := μJ.restrict τJ)
+          (f := fun τ : TripLength => (wJ τ - r * τ) * Qi)
+          (g := fun τ : TripLength => q τ * (Wi - r * Ti))
+          hdiffQ_integrable hqD_integrable
+    have hsub :
+        ∫ τ in τJ, wJ τ - r * τ ∂μJ =
+          ∫ τ in τJ, wJ τ ∂μJ -
+            ∫ τ in τJ, r * τ ∂μJ := by
+      simpa only [Pi.sub_apply] using
+        integral_sub (μ := μJ.restrict τJ)
+          (f := wJ) (g := fun τ : TripLength => r * τ)
+          hw_integrable hrt_integrable
+    rw [hadd, integral_mul_const, integral_mul_const, hsub,
+      integral_const_mul]
+    unfold singleStateTripPayment singleStateTripTime
+    ring
+  unfold gn21MeasuredRightLinearScoreAtCurrent
+    gn21MeasuredRightLinearScoreConstantAtCurrent
+  change
+    Qi * (gn21ScaledStateEarning μJ arrivalJ wJ τJ -
+        r * gn21ScaledStateTime μJ arrivalJ τJ) +
+        (Wi - r * Ti) *
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ τJ =
+      Qi * (-r) + (Wi - r * Ti) * switchJI +
+        arrivalJ *
+          lemma5MarginalSetReward μJ
+            (gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+              switchIJ switchJI wI wJ σI σJ) τJ
+  rw [hresp]
+  unfold gn21ScaledStateEarning gn21ScaledStateTime gn21ExitWeightIntegral
+    singleStateTripPayment singleStateTripTime
+  simp only [q]
+  ring_nf
+
+/--
+Dynamic optimality for the measured two-state reward implies fixed-response
+Lemma 5 marginal optimality for the non-surge state.  The proof follows the
+paper's source argument: Lemma 1 rewrites dynamic rewards as aggregate
+quotients, quotient cross-multiplication gives the current-reward linear
+score inequality, and the score/integral identity removes the common constant
+and positive arrival-rate scale.
+-/
+theorem lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_zero
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) ρ)
+    (harrival_pos : 0 < arrival 0)
+    (Hcurrent :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hcandidate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 σ (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hden_candidate_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) *
+                gn21ScaledStateTime (μ 0) (arrival 0) σ)
+    (hq_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+            σ (μ 0))
+    (hw_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (w 0) σ (μ 0))
+    (htime_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 0)) :
+    ∀ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy →
+      MeasurableSet σ' →
+        lemma5MarginalSetReward (μ 0)
+            (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+              (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+              (ρ 0) (ρ 1)) σ' ≤
+          lemma5MarginalSetReward (μ 0)
+            (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+              (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+              (ρ 0) (ρ 1)) (ρ 0) := by
+  intro σ' hσ'_subset hσ'_measurable
+  have hupdate :
+      dynamicFeasibleMeasurablePolicy (Function.update ρ 0 σ') :=
+    dynamicFeasibleMeasurablePolicy_update hρ.1 0 σ'
+      hσ'_subset hσ'_measurable
+  have hdyn_state :
+      dynamicStateReward
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ 0 σ' ≤
+        dynamicStateReward
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ 0 (ρ 0) :=
+    dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+      hρ 0 hupdate
+  have hdyn :
+      gn21MeasuredDynamicReward (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (w 0) (w 1) σ' (ρ 1) ≤
+        gn21MeasuredDynamicReward (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) := by
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero]
+      using hdyn_state
+  have hagg :
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) σ' (ρ 1) ≤
+        gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) := by
+    rw [paper_lemma1_measured_dynamic_reward_eq_aggregate_primitives_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) σ' (ρ 1)
+        (Hcandidate σ' hσ'_subset hσ'_measurable),
+      paper_lemma1_measured_dynamic_reward_eq_aggregate_primitives_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) Hcurrent] at hdyn
+    exact hdyn
+  have hquot :
+      gn21AggregateDynamicReward
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ')
+          (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+          (gn21ScaledStateTime (μ 0) (arrival 0) σ')
+          (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+          (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) σ')
+          (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1)) ≤
+        gn21AggregateDynamicReward
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+          (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+          (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+          (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+          (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0))
+          (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1)) := by
+    simpa [gn21MeasuredAggregateRewardPrimitives] using hagg
+  have hlinear_raw :=
+    gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le
+      (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+      (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+      (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+      (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+      (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0))
+      (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1))
+      (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ')
+      (gn21ScaledStateTime (μ 0) (arrival 0) σ')
+      (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) σ')
+      hden_pos (hden_candidate_pos σ' hσ'_subset hσ'_measurable)
+      hquot
+  have hlinear :
+      gn21MeasuredLeftLinearScoreAtCurrent (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) σ' ≤
+        gn21MeasuredLeftLinearScoreAtCurrent (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1)
+          (ρ 0) := by
+    simpa [gn21MeasuredLeftLinearScoreAtCurrent, mul_comm, mul_left_comm,
+      mul_assoc] using hlinear_raw
+  have hscore_candidate :=
+    gn21MeasuredLeftLinearScore_eq_const_add_marginalSetReward
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) σ'
+      (hq_integrable σ' hσ'_subset hσ'_measurable)
+      (hw_integrable σ' hσ'_subset hσ'_measurable)
+      (htime_integrable σ' hσ'_subset hσ'_measurable)
+  have hscore_current :=
+    gn21MeasuredLeftLinearScore_eq_const_add_marginalSetReward
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) (ρ 0)
+      (hq_integrable (ρ 0) (hρ.1 0).1 (hρ.1 0).2)
+      (hw_integrable (ρ 0) (hρ.1 0).1 (hρ.1 0).2)
+      (htime_integrable (ρ 0) (hρ.1 0).1 (hρ.1 0).2)
+  rw [hscore_candidate, hscore_current] at hlinear
+  nlinarith [harrival_pos, hlinear]
+
+/--
+Dynamic optimality for the measured two-state reward implies fixed-response
+Lemma 5 marginal optimality for the surge state.
+-/
+theorem lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_one
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) ρ)
+    (harrival_pos : 0 < arrival 1)
+    (Hcurrent :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hcandidate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) σ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hden_candidate_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) *
+              gn21ScaledStateTime (μ 1) (arrival 1) σ +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hq_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+            σ (μ 1))
+    (hw_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (w 1) σ (μ 1))
+    (htime_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 1)) :
+    ∀ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy →
+      MeasurableSet σ' →
+        lemma5MarginalSetReward (μ 1)
+            (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+              (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+              (ρ 0) (ρ 1)) σ' ≤
+          lemma5MarginalSetReward (μ 1)
+            (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+              (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+              (ρ 0) (ρ 1)) (ρ 1) := by
+  intro σ' hσ'_subset hσ'_measurable
+  have hupdate :
+      dynamicFeasibleMeasurablePolicy (Function.update ρ 1 σ') :=
+    dynamicFeasibleMeasurablePolicy_update hρ.1 1 σ'
+      hσ'_subset hσ'_measurable
+  have hdyn_state :
+      dynamicStateReward
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ 1 σ' ≤
+        dynamicStateReward
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ 1 (ρ 1) :=
+    dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+      hρ 1 hupdate
+  have hdyn :
+      gn21MeasuredDynamicReward (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (w 0) (w 1) (ρ 0) σ' ≤
+        gn21MeasuredDynamicReward (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) := by
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_one]
+      using hdyn_state
+  have hagg :
+      gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) σ' ≤
+        gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) := by
+    rw [paper_lemma1_measured_dynamic_reward_eq_aggregate_primitives_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) σ'
+        (Hcandidate σ' hσ'_subset hσ'_measurable),
+      paper_lemma1_measured_dynamic_reward_eq_aggregate_primitives_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) Hcurrent] at hdyn
+    exact hdyn
+  have hquot :
+      gn21AggregateDynamicReward
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+          (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ')
+          (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+          (gn21ScaledStateTime (μ 1) (arrival 1) σ')
+          (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0))
+          (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) σ') ≤
+        gn21AggregateDynamicReward
+          (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+          (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+          (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+          (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+          (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0))
+          (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1)) := by
+    simpa [gn21MeasuredAggregateRewardPrimitives] using hagg
+  have hlinear_raw :=
+    gn21AggregateDynamicReward_candidate_right_linear_score_le_current_of_le
+      (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+      (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+      (gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+      (gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+      (gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0))
+      (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1))
+      (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ')
+      (gn21ScaledStateTime (μ 1) (arrival 1) σ')
+      (gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) σ')
+      hden_pos (hden_candidate_pos σ' hσ'_subset hσ'_measurable)
+      hquot
+  have hlinear :
+      gn21MeasuredRightLinearScoreAtCurrent (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) σ' ≤
+        gn21MeasuredRightLinearScoreAtCurrent (μ 0) (μ 1) (arrival 0)
+          (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1)
+          (ρ 1) := by
+    simpa [gn21MeasuredRightLinearScoreAtCurrent, mul_comm, mul_left_comm,
+      mul_assoc] using hlinear_raw
+  have hscore_candidate :=
+    gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) σ'
+      (hq_integrable σ' hσ'_subset hσ'_measurable)
+      (hw_integrable σ' hσ'_subset hσ'_measurable)
+      (htime_integrable σ' hσ'_subset hσ'_measurable)
+  have hscore_current :=
+    gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) (ρ 1)
+      (hq_integrable (ρ 1) (hρ.1 1).1 (hρ.1 1).2)
+      (hw_integrable (ρ 1) (hρ.1 1).1 (hρ.1 1).2)
+      (htime_integrable (ρ 1) (hρ.1 1).1 (hρ.1 1).2)
+  rw [hscore_candidate, hscore_current] at hlinear
+  nlinarith [harrival_pos, hlinear]
 
 /--
 Positive affine transfer from dynamic local optimality to Lemma 5 marginal

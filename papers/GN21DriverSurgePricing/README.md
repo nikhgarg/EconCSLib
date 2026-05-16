@@ -937,6 +937,19 @@ and the paired Theorem 3 IC/AE wrappers.  Prefer this route for final Lemma 5
 closeout when the endpoint descent only compares interval/ray seeds contained
 in the feasible positive-trip domain.
 
+The measured GN21 reward now has a direct source-faithful bridge from dynamic
+local optimality to the fixed-response Lemma 5 marginal objective:
+`lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_zero`
+and
+`lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_one`.
+These use the compiled aggregate quotient cross-multiplication lemmas and the
+left/right score identities
+`gn21MeasuredLeftLinearScore_eq_const_add_marginalSetReward` and
+`gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward`, so the remaining
+Lemma 5 closeout can target response shape/measurability/integrability and the
+standard nondegeneracy/denominator positivity inputs rather than assuming the
+dynamic reward is a positive affine transform of the marginal integral.
+
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:
 `Theorem4ShapeReplacementDerivationCertificate`,
