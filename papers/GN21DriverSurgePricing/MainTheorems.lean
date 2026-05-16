@@ -1300,6 +1300,52 @@ theorem singleStateRenewalReward_diff_eq_self_of_zero_rate_component
   rw [hpayment_zero, hremoved_time_zero]
   ring
 
+/-- A measure-zero accepted component has zero payment integral. -/
+theorem singleStateTripPayment_eq_zero_of_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (σ : TripPolicy)
+    (hmeasure_zero : μ σ = 0) :
+    singleStateTripPayment μ w σ = 0 := by
+  unfold singleStateTripPayment
+  have hrestrict_zero : μ.restrict σ = 0 :=
+    Measure.restrict_eq_zero.2 hmeasure_zero
+  rw [hrestrict_zero, integral_zero_measure]
+
+/-- A measure-zero accepted component has zero trip-time integral. -/
+theorem singleStateTripTime_eq_zero_of_measure_zero
+    (μ : Measure TripLength) (σ : TripPolicy)
+    (hmeasure_zero : μ σ = 0) :
+    singleStateTripTime μ σ = 0 := by
+  unfold singleStateTripTime
+  have hrestrict_zero : μ.restrict σ = 0 :=
+    Measure.restrict_eq_zero.2 hmeasure_zero
+  rw [hrestrict_zero, integral_zero_measure]
+
+/-- Removing a measure-zero accepted component leaves single-state reward unchanged. -/
+theorem singleStateRenewalReward_diff_eq_self_of_measure_zero_component
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ removed : TripPolicy)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hmeasure_zero : μ removed = 0) :
+    singleStateRenewalReward μ arrivalRate w (σ \ removed) =
+      singleStateRenewalReward μ arrivalRate w σ := by
+  have hpayment_zero :
+      singleStateTripPayment μ w removed = 0 :=
+    singleStateTripPayment_eq_zero_of_measure_zero μ w removed hmeasure_zero
+  have htime_zero :
+      singleStateTripTime μ removed = 0 :=
+    singleStateTripTime_eq_zero_of_measure_zero μ removed hmeasure_zero
+  unfold singleStateRenewalReward
+  rw [singleStateTripPayment_diff μ w σ removed hremoved_subset
+      hremoved_measurable hw_integrable_σ,
+    singleStateTripTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  rw [hpayment_zero, htime_zero]
+  ring
+
 /-- Adding a disjoint zero-time boundary component leaves single-state reward unchanged. -/
 theorem singleStateRenewalReward_union_eq_self_of_zero_rate_component
     (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
@@ -4673,6 +4719,79 @@ theorem gn21ScaledStateEarning_union
   rw [singleStateTripPayment_union μ w σ added hdisjoint hadded_measurable
     hw_integrable_σ hw_integrable_added]
   unfold singleStateTripPayment
+  ring
+
+/-- Removing a measure-zero component leaves the GN21 exit-weight primitive unchanged. -/
+theorem gn21ExitWeightIntegral_diff_eq_self_of_measure_zero_component
+    (μ : Measure TripLength) (arrivalRate switchIJ switchJI : ℝ)
+    (σ removed : TripPolicy)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σ μ)
+    (hmeasure_zero : μ removed = 0) :
+    gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI (σ \ removed) =
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ := by
+  have hq_zero :
+      singleStateTripPayment μ (gn21SwitchProb switchIJ switchJI) removed = 0 :=
+    singleStateTripPayment_eq_zero_of_measure_zero μ
+      (gn21SwitchProb switchIJ switchJI) removed hmeasure_zero
+  have hintegral_diff :
+      singleStateTripPayment μ (gn21SwitchProb switchIJ switchJI)
+          (σ \ removed) =
+        singleStateTripPayment μ (gn21SwitchProb switchIJ switchJI) σ -
+          singleStateTripPayment μ (gn21SwitchProb switchIJ switchJI)
+            removed := by
+    exact
+      singleStateTripPayment_diff μ (gn21SwitchProb switchIJ switchJI)
+        σ removed hremoved_subset hremoved_measurable hq_integrable_σ
+  have hq_zero_integral :
+      ∫ τ in removed, gn21SwitchProb switchIJ switchJI τ ∂μ = 0 := by
+    simpa [singleStateTripPayment] using hq_zero
+  have hintegral_eq :
+      ∫ τ in σ \ removed, gn21SwitchProb switchIJ switchJI τ ∂μ =
+        ∫ τ in σ, gn21SwitchProb switchIJ switchJI τ ∂μ := by
+    unfold singleStateTripPayment at hintegral_diff
+    linarith
+  unfold gn21ExitWeightIntegral
+  rw [hintegral_eq]
+
+/-- Removing a measure-zero component leaves the GN21 scaled-time primitive unchanged. -/
+theorem gn21ScaledStateTime_diff_eq_self_of_measure_zero_component
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (σ removed : TripPolicy)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hmeasure_zero : μ removed = 0) :
+    gn21ScaledStateTime μ arrivalRate (σ \ removed) =
+      gn21ScaledStateTime μ arrivalRate σ := by
+  have htime_zero :
+      singleStateTripTime μ removed = 0 :=
+    singleStateTripTime_eq_zero_of_measure_zero μ removed hmeasure_zero
+  unfold gn21ScaledStateTime
+  rw [singleStateTripTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ, htime_zero]
+  ring
+
+/-- Removing a measure-zero component leaves the GN21 scaled-earning primitive unchanged. -/
+theorem gn21ScaledStateEarning_diff_eq_self_of_measure_zero_component
+    (μ : Measure TripLength) (arrivalRate : ℝ)
+    (w : PricingFunction) (σ removed : TripPolicy)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hw_integrable_σ : IntegrableOn w σ μ)
+    (hmeasure_zero : μ removed = 0) :
+    gn21ScaledStateEarning μ arrivalRate w (σ \ removed) =
+      gn21ScaledStateEarning μ arrivalRate w σ := by
+  have hpayment_zero :
+      singleStateTripPayment μ w removed = 0 :=
+    singleStateTripPayment_eq_zero_of_measure_zero μ w removed hmeasure_zero
+  unfold gn21ScaledStateEarning
+  rw [singleStateTripPayment_diff μ w σ removed hremoved_subset
+      hremoved_measurable hw_integrable_σ, hpayment_zero]
   ring
 
 /--
@@ -10949,6 +11068,126 @@ theorem eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
     exact ⟨hpos, (hshape hpos).mp hτ⟩
   · intro hτ
     exact (hshape hτ.1).mpr hτ.2
+
+/-- A middle-rejection policy with a strictly inverted gap is accept-all. -/
+theorem acceptsAllTrips_of_rejectsMiddleTrips_of_hi_lt_lo
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hhi_lt_lo : hi < lo) :
+    acceptsAllTrips σ := by
+  intro τ hτ
+  by_cases hτ_lt_lo : τ < lo
+  · exact (hshape hτ).mpr (Or.inl hτ_lt_lo)
+  · exact (hshape hτ).mpr (Or.inr (lt_of_lt_of_le hhi_lt_lo
+      (le_of_not_gt hτ_lt_lo)))
+
+/-- A non-accept-all middle-rejection branch cannot have `hi < lo`. -/
+theorem lo_le_hi_of_rejectsMiddleTrips_of_not_acceptsAll
+    {σ : TripPolicy} {lo hi : ℝ}
+    (hshape : rejectsMiddleTrips lo hi σ)
+    (hnot : ¬ acceptsAllTrips σ) :
+    lo ≤ hi := by
+  by_contra hlo_not_le_hi
+  exact hnot
+    (acceptsAllTrips_of_rejectsMiddleTrips_of_hi_lt_lo hshape
+      (lt_of_not_ge hlo_not_le_hi))
+
+/--
+When the two middle-rejection cutoffs coincide, the canonical policy is
+accept-all except for that single boundary trip length.
+-/
+theorem rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton
+    (t : ℝ) :
+    rejectMiddleTripsPolicy t t = acceptAllPolicy \ ({t} : Set ℝ) := by
+  ext τ
+  constructor
+  · intro hτ
+    refine ⟨hτ.1, ?_⟩
+    intro hτ_eq
+    have hτ_eq' : τ = t := by
+      simpa using hτ_eq
+    rcases hτ.2 with hlt | hgt
+    · have hlt' : τ < t := by
+        simpa using hlt
+      linarith
+    · have hgt' : t < τ := by
+        simpa using hgt
+      linarith
+  · intro hτ
+    refine ⟨hτ.1, ?_⟩
+    have hne : τ ≠ t := by
+      intro hτ_eq
+      exact hτ.2 (by simpa [hτ_eq])
+    exact lt_or_gt_of_ne hne
+
+/--
+A feasible middle-rejection policy with coincident cutoffs is accept-all
+except for one boundary trip length.
+-/
+theorem eq_acceptAll_diff_singleton_of_rejectsMiddleTrips_self_of_subset_acceptAll
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    σ = acceptAllPolicy \ ({t} : Set ℝ) := by
+  rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    hshape hsub, rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton]
+
+/--
+Under a nonatomic trip-length measure, a canonical reject-middle policy with
+coincident cutoffs has the same renewal reward as accept-all: it only removes a
+single boundary trip length.
+-/
+theorem singleStateRenewalReward_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate : ℝ) (w : PricingFunction) (t : ℝ)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    singleStateRenewalReward μ arrivalRate w (rejectMiddleTripsPolicy t t) =
+      singleStateRenewalReward μ arrivalRate w acceptAllPolicy := by
+  let removed : TripPolicy := acceptAllPolicy ∩ ({t} : Set ℝ)
+  have hpolicy :
+      rejectMiddleTripsPolicy t t = acceptAllPolicy \ removed := by
+    rw [rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton]
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1, fun hremoved => hτ.2 hremoved.2⟩
+    · intro hτ
+      exact ⟨hτ.1, fun hτ_eq => hτ.2 ⟨hτ.1, hτ_eq⟩⟩
+  rw [hpolicy]
+  have hremoved_subset : removed ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hτ.1
+  have hremoved_measurable : MeasurableSet removed :=
+    measurableSet_acceptAllPolicy.inter (measurableSet_singleton t)
+  have hmeasure_zero : μ removed = 0 :=
+    measure_mono_null (Set.inter_subset_right) (measure_singleton t)
+  exact
+    singleStateRenewalReward_diff_eq_self_of_measure_zero_component
+      μ arrivalRate w acceptAllPolicy removed hremoved_subset
+      hremoved_measurable hw_integrable_acceptAll htime_integrable_acceptAll
+      hmeasure_zero
+
+/--
+The same nonatomic boundary-removal fact for any feasible policy that has the
+coincident-cutoff middle-rejection shape.
+-/
+theorem singleStateRenewalReward_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate : ℝ) (w : PricingFunction) (σ : TripPolicy) (t : ℝ)
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    singleStateRenewalReward μ arrivalRate w σ =
+      singleStateRenewalReward μ arrivalRate w acceptAllPolicy := by
+  rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    singleStateRenewalReward_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+      μ arrivalRate w t hw_integrable_acceptAll htime_integrable_acceptAll
 
 /-- A feasible long-trip-rejection shape cannot be accept-all for finite cutoff. -/
 theorem not_acceptsAllTrips_of_rejectsLongTrips_of_subset_acceptAll

@@ -545,7 +545,11 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions`
   now expose exactly that reduced source shape: local endpoint facts receive
   the relevant non-accept-all hypothesis, and reject-middle local data is only
-  required when `0 <= lo`.
+  required when `0 <= lo`.  Lean also now has the nonatomic boundary bridge
+  showing that a reject-middle policy with coincident cutoffs (`lo = hi`)
+  differs from accept-all only by one trip length and leaves the single-state
+  reward and GN21 `Q,T,W` primitives unchanged after removing that
+  measure-zero component.
   These adapters are strongest in accept-all fixed-state branches;
   the source-faithful closure path remains the regular current-bounds route
   until the non-accept-all fixed-state reward-rate issue is discharged.
