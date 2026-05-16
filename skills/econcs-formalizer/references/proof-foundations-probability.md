@@ -188,6 +188,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   when a testing paper compares posterior-score marginal scales across
   different feature sets; this avoids forcing full/test-free features into the
   same finite index type just to reuse same-index precision lemmas.
+  For school-capacity cutoffs with finitely many Gaussian applicant groups, use
+  `StandardGaussianCDFAPI.mixtureTailMass` and
+  `existsUnique_mixtureTailMass_eq_and_region_of_capacity_mem_Ioo` before
+  writing paper-local intermediate-value arguments; it gives both the unique
+  capacity-realizing cutoff and the upper-threshold region characterization
+  from CDF end limits, nonnegative weights, a positive group weight, and
+  capacity in `(0, totalWeight)`.
   Use
   `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw` and
   `GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw_standardize_threshold`

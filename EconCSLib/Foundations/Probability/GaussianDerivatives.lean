@@ -567,6 +567,50 @@ theorem existsUnique_mixtureTailMass_eq_of_capacity_mem_Ioo
     rw [hthreshold', hthreshold] at hstrict
     exact (lt_irrefl capacity) hstrict
 
+/--
+Unique finite Gaussian-mixture capacity cutoff, including the threshold-region
+characterization.
+
+If the target capacity lies strictly between zero and the total mixture weight,
+then the common threshold realizing that capacity is unique, and the set of
+thresholds whose upper-tail mass is at most capacity is exactly the upper ray
+above the capacity cutoff.
+-/
+theorem existsUnique_mixtureTailMass_eq_and_region_of_capacity_mem_Ioo
+    (api : StandardGaussianCDFAPI)
+    (hcdf_atBot : Filter.Tendsto api.cdf Filter.atBot (nhds 0))
+    (hcdf_atTop : Filter.Tendsto api.cdf Filter.atTop (nhds 1))
+    {γ : Type*} [Fintype γ]
+    {weight : γ → ℝ} {law : γ → GaussianScaleLaw} {capacity : ℝ}
+    (hweight : ∀ g, 0 ≤ weight g) (hpos : ∃ g, 0 < weight g)
+    (hcapacity : capacity ∈ Set.Ioo (0 : ℝ) (∑ g : γ, weight g)) :
+    ∃! threshold : ℝ,
+      api.mixtureTailMass weight law threshold = capacity ∧
+        ∀ z : ℝ,
+          api.mixtureTailMass weight law z ≤ capacity ↔ threshold ≤ z := by
+  rcases api.existsUnique_mixtureTailMass_eq_of_capacity_mem_Ioo
+      hcdf_atBot hcdf_atTop hweight hpos hcapacity with
+    ⟨threshold, hthreshold, hunique⟩
+  have hanti : StrictAnti (api.mixtureTailMass weight law) :=
+    api.mixtureTailMass_strictAnti_threshold (law := law) hweight hpos
+  refine ⟨threshold, ⟨hthreshold, ?_⟩, ?_⟩
+  · intro z
+    constructor
+    · intro hmass
+      by_contra hnot
+      have hzlt : z < threshold := lt_of_not_ge hnot
+      have hstrict := hanti hzlt
+      rw [hthreshold] at hstrict
+      linarith
+    · intro hle
+      rcases lt_or_eq_of_le hle with hlt | rfl
+      · have hstrict := hanti hlt
+        rw [hthreshold] at hstrict
+        exact le_of_lt hstrict
+      · exact le_of_eq hthreshold
+  · intro threshold' hprops
+    exact hunique threshold' hprops.1
+
 end StandardGaussianCDFAPI
 
 /--
