@@ -632,3 +632,51 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `[Nonempty Belief]` citation form. When a paper-facing strategy is named,
   expose the named-strategy `for all beliefs` iff source-local-predicate
   endpoint, not only the arbitrary-strategy iff.
+
+## Strategic Admissions Source-Model Closure
+
+- For two-school standardized-testing models, do not introduce a fresh
+  theorem-level certificate after the paper's condition wrappers are source
+  shaped. Continue by proving the concrete inputs to the existing wrappers:
+  strategic applicant-pool mass identities, school objective value formulas,
+  mass feasibility, zero-contribution facts, and no-tie inequalities.
+- When a school weighted-merit objective collapses because one group has zero
+  contribution under a policy pair, prove that bookkeeping lemma directly and
+  use it to remove objective-equality premises from later bridges. Keep the
+  surviving-group mass and no-tie assumptions separate; they are economic
+  model facts, not algebraic rewrites.
+- For Proposition-5-style condition bundles, once cutoff/merit-crossing
+  wrappers construct the cost thresholds, the next best target is the concrete
+  Gaussian game data feeding those wrappers. Avoid restating conditions
+  (10)--(14) manually; use the established paper-level wrapper and discharge
+  its concrete premises.
+
+## Generalized-English Source-History and PBE Lessons
+
+- For threshold generalized-English auction histories, ordinary
+  strategy-consistent histories are usually too weak for exact terminal-record
+  conclusions: an active bidder can drop after its threshold and record an
+  overshot clock. Before trying to close a paper-level PBE theorem, prove either
+  exact-drop history, no-overshoot history, or a source transition relation
+  such as clock discipline that prevents overshoot at every realized dropout.
+- Attack source-history gaps at the transition level first. Prove a one-step
+  invariant saying a legal clock advance cannot pass any active threshold, or
+  a local dropout step records exactly the active bidder's threshold; then lift
+  it to histories and only then feed the result into terminal-record or
+  source-completion endpoints.
+- Keep the source PBE seam separate from outcome algebra. For generalized
+  English/GSP-style proofs, the durable split is concrete belief consistency,
+  a game-level sequential-rationality iff against a local reachable/off-path
+  predicate, behavioral PBE characterization, and source-history generation.
+  Slot/payment/utility equality should be downstream of those certificates, not
+  repeated as source assumptions.
+- In infinite-rank source models, a finite schedule cannot prove all ranks are
+  inactive from an all-active cold start. Use completed-rank endpoints for
+  finite paper checks, or introduce a finite-active source state whose inactive
+  outside ranks already carry exact records. Do not paper over the distinction
+  with an all-terminal wrapper.
+- For belief-explicit source-extensive PBE checkers, let the belief object carry
+  the generated source history and terminality proof. Then expose projection
+  theorems that recover generated history, terminality, and exact/no-overshoot
+  records from an accepted PBE witness; this keeps the human-facing PBE surface
+  honest about which source evidence was checked.

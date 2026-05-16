@@ -801,6 +801,18 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   field unfolds to the tail probability, expectation, or integral appearing in
   the paper, prove a thin source-surface endpoint, and make the DAG/README point
   to that endpoint rather than to the older abstract formula-premise theorem.
+- For source-affine Gaussian formulas, keep three layers separate: the
+  standardized integral identity, the raw source-density scaling, and the
+  paper's named source substitutions. After proving the normalized theorem,
+  add thin wrappers for raw-normal density arguments and for displayed source
+  definitions such as `a'_g(q)` and `b'_g`; this avoids repeatedly expanding
+  square-root denominators and prevents standardized-density facts from being
+  mistaken for source-density facts.
+- When an arXiv TeX source gives a different-looking Gaussian formula than the
+  PDF text extraction, treat the TeX line as authoritative for the wrapper and
+  record the mismatch in the paper plan/report. Do not repair the formula from
+  intuition unless the Lean proof is explicitly proving a corrected theorem and
+  the validation report says so.
 
 ## Lean Patterns
 

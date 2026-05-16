@@ -31,6 +31,12 @@ When another agent will pick up later, spend tokens on durable artifacts rather
 than chat: a paper-local handoff note, README/audit links, exact declaration
 names, validation status, and next command. Future agents should start from
 those files instead of reconstructing context from conversation history.
+For a pause of several days or longer, create or refresh a paper-local
+`START_HERE_NEXT_AGENT.md` that is shorter than the full handoff: current
+validation commands, shared-worktree caveats, the exact active proof seam,
+strongest reusable endpoints, and what not to work on next. Link it from the
+paper README, audit/final-validation report, and front repository status so a
+future agent has one obvious startup path.
 If a paper is being paused for a stronger future model, say that explicitly in
 the paper README/handoff and in the front repository status entries. Name the
 three or fewer exact proof seams that remain and the strongest public wrapper or
@@ -200,10 +206,19 @@ formalization, execute the standard intake before deep proof work:
 - Download/cache the exact source PDF in a new or existing
   `papers/[AuthorInitials][2DigitYear][Descriptor]/` folder, then create the
   adjacent `.txt` extraction with `pdftotext`.
+- If the paper link is arXiv, also download/cache the arXiv source archive
+  (`e-print`) during intake and unpack it beside the PDF/text cache. Prefer
+  the TeX source for theorem statements, displayed equations, notation, labels,
+  and appendix references; use PDF extraction mainly for quick search and for
+  confirming page context.
 - If the PDF/text cache already exists in the paper folder, use those local
-  files. Do not search the web again, re-download the paper, or re-run
-  extraction unless the cached source version is missing, corrupted, or known
-  to be the wrong version.
+  files. If an arXiv source cache exists, use it too. Do not search the web
+  again, re-download the paper, or re-run extraction unless the cached source
+  version is missing, corrupted, or known to be the wrong version.
+- When `pdftotext` output is garbled for formulas, stop trying to reconstruct
+  the formula from layout text. Read the cached TeX source directly and cite
+  the source line/macro in the paper-facing comment or plan note when it
+  changes the Lean statement.
 - Read the abstract, introduction, model section, and theorem statements first;
   then search the cached text for every named `Definition`, `Lemma`,
   `Proposition`, `Theorem`, `Corollary`, and appendix result.
@@ -233,7 +248,7 @@ the Lean statements against the paper.
      and named theorem statements.
   5. A local `.gitignore` file.
 - **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but should not contain paper-specific PDF exclusions or paths.
-- **Reproducible PDF and text cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF changes.
+- **Reproducible PDF/text/source cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. For arXiv papers, also cache and unpack the TeX source archive once; use it as the authoritative source for formulas when PDF extraction is ambiguous or garbled. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF or source archive changes.
 - **README Requirements:** The `README.md` must clearly identify the exact
   source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
 - **DAG Node Wording:** `DependencyDAG.tex` is a proof roadmap for humans, not
@@ -242,7 +257,9 @@ the Lean statements against the paper.
   implementation notes such as helper families, algebra rewrites, or "closed"
   status language; keep those details in the README status table, proof notes,
   or handoff files. Partial/conditional nodes may mention the missing proof
-  obligation, but should still foreground the paper statement.
+  obligation, but should still foreground the paper statement. During a pause
+  or handoff pass, audit the DAG for this specifically: if a node reads like a
+  session log, rewrite it before rendering.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
