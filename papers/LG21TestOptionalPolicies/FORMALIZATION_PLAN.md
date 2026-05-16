@@ -209,8 +209,13 @@ Last updated: 2026-05-16
   `paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness` and
   `paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness`,
   giving paper-facing Theorem 3.2 endpoints without the old tautological
-  fairness-impossibility certificate.  The remaining source gap is
-  instantiating one of these source witnesses from the full policy model.
+  fairness-impossibility certificate.  The point-estimate constructors
+  `paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface` and
+  `paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface`
+  discharge the off-mean field for deterministic scalar PMF/point-law surfaces
+  where the base-only estimate is the acting mean and the full-feature estimate
+  is the selected actor value.  The remaining source gap is instantiating the
+  rest of one source witness from the full policy model.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -336,8 +341,9 @@ Last updated: 2026-05-16
    implies test-blankness from either a final off-mean positive-mass acting
    witness or the stronger two-distinct-positive-mass-values witness.  The
    source-shaped witness structures are the current non-certificate endpoints.
-   The next work should instantiate one of them from the paper's full source
-   policy model.
+   The point-estimate constructors now close the off-mean field for deterministic
+   scalar estimate surfaces.  The next work should instantiate the remaining
+   mixture and best-response fields from the paper's full source policy model.
 
 ## Reusable Library Seams
 

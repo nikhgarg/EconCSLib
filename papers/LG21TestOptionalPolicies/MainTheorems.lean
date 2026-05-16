@@ -5148,6 +5148,75 @@ theorem paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of
   exact hne_mean (hsupport actor hmass)
 
 /--
+Theorem 3.2 final-witness constructor for scalar point-estimate PMF surfaces.
+If the base-only estimate is the point mass at the acting-distribution mean and
+the full-feature estimate is the point mass at the acting type selected by the
+test feature, then every non-test-blank witness gives a positive-mass actor off
+the acting mean.
+-/
+theorem paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    ∀ e base test,
+      S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test →
+        ∃ actor, 0 < (actorLaw e base actor).toReal ∧
+          actorValue e base actor ≠
+            pmfExp (actorLaw e base) (actorValue e base) := by
+  intro e base test hne
+  refine ⟨actorOfTest e base test, hmass e base test, ?_⟩
+  intro hmean
+  apply hne
+  rw [hbasePoint e base, hfullPoint e base test, hmean]
+
+/--
+Theorem 3.2 final-witness constructor for abstract point-law surfaces.
+-/
+theorem paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
+    {Skill Base Test Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (pointLaw : ℝ → Law)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyLaw e base =
+          pointLaw (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureLaw e base test =
+          pointLaw (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    ∀ e base test,
+      S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test →
+        ∃ actor, 0 < (actorLaw e base actor).toReal ∧
+          actorValue e base actor ≠
+            pmfExp (actorLaw e base) (actorValue e base) := by
+  intro e base test hne
+  refine ⟨actorOfTest e base test, hmass e base test, ?_⟩
+  intro hmean
+  apply hne
+  rw [hbasePoint e base, hfullPoint e base test, hmean]
+
+/--
 Source-shaped witness for the remaining Theorem 3.2 PMF route.  It packages
 the positive-share mixture identities, two-sided best response, affine payoff
 link, and the final source-model fact that any non-test-blank witness produces

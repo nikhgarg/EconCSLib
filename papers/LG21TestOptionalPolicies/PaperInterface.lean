@@ -3508,6 +3508,65 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_tes
     hotherPayoff_of_law_eq hweight hdenom hnonblank_off_mean
 
 /--
+Theorem 3.2 final-witness constructor for scalar point-estimate PMF surfaces.
+-/
+theorem paper_interface_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    ∀ e base test,
+      S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test →
+        ∃ actor, 0 < (actorLaw e base actor).toReal ∧
+          actorValue e base actor ≠
+            pmfExp (actorLaw e base) (actorValue e base) :=
+  paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface
+    actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass
+
+/--
+Theorem 3.2 final-witness constructor for abstract point-law surfaces.
+-/
+theorem paper_interface_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
+    {Skill Base Test Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (pointLaw : ℝ → Law)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyLaw e base =
+          pointLaw (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureLaw e base test =
+          pointLaw (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    ∀ e base test,
+      S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test →
+        ∃ actor, 0 < (actorLaw e base actor).toReal ∧
+          actorValue e base actor ≠
+            pmfExp (actorLaw e base) (actorValue e base) :=
+  paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
+    pointLaw actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass
+
+/--
 Theorem 3.2 observable branch from the source-shaped PMF witness.
 -/
 theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_witness
