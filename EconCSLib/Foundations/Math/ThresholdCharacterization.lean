@@ -15,6 +15,7 @@ comparisons into threshold statements.
 - `exists_threshold_of_continuous_strictMonoOn_Icc_crossing`
 - `exists_threshold_of_continuous_strictMonoOn_Icc`
 - `exists_threshold_le_of_continuous_strictMonoOn_Icc`
+- `existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop`
 -/
 
 namespace EconCSLib
@@ -22,6 +23,58 @@ namespace EconCSLib
 noncomputable section
 
 open Set
+
+/--
+Unbounded intermediate-value cutoff for a continuous scalar function with
+opposite end limits.  If `f` tends to `high` at `-∞`, tends to `low` at `+∞`,
+and `level` lies strictly between them, then some real cutoff attains `level`.
+-/
+theorem exists_eq_of_continuous_tendsto_atBot_atTop
+    {f : ℝ → ℝ} {level low high : ℝ}
+    (hf_cont : Continuous f)
+    (hatBot : Filter.Tendsto f Filter.atBot (nhds high))
+    (hatTop : Filter.Tendsto f Filter.atTop (nhds low))
+    (hlevel : level ∈ Ioo low high) :
+    ∃ cutoff : ℝ, f cutoff = level := by
+  have htop :
+      ∀ᶠ cutoff in Filter.atTop, f cutoff < level :=
+    hatTop.eventually (eventually_lt_nhds hlevel.1)
+  have hbot :
+      ∀ᶠ cutoff in Filter.atBot, level < f cutoff :=
+    hatBot.eventually (eventually_gt_nhds hlevel.2)
+  rcases htop.exists with ⟨cutoffTop, hcutoffTop⟩
+  rcases hbot.exists with ⟨cutoffBot, hcutoffBot⟩
+  rcases mem_range_of_exists_le_of_exists_ge hf_cont
+      ⟨cutoffTop, le_of_lt hcutoffTop⟩
+      ⟨cutoffBot, le_of_lt hcutoffBot⟩ with
+    ⟨cutoff, hcutoff⟩
+  exact ⟨cutoff, hcutoff⟩
+
+/--
+Unbounded uniqueness cutoff for a continuous strictly decreasing scalar
+function with opposite end limits.
+-/
+theorem existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop
+    {f : ℝ → ℝ} {level low high : ℝ}
+    (hf_cont : Continuous f)
+    (hf_anti : StrictAnti f)
+    (hatBot : Filter.Tendsto f Filter.atBot (nhds high))
+    (hatTop : Filter.Tendsto f Filter.atTop (nhds low))
+    (hlevel : level ∈ Ioo low high) :
+    ∃! cutoff : ℝ, f cutoff = level := by
+  rcases exists_eq_of_continuous_tendsto_atBot_atTop
+      hf_cont hatBot hatTop hlevel with
+    ⟨cutoff, hcutoff⟩
+  refine ⟨cutoff, hcutoff, ?_⟩
+  intro cutoff' hcutoff'
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hstrict := hf_anti hlt
+    rw [hcutoff, hcutoff'] at hstrict
+    exact (lt_irrefl level) hstrict
+  · have hstrict := hf_anti hgt
+    rw [hcutoff', hcutoff] at hstrict
+    exact (lt_irrefl level) hstrict
 
 /--
 If a scalar function is continuous and strictly increasing on `[0, 1]`, and a

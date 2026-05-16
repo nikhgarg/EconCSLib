@@ -39,6 +39,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   tie-breaking convention at cutoff points. Split on the region boundary
   predicates, force the strategy by pointwise best-response inequalities in
   strict branches, and use the tie-breaking hypotheses only in equality cases.
+- For school capacity fixed points, separate the scalar cutoff theorem from the
+  probabilistic applicant-mass formula. First prove a reusable theorem that a
+  continuous strictly decreasing applicant-mass function with end limits
+  `totalMass` at `-∞` and `0` at `+∞` has a unique capacity cutoff and sublevel
+  region. Then instantiate continuity, monotonicity, and limits from the
+  paper's Gaussian or strategic applicant-mass expression.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
