@@ -470,7 +470,11 @@ into the concrete endpoint policy data.
   plus the accept-all-complement specializations
   `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_left_of_complement_pointwise_kernel_nonneg`
   and
-  `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_right_of_complement_pointwise_kernel_nonneg`.
+  `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_right_of_complement_pointwise_kernel_nonneg`,
+  with current-bound Lemma 9/10 specializations
+  `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_left_of_lemma10_current_bounds`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_right_of_lemma9_current_bounds`.
   These are the useful bridge from "positive derivative kernel on positive
   mass" to an actual strict reward improvement for the quotient reward, and
   should be preferred over building more abstract wrappers when closing the
