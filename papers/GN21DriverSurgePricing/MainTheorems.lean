@@ -15613,6 +15613,47 @@ theorem policyAlmostEverywhereEq_of_diff_null
   exact measure_union_null hστ hτσ
 
 /--
+Adding the same fixed context to both policies cannot create new
+almost-everywhere disagreements.  This is the set-theoretic fact needed for
+Lemma 5 endpoint moves inside a larger finite interval policy.
+-/
+theorem symmDiff_union_left_subset
+    {κ σ τ : TripPolicy} :
+    ((κ ∪ σ) ∆ (κ ∪ τ)) ⊆ σ ∆ τ := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx ⊢
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_left, hx_not_right⟩
+    have hxσ : x ∈ σ := by
+      rcases hx_left with hxκ | hxσ
+      · exact False.elim (hx_not_right (Or.inl hxκ))
+      · exact hxσ
+    have hxτ_not : x ∉ τ := by
+      intro hxτ
+      exact hx_not_right (Or.inr hxτ)
+    exact Or.inl ⟨hxσ, hxτ_not⟩
+  · rcases hx with ⟨hx_right, hx_not_left⟩
+    have hxτ : x ∈ τ := by
+      rcases hx_right with hxκ | hxτ
+      · exact False.elim (hx_not_left (Or.inl hxκ))
+      · exact hxτ
+    have hxσ_not : x ∉ σ := by
+      intro hxσ
+      exact hx_not_left (Or.inr hxσ)
+    exact Or.inr ⟨hxτ, hxσ_not⟩
+
+/--
+Almost-everywhere policy equality is preserved after unioning both policies
+with a fixed context.
+-/
+theorem policyAlmostEverywhereEq_union_left
+    (μ : Measure TripLength) (κ : TripPolicy) {σ τ : TripPolicy}
+    (hae : policyAlmostEverywhereEq μ σ τ) :
+    policyAlmostEverywhereEq μ (κ ∪ σ) (κ ∪ τ) := by
+  rw [policyAlmostEverywhereEq] at hae ⊢
+  exact measure_mono_null symmDiff_union_left_subset hae
+
+/--
 When two open intervals touch at `b`, their union differs from the merged open
 interval only at the touching endpoint.  This is the set-theoretic core of the
 Lemma 5 Step 2 merge operation after an endpoint path reaches the next
@@ -15655,6 +15696,168 @@ theorem policyAlmostEverywhereEq_ioo_union_touching
     (symmDiff_ioo_union_touching_subset_singleton
       (a := a) (b := b) (c := c) hab hbc)
     (measure_singleton b)
+
+/--
+An open interval touching a right ray differs from the merged right ray only
+at the touching endpoint.
+-/
+theorem symmDiff_ioo_union_Ioi_touching_subset_singleton
+    {a b : TripLength} (hab : a ≤ b) :
+    ((Set.Ioo a b ∪ Set.Ioi b) ∆ Set.Ioi a) ⊆
+      ({b} : Set TripLength) := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_union, hx_not⟩
+    have hx_a : a < x := by
+      rcases hx_union with hx_interval | hx_ray
+      · exact hx_interval.1
+      · exact lt_of_le_of_lt hab hx_ray
+    exact False.elim (hx_not hx_a)
+  · rcases hx with ⟨hx_ray, hx_not_union⟩
+    by_cases hxb : x = b
+    · simpa [hxb]
+    · exfalso
+      rcases lt_or_gt_of_ne hxb with hx_lt_b | hb_lt_x
+      · exact hx_not_union (Or.inl ⟨hx_ray, hx_lt_b⟩)
+      · exact hx_not_union (Or.inr hb_lt_x)
+
+/--
+Under a nonatomic measure, an open interval touching a right ray is a.e. equal
+to the merged right ray.
+-/
+theorem policyAlmostEverywhereEq_ioo_union_Ioi_touching
+    (μ : Measure TripLength) [NoAtoms μ]
+    {a b : TripLength} (hab : a ≤ b) :
+    policyAlmostEverywhereEq μ
+      (Set.Ioo a b ∪ Set.Ioi b) (Set.Ioi a) := by
+  rw [policyAlmostEverywhereEq]
+  exact measure_mono_null
+    (symmDiff_ioo_union_Ioi_touching_subset_singleton
+      (a := a) (b := b) hab)
+    (measure_singleton b)
+
+/--
+Positive-domain version of the bounded-interval/right-ray merge used by the
+Lemma 5 boundary-tail reduction.
+-/
+theorem policyAlmostEverywhereEq_bounded_union_positiveRightRay_touching
+    (μ : Measure TripLength) [NoAtoms μ]
+    {a b : TripLength} (ha : 0 ≤ a) (hab : a ≤ b) :
+    policyAlmostEverywhereEq μ
+      (Set.Ioo a b ∪
+        (GN21GeneralizedIntervalComponent.positiveRightRay b).policy)
+      (GN21GeneralizedIntervalComponent.positiveRightRay a).policy := by
+  have hb : 0 ≤ b := ha.trans hab
+  have hright :
+      (GN21GeneralizedIntervalComponent.positiveRightRay b).policy =
+        Set.Ioi b := by
+    ext x
+    constructor
+    · intro hx
+      exact hx.2
+    · intro hx
+      exact ⟨lt_of_le_of_lt hb hx, hx⟩
+  have hmerged :
+      (GN21GeneralizedIntervalComponent.positiveRightRay a).policy =
+        Set.Ioi a := by
+    ext x
+    constructor
+    · intro hx
+      exact hx.2
+    · intro hx
+      exact ⟨lt_of_le_of_lt ha hx, hx⟩
+  rw [hright, hmerged]
+  exact policyAlmostEverywhereEq_ioo_union_Ioi_touching μ hab
+
+/--
+Positive-domain left-ray/bounded-interval merge: `(0,a) ∪ (a,b)` differs
+from `(0,b)` only at the touching endpoint `a`.
+-/
+theorem symmDiff_positiveLeftRay_union_bounded_touching_subset_singleton
+    {a b : TripLength} (ha : 0 ≤ a) (hab : a ≤ b) :
+    (((GN21GeneralizedIntervalComponent.positiveLeftRay a).policy ∪
+        Set.Ioo a b) ∆
+      (GN21GeneralizedIntervalComponent.positiveLeftRay b).policy) ⊆
+      ({a} : Set TripLength) := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_union, hx_not⟩
+    have hx_merged :
+        x ∈ (GN21GeneralizedIntervalComponent.positiveLeftRay b).policy := by
+      rcases hx_union with hx_left | hx_interval
+      · exact ⟨hx_left.1, lt_of_lt_of_le hx_left.2 hab⟩
+      · exact
+          ⟨lt_of_le_of_lt ha hx_interval.1, hx_interval.2⟩
+    exact False.elim (hx_not hx_merged)
+  · rcases hx with ⟨hx_merged, hx_not_union⟩
+    by_cases hxa : x = a
+    · simpa [hxa]
+    · exfalso
+      rcases lt_or_gt_of_ne hxa with hx_lt_a | ha_lt_x
+      · exact hx_not_union (Or.inl ⟨hx_merged.1, hx_lt_a⟩)
+      · exact hx_not_union (Or.inr ⟨ha_lt_x, hx_merged.2⟩)
+
+/--
+Under a nonatomic measure, a positive left ray touching a bounded interval is
+a.e. equal to the merged positive left ray.
+-/
+theorem policyAlmostEverywhereEq_positiveLeftRay_union_bounded_touching
+    (μ : Measure TripLength) [NoAtoms μ]
+    {a b : TripLength} (ha : 0 ≤ a) (hab : a ≤ b) :
+    policyAlmostEverywhereEq μ
+      ((GN21GeneralizedIntervalComponent.positiveLeftRay a).policy ∪
+        Set.Ioo a b)
+      (GN21GeneralizedIntervalComponent.positiveLeftRay b).policy := by
+  rw [policyAlmostEverywhereEq]
+  exact measure_mono_null
+    (symmDiff_positiveLeftRay_union_bounded_touching_subset_singleton
+      (a := a) (b := b) ha hab)
+    (measure_singleton a)
+
+/--
+A positive left ray and positive right ray touching at the same cutoff differ
+from the full positive domain only at that cutoff.
+-/
+theorem symmDiff_positiveLeftRightRay_touching_subset_singleton
+    (a : TripLength) :
+    (((GN21GeneralizedIntervalComponent.positiveLeftRay a).policy ∪
+        (GN21GeneralizedIntervalComponent.positiveRightRay a).policy) ∆
+      GN21GeneralizedIntervalComponent.positiveAll.policy) ⊆
+      ({a} : Set TripLength) := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_union, hx_not_all⟩
+    have hx_all : x ∈ GN21GeneralizedIntervalComponent.positiveAll.policy := by
+      rcases hx_union with hx_left | hx_right
+      · exact hx_left.1
+      · exact hx_right.1
+    exact False.elim (hx_not_all hx_all)
+  · rcases hx with ⟨hx_all, hx_not_union⟩
+    by_cases hxa : x = a
+    · simpa [hxa]
+    · exfalso
+      rcases lt_or_gt_of_ne hxa with hx_lt_a | ha_lt_x
+      · exact hx_not_union (Or.inl ⟨hx_all, hx_lt_a⟩)
+      · exact hx_not_union (Or.inr ⟨hx_all, ha_lt_x⟩)
+
+/--
+Under a nonatomic measure, touching positive left/right rays are a.e. equal to
+the full positive trip domain.
+-/
+theorem policyAlmostEverywhereEq_positiveLeftRightRay_touching
+    (μ : Measure TripLength) [NoAtoms μ]
+    (a : TripLength) :
+    policyAlmostEverywhereEq μ
+      ((GN21GeneralizedIntervalComponent.positiveLeftRay a).policy ∪
+        (GN21GeneralizedIntervalComponent.positiveRightRay a).policy)
+      GN21GeneralizedIntervalComponent.positiveAll.policy := by
+  rw [policyAlmostEverywhereEq]
+  exact measure_mono_null
+    (symmDiff_positiveLeftRightRay_touching_subset_singleton a)
+    (measure_singleton a)
 
 /--
 Concrete Lemma 5 endpoint-path merge step.  If moving an upper endpoint from
@@ -15756,6 +15959,235 @@ theorem lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
   simpa [hmerge_eq] using hpath_lt
 
 /--
+Context-aware Lemma 5 endpoint merge step.  This is the version used in the
+paper's finite interval induction: all other intervals in `context` stay fixed
+while the upper endpoint of one interval moves to the next lower endpoint.
+-/
+theorem lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_end :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower rightLower ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 ≤ derivative x) :
+    Rhat (context ∪
+      (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) ≤
+      Rhat (context ∪ Set.Ioo leftLower rightUpper) := by
+  have hpath_le :
+      path leftUpper ≤ path rightLower :=
+    endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+      hupper_right hpath_cont hpath_deriv hderiv_nonneg
+  rw [hpath_start, hpath_end] at hpath_le
+  have hleft_right : leftLower ≤ rightLower :=
+    hleft_upper.trans hupper_right
+  have hmerge_ae :
+      policyAlmostEverywhereEq μ
+        (context ∪
+          (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper))
+        (context ∪ Set.Ioo leftLower rightUpper) :=
+    policyAlmostEverywhereEq_union_left μ context
+      (policyAlmostEverywhereEq_ioo_union_touching μ
+        hleft_right hright_upper)
+  have hmerge_eq :
+      Rhat (context ∪
+          (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper)) =
+        Rhat (context ∪ Set.Ioo leftLower rightUpper) :=
+    hR_congr hmerge_ae
+  simpa [hmerge_eq] using hpath_le
+
+/--
+Strict context-aware version of
+`lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path_with_context`.
+-/
+theorem lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_end :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower rightLower ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 < derivative x) :
+    Rhat (context ∪
+      (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+      Rhat (context ∪ Set.Ioo leftLower rightUpper) := by
+  have hpath_lt :
+      path leftUpper < path rightLower :=
+    endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+      hupper_right hpath_cont hpath_deriv hderiv_pos
+  rw [hpath_start, hpath_end] at hpath_lt
+  have hleft_right : leftLower ≤ rightLower :=
+    hleft_upper.trans (le_of_lt hupper_right)
+  have hmerge_ae :
+      policyAlmostEverywhereEq μ
+        (context ∪
+          (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper))
+        (context ∪ Set.Ioo leftLower rightUpper) :=
+    policyAlmostEverywhereEq_union_left μ context
+      (policyAlmostEverywhereEq_ioo_union_touching μ
+        hleft_right hright_upper)
+  have hmerge_eq :
+      Rhat (context ∪
+          (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper)) =
+        Rhat (context ∪ Set.Ioo leftLower rightUpper) :=
+    hR_congr hmerge_ae
+  simpa [hmerge_eq] using hpath_lt
+
+/--
+Context-aware lower-endpoint merge step.  Moving the lower endpoint of the
+right interval left to the preceding upper endpoint merges adjacent intervals,
+with all other intervals held fixed.
+-/
+theorem lemma5_lower_endpoint_merge_reward_ge_of_endpoint_path_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_end :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo leftUpper rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonpos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x ≤ 0) :
+    Rhat (context ∪
+      (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) ≤
+      Rhat (context ∪ Set.Ioo leftLower rightUpper) := by
+  have hpath_le :
+      path rightLower ≤ path leftUpper :=
+    endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+      hupper_right hpath_cont hpath_deriv hderiv_nonpos
+  rw [hpath_start, hpath_end] at hpath_le
+  have hleft_rightUpper : leftUpper ≤ rightUpper :=
+    hupper_right.trans hright_upper
+  have hmerge_ae :
+      policyAlmostEverywhereEq μ
+        (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo leftUpper rightUpper))
+        (context ∪ Set.Ioo leftLower rightUpper) :=
+    policyAlmostEverywhereEq_union_left μ context
+      (policyAlmostEverywhereEq_ioo_union_touching μ
+        hleft_upper hleft_rightUpper)
+  have hmerge_eq :
+      Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo leftUpper rightUpper)) =
+        Rhat (context ∪ Set.Ioo leftLower rightUpper) :=
+    hR_congr hmerge_ae
+  simpa [hmerge_eq] using hpath_le
+
+/--
+Strict context-aware lower-endpoint merge step.
+-/
+theorem lemma5_lower_endpoint_merge_reward_gt_of_endpoint_path_with_context
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_end :
+      path leftUpper =
+        Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo leftUpper rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_neg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x < 0) :
+    Rhat (context ∪
+      (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper)) <
+      Rhat (context ∪ Set.Ioo leftLower rightUpper) := by
+  have hpath_lt :
+      path rightLower < path leftUpper :=
+    endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+      hupper_right hpath_cont hpath_deriv hderiv_neg
+  rw [hpath_start, hpath_end] at hpath_lt
+  have hleft_rightUpper : leftUpper ≤ rightUpper :=
+    (le_of_lt hupper_right).trans hright_upper
+  have hmerge_ae :
+      policyAlmostEverywhereEq μ
+        (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo leftUpper rightUpper))
+        (context ∪ Set.Ioo leftLower rightUpper) :=
+    policyAlmostEverywhereEq_union_left μ context
+      (policyAlmostEverywhereEq_ioo_union_touching μ
+        hleft_upper hleft_rightUpper)
+  have hmerge_eq :
+      Rhat (context ∪
+          (Set.Ioo leftLower leftUpper ∪ Set.Ioo leftUpper rightUpper)) =
+        Rhat (context ∪ Set.Ioo leftLower rightUpper) :=
+    hR_congr hmerge_ae
+  simpa [hmerge_eq] using hpath_lt
+
+/--
 Concrete Lemma 5 endpoint-path collapse step.  If moving a lower endpoint
 right until it reaches the upper endpoint has nonnegative derivative all along
 the path, then the interval is weakly dominated by deleting it.
@@ -15795,6 +16227,99 @@ theorem lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
   have hpath_lt : path lower < path upper :=
     endpoint_path_lt_of_hasDerivAt_pos_on_Icc
       hlower_upper hpath_cont hpath_deriv hderiv_pos
+  simpa [hpath_start, hpath_end] using hpath_lt
+
+/--
+Context-aware Lemma 5 endpoint collapse step.  This is the finite-induction
+version where all other intervals in `context` stay fixed while one accepted
+interval is collapsed to zero length.
+-/
+theorem lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower ≤ upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path upper = Rhat context)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo lower upper, 0 ≤ derivative x) :
+    Rhat (context ∪ Set.Ioo lower upper) ≤ Rhat context := by
+  have hpath_le : path lower ≤ path upper :=
+    endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+      hlower_upper hpath_cont hpath_deriv hderiv_nonneg
+  simpa [hpath_start, hpath_end] using hpath_le
+
+/--
+Strict context-aware version of
+`lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path_with_context`.
+-/
+theorem lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path upper = Rhat context)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo lower upper, 0 < derivative x) :
+    Rhat (context ∪ Set.Ioo lower upper) < Rhat context := by
+  have hpath_lt : path lower < path upper :=
+    endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+      hlower_upper hpath_cont hpath_deriv hderiv_pos
+  simpa [hpath_start, hpath_end] using hpath_lt
+
+/--
+Context-aware upper-endpoint collapse step.  Moving an interval's upper
+endpoint left to its lower endpoint deletes that interval while all other
+intervals remain fixed.
+-/
+theorem lemma5_upper_endpoint_collapse_reward_ge_of_endpoint_path_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower ≤ upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path upper = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path lower = Rhat context)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_nonpos :
+      ∀ x ∈ Set.Ioo lower upper, derivative x ≤ 0) :
+    Rhat (context ∪ Set.Ioo lower upper) ≤ Rhat context := by
+  have hpath_le : path upper ≤ path lower :=
+    endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+      hlower_upper hpath_cont hpath_deriv hderiv_nonpos
+  simpa [hpath_start, hpath_end] using hpath_le
+
+/--
+Strict context-aware upper-endpoint collapse step.
+-/
+theorem lemma5_upper_endpoint_collapse_reward_gt_of_endpoint_path_with_context
+    (Rhat : SingleStateReward)
+    (context : TripPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path upper = Rhat (context ∪ Set.Ioo lower upper))
+    (hpath_end : path lower = Rhat context)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_neg :
+      ∀ x ∈ Set.Ioo lower upper, derivative x < 0) :
+    Rhat (context ∪ Set.Ioo lower upper) < Rhat context := by
+  have hpath_lt : path upper < path lower :=
+    endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+      hlower_upper hpath_cont hpath_deriv hderiv_neg
   simpa [hpath_start, hpath_end] using hpath_lt
 
 /--
@@ -15901,6 +16426,45 @@ def GN21GeneralizedIntervalPolicy.twoBounded
     else
       GN21GeneralizedIntervalComponent.bounded rightLower rightUpper
 
+/--
+Add one bounded interval to a fixed generalized-policy context.  This is the
+local finite seed used after a Lemma 5 endpoint merge inside a larger policy.
+-/
+noncomputable def GN21GeneralizedIntervalPolicy.withSingleBounded
+    (context : GN21GeneralizedIntervalPolicy) (lower upper : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit ⊕ context.index
+  finite_index := by
+    classical
+    letI := context.finite_index
+    infer_instance
+  component := fun side =>
+    match side with
+    | Sum.inl _ => GN21GeneralizedIntervalComponent.bounded lower upper
+    | Sum.inr i => context.component i
+
+/--
+Add two bounded intervals to a fixed generalized-policy context.  This is the
+local finite seed used before a Lemma 5 endpoint merge inside a larger policy.
+-/
+noncomputable def GN21GeneralizedIntervalPolicy.withTwoBounded
+    (context : GN21GeneralizedIntervalPolicy)
+    (leftLower leftUpper rightLower rightUpper : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Bool ⊕ context.index
+  finite_index := by
+    classical
+    letI := context.finite_index
+    infer_instance
+  component := fun side =>
+    match side with
+    | Sum.inl b =>
+        if b then
+          GN21GeneralizedIntervalComponent.bounded leftLower leftUpper
+        else
+          GN21GeneralizedIntervalComponent.bounded rightLower rightUpper
+    | Sum.inr i => context.component i
+
 /-- Generalized one-component representative of long-trip rejection. -/
 def GN21GeneralizedIntervalPolicy.rejectLong (t : ℝ) :
     GN21GeneralizedIntervalPolicy where
@@ -15978,6 +16542,100 @@ theorem GN21GeneralizedIntervalPolicy.policy_twoBounded
     · exact Or.inr h
     · exact Or.inl h
 
+/--
+Add one arbitrary generalized component to a fixed generalized-policy context.
+This is the boundary/ray-aware version of `withSingleBounded`.
+-/
+noncomputable def GN21GeneralizedIntervalPolicy.withComponent
+    (context : GN21GeneralizedIntervalPolicy)
+    (component : GN21GeneralizedIntervalComponent) :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit ⊕ context.index
+  finite_index := by
+    classical
+    letI := context.finite_index
+    infer_instance
+  component := fun side =>
+    match side with
+    | Sum.inl _ => component
+    | Sum.inr i => context.component i
+
+/--
+Add two arbitrary generalized components to a fixed generalized-policy context.
+This is the boundary/ray-aware version of `withTwoBounded`.
+-/
+noncomputable def GN21GeneralizedIntervalPolicy.withTwoComponents
+    (context : GN21GeneralizedIntervalPolicy)
+    (left right : GN21GeneralizedIntervalComponent) :
+    GN21GeneralizedIntervalPolicy where
+  index := Bool ⊕ context.index
+  finite_index := by
+    classical
+    letI := context.finite_index
+    infer_instance
+  component := fun side =>
+    match side with
+    | Sum.inl b => if b then left else right
+    | Sum.inr i => context.component i
+
+/-- Policy set of a context plus one arbitrary generalized component. -/
+theorem GN21GeneralizedIntervalPolicy.policy_withComponent
+    (context : GN21GeneralizedIntervalPolicy)
+    (component : GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalPolicy.withComponent
+      context component).policy =
+      context.policy ∪ component.policy := by
+  classical
+  letI := context.finite_index
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.withComponent,
+    GN21GeneralizedIntervalPolicy.policy]
+  tauto
+
+/-- Policy set of a context plus two arbitrary generalized components. -/
+theorem GN21GeneralizedIntervalPolicy.policy_withTwoComponents
+    (context : GN21GeneralizedIntervalPolicy)
+    (left right : GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalPolicy.withTwoComponents
+      context left right).policy =
+      context.policy ∪ (left.policy ∪ right.policy) := by
+  classical
+  letI := context.finite_index
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.withTwoComponents,
+    GN21GeneralizedIntervalPolicy.policy]
+  tauto
+
+/-- Policy set of a context plus one bounded interval. -/
+theorem GN21GeneralizedIntervalPolicy.policy_withSingleBounded
+    (context : GN21GeneralizedIntervalPolicy) (lower upper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.withSingleBounded
+      context lower upper).policy =
+      context.policy ∪ Set.Ioo lower upper := by
+  classical
+  letI := context.finite_index
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.withSingleBounded,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy]
+  tauto
+
+/-- Policy set of a context plus two bounded intervals. -/
+theorem GN21GeneralizedIntervalPolicy.policy_withTwoBounded
+    (context : GN21GeneralizedIntervalPolicy)
+    (leftLower leftUpper rightLower rightUpper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.withTwoBounded
+      context leftLower leftUpper rightLower rightUpper).policy =
+      context.policy ∪
+        (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper) := by
+  classical
+  letI := context.finite_index
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.withTwoBounded,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy]
+  tauto
+
 /-- The one-component bounded representative has endpoint complexity one. -/
 theorem GN21GeneralizedIntervalPolicy.complexity_singleBounded
     (lower upper : ℝ) :
@@ -15995,6 +16653,65 @@ theorem GN21GeneralizedIntervalPolicy.complexity_twoBounded
     (GN21GeneralizedIntervalPolicy.twoBounded
       leftLower leftUpper rightLower rightUpper).complexity = 2 := by
   rfl
+
+/-- A context plus one bounded interval has one more component than the context. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_withSingleBounded
+    (context : GN21GeneralizedIntervalPolicy) (lower upper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.withSingleBounded
+      context lower upper).complexity =
+      context.complexity + 1 := by
+  classical
+  letI := context.finite_index
+  rw [GN21GeneralizedIntervalPolicy.complexity,
+    GN21GeneralizedIntervalPolicy.withSingleBounded,
+    Fintype.card_sum]
+  simp [GN21GeneralizedIntervalPolicy.complexity]
+  rw [add_comm]
+
+/-- A context plus two bounded intervals has two more components than the context. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_withTwoBounded
+    (context : GN21GeneralizedIntervalPolicy)
+    (leftLower leftUpper rightLower rightUpper : ℝ) :
+    (GN21GeneralizedIntervalPolicy.withTwoBounded
+      context leftLower leftUpper rightLower rightUpper).complexity =
+      context.complexity + 2 := by
+  classical
+  letI := context.finite_index
+  rw [GN21GeneralizedIntervalPolicy.complexity,
+    GN21GeneralizedIntervalPolicy.withTwoBounded,
+    Fintype.card_sum]
+  simp [GN21GeneralizedIntervalPolicy.complexity]
+  rw [add_comm]
+
+/-- A context plus one arbitrary component has one more component than the context. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_withComponent
+    (context : GN21GeneralizedIntervalPolicy)
+    (component : GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalPolicy.withComponent
+      context component).complexity =
+      context.complexity + 1 := by
+  classical
+  letI := context.finite_index
+  rw [GN21GeneralizedIntervalPolicy.complexity,
+    GN21GeneralizedIntervalPolicy.withComponent,
+    Fintype.card_sum]
+  simp [GN21GeneralizedIntervalPolicy.complexity]
+  rw [add_comm]
+
+/-- A context plus two arbitrary components has two more components than the context. -/
+theorem GN21GeneralizedIntervalPolicy.complexity_withTwoComponents
+    (context : GN21GeneralizedIntervalPolicy)
+    (left right : GN21GeneralizedIntervalComponent) :
+    (GN21GeneralizedIntervalPolicy.withTwoComponents
+      context left right).complexity =
+      context.complexity + 2 := by
+  classical
+  letI := context.finite_index
+  rw [GN21GeneralizedIntervalPolicy.complexity,
+    GN21GeneralizedIntervalPolicy.withTwoComponents,
+    Fintype.card_sum]
+  simp [GN21GeneralizedIntervalPolicy.complexity]
+  rw [add_comm]
 
 /--
 Concrete generalized-policy Step 2 merge move.  For a two-bounded-interval
@@ -16101,6 +16818,906 @@ theorem lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
     norm_num
 
 /--
+Contextual generalized-policy Step 2 merge move.  This is the paper's
+finite-reduction operation with the rest of the finite policy held fixed:
+two selected adjacent bounded intervals merge into one bounded interval,
+lowering component count by one.
+-/
+theorem lemma5_withTwoBounded_upper_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (context.policy ∪
+          (Set.Ioo leftLower rightLower ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 ≤ derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+        context leftLower leftUpper rightLower rightUpper).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withSingleBounded
+      context leftLower rightUpper, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withTwoBounded,
+      GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path_with_context
+        μ Rhat context.policy hR_congr hleft_upper hupper_right hright_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withTwoBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_nonneg
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoBounded]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Strict contextual version of
+`lemma5_withTwoBounded_upper_merge_step_of_endpoint_path`.
+-/
+theorem lemma5_withTwoBounded_upper_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (context.policy ∪
+          (Set.Ioo leftLower rightLower ∪
+            Set.Ioo rightLower rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 < derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+        context leftLower leftUpper rightLower rightUpper).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withSingleBounded
+      context leftLower rightUpper, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withTwoBounded,
+      GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path_with_context
+        μ Rhat context.policy hR_congr hleft_upper hupper_right hright_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withTwoBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_pos
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoBounded]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Contextual generalized-policy lower-endpoint merge move.  The right interval's
+lower endpoint moves left until it touches the left interval, and the two
+components are replaced by one merged bounded interval.
+-/
+theorem lemma5_withTwoBounded_lower_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).policy)
+    (hpath_end :
+      path leftUpper =
+        Rhat (context.policy ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo leftUpper rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonpos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x ≤ 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+        context leftLower leftUpper rightLower rightUpper).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withSingleBounded
+      context leftLower rightUpper, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withTwoBounded,
+      GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_lower_endpoint_merge_reward_ge_of_endpoint_path_with_context
+        μ Rhat context.policy hR_congr hleft_upper hupper_right hright_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withTwoBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_nonpos
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoBounded]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Strict contextual version of
+`lemma5_withTwoBounded_lower_merge_step_of_endpoint_path`.
+-/
+theorem lemma5_withTwoBounded_lower_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).policy)
+    (hpath_end :
+      path leftUpper =
+        Rhat (context.policy ∪
+          (Set.Ioo leftLower leftUpper ∪
+            Set.Ioo leftUpper rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_neg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x < 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoBounded
+        context leftLower leftUpper rightLower rightUpper).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoBounded
+          context leftLower leftUpper rightLower rightUpper).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withSingleBounded
+      context leftLower rightUpper, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withTwoBounded,
+      GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_lower_endpoint_merge_reward_gt_of_endpoint_path_with_context
+        μ Rhat context.policy hR_congr hleft_upper hupper_right hright_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withTwoBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_neg
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoBounded]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Contextual right-tail merge move.  A bounded interval whose upper endpoint is
+moved to a following positive right ray becomes one positive right ray, which
+is the finite reduction needed to reach the strictly-increasing canonical
+tail form.
+-/
+theorem lemma5_withBoundedRightRay_upper_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower : TripLength}
+    (hleft_nonneg : 0 ≤ leftLower)
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.bounded leftLower leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay rightLower)).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (context.policy ∪
+          (Set.Ioo leftLower rightLower ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              rightLower).policy)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 ≤ derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.bounded leftLower leftUpper)
+        (GN21GeneralizedIntervalComponent.positiveRightRay rightLower)).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.bounded leftLower leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context
+      (GN21GeneralizedIntervalComponent.positiveRightRay leftLower), ?_, ?_⟩
+  · have hpath_le :
+        path leftUpper ≤ path rightLower :=
+      endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_nonneg
+    rw [hpath_start, hpath_end] at hpath_le
+    have hleft_right : leftLower ≤ rightLower :=
+      hleft_upper.trans hupper_right
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            (Set.Ioo leftLower rightLower ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy))
+          (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              leftLower).policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_bounded_union_positiveRightRay_touching
+          μ hleft_nonneg hleft_right)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            (Set.Ioo leftLower rightLower ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy)) =
+          Rhat (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              leftLower).policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_le
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Strict contextual right-tail merge move.
+-/
+theorem lemma5_withBoundedRightRay_upper_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower : TripLength}
+    (hleft_nonneg : 0 ≤ leftLower)
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.bounded leftLower leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay rightLower)).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (context.policy ∪
+          (Set.Ioo leftLower rightLower ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              rightLower).policy)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 < derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.bounded leftLower leftUpper)
+        (GN21GeneralizedIntervalComponent.positiveRightRay rightLower)).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.bounded leftLower leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context
+      (GN21GeneralizedIntervalComponent.positiveRightRay leftLower), ?_, ?_⟩
+  · have hpath_lt :
+        path leftUpper < path rightLower :=
+      endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_pos
+    rw [hpath_start, hpath_end] at hpath_lt
+    have hleft_right : leftLower ≤ rightLower :=
+      hleft_upper.trans (le_of_lt hupper_right)
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            (Set.Ioo leftLower rightLower ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy))
+          (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              leftLower).policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_bounded_union_positiveRightRay_touching
+          μ hleft_nonneg hleft_right)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            (Set.Ioo leftLower rightLower ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy)) =
+          Rhat (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              leftLower).policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_lt
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Contextual left-boundary merge move.  A positive left ray and a following
+bounded interval merge into one larger positive left ray.
+-/
+theorem lemma5_withLeftRayBounded_lower_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftUpper rightLower rightUpper : TripLength}
+    (hleft_nonneg : 0 ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.bounded
+            rightLower rightUpper)).policy)
+    (hpath_end :
+      path leftUpper =
+        Rhat (context.policy ∪
+          ((GN21GeneralizedIntervalComponent.positiveLeftRay
+              leftUpper).policy ∪
+            Set.Ioo leftUpper rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonpos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x ≤ 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+        (GN21GeneralizedIntervalComponent.bounded
+          rightLower rightUpper)).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.bounded
+            rightLower rightUpper)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context
+      (GN21GeneralizedIntervalComponent.positiveLeftRay rightUpper), ?_, ?_⟩
+  · have hpath_le :
+        path rightLower ≤ path leftUpper :=
+      endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_nonpos
+    rw [hpath_start, hpath_end] at hpath_le
+    have hleft_rightUpper : leftUpper ≤ rightUpper :=
+      hupper_right.trans hright_upper
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              Set.Ioo leftUpper rightUpper))
+          (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveLeftRay
+              rightUpper).policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_positiveLeftRay_union_bounded_touching
+          μ hleft_nonneg hleft_rightUpper)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              Set.Ioo leftUpper rightUpper)) =
+          Rhat (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveLeftRay
+              rightUpper).policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_le
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Strict contextual left-boundary merge move.
+-/
+theorem lemma5_withLeftRayBounded_lower_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftUpper rightLower rightUpper : TripLength}
+    (hleft_nonneg : 0 ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.bounded
+            rightLower rightUpper)).policy)
+    (hpath_end :
+      path leftUpper =
+        Rhat (context.policy ∪
+          ((GN21GeneralizedIntervalComponent.positiveLeftRay
+              leftUpper).policy ∪
+            Set.Ioo leftUpper rightUpper)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_neg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x < 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+        (GN21GeneralizedIntervalComponent.bounded
+          rightLower rightUpper)).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.bounded
+            rightLower rightUpper)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context
+      (GN21GeneralizedIntervalComponent.positiveLeftRay rightUpper), ?_, ?_⟩
+  · have hpath_lt :
+        path rightLower < path leftUpper :=
+      endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_neg
+    rw [hpath_start, hpath_end] at hpath_lt
+    have hleft_rightUpper : leftUpper ≤ rightUpper :=
+      (le_of_lt hupper_right).trans hright_upper
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              Set.Ioo leftUpper rightUpper))
+          (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveLeftRay
+              rightUpper).policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_positiveLeftRay_union_bounded_touching
+          μ hleft_nonneg hleft_rightUpper)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              Set.Ioo leftUpper rightUpper)) =
+          Rhat (context.policy ∪
+            (GN21GeneralizedIntervalComponent.positiveLeftRay
+              rightUpper).policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_lt
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Contextual accept-all boundary merge by moving the left ray's upper endpoint
+right to the following right ray.  At collision the two rays are a.e. the full
+positive domain.
+-/
+theorem lemma5_withLeftRightRay_upper_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftUpper rightLower : TripLength}
+    (hupper_right : leftUpper ≤ rightLower)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (context.policy ∪
+          ((GN21GeneralizedIntervalComponent.positiveLeftRay
+              rightLower).policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              rightLower).policy)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 ≤ derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+        (GN21GeneralizedIntervalComponent.positiveRightRay
+          rightLower)).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context GN21GeneralizedIntervalComponent.positiveAll, ?_, ?_⟩
+  · have hpath_le :
+        path leftUpper ≤ path rightLower :=
+      endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_nonneg
+    rw [hpath_start, hpath_end] at hpath_le
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                rightLower).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy))
+          (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_positiveLeftRightRay_touching
+          μ rightLower)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                rightLower).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy)) =
+          Rhat (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_le
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Strict contextual accept-all boundary merge by moving the left ray's upper
+endpoint right.
+-/
+theorem lemma5_withLeftRightRay_upper_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftUpper rightLower : TripLength}
+    (hupper_right : leftUpper < rightLower)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).policy)
+    (hpath_end :
+      path rightLower =
+        Rhat (context.policy ∪
+          ((GN21GeneralizedIntervalComponent.positiveLeftRay
+              rightLower).policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              rightLower).policy)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 < derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+        (GN21GeneralizedIntervalComponent.positiveRightRay
+          rightLower)).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context GN21GeneralizedIntervalComponent.positiveAll, ?_, ?_⟩
+  · have hpath_lt :
+        path leftUpper < path rightLower :=
+      endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_pos
+    rw [hpath_start, hpath_end] at hpath_lt
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                rightLower).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy))
+          (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_positiveLeftRightRay_touching
+          μ rightLower)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                rightLower).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                rightLower).policy)) =
+          Rhat (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_lt
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Contextual accept-all boundary merge by moving the right ray's lower endpoint
+left to the preceding left ray.
+-/
+theorem lemma5_withLeftRightRay_lower_merge_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftUpper rightLower : TripLength}
+    (hupper_right : leftUpper ≤ rightLower)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).policy)
+    (hpath_end :
+      path leftUpper =
+        Rhat (context.policy ∪
+          ((GN21GeneralizedIntervalComponent.positiveLeftRay
+              leftUpper).policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              leftUpper).policy)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonpos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x ≤ 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+        (GN21GeneralizedIntervalComponent.positiveRightRay
+          rightLower)).policy ≤
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context GN21GeneralizedIntervalComponent.positiveAll, ?_, ?_⟩
+  · have hpath_le :
+        path rightLower ≤ path leftUpper :=
+      endpoint_path_ge_of_hasDerivAt_nonpos_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_nonpos
+    rw [hpath_start, hpath_end] at hpath_le
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                leftUpper).policy))
+          (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_positiveLeftRightRay_touching
+          μ leftUpper)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                leftUpper).policy)) =
+          Rhat (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_le
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
+Strict contextual accept-all boundary merge by moving the right ray's lower
+endpoint left.
+-/
+theorem lemma5_withLeftRightRay_lower_merge_strict_step_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftUpper rightLower : TripLength}
+    (hupper_right : leftUpper < rightLower)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path rightLower =
+        Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).policy)
+    (hpath_end :
+      path leftUpper =
+        Rhat (context.policy ∪
+          ((GN21GeneralizedIntervalComponent.positiveLeftRay
+              leftUpper).policy ∪
+            (GN21GeneralizedIntervalComponent.positiveRightRay
+              leftUpper).policy)))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_neg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, derivative x < 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withTwoComponents
+        context
+        (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+        (GN21GeneralizedIntervalComponent.positiveRightRay
+          rightLower)).policy <
+        Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withTwoComponents
+          context
+          (GN21GeneralizedIntervalComponent.positiveLeftRay leftUpper)
+          (GN21GeneralizedIntervalComponent.positiveRightRay
+            rightLower)).complexity := by
+  refine
+    ⟨GN21GeneralizedIntervalPolicy.withComponent
+      context GN21GeneralizedIntervalComponent.positiveAll, ?_, ?_⟩
+  · have hpath_lt :
+        path rightLower < path leftUpper :=
+      endpoint_path_gt_of_hasDerivAt_neg_on_Icc
+        hupper_right hpath_cont hpath_deriv hderiv_neg
+    rw [hpath_start, hpath_end] at hpath_lt
+    have hmerge_ae :
+        policyAlmostEverywhereEq μ
+          (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                leftUpper).policy))
+          (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      policyAlmostEverywhereEq_union_left μ context.policy
+        (policyAlmostEverywhereEq_positiveLeftRightRay_touching
+          μ leftUpper)
+    have hmerge_eq :
+        Rhat (context.policy ∪
+            ((GN21GeneralizedIntervalComponent.positiveLeftRay
+                leftUpper).policy ∪
+              (GN21GeneralizedIntervalComponent.positiveRightRay
+                leftUpper).policy)) =
+          Rhat (context.policy ∪
+            GN21GeneralizedIntervalComponent.positiveAll.policy) :=
+      hR_congr hmerge_ae
+    rw [GN21GeneralizedIntervalPolicy.policy_withComponent]
+    simpa [hmerge_eq] using hpath_lt
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withComponent,
+      GN21GeneralizedIntervalPolicy.complexity_withTwoComponents]
+    simpa [Nat.add_assoc] using
+      Nat.lt_succ_self (context.complexity + 1)
+
+/--
 Concrete generalized-policy Step 2 collapse move.  For a one-bounded-interval
 seed, a nonnegative derivative path moving its lower endpoint to its upper
 endpoint produces a weakly better empty seed with strictly smaller endpoint
@@ -16179,6 +17796,156 @@ theorem lemma5_singleBounded_lower_collapse_strict_step_of_endpoint_path
   · rw [GN21GeneralizedIntervalPolicy.complexity_empty,
       GN21GeneralizedIntervalPolicy.complexity_singleBounded]
     norm_num
+
+/--
+Contextual generalized-policy Step 2 collapse move.  This is the paper's
+finite-reduction operation with the rest of the finite policy held fixed:
+one selected bounded interval collapses to zero length and is removed.
+-/
+theorem lemma5_withSingleBounded_lower_collapse_step_of_endpoint_path
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    {lower upper : TripLength} (hlower_upper : lower ≤ upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower =
+        Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).policy)
+    (hpath_end : path upper = Rhat context.policy)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo lower upper, 0 ≤ derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+        context lower upper).policy ≤ Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).complexity := by
+  refine ⟨context, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path_with_context
+        Rhat context.policy hlower_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withSingleBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_nonneg
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded]
+    exact Nat.lt_succ_self context.complexity
+
+/--
+Strict contextual version of
+`lemma5_withSingleBounded_lower_collapse_step_of_endpoint_path`.
+-/
+theorem lemma5_withSingleBounded_lower_collapse_strict_step_of_endpoint_path
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path lower =
+        Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).policy)
+    (hpath_end : path upper = Rhat context.policy)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo lower upper, 0 < derivative x) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+        context lower upper).policy < Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).complexity := by
+  refine ⟨context, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path_with_context
+        Rhat context.policy hlower_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withSingleBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_pos
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded]
+    exact Nat.lt_succ_self context.complexity
+
+/--
+Contextual generalized-policy upper-endpoint collapse move.  A selected
+bounded interval's upper endpoint moves left until the interval disappears,
+leaving only the fixed context.
+-/
+theorem lemma5_withSingleBounded_upper_collapse_step_of_endpoint_path
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    {lower upper : TripLength} (hlower_upper : lower ≤ upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path upper =
+        Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).policy)
+    (hpath_end : path lower = Rhat context.policy)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_nonpos :
+      ∀ x ∈ Set.Ioo lower upper, derivative x ≤ 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+        context lower upper).policy ≤ Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).complexity := by
+  refine ⟨context, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_upper_endpoint_collapse_reward_ge_of_endpoint_path_with_context
+        Rhat context.policy hlower_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withSingleBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_nonpos
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded]
+    exact Nat.lt_succ_self context.complexity
+
+/--
+Strict contextual version of
+`lemma5_withSingleBounded_upper_collapse_step_of_endpoint_path`.
+-/
+theorem lemma5_withSingleBounded_upper_collapse_strict_step_of_endpoint_path
+    (Rhat : SingleStateReward)
+    (context : GN21GeneralizedIntervalPolicy)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path upper =
+        Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).policy)
+    (hpath_end : path lower = Rhat context.policy)
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_neg :
+      ∀ x ∈ Set.Ioo lower upper, derivative x < 0) :
+    ∃ seed' : GN21GeneralizedIntervalPolicy,
+      Rhat (GN21GeneralizedIntervalPolicy.withSingleBounded
+        context lower upper).policy < Rhat seed'.policy ∧
+      seed'.complexity <
+        (GN21GeneralizedIntervalPolicy.withSingleBounded
+          context lower upper).complexity := by
+  refine ⟨context, ?_, ?_⟩
+  · rw [GN21GeneralizedIntervalPolicy.policy_withSingleBounded]
+    exact
+      lemma5_upper_endpoint_collapse_reward_gt_of_endpoint_path_with_context
+        Rhat context.policy hlower_upper
+        (by
+          simpa [GN21GeneralizedIntervalPolicy.policy_withSingleBounded] using
+            hpath_start)
+        hpath_end hpath_cont hpath_deriv hderiv_neg
+  · rw [GN21GeneralizedIntervalPolicy.complexity_withSingleBounded]
+    exact Nat.lt_succ_self context.complexity
 
 /-- The generalized long-trip representative has the canonical long-rejection policy. -/
 theorem GN21GeneralizedIntervalPolicy.policy_rejectLong (t : ℝ) :

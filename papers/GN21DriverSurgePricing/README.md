@@ -809,6 +809,13 @@ replacements; Lean converts those policies to equal generalized interval/ray
 representatives.  This route lets the endpoint proof supply a weakly improving
 canonical representative directly, while Lean handles the finite-descent
 decrease through the shape-specific complexity rather than raw component count.
+For Lemma 5 Step 2, the endpoint reductions now work inside an arbitrary fixed
+generalized-policy context: bounded-bounded upper/lower merges,
+bounded-interval upper/lower collapses, bounded-to-right-ray merge,
+left-ray-to-bounded merge, and left/right-ray-to-accept-all merge are all
+compiled in weak and strict forms.  The remaining open part is selecting and
+iterating those local moves inside an arbitrary ordered finite
+interval/ray seed under the source derivative-sign hypotheses.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its
