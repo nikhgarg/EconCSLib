@@ -3071,6 +3071,38 @@ theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_
     C e base hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
 
 /--
+Paper-facing optional-reporting upper-tail endpoint for the concrete
+binary-mixture observable-access law.
+-/
+theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_binary_mixture_source_equilibrium
+    {Feature Skill Base Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase S)
+    (positiveShare : S.Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (e : S.Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_binary_mixture_source_equilibrium
+    C positiveShare hpositiveShare_le_one hpositiveShare_pos reporterPMF
+    noReporterPMF hNoAccess hAccessMixtureDef e base
+
+/--
 Paper-facing Theorem 3.2 report-required continuous upper-tail endpoint, with
 the source-equilibrium and threshold obligations packaged in one auditable
 certificate.
@@ -3105,6 +3137,45 @@ theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upp
   paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_source_equilibrium
     C e base hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
     houtsidePayoff_of_pmfEq
+
+/--
+Paper-facing report-required upper-tail endpoint for the concrete
+binary-mixture observable-access law.
+-/
+theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium
+    {Base Test Estimate : Type*} [Nonempty Base]
+    {skillGivenBase : Base → PMF ℝ}
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase S)
+    (positiveShare : S.Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (C.baseTerm e base +
+              C.signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (C.actorLaw e base) (C.decisionThreshold e base)) /
+              C.denom e base)
+    (e : S.Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium
+    C positiveShare hpositiveShare_le_one hpositiveShare_pos reporterPMF
+    noReporterPMF hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq e base
 
 /--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed

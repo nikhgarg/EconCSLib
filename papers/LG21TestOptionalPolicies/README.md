@@ -199,7 +199,13 @@ cache is kept as `source.txt` for named-statement audits.
   now collect the source-equilibrium, Gaussian payoff, tie-breaking,
   threshold-shape, and positive-slope assumptions into auditable certificates,
   leaving only the selected reporter/no-reporter mixture comparison as
-  theorem-local data.  The source-shaped
+  theorem-local data.  The binary-mixture wrappers
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_binary_mixture_source_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium`
+  discharge that displayed mixture equality from `lg21BinaryMixturePMF`, so the
+  concrete PMF route only needs the share positivity/no-access law and, in the
+  report-required case, the outside-payoff equality.  The source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
@@ -320,10 +326,12 @@ cache is kept as `source.txt` for named-statement audits.
   statement insists on conditional-on-skill laws rather than this direct
   constant-kernel specialization.  The continuous upper-tail route now has
   certificate-packaged source-equilibrium endpoints that derive best responses
-  from the concrete optional/report-required source games; its remaining
-  assumptions are the theorem-local reporter/no-reporter mixture identities and
-  any stricter conditional-kernel instantiation wanted for the final source
-  statement.
+  from the concrete optional/report-required source games.  For concrete
+  binary-mixture observable-access laws, the mixture identity is now
+  definitionally discharged; remaining theorem-local assumptions are the
+  positive share/no-access law and the report-required outside-payoff equality,
+  plus any stricter conditional-kernel instantiation wanted for the final
+  source statement.
 
 ## Source Notes
 

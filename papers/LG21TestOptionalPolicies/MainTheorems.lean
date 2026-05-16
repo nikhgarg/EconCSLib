@@ -11495,6 +11495,47 @@ theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_u
       (C.signalWeight_pos e base) (C.denom_pos e base)
 
 /--
+Theorem 3.2 optional-reporting continuous upper-tail endpoint when the
+observable-access law is definitionally the binary reporter/no-reporter PMF
+mixture.  This discharges the displayed `λ D_1 + (1 - λ) D_0` equality from
+the concrete mixture constructor.
+-/
+theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_binary_mixture_source_equilibrium
+    {Feature Skill Base Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase S)
+    (positiveShare : S.Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (e : S.Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  exact
+    paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_source_equilibrium
+      C e base (hpositiveShare_pos e base) (reporterPMF e base)
+      (noReporterPMF e base) (hNoAccess e base)
+      (fun estimate => by
+        rw [hAccessMixtureDef e base]
+        exact
+          lg21BinaryMixturePMF_apply_toReal
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base) estimate)
+
+/--
 Packaged source-model assumptions for the report-required continuous
 upper-tail route in Theorem 3.2.  The outside-payoff equality after
 reporter/no-reporter law identification remains theorem-specific because it
@@ -11580,6 +11621,55 @@ theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_so
       (C.take_at_indifference e) (C.taking_threshold e base)
       hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
       houtsidePayoff_of_pmfEq
+
+/--
+Theorem 3.2 report-required continuous upper-tail endpoint when the
+observable-access law is definitionally the binary taker/non-taker PMF mixture.
+The binary-mixture constructor supplies the displayed resampling-mixture
+identity used in the paper proof.
+-/
+theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium
+    {Base Test Estimate : Type*} [Nonempty Base]
+    {skillGivenBase : Base → PMF ℝ}
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase S)
+    (positiveShare : S.Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (C.baseTerm e base +
+              C.signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (C.actorLaw e base) (C.decisionThreshold e base)) /
+              C.denom e base)
+    (e : S.Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  exact
+    paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_source_equilibrium
+      C e base (hpositiveShare_pos e base) (reporterPMF e base)
+      (noReporterPMF e base) (hNoAccess e base)
+      (fun estimate => by
+        rw [hAccessMixtureDef e base]
+        exact
+          lg21BinaryMixturePMF_apply_toReal
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base) estimate)
+      (houtsidePayoff_of_pmfEq e base)
 
 /--
 Theorem 3.1 report-required crossing step.  The expected estimate from

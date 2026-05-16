@@ -231,7 +231,11 @@ Last updated: 2026-05-16
   make this route auditable: persistent source-model assumptions live in the
   certificate, while theorem-local data are the reporter/no-reporter mixture
   comparison and, in the report-required case, the outside-payoff equality after
-  reporter/no-reporter equality.
+  reporter/no-reporter equality.  The binary-mixture wrappers
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_binary_mixture_source_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_binary_mixture_source_equilibrium`
+  derive the displayed mixture comparison directly from `lg21BinaryMixturePMF`.
   The
   finite acting-distribution
   lemmas
@@ -513,8 +517,8 @@ Last updated: 2026-05-16
    positive-mass/support facts.  The active continuous/source route should now
    use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
    work is to decide the final paper-facing theorem statement: either expose
-   the current source certificates plus theorem-local mixture hypotheses
-   directly, or instantiate a stricter conditional-kernel version if the
+   the current source certificates plus binary-mixture/no-access/outside-payoff
+   hypotheses directly, or instantiate a stricter conditional-kernel version if the
    statement should quantify over conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
