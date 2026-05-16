@@ -6990,6 +6990,147 @@ theorem paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_post
       zero_lt_one
 
 /--
+Base-indexed one-test posterior source-law surface: at every base profile, the
+observable access law is Gaussian while the no-access law is a point law, so
+observable fairness fails.
+-/
+theorem paper_base_indexed_one_test_posterior_source_law_not_observably_fair
+    {Base : Type*} [Nonempty Base]
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawObservablyFair
+      (lg21BaseIndexedOneTestPosteriorLawSurface
+        intercept slope testScale noAccessEstimate hslope htestScale) := by
+  let base : Base := Classical.choice inferInstance
+  apply lg21_not_lawObservablyFair_of_witness PUnit.unit base
+  dsimp [lg21BaseIndexedOneTestPosteriorLawSurface]
+  exact LG21EstimateLaw.gaussian_ne_point _ _
+
+/--
+Base-indexed one-test posterior source-law surface: the demographic access law
+is Gaussian while the demographic no-access law is a point law, so demographic
+fairness fails.
+-/
+theorem paper_base_indexed_one_test_posterior_source_law_not_demographically_fair
+    {Base : Type*} [Nonempty Base]
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawDemographicallyFair
+      (lg21BaseIndexedOneTestPosteriorLawSurface
+        intercept slope testScale noAccessEstimate hslope htestScale) := by
+  apply lg21_not_lawDemographicallyFair_of_witness PUnit.unit
+  dsimp [lg21BaseIndexedOneTestPosteriorLawSurface]
+  exact LG21EstimateLaw.gaussian_ne_point _ _
+
+/--
+Theorem 3.1 optional-reporting law endpoint with a concrete source-law surface.
+The source-mixture argument supplies the strategic-withholding cutoff, while
+the base-indexed one-test posterior law surface supplies the three
+distribution-difference witnesses definitionally: access laws are Gaussian and
+no-access laws are point laws.
+-/
+theorem paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_base_indexed_one_test_posterior_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1)
+    (posteriorIntercept posteriorSlope posteriorTestScale
+      noAccessEstimate : Base → ℝ)
+    (hposteriorSlope : ∀ base : Base, 0 < posteriorSlope base)
+    (hposteriorTestScale : ∀ base : Base, 0 < posteriorTestScale base) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill) ∧
+        (∃ base score, ¬ W.reports base score) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+            ¬ lg21SourceLawLatentSkillFair
+              (lg21BaseIndexedOneTestPosteriorLawSurface
+                posteriorIntercept posteriorSlope posteriorTestScale
+                noAccessEstimate hposteriorSlope hposteriorTestScale) ∧
+              ¬ lg21SourceLawObservablyFair
+                (lg21BaseIndexedOneTestPosteriorLawSurface
+                  posteriorIntercept posteriorSlope posteriorTestScale
+                  noAccessEstimate hposteriorSlope hposteriorTestScale) ∧
+                ¬ lg21SourceLawDemographicallyFair
+                  (lg21BaseIndexedOneTestPosteriorLawSurface
+                    posteriorIntercept posteriorSlope posteriorTestScale
+                    noAccessEstimate hposteriorSlope hposteriorTestScale) := by
+  rcases
+      paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture
+        M theta k accessFraction baseOnlyEstimate scoreLaw
+        hC_nonneg hC_lt_one with
+    ⟨W, _reportCutoff, _hindiff, _hreports, htakes, hthreshold⟩
+  refine ⟨W, htakes, W.some_access_students_do_not_report, hthreshold, ?_, ?_, ?_⟩
+  · exact
+      paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_posterior_source_law
+        posteriorIntercept posteriorSlope posteriorTestScale noAccessEstimate
+        hposteriorSlope hposteriorTestScale
+  · exact
+      paper_base_indexed_one_test_posterior_source_law_not_observably_fair
+        posteriorIntercept posteriorSlope posteriorTestScale noAccessEstimate
+        hposteriorSlope hposteriorTestScale
+  · exact
+      paper_base_indexed_one_test_posterior_source_law_not_demographically_fair
+        posteriorIntercept posteriorSlope posteriorTestScale noAccessEstimate
+        hposteriorSlope hposteriorTestScale
+
+/--
+Theorem 3.1 report-required law endpoint with the same concrete source-law
+surface.  The no-take source-mixture argument supplies the strategic cutoff,
+and the base-indexed one-test posterior law surface supplies latent-skill,
+observable, and demographic law differences by Gaussian-vs-point
+non-equality.
+-/
+theorem paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_indexed_one_test_posterior_surface
+    {Base : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1)
+    (posteriorTestScale : Base → ℝ)
+    (hposteriorTestScale : ∀ base : Base, 0 < posteriorTestScale base) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∃ base skill, ¬ W.takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLawLatentSkillFair
+            (lg21BaseIndexedOneTestPosteriorLawSurface
+              intercept slope posteriorTestScale baseOnlyEstimate
+              hslope hposteriorTestScale) ∧
+            ¬ lg21SourceLawObservablyFair
+              (lg21BaseIndexedOneTestPosteriorLawSurface
+                intercept slope posteriorTestScale baseOnlyEstimate
+                hslope hposteriorTestScale) ∧
+              ¬ lg21SourceLawDemographicallyFair
+                (lg21BaseIndexedOneTestPosteriorLawSurface
+                  intercept slope posteriorTestScale baseOnlyEstimate
+                  hslope hposteriorTestScale) := by
+  rcases
+      paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture
+        intercept slope hslope accessFraction baseOnlyEstimate skillLaw
+        hC_nonneg hC_lt_one with
+    ⟨W, _takeCutoff, _hindiff, _htakes, hthreshold⟩
+  refine ⟨W, W.some_access_students_do_not_take, hthreshold, ?_, ?_, ?_⟩
+  · exact
+      paper_proposition4_2_not_latent_skill_fair_of_base_indexed_one_test_posterior_source_law
+        intercept slope posteriorTestScale baseOnlyEstimate
+        hslope hposteriorTestScale
+  · exact
+      paper_base_indexed_one_test_posterior_source_law_not_observably_fair
+        intercept slope posteriorTestScale baseOnlyEstimate
+        hslope hposteriorTestScale
+  · exact
+      paper_base_indexed_one_test_posterior_source_law_not_demographically_fair
+        intercept slope posteriorTestScale baseOnlyEstimate
+        hslope hposteriorTestScale
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full
 base-indexed one-test posterior source-law surface is not latent-skill fair.

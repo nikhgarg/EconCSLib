@@ -135,6 +135,18 @@ Last updated: 2026-05-16
   `paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture`
   now remove the source-witness certificate on both the PMF and law surfaces,
   leaving only those concrete distribution-difference witnesses as inputs.  The
+  concrete base-indexed one-test posterior law surface now supplies those law
+  witnesses directly: `paper_base_indexed_one_test_posterior_source_law_not_observably_fair`,
+  `paper_base_indexed_one_test_posterior_source_law_not_demographically_fair`,
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_base_indexed_one_test_posterior_surface`,
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_indexed_one_test_posterior_surface`
+  combine the automatic source-mixture cutoffs with Gaussian-vs-point
+  latent/observable/demographic law differences.  The remaining Theorem 3.1
+  source gap is therefore not the law-difference witness itself, but packaging
+  this concrete law surface into the full unobserved-access Gaussian source
+  model and, separately, deriving analogous PMF witnesses if a finite PMF
+  endpoint is desired.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
