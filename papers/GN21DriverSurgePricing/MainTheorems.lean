@@ -118,6 +118,12 @@ the continuous CTMC source theorems.
 - `symmDiff_ioo_union_touching_subset_singleton` and
   `policyAlmostEverywhereEq_ioo_union_touching`: the measure-zero collision
   merge fact used when an endpoint move joins two open intervals.
+- `lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path`,
+  `lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path`,
+  `lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path`, and
+  `lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path`: concrete
+  endpoint-path instantiations for merging two intervals and collapsing an
+  interval.
 - `lemma5DerivativeShapeWitness_strictlyQuasiConvex_of_lemma7_affine_ctmc_response`,
   `lemma5DerivativeShapeWitness_strictlyQuasiConcave_of_lemma8_affine_ctmc_response`:
   bridge Lemmas 7-8 response shapes into Lemma 5's derivative-shape interface.
@@ -15642,6 +15648,147 @@ theorem policyAlmostEverywhereEq_ioo_union_touching
     (symmDiff_ioo_union_touching_subset_singleton
       (a := a) (b := b) (c := c) hab hbc)
     (measure_singleton b)
+
+/--
+Concrete Lemma 5 endpoint-path merge step.  If moving an upper endpoint from
+`leftUpper` to the next lower endpoint `rightLower` has nonnegative derivative
+all along the path, then the starting two-interval policy is weakly dominated
+by the merged interval, modulo the paper's a.e. endpoint convention.
+-/
+theorem lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper ≤ rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (Set.Ioo leftLower leftUpper ∪
+          Set.Ioo rightLower rightUpper))
+    (hpath_end :
+      path rightLower =
+        Rhat (Set.Ioo leftLower rightLower ∪
+          Set.Ioo rightLower rightUpper))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 ≤ derivative x) :
+    Rhat (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper) ≤
+      Rhat (Set.Ioo leftLower rightUpper) := by
+  have hpath_le :
+      path leftUpper ≤ path rightLower :=
+    endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+      hupper_right hpath_cont hpath_deriv hderiv_nonneg
+  rw [hpath_start, hpath_end] at hpath_le
+  have hleft_right : leftLower ≤ rightLower :=
+    hleft_upper.trans hupper_right
+  have hmerge_ae :
+      policyAlmostEverywhereEq μ
+        (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper)
+        (Set.Ioo leftLower rightUpper) :=
+    policyAlmostEverywhereEq_ioo_union_touching μ hleft_right hright_upper
+  have hmerge_eq :
+      Rhat (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper) =
+        Rhat (Set.Ioo leftLower rightUpper) :=
+    hR_congr hmerge_ae
+  simpa [hmerge_eq] using hpath_le
+
+/--
+Strict version of `lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path`.
+-/
+theorem lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
+    (μ : Measure TripLength) [NoAtoms μ]
+    (Rhat : SingleStateReward)
+    (hR_congr :
+      ∀ {σ τ : TripPolicy}, policyAlmostEverywhereEq μ σ τ →
+        Rhat σ = Rhat τ)
+    {leftLower leftUpper rightLower rightUpper : TripLength}
+    (hleft_upper : leftLower ≤ leftUpper)
+    (hupper_right : leftUpper < rightLower)
+    (hright_upper : rightLower ≤ rightUpper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start :
+      path leftUpper =
+        Rhat (Set.Ioo leftLower leftUpper ∪
+          Set.Ioo rightLower rightUpper))
+    (hpath_end :
+      path rightLower =
+        Rhat (Set.Ioo leftLower rightLower ∪
+          Set.Ioo rightLower rightUpper))
+    (hpath_cont : ContinuousOn path (Set.Icc leftUpper rightLower))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo leftUpper rightLower,
+        HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo leftUpper rightLower, 0 < derivative x) :
+    Rhat (Set.Ioo leftLower leftUpper ∪ Set.Ioo rightLower rightUpper) <
+      Rhat (Set.Ioo leftLower rightUpper) := by
+  have hpath_lt :
+      path leftUpper < path rightLower :=
+    endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+      hupper_right hpath_cont hpath_deriv hderiv_pos
+  rw [hpath_start, hpath_end] at hpath_lt
+  have hleft_right : leftLower ≤ rightLower :=
+    hleft_upper.trans (le_of_lt hupper_right)
+  have hmerge_ae :
+      policyAlmostEverywhereEq μ
+        (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper)
+        (Set.Ioo leftLower rightUpper) :=
+    policyAlmostEverywhereEq_ioo_union_touching μ hleft_right hright_upper
+  have hmerge_eq :
+      Rhat (Set.Ioo leftLower rightLower ∪ Set.Ioo rightLower rightUpper) =
+        Rhat (Set.Ioo leftLower rightUpper) :=
+    hR_congr hmerge_ae
+  simpa [hmerge_eq] using hpath_lt
+
+/--
+Concrete Lemma 5 endpoint-path collapse step.  If moving a lower endpoint
+right until it reaches the upper endpoint has nonnegative derivative all along
+the path, then the interval is weakly dominated by deleting it.
+-/
+theorem lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path
+    (Rhat : SingleStateReward)
+    {lower upper : TripLength} (hlower_upper : lower ≤ upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start : path lower = Rhat (Set.Ioo lower upper))
+    (hpath_end : path upper = Rhat (∅ : TripPolicy))
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_nonneg :
+      ∀ x ∈ Set.Ioo lower upper, 0 ≤ derivative x) :
+    Rhat (Set.Ioo lower upper) ≤ Rhat (∅ : TripPolicy) := by
+  have hpath_le : path lower ≤ path upper :=
+    endpoint_path_le_of_hasDerivAt_nonneg_on_Icc
+      hlower_upper hpath_cont hpath_deriv hderiv_nonneg
+  simpa [hpath_start, hpath_end] using hpath_le
+
+/--
+Strict version of `lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path`.
+-/
+theorem lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
+    (Rhat : SingleStateReward)
+    {lower upper : TripLength} (hlower_upper : lower < upper)
+    {path derivative : TripLength → ℝ}
+    (hpath_start : path lower = Rhat (Set.Ioo lower upper))
+    (hpath_end : path upper = Rhat (∅ : TripPolicy))
+    (hpath_cont : ContinuousOn path (Set.Icc lower upper))
+    (hpath_deriv :
+      ∀ x ∈ Set.Ioo lower upper, HasDerivAt path (derivative x) x)
+    (hderiv_pos :
+      ∀ x ∈ Set.Ioo lower upper, 0 < derivative x) :
+    Rhat (Set.Ioo lower upper) < Rhat (∅ : TripPolicy) := by
+  have hpath_lt : path lower < path upper :=
+    endpoint_path_lt_of_hasDerivAt_pos_on_Icc
+      hlower_upper hpath_cont hpath_deriv hderiv_pos
+  simpa [hpath_start, hpath_end] using hpath_lt
 
 /--
 Analytic witness behind each Lemma 5 derivative-shape case.  The policy-form

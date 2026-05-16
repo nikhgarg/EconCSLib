@@ -59,6 +59,10 @@ lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
 lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
 symmDiff_ioo_union_touching_subset_singleton
 policyAlmostEverywhereEq_ioo_union_touching
+lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path
+lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
+lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path
+lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
 measure_congr_policy_ae
 singleStateTripMass_congr_policy_ae
 singleStateTripTime_congr_policy_ae
@@ -150,6 +154,15 @@ The collision merge step is also formalized:
 `(a,b) ∪ (b,c)` and `(a,c)` differ only on the singleton `{b}` under `[NoAtoms
 μ]`.  This is the exact measure-theoretic fact behind the source instruction
 to combine intervals after an endpoint reaches the next lower endpoint.
+
+Two concrete endpoint-path instantiations are compiled:
+`lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path` and its strict
+variant turn a nonnegative/positive derivative path for an upper endpoint into
+a reward comparison against the merged interval.  The lower-collapse pair does
+the same for moving a lower endpoint until the interval becomes empty.  These
+are the first real finite-policy endpoint moves; the remaining work is to
+thread them through arbitrary finite generalized policies and the shape-case
+sign lemmas.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical

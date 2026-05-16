@@ -134,6 +134,10 @@ lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
 lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
 symmDiff_ioo_union_touching_subset_singleton
 policyAlmostEverywhereEq_ioo_union_touching
+lemma5_upper_endpoint_merge_reward_ge_of_endpoint_path
+lemma5_upper_endpoint_merge_reward_gt_of_endpoint_path
+lemma5_lower_endpoint_collapse_reward_ge_of_endpoint_path
+lemma5_lower_endpoint_collapse_reward_gt_of_endpoint_path
 ```
 
 These lemmas prove that derivative sign on the whole interval between two
@@ -143,11 +147,13 @@ they prove the paper's monotone/quasi sign choices used to decide which
 endpoint should move.  The touching-interval merge fact proves the paper's
 zero-measure collision step: `(a,b) ∪ (b,c)` is a.e. equal to `(a,c)` under
 nonatomic trip-length measures.  The remaining nonlinear work is therefore
-not calculus, source sign algebra, or endpoint-collision measure theory; it is
-selecting the concrete endpoint path for each noncanonical generalized
-interval/ray seed, proving the source derivative-sign hypothesis holds along
-that path, and showing the resulting collision/canonical-boundary policy
-lowers finite complexity.
+not calculus, source sign algebra, or endpoint-collision measure theory.
+Lean also has direct reward-comparison lemmas for the two basic finite moves:
+upper-endpoint merge and lower-endpoint collapse, each in weak and strict
+form.  The remaining nonlinear work is threading these moves through arbitrary
+finite generalized interval/ray seeds, proving the source derivative-sign
+hypothesis holds along the selected path, and showing the resulting
+collision/canonical-boundary policy lowers finite complexity.
 
 Lemmas 9-10 are also closed for their named derivative-sign and
 ratio-feasibility statements.  The source-shaped wrappers are:
