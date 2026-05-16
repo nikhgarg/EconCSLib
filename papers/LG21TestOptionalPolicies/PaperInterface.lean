@@ -311,6 +311,28 @@ theorem paper_interface_no_profitable_binary_choice_of_report_required_source_mo
     hEq base test
 
 /--
+Definition 1 source report-required bridge for the base-indexed concrete payoff
+model: source best response implies the full two-sided binary take/no-take
+condition at each base profile.
+-/
+theorem paper_interface_no_profitable_binary_choice_of_base_report_required_source_model
+    {Base Test : Type*}
+    {takeDecision : ℝ → Base → Bool}
+    {reportDecision : Base → Test → Bool}
+    {testBenefitProb : Base → ℝ → ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      paperSourceEquilibrium
+        (lg21ReportRequiredBaseSourceEquilibriumData
+          takeDecision reportDecision testBenefitProb estimationConsistent))
+    (base : Base) (test : Test) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun skill : ℝ => takeDecision skill base = true)
+      (testBenefitProb base) (fun _skill : ℝ => (1 / 2 : ℝ)) :=
+  lg21NoProfitableBinaryChoiceDeviation_of_base_report_required_source_model
+    hEq base test
+
+/--
 Lemma 4.1 source-equilibrium bridge: a packaged Gaussian threshold-equilibrium
 certificate implies all access students report and take the test.
 -/
@@ -3984,6 +4006,80 @@ theorem paper_interface_theorem3_2_observable_fair_report_required_source_equili
     hAccessMixtureDef hLawEq_of_pmfEq actorLaw actorValue actorOfTest
     hchooses_support baseTerm signalWeight denom hchoosePayoff
     hotherPayoff_of_law_eq hweight hdenom hbasePoint hfullPoint hmass
+
+/--
+Theorem 3.2 report-required PMF endpoint for the paper's base-indexed affine
+taking payoff and binary taker/no-taker mixture.
+-/
+theorem paper_interface_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_base_affine_binary_mixture_point_estimate_source
+    {Base Test Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface ℝ Base Test ℝ}
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceTest : S.Equilibrium → Base → Test)
+    (positiveShare : S.Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF ℝ)
+    (reporterLaw noReporterLaw : S.Equilibrium → Base → Law)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (hLawEq_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          reporterLaw e base = noReporterLaw e base)
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : S.Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        paperSourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (houtsidePayoff_of_law_eq :
+      ∀ e base,
+        reporterLaw e base = noReporterLaw e base →
+          (1 / 2 : ℝ) =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    lg21SourceObservablyFair S → lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_report_required_source_equilibrium_implies_test_blank_of_base_affine_binary_mixture_point_estimate_source
+    takeDecision reportDecision estimationConsistent referenceTest
+    positiveShare hpositiveShare_le_one hpositiveShare_pos reporterPMF
+    noReporterPMF reporterLaw noReporterLaw hNoAccess hAccessMixtureDef
+    hLawEq_of_pmfEq actorLaw actorValue actorOfTest hchooses_support
+    baseTerm signalWeight denom hEq houtsidePayoff_of_law_eq hweight hdenom
+    hbasePoint hfullPoint hmass
 
 /--
 Theorem 3.2 report-required point-estimate abstract-law endpoint with the

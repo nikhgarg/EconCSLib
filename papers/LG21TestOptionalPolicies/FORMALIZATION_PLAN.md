@@ -15,9 +15,9 @@ Last updated: 2026-05-16
   no-profitable-deviation predicates used by Lemma 4.1.  The concrete
   optional-reporting and report-required source payoff models also now supply
   full two-sided binary best-response predicates for Theorem 3.1 and
-  Theorem 3.2.  The optional-reporting payoff model now also has a base-indexed
-  variant matching the paper's dependence on non-test features, with its own
-  two-sided best-response bridge.
+  Theorem 3.2.  The optional-reporting and report-required payoff models now
+  also have base-indexed variants matching the paper's dependence on non-test
+  features, with their own two-sided best-response bridges.
 - Definitions 2--5 now have direct PMF and continuous-law source predicates
   plus paper-interface unfold lemmas.  Definition 5 also has equivalent
   witness forms for concrete base/test relevance.
@@ -239,9 +239,11 @@ Last updated: 2026-05-16
   concrete fairness endpoint now combines this surface route with the
   latent-to-observable mixture reduction, and the `_self_law` wrapper uses the
   reporter/no-reporter PMFs themselves to eliminate the redundant abstract-law
-  equality bridge.  The remaining source gap is discharging the final paper
-  policy assumptions for this surface and proving the analogous report-required
-  outside-payoff identity.
+  equality bridge.  The base-indexed report-required affine endpoint now makes
+  the paper's taking payoff formula definitional; the remaining
+  report-required-specific source gap is the outside-payoff identity.  The
+  remaining optional-reporting source gap is discharging the final paper policy
+  assumptions for the concrete surface.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -381,9 +383,11 @@ Last updated: 2026-05-16
    formulas definitional, and the concrete binary-mixture point-estimate
    surface removes the remaining surface identity hypotheses.  The concrete
    fairness endpoint adds the latent-to-observable mixture reduction, and the
-   `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  Next
-   work should discharge the remaining paper policy assumptions for this
-   surface, then prove the report-required affine outside-payoff identity.
+   `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  The
+   base-indexed report-required affine endpoint now makes the taking payoff
+   formula definitional.  Next work should discharge the remaining optional
+   paper policy assumptions for the concrete surface, then prove the
+   report-required affine outside-payoff identity.
 
 ## Reusable Library Seams
 
