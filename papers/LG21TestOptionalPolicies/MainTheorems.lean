@@ -5844,6 +5844,93 @@ theorem paper_theorem3_1_report_required_strategic_withholding_of_source_witness
   · exact lg21_not_demographicallyFair_of_witness eDemo hDemoNe
 
 /--
+Theorem 3.1 optional-reporting PMF endpoint from the fully closed source
+no-report mixture crossing argument.  The only remaining non-strategy inputs
+are concrete PMF-difference witnesses for the three unfairness criteria.
+-/
+theorem paper_theorem3_1_optional_reporting_strategic_withholding_of_no_report_mixture
+    {Feature Skill Base Test Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill) ∧
+        (∃ base score, ¬ W.reports base score) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+            ¬ lg21SourceLatentSkillFair S ∧
+              ¬ lg21SourceObservablyFair S ∧
+                ¬ lg21SourceDemographicallyFair S := by
+  rcases
+      paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture
+        M theta k accessFraction baseOnlyEstimate scoreLaw
+        hC_nonneg hC_lt_one with
+    ⟨W, _reportCutoff, _hindiff, _hreports, _htakes, _hthreshold⟩
+  exact
+    ⟨W,
+      paper_theorem3_1_optional_reporting_strategic_withholding_of_source_witness
+        (S := S) W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe⟩
+
+/--
+Theorem 3.1 report-required PMF endpoint from the fully closed source no-take
+mixture crossing argument.  The only remaining non-strategy inputs are concrete
+PMF-difference witnesses for the three unfairness criteria.
+-/
+theorem paper_theorem3_1_report_required_strategic_withholding_of_no_take_mixture
+    {Skill Base Test Estimate : Type*} [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∃ base skill, ¬ W.takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLatentSkillFair S ∧
+            ¬ lg21SourceObservablyFair S ∧
+              ¬ lg21SourceDemographicallyFair S := by
+  rcases
+      paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture
+        intercept slope hslope accessFraction baseOnlyEstimate skillLaw
+        hC_nonneg hC_lt_one with
+    ⟨W, _takeCutoff, _hindiff, _htakes, _hthreshold⟩
+  exact
+    ⟨W,
+      paper_theorem3_1_report_required_strategic_withholding_of_source_witness
+        (S := S) W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe⟩
+
+/--
 Theorem 3.1 report-required endpoint over arbitrary estimate-law objects.
 -/
 theorem paper_theorem3_1_report_required_law_strategic_withholding_of_source_witness

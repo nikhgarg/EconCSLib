@@ -126,14 +126,16 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_1_report_required_law_strategic_withholding_of_source_witness`
   now combine those optional-reporting/report-required source witnesses with
-  concrete law-difference witnesses to rule out latent-skill, observable, and
-  demographic fairness.  The closed source-mixture variants
+  concrete distribution-difference witnesses to rule out latent-skill,
+  observable, and demographic fairness.  The closed source-mixture variants
+  `paper_theorem3_1_optional_reporting_strategic_withholding_of_no_report_mixture`,
+  `paper_theorem3_1_report_required_strategic_withholding_of_no_take_mixture`,
   `paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture`
   and
   `paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture`
-  now remove the source-witness certificate and leave only those concrete
-  law-difference witnesses as inputs.  The older combined threshold conclusions
-  are also
+  now remove the source-witness certificate on both the PMF and law surfaces,
+  leaving only those concrete distribution-difference witnesses as inputs.  The
+  older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
   functions now construct this witness via
