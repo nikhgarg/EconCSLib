@@ -25715,6 +25715,178 @@ theorem gn21MeasuredAggregateRewardPrimitives_le_acceptAll_right_of_complement_p
       hw_integrable_rejected hden_pos hden_add_pos hQi_nonneg hpointwise
 
 /--
+Measured aggregate strict improvement from changing the left-state policy to
+accept-all, with strictness discharged from pointwise nonnegativity and
+positive support of the Lemma 6 kernel on the rejected complement.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_left_of_complement_pointwise_kernel_nonneg
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (harrivalI_pos : 0 < arrivalI)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) σI μI)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        (acceptAllPolicy \ σI) μI)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σI) μI)
+    (hw_integrable_σ : IntegrableOn wI σI μI)
+    (hw_integrable_rejected : IntegrableOn wI (acceptAllPolicy \ σI) μI)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI +
+            arrivalI *
+              ∫ τ in acceptAllPolicy \ σI,
+                gn21SwitchProb switchIJ switchJI τ ∂μI) *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            (gn21ScaledStateTime μI arrivalI σI +
+              arrivalI * ∫ τ in acceptAllPolicy \ σI, τ ∂μI))
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+    (hpointwise :
+      ∀ τ : TripLength, τ ∈ acceptAllPolicy \ σI →
+        0 ≤
+          gn21DerivativeSignKernel
+            (gn21SwitchProb switchIJ switchJI τ) τ (wI τ)
+            (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+            (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+            (gn21ScaledStateTime μI arrivalI σI)
+            (gn21ScaledStateTime μJ arrivalJ σJ)
+            (gn21ScaledStateEarning μI arrivalI wI σI)
+            (gn21ScaledStateEarning μJ arrivalJ wJ σJ))
+    (hsupport_pos :
+      0 <
+        μI (Function.support
+          (fun τ : TripLength =>
+            gn21DerivativeSignKernel
+              (gn21SwitchProb switchIJ switchJI τ) τ (wI τ)
+              (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+              (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+              (gn21ScaledStateTime μI arrivalI σI)
+              (gn21ScaledStateTime μJ arrivalJ σJ)
+              (gn21ScaledStateEarning μI arrivalI wI σI)
+              (gn21ScaledStateEarning μJ arrivalJ wJ σJ)) ∩
+            (acceptAllPolicy \ σI))) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ <
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ acceptAllPolicy σJ := by
+  rw [← union_acceptAll_diff_of_subset hσI_subset]
+  exact
+    gn21MeasuredAggregateRewardPrimitives_lt_union_left_of_pointwise_kernel_nonneg
+      μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ
+      (acceptAllPolicy \ σI)
+      (by
+        rw [Set.disjoint_left]
+        intro τ hτ hτ_rejected
+        exact hτ_rejected.2 hτ)
+      (measurableSet_acceptAllPolicy.diff hσI_measurable)
+      harrivalI_pos hq_integrable_σ hq_integrable_rejected
+      htime_integrable_σ htime_integrable_rejected hw_integrable_σ
+      hw_integrable_rejected hden_pos hden_add_pos hQj_pos hpointwise
+      hsupport_pos
+
+/--
+Measured aggregate strict improvement from changing the right-state policy to
+accept-all, with strictness discharged from pointwise nonnegativity and
+positive support of the Lemma 6 kernel on the rejected complement.
+-/
+theorem gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_right_of_complement_pointwise_kernel_nonneg
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hσJ_subset : σJ ⊆ acceptAllPolicy)
+    (hσJ_measurable : MeasurableSet σJ)
+    (harrivalJ_pos : 0 < arrivalJ)
+    (hq_integrable_σ :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ) σJ μJ)
+    (hq_integrable_rejected :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ)
+        (acceptAllPolicy \ σJ) μJ)
+    (htime_integrable_σ :
+      IntegrableOn (fun τ : TripLength => τ) σJ μJ)
+    (htime_integrable_rejected :
+      IntegrableOn (fun τ : TripLength => τ) (acceptAllPolicy \ σJ) μJ)
+    (hw_integrable_σ : IntegrableOn wJ σJ μJ)
+    (hw_integrable_rejected : IntegrableOn wJ (acceptAllPolicy \ σJ) μJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hden_add_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            (gn21ScaledStateTime μJ arrivalJ σJ +
+              arrivalJ * ∫ τ in acceptAllPolicy \ σJ, τ ∂μJ) +
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ +
+            arrivalJ *
+              ∫ τ in acceptAllPolicy \ σJ,
+                gn21SwitchProb switchJI switchIJ τ ∂μJ) *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+    (hpointwise :
+      ∀ τ : TripLength, τ ∈ acceptAllPolicy \ σJ →
+        0 ≤
+          gn21DerivativeSignKernel
+            (gn21SwitchProb switchJI switchIJ τ) τ (wJ τ)
+            (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+            (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+            (gn21ScaledStateTime μJ arrivalJ σJ)
+            (gn21ScaledStateTime μI arrivalI σI)
+            (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+            (gn21ScaledStateEarning μI arrivalI wI σI))
+    (hsupport_pos :
+      0 <
+        μJ (Function.support
+          (fun τ : TripLength =>
+            gn21DerivativeSignKernel
+              (gn21SwitchProb switchJI switchIJ τ) τ (wJ τ)
+              (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+              (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+              (gn21ScaledStateTime μJ arrivalJ σJ)
+              (gn21ScaledStateTime μI arrivalI σI)
+              (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+              (gn21ScaledStateEarning μI arrivalI wI σI)) ∩
+            (acceptAllPolicy \ σJ))) :
+    gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ <
+      gn21MeasuredAggregateRewardPrimitives μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI acceptAllPolicy := by
+  rw [← union_acceptAll_diff_of_subset hσJ_subset]
+  exact
+    gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_pointwise_kernel_nonneg
+      μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ
+      (acceptAllPolicy \ σJ)
+      (by
+        rw [Set.disjoint_left]
+        intro τ hτ hτ_rejected
+        exact hτ_rejected.2 hτ)
+      (measurableSet_acceptAllPolicy.diff hσJ_measurable)
+      harrivalJ_pos hq_integrable_σ hq_integrable_rejected
+      htime_integrable_σ htime_integrable_rejected hw_integrable_σ
+      hw_integrable_rejected hden_pos hden_add_pos hQi_pos hpointwise
+      hsupport_pos
+
+/--
 Non-surge accept-all aggregate improvement from Lemma 10 current bounds.  This
 combines the pointwise Lemma 10 derivative-kernel positivity theorem with the
 rejected-complement aggregate add bridge.

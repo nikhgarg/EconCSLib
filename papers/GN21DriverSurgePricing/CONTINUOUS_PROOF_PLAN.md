@@ -466,7 +466,11 @@ into the concrete endpoint policy data.
   the pointwise support variants
   `gn21MeasuredAggregateRewardPrimitives_lt_union_left_of_pointwise_kernel_nonneg`
   and
-  `gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_pointwise_kernel_nonneg`.
+  `gn21MeasuredAggregateRewardPrimitives_lt_union_right_of_pointwise_kernel_nonneg`,
+  plus the accept-all-complement specializations
+  `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_left_of_complement_pointwise_kernel_nonneg`
+  and
+  `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_right_of_complement_pointwise_kernel_nonneg`.
   These are the useful bridge from "positive derivative kernel on positive
   mass" to an actual strict reward improvement for the quotient reward, and
   should be preferred over building more abstract wrappers when closing the

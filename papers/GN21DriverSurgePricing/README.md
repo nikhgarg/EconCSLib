@@ -90,7 +90,7 @@ cache is `source.txt`.
   improvement from positive integrated Lemma 6 kernels, measured `Q,T,W`
   union additivity and measured left/right aggregate weak/strict-improvement
   bridges for adding accepted sets, including pointwise-kernel strict
-  variants,
+  variants and accept-all-complement strict variants,
   including accept-all-complement specializations for rejected feasible sets,
   plus pointwise-to-integrated kernel bridges that turn nonnegative Lemma 6
   derivative kernels on an added set into the aggregate primitive side
