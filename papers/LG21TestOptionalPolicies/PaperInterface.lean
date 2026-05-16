@@ -1690,6 +1690,45 @@ theorem paper_interface_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt
   paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt M hq
 
 /--
+Theorem 3.1 optional-reporting threshold conclusions from a source-shaped
+witness: all access students take the test, some access student withholds a
+score, and reporting is a finite score-threshold rule at each base profile.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness
+    {Base : Type*}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base) :
+    (∀ base skill, W.takes base skill) ∧
+      (∃ base score, ¬ W.reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness W
+
+/--
+Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed
+Bayesian posterior-threshold reporting gives the paper's all-take conclusion
+and finite score-threshold reporting at every base profile.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_gaussian_best_response
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (reportingBase threshold : Base → ℝ) :
+    (∀ base skill,
+      (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+        M theta k reportingBase threshold).takes base skill) ∧
+      (∃ base score,
+        ¬ (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+          M theta k reportingBase threshold).reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ,
+            (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+              M theta k reportingBase threshold).reports base score ↔
+              cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_threshold_conclusions_of_gaussian_best_response
+    M theta k reportingBase threshold
+
+/--
 Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding
 witness.
 -/

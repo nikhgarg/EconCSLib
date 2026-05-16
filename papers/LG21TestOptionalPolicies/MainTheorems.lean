@@ -2955,6 +2955,134 @@ theorem lg21_not_lawTestBlank_iff_exists_witness
     exact lg21_not_lawTestBlank_of_witness e base test hne
 
 /--
+Source-shaped witness for Theorem 3.1's optional-reporting case.  The paper's
+first bullet says all access students take the test, while reporting follows a
+finite lower cutoff in the realized test score at each base profile.
+-/
+structure LG21OptionalReportingStrategicWithholdingSourceWitness
+    (Base : Type*) where
+  reports : Base → ℝ → Prop
+  takes : Base → ℝ → Prop
+  all_take : ∀ base skill, takes base skill
+  some_access_students_do_not_report : ∃ base score, ¬ reports base score
+  reporting_threshold :
+    ∀ base, ∃ cutoff : ℝ, ∀ score : ℝ, reports base score ↔ cutoff ≤ score
+
+/--
+Concrete optional-reporting witness from base-indexed reporting cutoffs.  Taking
+is identically true, and each reporting rule has a score one unit below its
+cutoff that is withheld.
+-/
+def lg21OptionalReportingThresholdStrategicWithholdingSourceWitness
+    {Base : Type*} [Nonempty Base] (reportCutoff : Base → ℝ) :
+    LG21OptionalReportingStrategicWithholdingSourceWitness Base where
+  reports := fun base score => reportCutoff base ≤ score
+  takes := fun _base _skill => True
+  all_take := by
+    intro _base _skill
+    trivial
+  some_access_students_do_not_report := by
+    let base : Base := Classical.choice inferInstance
+    refine ⟨base, reportCutoff base - 1, ?_⟩
+    exact not_le.mpr (sub_one_lt (reportCutoff base))
+  reporting_threshold := by
+    intro base
+    exact ⟨reportCutoff base, fun score => Iff.rfl⟩
+
+/--
+Theorem 3.1 optional-reporting threshold conclusions from a source-shaped
+witness: all access students take the test, some access student withholds a
+score, and reporting is a finite score-threshold rule at each base profile.
+-/
+theorem paper_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness
+    {Base : Type*}
+    (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base) :
+    (∀ base skill, W.takes base skill) ∧
+      (∃ base score, ¬ W.reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) :=
+  ⟨W.all_take, W.some_access_students_do_not_report,
+    W.reporting_threshold⟩
+
+/--
+Theorem 3.1 optional-reporting conclusions for explicit base-indexed reporting
+cutoffs.
+-/
+theorem paper_theorem3_1_optional_reporting_threshold_conclusions_of_cutoff_functions
+    {Base : Type*} [Nonempty Base] (reportCutoff : Base → ℝ) :
+    (∀ base skill,
+      (lg21OptionalReportingThresholdStrategicWithholdingSourceWitness
+        reportCutoff).takes base skill) ∧
+      (∃ base score, ¬ reportCutoff base ≤ score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, (reportCutoff base ≤ score) ↔ cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness
+    (lg21OptionalReportingThresholdStrategicWithholdingSourceWitness
+      reportCutoff)
+
+/--
+Base-indexed Gaussian optional-reporting witness.  At each base profile, the
+Bayesian report decision is a posterior-threshold comparison in the reported
+test score, so the affine Gaussian threshold theorem supplies a finite lower
+cutoff.
+-/
+def lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (reportingBase threshold : Base → ℝ) :
+    LG21OptionalReportingStrategicWithholdingSourceWitness Base where
+  reports := fun base score =>
+    threshold base ≤ (M base).posteriorMean
+      (Function.update (theta base) k score)
+  takes := fun _base _skill => True
+  all_take := by
+    intro _base _skill
+    trivial
+  some_access_students_do_not_report := by
+    let base : Base := Classical.choice inferInstance
+    rcases
+      paper_theorem3_1_reporting_threshold_of_gaussian_best_response
+        (M base) (theta base) k (reportingBase base) (threshold base)
+      with ⟨cutoff, hcutoff⟩
+    refine ⟨base, cutoff - 1, ?_⟩
+    intro hreport
+    have hle : cutoff ≤ cutoff - 1 := (hcutoff (cutoff - 1)).1 hreport
+    linarith
+  reporting_threshold := by
+    intro base
+    exact
+      paper_theorem3_1_reporting_threshold_of_gaussian_best_response
+        (M base) (theta base) k (reportingBase base) (threshold base)
+
+/--
+Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed
+Bayesian posterior-threshold reporting gives the paper's all-take conclusion
+and finite score-threshold reporting at every base profile.
+-/
+theorem paper_theorem3_1_optional_reporting_threshold_conclusions_of_gaussian_best_response
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (reportingBase threshold : Base → ℝ) :
+    (∀ base skill,
+      (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+        M theta k reportingBase threshold).takes base skill) ∧
+      (∃ base score,
+        ¬ (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+          M theta k reportingBase threshold).reports base score) ∧
+        (∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ,
+            (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+              M theta k reportingBase threshold).reports base score ↔
+              cutoff ≤ score) :=
+  paper_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness
+    (lg21OptionalReportingGaussianStrategicWithholdingSourceWitness
+      M theta k reportingBase threshold)
+
+/--
 Source-shaped witness for Theorem 3.1's strategic-withholding threshold
 conclusions.  `Base` represents the paper's non-test feature vector
 `{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the
