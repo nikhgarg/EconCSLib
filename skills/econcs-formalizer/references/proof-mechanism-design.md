@@ -87,6 +87,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `M > K reference ↔ cutoff < reference`. This is much faster than expanding
   Gaussian integrals or tail formulas again, and it keeps the paper statement
   auditable.
+- When a two-group strategic proof is a source-level case split ("no group
+  triggers the cutoff case", "both groups trigger it but that is impossible",
+  "only group A triggers it", "only group B triggers it"), first package that
+  logic as an exact-one propositional bridge. Then plug in the economic
+  qualifiers and mass/cutoff translations separately. This avoids duplicating
+  symmetric case analysis inside every paper-facing objective theorem.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,
