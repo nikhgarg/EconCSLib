@@ -84,9 +84,12 @@ Last updated: 2026-05-16
   conditional posterior-score means.  It also has a source-shaped
   `LG21EstimateLaw` wrapper for the point/Gaussian law surface used by the
   paper's distributional notation, plus the fixed-base one-random-test
-  posterior law matching the displayed proof formula.  The paper's named route
-  is now bridged as well: the Lemma 4.1 lower-tail all-report/all-take theorem
-  feeds the fixed-base one-test posterior law to produce the Proposition 4.2
+  posterior law matching the displayed proof formula.  The concrete
+  `lg21FixedBaseOneTestPosteriorLawSurface` now makes the no-access law
+  identity definitional and proves the fixed-base latent-skill unfairness
+  endpoint without law-equality assumptions.  The paper's named route is now
+  bridged as well: the Lemma 4.1 lower-tail all-report/all-take theorem feeds
+  the fixed-base one-test posterior law to produce the Proposition 4.2
   latent-skill-fairness contradiction; the stronger wrappers use Lemma 4.1's
   explicit-threshold, binary-equilibrium, packaged threshold-equilibrium
   certificate, and fully specified observed-access source-action routes.
@@ -140,10 +143,12 @@ Last updated: 2026-05-16
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now
    proved, and Propositions 4.2--4.3 are both routed through the closed Lemma
-   4.1 source-action endpoint.  Proposition 4.3's one-extra-test-signal
-   precision gap is no longer an assumption.  The remaining work is to prove the
-   concrete source-law identities used by Propositions 4.2--4.3 instead of
-   assuming them as law equalities.
+   4.1 source-action endpoint.  Proposition 4.2 now has a fixed-base concrete
+   source-law surface, so its remaining lift is the full multi-base Bayesian
+   surface.  Proposition 4.3's one-extra-test-signal precision gap is no longer
+   an assumption; its next concrete source-law target is an analogous
+   observable/demographic surface with access law equal to `withExtraSignal`
+   and no-access law equal to the base posterior law.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.

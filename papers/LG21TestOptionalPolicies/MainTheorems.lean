@@ -3550,6 +3550,118 @@ theorem paper_proposition4_2_not_latent_skill_fair_of_fully_specified_observed_a
       e qHigh qLow base hslope htestScale hNoAccess
       hAccessHigh hAccessLow hskill
 
+/--
+Concrete fixed-base source-law surface for Proposition 4.2.  Conditional on a
+single non-test base profile, no-access estimate laws are deterministic and
+independent of latent skill, while access estimate laws are the one-random-test
+posterior-score Gaussian laws.
+-/
+def lg21FixedBaseOneTestPosteriorLawSurface
+    (intercept slope : ℝ) (hslope : 0 < slope)
+    (testScale : ℝ) (htestScale : 0 < testScale)
+    (noAccessEstimate : ℝ) :
+    LG21SourceLawPolicySurface ℝ PUnit ℝ LG21EstimateLaw where
+  Equilibrium := PUnit
+  latentAccessLaw := fun _ skill _ =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope skill testScale htestScale)
+  latentNoAccessLaw := fun _ _ _ => LG21EstimateLaw.point noAccessEstimate
+  observableAccessLaw := fun _ _ =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope 0 testScale htestScale)
+  observableNoAccessLaw := fun _ _ => LG21EstimateLaw.point noAccessEstimate
+  demographicAccessLaw := fun _ =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope 0 testScale htestScale)
+  demographicNoAccessLaw := fun _ => LG21EstimateLaw.point noAccessEstimate
+  baseOnlyLaw := fun _ _ => LG21EstimateLaw.point noAccessEstimate
+  fullFeatureLaw := fun _ _ test =>
+    LG21EstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        intercept slope hslope test testScale htestScale)
+
+/--
+Proposition 4.2 concrete fixed-base law endpoint: strictly ordered latent
+skills have different access-side one-test posterior-score laws, while the
+no-access law is the same deterministic base-only estimate.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_fixed_base_one_test_posterior_source_law
+    {intercept slope skillHigh skillLow testScale noAccessEstimate : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hskill : skillLow < skillHigh) :
+    ¬ lg21SourceLawLatentSkillFair
+      (lg21FixedBaseOneTestPosteriorLawSurface
+        intercept slope hslope testScale htestScale noAccessEstimate) :=
+  paper_proposition4_2_not_estimate_law_latent_skill_fair_of_one_test_posterior_law
+    (S := lg21FixedBaseOneTestPosteriorLawSurface
+      intercept slope hslope testScale htestScale noAccessEstimate)
+    PUnit.unit skillHigh skillLow PUnit.unit
+    hslope htestScale rfl rfl rfl hskill
+
+/--
+Proposition 4.2 concrete source-model endpoint: the closed observed-access
+source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the concrete
+fixed-base one-test posterior source-law surface is not latent-skill fair.
+-/
+theorem paper_proposition4_2_not_latent_skill_fair_of_fully_specified_source_models_and_fixed_base_one_test_posterior_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    {intercept slope skillHigh skillLow noAccessEstimate : ℝ}
+    (hslope : 0 < slope) (hskill : skillLow < skillHigh) :
+    (∀ info : LG21AccessStudentInfo OptionalSkill OptionalBase ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : LG21AccessStudentInfo ℝ RequiredBase RequiredTest,
+        LG21AccessStudentInfo.chosenAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawLatentSkillFair
+          (lg21FixedBaseOneTestPosteriorLawSurface
+            intercept slope hslope testScale htestScale noAccessEstimate) := by
+  have hactions :=
+    paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+      C api Mstrategy theta k scoreLaw skillLaw takeDecision
+      reportRequiredDecision htestScale hReportEq hTakeEq
+  refine ⟨hactions.1, hactions.2, ?_⟩
+  exact
+    paper_proposition4_2_not_latent_skill_fair_of_fixed_base_one_test_posterior_source_law
+      hslope htestScale hskill
+
 /-- Certificate for Proposition 4.3. -/
 structure LG21NotObservableOrDemographicFairCertificate
     {Skill Base Test Estimate : Type*}
