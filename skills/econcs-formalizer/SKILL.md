@@ -195,8 +195,14 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   is using Git or the filesystem is temporarily read-only, pause; once clear,
   retry the same scoped path list. Never use broad `git add .` in this repo.
   Do not use `git reset` to repair staging or commits in a shared worktree;
-  it can move or unstage other agents' work. Recover with scoped staging,
-  follow-up commits, or explicit coordination instead.
+  it can move or unstage other agents' work. Do not use `git restore`,
+  `git restore --staged`, checkout-based file rewinds, or any "restage the
+  index" recovery workflow in a dirty shared worktree; these can silently
+  disturb another agent's staged or unstaged files. If a commit accidentally
+  includes extra work, prefer a follow-up corrective commit, an explicitly
+  scoped new commit for the remaining owned files, or direct coordination with
+  the user/other agent. Normal first-time `git add path...` of files you just
+  edited is fine; index surgery to repair mistakes is not.
 
 ### 1.2.1 Paper Link Intake Protocol
 
@@ -752,7 +758,11 @@ search.
   user explicitly requests that exact operation. Even soft or mixed resets can
   disturb other agents' staged work or branch position. Use scoped `git add`,
   path-limited commits, or follow-up corrective commits instead.
-- Always scope your git operations (e.g., `git checkout <specific_file>`, `git restore <specific_file>`) strictly to the files you are actively modifying.
+- **NEVER** use `git restore`, `git restore --staged`, checkout-based file
+  rewinds, or index restaging as a recovery move in a dirty shared worktree.
+  If staging or commit scope is wrong, leave the index alone and recover with a
+  follow-up commit or explicit coordination. Only use ordinary scoped
+  `git add path...` for files you intentionally edited.
 - Use the native `apply_patch` editing tool for manual source edits. Do not
   invoke `apply_patch` through a shell command, and do not use heredoc/sed/perl
   write tricks for ordinary Lean, README, or skill edits; those paths obscure
