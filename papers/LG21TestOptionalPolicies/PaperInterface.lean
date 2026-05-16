@@ -5414,6 +5414,50 @@ theorem paper_interface_theorem3_1_law_strategic_withholding_of_source_witness
     W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
 
 /--
+Paper-facing Theorem 3.1 PMF source-witness route packaged as the compact
+strategic-withholding certificate.
+-/
+def paper_interface_theorem3_1_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21StrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    LG21StrategicWithholdingCertificate S :=
+  paper_theorem3_1_strategic_withholding_certificate_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
+Paper-facing Theorem 3.1 continuous-law source-witness route packaged as the
+compact strategic-withholding certificate.
+-/
+def paper_interface_theorem3_1_law_strategic_withholding_certificate_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21StrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    LG21LawStrategicWithholdingCertificate S :=
+  paper_theorem3_1_law_strategic_withholding_certificate_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
 Theorem 3.2: latent-skill or observable fairness implies test-blankness.
 
 Current Lean status: conditional on the fairness-impossibility certificate.

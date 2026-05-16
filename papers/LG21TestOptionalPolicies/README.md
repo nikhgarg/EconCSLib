@@ -81,6 +81,10 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_1_law_strategic_withholding_of_certificate` now mirror the
   compact PMF certificate endpoint for continuous-law surfaces, giving the
   Theorem 3.1 law route the same paper-facing closure pattern as the PMF route.
+  The generic PMF and continuous-law source-witness routes now also construct
+  those compact strategic-withholding certificates directly, so the top-level
+  Theorem 3.1 certificate interface can consume source witnesses plus concrete
+  unfairness witnesses without manual certificate assembly.
 
 ### Recent Theorem 3.2 Progress
 
