@@ -659,6 +659,12 @@ cache is `source.txt`.
   constructed structured CTMC prices are measurable IC, and every measurable
   optimum rejects only a zero-measure subset of the feasible accept-all trips
   in each state.
+  The feasible primitive, accounting-form, and reward-rate current-bounds
+  source boundaries expose the same conclusion through
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_source_assumptions`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_source_assumptions`.
   The accounting-form wrapper,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions`,
   further replaces fixed-state reward-rate identities with the structured
@@ -1034,6 +1040,12 @@ statewise rejected-trip measure zero.
 The Theorem 3 source-current-bounds wrapper now threads this conclusion through
 the constructed price parameters as
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions`.
+The primitive feasible current-bounds package has its own rejected-mass
+adapter,
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,
+and the feasible-primitive, accounting, and reward-rate Theorem 3 wrappers
+reuse it or the source-data adapter to return the same AE uniqueness
+conclusion.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

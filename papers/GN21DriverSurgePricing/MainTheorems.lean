@@ -32330,6 +32330,92 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_structured_curren
       μ arrival R1 R2 switch12 switch21 m z C)
 
 /--
+Primitive feasible current-bounds data instantiate the feasible measurable
+aggregate positive-rejected-mass certificate.  The primitive package already
+contains enough nondegeneracy to recover the positive arrival rates needed by
+the strict aggregate inequalities.
+-/
+def theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_structured_current_bounds_primitive
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  accept_all_optimal := by
+    exact
+      paper_theorem4_measurable_accept_all_optimal_of_statewise_accept_all_weak_reward
+        (gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z)
+        (theorem4StatewiseAcceptAllMeasurableWeakRewardCertificate_of_structured_current_bounds_primitive
+          μ arrival R1 R2 switch12 switch21 m z C)
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hrejected_pos
+    rcases C.nonsurge_data ρ hρ.1 with ⟨ratio, D⟩
+    have Hcur := C.current_nondegenerate ρ hρ.1
+    have harrival1_ne : arrival 0 ≠ 0 := by
+      intro hzero
+      exact Hcur.arrivalMassI_ne (by simp [hzero])
+    have harrival1_pos : 0 < arrival 0 :=
+      lt_of_le_of_ne D.arrival_nonneg (Ne.symm harrival1_ne)
+    refine ⟨acceptAllPolicy, ?_, Hcur,
+      C.nonsurge_accept_all_nondegenerate ρ hρ.1, ?_⟩
+    · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ.1 0
+    · have hlt :=
+        GN21NonsurgeLemma10AcceptAllAggregatePrimitiveData.aggregate_lt_acceptAll_of_rejected_measure_pos
+          D harrival1_pos hrejected_pos
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        C.m0_eq] using hlt
+  surge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hrejected_pos
+    rcases C.surge_data ρ hρ.1 with ⟨ratio, D⟩
+    have Hcur := C.current_nondegenerate ρ hρ.1
+    have harrival2_ne : arrival 1 ≠ 0 := by
+      intro hzero
+      exact Hcur.arrivalMassJ_ne (by simp [hzero])
+    have harrival2_pos : 0 < arrival 1 :=
+      lt_of_le_of_ne D.arrival_nonneg (Ne.symm harrival2_ne)
+    refine ⟨acceptAllPolicy, ?_, Hcur,
+      C.surge_accept_all_nondegenerate ρ hρ.1, ?_⟩
+    · exact dynamicFeasibleMeasurablePolicy_update_acceptAll hρ.1 1
+    · have hlt :=
+        GN21SurgeLemma9AcceptAllAggregatePrimitiveData.aggregate_lt_acceptAll_of_rejected_measure_pos
+          D harrival2_pos hrejected_pos
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        C.m0_eq] using hlt
+
+/--
+Primitive feasible current-bounds data imply accept-all measurable optimality
+and almost-everywhere uniqueness.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsFeasiblePrimitiveCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+    μ arrival switch12 switch21
+    (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+    (theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_structured_current_bounds_primitive
+      μ arrival R1 R2 switch12 switch21 m z C)
+
+/--
 Source current-bounds data instantiate the feasible measurable aggregate
 positive-rejected-mass certificate.  Unlike the exact strict-local route, this
 does not require a syntactic `¬ acceptsAllTrips` witness; positive rejected
@@ -70613,6 +70699,42 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_cu
         μ arrival R1 R2 switch12 switch21 A.current_bounds)
 
 /--
+Paper-facing Theorem 3 wrapper at the feasible primitive current-bounds
+boundary, including almost-everywhere uniqueness of every measurable optimum.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_feasible_primitive_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsFeasiblePrimitiveSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases
+      paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_feasible_primitive_source_assumptions
+        μ arrival rho R1 R2 switch12 switch21 A with
+    ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive
+      μ arrival R1 R2 switch12 switch21 m z
+      (A.current_bounds m z hsigns hparams)
+  have hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+    intro ρ hρ
+    have hρ' :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ρ := by
+      simpa [gn21MeasuredCTMCStructuredDynamicReward] using hρ
+    exact H.2 ρ hρ'
+  exact ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
+
+/--
 Bundled source-level assumptions for the lightest source-facing feasible
 current-bounds route.  The per-policy proof supplies only source data: positive
 current mass, Lemma 9/10 current bounds, and fixed-state reward-rate
@@ -70791,6 +70913,44 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_cu
         μ arrival R1 R2 switch12 switch21 A.current_bounds)
 
 /--
+Paper-facing Theorem 3 wrapper at the accounting-form feasible current-bounds
+boundary, including almost-everywhere uniqueness of every measurable optimum.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsAccountingSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases
+      paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_source_assumptions
+        μ arrival rho R1 R2 switch12 switch21 A with
+    ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source
+      μ arrival R1 R2 switch12 switch21 m z
+      (Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate.of_accounting
+        μ arrival R1 R2 switch12 switch21 m z
+        (A.current_bounds m z hsigns hparams))
+  have hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+    intro ρ hρ
+    have hρ' :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ρ := by
+      simpa [gn21MeasuredCTMCStructuredDynamicReward] using hρ
+    exact H.2 ρ hρ'
+  exact ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
+
+/--
 Bundled source-level assumptions for the reward-rate feasible current-bounds
 route.  The per-policy proof supplies positive current mass, Lemma 9/10
 current bounds, and fixed-state measured reward-rate equalities.
@@ -70859,6 +71019,44 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_structured_cu
       A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
       (theorem3AcceptAllFeasibleWeakRewardCertificate_of_structured_current_bounds_reward_rate
         μ arrival R1 R2 switch12 switch21 A.current_bounds)
+
+/--
+Paper-facing Theorem 3 wrapper at the reward-rate feasible current-bounds
+boundary, including almost-everywhere uniqueness of every measurable optimum.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsRewardRateSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases
+      paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_reward_rate_source_assumptions
+        μ arrival rho R1 R2 switch12 switch21 A with
+    ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source
+      μ arrival R1 R2 switch12 switch21 m z
+      (Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate.of_reward_rate
+        μ arrival R1 R2 switch12 switch21 m z
+        (A.current_bounds m z hsigns hparams))
+  have hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+    intro ρ hρ
+    have hρ' :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ρ := by
+      simpa [gn21MeasuredCTMCStructuredDynamicReward] using hρ
+    exact H.2 ρ hρ'
+  exact ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
 
 /--
 Measured Theorem 3 endpoint from statewise positive Lemma 5 replacement
