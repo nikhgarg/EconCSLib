@@ -122,11 +122,18 @@ Last updated: 2026-05-16
   `paper_theorem3_2_affine_resampling_mean_payoff_lt` and the below-mean actor
   wrappers now prove the profitable-deviation contradiction whenever the full
   policy model supplies a currently acting score/skill below the resampling
-  mean.  The latent-skill branch is reduced to the observable branch under the
-  shared latent-skill mixture identities.  The remaining source gap is deriving
-  that below-mean acting witness, or the no-positive-share alternative, from the
-  full policy model and then closing the final test-blank implication without a
-  certificate.
+  mean.  The finite acting-distribution lemmas
+  `paper_theorem3_2_exists_support_actor_le_mean` and
+  `paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor`
+  formalize the paper's mean-existence claim, with the important strictness
+  caveat: strict profitable deviation needs a nondegenerate acting distribution
+  with some positive-mass actor above the mean.  The nondegenerate actor
+  distribution wrappers combine this support fact with the resampling
+  cancellation and payoff comparison.  The latent-skill branch is reduced to
+  the observable branch under the shared latent-skill mixture identities.  The
+  remaining source gap is deriving the final no-positive-share/test-blank
+  alternative from the full policy model and then closing the final test-blank
+  implication without a certificate.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff

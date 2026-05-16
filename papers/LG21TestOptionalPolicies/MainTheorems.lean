@@ -3923,6 +3923,226 @@ theorem paper_theorem3_2_law_observable_fair_positive_reporting_below_mean_actor
       hLawEq
 
 /--
+Theorem 3.2 finite-mean support fact: every finite acting distribution has a
+positive-mass actor whose score/skill is weakly below its mean.
+-/
+theorem paper_theorem3_2_exists_support_actor_le_mean
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor] [Nonempty Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ) :
+    ∃ actor, 0 < (actorLaw actor).toReal ∧
+      actorValue actor ≤ pmfExp actorLaw actorValue := by
+  classical
+  by_contra hnone
+  have hsupport_gt :
+      ∀ actor, 0 < (actorLaw actor).toReal →
+        pmfExp actorLaw actorValue < actorValue actor := by
+    intro actor hmass
+    have hnot :
+        ¬ actorValue actor ≤ pmfExp actorLaw actorValue := by
+      intro hle
+      exact hnone ⟨actor, hmass, hle⟩
+    exact lt_of_not_ge hnot
+  let supportValue : Actor → ℝ :=
+    fun actor =>
+      if (actorLaw actor).toReal = 0 then
+        pmfExp actorLaw actorValue + 1
+      else actorValue actor
+  have hExpEq :
+      pmfExp actorLaw actorValue = pmfExp actorLaw supportValue := by
+    unfold pmfExp supportValue
+    refine Finset.sum_congr rfl ?_
+    intro actor _ha
+    by_cases hzero : (actorLaw actor).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hall_gt :
+      ∀ actor, pmfExp actorLaw actorValue < supportValue actor := by
+    intro actor
+    by_cases hzero : (actorLaw actor).toReal = 0
+    · simp [supportValue, hzero]
+    · have hmass : 0 < (actorLaw actor).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      simpa [supportValue, hzero] using hsupport_gt actor hmass
+  have hlt :
+      pmfExp actorLaw actorValue < pmfExp actorLaw actorValue :=
+    hExpEq ▸
+      (pmfExp_lt_of_forall_lt actorLaw supportValue
+        (pmfExp actorLaw actorValue) hall_gt)
+  exact (lt_irrefl _) hlt
+
+/--
+Theorem 3.2 strict finite-mean support fact: if a finite acting distribution
+has a positive-mass actor strictly above its mean, then it also has a
+positive-mass actor strictly below its mean.
+-/
+theorem paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor) :
+    ∃ actor, 0 < (actorLaw actor).toReal ∧
+      actorValue actor < pmfExp actorLaw actorValue := by
+  classical
+  by_contra hnone
+  have hno_below :
+      ∀ actor, 0 < (actorLaw actor).toReal →
+        pmfExp actorLaw actorValue ≤ actorValue actor := by
+    intro actor hmass
+    by_contra hlt_not
+    exact hnone ⟨actor, hmass, lt_of_not_ge hlt_not⟩
+  let supportNegValue : Actor → ℝ :=
+    fun actor =>
+      if (actorLaw actor).toReal = 0 then
+        - pmfExp actorLaw actorValue
+      else - actorValue actor
+  have hExpNegEq :
+      pmfExp actorLaw supportNegValue =
+        pmfExp actorLaw (fun actor => - actorValue actor) := by
+    unfold pmfExp supportNegValue
+    refine Finset.sum_congr rfl ?_
+    intro actor _ha
+    by_cases hzero : (actorLaw actor).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hle_neg :
+      ∀ actor, supportNegValue actor ≤ - pmfExp actorLaw actorValue := by
+    intro actor
+    by_cases hzero : (actorLaw actor).toReal = 0
+    · simp [supportNegValue, hzero]
+    · have hmass : 0 < (actorLaw actor).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      simpa [supportNegValue, hzero] using neg_le_neg (hno_below actor hmass)
+  have habove_neg :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        supportNegValue actor < - pmfExp actorLaw actorValue := by
+    rcases habove with ⟨actor, hmass, hgt⟩
+    have hzero : (actorLaw actor).toReal ≠ 0 :=
+      ne_of_gt hmass
+    exact ⟨actor, hmass, by
+      simpa [supportNegValue, hzero] using neg_lt_neg hgt⟩
+  have hneg_lt :
+      pmfExp actorLaw supportNegValue <
+        - pmfExp actorLaw actorValue :=
+    pmfExp_lt_of_forall_le_exists_lt
+      actorLaw supportNegValue
+      (- pmfExp actorLaw actorValue) hle_neg habove_neg
+  rw [hExpNegEq, pmfExp_neg] at hneg_lt
+  linarith
+
+/--
+Theorem 3.2 positive-share PMF resampling instability from a nondegenerate
+finite acting distribution.  The finite-mean lemma supplies a strictly
+below-mean acting score/skill whenever some positive-mass actor is strictly
+above the mean.
+-/
+theorem paper_theorem3_2_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+    {Skill Base Test Estimate Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hLawEq_of_pmfEq :
+      reporterPMF = noReporterPMF → reporterLaw = noReporterLaw)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor)
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ¬ lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff := by
+  rcases
+      paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor
+        actorLaw actorValue habove with
+    ⟨actor, hmass, hbelow⟩
+  exact
+    paper_theorem3_2_observable_fair_positive_reporting_below_mean_actor_unstable
+      hfair e base hlambda reporterPMF noReporterPMF reporterLaw noReporterLaw
+      hNoAccess hAccessMixture hLawEq_of_pmfEq
+      (hchooses_support actor hmass)
+      (hchoosePayoff (actorValue actor))
+      (hotherPayoff_of_law_eq (actorValue actor))
+      hweight hdenom hbelow
+
+/--
+Theorem 3.2 abstract-law resampling instability from a nondegenerate finite
+acting distribution.
+-/
+theorem paper_theorem3_2_law_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+    {Skill Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hfair : lg21SourceLawObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor)
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ¬ lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff := by
+  rcases
+      paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor
+        actorLaw actorValue habove with
+    ⟨actor, hmass, hbelow⟩
+  exact
+    paper_theorem3_2_law_observable_fair_positive_reporting_below_mean_actor_unstable
+      mass law_ext hfair e base hlambda reporterLaw noReporterLaw
+      hNoAccess hAccessMixture
+      (hchooses_support actor hmass)
+      (hchoosePayoff (actorValue actor))
+      (hotherPayoff_of_law_eq (actorValue actor))
+      hweight hdenom hbelow
+
+/--
 Theorem 3.2 latent-to-observable reduction.  If latent-skill fairness implies
 observable fairness, then it is enough to prove the test-blank implication for
 observable fairness.

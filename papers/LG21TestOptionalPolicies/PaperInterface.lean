@@ -15,6 +15,7 @@ namespace LG21TestOptionalPolicies
 
 noncomputable section
 
+open EconCSLib
 open EconCSLib.Probability
 
 /-- Source model access indicator `Z`. -/
@@ -2640,6 +2641,128 @@ theorem paper_interface_theorem3_2_law_observable_fair_positive_reporting_below_
     mass law_ext hfair e base hlambda reporterLaw noReporterLaw
     hNoAccess hAccessMixture hchosen hchoosePayoff hotherPayoff_of_law_eq
     hweight hdenom hactor
+
+/--
+Theorem 3.2 finite-distribution support fact: an acting distribution always
+has a positive-mass actor weakly below its own mean.
+-/
+theorem paper_interface_theorem3_2_exists_support_actor_le_mean
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor] [Nonempty Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ) :
+    ∃ actor, 0 < (actorLaw actor).toReal ∧
+      actorValue actor ≤ pmfExp actorLaw actorValue :=
+  paper_theorem3_2_exists_support_actor_le_mean actorLaw actorValue
+
+/--
+Theorem 3.2 finite-distribution strict support fact: a nondegenerate acting
+distribution with a positive-mass actor above its mean also has a positive-mass
+actor below its mean.
+-/
+theorem paper_interface_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor
+    {Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor) :
+    ∃ actor, 0 < (actorLaw actor).toReal ∧
+      actorValue actor < pmfExp actorLaw actorValue :=
+  paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor
+    actorLaw actorValue habove
+
+/--
+Theorem 3.2 PMF-law resampling instability from a nondegenerate finite acting
+distribution.
+-/
+theorem paper_interface_theorem3_2_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+    {Skill Base Test Estimate Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (hfair : lg21SourceObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (hLawEq_of_pmfEq :
+      reporterPMF = noReporterPMF → reporterLaw = noReporterLaw)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor)
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ¬ lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff :=
+  paper_theorem3_2_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+    hfair e base hlambda reporterPMF noReporterPMF reporterLaw noReporterLaw
+    hNoAccess hAccessMixture hLawEq_of_pmfEq actorLaw actorValue
+    hchooses_support habove hchoosePayoff hotherPayoff_of_law_eq
+    hweight hdenom
+
+/--
+Theorem 3.2 abstract-law resampling instability from a nondegenerate finite
+acting distribution.
+-/
+theorem paper_interface_theorem3_2_law_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+    {Skill Base Test Outcome Law Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    {chooses : ℝ → Prop} {choosePayoff otherPayoff : ℝ → ℝ}
+    (mass : Law → Outcome → ℝ)
+    (law_ext :
+      ∀ {L1 L0 : Law}, (∀ outcome, mass L1 outcome = mass L0 outcome) →
+        L1 = L0)
+    (hfair : lg21SourceLawObservablyFair S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterLaw noReporterLaw : Law)
+    (hNoAccess : S.observableNoAccessLaw e base = noReporterLaw)
+    (hAccessMixture :
+      ∀ outcome,
+        mass (S.observableAccessLaw e base) outcome =
+          lambda * mass reporterLaw outcome +
+            (1 - lambda) * mass noReporterLaw outcome)
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (hchooses_support :
+      ∀ actor, 0 < (actorLaw actor).toReal → chooses (actorValue actor))
+    (habove :
+      ∃ actor, 0 < (actorLaw actor).toReal ∧
+        pmfExp actorLaw actorValue < actorValue actor)
+    {baseTerm signalWeight denom : ℝ}
+    (hchoosePayoff :
+      ∀ actor,
+        choosePayoff actor =
+          (baseTerm + signalWeight * actor) / denom)
+    (hotherPayoff_of_law_eq :
+      ∀ actor,
+        reporterLaw = noReporterLaw →
+          otherPayoff actor =
+            (baseTerm + signalWeight * pmfExp actorLaw actorValue) / denom)
+    (hweight : 0 < signalWeight) (hdenom : 0 < denom) :
+    ¬ lg21NoProfitableBinaryChoiceDeviation
+        chooses choosePayoff otherPayoff :=
+  paper_theorem3_2_law_observable_fair_positive_reporting_nondegenerate_actor_distribution_unstable
+    mass law_ext hfair e base hlambda reporterLaw noReporterLaw
+    hNoAccess hAccessMixture actorLaw actorValue hchooses_support habove
+    hchoosePayoff hotherPayoff_of_law_eq hweight hdenom
 
 /--
 Theorem 3.2 latent-skill branch reduction: under the paper's shared mixture
