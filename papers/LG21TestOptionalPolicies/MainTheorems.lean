@@ -2140,6 +2140,53 @@ theorem gaussian_ne_of_scale_lt {Lsmall Llarge : GaussianScaleLaw}
 end LG21EstimateLaw
 
 /--
+Paper-local law type for Theorem 3.1's source-shaped continuous route.
+It records the paper's conditional-on-skill Gaussian estimate laws, observable
+laws obtained by mixing over latent skill at a fixed base profile, and
+demographic laws obtained by mixing over base profiles.
+-/
+inductive LG21SkillBaseMixtureEstimateLaw (Skill Base : Type*) where
+  | point : ℝ → LG21SkillBaseMixtureEstimateLaw Skill Base
+  | gaussian : GaussianScaleLaw → LG21SkillBaseMixtureEstimateLaw Skill Base
+  | skillGaussianMixture :
+      PMF Skill → (Skill → GaussianScaleLaw) →
+        LG21SkillBaseMixtureEstimateLaw Skill Base
+  | baseSkillGaussianMixture :
+      PMF Base → (Base → PMF Skill) → (Base → Skill → GaussianScaleLaw) →
+        LG21SkillBaseMixtureEstimateLaw Skill Base
+  | basePointMixture :
+      PMF Base → (Base → ℝ) → LG21SkillBaseMixtureEstimateLaw Skill Base
+
+namespace LG21SkillBaseMixtureEstimateLaw
+
+theorem gaussian_ne_point
+    {Skill Base : Type*} (law : GaussianScaleLaw) (estimate : ℝ) :
+    gaussian (Skill := Skill) (Base := Base) law ≠ point estimate := by
+  intro h
+  cases h
+
+theorem skillGaussianMixture_ne_point
+    {Skill Base : Type*} (skillLaw : PMF Skill)
+    (lawBySkill : Skill → GaussianScaleLaw) (estimate : ℝ) :
+    skillGaussianMixture (Skill := Skill) (Base := Base) skillLaw lawBySkill ≠
+      point estimate := by
+  intro h
+  cases h
+
+theorem baseSkillGaussianMixture_ne_basePointMixture
+    {Skill Base : Type*} (baseProfile : PMF Base)
+    (skillGivenBase : Base → PMF Skill)
+    (lawByBaseSkill : Base → Skill → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    baseSkillGaussianMixture (Skill := Skill) (Base := Base)
+        baseProfile skillGivenBase lawByBaseSkill ≠
+      basePointMixture baseProfile noAccessEstimate := by
+  intro h
+  cases h
+
+end LG21SkillBaseMixtureEstimateLaw
+
+/--
 Paper-local representation of Gaussian estimate laws and finite mixtures over
 base profiles.  It is used for Proposition 4.3's demographic statement, where
 the paper integrates base-conditioned estimate laws over the common
@@ -14308,6 +14355,192 @@ def lg21BaseIndexedAffineSkillPosteriorLawSurface
     hslope (fun base => (skillLaw base).scale_pos)
 
 /--
+Base- and skill-mixture source-law surface for Theorem 3.1.  Conditional on
+latent skill and base, access estimates are one-test posterior-score Gaussian
+laws and no-access estimates are deterministic base-only estimates.  Observable
+access laws are symbolic mixtures over the latent-skill law at the observed
+base; demographic laws are symbolic mixtures over the base-profile law.
+-/
+def lg21BaseMixedOneTestPosteriorLawSurface
+    {Base : Type*}
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    LG21SourceLawPolicySurface ℝ Base ℝ
+      (LG21SkillBaseMixtureEstimateLaw ℝ Base) where
+  Equilibrium := PUnit
+  latentAccessLaw := fun _ skill base =>
+    LG21SkillBaseMixtureEstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        (intercept base) (slope base) (hslope base)
+        skill (testScale base) (htestScale base))
+  latentNoAccessLaw := fun _ _ base =>
+    LG21SkillBaseMixtureEstimateLaw.point (noAccessEstimate base)
+  observableAccessLaw := fun _ base =>
+    LG21SkillBaseMixtureEstimateLaw.skillGaussianMixture
+      (skillGivenBase base)
+      (fun skill =>
+        lg21OneTestPosteriorScoreLaw
+          (intercept base) (slope base) (hslope base)
+          skill (testScale base) (htestScale base))
+  observableNoAccessLaw := fun _ base =>
+    LG21SkillBaseMixtureEstimateLaw.point (noAccessEstimate base)
+  demographicAccessLaw := fun _ =>
+    LG21SkillBaseMixtureEstimateLaw.baseSkillGaussianMixture
+      baseProfile skillGivenBase
+      (fun base skill =>
+        lg21OneTestPosteriorScoreLaw
+          (intercept base) (slope base) (hslope base)
+          skill (testScale base) (htestScale base))
+  demographicNoAccessLaw := fun _ =>
+    LG21SkillBaseMixtureEstimateLaw.basePointMixture
+      baseProfile noAccessEstimate
+  baseOnlyLaw := fun _ base =>
+    LG21SkillBaseMixtureEstimateLaw.point (noAccessEstimate base)
+  fullFeatureLaw := fun _ base test =>
+    LG21SkillBaseMixtureEstimateLaw.gaussian
+      (lg21OneTestPosteriorScoreLaw
+        (intercept base) (slope base) (hslope base)
+        test (testScale base) (htestScale base))
+
+/--
+Concrete Theorem 3.1 optional-reporting law surface with observable and
+demographic laws represented as source-shaped skill/base mixtures.
+-/
+def lg21BaseMixedGaussianPosteriorLawSurface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourceLawPolicySurface ℝ Base ℝ
+      (LG21SkillBaseMixtureEstimateLaw ℝ Base) :=
+  lg21BaseMixedOneTestPosteriorLawSurface
+    skillGivenBase baseProfile
+    (fun base => (M base).posteriorMean (Function.update (theta base) k 0))
+    (fun base => (M base).centeredFamily.signalWeight k)
+    (fun base => (scoreLaw base).scale)
+    noAccessEstimate
+    (fun base => (M base).centeredFamily.signalWeight_pos k)
+    (fun base => (scoreLaw base).scale_pos)
+
+/--
+Concrete Theorem 3.1 report-required law surface with observable and
+demographic laws represented as source-shaped skill/base mixtures.
+-/
+def lg21BaseMixedAffineSkillPosteriorLawSurface
+    {Base : Type*}
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (skillLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourceLawPolicySurface ℝ Base ℝ
+      (LG21SkillBaseMixtureEstimateLaw ℝ Base) :=
+  lg21BaseMixedOneTestPosteriorLawSurface
+    skillGivenBase baseProfile intercept slope
+    (fun base => (skillLaw base).scale) noAccessEstimate
+    hslope (fun base => (skillLaw base).scale_pos)
+
+/--
+Theorem 3.1 base/skill-mixture law surface: latent-skill fairness fails because
+the access-side conditional law is Gaussian while the no-access law is a point
+estimate.
+-/
+theorem paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_latent_skill_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawLatentSkillFair
+      (lg21BaseMixedOneTestPosteriorLawSurface
+        skillGivenBase baseProfile intercept slope testScale
+        noAccessEstimate hslope htestScale) := by
+  let base : Base := Classical.choice inferInstance
+  apply lg21_not_lawLatentSkillFair_of_witness PUnit.unit (0 : ℝ) base
+  dsimp [lg21BaseMixedOneTestPosteriorLawSurface]
+  exact LG21SkillBaseMixtureEstimateLaw.gaussian_ne_point _ _
+
+/--
+Theorem 3.1 base/skill-mixture law surface: observable fairness fails because
+the access-side observable law is a latent-skill mixture of Gaussians while the
+no-access law is a point estimate.
+-/
+theorem paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_observably_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawObservablyFair
+      (lg21BaseMixedOneTestPosteriorLawSurface
+        skillGivenBase baseProfile intercept slope testScale
+        noAccessEstimate hslope htestScale) := by
+  let base : Base := Classical.choice inferInstance
+  apply lg21_not_lawObservablyFair_of_witness PUnit.unit base
+  dsimp [lg21BaseMixedOneTestPosteriorLawSurface]
+  exact LG21SkillBaseMixtureEstimateLaw.skillGaussianMixture_ne_point _ _ _
+
+/--
+Theorem 3.1 base/skill-mixture law surface: demographic fairness fails because
+the access-side law is a base mixture of skill-conditioned Gaussian mixtures,
+while the no-access law is a base mixture of deterministic point estimates.
+-/
+theorem paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_demographically_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawDemographicallyFair
+      (lg21BaseMixedOneTestPosteriorLawSurface
+        skillGivenBase baseProfile intercept slope testScale
+        noAccessEstimate hslope htestScale) := by
+  apply lg21_not_lawDemographicallyFair_of_witness PUnit.unit
+  dsimp [lg21BaseMixedOneTestPosteriorLawSurface]
+  exact
+    LG21SkillBaseMixtureEstimateLaw.baseSkillGaussianMixture_ne_basePointMixture
+      baseProfile skillGivenBase
+      (fun base skill =>
+        lg21OneTestPosteriorScoreLaw
+          (intercept base) (slope base) (hslope base)
+          skill (testScale base) (htestScale base))
+      noAccessEstimate
+
+/--
+Theorem 3.1 base/skill-mixture law surface: all three fairness criteria fail.
+-/
+theorem paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLawLatentSkillFair
+        (lg21BaseMixedOneTestPosteriorLawSurface
+          skillGivenBase baseProfile intercept slope testScale
+          noAccessEstimate hslope htestScale) ∧
+      ¬ lg21SourceLawObservablyFair
+        (lg21BaseMixedOneTestPosteriorLawSurface
+          skillGivenBase baseProfile intercept slope testScale
+          noAccessEstimate hslope htestScale) ∧
+        ¬ lg21SourceLawDemographicallyFair
+          (lg21BaseMixedOneTestPosteriorLawSurface
+            skillGivenBase baseProfile intercept slope testScale
+            noAccessEstimate hslope htestScale) :=
+  ⟨paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_latent_skill_fair
+      skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+      hslope htestScale,
+    paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_observably_fair
+      skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+      hslope htestScale,
+    paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_demographically_fair
+      skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+      hslope htestScale⟩
+
+/--
 Proposition 4.2 base-indexed law endpoint at a selected base profile: strict
 latent-skill ordering at that base contradicts latent-skill fairness.
 -/
@@ -14554,6 +14787,100 @@ theorem paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mi
       hC_nonneg hC_lt_one
       (fun base => (skillLaw base).scale)
       (fun base => (skillLaw base).scale_pos))
+
+/--
+Theorem 3.1 optional-reporting law endpoint with a source-shaped
+skill/base-mixture posterior surface.  The source-mixture argument supplies the
+strategic-withholding cutoff, while the law surface records observable laws as
+mixtures over latent skill and demographic laws as mixtures over base profiles.
+-/
+theorem paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill) ∧
+        (∃ base score, ¬ W.reports base score) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+            ¬ lg21SourceLawLatentSkillFair
+              (lg21BaseMixedGaussianPosteriorLawSurface
+                skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) ∧
+              ¬ lg21SourceLawObservablyFair
+                (lg21BaseMixedGaussianPosteriorLawSurface
+                  skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) ∧
+                ¬ lg21SourceLawDemographicallyFair
+                  (lg21BaseMixedGaussianPosteriorLawSurface
+                    skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) := by
+  rcases
+      paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture
+        M theta k accessFraction baseOnlyEstimate scoreLaw
+        hC_nonneg hC_lt_one with
+    ⟨W, _reportCutoff, _hindiff, _hreports, htakes, hthreshold⟩
+  have hfair :=
+    paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_fair
+      skillGivenBase baseProfile
+      (fun base => (M base).posteriorMean (Function.update (theta base) k 0))
+      (fun base => (M base).centeredFamily.signalWeight k)
+      (fun base => (scoreLaw base).scale)
+      baseOnlyEstimate
+      (fun base => (M base).centeredFamily.signalWeight_pos k)
+      (fun base => (scoreLaw base).scale_pos)
+  refine ⟨W, htakes, W.some_access_students_do_not_report, hthreshold,
+    ?_, ?_, ?_⟩
+  · exact hfair.1
+  · exact hfair.2.1
+  · exact hfair.2.2
+
+/--
+Theorem 3.1 report-required law endpoint with a source-shaped skill/base-mixture
+posterior surface.  The source no-take mixture supplies the taking cutoff, and
+the law surface records observable and demographic mixture structure directly.
+-/
+theorem paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∃ base skill, ¬ W.takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLawLatentSkillFair
+            (lg21BaseMixedAffineSkillPosteriorLawSurface
+              skillGivenBase baseProfile intercept slope hslope skillLaw
+              baseOnlyEstimate) ∧
+            ¬ lg21SourceLawObservablyFair
+              (lg21BaseMixedAffineSkillPosteriorLawSurface
+                skillGivenBase baseProfile intercept slope hslope skillLaw
+                baseOnlyEstimate) ∧
+              ¬ lg21SourceLawDemographicallyFair
+                (lg21BaseMixedAffineSkillPosteriorLawSurface
+                  skillGivenBase baseProfile intercept slope hslope skillLaw
+                  baseOnlyEstimate) := by
+  rcases
+      paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture
+        intercept slope hslope accessFraction baseOnlyEstimate skillLaw
+        hC_nonneg hC_lt_one with
+    ⟨W, _takeCutoff, _hindiff, _htakes, hthreshold⟩
+  have hfair :=
+    paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_fair
+      skillGivenBase baseProfile intercept slope
+      (fun base => (skillLaw base).scale)
+      baseOnlyEstimate hslope
+      (fun base => (skillLaw base).scale_pos)
+  refine ⟨W, W.some_access_students_do_not_take, hthreshold, ?_, ?_, ?_⟩
+  · exact hfair.1
+  · exact hfair.2.1
+  · exact hfair.2.2
 
 /--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
