@@ -196,6 +196,44 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   CDF, and zero horizontal-boundary mass are known.  Prove this generic strip
   identity first, then separately prove the transformed Gaussian law supplies
   the advertised CDFs.
+- For Owen affine selection identities, avoid formalizing tabulated integrals
+  directly when a Gaussian linear-map proof is shorter.  Define the
+  standardizing map `(X,Z) ↦ ((X - c Z)/sqrt(1+c^2), Z)`, prove its law equals
+  the correlated standard-Gaussian law with
+  `rho = -c/sqrt(1+c^2)` by `charFunDual`/product Gaussian characteristic
+  functions, and then prove the affine event preimage is the vertical strip.
+  This gives a reusable source-affine mass bridge before any first-moment
+  Owen identity is attempted.
+- For Owen first-moment identities, prove the standardized analytic identity
+  in the shared Gaussian library first, then bind source scaling afterward. The
+  useful route is product-density completion of squares for
+  `∫ phi(z) phi(A*sqrt(1+c^2)+c*z)`, integration by parts for
+  `∫ z*phi(z)*Phi(A*sqrt(1+c^2)+c*z)`, and integrability by bounding shifted
+  densities plus splitting the `z*phi(z)` tail at zero. Keep the displayed
+  paper formula separate from the verified upper-tail endpoint until the
+  source scaling is checked; if they differ by a boundary term, add an audit
+  theorem proving equality only in the degenerate case or proving non-equality
+  under ordinary nonzero assumptions. For finite enrollment regions such as
+  GLM20's `kappa` term, derive finite-interval product-density and
+  first-moment theorems by subtracting two proved upper-tail identities before
+  doing any paper-specific algebra.
+- For `kappa`-style lower-tail Owen first moments, it can be faster and more
+  faithful to prove the lower-tail theorem directly once the upper-tail route
+  has supplied the integration-by-parts pattern. Add the shared identities
+  `standardGaussianDensity_mul_affine_integral_Iic` and
+  `standardGaussian_firstMoment_affineCDF_integral_Iic` to the probability
+  library, then expose paper wrappers for
+  `∫_{-∞}^{q} z φ(z) Φ(A*sqrt(1+c^2)+c*z) dz`. Then add a thin source-scaling
+  bridge if the displayed expression differs only by a density scaling or
+  cutoff substitution. Keep that premise explicit: GLM20's displayed `kappa`
+  has a source-specific prefactor and boundary-density argument, so proving the
+  normalized lower-tail integral is not by itself the full paper formula.
+  If the source density is raw normal rather than standard normal, prove the
+  reusable scaling fact `scale * normalDensity L raw = phi (L.standardize raw)`
+  once and then use a source-density formula wrapper, instead of forcing the
+  paper formula to pretend every density argument is already standardized.
+  In Lean statements, parenthesize `c * (∫ ...) - boundary`; otherwise the
+  parser may absorb the subtraction into the integrand and waste a proof loop.
 - When a later algebraic theorem assumes these selection cores are positive,
   avoid carrying positivity as a paper premise for concrete bivariate normals.
   Prove a reusable open-positive-measure lemma that every nonempty vertical

@@ -563,6 +563,14 @@ theorem normalDensity_nonneg (api : StandardGaussianCDFAPI)
     0 ≤ api.normalDensity L x := by
   exact div_nonneg (api.density_nonneg (L.standardize x)) L.scale_pos.le
 
+/-- Multiplying a location-scale Gaussian density by its scale recovers the
+standard-normal density at the standardized point. -/
+theorem scale_mul_normalDensity (api : StandardGaussianCDFAPI)
+    (L : GaussianScaleLaw) (x : ℝ) :
+    L.scale * api.normalDensity L x = api.density (L.standardize x) := by
+  rw [normalDensity]
+  field_simp [L.scale_pos.ne']
+
 end StandardGaussianCDFAPI
 
 /--

@@ -1,4 +1,6 @@
 import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Order.Hom.Set
 import Mathlib.Probability.CDF
@@ -24,6 +26,14 @@ standard-normal interfaces used by admissions and testing formalizations.
 - `continuous_cdf_of_noAtoms`
 - `standardGaussianMeasure`
 - `standardGaussianCDF_neg_eq_one_sub`
+- `standardGaussianDensity_mul_affine_eq`
+- `standardGaussianDensity_hasDerivAt`
+- `standardGaussianTail_eq_integral_Ioi`
+- `standardGaussianDensity_mul_affine_integral_Iic`
+- `standardGaussianDensity_mul_affine_integral_interval`
+- `standardGaussian_firstMoment_affineCDF_integral_Iic_of_integrable`
+- `standardGaussian_firstMoment_affineCDF_integral_Iic`
+- `standardGaussian_firstMoment_affineCDF_integral_interval`
 - `standardGaussianCDFAPI`
 - `standardGaussianCDFOrderIso`
 - `standardGaussianLowerTailMeanCertificate`
@@ -284,6 +294,110 @@ theorem standardGaussianDensity_neg (z : ℝ) :
     standardGaussianDensity_eq_mills_integrand]
   ring_nf
 
+/-- The standard Gaussian density is integrable on the real line. -/
+theorem standardGaussianDensity_integrable :
+    Integrable standardGaussianDensity := by
+  simpa [standardGaussianDensity] using
+    (ProbabilityTheory.integrable_gaussianPDFReal 0 (1 : ℝ≥0))
+
+/-- The normalizing constant in the standard Gaussian density is nonnegative. -/
+theorem standardGaussianDensity_normConst_nonneg :
+    0 ≤ (Real.sqrt (2 * Real.pi))⁻¹ := by
+  exact inv_nonneg.mpr (Real.sqrt_nonneg (2 * Real.pi))
+
+/-- The standard Gaussian density is bounded by its normalizing constant. -/
+theorem standardGaussianDensity_le_normConst (z : ℝ) :
+    standardGaussianDensity z ≤ (Real.sqrt (2 * Real.pi))⁻¹ := by
+  rw [standardGaussianDensity_eq_mills_integrand]
+  have hexp_le : Real.exp (-(z ^ 2) / 2) ≤ 1 := by
+    simpa using
+      (Real.exp_le_exp.mpr (by nlinarith [sq_nonneg z] :
+        -(z ^ 2) / 2 ≤ (0 : ℝ)))
+  exact mul_le_of_le_one_right standardGaussianDensity_normConst_nonneg hexp_le
+
+/--
+Product-density completion of squares for the affine Owen integrand.
+
+This is the algebraic density identity behind the first-moment version of
+Owen's formula:
+`phi(z) * phi(A * sqrt(1+c^2) + c z)
+ = phi(A) * phi(sqrt(1+c^2) z + A c)`.
+-/
+theorem standardGaussianDensity_mul_affine_eq
+    (c A z : ℝ) :
+    standardGaussianDensity z *
+        standardGaussianDensity (A * Real.sqrt (1 + c ^ 2) + c * z) =
+      standardGaussianDensity A *
+        standardGaussianDensity (Real.sqrt (1 + c ^ 2) * z + A * c) := by
+  let normConst : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  let D : ℝ := Real.sqrt (1 + c ^ 2)
+  have hDsq : D ^ 2 = 1 + c ^ 2 := by
+    dsimp [D]
+    exact Real.sq_sqrt (by positivity)
+  have hexp :
+      Real.exp (-(z ^ 2) / 2) *
+          Real.exp (-((A * D + c * z) ^ 2) / 2) =
+        Real.exp (-(A ^ 2) / 2) *
+          Real.exp (-((D * z + A * c) ^ 2) / 2) := by
+    rw [← Real.exp_add, ← Real.exp_add]
+    congr 1
+    nlinarith [hDsq]
+  rw [standardGaussianDensity_eq_mills_integrand,
+    standardGaussianDensity_eq_mills_integrand,
+    standardGaussianDensity_eq_mills_integrand,
+    standardGaussianDensity_eq_mills_integrand]
+  change
+    normConst * Real.exp (-(z ^ 2) / 2) *
+        (normConst * Real.exp (-((A * D + c * z) ^ 2) / 2)) =
+      normConst * Real.exp (-(A ^ 2) / 2) *
+        (normConst * Real.exp (-((D * z + A * c) ^ 2) / 2))
+  calc
+    normConst * Real.exp (-(z ^ 2) / 2) *
+        (normConst * Real.exp (-((A * D + c * z) ^ 2) / 2))
+        =
+      normConst * normConst *
+        (Real.exp (-(z ^ 2) / 2) *
+          Real.exp (-((A * D + c * z) ^ 2) / 2)) := by
+          ring
+    _ =
+      normConst * normConst *
+        (Real.exp (-(A ^ 2) / 2) *
+          Real.exp (-((D * z + A * c) ^ 2) / 2)) := by
+          rw [hexp]
+    _ =
+      normConst * Real.exp (-(A ^ 2) / 2) *
+        (normConst * Real.exp (-((D * z + A * c) ^ 2) / 2)) := by
+          ring
+
+/-- Derivative of the mathlib-backed standard Gaussian density. -/
+theorem standardGaussianDensity_hasDerivAt (z : ℝ) :
+    HasDerivAt standardGaussianDensity
+      (-z * standardGaussianDensity z) z := by
+  let normConst : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hinner :
+      HasDerivAt (fun x : ℝ => -(x ^ 2) / 2) (-z) z := by
+    convert ((hasDerivAt_id z).pow 2).neg.div_const 2 using 1
+    · simp [id_eq]
+      ring
+  have hexp :
+      HasDerivAt (fun x : ℝ => Real.exp (-(x ^ 2) / 2))
+        (-(Real.exp (-(z ^ 2) / 2) * z)) z := by
+    simpa using hinner.exp
+  have hscaled :
+      HasDerivAt
+        (fun x : ℝ => normConst * Real.exp (-(x ^ 2) / 2))
+        (normConst * (-(Real.exp (-(z ^ 2) / 2) * z))) z :=
+    hexp.const_mul normConst
+  have hstd :
+      HasDerivAt standardGaussianDensity
+        (normConst * (-(Real.exp (-(z ^ 2) / 2) * z))) z :=
+    hscaled.congr_of_eventuallyEq
+      (Eventually.of_forall fun x => by
+      rw [standardGaussianDensity_eq_mills_integrand])
+  convert hstd using 1
+  rw [standardGaussianDensity_eq_mills_integrand]
+  ring
+
 /-- The mathlib-backed standard Gaussian CDF is nonnegative. -/
 theorem standardGaussianCDF_nonneg (z : ℝ) :
     0 ≤ standardGaussianCDF z := by
@@ -317,6 +431,158 @@ theorem standardGaussianTail_pos (z : ℝ) :
     0 < 1 - standardGaussianCDF z := by
   have hlt := standardGaussianCDF_lt_one z
   linarith
+
+/-- The mathlib-backed standard Gaussian upper tail as a density integral. -/
+theorem standardGaussianTail_eq_integral_Ioi (z : ℝ) :
+    1 - standardGaussianCDF z =
+      ∫ x in Ioi z, standardGaussianDensity x := by
+  have hcompl :
+      standardGaussianMeasure.real (Ioi z) = 1 - standardGaussianCDF z := by
+    simpa [standardGaussianCDF, ProbabilityTheory.cdf_eq_real, compl_Iic] using
+      (MeasureTheory.probReal_compl_eq_one_sub
+        (μ := standardGaussianMeasure) (s := Iic z) measurableSet_Iic)
+  have hmeasure :
+      standardGaussianMeasure (Ioi z) =
+        ENNReal.ofReal (∫ x in Ioi z, standardGaussianDensity x) := by
+    unfold standardGaussianMeasure standardGaussianDensity
+    simpa using
+      (ProbabilityTheory.gaussianReal_apply_eq_integral
+        0 standardGaussianVariance_ne_zero (Ioi z))
+  have htail_integral :
+      standardGaussianMeasure.real (Ioi z) =
+        ∫ x in Ioi z, standardGaussianDensity x := by
+    rw [measureReal_def, hmeasure]
+    rw [ENNReal.toReal_ofReal]
+    exact MeasureTheory.setIntegral_nonneg measurableSet_Ioi
+      (fun x _hx => standardGaussianDensity_nonneg x)
+  rw [← hcompl, htail_integral]
+
+private theorem integral_comp_add_right_Ioi_real (f : ℝ → ℝ) (a d : ℝ) :
+    (∫ x in Ioi a, f (x + d)) =
+      ∫ y in Ioi (a + d), f y := by
+  have h :=
+    (measurePreserving_add_right (volume : Measure ℝ) d).setIntegral_image_emb
+      (MeasurableEquiv.addRight d).measurableEmbedding f (Ioi a)
+  simpa [image_add_const_Ioi] using h.symm
+
+private theorem integral_comp_add_right_Iic_real (f : ℝ → ℝ) (a d : ℝ) :
+    (∫ x in Iic a, f (x + d)) =
+      ∫ y in Iic (a + d), f y := by
+  have himage : (fun x : ℝ => x + d) '' Iic a = Iic (a + d) := by
+    ext y
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      simpa using add_le_add_right hx d
+    · intro hy
+      refine ⟨y - d, ?_, by ring⟩
+      change y - d ≤ a
+      have hy' : y ≤ a + d := hy
+      linarith
+  have h :=
+    (measurePreserving_add_right (volume : Measure ℝ) d).setIntegral_image_emb
+      (MeasurableEquiv.addRight d).measurableEmbedding f (Iic a)
+  simpa [himage] using h.symm
+
+private theorem integral_comp_mul_left_Iic_real (f : ℝ → ℝ) (a : ℝ)
+    {b : ℝ} (hb : 0 < b) :
+    (∫ x in Iic a, f (b * x)) =
+      b⁻¹ * ∫ y in Iic (b * a), f y := by
+  suffices (∫ x in Iic a, f (b * x)) =
+      b⁻¹ • ∫ y in Iic (b * a), f y by
+    simpa [smul_eq_mul] using this
+  have hmeas : ∀ c : ℝ, MeasurableSet (Iic c) := fun _ => measurableSet_Iic
+  rw [← integral_indicator (hmeas a), ← integral_indicator (hmeas (b * a)),
+    ← abs_of_pos (inv_pos.mpr hb), ← Measure.integral_comp_mul_left]
+  congr
+  ext1 x
+  rw [← indicator_comp_right, preimage_const_mul_Iic₀ _ hb,
+    mul_div_cancel_left₀ _ hb.ne', Function.comp_def]
+
+/--
+Affine upper-tail integral of the Gaussian product appearing in Owen's
+first-moment calculation.
+-/
+theorem standardGaussianDensity_mul_affine_integral_Ioi
+    (c A B : ℝ) :
+    (∫ z in Ioi B,
+        standardGaussianDensity z *
+          standardGaussianDensity
+            (A * Real.sqrt (1 + c ^ 2) + c * z)) =
+      standardGaussianDensity A * (Real.sqrt (1 + c ^ 2))⁻¹ *
+        (1 - standardGaussianCDF
+          (Real.sqrt (1 + c ^ 2) * B + A * c)) := by
+  let D : ℝ := Real.sqrt (1 + c ^ 2)
+  have hDpos : 0 < D := by
+    dsimp [D]
+    positivity
+  have hpoint :
+      EqOn
+        (fun z : ℝ =>
+          standardGaussianDensity z *
+            standardGaussianDensity (A * D + c * z))
+        (fun z : ℝ =>
+          standardGaussianDensity A *
+            standardGaussianDensity (D * z + A * c))
+        (Ioi B) := by
+    intro z _hz
+    exact standardGaussianDensity_mul_affine_eq c A z
+  have hscale :
+      (∫ z in Ioi B, standardGaussianDensity (D * z + A * c)) =
+        D⁻¹ * ∫ y in Ioi (D * B + A * c),
+          standardGaussianDensity y := by
+    have hmul :=
+      MeasureTheory.integral_comp_mul_left_Ioi
+        (g := fun y : ℝ => standardGaussianDensity (y + A * c))
+        (a := B) hDpos
+    have hshift :
+        (∫ y in Ioi (D * B),
+            standardGaussianDensity (y + A * c)) =
+          ∫ y in Ioi (D * B + A * c),
+            standardGaussianDensity y :=
+      integral_comp_add_right_Ioi_real standardGaussianDensity (D * B) (A * c)
+    calc
+      (∫ z in Ioi B, standardGaussianDensity (D * z + A * c))
+          =
+        (∫ z in Ioi B,
+          (fun y : ℝ => standardGaussianDensity (y + A * c)) (D * z)) := by
+          rfl
+      _ =
+        D⁻¹ * ∫ y in Ioi (D * B),
+          standardGaussianDensity (y + A * c) := by
+          simpa [smul_eq_mul] using hmul
+      _ =
+        D⁻¹ * ∫ y in Ioi (D * B + A * c),
+          standardGaussianDensity y := by
+          rw [hshift]
+  calc
+    (∫ z in Ioi B,
+        standardGaussianDensity z *
+          standardGaussianDensity
+            (A * Real.sqrt (1 + c ^ 2) + c * z))
+        =
+      ∫ z in Ioi B,
+        standardGaussianDensity A *
+          standardGaussianDensity (D * z + A * c) := by
+        dsimp [D]
+        exact MeasureTheory.setIntegral_congr_fun measurableSet_Ioi hpoint
+    _ =
+      standardGaussianDensity A *
+        ∫ z in Ioi B, standardGaussianDensity (D * z + A * c) := by
+        rw [integral_const_mul]
+    _ =
+      standardGaussianDensity A * (D⁻¹ *
+        ∫ y in Ioi (D * B + A * c), standardGaussianDensity y) := by
+        rw [hscale]
+    _ =
+      standardGaussianDensity A * D⁻¹ *
+        (1 - standardGaussianCDF (D * B + A * c)) := by
+        rw [← standardGaussianTail_eq_integral_Ioi]
+        ring
+    _ =
+      standardGaussianDensity A * (Real.sqrt (1 + c ^ 2))⁻¹ *
+        (1 - standardGaussianCDF
+          (Real.sqrt (1 + c ^ 2) * B + A * c)) := by
+        rfl
 
 /--
 The mathlib-backed standard Gaussian upper tail equals the normalized
@@ -611,6 +877,113 @@ theorem standardGaussianDensity_continuous :
   unfold standardGaussianDensity ProbabilityTheory.gaussianPDFReal
   fun_prop
 
+/-- Product of the standard Gaussian density with an affine-shifted density is integrable on
+every upper tail. -/
+theorem standardGaussianDensity_mul_affine_integrableOn_Ioi
+    (offset c B : ℝ) :
+    IntegrableOn
+      (fun x : ℝ =>
+        standardGaussianDensity x *
+          standardGaussianDensity (offset + c * x))
+      (Ioi B) := by
+  let normConst : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hbase :
+      Integrable (fun x : ℝ => normConst * standardGaussianDensity x)
+        (volume.restrict (Ioi B)) := by
+    exact (standardGaussianDensity_integrable.mono_measure
+      Measure.restrict_le_self).const_mul normConst
+  change Integrable
+    (fun x : ℝ =>
+      standardGaussianDensity x *
+        standardGaussianDensity (offset + c * x))
+    (volume.restrict (Ioi B))
+  refine Integrable.mono' hbase ?_ ?_
+  · have haff : Continuous fun x : ℝ => offset + c * x := by fun_prop
+    exact ((standardGaussianDensity_continuous.mul
+      (standardGaussianDensity_continuous.comp haff)).stronglyMeasurable).aestronglyMeasurable
+  · exact Eventually.of_forall fun x => by
+      have hnonneg :
+          0 ≤ standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) :=
+        mul_nonneg (standardGaussianDensity_nonneg x)
+          (standardGaussianDensity_nonneg (offset + c * x))
+      rw [Real.norm_of_nonneg hnonneg]
+      have hmul := mul_le_mul_of_nonneg_left
+        (standardGaussianDensity_le_normConst (offset + c * x))
+        (standardGaussianDensity_nonneg x)
+      simpa [normConst, mul_comm, mul_left_comm, mul_assoc] using hmul
+
+/-- Product of the standard Gaussian density with an affine-shifted density is integrable on
+every lower tail. -/
+theorem standardGaussianDensity_mul_affine_integrableOn_Iic
+    (offset c B : ℝ) :
+    IntegrableOn
+      (fun x : ℝ =>
+        standardGaussianDensity x *
+          standardGaussianDensity (offset + c * x))
+      (Iic B) := by
+  let normConst : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hbase :
+      Integrable (fun x : ℝ => normConst * standardGaussianDensity x)
+        (volume.restrict (Iic B)) := by
+    exact (standardGaussianDensity_integrable.mono_measure
+      Measure.restrict_le_self).const_mul normConst
+  change Integrable
+    (fun x : ℝ =>
+      standardGaussianDensity x *
+        standardGaussianDensity (offset + c * x))
+    (volume.restrict (Iic B))
+  refine Integrable.mono' hbase ?_ ?_
+  · have haff : Continuous fun x : ℝ => offset + c * x := by fun_prop
+    exact ((standardGaussianDensity_continuous.mul
+      (standardGaussianDensity_continuous.comp haff)).stronglyMeasurable).aestronglyMeasurable
+  · exact Eventually.of_forall fun x => by
+      have hnonneg :
+          0 ≤ standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) :=
+        mul_nonneg (standardGaussianDensity_nonneg x)
+          (standardGaussianDensity_nonneg (offset + c * x))
+      rw [Real.norm_of_nonneg hnonneg]
+      have hmul := mul_le_mul_of_nonneg_left
+        (standardGaussianDensity_le_normConst (offset + c * x))
+        (standardGaussianDensity_nonneg x)
+      simpa [normConst, mul_comm, mul_left_comm, mul_assoc] using hmul
+
+/--
+Integral of the product of a standard Gaussian density and an affine-shifted
+standard Gaussian density over a finite interval.
+-/
+theorem standardGaussianDensity_mul_affine_integral_interval
+    (c A lower upper : ℝ) (hlower_upper : lower ≤ upper) :
+    (∫ z in lower..upper,
+        standardGaussianDensity z *
+          standardGaussianDensity
+            (A * Real.sqrt (1 + c ^ 2) + c * z)) =
+      let denom := Real.sqrt (1 + c ^ 2)
+      standardGaussianDensity A * denom⁻¹ *
+        (standardGaussianCDF (denom * upper + A * c) -
+          standardGaussianCDF (denom * lower + A * c)) := by
+  have hint :
+      IntegrableOn
+        (fun z : ℝ =>
+          standardGaussianDensity z *
+            standardGaussianDensity
+              (A * Real.sqrt (1 + c ^ 2) + c * z))
+        (Ioi lower) :=
+    standardGaussianDensity_mul_affine_integrableOn_Ioi
+      (A * Real.sqrt (1 + c ^ 2)) c lower
+  have htail :=
+    intervalIntegral.integral_Ioi_sub_Ioi
+      (f := fun z : ℝ =>
+        standardGaussianDensity z *
+          standardGaussianDensity
+            (A * Real.sqrt (1 + c ^ 2) + c * z))
+      hint hlower_upper
+  rw [standardGaussianDensity_mul_affine_integral_Ioi c A lower,
+    standardGaussianDensity_mul_affine_integral_Ioi c A upper] at htail
+  rw [← htail]
+  ring
+
 /-- The standard Gaussian probability of `(-∞, x]` is the integral of its density. -/
 theorem standardGaussianMeasure_real_Iic_eq_integral_density (x : ℝ) :
     standardGaussianMeasure.real (Iic x) =
@@ -633,6 +1006,92 @@ theorem standardGaussianCDF_eq_integral_Iic (x : ℝ) :
       ∫ y in Iic x, standardGaussianDensity y := by
   rw [standardGaussianCDF, ProbabilityTheory.cdf_eq_real]
   exact standardGaussianMeasure_real_Iic_eq_integral_density x
+
+/--
+Affine lower-tail integral of the Gaussian product appearing in Owen's
+first-moment calculation.
+-/
+theorem standardGaussianDensity_mul_affine_integral_Iic
+    (c A B : ℝ) :
+    (∫ z in Iic B,
+        standardGaussianDensity z *
+          standardGaussianDensity
+            (A * Real.sqrt (1 + c ^ 2) + c * z)) =
+      standardGaussianDensity A * (Real.sqrt (1 + c ^ 2))⁻¹ *
+        standardGaussianCDF
+          (Real.sqrt (1 + c ^ 2) * B + A * c) := by
+  let D : ℝ := Real.sqrt (1 + c ^ 2)
+  have hDpos : 0 < D := by
+    dsimp [D]
+    positivity
+  have hpoint :
+      EqOn
+        (fun z : ℝ =>
+          standardGaussianDensity z *
+            standardGaussianDensity (A * D + c * z))
+        (fun z : ℝ =>
+          standardGaussianDensity A *
+            standardGaussianDensity (D * z + A * c))
+        (Iic B) := by
+    intro z _hz
+    exact standardGaussianDensity_mul_affine_eq c A z
+  have hscale :
+      (∫ z in Iic B, standardGaussianDensity (D * z + A * c)) =
+        D⁻¹ * ∫ y in Iic (D * B + A * c),
+          standardGaussianDensity y := by
+    have hmul :=
+      integral_comp_mul_left_Iic_real
+        (fun y : ℝ => standardGaussianDensity (y + A * c))
+        B hDpos
+    have hshift :
+        (∫ y in Iic (D * B),
+            standardGaussianDensity (y + A * c)) =
+          ∫ y in Iic (D * B + A * c),
+            standardGaussianDensity y :=
+      integral_comp_add_right_Iic_real standardGaussianDensity (D * B) (A * c)
+    calc
+      (∫ z in Iic B, standardGaussianDensity (D * z + A * c))
+          =
+        (∫ z in Iic B,
+          (fun y : ℝ => standardGaussianDensity (y + A * c)) (D * z)) := by
+          rfl
+      _ =
+        D⁻¹ * ∫ y in Iic (D * B),
+          standardGaussianDensity (y + A * c) := by
+          simpa using hmul
+      _ =
+        D⁻¹ * ∫ y in Iic (D * B + A * c),
+          standardGaussianDensity y := by
+          rw [hshift]
+  calc
+    (∫ z in Iic B,
+        standardGaussianDensity z *
+          standardGaussianDensity
+            (A * Real.sqrt (1 + c ^ 2) + c * z))
+        =
+      ∫ z in Iic B,
+        standardGaussianDensity A *
+          standardGaussianDensity (D * z + A * c) := by
+        dsimp [D]
+        exact MeasureTheory.setIntegral_congr_fun measurableSet_Iic hpoint
+    _ =
+      standardGaussianDensity A *
+        ∫ z in Iic B, standardGaussianDensity (D * z + A * c) := by
+        rw [integral_const_mul]
+    _ =
+      standardGaussianDensity A * (D⁻¹ *
+        ∫ y in Iic (D * B + A * c), standardGaussianDensity y) := by
+        rw [hscale]
+    _ =
+      standardGaussianDensity A * D⁻¹ *
+        standardGaussianCDF (D * B + A * c) := by
+        rw [standardGaussianCDF_eq_integral_Iic]
+        ring
+    _ =
+      standardGaussianDensity A * (Real.sqrt (1 + c ^ 2))⁻¹ *
+        standardGaussianCDF
+          (Real.sqrt (1 + c ^ 2) * B + A * c) := by
+        rfl
 
 /-- Derivative of the mathlib-backed standard Gaussian CDF. -/
 theorem standardGaussianCDF_hasDerivAt_density (x : ℝ) :
@@ -743,6 +1202,536 @@ theorem standardGaussianDensity_tendsto_atTop_zero :
     filter_upwards with t
     rw [standardGaussianDensity_eq_mills_integrand]
   simpa using hdensity
+
+/--
+Integration-by-parts identity for the affine-CDF first moment on an upper
+tail, assuming the two integration-by-parts terms are integrable.
+
+`offset = A * sqrt(1+c^2)`.
+-/
+theorem standardGaussian_firstMoment_affineCDF_integral_Ioi_of_integrable
+    (offset c B : ℝ)
+    (hleft :
+      IntegrableOn
+        ((fun x : ℝ => standardGaussianCDF (offset + c * x)) *
+          (fun x : ℝ => -x * standardGaussianDensity x))
+        (Ioi B))
+    (hprod :
+      IntegrableOn
+        ((fun x : ℝ => c * standardGaussianDensity (offset + c * x)) *
+          standardGaussianDensity)
+        (Ioi B)) :
+    (∫ x in Ioi B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) =
+      standardGaussianDensity B * standardGaussianCDF (offset + c * B) +
+        c * ∫ x in Ioi B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) := by
+  let u : ℝ → ℝ := fun x => standardGaussianCDF (offset + c * x)
+  let u' : ℝ → ℝ := fun x => c * standardGaussianDensity (offset + c * x)
+  let v : ℝ → ℝ := standardGaussianDensity
+  let v' : ℝ → ℝ := fun x => -x * standardGaussianDensity x
+  have hu : ∀ x ∈ Ioi B, HasDerivAt u (u' x) x := by
+    intro x _hx
+    have hlin : HasDerivAt (fun y : ℝ => offset + c * y) c x := by
+      have hmul : HasDerivAt (fun y : ℝ => c * y) c x := by
+        simpa using (hasDerivAt_id x).const_mul c
+      change HasDerivAt ((fun _ : ℝ => offset) + fun y : ℝ => c * y) c x
+      convert (hasDerivAt_const x offset).add hmul using 1
+      ring
+    simpa [u, u', mul_comm] using
+      (standardGaussianCDF_hasDerivAt_density (offset + c * x)).comp x hlin
+  have hv : ∀ x ∈ Ioi B, HasDerivAt v (v' x) x := by
+    intro x _hx
+    simpa [v, v'] using standardGaussianDensity_hasDerivAt x
+  have hzero :
+      Tendsto (u * v) (𝓝[>] B)
+        (𝓝 (standardGaussianCDF (offset + c * B) *
+          standardGaussianDensity B)) := by
+    have hcont :
+        Continuous fun x : ℝ =>
+          standardGaussianCDF (offset + c * x) *
+            standardGaussianDensity x := by
+      exact (standardGaussianCDF_continuous.comp (by fun_prop)).mul
+        standardGaussianDensity_continuous
+    simpa [u, v, Pi.mul_apply] using
+      hcont.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
+  have hinfty :
+      Tendsto (u * v) atTop (𝓝 0) := by
+    have hsq :
+        Tendsto
+          (fun x : ℝ =>
+            standardGaussianCDF (offset + c * x) *
+              standardGaussianDensity x)
+          atTop (𝓝 0) := by
+      refine squeeze_zero
+        (fun x => mul_nonneg
+          (standardGaussianCDF_nonneg (offset + c * x))
+          (standardGaussianDensity_nonneg x))
+        (fun x => by
+          exact mul_le_of_le_one_left
+            (standardGaussianDensity_nonneg x)
+            (standardGaussianCDF_le_one (offset + c * x)))
+        standardGaussianDensity_tendsto_atTop_zero
+    simpa [u, v, Pi.mul_apply] using hsq
+  have hparts :=
+    MeasureTheory.integral_Ioi_mul_deriv_eq_deriv_mul
+      (a := B) (u := u) (u' := u') (v := v) (v' := v')
+      hu hv hleft hprod hzero hinfty
+  have hleft_eq :
+      (∫ x in Ioi B, u x * v' x) =
+        -∫ x in Ioi B,
+          x * standardGaussianDensity x *
+            standardGaussianCDF (offset + c * x) := by
+    rw [← integral_neg]
+    exact MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      (fun x _hx => by
+        simp [u, v']
+        ring)
+  have hprod_eq :
+      (∫ x in Ioi B, u' x * v x) =
+        c * ∫ x in Ioi B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) := by
+    rw [← integral_const_mul]
+    exact MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      (fun x _hx => by
+        simp [u', v]
+        ring)
+  rw [hleft_eq, hprod_eq] at hparts
+  linarith
+
+/--
+Integration-by-parts identity for the affine-CDF first moment on a lower tail,
+assuming the two integration-by-parts terms are integrable.
+
+This is the lower-tail counterpart to
+`standardGaussian_firstMoment_affineCDF_integral_Ioi_of_integrable` and is the
+shape needed by Proposition 2's `kappa` calculation.
+-/
+theorem standardGaussian_firstMoment_affineCDF_integral_Iic_of_integrable
+    (offset c B : ℝ)
+    (hleft :
+      IntegrableOn
+        ((fun x : ℝ => standardGaussianCDF (offset + c * x)) *
+          (fun x : ℝ => -x * standardGaussianDensity x))
+        (Iic B))
+    (hprod :
+      IntegrableOn
+        ((fun x : ℝ => c * standardGaussianDensity (offset + c * x)) *
+          standardGaussianDensity)
+        (Iic B)) :
+    (∫ x in Iic B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) =
+      c * (∫ x in Iic B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x)) -
+        standardGaussianDensity B * standardGaussianCDF (offset + c * B) := by
+  let u : ℝ → ℝ := fun x => standardGaussianCDF (offset + c * x)
+  let u' : ℝ → ℝ := fun x => c * standardGaussianDensity (offset + c * x)
+  let v : ℝ → ℝ := standardGaussianDensity
+  let v' : ℝ → ℝ := fun x => -x * standardGaussianDensity x
+  have hu : ∀ x ∈ Iio B, HasDerivAt u (u' x) x := by
+    intro x _hx
+    have hlin : HasDerivAt (fun y : ℝ => offset + c * y) c x := by
+      have hmul : HasDerivAt (fun y : ℝ => c * y) c x := by
+        simpa using (hasDerivAt_id x).const_mul c
+      change HasDerivAt ((fun _ : ℝ => offset) + fun y : ℝ => c * y) c x
+      convert (hasDerivAt_const x offset).add hmul using 1
+      ring
+    simpa [u, u', mul_comm] using
+      (standardGaussianCDF_hasDerivAt_density (offset + c * x)).comp x hlin
+  have hv : ∀ x ∈ Iio B, HasDerivAt v (v' x) x := by
+    intro x _hx
+    simpa [v, v'] using standardGaussianDensity_hasDerivAt x
+  have hzero :
+      Tendsto (u * v) (𝓝[<] B)
+        (𝓝 (standardGaussianCDF (offset + c * B) *
+          standardGaussianDensity B)) := by
+    have hcont :
+        Continuous fun x : ℝ =>
+          standardGaussianCDF (offset + c * x) *
+            standardGaussianDensity x := by
+      exact (standardGaussianCDF_continuous.comp (by fun_prop)).mul
+        standardGaussianDensity_continuous
+    simpa [u, v, Pi.mul_apply] using
+      hcont.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
+  have hinfty :
+      Tendsto (u * v) atBot (𝓝 0) := by
+    have hsq :
+        Tendsto
+          (fun x : ℝ =>
+            standardGaussianCDF (offset + c * x) *
+              standardGaussianDensity x)
+          atBot (𝓝 0) := by
+      refine squeeze_zero
+        (fun x => mul_nonneg
+          (standardGaussianCDF_nonneg (offset + c * x))
+          (standardGaussianDensity_nonneg x))
+        (fun x => by
+          exact mul_le_of_le_one_left
+            (standardGaussianDensity_nonneg x)
+            (standardGaussianCDF_le_one (offset + c * x)))
+        standardGaussianDensity_tendsto_atBot_zero
+    simpa [u, v, Pi.mul_apply] using hsq
+  have hparts :=
+    MeasureTheory.integral_Iic_mul_deriv_eq_deriv_mul
+      (a := B) (u := u) (u' := u') (v := v) (v' := v')
+      hu hv hleft hprod hzero hinfty
+  have hleft_eq :
+      (∫ x in Iic B, u x * v' x) =
+        -∫ x in Iic B,
+          x * standardGaussianDensity x *
+            standardGaussianCDF (offset + c * x) := by
+    rw [← integral_neg]
+    exact MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      (fun x _hx => by
+        simp [u, v']
+        ring)
+  have hprod_eq :
+      (∫ x in Iic B, u' x * v x) =
+        c * ∫ x in Iic B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) := by
+    rw [← integral_const_mul]
+    exact MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      (fun x _hx => by
+        simp [u', v]
+        ring)
+  rw [hleft_eq, hprod_eq] at hparts
+  calc
+    (∫ x in Iic B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x))
+        =
+      -(-∫ x in Iic B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) := by
+        ring
+    _ =
+      -(standardGaussianCDF (offset + c * B) *
+          standardGaussianDensity B - 0 -
+        c * ∫ x in Iic B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x)) := by
+        rw [hparts]
+    _ =
+      c * (∫ x in Iic B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x)) -
+        standardGaussianDensity B * standardGaussianCDF (offset + c * B) := by
+        ring
+
+/--
+Integration-by-parts identity for the affine-CDF first moment on an upper tail,
+with the product-density integrability obligation discharged from the Gaussian
+density bound.
+-/
+theorem standardGaussian_firstMoment_affineCDF_integral_Ioi_of_left_integrable
+    (offset c B : ℝ)
+    (hleft :
+      IntegrableOn
+        ((fun x : ℝ => standardGaussianCDF (offset + c * x)) *
+          (fun x : ℝ => -x * standardGaussianDensity x))
+        (Ioi B)) :
+    (∫ x in Ioi B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) =
+      standardGaussianDensity B * standardGaussianCDF (offset + c * B) +
+        c * ∫ x in Ioi B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) := by
+  have hprodBase :
+      Integrable
+        (fun x : ℝ =>
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x))
+        (volume.restrict (Ioi B)) :=
+    standardGaussianDensity_mul_affine_integrableOn_Ioi offset c B
+  have hprod :
+      IntegrableOn
+        ((fun x : ℝ => c * standardGaussianDensity (offset + c * x)) *
+          standardGaussianDensity)
+        (Ioi B) := by
+    change Integrable
+      (fun x : ℝ =>
+        (c * standardGaussianDensity (offset + c * x)) *
+          standardGaussianDensity x)
+      (volume.restrict (Ioi B))
+    exact (hprodBase.const_mul c).congr
+      (Eventually.of_forall fun x => by ring)
+  exact standardGaussian_firstMoment_affineCDF_integral_Ioi_of_integrable
+    offset c B hleft hprod
+
+/-- `-x * phi(x)` is integrable on every standard-Gaussian upper tail. -/
+theorem standardGaussian_neg_id_mul_density_integrableOn_Ioi (B : ℝ) :
+    IntegrableOn (fun x : ℝ => -x * standardGaussianDensity x) (Ioi B) := by
+  have htail_nonneg :
+      IntegrableOn (fun x : ℝ => -x * standardGaussianDensity x) (Ioi (max B 0)) := by
+    have hmax_nonneg : 0 ≤ max B 0 := le_max_right B 0
+    refine MeasureTheory.integrableOn_Ioi_deriv_of_nonpos'
+      (a := max B 0) (g := standardGaussianDensity)
+      (g' := fun x : ℝ => -x * standardGaussianDensity x)
+      ?_ ?_ standardGaussianDensity_tendsto_atTop_zero
+    · intro x _hx
+      exact standardGaussianDensity_hasDerivAt x
+    · intro x hx
+      have hx_nonneg : 0 ≤ x := le_trans hmax_nonneg (le_of_lt hx)
+      have hmul_nonneg : 0 ≤ x * standardGaussianDensity x :=
+        mul_nonneg hx_nonneg (standardGaussianDensity_nonneg x)
+      nlinarith
+  by_cases hB : 0 ≤ B
+  · simpa [max_eq_left hB] using htail_nonneg
+  · have hBlt : B < 0 := lt_of_not_ge hB
+    have hcompact :
+        IntegrableOn (fun x : ℝ => -x * standardGaussianDensity x) (Ioc B 0) := by
+      have hcont : Continuous fun x : ℝ => -x * standardGaussianDensity x := by
+        exact continuous_id.neg.mul standardGaussianDensity_continuous
+      exact (hcont.continuousOn.integrableOn_Icc).mono_set Ioc_subset_Icc_self
+    have htail0 :
+        IntegrableOn (fun x : ℝ => -x * standardGaussianDensity x) (Ioi 0) := by
+      simpa [max_eq_right hBlt.le] using htail_nonneg
+    have hunion :
+        IntegrableOn (fun x : ℝ => -x * standardGaussianDensity x)
+          (Ioc B 0 ∪ Ioi 0) :=
+      hcompact.union htail0
+    rw [Ioc_union_Ioi_eq_Ioi hBlt.le] at hunion
+    exact hunion
+
+/-- `x * phi(x)` is integrable on every standard-Gaussian upper tail. -/
+theorem standardGaussian_id_mul_density_integrableOn_Ioi (B : ℝ) :
+    IntegrableOn (fun x : ℝ => x * standardGaussianDensity x) (Ioi B) := by
+  have hneg := (standardGaussian_neg_id_mul_density_integrableOn_Ioi B).neg
+  simpa using hneg
+
+/-- `-x * phi(x)` is integrable on every standard-Gaussian lower tail. -/
+theorem standardGaussian_neg_id_mul_density_integrableOn_Iic (B : ℝ) :
+    IntegrableOn (fun x : ℝ => -x * standardGaussianDensity x) (Iic B) := by
+  have htail :
+      IntegrableOn (fun y : ℝ => y * standardGaussianDensity y)
+        (Ioi (-(B + 1))) :=
+    standardGaussian_id_mul_density_integrableOn_Ioi (-(B + 1))
+  have hcomp :
+      IntegrableOn
+        ((fun y : ℝ => y * standardGaussianDensity y) ∘ fun x : ℝ => -x)
+        ((fun x : ℝ => -x) ⁻¹' Ioi (-(B + 1))) := by
+    exact ((Measure.measurePreserving_neg (volume : Measure ℝ)).integrableOn_comp_preimage
+      (Homeomorph.neg ℝ).measurableEmbedding).2 htail
+  have hsubset :
+      Iic B ⊆ (fun x : ℝ => -x) ⁻¹' Ioi (-(B + 1)) := by
+    intro x hx
+    simp only [Set.mem_preimage, Set.mem_Ioi]
+    have hxle : x ≤ B := hx
+    linarith
+  exact (hcomp.mono_set hsubset).congr (Eventually.of_forall fun x => by
+    simp [standardGaussianDensity_neg])
+
+/-- `x * phi(x)` is integrable on every standard-Gaussian lower tail. -/
+theorem standardGaussian_id_mul_density_integrableOn_Iic (B : ℝ) :
+    IntegrableOn (fun x : ℝ => x * standardGaussianDensity x) (Iic B) := by
+  have hneg := (standardGaussian_neg_id_mul_density_integrableOn_Iic B).neg
+  simpa using hneg
+
+/--
+The first integration-by-parts term for an affine Gaussian CDF is integrable on
+every upper tail.
+-/
+theorem standardGaussian_affineCDF_mul_neg_id_density_integrableOn_Ioi
+    (offset c B : ℝ) :
+    IntegrableOn
+      ((fun x : ℝ => standardGaussianCDF (offset + c * x)) *
+        (fun x : ℝ => -x * standardGaussianDensity x))
+      (Ioi B) := by
+  have hbase :
+      Integrable (fun x : ℝ => -x * standardGaussianDensity x)
+        (volume.restrict (Ioi B)) :=
+    standardGaussian_neg_id_mul_density_integrableOn_Ioi B
+  change Integrable
+    (fun x : ℝ =>
+      standardGaussianCDF (offset + c * x) *
+        (-x * standardGaussianDensity x))
+    (volume.restrict (Ioi B))
+  refine Integrable.mono' hbase.norm ?_ ?_
+  · have haff : Continuous fun x : ℝ => offset + c * x := by fun_prop
+    have hneg : Continuous fun x : ℝ => -x * standardGaussianDensity x :=
+      continuous_id.neg.mul standardGaussianDensity_continuous
+    have hcont := (standardGaussianCDF_continuous.comp haff).mul hneg
+    exact hcont.stronglyMeasurable.aestronglyMeasurable
+  · exact Eventually.of_forall fun x => by
+      rw [norm_mul]
+      have hcdf_nonneg : 0 ≤ standardGaussianCDF (offset + c * x) :=
+        standardGaussianCDF_nonneg (offset + c * x)
+      rw [Real.norm_of_nonneg hcdf_nonneg]
+      exact mul_le_of_le_one_left (norm_nonneg _)
+        (standardGaussianCDF_le_one (offset + c * x))
+
+/--
+The first integration-by-parts term for an affine Gaussian CDF is integrable on
+every lower tail.
+-/
+theorem standardGaussian_affineCDF_mul_neg_id_density_integrableOn_Iic
+    (offset c B : ℝ) :
+    IntegrableOn
+      ((fun x : ℝ => standardGaussianCDF (offset + c * x)) *
+        (fun x : ℝ => -x * standardGaussianDensity x))
+      (Iic B) := by
+  have hbase :
+      Integrable (fun x : ℝ => -x * standardGaussianDensity x)
+        (volume.restrict (Iic B)) :=
+    standardGaussian_neg_id_mul_density_integrableOn_Iic B
+  change Integrable
+    (fun x : ℝ =>
+      standardGaussianCDF (offset + c * x) *
+        (-x * standardGaussianDensity x))
+    (volume.restrict (Iic B))
+  refine Integrable.mono' hbase.norm ?_ ?_
+  · have haff : Continuous fun x : ℝ => offset + c * x := by fun_prop
+    have hneg : Continuous fun x : ℝ => -x * standardGaussianDensity x :=
+      continuous_id.neg.mul standardGaussianDensity_continuous
+    have hcont := (standardGaussianCDF_continuous.comp haff).mul hneg
+    exact hcont.stronglyMeasurable.aestronglyMeasurable
+  · exact Eventually.of_forall fun x => by
+      rw [norm_mul]
+      have hcdf_nonneg : 0 ≤ standardGaussianCDF (offset + c * x) :=
+        standardGaussianCDF_nonneg (offset + c * x)
+      rw [Real.norm_of_nonneg hcdf_nonneg]
+      exact mul_le_of_le_one_left (norm_nonneg _)
+        (standardGaussianCDF_le_one (offset + c * x))
+
+/-- Affine-CDF first-moment identity on an upper tail, with all integrability
+obligations discharged by Gaussian tail bounds. -/
+theorem standardGaussian_firstMoment_affineCDF_integral_Ioi
+    (offset c B : ℝ) :
+    (∫ x in Ioi B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) =
+      standardGaussianDensity B * standardGaussianCDF (offset + c * B) +
+        c * ∫ x in Ioi B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x) :=
+  standardGaussian_firstMoment_affineCDF_integral_Ioi_of_left_integrable
+    offset c B
+    (standardGaussian_affineCDF_mul_neg_id_density_integrableOn_Ioi
+      offset c B)
+
+/--
+Integration-by-parts identity for the affine-CDF first moment on a lower tail,
+with the product-density integrability obligation discharged from the Gaussian
+density bound.
+-/
+theorem standardGaussian_firstMoment_affineCDF_integral_Iic_of_left_integrable
+    (offset c B : ℝ)
+    (hleft :
+      IntegrableOn
+        ((fun x : ℝ => standardGaussianCDF (offset + c * x)) *
+          (fun x : ℝ => -x * standardGaussianDensity x))
+        (Iic B)) :
+    (∫ x in Iic B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) =
+      c * (∫ x in Iic B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x)) -
+        standardGaussianDensity B * standardGaussianCDF (offset + c * B) := by
+  have hprodBase :
+      Integrable
+        (fun x : ℝ =>
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x))
+        (volume.restrict (Iic B)) :=
+    standardGaussianDensity_mul_affine_integrableOn_Iic offset c B
+  have hprod :
+      IntegrableOn
+        ((fun x : ℝ => c * standardGaussianDensity (offset + c * x)) *
+          standardGaussianDensity)
+        (Iic B) := by
+    change Integrable
+      (fun x : ℝ =>
+        (c * standardGaussianDensity (offset + c * x)) *
+          standardGaussianDensity x)
+      (volume.restrict (Iic B))
+    exact (hprodBase.const_mul c).congr
+      (Eventually.of_forall fun x => by ring)
+  exact standardGaussian_firstMoment_affineCDF_integral_Iic_of_integrable
+    offset c B hleft hprod
+
+/-- Affine-CDF first-moment identity on a lower tail, with all integrability
+obligations discharged by Gaussian tail bounds. -/
+theorem standardGaussian_firstMoment_affineCDF_integral_Iic
+    (offset c B : ℝ) :
+    (∫ x in Iic B,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (offset + c * x)) =
+      c * (∫ x in Iic B,
+          standardGaussianDensity x *
+            standardGaussianDensity (offset + c * x)) -
+        standardGaussianDensity B * standardGaussianCDF (offset + c * B) :=
+  standardGaussian_firstMoment_affineCDF_integral_Iic_of_left_integrable
+    offset c B
+    (standardGaussian_affineCDF_mul_neg_id_density_integrableOn_Iic
+      offset c B)
+
+/--
+Affine-CDF first-moment identity on a finite interval, obtained by subtracting
+the two upper-tail identities.
+-/
+theorem standardGaussian_firstMoment_affineCDF_integral_interval
+    (A c lower upper : ℝ) (hlower_upper : lower ≤ upper) :
+    (∫ x in lower..upper,
+        x * standardGaussianDensity x *
+          standardGaussianCDF (A * Real.sqrt (1 + c ^ 2) + c * x)) =
+      (let denom := Real.sqrt (1 + c ^ 2)
+       standardGaussianDensity lower *
+           standardGaussianCDF (A * denom + c * lower) +
+         c * (standardGaussianDensity A * denom⁻¹ *
+          (1 - standardGaussianCDF (denom * lower + A * c)))) -
+        (let denom := Real.sqrt (1 + c ^ 2)
+         standardGaussianDensity upper *
+             standardGaussianCDF (A * denom + c * upper) +
+           c * (standardGaussianDensity A * denom⁻¹ *
+            (1 - standardGaussianCDF (denom * upper + A * c)))) := by
+  let denom := Real.sqrt (1 + c ^ 2)
+  have hint :
+      IntegrableOn
+        (fun x : ℝ =>
+          x * standardGaussianDensity x *
+            standardGaussianCDF (A * denom + c * x))
+        (Ioi lower) := by
+    have hbase :
+        Integrable (fun x : ℝ => x * standardGaussianDensity x)
+          (volume.restrict (Ioi lower)) :=
+      standardGaussian_id_mul_density_integrableOn_Ioi lower
+    change Integrable
+      (fun x : ℝ =>
+        x * standardGaussianDensity x *
+          standardGaussianCDF (A * denom + c * x))
+      (volume.restrict (Ioi lower))
+    refine Integrable.mono' hbase.norm ?_ ?_
+    · have haff : Continuous fun x : ℝ => A * denom + c * x := by fun_prop
+      have hcont :=
+        (continuous_id.mul standardGaussianDensity_continuous).mul
+          (standardGaussianCDF_continuous.comp haff)
+      exact hcont.stronglyMeasurable.aestronglyMeasurable
+    · exact Eventually.of_forall fun x => by
+        rw [norm_mul]
+        have hcdf_nonneg : 0 ≤ standardGaussianCDF (A * denom + c * x) :=
+          standardGaussianCDF_nonneg (A * denom + c * x)
+        rw [Real.norm_of_nonneg hcdf_nonneg]
+        exact mul_le_of_le_one_right (norm_nonneg _)
+          (standardGaussianCDF_le_one (A * denom + c * x))
+  have htail :=
+    intervalIntegral.integral_Ioi_sub_Ioi
+      (f := fun x : ℝ =>
+        x * standardGaussianDensity x *
+          standardGaussianCDF (A * denom + c * x))
+      hint hlower_upper
+  rw [standardGaussian_firstMoment_affineCDF_integral_Ioi (A * denom) c lower,
+    standardGaussian_firstMoment_affineCDF_integral_Ioi (A * denom) c upper] at htail
+  rw [standardGaussianDensity_mul_affine_integral_Ioi c A lower,
+    standardGaussianDensity_mul_affine_integral_Ioi c A upper] at htail
+  exact htail.symm
 
 /-- The left-tail probability times the positive tail coordinate tends to zero. -/
 theorem standardGaussianCDF_neg_mul_id_tendsto_atTop_zero :
