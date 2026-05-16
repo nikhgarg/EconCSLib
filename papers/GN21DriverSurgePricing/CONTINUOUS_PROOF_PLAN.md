@@ -475,6 +475,13 @@ into the concrete endpoint policy data.
   `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_left_of_lemma10_current_bounds`
   and
   `gn21MeasuredAggregateRewardPrimitives_lt_acceptAll_right_of_lemma9_current_bounds`.
+  The strict route is also packaged on the Lemma 9/10 aggregate data records as
+  `GN21NonsurgeLemma10AcceptAllAggregateData.aggregate_lt_acceptAll`,
+  `GN21SurgeLemma9AcceptAllAggregateData.aggregate_lt_acceptAll`, their
+  primitive-data analogues, and the source-facing
+  `GN21NonsurgeLemma10AcceptAllAggregateSourceData.aggregate_lt_acceptAll` /
+  `GN21SurgeLemma9AcceptAllAggregateSourceData.aggregate_lt_acceptAll`
+  methods.
   These are the useful bridge from "positive derivative kernel on positive
   mass" to an actual strict reward improvement for the quotient reward, and
   should be preferred over building more abstract wrappers when closing the
