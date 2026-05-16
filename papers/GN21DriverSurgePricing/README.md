@@ -587,7 +587,9 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`,
   and the positive-parameter fixed-transfer wrapper
-  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions`;
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions`,
+  with the fixed-state-equality cutoff-bounds source boundary exposed as
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`;
   it consumes the all-optimal measurable Lemma 5 allowed policy-form
   classification plus continuous-density endpoint data, source Lemma 9/10
   current-bounds data, support, and tail-integrability packages, then chooses a

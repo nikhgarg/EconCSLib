@@ -64175,6 +64175,54 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
           exact ⟨Creplacement, L.to_fixed_state_by_policy_form⟩ }
 
 /--
+Common fixed-state equality cutoff-bounds source boundary for the
+fixed-transfer route, returning the paper's almost-everywhere uniqueness
+convention for measurable optima.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR1_pos := A.hR1_pos
+        hR1_lt_R2 := A.hR1_lt_R2
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmeasure1_pos := A.hmeasure1_pos
+        hmeasure2_pos := A.hmeasure2_pos
+        endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_selection := by
+          intro m z hnonneg hparams
+          rcases
+              A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_selection
+                m z hnonneg hparams with
+            ⟨CreplacementData, L⟩
+          let P :
+              Theorem3AcceptAllStructuredPositiveParameterData
+                μ arrival R1 R2 switch12 switch21 m z :=
+            Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams
+          exact
+            L.to_fixed_transfer_allowed_policy_forms_of_shape_replacements
+              P A.hR1_pos A.hR1_lt_R2 A.hR2_pos A.hmeasure1_pos
+              A.hmeasure2_pos CreplacementData.to_shape_replacements }
+
+/--
 Common fixed-state equality version of the cutoff-bounds wrapper, routed
 through the hnot-aware endpoint-selection interface.
 -/
