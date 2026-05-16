@@ -373,7 +373,10 @@ cache is kept as `source.txt` for named-statement audits.
   The companion implication wrapper
   `paper_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
   states the same continuous route in the paper's exact Theorem 3.2
-  fairness-implies-test-blankness form.
+  fairness-implies-test-blankness form, and the no-relevance wrapper
+  `paper_theorem3_2_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  states the corresponding Definition 5 conclusion that no base/test
+  relevance witness exists.
   The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
@@ -392,7 +395,9 @@ cache is kept as `source.txt` for named-statement audits.
   companion implication wrapper
   `paper_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
   states the normalized report-required route directly as fairness implies
-  test-blankness.
+  test-blankness; the matching no-relevance wrapper
+  `paper_theorem3_2_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  rules out every base/test relevance witness.
 
 ## Source Notes
 

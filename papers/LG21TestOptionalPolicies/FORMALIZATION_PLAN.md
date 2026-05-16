@@ -576,7 +576,11 @@ Last updated: 2026-05-16
    concrete surfaces, and the mapped-actor-law variants reduce the displayed
    support facts to positive mass of the displayed concrete test/skill values.
    The centered-base-term-by-definition variant closes the report-required
-   outside-payoff algebra for the normalized affine source model.  This finite
+   outside-payoff algebra for the normalized affine source model.  The optional
+   posterior-payoff and report-required unit-centered continuous routes now
+   also have concrete no-relevance wrappers, so their fairness hypotheses rule
+   out every base/test witness directly rather than only through the abstract
+   test-blank predicate.  This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
