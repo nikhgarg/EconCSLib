@@ -1593,6 +1593,52 @@ theorem lg21NoProfitableWithholdingDeviation_of_source_optional_equilibrium
   exact hbest
 
 /--
+Concrete optional-reporting source game used in the Lemma 4.1 route.  The
+payoff from reporting is the reported-score estimate; the payoff from not
+reporting is the no-report estimate.
+-/
+def lg21OptionalReportingSourceEquilibriumData
+    {Skill Base : Type*}
+    (takeDecision : Skill → Base → Bool)
+    (reportDecision : Base → ℝ → Bool)
+    (reportedEstimate : ℝ → ℝ) (noReportEstimate : ℝ)
+    (estimationConsistent : Prop) :
+    LG21SourceEquilibriumData Skill Base ℝ where
+  requirement := LG21AccessAction.optionalReportingRequirement
+  takeDecision := takeDecision
+  reportDecision := reportDecision
+  payoff := fun info action =>
+    if action.reportsScore then reportedEstimate info.test else noReportEstimate
+  estimationConsistent := estimationConsistent
+
+theorem lg21NoProfitableWithholdingDeviation_of_optional_reporting_source_model
+    {Skill Base : Type*}
+    {takeDecision : Skill → Base → Bool}
+    {reportDecision : Base → ℝ → Bool}
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21OptionalReportingSourceEquilibriumData
+          takeDecision reportDecision reportedEstimate
+          noReportEstimate estimationConsistent))
+    (skill : Skill) (base : Base) :
+    lg21NoProfitableWithholdingDeviation
+      (fun score : ℝ => reportDecision base score = true)
+      reportedEstimate noReportEstimate := by
+  refine
+    lg21NoProfitableWithholdingDeviation_of_source_optional_equilibrium
+      hEq rfl skill base ?_ ?_
+  · intro score
+    rfl
+  · intro score hn
+    dsimp [lg21OptionalReportingSourceEquilibriumData,
+      LG21AccessStudentInfo.chosenAction]
+    by_cases hreport : reportDecision base score
+    · exact False.elim (hn (by simp [hreport]))
+    · simp [hreport]
+
+/--
 Binary test-taking subgame used to connect Definition 1-style best responses
 to the no-profitable-test-taking predicate in Lemma 4.1.
 -/
@@ -1660,6 +1706,51 @@ theorem lg21NoProfitableTestTakingDeviation_of_source_report_required_equilibriu
       LG21AccessAction.takeAndReport hfeasible
   rw [htakePayoff skill, hnoTakeChosenPayoff skill hntake] at hbest
   exact hbest
+
+/--
+Concrete report-required source game used in the Lemma 4.1 route.  The payoff
+from taking and reporting is the test-taking benefit probability; the payoff
+from not taking is `1 / 2`.
+-/
+def lg21ReportRequiredSourceEquilibriumData
+    {Base Test : Type*}
+    (takeDecision : ℝ → Base → Bool)
+    (reportDecision : Base → Test → Bool)
+    (testBenefitProb : ℝ → ℝ)
+    (estimationConsistent : Prop) :
+    LG21SourceEquilibriumData ℝ Base Test where
+  requirement := LG21AccessAction.reportRequiredAfterTaking
+  takeDecision := takeDecision
+  reportDecision := reportDecision
+  payoff := fun info action =>
+    if action.takesTest then testBenefitProb info.skill else (1 / 2 : ℝ)
+  estimationConsistent := estimationConsistent
+
+theorem lg21NoProfitableTestTakingDeviation_of_report_required_source_model
+    {Base Test : Type*}
+    {takeDecision : ℝ → Base → Bool}
+    {reportDecision : Base → Test → Bool}
+    {testBenefitProb : ℝ → ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21ReportRequiredSourceEquilibriumData
+          takeDecision reportDecision testBenefitProb estimationConsistent))
+    (base : Base) (test : Test) :
+    lg21NoProfitableTestTakingDeviation
+      (fun skill : ℝ => takeDecision skill base = true)
+      testBenefitProb := by
+  refine
+    lg21NoProfitableTestTakingDeviation_of_source_report_required_equilibrium
+      hEq rfl base test ?_ ?_
+  · intro skill
+    rfl
+  · intro skill hntake
+    dsimp [lg21ReportRequiredSourceEquilibriumData,
+      LG21AccessStudentInfo.chosenAction]
+    by_cases htake : takeDecision skill base
+    · exact False.elim (hntake (by simp [htake]))
+    · simp [htake]
 
 /--
 Lemma 4.1 route from source Definition 1 equilibria: source best responses in
@@ -1741,6 +1832,68 @@ theorem paper_lemma4_1_strategy_proofness_of_source_equilibrium_projections
     (lg21NoProfitableTestTakingDeviation_of_source_report_required_equilibrium
       hTakeEq hTakeRequirement takeBase takeTest htakePayoff
       hnoTakeChosenPayoff)
+
+/--
+Lemma 4.1 route from concrete source payoff models: the optional-reporting
+and report-required source games have the payoff identities definitionally, so
+only the Gaussian threshold shapes and lower-tail identities remain as
+mathematical hypotheses.
+-/
+theorem paper_lemma4_1_strategy_proofness_of_concrete_source_models
+    {Feature ReportSkill ReportBase TakeBase TakeTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {takeDecisionReport : ReportSkill → ReportBase → Bool}
+    {reportDecision : ReportBase → ℝ → Bool}
+    {takeDecision : ℝ → TakeBase → Bool}
+    {reportRequiredDecision : TakeBase → TakeTest → Bool}
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    {noReportEstimate qTilde reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21OptionalReportingSourceEquilibriumData
+          takeDecisionReport reportDecision
+          (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+          noReportEstimate reportEstimationConsistent))
+    (reportSkill : ReportSkill) (reportBase : ReportBase)
+    (hreports :
+      ∀ score : ℝ,
+        reportDecision reportBase score = true ↔
+          threshold ≤ M.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21ReportRequiredSourceEquilibriumData
+          takeDecision reportRequiredDecision
+          (fun skill : ℝ =>
+            api.thresholdPassProb
+              (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde)
+          takeEstimationConsistent))
+    (takeBase : TakeBase) (takeTest : TakeTest)
+    (htakes :
+      ∀ skill : ℝ, takeDecision skill takeBase = true ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar) :
+    (∀ score : ℝ, reportDecision reportBase score = true) ∧
+      (∀ skill : ℝ, takeDecision skill takeBase = true) :=
+  paper_lemma4_1_strategy_proofness_of_gaussian_reporting_threshold_and_explicit_taking_threshold
+    C api M theta k scoreLaw skillLaw htestScale hreports hnoReport
+    (lg21NoProfitableWithholdingDeviation_of_optional_reporting_source_model
+      hReportEq reportSkill reportBase)
+    htakes hqTilde
+    (lg21NoProfitableTestTakingDeviation_of_report_required_source_model
+      hTakeEq takeBase takeTest)
 
 /--
 Lemma 4.1 route from explicit threshold policies and binary subgame
