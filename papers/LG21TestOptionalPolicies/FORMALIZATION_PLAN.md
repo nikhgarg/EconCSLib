@@ -13,6 +13,9 @@ Last updated: 2026-05-16
   estimation-consistency projections encoded.  Binary reporting and taking
   subgames bridge `lg21Equilibrium` best responses to the
   no-profitable-deviation predicates used by Lemma 4.1.
+- Definitions 2--5 now have direct PMF and continuous-law source predicates
+  plus paper-interface unfold lemmas.  Definition 5 also has equivalent
+  witness forms for concrete base/test relevance.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
   the shared conditional-resampling API.  Theorem 4.4 also has a combined
   source-route wrapper that pairs the finite resampling fairness proof with

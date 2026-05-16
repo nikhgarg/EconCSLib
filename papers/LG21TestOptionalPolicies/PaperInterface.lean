@@ -224,6 +224,77 @@ abbrev paperLawTestBlank {Skill Base Test Law : Type*}
     (S : LG21SourceLawPolicySurface Skill Base Test Law) : Prop :=
   lg21SourceLawTestBlank S
 
+/-- Definition 2 unfolded: latent-skill fairness is equality for every equilibrium, skill, and base profile. -/
+theorem paper_interface_definition2_latent_skill_fair_iff
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) :
+    paperLatentSkillFair S ↔
+      ∀ e q base, S.latentAccessEstimate e q base =
+        S.latentNoAccessEstimate e q base :=
+  Iff.rfl
+
+/-- Continuous-law Definition 2 unfolded. -/
+theorem paper_interface_definition2_law_latent_skill_fair_iff
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) :
+    paperLawLatentSkillFair S ↔
+      ∀ e q base, S.latentAccessLaw e q base =
+        S.latentNoAccessLaw e q base :=
+  Iff.rfl
+
+/-- Definition 3 unfolded: observable fairness is equality for every equilibrium and base profile. -/
+theorem paper_interface_definition3_observably_fair_iff
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) :
+    paperObservablyFair S ↔
+      ∀ e base, S.observableAccessEstimate e base =
+        S.observableNoAccessEstimate e base :=
+  Iff.rfl
+
+/-- Continuous-law Definition 3 unfolded. -/
+theorem paper_interface_definition3_law_observably_fair_iff
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) :
+    paperLawObservablyFair S ↔
+      ∀ e base, S.observableAccessLaw e base =
+        S.observableNoAccessLaw e base :=
+  Iff.rfl
+
+/-- Definition 4 unfolded: demographic fairness is equality in every equilibrium. -/
+theorem paper_interface_definition4_demographically_fair_iff
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) :
+    paperDemographicallyFair S ↔
+      ∀ e, S.demographicAccessEstimate e =
+        S.demographicNoAccessEstimate e :=
+  Iff.rfl
+
+/-- Continuous-law Definition 4 unfolded. -/
+theorem paper_interface_definition4_law_demographically_fair_iff
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) :
+    paperLawDemographicallyFair S ↔
+      ∀ e, S.demographicAccessLaw e = S.demographicNoAccessLaw e :=
+  Iff.rfl
+
+/-- Definition 5 unfolded: test-blankness is equality of base-only and full-feature estimates. -/
+theorem paper_interface_definition5_test_blank_iff
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) :
+    paperTestBlank S ↔
+      ∀ e base test, S.baseOnlyEstimate e base =
+        S.fullFeatureEstimate e base test :=
+  Iff.rfl
+
+/-- Continuous-law Definition 5 unfolded. -/
+theorem paper_interface_definition5_law_test_blank_iff
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) :
+    paperLawTestBlank S ↔
+      ∀ e base test, S.baseOnlyLaw e base =
+        S.fullFeatureLaw e base test :=
+  Iff.rfl
+
 /--
 Definition 5 witness form: a policy is not test-blank exactly when some
 equilibrium/base/test tuple has different base-only and full-feature estimates.
