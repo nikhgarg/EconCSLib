@@ -282,6 +282,12 @@ The all-optima handoff boundary for this lighter route is
 representative pipeline.  If stronger analytic shape data are already
 available, `Theorem4AllMeasurableFixedResponseShapeData.to_policy_form_data`
 converts them to this lighter boundary.
+The paper-facing consumers for this lighter route are
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_improvements`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_source_assumptions`.
+For Theorem 3, package the constructed-price state data as
+`GN21Theorem3FixedResponsePolicyFormSourceData`.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

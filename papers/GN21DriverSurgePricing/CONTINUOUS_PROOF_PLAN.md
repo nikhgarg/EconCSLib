@@ -195,6 +195,13 @@ policy-form packages are available for both states; its
 a.e. representative route.  The older stronger
 `Theorem4AllMeasurableFixedResponseShapeData` can be converted to this smaller
 boundary by `.to_policy_form_data`.
+The direct Theorem 4 and Theorem 3 consumers are now also compiled:
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_improvements`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_source_assumptions`.
+For constructed Theorem 3 prices, fill
+`GN21Theorem3FixedResponsePolicyFormSourceData` rather than manually
+materializing `GN21Theorem3FeasibleAERepresentativeSourceData`.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
