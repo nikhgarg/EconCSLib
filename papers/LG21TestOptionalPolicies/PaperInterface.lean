@@ -5253,6 +5253,23 @@ theorem paper_interface_theorem3_1_strategic_withholding
   paper_theorem3_1_strategic_withholding_of_certificate C
 
 /--
+Theorem 3.1 over continuous-law estimate objects: strategic withholding and
+failure of latent-skill, observable, and demographic fairness.
+
+Current Lean status: conditional on the strategic withholding certificate.
+-/
+theorem paper_interface_theorem3_1_law_strategic_withholding
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawStrategicWithholdingCertificate S) :
+    C.some_access_students_do_not_report ∧
+      C.threshold_reporting ∧ C.threshold_taking ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_law_strategic_withholding_of_certificate C
+
+/--
 Theorem 3.1 source-facing endpoint over PMF estimate surfaces: strategic
 threshold behavior plus concrete fairness-violation witnesses imply the
 paper's withholding/threshold conclusions and failure of all three fairness

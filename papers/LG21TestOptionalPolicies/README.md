@@ -77,6 +77,10 @@ cache is kept as `source.txt` for named-statement audits.
   as latent-skill mixtures and demographic laws as base-profile mixtures.  The
   optional-reporting and report-required base-mixed endpoints close the prior
   caveat about needing a stricter conditional-on-skill continuous-law surface.
+- `LG21LawStrategicWithholdingCertificate` and
+  `paper_theorem3_1_law_strategic_withholding_of_certificate` now mirror the
+  compact PMF certificate endpoint for continuous-law surfaces, giving the
+  Theorem 3.1 law route the same paper-facing closure pattern as the PMF route.
 
 ### Recent Theorem 3.2 Progress
 

@@ -160,6 +160,8 @@ Last updated: 2026-05-16
   latent-skill mixtures, and demographic laws are symbolic base-profile
   mixtures.  The new optional-reporting and report-required base-mixed
   endpoints combine those surfaces with the automatic source-mixture cutoffs.
+  `LG21LawStrategicWithholdingCertificate` now mirrors the compact PMF
+  certificate endpoint for these continuous-law routes.
   Remaining Theorem 3.1 source work is deriving analogous PMF witnesses if a
   finite PMF endpoint is desired and, if needed later, strengthening the current
   closed source-mixture endpoint to match the paper's exact "every equilibrium"

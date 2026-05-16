@@ -14796,6 +14796,42 @@ theorem paper_theorem3_1_strategic_withholding_of_certificate
     C.not_latent_skill_fair, C.not_observably_fair,
     C.not_demographically_fair⟩
 
+/--
+Continuous-law certificate for Theorem 3.1's strategic-withholding and
+unfairness endpoint.
+-/
+structure LG21LawStrategicWithholdingCertificate
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) where
+  some_access_students_do_not_report : Prop
+  threshold_reporting : Prop
+  threshold_taking : Prop
+  some_access_students_do_not_report_holds :
+    some_access_students_do_not_report
+  threshold_reporting_holds : threshold_reporting
+  threshold_taking_holds : threshold_taking
+  not_latent_skill_fair : ¬ lg21SourceLawLatentSkillFair S
+  not_observably_fair : ¬ lg21SourceLawObservablyFair S
+  not_demographically_fair : ¬ lg21SourceLawDemographicallyFair S
+
+/--
+Theorem 3.1 continuous-law endpoint, conditional on the strategic-withholding
+certificate.
+-/
+theorem paper_theorem3_1_law_strategic_withholding_of_certificate
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawStrategicWithholdingCertificate S) :
+    C.some_access_students_do_not_report ∧
+      C.threshold_reporting ∧ C.threshold_taking ∧
+        ¬ lg21SourceLawLatentSkillFair S ∧
+          ¬ lg21SourceLawObservablyFair S ∧
+            ¬ lg21SourceLawDemographicallyFair S := by
+  exact ⟨C.some_access_students_do_not_report_holds,
+    C.threshold_reporting_holds, C.threshold_taking_holds,
+    C.not_latent_skill_fair, C.not_observably_fair,
+    C.not_demographically_fair⟩
+
 /-- Certificate for Theorem 3.2's fairness-impossibility implication. -/
 structure LG21FairnessImpossibilityCertificate
     {Skill Base Test Estimate : Type*}
