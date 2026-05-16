@@ -153,7 +153,10 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_witness_of_centered_outside`
   applies it under the centered outside-payoff identity.  The remaining source
   gap is discharging the final paper policy assumptions for the concrete
-  optional/report-required surfaces.
+  optional/report-required surfaces.  A distinct-tests bridge
+  `paper_theorem3_2_not_latent_or_observable_fair_of_distinct_point_estimate_tests`
+  now lets those direct endpoints use two different full-feature point
+  estimates as the paper-facing test-relevance witness.
 
 ## Source Notes
 

@@ -3647,6 +3647,52 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_point_estima
     e base test hne
 
 /--
+Two distinct full-feature point estimates imply an off-mean point-estimate test
+witness.
+-/
+theorem paper_interface_theorem3_2_exists_off_mean_test_of_distinct_point_estimate_tests
+    {Test Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (actorOfTest : Test → Actor) (test₁ test₂ : Test)
+    (hne :
+      actorValue (actorOfTest test₁) ≠ actorValue (actorOfTest test₂)) :
+    ∃ test,
+      actorValue (actorOfTest test) ≠ pmfExp actorLaw actorValue :=
+  paper_theorem3_2_exists_off_mean_test_of_distinct_point_estimate_tests
+    actorLaw actorValue actorOfTest test₁ test₂ hne
+
+/--
+Direct Theorem 3.2 contradiction for point-estimate surfaces from two distinct
+full-feature point estimates at the same base profile.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_distinct_point_estimate_tests
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hfair_to_blank :
+      lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S)
+    (e : S.Equilibrium) (base : Base) (test₁ test₂ : Test)
+    (hne :
+      actorValue e base (actorOfTest e base test₁) ≠
+        actorValue e base (actorOfTest e base test₂)) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_distinct_point_estimate_tests
+    actorLaw actorValue actorOfTest hbasePoint hfullPoint hfair_to_blank
+    e base test₁ test₂ hne
+
+/--
 Theorem 3.2 final-witness constructor for abstract point-law surfaces.
 -/
 theorem paper_interface_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface

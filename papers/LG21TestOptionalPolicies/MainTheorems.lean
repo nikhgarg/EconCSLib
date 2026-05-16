@@ -4239,6 +4239,66 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
   exact hne (lg21_pmf_pure_eq_iff.mp hblank).symm
 
 /--
+If two test features select distinct point estimates, then at least one of
+them is off the acting-distribution mean.
+-/
+theorem paper_theorem3_2_exists_off_mean_test_of_distinct_point_estimate_tests
+    {Test Actor : Type*} [Fintype Actor] [DecidableEq Actor]
+    (actorLaw : PMF Actor) (actorValue : Actor → ℝ)
+    (actorOfTest : Test → Actor) (test₁ test₂ : Test)
+    (hne :
+      actorValue (actorOfTest test₁) ≠ actorValue (actorOfTest test₂)) :
+    ∃ test,
+      actorValue (actorOfTest test) ≠ pmfExp actorLaw actorValue := by
+  by_contra hnone
+  have h₁ :
+      actorValue (actorOfTest test₁) = pmfExp actorLaw actorValue := by
+    by_contra hne₁
+    exact hnone ⟨test₁, hne₁⟩
+  have h₂ :
+      actorValue (actorOfTest test₂) = pmfExp actorLaw actorValue := by
+    by_contra hne₂
+    exact hnone ⟨test₂, hne₂⟩
+  exact hne (h₁.trans h₂.symm)
+
+/--
+Direct Theorem 3.2 contradiction for point-estimate surfaces from two distinct
+full-feature point estimates at the same base profile.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_distinct_point_estimate_tests
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hfair_to_blank :
+      lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S)
+    (e : S.Equilibrium) (base : Base) (test₁ test₂ : Test)
+    (hne :
+      actorValue e base (actorOfTest e base test₁) ≠
+        actorValue e base (actorOfTest e base test₂)) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  rcases
+      paper_theorem3_2_exists_off_mean_test_of_distinct_point_estimate_tests
+        (actorLaw e base) (actorValue e base) (actorOfTest e base)
+        test₁ test₂ hne with
+    ⟨test, hne_mean⟩
+  exact
+    paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
+      actorLaw actorValue actorOfTest hbasePoint hfullPoint hfair_to_blank
+      e base test hne_mean
+
+/--
 Theorem 3.2 mixture-cancellation algebra for finite estimate laws.  This is
 the paper's displayed implication
 `D_{P,0} = λ D_{P,1} + (1 - λ) D_{P,0} ⇒ D_{P,1} = D_{P,0}` for a positive

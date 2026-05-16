@@ -250,8 +250,13 @@ Last updated: 2026-05-16
   unfairness from an explicit off-mean test witness, and the optional-reporting
   concrete direct endpoint applies it to the optional binary-mixture surface.
   The report-required concrete direct endpoint applies it under the centered
-  outside-payoff identity.  The remaining source gap is discharging the final
-  paper policy assumptions for the concrete optional/report-required surfaces.
+  outside-payoff identity.  The distinct-tests bridge turns two different
+  full-feature point estimates at one base profile into the off-mean witness
+  needed by the direct unfairness endpoints.  The remaining source gap is
+  discharging the final paper policy assumptions for the concrete
+  optional/report-required surfaces, especially the latent-to-observable
+  mixture identities, positive-share/support facts, and centered
+  outside-payoff identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -401,9 +406,12 @@ Last updated: 2026-05-16
    unfairness from an off-mean point-estimate witness, with a concrete
    optional-reporting direct endpoint already routed through the optional
    binary-mixture surface and a report-required direct endpoint routed through
-   the centered outside-payoff variant.  Next work should discharge the
+   the centered outside-payoff variant.  The distinct-tests bridge now replaces
+   the off-mean witness with the paper-facing condition that two full-feature
+   point estimates at one base profile differ.  Next work should discharge the
    remaining paper policy assumptions for the concrete optional/report-required
-   surfaces.
+   surfaces, especially the latent-to-observable mixture identities,
+   positive-share/support facts, and centered outside-payoff identity.
 
 ## Reusable Library Seams
 
