@@ -131,6 +131,28 @@ abbrev paperLawTestBlank {Skill Base Test Law : Type*}
   lg21SourceLawTestBlank S
 
 /--
+Definition 5 witness form: a policy is not test-blank exactly when some
+equilibrium/base/test tuple has different base-only and full-feature estimates.
+-/
+theorem paper_interface_not_test_blank_iff_exists_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate} :
+    ¬ paperTestBlank S ↔
+      ∃ e base test,
+        S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  lg21_not_testBlank_iff_exists_witness
+
+/--
+Continuous-law Definition 5 witness form.
+-/
+theorem paper_interface_not_law_test_blank_iff_exists_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law} :
+    ¬ paperLawTestBlank S ↔
+      ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  lg21_not_lawTestBlank_iff_exists_witness
+
+/--
 Definitions 2--3 implication, with the source's mixture interpretation made
 explicit: latent-skill fairness implies observable fairness when observable
 laws are the shared-skill-law mixtures of latent-skill-conditioned laws.
@@ -1180,6 +1202,19 @@ theorem paper_interface_theorem3_2_fairness_impossibility
   paper_theorem3_2_fairness_impossibility_of_certificate C
 
 /--
+Theorem 3.2 no-relevance form: latent or observable fairness rules out every
+concrete base/test relevance witness.
+-/
+theorem paper_interface_theorem3_2_no_test_relevance_of_fairness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :
+    ¬ ∃ e base test,
+        S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_no_test_relevance_of_fairness C hfair
+
+/--
 Theorem 3.2 contrapositive core: under the source implication, a concrete
 test-relevance witness rules out latent-skill or observable fairness.
 -/
@@ -1204,6 +1239,18 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility
     lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
       lg21SourceLawTestBlank S :=
   paper_theorem3_2_law_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 continuous-law no-relevance form: latent or observable fairness
+rules out every concrete base/test relevance law witness.
+-/
+theorem paper_interface_theorem3_2_law_no_test_relevance_of_fairness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
+    ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_law_no_test_relevance_of_fairness C hfair
 
 /--
 Theorem 3.2 continuous-law contrapositive core: under the source implication, a

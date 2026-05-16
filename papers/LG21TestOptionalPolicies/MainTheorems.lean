@@ -1840,6 +1840,46 @@ theorem lg21_not_lawTestBlank_of_witness
   exact hne (hblank e base test)
 
 /--
+Test-blankness equivalently says there is no equilibrium/base/test witness on
+which base-only and full-feature estimate distributions differ.
+-/
+theorem lg21_not_testBlank_iff_exists_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate} :
+    ¬ lg21SourceTestBlank S ↔
+      ∃ e base test,
+        S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test := by
+  classical
+  constructor
+  · intro hnot
+    by_contra hnone
+    apply hnot
+    intro e base test
+    by_contra hne
+    exact hnone ⟨e, base, test, hne⟩
+  · rintro ⟨e, base, test, hne⟩
+    exact lg21_not_testBlank_of_witness e base test hne
+
+/--
+Continuous-law version of the test-blankness witness equivalence.
+-/
+theorem lg21_not_lawTestBlank_iff_exists_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law} :
+    ¬ lg21SourceLawTestBlank S ↔
+      ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test := by
+  classical
+  constructor
+  · intro hnot
+    by_contra hnone
+    apply hnot
+    intro e base test
+    by_contra hne
+    exact hnone ⟨e, base, test, hne⟩
+  · rintro ⟨e, base, test, hne⟩
+    exact lg21_not_lawTestBlank_of_witness e base test hne
+
+/--
 Source-shaped witness for Theorem 3.1's strategic-withholding threshold
 conclusions.  `Base` represents the paper's non-test feature vector
 `{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the
@@ -1982,6 +2022,21 @@ theorem paper_theorem3_2_fairness_impossibility_of_certificate
   exact C.latent_or_observable_implies_test_blank
 
 /--
+Theorem 3.2 no-relevance form: under the source implication, latent or
+observable fairness rules out every concrete base/test relevance witness.
+-/
+theorem paper_theorem3_2_no_test_relevance_of_fairness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :
+    ¬ ∃ e base test,
+        S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test := by
+  intro hrel
+  exact (lg21_not_testBlank_iff_exists_witness.mpr hrel)
+    (C.latent_or_observable_implies_test_blank hfair)
+
+/--
 Theorem 3.2 contrapositive core: once the source implication from fairness to
 test-blankness is available, any concrete test-relevance witness rules out both
 latent-skill and observable fairness.
@@ -2013,6 +2068,21 @@ theorem paper_theorem3_2_law_fairness_impossibility_of_certificate
     lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
       lg21SourceLawTestBlank S := by
   exact C.latent_or_observable_implies_test_blank
+
+/--
+Theorem 3.2 continuous-law no-relevance form: under the source implication,
+latent or observable fairness rules out every concrete base/test relevance law
+witness.
+-/
+theorem paper_theorem3_2_law_no_test_relevance_of_fairness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (hfair : lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
+    ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test := by
+  intro hrel
+  exact (lg21_not_lawTestBlank_iff_exists_witness.mpr hrel)
+    (C.latent_or_observable_implies_test_blank hfair)
 
 /--
 Theorem 3.2 continuous-law contrapositive core: a concrete test-relevance

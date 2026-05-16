@@ -26,9 +26,11 @@ Last updated: 2026-05-16
   `LG21StrategicWithholdingSourceWitness`, and PMF/law wrappers prove failure
   of all three fairness criteria from concrete distribution-difference
   witnesses.
-- Theorem 3.2 now has PMF and continuous-law endpoints plus contrapositive
-  wrappers: a concrete base/test relevance witness rules out latent-skill or
-  observable fairness once the source unraveling implication is available.
+- Theorem 3.2 now has PMF and continuous-law endpoints, no-relevance forms,
+  and contrapositive wrappers: test-blankness is equivalent to absence of a
+  concrete base/test relevance witness, and such a witness rules out
+  latent-skill or observable fairness once the source unraveling implication is
+  available.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
