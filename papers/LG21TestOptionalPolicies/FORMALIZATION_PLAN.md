@@ -252,11 +252,13 @@ Last updated: 2026-05-16
   The report-required concrete direct endpoint applies it under the centered
   outside-payoff identity.  The distinct-tests bridge turns two different
   full-feature point estimates at one base profile into the off-mean witness
-  needed by the direct unfairness endpoints.  The remaining source gap is
-  discharging the final paper policy assumptions for the concrete
-  optional/report-required surfaces, especially the latent-to-observable
-  mixture identities, positive-share/support facts, and centered
-  outside-payoff identity.
+  needed by the direct unfairness endpoints, and the concrete optional and
+  report-required distinct-test endpoints expose that paper-facing relevance
+  condition directly on the binary-mixture point-estimate surfaces.  The
+  remaining source gap is discharging the final paper policy assumptions for
+  the concrete optional/report-required surfaces, especially the
+  latent-to-observable mixture identities, positive-share/support facts, and
+  centered outside-payoff identity.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -408,10 +410,12 @@ Last updated: 2026-05-16
    binary-mixture surface and a report-required direct endpoint routed through
    the centered outside-payoff variant.  The distinct-tests bridge now replaces
    the off-mean witness with the paper-facing condition that two full-feature
-   point estimates at one base profile differ.  Next work should discharge the
-   remaining paper policy assumptions for the concrete optional/report-required
-   surfaces, especially the latent-to-observable mixture identities,
-   positive-share/support facts, and centered outside-payoff identity.
+   point estimates at one base profile differ, and the concrete optional and
+   report-required wrappers now state that condition directly.  Next work
+   should discharge the remaining paper policy assumptions for the concrete
+   optional/report-required surfaces, especially the latent-to-observable
+   mixture identities, positive-share/support facts, and centered
+   outside-payoff identity.
 
 ## Reusable Library Seams
 

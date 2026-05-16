@@ -156,7 +156,12 @@ cache is kept as `source.txt` for named-statement audits.
   optional/report-required surfaces.  A distinct-tests bridge
   `paper_theorem3_2_not_latent_or_observable_fair_of_distinct_point_estimate_tests`
   now lets those direct endpoints use two different full-feature point
-  estimates as the paper-facing test-relevance witness.
+  estimates as the paper-facing test-relevance witness.  The concrete optional
+  and report-required endpoints
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_tests`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_tests_of_centered_outside`
+  expose this condition directly on the binary-mixture point-estimate surfaces.
 
 ## Source Notes
 
