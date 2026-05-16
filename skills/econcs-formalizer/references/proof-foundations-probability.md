@@ -45,6 +45,14 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   identities from Wald/geometric calculations. This closes sample-path
   ratio/time-fraction theorems with strong-law proof terms and keeps only the
   source's actual cycle-construction assumptions in the theorem signature.
+- For cutoff/threshold reward objectives with possible atoms on the threshold
+  boundary, do not default to a zero-boundary-mass assumption.  Prove the
+  one-sided dominated-convergence limits for the primitive set integrals:
+  approaching from below sends strict and complete threshold sets to the
+  complete threshold, while approaching from above sends both to the strict
+  threshold.  Then lift payment/time limits through the renewal-reward quotient
+  and prove upper semicontinuity of the max objective from the two one-sided
+  limits, since each one-sided limit is bounded by the pointwise max.
 - Keep the paper-facing source boundary honest: denominator-valid reward-rate
   routes should quantify over feasible measurable policies with positive mass,
   while broader measurable wrappers should either keep explicit positive-mass

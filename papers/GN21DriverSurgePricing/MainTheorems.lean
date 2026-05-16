@@ -178,10 +178,13 @@ the continuous CTMC source theorems.
 - `paper_theorem1_multiplicative_threshold_best_response_measurable`:
   multiplicative-pricing special case of Theorem 1, with accept-all as the
   complete threshold at rate `m`.
+- `paper_theorem1_single_state_threshold_best_response_measurable`:
+  source-facing measurable single-state threshold best-response theorem, closed
+  by one-sided dominated convergence for the compact cutoff objective.
 - `paper_theorem1_single_state_threshold_best_response_of_certificate`,
   `paper_theorem2_multiplicative_not_ic_of_witness`, and
-  `paper_theorem3_structured_prices_ic_of_certificate`: conditional
-  source-facing wrappers that name the remaining continuous certificates.
+  `paper_theorem3_structured_prices_ic_of_certificate`: certificate wrappers
+  for alternate or still-conditional source-facing routes.
 - `continuous_gn21SwitchProb`, `continuous_ctmcStructuredSurgePrice`,
   `continuousAt_mul_density_of_continuous`,
   `stronglyMeasurableAtFilter_mul_density_of_continuous`, and
@@ -1700,6 +1703,692 @@ theorem continuousOn_theorem1_cutoff_objective_of_boundary_measure_zero
     (continuousAt_theorem1_cutoff_objective_of_boundary_measure_zero
       μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
       htime_integrable_acceptAll hlambda (hboundary_zero c)).continuousWithinAt
+
+/--
+Left limits of strict thresholds include the boundary: as the cutoff approaches
+`c0` from below, the strict-threshold set integrals converge to the complete
+threshold at `c0`.
+-/
+theorem tendsto_setIntegral_strictThresholdPolicy_left
+    (μ : Measure TripLength) (w : PricingFunction) (f : TripLength → ℝ)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hf_integrable_acceptAll : IntegrableOn f acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, f τ ∂μ)
+      (𝓝[<] c0)
+      (𝓝 (∫ τ in completeThresholdPolicy w c0, f τ ∂μ)) := by
+  have hbound_integrable :
+      Integrable (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖) μ :=
+    (hf_integrable_acceptAll.integrable_indicator
+      measurableSet_acceptAllPolicy).norm
+  have hF_meas :
+      ∀ᶠ c in 𝓝[<] c0,
+        AEStronglyMeasurable
+          (fun τ : TripLength => (strictThresholdPolicy w c).indicator f τ) μ := by
+    filter_upwards with c
+    exact
+      ((hf_integrable_acceptAll.mono_set
+          (strictThresholdPolicy_subset_acceptAll w c)).integrable_indicator
+        (measurableSet_strictThresholdPolicy w c hrate_measurable)).aestronglyMeasurable
+  have h_bound :
+      ∀ᶠ c in 𝓝[<] c0,
+        ∀ᵐ τ : TripLength ∂μ,
+          ‖(strictThresholdPolicy w c).indicator f τ‖ ≤
+            ‖acceptAllPolicy.indicator f τ‖ := by
+    filter_upwards with c
+    exact ae_of_all μ (fun τ =>
+      norm_indicator_le_of_subset (strictThresholdPolicy_subset_acceptAll w c) f τ)
+  have h_lim :
+      ∀ᵐ τ : TripLength ∂μ,
+        Tendsto
+          (fun c : ℝ => (strictThresholdPolicy w c).indicator f τ)
+          (𝓝[<] c0)
+          (𝓝 ((completeThresholdPolicy w c0).indicator f τ)) := by
+    refine ae_of_all μ ?_
+    intro τ
+    by_cases hτ_pos : 0 < τ
+    · by_cases htarget : c0 ≤ w τ / τ
+      · exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [self_mem_nhdsWithin] with c hc
+            have hc_lt_rate : c < w τ / τ := lt_of_lt_of_le hc htarget
+            simp [strictThresholdPolicy, completeThresholdPolicy, hτ_pos,
+              hc_lt_rate, htarget])
+      · have hrate_lt : w τ / τ < c0 := lt_of_not_ge htarget
+        exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [mem_nhdsWithin_of_mem_nhds
+                (Ioi_mem_nhds hrate_lt)] with c hc
+            have hnot : ¬ c < w τ / τ := not_lt_of_ge (le_of_lt hc)
+            simp [strictThresholdPolicy, completeThresholdPolicy, hτ_pos,
+              htarget, hnot])
+    · exact tendsto_const_nhds.congr'
+        (by
+          filter_upwards with c
+          simp [strictThresholdPolicy, completeThresholdPolicy, hτ_pos])
+  have hindicator :
+      Tendsto
+        (fun c : ℝ =>
+          ∫ τ, (strictThresholdPolicy w c).indicator f τ ∂μ)
+        (𝓝[<] c0)
+        (𝓝 (∫ τ, (completeThresholdPolicy w c0).indicator f τ ∂μ)) :=
+    tendsto_integral_filter_of_dominated_convergence
+      (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖)
+      hF_meas h_bound hbound_integrable h_lim
+  have hdomain :
+      (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, f τ ∂μ) =
+        fun c : ℝ => ∫ τ, (strictThresholdPolicy w c).indicator f τ ∂μ := by
+    funext c
+    exact (integral_indicator
+      (measurableSet_strictThresholdPolicy w c hrate_measurable)).symm
+  have htarget :
+      ∫ τ in completeThresholdPolicy w c0, f τ ∂μ =
+        ∫ τ, (completeThresholdPolicy w c0).indicator f τ ∂μ :=
+    (integral_indicator
+      (measurableSet_completeThresholdPolicy w c0 hrate_measurable)).symm
+  rw [hdomain, htarget]
+  exact hindicator
+
+/--
+Right limits of strict thresholds exclude the boundary: as the cutoff approaches
+`c0` from above, strict-threshold set integrals converge to the strict threshold
+at `c0`.
+-/
+theorem tendsto_setIntegral_strictThresholdPolicy_right
+    (μ : Measure TripLength) (w : PricingFunction) (f : TripLength → ℝ)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hf_integrable_acceptAll : IntegrableOn f acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, f τ ∂μ)
+      (𝓝[>] c0)
+      (𝓝 (∫ τ in strictThresholdPolicy w c0, f τ ∂μ)) := by
+  have hbound_integrable :
+      Integrable (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖) μ :=
+    (hf_integrable_acceptAll.integrable_indicator
+      measurableSet_acceptAllPolicy).norm
+  have hF_meas :
+      ∀ᶠ c in 𝓝[>] c0,
+        AEStronglyMeasurable
+          (fun τ : TripLength => (strictThresholdPolicy w c).indicator f τ) μ := by
+    filter_upwards with c
+    exact
+      ((hf_integrable_acceptAll.mono_set
+          (strictThresholdPolicy_subset_acceptAll w c)).integrable_indicator
+        (measurableSet_strictThresholdPolicy w c hrate_measurable)).aestronglyMeasurable
+  have h_bound :
+      ∀ᶠ c in 𝓝[>] c0,
+        ∀ᵐ τ : TripLength ∂μ,
+          ‖(strictThresholdPolicy w c).indicator f τ‖ ≤
+            ‖acceptAllPolicy.indicator f τ‖ := by
+    filter_upwards with c
+    exact ae_of_all μ (fun τ =>
+      norm_indicator_le_of_subset (strictThresholdPolicy_subset_acceptAll w c) f τ)
+  have h_lim :
+      ∀ᵐ τ : TripLength ∂μ,
+        Tendsto
+          (fun c : ℝ => (strictThresholdPolicy w c).indicator f τ)
+          (𝓝[>] c0)
+          (𝓝 ((strictThresholdPolicy w c0).indicator f τ)) := by
+    refine ae_of_all μ ?_
+    intro τ
+    by_cases hτ_pos : 0 < τ
+    · by_cases htarget : c0 < w τ / τ
+      · exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [mem_nhdsWithin_of_mem_nhds
+                (Iio_mem_nhds htarget)] with c hc
+            have hc_lt_rate : c < w τ / τ := hc
+            simp [strictThresholdPolicy, hτ_pos, htarget, hc_lt_rate])
+      · have hrate_le : w τ / τ ≤ c0 := le_of_not_gt htarget
+        exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [self_mem_nhdsWithin] with c hc
+            have hnot : ¬ c < w τ / τ :=
+              not_lt_of_ge (le_trans hrate_le (le_of_lt hc))
+            simp [strictThresholdPolicy, hτ_pos, htarget, hnot])
+    · exact tendsto_const_nhds.congr'
+        (by
+          filter_upwards with c
+          simp [strictThresholdPolicy, hτ_pos])
+  have hindicator :
+      Tendsto
+        (fun c : ℝ =>
+          ∫ τ, (strictThresholdPolicy w c).indicator f τ ∂μ)
+        (𝓝[>] c0)
+        (𝓝 (∫ τ, (strictThresholdPolicy w c0).indicator f τ ∂μ)) :=
+    tendsto_integral_filter_of_dominated_convergence
+      (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖)
+      hF_meas h_bound hbound_integrable h_lim
+  have hdomain :
+      (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, f τ ∂μ) =
+        fun c : ℝ => ∫ τ, (strictThresholdPolicy w c).indicator f τ ∂μ := by
+    funext c
+    exact (integral_indicator
+      (measurableSet_strictThresholdPolicy w c hrate_measurable)).symm
+  have htarget :
+      ∫ τ in strictThresholdPolicy w c0, f τ ∂μ =
+        ∫ τ, (strictThresholdPolicy w c0).indicator f τ ∂μ :=
+    (integral_indicator
+      (measurableSet_strictThresholdPolicy w c0 hrate_measurable)).symm
+  rw [hdomain, htarget]
+  exact hindicator
+
+/--
+Left limits of complete thresholds keep the boundary: as the cutoff approaches
+`c0` from below, complete-threshold set integrals converge to the complete
+threshold at `c0`.
+-/
+theorem tendsto_setIntegral_completeThresholdPolicy_left
+    (μ : Measure TripLength) (w : PricingFunction) (f : TripLength → ℝ)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hf_integrable_acceptAll : IntegrableOn f acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, f τ ∂μ)
+      (𝓝[<] c0)
+      (𝓝 (∫ τ in completeThresholdPolicy w c0, f τ ∂μ)) := by
+  have hbound_integrable :
+      Integrable (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖) μ :=
+    (hf_integrable_acceptAll.integrable_indicator
+      measurableSet_acceptAllPolicy).norm
+  have hF_meas :
+      ∀ᶠ c in 𝓝[<] c0,
+        AEStronglyMeasurable
+          (fun τ : TripLength => (completeThresholdPolicy w c).indicator f τ) μ := by
+    filter_upwards with c
+    exact
+      ((hf_integrable_acceptAll.mono_set
+          (completeThresholdPolicy_subset_acceptAll w c)).integrable_indicator
+        (measurableSet_completeThresholdPolicy w c hrate_measurable)).aestronglyMeasurable
+  have h_bound :
+      ∀ᶠ c in 𝓝[<] c0,
+        ∀ᵐ τ : TripLength ∂μ,
+          ‖(completeThresholdPolicy w c).indicator f τ‖ ≤
+            ‖acceptAllPolicy.indicator f τ‖ := by
+    filter_upwards with c
+    exact ae_of_all μ (fun τ =>
+      norm_indicator_le_of_subset (completeThresholdPolicy_subset_acceptAll w c) f τ)
+  have h_lim :
+      ∀ᵐ τ : TripLength ∂μ,
+        Tendsto
+          (fun c : ℝ => (completeThresholdPolicy w c).indicator f τ)
+          (𝓝[<] c0)
+          (𝓝 ((completeThresholdPolicy w c0).indicator f τ)) := by
+    refine ae_of_all μ ?_
+    intro τ
+    by_cases hτ_pos : 0 < τ
+    · by_cases htarget : c0 ≤ w τ / τ
+      · exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [self_mem_nhdsWithin] with c hc
+            have hc_le_rate : c ≤ w τ / τ := le_trans (le_of_lt hc) htarget
+            simp [completeThresholdPolicy, hτ_pos, htarget, hc_le_rate])
+      · have hrate_lt : w τ / τ < c0 := lt_of_not_ge htarget
+        exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [mem_nhdsWithin_of_mem_nhds
+                (Ioi_mem_nhds hrate_lt)] with c hc
+            have hnot : ¬ c ≤ w τ / τ := not_le_of_gt hc
+            simp [completeThresholdPolicy, hτ_pos, htarget, hnot])
+    · exact tendsto_const_nhds.congr'
+        (by
+          filter_upwards with c
+          simp [completeThresholdPolicy, hτ_pos])
+  have hindicator :
+      Tendsto
+        (fun c : ℝ =>
+          ∫ τ, (completeThresholdPolicy w c).indicator f τ ∂μ)
+        (𝓝[<] c0)
+        (𝓝 (∫ τ, (completeThresholdPolicy w c0).indicator f τ ∂μ)) :=
+    tendsto_integral_filter_of_dominated_convergence
+      (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖)
+      hF_meas h_bound hbound_integrable h_lim
+  have hdomain :
+      (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, f τ ∂μ) =
+        fun c : ℝ => ∫ τ, (completeThresholdPolicy w c).indicator f τ ∂μ := by
+    funext c
+    exact (integral_indicator
+      (measurableSet_completeThresholdPolicy w c hrate_measurable)).symm
+  have htarget :
+      ∫ τ in completeThresholdPolicy w c0, f τ ∂μ =
+        ∫ τ, (completeThresholdPolicy w c0).indicator f τ ∂μ :=
+    (integral_indicator
+      (measurableSet_completeThresholdPolicy w c0 hrate_measurable)).symm
+  rw [hdomain, htarget]
+  exact hindicator
+
+/--
+Right limits of complete thresholds drop the boundary: as the cutoff approaches
+`c0` from above, complete-threshold set integrals converge to the strict
+threshold at `c0`.
+-/
+theorem tendsto_setIntegral_completeThresholdPolicy_right
+    (μ : Measure TripLength) (w : PricingFunction) (f : TripLength → ℝ)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hf_integrable_acceptAll : IntegrableOn f acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, f τ ∂μ)
+      (𝓝[>] c0)
+      (𝓝 (∫ τ in strictThresholdPolicy w c0, f τ ∂μ)) := by
+  have hbound_integrable :
+      Integrable (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖) μ :=
+    (hf_integrable_acceptAll.integrable_indicator
+      measurableSet_acceptAllPolicy).norm
+  have hF_meas :
+      ∀ᶠ c in 𝓝[>] c0,
+        AEStronglyMeasurable
+          (fun τ : TripLength => (completeThresholdPolicy w c).indicator f τ) μ := by
+    filter_upwards with c
+    exact
+      ((hf_integrable_acceptAll.mono_set
+          (completeThresholdPolicy_subset_acceptAll w c)).integrable_indicator
+        (measurableSet_completeThresholdPolicy w c hrate_measurable)).aestronglyMeasurable
+  have h_bound :
+      ∀ᶠ c in 𝓝[>] c0,
+        ∀ᵐ τ : TripLength ∂μ,
+          ‖(completeThresholdPolicy w c).indicator f τ‖ ≤
+            ‖acceptAllPolicy.indicator f τ‖ := by
+    filter_upwards with c
+    exact ae_of_all μ (fun τ =>
+      norm_indicator_le_of_subset (completeThresholdPolicy_subset_acceptAll w c) f τ)
+  have h_lim :
+      ∀ᵐ τ : TripLength ∂μ,
+        Tendsto
+          (fun c : ℝ => (completeThresholdPolicy w c).indicator f τ)
+          (𝓝[>] c0)
+          (𝓝 ((strictThresholdPolicy w c0).indicator f τ)) := by
+    refine ae_of_all μ ?_
+    intro τ
+    by_cases hτ_pos : 0 < τ
+    · by_cases htarget : c0 < w τ / τ
+      · exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [mem_nhdsWithin_of_mem_nhds
+                (Iio_mem_nhds htarget)] with c hc
+            have hc_le_rate : c ≤ w τ / τ := le_of_lt hc
+            simp [strictThresholdPolicy, completeThresholdPolicy, hτ_pos,
+              htarget, hc_le_rate])
+      · have hrate_le : w τ / τ ≤ c0 := le_of_not_gt htarget
+        exact tendsto_const_nhds.congr'
+          (by
+            filter_upwards [self_mem_nhdsWithin] with c hc
+            have hnot : ¬ c ≤ w τ / τ :=
+              not_le_of_gt (lt_of_le_of_lt hrate_le hc)
+            simp [strictThresholdPolicy, completeThresholdPolicy, hτ_pos,
+              htarget, hnot])
+    · exact tendsto_const_nhds.congr'
+        (by
+          filter_upwards with c
+          simp [strictThresholdPolicy, completeThresholdPolicy, hτ_pos])
+  have hindicator :
+      Tendsto
+        (fun c : ℝ =>
+          ∫ τ, (completeThresholdPolicy w c).indicator f τ ∂μ)
+        (𝓝[>] c0)
+        (𝓝 (∫ τ, (strictThresholdPolicy w c0).indicator f τ ∂μ)) :=
+    tendsto_integral_filter_of_dominated_convergence
+      (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖)
+      hF_meas h_bound hbound_integrable h_lim
+  have hdomain :
+      (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, f τ ∂μ) =
+        fun c : ℝ => ∫ τ, (completeThresholdPolicy w c).indicator f τ ∂μ := by
+    funext c
+    exact (integral_indicator
+      (measurableSet_completeThresholdPolicy w c hrate_measurable)).symm
+  have htarget :
+      ∫ τ in strictThresholdPolicy w c0, f τ ∂μ =
+        ∫ τ, (strictThresholdPolicy w c0).indicator f τ ∂μ :=
+    (integral_indicator
+      (measurableSet_strictThresholdPolicy w c0 hrate_measurable)).symm
+  rw [hdomain, htarget]
+  exact hindicator
+
+/-- Expected payment of strict thresholds has the complete-threshold left limit. -/
+theorem tendsto_singleStateTripPayment_strictThresholdPolicy_left
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripPayment μ w (strictThresholdPolicy w c))
+      (𝓝[<] c0)
+      (𝓝 (singleStateTripPayment μ w (completeThresholdPolicy w c0))) := by
+  simpa [singleStateTripPayment] using
+    tendsto_setIntegral_strictThresholdPolicy_left
+      μ w w c0 hrate_measurable hw_integrable_acceptAll
+
+/-- Expected trip time of strict thresholds has the complete-threshold left limit. -/
+theorem tendsto_singleStateTripTime_strictThresholdPolicy_left
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripTime μ (strictThresholdPolicy w c))
+      (𝓝[<] c0)
+      (𝓝 (singleStateTripTime μ (completeThresholdPolicy w c0))) := by
+  simpa [singleStateTripTime] using
+    tendsto_setIntegral_strictThresholdPolicy_left
+      μ w (fun τ : TripLength => τ) c0 hrate_measurable
+      htime_integrable_acceptAll
+
+/-- Expected payment of strict thresholds has the strict-threshold right limit. -/
+theorem tendsto_singleStateTripPayment_strictThresholdPolicy_right
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripPayment μ w (strictThresholdPolicy w c))
+      (𝓝[>] c0)
+      (𝓝 (singleStateTripPayment μ w (strictThresholdPolicy w c0))) := by
+  simpa [singleStateTripPayment] using
+    tendsto_setIntegral_strictThresholdPolicy_right
+      μ w w c0 hrate_measurable hw_integrable_acceptAll
+
+/-- Expected trip time of strict thresholds has the strict-threshold right limit. -/
+theorem tendsto_singleStateTripTime_strictThresholdPolicy_right
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripTime μ (strictThresholdPolicy w c))
+      (𝓝[>] c0)
+      (𝓝 (singleStateTripTime μ (strictThresholdPolicy w c0))) := by
+  simpa [singleStateTripTime] using
+    tendsto_setIntegral_strictThresholdPolicy_right
+      μ w (fun τ : TripLength => τ) c0 hrate_measurable
+      htime_integrable_acceptAll
+
+/-- Expected payment of complete thresholds has the complete-threshold left limit. -/
+theorem tendsto_singleStateTripPayment_completeThresholdPolicy_left
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripPayment μ w (completeThresholdPolicy w c))
+      (𝓝[<] c0)
+      (𝓝 (singleStateTripPayment μ w (completeThresholdPolicy w c0))) := by
+  simpa [singleStateTripPayment] using
+    tendsto_setIntegral_completeThresholdPolicy_left
+      μ w w c0 hrate_measurable hw_integrable_acceptAll
+
+/-- Expected trip time of complete thresholds has the complete-threshold left limit. -/
+theorem tendsto_singleStateTripTime_completeThresholdPolicy_left
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripTime μ (completeThresholdPolicy w c))
+      (𝓝[<] c0)
+      (𝓝 (singleStateTripTime μ (completeThresholdPolicy w c0))) := by
+  simpa [singleStateTripTime] using
+    tendsto_setIntegral_completeThresholdPolicy_left
+      μ w (fun τ : TripLength => τ) c0 hrate_measurable
+      htime_integrable_acceptAll
+
+/-- Expected payment of complete thresholds has the strict-threshold right limit. -/
+theorem tendsto_singleStateTripPayment_completeThresholdPolicy_right
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripPayment μ w (completeThresholdPolicy w c))
+      (𝓝[>] c0)
+      (𝓝 (singleStateTripPayment μ w (strictThresholdPolicy w c0))) := by
+  simpa [singleStateTripPayment] using
+    tendsto_setIntegral_completeThresholdPolicy_right
+      μ w w c0 hrate_measurable hw_integrable_acceptAll
+
+/-- Expected trip time of complete thresholds has the strict-threshold right limit. -/
+theorem tendsto_singleStateTripTime_completeThresholdPolicy_right
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    Tendsto
+      (fun c : ℝ => singleStateTripTime μ (completeThresholdPolicy w c))
+      (𝓝[>] c0)
+      (𝓝 (singleStateTripTime μ (strictThresholdPolicy w c0))) := by
+  simpa [singleStateTripTime] using
+    tendsto_setIntegral_completeThresholdPolicy_right
+      μ w (fun τ : TripLength => τ) c0 hrate_measurable
+      htime_integrable_acceptAll
+
+/-- Strict-threshold renewal rewards have the complete-threshold left limit. -/
+theorem tendsto_singleStateRenewalReward_strictThresholdPolicy_left
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    Tendsto
+      (fun c : ℝ =>
+        singleStateRenewalReward μ arrivalRate w (strictThresholdPolicy w c))
+      (𝓝[<] c0)
+      (𝓝 (singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c0))) := by
+  have hpayment :=
+    tendsto_singleStateTripPayment_strictThresholdPolicy_left
+      μ w c0 hrate_measurable hw_integrable_acceptAll
+  have htime :=
+    tendsto_singleStateTripTime_strictThresholdPolicy_left
+      μ w c0 hrate_measurable htime_integrable_acceptAll
+  have htime_nonneg :
+      0 ≤ singleStateTripTime μ (completeThresholdPolicy w c0) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (completeThresholdPolicy w c0)
+      (measurableSet_completeThresholdPolicy w c0 hrate_measurable)
+      (completeThresholdPolicy_subset_acceptAll w c0)
+  unfold singleStateRenewalReward
+  refine (tendsto_const_nhds.mul hpayment).div
+    (tendsto_const_nhds.add (tendsto_const_nhds.mul htime)) ?_
+  exact ne_of_gt (by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg])
+
+/-- Strict-threshold renewal rewards have the strict-threshold right limit. -/
+theorem tendsto_singleStateRenewalReward_strictThresholdPolicy_right
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    Tendsto
+      (fun c : ℝ =>
+        singleStateRenewalReward μ arrivalRate w (strictThresholdPolicy w c))
+      (𝓝[>] c0)
+      (𝓝 (singleStateRenewalReward μ arrivalRate w
+        (strictThresholdPolicy w c0))) := by
+  have hpayment :=
+    tendsto_singleStateTripPayment_strictThresholdPolicy_right
+      μ w c0 hrate_measurable hw_integrable_acceptAll
+  have htime :=
+    tendsto_singleStateTripTime_strictThresholdPolicy_right
+      μ w c0 hrate_measurable htime_integrable_acceptAll
+  have htime_nonneg :
+      0 ≤ singleStateTripTime μ (strictThresholdPolicy w c0) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (strictThresholdPolicy w c0)
+      (measurableSet_strictThresholdPolicy w c0 hrate_measurable)
+      (strictThresholdPolicy_subset_acceptAll w c0)
+  unfold singleStateRenewalReward
+  refine (tendsto_const_nhds.mul hpayment).div
+    (tendsto_const_nhds.add (tendsto_const_nhds.mul htime)) ?_
+  exact ne_of_gt (by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg])
+
+/-- Complete-threshold renewal rewards have the complete-threshold left limit. -/
+theorem tendsto_singleStateRenewalReward_completeThresholdPolicy_left
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    Tendsto
+      (fun c : ℝ =>
+        singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c))
+      (𝓝[<] c0)
+      (𝓝 (singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w c0))) := by
+  have hpayment :=
+    tendsto_singleStateTripPayment_completeThresholdPolicy_left
+      μ w c0 hrate_measurable hw_integrable_acceptAll
+  have htime :=
+    tendsto_singleStateTripTime_completeThresholdPolicy_left
+      μ w c0 hrate_measurable htime_integrable_acceptAll
+  have htime_nonneg :
+      0 ≤ singleStateTripTime μ (completeThresholdPolicy w c0) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (completeThresholdPolicy w c0)
+      (measurableSet_completeThresholdPolicy w c0 hrate_measurable)
+      (completeThresholdPolicy_subset_acceptAll w c0)
+  unfold singleStateRenewalReward
+  refine (tendsto_const_nhds.mul hpayment).div
+    (tendsto_const_nhds.add (tendsto_const_nhds.mul htime)) ?_
+  exact ne_of_gt (by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg])
+
+/-- Complete-threshold renewal rewards have the strict-threshold right limit. -/
+theorem tendsto_singleStateRenewalReward_completeThresholdPolicy_right
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    Tendsto
+      (fun c : ℝ =>
+        singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c))
+      (𝓝[>] c0)
+      (𝓝 (singleStateRenewalReward μ arrivalRate w
+        (strictThresholdPolicy w c0))) := by
+  have hpayment :=
+    tendsto_singleStateTripPayment_completeThresholdPolicy_right
+      μ w c0 hrate_measurable hw_integrable_acceptAll
+  have htime :=
+    tendsto_singleStateTripTime_completeThresholdPolicy_right
+      μ w c0 hrate_measurable htime_integrable_acceptAll
+  have htime_nonneg :
+      0 ≤ singleStateTripTime μ (strictThresholdPolicy w c0) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (strictThresholdPolicy w c0)
+      (measurableSet_strictThresholdPolicy w c0 hrate_measurable)
+      (strictThresholdPolicy_subset_acceptAll w c0)
+  unfold singleStateRenewalReward
+  refine (tendsto_const_nhds.mul hpayment).div
+    (tendsto_const_nhds.add (tendsto_const_nhds.mul htime)) ?_
+  exact ne_of_gt (by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg])
+
+/--
+If a real-valued function has one-sided limits below its value at `x`, then it
+is upper-semicontinuous within any ambient set at `x`.
+-/
+theorem upperSemicontinuousWithinAt_of_tendsto_left_right_le
+    (f : ℝ → ℝ) (s : Set ℝ) (x left right : ℝ)
+    (hleft_le : left ≤ f x)
+    (hright_le : right ≤ f x)
+    (hleft : Tendsto f (𝓝[<] x) (𝓝 left))
+    (hright : Tendsto f (𝓝[>] x) (𝓝 right)) :
+    UpperSemicontinuousWithinAt f s x := by
+  rw [upperSemicontinuousWithinAt_iff]
+  intro y hxy
+  have hleft_lt : left < y := lt_of_le_of_lt hleft_le hxy
+  have hright_lt : right < y := lt_of_le_of_lt hright_le hxy
+  have hleft_event :
+      ∀ᶠ z in 𝓝[s ∩ Set.Iio x] x, f z < y :=
+    (hleft.eventually (Iio_mem_nhds hleft_lt)).filter_mono
+      (nhdsWithin_mono _ Set.inter_subset_right)
+  have hright_event_gt : ∀ᶠ z in 𝓝[>] x, f z < y :=
+    hright.eventually (Iio_mem_nhds hright_lt)
+  have hself_event : ∀ᶠ z in 𝓝[{x}] x, f z < y := by
+    simpa [nhdsWithin_singleton, eventually_pure] using hxy
+  have hright_event_ge : ∀ᶠ z in 𝓝[≥] x, f z < y := by
+    rw [← nhdsGT_sup_nhdsWithin_singleton x, eventually_sup]
+    exact ⟨hright_event_gt, hself_event⟩
+  have hright_event :
+      ∀ᶠ z in 𝓝[s ∩ Set.Ici x] x, f z < y :=
+    hright_event_ge.filter_mono
+      (nhdsWithin_mono _ Set.inter_subset_right)
+  rw [← nhdsWithinLT_sup_nhdsWithinGE (a := x) (s := s), eventually_sup]
+  exact ⟨hleft_event, hright_event⟩
+
+/--
+The strict/complete cutoff objective is compact-upper-semicontinuous with no
+atom-free boundary assumption.  At a boundary atom, both threshold rewards have
+the complete-threshold value as their left limit and the strict-threshold value
+as their right limit, so the pointwise maximum has one-sided limits bounded by
+its value at the cutoff.
+-/
+theorem upperSemicontinuousOn_theorem1_cutoff_objective
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (C : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    UpperSemicontinuousOn
+      (fun c : ℝ =>
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)))
+      (Set.Icc 0 C) := by
+  intro c0 _hc0
+  let strictReward : ℝ → ℝ := fun c =>
+    singleStateRenewalReward μ arrivalRate w (strictThresholdPolicy w c)
+  let completeReward : ℝ → ℝ := fun c =>
+    singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c)
+  let objective : ℝ → ℝ := fun c => max (strictReward c) (completeReward c)
+  have hleft_strict :
+      Tendsto strictReward (𝓝[<] c0) (𝓝 (completeReward c0)) := by
+    simpa [strictReward, completeReward] using
+      tendsto_singleStateRenewalReward_strictThresholdPolicy_left
+        μ arrivalRate w c0 hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda
+  have hleft_complete :
+      Tendsto completeReward (𝓝[<] c0) (𝓝 (completeReward c0)) := by
+    simpa [completeReward] using
+      tendsto_singleStateRenewalReward_completeThresholdPolicy_left
+        μ arrivalRate w c0 hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda
+  have hright_strict :
+      Tendsto strictReward (𝓝[>] c0) (𝓝 (strictReward c0)) := by
+    simpa [strictReward] using
+      tendsto_singleStateRenewalReward_strictThresholdPolicy_right
+        μ arrivalRate w c0 hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda
+  have hright_complete :
+      Tendsto completeReward (𝓝[>] c0) (𝓝 (strictReward c0)) := by
+    simpa [strictReward, completeReward] using
+      tendsto_singleStateRenewalReward_completeThresholdPolicy_right
+        μ arrivalRate w c0 hrate_measurable hw_integrable_acceptAll
+        htime_integrable_acceptAll hlambda
+  have hleft_objective :
+      Tendsto objective (𝓝[<] c0) (𝓝 (completeReward c0)) := by
+    simpa [objective] using hleft_strict.max hleft_complete
+  have hright_objective :
+      Tendsto objective (𝓝[>] c0) (𝓝 (strictReward c0)) := by
+    simpa [objective] using hright_strict.max hright_complete
+  have husc :
+      UpperSemicontinuousWithinAt objective (Set.Icc 0 C) c0 :=
+    upperSemicontinuousWithinAt_of_tendsto_left_right_le
+      objective (Set.Icc 0 C) c0 (completeReward c0) (strictReward c0)
+      (le_max_right _ _) (le_max_left _ _) hleft_objective hright_objective
+  change UpperSemicontinuousWithinAt objective (Set.Icc 0 C) c0
+  exact husc
 
 /-- Expected payment of strict thresholds vanishes in the high-cutoff tail. -/
 theorem singleStateTripPayment_strictThresholdPolicy_tendsto_zero
@@ -5684,6 +6373,38 @@ theorem paper_theorem1_single_state_threshold_best_response_measurable_of_no_bou
         continuousOn_theorem1_cutoff_objective_of_boundary_measure_zero
           μ arrivalRate w C hrate_measurable hw_integrable_acceptAll
           htime_integrable_acceptAll hlambda hboundary_zero)
+
+/--
+Theorem 1, source-facing measurable single-state threshold best response.  The
+compactness step is now closed without the earlier zero-boundary-mass
+regularity condition: one-sided dominated convergence proves upper
+semicontinuity of the strict/complete cutoff objective even when positive mass
+lies on a threshold boundary.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity
+      μ arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hpayment_acceptAll_pos
+      (fun C _hC =>
+        upperSemicontinuousOn_theorem1_cutoff_objective
+          μ arrivalRate w C hrate_measurable hw_integrable_acceptAll
+          htime_integrable_acceptAll hlambda)
 
 /--
 Theorem 1, conditional source-facing wrapper: given the continuous

@@ -42,17 +42,26 @@ continuousAt_setIntegral_strictThresholdPolicy_of_boundary_measure_zero
 continuousAt_setIntegral_completeThresholdPolicy_of_boundary_measure_zero
 continuousOn_theorem1_cutoff_objective_of_boundary_measure_zero
 paper_theorem1_single_state_threshold_best_response_measurable_of_no_boundary_mass
+tendsto_setIntegral_strictThresholdPolicy_left
+tendsto_setIntegral_strictThresholdPolicy_right
+tendsto_setIntegral_completeThresholdPolicy_left
+tendsto_setIntegral_completeThresholdPolicy_right
+upperSemicontinuousOn_theorem1_cutoff_objective
+paper_theorem1_single_state_threshold_best_response_measurable
 ```
 
-The remaining general Theorem 1 work is now exactly the source Step 3 compact
-upper-semicontinuity work: prove compact upper-semicontinuity of the
-strict/complete cutoff objective from the paper's continuity/distribution
-assumptions in the atom-at-threshold case.  Lean now proves the high-reward
-band/gap dichotomy internally, derives the negative-cutoff left tail from
-nonnegative on-trip rates, derives the high-cutoff right tail from antitone
-threshold-set convergence plus accept-all payment/time integrability, and
-closes the dominated-convergence compact-continuity route when every threshold
-boundary has zero measure.
+Theorem 1 is now closed for the source measurable single-state threshold best
+response under the explicit source primitives in the Lean statement:
+measurable nonnegative on-trip rates, finite accept-all mass, accept-all
+payment/time integrability, positive arrival rate, and positive accept-all
+payment.  Lean proves the high-reward band/gap dichotomy internally, derives
+the negative-cutoff left tail from nonnegative on-trip rates, derives the
+high-cutoff right tail from antitone threshold-set convergence plus accept-all
+payment/time integrability, and closes the atom-at-threshold compactness seam
+by one-sided dominated convergence.  From the left, strict and complete
+threshold rewards converge to the complete-threshold reward; from the right,
+they converge to the strict-threshold reward; therefore the strict/complete
+max cutoff objective is upper-semicontinuous on every compact interval.
 Proposition 3.1 and the single-state multiplicative-pricing corollary are
 closed for the actual renewal reward on measurable feasible policies.
 
