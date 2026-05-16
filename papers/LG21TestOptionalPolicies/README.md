@@ -345,7 +345,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_surface`
   make the no-access and mixture identities definitional for those surfaces,
   leaving only the source certificate, a positive-mass event witness, and the
-  report-required outside-payoff equality.
+  report-required outside-payoff equality.  The constant-latent variants
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface`
+  also discharge the latent-to-observable identities by making latent kernels
+  skill-independent copies of the observable laws.
 
 ## Source Notes
 
