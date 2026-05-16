@@ -459,11 +459,16 @@ into the concrete endpoint policy data.
   Lemma 5 work is no longer this interval geometry, fixed-response set
   comparison, restricted-optimality plumbing, or fixed-response certificate
   plumbing.  The first inner-regularity part of source Step 1 is also now
-  compiled as `GN21FiniteOpenBallApproximation` and
-  `exists_gn21FiniteOpenBallApproximation_of_isOpen`: every open trip policy
-  under a finite regular measure has a finite open-ball subpolicy with
-  arbitrarily small omitted mass.  The remaining Lemma 5 work is the source
-  symmetric-difference/tail-normal open-set approximation plus
+  compiled as `GN21FiniteOpenBallApproximation`,
+  `GN21FiniteOpenIntervalApproximation`,
+  `exists_gn21FiniteOpenBallApproximation_of_isOpen`,
+  `GN21FiniteOpenBallApproximation.to_interval`,
+  `exists_gn21FiniteOpenIntervalApproximation_of_isOpen`, and
+  `GN21FiniteOpenIntervalApproximation.measure_symmDiff_lt`: every open trip
+  policy under a finite regular measure has a finite open-interval subpolicy
+  with arbitrarily small omitted mass, and its symmetric-difference error is
+  the same omitted mass because it is an inner approximation.  The remaining
+  Lemma 5 work is the source tail-normal finite-interval normalization plus
   endpoint-continuity argument that identifies the nonlinear endpoint path with
   this positive-response dominance.
 - The Theorem 4 endpoint layer now has AE shape predicates

@@ -10,7 +10,7 @@ import Mathlib.MeasureTheory.Integral.Bochner.Set
 open EconCSLib
 open MeasureTheory
 open Filter
-open scoped Function ProbabilityTheory Topology ENNReal
+open scoped Function ProbabilityTheory Topology ENNReal symmDiff
 
 /-!
 # Paper-Facing Theorems: Driver Surge Pricing
@@ -446,6 +446,40 @@ structure GN21FiniteOpenBallApproximation
     μ (σ \ ⋃ i : index, Metric.ball (center i) (radius i)) < ε
 
 /--
+Finite open-interval approximation of an open trip policy.  This is the same
+Step 1 approximation as `GN21FiniteOpenBallApproximation`, stated with
+explicit lower and upper endpoints.
+-/
+structure GN21FiniteOpenIntervalApproximation
+    (μ : Measure TripLength) (σ : TripPolicy) (ε : ℝ≥0∞) where
+  index : Type
+  finite_index : Fintype index
+  lower : index → ℝ
+  upper : index → ℝ
+  lower_lt_upper : ∀ i, lower i < upper i
+  interval_subset : ∀ i, Set.Ioo (lower i) (upper i) ⊆ σ
+  measure_omitted_lt :
+    μ (σ \ ⋃ i : index, Set.Ioo (lower i) (upper i)) < ε
+
+/-- Convert a finite open-ball approximation on `ℝ` into endpoint intervals. -/
+noncomputable def GN21FiniteOpenBallApproximation.to_interval
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenBallApproximation μ σ ε) :
+    GN21FiniteOpenIntervalApproximation μ σ ε where
+  index := A.index
+  finite_index := A.finite_index
+  lower := fun i => A.center i - A.radius i
+  upper := fun i => A.center i + A.radius i
+  lower_lt_upper := by
+    intro i
+    linarith [A.radius_pos i]
+  interval_subset := by
+    intro i
+    simpa [Real.ball_eq_Ioo] using A.ball_subset i
+  measure_omitted_lt := by
+    simpa [Real.ball_eq_Ioo] using A.measure_omitted_lt
+
+/--
 Lemma 5 Step 1, in the form needed by the continuous proof: every open
 measurable trip policy with finite mass can be approximated from inside by a
 finite union of open intervals/balls, with arbitrarily small omitted mass.
@@ -501,6 +535,39 @@ theorem exists_gn21FiniteOpenBallApproximation_of_isOpen
         intro y hy
         exact ⟨hy.1, fun hyK => hy.2 (hK_subset_union hyK)⟩)).trans_lt
       hKdiff
+
+/--
+Lemma 5 Step 1 in explicit endpoint form: every open trip policy under a
+finite regular measure has a finite open-interval subpolicy whose omitted mass
+is arbitrarily small.
+-/
+theorem exists_gn21FiniteOpenIntervalApproximation_of_isOpen
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {σ : TripPolicy} (hσ_open : IsOpen σ)
+    {ε : ℝ≥0∞} (hε : ε ≠ 0) :
+    Nonempty (GN21FiniteOpenIntervalApproximation μ σ ε) := by
+  rcases exists_gn21FiniteOpenBallApproximation_of_isOpen
+      μ hσ_open hε with
+    ⟨A⟩
+  exact ⟨A.to_interval⟩
+
+/--
+Because the finite-interval approximation is an inner approximation, its
+symmetric-difference error is exactly the omitted mass controlled in Step 1.
+-/
+theorem GN21FiniteOpenIntervalApproximation.measure_symmDiff_lt
+    {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
+    (A : GN21FiniteOpenIntervalApproximation μ σ ε) :
+    μ (σ ∆ (⋃ i : A.index, Set.Ioo (A.lower i) (A.upper i))) <
+      ε := by
+  let V : Set TripLength := ⋃ i : A.index, Set.Ioo (A.lower i) (A.upper i)
+  have hV_subset : V ⊆ σ := by
+    intro x hx
+    rcases Set.mem_iUnion.1 hx with ⟨i, hxi⟩
+    exact A.interval_subset i hxi
+  have hsymm : σ ∆ V = σ \ V := by
+    rw [Set.symmDiff_def, Set.diff_eq_empty.2 hV_subset, Set.union_empty]
+  simpa [V, hsymm] using A.measure_omitted_lt
 
 /-- Lifetime earnings-rate functional for a one-state policy. -/
 abbrev SingleStateReward := TripPolicy → ℝ
