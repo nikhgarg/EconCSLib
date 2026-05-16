@@ -11189,6 +11189,174 @@ theorem singleStateRenewalReward_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
     singleStateRenewalReward_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
       μ arrivalRate w t hw_integrable_acceptAll htime_integrable_acceptAll
 
+/--
+The GN21 exit-weight primitive is unchanged by a coincident-cutoff
+middle-rejection policy under a nonatomic trip-length measure.
+-/
+theorem gn21ExitWeightIntegral_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate switchIJ switchJI t : ℝ)
+    (hq_integrable_acceptAll :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        acceptAllPolicy μ) :
+    gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI
+        (rejectMiddleTripsPolicy t t) =
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI
+        acceptAllPolicy := by
+  let removed : TripPolicy := acceptAllPolicy ∩ ({t} : Set ℝ)
+  have hpolicy :
+      rejectMiddleTripsPolicy t t = acceptAllPolicy \ removed := by
+    rw [rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton]
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1, fun hremoved => hτ.2 hremoved.2⟩
+    · intro hτ
+      exact ⟨hτ.1, fun hτ_eq => hτ.2 ⟨hτ.1, hτ_eq⟩⟩
+  rw [hpolicy]
+  have hremoved_subset : removed ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hτ.1
+  have hremoved_measurable : MeasurableSet removed :=
+    measurableSet_acceptAllPolicy.inter (measurableSet_singleton t)
+  have hmeasure_zero : μ removed = 0 :=
+    measure_mono_null (Set.inter_subset_right) (measure_singleton t)
+  exact
+    gn21ExitWeightIntegral_diff_eq_self_of_measure_zero_component
+      μ arrivalRate switchIJ switchJI acceptAllPolicy removed
+      hremoved_subset hremoved_measurable hq_integrable_acceptAll
+      hmeasure_zero
+
+/--
+The GN21 scaled-time primitive is unchanged by a coincident-cutoff
+middle-rejection policy under a nonatomic trip-length measure.
+-/
+theorem gn21ScaledStateTime_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate t : ℝ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    gn21ScaledStateTime μ arrivalRate (rejectMiddleTripsPolicy t t) =
+      gn21ScaledStateTime μ arrivalRate acceptAllPolicy := by
+  let removed : TripPolicy := acceptAllPolicy ∩ ({t} : Set ℝ)
+  have hpolicy :
+      rejectMiddleTripsPolicy t t = acceptAllPolicy \ removed := by
+    rw [rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton]
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1, fun hremoved => hτ.2 hremoved.2⟩
+    · intro hτ
+      exact ⟨hτ.1, fun hτ_eq => hτ.2 ⟨hτ.1, hτ_eq⟩⟩
+  rw [hpolicy]
+  have hremoved_subset : removed ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hτ.1
+  have hremoved_measurable : MeasurableSet removed :=
+    measurableSet_acceptAllPolicy.inter (measurableSet_singleton t)
+  have hmeasure_zero : μ removed = 0 :=
+    measure_mono_null (Set.inter_subset_right) (measure_singleton t)
+  exact
+    gn21ScaledStateTime_diff_eq_self_of_measure_zero_component
+      μ arrivalRate acceptAllPolicy removed hremoved_subset
+      hremoved_measurable htime_integrable_acceptAll hmeasure_zero
+
+/--
+The GN21 scaled-earning primitive is unchanged by a coincident-cutoff
+middle-rejection policy under a nonatomic trip-length measure.
+-/
+theorem gn21ScaledStateEarning_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate : ℝ) (w : PricingFunction) (t : ℝ)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    gn21ScaledStateEarning μ arrivalRate w (rejectMiddleTripsPolicy t t) =
+      gn21ScaledStateEarning μ arrivalRate w acceptAllPolicy := by
+  let removed : TripPolicy := acceptAllPolicy ∩ ({t} : Set ℝ)
+  have hpolicy :
+      rejectMiddleTripsPolicy t t = acceptAllPolicy \ removed := by
+    rw [rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton]
+    ext τ
+    constructor
+    · intro hτ
+      exact ⟨hτ.1, fun hremoved => hτ.2 hremoved.2⟩
+    · intro hτ
+      exact ⟨hτ.1, fun hτ_eq => hτ.2 ⟨hτ.1, hτ_eq⟩⟩
+  rw [hpolicy]
+  have hremoved_subset : removed ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hτ.1
+  have hremoved_measurable : MeasurableSet removed :=
+    measurableSet_acceptAllPolicy.inter (measurableSet_singleton t)
+  have hmeasure_zero : μ removed = 0 :=
+    measure_mono_null (Set.inter_subset_right) (measure_singleton t)
+  exact
+    gn21ScaledStateEarning_diff_eq_self_of_measure_zero_component
+      μ arrivalRate w acceptAllPolicy removed hremoved_subset
+      hremoved_measurable hw_integrable_acceptAll hmeasure_zero
+
+/--
+Source-shaped version of the `Q_i` boundary-removal bridge for any feasible
+coincident-cutoff middle-rejection policy.
+-/
+theorem gn21ExitWeightIntegral_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate switchIJ switchJI : ℝ)
+    (σ : TripPolicy) (t : ℝ)
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hq_integrable_acceptAll :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ)
+        acceptAllPolicy μ) :
+    gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI σ =
+      gn21ExitWeightIntegral μ arrivalRate switchIJ switchJI
+        acceptAllPolicy := by
+  rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ExitWeightIntegral_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+      μ arrivalRate switchIJ switchJI t hq_integrable_acceptAll
+
+/--
+Source-shaped version of the `T_i` boundary-removal bridge for any feasible
+coincident-cutoff middle-rejection policy.
+-/
+theorem gn21ScaledStateTime_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate : ℝ)
+    (σ : TripPolicy) (t : ℝ)
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ) :
+    gn21ScaledStateTime μ arrivalRate σ =
+      gn21ScaledStateTime μ arrivalRate acceptAllPolicy := by
+  rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateTime_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+      μ arrivalRate t htime_integrable_acceptAll
+
+/--
+Source-shaped version of the `W_i` boundary-removal bridge for any feasible
+coincident-cutoff middle-rejection policy.
+-/
+theorem gn21ScaledStateEarning_rejectsMiddleTrips_self_eq_acceptAll_of_noAtoms
+    (μ : Measure TripLength) [NoAtoms μ]
+    (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy) (t : ℝ)
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ) :
+    gn21ScaledStateEarning μ arrivalRate w σ =
+      gn21ScaledStateEarning μ arrivalRate w acceptAllPolicy := by
+  rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+    hshape hsub]
+  exact
+    gn21ScaledStateEarning_rejectMiddleTripsPolicy_self_eq_acceptAll_of_noAtoms
+      μ arrivalRate w t hw_integrable_acceptAll
+
 /-- A feasible long-trip-rejection shape cannot be accept-all for finite cutoff. -/
 theorem not_acceptsAllTrips_of_rejectsLongTrips_of_subset_acceptAll
     {σ : TripPolicy} {t : ℝ}
