@@ -245,8 +245,11 @@ Last updated: 2026-05-16
   point-estimate surface and latent-to-observable mixture reduction.  The
   centered-outside variant reduces the report-required outside-payoff identity
   to the algebraic condition that the affine numerator at the resampling mean
-  is half the denominator.  The remaining source gap is discharging the final
-  paper policy assumptions for the concrete optional/report-required surfaces.
+  is half the denominator.  The point-estimate unfairness wrapper now converts
+  these fairness-to-test-blank routes into direct latent-or-observable
+  unfairness from an explicit off-mean test witness.  The remaining source gap
+  is discharging the final paper policy assumptions for the concrete
+  optional/report-required surfaces.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
   reported-score estimate plus a non-report estimate inside a nontrivial cutoff
@@ -391,8 +394,10 @@ Last updated: 2026-05-16
    formula definitional, and the concrete report-required fairness endpoint
    adds the corresponding binary-mixture surface and latent-to-observable
    reduction.  The centered-outside variant reduces the report-required
-   outside payoff to a numerator-equals-half-denominator identity.  Next work
-   should discharge the remaining paper policy assumptions for the concrete
+   outside payoff to a numerator-equals-half-denominator identity.  The
+   point-estimate unfairness wrapper now turns these implications into direct
+   unfairness from an off-mean point-estimate witness.  Next work should
+   discharge the remaining paper policy assumptions for the concrete
    optional/report-required surfaces.
 
 ## Reusable Library Seams

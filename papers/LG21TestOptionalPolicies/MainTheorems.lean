@@ -4185,6 +4185,59 @@ noncomputable def lg21BinaryMixturePointEstimateSurface
   fullFeatureEstimate := fun e base test =>
     PMF.pure (actorValue e base (actorOfTest e base test))
 
+/-- Point-mass PMFs are equal exactly when their atoms are equal. -/
+theorem lg21_pmf_pure_eq_iff
+    {Estimate : Type*} [DecidableEq Estimate] {x y : Estimate} :
+    PMF.pure x = PMF.pure y ↔ x = y := by
+  constructor
+  · intro h
+    by_contra hne
+    have hmass : PMF.pure x x = PMF.pure y x := by
+      simpa using congrArg (fun μ : PMF Estimate => μ x) h
+    have hleft : PMF.pure x x = (1 : ℝ≥0∞) := by
+      simp [PMF.pure_apply]
+    have hright : PMF.pure y x = (0 : ℝ≥0∞) := by
+      simp [PMF.pure_apply, hne]
+    rw [hleft, hright] at hmass
+    norm_num at hmass
+  · intro h
+    subst h
+    rfl
+
+/--
+Direct Theorem 3.2 contradiction for point-estimate surfaces.  If a
+paper-specific route proves latent-or-observable fairness implies test
+blankness, then one full-feature point estimate off the base-only acting mean
+rules out latent or observable fairness.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hfair_to_blank :
+      lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S)
+    (e : S.Equilibrium) (base : Base) (test : Test)
+    (hne :
+      actorValue e base (actorOfTest e base test) ≠
+        pmfExp (actorLaw e base) (actorValue e base)) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  intro hfair
+  have hblank := hfair_to_blank hfair e base test
+  rw [hbasePoint e base, hfullPoint e base test] at hblank
+  exact hne (lg21_pmf_pure_eq_iff.mp hblank).symm
+
 /--
 Theorem 3.2 mixture-cancellation algebra for finite estimate laws.  This is
 the paper's displayed implication

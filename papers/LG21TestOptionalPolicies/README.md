@@ -142,8 +142,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside`
   reduces the report-required outside-payoff identity to the algebraic
   condition that the affine numerator at the resampling mean is half the
-  denominator.  The remaining source gap is discharging the final paper policy
-  assumptions for the concrete optional/report-required surfaces.
+  denominator.  The direct contradiction
+  `paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness`
+  now converts any latent-or-observable-fairness-to-test-blank route into
+  explicit unfairness from a point-estimate test witness off the acting mean.
+  The remaining source gap is discharging the final paper policy assumptions
+  for the concrete optional/report-required surfaces.
 
 ## Source Notes
 

@@ -3617,6 +3617,36 @@ theorem paper_interface_theorem3_2_nonblank_off_mean_witness_of_point_estimate_s
     actorLaw actorValue actorOfTest hbasePoint hfullPoint hmass
 
 /--
+Direct Theorem 3.2 contradiction for scalar point-estimate PMF surfaces.
+-/
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hfair_to_blank :
+      lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S)
+    (e : S.Equilibrium) (base : Base) (test : Test)
+    (hne :
+      actorValue e base (actorOfTest e base test) ≠
+        pmfExp (actorLaw e base) (actorValue e base)) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :=
+  paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
+    actorLaw actorValue actorOfTest hbasePoint hfullPoint hfair_to_blank
+    e base test hne
+
+/--
 Theorem 3.2 final-witness constructor for abstract point-law surfaces.
 -/
 theorem paper_interface_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
