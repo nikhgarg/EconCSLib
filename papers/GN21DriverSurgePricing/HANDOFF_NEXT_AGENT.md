@@ -252,6 +252,20 @@ representative conclusion.  It should speed up the measured quotient response,
 which is a positive scaling of the Lemma 6 normalized response on positive
 trip lengths.  Use `Lemma5PositiveResponsePolicyFormData.of_positive_scaling`
 to transfer the policy-form/null-zero package through such a positive scaling.
+The measured response scaling algebra is compiled:
+`gn21LeftLinearResponse_eq_scaled_lemma6Response` handles the scalar
+cross-multiplication identity,
+`gn21LeftLinearResponse_lemma6_scale_pos` handles positivity of the multiplier,
+and
+`gn21MeasuredLeftMarginalResponse_eq_scaled_lemma6Response` /
+`gn21MeasuredRightMarginalResponse_eq_scaled_lemma6Response` identify the
+measured left/right Lemma 5 marginal responses as positive scalings of the
+normalized Lemma 6 response under the current reward-rate identities
+`W_i = R_i*T_i`, `W_j = R_j*T_j`, nonzero state times, and nonzero aggregate
+denominator.  The next closeout step is to package these identities with the
+existing Lemma 6/7/8 policy-form data into
+`Lemma5PositiveResponsePolicyFormData`, then feed the existing marginal
+optimality bridge and feasible a.e. endpoint.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

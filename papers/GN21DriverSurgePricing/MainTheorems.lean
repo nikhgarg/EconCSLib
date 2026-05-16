@@ -45219,6 +45219,146 @@ theorem gn21MeasuredRightLinearScore_eq_const_add_marginalSetReward
   ring_nf
 
 /--
+Scalar algebra relating the fixed-response marginal score from quotient
+cross-multiplication to Lemma 6's normalized response.  The left-state
+marginal response is a positive scalar multiple of the normalized Lemma 6
+response under the usual positive primitives.
+-/
+theorem gn21LeftLinearResponse_eq_scaled_lemma6Response
+    (q u wi Qi Qj Ti Tj Wi Wj Ri Rj : ℝ)
+    (hden : Qi * Tj + Qj * Ti ≠ 0)
+    (hu : u ≠ 0) (hTi : Ti ≠ 0) (hTj : Tj ≠ 0)
+    (hWi : Wi = Ri * Ti) (hWj : Wj = Rj * Tj) :
+    (wi - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * u) * Qj +
+        q * (Wj - gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj * Tj) =
+      (Qj * u * Ti * Tj / (Qi * Tj + Qj * Ti)) *
+        gn21Lemma6Response q u wi Qi Qj Ti Tj Ri Rj := by
+  unfold gn21AggregateDynamicReward gn21Lemma6Response
+  rw [hWi, hWj]
+  field_simp [hden, hu, hTi, hTj]
+  ring
+
+/-- The positive scale in `gn21LeftLinearResponse_eq_scaled_lemma6Response`. -/
+theorem gn21LeftLinearResponse_lemma6_scale_pos
+    (u Qj Ti Tj den : ℝ)
+    (hu : 0 < u) (hQj : 0 < Qj) (hTi : 0 < Ti) (hTj : 0 < Tj)
+    (hden : 0 < den) :
+    0 < Qj * u * Ti * Tj / den := by
+  positivity
+
+/--
+Measured left marginal response as a positive scaling of Lemma 6's normalized
+response.  This is the bridge used to transfer Lemma 6/7/8 response-shape
+facts to the fixed-response Lemma 5 marginal objective.
+-/
+theorem gn21MeasuredLeftMarginalResponse_eq_scaled_lemma6Response
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj τ : ℝ)
+    (hden :
+      gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hτ : τ ≠ 0)
+    (hTi : gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hTj : gn21ScaledStateTime μJ arrivalJ σJ ≠ 0)
+    (hWi :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        Ri * gn21ScaledStateTime μI arrivalI σI)
+    (hWj :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        Rj * gn21ScaledStateTime μJ arrivalJ σJ) :
+    gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ τ =
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          τ * gn21ScaledStateTime μI arrivalI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ /
+        (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)) *
+        gn21Lemma6Response (gn21SwitchProb switchIJ switchJI τ) τ (wI τ)
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+          (gn21ScaledStateTime μI arrivalI σI)
+          (gn21ScaledStateTime μJ arrivalJ σJ) Ri Rj := by
+  unfold gn21MeasuredLeftMarginalResponseAtCurrent
+  simpa [mul_comm, mul_left_comm, mul_assoc] using
+    gn21LeftLinearResponse_eq_scaled_lemma6Response
+      (gn21SwitchProb switchIJ switchJI τ) τ (wI τ)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateEarning μI arrivalI wI σI)
+      (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+      Ri Rj hden hτ hTi hTj hWi hWj
+
+/--
+Measured right marginal response as a positive scaling of Lemma 6's normalized
+response, with the moving and fixed states swapped.
+-/
+theorem gn21MeasuredRightMarginalResponse_eq_scaled_lemma6Response
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj τ : ℝ)
+    (hden :
+      gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hτ : τ ≠ 0)
+    (hTi : gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hTj : gn21ScaledStateTime μJ arrivalJ σJ ≠ 0)
+    (hWi :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        Ri * gn21ScaledStateTime μI arrivalI σI)
+    (hWj :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        Rj * gn21ScaledStateTime μJ arrivalJ σJ) :
+    gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ τ =
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          τ * gn21ScaledStateTime μJ arrivalJ σJ *
+            gn21ScaledStateTime μI arrivalI σI /
+        (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI +
+          gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ)) *
+        gn21Lemma6Response (gn21SwitchProb switchJI switchIJ τ) τ (wJ τ)
+          (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+          (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+          (gn21ScaledStateTime μJ arrivalJ σJ)
+          (gn21ScaledStateTime μI arrivalI σI) Rj Ri := by
+  unfold gn21MeasuredRightMarginalResponseAtCurrent
+  rw [gn21AggregateDynamicReward_swap
+    (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+    (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+    (gn21ScaledStateTime μI arrivalI σI)
+    (gn21ScaledStateTime μJ arrivalJ σJ)
+    (gn21ScaledStateEarning μI arrivalI wI σI)
+    (gn21ScaledStateEarning μJ arrivalJ wJ σJ)]
+  have hden_swap :
+      gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI +
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ ≠ 0 := by
+    simpa [add_comm, mul_comm, mul_left_comm, mul_assoc] using hden
+  simpa [add_comm, mul_comm, mul_left_comm, mul_assoc] using
+    gn21LeftLinearResponse_eq_scaled_lemma6Response
+      (gn21SwitchProb switchJI switchIJ τ) τ (wJ τ)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateEarning μJ arrivalJ wJ σJ)
+      (gn21ScaledStateEarning μI arrivalI wI σI)
+      Rj Ri hden_swap hτ hTj hTi hWj hWi
+
+/--
 Dynamic optimality for the measured two-state reward implies fixed-response
 Lemma 5 marginal optimality for the non-surge state.  The proof follows the
 paper's source argument: Lemma 1 rewrites dynamic rewards as aggregate

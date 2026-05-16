@@ -169,6 +169,15 @@ state-dependent scaling that preserves signs but may not preserve the stronger
 analytic shape predicate.
 `Lemma5PositiveResponsePolicyFormData.of_positive_scaling` transfers this data
 across positive pointwise scalings on positive trip lengths.
+The measured GN21 quotient responses have now been connected to that route:
+`gn21LeftLinearResponse_eq_scaled_lemma6Response` is the scalar algebra,
+`gn21LeftLinearResponse_lemma6_scale_pos` proves positivity of the scaling
+factor, and
+`gn21MeasuredLeftMarginalResponse_eq_scaled_lemma6Response` /
+`gn21MeasuredRightMarginalResponse_eq_scaled_lemma6Response` identify the
+left/right measured marginal responses as positive state-dependent scalings of
+the normalized Lemma 6 response once the current `W = R*T` identities and
+nonzero aggregate denominator/time/trip inputs are available.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

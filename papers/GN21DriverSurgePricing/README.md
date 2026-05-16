@@ -956,6 +956,15 @@ form and the positive zero set is null, but proving the stronger analytic
 `Lemma5PositiveResponseShapeData` for the scaled function would duplicate work.
 `Lemma5PositiveResponsePolicyFormData.of_positive_scaling` transfers this
 package through positive pointwise scalings on positive trip lengths.
+The measured quotient response is now tied to that scaled-response route:
+`gn21LeftLinearResponse_eq_scaled_lemma6Response` proves the scalar identity,
+`gn21LeftLinearResponse_lemma6_scale_pos` proves the multiplier is positive,
+and
+`gn21MeasuredLeftMarginalResponse_eq_scaled_lemma6Response` /
+`gn21MeasuredRightMarginalResponse_eq_scaled_lemma6Response` rewrite the
+left/right measured Lemma 5 marginal responses as positive scalings of the
+normalized Lemma 6 response under current reward-rate identities and the usual
+nonzero denominator/time inputs.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:
