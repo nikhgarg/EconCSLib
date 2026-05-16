@@ -214,6 +214,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   Gaussian measures.  These facts then discharge continuity, strict monotonicity
   via open-positive upper-orthant lemmas, and endpoint regularity without
   repeating bivariate density calculations in paper files.
+- After proving correlated-Gaussian upper-orthant regularity, immediately
+  compose it into the named source-event fixed-point theorem. Do not leave the
+  session at a green per-component regularity lemma if the paper endpoint is
+  just a finite-sum wrapper away; expose both the per-component package and the
+  paper-facing `existsUnique` theorem in the human interface.
 - When a paper theorem is group-indexed, avoid stopping at a one-representative
   type theorem. After the single-group payoff/cutoff calculation is green,
   immediately package the group-indexed equilibrium object with common school
