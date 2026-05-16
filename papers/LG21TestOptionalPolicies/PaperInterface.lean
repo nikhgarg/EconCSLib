@@ -1438,6 +1438,73 @@ theorem paper_interface_proposition4_2_not_latent_skill_fair_of_explicit_thresho
     hNoAccess hAccessHigh hAccessLow hskill
 
 /--
+Proposition 4.2 source-route wrapper from binary reporting/taking equilibria:
+the equilibrium fields feed Lemma 4.1's explicit-threshold route, then the
+fixed-base one-test posterior law gives the latent-skill fairness contradiction.
+-/
+theorem paper_interface_proposition4_2_not_latent_skill_fair_of_threshold_equilibria_and_one_test_posterior_law
+    {Feature Skill Base Test : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test LG21EstimateLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} [DecidablePred reports] [DecidablePred takes]
+    {noReportEstimate qTilde reportingBase threshold qBar : ℝ}
+    (e : S.Equilibrium) (qHigh qLow : Skill) (base : Base)
+    {intercept slope skillHigh skillLow testScale : ℝ}
+    (hslope : 0 < slope) (htestScale : 0 < testScale)
+    (hreports :
+      ∀ score : ℝ,
+        reports score ↔
+          threshold ≤ M.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (EconCSLib.affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (hreportEq :
+      paperEquilibrium
+        (lg21ReportingEquilibriumData
+          reports
+          (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+          noReportEstimate))
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeEq :
+      paperEquilibrium
+        (lg21TestTakingEquilibriumData takes
+          (fun skill : ℝ =>
+            api.thresholdPassProb
+              (paperGaussianTestScoreLaw skill testScale htestScale) qTilde)))
+    (hNoAccess :
+      S.latentNoAccessLaw e qHigh base =
+        S.latentNoAccessLaw e qLow base)
+    (hAccessHigh :
+      S.latentAccessLaw e qHigh base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillHigh testScale htestScale))
+    (hAccessLow :
+      S.latentAccessLaw e qLow base =
+        LG21EstimateLaw.gaussian
+          (paperOneTestPosteriorScoreLaw
+            intercept slope hslope skillLow testScale htestScale))
+    (hskill : skillLow < skillHigh) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawLatentSkillFair S :=
+  paper_proposition4_2_not_latent_skill_fair_of_threshold_equilibria_and_one_test_posterior_law
+    C api M theta k scoreLaw skillLaw e qHigh qLow base hslope htestScale
+    hreports hnoReport hreportEq htakes hqTilde htakeEq
+    hNoAccess hAccessHigh hAccessLow hskill
+
+/--
 Proposition 4.3: the full Bayesian optimal policy is not observable or
 demographic fair.
 
@@ -1834,6 +1901,73 @@ theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of
   paper_proposition4_3_not_law_observable_or_demographic_fair_of_explicit_thresholds_and_extra_signal
     C api Mstrategy theta k scoreLaw skillLaw htestScale
     hreports hnoReport hreportNoDeviation htakes hqTilde htakeNoDeviation
+    eObs base eDemo Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+    hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
+
+/--
+Proposition 4.3 source-route wrapper from binary reporting/taking equilibria
+and the paper's concrete extra-test-signal posterior-precision gap.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_threshold_equilibria_and_extra_signal
+    {StrategyFeature Skill Base Test Feature : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature]
+    {S : LG21SourceLawPolicySurface Skill Base Test GaussianScaleLaw}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop} [DecidablePred reports] [DecidablePred takes]
+    {noReportEstimate qTilde reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreports :
+      ∀ score : ℝ,
+        reports score ↔
+          threshold ≤ Mstrategy.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        Mstrategy.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (EconCSLib.affineCutoff
+                (Mstrategy.posteriorMean (Function.update theta k reportingBase) -
+                  Mstrategy.centeredFamily.signalWeight k * reportingBase)
+                (Mstrategy.centeredFamily.signalWeight k) threshold))))
+    (hreportEq :
+      paperEquilibrium
+        (lg21ReportingEquilibriumData
+          reports
+          (fun value : ℝ => Mstrategy.posteriorMean (Function.update theta k value))
+          noReportEstimate))
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeEq :
+      paperEquilibrium
+        (lg21TestTakingEquilibriumData takes
+          (fun skill : ℝ =>
+            api.thresholdPassProb
+              (paperGaussianTestScoreLaw skill testScale htestScale) qTilde)))
+    (eObs : S.Equilibrium) (base : Base) (eDemo : S.Equilibrium)
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar)
+    (hAccessObs :
+      S.observableAccessLaw eObs base =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessObs :
+      S.observableNoAccessLaw eObs base = Mbase.posteriorMeanScaleLaw)
+    (hAccessDemo :
+      S.demographicAccessLaw eDemo =
+        (Mbase.withExtraSignal extraNoiseMean extraNoiseVar hextraNoiseVar).posteriorMeanScaleLaw)
+    (hNoAccessDemo :
+      S.demographicNoAccessLaw eDemo = Mbase.posteriorMeanScaleLaw) :
+    (∀ score : ℝ, reports score) ∧
+      (∀ skill : ℝ, takes skill) ∧
+        ¬ lg21SourceLawObservablyFair S ∧
+          ¬ lg21SourceLawDemographicallyFair S :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_threshold_equilibria_and_extra_signal
+    C api Mstrategy theta k scoreLaw skillLaw htestScale
+    hreports hnoReport hreportEq htakes hqTilde htakeEq
     eObs base eDemo Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
     hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
 
