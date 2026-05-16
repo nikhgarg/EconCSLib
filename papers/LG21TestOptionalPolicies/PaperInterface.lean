@@ -3301,6 +3301,104 @@ theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_
     hweight hdenom hwitness e base
 
 /--
+Paper-facing optional-reporting upper-tail endpoint on the event-share
+binary-mixture surface with skill-independent latent kernels and the
+reported-score payoff stated directly as the Gaussian posterior mean.
+-/
+theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff
+    {Feature Skill Base Estimate Student Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (skillGivenBase : Base → PMF Skill)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (reporterEvent : Equilibrium → Base → Student → Prop)
+    (decReporterEvent :
+      ∀ e base, DecidablePred (reporterEvent e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → ℝ → PMF Estimate)
+    (takeDecision : Equilibrium → Skill → Base → Bool)
+    (reportDecision : Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceSkill : Equilibrium → Base → Skill)
+    (actorLaw : Equilibrium → Base → GaussianScaleLaw)
+    (decisionThreshold : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (M base).posteriorMean (Function.update (theta base) k actor))
+            (fun base =>
+              (M base).posteriorMean
+                (Function.update (theta base) k
+                  (GaussianHazardCertificate.normalUpperTailMean
+                    standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                    (actorLaw e base) (decisionThreshold e base))))
+            (estimationConsistent e)))
+    (htie :
+      ∀ e base score,
+        (M base).posteriorMean (Function.update (theta base) k score) =
+            (M base).posteriorMean
+              (Function.update (theta base) k
+                (GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (actorLaw e base) (decisionThreshold e base))) →
+          reportDecision e base score = true)
+    (hthreshold :
+      ∀ e base actor, reportDecision e base actor = true ↔
+        decisionThreshold e base ≤ actor)
+    (hwitness :
+      ∀ e base, ∃ student, reporterEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (e : Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            (Skill := Skill) (Base := Base) (Test := ℝ)
+            (Estimate := Estimate) (Student := Student)
+            Equilibrium
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              lg21BinaryMixturePMF
+                (lg21PMFEventShareFn studentLaw reporterEvent
+                  decReporterEvent e base)
+                (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+                  decReporterEvent e base)
+                (reporterPMF e base) (noReporterPMF e base))
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              noReporterPMF e base)
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            reporterEvent decReporterEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate) ∨
+        lg21SourceObservablyFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            (Skill := Skill) (Base := Base) (Test := ℝ)
+            (Estimate := Estimate) (Student := Student)
+            Equilibrium
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              lg21BinaryMixturePMF
+                (lg21PMFEventShareFn studentLaw reporterEvent
+                  decReporterEvent e base)
+                (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+                  decReporterEvent e base)
+                (reporterPMF e base) (noReporterPMF e base))
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              noReporterPMF e base)
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            reporterEvent decReporterEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate)) :=
+  paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff
+    M theta k skillGivenBase demographicAccessEstimate
+    demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
+    reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate takeDecision
+    reportDecision estimationConsistent referenceSkill actorLaw
+    decisionThreshold hEq htie hthreshold hwitness e base
+
+/--
 Paper-facing Theorem 3.2 report-required continuous upper-tail endpoint, with
 the source-equilibrium and threshold obligations packaged in one auditable
 certificate.

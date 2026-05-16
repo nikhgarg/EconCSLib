@@ -356,7 +356,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface`
   also discharge the latent-to-observable identities by making latent kernels
-  skill-independent copies of the observable laws.  The report-required
+  skill-independent copies of the observable laws.  The optional-reporting
+  posterior-payoff variant
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  states the source payoff directly as the Gaussian posterior mean and
+  discharges the affine `baseTerm`/`signalWeight`/`denom` bookkeeping from
+  `GaussianOffsetSignalFamily.posteriorMean_update_eq_base_add_weight_mul`.
+  The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
   closes the remaining outside-payoff equality when the report-required base
@@ -388,4 +394,6 @@ endpoint rather than the older packaged certificate. Theorem 3.1/3.2 remain
 open only at the level of choosing the final source-facing theorem statement;
 their strongest current routes derive source witnesses and upper-tail
 impossibility from concrete source equilibria under explicit payoff,
-tie-breaking, threshold, and mixture hypotheses.
+tie-breaking, threshold, and mixture hypotheses.  In the optional-reporting
+continuous upper-tail route, the concrete Gaussian posterior-payoff
+specialization now removes the separate affine-payoff identity hypothesis.

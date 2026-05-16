@@ -11889,6 +11889,191 @@ theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_u
         noReporterPMF e base).symm
 
 /--
+Optional-reporting constant-latent upper-tail endpoint with the reported-score
+payoff written directly as the Gaussian posterior mean.  The affine posterior
+identity supplies the certificate's `baseTerm`, `signalWeight`, and
+denominator, so callers no longer need to restate that algebra.
+-/
+theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff
+    {Feature Skill Base Estimate Student Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (skillGivenBase : Base → PMF Skill)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (reporterEvent : Equilibrium → Base → Student → Prop)
+    (decReporterEvent :
+      ∀ e base, DecidablePred (reporterEvent e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → ℝ → PMF Estimate)
+    (takeDecision : Equilibrium → Skill → Base → Bool)
+    (reportDecision : Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceSkill : Equilibrium → Base → Skill)
+    (actorLaw : Equilibrium → Base → GaussianScaleLaw)
+    (decisionThreshold : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (M base).posteriorMean (Function.update (theta base) k actor))
+            (fun base =>
+              (M base).posteriorMean
+                (Function.update (theta base) k
+                  (GaussianHazardCertificate.normalUpperTailMean
+                    standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                    (actorLaw e base) (decisionThreshold e base))))
+            (estimationConsistent e)))
+    (htie :
+      ∀ e base score,
+        (M base).posteriorMean (Function.update (theta base) k score) =
+            (M base).posteriorMean
+              (Function.update (theta base) k
+                (GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (actorLaw e base) (decisionThreshold e base))) →
+          reportDecision e base score = true)
+    (hthreshold :
+      ∀ e base actor, reportDecision e base actor = true ↔
+        decisionThreshold e base ≤ actor)
+    (hwitness :
+      ∀ e base, ∃ student, reporterEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (e : Equilibrium) (base : Base) :
+    ¬ (lg21SourceLatentSkillFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            (Skill := Skill) (Base := Base) (Test := ℝ)
+            (Estimate := Estimate) (Student := Student)
+            Equilibrium
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              lg21BinaryMixturePMF
+                (lg21PMFEventShareFn studentLaw reporterEvent
+                  decReporterEvent e base)
+                (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+                  decReporterEvent e base)
+                (reporterPMF e base) (noReporterPMF e base))
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              noReporterPMF e base)
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            reporterEvent decReporterEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate) ∨
+        lg21SourceObservablyFair
+          (lg21EventShareBinaryMixtureEstimateSurface
+            (Skill := Skill) (Base := Base) (Test := ℝ)
+            (Estimate := Estimate) (Student := Student)
+            Equilibrium
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              lg21BinaryMixturePMF
+                (lg21PMFEventShareFn studentLaw reporterEvent
+                  decReporterEvent e base)
+                (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+                  decReporterEvent e base)
+                (reporterPMF e base) (noReporterPMF e base))
+            (fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+              noReporterPMF e base)
+            demographicAccessEstimate demographicNoAccessEstimate studentLaw
+            reporterEvent decReporterEvent reporterPMF noReporterPMF
+            baseOnlyEstimate fullFeatureEstimate)) := by
+  refine
+    paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface
+      M theta k skillGivenBase demographicAccessEstimate
+      demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
+      reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate
+      takeDecision reportDecision estimationConsistent referenceSkill
+      (fun _e base =>
+        (M base).posteriorMean (Function.update (theta base) k 0))
+      (fun _e base => (M base).centeredFamily.signalWeight k)
+      (fun _e _base => 1)
+      actorLaw decisionThreshold ?_ ?_ ?_ hthreshold ?_ ?_ hwitness e base
+  · intro e
+    let upper : Base → ℝ := fun base =>
+      GaussianHazardCertificate.normalUpperTailMean
+        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+        (actorLaw e base) (decisionThreshold e base)
+    let Epost : LG21SourceEquilibriumData Skill Base ℝ :=
+      lg21OptionalReportingBaseSourceEquilibriumData
+        (takeDecision e) (reportDecision e)
+        (fun base actor =>
+          (M base).posteriorMean (Function.update (theta base) k actor))
+        (fun base =>
+          (M base).posteriorMean (Function.update (theta base) k (upper base)))
+        (estimationConsistent e)
+    let Eaff : LG21SourceEquilibriumData Skill Base ℝ :=
+      lg21OptionalReportingBaseSourceEquilibriumData
+        (takeDecision e) (reportDecision e)
+        (fun base actor =>
+          ((M base).posteriorMean (Function.update (theta base) k 0) +
+              (M base).centeredFamily.signalWeight k * actor) / 1)
+        (fun base =>
+          ((M base).posteriorMean (Function.update (theta base) k 0) +
+              (M base).centeredFamily.signalWeight k * upper base) / 1)
+        (estimationConsistent e)
+    change lg21SourceEquilibrium Eaff
+    have hpost : lg21SourceEquilibrium Epost := by
+      simpa [Epost, upper] using hEq e
+    have hpayoff :
+        ∀ (info : LG21AccessStudentInfo Skill Base ℝ)
+          (action : LG21AccessAction),
+          Eaff.payoff info action = Epost.payoff info action := by
+      intro info action
+      by_cases hreport : action.reportsScore
+      · simp [Eaff, Epost, upper, lg21OptionalReportingBaseSourceEquilibriumData,
+          hreport, div_one,
+          (M info.base).posteriorMean_update_eq_base_add_weight_mul
+            (theta info.base) k info.test]
+      · simp [Eaff, Epost, upper, lg21OptionalReportingBaseSourceEquilibriumData,
+          hreport, div_one,
+          (M info.base).posteriorMean_update_eq_base_add_weight_mul
+            (theta info.base) k (upper info.base)]
+    rcases (lg21SourceEquilibrium_iff Epost).1 hpost with
+      ⟨hfeasible, hbest, hconsistent⟩
+    refine (lg21SourceEquilibrium_iff Eaff).2 ⟨?_, ?_, hconsistent⟩
+    · intro info
+      simpa [Eaff, Epost, lg21OptionalReportingBaseSourceEquilibriumData]
+        using hfeasible info
+    · intro info action hfeasibleAction
+      have hfeasiblePost : LG21AccessAction.feasible Epost.requirement action := by
+        simpa [Eaff, Epost, lg21OptionalReportingBaseSourceEquilibriumData]
+          using hfeasibleAction
+      have h := hbest info action hfeasiblePost
+      calc
+        Eaff.payoff info action = Epost.payoff info action :=
+          hpayoff info action
+        _ ≤ Epost.payoff info
+              (LG21AccessStudentInfo.chosenAction
+                Epost.takeDecision Epost.reportDecision info) := h
+        _ = Eaff.payoff info
+              (LG21AccessStudentInfo.chosenAction
+                Eaff.takeDecision Eaff.reportDecision info) := by
+          simpa [Eaff, Epost, lg21OptionalReportingBaseSourceEquilibriumData]
+            using
+              (hpayoff info
+                (LG21AccessStudentInfo.chosenAction
+                  Eaff.takeDecision Eaff.reportDecision info)).symm
+  · intro e base score
+    simpa [div_one] using
+      (M base).posteriorMean_update_eq_base_add_weight_mul
+        (theta base) k score
+  · intro e base score h
+    exact htie e base score (by
+      simpa [div_one,
+        (M base).posteriorMean_update_eq_base_add_weight_mul
+          (theta base) k
+          (GaussianHazardCertificate.normalUpperTailMean
+            standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+            (actorLaw e base) (decisionThreshold e base))] using h)
+  · intro _e base
+    exact (M base).centeredFamily.signalWeight_pos k
+  · intro _e _base
+    norm_num
+
+/--
 Packaged source-model assumptions for the report-required continuous
 upper-tail route in Theorem 3.2.  The outside-payoff equality after
 reporter/no-reporter law identification remains theorem-specific because it

@@ -261,7 +261,13 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface`
   further discharge the latent-to-observable identities via
-  `lg21LatentSkillEstimateDistribution_const_indexed`.  The report-required
+  `lg21LatentSkillEstimateDistribution_const_indexed`.  The optional-reporting
+  posterior-payoff specialization
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  now takes the reported and no-report source payoffs directly as Gaussian
+  posterior means and derives the affine certificate fields internally from
+  `GaussianOffsetSignalFamily.posteriorMean_update_eq_base_add_weight_mul`.
+  The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
   closes the outside-payoff equality by defining the report-required base term
