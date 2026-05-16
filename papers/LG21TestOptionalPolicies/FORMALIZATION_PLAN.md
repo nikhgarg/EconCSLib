@@ -584,7 +584,10 @@ Last updated: 2026-05-16
    `_of_nonempty_equilibrium` wrappers that choose the positive-share
    contradiction witness internally from nonempty equilibrium/base spaces; the
    report-required unit-centered route now has the same nonempty-equilibrium
-   cleanup.
+   cleanup.  The compact certificate-level event-share source-equilibrium
+   endpoints also now choose the equilibrium/base contradiction witness
+   internally, reducing the final source-facing route to certificate,
+   positive-share, mixture-definition, and payoff-normalization data.
    This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed

@@ -11714,6 +11714,48 @@ theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_u
     reporterPMF noReporterPMF hNoAccess hAccessMixtureDef e base
 
 /--
+Optional-reporting event-share source-equilibrium endpoint with the
+equilibrium/base witness chosen internally from nonempty spaces.
+-/
+theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_source_equilibrium_of_nonempty_equilibrium
+    {Feature Skill Base Estimate Student : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    [Nonempty S.Equilibrium]
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase S)
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (reporterEvent : S.Equilibrium → Base → Student → Prop)
+    (decReporterEvent :
+      ∀ e base, DecidablePred (reporterEvent e base))
+    (hwitness :
+      ∀ e base, ∃ student, reporterEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base)) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  let e : S.Equilibrium := Classical.choice inferInstance
+  let base : Base := Classical.choice inferInstance
+  exact
+    paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_source_equilibrium
+      C studentLaw reporterEvent decReporterEvent hwitness reporterPMF
+      noReporterPMF hNoAccess hAccessMixtureDef e base
+
+/--
 Optional-reporting upper-tail endpoint specialized to the generic
 event-share binary-mixture policy surface, so the no-access and mixture
 surface identities are definitional.
@@ -12604,6 +12646,54 @@ theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_ev
       decTakerEvent hwitness)
     reporterPMF noReporterPMF hNoAccess hAccessMixtureDef
     houtsidePayoff_of_pmfEq e base
+
+/--
+Report-required event-share source-equilibrium endpoint with the
+equilibrium/base witness chosen internally from nonempty spaces.
+-/
+theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium_of_nonempty_equilibrium
+    {Base Test Estimate Student : Type*} [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {skillGivenBase : Base → PMF ℝ}
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    [Nonempty S.Equilibrium]
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase S)
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (takerEvent : S.Equilibrium → Base → Student → Prop)
+    (decTakerEvent :
+      ∀ e base, DecidablePred (takerEvent e base))
+    (hwitness :
+      ∀ e base, ∃ student, takerEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (C.baseTerm e base +
+              C.signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (C.actorLaw e base) (C.decisionThreshold e base)) /
+              C.denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  let e : S.Equilibrium := Classical.choice inferInstance
+  let base : Base := Classical.choice inferInstance
+  exact
+    paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium
+      C studentLaw takerEvent decTakerEvent hwitness reporterPMF noReporterPMF
+      hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq e base
 
 /--
 Report-required upper-tail endpoint specialized to the generic event-share
