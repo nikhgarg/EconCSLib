@@ -199,7 +199,11 @@ Last updated: 2026-05-16
   Gaussian/all-report and Gaussian/all-take
   wrappers instantiate the paper's "such a student always exists" sentence by
   selecting `mean - scale` from a nondegenerate `GaussianScaleLaw`, avoiding
-  point-mass assumptions in the continuous route.  The finite acting-distribution
+  point-mass assumptions in the continuous route.  The standard-Gaussian
+  upper-tail wrappers now cover thresholded Gaussian acting cohorts directly:
+  the Mills/hazard proof shows the upper-tail conditional mean at a cutoff is
+  strictly above that cutoff, so the cutoff-midpoint branch applies.  The
+  finite acting-distribution
   lemmas
   `paper_theorem3_2_exists_support_actor_le_mean` and
   `paper_theorem3_2_exists_support_actor_lt_mean_of_exists_mean_lt_actor`

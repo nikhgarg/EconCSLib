@@ -152,7 +152,15 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_gaussian_all_take`
   instantiate the paper's "such a student always exists" line by choosing
   `mean - scale` from a nondegenerate Gaussian acting cohort, without requiring
-  positive point mass.  The source-shaped structures
+  positive point mass.  The standard Gaussian upper-tail bridge
+  `paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold` and the
+  optional/report-required wrappers
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_gaussian_upper_tail_cutoff`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_gaussian_upper_tail_cutoff`
+  now cover thresholded Gaussian acting cohorts by proving that their
+  upper-tail conditional mean is strictly above the cutoff.  The source-shaped
+  structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
   and `paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness`

@@ -5053,6 +5053,53 @@ theorem paper_theorem3_2_gaussianScaleLaw_exists_below_mean
   ⟨L.mean - L.scale, sub_lt_self L.mean L.scale_pos⟩
 
 /--
+Standard Gaussian hazard bound used by the continuous upper-tail Theorem 3.2
+branch: the inverse-Mills hazard is strictly above the identity.
+-/
+theorem paper_theorem3_2_standardGaussianHazard_gt_arg (z : ℝ) :
+    z < standardGaussianHazard z := by
+  by_cases hz_nonpos : z ≤ 0
+  · have hpos : 0 < standardGaussianHazard z :=
+      standardGaussianHazard_pos z
+    linarith
+  · have hz_pos : 0 < z := lt_of_not_ge hz_nonpos
+    rw [standardGaussianHazard_eq_millsHazard]
+    exact gaussianMillsHazard_gt_arg_of_pos hz_pos
+
+/--
+Continuous Gaussian support fact for the threshold route: the standard
+Gaussian upper-tail conditional mean at any finite cutoff is strictly above
+that cutoff.
+-/
+theorem paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
+    (L : GaussianScaleLaw) (threshold : ℝ) :
+    threshold <
+      GaussianHazardCertificate.normalUpperTailMean
+        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate L threshold := by
+  have hthreshold_std :
+      L.mean + L.scale * L.standardize threshold = threshold := by
+    simpa [GaussianScaleLaw.unstandardize] using
+      L.unstandardize_standardize threshold
+  have hcore :
+      L.standardize threshold <
+        standardGaussianHazard (L.standardize threshold) :=
+    paper_theorem3_2_standardGaussianHazard_gt_arg
+      (L.standardize threshold)
+  have hmul :
+      L.scale * L.standardize threshold <
+        L.scale * standardGaussianHazard (L.standardize threshold) :=
+    mul_lt_mul_of_pos_left hcore L.scale_pos
+  calc
+    threshold = L.mean + L.scale * L.standardize threshold :=
+      hthreshold_std.symm
+    _ < L.mean + L.scale *
+          standardGaussianHazard (L.standardize threshold) := by
+      simpa [add_comm] using add_lt_add_left hmul L.mean
+    _ = GaussianHazardCertificate.normalUpperTailMean
+          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate L threshold := by
+      rfl
+
+/--
 Optional-reporting cutoff specialization of the direct below-mean Theorem 3.2
 branch.  If every score weakly above a cutoff reports and the cutoff is below
 the resampling mean, the midpoint between the cutoff and the mean is a reported
@@ -5435,6 +5482,144 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_a
       actorMean hEq e base hlambda reporterPMF noReporterPMF hNoAccess
       hAccessMixture houtsidePayoff_of_pmfEq actor (hallTake e base actor)
       hweight hdenom hbelow
+
+/--
+Optional-reporting Gaussian upper-tail specialization of the direct Theorem 3.2
+branch.  If the acting/reporting cohort mean is the standard Gaussian
+upper-tail mean at the reporting cutoff, then that mean is strictly above the
+cutoff, so the cutoff-midpoint contradiction applies.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_gaussian_upper_tail_cutoff
+    {Skill Base Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → Skill → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceSkill : S.Equilibrium → Base → Skill)
+    (baseTerm signalWeight denom actorMean : S.Equilibrium → Base → ℝ)
+    (actorLaw : S.Equilibrium → Base → GaussianScaleLaw)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base + signalWeight e base * actorMean e base) /
+                denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (cutoff : ℝ)
+    (hactorMean :
+      actorMean e base =
+        GaussianHazardCertificate.normalUpperTailMean
+          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+          (actorLaw e base) cutoff)
+    (hreports_above_cutoff :
+      ∀ actor, cutoff ≤ actor → reportDecision e base actor = true)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  have hcutoff : cutoff < actorMean e base := by
+    rw [hactorMean]
+    exact
+      paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
+        (actorLaw e base) cutoff
+  exact
+    paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_base_affine_cutoff_below_mean
+      skillGivenBase hObsAccess hObsNoAccess takeDecision reportDecision
+      estimationConsistent referenceSkill baseTerm signalWeight denom
+      actorMean hEq e base hlambda reporterPMF noReporterPMF hNoAccess
+      hAccessMixture cutoff hreports_above_cutoff hcutoff hweight hdenom
+
+/--
+Report-required Gaussian upper-tail specialization of the direct Theorem 3.2
+branch.  If the taking cohort mean is the standard Gaussian upper-tail mean at
+the taking cutoff, then the cutoff-midpoint contradiction applies.
+-/
+theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_gaussian_upper_tail_cutoff
+    {Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF ℝ)
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (takeDecision : S.Equilibrium → ℝ → Base → Bool)
+    (reportDecision : S.Equilibrium → Base → Test → Bool)
+    (estimationConsistent : S.Equilibrium → Prop)
+    (referenceTest : S.Equilibrium → Base → Test)
+    (baseTerm signalWeight denom actorMean : S.Equilibrium → Base → ℝ)
+    (actorLaw : S.Equilibrium → Base → GaussianScaleLaw)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (houtsidePayoff_of_pmfEq :
+      reporterPMF = noReporterPMF →
+        (1 / 2 : ℝ) =
+          (baseTerm e base + signalWeight e base * actorMean e base) /
+            denom e base)
+    (cutoff : ℝ)
+    (hactorMean :
+      actorMean e base =
+        GaussianHazardCertificate.normalUpperTailMean
+          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+          (actorLaw e base) cutoff)
+    (htakes_above_cutoff :
+      ∀ actor, cutoff ≤ actor → takeDecision e actor base = true)
+    (hweight : 0 < signalWeight e base)
+    (hdenom : 0 < denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  have hcutoff : cutoff < actorMean e base := by
+    rw [hactorMean]
+    exact
+      paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
+        (actorLaw e base) cutoff
+  exact
+    paper_theorem3_2_not_latent_or_observable_fair_of_report_required_base_affine_cutoff_below_mean
+      skillGivenBase hObsAccess hObsNoAccess takeDecision reportDecision
+      estimationConsistent referenceTest baseTerm signalWeight denom actorMean
+      hEq e base hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
+      houtsidePayoff_of_pmfEq cutoff htakes_above_cutoff hcutoff hweight
+      hdenom
 
 /--
 Theorem 3.2 finite-mean support fact: every finite acting distribution has a
