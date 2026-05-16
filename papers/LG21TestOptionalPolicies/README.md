@@ -372,7 +372,11 @@ cache is kept as `source.txt` for named-statement audits.
   further specializes this branch to denominator `1`, with the source payoff
   stated directly as `1 / 2 - slope * upperTailMean + slope * skill`; its
   indifference/tie step is derived internally from the positive slope and the
-  strict Gaussian upper-tail-mean-above-threshold lemma.
+  strict Gaussian upper-tail-mean-above-threshold lemma.  The unit-centered
+  endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  specializes this further to the normalized payoff
+  `1 / 2 - upperTailMean + skill`, removing the slope parameter as well.
 
 ## Source Notes
 
@@ -405,4 +409,5 @@ continuous upper-tail route, the concrete Gaussian posterior-payoff
 specialization now removes the separate affine-payoff identity hypothesis.  In
 the report-required continuous upper-tail route, the affine-centered-payoff
 specialization now removes the separate denominator/base-term bookkeeping and
-the explicit tie-at-indifference hypothesis.
+the explicit tie-at-indifference hypothesis; its unit-centered specialization
+also removes the slope parameter.

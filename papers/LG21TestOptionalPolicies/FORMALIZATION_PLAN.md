@@ -278,6 +278,10 @@ Last updated: 2026-05-16
   `1 / 2 - slope * upperTailMean + slope * skill`.  Its tie-at-indifference
   step is now proved internally: indifference forces `skill = upperTailMean`,
   and the Gaussian upper-tail mean is strictly above the decision threshold.
+  The unit-centered endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  specializes further to source payoff
+  `1 / 2 - upperTailMean + skill`, removing the slope parameter too.
   The
   finite acting-distribution
   lemmas
