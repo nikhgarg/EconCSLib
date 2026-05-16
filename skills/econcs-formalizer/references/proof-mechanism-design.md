@@ -53,6 +53,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   those definitions. This makes the human-facing theorem auditable and prevents
   opaque fields like `subFullEquilibriumIff : Prop` from hiding whether the
   Lean statement actually matches the paper.
+- Audit existential cost-boundary statements before treating them as substantive
+  strategic conclusions. If a theorem only says there exist positive functions
+  characterizing an equilibrium region, the bare existential may be provable by
+  case-splitting on the equilibrium predicate and choosing artificial constant
+  boundaries. Record that as an abstract statement-level closure, but keep the
+  economically meaningful task separate: derive the intended boundary functions
+  from continuity, monotonicity, and the concrete strategic fixed point.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
