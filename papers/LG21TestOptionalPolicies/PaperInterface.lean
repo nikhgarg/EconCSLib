@@ -730,6 +730,59 @@ theorem paper_interface_gaussian_posteriorMean_update_exists_above
       level < M.posteriorMean (Function.update theta k score) :=
   paper_gaussian_posteriorMean_update_exists_above M theta k level
 
+/--
+Theorem 3.1 Gaussian lower-tail support: the lower-tail posterior update is
+continuous in the finite cutoff.
+-/
+theorem paper_interface_theorem3_1_standard_lower_tail_posterior_update_continuous
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) :
+    Continuous (fun cutoff : ℝ =>
+      M.posteriorMean
+        (Function.update theta k
+          (standardGaussianLowerTailMean scoreLaw cutoff))) :=
+  paper_theorem3_1_standard_lower_tail_posterior_update_continuous
+    M theta k scoreLaw
+
+/--
+Theorem 3.1 optional-reporting source formula support: the pooled no-report
+estimate is continuous when the access lower-tail estimate is continuous.
+-/
+theorem paper_interface_optional_no_report_mixture_estimate_continuous
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ) (scoreLaw : GaussianScaleLaw)
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hcontAccess : Continuous accessLowerTailEstimate) :
+    Continuous (fun cutoff : ℝ =>
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff) :=
+  lg21OptionalNoReportMixtureEstimate_continuous
+    hC_nonneg hC_lt_one baseOnlyEstimate scoreLaw hcontAccess
+
+/--
+Theorem 3.1 optional-reporting source formula support specialized to the
+Gaussian lower-tail posterior estimate.
+-/
+theorem paper_interface_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) :
+    Continuous (fun cutoff : ℝ =>
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw
+        (fun cutoff : ℝ =>
+          M.posteriorMean
+            (Function.update theta k
+              (standardGaussianLowerTailMean scoreLaw cutoff)))
+        cutoff) :=
+  paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous
+    hC_nonneg hC_lt_one baseOnlyEstimate M theta k scoreLaw
+
 /-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
 theorem paper_interface_monotone_of_lowerCutoffStrategy
     {choose : ℝ → Prop} (hcutoff : lg21LowerCutoffStrategy choose) :

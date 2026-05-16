@@ -45,7 +45,13 @@ Last updated: 2026-05-16
   follow-on bridge
   `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_best_response_tiebreak`
   packages the report-at-indifference convention into a source-shaped finite
-  reporting-cutoff witness.  The
+  reporting-cutoff witness.  The cutoff-indexed no-report estimate formula is
+  now partially source-instantiated: `lg21OptionalNoReportMixtureEstimate`
+  encodes the unobserved-access pool of no-access students and access students
+  below the reporting cutoff, and
+  `paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous`
+  proves continuity for the Gaussian lower-tail posterior component under
+  `0 ≤ C < 1`.  The
   analogous report-required nontriviality step is
   `paper_theorem3_1_report_required_affine_best_response_nontrivial`, using
   positive-slope affine expected taking estimates to rule out both

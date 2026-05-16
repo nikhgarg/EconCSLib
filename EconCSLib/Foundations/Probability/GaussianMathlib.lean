@@ -608,6 +608,20 @@ theorem standardGaussianHazard_continuous :
     (continuous_const.sub standardGaussianCDF_continuous)
     (fun z => (standardGaussianTail_pos z).ne')
 
+/--
+For a fixed Gaussian location-scale law, the concrete lower-tail conditional
+mean is continuous in the finite threshold.
+-/
+theorem standardGaussianLowerTailMean_continuous (L : GaussianScaleLaw) :
+    Continuous (fun threshold : ℝ =>
+      standardGaussianLowerTailMean L threshold) := by
+  dsimp [standardGaussianLowerTailMean]
+  have hstd : Continuous (fun threshold : ℝ => L.standardize threshold) := by
+    unfold GaussianScaleLaw.standardize
+    fun_prop
+  exact continuous_const.sub
+    (continuous_const.mul (standardGaussianHazard_continuous.comp hstd.neg))
+
 /-- The standard Gaussian density tends to zero at `-∞`. -/
 theorem standardGaussianDensity_tendsto_atBot_zero :
     Tendsto standardGaussianDensity atBot (𝓝 0) := by

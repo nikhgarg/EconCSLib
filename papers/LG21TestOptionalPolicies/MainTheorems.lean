@@ -1,5 +1,6 @@
 import EconCSLib.Foundations.Probability.Admissions
 import EconCSLib.Foundations.Probability.Gaussian
+import EconCSLib.Foundations.Probability.GaussianMathlib
 import EconCSLib.Foundations.Math.AffineThreshold
 import EconCSLib.Foundations.Math.ThresholdCharacterization
 
@@ -635,6 +636,111 @@ theorem paper_theorem3_1_report_required_affine_threshold_of_best_response_tiebr
       have heq : intercept + slope * skill = noTakeEstimate :=
         le_antisymm hother hle
       exact htie skill heq
+
+/--
+Theorem 3.1 Gaussian lower-tail continuity support: the lower-tail score
+imputed from a finite Gaussian cutoff varies continuously with the cutoff after
+being passed through the Bayesian posterior estimate.
+-/
+theorem paper_theorem3_1_standard_lower_tail_posterior_update_continuous
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) :
+    Continuous (fun cutoff : ℝ =>
+      M.posteriorMean
+        (Function.update theta k
+          (standardGaussianLowerTailMean scoreLaw cutoff))) :=
+  (paper_gaussian_posteriorMean_update_continuous M theta k).comp
+    (standardGaussianLowerTailMean_continuous scoreLaw)
+
+/--
+Source-form no-report estimate for the unobserved-access optional-reporting
+proof.  Among students with no reported score, a `(1 - C)` no-access mass with
+base-only estimate is pooled with a `C * F(cutoff)` access mass whose test
+score is below the reporting cutoff.
+-/
+def lg21OptionalNoReportMixtureEstimate
+    (accessFraction baseOnlyEstimate : ℝ)
+    (scoreLaw : GaussianScaleLaw)
+    (accessLowerTailEstimate : ℝ → ℝ) (cutoff : ℝ) : ℝ :=
+  ((1 - accessFraction) * baseOnlyEstimate +
+      accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff *
+        accessLowerTailEstimate cutoff) /
+    ((1 - accessFraction) +
+      accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff)
+
+theorem lg21OptionalNoReportMixtureEstimate_denominator_pos
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (scoreLaw : GaussianScaleLaw) (cutoff : ℝ) :
+    0 <
+      (1 - accessFraction) +
+        accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff := by
+  have hbase : 0 < 1 - accessFraction := by
+    linarith
+  have haccess :
+      0 ≤ accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff :=
+    mul_nonneg hC_nonneg
+      (standardGaussianCDFAPI.normalCDF_nonneg scoreLaw cutoff)
+  linarith
+
+/--
+Theorem 3.1 optional-reporting source formula support: the pooled no-report
+estimate is continuous in the finite reporting cutoff whenever the access
+lower-tail estimate is continuous.
+-/
+theorem lg21OptionalNoReportMixtureEstimate_continuous
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ) (scoreLaw : GaussianScaleLaw)
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hcontAccess : Continuous accessLowerTailEstimate) :
+    Continuous (fun cutoff : ℝ =>
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff) := by
+  have hcdf :
+      Continuous (fun cutoff : ℝ =>
+        standardGaussianCDFAPI.normalCDF scoreLaw cutoff) :=
+    standardGaussianCDFAPI.normalCDF_continuous scoreLaw
+  have hdenom :
+      ∀ cutoff : ℝ,
+        ((1 - accessFraction) +
+            accessFraction * standardGaussianCDFAPI.normalCDF scoreLaw cutoff) ≠
+          0 := by
+    intro cutoff
+    exact ne_of_gt
+      (lg21OptionalNoReportMixtureEstimate_denominator_pos
+        hC_nonneg hC_lt_one scoreLaw cutoff)
+  dsimp [lg21OptionalNoReportMixtureEstimate]
+  exact
+    (continuous_const.add
+        ((continuous_const.mul hcdf).mul hcontAccess)).div
+      (continuous_const.add (continuous_const.mul hcdf)) hdenom
+
+/--
+Theorem 3.1 optional-reporting source formula support specialized to the
+Gaussian lower-tail posterior estimate used for access students below the
+reporting cutoff.
+-/
+theorem paper_theorem3_1_optional_no_report_mixture_standard_lower_tail_continuous
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) :
+    Continuous (fun cutoff : ℝ =>
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw
+        (fun cutoff : ℝ =>
+          M.posteriorMean
+            (Function.update theta k
+              (standardGaussianLowerTailMean scoreLaw cutoff)))
+        cutoff) :=
+  lg21OptionalNoReportMixtureEstimate_continuous
+    hC_nonneg hC_lt_one baseOnlyEstimate scoreLaw
+    (paper_theorem3_1_standard_lower_tail_posterior_update_continuous
+      M theta k scoreLaw)
 
 /--
 Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
