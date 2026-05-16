@@ -23697,6 +23697,116 @@ inductive Theorem4SurgeAllowedReplacementData
           Rhat σ0 < Rhat (rejectMiddleTripsPolicy lo hi))
 
 /--
+Any feasible Lemma 5 optimizer-replacement certificate in an allowed non-surge
+shape yields the concrete allowed replacement cases used by Theorem 4.
+-/
+noncomputable def Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4NonsurgeAllowedLemma5Shape shape)
+    (C : Lemma5OptimizerReplacementCertificate Rhat σ0 shape)
+    (hsubset : C.policy ⊆ acceptAllPolicy) :
+    Theorem4NonsurgeAllowedReplacementData Rhat σ0 := by
+  classical
+  cases shape with
+  | positive =>
+      have hpolicy_eq : C.policy = acceptAllPolicy :=
+        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+          hsubset C.policy_form
+      exact
+        .positive
+          (by simpa [hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [hpolicy_eq] using C.strict_unless_initial_form hnot)
+  | strictlyIncreasing =>
+      exact False.elim hallowed
+  | strictlyDecreasing =>
+      let t := Classical.choose C.policy_form
+      have ht : rejectsLongTrips t C.policy :=
+        Classical.choose_spec C.policy_form
+      have hpolicy_eq : C.policy = rejectLongTripsPolicy t :=
+        eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
+          ht hsubset
+      exact
+        .rejectLong t
+          (by simpa [hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [hpolicy_eq] using C.strict_unless_initial_form hnot)
+  | strictlyQuasiConvex =>
+      exact False.elim hallowed
+  | strictlyQuasiConcave =>
+      let lo := Classical.choose C.policy_form
+      let hi := Classical.choose (Classical.choose_spec C.policy_form)
+      have hmiddle : acceptsMiddleTrips lo hi C.policy :=
+        Classical.choose_spec (Classical.choose_spec C.policy_form)
+      have hpolicy_eq : C.policy = acceptMiddleTripsPolicy lo hi :=
+        eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+          hmiddle hsubset
+      exact
+        .acceptMiddle lo hi
+          (by simpa [hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [hpolicy_eq] using C.strict_unless_initial_form hnot)
+
+/--
+Any feasible Lemma 5 optimizer-replacement certificate in an allowed surge
+shape yields the concrete allowed replacement cases used by Theorem 4.
+-/
+noncomputable def Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4SurgeAllowedLemma5Shape shape)
+    (C : Lemma5OptimizerReplacementCertificate Rhat σ0 shape)
+    (hsubset : C.policy ⊆ acceptAllPolicy) :
+    Theorem4SurgeAllowedReplacementData Rhat σ0 := by
+  classical
+  cases shape with
+  | positive =>
+      have hpolicy_eq : C.policy = acceptAllPolicy :=
+        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
+          hsubset C.policy_form
+      exact
+        .positive
+          (by simpa [hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [hpolicy_eq] using C.strict_unless_initial_form hnot)
+  | strictlyIncreasing =>
+      let t := Classical.choose C.policy_form
+      have ht : rejectsShortTrips t C.policy :=
+        Classical.choose_spec C.policy_form
+      have hpolicy_eq : C.policy = rejectShortTripsPolicy t :=
+        eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
+          ht hsubset
+      exact
+        .rejectShort t
+          (by simpa [hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [hpolicy_eq] using C.strict_unless_initial_form hnot)
+  | strictlyDecreasing =>
+      exact False.elim hallowed
+  | strictlyQuasiConvex =>
+      let lo := Classical.choose C.policy_form
+      let hi := Classical.choose (Classical.choose_spec C.policy_form)
+      have hmiddle : rejectsMiddleTrips lo hi C.policy :=
+        Classical.choose_spec (Classical.choose_spec C.policy_form)
+      have hpolicy_eq : C.policy = rejectMiddleTripsPolicy lo hi :=
+        eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+          hmiddle hsubset
+      exact
+        .rejectMiddle lo hi
+          (by simpa [hpolicy_eq] using C.reward_ge)
+          (by
+            intro hnot
+            simpa [hpolicy_eq] using C.strict_unless_initial_form hnot)
+  | strictlyQuasiConcave =>
+      exact False.elim hallowed
+
+/--
 Policy-level canonical-dominance Lemma 5 data produce the concrete non-surge
 allowed replacement cases used by the older Theorem 4 middle-reroute routes.
 -/
@@ -23711,51 +23821,9 @@ noncomputable def Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dom
   let C := D.to_optimizer_replacement
   have hsubset : C.policy ⊆ acceptAllPolicy := by
     simpa [C] using D.to_optimizer_replacement_subset
-  cases shape with
-  | positive =>
-      have hpolicy_eq : C.policy = acceptAllPolicy :=
-        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
-          hsubset C.policy_form
-      exact
-        .positive
-          (by simpa [C, hpolicy_eq] using C.reward_ge)
-          (by
-            intro hnot
-            simpa [C, hpolicy_eq] using
-              C.strict_unless_initial_form hnot)
-  | strictlyIncreasing =>
-      exact False.elim hallowed
-  | strictlyDecreasing =>
-      let t := Classical.choose C.policy_form
-      have ht : rejectsLongTrips t C.policy :=
-        Classical.choose_spec C.policy_form
-      have hpolicy_eq : C.policy = rejectLongTripsPolicy t :=
-        eq_rejectLongTripsPolicy_of_rejectsLongTrips_of_subset_acceptAll
-          ht hsubset
-      exact
-        .rejectLong t
-          (by simpa [C, hpolicy_eq] using C.reward_ge)
-          (by
-            intro hnot
-            simpa [C, hpolicy_eq] using
-              C.strict_unless_initial_form hnot)
-  | strictlyQuasiConvex =>
-      exact False.elim hallowed
-  | strictlyQuasiConcave =>
-      let lo := Classical.choose C.policy_form
-      let hi := Classical.choose (Classical.choose_spec C.policy_form)
-      have hmiddle : acceptsMiddleTrips lo hi C.policy :=
-        Classical.choose_spec (Classical.choose_spec C.policy_form)
-      have hpolicy_eq : C.policy = acceptMiddleTripsPolicy lo hi :=
-        eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
-          hmiddle hsubset
-      exact
-        .acceptMiddle lo hi
-          (by simpa [C, hpolicy_eq] using C.reward_ge)
-          (by
-            intro hnot
-            simpa [C, hpolicy_eq] using
-              C.strict_unless_initial_form hnot)
+  exact
+    Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
+      hallowed C hsubset
 
 /--
 Policy-level canonical-dominance Lemma 5 data produce the concrete surge
@@ -23772,51 +23840,79 @@ noncomputable def Theorem4SurgeAllowedReplacementData.of_policy_canonical_domina
   let C := D.to_optimizer_replacement
   have hsubset : C.policy ⊆ acceptAllPolicy := by
     simpa [C] using D.to_optimizer_replacement_subset
-  cases shape with
-  | positive =>
-      have hpolicy_eq : C.policy = acceptAllPolicy :=
-        eq_acceptAllPolicy_of_subset_acceptAll_of_acceptsAll
-          hsubset C.policy_form
-      exact
-        .positive
-          (by simpa [C, hpolicy_eq] using C.reward_ge)
-          (by
-            intro hnot
-            simpa [C, hpolicy_eq] using
-              C.strict_unless_initial_form hnot)
-  | strictlyIncreasing =>
-      let t := Classical.choose C.policy_form
-      have ht : rejectsShortTrips t C.policy :=
-        Classical.choose_spec C.policy_form
-      have hpolicy_eq : C.policy = rejectShortTripsPolicy t :=
-        eq_rejectShortTripsPolicy_of_rejectsShortTrips_of_subset_acceptAll
-          ht hsubset
-      exact
-        .rejectShort t
-          (by simpa [C, hpolicy_eq] using C.reward_ge)
-          (by
-            intro hnot
-            simpa [C, hpolicy_eq] using
-              C.strict_unless_initial_form hnot)
-  | strictlyDecreasing =>
-      exact False.elim hallowed
-  | strictlyQuasiConvex =>
-      let lo := Classical.choose C.policy_form
-      let hi := Classical.choose (Classical.choose_spec C.policy_form)
-      have hmiddle : rejectsMiddleTrips lo hi C.policy :=
-        Classical.choose_spec (Classical.choose_spec C.policy_form)
-      have hpolicy_eq : C.policy = rejectMiddleTripsPolicy lo hi :=
-        eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
-          hmiddle hsubset
-      exact
-        .rejectMiddle lo hi
-          (by simpa [C, hpolicy_eq] using C.reward_ge)
-          (by
-            intro hnot
-            simpa [C, hpolicy_eq] using
-              C.strict_unless_initial_form hnot)
-  | strictlyQuasiConcave =>
-      exact False.elim hallowed
+  exact
+    Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
+      hallowed C hsubset
+
+/--
+Positive-response marginal Lemma 5 data produce concrete non-surge allowed
+replacement cases whenever the positive-response policy has an allowed
+non-surge form.
+-/
+def Theorem4NonsurgeAllowedReplacementData.of_positiveResponse_marginal
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ0 : TripPolicy) {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4NonsurgeAllowedLemma5Shape shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hpositive_form :
+      lemma5PolicyForm shape (lemma5PositiveResponsePolicy response))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape σ0 →
+        0 < μ (lemma5PositiveResponsePolicy response \ σ0) ∨
+        0 <
+          μ (Function.support response ∩
+            (σ0 \ lemma5PositiveResponsePolicy response))) :
+    Theorem4NonsurgeAllowedReplacementData
+      (lemma5MarginalSetReward μ response) σ0 := by
+  let C :=
+    lemma5MarginalOptimizerReplacementCertificate_positiveResponse
+      μ response σ0 shape hresponse_measurable
+      hresponse_integrable_acceptAll hσ0_measurable hσ0_subset
+      hpositive_form hstrict_mass
+  have hsubset : C.policy ⊆ acceptAllPolicy := by
+    simpa [C] using lemma5PositiveResponsePolicy_subset_acceptAll response
+  exact
+    Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
+      hallowed C hsubset
+
+/--
+Positive-response marginal Lemma 5 data produce concrete surge allowed
+replacement cases whenever the positive-response policy has an allowed surge
+form.
+-/
+def Theorem4SurgeAllowedReplacementData.of_positiveResponse_marginal
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (σ0 : TripPolicy) {shape : Lemma5DerivativeShape}
+    (hallowed : theorem4SurgeAllowedLemma5Shape shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ0_measurable : MeasurableSet σ0)
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hpositive_form :
+      lemma5PolicyForm shape (lemma5PositiveResponsePolicy response))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape σ0 →
+        0 < μ (lemma5PositiveResponsePolicy response \ σ0) ∨
+        0 <
+          μ (Function.support response ∩
+            (σ0 \ lemma5PositiveResponsePolicy response))) :
+    Theorem4SurgeAllowedReplacementData
+      (lemma5MarginalSetReward μ response) σ0 := by
+  let C :=
+    lemma5MarginalOptimizerReplacementCertificate_positiveResponse
+      μ response σ0 shape hresponse_measurable
+      hresponse_integrable_acceptAll hσ0_measurable hσ0_subset
+      hpositive_form hstrict_mass
+  have hsubset : C.policy ⊆ acceptAllPolicy := by
+    simpa [C] using lemma5PositiveResponsePolicy_subset_acceptAll response
+  exact
+    Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
+      hallowed C hsubset
 
 /-- Convert source-facing non-surge replacement data into Theorem 4's dependent shape data. -/
 def Theorem4NonsurgeAllowedReplacementData.to_allowed_replacement

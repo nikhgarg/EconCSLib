@@ -103,6 +103,12 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   `Type`; Lean cannot eliminate Prop existentials that way.  Use
   `Classical.choose` / `Classical.choose_spec` to recover the threshold
   parameters, then rewrite the chosen policy to the canonical replacement.
+- When several source routes produce a feasible Lemma 5 optimizer-replacement
+  certificate, add one generic `of_optimizer_replacement_subset` adapter to
+  the paper's concrete replacement-data type, then specialize it to
+  policy-canonical dominance, positive-response marginal certificates, or
+  endpoint certificates.  This avoids duplicating the shape/threshold
+  extraction proof.
 - If the source-facing certificate is proof-valued, avoid packing it under
   `Sigma`; Lean expects a `Type` there and proof-valued structures may live in
   `Prop`.  Use ordinary `Exists` fields for proof-only choices, then `rcases`

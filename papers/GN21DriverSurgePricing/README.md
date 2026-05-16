@@ -818,10 +818,17 @@ feasibility/measurability through
 now converts per-state policy-level Lemma 5 dominance data into the measurable
 all-optimal allowed-policy-form certificate used by the endpoint-selection
 wrappers.  When a route needs the concrete allowed replacement cases,
+`Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset`,
+`Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset`,
 `Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance`,
 `Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance`, and
 `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_replacement_data`
-recover them noncomputably from the policy-form proofs.  The regular endpoint package
+recover them noncomputably from the policy-form proofs.  The positive-response
+marginal route also has
+`Theorem4NonsurgeAllowedReplacementData.of_positiveResponse_marginal` and
+`Theorem4SurgeAllowedReplacementData.of_positiveResponse_marginal`, which feed
+response-shape/mass-strictness Lemma 5 data into the same replacement
+interface.  The regular endpoint package
 `Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
 and theorem
 `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance`

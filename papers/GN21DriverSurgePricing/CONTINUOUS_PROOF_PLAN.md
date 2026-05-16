@@ -514,11 +514,18 @@ into the concrete endpoint policy data.
   dominance data rather than older opaque replacement packages.
   When a downstream route needs concrete canonical replacement cases instead
   of only policy-form classification, use
+  `Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset`,
+  `Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset`,
   `Theorem4NonsurgeAllowedReplacementData.of_policy_canonical_dominance`,
   `Theorem4SurgeAllowedReplacementData.of_policy_canonical_dominance`, and
   `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_replacement_data`.
   These wrappers are noncomputable because they choose threshold parameters
   from Prop-valued Lemma 5 policy-form proofs.
+  The positive-response marginal route is also packaged through
+  `Theorem4NonsurgeAllowedReplacementData.of_positiveResponse_marginal` and
+  `Theorem4SurgeAllowedReplacementData.of_positiveResponse_marginal`, so a
+  source proof with response-shape and mass-strictness facts can enter the
+  same concrete replacement interface directly.
   The regular endpoint layer now has
   `Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
   and
