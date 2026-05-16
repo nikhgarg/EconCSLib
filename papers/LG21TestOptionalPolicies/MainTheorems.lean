@@ -838,6 +838,29 @@ theorem paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable
     hnoDeviation
 
 /--
+Lemma 4.1 report-required bridge for an explicit lower-threshold taking rule:
+if the no-test estimate is the lower-tail skill mean at that threshold, then
+no-profitable-test-taking forces every access student to take.
+-/
+theorem paper_lemma4_1_all_take_of_explicit_lower_tail_threshold_no_profitable_test_taking
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI) (skillLaw : GaussianScaleLaw)
+    {takes : ℝ → Prop} {qTilde qBar scale : ℝ}
+    (hscale : 0 < scale)
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar)
+    (hnoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill scale hscale) qTilde)) :
+    ∀ skill : ℝ, takes skill :=
+  paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable_test_taking
+    C api skillLaw hscale
+    (fun _hnotAll => ⟨qBar, htakes, hqTilde⟩)
+    hnoDeviation
+
+/--
 Lemma 4.1 lower-tail strategy-proofness bridge: combining the optional-reporting
 and report-required lower-tail arguments gives the source-shaped conclusion
 that the relevant observed-access cohorts all report and all take, conditional
@@ -928,6 +951,52 @@ theorem paper_lemma4_1_strategy_proofness_of_gaussian_reporting_threshold_and_lo
       C M theta k scoreLaw hreports hnoReport hreportNoDeviation,
     paper_lemma4_1_all_take_of_gaussian_lower_tail_certificate_no_profitable_test_taking
       C api skillLaw htestScale htakeCutoffIfNotAll htakeNoDeviation⟩
+
+/--
+Lemma 4.1 route with both threshold premises made explicit: Gaussian Bayesian
+threshold reporting supplies the reporting cutoff, and an explicit lower-tail
+taking threshold supplies the report-required side.
+-/
+theorem paper_lemma4_1_strategy_proofness_of_gaussian_reporting_threshold_and_explicit_taking_threshold
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop}
+    {noReportEstimate qTilde base threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (hreports :
+      ∀ score : ℝ,
+        reports score ↔
+          threshold ≤ M.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (affineCutoff
+                (M.posteriorMean (Function.update theta k base) -
+                  M.centeredFamily.signalWeight k * base)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (hreportNoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        reports
+        (fun value : ℝ =>
+          M.posteriorMean (Function.update theta k value))
+        noReportEstimate)
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar)
+    (htakeNoDeviation :
+      lg21NoProfitableTestTakingDeviation takes
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde)) :
+    (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+  ⟨paper_lemma4_1_all_report_of_gaussian_threshold_policy_lower_tail_no_profitable_withholding
+      C M theta k scoreLaw hreports hnoReport hreportNoDeviation,
+    paper_lemma4_1_all_take_of_explicit_lower_tail_threshold_no_profitable_test_taking
+      C api skillLaw htestScale htakes hqTilde htakeNoDeviation⟩
 
 /--
 Propositions 4.2--4.3 support: Gaussian estimate laws with strictly different
