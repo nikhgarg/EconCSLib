@@ -88,6 +88,14 @@ cache is kept as `source.txt` for named-statement audits.
 
 ### Recent Theorem 3.2 Progress
 
+- The concrete optional/report-required constant-latent event-share routes now
+  also produce compact `LG21FairnessImpossibilityCertificate` values:
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`
+  package the strongest optional posterior-payoff and report-required
+  unit-centered payoff surfaces into the same certificate interface used by the
+  source-equilibrium route.
 - `paper_theorem3_2_observable_fair_best_response_forces_no_above_mean_actor`
   and
   `paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor`

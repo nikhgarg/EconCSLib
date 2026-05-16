@@ -282,6 +282,10 @@ Last updated: 2026-05-16
   companion implication wrapper
   `paper_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
   presents this continuous route directly as fairness implies test-blankness.
+  The nonempty-equilibrium constructor
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
+  now packages this concrete optional surface into the compact
+  `LG21FairnessImpossibilityCertificate` interface.
   The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
@@ -300,7 +304,10 @@ Last updated: 2026-05-16
   implication wrapper
   `paper_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
   presents this normalized report-required route directly in Theorem 3.2's
-  fairness-implies-test-blankness form.
+  fairness-implies-test-blankness form.  Its nonempty-equilibrium constructor
+  `paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`
+  now packages the concrete unit-centered report-required surface into the same
+  compact certificate interface.
   The
   finite acting-distribution
   lemmas
