@@ -638,6 +638,256 @@ theorem standardGaussianCDF_tendsto_atTop :
   unfold standardGaussianCDF
   exact ProbabilityTheory.tendsto_cdf_atTop standardGaussianMeasure
 
+/--
+Mills upper bound for the standard Gaussian left tail.
+
+For `t > 0`, `Phi(-t)` is bounded above by the usual density-over-argument
+quantity.
+-/
+theorem standardGaussianCDF_neg_lt_mills_upper {t : ℝ} (ht : 0 < t) :
+    standardGaussianCDF (-t) <
+      (Real.sqrt (2 * Real.pi))⁻¹ * (Real.exp (-(t ^ 2) / 2) / t) := by
+  let c : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    exact inv_pos.mpr
+      (Real.sqrt_pos.mpr (by positivity : (0 : ℝ) < 2 * Real.pi))
+  have htail_lt :
+      gaussianMillsTail t < Real.exp (-(t ^ 2) / 2) / t := by
+    simpa [gaussianMillsUpperGap, sub_pos] using
+      gaussianMillsUpperGap_pos_of_pos ht
+  calc
+    standardGaussianCDF (-t) = 1 - standardGaussianCDF t := by
+      rw [standardGaussianCDF_neg_eq_one_sub]
+    _ = c * gaussianMillsTail t := by
+      dsimp [c]
+      rw [standardGaussianTail_eq_const_mul_millsTail]
+    _ < c * (Real.exp (-(t ^ 2) / 2) / t) :=
+      mul_lt_mul_of_pos_left htail_lt hc_pos
+
+/--
+Sampford's lower Mills comparison gives a lower bound for the standard
+Gaussian left tail.
+-/
+theorem standardGaussianCDF_neg_mills_lower_lt {t : ℝ} :
+    (Real.sqrt (2 * Real.pi))⁻¹ *
+        (gaussianSampfordLowerComparison t * Real.exp (-(t ^ 2) / 2)) <
+      standardGaussianCDF (-t) := by
+  let c : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    exact inv_pos.mpr
+      (Real.sqrt_pos.mpr (by positivity : (0 : ℝ) < 2 * Real.pi))
+  have hlower := gaussianSampfordLowerComparison_lt_millsRatio t
+  have hmul :=
+    mul_lt_mul_of_pos_right hlower (Real.exp_pos (-(t ^ 2) / 2))
+  have htail :
+      gaussianSampfordLowerComparison t * Real.exp (-(t ^ 2) / 2) <
+        gaussianMillsTail t := by
+    unfold gaussianMillsRatio at hmul
+    calc
+      gaussianSampfordLowerComparison t * Real.exp (-(t ^ 2) / 2)
+          < (Real.exp (t ^ 2 / 2) * gaussianMillsTail t) *
+              Real.exp (-(t ^ 2) / 2) := hmul
+      _ = gaussianMillsTail t := by
+        calc
+          (Real.exp (t ^ 2 / 2) * gaussianMillsTail t) *
+              Real.exp (-(t ^ 2) / 2)
+              =
+            gaussianMillsTail t *
+              (Real.exp (t ^ 2 / 2) * Real.exp (-(t ^ 2) / 2)) := by
+                ring
+          _ = gaussianMillsTail t := by
+            rw [← Real.exp_add]
+            have hsum : t ^ 2 / 2 + -(t ^ 2) / 2 = 0 := by ring
+            rw [hsum, Real.exp_zero, mul_one]
+  calc
+    c * (gaussianSampfordLowerComparison t * Real.exp (-(t ^ 2) / 2))
+        < c * gaussianMillsTail t := mul_lt_mul_of_pos_left htail hc_pos
+    _ = 1 - standardGaussianCDF t := by
+      dsimp [c]
+      rw [standardGaussianTail_eq_const_mul_millsTail]
+    _ = standardGaussianCDF (-t) := by
+      rw [standardGaussianCDF_neg_eq_one_sub]
+
+/--
+Pointwise left-tail comparison used to bootstrap eventual dominance: if the
+quadratic exponential factor is already below `eps`, then
+`Phi(-lambda*t) < eps * Phi(-t)`.
+-/
+theorem standardGaussianCDF_neg_const_mul_lt_mul_neg_of_exp_small
+    {lambda eps t : ℝ} (hlambda : 1 < lambda) (heps : 0 < eps)
+    (ht : 1 ≤ t)
+    (hsmall :
+      (2 / lambda) *
+          Real.exp (-(((lambda ^ 2 - 1) / 2) * t ^ 2)) <
+        eps) :
+    standardGaussianCDF (-(lambda * t)) <
+      eps * standardGaussianCDF (-t) := by
+  let c : ℝ := (Real.sqrt (2 * Real.pi))⁻¹
+  let a : ℝ := (1 / (2 * t)) * Real.exp (-(t ^ 2) / 2)
+  let b : ℝ := Real.exp (-((lambda * t) ^ 2) / 2) / (lambda * t)
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    exact inv_pos.mpr
+      (Real.sqrt_pos.mpr (by positivity : (0 : ℝ) < 2 * Real.pi))
+  have ht_pos : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  have hlambda_pos : 0 < lambda := lt_trans zero_lt_one hlambda
+  have hlt_pos : 0 < lambda * t := mul_pos hlambda_pos ht_pos
+  have hupper := standardGaussianCDF_neg_lt_mills_upper hlt_pos
+  have hupper_c :
+      standardGaussianCDF (-(lambda * t)) < c * b := by
+    simpa [c, b] using hupper
+  have hlower := standardGaussianCDF_neg_mills_lower_lt (t := t)
+  have hlower_c :
+      c * (gaussianSampfordLowerComparison t * Real.exp (-(t ^ 2) / 2)) <
+        standardGaussianCDF (-t) := by
+    simpa [c] using hlower
+  let L := gaussianSampfordLowerComparison t
+  have hL_lower : 1 / (2 * t) < L := by
+    have hquad :=
+      gaussianSampfordLowerComparison_sq_add_one_mul_gt_arg ht_pos
+    have hden_pos : 0 < t ^ 2 + 1 := by nlinarith [sq_nonneg t]
+    have hdiv : t / (t ^ 2 + 1) < L := by
+      rw [div_lt_iff₀ hden_pos]
+      simpa [L, mul_comm] using hquad
+    have hhalf : 1 / (2 * t) ≤ t / (t ^ 2 + 1) := by
+      have hden1 : 0 < 2 * t := by positivity
+      have hden2 : 0 < t ^ 2 + 1 := by nlinarith [sq_nonneg t]
+      rw [div_le_div_iff₀ hden1 hden2]
+      nlinarith [ht, sq_nonneg t]
+    exact lt_of_le_of_lt hhalf hdiv
+  have hlower_simple : c * a < standardGaussianCDF (-t) := by
+    have hmulL :
+        (1 / (2 * t)) * Real.exp (-(t ^ 2) / 2) <
+          L * Real.exp (-(t ^ 2) / 2) :=
+      mul_lt_mul_of_pos_right hL_lower (Real.exp_pos _)
+    have h := (mul_lt_mul_of_pos_left hmulL hc_pos).trans hlower_c
+    simpa [a, L] using h
+  have hcore : b < eps * a := by
+    have hpos : 0 < a := by
+      dsimp [a]
+      positivity
+    have hmul := mul_lt_mul_of_pos_right hsmall hpos
+    calc
+      b =
+          ((2 / lambda) *
+              Real.exp (-(((lambda ^ 2 - 1) / 2) * t ^ 2)) *
+            a) := by
+            dsimp [a, b]
+            have hexp :
+                Real.exp (-((lambda * t) ^ 2) / 2) =
+                  Real.exp (-(((lambda ^ 2 - 1) / 2) * t ^ 2)) *
+                    Real.exp (-(t ^ 2) / 2) := by
+              rw [← Real.exp_add]
+              congr 1
+              ring
+            rw [hexp]
+            field_simp [hlambda_pos.ne', ht_pos.ne']
+      _ < eps * a := hmul
+  refine hupper_c.trans ?_
+  refine (mul_lt_mul_of_pos_left hcore hc_pos).trans ?_
+  rw [show c * (eps * a) = eps * (c * a) by ring]
+  exact mul_lt_mul_of_pos_left hlower_simple heps
+
+/--
+Gaussian left-tail dominance: for any `lambda > 1`,
+`Phi(-lambda*t)` is eventually smaller than any positive multiple of
+`Phi(-t)`.
+-/
+theorem standardGaussianCDF_neg_const_mul_lt_mul_neg_eventually
+    {lambda eps : ℝ} (hlambda : 1 < lambda) (heps : 0 < eps) :
+    ∀ᶠ t in atTop,
+      standardGaussianCDF (-(lambda * t)) <
+        eps * standardGaussianCDF (-t) := by
+  let c : ℝ := (lambda ^ 2 - 1) / 2
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    nlinarith [hlambda]
+  have harg : Tendsto (fun t : ℝ => -c * t ^ 2) atTop atBot := by
+    exact tendsto_neg_const_mul_pow_atTop (n := 2) (by norm_num) (by linarith)
+  have hdecay :
+      Tendsto
+        (fun t : ℝ => (2 / lambda) * Real.exp (-c * t ^ 2))
+        atTop (nhds 0) := by
+    have hexp :
+        Tendsto (fun t : ℝ => Real.exp (-c * t ^ 2))
+          atTop (nhds 0) :=
+      Real.tendsto_exp_atBot.comp harg
+    simpa using (tendsto_const_nhds (x := 2 / lambda)).mul hexp
+  have hsmall_ev :
+      ∀ᶠ t in atTop,
+        (2 / lambda) * Real.exp (-c * t ^ 2) < eps :=
+    hdecay.eventually (eventually_lt_nhds heps)
+  filter_upwards [eventually_ge_atTop (1 : ℝ), hsmall_ev] with t ht hsmall
+  exact
+    standardGaussianCDF_neg_const_mul_lt_mul_neg_of_exp_small
+      hlambda heps ht (by simpa [c] using hsmall)
+
+/--
+Affine left-tail dominance.  If the first affine standardized cutoff has the
+larger positive skill slope, then its standard Gaussian left-tail CDF is
+eventually smaller than any positive multiple of the slower affine left tail.
+-/
+theorem standardGaussianCDF_affine_leftTail_lt_mul_eventually_of_slope_lt
+    {interceptFast slopeFast interceptSlow slopeSlow eps : ℝ}
+    (hslopeSlow_pos : 0 < slopeSlow) (hslope : slopeSlow < slopeFast)
+    (heps : 0 < eps) :
+    ∀ᶠ q in atTop,
+      standardGaussianCDF (interceptFast - slopeFast * q) <
+        eps * standardGaussianCDF (interceptSlow - slopeSlow * q) := by
+  let lambda : ℝ := (slopeFast + slopeSlow) / (2 * slopeSlow)
+  have hlambda_gt_one : 1 < lambda := by
+    dsimp [lambda]
+    rw [lt_div_iff₀ (by positivity : 0 < 2 * slopeSlow)]
+    nlinarith
+  have hlambda_slope_lt : lambda * slopeSlow < slopeFast := by
+    dsimp [lambda]
+    field_simp [hslopeSlow_pos.ne']
+    nlinarith
+  have hslow_atTop :
+      Tendsto (fun q : ℝ => slopeSlow * q - interceptSlow) atTop atTop := by
+    have hmul :
+        Tendsto (fun q : ℝ => slopeSlow * q + (-interceptSlow))
+          atTop atTop :=
+      ((Filter.tendsto_const_mul_atTop_of_pos hslopeSlow_pos).2
+          Filter.tendsto_id).atTop_add
+        tendsto_const_nhds
+    simpa [sub_eq_add_neg] using hmul
+  have htail_q :
+      ∀ᶠ q in atTop,
+        standardGaussianCDF (-(lambda * (slopeSlow * q - interceptSlow))) <
+          eps * standardGaussianCDF (-(slopeSlow * q - interceptSlow)) := by
+    exact hslow_atTop.eventually
+      (standardGaussianCDF_neg_const_mul_lt_mul_neg_eventually
+        hlambda_gt_one heps)
+  obtain ⟨q0, horder⟩ :=
+    StandardGaussianDerivativeAPI.exists_eventual_affineStandardized_lt_of_slope_lt
+      (interceptFast := interceptFast) (slopeFast := slopeFast)
+      (interceptSlow := lambda * interceptSlow)
+      (slopeSlow := lambda * slopeSlow)
+      hlambda_slope_lt
+  filter_upwards [htail_q, eventually_gt_atTop q0] with q htailq hq
+  have hstd :
+      interceptFast - slopeFast * q <
+        lambda * interceptSlow - (lambda * slopeSlow) * q :=
+    horder q hq
+  have hle :
+      interceptFast - slopeFast * q ≤
+        -(lambda * (slopeSlow * q - interceptSlow)) := by
+    have heq :
+        -(lambda * (slopeSlow * q - interceptSlow)) =
+          lambda * interceptSlow - (lambda * slopeSlow) * q := by
+      ring
+    rw [heq]
+    exact le_of_lt hstd
+  have hcdf_le := standardGaussianCDF_mono hle
+  have htailq' :
+      standardGaussianCDF (-(lambda * (slopeSlow * q - interceptSlow))) <
+        eps * standardGaussianCDF (interceptSlow - slopeSlow * q) := by
+    simpa [sub_eq_add_neg] using htailq
+  exact lt_of_le_of_lt hcdf_le htailq'
+
 /-- Every probability in `(0,1)` is hit by the standard Gaussian CDF. -/
 theorem standardGaussianCDF_mem_range_of_mem_Ioo {p : ℝ}
     (hp : p ∈ Ioo (0 : ℝ) 1) :
