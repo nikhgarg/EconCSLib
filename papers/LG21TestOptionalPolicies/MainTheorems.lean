@@ -1547,6 +1547,52 @@ theorem lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium
   simpa [hnreport] using hbest
 
 /--
+Source Definition 1 optional-reporting projection: if a source equilibrium's
+payoff for deviating to `(Y, X) = (1, 1)` is the reported-score estimate, and
+the chosen non-report payoff is the no-report estimate, then source
+best-response implies the no-profitable-withholding predicate used in
+Lemma 4.1.
+-/
+theorem lg21NoProfitableWithholdingDeviation_of_source_optional_equilibrium
+    {Skill Base : Type*}
+    {E : LG21SourceEquilibriumData Skill Base ℝ}
+    (hEq : lg21SourceEquilibrium E)
+    (hrequirement :
+      E.requirement = LG21AccessAction.optionalReportingRequirement)
+    (skill : Skill) (base : Base)
+    {reports : ℝ → Prop}
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    (hreportPayoff :
+      ∀ score : ℝ,
+        E.payoff
+          { skill := skill, base := base, test := score }
+          LG21AccessAction.takeAndReport =
+            reportedEstimate score)
+    (hnoReportChosenPayoff :
+      ∀ score : ℝ, ¬ reports score →
+        E.payoff
+          { skill := skill, base := base, test := score }
+          (LG21AccessStudentInfo.chosenAction
+            E.takeDecision E.reportDecision
+            { skill := skill, base := base, test := score }) =
+            noReportEstimate) :
+    lg21NoProfitableWithholdingDeviation
+      reports reportedEstimate noReportEstimate := by
+  intro score hnreport
+  let info : LG21AccessStudentInfo Skill Base ℝ :=
+    { skill := skill, base := base, test := score }
+  have hfeasible :
+      LG21AccessAction.feasible E.requirement
+        LG21AccessAction.takeAndReport := by
+    rw [hrequirement]
+    exact LG21AccessAction.takeAndReport_optionalReporting_feasible
+  have hbest :=
+    lg21SourceEquilibrium_best_response hEq info
+      LG21AccessAction.takeAndReport hfeasible
+  rw [hreportPayoff score, hnoReportChosenPayoff score hnreport] at hbest
+  exact hbest
+
+/--
 Binary test-taking subgame used to connect Definition 1-style best responses
 to the no-profitable-test-taking predicate in Lemma 4.1.
 -/
@@ -1571,6 +1617,130 @@ theorem lg21NoProfitableTestTakingDeviation_of_taking_equilibrium
   have hbest := hEq.2.1 skill true trivial
   dsimp [lg21TestTakingEquilibriumData] at hbest
   simpa [hntake] using hbest
+
+/--
+Source Definition 1 report-required projection: if deviating to
+`(Y, X) = (1, 1)` gives the test-taking benefit probability, and the chosen
+non-taking payoff is `1 / 2`, then source best-response implies the
+no-profitable-test-taking predicate used in Lemma 4.1.
+-/
+theorem lg21NoProfitableTestTakingDeviation_of_source_report_required_equilibrium
+    {Base Test : Type*}
+    {E : LG21SourceEquilibriumData ℝ Base Test}
+    (hEq : lg21SourceEquilibrium E)
+    (hrequirement :
+      E.requirement = LG21AccessAction.reportRequiredAfterTaking)
+    (base : Base) (test : Test)
+    {takes : ℝ → Prop} {testBenefitProb : ℝ → ℝ}
+    (htakePayoff :
+      ∀ skill : ℝ,
+        E.payoff
+          { skill := skill, base := base, test := test }
+          LG21AccessAction.takeAndReport =
+            testBenefitProb skill)
+    (hnoTakeChosenPayoff :
+      ∀ skill : ℝ, ¬ takes skill →
+        E.payoff
+          { skill := skill, base := base, test := test }
+          (LG21AccessStudentInfo.chosenAction
+            E.takeDecision E.reportDecision
+            { skill := skill, base := base, test := test }) =
+            (1 / 2 : ℝ)) :
+    lg21NoProfitableTestTakingDeviation takes testBenefitProb := by
+  intro skill hntake
+  let info : LG21AccessStudentInfo ℝ Base Test :=
+    { skill := skill, base := base, test := test }
+  have hfeasible :
+      LG21AccessAction.feasible E.requirement
+        LG21AccessAction.takeAndReport := by
+    rw [hrequirement]
+    exact LG21AccessAction.takeAndReport_reportRequiredAfterTaking_feasible
+  have hbest :=
+    lg21SourceEquilibrium_best_response hEq info
+      LG21AccessAction.takeAndReport hfeasible
+  rw [htakePayoff skill, hnoTakeChosenPayoff skill hntake] at hbest
+  exact hbest
+
+/--
+Lemma 4.1 route from source Definition 1 equilibria: source best responses in
+the optional-reporting and report-required games supply the two no-profitable
+deviation predicates, and the Gaussian threshold proof then gives all-report
+and all-take.
+-/
+theorem paper_lemma4_1_strategy_proofness_of_source_equilibrium_projections
+    {Feature ReportSkill ReportBase TakeBase TakeTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop}
+    {noReportEstimate qTilde reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (Ereport : LG21SourceEquilibriumData ReportSkill ReportBase ℝ)
+    (hReportEq : lg21SourceEquilibrium Ereport)
+    (hReportRequirement :
+      Ereport.requirement = LG21AccessAction.optionalReportingRequirement)
+    (reportSkill : ReportSkill) (reportBase : ReportBase)
+    (hreportPayoff :
+      ∀ score : ℝ,
+        Ereport.payoff
+          { skill := reportSkill, base := reportBase, test := score }
+          LG21AccessAction.takeAndReport =
+            M.posteriorMean (Function.update theta k score))
+    (hnoReportChosenPayoff :
+      ∀ score : ℝ, ¬ reports score →
+        Ereport.payoff
+          { skill := reportSkill, base := reportBase, test := score }
+          (LG21AccessStudentInfo.chosenAction
+            Ereport.takeDecision Ereport.reportDecision
+            { skill := reportSkill, base := reportBase, test := score }) =
+            noReportEstimate)
+    (hreports :
+      ∀ score : ℝ,
+        reports score ↔
+          threshold ≤ M.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (Etake : LG21SourceEquilibriumData ℝ TakeBase TakeTest)
+    (hTakeEq : lg21SourceEquilibrium Etake)
+    (hTakeRequirement :
+      Etake.requirement = LG21AccessAction.reportRequiredAfterTaking)
+    (takeBase : TakeBase) (takeTest : TakeTest)
+    (htakePayoff :
+      ∀ skill : ℝ,
+        Etake.payoff
+          { skill := skill, base := takeBase, test := takeTest }
+          LG21AccessAction.takeAndReport =
+            api.thresholdPassProb
+              (lg21GaussianTestScoreLaw skill testScale htestScale) qTilde)
+    (hnoTakeChosenPayoff :
+      ∀ skill : ℝ, ¬ takes skill →
+        Etake.payoff
+          { skill := skill, base := takeBase, test := takeTest }
+          (LG21AccessStudentInfo.chosenAction
+            Etake.takeDecision Etake.reportDecision
+            { skill := skill, base := takeBase, test := takeTest }) =
+            (1 / 2 : ℝ))
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar) :
+    (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+  paper_lemma4_1_strategy_proofness_of_gaussian_reporting_threshold_and_explicit_taking_threshold
+    C api M theta k scoreLaw skillLaw htestScale hreports hnoReport
+    (lg21NoProfitableWithholdingDeviation_of_source_optional_equilibrium
+      hReportEq hReportRequirement reportSkill reportBase hreportPayoff
+      hnoReportChosenPayoff)
+    htakes hqTilde
+    (lg21NoProfitableTestTakingDeviation_of_source_report_required_equilibrium
+      hTakeEq hTakeRequirement takeBase takeTest htakePayoff
+      hnoTakeChosenPayoff)
 
 /--
 Lemma 4.1 route from explicit threshold policies and binary subgame

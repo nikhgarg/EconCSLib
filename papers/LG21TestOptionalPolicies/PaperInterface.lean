@@ -74,6 +74,38 @@ theorem paper_interface_no_profitable_withholding_of_reporting_equilibrium
   lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium hEq
 
 /--
+Definition 1 source optional-reporting bridge: source best response implies
+the no-profitable-withholding condition used by Lemma 4.1.
+-/
+theorem paper_interface_no_profitable_withholding_of_source_optional_equilibrium
+    {Skill Base : Type*}
+    {E : LG21SourceEquilibriumData Skill Base ℝ}
+    (hEq : paperSourceEquilibrium E)
+    (hrequirement :
+      E.requirement = LG21AccessAction.optionalReportingRequirement)
+    (skill : Skill) (base : Base)
+    {reports : ℝ → Prop}
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    (hreportPayoff :
+      ∀ score : ℝ,
+        E.payoff
+          { skill := skill, base := base, test := score }
+          LG21AccessAction.takeAndReport =
+            reportedEstimate score)
+    (hnoReportChosenPayoff :
+      ∀ score : ℝ, ¬ reports score →
+        E.payoff
+          { skill := skill, base := base, test := score }
+          (paperChosenAccessAction
+            E.takeDecision E.reportDecision
+            { skill := skill, base := base, test := score }) =
+            noReportEstimate) :
+    lg21NoProfitableWithholdingDeviation
+      reports reportedEstimate noReportEstimate :=
+  lg21NoProfitableWithholdingDeviation_of_source_optional_equilibrium
+    hEq hrequirement skill base hreportPayoff hnoReportChosenPayoff
+
+/--
 Definition 1 bridge: in the binary test-taking subgame, equilibrium implies
 the no-profitable-test-taking condition used by Lemma 4.1.
 -/
@@ -85,6 +117,36 @@ theorem paper_interface_no_profitable_test_taking_of_taking_equilibrium
         (lg21TestTakingEquilibriumData takes testBenefitProb)) :
     lg21NoProfitableTestTakingDeviation takes testBenefitProb :=
   lg21NoProfitableTestTakingDeviation_of_taking_equilibrium hEq
+
+/--
+Definition 1 source report-required bridge: source best response implies the
+no-profitable-test-taking condition used by Lemma 4.1.
+-/
+theorem paper_interface_no_profitable_test_taking_of_source_report_required_equilibrium
+    {Base Test : Type*}
+    {E : LG21SourceEquilibriumData ℝ Base Test}
+    (hEq : paperSourceEquilibrium E)
+    (hrequirement :
+      E.requirement = LG21AccessAction.reportRequiredAfterTaking)
+    (base : Base) (test : Test)
+    {takes : ℝ → Prop} {testBenefitProb : ℝ → ℝ}
+    (htakePayoff :
+      ∀ skill : ℝ,
+        E.payoff
+          { skill := skill, base := base, test := test }
+          LG21AccessAction.takeAndReport =
+            testBenefitProb skill)
+    (hnoTakeChosenPayoff :
+      ∀ skill : ℝ, ¬ takes skill →
+        E.payoff
+          { skill := skill, base := base, test := test }
+          (paperChosenAccessAction
+            E.takeDecision E.reportDecision
+            { skill := skill, base := base, test := test }) =
+            (1 / 2 : ℝ)) :
+    lg21NoProfitableTestTakingDeviation takes testBenefitProb :=
+  lg21NoProfitableTestTakingDeviation_of_source_report_required_equilibrium
+    hEq hrequirement base test htakePayoff hnoTakeChosenPayoff
 
 /--
 Lemma 4.1 source-equilibrium bridge: a packaged Gaussian threshold-equilibrium
@@ -1082,6 +1144,84 @@ theorem paper_interface_lemma4_1_strategy_proofness_of_explicit_threshold_equili
   paper_lemma4_1_strategy_proofness_of_explicit_threshold_equilibria
     C api M theta k scoreLaw skillLaw htestScale hreports hnoReport
     hreportEq htakes hqTilde htakeEq
+
+/--
+Lemma 4.1 route from source Definition 1 equilibria: source best responses in
+the optional-reporting and report-required games supply the two no-profitable
+deviation predicates, and the Gaussian threshold proof then gives all-report
+and all-take.
+-/
+theorem paper_interface_lemma4_1_strategy_proofness_of_source_equilibrium_projections
+    {Feature ReportSkill ReportBase TakeBase TakeTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    {reports takes : ℝ → Prop}
+    {noReportEstimate qTilde reportingBase threshold qBar testScale : ℝ}
+    (htestScale : 0 < testScale)
+    (Ereport : LG21SourceEquilibriumData ReportSkill ReportBase ℝ)
+    (hReportEq : paperSourceEquilibrium Ereport)
+    (hReportRequirement :
+      Ereport.requirement = LG21AccessAction.optionalReportingRequirement)
+    (reportSkill : ReportSkill) (reportBase : ReportBase)
+    (hreportPayoff :
+      ∀ score : ℝ,
+        Ereport.payoff
+          { skill := reportSkill, base := reportBase, test := score }
+          LG21AccessAction.takeAndReport =
+            M.posteriorMean (Function.update theta k score))
+    (hnoReportChosenPayoff :
+      ∀ score : ℝ, ¬ reports score →
+        Ereport.payoff
+          { skill := reportSkill, base := reportBase, test := score }
+          (paperChosenAccessAction
+            Ereport.takeDecision Ereport.reportDecision
+            { skill := reportSkill, base := reportBase, test := score }) =
+            noReportEstimate)
+    (hreports :
+      ∀ score : ℝ,
+        reports score ↔
+          threshold ≤ M.posteriorMean (Function.update theta k score))
+    (hnoReport :
+      noReportEstimate =
+        M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (EconCSLib.affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    (Etake : LG21SourceEquilibriumData ℝ TakeBase TakeTest)
+    (hTakeEq : paperSourceEquilibrium Etake)
+    (hTakeRequirement :
+      Etake.requirement = LG21AccessAction.reportRequiredAfterTaking)
+    (takeBase : TakeBase) (takeTest : TakeTest)
+    (htakePayoff :
+      ∀ skill : ℝ,
+        Etake.payoff
+          { skill := skill, base := takeBase, test := takeTest }
+          LG21AccessAction.takeAndReport =
+            api.thresholdPassProb
+              (paperGaussianTestScoreLaw skill testScale htestScale) qTilde)
+    (hnoTakeChosenPayoff :
+      ∀ skill : ℝ, ¬ takes skill →
+        Etake.payoff
+          { skill := skill, base := takeBase, test := takeTest }
+          (paperChosenAccessAction
+            Etake.takeDecision Etake.reportDecision
+            { skill := skill, base := takeBase, test := takeTest }) =
+            (1 / 2 : ℝ))
+    (htakes : ∀ skill : ℝ, takes skill ↔ qBar ≤ skill)
+    (hqTilde : qTilde = C.lowerTailMean skillLaw qBar) :
+    (∀ score : ℝ, reports score) ∧ (∀ skill : ℝ, takes skill) :=
+  paper_lemma4_1_strategy_proofness_of_source_equilibrium_projections
+    C api M theta k scoreLaw skillLaw htestScale
+    Ereport hReportEq hReportRequirement reportSkill reportBase
+    hreportPayoff hnoReportChosenPayoff hreports hnoReport
+    Etake hTakeEq hTakeRequirement takeBase takeTest
+    htakePayoff hnoTakeChosenPayoff htakes hqTilde
 
 /--
 Fixed-base posterior-score law: all non-test information is fixed and the
