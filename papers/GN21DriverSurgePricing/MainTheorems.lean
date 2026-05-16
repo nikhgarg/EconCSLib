@@ -493,6 +493,99 @@ noncomputable def GN21FiniteIntervalPolicy.complexity
     (P : GN21FiniteIntervalPolicy) : Nat :=
   @Fintype.card P.index P.finite_index
 
+/--
+Finite interval/ray components for Lemma 5 endpoint descent.  Bounded
+intervals are the inner-regularity seeds; positive-domain rays and the full
+positive domain are needed because the canonical Lemma 5 policies include
+accept-all and unbounded tails.
+-/
+inductive GN21GeneralizedIntervalComponent where
+  | bounded (lower upper : ℝ)
+  | positiveBounded (lower upper : ℝ)
+  | positiveLeftRay (upper : ℝ)
+  | positiveRightRay (lower : ℝ)
+  | positiveAll
+
+/-- Trip-policy set represented by one generalized interval/ray component. -/
+def GN21GeneralizedIntervalComponent.policy :
+    GN21GeneralizedIntervalComponent → TripPolicy
+  | .bounded lower upper => Set.Ioo lower upper
+  | .positiveBounded lower upper =>
+      Set.Ioi (0 : ℝ) ∩ Set.Ioi lower ∩ Set.Iio upper
+  | .positiveLeftRay upper => Set.Ioi (0 : ℝ) ∩ Set.Iio upper
+  | .positiveRightRay lower => Set.Ioi (0 : ℝ) ∩ Set.Ioi lower
+  | .positiveAll => Set.Ioi (0 : ℝ)
+
+/-- Each generalized interval/ray component is measurable. -/
+theorem GN21GeneralizedIntervalComponent.measurableSet_policy
+    (C : GN21GeneralizedIntervalComponent) :
+    MeasurableSet C.policy := by
+  cases C with
+  | bounded lower upper =>
+      exact measurableSet_Ioo
+  | positiveBounded lower upper =>
+      exact ((measurableSet_Ioi (a := (0 : ℝ))).inter
+        (measurableSet_Ioi (a := lower))).inter
+          (measurableSet_Iio (a := upper))
+  | positiveLeftRay upper =>
+      exact (measurableSet_Ioi (a := (0 : ℝ))).inter
+        (measurableSet_Iio (a := upper))
+  | positiveRightRay lower =>
+      exact (measurableSet_Ioi (a := (0 : ℝ))).inter
+        (measurableSet_Ioi (a := lower))
+  | positiveAll =>
+      exact measurableSet_Ioi
+
+/--
+Finite generalized interval policy domain for Lemma 5.  This is the finite
+descent domain that can contain both the bounded approximation seeds and the
+unbounded canonical policies reached by endpoint movements.
+-/
+structure GN21GeneralizedIntervalPolicy where
+  index : Type
+  finite_index : Fintype index
+  component : index → GN21GeneralizedIntervalComponent
+
+/-- The trip-policy set represented by a generalized finite interval policy. -/
+def GN21GeneralizedIntervalPolicy.policy
+    (P : GN21GeneralizedIntervalPolicy) : TripPolicy :=
+  ⋃ i : P.index, (P.component i).policy
+
+/-- A generalized finite interval/ray policy is measurable. -/
+theorem GN21GeneralizedIntervalPolicy.measurableSet_policy
+    (P : GN21GeneralizedIntervalPolicy) :
+    MeasurableSet P.policy := by
+  classical
+  letI := P.finite_index
+  unfold GN21GeneralizedIntervalPolicy.policy
+  exact MeasurableSet.iUnion
+    (fun i => (P.component i).measurableSet_policy)
+
+/-- Natural complexity of a generalized finite interval/ray policy. -/
+noncomputable def GN21GeneralizedIntervalPolicy.complexity
+    (P : GN21GeneralizedIntervalPolicy) : Nat :=
+  @Fintype.card P.index P.finite_index
+
+/-- Embed a bounded finite interval policy in the generalized interval/ray domain. -/
+noncomputable def GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy
+    (P : GN21FiniteIntervalPolicy) : GN21GeneralizedIntervalPolicy where
+  index := P.index
+  finite_index := P.finite_index
+  component := fun i =>
+    GN21GeneralizedIntervalComponent.bounded (P.lower i) (P.upper i)
+
+/-- The generalized embedding preserves the represented policy set. -/
+theorem GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy_policy
+    (P : GN21FiniteIntervalPolicy) :
+    P.toGeneralizedIntervalPolicy.policy = P.policy := by
+  rfl
+
+/-- The generalized embedding preserves endpoint complexity. -/
+theorem GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy_complexity
+    (P : GN21FiniteIntervalPolicy) :
+    P.toGeneralizedIntervalPolicy.complexity = P.complexity := by
+  rfl
+
 /-- Convert a finite open-ball approximation on `ℝ` into endpoint intervals. -/
 noncomputable def GN21FiniteOpenBallApproximation.to_interval
     {μ : Measure TripLength} {σ : TripPolicy} {ε : ℝ≥0∞}
@@ -718,6 +811,49 @@ theorem exists_gn21FiniteIntervalPolicy_reward_close_below
     (abs_lt.1 hclose).1
   exact ⟨P, by linarith⟩
 
+/--
+Generalized finite interval/ray seeds inherit the finite-interval approximation
+theorem.  The initial seeds are bounded; later endpoint descent may move them
+to rays or the full positive domain.
+-/
+theorem exists_gn21GeneralizedIntervalPolicy_reward_close
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : TripPolicy → ℝ) {σ : TripPolicy}
+    (hσ_open : IsOpen σ)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ)
+    {εReward : ℝ} (hεReward : 0 < εReward) :
+    ∃ P : GN21GeneralizedIntervalPolicy,
+      P.policy ⊆ σ ∧ |Rhat P.policy - Rhat σ| < εReward := by
+  rcases exists_gn21FiniteIntervalPolicy_reward_close
+      μ Rhat hσ_open hcont hεReward with
+    ⟨P, hP_subset, hclose⟩
+  refine ⟨P.toGeneralizedIntervalPolicy, ?_, ?_⟩
+  · simpa [GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy_policy] using
+      hP_subset
+  · simpa [GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy_policy] using
+      hclose
+
+/--
+Generalized finite interval/ray seeds approximate the source reward from
+below.  This is the corrected seed input for Lemma 5 descent domains that
+also need unbounded canonical policies.
+-/
+theorem exists_gn21GeneralizedIntervalPolicy_reward_close_below
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : TripPolicy → ℝ) {σ : TripPolicy}
+    (hσ_open : IsOpen σ)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ) :
+    ∀ εReward : ℝ, 0 < εReward →
+      ∃ P : GN21GeneralizedIntervalPolicy,
+        Rhat σ - εReward < Rhat P.policy := by
+  intro εReward hεReward
+  rcases exists_gn21GeneralizedIntervalPolicy_reward_close
+      μ Rhat hσ_open hcont hεReward with
+    ⟨P, _hP_subset, hclose⟩
+  have hclose_left : -(εReward) < Rhat P.policy - Rhat σ :=
+    (abs_lt.1 hclose).1
+  exact ⟨P, by linarith⟩
+
 /-- Lifetime earnings-rate functional for a one-state policy. -/
 abbrev SingleStateReward := TripPolicy → ℝ
 
@@ -751,6 +887,16 @@ theorem GN21FiniteIntervalPolicy.policy_subset_acceptAll_of_intervals
   intro τ hτ
   rcases Set.mem_iUnion.1 hτ with ⟨i, hτi⟩
   exact hintervals i hτi
+
+/-- Component-level feasibility implies feasibility of a generalized interval policy. -/
+theorem GN21GeneralizedIntervalPolicy.policy_subset_acceptAll_of_components
+    (P : GN21GeneralizedIntervalPolicy)
+    (hcomponents :
+      ∀ i : P.index, (P.component i).policy ⊆ acceptAllPolicy) :
+    P.policy ⊆ acceptAllPolicy := by
+  intro τ hτ
+  rcases Set.mem_iUnion.1 hτ with ⟨i, hτi⟩
+  exact hcomponents i hτi
 
 /-- A policy fails to accept all feasible trips iff it misses some positive trip length. -/
 theorem not_acceptsAllTrips_iff_exists_pos_not_mem
@@ -15364,6 +15510,95 @@ def acceptMiddleTripsPolicy (lo hi : ℝ) : TripPolicy :=
 def rejectMiddleTripsPolicy (lo hi : ℝ) : TripPolicy :=
   Set.Ioi (0 : ℝ) ∩ (Set.Iio lo ∪ Set.Ioi hi)
 
+/-- Generalized one-component representative of the accept-all policy. -/
+def GN21GeneralizedIntervalPolicy.acceptAll :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit
+  finite_index := inferInstance
+  component := fun _ => GN21GeneralizedIntervalComponent.positiveAll
+
+/-- Generalized one-component representative of long-trip rejection. -/
+def GN21GeneralizedIntervalPolicy.rejectLong (t : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit
+  finite_index := inferInstance
+  component := fun _ => GN21GeneralizedIntervalComponent.positiveLeftRay t
+
+/-- Generalized one-component representative of short-trip rejection. -/
+def GN21GeneralizedIntervalPolicy.rejectShort (t : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit
+  finite_index := inferInstance
+  component := fun _ => GN21GeneralizedIntervalComponent.positiveRightRay t
+
+/-- Generalized one-component representative of middle-trip acceptance. -/
+def GN21GeneralizedIntervalPolicy.acceptMiddle (lo hi : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Unit
+  finite_index := inferInstance
+  component := fun _ =>
+    GN21GeneralizedIntervalComponent.positiveBounded lo hi
+
+/-- Generalized two-component representative of middle-trip rejection. -/
+def GN21GeneralizedIntervalPolicy.rejectMiddle (lo hi : ℝ) :
+    GN21GeneralizedIntervalPolicy where
+  index := Bool
+  finite_index := inferInstance
+  component := fun b =>
+    if b then
+      GN21GeneralizedIntervalComponent.positiveRightRay hi
+    else
+      GN21GeneralizedIntervalComponent.positiveLeftRay lo
+
+/-- The generalized accept-all representative has exactly the accept-all policy. -/
+theorem GN21GeneralizedIntervalPolicy.policy_acceptAll :
+    GN21GeneralizedIntervalPolicy.acceptAll.policy = acceptAllPolicy := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.acceptAll,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy,
+    acceptAllPolicy, positiveTripLengths]
+
+/-- The generalized long-trip representative has the canonical long-rejection policy. -/
+theorem GN21GeneralizedIntervalPolicy.policy_rejectLong (t : ℝ) :
+    (GN21GeneralizedIntervalPolicy.rejectLong t).policy =
+      rejectLongTripsPolicy t := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.rejectLong,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy,
+    rejectLongTripsPolicy]
+
+/-- The generalized short-trip representative has the canonical short-rejection policy. -/
+theorem GN21GeneralizedIntervalPolicy.policy_rejectShort (t : ℝ) :
+    (GN21GeneralizedIntervalPolicy.rejectShort t).policy =
+      rejectShortTripsPolicy t := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.rejectShort,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy,
+    rejectShortTripsPolicy]
+
+/-- The generalized middle-acceptance representative has the canonical policy. -/
+theorem GN21GeneralizedIntervalPolicy.policy_acceptMiddle (lo hi : ℝ) :
+    (GN21GeneralizedIntervalPolicy.acceptMiddle lo hi).policy =
+      acceptMiddleTripsPolicy lo hi := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.acceptMiddle,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy,
+    acceptMiddleTripsPolicy, and_assoc]
+
+/-- The generalized middle-rejection representative has the canonical policy. -/
+theorem GN21GeneralizedIntervalPolicy.policy_rejectMiddle (lo hi : ℝ) :
+    (GN21GeneralizedIntervalPolicy.rejectMiddle lo hi).policy =
+      rejectMiddleTripsPolicy lo hi := by
+  ext τ
+  simp [GN21GeneralizedIntervalPolicy.rejectMiddle,
+    GN21GeneralizedIntervalPolicy.policy,
+    GN21GeneralizedIntervalComponent.policy,
+    rejectMiddleTripsPolicy, and_or_left]
+
 /-- The canonical long-trip-rejection policy has the corresponding Lemma 5 form. -/
 theorem rejectsLongTrips_rejectLongTripsPolicy (t : ℝ) :
     rejectsLongTrips t (rejectLongTripsPolicy t) := by
@@ -17784,6 +18019,41 @@ theorem lemma5PolicyForm_strictlyQuasiConcave_acceptMiddleTripsPolicy (lo hi : �
     lemma5PolicyForm .strictlyQuasiConcave (acceptMiddleTripsPolicy lo hi) := by
   exact ⟨lo, hi, acceptsMiddleTrips_acceptMiddleTripsPolicy lo hi⟩
 
+/-- Generalized accept-all representative has the positive Lemma 5 form. -/
+theorem lemma5PolicyForm_generalized_acceptAll :
+    lemma5PolicyForm .positive
+      GN21GeneralizedIntervalPolicy.acceptAll.policy := by
+  rw [GN21GeneralizedIntervalPolicy.policy_acceptAll]
+  exact lemma5PolicyForm_positive_acceptAllPolicy
+
+/-- Generalized short-rejection representative has the increasing Lemma 5 form. -/
+theorem lemma5PolicyForm_generalized_rejectShort (t : ℝ) :
+    lemma5PolicyForm .strictlyIncreasing
+      (GN21GeneralizedIntervalPolicy.rejectShort t).policy := by
+  rw [GN21GeneralizedIntervalPolicy.policy_rejectShort]
+  exact lemma5PolicyForm_strictlyIncreasing_rejectShortTripsPolicy t
+
+/-- Generalized long-rejection representative has the decreasing Lemma 5 form. -/
+theorem lemma5PolicyForm_generalized_rejectLong (t : ℝ) :
+    lemma5PolicyForm .strictlyDecreasing
+      (GN21GeneralizedIntervalPolicy.rejectLong t).policy := by
+  rw [GN21GeneralizedIntervalPolicy.policy_rejectLong]
+  exact lemma5PolicyForm_strictlyDecreasing_rejectLongTripsPolicy t
+
+/-- Generalized middle-rejection representative has the quasi-convex Lemma 5 form. -/
+theorem lemma5PolicyForm_generalized_rejectMiddle (lo hi : ℝ) :
+    lemma5PolicyForm .strictlyQuasiConvex
+      (GN21GeneralizedIntervalPolicy.rejectMiddle lo hi).policy := by
+  rw [GN21GeneralizedIntervalPolicy.policy_rejectMiddle]
+  exact lemma5PolicyForm_strictlyQuasiConvex_rejectMiddleTripsPolicy lo hi
+
+/-- Generalized middle-acceptance representative has the quasi-concave Lemma 5 form. -/
+theorem lemma5PolicyForm_generalized_acceptMiddle (lo hi : ℝ) :
+    lemma5PolicyForm .strictlyQuasiConcave
+      (GN21GeneralizedIntervalPolicy.acceptMiddle lo hi).policy := by
+  rw [GN21GeneralizedIntervalPolicy.policy_acceptMiddle]
+  exact lemma5PolicyForm_strictlyQuasiConcave_acceptMiddleTripsPolicy lo hi
+
 /--
 Lemma 5 quasi-convex interval fact: for a strictly quasi-convex endpoint
 response, any positive interior point has response below the larger endpoint
@@ -18819,6 +19089,43 @@ noncomputable def lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_
     canonicalMax step strictWitness
 
 /--
+Generalized interval/ray specialization of the Lemma 5 descent/maximizer
+constructor.  This is the faithful finite-domain target for the source proof:
+bounded finite intervals provide the approximation seeds, while endpoint
+descent may end at accept-all, a tail, or a middle policy.
+-/
+noncomputable def lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer
+    (μ : Measure TripLength) [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    (Rhat : SingleStateReward) {σ0 : TripPolicy}
+    (shape : Lemma5DerivativeShape)
+    (hσ0_open : IsOpen σ0)
+    (hcont : GN21SymmDiffContinuousAt μ Rhat σ0)
+    (canonicalMax :
+      ∃ maximizer : GN21GeneralizedIntervalPolicy,
+        lemma5PolicyForm shape maximizer.policy ∧
+          ∀ seed : GN21GeneralizedIntervalPolicy,
+            lemma5PolicyForm shape seed.policy →
+              Rhat seed.policy ≤ Rhat maximizer.policy)
+    (step :
+      ∀ seed : GN21GeneralizedIntervalPolicy,
+        ¬ lemma5PolicyForm shape seed.policy →
+          ∃ seed' : GN21GeneralizedIntervalPolicy,
+            Rhat seed.policy ≤ Rhat seed'.policy ∧
+              seed'.complexity < seed.complexity)
+    (strictWitness :
+      ¬ lemma5PolicyForm shape σ0 →
+        ∃ seed : GN21GeneralizedIntervalPolicy,
+          lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer
+    Rhat σ0 shape
+    (fun seed : GN21GeneralizedIntervalPolicy => seed.policy)
+    GN21GeneralizedIntervalPolicy.complexity
+    (exists_gn21GeneralizedIntervalPolicy_reward_close_below
+      μ Rhat hσ0_open hcont)
+    canonicalMax step strictWitness
+
+/--
 Named finite-interval Lemma 5 source data.  This is the current precise target
 for closing the nonlinear endpoint-selection proof: source regularity gives
 `hσ0_open` and `hcont`; the finite endpoint argument must provide a canonical
@@ -18855,6 +19162,43 @@ noncomputable def Lemma5FiniteIntervalPolicyDescentMaximizerData.to_optimizer_re
     (D : Lemma5FiniteIntervalPolicyDescentMaximizerData μ Rhat σ0 shape) :
     Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
   lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_descent_and_maximizer
+    μ Rhat shape D.hσ0_open D.hcont D.canonicalMax D.step D.strictWitness
+
+/--
+Named generalized interval/ray Lemma 5 source data.  This is the corrected
+closeout target for shape cases whose canonical policies are unbounded tails
+or accept-all.
+-/
+structure Lemma5GeneralizedIntervalPolicyDescentMaximizerData
+    (μ : Measure TripLength) (Rhat : SingleStateReward)
+    (σ0 : TripPolicy) (shape : Lemma5DerivativeShape) where
+  hσ0_open : IsOpen σ0
+  hcont : GN21SymmDiffContinuousAt μ Rhat σ0
+  canonicalMax :
+    ∃ maximizer : GN21GeneralizedIntervalPolicy,
+      lemma5PolicyForm shape maximizer.policy ∧
+        ∀ seed : GN21GeneralizedIntervalPolicy,
+          lemma5PolicyForm shape seed.policy →
+            Rhat seed.policy ≤ Rhat maximizer.policy
+  step :
+    ∀ seed : GN21GeneralizedIntervalPolicy,
+      ¬ lemma5PolicyForm shape seed.policy →
+        ∃ seed' : GN21GeneralizedIntervalPolicy,
+          Rhat seed.policy ≤ Rhat seed'.policy ∧
+            seed'.complexity < seed.complexity
+  strictWitness :
+    ¬ lemma5PolicyForm shape σ0 →
+      ∃ seed : GN21GeneralizedIntervalPolicy,
+        lemma5PolicyForm shape seed.policy ∧ Rhat σ0 < Rhat seed.policy
+
+/-- Generalized interval/ray Lemma 5 source data produce the replacement certificate. -/
+noncomputable def Lemma5GeneralizedIntervalPolicyDescentMaximizerData.to_optimizer_replacement
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5GeneralizedIntervalPolicyDescentMaximizerData μ Rhat σ0 shape) :
+    Lemma5OptimizerReplacementCertificate Rhat σ0 shape :=
+  lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer
     μ Rhat shape D.hσ0_open D.hcont D.canonicalMax D.step D.strictWitness
 
 /--
@@ -19009,6 +19353,38 @@ theorem Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_candidate_l
     {Rhat : SingleStateReward} {σ0 : TripPolicy}
     {shape : Lemma5DerivativeShape}
     (D : Lemma5FiniteIntervalPolicyDescentMaximizerData μ Rhat σ0 shape)
+    (hcandidate :
+      Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_candidate_le
+      Rhat σ0 shape D.to_optimizer_replacement hcandidate
+
+/--
+If the current policy is globally optimal, generalized interval/ray Lemma 5
+source data force the current policy itself to have the corresponding form.
+-/
+theorem Lemma5GeneralizedIntervalPolicyDescentMaximizerData.policyForm_of_optimal
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5GeneralizedIntervalPolicyDescentMaximizerData μ Rhat σ0 shape)
+    (hoptimal : ∀ σ : TripPolicy, Rhat σ ≤ Rhat σ0) :
+    lemma5PolicyForm shape σ0 := by
+  exact
+    lemma5PolicyForm_of_optimizer_replacement_certificate_of_optimal
+      Rhat σ0 shape D.to_optimizer_replacement hoptimal
+
+/--
+Restricted-domain variant for generalized interval/ray Lemma 5 data: comparing
+the produced replacement against the current policy is enough to extract the
+source policy form.
+-/
+theorem Lemma5GeneralizedIntervalPolicyDescentMaximizerData.policyForm_of_candidate_le
+    {μ : Measure TripLength} [IsFiniteMeasure μ] [μ.InnerRegularCompactLTTop]
+    {Rhat : SingleStateReward} {σ0 : TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D : Lemma5GeneralizedIntervalPolicyDescentMaximizerData μ Rhat σ0 shape)
     (hcandidate :
       Rhat D.to_optimizer_replacement.policy ≤ Rhat σ0) :
     lemma5PolicyForm shape σ0 := by

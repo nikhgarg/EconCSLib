@@ -10,7 +10,8 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and
 `lake build GN21DriverSurgePricing` pass after the newest Lemma 1-3 IID-cycle
 strong-law work, Lemma 9 envelope/slack source-boundary reduction, and the
-current payment nonnegativity derivation.
+current payment nonnegativity derivation.  The latest checked build also passes
+after adding the generalized interval/ray Lemma 5 descent domain.
 
 Useful checks:
 
@@ -19,6 +20,29 @@ lake build GN21DriverSurgePricing
 latexmk -pdf DependencyDAG.tex   # from papers/GN21DriverSurgePricing
 git diff --check -- papers/GN21DriverSurgePricing skills/econcs-formalizer
 ```
+
+## Latest Lemma 5 Domain Update
+
+The bounded finite interval domain is now explicitly just the inner-regularity
+seed domain.  For source closeout, use the generalized interval/ray domain:
+
+```lean
+GN21GeneralizedIntervalComponent
+GN21GeneralizedIntervalPolicy
+GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy
+exists_gn21GeneralizedIntervalPolicy_reward_close_below
+lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer
+Lemma5GeneralizedIntervalPolicyDescentMaximizerData
+```
+
+This matters because the canonical Lemma 5 outputs include accept-all and
+unbounded positive tails.  Bounded intervals alone cannot be the final descent
+domain for the positive, short-rejection, or middle-rejection cases.  The next
+hard proof target is the paper-specific endpoint-step field on
+`Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical
+generalized finite interval/ray policy, construct a weakly improving endpoint
+move that strictly lowers complexity and identify that move with the existing
+nonlinear endpoint derivative lemmas.
 
 ## Lemmas 1-3 Status
 

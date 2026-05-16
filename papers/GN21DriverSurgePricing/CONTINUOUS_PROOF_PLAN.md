@@ -474,12 +474,25 @@ into the concrete endpoint policy data.
   `GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy` and
   `GN21FiniteOpenIntervalApproximation.toFiniteIntervalPolicy_subset` forget
   the measure bookkeeping while preserving the internal finite interval seed.
+  The bounded seed domain now embeds into the generalized interval/ray domain
+  through `GN21GeneralizedIntervalComponent`,
+  `GN21GeneralizedIntervalPolicy`,
+  `GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy`, and
+  `GN21FiniteIntervalPolicy.toGeneralizedIntervalPolicy_policy`.  This matters
+  because bounded intervals are enough for approximation, but not for the
+  canonical Lemma 5 endpoints: accept-all, short-trip rejection, and
+  middle-trip rejection use the full positive domain or unbounded positive
+  rays.  The generalized domain has measurable policies, natural complexity,
+  reward-close seed theorems
+  `exists_gn21GeneralizedIntervalPolicy_reward_close` and
+  `exists_gn21GeneralizedIntervalPolicy_reward_close_below`, and canonical
+  representatives for all five Lemma 5 policy forms.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and
   `exists_gn21FiniteIntervalPolicy_reward_close_below` now compose this
   approximation with the source continuity assumption to choose a concrete
-  finite interval policy seed whose reward is arbitrarily close to the
+  generalized interval/ray policy seed whose reward is arbitrarily close to the
   original open policy.  The finite-family descent and compactness handoff is
   also now
   compiled as `exists_canonical_ge_of_finite_descent`,
@@ -492,13 +505,19 @@ into the concrete endpoint policy data.
   `lemma5OptimizerReplacementCertificate_of_domain_finite_descent_and_maximizer`,
   with the concrete finite-interval specialization
   `lemma5OptimizerReplacementCertificate_of_finiteIntervalPolicy_descent_and_maximizer`.
-  The source-facing finite-interval data target is now named
+  The source-facing finite-interval data target is named
   `Lemma5FiniteIntervalPolicyDescentMaximizerData`, with
   `Lemma5FiniteIntervalPolicyDescentMaximizerData.to_optimizer_replacement`,
   `Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_optimal`, and
   `Lemma5FiniteIntervalPolicyDescentMaximizerData.policyForm_of_candidate_le`
   converting that data into the exact optimizer-replacement and policy-form
-  conclusions needed by Theorem 4.
+  conclusions needed by Theorem 4.  For the actual source closeout, prefer the
+  generalized target
+  `lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_descent_and_maximizer`
+  and `Lemma5GeneralizedIntervalPolicyDescentMaximizerData`, whose
+  `to_optimizer_replacement`, `policyForm_of_optimal`, and
+  `policyForm_of_candidate_le` methods have the same downstream interface but
+  can terminate in the unbounded canonical policies.
   These theorems prove the source proof's termination and limit/maximizer
   bridge for any finite-policy domain with a natural-valued endpoint
   complexity.  The remaining Lemma 5 work is now the paper-specific endpoint

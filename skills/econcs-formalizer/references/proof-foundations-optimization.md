@@ -81,6 +81,12 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   maximizer bridge showing the original target value is attained or exceeded.
   Keep the paper-specific work in the one-step move certificate; this avoids
   token-heavy rewrites of the same termination and epsilon/maximizer argument.
+- When the approximation seeds are bounded but the canonical objects may be
+  unbounded, do not use the bounded seed type as the descent domain.  Embed the
+  bounded seeds into a finite coded domain that also represents rays, tails, or
+  the full feasible domain, then state descent and maximizer data over that
+  larger domain.  This prevents a later impossible maximizer/canonical-shape
+  obligation for accept-all or tail policies.
 
 ## Lean Patterns
 
