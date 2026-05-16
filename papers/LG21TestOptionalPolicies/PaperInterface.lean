@@ -7,7 +7,8 @@ This file is the compact audit surface for
 *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps*.
 It lists the source-facing definitions and named theorem endpoints in paper
 order.  The re-sampling distributional core is proved; the strategic and
-Gaussian posterior endpoints remain certificate-shaped.
+Gaussian posterior endpoints remain certificate-shaped beyond the closed
+observed-access Lemma 4.1 source-model endpoint.
 -/
 
 namespace LG21TestOptionalPolicies
@@ -165,6 +166,57 @@ theorem paper_interface_lemma4_1_strategy_proofness_of_threshold_equilibrium_cer
     (∀ score : ℝ, K.reports score) ∧ (∀ skill : ℝ, K.takes skill) :=
   paper_lemma4_1_strategy_proofness_of_threshold_equilibrium_certificate
     C api M theta k scoreLaw skillLaw htestScale K
+
+/--
+Lemma 4.1 source-model endpoint: for the fully specified observed-access
+Bayesian source games, every source equilibrium chooses `(Y, X) = (1, 1)` in
+both the optional-reporting and report-required regimes.
+-/
+theorem paper_interface_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+    {Feature Skill Base ReportRequiredBase ReportRequiredTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : Skill → Base → Bool)
+    (reportRequiredDecision : ReportRequiredBase → ReportRequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent)) :
+    (∀ info : paperAccessStudentInfo Skill Base ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info :
+        paperAccessStudentInfo ℝ ReportRequiredBase ReportRequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) :=
+  paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+    C api M theta k scoreLaw skillLaw takeDecision reportRequiredDecision
+    htestScale hReportEq hTakeEq
 
 /-- Definition 1 action object for students with test access: `(Y, X)`. -/
 abbrev paperAccessAction : Type :=

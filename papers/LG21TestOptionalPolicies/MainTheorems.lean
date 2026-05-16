@@ -25,8 +25,8 @@ support for the future source-faithful formalization of
 - `LG21EquilibriumData`, `lg21Equilibrium`, `LG21SourcePolicySurface`:
   source-facing equilibrium and fairness surfaces for the strategic parts of
   the paper.
-- `LG21GaussianThresholdEquilibriumCertificate`: the current bridge target from
-  the source equilibrium to Lemma 4.1's Gaussian threshold subgames.
+- `paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models`:
+  the closed observed-access source-model endpoint for Lemma 4.1.
 - `LG21StrategicWithholdingSourceWitness`: the current bridge target for
   Theorem 3.1's threshold and unfairness conclusions.
 - `paper_theorem4_4_resampling_policy_observably_fair`,
@@ -1323,6 +1323,14 @@ theorem takeAndReport_reportImpliesTake :
   intro _hreport
   rfl
 
+theorem eq_takeAndReport_of_takes_reports
+    {a : LG21AccessAction}
+    (htake : a.takesTest = true) (hreport : a.reportsScore = true) :
+    a = takeAndReport := by
+  cases a
+  simp [takeAndReport] at htake hreport ⊢
+  exact ⟨htake, hreport⟩
+
 theorem reportRequiredAfterTaking_reportImpliesTake
     {a : LG21AccessAction} (h : reportRequiredAfterTaking a) :
     a.reportImpliesTake := by
@@ -1967,6 +1975,60 @@ theorem paper_lemma4_1_strategy_proofness_of_concrete_threshold_source_models
     · simp [h]
 
 /--
+Fully specified optional-reporting source game for the observed-access
+Lemma 4.1 proof.  Reporting follows the Bayesian posterior-threshold rule,
+reported scores receive their posterior mean, and non-reporters receive the
+lower-tail posterior estimate induced by the same threshold.
+-/
+def lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+    {Feature Skill Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw)
+    (takeDecision : Skill → Base → Bool)
+    (reportingBase threshold : ℝ)
+    (estimationConsistent : Prop) :
+    LG21SourceEquilibriumData Skill Base ℝ :=
+  lg21OptionalReportingSourceEquilibriumData
+    takeDecision
+    (fun _base score =>
+      if threshold ≤ M.posteriorMean (Function.update theta k score) then
+        true
+      else
+        false)
+    (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+    (M.posteriorMean
+      (Function.update theta k
+        (C.lowerTailMean scoreLaw
+          (affineCutoff
+            (M.posteriorMean (Function.update theta k reportingBase) -
+              M.centeredFamily.signalWeight k * reportingBase)
+            (M.centeredFamily.signalWeight k) threshold))))
+    estimationConsistent
+
+/--
+Fully specified report-required source game for the observed-access Lemma 4.1
+proof.  Taking follows a lower skill threshold, taking payoff is the probability
+of clearing the lower-tail no-test estimate, and not taking receives `1 / 2`.
+-/
+def lg21FullySpecifiedReportRequiredSourceEquilibriumData
+    {Base Test : Type*}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI) (skillLaw : GaussianScaleLaw)
+    (reportDecision : Base → Test → Bool)
+    (qBar testScale : ℝ) (htestScale : 0 < testScale)
+    (estimationConsistent : Prop) :
+    LG21SourceEquilibriumData ℝ Base Test :=
+  lg21ReportRequiredSourceEquilibriumData
+    (fun skill _base => if qBar ≤ skill then true else false)
+    reportDecision
+    (fun skill : ℝ =>
+      api.thresholdPassProb
+        (lg21GaussianTestScoreLaw skill testScale htestScale)
+        (C.lowerTailMean skillLaw qBar))
+    estimationConsistent
+
+/--
 Lemma 4.1 route from fully specified threshold source models: reporting and
 taking are threshold policies, and the no-report/no-test estimates are the
 paper's lower-tail expressions by definition.  The only remaining inputs are
@@ -2024,6 +2086,225 @@ theorem paper_lemma4_1_strategy_proofness_of_fully_specified_threshold_source_mo
     C api M theta k scoreLaw skillLaw htestScale
     hReportEq reportSkill reportBase rfl
     hTakeEq takeBase takeTest rfl
+
+/--
+Lemma 4.1 optional-reporting endpoint in the paper's action notation: in the
+fully specified observed-access reporting source game, every source equilibrium
+chooses `(Y, X) = (1, 1)` for every access-student information tuple.
+-/
+theorem paper_lemma4_1_optional_reporting_chosen_action_take_and_report_of_fully_specified_source_model
+    {Feature Skill Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw)
+    (takeDecision : Skill → Base → Bool)
+    {reportingBase threshold : ℝ} {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold estimationConsistent)) :
+    ∀ info : LG21AccessStudentInfo Skill Base ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold estimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold estimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport := by
+  intro info
+  let E :=
+    lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+      C M theta k scoreLaw takeDecision
+      reportingBase threshold estimationConsistent
+  have hnoDeviation :
+      lg21NoProfitableWithholdingDeviation
+        (fun score : ℝ => E.reportDecision info.base score = true)
+        (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+        (M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold)))) := by
+    change
+      lg21NoProfitableWithholdingDeviation
+        (fun score : ℝ => E.reportDecision info.base score = true)
+        (fun value : ℝ => M.posteriorMean (Function.update theta k value))
+        (M.posteriorMean
+          (Function.update theta k
+            (C.lowerTailMean scoreLaw
+              (affineCutoff
+                (M.posteriorMean (Function.update theta k reportingBase) -
+                  M.centeredFamily.signalWeight k * reportingBase)
+                (M.centeredFamily.signalWeight k) threshold))))
+    exact
+      lg21NoProfitableWithholdingDeviation_of_optional_reporting_source_model
+        hEq info.skill info.base
+  have hallReport : ∀ score : ℝ, E.reportDecision info.base score = true := by
+    refine
+      paper_lemma4_1_all_report_of_gaussian_threshold_policy_lower_tail_no_profitable_withholding
+        C M theta k scoreLaw
+        (reports := fun score : ℝ => E.reportDecision info.base score = true)
+        (base := reportingBase) (threshold := threshold)
+        ?_ ?_ hnoDeviation
+    · intro score
+      dsimp [E, lg21FullySpecifiedOptionalReportingSourceEquilibriumData,
+        lg21OptionalReportingSourceEquilibriumData]
+      by_cases h :
+          threshold ≤ M.posteriorMean (Function.update theta k score)
+      · simp [h]
+      · simp [h]
+    · rfl
+  have hreport : E.reportDecision info.base info.test = true :=
+    hallReport info.test
+  have hfeasible :
+      LG21AccessAction.feasible E.requirement
+        (LG21AccessStudentInfo.chosenAction
+          E.takeDecision E.reportDecision info) := by
+    change
+      LG21AccessAction.feasible E.requirement
+        (LG21AccessStudentInfo.chosenAction
+          E.takeDecision E.reportDecision info)
+    exact lg21SourceEquilibrium_feasible hEq info
+  have htake : E.takeDecision info.skill info.base = true :=
+    hfeasible.1 hreport
+  exact LG21AccessAction.eq_takeAndReport_of_takes_reports htake hreport
+
+/--
+Lemma 4.1 report-required endpoint in the paper's action notation: in the fully
+specified observed-access taking source game, every source equilibrium chooses
+`(Y, X) = (1, 1)` for every access-student information tuple.
+-/
+theorem paper_lemma4_1_report_required_chosen_action_take_and_report_of_fully_specified_source_model
+    {Base Test : Type*}
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI) (skillLaw : GaussianScaleLaw)
+    (reportDecision : Base → Test → Bool)
+    {qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportDecision qBar testScale htestScale
+          estimationConsistent)) :
+    ∀ info : LG21AccessStudentInfo ℝ Base Test,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportDecision qBar testScale htestScale
+          estimationConsistent).takeDecision
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportDecision qBar testScale htestScale
+          estimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport := by
+  intro info
+  let E :=
+    lg21FullySpecifiedReportRequiredSourceEquilibriumData
+      C api skillLaw reportDecision qBar testScale htestScale
+      estimationConsistent
+  have hnoDeviation :
+      lg21NoProfitableTestTakingDeviation
+        (fun skill : ℝ => E.takeDecision skill info.base = true)
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill testScale htestScale)
+            (C.lowerTailMean skillLaw qBar)) := by
+    change
+      lg21NoProfitableTestTakingDeviation
+        (fun skill : ℝ => E.takeDecision skill info.base = true)
+        (fun skill : ℝ =>
+          api.thresholdPassProb
+            (lg21GaussianTestScoreLaw skill testScale htestScale)
+            (C.lowerTailMean skillLaw qBar))
+    exact
+      lg21NoProfitableTestTakingDeviation_of_report_required_source_model
+        hEq info.base info.test
+  have hallTake : ∀ skill : ℝ, E.takeDecision skill info.base = true := by
+    refine
+      paper_lemma4_1_all_take_of_explicit_lower_tail_threshold_no_profitable_test_taking
+        C api skillLaw htestScale ?_ rfl hnoDeviation
+    intro skill
+    dsimp [E, lg21FullySpecifiedReportRequiredSourceEquilibriumData,
+      lg21ReportRequiredSourceEquilibriumData]
+    by_cases h : qBar ≤ skill
+    · simp [h]
+    · simp [h]
+  have htake : E.takeDecision info.skill info.base = true :=
+    hallTake info.skill
+  have hfeasible :
+      LG21AccessAction.feasible E.requirement
+        (LG21AccessStudentInfo.chosenAction
+          E.takeDecision E.reportDecision info) := by
+    change
+      LG21AccessAction.feasible E.requirement
+        (LG21AccessStudentInfo.chosenAction
+          E.takeDecision E.reportDecision info)
+    exact lg21SourceEquilibrium_feasible hEq info
+  have hrequired :
+      (LG21AccessStudentInfo.chosenAction
+        E.takeDecision E.reportDecision info).takesTest =
+        (LG21AccessStudentInfo.chosenAction
+          E.takeDecision E.reportDecision info).reportsScore := by
+    exact hfeasible.2
+  have hreport : E.reportDecision info.base info.test = true := by
+    dsimp [LG21AccessStudentInfo.chosenAction] at hrequired
+    rw [← hrequired]
+    exact htake
+  exact LG21AccessAction.eq_takeAndReport_of_takes_reports htake hreport
+
+/--
+Lemma 4.1 observed-access source-model endpoint: both source regimes in the
+paper choose `(Y, X) = (1, 1)` in every fully specified source equilibrium.
+-/
+theorem paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+    {Feature Skill Base ReportRequiredBase ReportRequiredTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : Skill → Base → Bool)
+    (reportRequiredDecision : ReportRequiredBase → ReportRequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent)) :
+    (∀ info : LG21AccessStudentInfo Skill Base ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : LG21AccessStudentInfo ℝ ReportRequiredBase ReportRequiredTest,
+        LG21AccessStudentInfo.chosenAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) :=
+  ⟨paper_lemma4_1_optional_reporting_chosen_action_take_and_report_of_fully_specified_source_model
+      C M theta k scoreLaw takeDecision hReportEq,
+    paper_lemma4_1_report_required_chosen_action_take_and_report_of_fully_specified_source_model
+      C api skillLaw reportRequiredDecision htestScale hTakeEq⟩
 
 /--
 Lemma 4.1 route from explicit threshold policies and binary subgame
