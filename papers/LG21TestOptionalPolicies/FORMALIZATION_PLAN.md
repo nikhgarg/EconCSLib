@@ -21,7 +21,11 @@ Last updated: 2026-05-16
 - Theorem 3.1 now has a concrete cutoff-strategy support lemma:
   `paper_theorem3_1_reporting_threshold_of_gaussian_best_response` packages
   the Gaussian reporting decision as a finite lower-cutoff rule and proves the
-  monotonicity consequence for any such cutoff rule.
+  monotonicity consequence for any such cutoff rule.  Its source-facing
+  threshold conclusions are now packaged in
+  `LG21StrategicWithholdingSourceWitness`, and PMF/law wrappers prove failure
+  of all three fairness criteria from concrete distribution-difference
+  witnesses.
 - Theorem 3.2 now has PMF and continuous-law endpoints plus contrapositive
   wrappers: a concrete base/test relevance witness rules out latent-skill or
   observable fairness once the source unraveling implication is available.

@@ -27,6 +27,8 @@ support for the future source-faithful formalization of
   the paper.
 - `LG21GaussianThresholdEquilibriumCertificate`: the current bridge target from
   the source equilibrium to Lemma 4.1's Gaussian threshold subgames.
+- `LG21StrategicWithholdingSourceWitness`: the current bridge target for
+  Theorem 3.1's threshold and unfairness conclusions.
 - `paper_theorem4_4_resampling_policy_observably_fair`,
   `paper_theorem4_4_resampling_policy_demographically_fair`: finite
   distributional core of Theorem 4.4.
@@ -1836,6 +1838,101 @@ theorem lg21_not_lawTestBlank_of_witness
     ¬ lg21SourceLawTestBlank S := by
   intro hblank
   exact hne (hblank e base test)
+
+/--
+Source-shaped witness for Theorem 3.1's strategic-withholding threshold
+conclusions.  `Base` represents the paper's non-test feature vector
+`{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the
+reported test score and latent skill, respectively.
+-/
+structure LG21StrategicWithholdingSourceWitness (Base : Type*) where
+  reports : Base → ℝ → Prop
+  takes : Base → ℝ → Prop
+  some_access_students_do_not_report : ∃ base score, ¬ reports base score
+  reporting_threshold :
+    ∀ base, ∃ cutoff : ℝ, ∀ score : ℝ, reports base score ↔ cutoff ≤ score
+  taking_threshold :
+    ∀ base, ∃ qBar : ℝ, ∀ skill : ℝ, takes base skill ↔ qBar ≤ skill
+
+/--
+Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding
+witness.
+-/
+theorem paper_theorem3_1_threshold_conclusions_of_source_witness
+    {Base : Type*} (W : LG21StrategicWithholdingSourceWitness Base) :
+    (∃ base score, ¬ W.reports base score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
+  ⟨W.some_access_students_do_not_report,
+    W.reporting_threshold, W.taking_threshold⟩
+
+/--
+Theorem 3.1 source-facing endpoint over PMF estimate surfaces: strategic
+threshold behavior plus concrete fairness-violation witnesses imply the
+paper's withholding/threshold conclusions and failure of all three fairness
+criteria.
+-/
+theorem paper_theorem3_1_strategic_withholding_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21StrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    (∃ base score, ¬ W.reports base score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLatentSkillFair S ∧
+            ¬ lg21SourceObservablyFair S ∧
+              ¬ lg21SourceDemographicallyFair S := by
+  refine ⟨W.some_access_students_do_not_report,
+    W.reporting_threshold, W.taking_threshold, ?_, ?_, ?_⟩
+  · exact lg21_not_latentSkillFair_of_witness eLat q baseLat hLatNe
+  · exact lg21_not_observablyFair_of_witness eObs baseObs hObsNe
+  · exact lg21_not_demographicallyFair_of_witness eDemo hDemoNe
+
+/--
+Theorem 3.1 source-facing endpoint over arbitrary estimate-law objects.  This
+is the version used by the Gaussian continuous-law wrappers.
+-/
+theorem paper_theorem3_1_law_strategic_withholding_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21StrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    (∃ base score, ¬ W.reports base score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLawLatentSkillFair S ∧
+            ¬ lg21SourceLawObservablyFair S ∧
+              ¬ lg21SourceLawDemographicallyFair S := by
+  refine ⟨W.some_access_students_do_not_report,
+    W.reporting_threshold, W.taking_threshold, ?_, ?_, ?_⟩
+  · exact lg21_not_lawLatentSkillFair_of_witness eLat q baseLat hLatNe
+  · exact lg21_not_lawObservablyFair_of_witness eObs baseObs hObsNe
+  · exact lg21_not_lawDemographicallyFair_of_witness eDemo hDemoNe
 
 /-- Certificate for Theorem 3.1's strategic-withholding and unfairness endpoint. -/
 structure LG21StrategicWithholdingCertificate

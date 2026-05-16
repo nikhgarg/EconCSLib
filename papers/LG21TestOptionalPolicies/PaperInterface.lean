@@ -1077,6 +1077,19 @@ theorem paper_interface_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt
   paper_conditional_posteriorMeanScaleLaw_mean_lt_of_skill_lt M hq
 
 /--
+Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding
+witness.
+-/
+theorem paper_interface_theorem3_1_threshold_conclusions_of_source_witness
+    {Base : Type*} (W : LG21StrategicWithholdingSourceWitness Base) :
+    (∃ base score, ¬ W.reports base score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) :=
+  paper_theorem3_1_threshold_conclusions_of_source_witness W
+
+/--
 Theorem 3.1: strategic withholding and failure of latent-skill, observable,
 and demographic fairness.
 
@@ -1092,6 +1105,66 @@ theorem paper_interface_theorem3_1_strategic_withholding
           ¬ lg21SourceObservablyFair S ∧
             ¬ lg21SourceDemographicallyFair S :=
   paper_theorem3_1_strategic_withholding_of_certificate C
+
+/--
+Theorem 3.1 source-facing endpoint over PMF estimate surfaces: strategic
+threshold behavior plus concrete fairness-violation witnesses imply the
+paper's withholding/threshold conclusions and failure of all three fairness
+criteria.
+-/
+theorem paper_interface_theorem3_1_strategic_withholding_of_source_witness
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (W : LG21StrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    (∃ base score, ¬ W.reports base score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLatentSkillFair S ∧
+            ¬ lg21SourceObservablyFair S ∧
+              ¬ lg21SourceDemographicallyFair S :=
+  paper_theorem3_1_strategic_withholding_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
+
+/--
+Theorem 3.1 source-facing endpoint over arbitrary estimate-law objects.  This
+is the version used by the Gaussian continuous-law wrappers.
+-/
+theorem paper_interface_theorem3_1_law_strategic_withholding_of_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (W : LG21StrategicWithholdingSourceWitness Base)
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessLaw eLat q baseLat ≠ S.latentNoAccessLaw eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessLaw eObs baseObs ≠ S.observableNoAccessLaw eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe : S.demographicAccessLaw eDemo ≠ S.demographicNoAccessLaw eDemo) :
+    (∃ base score, ¬ W.reports base score) ∧
+      (∀ base, ∃ cutoff : ℝ,
+        ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLawLatentSkillFair S ∧
+            ¬ lg21SourceLawObservablyFair S ∧
+              ¬ lg21SourceLawDemographicallyFair S :=
+  paper_theorem3_1_law_strategic_withholding_of_source_witness
+    W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe
 
 /--
 Theorem 3.2: latent-skill or observable fairness implies test-blankness.
