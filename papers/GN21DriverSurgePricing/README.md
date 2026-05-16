@@ -826,6 +826,9 @@ second/third bounded-component upper/lower merges and the second-component
 bounded-to-right-ray merge are compiled in weak and strict forms, so ordered
 descent can now reduce adjacent middle components after one leading component
 has been peeled off.
+The quasi-convex three-interval and quasi-concave two-interval source case
+splits are now formalized as endpoint-sign trichotomies, matching the paper's
+Subcases 1A/1B/1C before the selected move is threaded to an endpoint path.
 The remaining open part is selecting and iterating those local moves
 inside an arbitrary ordered finite
 interval/ray seed under the source derivative-sign hypotheses.

@@ -249,6 +249,9 @@ preserving the leading component and tail, and the symmetric upper-collapse is
 also compiled.  Lean now also has the ordered second/third bounded-component
 upper/lower merge primitives and the ordered second-component
 bounded-to-right-ray merge, each in weak and strict forms.  The remaining
+source sign-selection facts are no longer informal: the quasi-convex
+three-interval case and quasi-concave two-interval case are compiled as
+endpoint-sign trichotomies matching Subcases 1A/1B/1C.  The remaining
 nonlinear work is selecting the appropriate local move inside an arbitrary
 ordered finite interval/ray seed, proving the source derivative-sign
 hypothesis holds along the selected path, and iterating the component-count

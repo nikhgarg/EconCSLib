@@ -245,6 +245,9 @@ including the second/third bounded merge and second bounded-to-right-ray cases
 after one leading component has been peeled off.  The remaining work is to
 select the correct move in an arbitrary ordered finite generalized policy and
 connect that selection to the shape-case sign lemmas.
+The source Subcases 1A/1B/1C are now available as pure sign selectors:
+`lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy` and
+`lemma5_strictQuasiConcave_two_interval_endpoint_sign_trichotomy`.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact

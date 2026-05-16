@@ -22458,6 +22458,35 @@ theorem lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
   constructor <;> linarith
 
 /--
+Lemma 5 Step 2, strictly quasi-convex three-interval selector.  For three
+ordered positive intervals, either the first upper endpoint can expand, the
+third lower endpoint can move left, or the middle interval has both endpoint
+signs needed to collapse.  This is the formal version of the paper's
+Subcases 1A/1B/1C split.
+-/
+theorem lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConvexOnPositive response)
+    {leftUpper middleLower middleUpper rightLower : TripLength}
+    (hleft_pos : 0 < leftUpper)
+    (hleft_middleLower : leftUpper < middleLower)
+    (hmiddleLower_middleUpper : middleLower < middleUpper)
+    (hmiddleUpper_rightLower : middleUpper < rightLower) :
+    0 < response leftUpper ∨
+      0 < response rightLower ∨
+        (0 < -response middleLower ∧ response middleUpper < 0) := by
+  by_cases hleft : 0 < response leftUpper
+  · exact Or.inl hleft
+  by_cases hright : 0 < response rightLower
+  · exact Or.inr (Or.inl hright)
+  have hmiddle :
+      0 < -response middleLower ∧ response middleUpper < 0 :=
+    lemma5_strictQuasiConvex_middle_endpoint_signs_of_outer_nonpos
+      response hqc hleft_pos hleft_middleLower hmiddleLower_middleUpper
+      hmiddleUpper_rightLower (le_of_not_gt hleft) (le_of_not_gt hright)
+  exact Or.inr (Or.inr hmiddle)
+
+/--
 Lemma 5 Step 2, strictly quasi-concave case: if the lower-endpoint responses
 on two adjacent intervals are nonnegative, then the upper endpoint before the
 gap has positive response, so expanding that interval toward the gap is an
@@ -22483,6 +22512,33 @@ theorem lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
       response hqc hleftLower_pos hleftLower_leftUpper
       hleftUpper_rightLower
   linarith
+
+/--
+Lemma 5 Step 2, strictly quasi-concave two-interval selector.  For two ordered
+positive intervals, either the first upper endpoint can expand to merge the
+gap, or one of the two intervals has the lower-endpoint sign needed to collapse.
+This packages the paper's quasi-concave Subcases 1A/1B/1C.
+-/
+theorem lemma5_strictQuasiConcave_two_interval_endpoint_sign_trichotomy
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConcaveOnPositive response)
+    {leftLower leftUpper rightLower : TripLength}
+    (hleftLower_pos : 0 < leftLower)
+    (hleftLower_leftUpper : leftLower < leftUpper)
+    (hleftUpper_rightLower : leftUpper < rightLower) :
+    0 < response leftUpper ∨
+      response leftLower < 0 ∨
+        response rightLower < 0 := by
+  by_cases hleft_lower_neg : response leftLower < 0
+  · exact Or.inr (Or.inl hleft_lower_neg)
+  by_cases hright_lower_neg : response rightLower < 0
+  · exact Or.inr (Or.inr hright_lower_neg)
+  have hupper_pos :
+      0 < response leftUpper :=
+    lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg
+      response hqc hleftLower_pos hleftLower_leftUpper hleftUpper_rightLower
+      (le_of_not_gt hleft_lower_neg) (le_of_not_gt hright_lower_neg)
+  exact Or.inl hupper_pos
 
 /--
 Policy that accepts exactly the positive trip lengths whose marginal response
