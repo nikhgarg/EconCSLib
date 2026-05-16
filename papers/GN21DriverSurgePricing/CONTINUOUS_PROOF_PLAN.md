@@ -24,18 +24,20 @@ reductions:
 paper_theorem1_cutoff_maximizer_of_compact_upperSemicontinuity
 paper_theorem1_complete_threshold_ge_strict_threshold_of_cutoff_ge_strict_reward
 paper_theorem1_strict_threshold_reward_lt_higher_strict_threshold_of_positive_band
+paper_theorem1_strict_threshold_reward_eq_complete_threshold_of_gap_measure_zero
+paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity_band_or_gap_resolution
 paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity_band_resolution
 paper_theorem1_single_state_threshold_best_response_measurable_of_complete_maximizer
 paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuity
+paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity_band_or_gap
 ```
 
 The remaining general Theorem 1 work is now exactly the source Step 3 analytic
 tail/gap work: prove the compact upper-semicontinuity/tail-bound hypotheses for
-the strict/complete cutoff objective, and prove the source no-mass-gap
-alternative that replaces a high-reward maximizer with a higher complete
-threshold when no positive band exists.  Proposition 3.1 and the single-state
-multiplicative-pricing corollary are closed for the actual renewal reward on
-measurable feasible policies.
+the strict/complete cutoff objective, and prove the high-reward band-or-gap
+dichotomy from the paper's continuity/asymptotic-boundedness assumptions.
+Proposition 3.1 and the single-state multiplicative-pricing corollary are
+closed for the actual renewal reward on measurable feasible policies.
 
 ## Lemmas 6-10 Update
 
