@@ -15444,6 +15444,42 @@ def lemma5PolicyForm (shape : Lemma5DerivativeShape) (σ : TripPolicy) : Prop :=
   | .strictlyQuasiConvex => ∃ lo hi : ℝ, rejectsMiddleTrips lo hi σ
   | .strictlyQuasiConcave => ∃ lo hi : ℝ, acceptsMiddleTrips lo hi σ
 
+/-- Two trip policies agree up to a null symmetric difference. -/
+def policyAlmostEverywhereEq
+    (μ : Measure TripLength) (σ τ : TripPolicy) : Prop :=
+  μ (σ ∆ τ) = 0
+
+/--
+Lemma 5 policy form modulo null boundary sets.  The source paper uses strict
+interval inequalities at derivative zero crossings; this predicate records the
+faithful measure-theoretic reading of those endpoint conventions.
+-/
+def lemma5PolicyFormAlmostEverywhere
+    (μ : Measure TripLength) (shape : Lemma5DerivativeShape)
+    (σ : TripPolicy) : Prop :=
+  ∃ σstar : TripPolicy,
+    lemma5PolicyForm shape σstar ∧ policyAlmostEverywhereEq μ σ σstar
+
+/-- Exact Lemma 5 policy form immediately gives the AE policy-form version. -/
+theorem lemma5PolicyFormAlmostEverywhere_of_policyForm
+    (μ : Measure TripLength) {shape : Lemma5DerivativeShape}
+    {σ : TripPolicy}
+    (hform : lemma5PolicyForm shape σ) :
+    lemma5PolicyFormAlmostEverywhere μ shape σ := by
+  refine ⟨σ, hform, ?_⟩
+  simp [policyAlmostEverywhereEq]
+
+/--
+If both one-sided policy differences are null, then the symmetric-difference
+policy disagreement is null.
+-/
+theorem policyAlmostEverywhereEq_of_diff_null
+    (μ : Measure TripLength) {σ τ : TripPolicy}
+    (hστ : μ (σ \ τ) = 0) (hτσ : μ (τ \ σ) = 0) :
+    policyAlmostEverywhereEq μ σ τ := by
+  rw [policyAlmostEverywhereEq, Set.symmDiff_def]
+  exact measure_union_null hστ hτσ
+
 /--
 Analytic witness behind each Lemma 5 derivative-shape case.  The policy-form
 predicate above records the optimizer shape; this predicate records the
@@ -18976,6 +19012,249 @@ theorem Lemma5PositiveResponseShapeData.policyForm
         lemma5PolicyForm_positiveResponse_strictlyQuasiConcave_of_boundary_zeros
           response hlo_pos hlo_hi hqc hlo_zero hhi_zero
           hleft_nonpos hright_nonpos
+
+/--
+For every response-shape case used in Lemma 5, the positive feasible zero set
+of the response is null under a nonatomic trip-length measure.  This is the
+measure-theoretic boundary bridge that the source proof leaves implicit when it
+uses strict interval forms at derivative zero crossings.
+-/
+theorem Lemma5PositiveResponseShapeData.positive_zero_set_null
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ] :
+    μ ({τ : TripLength | 0 < τ ∧ response τ = 0}) = 0 := by
+  cases D with
+  | positive hpositive =>
+      have hsubset :
+          {τ : TripLength | 0 < τ ∧ response τ = 0} ⊆
+            (∅ : Set TripLength) := by
+        intro τ hτ
+        have hresp_pos : 0 < response τ := hpositive τ hτ.1
+        rw [hτ.2] at hresp_pos
+        exact (lt_irrefl (0 : ℝ) hresp_pos)
+      exact measure_mono_null hsubset (by simp)
+  | strictlyIncreasing t ht_pos hmono hzero =>
+      have hsubset :
+          {τ : TripLength | 0 < τ ∧ response τ = 0} ⊆
+            ({t} : Set TripLength) := by
+        intro τ hτ
+        rcases lt_trichotomy τ t with hτ_lt_t | hτ_eq_t | ht_lt_τ
+        · have hresp_lt : response τ < response t :=
+            hmono hτ.1 ht_pos hτ_lt_t
+          rw [hzero, hτ.2] at hresp_lt
+          linarith
+        · exact hτ_eq_t
+        · have hresp_lt : response t < response τ :=
+            hmono ht_pos hτ.1 ht_lt_τ
+          rw [hzero, hτ.2] at hresp_lt
+          linarith
+      exact measure_mono_null hsubset (measure_singleton t)
+  | strictlyDecreasing t ht_pos hanti hzero =>
+      have hsubset :
+          {τ : TripLength | 0 < τ ∧ response τ = 0} ⊆
+            ({t} : Set TripLength) := by
+        intro τ hτ
+        rcases lt_trichotomy τ t with hτ_lt_t | hτ_eq_t | ht_lt_τ
+        · have hresp_lt : response t < response τ :=
+            hanti hτ.1 ht_pos hτ_lt_t
+          rw [hzero, hτ.2] at hresp_lt
+          linarith
+        · exact hτ_eq_t
+        · have hresp_lt : response τ < response t :=
+            hanti ht_pos hτ.1 ht_lt_τ
+          rw [hzero, hτ.2] at hresp_lt
+          linarith
+      exact measure_mono_null hsubset (measure_singleton t)
+  | strictlyQuasiConvex lo hi hlo_pos hlo_hi hqc hlo_zero hhi_zero
+      hleft_pos hright_pos =>
+      have hsubset :
+          {τ : TripLength | 0 < τ ∧ response τ = 0} ⊆
+            (({lo} : Set TripLength) ∪ ({hi} : Set TripLength)) := by
+        intro τ hτ
+        rcases lt_trichotomy τ lo with hτ_lt_lo | hτ_eq_lo | hlo_lt_τ
+        · have hresp_pos : 0 < response τ :=
+            hleft_pos τ hτ.1 hτ_lt_lo
+          rw [hτ.2] at hresp_pos
+          exact False.elim ((lt_irrefl (0 : ℝ)) hresp_pos)
+        · exact Or.inl hτ_eq_lo
+        · rcases lt_trichotomy τ hi with hτ_lt_hi | hτ_eq_hi | hhi_lt_τ
+          · have hresp_lt :
+                response τ < max (response lo) (response hi) :=
+              paper_lemma5_strictQuasiConvex_response_lt_of_between
+                response hqc hlo_pos hlo_lt_τ hτ_lt_hi
+            rw [hlo_zero, hhi_zero, hτ.2] at hresp_lt
+            norm_num at hresp_lt
+          · exact Or.inr hτ_eq_hi
+          · have hresp_pos : 0 < response τ :=
+              hright_pos τ hhi_lt_τ
+            rw [hτ.2] at hresp_pos
+            exact False.elim ((lt_irrefl (0 : ℝ)) hresp_pos)
+      exact
+        measure_mono_null hsubset
+          (measure_union_null (measure_singleton lo) (measure_singleton hi))
+  | strictlyQuasiConcave lo hi hlo_pos hlo_hi hqc hlo_zero hhi_zero
+      hleft_nonpos hright_nonpos =>
+      have hsubset :
+          {τ : TripLength | 0 < τ ∧ response τ = 0} ⊆
+            (({lo} : Set TripLength) ∪ ({hi} : Set TripLength)) := by
+        intro τ hτ
+        rcases lt_trichotomy τ lo with hτ_lt_lo | hτ_eq_lo | hlo_lt_τ
+        · have hresp_lt :
+              min (response τ) (response hi) < response lo :=
+            paper_lemma5_strictQuasiConcave_response_lt_between
+              response hqc hτ.1 hτ_lt_lo hlo_hi
+          rw [hτ.2, hhi_zero, hlo_zero] at hresp_lt
+          norm_num at hresp_lt
+        · exact Or.inl hτ_eq_lo
+        · rcases lt_trichotomy τ hi with hτ_lt_hi | hτ_eq_hi | hhi_lt_τ
+          · have hresp_lt :
+                min (response lo) (response hi) < response τ :=
+              paper_lemma5_strictQuasiConcave_response_lt_between
+                response hqc hlo_pos hlo_lt_τ hτ_lt_hi
+            rw [hlo_zero, hhi_zero, hτ.2] at hresp_lt
+            norm_num at hresp_lt
+          · exact Or.inr hτ_eq_hi
+          · have hresp_lt :
+                min (response lo) (response τ) < response hi :=
+              paper_lemma5_strictQuasiConcave_response_lt_between
+                response hqc hlo_pos hlo_hi hhi_lt_τ
+            rw [hlo_zero, hτ.2, hhi_zero] at hresp_lt
+            norm_num at hresp_lt
+      exact
+        measure_mono_null hsubset
+          (measure_union_null (measure_singleton lo) (measure_singleton hi))
+
+/--
+Candidate optimality for the positive-response policy identifies the current
+policy with that canonical policy up to null zero-response boundaries.
+-/
+theorem Lemma5PositiveResponseShapeData.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    policyAlmostEverywhereEq μ σ
+      (lemma5PositiveResponsePolicy response) := by
+  let P : TripPolicy := lemma5PositiveResponsePolicy response
+  have hPσ : μ (P \ σ) = 0 := by
+    simpa [P] using
+      lemma5_positiveResponse_omitted_mass_zero_of_candidate_le
+        μ response σ hresponse_measurable hresponse_integrable_acceptAll
+        hσ_measurable hσ_subset hcandidate
+  have hstrict_negative :
+      μ (Function.support response ∩ (σ \ P)) = 0 := by
+    simpa [P] using
+      lemma5_positiveResponse_negative_mass_zero_of_candidate_le
+        μ response σ hresponse_measurable hresponse_integrable_acceptAll
+        hσ_measurable hσ_subset hcandidate
+  have hzero_response :
+      μ ({τ : TripLength | 0 < τ ∧ response τ = 0}) = 0 :=
+    D.positive_zero_set_null μ
+  have hσP_subset :
+      σ \ P ⊆
+        Function.support response ∩ (σ \ P) ∪
+          {τ : TripLength | 0 < τ ∧ response τ = 0} := by
+    intro τ hτ
+    by_cases hresp_zero : response τ = 0
+    · exact Or.inr ⟨hσ_subset hτ.1, hresp_zero⟩
+    · exact Or.inl ⟨hresp_zero, hτ⟩
+  have hσP : μ (σ \ P) = 0 :=
+    measure_mono_null hσP_subset
+      (measure_union_null hstrict_negative hzero_response)
+  exact policyAlmostEverywhereEq_of_diff_null μ hσP hPσ
+
+/--
+Full fixed-response Lemma 5 conclusion modulo null boundary sets: a candidate
+that is at least as good as the positive-response policy has the canonical
+policy form almost everywhere.
+-/
+theorem Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_candidate_le
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hcandidate :
+      lemma5MarginalSetReward μ response
+          (lemma5PositiveResponsePolicy response) ≤
+        lemma5MarginalSetReward μ response σ) :
+    lemma5PolicyFormAlmostEverywhere μ shape σ := by
+  refine ⟨lemma5PositiveResponsePolicy response, D.policyForm, ?_⟩
+  exact
+    D.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset hcandidate
+
+/--
+Feasible optimality for the fixed marginal-response reward gives the Lemma 5
+canonical policy form almost everywhere.
+-/
+theorem Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_feasible_optimal
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (μ : Measure TripLength) [NoAtoms μ]
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    lemma5PolicyFormAlmostEverywhere μ shape σ := by
+  exact
+    D.policyFormAlmostEverywhere_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset
+      (hoptimal (lemma5PositiveResponsePolicy response)
+        (lemma5PositiveResponsePolicy_subset_acceptAll response)
+        (measurableSet_lemma5PositiveResponsePolicy response
+          hresponse_measurable))
+
+/--
+Paper-facing fixed-response version of Lemma 5: once Lemma 6 has reduced an
+endpoint derivative to a response function in one of the five source shapes,
+every measurable feasible maximizer of the corresponding marginal reward has
+the canonical Lemma 5 policy form, modulo null boundary sets.
+-/
+theorem paper_lemma5_fixed_response_policy_form_ae_of_response_shape
+    (μ : Measure TripLength) [NoAtoms μ]
+    (response : TripLength → ℝ) {shape : Lemma5DerivativeShape}
+    (σ : TripPolicy)
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          lemma5MarginalSetReward μ response σ' ≤
+            lemma5MarginalSetReward μ response σ) :
+    lemma5PolicyFormAlmostEverywhere μ shape σ :=
+  D.policyFormAlmostEverywhere_of_feasible_optimal
+    μ σ hresponse_measurable hresponse_integrable_acceptAll
+    hσ_measurable hσ_subset hoptimal
 
 /--
 Lemma 5 certificate: a derivative-shape hypothesis lets one replace an open

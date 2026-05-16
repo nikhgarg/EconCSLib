@@ -531,6 +531,17 @@ into the concrete endpoint policy data.
   `Theorem4SurgeAllowedReplacementData.of_positiveResponse_marginal`, so a
   source proof with response-shape and mass-strictness facts can enter the
   same concrete replacement interface directly.
+  The fixed-response Lemma 5 endpoint is now also available in source-faithful
+  almost-everywhere form.  `policyAlmostEverywhereEq` and
+  `lemma5PolicyFormAlmostEverywhere` express equality modulo null symmetric
+  difference, `Lemma5PositiveResponseShapeData.positive_zero_set_null` proves
+  that zero-response boundary points have zero measure under `[NoAtoms μ]`,
+  and `paper_lemma5_fixed_response_policy_form_ae_of_response_shape` proves
+  that every measurable feasible maximizer of
+  `lemma5MarginalSetReward μ response` has the appropriate five-case Lemma 5
+  policy form almost everywhere.  This closes the strict-boundary ambiguity in
+  the fixed-response part; the remaining source work is the nonlinear
+  endpoint-selection/canonical-dominance bridge.
   The regular endpoint layer now has
   `Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
   and

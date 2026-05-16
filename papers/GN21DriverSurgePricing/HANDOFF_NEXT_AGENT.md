@@ -43,6 +43,11 @@ Lemma5PolicyCanonicalDominanceMaximizerData
 Lemma5PositiveResponseShapeData
 Lemma5PositiveResponseShapeData.derivativeShapeWitness
 Lemma5PositiveResponseShapeData.policyForm
+Lemma5PositiveResponseShapeData.positive_zero_set_null
+Lemma5PositiveResponseShapeData.policyAlmostEverywhereEq_positiveResponse_of_candidate_le
+Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_candidate_le
+Lemma5PositiveResponseShapeData.policyFormAlmostEverywhere_of_feasible_optimal
+paper_lemma5_fixed_response_policy_form_ae_of_response_shape
 paper_lemma5_marginal_optimizer_replacement_of_response_shape
 Theorem4NonsurgeAllowedReplacementData.of_optimizer_replacement_subset
 Theorem4SurgeAllowedReplacementData.of_optimizer_replacement_subset
@@ -73,6 +78,18 @@ positive-response policy with the paper's canonical form, and
 `paper_lemma5_marginal_optimizer_replacement_of_response_shape` proves weak
 and strict variational replacement for `lemma5MarginalSetReward` under the
 mass-strictness alternatives.
+
+The strict-boundary issue is now handled directly.  `policyAlmostEverywhereEq`
+and `lemma5PolicyFormAlmostEverywhere` record the source convention that
+zero-response cutoffs can differ on null sets.  Under `[NoAtoms μ]`,
+`Lemma5PositiveResponseShapeData.positive_zero_set_null` proves the feasible
+zero-response set is null in all five response-shape cases, including the two
+quasi cases by the strict quasi-convex/concave between-endpoint lemmas.
+`paper_lemma5_fixed_response_policy_form_ae_of_response_shape` is the
+paper-facing fixed-response Lemma 5 endpoint: feasible measurable optimality
+for `lemma5MarginalSetReward μ response` implies the canonical Lemma 5 policy
+form almost everywhere.  Start from this theorem rather than reproving the
+boundary-null argument.
 
 The next hard proof target is the paper-specific endpoint-step field on
 `Lemma5GeneralizedIntervalPolicyDescentMaximizerData.step`: from a noncanonical
