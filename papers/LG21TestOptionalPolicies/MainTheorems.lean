@@ -9967,6 +9967,21 @@ theorem paper_theorem3_2_law_fairness_impossibility_of_observable_implication
       exact hobservable_to_test_blank hobservable
 
 /--
+Theorem 3.2 law-level logical endpoint for branches that prove the stronger
+statement that latent skill fairness or observable fairness is impossible.
+-/
+theorem paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnotFair :
+      ¬ (lg21SourceLawLatentSkillFair S ∨
+          lg21SourceLawObservablyFair S)) :
+    lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+      lg21SourceLawTestBlank S := by
+  intro hfair
+  exact False.elim (hnotFair hfair)
+
+/--
 Theorem 3.2 abstract-law endpoint from a latent-to-observable implication and
 the source-shaped abstract-law witness.
 -/

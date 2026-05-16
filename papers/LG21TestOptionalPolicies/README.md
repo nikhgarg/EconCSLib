@@ -226,7 +226,9 @@ cache is kept as `source.txt` for named-statement audits.
   tautological fairness-impossibility certificate.  The logical bridge
   `paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair`
   also converts stronger contradiction-style continuous upper-tail branches
-  back into the paper's exact "fairness implies test-blankness" conclusion.
+  back into the paper's exact "fairness implies test-blankness" conclusion;
+  `paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  now provides the same conversion for abstract law surfaces.
   The point-estimate
   constructors
   `paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface` and

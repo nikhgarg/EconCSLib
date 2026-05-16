@@ -9029,6 +9029,21 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_impl
     hlatent_to_observable W
 
 /--
+Theorem 3.2 law-level implication form for routes that prove the stronger
+contradiction-style no-fairness statement.
+-/
+theorem paper_interface_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnotFair :
+      ¬ (lg21SourceLawLatentSkillFair S ∨
+          lg21SourceLawObservablyFair S)) :
+    lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    hnotFair
+
+/--
 Theorem 3.2 latent-skill branch reduction: under the paper's shared mixture
 identities, proving the test-blank implication for observable fairness also
 proves it for latent-skill fairness.

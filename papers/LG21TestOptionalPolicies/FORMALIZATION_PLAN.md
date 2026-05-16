@@ -188,7 +188,13 @@ Last updated: 2026-05-16
   `paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor`
   and
   `paper_theorem3_2_not_law_latent_or_observable_fair_of_observable_implication_and_below_mean_actor`
-  expose this branch without requiring finite atoms; the optional-reporting
+  expose this branch without requiring finite atoms.  The PMF and law logical
+  bridges
+  `paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  and
+  `paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  convert such contradiction-style branches back into Theorem 3.2's
+  fairness-implies-test-blankness shape.  The optional-reporting
   and report-required source-model wrappers derive the two-sided best-response
   field from concrete Definition 1 equilibria.  The cutoff-midpoint wrappers
   connect the existing threshold-strategy infrastructure to this direct branch:
