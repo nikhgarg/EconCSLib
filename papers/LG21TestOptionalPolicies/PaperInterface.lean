@@ -208,6 +208,30 @@ theorem paper_interface_no_profitable_binary_choice_of_optional_reporting_source
     hEq skill base
 
 /--
+Definition 1 source optional-reporting bridge for the base-indexed concrete
+payoff model: source best response implies the full two-sided binary
+report/no-report condition at each base profile.
+-/
+theorem paper_interface_no_profitable_binary_choice_of_base_optional_reporting_source_model
+    {Skill Base : Type*}
+    {takeDecision : Skill → Base → Bool}
+    {reportDecision : Base → ℝ → Bool}
+    {reportedEstimate : Base → ℝ → ℝ}
+    {noReportEstimate : Base → ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      paperSourceEquilibrium
+        (lg21OptionalReportingBaseSourceEquilibriumData
+          takeDecision reportDecision reportedEstimate noReportEstimate
+          estimationConsistent))
+    (skill : Skill) (base : Base) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun score : ℝ => reportDecision base score = true)
+      (reportedEstimate base) (fun _score : ℝ => noReportEstimate base) :=
+  lg21NoProfitableBinaryChoiceDeviation_of_base_optional_reporting_source_model
+    hEq skill base
+
+/--
 Definition 1 bridge: in the binary test-taking subgame, equilibrium implies
 the no-profitable-test-taking condition used by Lemma 4.1.
 -/

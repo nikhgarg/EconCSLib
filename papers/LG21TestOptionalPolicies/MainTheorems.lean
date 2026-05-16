@@ -2791,6 +2791,81 @@ theorem lg21NoProfitableBinaryChoiceDeviation_of_optional_reporting_source_model
         hEq skill base
 
 /--
+Base-indexed optional-reporting source game.  This variant keeps the paper's
+dependence on the non-test base profile in both the reported-score estimate
+and the no-report estimate.
+-/
+def lg21OptionalReportingBaseSourceEquilibriumData
+    {Skill Base : Type*}
+    (takeDecision : Skill → Base → Bool)
+    (reportDecision : Base → ℝ → Bool)
+    (reportedEstimate : Base → ℝ → ℝ)
+    (noReportEstimate : Base → ℝ)
+    (estimationConsistent : Prop) :
+    LG21SourceEquilibriumData Skill Base ℝ where
+  requirement := LG21AccessAction.optionalReportingRequirement
+  takeDecision := takeDecision
+  reportDecision := reportDecision
+  payoff := fun info action =>
+    if action.reportsScore then
+      reportedEstimate info.base info.test
+    else
+      noReportEstimate info.base
+  estimationConsistent := estimationConsistent
+
+/--
+Concrete base-indexed optional-reporting source game gives the full two-sided
+best-response condition at each base profile.
+-/
+theorem lg21NoProfitableBinaryChoiceDeviation_of_base_optional_reporting_source_model
+    {Skill Base : Type*}
+    {takeDecision : Skill → Base → Bool}
+    {reportDecision : Base → ℝ → Bool}
+    {reportedEstimate : Base → ℝ → ℝ}
+    {noReportEstimate : Base → ℝ}
+    {estimationConsistent : Prop}
+    (hEq :
+      lg21SourceEquilibrium
+        (lg21OptionalReportingBaseSourceEquilibriumData
+          takeDecision reportDecision reportedEstimate noReportEstimate
+          estimationConsistent))
+    (skill : Skill) (base : Base) :
+    lg21NoProfitableBinaryChoiceDeviation
+      (fun score : ℝ => reportDecision base score = true)
+      (reportedEstimate base) (fun _score : ℝ => noReportEstimate base) := by
+  constructor
+  · intro score hreport
+    let info : LG21AccessStudentInfo Skill Base ℝ :=
+      { skill := skill, base := base, test := score }
+    have hfeasible :
+        LG21AccessAction.feasible
+          LG21AccessAction.optionalReportingRequirement
+          LG21AccessAction.takeAndWithhold :=
+      LG21AccessAction.takeAndWithhold_optionalReporting_feasible
+    have hbest :=
+      lg21SourceEquilibrium_best_response hEq info
+        LG21AccessAction.takeAndWithhold hfeasible
+    dsimp [lg21OptionalReportingBaseSourceEquilibriumData,
+      LG21AccessStudentInfo.chosenAction] at hbest
+    simpa [LG21AccessAction.takeAndWithhold, info, hreport] using hbest
+  · intro score hnreport
+    let info : LG21AccessStudentInfo Skill Base ℝ :=
+      { skill := skill, base := base, test := score }
+    have hfeasible :
+        LG21AccessAction.feasible
+          LG21AccessAction.optionalReportingRequirement
+          LG21AccessAction.takeAndReport :=
+      LG21AccessAction.takeAndReport_optionalReporting_feasible
+    have hbest :=
+      lg21SourceEquilibrium_best_response hEq info
+        LG21AccessAction.takeAndReport hfeasible
+    dsimp [lg21OptionalReportingBaseSourceEquilibriumData,
+      LG21AccessStudentInfo.chosenAction] at hbest
+    by_cases hreport : reportDecision base score
+    · exact False.elim (hnreport (by simp [hreport]))
+    · simpa [LG21AccessAction.takeAndReport, info, hreport] using hbest
+
+/--
 Binary test-taking subgame used to connect Definition 1-style best responses
 to the no-profitable-test-taking predicate in Lemma 4.1.
 -/

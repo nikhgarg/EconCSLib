@@ -15,7 +15,9 @@ Last updated: 2026-05-16
   no-profitable-deviation predicates used by Lemma 4.1.  The concrete
   optional-reporting and report-required source payoff models also now supply
   full two-sided binary best-response predicates for Theorem 3.1 and
-  Theorem 3.2.
+  Theorem 3.2.  The optional-reporting payoff model now also has a base-indexed
+  variant matching the paper's dependence on non-test features, with its own
+  two-sided best-response bridge.
 - Definitions 2--5 now have direct PMF and continuous-law source predicates
   plus paper-interface unfold lemmas.  Definition 5 also has equivalent
   witness forms for concrete base/test relevance.
@@ -368,7 +370,9 @@ Last updated: 2026-05-16
    when observable-access estimates are built from `lg21BinaryMixturePMF`, and
    the optional-reporting and report-required endpoints now combine this with
    concrete Definition 1 best response.  The next work should instantiate the
-   remaining affine-payoff identities from the paper's full source policy model.
+   optional-reporting affine endpoint using the base-indexed source payoff
+   model, then instantiate the remaining affine-payoff identities from the
+   paper's full source policy model.
 
 ## Reusable Library Seams
 
