@@ -910,6 +910,15 @@ def singleStateIncentiveCompatible (R : SingleStateReward) : Prop :=
 def singleStateMeasurableIncentiveCompatible (R : SingleStateReward) : Prop :=
   ∀ σ : TripPolicy, σ ⊆ acceptAllPolicy → MeasurableSet σ → R σ ≤ R acceptAllPolicy
 
+/--
+Measurable feasible-policy version of one-state optimality.  This is the
+continuous source domain for Theorem 1: policies are measurable subsets of the
+positive-trip domain, not arbitrary sets of real trip lengths.
+-/
+def singleStateMeasurableOptimal (R : SingleStateReward) (σ : TripPolicy) : Prop :=
+  σ ⊆ acceptAllPolicy ∧ MeasurableSet σ ∧
+    ∀ ρ : TripPolicy, ρ ⊆ acceptAllPolicy → MeasurableSet ρ → R ρ ≤ R σ
+
 /-- Accepted mass is nonnegative for any trip-length set. -/
 theorem singleStateTripMass_nonneg
     (μ : Measure TripLength) (σ : TripPolicy) :
@@ -1780,6 +1789,157 @@ theorem paper_theorem1_remove_set_if_pointwise_rate_below_current
     nlinarith
   rw [div_le_div_iff₀ hden_current hden_remaining]
   nlinarith
+
+/--
+Theorem 1 Step 1 in reward-rate form.  Every feasible measurable policy is
+weakly dominated by the complete threshold policy at its own renewal reward
+rate.  This avoids an opaque equal-utilization selection obligation: first add
+all excluded trips whose on-trip rate is at least the current reward, then
+remove all accepted trips whose on-trip rate is below it.
+-/
+theorem paper_theorem1_policy_le_complete_threshold_at_own_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (σ : TripPolicy)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hσ_measurable : MeasurableSet σ)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate) :
+    singleStateRenewalReward μ arrivalRate w σ ≤
+      singleStateRenewalReward μ arrivalRate w
+        (completeThresholdPolicy w
+          (singleStateRenewalReward μ arrivalRate w σ)) := by
+  let r := singleStateRenewalReward μ arrivalRate w σ
+  let complete : TripPolicy := completeThresholdPolicy w r
+  let added : TripPolicy := complete \ σ
+  let enlarged : TripPolicy := σ ∪ added
+  let removed : TripPolicy := enlarged \ complete
+  have hcomplete_subset : complete ⊆ acceptAllPolicy :=
+    completeThresholdPolicy_subset_acceptAll w r
+  have hcomplete_measurable : MeasurableSet complete :=
+    measurableSet_completeThresholdPolicy w r hrate_measurable
+  have hadded_subset_acceptAll : added ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact hcomplete_subset hτ.1
+  have hadded_measurable : MeasurableSet added :=
+    hcomplete_measurable.diff hσ_measurable
+  have henlarged_subset_acceptAll : enlarged ⊆ acceptAllPolicy := by
+    intro τ hτ
+    rcases hτ with hτ | hτ
+    · exact hσ_subset hτ
+    · exact hadded_subset_acceptAll hτ
+  have henlarged_measurable : MeasurableSet enlarged :=
+    hσ_measurable.union hadded_measurable
+  have hremoved_subset_acceptAll : removed ⊆ acceptAllPolicy := by
+    intro τ hτ
+    exact henlarged_subset_acceptAll hτ.1
+  have hremoved_measurable : MeasurableSet removed :=
+    henlarged_measurable.diff hcomplete_measurable
+  have hσ_time_nonneg : 0 ≤ singleStateTripTime μ σ :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ σ hσ_measurable hσ_subset
+  have hadded_time_nonneg : 0 ≤ singleStateTripTime μ added :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ added hadded_measurable
+      hadded_subset_acceptAll
+  have henlarged_time_nonneg : 0 ≤ singleStateTripTime μ enlarged :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ enlarged
+      henlarged_measurable henlarged_subset_acceptAll
+  have hσ_w_integrable : IntegrableOn w σ μ :=
+    hw_integrable_acceptAll.mono_set hσ_subset
+  have hadded_w_integrable : IntegrableOn w added μ :=
+    hw_integrable_acceptAll.mono_set hadded_subset_acceptAll
+  have henlarged_w_integrable : IntegrableOn w enlarged μ :=
+    hw_integrable_acceptAll.mono_set henlarged_subset_acceptAll
+  have hremoved_w_integrable : IntegrableOn w removed μ :=
+    hw_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+  have hσ_time_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ :=
+    htime_integrable_acceptAll.mono_set hσ_subset
+  have hadded_time_integrable :
+      IntegrableOn (fun τ : TripLength => τ) added μ :=
+    htime_integrable_acceptAll.mono_set hadded_subset_acceptAll
+  have henlarged_time_integrable :
+      IntegrableOn (fun τ : TripLength => τ) enlarged μ :=
+    htime_integrable_acceptAll.mono_set henlarged_subset_acceptAll
+  have hremoved_time_integrable :
+      IntegrableOn (fun τ : TripLength => τ) removed μ :=
+    htime_integrable_acceptAll.mono_set hremoved_subset_acceptAll
+  have hdisjoint_added : Disjoint σ added := by
+    rw [Set.disjoint_left]
+    intro τ hσ hadded
+    exact hadded.2 hσ
+  have hadd_pointwise :
+      ∀ τ ∈ added, r * τ ≤ w τ := by
+    intro τ hτ
+    have hτ_pos : 0 < τ := hadded_subset_acceptAll hτ
+    have hrate : r ≤ w τ / τ := hτ.1.2
+    have hmul := mul_le_mul_of_nonneg_right hrate (le_of_lt hτ_pos)
+    have hτ_ne : τ ≠ 0 := ne_of_gt hτ_pos
+    field_simp [hτ_ne] at hmul
+    simpa [mul_comm, r] using hmul
+  have hσ_le_enlarged :
+      singleStateRenewalReward μ arrivalRate w σ ≤
+        singleStateRenewalReward μ arrivalRate w enlarged := by
+    exact
+      paper_theorem1_add_set_if_pointwise_rate_above_current
+        μ arrivalRate w σ added hdisjoint_added hadded_measurable
+        hσ_w_integrable hadded_w_integrable hσ_time_integrable
+        hadded_time_integrable hlambda hσ_time_nonneg hadded_time_nonneg
+        (by simpa [r] using hadd_pointwise)
+  have hcomplete_subset_enlarged : complete ⊆ enlarged := by
+    intro τ hτ
+    by_cases hτ_sigma : τ ∈ σ
+    · exact Or.inl hτ_sigma
+    · exact Or.inr ⟨hτ, hτ_sigma⟩
+  have henlarged_diff_removed_eq_complete : enlarged \ removed = complete := by
+    apply Set.Subset.antisymm
+    · intro τ hτ
+      by_contra hτ_not_complete
+      exact hτ.2 ⟨hτ.1, hτ_not_complete⟩
+    · intro τ hτ
+      exact ⟨hcomplete_subset_enlarged hτ, by
+        intro hremoved
+        exact hremoved.2 hτ⟩
+  have hremaining_time_nonneg :
+      0 ≤ singleStateTripTime μ enlarged - singleStateTripTime μ removed := by
+    rw [← singleStateTripTime_diff μ enlarged removed (by intro τ hτ; exact hτ.1)
+        hremoved_measurable henlarged_time_integrable,
+      henlarged_diff_removed_eq_complete]
+    exact singleStateTripTime_nonneg_of_subset_acceptAll μ complete
+      hcomplete_measurable hcomplete_subset
+  have hremove_pointwise :
+      ∀ τ ∈ removed,
+        w τ ≤ singleStateRenewalReward μ arrivalRate w enlarged * τ := by
+    intro τ hτ
+    have hτ_pos : 0 < τ := hremoved_subset_acceptAll hτ
+    have hnot_complete : τ ∉ complete := hτ.2
+    have hrate_lt : w τ / τ < r := by
+      have hnot : ¬ r ≤ w τ / τ := by
+        intro hle
+        exact hnot_complete ⟨hτ_pos, hle⟩
+      exact lt_of_not_ge hnot
+    have hlt_mul : w τ < r * τ := by
+      have hmul := mul_lt_mul_of_pos_right hrate_lt hτ_pos
+      have hτ_ne : τ ≠ 0 := ne_of_gt hτ_pos
+      field_simp [hτ_ne] at hmul
+      simpa [mul_comm] using hmul
+    have hr_le :
+        r * τ ≤ singleStateRenewalReward μ arrivalRate w enlarged * τ := by
+      exact mul_le_mul_of_nonneg_right (by simpa [r] using hσ_le_enlarged)
+        (le_of_lt hτ_pos)
+    exact le_trans hlt_mul.le hr_le
+  have henlarged_le_complete :
+      singleStateRenewalReward μ arrivalRate w enlarged ≤
+        singleStateRenewalReward μ arrivalRate w complete := by
+    have hremove :=
+      paper_theorem1_remove_set_if_pointwise_rate_below_current
+        μ arrivalRate w enlarged removed (by intro τ hτ; exact hτ.1)
+        hremoved_measurable henlarged_w_integrable hremoved_w_integrable
+        henlarged_time_integrable hremoved_time_integrable hlambda
+        henlarged_time_nonneg hremaining_time_nonneg hremove_pointwise
+    simpa [complete, removed, enlarged, henlarged_diff_removed_eq_complete] using hremove
+  exact hσ_le_enlarged.trans henlarged_le_complete
 
 /--
 Theorem 1 pointwise add step: adding a disjoint measurable positive-time set
@@ -3060,6 +3220,19 @@ structure SingleStateThresholdCertificate (R : SingleStateReward)
   optimal : singleStateOptimal R policy
 
 /--
+Measurable-domain certificate for paper Theorem 1.  This is the faithful
+continuous-policy endpoint: the best-response comparison ranges over
+measurable feasible trip-length policies.
+-/
+structure SingleStateMeasurableThresholdCertificate (R : SingleStateReward)
+    (w : PricingFunction) where
+  policy : TripPolicy
+  threshold : ℝ
+  threshold_nonneg : 0 ≤ threshold
+  threshold_shape : thresholdRatePolicy w threshold policy
+  measurable_optimal : singleStateMeasurableOptimal R policy
+
+/--
 Theorem 1 certificate constructor from the paper's Step 1/2/3 proof
 obligations. This packages the earlier assembly theorem into the standard
 single-state threshold-certificate interface used by later wrappers.
@@ -3156,6 +3329,304 @@ def paper_theorem1_threshold_certificate_of_step1_step3_renewal_reward
             (completeThresholdPolicy w cstar) := by
       exact max_le (hstep3 c).1 (hstep3 c).2
     exact hσ_le_ρ.trans (hρ_le_max.trans hmax_le)
+
+/--
+Compact upper-semicontinuity maximizer principle.  This is the topological
+core of the paper's Step 3 compactness argument, stated for an abstract cutoff
+objective.
+-/
+theorem paper_theorem1_cutoff_maximizer_of_compact_upperSemicontinuity
+    (f : ℝ → ℝ) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hf_upper : UpperSemicontinuousOn f (Set.Icc 0 C))
+    (hleft_bound : ∀ c : ℝ, c < 0 → f c ≤ f 0)
+    (hright_bound : ∀ c : ℝ, C < c → f c ≤ f 0) :
+    ∃ cstar : ℝ, 0 ≤ cstar ∧ cstar ≤ C ∧
+      ∀ c : ℝ, f c ≤ f cstar := by
+  have hinterval_nonempty : (Set.Icc (0 : ℝ) C).Nonempty :=
+    Set.nonempty_Icc.mpr hC_nonneg
+  rcases
+      UpperSemicontinuousOn.exists_isMaxOn
+        hinterval_nonempty isCompact_Icc hf_upper with
+    ⟨cstar, hcstar_mem, hcstar_max⟩
+  rw [isMaxOn_iff] at hcstar_max
+  have hzero_mem : (0 : ℝ) ∈ Set.Icc (0 : ℝ) C :=
+    ⟨le_rfl, hC_nonneg⟩
+  refine ⟨cstar, hcstar_mem.1, hcstar_mem.2, ?_⟩
+  intro c
+  by_cases hc_left : c < 0
+  · exact (hleft_bound c hc_left).trans (hcstar_max 0 hzero_mem)
+  by_cases hc_right : C < c
+  · exact (hright_bound c hc_right).trans (hcstar_max 0 hzero_mem)
+  exact hcstar_max c ⟨le_of_not_gt hc_left, le_of_not_gt hc_right⟩
+
+/--
+Compact-continuity maximizer principle for complete-threshold rewards.  If the
+complete-threshold reward is continuous on a compact cutoff interval and no
+cutoff outside that interval beats the zero cutoff, then some cutoff in the
+interval maximizes complete-threshold reward over all real cutoffs.
+-/
+theorem paper_theorem1_complete_threshold_maximizer_of_compact_continuity
+    (f : ℝ → ℝ) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hf_continuous : ContinuousOn f (Set.Icc 0 C))
+    (hleft_bound : ∀ c : ℝ, c < 0 → f c ≤ f 0)
+    (hright_bound : ∀ c : ℝ, C < c → f c ≤ f 0) :
+    ∃ cstar : ℝ, 0 ≤ cstar ∧ cstar ≤ C ∧
+      ∀ c : ℝ, f c ≤ f cstar := by
+  exact
+    paper_theorem1_cutoff_maximizer_of_compact_upperSemicontinuity
+      f C hC_nonneg hf_continuous.upperSemicontinuousOn
+      hleft_bound hright_bound
+
+/--
+Paper Theorem 1 Step 3 algebra: if `cstar` maximizes the paper's
+strict/complete cutoff objective and the complete threshold at `cstar`
+dominates the strict threshold at `cstar`, then that complete threshold
+dominates every strict and complete threshold.
+-/
+theorem paper_theorem1_step3_strict_complete_dominated_of_maximizer
+    (R : SingleStateReward) (w : PricingFunction) (cstar : ℝ)
+    (hmax :
+      ∀ c : ℝ,
+        max (R (strictThresholdPolicy w c)) (R (completeThresholdPolicy w c)) ≤
+          max (R (strictThresholdPolicy w cstar))
+            (R (completeThresholdPolicy w cstar)))
+    (hcomplete_ge_strict_at_max :
+      R (strictThresholdPolicy w cstar) ≤
+        R (completeThresholdPolicy w cstar)) :
+    ∀ c : ℝ,
+      R (strictThresholdPolicy w c) ≤ R (completeThresholdPolicy w cstar) ∧
+        R (completeThresholdPolicy w c) ≤
+          R (completeThresholdPolicy w cstar) := by
+  intro c
+  have hmax_at :
+      max (R (strictThresholdPolicy w cstar))
+          (R (completeThresholdPolicy w cstar)) =
+        R (completeThresholdPolicy w cstar) :=
+    max_eq_right hcomplete_ge_strict_at_max
+  constructor
+  · exact (le_max_left _ _).trans ((hmax c).trans (by rw [hmax_at]))
+  · exact (le_max_right _ _).trans ((hmax c).trans (by rw [hmax_at]))
+
+/--
+Paper Theorem 1 Step 3 from a compact upper-semicontinuity maximizer for the
+strict/complete cutoff objective, plus the paper's final inclusion-at-the-margin
+subargument at the maximizing cutoff.
+-/
+theorem paper_theorem1_step3_strict_complete_dominated_of_compact_upperSemicontinuity
+    (R : SingleStateReward) (w : PricingFunction) (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hobjective_upper :
+      UpperSemicontinuousOn
+        (fun c : ℝ =>
+          max (R (strictThresholdPolicy w c)) (R (completeThresholdPolicy w c)))
+        (Set.Icc 0 C))
+    (hleft_bound :
+      ∀ c : ℝ, c < 0 →
+        max (R (strictThresholdPolicy w c))
+            (R (completeThresholdPolicy w c)) ≤
+          max (R (strictThresholdPolicy w 0))
+            (R (completeThresholdPolicy w 0)))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        max (R (strictThresholdPolicy w c))
+            (R (completeThresholdPolicy w c)) ≤
+          max (R (strictThresholdPolicy w 0))
+            (R (completeThresholdPolicy w 0)))
+    (hcomplete_ge_strict_at_any_max :
+      ∀ cstar : ℝ,
+        0 ≤ cstar → cstar ≤ C →
+          (∀ c : ℝ,
+            max (R (strictThresholdPolicy w c))
+                (R (completeThresholdPolicy w c)) ≤
+              max (R (strictThresholdPolicy w cstar))
+                (R (completeThresholdPolicy w cstar))) →
+          R (strictThresholdPolicy w cstar) ≤
+            R (completeThresholdPolicy w cstar)) :
+    ∃ cstar : ℝ, 0 ≤ cstar ∧ cstar ≤ C ∧
+      ∀ c : ℝ,
+        R (strictThresholdPolicy w c) ≤
+            R (completeThresholdPolicy w cstar) ∧
+          R (completeThresholdPolicy w c) ≤
+            R (completeThresholdPolicy w cstar) := by
+  let f : ℝ → ℝ := fun c =>
+    max (R (strictThresholdPolicy w c)) (R (completeThresholdPolicy w c))
+  rcases
+      paper_theorem1_cutoff_maximizer_of_compact_upperSemicontinuity
+        f C hC_nonneg hobjective_upper hleft_bound hright_bound with
+    ⟨cstar, hcstar_nonneg, hcstar_le_C, hmax⟩
+  refine ⟨cstar, hcstar_nonneg, hcstar_le_C, ?_⟩
+  exact
+    paper_theorem1_step3_strict_complete_dominated_of_maximizer
+      R w cstar hmax
+      (hcomplete_ge_strict_at_any_max cstar hcstar_nonneg hcstar_le_C hmax)
+
+/--
+Theorem 1 measurable certificate after closing Step 1.  Once a complete
+threshold maximizer is supplied, Lean proves that the maximizing complete
+threshold is optimal among all measurable feasible policies: Step 1 sends an
+arbitrary measurable feasible policy to a weakly better complete threshold at
+its own reward rate, and the maximizer dominates that complete threshold.
+-/
+def paper_theorem1_measurable_threshold_certificate_of_complete_maximizer_renewal_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (cstar : ℝ)
+    (hcstar_nonneg : 0 ≤ cstar)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hcomplete_max :
+      ∀ c : ℝ,
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar)) :
+    SingleStateMeasurableThresholdCertificate
+      (singleStateRenewalReward μ arrivalRate w) w where
+  policy := completeThresholdPolicy w cstar
+  threshold := cstar
+  threshold_nonneg := hcstar_nonneg
+  threshold_shape := thresholdRatePolicy_completeThresholdPolicy w cstar
+  measurable_optimal := by
+    refine ⟨completeThresholdPolicy_subset_acceptAll w cstar,
+      measurableSet_completeThresholdPolicy w cstar hrate_measurable, ?_⟩
+    intro σ hσ_subset hσ_measurable
+    have hstep1 :
+        singleStateRenewalReward μ arrivalRate w σ ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w
+              (singleStateRenewalReward μ arrivalRate w σ)) :=
+      paper_theorem1_policy_le_complete_threshold_at_own_reward
+        μ arrivalRate w σ hrate_measurable hσ_subset hσ_measurable
+        hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+    exact hstep1.trans
+      (hcomplete_max (singleStateRenewalReward μ arrivalRate w σ))
+
+/--
+Theorem 1 measurable certificate from the compact-continuity Step 3 route.
+The old Step 1 selection obligation is gone: the only analytic inputs are the
+complete-threshold compactness/continuity bounds that produce a maximizing
+cutoff.
+-/
+theorem paper_theorem1_measurable_threshold_certificate_of_compact_continuity_renewal_reward
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hcomplete_continuous :
+      ContinuousOn
+        (fun c : ℝ =>
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c))
+        (Set.Icc 0 C))
+    (hleft_bound :
+      ∀ c : ℝ, c < 0 →
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0)) :
+    ∃ Cth : SingleStateMeasurableThresholdCertificate
+      (singleStateRenewalReward μ arrivalRate w) w,
+      Cth.threshold ≤ C := by
+  let f : ℝ → ℝ := fun c =>
+    singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c)
+  rcases paper_theorem1_complete_threshold_maximizer_of_compact_continuity
+      f C hC_nonneg hcomplete_continuous hleft_bound hright_bound with
+    ⟨cstar, hcstar_nonneg, hcstar_le_C, hmax⟩
+  exact
+    ⟨paper_theorem1_measurable_threshold_certificate_of_complete_maximizer_renewal_reward
+      μ arrivalRate w cstar hcstar_nonneg hrate_measurable
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda hmax,
+      hcstar_le_C⟩
+
+/--
+Theorem 1 measurable best-response endpoint from a complete-threshold
+maximizer.  This is the closed Lean assembly after the new Step 1 theorem:
+there is no remaining Step 1 or Step 2 hypothesis in the statement.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_complete_maximizer
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (cstar : ℝ)
+    (hcstar_nonneg : 0 ≤ cstar)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hcomplete_max :
+      ∀ c : ℝ,
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w cstar)) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  let Cth :=
+    paper_theorem1_measurable_threshold_certificate_of_complete_maximizer_renewal_reward
+      μ arrivalRate w cstar hcstar_nonneg hrate_measurable
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hcomplete_max
+  exact ⟨Cth.threshold, Cth.threshold_nonneg, Cth.policy,
+    Cth.threshold_shape, Cth.measurable_optimal⟩
+
+/--
+Theorem 1 measurable best-response endpoint from compact-continuity Step 3
+assumptions on complete-threshold rewards.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuity
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (C : ℝ)
+    (hC_nonneg : 0 ≤ C)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hcomplete_continuous :
+      ContinuousOn
+        (fun c : ℝ =>
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c))
+        (Set.Icc 0 C))
+    (hleft_bound :
+      ∀ c : ℝ, c < 0 →
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0))
+    (hright_bound :
+      ∀ c : ℝ, C < c →
+        singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c) ≤
+          singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w 0)) :
+    ∃ c : ℝ, 0 ≤ c ∧ c ≤ C ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  rcases
+      paper_theorem1_measurable_threshold_certificate_of_compact_continuity_renewal_reward
+        μ arrivalRate w C hC_nonneg hrate_measurable
+        hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+        hcomplete_continuous hleft_bound hright_bound with
+    ⟨Cth, hCth_le_C⟩
+  exact ⟨Cth.threshold, Cth.threshold_nonneg, hCth_le_C, Cth.policy,
+    Cth.threshold_shape, Cth.measurable_optimal⟩
 
 /--
 Theorem 1, conditional source-facing wrapper: given the continuous
@@ -3827,6 +4298,29 @@ def dynamicOptimal (R : DynamicReward) (σ : Fin 2 → TripPolicy) : Prop :=
 /-- Dynamic source IC predicate: accepting all trips in both states is optimal. -/
 def dynamicIncentiveCompatible (R : DynamicReward) : Prop :=
   dynamicOptimal R acceptAllDynamicPolicy
+
+/-- A one-state policy agrees with accept-all up to a null feasible-trip set. -/
+def acceptAllAlmostEverywhere (μ : Measure TripLength) (σ : TripPolicy) : Prop :=
+  μ (acceptAllPolicy \ σ) = 0
+
+/-- A two-state dynamic policy agrees statewise with accept-all up to null sets. -/
+def dynamicAcceptAllAlmostEverywhere
+    (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop :=
+  ∀ i : Fin 2, acceptAllAlmostEverywhere (μ i) (σ i)
+
+/-- Exact accept-all immediately gives accept-all up to a null feasible-trip set. -/
+theorem acceptAllAlmostEverywhere_of_acceptsAllTrips
+    (μ : Measure TripLength) {σ : TripPolicy}
+    (hall : acceptsAllTrips σ) :
+    acceptAllAlmostEverywhere μ σ := by
+  have hempty : acceptAllPolicy \ σ = (∅ : Set TripLength) := by
+    ext τ
+    constructor
+    · intro hτ
+      exact False.elim (hτ.2 (hall hτ.1))
+    · intro hτ
+      exact False.elim hτ
+  simp [acceptAllAlmostEverywhere, hempty]
 
 /-- Dynamic policies in the source feasible measurable domain. -/
 def dynamicFeasibleMeasurablePolicy (σ : Fin 2 → TripPolicy) : Prop :=
@@ -11131,6 +11625,26 @@ theorem eq_acceptAll_diff_singleton_of_rejectsMiddleTrips_self_of_subset_acceptA
     σ = acceptAllPolicy \ ({t} : Set ℝ) := by
   rw [eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
     hshape hsub, rejectMiddleTripsPolicy_self_eq_acceptAll_diff_singleton]
+
+/--
+If a feasible middle-rejection policy rejects only a coincident cutoff, then
+under a nonatomic trip-length measure it is accept-all up to a null set.
+-/
+theorem acceptAllAlmostEverywhere_of_rejectsMiddleTrips_self_of_subsetAcceptAll
+    (μ : Measure TripLength) [NoAtoms μ]
+    {σ : TripPolicy} {t : ℝ}
+    (hshape : rejectsMiddleTrips t t σ)
+    (hsub : σ ⊆ acceptAllPolicy) :
+    acceptAllAlmostEverywhere μ σ := by
+  rw [acceptAllAlmostEverywhere,
+    eq_acceptAll_diff_singleton_of_rejectsMiddleTrips_self_of_subset_acceptAll
+      hshape hsub]
+  have hsubset :
+      acceptAllPolicy \ (acceptAllPolicy \ ({t} : Set ℝ)) ⊆ ({t} : Set ℝ) := by
+    intro τ hτ
+    by_contra hτ_not
+    exact hτ.2 ⟨hτ.1, hτ_not⟩
+  exact measure_mono_null hsubset (measure_singleton t)
 
 /--
 Under a nonatomic trip-length measure, a canonical reject-middle policy with
