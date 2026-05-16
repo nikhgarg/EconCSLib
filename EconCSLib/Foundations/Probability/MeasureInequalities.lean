@@ -555,6 +555,112 @@ theorem measureProb_lt_of_imp_of_residual_ne_zero
   rw [hleft]
   exact lt_of_le_of_ne (bot_le) hright.symm
 
+/-- Real-valued mass of the lower-left rectangle `{(u,v) : u <= x, v <= y}`. -/
+noncomputable def lowerLeftRectangleMass (μ : Measure (ℝ × ℝ)) (x y : ℝ) : ℝ :=
+  μ.real {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 ≤ y}
+
+/-- Real-valued mass of the first-coordinate lower half-space `{(u,v) : u <= x}`. -/
+noncomputable def firstCoordinateLowerMass (μ : Measure (ℝ × ℝ)) (x : ℝ) : ℝ :=
+  μ.real {p : ℝ × ℝ | p.1 ≤ x}
+
+/-- Real-valued mass of the vertical strip `{(u,v) : u <= x, y <= v}`. -/
+noncomputable def verticalUpperStripMass (μ : Measure (ℝ × ℝ)) (x y : ℝ) : ℝ :=
+  μ.real {p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2}
+
+theorem measurableSet_lowerLeftRectangle (x y : ℝ) :
+    MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ p.2 ≤ y}) := by
+  exact
+    (isClosed_le continuous_fst continuous_const).measurableSet.inter
+      (isClosed_le continuous_snd continuous_const).measurableSet
+
+theorem measurableSet_firstCoordinateLower (x : ℝ) :
+    MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x}) :=
+  (isClosed_le continuous_fst continuous_const).measurableSet
+
+theorem measurableSet_verticalUpperStrip (x y : ℝ) :
+    MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2}) := by
+  exact
+    (isClosed_le continuous_fst continuous_const).measurableSet.inter
+      (isClosed_le continuous_const continuous_snd).measurableSet
+
+theorem measurableSet_horizontalBoundaryLeft (x y : ℝ) :
+    MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ p.2 = y}) := by
+  exact
+    (isClosed_le continuous_fst continuous_const).measurableSet.inter
+      (isClosed_eq continuous_snd continuous_const).measurableSet
+
+/--
+A lower-left rectangle subtracts from the first-coordinate lower half-space to
+give the vertical upper strip, up to a null horizontal boundary.
+
+This is the reusable CDF bookkeeping behind identities of the form
+`P(X <= x, y <= Y) = P(X <= x) - P(X <= x, Y <= y)` for continuous laws.
+-/
+theorem verticalUpperStripMass_eq_firstCoordinateLowerMass_sub_lowerLeftRectangleMass
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] (x y : ℝ)
+    (hboundary : μ.real {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 = y} = 0) :
+    verticalUpperStripMass μ x y =
+      firstCoordinateLowerMass μ x - lowerLeftRectangleMass μ x y := by
+  let left : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 ≤ x}
+  let lower : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 ≤ y}
+  let strictUpper : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 ≤ x ∧ y < p.2}
+  let upper : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2}
+  let boundary : Set (ℝ × ℝ) := {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 = y}
+  have hlower_subset : lower ⊆ left := by
+    intro p hp
+    exact hp.1
+  have hdiff_eq : left \ lower = strictUpper := by
+    ext p
+    constructor
+    · intro hp
+      have hnot : ¬ p.2 ≤ y := by
+        intro hle
+        exact hp.2 ⟨hp.1, hle⟩
+      exact ⟨hp.1, lt_of_not_ge hnot⟩
+    · intro hp
+      exact ⟨hp.1, by intro hlow; exact not_lt.mpr hlow.2 hp.2⟩
+  have hupper_split : upper = strictUpper ∪ boundary := by
+    ext p
+    constructor
+    · intro hp
+      rcases lt_or_eq_of_le hp.2 with hlt | heq
+      · exact Or.inl ⟨hp.1, hlt⟩
+      · exact Or.inr ⟨hp.1, heq.symm⟩
+    · intro hp
+      rcases hp with hstrict | hbd
+      · exact ⟨hstrict.1, hstrict.2.le⟩
+      · exact ⟨hbd.1, hbd.2.ge⟩
+  have hdisj : Disjoint strictUpper boundary := by
+    refine Set.disjoint_left.2 ?_
+    intro p hstrict hbd
+    exact ne_of_gt hstrict.2 hbd.2
+  have hboundary' : μ.real boundary = 0 := by
+    simpa [boundary] using hboundary
+  have hstrict_meas : MeasurableSet strictUpper := by
+    have hleft : MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x}) :=
+      measurableSet_firstCoordinateLower x
+    have hright : MeasurableSet ({p : ℝ × ℝ | y < p.2}) :=
+      (isOpen_lt continuous_const continuous_snd).measurableSet
+    simpa [strictUpper, Set.setOf_and] using hleft.inter hright
+  have hboundary_meas : MeasurableSet boundary := by
+    simpa [boundary] using measurableSet_horizontalBoundaryLeft x y
+  have hupper_mass :
+      μ.real upper = μ.real strictUpper := by
+    rw [hupper_split, measureReal_union hdisj hboundary_meas, hboundary',
+      add_zero]
+  have hstrict_mass :
+      μ.real strictUpper = μ.real left - μ.real lower := by
+    rw [← hdiff_eq]
+    exact measureReal_diff
+      (μ := μ) (s₁ := left) (s₂ := lower) hlower_subset
+      (by simpa [lower] using measurableSet_lowerLeftRectangle x y)
+      (measure_ne_top μ left)
+  calc
+    verticalUpperStripMass μ x y = μ.real upper := rfl
+    _ = μ.real strictUpper := hupper_mass
+    _ = μ.real left - μ.real lower := hstrict_mass
+    _ = firstCoordinateLowerMass μ x - lowerLeftRectangleMass μ x y := rfl
+
 /-- Real-valued mass of the upper orthant `{(u,v) : x <= u, y <= v}`. -/
 noncomputable def upperOrthantMass (μ : Measure (ℝ × ℝ)) (x y : ℝ) : ℝ :=
   μ.real {p : ℝ × ℝ | x ≤ p.1 ∧ y ≤ p.2}

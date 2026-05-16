@@ -189,6 +189,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `mass_1 / C_1 > mass_2 / C_2 ↔ mass_1 / mass_2 > C_1 / C_2` under positive
   capacities and positive denominator mass.  Then leave only the model-side
   Gaussian/Owen integral identities as the concrete analytic seam.
+- For bivariate CDF/Owen selection formulas, peel off the measure bookkeeping
+  before attempting Gaussian density algebra.  A common bracket
+  `Phi(A) - Phi_2(A,B;rho)` is just the vertical strip mass
+  `P(Z_1 <= A, B <= Z_2)` once the first marginal CDF, lower-left bivariate
+  CDF, and zero horizontal-boundary mass are known.  Prove this generic strip
+  identity first, then separately prove the transformed Gaussian law supplies
+  the advertised CDFs.
 - When a paper theorem is group-indexed, avoid stopping at a one-representative
   type theorem. After the single-group payoff/cutoff calculation is green,
   immediately package the group-indexed equilibrium object with common school
