@@ -8848,6 +8848,20 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_mixture_and_source_
     skillGivenBase hObsAccess hObsNoAccess W
 
 /--
+Theorem 3.2 implication form for routes that prove the stronger
+contradiction-style no-fairness statement.
+-/
+theorem paper_interface_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnotFair :
+      ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S)) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    hnotFair
+
+/--
 Theorem 3.2 abstract-law observable branch from the source-shaped witness.
 -/
 theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_witness

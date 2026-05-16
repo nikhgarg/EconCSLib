@@ -223,7 +223,11 @@ cache is kept as `source.txt` for named-statement audits.
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
   and `paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness`
   plus the law analogue give paper-facing endpoints without using the old
-  tautological fairness-impossibility certificate.  The point-estimate
+  tautological fairness-impossibility certificate.  The logical bridge
+  `paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  also converts stronger contradiction-style continuous upper-tail branches
+  back into the paper's exact "fairness implies test-blankness" conclusion.
+  The point-estimate
   constructors
   `paper_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface` and
   `paper_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface`

@@ -8140,6 +8140,22 @@ theorem paper_theorem3_2_fairness_impossibility_of_observable_implication
       exact hobservable_to_test_blank hobservable
 
 /--
+Theorem 3.2 logical endpoint for branches that prove the stronger statement
+that latent skill fairness or observable fairness is impossible.  This puts
+those contradiction-style branches back in the paper's implication form:
+fairness implies test-blankness.
+-/
+theorem paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnotFair :
+      ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S)) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S := by
+  intro hfair
+  exact False.elim (hnotFair hfair)
+
+/--
 Theorem 3.2 latent-to-observable reduction using the paper's shared
 latent-skill mixture identities.
 -/

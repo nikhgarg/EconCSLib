@@ -531,10 +531,14 @@ Last updated: 2026-05-16
    concrete Definition 1 best response.  The base-indexed optional-reporting
    affine endpoint now makes the paper's reported-score and no-report payoff
    formulas definitional, and the concrete binary-mixture point-estimate
-   surface removes the remaining surface identity hypotheses.  The concrete
-   fairness endpoint adds the latent-to-observable mixture reduction, and the
-   `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  The
-   base-indexed report-required affine endpoint now makes the taking payoff
+  surface removes the remaining surface identity hypotheses.  The concrete
+  fairness endpoint adds the latent-to-observable mixture reduction, and the
+  `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  The
+  logical bridge
+  `paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  converts the stronger continuous no-fairness endpoints into the paper's
+  implication shape.  The
+  base-indexed report-required affine endpoint now makes the taking payoff
    formula definitional, and the concrete report-required fairness endpoint
    adds the corresponding binary-mixture surface and latent-to-observable
    reduction.  The centered-outside variant reduces the report-required
