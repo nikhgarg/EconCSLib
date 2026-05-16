@@ -41,6 +41,8 @@ lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_policy_canoni
 lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer
 Lemma5PolicyCanonicalDominanceMaximizerData
 Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms
+Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate
+paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance
 ```
 
 This matters because the canonical Lemma 5 outputs include accept-all and
@@ -63,6 +65,10 @@ certificate, prefer `Theorem4AllMeasurablePolicyCanonicalDominanceData`: it
 uses the direct source-policy constructor, proves the canonical replacement is
 feasible/measurable, and applies restricted measurable optimality to extract
 the current policy form.
+For the regular current-bounds endpoint route, use
+`Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`;
+it combines those policy-level Lemma 5 data with the four regular endpoint
+families and feeds the existing allowed-policy-form route internally.
 
 ## Lemmas 1-3 Status
 

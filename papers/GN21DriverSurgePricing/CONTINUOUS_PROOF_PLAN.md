@@ -512,6 +512,13 @@ into the concrete endpoint policy data.
   turns those per-state certificates into the all-optimal measurable
   allowed-policy-form certificate, so future work should target policy-level
   dominance data rather than older opaque replacement packages.
+  The regular endpoint layer now has
+  `Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
+  and
+  `paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance`,
+  so the source closeout can combine policy-level Lemma 5 canonical dominance
+  with regular endpoint data without first hand-building an allowed-policy-form
+  certificate.
   `GN21SymmDiffContinuousAt` and
   `exists_gn21FiniteOpenIntervalApproximation_reward_close`,
   `exists_gn21FiniteIntervalPolicy_reward_close`, and

@@ -817,7 +817,12 @@ feasibility/measurability through
 `Theorem4AllMeasurablePolicyCanonicalDominanceData.to_allowed_policy_forms`
 now converts per-state policy-level Lemma 5 dominance data into the measurable
 all-optimal allowed-policy-form certificate used by the endpoint-selection
-wrappers.
+wrappers.  The regular endpoint package
+`Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate`
+and theorem
+`paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance`
+feed that classification directly into the current-bounds regular Theorem 4
+route.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

@@ -47344,6 +47344,82 @@ structure Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertif
           GN21SurgeRejectMiddleRegularEndpointData
             μ arrival m z switch12 switch21 ρ lo hi
 
+/--
+Regular endpoint data attached directly to policy-level canonical-dominance
+Lemma 5 data.  This is the preferred source-facing regular endpoint package
+after the generalized interval/ray bridge: the caller proves per-state
+policy-level canonical dominance, and Lean derives the all-optimal measurable
+allowed-policy-form classification internally.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  policy_canonical_dominance :
+    Theorem4AllMeasurablePolicyCanonicalDominanceData μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          GN21NonsurgeRejectLongRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  nonsurge_accept_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          GN21NonsurgeAcceptMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+  surge_reject_short_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          GN21SurgeRejectShortRegularEndpointData
+            μ arrival m z switch12 switch21 ρ u
+  surge_reject_middle_endpoint :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          GN21SurgeRejectMiddleRegularEndpointData
+            μ arrival m z switch12 switch21 ρ lo hi
+
+/--
+Convert regular policy-level canonical-dominance endpoint data to the existing
+regular allowed-policy-form endpoint package.
+-/
+noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate.to_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ} {switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsCertificate
+      μ arrival m z switch12 switch21 where
+  allowed_policy_forms := C.policy_canonical_dominance.to_allowed_policy_forms
+  nonsurge_reject_long_endpoint := C.nonsurge_reject_long_endpoint
+  nonsurge_accept_middle_endpoint := C.nonsurge_accept_middle_endpoint
+  surge_reject_short_endpoint := C.surge_reject_short_endpoint
+  surge_reject_middle_endpoint := C.surge_reject_middle_endpoint
+
 /-- Convert all-optimal allowed policy forms plus regular endpoints to the regular-shape route. -/
 noncomputable def Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
     (μ : Fin 2 → Measure TripLength)
@@ -47390,6 +47466,33 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
       μ arrival m z switch12 switch21
       (Theorem4MeasurableEndpointCurrentBoundsRegularShapeDerivationCertificate.of_allowed_policy_forms
         μ arrival m z switch12 switch21 C)
+
+/--
+Measurable Theorem 4 accept-all uniqueness from policy-level canonical
+dominance and regular endpoint data.
+-/
+theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsRegularPolicyCanonicalDominanceCertificate
+        μ arrival m z switch12 switch21) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          ρ = acceptAllDynamicPolicy := by
+  exact
+    paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_regular_allowed_policy_forms
+      μ arrival m z switch12 switch21 C.to_allowed_policy_forms
 
 /--
 Regular endpoint data plus all-measurable shape replacements instantiate the
