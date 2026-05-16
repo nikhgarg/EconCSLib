@@ -109,6 +109,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   objective bookkeeping in the same session when that closes a named condition
   bundle, as in
   `paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings`.
+- Once the two part-level condition bundles are green, add the paper-level
+  wrapper immediately if it is mostly existential packaging.  For GLM20, the
+  useful endpoint is
+  `paper_theorem3_source_conditions_of_proposition5_merit_crossings`: it
+  constructs all three threshold functions from the part-level merit crossings
+  and composes them with the binary policy-equilibrium bridge.  This gives the
+  human-facing file one theorem to audit before the remaining concrete
+  Gaussian objective premises are attacked.
 - After proving a strategic payoff is continuous and strictly increasing, use a
   generic crossing lemma before specializing tail limits. The reusable theorem
   `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing` turns
