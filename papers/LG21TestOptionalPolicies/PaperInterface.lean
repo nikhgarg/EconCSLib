@@ -2947,6 +2947,97 @@ theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of
     hAccessObs hNoAccessObs hAccessDemo hNoAccessDemo
 
 /--
+Proposition 4.3 concrete extra-signal law surface: access laws use one
+additional Gaussian signal and no-access laws use the base posterior law.
+-/
+abbrev paperExtraSignalPosteriorLawSurface
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    LG21SourceLawPolicySurface ℝ PUnit ℝ GaussianScaleLaw :=
+  lg21ExtraSignalPosteriorLawSurface
+    Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
+Proposition 4.3 concrete extra-signal law endpoint: the extra-signal source-law
+surface is neither observable nor demographically fair.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_extra_signal_source_law
+    {Feature : Type*} [Fintype Feature] [Nonempty Feature]
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    ¬ lg21SourceLawObservablyFair
+        (paperExtraSignalPosteriorLawSurface
+          Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+      ¬ lg21SourceLawDemographicallyFair
+        (paperExtraSignalPosteriorLawSurface
+          Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_extra_signal_source_law
+    Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
+Proposition 4.3 concrete source-model endpoint: the closed observed-access
+source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the concrete
+extra-signal source-law surface is neither observable nor demographically fair.
+-/
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_extra_signal_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Feature : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (Mbase : GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (∀ info : paperAccessStudentInfo OptionalSkill OptionalBase ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : paperAccessStudentInfo ℝ RequiredBase RequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawObservablyFair
+          (paperExtraSignalPosteriorLawSurface
+            Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+          ¬ lg21SourceLawDemographicallyFair
+            (paperExtraSignalPosteriorLawSurface
+              Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) :=
+  paper_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_extra_signal_surface
+    C api Mstrategy theta k scoreLaw skillLaw takeDecision
+    reportRequiredDecision htestScale hReportEq hTakeEq Mbase
+    extraNoiseMean extraNoiseVar hextraNoiseVar
+
+/--
 Definition 6: the re-sampling policy uses the conditional law of the optional
 test score given the non-test profile.
 -/

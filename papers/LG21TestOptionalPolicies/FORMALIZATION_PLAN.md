@@ -104,7 +104,10 @@ Last updated: 2026-05-16
   closed by the shared `GaussianOffsetSignalFamily.withExtraSignal` helper,
   and the strongest wrappers use Lemma 4.1's explicit-threshold,
   binary-equilibrium, packaged threshold-equilibrium-certificate, and fully
-  specified observed-access source-action routes.
+  specified observed-access source-action routes.  The concrete
+  `lg21ExtraSignalPosteriorLawSurface` now makes the access and no-access
+  observable/demographic laws definitional and proves the extra-signal
+  observable/demographic unfairness endpoint without law-equality assumptions.
 - `PaperInterface.lean` is the human-facing theorem statement ledger.
 - Strategic withholding, fairness impossibility, observed-access
   strategy-proofness, and the final concrete equilibrium instantiations remain
@@ -145,10 +148,11 @@ Last updated: 2026-05-16
    proved, and Propositions 4.2--4.3 are both routed through the closed Lemma
    4.1 source-action endpoint.  Proposition 4.2 now has a fixed-base concrete
    source-law surface, so its remaining lift is the full multi-base Bayesian
-   surface.  Proposition 4.3's one-extra-test-signal precision gap is no longer
-   an assumption; its next concrete source-law target is an analogous
-   observable/demographic surface with access law equal to `withExtraSignal`
-   and no-access law equal to the base posterior law.
+   surface.  Proposition 4.3 now has the analogous extra-signal concrete
+   source-law surface with access law equal to `withExtraSignal` and no-access
+   law equal to the base posterior law.  The remaining work for both
+   propositions is lifting the fixed-base/one-base surfaces to the full
+   multi-base Bayesian policy surface used in the paper statement.
 5. Treat Theorem 3.2 as a source-level fairness/test-blank implication and keep
    it separate from Gaussian calculus; it should consume a clean policy-surface
    or equilibrium certificate.
