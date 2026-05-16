@@ -67,7 +67,11 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture_crossings`;
   these leave only finite endpoint inequalities for the report-required source
-  formula.  The paper's
+  formula.  The generic mixture endpoint algebra
+  `lt_lg21OptionalNoReportMixtureEstimate_of_lt_components` and
+  `lg21OptionalNoReportMixtureEstimate_lt_of_components_lt` now reduces those
+  finite endpoint comparisons to component-wise comparisons against the
+  base-only estimate and access lower-tail estimate.  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:

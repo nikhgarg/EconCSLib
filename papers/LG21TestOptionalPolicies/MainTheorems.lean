@@ -685,6 +685,99 @@ theorem lg21OptionalNoReportMixtureEstimate_denominator_pos
   linarith
 
 /--
+If both source components in the unobserved-access no-action pool are strictly
+above a finite target, then the pooled estimate is above that target.
+-/
+theorem lt_lg21OptionalNoReportMixtureEstimate_of_lt_components
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hbase : target < baseOnlyEstimate)
+    (haccess : target < accessLowerTailEstimate cutoff) :
+    target <
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff := by
+  let F : ℝ := standardGaussianCDFAPI.normalCDF scoreLaw cutoff
+  let w0 : ℝ := 1 - accessFraction
+  let w1 : ℝ := accessFraction * F
+  have hw0_pos : 0 < w0 := by
+    dsimp [w0]
+    linarith
+  have hw1_nonneg : 0 ≤ w1 := by
+    dsimp [w1, F]
+    exact mul_nonneg hC_nonneg
+      (standardGaussianCDFAPI.normalCDF_nonneg scoreLaw cutoff)
+  have hdenom_pos : 0 < w0 + w1 := by
+    linarith
+  have hnum :
+      (w0 + w1) * target <
+        w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff := by
+    have h0 : w0 * target < w0 * baseOnlyEstimate :=
+      mul_lt_mul_of_pos_left hbase hw0_pos
+    have h1 : w1 * target ≤ w1 * accessLowerTailEstimate cutoff :=
+      mul_le_mul_of_nonneg_left haccess.le hw1_nonneg
+    nlinarith
+  calc
+    target = ((w0 + w1) * target) / (w0 + w1) := by
+      rw [mul_div_cancel_left₀ target (ne_of_gt hdenom_pos)]
+    _ <
+        (w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff) /
+          (w0 + w1) :=
+      div_lt_div_of_pos_right hnum hdenom_pos
+    _ =
+        lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff := by
+      simp [lg21OptionalNoReportMixtureEstimate, w0, w1, F, mul_assoc]
+
+/--
+If both source components in the unobserved-access no-action pool are strictly
+below a finite target, then the pooled estimate is below that target.
+-/
+theorem lg21OptionalNoReportMixtureEstimate_lt_of_components_lt
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hbase : baseOnlyEstimate < target)
+    (haccess : accessLowerTailEstimate cutoff < target) :
+    lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff <
+      target := by
+  let F : ℝ := standardGaussianCDFAPI.normalCDF scoreLaw cutoff
+  let w0 : ℝ := 1 - accessFraction
+  let w1 : ℝ := accessFraction * F
+  have hw0_pos : 0 < w0 := by
+    dsimp [w0]
+    linarith
+  have hw1_nonneg : 0 ≤ w1 := by
+    dsimp [w1, F]
+    exact mul_nonneg hC_nonneg
+      (standardGaussianCDFAPI.normalCDF_nonneg scoreLaw cutoff)
+  have hdenom_pos : 0 < w0 + w1 := by
+    linarith
+  have hnum :
+      w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff <
+        (w0 + w1) * target := by
+    have h0 : w0 * baseOnlyEstimate < w0 * target :=
+      mul_lt_mul_of_pos_left hbase hw0_pos
+    have h1 : w1 * accessLowerTailEstimate cutoff ≤ w1 * target :=
+      mul_le_mul_of_nonneg_left haccess.le hw1_nonneg
+    nlinarith
+  calc
+    lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff =
+        (w0 * baseOnlyEstimate + w1 * accessLowerTailEstimate cutoff) /
+          (w0 + w1) := by
+      simp [lg21OptionalNoReportMixtureEstimate, w0, w1, F, mul_assoc]
+    _ < ((w0 + w1) * target) / (w0 + w1) :=
+      div_lt_div_of_pos_right hnum hdenom_pos
+    _ = target := by
+      rw [mul_div_cancel_left₀ target (ne_of_gt hdenom_pos)]
+
+/--
 Theorem 3.1 optional-reporting source formula support: the pooled no-report
 estimate is continuous in the finite reporting cutoff whenever the access
 lower-tail estimate is continuous.

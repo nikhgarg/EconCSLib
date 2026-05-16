@@ -762,6 +762,42 @@ theorem paper_interface_optional_no_report_mixture_estimate_continuous
     hC_nonneg hC_lt_one baseOnlyEstimate scoreLaw hcontAccess
 
 /--
+Theorem 3.1 source mixture endpoint support: if both no-action pool components
+are above a target, the pooled estimate is above it.
+-/
+theorem paper_interface_lt_optional_no_report_mixture_of_lt_components
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hbase : target < baseOnlyEstimate)
+    (haccess : target < accessLowerTailEstimate cutoff) :
+    target <
+      lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff :=
+  lt_lg21OptionalNoReportMixtureEstimate_of_lt_components
+    hC_nonneg hC_lt_one hbase haccess
+
+/--
+Theorem 3.1 source mixture endpoint support: if both no-action pool components
+are below a target, the pooled estimate is below it.
+-/
+theorem paper_interface_optional_no_report_mixture_lt_of_components_lt
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    {baseOnlyEstimate target cutoff : ℝ}
+    {scoreLaw : GaussianScaleLaw}
+    {accessLowerTailEstimate : ℝ → ℝ}
+    (hbase : baseOnlyEstimate < target)
+    (haccess : accessLowerTailEstimate cutoff < target) :
+    lg21OptionalNoReportMixtureEstimate
+        accessFraction baseOnlyEstimate scoreLaw accessLowerTailEstimate cutoff <
+      target :=
+  lg21OptionalNoReportMixtureEstimate_lt_of_components_lt
+    hC_nonneg hC_lt_one hbase haccess
+
+/--
 Theorem 3.1 optional-reporting source formula support specialized to the
 Gaussian lower-tail posterior estimate.
 -/
