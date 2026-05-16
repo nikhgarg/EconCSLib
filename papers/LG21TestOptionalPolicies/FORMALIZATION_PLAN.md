@@ -76,7 +76,13 @@ Last updated: 2026-05-16
   `lt_lg21OptionalNoReportMixtureEstimate_of_weighted_gap_pos` and
   `lg21OptionalNoReportMixtureEstimate_lt_of_weighted_gap_neg` handle the
   low-endpoint case where the access lower-tail component can be below the
-  target but has small Gaussian mass.  The paper's
+  target but has small Gaussian mass.  The high-endpoint inequalities for both
+  policy regimes are now closed by
+  `paper_theorem3_1_optional_no_report_mixture_high_endpoint_exists` and
+  `paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists`:
+  the reported/take payoff eventually exceeds the base-only component, and the
+  Gaussian lower-tail component is always strictly below the cutoff payoff.
+  The paper's
   optional-reporting
   fixed-point/crossing step is now formalized by
   `paper_theorem3_1_optional_reporting_threshold_equilibrium_exists_of_crossing`:

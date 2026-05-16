@@ -954,6 +954,96 @@ theorem paper_theorem3_1_report_required_no_take_mixture_standard_lower_tail_con
       hC_nonneg hC_lt_one baseOnlyEstimate skillLaw hcontAccess
 
 /--
+Theorem 3.1 lower-tail component comparison for optional reporting: replacing
+the reported score by the Gaussian lower-tail mean below the cutoff strictly
+lowers the Bayesian posterior estimate.
+-/
+theorem paper_theorem3_1_standard_lower_tail_posterior_update_lt_reported
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) (cutoff : ℝ) :
+    M.posteriorMean
+        (Function.update theta k
+          (standardGaussianLowerTailMean scoreLaw cutoff)) <
+      M.posteriorMean (Function.update theta k cutoff) := by
+  exact
+    (paper_bayesian_optimal_estimator_strictMono_feature M theta k)
+      (standardGaussianLowerTailMean_lt_threshold scoreLaw cutoff)
+
+/--
+Theorem 3.1 lower-tail component comparison for report-required policies:
+passing the lower-tail skill mean through a positive-slope affine estimate is
+strictly below evaluating the affine estimate at the cutoff skill.
+-/
+theorem paper_theorem3_1_affine_lower_tail_component_lt_reported
+    {intercept slope cutoff : ℝ} (hslope : 0 < slope)
+    (skillLaw : GaussianScaleLaw) :
+    intercept + slope * standardGaussianLowerTailMean skillLaw cutoff <
+      intercept + slope * cutoff := by
+  have htail :
+      standardGaussianLowerTailMean skillLaw cutoff < cutoff :=
+    standardGaussianLowerTailMean_lt_threshold skillLaw cutoff
+  simpa [add_comm, add_left_comm, add_assoc] using
+    add_lt_add_left (mul_lt_mul_of_pos_left htail hslope) intercept
+
+/--
+Theorem 3.1 optional-reporting high endpoint for the paper's source mixture.
+At some finite high reporting cutoff, the pooled no-report estimate lies below
+the reported-score posterior estimate at the cutoff.
+-/
+theorem paper_theorem3_1_optional_no_report_mixture_high_endpoint_exists
+    {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate : ℝ)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw : GaussianScaleLaw) :
+    ∃ high : ℝ,
+      lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate scoreLaw
+          (fun cutoff : ℝ =>
+            M.posteriorMean
+              (Function.update theta k
+                (standardGaussianLowerTailMean scoreLaw cutoff)))
+          high <
+        M.posteriorMean (Function.update theta k high) := by
+  rcases paper_gaussian_posteriorMean_update_exists_above
+      M theta k baseOnlyEstimate with
+    ⟨high, hbase⟩
+  refine ⟨high, ?_⟩
+  exact
+    lg21OptionalNoReportMixtureEstimate_lt_of_components_lt
+      hC_nonneg hC_lt_one hbase
+      (paper_theorem3_1_standard_lower_tail_posterior_update_lt_reported
+        M theta k scoreLaw high)
+
+/--
+Theorem 3.1 report-required high endpoint for the paper's source mixture.  At
+some finite high taking cutoff, the pooled no-take estimate lies below the
+take/report payoff at the cutoff.
+-/
+theorem paper_theorem3_1_report_required_no_take_mixture_high_endpoint_exists
+    {accessFraction : ℝ} (hC_nonneg : 0 ≤ accessFraction)
+    (hC_lt_one : accessFraction < 1)
+    (baseOnlyEstimate intercept : ℝ) {slope : ℝ} (hslope : 0 < slope)
+    (skillLaw : GaussianScaleLaw) :
+    ∃ high : ℝ,
+      lg21OptionalNoReportMixtureEstimate
+          accessFraction baseOnlyEstimate skillLaw
+          (fun qBar : ℝ =>
+            intercept + slope * standardGaussianLowerTailMean skillLaw qBar)
+          high <
+        intercept + slope * high := by
+  rcases exists_lt_affine intercept baseOnlyEstimate hslope with
+    ⟨high, hbase⟩
+  refine ⟨high, ?_⟩
+  exact
+    lg21OptionalNoReportMixtureEstimate_lt_of_components_lt
+      hC_nonneg hC_lt_one hbase
+      (paper_theorem3_1_affine_lower_tail_component_lt_reported
+        hslope skillLaw)
+
+/--
 Lemma 4.1 optional-reporting equilibrium core: a nontrivial lower-cutoff
 reporting strategy cannot satisfy no-profitable-withholding-deviation when the
 no-report estimate lies strictly inside the cutoff interval.
