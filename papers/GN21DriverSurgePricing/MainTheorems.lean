@@ -119,6 +119,11 @@ the continuous CTMC source theorems.
   `lemma5_strictQuasiConcave_gap_endpoint_sign_of_lower_nonneg`: source
   Step 2 sign implications that choose improving endpoint directions in the
   monotone and quasi cases.
+- `lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves`
+  and
+  `lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`:
+  strict-local improvement selectors for ruling out noncanonical quasi-case
+  optima once stopped endpoint moves are supplied.
 - `symmDiff_ioo_union_touching_subset_singleton` and
   `policyAlmostEverywhereEq_ioo_union_touching`: the measure-zero collision
   merge fact used when an endpoint move joins two open intervals.
@@ -23585,6 +23590,39 @@ theorem lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy
   exact Or.inr (Or.inr hmiddle)
 
 /--
+Strict-improvement selector for the quasi-convex three-interval case.  Once
+the stopped endpoint-move lemmas provide a strict reward improvement for each
+signed endpoint direction, the source sign trichotomy gives an immediate local
+improvement for any policy containing the three ordered intervals.
+-/
+theorem lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConvexOnPositive response)
+    {leftUpper middleLower middleUpper rightLower : TripLength}
+    (hleft_pos : 0 < leftUpper)
+    (hleft_middleLower : leftUpper < middleLower)
+    (hmiddleLower_middleUpper : middleLower < middleUpper)
+    (hmiddleUpper_rightLower : middleUpper < rightLower)
+    (hleftUpper_move :
+      0 < response leftUpper → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (hrightLower_move :
+      0 < response rightLower → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (hmiddleLower_move :
+      0 < -response middleLower → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (_hmiddleUpper_move :
+      response middleUpper < 0 → ∃ σ' : TripPolicy, Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, Rhat σ < Rhat σ' := by
+  rcases lemma5_strictQuasiConvex_three_interval_endpoint_sign_trichotomy
+      response hqc hleft_pos hleft_middleLower hmiddleLower_middleUpper
+      hmiddleUpper_rightLower with hleft | hright_or_middle
+  · exact hleftUpper_move hleft
+  · rcases hright_or_middle with hright | hmiddle
+    · exact hrightLower_move hright
+    · exact hmiddleLower_move hmiddle.1
+
+/--
 Lemma 5 Step 2, strictly quasi-concave case: if the lower-endpoint responses
 on two adjacent intervals are nonnegative, then the upper endpoint before the
 gap has positive response, so expanding that interval toward the gap is an
@@ -23637,6 +23675,35 @@ theorem lemma5_strictQuasiConcave_two_interval_endpoint_sign_trichotomy
       response hqc hleftLower_pos hleftLower_leftUpper hleftUpper_rightLower
       (le_of_not_gt hleft_lower_neg) (le_of_not_gt hright_lower_neg)
   exact Or.inl hupper_pos
+
+/--
+Strict-improvement selector for the quasi-concave two-interval case.  The
+source sign trichotomy plus strict stopped endpoint moves rules out any
+noncanonical two-interval optimum.
+-/
+theorem lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves
+    (Rhat : SingleStateReward)
+    (σ : TripPolicy)
+    (response : TripLength → ℝ)
+    (hqc : strictQuasiConcaveOnPositive response)
+    {leftLower leftUpper rightLower : TripLength}
+    (hleftLower_pos : 0 < leftLower)
+    (hleftLower_leftUpper : leftLower < leftUpper)
+    (hleftUpper_rightLower : leftUpper < rightLower)
+    (hupper_move :
+      0 < response leftUpper → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (hleftLower_move :
+      response leftLower < 0 → ∃ σ' : TripPolicy, Rhat σ < Rhat σ')
+    (hrightLower_move :
+      response rightLower < 0 → ∃ σ' : TripPolicy, Rhat σ < Rhat σ') :
+    ∃ σ' : TripPolicy, Rhat σ < Rhat σ' := by
+  rcases lemma5_strictQuasiConcave_two_interval_endpoint_sign_trichotomy
+      response hqc hleftLower_pos hleftLower_leftUpper
+      hleftUpper_rightLower with hupper | hlower_or_right
+  · exact hupper_move hupper
+  · rcases hlower_or_right with hleft | hright
+    · exact hleftLower_move hleft
+    · exact hrightLower_move hright
 
 /--
 Policy that accepts exactly the positive trip lengths whose marginal response

@@ -857,6 +857,13 @@ paper-specific well-founded progress relation, thread stopped moves through the
 quasi-convex/quasi-concave selector, and prove that repeated sign-change stops
 cannot cycle without eventually lowering component count or reaching a
 canonical Lemma 5 shape.
+For optimality arguments there is also a shorter strict-local route now
+compiled:
+`lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves`
+and
+`lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`
+combine the source sign trichotomies with stopped endpoint-move improvement
+premises to rule out noncanonical interval configurations directly.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`
 returns the ordinary canonical source policy as the replacement and exposes its

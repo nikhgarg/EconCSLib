@@ -277,6 +277,14 @@ move, update the interval endpoint, re-enter the quasi-convex/quasi-concave
 selector, define a well-founded progress relation, and prove the repeated
 stops cannot cycle without eventually reducing component count or reaching a
 canonical Lemma 5 shape.
+There is also a shorter strict-local route for optimality:
+`lemma5_strictQuasiConvex_three_interval_exists_strict_improvement_of_endpoint_moves`
+and
+`lemma5_strictQuasiConcave_two_interval_exists_strict_improvement_of_endpoint_moves`
+combine the source sign trichotomies with stopped endpoint-move improvement
+premises.  Use these to rule out noncanonical Case 1 optima directly if the
+goal is Theorem 4-style optimal policy classification rather than full Lemma 5
+dominance for every seed.
 
 One finite-domain threading instance is closed: the two-bounded-interval
 generalized policy has explicit one/two component representatives, exact
