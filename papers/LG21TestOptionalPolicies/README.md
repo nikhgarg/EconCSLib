@@ -101,6 +101,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
   package the source-shaped skill/base-mixture Gaussian and affine-skill law
   routes without requiring callers to unpack the older tuple endpoints.
+- The strongest Theorem 3.1 continuous-law route now also has explicit
+  "every equilibrium" wrappers:
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
+  return the corresponding regime-specific certificate for each supplied
+  equilibrium-indexed source surface.
 
 ### Recent Theorem 3.2 Progress
 

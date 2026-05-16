@@ -11245,6 +11245,53 @@ def paper_interface_theorem3_1_report_required_law_strategic_withholding_certifi
     baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
 
 /--
+Paper-facing Theorem 3.1 optional-reporting "every equilibrium" wrapper over
+source-shaped skill/base-mixture Gaussian posterior-law surfaces.
+-/
+def paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    {Feature Base Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (skillGivenBase : Equilibrium → Base → PMF ℝ)
+    (baseProfile : Equilibrium → PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (scoreLaw : Equilibrium → Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ e base, 0 ≤ accessFraction e base)
+    (hC_lt_one : ∀ e base, accessFraction e base < 1) :
+    ∀ e : Equilibrium,
+      LG21LawOptionalReportingStrategicWithholdingCertificate
+        (paperBaseMixedGaussianPosteriorLawSurface
+          (skillGivenBase e) (baseProfile e) M theta k (scoreLaw e)
+          (baseOnlyEstimate e)) :=
+  paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    skillGivenBase baseProfile M theta k accessFraction baseOnlyEstimate
+    scoreLaw hC_nonneg hC_lt_one
+
+/--
+Paper-facing Theorem 3.1 report-required "every equilibrium" wrapper over
+source-shaped skill/base-mixture affine-skill posterior-law surfaces.
+-/
+def paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    {Base Equilibrium : Type*} [Nonempty Base]
+    (skillGivenBase : Equilibrium → Base → PMF ℝ)
+    (baseProfile : Equilibrium → PMF Base)
+    (intercept slope : Equilibrium → Base → ℝ)
+    (hslope : ∀ e base, 0 < slope e base)
+    (accessFraction baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (skillLaw : Equilibrium → Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ e base, 0 ≤ accessFraction e base)
+    (hC_lt_one : ∀ e base, accessFraction e base < 1) :
+    ∀ e : Equilibrium,
+      LG21LawReportRequiredStrategicWithholdingCertificate
+        (paperBaseMixedAffineSkillPosteriorLawSurface
+          (skillGivenBase e) (baseProfile e) (intercept e) (slope e)
+          (hslope e) (skillLaw e) (baseOnlyEstimate e)) :=
+  paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    skillGivenBase baseProfile intercept slope hslope accessFraction
+    baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full base-indexed
 one-test posterior source-law surface is not latent-skill fair.
