@@ -44598,6 +44598,85 @@ noncomputable def Theorem4AllMeasurableAllowedPolicyFormsCertificate.to_feasible
           (μ 1) (hρ.1 1).1 (hρ.1 1).2 hshape.2⟩
 
 /--
+Fixed-response Lemma 5 hypotheses for one state and one current feasible
+policy.
+-/
+structure Lemma5FixedResponseFeasibleOptimalData
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (shape : Lemma5DerivativeShape) (σ : TripPolicy) where
+  marker : Unit := ()
+  shape_data : Lemma5PositiveResponseShapeData response shape
+  response_measurable : Measurable response
+  response_integrable_acceptAll :
+    IntegrableOn response acceptAllPolicy μ
+  optimal :
+    ∀ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy →
+      MeasurableSet σ' →
+        lemma5MarginalSetReward μ response σ' ≤
+          lemma5MarginalSetReward μ response σ
+
+/--
+All measurable optima satisfy the fixed-response Lemma 5 hypotheses in both
+states.  This is the paper-facing Lemma 5 boundary just before applying the
+a.e. representative endpoint: provide the response function, its source shape,
+measurability/integrability, and the fixed-state marginal optimality
+inequality.
+-/
+structure Theorem4AllMeasurableFixedResponseShapeData
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Σ response : TripLength → ℝ,
+          Lemma5FixedResponseFeasibleOptimalData
+            (μ 0) response shape.1 (ρ 0)
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Σ response : TripLength → ℝ,
+          Lemma5FixedResponseFeasibleOptimalData
+            (μ 1) response shape.1 (ρ 1)
+
+/--
+Fixed-response Lemma 5 hypotheses for every measurable optimum produce the
+feasible a.e. representative policy-form data consumed by the Theorem 4
+endpoint bridge.
+-/
+def Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (C : Theorem4AllMeasurableFixedResponseShapeData μ R) :
+    Theorem4AllMeasurableFeasibleAEPolicyFormData μ R where
+  exists_optimal := C.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    rcases C.nonsurge ρ hρ with
+      ⟨shape, response, D⟩
+    exact
+      ⟨shape,
+        paper_lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
+          (μ 0) response (ρ 0) D.shape_data D.response_measurable
+          D.response_integrable_acceptAll (hρ.1 0).2 (hρ.1 0).1
+          D.optimal⟩
+  surge := by
+    intro ρ hρ
+    rcases C.surge ρ hρ with
+      ⟨shape, response, D⟩
+    exact
+      ⟨shape,
+        paper_lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
+          (μ 1) response (ρ 1) D.shape_data D.response_measurable
+          D.response_integrable_acceptAll (hρ.1 1).2 (hρ.1 1).1
+          D.optimal⟩
+
+/--
 Feasible a.e. Lemma 5 representatives plus endpoint improvements on the exact
 representatives instantiate the rejected-mass strict-local certificate.
 -/

@@ -152,6 +152,13 @@ and
 This is the current cleanest Theorem 3 boundary for a direct Lemma 5 closeout:
 prove feasible AE representative forms for every optimal policy and prove the
 four endpoint-improvement cases on those exact representatives.
+The Lemma 5 side has one more compiled reduction:
+`Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms`.
+Target `Theorem4AllMeasurableFixedResponseShapeData` when proving the
+fixed-response variational part: for each measurable optimum and state, supply
+the response function, `Lemma5PositiveResponseShapeData`, response
+measurability/integrability, and marginal optimality.  Lean then produces the
+feasible AE representative data automatically.
 
 The global calculus part of Lemma 5 Step 2 is now compiled:
 

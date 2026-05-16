@@ -237,6 +237,11 @@ and
 Use this source boundary when Lemma 5 gives a feasible representative only
 modulo null sets; it avoids forcing the endpoint proof to operate on the
 original syntactic policy.
+For the fixed-response Lemma 5 portion, target
+`Theorem4AllMeasurableFixedResponseShapeData`: the compiled adapter
+`Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms`
+turns per-optimum response-shape data, response measurability/integrability,
+and fixed-state marginal optimality into the feasible AE representative forms.
 The a.e. convention is now backed by actual primitive congruence lemmas:
 single-state mass/time/payment/renewal reward, Lemma 3 `Q,T,W`, and
 `gn21MeasuredAggregateRewardPrimitives` are unchanged under
