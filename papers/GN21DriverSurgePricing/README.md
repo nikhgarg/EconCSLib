@@ -819,8 +819,10 @@ proves that the first one or two source-ordered components are exactly the
 compiled context seeds.  The first ordered-list bounded-bounded merge and
 bounded-interval collapse reductions now return shorter ordered lists directly,
 and the ordered boundary merges now reach the canonical right-tail, left-tail,
-and accept-all families.  The remaining open part is selecting and iterating
-those local moves inside an arbitrary ordered finite
+and accept-all families.  The second-component lower-collapse reduction now
+removes a middle bounded component while preserving a leading component and
+tail.  The remaining open part is selecting and iterating those local moves
+inside an arbitrary ordered finite
 interval/ray seed under the source derivative-sign hypotheses.
 The stronger policy-level constructor
 `lemma5OptimizerReplacementCertificate_of_policy_canonical_dominance_and_maximizer`

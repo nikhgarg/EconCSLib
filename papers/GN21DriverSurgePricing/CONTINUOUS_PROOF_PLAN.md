@@ -196,6 +196,8 @@ lemma5_list_leftRay_bounded_lower_merge_step_of_endpoint_path
 lemma5_list_leftRay_bounded_lower_merge_strict_step_of_endpoint_path
 lemma5_list_leftRightRay_upper_merge_step_of_endpoint_path
 lemma5_list_leftRightRay_upper_merge_strict_step_of_endpoint_path
+lemma5_list_second_bounded_lower_collapse_step_of_endpoint_path
+lemma5_list_second_bounded_lower_collapse_strict_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_step_of_endpoint_path
 lemma5_twoBounded_upper_merge_strict_step_of_endpoint_path
 lemma5_withTwoBounded_upper_merge_step_of_endpoint_path
@@ -240,8 +242,11 @@ seeds.  The first ordered bounded-bounded merge and bounded-interval collapse
 steps now produce a shorter ordered list directly, in weak and strict forms;
 the ordered bounded/right-ray, left-ray/bounded, and left/right-ray boundary
 merges now reach shorter right-tail, left-tail, and accept-all lists.  The
-remaining nonlinear work is selecting the appropriate local move inside an
-arbitrary ordered finite interval/ray seed, proving the source
+second-component bounded lower-collapse also removes a middle component while
+preserving the leading component and tail.  The remaining nonlinear work is
+selecting the appropriate local move inside an arbitrary ordered finite
+interval/ray seed, adding the symmetric second-component upper-collapse,
+proving the source
 derivative-sign hypothesis holds along the selected path, and iterating the
 component-count decrease to a canonical Lemma 5 shape.
 
