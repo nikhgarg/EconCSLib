@@ -221,7 +221,17 @@ Last updated: 2026-05-16
   upper-tail wrappers now derive the best-response premises from the concrete
   base-indexed optional/report-required source games, leaving the Gaussian
   payoff identity, tie-breaking convention, threshold shape, and mixture
-  identities as the visible source assumptions for this route.
+  identities as the visible source assumptions for this route.  The packaged
+  certificates
+  `LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate` and
+  `LG21ReportRequiredUpperTailSourceEquilibriumCertificate`, with wrappers
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_source_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_source_equilibrium`,
+  make this route auditable: persistent source-model assumptions live in the
+  certificate, while theorem-local data are the reporter/no-reporter mixture
+  comparison and, in the report-required case, the outside-payoff equality after
+  reporter/no-reporter equality.
   The
   finite acting-distribution
   lemmas
@@ -501,11 +511,11 @@ Last updated: 2026-05-16
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
-   use the source-equilibrium upper-tail endpoints.  Next work is to decide the
-   final paper-facing theorem statement: either expose the current payoff,
-   tie-breaking, threshold, and mixture hypotheses directly, or instantiate a
-   stricter conditional-kernel version if the statement should quantify over
-   conditional-on-skill Gaussian laws.
+   use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
+   work is to decide the final paper-facing theorem statement: either expose
+   the current source certificates plus theorem-local mixture hypotheses
+   directly, or instantiate a stricter conditional-kernel version if the
+   statement should quantify over conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 

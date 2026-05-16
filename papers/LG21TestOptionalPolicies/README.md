@@ -192,7 +192,14 @@ cache is kept as `source.txt` for named-statement audits.
   derive the Theorem 3.1 best-response premises directly from the concrete
   base-indexed source equilibria, leaving only the Gaussian payoff identity,
   tie-breaking, threshold shape, and mixture/fairness-surface assumptions
-  explicit.  The source-shaped
+  explicit.  The packaged endpoints
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_source_equilibrium`
+  and
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_source_equilibrium`
+  now collect the source-equilibrium, Gaussian payoff, tie-breaking,
+  threshold-shape, and positive-slope assumptions into auditable certificates,
+  leaving only the selected reporter/no-reporter mixture comparison as
+  theorem-local data.  The source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,
@@ -312,11 +319,11 @@ cache is kept as `source.txt` for named-statement audits.
   skill-dependent latent-kernel instantiation can be added later if the final
   statement insists on conditional-on-skill laws rather than this direct
   constant-kernel specialization.  The continuous upper-tail route now has
-  source-equilibrium endpoints that derive best responses from the concrete
-  optional/report-required source games; its remaining assumptions are the
-  paper-facing payoff identities, tie-breaking convention, threshold shape,
-  mixture identities, and any stricter conditional-kernel instantiation wanted
-  for the final source statement.
+  certificate-packaged source-equilibrium endpoints that derive best responses
+  from the concrete optional/report-required source games; its remaining
+  assumptions are the theorem-local reporter/no-reporter mixture identities and
+  any stricter conditional-kernel instantiation wanted for the final source
+  statement.
 
 ## Source Notes
 

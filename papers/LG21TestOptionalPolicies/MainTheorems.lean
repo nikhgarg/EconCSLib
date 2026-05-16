@@ -11391,6 +11391,197 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_source
       (hdenom_all base)
 
 /--
+Packaged source-model assumptions for the optional-reporting continuous
+upper-tail route in Theorem 3.2.  The certificate records the paper-facing
+Gaussian payoff identity, tie-breaking convention, reporting-threshold shape,
+positive-slope affine payoff, and latent-to-observable mixture identities; the
+selected equilibrium/base mixture is supplied by the theorem below.
+-/
+structure LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+    {Feature Skill Base Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (skillGivenBase : Base → PMF Skill)
+    (S : LG21SourcePolicySurface Skill Base ℝ Estimate) where
+  takeDecision : S.Equilibrium → Skill → Base → Bool
+  reportDecision : S.Equilibrium → Base → ℝ → Bool
+  estimationConsistent : S.Equilibrium → Prop
+  referenceSkill : S.Equilibrium → Base → Skill
+  baseTerm : S.Equilibrium → Base → ℝ
+  signalWeight : S.Equilibrium → Base → ℝ
+  denom : S.Equilibrium → Base → ℝ
+  actorLaw : S.Equilibrium → Base → GaussianScaleLaw
+  decisionThreshold : S.Equilibrium → Base → ℝ
+  observableAccess_eq :
+    ∀ e base, S.observableAccessEstimate e base =
+      lg21LatentSkillEstimateDistribution skillGivenBase
+        (S.latentAccessEstimate e) base
+  observableNoAccess_eq :
+    ∀ e base, S.observableNoAccessEstimate e base =
+      lg21LatentSkillEstimateDistribution skillGivenBase
+        (S.latentNoAccessEstimate e) base
+  sourceEquilibrium :
+    ∀ e,
+      lg21SourceEquilibrium
+        (lg21OptionalReportingBaseSourceEquilibriumData
+          (takeDecision e) (reportDecision e)
+          (fun base actor =>
+            (baseTerm e base + signalWeight e base * actor) / denom e base)
+          (fun base =>
+            (baseTerm e base +
+              signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (actorLaw e base) (decisionThreshold e base)) /
+              denom e base)
+          (estimationConsistent e))
+  posterior_eq :
+    ∀ e base score,
+      (M base).posteriorMean (Function.update (theta base) k score) =
+        (baseTerm e base + signalWeight e base * score) / denom e base
+  report_at_indifference :
+    ∀ e base score,
+      (M base).posteriorMean (Function.update (theta base) k score) =
+          (baseTerm e base +
+            signalWeight e base *
+              GaussianHazardCertificate.normalUpperTailMean
+                standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                (actorLaw e base) (decisionThreshold e base)) /
+            denom e base →
+        reportDecision e base score = true
+  reporting_threshold :
+    ∀ e base actor, reportDecision e base actor = true ↔
+      decisionThreshold e base ≤ actor
+  signalWeight_pos : ∀ e base, 0 < signalWeight e base
+  denom_pos : ∀ e base, 0 < denom e base
+
+/--
+Theorem 3.2 optional-reporting continuous upper-tail endpoint, stated through
+a compact source-equilibrium certificate.  This is the current strongest
+source-facing optional-reporting fairness-impossibility route.
+-/
+theorem paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_source_equilibrium
+    {Feature Skill Base Estimate : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  exact
+    paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_source_equilibrium_upper_tail_threshold_actor_mean
+      M theta k skillGivenBase C.observableAccess_eq
+      C.observableNoAccess_eq C.takeDecision C.reportDecision
+      C.estimationConsistent C.referenceSkill C.baseTerm C.signalWeight
+      C.denom C.actorLaw C.decisionThreshold C.sourceEquilibrium e base
+      (C.posterior_eq e)
+      (C.report_at_indifference e)
+      (C.reporting_threshold e base)
+      hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
+      (C.signalWeight_pos e base) (C.denom_pos e base)
+
+/--
+Packaged source-model assumptions for the report-required continuous
+upper-tail route in Theorem 3.2.  The outside-payoff equality after
+reporter/no-reporter law identification remains theorem-specific because it
+depends on the selected mixture comparison.
+-/
+structure LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+    {Base Test Estimate : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ)
+    (S : LG21SourcePolicySurface ℝ Base Test Estimate) where
+  takeDecision : S.Equilibrium → ℝ → Base → Bool
+  reportDecision : S.Equilibrium → Base → Test → Bool
+  estimationConsistent : S.Equilibrium → Prop
+  referenceTest : S.Equilibrium → Base → Test
+  baseTerm : S.Equilibrium → Base → ℝ
+  signalWeight : S.Equilibrium → Base → ℝ
+  denom : S.Equilibrium → Base → ℝ
+  actorLaw : S.Equilibrium → Base → GaussianScaleLaw
+  decisionThreshold : S.Equilibrium → Base → ℝ
+  observableAccess_eq :
+    ∀ e base, S.observableAccessEstimate e base =
+      lg21LatentSkillEstimateDistribution skillGivenBase
+        (S.latentAccessEstimate e) base
+  observableNoAccess_eq :
+    ∀ e base, S.observableNoAccessEstimate e base =
+      lg21LatentSkillEstimateDistribution skillGivenBase
+        (S.latentNoAccessEstimate e) base
+  sourceEquilibrium :
+    ∀ e,
+      lg21SourceEquilibrium
+        (lg21ReportRequiredBaseSourceEquilibriumData
+          (takeDecision e) (reportDecision e)
+          (fun base actor =>
+            (baseTerm e base + signalWeight e base * actor) / denom e base)
+          (estimationConsistent e))
+  take_at_indifference :
+    ∀ e base skill,
+      (baseTerm e base + signalWeight e base * skill) / denom e base =
+          (1 / 2 : ℝ) →
+        takeDecision e skill base = true
+  taking_threshold :
+    ∀ e base actor, takeDecision e actor base = true ↔
+      decisionThreshold e base ≤ actor
+  signalWeight_pos : ∀ e base, 0 < signalWeight e base
+  denom_pos : ∀ e base, 0 < denom e base
+
+/--
+Theorem 3.2 report-required continuous upper-tail endpoint, stated through a
+compact source-equilibrium certificate.
+-/
+theorem paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_source_equilibrium
+    {Base Test Estimate : Type*} [Nonempty Base]
+    {skillGivenBase : Base → PMF ℝ}
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase S)
+    (e : S.Equilibrium) (base : Base)
+    {lambda : ℝ} (hlambda : 0 < lambda)
+    (reporterPMF noReporterPMF : PMF Estimate)
+    (hNoAccess :
+      S.observableNoAccessEstimate e base = noReporterPMF)
+    (hAccessMixture :
+      ∀ estimate,
+        (S.observableAccessEstimate e base estimate).toReal =
+          lambda * (reporterPMF estimate).toReal +
+            (1 - lambda) * (noReporterPMF estimate).toReal)
+    (houtsidePayoff_of_pmfEq :
+      reporterPMF = noReporterPMF →
+        (1 / 2 : ℝ) =
+          (C.baseTerm e base +
+            C.signalWeight e base *
+              GaussianHazardCertificate.normalUpperTailMean
+                standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                (C.actorLaw e base) (C.decisionThreshold e base)) /
+            C.denom e base) :
+    ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) := by
+  exact
+    paper_theorem3_2_not_latent_or_observable_fair_of_report_required_source_equilibrium_upper_tail_threshold_actor_mean
+      skillGivenBase C.observableAccess_eq C.observableNoAccess_eq
+      C.takeDecision C.reportDecision C.estimationConsistent C.referenceTest
+      C.baseTerm C.signalWeight C.denom C.actorLaw C.decisionThreshold
+      C.sourceEquilibrium e base (C.signalWeight_pos e) (C.denom_pos e)
+      (C.take_at_indifference e) (C.taking_threshold e base)
+      hlambda reporterPMF noReporterPMF hNoAccess hAccessMixture
+      houtsidePayoff_of_pmfEq
+
+/--
 Theorem 3.1 report-required crossing step.  The expected estimate from
 taking/reporting is strictly increasing in latent skill, while the no-take
 estimate varies continuously with the candidate skill cutoff.  Opposite
