@@ -21,8 +21,8 @@ Last updated: 2026-05-16
   both access and re-sampled no-access estimate laws as the same conditional
   test-score-law pushforward through the common estimate map.  Theorem 4.4
   also has a combined source-route wrapper that pairs the finite resampling
-  fairness proof with Lemma 4.1's all-report/all-take conclusion from the
-  packaged threshold-equilibrium certificate.
+  fairness proof with the closed Lemma 4.1 observed-access source-action
+  endpoint.
 - The shared Bayesian Gaussian estimator algebra is proved:
   `paper_bayesian_optimal_estimator_gaussian` gives the precision-weighted
   posterior mean and marginal estimate law variance formula.

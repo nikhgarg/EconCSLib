@@ -4552,6 +4552,68 @@ theorem paper_theorem4_4_resampling_policy_strategy_proof_observable_and_demogra
     paper_theorem4_4_resampling_policy_observably_fair e,
     paper_theorem4_4_resampling_policy_demographically_fair e⟩
 
+/--
+Theorem 4.4 source-model route: the closed observed-access Lemma 4.1 endpoint
+supplies `(Y, X) = (1, 1)`, while the resampling kernel is observably and
+demographically fair.
+-/
+theorem paper_theorem4_4_resampling_policy_source_strategy_proof_observable_and_demographic_fair
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      ΩBase ΩTest Estimate : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype ΩBase] [DecidableEq ΩBase]
+    (C : GaussianLowerTailMeanCertificate)
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      lg21SourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          C api skillLaw reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (e : LG21ResamplingExperiment ΩBase ΩTest Estimate) :
+    (∀ info : LG21AccessStudentInfo OptionalSkill OptionalBase ℝ,
+      LG21AccessStudentInfo.chosenAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          C Mstrategy theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : LG21AccessStudentInfo ℝ RequiredBase RequiredTest,
+        LG21AccessStudentInfo.chosenAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            C api skillLaw reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        lg21ObservableFair
+          (lg21AccessEstimateKernel e) (lg21ResamplingEstimateKernel e) ∧
+          lg21DemographicallyFair e.baseProfile
+            (lg21AccessEstimateKernel e) (lg21ResamplingEstimateKernel e) := by
+  have hactions :=
+    paper_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+      C api Mstrategy theta k scoreLaw skillLaw takeDecision
+      reportRequiredDecision htestScale hReportEq hTakeEq
+  exact ⟨hactions.1, hactions.2,
+    paper_theorem4_4_resampling_policy_observably_fair e,
+    paper_theorem4_4_resampling_policy_demographically_fair e⟩
+
 def lg21BaseModel {Θ ΩBase ΩTest : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩBase] [DecidableEq ΩBase] [Fintype ΩTest] [DecidableEq ΩTest]
     (m : LG21Model Θ ΩBase ΩTest) : AdmissionsModel Θ ΩBase :=
