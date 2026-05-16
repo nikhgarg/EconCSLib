@@ -12,20 +12,31 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
-The current best route is the positive-mass sequential Theorem 3 route:
+The current best route is now the endpoint/allowed-policy-form middle-reroute
+Theorem 3 route:
 
-  paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_lower_reward_bound_fixed_upper_no_ratio_data_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions
 
 This route is source-faithful:
 
-1. Move the surge policy to accept-all first.
-2. Use Lemma 9 with the current fixed non-surge policy's reward rate.
-3. Then move the non-surge policy to accept-all with surge fixed at accept-all.
-4. The Lemma 10 branch is already discharged from Theorem 3 parameter data.
+1. Use Lemma 5/Theorem 4 to restrict non-accept-all optima to the relevant
+   endpoint shapes.
+2. Keep the branch-local `not acceptsAllTrips` fact available at the endpoint
+   layer.
+3. If a surge reject-middle lower cutoff is nonpositive, reroute through the
+   reject-short endpoint instead of asking for impossible all-branch
+   reject-middle positivity.
+4. Use the fixed-state equality or by-policy-form data only on the branches
+   that Theorem 4 actually exposes.
 
-The remaining work is therefore not a global Theorem 4 audit.  It is the
-source Lemma 9 data for the surge move, for every feasible measurable
-positive-mass current policy.
+The older positive-mass sequential route remains useful as a scalar audit
+fallback, but it should not be pushed as an all-policy proof obligation:
+selected-price lower slack can fail for arbitrary feasible positive-mass
+policies that are not known to be optimal under the constructed prices.
+
+The remaining work is therefore not a global Theorem 4 audit and not an
+arbitrary-policy Lemma 9 proof.  It is the source endpoint-selection proof for
+the shape cases that can actually occur in an optimal non-accept-all policy.
 
 
 Meaning of r1_current
@@ -48,6 +59,13 @@ separate equality has been proved.
 
 Important conclusion from the source proof
 ------------------------------------------
+This is not a claim that the paper proof is wrong.  The paper's Theorem 3
+proof uses compact notation: Lemma 9 fixes an arbitrary current non-surge
+policy, while the displayed Theorem 3 quantities are accept-all primitives.
+Lean therefore needs the missing bridge to be explicit, either by proving the
+current-policy quantities agree with the required fixed-transfer data on the
+relevant branch, or by routing through Theorem 4's shape/endpoint reduction.
+
 Do not try to close Lemma 9 by proving a universal arbitrary-policy bound
 
   r1_current <= R1.

@@ -385,10 +385,18 @@ endpoint at cutoff `hi`.  The lower fixed-transfer boundary is now compiled as
 and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions`.
 
-The next useful Lean target is deriving this middle-reroute certificate from
-the existing fixed-state-by-policy-form / derived-tail data, replacing the old
-global `surge_rejectShort_pos` and all-branch `surge_rejectMiddle_bounds`
-fields with branch-local facts from `hnot`.
+That middle-reroute derivation from fixed-state-by-policy-form / derived-tail
+data is now compiled.  The source-facing endpoints are:
+
+```lean
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions
+```
+
+The next useful Lean target is to build the fields of the fixed-state-equality
+middle-reroute source assumption from the paper's regularity hypotheses and
+the Lemma 5 all-optimal shape classification, rather than reverting to global
+`surge_rejectShort_pos` or all-branch `surge_rejectMiddle_bounds` fields.
 
 Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:
@@ -407,5 +415,6 @@ condition for that wrapper.
 - `CLOSEOUT_PROOF_PLAN.txt`: shortest remaining source proof plan for Theorem 3.
 - `CONTINUOUS_PROOF_PLAN.md`: strategic route and reusable infrastructure.
 - `LEMMA9_10_REWARD_RATE_AUDIT.md`: why target reward rates cannot be confused
-  with current fixed-state rates, and why the sequential route is preferred.
+  with current fixed-state rates, and why the sequential route is only a
+  fallback scalar audit after the endpoint/allowed-policy pivot.
 - `DependencyDAG.tex`: graphical paper-stage status.
