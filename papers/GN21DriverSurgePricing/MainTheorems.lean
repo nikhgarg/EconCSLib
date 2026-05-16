@@ -44529,6 +44529,239 @@ theorem gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
     exact hagg
 
 /--
+All measurable optima have feasible a.e. Lemma 5 representatives in the
+Theorem 4-allowed shape families.
+-/
+structure Theorem4AllMeasurableFeasibleAEPolicyFormData
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Lemma5FeasiblePolicyFormAlmostEverywhereData
+          (μ 0) shape.1 (ρ 0)
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Lemma5FeasiblePolicyFormAlmostEverywhereData
+          (μ 1) shape.1 (ρ 1)
+
+/--
+Feasible a.e. Lemma 5 representatives plus endpoint improvements on the exact
+representatives instantiate the rejected-mass strict-local certificate.
+-/
+def theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_feasible_ae_forms_and_representative_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (forms :
+      Theorem4AllMeasurableFeasibleAEPolicyFormData μ
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (accept_all_optimal :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy)
+    (nonsurge_reject_long_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 0) →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (nonsurge_accept_middle_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 0) →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (surge_reject_short_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 1) →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (surge_reject_middle_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 1) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  accept_all_optimal := accept_all_optimal
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    rcases forms.nonsurge ρ hρ with ⟨⟨shape, hallowed⟩, D⟩
+    cases shape with
+    | positive =>
+        have hzero : (μ 0) (acceptAllPolicy \ ρ 0) = 0 := by
+          simpa [acceptAllAlmostEverywhere] using
+            D.acceptAllAlmostEverywhere_of_positive
+        rw [hzero] at hpos
+        exact False.elim (lt_irrefl (0 : ℝ≥0∞) hpos)
+    | strictlyIncreasing =>
+        exact False.elim
+          (by simpa [theorem4NonsurgeAllowedLemma5Shape] using hallowed)
+    | strictlyDecreasing =>
+        have hform := D.policy_form
+        change ∃ t : ℝ, rejectsLongTrips t D.policy at hform
+        rcases hform with ⟨t, hshape⟩
+        let ρrep : Fin 2 → TripPolicy := Function.update ρ 0 D.policy
+        have hρrep :
+            dynamicMeasurableOptimal
+              (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+              ρrep :=
+          dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_zero_of_policy_ae
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            hρ D.policy_subset D.policy_measurable D.policy_ae
+        have hpos_rep : 0 < (μ 0) (acceptAllPolicy \ D.policy) := by
+          have hcongr :=
+            acceptAllDiff_measure_congr_policy_ae (μ 0) D.policy_ae
+          simpa [hcongr] using hpos
+        have hnot_rep : ¬ acceptsAllTrips (ρrep 0) := by
+          simpa [ρrep, Function.update] using
+            not_acceptsAllTrips_of_rejected_mass_pos (μ 0) hpos_rep
+        have Hrep :=
+          nonsurge_reject_long_improvement ρrep hρrep hnot_rep t
+            (by simpa [ρrep, Function.update] using hshape)
+        exact
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+            D.policy_ae Hrep
+    | strictlyQuasiConvex =>
+        exact False.elim
+          (by simpa [theorem4NonsurgeAllowedLemma5Shape] using hallowed)
+    | strictlyQuasiConcave =>
+        have hform := D.policy_form
+        change ∃ lo hi : ℝ, acceptsMiddleTrips lo hi D.policy at hform
+        rcases hform with ⟨lo, hi, hshape⟩
+        let ρrep : Fin 2 → TripPolicy := Function.update ρ 0 D.policy
+        have hρrep :
+            dynamicMeasurableOptimal
+              (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+              ρrep :=
+          dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_zero_of_policy_ae
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            hρ D.policy_subset D.policy_measurable D.policy_ae
+        have hpos_rep : 0 < (μ 0) (acceptAllPolicy \ D.policy) := by
+          have hcongr :=
+            acceptAllDiff_measure_congr_policy_ae (μ 0) D.policy_ae
+          simpa [hcongr] using hpos
+        have hnot_rep : ¬ acceptsAllTrips (ρrep 0) := by
+          simpa [ρrep, Function.update] using
+            not_acceptsAllTrips_of_rejected_mass_pos (μ 0) hpos_rep
+        have Hrep :=
+          nonsurge_accept_middle_improvement ρrep hρrep hnot_rep lo hi
+            (by simpa [ρrep, Function.update] using hshape)
+        exact
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+            D.policy_ae Hrep
+  surge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    rcases forms.surge ρ hρ with ⟨⟨shape, hallowed⟩, D⟩
+    cases shape with
+    | positive =>
+        have hzero : (μ 1) (acceptAllPolicy \ ρ 1) = 0 := by
+          simpa [acceptAllAlmostEverywhere] using
+            D.acceptAllAlmostEverywhere_of_positive
+        rw [hzero] at hpos
+        exact False.elim (lt_irrefl (0 : ℝ≥0∞) hpos)
+    | strictlyIncreasing =>
+        have hform := D.policy_form
+        change ∃ t : ℝ, rejectsShortTrips t D.policy at hform
+        rcases hform with ⟨t, hshape⟩
+        let ρrep : Fin 2 → TripPolicy := Function.update ρ 1 D.policy
+        have hρrep :
+            dynamicMeasurableOptimal
+              (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+              ρrep :=
+          dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_one_of_policy_ae
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            hρ D.policy_subset D.policy_measurable D.policy_ae
+        have hpos_rep : 0 < (μ 1) (acceptAllPolicy \ D.policy) := by
+          have hcongr :=
+            acceptAllDiff_measure_congr_policy_ae (μ 1) D.policy_ae
+          simpa [hcongr] using hpos
+        have hnot_rep : ¬ acceptsAllTrips (ρrep 1) := by
+          simpa [ρrep, Function.update] using
+            not_acceptsAllTrips_of_rejected_mass_pos (μ 1) hpos_rep
+        have Hrep :=
+          surge_reject_short_improvement ρrep hρrep hnot_rep t
+            (by simpa [ρrep, Function.update] using hshape)
+        exact
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+            D.policy_ae Hrep
+    | strictlyDecreasing =>
+        exact False.elim
+          (by simpa [theorem4SurgeAllowedLemma5Shape] using hallowed)
+    | strictlyQuasiConvex =>
+        have hform := D.policy_form
+        change ∃ lo hi : ℝ, rejectsMiddleTrips lo hi D.policy at hform
+        rcases hform with ⟨lo, hi, hshape⟩
+        let ρrep : Fin 2 → TripPolicy := Function.update ρ 1 D.policy
+        have hρrep :
+            dynamicMeasurableOptimal
+              (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+              ρrep :=
+          dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_one_of_policy_ae
+            μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+            hρ D.policy_subset D.policy_measurable D.policy_ae
+        have hpos_rep : 0 < (μ 1) (acceptAllPolicy \ D.policy) := by
+          have hcongr :=
+            acceptAllDiff_measure_congr_policy_ae (μ 1) D.policy_ae
+          simpa [hcongr] using hpos
+        have hnot_rep : ¬ acceptsAllTrips (ρrep 1) := by
+          simpa [ρrep, Function.update] using
+            not_acceptsAllTrips_of_rejected_mass_pos (μ 1) hpos_rep
+        have Hrep :=
+          surge_reject_middle_improvement ρrep hρrep hnot_rep lo hi
+            (by simpa [ρrep, Function.update] using hshape)
+        exact
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae
+            D.policy_ae Hrep
+    | strictlyQuasiConcave =>
+        exact False.elim
+          (by simpa [theorem4SurgeAllowedLemma5Shape] using hallowed)
+
+/--
 Uniform feasible-measurable statewise strict-local aggregate certificate.  This
 is the direct endpoint interface needed by the feasible strict-local Theorem 4
 route.

@@ -139,6 +139,12 @@ lemmas to treat the updated exact representative as an optimal current policy,
 prove the concrete endpoint improvement on `D.policy`, then use the two
 `...congr_current_ae` lemmas to move the feasible strict aggregate improvement
 back to the original optimal policy.
+This route is now packaged at the Theorem 4 level by
+`Theorem4AllMeasurableFeasibleAEPolicyFormData` and
+`theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_feasible_ae_forms_and_representative_improvements`:
+given all-optimal feasible AE Lemma 5 representatives and the four endpoint
+improvement facts on exact representatives, Lean builds the positive
+rejected-mass strict-local certificate for the original measurable policies.
 
 The global calculus part of Lemma 5 Step 2 is now compiled:
 

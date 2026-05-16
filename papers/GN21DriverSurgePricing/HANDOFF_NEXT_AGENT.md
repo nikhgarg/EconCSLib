@@ -224,6 +224,12 @@ lemmas preserve optimality for that updated measured current policy.  Then use
 `gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae` or
 `gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_current_ae` to
 transfer the strict improvement back to the original optimal policy.
+This pattern is also available as a compiled Theorem 4 bridge:
+`Theorem4AllMeasurableFeasibleAEPolicyFormData` plus
+`theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate_of_feasible_ae_forms_and_representative_improvements`
+turn all-optimal feasible AE Lemma 5 representative data and the four exact
+representative endpoint improvements into the positive rejected-mass strict
+local improvement certificate.
 The a.e. convention is now backed by actual primitive congruence lemmas:
 single-state mass/time/payment/renewal reward, Lemma 3 `Q,T,W`, and
 `gn21MeasuredAggregateRewardPrimitives` are unchanged under
