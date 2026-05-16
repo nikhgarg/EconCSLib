@@ -45359,6 +45359,305 @@ theorem gn21MeasuredRightMarginalResponse_eq_scaled_lemma6Response
       Rj Ri hden_swap hτ hTj hTi hWj hWi
 
 /--
+Normalized Lemma 6 response corresponding to the left-state measured marginal
+response at the current two-state policy.
+-/
+def gn21MeasuredLeftLemma6ResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj : ℝ) : TripLength → ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  fun τ =>
+    gn21Lemma6Response (gn21SwitchProb switchIJ switchJI τ) τ (wI τ)
+      Qi Qj Ti Tj Ri Rj
+
+/--
+Normalized Lemma 6 response corresponding to the right-state measured marginal
+response, with the moving/fixed states swapped.
+-/
+def gn21MeasuredRightLemma6ResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj : ℝ) : TripLength → ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  fun τ =>
+    gn21Lemma6Response (gn21SwitchProb switchJI switchIJ τ) τ (wJ τ)
+      Qj Qi Tj Ti Rj Ri
+
+/-- Positive scaling factor between the left measured response and Lemma 6. -/
+def gn21MeasuredLeftLemma6ScaleAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy) : TripLength → ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  fun τ => Qj * τ * Ti * Tj / (Qi * Tj + Qj * Ti)
+
+/-- Positive scaling factor between the right measured response and Lemma 6. -/
+def gn21MeasuredRightLemma6ScaleAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy) : TripLength → ℝ :=
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  fun τ => Qi * τ * Tj * Ti / (Qj * Ti + Qi * Tj)
+
+/-- Positivity of the left Lemma 6 scaling factor. -/
+theorem gn21MeasuredLeftLemma6ScaleAtCurrent_pos
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy)
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+    (hTi_pos : 0 < gn21ScaledStateTime μI arrivalI σI)
+    (hTj_pos : 0 < gn21ScaledStateTime μJ arrivalJ σJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    {τ : TripLength} (hτ : 0 < τ) :
+    0 <
+      gn21MeasuredLeftLemma6ScaleAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI σI σJ τ := by
+  simpa [gn21MeasuredLeftLemma6ScaleAtCurrent] using
+    gn21LeftLinearResponse_lemma6_scale_pos τ
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI)
+      hτ hQj_pos hTi_pos hTj_pos hden_pos
+
+/-- Positivity of the right Lemma 6 scaling factor. -/
+theorem gn21MeasuredRightLemma6ScaleAtCurrent_pos
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (σI σJ : TripPolicy)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+    (hTi_pos : 0 < gn21ScaledStateTime μI arrivalI σI)
+    (hTj_pos : 0 < gn21ScaledStateTime μJ arrivalJ σJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    {τ : TripLength} (hτ : 0 < τ) :
+    0 <
+      gn21MeasuredRightLemma6ScaleAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI σI σJ τ := by
+  have hden_swap :
+      0 <
+        gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI +
+          gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ := by
+    simpa [add_comm] using hden_pos
+  simpa [gn21MeasuredRightLemma6ScaleAtCurrent] using
+    gn21LeftLinearResponse_lemma6_scale_pos τ
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI +
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ)
+      hτ hQi_pos hTj_pos hTi_pos hden_swap
+
+/-- Left measured response equals a positive scale times the normalized Lemma 6 response. -/
+theorem gn21MeasuredLeftMarginalResponse_eq_scale_mul_lemma6ResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj τ : ℝ)
+    (hden :
+      gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hτ : τ ≠ 0)
+    (hTi : gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hTj : gn21ScaledStateTime μJ arrivalJ σJ ≠ 0)
+    (hWi :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        Ri * gn21ScaledStateTime μI arrivalI σI)
+    (hWj :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        Rj * gn21ScaledStateTime μJ arrivalJ σJ) :
+    gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ τ =
+      gn21MeasuredLeftLemma6ScaleAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI σI σJ τ *
+        gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI wI σI σJ Ri Rj τ := by
+  simpa [gn21MeasuredLeftLemma6ScaleAtCurrent,
+    gn21MeasuredLeftLemma6ResponseAtCurrent] using
+    gn21MeasuredLeftMarginalResponse_eq_scaled_lemma6Response
+      μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ
+      Ri Rj τ hden hτ hTi hTj hWi hWj
+
+/-- Right measured response equals a positive scale times the normalized Lemma 6 response. -/
+theorem gn21MeasuredRightMarginalResponse_eq_scale_mul_lemma6ResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj τ : ℝ)
+    (hden :
+      gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+          gn21ScaledStateTime μJ arrivalJ σJ +
+        gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+          gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hτ : τ ≠ 0)
+    (hTi : gn21ScaledStateTime μI arrivalI σI ≠ 0)
+    (hTj : gn21ScaledStateTime μJ arrivalJ σJ ≠ 0)
+    (hWi :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        Ri * gn21ScaledStateTime μI arrivalI σI)
+    (hWj :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        Rj * gn21ScaledStateTime μJ arrivalJ σJ) :
+    gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ τ =
+      gn21MeasuredRightLemma6ScaleAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI σI σJ τ *
+        gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI wJ σI σJ Ri Rj τ := by
+  simpa [gn21MeasuredRightLemma6ScaleAtCurrent,
+    gn21MeasuredRightLemma6ResponseAtCurrent] using
+    gn21MeasuredRightMarginalResponse_eq_scaled_lemma6Response
+      μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ
+      Ri Rj τ hden hτ hTi hTj hWi hWj
+
+/--
+Transfer a Lemma 6 positive-response policy-form package to the measured left
+Lemma 5 marginal response.
+-/
+def gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj : ℝ) {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI wI σI σJ Ri Rj) shape)
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+    (hTi_pos : 0 < gn21ScaledStateTime μI arrivalI σI)
+    (hTj_pos : 0 < gn21ScaledStateTime μJ arrivalJ σJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hWi :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        Ri * gn21ScaledStateTime μI arrivalI σI)
+    (hWj :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        Rj * gn21ScaledStateTime μJ arrivalJ σJ) :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) shape :=
+  Lemma5PositiveResponsePolicyFormData.of_positive_scaling
+    (base :=
+      gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI σI σJ Ri Rj)
+    (response :=
+      gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ)
+    (scale :=
+      gn21MeasuredLeftLemma6ScaleAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI σI σJ)
+    D
+    (by
+      intro τ hτ
+      exact
+        gn21MeasuredLeftLemma6ScaleAtCurrent_pos μI μJ arrivalI arrivalJ
+          switchIJ switchJI σI σJ hQj_pos hTi_pos hTj_pos hden_pos hτ)
+    (by
+      intro τ hτ
+      exact
+        gn21MeasuredLeftMarginalResponse_eq_scale_mul_lemma6ResponseAtCurrent
+          μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ
+          Ri Rj τ (ne_of_gt hden_pos) (ne_of_gt hτ)
+          (ne_of_gt hTi_pos) (ne_of_gt hTj_pos) hWi hWj)
+
+/--
+Transfer a Lemma 6 positive-response policy-form package to the measured right
+Lemma 5 marginal response.
+-/
+def gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (Ri Rj : ℝ) {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI wJ σI σJ Ri Rj) shape)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+    (hTi_pos : 0 < gn21ScaledStateTime μI arrivalI σI)
+    (hTj_pos : 0 < gn21ScaledStateTime μJ arrivalJ σJ)
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI *
+            gn21ScaledStateTime μJ arrivalJ σJ +
+          gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ *
+            gn21ScaledStateTime μI arrivalI σI)
+    (hWi :
+      gn21ScaledStateEarning μI arrivalI wI σI =
+        Ri * gn21ScaledStateTime μI arrivalI σI)
+    (hWj :
+      gn21ScaledStateEarning μJ arrivalJ wJ σJ =
+        Rj * gn21ScaledStateTime μJ arrivalJ σJ) :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) shape :=
+  Lemma5PositiveResponsePolicyFormData.of_positive_scaling
+    (base :=
+      gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wJ σI σJ Ri Rj)
+    (response :=
+      gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ)
+    (scale :=
+      gn21MeasuredRightLemma6ScaleAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI σI σJ)
+    D
+    (by
+      intro τ hτ
+      exact
+        gn21MeasuredRightLemma6ScaleAtCurrent_pos μI μJ arrivalI arrivalJ
+          switchIJ switchJI σI σJ hQi_pos hTi_pos hTj_pos hden_pos hτ)
+    (by
+      intro τ hτ
+      exact
+        gn21MeasuredRightMarginalResponse_eq_scale_mul_lemma6ResponseAtCurrent
+          μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ σI σJ
+          Ri Rj τ (ne_of_gt hden_pos) (ne_of_gt hτ)
+          (ne_of_gt hTi_pos) (ne_of_gt hTj_pos) hWi hWj)
+
+/--
 Dynamic optimality for the measured two-state reward implies fixed-response
 Lemma 5 marginal optimality for the non-surge state.  The proof follows the
 paper's source argument: Lemma 1 rewrites dynamic rewards as aggregate

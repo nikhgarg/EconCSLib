@@ -965,6 +965,11 @@ and
 left/right measured Lemma 5 marginal responses as positive scalings of the
 normalized Lemma 6 response under current reward-rate identities and the usual
 nonzero denominator/time inputs.
+The next layer is also packaged:
+`gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
+`gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`
+transfer normalized Lemma 6 positive-response policy-form data through those
+positive scalings to the measured marginal responses.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

@@ -178,6 +178,16 @@ factor, and
 left/right measured marginal responses as positive state-dependent scalings of
 the normalized Lemma 6 response once the current `W = R*T` identities and
 nonzero aggregate denominator/time/trip inputs are available.
+Use the packaged transfer endpoints
+`gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
+`gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response` to
+move a normalized Lemma 6 positive-response policy-form package onto the
+measured marginal response.  Their supporting definitions are
+`gn21MeasuredLeftLemma6ResponseAtCurrent`,
+`gn21MeasuredRightLemma6ResponseAtCurrent`,
+`gn21MeasuredLeftLemma6ScaleAtCurrent`, and
+`gn21MeasuredRightLemma6ScaleAtCurrent`; their positivity lemmas discharge the
+scale side condition for positive current `Q,T` primitives.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

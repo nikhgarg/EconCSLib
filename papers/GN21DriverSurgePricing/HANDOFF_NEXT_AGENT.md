@@ -266,6 +266,16 @@ denominator.  The next closeout step is to package these identities with the
 existing Lemma 6/7/8 policy-form data into
 `Lemma5PositiveResponsePolicyFormData`, then feed the existing marginal
 optimality bridge and feasible a.e. endpoint.
+That first packaging step is now compiled for both states:
+`gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
+`gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`
+transfer normalized Lemma 6 positive-response policy-form data to the measured
+marginal responses.  Their helper definitions
+`gn21MeasuredLeftLemma6ResponseAtCurrent`,
+`gn21MeasuredRightLemma6ResponseAtCurrent`,
+`gn21MeasuredLeftLemma6ScaleAtCurrent`, and
+`gn21MeasuredRightLemma6ScaleAtCurrent` keep the base response and positive
+scale explicit.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
