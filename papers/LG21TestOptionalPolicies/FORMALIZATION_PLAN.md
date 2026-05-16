@@ -173,6 +173,11 @@ Last updated: 2026-05-16
   paper's exact optional-reporting conclusion, all access students take and
   reporting is thresholded, instead of routing optional reporting through the
   generic finite-taking-threshold certificate.
+  The strongest concrete source-shaped continuous-law surfaces now construct
+  those regime-specific certificates directly via
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`.
   Remaining Theorem 3.1 source work is deriving analogous PMF witnesses if a
   finite PMF endpoint is desired and, if needed later, strengthening the current
   closed source-mixture endpoint to match the paper's exact "every equilibrium"

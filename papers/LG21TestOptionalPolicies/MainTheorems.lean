@@ -16780,6 +16780,76 @@ theorem paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mi
   · exact hfair.2.2
 
 /--
+Theorem 3.1 optional-reporting concrete base-mixed Gaussian law surface
+packaged as the regime-specific continuous-law certificate.
+-/
+def paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    LG21LawOptionalReportingStrategicWithholdingCertificate
+      (lg21BaseMixedGaussianPosteriorLawSurface
+        skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) := by
+  let h :=
+      paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+        skillGivenBase baseProfile M theta k accessFraction
+        baseOnlyEstimate scoreLaw hC_nonneg hC_lt_one
+  let W := Classical.choose h
+  have hspec := Classical.choose_spec h
+  exact
+    { all_take := ∀ base skill, W.takes base skill
+      some_access_students_do_not_report :=
+        ∃ base score, ¬ W.reports base score
+      reporting_threshold :=
+        ∀ base, ∃ cutoff : ℝ,
+          ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score
+      all_take_holds := hspec.1
+      some_access_students_do_not_report_holds := hspec.2.1
+      reporting_threshold_holds := hspec.2.2.1
+      not_latent_skill_fair := hspec.2.2.2.1
+      not_observably_fair := hspec.2.2.2.2.1
+      not_demographically_fair := hspec.2.2.2.2.2 }
+
+/--
+Theorem 3.1 report-required concrete base-mixed affine-skill law surface
+packaged as the regime-specific continuous-law certificate.
+-/
+def paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    LG21LawReportRequiredStrategicWithholdingCertificate
+      (lg21BaseMixedAffineSkillPosteriorLawSurface
+        skillGivenBase baseProfile intercept slope hslope skillLaw
+        baseOnlyEstimate) := by
+  let h :=
+      paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+        skillGivenBase baseProfile intercept slope hslope accessFraction
+        baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
+  let W := Classical.choose h
+  have hspec := Classical.choose_spec h
+  exact
+    { some_access_students_do_not_take :=
+        ∃ base skill, ¬ W.takes base skill
+      taking_threshold :=
+        ∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill
+      some_access_students_do_not_take_holds := hspec.1
+      taking_threshold_holds := hspec.2.1
+      not_latent_skill_fair := hspec.2.2.1
+      not_observably_fair := hspec.2.2.2.1
+      not_demographically_fair := hspec.2.2.2.2 }
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full
 base-indexed one-test posterior source-law surface is not latent-skill fair.

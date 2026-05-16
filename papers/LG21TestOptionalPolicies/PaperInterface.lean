@@ -11203,6 +11203,48 @@ theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_
     baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
 
 /--
+Theorem 3.1 optional-reporting source-shaped skill/base-mixture Gaussian
+posterior-law surface packaged as the regime-specific continuous-law
+certificate.
+-/
+def paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    LG21LawOptionalReportingStrategicWithholdingCertificate
+      (paperBaseMixedGaussianPosteriorLawSurface
+        skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) :=
+  paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    skillGivenBase baseProfile M theta k accessFraction baseOnlyEstimate
+    scoreLaw hC_nonneg hC_lt_one
+
+/--
+Theorem 3.1 report-required source-shaped skill/base-mixture affine-skill
+posterior-law surface packaged as the regime-specific continuous-law
+certificate.
+-/
+def paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    LG21LawReportRequiredStrategicWithholdingCertificate
+      (paperBaseMixedAffineSkillPosteriorLawSurface
+        skillGivenBase baseProfile intercept slope hslope skillLaw
+        baseOnlyEstimate) :=
+  paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    skillGivenBase baseProfile intercept slope hslope accessFraction
+    baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full base-indexed
 one-test posterior source-law surface is not latent-skill fair.

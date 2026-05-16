@@ -94,6 +94,13 @@ cache is kept as `source.txt` for named-statement audits.
   optional-reporting conclusion as the paper states it, namely all access
   students take the test plus score-threshold reporting, rather than forcing it
   into the generic finite taking-threshold shape.
+- The strongest concrete Theorem 3.1 continuous-law surfaces now construct
+  those regime-specific certificates directly:
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
+  package the source-shaped skill/base-mixture Gaussian and affine-skill law
+  routes without requiring callers to unpack the older tuple endpoints.
 
 ### Recent Theorem 3.2 Progress
 
