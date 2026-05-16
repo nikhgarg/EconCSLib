@@ -165,7 +165,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_threshold_witness_gaussian_upper_tail_cutoff`
   connect Theorem 3.1 threshold witnesses to those continuous Gaussian
-  upper-tail branches.  The source-shaped
+  upper-tail branches.  The source-witness wrappers
+  `paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_source_witness_gaussian_upper_tail`
+  and
+  `paper_theorem3_2_not_latent_or_observable_fair_of_report_required_source_witness_gaussian_upper_tail`
+  now extract the finite cutoff directly from the Theorem 3.1 witness and only
+  require the policy-specific identification of the witness cutoff with the
+  Gaussian upper-tail acting mean.  The source-shaped
   structures
   `LG21ObservableFairTestBlankSourceWitness` and
   `LG21LawObservableFairTestBlankSourceWitness` now package these obligations,

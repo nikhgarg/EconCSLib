@@ -206,7 +206,10 @@ Last updated: 2026-05-16
   witness-level upper-tail wrappers connect the Theorem 3.1 optional-reporting
   and report-required threshold witnesses back to concrete source decisions and
   discharge the same impossibility branch for continuous Gaussian acting
-  cohorts.  The
+  cohorts.  The source-witness upper-tail wrappers now extract the relevant
+  finite cutoff from the witness itself, reducing the remaining policy-specific
+  assumptions to decision identification and actor-mean/upper-tail-mean
+  identification.  The
   finite acting-distribution
   lemmas
   `paper_theorem3_2_exists_support_actor_le_mean` and
