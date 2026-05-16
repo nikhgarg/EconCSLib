@@ -70,17 +70,26 @@ The corresponding Theorem 3 AE wrappers are now compiled as:
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae
   Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions_via_ae
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute
+  Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
+  Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
 
 This does not mean the paper proof is wrong.  It means the paper's notation
 compresses the bridge from current fixed-state reward/accounting data to the
 endpoint current-bounds certificate, and Lean now expands that bridge.  The
 remaining source work is to build the fixed-state local endpoint fields from
-the paper's regularity hypotheses.  The stronger exact middle-reroute source
-boundaries already supply the AE source packages: Lean derives the separate
-accept-all optimality field through the compiled Theorem 4 middle-reroute
-endpoint proof, then forgets the all-branch reject-middle gap to the
-positive-rejected-mass AE local endpoint.  Only genuinely AE-only routes still
-need accept-all optimality as a separate input.
+the paper's regularity hypotheses.  The older cutoff-bounds source boundaries
+now also feed the preferred middle-reroute route directly, so future work should
+not duplicate a separate cutoff-bounds proof path unless it is only being used
+as an audit comparison.  The stronger exact middle-reroute source boundaries
+already supply the AE source packages: Lean derives the separate accept-all
+optimality field through the compiled Theorem 4 middle-reroute endpoint proof,
+then forgets the all-branch reject-middle gap to the positive-rejected-mass AE
+local endpoint.  Only genuinely AE-only routes still need accept-all
+optimality as a separate input.
 
 
 Meaning of r1_current
@@ -444,20 +453,24 @@ Recommended proof order
    syntactic cutoff cases that are actually accept-all or reducible to a
    simpler short-tail case on positive trip lengths.  The existing
    fixed-transfer cutoff-bounds endpoint packages now have compiled
-   `..._via_selection_unless` Theorem 3 wrappers.  The generic
-   middle-reroute endpoint boundary already splits the surge reject-middle
-   case on `lo <= 0` and uses
+   `..._via_selection_unless` Theorem 3 wrappers and direct
+   `to_middle_reroute` adapters.  The generic middle-reroute endpoint boundary
+   already splits the surge reject-middle case on `lo <= 0` and uses
    `rejectsShortTrips_of_rejectsMiddleTrips_of_lo_nonpos` to route that
    degenerate branch through the short-tail endpoint.  The lower fixed-transfer
    middle-reroute source boundary is also compiled:
 
      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate
      paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions
+     Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute
+     Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute
+     Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
+     Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
 
-   The next reduction is to derive this certificate from the existing
-   fixed-state-by-policy-form / derived-tail data, using `hnot` to derive the
-   surge short cutoff positivity and to avoid reject-middle endpoint data when
-   `lo <= 0`.
+   That reduction is now done.  The next reduction is to prove the
+   fixed-state-by-policy-form / common equality and cutoff-bound source fields
+   from the paper's regularity hypotheses, then consume them through the
+   middle-reroute source wrappers rather than the older cutoff-only route.
 6. Prove or explicitly source-assume the exposed arrival/intercept bound
    `arrival0*z0 <= R2`.
 7. Prove the selected-price current lower interval slack, probably using the

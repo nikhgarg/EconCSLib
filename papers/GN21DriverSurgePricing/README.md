@@ -540,9 +540,18 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless`
-  thread those existing packages through `SelectionUnless`; the remaining
-  closeout target is to weaken the endpoint source assumptions using the
-  branch-local `¬ acceptsAllTrips` facts.  The reject-long fixed-state
+  thread those existing packages through `SelectionUnless`.  The newer
+  adapters
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute`,
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions`,
+  and
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions`
+  route those same cutoff-bounds packages through the preferred
+  middle-reroute endpoint boundary directly.  The remaining closeout target is
+  now to prove or weaken the fixed-state/cutoff-bound source fields from the
+  paper's regularity hypotheses, not to maintain a parallel cutoff-only proof
+  path.  The reject-long fixed-state
   lower-comparison side is now internal:
   `GN21RegularEndpointSharedSourceData.nonsurge_lower_pointwise_of_rejectsLongTrips`,
   `GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_ge_acceptAll_of_rejectsLongTrips`,
@@ -598,6 +607,10 @@ cache is `source.txt`.
   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions_via_ae`.
+  The stronger cutoff-bounds source boundaries now feed the same route through
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute`.
   These adapters derive the separate accept-all optimality field from the
   compiled Theorem 4 middle-reroute endpoint proof, then forget the all-branch
   reject-middle gap assumption to the positive-rejected-mass AE local endpoint.
@@ -626,7 +639,9 @@ cache is `source.txt`.
   and the positive-parameter fixed-transfer wrapper
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_positive_source_assumptions`,
   with the fixed-state-equality cutoff-bounds source boundary exposed as
-  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`;
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions`
+  and now also routed through the middle-reroute AE endpoint as
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute`;
   the branch-local middle-reroute fixed-transfer source boundary is now exposed
   through the by-policy-form and fixed-state-equality wrappers
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions`

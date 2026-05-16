@@ -58815,6 +58815,53 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
     exact (C.nonsurge_fixed_state_eq ρ hopt).to_policy_form
 
 /--
+The older cutoff-bounds endpoint package is stronger than the branch-local
+middle-reroute package: its all-branch `0 <= lo ∧ lo < hi` field supplies the
+only gap the middle-reroute route still asks for on the nonnegative-lower-cutoff
+branch.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteLocalEndpointCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := C.shared
+  nonsurge_rejectLong_pos := C.nonsurge_rejectLong_pos
+  nonsurge_acceptMiddle_bounds := C.nonsurge_acceptMiddle_bounds
+  surge_rejectMiddle_hi_bounds_of_nonneg_lo := by
+    intro ρ hopt lo hi hshape _hlo
+    exact (C.surge_rejectMiddle_bounds ρ hopt lo hi hshape).2
+  surge_fixed_state_by_policy_form := C.surge_fixed_state_by_policy_form
+  nonsurge_fixed_state_by_policy_form := C.nonsurge_fixed_state_by_policy_form
+
+/--
+Common fixed-state equality cutoff-bounds data also imply the branch-local
+middle-reroute endpoint package, without expanding equality data until the
+middle-reroute route needs it.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_middle_reroute
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := C.shared
+  nonsurge_rejectLong_pos := C.nonsurge_rejectLong_pos
+  nonsurge_acceptMiddle_bounds := C.nonsurge_acceptMiddle_bounds
+  surge_rejectMiddle_hi_bounds_of_nonneg_lo := by
+    intro ρ hopt lo hi hshape _hlo
+    exact (C.surge_rejectMiddle_bounds ρ hopt lo hi hshape).2
+  surge_fixed_state_eq := C.surge_fixed_state_eq
+  nonsurge_fixed_state_eq := C.nonsurge_fixed_state_eq
+
+/--
 AE-facing fixed-transfer local endpoint data.  It omits the all-branch
 reject-middle gap assumption; positive rejected mass will supply `lo < hi`
 inside the strict-improvement branch.
@@ -65926,6 +65973,145 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_end
       μ arrival R1 R2 switch12 switch21 :=
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions
     μ arrival rho R1 R2 switch12 switch21 A.to_ae_source_assumptions
+
+/--
+The older by-policy-form cutoff-bounds source boundary feeds the newer
+middle-reroute boundary by forgetting the lower-cutoff nonnegativity proof and
+retaining only `lo < hi` on the branch where middle-reroute needs it.
+-/
+def Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_selection := by
+    intro m z hnonneg hparams
+    rcases
+        A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_selection
+          m z hnonneg hparams with
+      ⟨CreplacementData, L⟩
+    exact ⟨CreplacementData, L.to_middle_reroute⟩
+
+/--
+The cutoff-bounds source wrapper can now be proved through the branch-local
+middle-reroute proof route.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A.to_middle_reroute_source_assumptions
+
+/--
+The same cutoff-bounds source boundary also reaches the AE uniqueness
+conclusion through the positive-rejected-mass middle-reroute wrapper.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae
+    μ arrival rho R1 R2 switch12 switch21 A.to_middle_reroute_source_assumptions
+
+/--
+The common-fixed-state equality cutoff-bounds source boundary feeds the newer
+middle-reroute boundary directly.
+-/
+def Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_selection := by
+    intro m z hnonneg hparams
+    rcases
+        A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_selection
+          m z hnonneg hparams with
+      ⟨CreplacementData, L⟩
+    exact ⟨CreplacementData, L.to_middle_reroute⟩
+
+/--
+The common-fixed-state cutoff-bounds wrapper can now be routed through the
+branch-local middle-reroute proof.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A.to_middle_reroute_source_assumptions
+
+/--
+The common-fixed-state cutoff-bounds wrapper reaches AE uniqueness through the
+same middle-reroute route.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_source_assumptions_via_ae
+    μ arrival rho R1 R2 switch12 switch21 A.to_middle_reroute_source_assumptions
 
 /--
 Bundled source-level assumptions for the weak-reward Theorem 3 route.  This is
