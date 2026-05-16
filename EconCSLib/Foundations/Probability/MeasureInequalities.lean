@@ -1,8 +1,12 @@
 import EconCSLib.Foundations.Probability.FiniteExpectation
 import Mathlib.Data.Set.Disjoint
+import Mathlib.MeasureTheory.Integral.Indicator
+import Mathlib.MeasureTheory.Measure.OpenPos
+import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.MeasureTheory.Measure.WithDensity
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
+import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Probability.Independence.InfinitePi
 import Mathlib.Probability.Moments.SubGaussian
 import Mathlib.Probability.ProductMeasure
@@ -11,6 +15,7 @@ import Mathlib.Probability.ProbabilityMassFunction.Integrals
 
 open MeasureTheory
 open ProbabilityTheory
+open Filter
 open scoped ENNReal
 
 namespace EconCSLib
@@ -549,6 +554,324 @@ theorem measureProb_lt_of_imp_of_residual_ne_zero
     simpa [hres'] using hres
   rw [hleft]
   exact lt_of_le_of_ne (bot_le) hright.symm
+
+/-- Real-valued mass of the upper orthant `{(u,v) : x <= u, y <= v}`. -/
+noncomputable def upperOrthantMass (μ : Measure (ℝ × ℝ)) (x y : ℝ) : ℝ :=
+  μ.real {p : ℝ × ℝ | x ≤ p.1 ∧ y ≤ p.2}
+
+theorem measurableSet_upperOrthant (x y : ℝ) :
+    MeasurableSet ({p : ℝ × ℝ | x ≤ p.1 ∧ y ≤ p.2}) := by
+  exact
+    (isClosed_le continuous_const continuous_fst).measurableSet.inter
+      (isClosed_le continuous_const continuous_snd).measurableSet
+
+/--
+Moving an upper-orthant threshold up in both coordinates strictly decreases
+its mass for any finite joint measure that is positive on nonempty open sets.
+
+This is the reusable measure-level fact behind strategic applicant pools:
+if application and admission cutoffs both rise with the school cutoff, the
+joint mass of students above both cutoffs falls strictly.
+-/
+theorem upperOrthantMass_strictAnti_of_strictMono_left_monotone_right
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] [Measure.IsOpenPosMeasure μ]
+    {a b : ℝ → ℝ} (ha : StrictMono a) (hb : Monotone b) :
+    StrictAnti fun q : ℝ => upperOrthantMass μ (a q) (b q) := by
+  intro q₁ q₂ hq
+  have hmeasure_lt :
+      μ {p : ℝ × ℝ | a q₂ ≤ p.1 ∧ b q₂ ≤ p.2} <
+        μ {p : ℝ × ℝ | a q₁ ≤ p.1 ∧ b q₁ ≤ p.2} := by
+    refine measure_lt_of_imp_of_diff_ne_zero μ
+      (p := fun p : ℝ × ℝ => a q₂ ≤ p.1 ∧ b q₂ ≤ p.2)
+      (q := fun p : ℝ × ℝ => a q₁ ≤ p.1 ∧ b q₁ ≤ p.2)
+      (measurableSet_upperOrthant (a q₂) (b q₂))
+      (measurableSet_upperOrthant (a q₁) (b q₁)) ?_ ?_
+    · intro p hp
+      exact ⟨(ha hq).le.trans hp.1, (hb hq.le).trans hp.2⟩
+    · let U : Set (ℝ × ℝ) :=
+        {p : ℝ × ℝ | a q₁ < p.1 ∧ p.1 < a q₂ ∧ b q₂ < p.2}
+      have hU_open : IsOpen U := by
+        have hopen_left : IsOpen {p : ℝ × ℝ | a q₁ < p.1} :=
+          isOpen_lt (continuous_const : Continuous fun _ : ℝ × ℝ => a q₁)
+            (continuous_fst : Continuous fun p : ℝ × ℝ => p.1)
+        have hopen_mid : IsOpen {p : ℝ × ℝ | p.1 < a q₂} :=
+          isOpen_lt (continuous_fst : Continuous fun p : ℝ × ℝ => p.1)
+            (continuous_const : Continuous fun _ : ℝ × ℝ => a q₂)
+        have hopen_right : IsOpen {p : ℝ × ℝ | b q₂ < p.2} :=
+          isOpen_lt (continuous_const : Continuous fun _ : ℝ × ℝ => b q₂)
+            (continuous_snd : Continuous fun p : ℝ × ℝ => p.2)
+        simpa [U, Set.setOf_and, Set.inter_assoc] using
+          (hopen_left.inter hopen_mid).inter hopen_right
+      have hU_nonempty : U.Nonempty := by
+        refine ⟨((a q₁ + a q₂) / 2, b q₂ + 1), ?_⟩
+        have haq : a q₁ < a q₂ := ha hq
+        dsimp [U]
+        constructor
+        · nlinarith
+        · constructor
+          · nlinarith
+          · linarith
+      have hU_ne_zero : μ U ≠ 0 :=
+        hU_open.measure_ne_zero μ hU_nonempty
+      intro hzero
+      apply hU_ne_zero
+      refine measure_mono_null ?_ hzero
+      intro p hp
+      rcases hp with ⟨hp_left, hp_between, hp_right⟩
+      exact
+        ⟨⟨hp_left.le, (hb hq.le).trans hp_right.le⟩,
+          fun hnew => not_le_of_gt hp_between hnew.1⟩
+  exact (ENNReal.toReal_lt_toReal
+    (measure_ne_top μ {p : ℝ × ℝ | a q₂ ≤ p.1 ∧ b q₂ ≤ p.2})
+    (measure_ne_top μ {p : ℝ × ℝ | a q₁ ≤ p.1 ∧ b q₁ ≤ p.2})).2
+      hmeasure_lt
+
+/--
+Along the diagonal path `(q - offset, q)`, upper-orthant mass tends to zero as
+`q -> +∞`.
+-/
+theorem upperOrthantMass_diagonal_tendsto_atTop_zero
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] (offset : ℝ) :
+    Filter.Tendsto (fun q : ℝ => upperOrthantMass μ (q - offset) q)
+      Filter.atTop (nhds 0) := by
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ =>
+          μ {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2})
+        Filter.atTop (nhds (0 : ℝ≥0∞)) := by
+    simpa using
+      (MeasureTheory.tendsto_measure_of_tendsto_indicator_of_isFiniteMeasure
+        (L := Filter.atTop) (μ := μ)
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2})
+        (A := (∅ : Set (ℝ × ℝ)))
+        (fun q => measurableSet_upperOrthant (q - offset) q)
+        (by
+          intro p
+          filter_upwards [Filter.eventually_gt_atTop p.2] with q hq
+          constructor
+          · intro hp
+            exact False.elim ((not_le_of_gt hq) hp.2)
+          · intro hp
+            exact False.elim hp))
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2}).toReal)
+      Filter.atTop (nhds 0)
+  exact (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hmeasure
+
+/--
+Along the diagonal path `(q - offset, q)`, upper-orthant mass tends to the
+whole mass as `q -> -∞`.
+-/
+theorem upperOrthantMass_diagonal_tendsto_atBot_univ
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] (offset : ℝ) :
+    Filter.Tendsto (fun q : ℝ => upperOrthantMass μ (q - offset) q)
+      Filter.atBot (nhds (μ.real Set.univ)) := by
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ =>
+          μ {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2})
+        Filter.atBot (nhds (μ Set.univ)) := by
+    simpa using
+      (MeasureTheory.tendsto_measure_of_tendsto_indicator_of_isFiniteMeasure
+        (L := Filter.atBot) (μ := μ)
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2})
+        (A := (Set.univ : Set (ℝ × ℝ)))
+        (fun q => measurableSet_upperOrthant (q - offset) q)
+        (by
+          intro p
+          filter_upwards [Filter.eventually_lt_atBot (min (p.1 + offset) p.2)] with q hq
+          constructor
+          · intro _hp
+            trivial
+          · intro _hp
+            constructor
+            · linarith [lt_of_lt_of_le hq (min_le_left (p.1 + offset) p.2)]
+            · exact (lt_of_lt_of_le hq (min_le_right (p.1 + offset) p.2)).le))
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2}).toReal)
+      Filter.atBot (nhds (μ.real Set.univ))
+  simpa [Measure.real] using
+    (ENNReal.tendsto_toReal (measure_ne_top μ Set.univ)).comp hmeasure
+
+/--
+Continuity of moving upper-orthant mass along `(q - offset, q)` when the joint
+law puts zero mass on every corresponding vertical or horizontal boundary.
+-/
+theorem upperOrthantMass_diagonal_continuous_of_boundary_null
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] (offset : ℝ)
+    (hboundary :
+      ∀ q : ℝ,
+        μ ({p : ℝ × ℝ | p.1 = q - offset} ∪ {p : ℝ × ℝ | p.2 = q}) = 0) :
+    Continuous fun q : ℝ => upperOrthantMass μ (q - offset) q := by
+  refine continuous_iff_continuousAt.2 ?_
+  intro q₀
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ =>
+          μ {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2})
+        (nhds q₀)
+        (nhds (μ {p : ℝ × ℝ | q₀ - offset ≤ p.1 ∧ q₀ ≤ p.2})) := by
+    refine
+      MeasureTheory.tendsto_measure_of_ae_tendsto_indicator_of_isFiniteMeasure
+        (L := nhds q₀) (μ := μ)
+        (A := {p : ℝ × ℝ | q₀ - offset ≤ p.1 ∧ q₀ ≤ p.2})
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2})
+        (measurableSet_upperOrthant (q₀ - offset) q₀)
+        (fun q => measurableSet_upperOrthant (q - offset) q) ?_
+    have hboundary_ae :
+        ∀ᵐ p ∂μ, p.1 ≠ q₀ - offset ∧ p.2 ≠ q₀ := by
+      refine (measure_eq_zero_iff_ae_notMem.1 (hboundary q₀)).mono ?_
+      intro p hp
+      constructor
+      · intro h
+        exact hp (Or.inl h)
+      · intro h
+        exact hp (Or.inr h)
+    filter_upwards [hboundary_ae] with p hp
+    have hsub_tend :
+        Filter.Tendsto (fun q : ℝ => q - offset) (nhds q₀)
+          (nhds (q₀ - offset)) :=
+      (continuous_id.sub continuous_const).tendsto q₀
+    by_cases hsub_pos : q₀ - offset < p.1
+    · have hsub_event :
+          ∀ᶠ q in nhds q₀, q - offset ≤ p.1 :=
+        (hsub_tend.eventually (Iio_mem_nhds hsub_pos)).mono
+          (fun _ hlt => hlt.le)
+      by_cases hadmit_pos : q₀ < p.2
+      · have hadmit_event :
+            ∀ᶠ q in nhds q₀, q ≤ p.2 :=
+          (tendsto_id.eventually (Iio_mem_nhds hadmit_pos)).mono
+            (fun _ hlt => hlt.le)
+        filter_upwards [hsub_event, hadmit_event] with q hqsub hqadmit
+        simp [hqsub, hqadmit, hsub_pos.le, hadmit_pos.le]
+      · have hadmit_neg : p.2 < q₀ :=
+          lt_of_le_of_ne (le_of_not_gt hadmit_pos) hp.2
+        have hadmit_event :
+            ∀ᶠ q in nhds q₀, ¬ q ≤ p.2 :=
+          (tendsto_id.eventually (Ioi_mem_nhds hadmit_neg)).mono
+            (fun _ hgt => not_le_of_gt hgt)
+        filter_upwards [hadmit_event] with q hqadmit
+        simp [hqadmit, hadmit_neg.not_ge]
+    · have hsub_neg : p.1 < q₀ - offset :=
+        lt_of_le_of_ne (le_of_not_gt hsub_pos) hp.1
+      have hsub_event :
+          ∀ᶠ q in nhds q₀, ¬ q - offset ≤ p.1 :=
+        (hsub_tend.eventually (Ioi_mem_nhds hsub_neg)).mono
+          (fun _ hgt => not_le_of_gt hgt)
+      filter_upwards [hsub_event] with q hqsub
+      simp [hqsub, hsub_neg.not_ge]
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | q - offset ≤ p.1 ∧ q ≤ p.2}).toReal)
+      (nhds q₀)
+      (nhds ((μ {p : ℝ × ℝ | q₀ - offset ≤ p.1 ∧ q₀ ≤ p.2}).toReal))
+  exact
+    (ENNReal.tendsto_toReal
+      (measure_ne_top μ {p : ℝ × ℝ | q₀ - offset ≤ p.1 ∧ q₀ ≤ p.2})).comp
+      hmeasure
+
+/--
+Continuity of moving upper-orthant mass from nonatomic first and second
+marginals.
+-/
+theorem upperOrthantMass_diagonal_continuous_of_noAtoms_marginals
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ]
+    [NoAtoms (μ.map Prod.fst)] [NoAtoms (μ.map Prod.snd)] (offset : ℝ) :
+    Continuous fun q : ℝ => upperOrthantMass μ (q - offset) q := by
+  refine upperOrthantMass_diagonal_continuous_of_boundary_null μ offset ?_
+  intro q
+  have hleft : μ {p : ℝ × ℝ | p.1 = q - offset} = 0 := by
+    calc
+      μ {p : ℝ × ℝ | p.1 = q - offset}
+          = μ (Prod.fst ⁻¹' ({q - offset} : Set ℝ)) := by
+              rfl
+      _ = (μ.map Prod.fst) ({q - offset} : Set ℝ) := by
+              rw [Measure.map_apply measurable_fst (measurableSet_singleton (q - offset))]
+      _ = 0 := by
+              exact measure_singleton (q - offset)
+  have hright : μ {p : ℝ × ℝ | p.2 = q} = 0 := by
+    calc
+      μ {p : ℝ × ℝ | p.2 = q}
+          = μ (Prod.snd ⁻¹' ({q} : Set ℝ)) := by
+              rfl
+      _ = (μ.map Prod.snd) ({q} : Set ℝ) := by
+              rw [Measure.map_apply measurable_snd (measurableSet_singleton q)]
+      _ = 0 := by
+              exact measure_singleton q
+  exact measure_union_null hleft hright
+
+theorem volume_prod_vertical_line (x : ℝ) :
+    (volume : Measure (ℝ × ℝ)) {p : ℝ × ℝ | p.1 = x} = 0 := by
+  have hset :
+      ({p : ℝ × ℝ | p.1 = x} : Set (ℝ × ℝ)) =
+        ({x} : Set ℝ) ×ˢ (Set.univ : Set ℝ) := by
+    ext p
+    simp
+  rw [hset, Measure.volume_eq_prod ℝ ℝ,
+    Measure.prod_prod ({x} : Set ℝ) (Set.univ : Set ℝ)]
+  simp
+
+theorem volume_prod_horizontal_line (y : ℝ) :
+    (volume : Measure (ℝ × ℝ)) {p : ℝ × ℝ | p.2 = y} = 0 := by
+  have hset :
+      ({p : ℝ × ℝ | p.2 = y} : Set (ℝ × ℝ)) =
+        (Set.univ : Set ℝ) ×ˢ ({y} : Set ℝ) := by
+    ext p
+    simp
+  rw [hset, Measure.volume_eq_prod ℝ ℝ,
+    Measure.prod_prod (Set.univ : Set ℝ) ({y} : Set ℝ)]
+  simp
+
+theorem volume_withDensity_vertical_horizontal_boundary_null
+    (D : ℝ × ℝ → ℝ≥0∞) (x y : ℝ) :
+    ((volume : Measure (ℝ × ℝ)).withDensity D)
+        ({p : ℝ × ℝ | p.1 = x} ∪ {p : ℝ × ℝ | p.2 = y}) = 0 := by
+  have hac :
+      ((volume : Measure (ℝ × ℝ)).withDensity D) ≪
+        (volume : Measure (ℝ × ℝ)) :=
+    withDensity_absolutelyContinuous (volume : Measure (ℝ × ℝ)) D
+  have hleft :
+      ((volume : Measure (ℝ × ℝ)).withDensity D)
+          {p : ℝ × ℝ | p.1 = x} = 0 :=
+    hac (volume_prod_vertical_line x)
+  have hright :
+      ((volume : Measure (ℝ × ℝ)).withDensity D)
+          {p : ℝ × ℝ | p.2 = y} = 0 :=
+    hac (volume_prod_horizontal_line y)
+  exact measure_union_null hleft hright
+
+theorem volume_withDensity_isOpenPosMeasure_of_ae_ne_zero
+    (D : ℝ × ℝ → ℝ≥0∞)
+    (hD : AEMeasurable D (volume : Measure (ℝ × ℝ)))
+    (hD_ne_zero : ∀ᵐ p ∂(volume : Measure (ℝ × ℝ)), D p ≠ 0) :
+    Measure.IsOpenPosMeasure
+      ((volume : Measure (ℝ × ℝ)).withDensity D) := by
+  have h_ac :
+      (volume : Measure (ℝ × ℝ)) ≪
+        ((volume : Measure (ℝ × ℝ)).withDensity D) :=
+    withDensity_absolutelyContinuous' hD hD_ne_zero
+  exact h_ac.isOpenPosMeasure
+
+theorem upperOrthantMass_diagonal_continuous_of_volume_withDensity
+    (D : ℝ × ℝ → ℝ≥0∞)
+    [IsFiniteMeasure ((volume : Measure (ℝ × ℝ)).withDensity D)]
+    (offset : ℝ) :
+    Continuous fun q : ℝ =>
+      upperOrthantMass ((volume : Measure (ℝ × ℝ)).withDensity D)
+        (q - offset) q := by
+  refine
+    upperOrthantMass_diagonal_continuous_of_boundary_null
+      ((volume : Measure (ℝ × ℝ)).withDensity D) offset ?_
+  intro q
+  exact volume_withDensity_vertical_horizontal_boundary_null D (q - offset) q
 
 /--
 If a probability measure is pushed forward to a countable measurable space and

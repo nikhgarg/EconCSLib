@@ -167,6 +167,21 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   remaining analytic seam precise: bivariate Gaussian identification and
   regularity of the application-gated mass, rather than vague "equilibrium
   consistency".
+- For application-gated strategic applicant masses, a fast source-faithful route
+  is to formalize the joint event before the closed-form CDF. Define
+  `π_g * P(q_sub >= qApply, q_full >= qAdmit)` as a measure-backed upper-orthant
+  mass, prove moving-threshold continuity/strict decrease/endpoints from finite
+  open-positive nonatomic joint laws, then compose those component facts through
+  the finite group-sum fixed point. Keep the bivariate-normal/Owen-CDF identity
+  as the remaining analytic identification seam rather than blocking the source
+  equilibrium theorem on the displayed formula.
+- When the paper's named equilibrium lemma only needs the application-gated
+  source event and the closed-form bivariate/Owen expression is introduced in a
+  later proposition, close the equilibrium lemma at the density-backed source
+  event surface.  Prove open-positive and boundary-null regularity from
+  normalized positive Lebesgue densities, mark the named lemma green there, and
+  track the Owen/CDF identity under the proposition that actually uses the
+  displayed formula.
 - When a paper theorem is group-indexed, avoid stopping at a one-representative
   type theorem. After the single-group payoff/cutoff calculation is green,
   immediately package the group-indexed equilibrium object with common school
