@@ -34,6 +34,11 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   is the value difference. Prove the low/high cutoff region iff nonnegative
   incremental payoff, then separately prove the region indicator pointwise
   maximizes the binary apply/not-apply payoff.
+- To prove uniqueness of a threshold/region strategy, first prove strict
+  payoff signs away from every cutoff and then assume only the paper's
+  tie-breaking convention at cutoff points. Split on the region boundary
+  predicates, force the strategy by pointwise best-response inequalities in
+  strict branches, and use the tie-breaking hypotheses only in equality cases.
 - Prove truthfulness at the threshold-rule level: if the threshold offered to
   bidder `i` is independent of `i`'s report, accepting iff bid exceeds that
   threshold is DSIC.
