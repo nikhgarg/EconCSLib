@@ -8,6 +8,8 @@ Last updated: 2026-05-16
 - Finite admissions decompositions are proved in `MainTheorems.lean`.
 - Definition 1 now has a concrete `(Y, X)` access-action object with `Y ≥ X`
   feasibility and the optional-reporting/report-required regimes encoded.
+  Binary reporting and taking subgames now bridge `lg21Equilibrium` best
+  responses to the no-profitable-deviation predicates used by Lemma 4.1.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
   the shared conditional-resampling API.
 - The shared Bayesian Gaussian estimator algebra is proved:
@@ -94,9 +96,10 @@ Last updated: 2026-05-16
    all-report/all-take from the paper's "if not all, then finite cutoff" and
    lower-tail-mean premises; for Gaussian Bayesian threshold reporting, the
    reporting cutoff is now produced directly by the affine threshold lemma, and
-   explicit lower-tail taking thresholds are supported.  The remaining
-   strategic bridge is to derive these threshold/no-deviation facts from the
-   concrete equilibrium predicate and close the endpoint.
+   explicit lower-tail taking thresholds are supported.  The no-deviation facts
+   now follow from binary subgame equilibria.  The remaining strategic bridge is
+   to map the full source equilibrium to those binary subgames and threshold
+   shapes, then close the endpoint.
 4. Continue instantiating the law-level Proposition 4.2 and Proposition 4.3
    cores with the paper's concrete Bayesian posterior laws.  The conditional
    posterior-score mean-gap and signal-precision scale-gap wrappers are now

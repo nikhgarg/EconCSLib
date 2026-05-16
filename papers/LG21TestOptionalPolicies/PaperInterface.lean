@@ -21,6 +21,34 @@ abbrev paperEquilibrium {StudentInfo Action : Type*}
     (E : LG21EquilibriumData StudentInfo Action) : Prop :=
   lg21Equilibrium E
 
+/--
+Definition 1 bridge: in the binary reporting subgame, equilibrium implies the
+no-profitable-withholding condition used by Lemma 4.1.
+-/
+theorem paper_interface_no_profitable_withholding_of_reporting_equilibrium
+    {reports : ℝ → Prop} [DecidablePred reports]
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    (hEq :
+      paperEquilibrium
+        (lg21ReportingEquilibriumData
+          reports reportedEstimate noReportEstimate)) :
+    lg21NoProfitableWithholdingDeviation
+      reports reportedEstimate noReportEstimate :=
+  lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium hEq
+
+/--
+Definition 1 bridge: in the binary test-taking subgame, equilibrium implies
+the no-profitable-test-taking condition used by Lemma 4.1.
+-/
+theorem paper_interface_no_profitable_test_taking_of_taking_equilibrium
+    {takes : ℝ → Prop} [DecidablePred takes]
+    {testBenefitProb : ℝ → ℝ}
+    (hEq :
+      paperEquilibrium
+        (lg21TestTakingEquilibriumData takes testBenefitProb)) :
+    lg21NoProfitableTestTakingDeviation takes testBenefitProb :=
+  lg21NoProfitableTestTakingDeviation_of_taking_equilibrium hEq
+
 /-- Definition 1 action object for students with test access: `(Y, X)`. -/
 abbrev paperAccessAction : Type :=
   LG21AccessAction

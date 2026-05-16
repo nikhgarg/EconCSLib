@@ -1368,6 +1368,60 @@ def lg21Equilibrium {StudentInfo Action : Type*}
       E.estimationConsistent
 
 /--
+Binary reporting subgame used to connect Definition 1-style best responses to
+the no-profitable-withholding predicate in Lemma 4.1.
+-/
+def lg21ReportingEquilibriumData
+    (reports : ℝ → Prop) [DecidablePred reports]
+    (reportedEstimate : ℝ → ℝ) (noReportEstimate : ℝ) :
+    LG21EquilibriumData ℝ Bool where
+  actionFeasible := fun _score _report => True
+  chosenAction := fun score => if reports score then true else false
+  payoff := fun score report =>
+    if report = true then reportedEstimate score else noReportEstimate
+  estimationConsistent := True
+
+theorem lg21NoProfitableWithholdingDeviation_of_reporting_equilibrium
+    {reports : ℝ → Prop} [DecidablePred reports]
+    {reportedEstimate : ℝ → ℝ} {noReportEstimate : ℝ}
+    (hEq :
+      lg21Equilibrium
+        (lg21ReportingEquilibriumData
+          reports reportedEstimate noReportEstimate)) :
+    lg21NoProfitableWithholdingDeviation
+      reports reportedEstimate noReportEstimate := by
+  intro score hnreport
+  have hbest := hEq.2.1 score true trivial
+  dsimp [lg21ReportingEquilibriumData] at hbest
+  simpa [hnreport] using hbest
+
+/--
+Binary test-taking subgame used to connect Definition 1-style best responses
+to the no-profitable-test-taking predicate in Lemma 4.1.
+-/
+def lg21TestTakingEquilibriumData
+    (takes : ℝ → Prop) [DecidablePred takes]
+    (testBenefitProb : ℝ → ℝ) :
+    LG21EquilibriumData ℝ Bool where
+  actionFeasible := fun _skill _take => True
+  chosenAction := fun skill => if takes skill then true else false
+  payoff := fun skill take =>
+    if take = true then testBenefitProb skill else (1 / 2 : ℝ)
+  estimationConsistent := True
+
+theorem lg21NoProfitableTestTakingDeviation_of_taking_equilibrium
+    {takes : ℝ → Prop} [DecidablePred takes]
+    {testBenefitProb : ℝ → ℝ}
+    (hEq :
+      lg21Equilibrium
+        (lg21TestTakingEquilibriumData takes testBenefitProb)) :
+    lg21NoProfitableTestTakingDeviation takes testBenefitProb := by
+  intro skill hntake
+  have hbest := hEq.2.1 skill true trivial
+  dsimp [lg21TestTakingEquilibriumData] at hbest
+  simpa [hntake] using hbest
+
+/--
 Source-facing policy surface for Definitions 2--5.  The fields expose exactly
 the estimate distributions whose equality the paper's fairness definitions
 compare, quantified over every equilibrium in the surface.
