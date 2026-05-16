@@ -216,6 +216,11 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   full-policy ordering, while an eventual comparison of full-minus-sub upper
   tails can require a separate test-free slope ordering; keep that extra
   premise explicit unless it is actually derived from the raw model. Use
+  direction-specific wrappers for high-skill comparative statics: if the theorem
+  statement, surrounding narrative, and appendix proof disagree about whether
+  a gap is larger before or after a policy change, prove both algebraic
+  directions under the corresponding delta inequality and document the source
+  mismatch before choosing a preferred paper-facing endpoint. Use
   `StandardGaussianCDFAPI.mixtureTailMass_antitone_threshold` and
   `StandardGaussianCDFAPI.MixtureThresholdCertificate` for source equations
   where a common admission cutoff realizes a finite group-mixture capacity.
