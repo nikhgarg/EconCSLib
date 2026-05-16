@@ -38,15 +38,21 @@ singleStateTripPayment_completeThresholdPolicy_tendsto_zero
 singleStateTripTime_completeThresholdPolicy_tendsto_zero
 paper_theorem1_single_state_threshold_best_response_measurable_of_compact_upperSemicontinuity
 paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuous_objective
+continuousAt_setIntegral_strictThresholdPolicy_of_boundary_measure_zero
+continuousAt_setIntegral_completeThresholdPolicy_of_boundary_measure_zero
+continuousOn_theorem1_cutoff_objective_of_boundary_measure_zero
+paper_theorem1_single_state_threshold_best_response_measurable_of_no_boundary_mass
 ```
 
 The remaining general Theorem 1 work is now exactly the source Step 3 compact
 upper-semicontinuity work: prove compact upper-semicontinuity of the
 strict/complete cutoff objective from the paper's continuity/distribution
-assumptions.  Lean now proves the high-reward band/gap dichotomy internally,
-derives the negative-cutoff left tail from nonnegative on-trip rates, and
-derives the high-cutoff right tail from antitone threshold-set convergence plus
-accept-all payment/time integrability.
+assumptions in the atom-at-threshold case.  Lean now proves the high-reward
+band/gap dichotomy internally, derives the negative-cutoff left tail from
+nonnegative on-trip rates, derives the high-cutoff right tail from antitone
+threshold-set convergence plus accept-all payment/time integrability, and
+closes the dominated-convergence compact-continuity route when every threshold
+boundary has zero measure.
 Proposition 3.1 and the single-state multiplicative-pricing corollary are
 closed for the actual renewal reward on measurable feasible policies.
 

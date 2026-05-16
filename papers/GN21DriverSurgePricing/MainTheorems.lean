@@ -1384,6 +1384,323 @@ theorem iInter_completeThresholdPolicy_eq_empty
   · intro hτ
     exact False.elim hτ
 
+/--
+For a fixed trip length away from the threshold boundary, strict-threshold
+membership is locally constant as the cutoff varies.
+-/
+theorem continuousAt_strictThresholdPolicy_indicator_of_not_boundary
+    (w : PricingFunction) (f : TripLength → ℝ) (τ c0 : ℝ)
+    (hnot_boundary : τ ∉ thresholdBoundaryPolicy w c0) :
+    ContinuousAt
+      (fun c : ℝ => (strictThresholdPolicy w c).indicator f τ) c0 := by
+  by_cases hτ_pos : 0 < τ
+  · have hrate_ne : w τ / τ ≠ c0 := by
+      intro hrate_eq
+      exact hnot_boundary ⟨hτ_pos, hrate_eq⟩
+    rcases lt_or_gt_of_ne hrate_ne with hrate_lt | hc0_lt
+    · exact (continuousAt_const (x := c0) (y := (0 : ℝ))).congr_of_eventuallyEq
+        (by
+          filter_upwards [isOpen_Ioi.mem_nhds hrate_lt] with c hc
+          have hc_gt : w τ / τ < c := by simpa using hc
+          simp [strictThresholdPolicy, hτ_pos, not_lt_of_ge (le_of_lt hc_gt)])
+    · exact (continuousAt_const (x := c0) (y := f τ)).congr_of_eventuallyEq
+        (by
+          filter_upwards [isOpen_Iio.mem_nhds hc0_lt] with c hc
+          have hc_lt : c < w τ / τ := by simpa using hc
+          simp [strictThresholdPolicy, hτ_pos, hc_lt])
+  · exact (continuousAt_const (x := c0) (y := (0 : ℝ))).congr_of_eventuallyEq
+      (by
+        filter_upwards with c
+        simp [strictThresholdPolicy, hτ_pos])
+
+/--
+For a fixed trip length away from the threshold boundary, complete-threshold
+membership is locally constant as the cutoff varies.
+-/
+theorem continuousAt_completeThresholdPolicy_indicator_of_not_boundary
+    (w : PricingFunction) (f : TripLength → ℝ) (τ c0 : ℝ)
+    (hnot_boundary : τ ∉ thresholdBoundaryPolicy w c0) :
+    ContinuousAt
+      (fun c : ℝ => (completeThresholdPolicy w c).indicator f τ) c0 := by
+  by_cases hτ_pos : 0 < τ
+  · have hrate_ne : w τ / τ ≠ c0 := by
+      intro hrate_eq
+      exact hnot_boundary ⟨hτ_pos, hrate_eq⟩
+    rcases lt_or_gt_of_ne hrate_ne with hrate_lt | hc0_lt
+    · exact (continuousAt_const (x := c0) (y := (0 : ℝ))).congr_of_eventuallyEq
+        (by
+          filter_upwards [isOpen_Ioi.mem_nhds hrate_lt] with c hc
+          have hc_gt : w τ / τ < c := by simpa using hc
+          simp [completeThresholdPolicy, hτ_pos, not_le_of_gt hc_gt])
+    · exact (continuousAt_const (x := c0) (y := f τ)).congr_of_eventuallyEq
+        (by
+          filter_upwards [isOpen_Iio.mem_nhds hc0_lt] with c hc
+          have hc_lt : c < w τ / τ := by simpa using hc
+          simp [completeThresholdPolicy, hτ_pos, le_of_lt hc_lt])
+  · exact (continuousAt_const (x := c0) (y := (0 : ℝ))).congr_of_eventuallyEq
+      (by
+        filter_upwards with c
+        simp [completeThresholdPolicy, hτ_pos])
+
+/-- Strict-threshold set integrals are continuous at cutoffs with zero boundary mass. -/
+theorem continuousAt_setIntegral_strictThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (f : TripLength → ℝ)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hf_integrable_acceptAll : IntegrableOn f acceptAllPolicy μ)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ => ∫ τ in strictThresholdPolicy w c, f τ ∂μ) c0 := by
+  have hbound_integrable :
+      Integrable (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖) μ :=
+    (hf_integrable_acceptAll.integrable_indicator
+      measurableSet_acceptAllPolicy).norm
+  have hF_meas :
+      ∀ᶠ c in 𝓝 c0,
+        AEStronglyMeasurable
+          (fun τ : TripLength => (strictThresholdPolicy w c).indicator f τ) μ := by
+    filter_upwards with c
+    exact
+      ((hf_integrable_acceptAll.mono_set
+          (strictThresholdPolicy_subset_acceptAll w c)).integrable_indicator
+        (measurableSet_strictThresholdPolicy w c hrate_measurable)).aestronglyMeasurable
+  have h_bound :
+      ∀ᶠ c in 𝓝 c0,
+        ∀ᵐ τ : TripLength ∂μ,
+          ‖(strictThresholdPolicy w c).indicator f τ‖ ≤
+            ‖acceptAllPolicy.indicator f τ‖ := by
+    filter_upwards with c
+    exact ae_of_all μ (fun τ =>
+      norm_indicator_le_of_subset (strictThresholdPolicy_subset_acceptAll w c) f τ)
+  have h_cont :
+      ∀ᵐ τ : TripLength ∂μ,
+        ContinuousAt
+          (fun c : ℝ => (strictThresholdPolicy w c).indicator f τ) c0 :=
+    (measure_eq_zero_iff_ae_notMem.1 hboundary_zero).mono
+      (fun τ hτ =>
+        continuousAt_strictThresholdPolicy_indicator_of_not_boundary
+          w f τ c0 hτ)
+  have hindicator_cont :
+      ContinuousAt
+        (fun c : ℝ =>
+          ∫ τ, (strictThresholdPolicy w c).indicator f τ ∂μ) c0 :=
+    continuousAt_of_dominated hF_meas h_bound hbound_integrable h_cont
+  convert hindicator_cont using 1
+  ext c
+  exact (integral_indicator
+    (measurableSet_strictThresholdPolicy w c hrate_measurable)).symm
+
+/-- Complete-threshold set integrals are continuous at cutoffs with zero boundary mass. -/
+theorem continuousAt_setIntegral_completeThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (f : TripLength → ℝ)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hf_integrable_acceptAll : IntegrableOn f acceptAllPolicy μ)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ => ∫ τ in completeThresholdPolicy w c, f τ ∂μ) c0 := by
+  have hbound_integrable :
+      Integrable (fun τ : TripLength => ‖acceptAllPolicy.indicator f τ‖) μ :=
+    (hf_integrable_acceptAll.integrable_indicator
+      measurableSet_acceptAllPolicy).norm
+  have hF_meas :
+      ∀ᶠ c in 𝓝 c0,
+        AEStronglyMeasurable
+          (fun τ : TripLength => (completeThresholdPolicy w c).indicator f τ) μ := by
+    filter_upwards with c
+    exact
+      ((hf_integrable_acceptAll.mono_set
+          (completeThresholdPolicy_subset_acceptAll w c)).integrable_indicator
+        (measurableSet_completeThresholdPolicy w c hrate_measurable)).aestronglyMeasurable
+  have h_bound :
+      ∀ᶠ c in 𝓝 c0,
+        ∀ᵐ τ : TripLength ∂μ,
+          ‖(completeThresholdPolicy w c).indicator f τ‖ ≤
+            ‖acceptAllPolicy.indicator f τ‖ := by
+    filter_upwards with c
+    exact ae_of_all μ (fun τ =>
+      norm_indicator_le_of_subset (completeThresholdPolicy_subset_acceptAll w c) f τ)
+  have h_cont :
+      ∀ᵐ τ : TripLength ∂μ,
+        ContinuousAt
+          (fun c : ℝ => (completeThresholdPolicy w c).indicator f τ) c0 :=
+    (measure_eq_zero_iff_ae_notMem.1 hboundary_zero).mono
+      (fun τ hτ =>
+        continuousAt_completeThresholdPolicy_indicator_of_not_boundary
+          w f τ c0 hτ)
+  have hindicator_cont :
+      ContinuousAt
+        (fun c : ℝ =>
+          ∫ τ, (completeThresholdPolicy w c).indicator f τ ∂μ) c0 :=
+    continuousAt_of_dominated hF_meas h_bound hbound_integrable h_cont
+  convert hindicator_cont using 1
+  ext c
+  exact (integral_indicator
+    (measurableSet_completeThresholdPolicy w c hrate_measurable)).symm
+
+/-- Expected payment of strict thresholds is continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_singleStateTripPayment_strictThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ => singleStateTripPayment μ w (strictThresholdPolicy w c)) c0 := by
+  simpa [singleStateTripPayment] using
+    continuousAt_setIntegral_strictThresholdPolicy_of_boundary_measure_zero
+      μ w w c0 hrate_measurable hw_integrable_acceptAll hboundary_zero
+
+/-- Expected trip time of strict thresholds is continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_singleStateTripTime_strictThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ => singleStateTripTime μ (strictThresholdPolicy w c)) c0 := by
+  simpa [singleStateTripTime] using
+    continuousAt_setIntegral_strictThresholdPolicy_of_boundary_measure_zero
+      μ w (fun τ : TripLength => τ) c0 hrate_measurable
+      htime_integrable_acceptAll hboundary_zero
+
+/-- Expected payment of complete thresholds is continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_singleStateTripPayment_completeThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ => singleStateTripPayment μ w (completeThresholdPolicy w c)) c0 := by
+  simpa [singleStateTripPayment] using
+    continuousAt_setIntegral_completeThresholdPolicy_of_boundary_measure_zero
+      μ w w c0 hrate_measurable hw_integrable_acceptAll hboundary_zero
+
+/-- Expected trip time of complete thresholds is continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_singleStateTripTime_completeThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (w : PricingFunction) (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ => singleStateTripTime μ (completeThresholdPolicy w c)) c0 := by
+  simpa [singleStateTripTime] using
+    continuousAt_setIntegral_completeThresholdPolicy_of_boundary_measure_zero
+      μ w (fun τ : TripLength => τ) c0 hrate_measurable
+      htime_integrable_acceptAll hboundary_zero
+
+/-- Strict-threshold renewal rewards are continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_singleStateRenewalReward_strictThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ =>
+        singleStateRenewalReward μ arrivalRate w (strictThresholdPolicy w c)) c0 := by
+  have hpayment_cont :=
+    continuousAt_singleStateTripPayment_strictThresholdPolicy_of_boundary_measure_zero
+      μ w c0 hrate_measurable hw_integrable_acceptAll hboundary_zero
+  have htime_cont :=
+    continuousAt_singleStateTripTime_strictThresholdPolicy_of_boundary_measure_zero
+      μ w c0 hrate_measurable htime_integrable_acceptAll hboundary_zero
+  have htime_nonneg :
+      0 ≤ singleStateTripTime μ (strictThresholdPolicy w c0) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (strictThresholdPolicy w c0)
+      (measurableSet_strictThresholdPolicy w c0 hrate_measurable)
+      (strictThresholdPolicy_subset_acceptAll w c0)
+  unfold singleStateRenewalReward
+  refine (continuousAt_const.mul hpayment_cont).div
+    (continuousAt_const.add (continuousAt_const.mul htime_cont)) ?_
+  exact ne_of_gt (by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg])
+
+/-- Complete-threshold renewal rewards are continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_singleStateRenewalReward_completeThresholdPolicy_of_boundary_measure_zero
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ =>
+        singleStateRenewalReward μ arrivalRate w (completeThresholdPolicy w c)) c0 := by
+  have hpayment_cont :=
+    continuousAt_singleStateTripPayment_completeThresholdPolicy_of_boundary_measure_zero
+      μ w c0 hrate_measurable hw_integrable_acceptAll hboundary_zero
+  have htime_cont :=
+    continuousAt_singleStateTripTime_completeThresholdPolicy_of_boundary_measure_zero
+      μ w c0 hrate_measurable htime_integrable_acceptAll hboundary_zero
+  have htime_nonneg :
+      0 ≤ singleStateTripTime μ (completeThresholdPolicy w c0) :=
+    singleStateTripTime_nonneg_of_subset_acceptAll μ
+      (completeThresholdPolicy w c0)
+      (measurableSet_completeThresholdPolicy w c0 hrate_measurable)
+      (completeThresholdPolicy_subset_acceptAll w c0)
+  unfold singleStateRenewalReward
+  refine (continuousAt_const.mul hpayment_cont).div
+    (continuousAt_const.add (continuousAt_const.mul htime_cont)) ?_
+  exact ne_of_gt (by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg])
+
+/-- The strict/complete cutoff objective is continuous at zero-boundary-mass cutoffs. -/
+theorem continuousAt_theorem1_cutoff_objective_of_boundary_measure_zero
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (c0 : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hboundary_zero : μ (thresholdBoundaryPolicy w c0) = 0) :
+    ContinuousAt
+      (fun c : ℝ =>
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c))) c0 := by
+  exact
+    (continuousAt_singleStateRenewalReward_strictThresholdPolicy_of_boundary_measure_zero
+      μ arrivalRate w c0 hrate_measurable hw_integrable_acceptAll
+      htime_integrable_acceptAll hlambda hboundary_zero).max
+    (continuousAt_singleStateRenewalReward_completeThresholdPolicy_of_boundary_measure_zero
+      μ arrivalRate w c0 hrate_measurable hw_integrable_acceptAll
+      htime_integrable_acceptAll hlambda hboundary_zero)
+
+/-- The strict/complete cutoff objective is compact-continuous when every boundary has zero mass. -/
+theorem continuousOn_theorem1_cutoff_objective_of_boundary_measure_zero
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (C : ℝ)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hboundary_zero : ∀ c : ℝ, μ (thresholdBoundaryPolicy w c) = 0) :
+    ContinuousOn
+      (fun c : ℝ =>
+        max
+          (singleStateRenewalReward μ arrivalRate w
+            (strictThresholdPolicy w c))
+          (singleStateRenewalReward μ arrivalRate w
+            (completeThresholdPolicy w c)))
+      (Set.Icc 0 C) := by
+  intro c _hc
+  exact
+    (continuousAt_theorem1_cutoff_objective_of_boundary_measure_zero
+      μ arrivalRate w c hrate_measurable hw_integrable_acceptAll
+      htime_integrable_acceptAll hlambda (hboundary_zero c)).continuousWithinAt
+
 /-- Expected payment of strict thresholds vanishes in the high-cutoff tail. -/
 theorem singleStateTripPayment_strictThresholdPolicy_tendsto_zero
     (μ : Measure TripLength) (w : PricingFunction)
@@ -5334,6 +5651,39 @@ theorem paper_theorem1_single_state_threshold_best_response_measurable_of_compac
       hpayment_acceptAll_pos
       (fun C hC =>
         (hobjective_continuous_all C hC).upperSemicontinuousOn)
+
+/--
+Theorem 1 measurable best-response endpoint under a no-boundary-mass
+regularity condition for the on-trip rate.  Under this condition, dominated
+convergence proves compact continuity of the strict/complete cutoff objective;
+the rest of Theorem 1 is then discharged by the compiled Step 1, Step 2,
+band/gap, and tail arguments.
+-/
+theorem paper_theorem1_single_state_threshold_best_response_measurable_of_no_boundary_mass
+    (μ : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun τ : TripLength => w τ / τ))
+    (hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ)
+    (hboundary_zero : ∀ c : ℝ, μ (thresholdBoundaryPolicy w c) = 0)
+    (hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy μ)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μ)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment μ w acceptAllPolicy) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ σ : TripPolicy,
+      thresholdRatePolicy w c σ ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward μ arrivalRate w) σ := by
+  exact
+    paper_theorem1_single_state_threshold_best_response_measurable_of_compact_continuous_objective
+      μ arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hpayment_acceptAll_pos
+      (fun C _hC =>
+        continuousOn_theorem1_cutoff_objective_of_boundary_measure_zero
+          μ arrivalRate w C hrate_measurable hw_integrable_acceptAll
+          htime_integrable_acceptAll hlambda hboundary_zero)
 
 /--
 Theorem 1, conditional source-facing wrapper: given the continuous
