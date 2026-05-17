@@ -95,8 +95,15 @@ cache is `source.txt`.
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless_of_exact_shapes`,
   `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceData`,
   `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData`,
+  `GN21Theorem3ExactOneThresholdBranchByPolicyFormFixedTransferSourceData.to_surge_cross_source_data`,
+  `GN21Theorem3ExactOneThresholdBranchByPolicyFormFixedTransferSourceExistenceData.to_surge_cross_source_data`,
+  `Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchByPolicyFormFixedTransferSourceAssumptions.to_surge_cross_source_assumptions`,
+  `Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchByPolicyFormFixedTransferExistenceSourceAssumptions.to_surge_cross_source_assumptions`,
   and the paper-facing wrappers ending at
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions`.
+  The older exact by-policy-form fixed-transfer boundary therefore entails the
+  weaker aggregate-cross boundary; future source proofs should not duplicate
+  both sets of endpoint fields.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
@@ -1344,6 +1351,11 @@ The existence-style wrapper
 `paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_existence_source_assumptions`
 derives the replacement data internally from optimum existence and exact
 branch selectors.
+This exact boundary should not be derived directly from ordinary
+fixed-response Lemma 5 output: the fixed-response source data give a.e.
+policy-form representatives, not exact raw selectors for `ρ i`.  Use the
+exact route only after an explicit normalization step, or stay with the
+fixed-response/a.e. route.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

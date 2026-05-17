@@ -376,6 +376,8 @@ current-bounds endpoint interface:
   GN21Theorem3ExactOneThresholdBranchFixedTransferSourceData
   GN21Theorem3ExactOneThresholdBranchByPolicyFormFixedTransferSourceData
   GN21Theorem3ExactOneThresholdBranchByPolicyFormFixedTransferSourceExistenceData
+  GN21Theorem3ExactOneThresholdBranchByPolicyFormFixedTransferSourceData.to_surge_cross_source_data
+  GN21Theorem3ExactOneThresholdBranchByPolicyFormFixedTransferSourceExistenceData.to_surge_cross_source_data
   GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_one_threshold_branch_fixed_transfer_source
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_selection_unless_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_fixed_transfer_source_assumptions
@@ -392,6 +394,8 @@ current-bounds endpoint interface:
   paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_selection_unless_source_assumptions
   Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceAssumptions
   Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferExistenceSourceAssumptions
+  Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchByPolicyFormFixedTransferSourceAssumptions.to_surge_cross_source_assumptions
+  Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchByPolicyFormFixedTransferExistenceSourceAssumptions.to_surge_cross_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
@@ -403,7 +407,17 @@ reject-short endpoint for the same policy, so source proofs with exact
 one-threshold normalization do not have to manufacture separate middle
 endpoint data.  The fixed-transfer variant is the preferred boundary after
 Theorem 3 prices have been constructed: it asks only for non-surge reject-long
-and surge reject-short local endpoint packages plus their fixed reward-rate
+and surge reject-short exact branch selectors, and any older exact
+by-policy-form source package now forgets to this aggregate-cross boundary.
+
+Do not derive the exact normalized branch source data from ordinary
+fixed-response source data without an explicit normalization step.  The
+fixed-response route gives Lemma 5 a.e. policy-form representatives; it does
+not prove exact raw ray selectors for the unmodified current policy `ρ i`.
+Use the fixed-response a.e. route for those obligations, or first formalize
+the policy replacement/normalization that changes the current policy to the
+representative.
+It also asks for the corresponding local endpoint packages plus their fixed reward-rate
 accounting plus all-optimal Lemma 5 replacement data, then expands them to the
 exact current-bounds selector and the paper-facing Theorem 3 IC and
 AE-unique conclusions.
