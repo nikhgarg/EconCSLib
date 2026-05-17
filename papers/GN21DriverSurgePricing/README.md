@@ -1224,6 +1224,12 @@ normalized to the exact representative, or keep the broader by-policy-form
 middle-cutoff boundary.  In this exact branch route Lean derives the
 conditional non-surge accepted-middle gap internally from the exact
 positive-cutoff reject-long shape.
+The current-bounds endpoint layer has the same exact-branch selector via
+`Theorem4MeasurableEndpointCurrentBoundsExactOneThresholdSelectionUnlessCertificate`
+and
+`Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_exact_one_threshold_selection_unless`,
+which reroute middle syntax through the exact non-surge reject-long or surge
+reject-short endpoint for the same policy.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

@@ -265,6 +265,18 @@ non-surge accepted-middle gap field is not a source obligation in this exact
 route: Lean derives it from the exact positive-cutoff reject-long shape via
 `acceptsMiddleTrips_gap_of_rejectsLongTrips_of_cutoff_pos`.
 
+The same exact-branch routing is also available one layer earlier at the
+current-bounds endpoint interface:
+
+  Theorem4MeasurableEndpointCurrentBoundsExactOneThresholdSelectionUnlessCertificate
+  Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_exact_one_threshold_selection_unless
+
+This adapter routes non-surge accepted-middle syntax through the exact
+reject-long endpoint and surge reject-middle syntax through the exact
+reject-short endpoint for the same policy, so source proofs with exact
+one-threshold normalization do not have to manufacture separate middle
+endpoint data.
+
 
 Meaning of r1_current
 ---------------------
