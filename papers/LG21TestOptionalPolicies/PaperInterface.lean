@@ -6988,6 +6988,49 @@ theorem paper_interface_theorem3_1_section3_report_required_strategic_withholdin
     S C
 
 /--
+Short paper-facing Theorem 3.1 PMF alias, optional-reporting regime.  In the
+hidden-access Section 3 setting, each equilibrium-indexed PMF certificate gives
+all-take, some-withhold, threshold-reporting, and failure of latent-skill,
+observable, and demographic fairness.
+-/
+theorem paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf
+    {Skill Base Test Estimate Equilibrium : Type*}
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (C : ∀ e, LG21OptionalReportingStrategicWithholdingCertificate (S e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        (C e).all_take ∧ (C e).some_access_students_do_not_report ∧
+          (C e).reporting_threshold ∧
+            ¬ lg21SourceLatentSkillFair (S e) ∧
+              ¬ lg21SourceObservablyFair (S e) ∧
+                ¬ lg21SourceDemographicallyFair (S e) :=
+  paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_certificates
+    S C
+
+/--
+Short paper-facing Theorem 3.1 PMF alias, report-required regime.  In the
+hidden-access Section 3 setting, each equilibrium-indexed PMF certificate gives
+some no-take/no-report behavior, threshold-taking, and failure of latent-skill,
+observable, and demographic fairness.
+-/
+theorem paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf
+    {Skill Base Test Estimate Equilibrium : Type*}
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (C : ∀ e, LG21ReportRequiredStrategicWithholdingCertificate (S e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        (C e).some_access_students_do_not_take ∧ (C e).taking_threshold ∧
+          ¬ lg21SourceLatentSkillFair (S e) ∧
+            ¬ lg21SourceObservablyFair (S e) ∧
+              ¬ lg21SourceDemographicallyFair (S e) :=
+  paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_certificates
+    S C
+
+/--
 Paper-facing Theorem 3.1 Section 3 optional-reporting endpoint for every
 equilibrium from continuous-law certificates.
 -/

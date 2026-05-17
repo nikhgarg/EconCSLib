@@ -86,6 +86,14 @@ abbrev audit_theorem3_1_section3_optional_reporting :=
 abbrev audit_theorem3_1_section3_report_required :=
   @paper_interface_theorem3_1_section3_report_required_strategic_withholding
 
+/-- Audit endpoint for Theorem 3.1, optional-reporting Section 3 PMF branch. -/
+abbrev audit_theorem3_1_section3_optional_reporting_pmf :=
+  @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf
+
+/-- Audit endpoint for Theorem 3.1, report-required Section 3 PMF branch. -/
+abbrev audit_theorem3_1_section3_report_required_pmf :=
+  @paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf
+
 /-- Audit endpoint for Theorem 3.2, optional-reporting fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_optional_reporting_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility
