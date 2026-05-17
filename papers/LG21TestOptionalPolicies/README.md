@@ -180,6 +180,14 @@ cache is kept as `source.txt` for named-statement audits.
   These endpoints make the paper hypothesis "the school does not know access
   status" a theorem conjunct before returning fairness-implies-test-blankness
   or the equivalent absence of concrete base/test relevance witnesses.
+- Theorem 3.2 now also has PMF and continuous-law iff wrappers that combine
+  the fairness-impossibility certificate with the Definition 5-to-Definition 3
+  bridge.  Under the standard source identities that observable access uses
+  the displayed full-feature law and no-access uses the base-only law,
+  `paper_interface_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only`
+  and its continuous-law analogue state that latent-or-observable fairness is
+  equivalent to test-blankness.  The observable-only and Section 3 hidden-access
+  variants expose the same equivalence for audit callers.
 - The event-share case split now has a share-language bridge:
   `paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass`
   proves that a finite event share is positive exactly when the event contains

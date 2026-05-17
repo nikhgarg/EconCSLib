@@ -290,6 +290,30 @@ abbrev audit_theorem3_2_section3_report_required_zero_share_no_test_relevance :=
 abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_no_test_relevance :=
   @paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share
 
+/-- Audit endpoint for the PMF Theorem 3.2 fairness/test-blank iff bridge. -/
+abbrev audit_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only
+
+/-- Audit endpoint for the PMF Theorem 3.2 observable-fair/test-blank iff bridge. -/
+abbrev audit_theorem3_2_observable_fair_iff_test_blank_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_observable_fair_iff_test_blank_of_full_feature_base_only
+
+/-- Audit endpoint for the Section 3 PMF Theorem 3.2 fairness/test-blank iff bridge. -/
+abbrev audit_theorem3_2_section3_fairness_iff_test_blank_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_section3_fairness_iff_test_blank_of_full_feature_base_only
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 fairness/test-blank iff bridge. -/
+abbrev audit_theorem3_2_law_fairness_iff_test_blank_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_law_fairness_iff_test_blank_of_full_feature_base_only
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 observable-fair/test-blank iff bridge. -/
+abbrev audit_theorem3_2_law_observable_fair_iff_test_blank_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_law_observable_fair_iff_test_blank_of_full_feature_base_only
+
+/-- Audit endpoint for the Section 3 continuous-law Theorem 3.2 fairness/test-blank iff bridge. -/
+abbrev audit_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only
+
 /-- Audit endpoint for Lemma 4.1, observed-access source strategy-proofness. -/
 abbrev audit_lemma4_1_observed_access_strategy_proofness :=
   @paper_interface_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models

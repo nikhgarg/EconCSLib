@@ -12535,6 +12535,69 @@ theorem paper_interface_theorem3_2_no_test_relevance_of_fairness
   paper_theorem3_2_no_test_relevance_of_fairness C hfair
 
 /--
+Theorem 3.2 iff form: under the source implication and the ordinary
+full-feature/base-only observable-surface identities, satisfying either
+latent-skill or observable fairness is equivalent to test-blankness.
+-/
+theorem paper_interface_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        S.fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        S.baseOnlyEstimate e base) :
+    (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C testOf hAccess hNoAccess
+
+/--
+Theorem 3.2 observable-fairness iff form under the same source-surface
+identities.
+-/
+theorem paper_interface_theorem3_2_observable_fair_iff_test_blank_of_full_feature_base_only
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        S.fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        S.baseOnlyEstimate e base) :
+    lg21SourceObservablyFair S ↔ lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only
+    C testOf hAccess hNoAccess
+
+/--
+Theorem 3.2 Section 3 iff form, bundling the hidden-access information-set
+hypothesis with the fairness/test-blank equivalence.
+-/
+theorem paper_interface_theorem3_2_section3_fairness_iff_test_blank_of_full_feature_base_only
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        S.fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        S.baseOnlyEstimate e base) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C testOf hAccess hNoAccess
+
+/--
 Theorem 3.2 contrapositive core: under the source implication, a concrete
 test-relevance witness rules out latent-skill or observable fairness.
 -/
@@ -12575,6 +12638,66 @@ theorem paper_interface_theorem3_2_section3_law_fairness_impossibility
       (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
         lg21SourceLawTestBlank S) :=
   paper_theorem3_2_section3_law_fairness_impossibility_of_certificate C
+
+/--
+Theorem 3.2 continuous-law iff form under full-feature/base-only observable-law
+identities.
+-/
+theorem paper_interface_theorem3_2_law_fairness_iff_test_blank_of_full_feature_base_only
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessLaw e base =
+        S.fullFeatureLaw e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base =
+        S.baseOnlyLaw e base) :
+    (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C testOf hAccess hNoAccess
+
+/--
+Theorem 3.2 continuous-law observable-fairness iff form.
+-/
+theorem paper_interface_theorem3_2_law_observable_fair_iff_test_blank_of_full_feature_base_only
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessLaw e base =
+        S.fullFeatureLaw e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base =
+        S.baseOnlyLaw e base) :
+    lg21SourceLawObservablyFair S ↔ lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only
+    C testOf hAccess hNoAccess
+
+/--
+Theorem 3.2 Section 3 continuous-law iff form with hidden access bundled.
+-/
+theorem paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessLaw e base =
+        S.fullFeatureLaw e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base =
+        S.baseOnlyLaw e base) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+        lg21SourceLawTestBlank S) :=
+  paper_theorem3_2_section3_law_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C testOf hAccess hNoAccess
 
 /--
 Theorem 3.2 continuous-law latent-skill branch reduction: once latent-skill

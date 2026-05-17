@@ -264,7 +264,14 @@ Last updated: 2026-05-16
   branch, "test-blank policies meet observable fairness trivially", is now
   exposed by `lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly`
   and the continuous-law analogue; both keep the necessary source-surface
-  identities explicit.
+  identities explicit.  Combining those bridges with the
+  fairness-impossibility certificates now gives PMF and continuous-law iff
+  endpoints:
+  `paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_full_feature_base_only`,
+  `paper_theorem3_2_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only`,
+  and the corresponding law and Section 3 wrappers.  These state the paper's
+  "only way" reading directly whenever the observable surface is the ordinary
+  full-feature/base-only one.
   These case-split endpoints also have Section 3 hidden-access wrappers,
   removing the earlier global positive-share assumption from the source-facing
   theorem route.  The fully concrete optional posterior-payoff and report-required
