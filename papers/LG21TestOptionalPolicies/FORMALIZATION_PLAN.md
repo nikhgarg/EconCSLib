@@ -658,7 +658,13 @@ Last updated: 2026-05-16
    `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility`
    and
    `paper_interface_theorem3_2_section3_report_required_fairness_impossibility`
-   are the final audit targets.  This finite
+   are the final implication audit targets.  The matching short no-relevance
+   aliases
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance`
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance`
+   expose the contrapositive paper reading directly from the same case-split
+   concrete surfaces.  This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
