@@ -187,7 +187,9 @@ cache is `source.txt`.
   and
   `Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData.surge_current_mass_pos`,
   so the bracket adapter no longer needs to pass through the noncomputable
-  ordinary-source conversion.
+  ordinary-source conversion; the exact bracket constructor
+  `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`
+  now uses the direct bracket non-surge mass projection too.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint

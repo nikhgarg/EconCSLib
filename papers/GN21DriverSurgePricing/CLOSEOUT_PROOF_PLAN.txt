@@ -211,6 +211,10 @@ Use these direct mass-separated adapters whenever the endpoint proof already
 has GN21 fixed-response source records.  Do not route through the older
 allowed-policy-form mass constructor unless the proof genuinely has only
 ordinary allowed policy forms and no GN21 fixed-response source data.
+The exact bracket branch constructor
+`GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`
+also stays bracket-level for its non-surge mass premise; do not reintroduce a
+`forms.to_source_data` detour for that purpose.
 
 The exact one-threshold source route now has direct constructors that apply
 this internally:
