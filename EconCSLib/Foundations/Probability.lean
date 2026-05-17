@@ -2,6 +2,7 @@ import EconCSLib.Foundations.Probability.Admissions
 import EconCSLib.Foundations.Probability.BivariateGaussian
 import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.Conditional
+import EconCSLib.Foundations.Probability.Exponential
 import EconCSLib.Foundations.Probability.FairCoin
 import EconCSLib.Foundations.Probability.FiniteExpectation
 import EconCSLib.Foundations.Probability.FiniteLabel
