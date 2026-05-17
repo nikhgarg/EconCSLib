@@ -1078,6 +1078,12 @@ and
 `lemma5_strictlyDecreasing_gap_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context`,
 so surge increasing and non-surge decreasing endpoint calculus can now
 contradict dynamic measurable optimality without a separate one-state bridge.
+The remaining local Lemma 5 shapes have the same dynamic bridge:
+`lemma5_strictQuasiConvex_three_interval_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context`
+and
+`lemma5_strictQuasiConcave_two_interval_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context`.
+Use these for the three-interval quasi-convex and two-interval
+quasi-concave endpoint exclusions in the full Theorem 4 branch proof.
 The non-surge accept-middle endpoint also has a local reroute:
 `rejectsLongTrips_of_acceptsMiddleTrips_of_lo_nonpos` and
 `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form_middle_reroute`
