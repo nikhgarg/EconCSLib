@@ -61,6 +61,8 @@ and
 - Paper-facing Lean: `PaperInterface.lean` exposes the compact statement
   surface. `PostPaperAudit.lean` imports it and gives source-numbered aliases
   for the named definitions and theorem endpoints.
+- Pickup note: `START_HERE_NEXT_AGENT.md` records the latest clean boundary,
+  validation commands, and next useful proof seams.
 - README: every named paper item has a status row. The Section 3 rows are
   marked `conditional`; Section 4 and resampling rows are marked `formalized`.
 - DAG: Theorem 3.1 and Theorem 3.2 are `dag_conditional`; the source-model,

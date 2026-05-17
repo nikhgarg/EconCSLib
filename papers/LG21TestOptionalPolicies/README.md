@@ -21,6 +21,8 @@ cache is kept as `source.txt` for named-statement audits.
 - Importable source-numbered audit ledger:
   `LG21TestOptionalPolicies/PostPaperAudit.lean`
 - Live proof plan: `LG21TestOptionalPolicies/FORMALIZATION_PLAN.md`
+- Pickup note for the next session:
+  `LG21TestOptionalPolicies/START_HERE_NEXT_AGENT.md`
 - Validation report: `FINAL_VALIDATION_REPORT.md`
 
 ## Dependency DAG
