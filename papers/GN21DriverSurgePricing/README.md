@@ -90,6 +90,13 @@ cache is `source.txt`.
   `GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
   and the policy-form, one-threshold, and bracket compiled wrappers, ending at
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cross_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
+  The exact normalized one-threshold fixed-transfer route now has the same
+  aggregate-cross source boundary through
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless_of_exact_shapes`,
+  `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceData`,
+  `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData`,
+  and the paper-facing wrappers ending at
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions`.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
