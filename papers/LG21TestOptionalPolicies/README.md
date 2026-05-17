@@ -217,6 +217,17 @@ cache is kept as `source.txt` for named-statement audits.
   positive-share surfaces now have Section 3 fairness/test-blank and
   fairness/no-relevance iff wrappers under the named full-feature/base-only
   observable-identity certificate.
+- The source-shaped PMF and continuous-law witness routes now also have direct
+  Section 3 wrappers:
+  `paper_interface_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_evidence`,
+  `paper_interface_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence`,
+  `paper_interface_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_evidence`,
+  and
+  `paper_interface_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence`.
+  These audit the non-certificate route itself: latent-to-observable mixing
+  plus the source witness's best-response, mixture-cancellation, and payoff
+  obligations imply the paper's hidden-access fairness-to-test-blank statement
+  and its no-relevance form.
 - Theorem 3.2 now also has PMF and continuous-law iff wrappers that combine
   the fairness-impossibility certificate with the Definition 5-to-Definition 3
   bridge.  Under the standard source identities that observable access uses

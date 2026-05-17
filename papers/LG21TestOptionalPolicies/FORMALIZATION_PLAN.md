@@ -877,6 +877,15 @@ Last updated: 2026-05-16
    `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium`,
    and
    `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium`.
+   The more abstract source-witness route now also has direct Section 3
+   implication/no-relevance aliases for both PMF and continuous-law surfaces:
+   `paper_interface_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_evidence`,
+   `paper_interface_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence`,
+   `paper_interface_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_evidence`,
+   and
+   `paper_interface_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence`.
+   Use these when the intended statement should cite the source-shaped witness
+   obligations directly rather than routing through a compact certificate.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,

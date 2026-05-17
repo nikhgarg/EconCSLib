@@ -48,7 +48,13 @@ The companion aliases
 and
 `audit_theorem3_2_report_required_mapped_actor_full_support_exists_distinct`
 state the strongest mapped-actor routes using existential distinct-test
-witnesses rather than explicit selected tests.
+witnesses rather than explicit selected tests.  The non-certificate
+source-witness route is also audited directly by
+`audit_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_evidence`,
+`audit_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence`,
+`audit_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_evidence`,
+and
+`audit_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence`.
 
 ## Cross-Artifact Checks
 

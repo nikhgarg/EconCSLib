@@ -13711,6 +13711,57 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_mixture_and_source_
     skillGivenBase hObsAccess hObsNoAccess W
 
 /--
+Theorem 3.2 Section 3 endpoint from the source-shaped PMF witness, bundling
+the hidden-access information-set hypothesis with fairness implying
+test-blankness.
+-/
+theorem paper_interface_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_evidence
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_witness
+    skillGivenBase hObsAccess hObsNoAccess W
+
+/--
+Theorem 3.2 Section 3 no-relevance form from the source-shaped PMF witness.
+-/
+theorem paper_interface_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (W : LG21ObservableFairTestBlankSourceWitness S)
+    (hfair : lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_section3_no_test_relevance_of_mixture_and_source_witness
+    skillGivenBase hObsAccess hObsNoAccess W hfair
+
+/--
 Theorem 3.2 implication form for routes that prove the stronger
 contradiction-style no-fairness statement.
 -/
@@ -13762,6 +13813,42 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_impl
       lg21SourceLawTestBlank S :=
   paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness
     hlatent_to_observable W
+
+/--
+Theorem 3.2 Section 3 abstract-law endpoint from the source-shaped witness.
+-/
+theorem paper_interface_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_evidence
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+        lg21SourceLawTestBlank S) :=
+  paper_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_witness
+    hlatent_to_observable W
+
+/--
+Theorem 3.2 Section 3 abstract-law no-relevance form from the source-shaped
+witness.
+-/
+theorem paper_interface_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S)
+    (hfair :
+      lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_witness
+    hlatent_to_observable W hfair
 
 /--
 Theorem 3.2 law-level implication form for routes that prove the stronger
