@@ -61141,6 +61141,171 @@ structure Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnle
             μ arrival m z switch12 switch21 ρ
 
 /--
+Existence-based version of the AE-facing hnot-aware statewise-improvement
+data.  It omits accept-all optimality; the `all_measurable_shape_replacements`
+field already contains an optimum, and positive-rejected-mass strict
+improvements derive accept-all optimality afterward.
+-/
+structure Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessExistenceCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ) where
+  all_measurable_shape_replacements :
+    Theorem4AllMeasurableOptimalShapeReplacementDerivationCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 0)) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 0)) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 1)) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      (hnot : ¬ acceptsAllTrips (ρ 1)) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+
+/--
+The existence-based shape-replacement certificate supplies the measured
+aggregate existence certificate by routing through the Lemma 5 shape cases.
+-/
+noncomputable def Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessExistenceCertificate.to_rejected_mass_existence_certificate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessExistenceCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate
+      μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21) where
+  exists_optimal := C.all_measurable_shape_replacements.exists_optimal
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    let D :=
+      theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        C.all_measurable_shape_replacements
+    have hnot : ¬ acceptsAllTrips (ρ 0) :=
+      not_acceptsAllTrips_of_rejected_mass_pos (μ 0) hpos
+    rcases D.only_policy_forms ρ hρ with
+      ⟨⟨nshape, hnallowed, hnform⟩, _⟩
+    have hshape : theorem4NonsurgeShape (ρ 0) :=
+      theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform
+    rcases theorem4NonsurgeShape_cases_of_not_acceptsAll hshape hnot with
+      hlong | hmiddle
+    · rcases hlong with ⟨t, ht⟩
+      rcases C.nonsurge_reject_long_improvement ρ hρ hnot hpos t ht with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+    · rcases hmiddle with ⟨lo, hi, hmid⟩
+      rcases C.nonsurge_accept_middle_improvement ρ hρ hnot hpos lo hi hmid with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+  surge_strict_aggregate_improvement_of_rejected_mass_pos := by
+    intro ρ hρ hpos
+    let D :=
+      theorem4MeasurableShapeDerivationCertificate_of_all_measurable_shape_replacements
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        C.all_measurable_shape_replacements
+    have hnot : ¬ acceptsAllTrips (ρ 1) :=
+      not_acceptsAllTrips_of_rejected_mass_pos (μ 1) hpos
+    rcases D.only_policy_forms ρ hρ with
+      ⟨_, ⟨sshape, hsallowed, hsform⟩⟩
+    have hshape : theorem4SurgeShape (ρ 1) :=
+      theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform
+    rcases theorem4SurgeShape_cases_of_not_acceptsAll hshape hnot with
+      hshort | hmiddle
+    · rcases hshort with ⟨t, ht⟩
+      rcases C.surge_reject_short_improvement ρ hρ hnot hpos t ht with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+    · rcases hmiddle with ⟨lo, hi, hmid⟩
+      rcases C.surge_reject_middle_improvement ρ hρ hnot hpos lo hi hmid with
+        ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+      refine ⟨τ, hτ_feasible, Hcur, ?_, ?_⟩
+      · simpa [replaceDynamicPolicyState] using Hrep
+      · simpa [gn21MeasuredAggregateDynamicStateReward,
+          replaceDynamicPolicyState] using hagg
+
+/--
+The existence-based shape-replacement certificate derives the older
+accept-all-optimality shape-replacement certificate.
+-/
+noncomputable def Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessExistenceCertificate.to_accept_all_certificate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessExistenceCertificate
+        μ arrival m z switch12 switch21) :
+    Theorem4MeasurableShapeReplacementStatewiseRejectedMassImprovementUnlessCertificate
+      μ arrival m z switch12 switch21 where
+  accept_all_optimal :=
+    (paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements_from_existence_certificate
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      C.to_rejected_mass_existence_certificate).1
+  all_measurable_shape_replacements := C.all_measurable_shape_replacements
+  nonsurge_reject_long_improvement := C.nonsurge_reject_long_improvement
+  nonsurge_accept_middle_improvement := C.nonsurge_accept_middle_improvement
+  surge_reject_short_improvement := C.surge_reject_short_improvement
+  surge_reject_middle_improvement := C.surge_reject_middle_improvement
+
+/--
 AE-facing shape/statewise data instantiate the measured aggregate
 positive-rejected-mass strict-local certificate.
 -/
