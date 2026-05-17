@@ -596,6 +596,8 @@ cache is `source.txt`.
   The fixed-transfer local endpoint feed into that AE layer is also compiled as
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate`,
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteAELocalEndpointCertificate.to_shape_replacement_rejected_mass_improvements_of_shape_replacements`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate.to_by_policy_form_ae_local_endpoint`,
   and
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_ae_local_endpoint`;
   this is the Lean bridge corresponding to the paper's equality-up-to-null-sets
@@ -607,6 +609,8 @@ cache is `source.txt`.
   `Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions`,
+  `GN21Theorem3MiddleRerouteLightAEEqSourceData`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_source_assumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions`.
   The first four declarations are the direct measure-theoretic endpoint
@@ -614,9 +618,11 @@ cache is `source.txt`.
   selection certificate without first packaging exact all-measurable Lemma 5
   replacement data.  The later wrappers use source-data records
   `GN21Theorem3MiddleRerouteAEPolicyFormSourceData` and
+  `GN21Theorem3MiddleRerouteLightAEEqSourceData` or
   `GN21Theorem3MiddleRerouteAEEqSourceData` so the proof can separately supply
   Lemma 5 replacement data, accept-all optimality, and the local fixed-state
-  endpoint package.  The stronger exact middle-reroute source boundaries now
+  endpoint package; prefer the light Eq source data for AE uniqueness because it
+  does not ask for the exact-route all-branch surge middle-gap fact.  The stronger exact middle-reroute source boundaries now
   feed this AE route directly through
   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae`,
