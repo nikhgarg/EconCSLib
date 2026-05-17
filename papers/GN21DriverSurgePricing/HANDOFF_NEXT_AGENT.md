@@ -299,6 +299,9 @@ For all optima at once, use
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
 `.to_fixed_response_policy_form_data` method to build
 `Theorem4AllMeasurableFixedResponsePolicyFormData`.
+For Theorem 3, `GN21Theorem3FixedResponsePolicyFormSourceData.of_gn21_source_data`
+packages that all-optima GN21 data together with accept-all optimality and the
+four endpoint-improvement cases.
 The measured marginal-response measurability/integrability obligations now
 have direct lemmas:
 `measurable_gn21MeasuredLeftMarginalResponseAtCurrent`,

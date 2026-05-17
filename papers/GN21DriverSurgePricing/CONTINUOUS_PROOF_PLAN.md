@@ -214,6 +214,10 @@ For all optima at once, package the statewise assumptions as
 `.to_fixed_response_policy_form_data`; this produces
 `Theorem4AllMeasurableFixedResponsePolicyFormData` for the Theorem 4/Theorem 3
 routes above.
+For Theorem 3, use
+`GN21Theorem3FixedResponsePolicyFormSourceData.of_gn21_source_data` to turn
+that all-optima GN21 package plus the four endpoint-improvement cases into the
+source-data object consumed by the fixed-response policy-form Theorem 3 route.
 Measured-response regularity is now compiled as
 `measurable_gn21MeasuredLeftMarginalResponseAtCurrent`,
 `measurable_gn21MeasuredRightMarginalResponseAtCurrent`,

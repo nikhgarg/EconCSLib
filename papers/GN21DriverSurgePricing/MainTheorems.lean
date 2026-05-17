@@ -81364,6 +81364,81 @@ structure GN21Theorem3FixedResponsePolicyFormSourceData
             μ arrival m z switch12 switch21 ρ
 
 /--
+Construct Theorem 3 fixed-response policy-form source data from the GN21
+all-optima measured fixed-response source package.
+-/
+def GN21Theorem3FixedResponsePolicyFormSourceData.of_gn21_source_data
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData μ arrival
+        switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+    (accept_all_optimal :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy)
+    (nonsurge_reject_long_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 0) →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (nonsurge_accept_middle_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 0) →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (surge_reject_short_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 1) →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (surge_reject_middle_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 1) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    GN21Theorem3FixedResponsePolicyFormSourceData
+      μ arrival switch12 switch21 m z where
+  forms := forms.to_fixed_response_policy_form_data
+  accept_all_optimal := accept_all_optimal
+  nonsurge_reject_long_improvement := nonsurge_reject_long_improvement
+  nonsurge_accept_middle_improvement := nonsurge_accept_middle_improvement
+  surge_reject_short_improvement := surge_reject_short_improvement
+  surge_reject_middle_improvement := surge_reject_middle_improvement
+
+/--
 Fixed-response policy-form endpoint data for the constructed
 positive-parameter prices instantiate the positive-rejected-mass strict-local
 boundary used by Theorem 3.
