@@ -283,12 +283,17 @@ all-middle `SurgeCutoffCrossField` boundary:
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions_via_ordered
   Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_ordered_surge_cutoff_cross_field_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_branch_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+  GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_bracket_ordered_surge_cutoff_cross_field_source
+  Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_bracket_ordered_surge_cutoff_cross_field_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
 
 The source obligation for surge reject-middle is now exactly:
 provide `Q_current * hi <= T_current * q(hi)` only under
 `rejectsMiddleTrips lo hi`, `lo <= hi`, and `0 < hi`.  Exact one-threshold
 branch data feed this route directly, using the previously compiled ordered
-projection; no duplicate all-middle scalar inequality should be introduced.
+projection, and bracket exact branch data now preserve the Lemma 6 sign-bracket
+source record while feeding the same ordered route.  No duplicate all-middle
+scalar inequality should be introduced.
 If an older proof already supplies the stronger all-middle scalar inequality,
 use the `_via_ordered` adapters above instead of following the old all-middle
 wrapper; this keeps the source boundary aligned with the paper's ordered-gap

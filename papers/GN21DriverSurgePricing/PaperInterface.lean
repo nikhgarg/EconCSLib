@@ -99,7 +99,26 @@ theorem theorem1_single_state_threshold_best_response_measurable
 Theorem 3 source-facing measured structured-pricing endpoint on the current
 paper proof route.  Lemma 6 is supplied at the sign-bracket level; the
 remaining source fields are the Lemma 9/10 branch inequalities plus the
-fixed-response reward-rate identifications.
+fixed-response reward-rate identifications, with the surge middle-cutoff
+field required only on ordered gaps.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_ordered_cross_fields
+    (mu : Fin 2 → Measure TripLength)
+    [NoAtoms (mu 0)] [NoAtoms (mu 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Compatibility interface for the older all-middle cross-field source boundary;
+internally it is consumed through the ordered route above.
 -/
 theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_cross_fields
     (mu : Fin 2 → Measure TripLength)
@@ -112,7 +131,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_cross_fields
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
       mu arrival R1 R2 switch12 switch21 := by
   exact
-    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions_via_ordered
       mu arrival rho R1 R2 switch12 switch21 A
 
 end PaperInterface
