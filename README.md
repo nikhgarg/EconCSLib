@@ -59,7 +59,7 @@ paper folder contains the detailed theorem ledger and caveats.
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Verified with OCR caveat | Stable-marriage and college-quota statements are formalized; source scan quality is documented. |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | Bayesian rating-system results are formalized with a documented boundary correction. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Main endpoints formalized | Core AdWords endpoints are closed with documented proof-structure deviations. |
-| [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Partially formalized | Finite decomposition and resampling cores are closed; strategic/Gaussian instantiations remain open. |
+| [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Conditional source endpoints formalized | Section 3 strategic-withholding and fairness-impossibility endpoints now expose hidden access over concrete Gaussian/affine law surfaces; observed-access and resampling sections are closed. |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Partially formalized | Continuous IC/reward and CTMC algebra are in place; process-level bridges remain open. |
 
 For more detail, use:
