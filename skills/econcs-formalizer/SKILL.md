@@ -37,6 +37,15 @@ validation commands, shared-worktree caveats, the exact active proof seam,
 strongest reusable endpoints, and what not to work on next. Link it from the
 paper README, audit/final-validation report, and front repository status so a
 future agent has one obvious startup path.
+For a week-scale pause after a long proof push, also create a dated
+paper-local handoff such as `HANDOFF_YYYY-MM-DD_WEEK_PAUSE.md` and make
+`START_HERE_NEXT_AGENT.md` point to it first. That week-pause note should name
+the exact current theorem seam, the strongest bridge theorem to use next, the
+closed layers future agents must not redo, the files intentionally touched, and
+the validation command set. Keep it concise enough to be read before opening
+large theorem files.
+If the latest green declarations are support endpoints rather than closed
+paper results, say so explicitly in the handoff and do not over-mark the DAG.
 If a paper is being paused for a stronger future model, say that explicitly in
 the paper README/handoff and in the front repository status entries. Name the
 three or fewer exact proof seams that remain and the strongest public wrapper or
@@ -680,6 +689,11 @@ search.
   can be made green quickly, finish that wrapper, and run the targeted module
   plus paper-root builds. Only then update the README/DAG/skill handoff. Do not
   start a fresh hard proof branch just before documenting a handoff.
+- Before committing a pause handoff, expose any newly closed internal theorem
+  through the paper-facing wrapper layer if it is part of the source proof
+  audit. Otherwise the next agent has to rediscover that the lemma exists
+  internally. Update the paper README/status/DAG from those public wrapper
+  names rather than from private proof-local names.
 
 ### 1.5 Workflow
 

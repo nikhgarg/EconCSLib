@@ -679,6 +679,16 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   Gaussian game data feeding those wrappers. Avoid restating conditions
   (10)--(14) manually; use the established paper-level wrapper and discharge
   its concrete premises.
+- For large theorem wrappers with repeated interval or feasibility premises,
+  add small composition endpoints rather than copying the whole signature into
+  every downstream theorem. If parts (i) and (ii) are interval endpoints and
+  part (iii) follows from positive costs, add one source-shaped theorem that
+  composes those facts and exposes only the remaining model premises.
+- When a generated policy-state or objective table overrides only one school
+  row, expose a fallback-row theorem under the distinct-school hypothesis
+  (`J1 != J2`) immediately. Downstream source-model proofs should state the
+  untouched school's no-deviation or objective premise on the ordinary fallback
+  row, not on the generated override function.
 
 ## Generalized-English Source-History and PBE Lessons
 
