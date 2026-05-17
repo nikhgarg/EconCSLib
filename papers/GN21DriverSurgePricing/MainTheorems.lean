@@ -45007,6 +45007,106 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggre
       hunique⟩
 
 /--
+Existence-based version of the positive-rejected-mass measured aggregate
+certificate.  It records the source data that are actually needed before
+accept-all optimality has been derived: an optimum exists, and every optimum
+with positive rejected feasible mass has a strict feasible aggregate
+improvement.
+-/
+structure Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update ρ 0 τ) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) (ρ 1) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 τ (ρ 1) ∧
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) τ (ρ 1)
+  surge_strict_aggregate_improvement_of_rejected_mass_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+        ∃ τ : TripPolicy,
+          dynamicFeasibleMeasurablePolicy (Function.update ρ 1 τ) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) (ρ 1) ∧
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) τ ∧
+          gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+              (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) τ
+
+/--
+The existence-based certificate derives the older accept-all-optimality
+certificate.  This is the bridge that lets source proofs avoid carrying
+accept-all optimality as an independent assumption.
+-/
+def Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate.to_accept_all_certificate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    (C :
+      Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate
+        μ arrival switch12 switch21 w) :
+    Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementCertificate
+      μ arrival switch12 switch21 w where
+  accept_all_optimal :=
+    (paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements_from_exists
+      μ arrival switch12 switch21 w C.exists_optimal
+      C.nonsurge_strict_aggregate_improvement_of_rejected_mass_pos
+      C.surge_strict_aggregate_improvement_of_rejected_mass_pos).1
+  nonsurge_strict_aggregate_improvement_of_rejected_mass_pos :=
+    C.nonsurge_strict_aggregate_improvement_of_rejected_mass_pos
+  surge_strict_aggregate_improvement_of_rejected_mass_pos :=
+    C.surge_strict_aggregate_improvement_of_rejected_mass_pos
+
+/--
+Paper-facing Theorem 4 conclusion from the existence-based measured aggregate
+positive-rejected-mass certificate.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements_from_existence_certificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (C :
+      Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate
+        μ arrival switch12 switch21 w) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+    μ arrival switch12 switch21 w C.to_accept_all_certificate
+
+/--
 Source current-bounds data plus strict kernel support instantiate the feasible
 measurable strict-local aggregate certificate, using accept-all itself as the
 profitable replacement in the deviating state.
