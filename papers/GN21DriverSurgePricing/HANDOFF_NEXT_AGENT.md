@@ -335,6 +335,13 @@ For all optima at once, use
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
 `.to_fixed_response_policy_form_data` method to build
 `Theorem4AllMeasurableFixedResponsePolicyFormData`.
+If every measurable optimum has non-surge decreasing and surge increasing
+one-threshold source data, use
+`Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.of_one_threshold_structured_forms`
+to package the allowed shapes, or
+`GN21Theorem3FixedResponsePolicyFormSourceData.of_one_threshold_structured_forms`
+to go straight to the Theorem 3 fixed-response source boundary together with
+accept-all optimality and the four endpoint-improvement fields.
 For Theorem 3, `GN21Theorem3FixedResponsePolicyFormSourceData.of_gn21_source_data`
 packages that all-optima GN21 data together with accept-all optimality and the
 four endpoint-improvement cases.

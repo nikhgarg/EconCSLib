@@ -1019,10 +1019,16 @@ and the usual integrability facts, and they return the full state source data
 for the non-surge decreasing and surge increasing branches.
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` packages these
 statewise assumptions for all measurable optima and converts to the
-all-optima fixed-response policy-form boundary.
+all-optima fixed-response policy-form boundary; the constructor
+`Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.of_one_threshold_structured_forms`
+now discharges the allowed-shape wrappers when all optima supply non-surge
+decreasing and surge increasing source data.
 `GN21Theorem3FixedResponsePolicyFormSourceData.of_gn21_source_data` turns that
 package plus accept-all optimality and the four endpoint-improvement cases into
 the fixed-response policy-form Theorem 3 source data.
+`GN21Theorem3FixedResponsePolicyFormSourceData.of_one_threshold_structured_forms`
+is the matching top-level Theorem 3 source constructor for that one-threshold
+route.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
