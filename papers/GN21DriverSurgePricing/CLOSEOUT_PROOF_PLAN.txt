@@ -211,6 +211,9 @@ route
   GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData
   GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.to_fixed_state
   GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_le
+  GN21NonsurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData
+  GN21NonsurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.to_cross
+  GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_cross_policy_form
   gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae
   gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate
@@ -225,7 +228,11 @@ built with
 `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`;
 the surge fixed-state side now similarly asks only for the one-sided
 reject-short/reject-middle complement comparison plus the reward-rate identity,
-not pointwise equality.
+not pointwise equality.  The fixed non-surge side now has an aggregate
+cross-ratio package as well: reject-long needs only the upper cross comparison
+because the lower comparison follows from the reject-long shape, and
+accept-middle can be supplied as the two Lemma 9 cross-ratio inequalities
+instead of a pointwise equality.
 do not try to prove global pointwise equality on the rejected long-trip tail
 unless the source argument genuinely supplies it.
 

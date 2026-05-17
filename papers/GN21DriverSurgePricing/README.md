@@ -1064,6 +1064,10 @@ the one-sided surge fixed-state policy-form package
 `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData`
 with adapter
 `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.to_fixed_state`,
+the aggregate fixed-non-surge cross-ratio package
+`GN21NonsurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData`
+with adapter
+`GN21NonsurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.to_cross`,
 the fixed-state a.e. transfer lemmas
 `gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae` and
 `gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae`, the core
@@ -1080,7 +1084,11 @@ instead of global complement equality.  Strong surge branch-equality data still
 feed this route through
 `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_le`,
 but source proofs no longer need equality when the endpoint theorem consumes
-only the `<=` complement comparison.
+only the `<=` complement comparison.  Strong non-surge branch-equality data
+similarly feed the aggregate fixed-state boundary through
+`GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_cross_policy_form`,
+but the middle-cutoff route itself now asks only for the Lemma 9 cross-ratio
+inequalities and reward-rate identity.
 The state-level adapters
 `gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 and
@@ -1186,9 +1194,10 @@ gives branch-specific Lemma 9/10 inequalities rather than literal pointwise
 equality on every rejected complement.  On the surge fixed-state side the
 compiled boundary now asks only for the one-sided comparison used by the
 fixed-transfer endpoint theorem; on the non-surge fixed-state side the
-reject-long branch already has the analogous upper-comparison constructor,
-while the accept-middle branch is the next equality/one-sidedness point to
-audit.
+compiled boundary now asks for aggregate Lemma 9 cross-ratio inequalities
+rather than pointwise equality, with reject-long reducing to a single upper
+cross-ratio comparison and accept-middle exposing the two aggregate cross
+comparisons directly.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
