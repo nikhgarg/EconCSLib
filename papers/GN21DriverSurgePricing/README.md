@@ -857,8 +857,13 @@ cache is `source.txt`.
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularAllowedPolicyFormsSourceAssumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`;
-  the same regular shape, regular allowed-policy-form, and Theorem 3
-  fixed-transfer boundaries now have AE-uniqueness-returning wrappers
+  the same exact selection, allowed-replacement, supported, regular,
+  regular-shape, regular allowed-policy-form, and Theorem 3 fixed-transfer
+  boundaries now have AE-uniqueness-returning wrappers
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_selection_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_supported_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_shape_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_allowed_policy_forms_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_source_assumptions`,
@@ -894,8 +899,10 @@ cache is `source.txt`.
   `Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_regular_source_assumptions`;
-  it additionally asks for ordinary allowed Lemma 5 replacement data and expands
-  the regular endpoint packages into the supported endpoint route internally.
+  it additionally asks for ordinary allowed Lemma 5 replacement data, expands
+  the regular endpoint packages into the supported endpoint route internally,
+  and now has the AE-unique interface
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_regular`.
   The supported endpoint route remains exposed as
   the five `GN21...SupportedEndpointData` packages,
   `Theorem4MeasurableEndpointCurrentBoundsSupportedSelectionCertificate`,
@@ -905,7 +912,9 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_supported_source_assumptions`;
   it expands ordinary allowed replacement cases plus density-support,
   calculus-backed endpoint data, and short/tail integrability packages into the
-  allowed-replacement current-bounds route internally.  The lightest current
+  allowed-replacement current-bounds route internally, with compact AE-unique
+  interfaces also exposed for the exact selection, allowed-replacement, and
+  supported layers.  The lightest current
   IC-only source boundary is now exposed as
   `Theorem3AcceptAllWeakRewardSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_weak_reward_source_assumptions`,

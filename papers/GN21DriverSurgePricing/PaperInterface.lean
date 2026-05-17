@@ -180,6 +180,76 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the exact endpoint current-bounds selection route: exact endpoint
+selections imply structured measurable IC and the paper's a.e. uniqueness
+convention.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_selection
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_selection_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the source-facing allowed-replacement endpoint-current-bounds
+route.  Lean expands the allowed replacement and endpoint data into exact
+Theorem 4 accept-all uniqueness, then returns a.e. uniqueness.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_allowed_replacement
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the supported endpoint-current-bounds route with density support
+and product-calculus endpoint packages.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_supported
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_supported_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the regular endpoint-current-bounds route with continuous density
+and source Lemma 9/10 current-bounds endpoint packages.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_regular
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the direct measure-theoretic AE endpoint middle-reroute route:
 the endpoint certificate supplies a.e. Lemma 5 shape classification and the
 four local endpoint moves, while Lean derives structured measurable IC and
