@@ -350,6 +350,60 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_r
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the source-data feasible current-bounds route: for each
+constructed price vector, the source supplies only the Lemma 9/10 current-bound
+data and fixed-state reward-rate fields needed by the continuous endpoint
+proof.  Lean derives structured measurable IC and a.e. uniqueness.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the accounting-form feasible current-bounds route: the fixed-state
+fields are supplied as the structured-price accounting equations from Remark 2.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsAccountingSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the reward-rate feasible current-bounds route: the fixed-state
+fields are supplied as measured reward-rate equalities, matching the Lemma 9/10
+source phrasing after fixing the current policy.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsRewardRateSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the direct measure-theoretic AE endpoint middle-reroute route:
 the endpoint certificate supplies a.e. Lemma 5 shape classification and the
 four local endpoint moves, while Lean derives structured measurable IC and

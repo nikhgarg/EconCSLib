@@ -2040,6 +2040,12 @@ statewise rejected-trip measure zero.
 The Theorem 3 source-current-bounds wrapper now threads this conclusion through
 the constructed price parameters as
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions`.
+The same source-current-bounds route is now exposed in the compact
+`PaperInterface` as
+`theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible`,
+with accounting and reward-rate variants
+`theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting` and
+`theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate`.
 The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,
