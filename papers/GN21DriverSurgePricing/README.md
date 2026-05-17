@@ -372,7 +372,14 @@ cache is `source.txt`.
   `arrival_0*(rho*T_1-(T_1-1)) <= Q_1-switch12`.  Conversely,
   `theorem3_scalar_conditions_do_not_imply_arrival_nonsurge_z_le_R2` is a
   compiled counterexample showing that the broad displayed Theorem 3 scalar
-  inequalities alone do not imply the arrival/intercept side condition.
+  inequalities alone do not imply the arrival/intercept side condition.  The
+  local lower-slack bridge is also compiled:
+  `theorem3CurrentNonsurgeReward_le_massAffineSignedEnvelope` proves the
+  current non-surge reward is bounded by the selected mass-affine envelope, and
+  `theorem3CurrentLowerIntervalSlack_of_lower_nonpos_massAffineEnvelope` turns
+  endpoint lower nonpositivity into the exact selected-price Lemma 9 lower
+  slack.  Thus the remaining Lemma 9 work should prove the endpoint sign used
+  by the paper proof, not reprove the reward-rate envelope algebra.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

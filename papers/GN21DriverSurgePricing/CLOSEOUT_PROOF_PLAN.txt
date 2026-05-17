@@ -1004,6 +1004,18 @@ Recommended proof order
    the policy shapes that can actually be optimal under the constructed
    prices, not for arbitrary feasible policies.
 
+   The reward-envelope part of this lower-slack route is now isolated in Lean:
+
+     theorem3CurrentNonsurgeReward_le_massAffineSignedEnvelope
+     theorem3CurrentLowerIntervalSlack_of_lower_nonpos_massAffineEnvelope
+
+   The second theorem proves the exact selected-price lower slack from the
+   endpoint lower-nonpositivity statement plus the compiled mass-affine reward
+   envelope.  Therefore the next proof should focus on the paper's endpoint
+   sign argument for the policy forms that can be optimal under the selected
+   prices; do not duplicate the current reward-rate envelope calculation in
+   the endpoint proof.
+
    The endpoint/allowed-policy pivot now has a compiled non-accept-all
    interface:
 
@@ -1052,10 +1064,13 @@ Recommended proof order
    source-wrapper field; Lean derives `arrival0*z0 <= R2` from it.  The
    compiled counterexample shows the broad feasibility inequalities do not
    imply it by themselves.
-7. Prove the selected-price current lower interval slack, probably using the
-   explicit small-ratio formula for `z_2,m_2` and the signed current reward
-   envelope.  If this fails, the paper needs an explicit uniform lower-bound
-   assumption rather than the old lower-nonpositive claim.
+7. Prove the selected-price current lower interval slack by proving endpoint
+   lower nonpositivity on the policy shapes used by the paper proof, then
+   consume
+   `theorem3CurrentLowerIntervalSlack_of_lower_nonpos_massAffineEnvelope`.
+   If endpoint lower nonpositivity fails for those shapes, the paper needs an
+   explicit uniform lower-bound assumption rather than the old
+   lower-nonpositive claim.
 8. Instantiate the interval source wrapper.
 
 
