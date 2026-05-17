@@ -1261,7 +1261,14 @@ boundaries now feed this route directly through
 and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_exact_one_threshold_bracket_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`;
 Lean derives the all-optimal allowed-replacement field by replacing each
-already-exact reject-long/reject-short optimum with itself.
+already-exact reject-long/reject-short optimum with itself.  A parallel
+by-policy-form endpoint boundary is also compiled:
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless_of_exact_shapes`
+and
+`paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_source_assumptions`
+use the exact selectors to choose the appropriate by-policy-form fixed-state
+branch, so source proofs can provide the broader middle-cutoff endpoint record
+instead of direct fixed-state branch data.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
