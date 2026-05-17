@@ -808,26 +808,23 @@ can push the state reward rate above the target accept-all rate unless the
 proof has already restricted the policy shape.
 
 
-Step 4: prove the current Lemma 9 lower endpoint directly.
+Step 4: do not derive lower-endpoint nonpositivity from Lemma 9 feasibility.
 
-The current frontier asks for:
+The paper's Lemma 9 final feasibility line has now been formalized as the
+positive cross-multiplied interval gap:
+
+  lemma9StructuredFeasibilityGap_eq_source_final_factor
+  lemma9StructuredFeasibilityGap_pos_of_positive_primitives
+
+This proves the displayed lower/upper ratio interval is nonempty from
+primitive signs.  It does not imply
 
   lemma9StructuredLower current_T1 current_Q1 acceptAll_T2 acceptAll_Q2 switch21 <= 0
 
-This replaces one cross-ratio comparison.  The source proof says the Lemma 9
-left endpoint is nonpositive because the final feasibility line has a
-nonpositive left side and a positive right side.  In Lean, prove the
-current-policy version using:
-
-  current T1 >= 1
-  current Q1 > 0
-  acceptAll gap switch21*T2 - Q2 >= 0
-  switch rates positive
-
-If the algebra gets sticky, add a separate scalar lemma for
-lemma9StructuredLower_nonpos_of_current_primitives and prove it by unfolding
-the numerator/denominator definitions.  Keep it parameterized over T1,Q1,T2,Q2
-so it is reusable.
+for arbitrary feasible current non-surge policies.  Use lower-endpoint
+nonpositivity only when a source condition or restricted endpoint shape proves
+it directly; otherwise stay on the endpoint/allowed-policy Theorem 4 route or
+the positive-primitives parameter route.
 
 
 Step 5: prove the remaining upper fixed-state cross-ratio comparison.
