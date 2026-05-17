@@ -1066,6 +1066,12 @@ Use these when a Lemma 5 endpoint-shape result already proves one-state
 measurable nonoptimality; the older strict-improvement bridge remains useful
 when the endpoint proof is still phrased as an explicit improved feasible
 replacement.
+The one-threshold dynamic branch exclusions are exposed as
+`lemma5_strictlyIncreasing_interval_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context`
+and
+`lemma5_strictlyDecreasing_gap_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context`,
+so surge increasing and non-surge decreasing endpoint calculus can now
+contradict dynamic measurable optimality without a separate one-state bridge.
 The source-data constructors
 `GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity` and
 `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity` now derive

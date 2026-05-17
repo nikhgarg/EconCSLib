@@ -148,12 +148,17 @@ threading it through measurable optimality.  The generic dynamic bridge
   not_dynamicMeasurableOptimal_of_state_not_singleStateMeasurableOptimal
   not_dynamicMeasurableOptimal_of_state_eq_not_singleStateMeasurableOptimal
   not_dynamicMeasurableOptimal_of_state_eq_exists_strict_feasible_trip_policy_improvement
+  lemma5_strictlyIncreasing_interval_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context
+  lemma5_strictlyDecreasing_gap_not_dynamicMeasurableOptimal_of_local_endpoint_paths_with_context
 
 now converts a dynamic measurable optimum into the relevant one-state
 measurable optimum and exposes the contrapositive directly.  Use the
 `singleStateMeasurableOptimal` bridge when a Lemma 5 endpoint theorem already
 proves local nonoptimality, and the existential strict-improvement bridge after
 identifying the current state policy with the concrete endpoint-union set.
+For the one-threshold Theorem 3 route, use the two named dynamic Lemma 5
+wrappers directly on the surge strictly-increasing and non-surge
+strictly-decreasing branch exclusions.
 
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
