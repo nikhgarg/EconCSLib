@@ -4224,6 +4224,18 @@ theorem lg21PMFEventShare_pos_of_mass
   simpa using pmfProb_pos_of_mass μ p a₀ hp hmass
 
 /--
+A finite event share is positive exactly when the event contains a
+positive-mass atom.
+-/
+theorem lg21PMFEventShare_pos_iff_exists_pos_mass
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    0 < (lg21PMFEventShare μ p).toReal ↔
+      ∃ a, p a ∧ 0 < (μ a).toReal := by
+  simpa [lg21PMFEventShare_toReal] using
+    (pmfProb_pos_iff_exists_pos_mass μ p)
+
+/--
 A finite PMF event share is strictly below one when the complement contains a
 positive-mass atom.
 -/
@@ -4276,6 +4288,24 @@ theorem lg21PMFEventShareFn_pos_of_mass
   dsimp [lg21PMFEventShareFn]
   exact @lg21PMFEventShare_pos_of_mass Student _ _ (studentLaw e base)
     (event e base) (decEvent e base) student hevent hmass
+
+/--
+Base-indexed finite event shares are positive exactly when the indexed event
+contains a positive-mass atom.
+-/
+theorem lg21PMFEventShareFn_pos_iff_exists_pos_mass
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base)) :
+    ∀ e base,
+      0 < (lg21PMFEventShareFn studentLaw event decEvent e base).toReal ↔
+        ∃ student, event e base student ∧
+          0 < (studentLaw e base student).toReal := by
+  intro e base
+  dsimp [lg21PMFEventShareFn]
+  exact @lg21PMFEventShare_pos_iff_exists_pos_mass Student _ _
+    (studentLaw e base) (event e base) (decEvent e base)
 
 /--
 Base-indexed finite event shares are strictly below one whenever each indexed
@@ -4460,6 +4490,44 @@ theorem lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank
         0 < (studentLaw e base student).toReal
   · exact Or.inl hpositive
   · exact Or.inr (hblank_of_no_positive e base hpositive)
+
+/--
+If every zero-share profile is already test-blank, then the explicit Theorem
+3.2 source-route case split holds.  This is the same bridge as
+`lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank`, but stated
+in the paper's finite event-share language.
+-/
+theorem lg21EventSharePositiveOrBlank_of_zero_event_share_implies_blank
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    {studentLaw : Equilibrium → Base → PMF Student}
+    {event : Equilibrium → Base → Student → Prop}
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    {baseOnlyEstimate : Equilibrium → Base → PMF Estimate}
+    {fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate}
+    (hblank_of_zero_share :
+      ∀ e base,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0 →
+          ∀ test, baseOnlyEstimate e base =
+            fullFeatureEstimate e base test) :
+    lg21EventSharePositiveOrBlank
+      studentLaw event baseOnlyEstimate fullFeatureEstimate := by
+  refine lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank ?_
+  intro e base hno_positive
+  have hnot_share_pos :
+      ¬ 0 < (lg21PMFEventShareFn studentLaw event decEvent e base).toReal := by
+    intro hshare_pos
+    exact hno_positive
+      ((lg21PMFEventShareFn_pos_iff_exists_pos_mass
+        studentLaw event decEvent e base).1 hshare_pos)
+  have hshare_nonneg :
+      0 ≤ (lg21PMFEventShareFn studentLaw event decEvent e base).toReal := by
+    dsimp [lg21PMFEventShareFn]
+    exact pmfProb_nonneg (studentLaw e base) (event e base)
+  have hshare_zero :
+      (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0 :=
+    le_antisymm (le_of_not_gt hnot_share_pos) hshare_nonneg
+  exact hblank_of_zero_share e base hshare_zero
 
 /--
 Concrete PMF policy surface for Theorem 3.2's optional-reporting route: access

@@ -4365,6 +4365,29 @@ theorem paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_
     hblank_of_no_positive
 
 /--
+Theorem 3.2 case-split bridge in finite event-share form: if zero reporter or
+taker share already makes the profile test-blank, then each profile either has
+positive event share or is test-blank.
+-/
+theorem paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    {studentLaw : Equilibrium → Base → PMF Student}
+    {event : Equilibrium → Base → Student → Prop}
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    {baseOnlyEstimate : Equilibrium → Base → PMF Estimate}
+    {fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate}
+    (hblank_of_zero_share :
+      ∀ e base,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0 →
+          ∀ test, baseOnlyEstimate e base =
+            fullFeatureEstimate e base test) :
+    lg21EventSharePositiveOrBlank
+      studentLaw event baseOnlyEstimate fullFeatureEstimate :=
+  lg21EventSharePositiveOrBlank_of_zero_event_share_implies_blank
+    decEvent hblank_of_zero_share
+
+/--
 Paper-facing Theorem 3.2, optional-reporting regime.  If access status is
 hidden and zero-positive-reporter profiles are already test-blank, then
 latent-skill or observable fairness implies test-blankness on the concrete
@@ -7201,6 +7224,17 @@ theorem paper_interface_theorem3_2_pmf_event_share_pos_of_mass
   lg21PMFEventShare_pos_of_mass μ p a₀ hp hmass
 
 /--
+Theorem 3.2 helper: a finite event share is positive exactly when the event
+contains a positive-mass atom.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_pos_iff_exists_pos_mass
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    0 < (paper_interface_theorem3_2_pmf_event_share μ p).toReal ↔
+      ∃ a, p a ∧ 0 < (μ a).toReal :=
+  lg21PMFEventShare_pos_iff_exists_pos_mass μ p
+
+/--
 Theorem 3.1/3.2 helper: a positive-mass atom outside the event makes the finite
 event share strictly below one.
 -/
@@ -7248,6 +7282,23 @@ theorem paper_interface_theorem3_2_pmf_event_share_fn_pos_of_mass
         (paper_interface_theorem3_2_pmf_event_share_fn
           studentLaw event decEvent e base).toReal :=
   lg21PMFEventShareFn_pos_of_mass studentLaw event decEvent hwitness
+
+/--
+Theorem 3.2 helper: a base-indexed finite event share is positive exactly when
+the indexed event contains a positive-mass atom.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base)) :
+    ∀ e base,
+      0 <
+          (paper_interface_theorem3_2_pmf_event_share_fn
+            studentLaw event decEvent e base).toReal ↔
+        ∃ student, event e base student ∧
+          0 < (studentLaw e base student).toReal :=
+  lg21PMFEventShareFn_pos_iff_exists_pos_mass studentLaw event decEvent
 
 /--
 Theorem 3.1/3.2 helper: base-indexed finite event shares are strictly below one

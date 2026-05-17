@@ -180,6 +180,13 @@ cache is kept as `source.txt` for named-statement audits.
   These endpoints make the paper hypothesis "the school does not know access
   status" a theorem conjunct before returning fairness-implies-test-blankness
   or the equivalent absence of concrete base/test relevance witnesses.
+- The event-share case split now has a share-language bridge:
+  `paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass`
+  proves that a finite event share is positive exactly when the event contains
+  a positive-mass student atom, and
+  `paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank`
+  lets Theorem 3.2 callers state the blank branch as "zero reporter/taker
+  share implies blank" rather than in negated existential form.
 - The certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now also have Section 3 hidden-access implication
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2

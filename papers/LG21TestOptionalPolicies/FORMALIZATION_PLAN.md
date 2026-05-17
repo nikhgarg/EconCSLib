@@ -690,7 +690,13 @@ Last updated: 2026-05-16
    optional-reporting and report-required event-or-blank wrappers, plus Section
    3 hidden-access versions, so the route follows the paper proof's split
    between positive reporter/taker share and already-test-blank profiles rather
-   than assuming a global positive share.  The fully concrete optional
+   than assuming a global positive share.  The share-language bridge
+   `paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass`
+   proves that positive finite share is equivalent to a positive-mass event
+   atom, and
+   `paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank`
+   converts a zero-share-implies-blank premise into the event-or-blank split.
+   The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,
    and short `PaperInterface` aliases
