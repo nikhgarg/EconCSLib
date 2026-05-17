@@ -813,6 +813,15 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   record the mismatch in the paper plan/report. Do not repair the formula from
   intuition unless the Lean proof is explicitly proving a corrected theorem and
   the validation report says so.
+- For Gaussian admission formulas, audit whether a displayed CDF argument is
+  written as `(mu - q) / sigma * sqrt(ratio)` or should be
+  `(mu - q) / (sigma * sqrt(ratio))` from the law's scale. If surrounding
+  conditional-density algebra implies the reciprocal standardization, preserve
+  a literal-source definition for audit and introduce a corrected source-algebra
+  definition with comments pointing to the conditioning line. For source-affine
+  cutoff terms, derive the numerator and denominator from the conditional
+  probability before trusting the display; missing precision factors should
+  become explicit corrected wrappers, not hidden assumptions.
 
 ## Lean Patterns
 

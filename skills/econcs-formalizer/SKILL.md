@@ -81,6 +81,13 @@ new lesson names a specific paper, theorem number, counterexample, proof
 recipe, or declaration family, it belongs in a reference file unless it is only
 a one-line routing pointer.
 
+When a displayed formula conflicts with its surrounding derivation, do not
+silently overwrite the paper statement. Keep the literal source formula and the
+derivation-corrected formula as separate named definitions or wrappers, prove
+the corrected bridge from the surrounding source equations when possible, and
+record the discrepancy in the paper handoff/final report. Only mark a
+paper-facing theorem as closed for the exact statement Lean actually proves.
+
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
 library tools. Do not force a detached library project before proving the paper,
@@ -296,9 +303,16 @@ the Lean statements against the paper.
 - When scaffolding a paper (for example through `scripts/new_paper.py`), run
   `python3 scripts/review_dashboard.py --paper <paper-folder> --refresh-cache`
   once so the dashboard snapshot is generated before the first review workflow.
-- After declaration-level edits in `PaperInterface.lean` (especially theorem
-  statement changes), run the paper-local review launcher (`./review-dashboard.sh`)
-  before relying on the trace for those statements.
+- Do not refresh or precheck the review dashboard after every small
+  declaration-level edit. During active proof work, keep moving with Lean
+  builds and source-facing docs; refresh the dashboard at natural review
+  boundaries instead: after a coherent batch of `PaperInterface.lean`
+  statement changes, before a human review session, before final handoff, or
+  before declaring a paper/proof phase complete.
+- If you only added or adjusted a few paper-facing declarations and are leaving
+  a short interim stopping point, it is enough to record the changed
+  declaration names in the README/plan/handoff and defer dashboard refresh to
+  the next review boundary.
 - The launcher checks freshness against the logged trace on startup; if an old
   check is out of date, it warns you and you can immediately re-save checks.
 - It also shows compact paper-source action links (open PDF/text file), so the
@@ -906,6 +920,10 @@ validation pass:
   checks, the launcher surfaces stale warnings so you can refresh only the affected
   items. Use `./review-dashboard.sh --check` to run the precheck step in CI-like,
   non-interactive mode before handoff.
+- For non-final proof loops and short pauses, do not treat dashboard refresh as
+  required validation. A successful focused Lean build plus a precise handoff
+  note is the right stopping boundary; run dashboard refresh/precheck only when
+  the next action is human review, release/finalization, or a broader audit.
 - Confirm every final paper-facing declaration is fully formalized with no
   hidden placeholders; no unresolved `sorry`, scaffold wrappers, or unnamed
   gaps should remain in the claimed result chain.
