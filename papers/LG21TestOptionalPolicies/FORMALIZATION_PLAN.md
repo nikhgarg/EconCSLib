@@ -723,6 +723,14 @@ Last updated: 2026-05-16
    and
    `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share`
    route the contrapositive statements through the same constructed surface.
+   The compact certificate aliases
+   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff`,
+   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff`,
+   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff`,
+   and
+   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff`
+   package the event-or-blank and constructed blank-on-zero-share routes as
+   `LG21FairnessImpossibilityCertificate`s.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,

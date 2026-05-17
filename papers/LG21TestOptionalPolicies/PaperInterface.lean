@@ -3564,6 +3564,20 @@ def paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certifi
     decisionThreshold hEq hthreshold hwitness
 
 /--
+Paper-facing optional-reporting event-or-blank constant-latent route packaged
+as the compact Theorem 3.2 fairness-impossibility certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff :=
+  @paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
+
+/--
+Paper-facing optional-reporting blank-on-zero-share route packaged as the
+compact Theorem 3.2 fairness-impossibility certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff :=
+  @paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff
+
+/--
 Paper-facing Theorem 3.2 Section 3 optional-reporting endpoint on the concrete
 constant-latent event-share surface.
 -/
@@ -5450,6 +5464,20 @@ def paper_interface_theorem3_2_report_required_fairness_impossibility_certificat
     baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
     estimationConsistent referenceTest actorLaw decisionThreshold hEq
     hthreshold hwitness
+
+/--
+Paper-facing report-required event-or-blank constant-latent route packaged as
+the compact Theorem 3.2 fairness-impossibility certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff :=
+  @paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
+
+/--
+Paper-facing report-required blank-on-zero-share route packaged as the compact
+Theorem 3.2 fairness-impossibility certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff :=
+  @paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff
 
 /--
 Paper-facing Theorem 3.2 Section 3 report-required endpoint on the concrete
