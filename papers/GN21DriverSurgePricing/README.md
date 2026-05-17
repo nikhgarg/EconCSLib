@@ -124,7 +124,7 @@ cache is `source.txt`.
   upper cross-ratio field.  The remaining non-surge fixed-state input on this
   exact branch is therefore the fixed reward-rate identity, not a separate
   scalar cross-ratio assumption.
-  The preferred monotonicity-facing versions are weaker:
+  The preferred one-sided upper-comparison versions are weaker:
   `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_upper_transfer`
   and
   `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_upper_transfer`
@@ -137,7 +137,7 @@ cache is `source.txt`.
   and interface theorem
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_transfer`
   expose this exact bracket route directly.
-  The one-sided paper-facing boundary is exposed as
+  The one-sided upper-comparison paper-facing boundary is exposed as
   `Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions`
   and
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_upper_transfer`.

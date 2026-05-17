@@ -888,9 +888,10 @@ weaker complement pointwise comparison:
 on rejected non-surge trips, use the reverse cross-ratio helper instead.  The
 upper-transfer route above consumes the `<=` direction on rejected non-surge
 trips.  Both directions are already available in the
-gn21FixedStateCross_* family.  This comes from the fact that q(τ)/τ is
-decreasing in τ and the rejected complement lies on the appropriate side of
-the current non-surge threshold/shape.
+gn21FixedStateCross_* family.  For a reject-long non-surge shape, monotonicity
+of q(τ)/τ on the rejected complement gives this reverse `>=` direction; do
+not cite reject-long monotonicity for the upper-transfer `<=` route unless an
+additional source equality or upper comparison has been proved.
 
 If the current policy shape is not yet available at this boundary, route
 through the existing Theorem 4 allowed-policy-form endpoint packages rather
