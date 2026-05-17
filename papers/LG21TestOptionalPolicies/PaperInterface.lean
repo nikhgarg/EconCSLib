@@ -5586,6 +5586,78 @@ theorem paper_interface_theorem3_2_report_required_no_test_relevance_of_upper_ta
     hthreshold hwitness hfair
 
 /--
+Paper-facing Theorem 3.2 Section 3 report-required concrete case-split
+endpoint on the constant-latent unit-centered event-share surface.
+-/
+theorem paper_interface_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
+    {Base Test Estimate Student Equilibrium : Type*} [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    (skillGivenBase : Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (takerEvent : Equilibrium → Base → Student → Prop)
+    (decTakerEvent :
+      ∀ e base, DecidablePred (takerEvent e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (actorLaw : Equilibrium → Base → GaussianScaleLaw)
+    (decisionThreshold : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        lg21SourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              ((1 / 2 : ℝ) -
+                    GaussianHazardCertificate.normalUpperTailMean
+                      standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                      (actorLaw e base) (decisionThreshold e base)) +
+                  actor)
+            (estimationConsistent e)))
+    (hthreshold :
+      ∀ e base actor, takeDecision e actor base = true ↔
+        decisionThreshold e base ≤ actor)
+    (hEventOrBlank :
+      ∀ e base,
+        (∃ student, takerEvent e base student ∧
+          0 < (studentLaw e base student).toReal) ∨
+          ∀ test, baseOnlyEstimate e base =
+            fullFeatureEstimate e base test) :
+    let S :=
+      lg21EventShareBinaryMixtureEstimateSurface
+        (Skill := ℝ) (Base := Base) (Test := Test)
+        (Estimate := Estimate) (Student := Student)
+        Equilibrium
+        (fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+              e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          noReporterPMF e base)
+        demographicAccessEstimate demographicNoAccessEstimate studentLaw
+        takerEvent decTakerEvent reporterPMF noReporterPMF
+        baseOnlyEstimate fullFeatureEstimate
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
+    skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
+    studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
+    baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
+    estimationConsistent referenceTest actorLaw decisionThreshold hEq
+    hthreshold hEventOrBlank
+
+/--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed
 Bayesian posterior-threshold reporting gives the paper's all-take conclusion
 and finite score-threshold reporting at every base profile.
