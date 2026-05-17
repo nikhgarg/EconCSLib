@@ -86,6 +86,15 @@ cache is `source.txt`.
   This lets the paper proof keep Lemma 6 at the sign-bracket level while Lean
   derives the duplicated reward-rate fields from the fixed-response source
   records.
+  The normalization side is now sharper: ordinary and bracket fixed-response
+  source records expose `Ri_eq_of_fixed_reward_rate`/`Rj_eq_of_fixed_reward_rate`
+  cancellation lemmas, and both cross-field routes have
+  `of_fixed_reward_rate_fields` constructors.  Source proofs can therefore
+  supply the actual fixed-state earning identities rather than separate local
+  `Ri = R1` and `Rj = R2` assumptions.  The surge middle-cutoff path also has
+  ordered-gap variants that require the upper-cutoff scalar inequality only
+  when `lo <= hi`; inverted middle-rejection representations are handled as
+  empty-complement cases.
   The preferred non-surge endpoint route is now weaker still: the fixed-surge
   side can be supplied directly as the aggregate cross-ratio comparison that
   Lemma 10 consumes.  The compiled bridge is

@@ -238,6 +238,32 @@ reject-long upper cross, non-surge accept-middle lower cross, non-surge
 accept-middle upper cross, `Ri = R1`, and `Rj = R2`.  Do not replace this with
 a general all-policy scalar Lemma 9 package; stay on these paper branch fields.
 
+Update: the `Ri = R1` and `Rj = R2` normalizations no longer need to be
+supplied as primitive source equalities.  Lean now has ordinary and bracket
+`Ri_eq_of_fixed_reward_rate`/`Rj_eq_of_fixed_reward_rate` cancellation lemmas
+plus `of_fixed_reward_rate_fields` constructors for both cross-field source
+routes.  The source-facing obligation is the actual fixed-state earning
+identity
+
+  W_current = R_target * T_current
+
+for the relevant non-surge/surge fixed response.  Positive current time from
+the Lemma 6 source record cancels the equality to identify the local `Ri` or
+`Rj`.
+
+Update: the surge middle-cutoff obligation should be treated as an ordered-gap
+obligation.  The compiled helper
+
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_and_ordered_rejectMiddle_cutoff_bounds
+
+requires the upper-cutoff scalar inequality for reject-middle only when
+`lo <= hi`; if `hi < lo`, the reject-middle representation accepts every
+positive trip and the rejected complement is empty.  Pointwise endpoint data
+also now extract the scalar cutoff checks directly via
+`reject_short_cutoff_bound` and
+`reject_middle_ordered_upper_cutoff_bound`, so do not duplicate endpoint
+pointwise algebra in source proofs.
+
 Important notation warning for this route: `Ri = R1` and `Rj = R2` are not
 free algebraic consequences of the cross-ratio inequalities.  They are the
 paper's local fixed-response reward-rate identifications, so they must come
