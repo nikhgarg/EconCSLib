@@ -106,6 +106,14 @@ abbrev audit_theorem3_1_section3_optional_reporting :=
 abbrev audit_theorem3_1_section3_report_required :=
   @paper_interface_theorem3_1_section3_report_required_strategic_withholding
 
+/-- Audit endpoint for Theorem 3.1, optional-reporting Section 3 finite-event-share branch. -/
+abbrev audit_theorem3_1_section3_optional_reporting_event_share :=
+  @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share
+
+/-- Audit endpoint for Theorem 3.1, report-required Section 3 finite-event-share branch. -/
+abbrev audit_theorem3_1_section3_report_required_event_share :=
+  @paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share
+
 /-- Audit endpoint for Theorem 3.1, optional-reporting Section 3 PMF branch. -/
 abbrev audit_theorem3_1_section3_optional_reporting_pmf :=
   @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf

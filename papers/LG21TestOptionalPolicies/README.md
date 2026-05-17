@@ -142,7 +142,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
   remove the explicit real-valued `accessFraction` and `0 <= C < 1` premises
   from those public endpoints by deriving them from the finite cohort/event
-  representation.
+  representation.  The shorter audit-facing aliases
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share`
+  expose this finite-event-share version without the long implementation
+  suffix.
 - Theorem 3.1 now has Section 3 hidden-access wrappers over both PMF and
   continuous-law certificates, including every-equilibrium certificate-family
   forms.  These endpoints make the paper hypothesis "the school does not know

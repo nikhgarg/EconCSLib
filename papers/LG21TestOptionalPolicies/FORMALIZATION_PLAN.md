@@ -211,7 +211,12 @@ Last updated: 2026-05-16
   and
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`,
   remove the explicit `accessFraction`/`0 <= C < 1` premises from the public
-  Section 3 endpoints.
+  Section 3 endpoints.  The shorter aliases
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share`
+  state the same finite-event-share route without the long implementation
+  suffix.
   These avoid certificate-field indirection by directly returning, for every
   equilibrium index, the optional/report-required strategic-withholding witness
   and failures of all three fairness notions on the concrete Gaussian or
