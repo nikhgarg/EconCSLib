@@ -7,8 +7,9 @@ This file is the compact audit surface for
 *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps*.
 It lists the source-facing definitions and named theorem endpoints in paper
 order.  The re-sampling distributional core is proved; the strategic and
-Gaussian posterior endpoints remain certificate-shaped beyond the closed
-observed-access Lemma 4.1 source-model endpoint.
+Gaussian posterior endpoints expose the concrete Section 3 source surfaces used
+by the proof.  Theorem 3.1 and Theorem 3.2 have short paper-facing aliases, with
+the remaining conditional status documented in `FINAL_VALIDATION_REPORT.md`.
 -/
 
 namespace LG21TestOptionalPolicies

@@ -18,7 +18,10 @@ cache is kept as `source.txt` for named-statement audits.
 
 - `LG21TestOptionalPolicies/MainTheorems.lean`
 - Human-facing theorem ledger: `LG21TestOptionalPolicies/PaperInterface.lean`
+- Importable source-numbered audit ledger:
+  `LG21TestOptionalPolicies/PostPaperAudit.lean`
 - Live proof plan: `LG21TestOptionalPolicies/FORMALIZATION_PLAN.md`
+- Validation report: `FINAL_VALIDATION_REPORT.md`
 
 ## Dependency DAG
 
@@ -27,8 +30,9 @@ cache is kept as `source.txt` for named-statement audits.
 ## Guideline Audit
 
 - Folder contract: satisfied (`.gitignore`, `README.md`, `DependencyDAG.tex`,
-  `MainTheorems.lean`, `PaperInterface.lean`, `FORMALIZATION_PLAN.md`, local
-  PDF, and `source.txt` are present).
+  `MainTheorems.lean`, `PaperInterface.lean`, `PostPaperAudit.lean`,
+  `FORMALIZATION_PLAN.md`, `FINAL_VALIDATION_REPORT.md`, local PDF, and
+  `source.txt` are present).
 - README status vocabulary: updated to use the controlled statuses from
   `docs/STATUS.md`.
 - DAG status vocabulary: updated to use shared `docs/tikz/dag_preamble.tex`
@@ -535,11 +539,11 @@ and 4.3 now both have named source routes through Lemma 4.1's lower-tail
 strategy-proofness bridge and a packaged Gaussian threshold-equilibrium
 certificate. Lemma 4.1's own observed-access source endpoint is now closed, and
 Propositions 4.2--4.3 both have direct wrappers that consume this source action
-endpoint rather than the older packaged certificate. Theorem 3.1/3.2 remain
-open only at the level of choosing the final source-facing theorem statement;
-their strongest current routes derive source witnesses and upper-tail
-impossibility from concrete source equilibria under explicit payoff,
-tie-breaking, threshold, and mixture hypotheses.  In the optional-reporting
+endpoint rather than the older packaged certificate. Theorem 3.1/3.2 now have
+short Section 3 paper-facing aliases; their conditional status is that the
+strongest current routes derive source witnesses and upper-tail impossibility
+from concrete source equilibria under explicit payoff, tie-breaking, threshold,
+and mixture hypotheses.  In the optional-reporting
 continuous upper-tail route, the concrete Gaussian posterior-payoff
 specialization now removes the separate affine-payoff identity and
 tie-at-indifference hypotheses.  In
