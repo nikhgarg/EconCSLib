@@ -901,6 +901,8 @@ Recommended proof order
      paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_slack
      paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack
      theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
+     theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
+     theorem3_scalar_conditions_do_not_imply_arrival_nonsurge_z_le_R2
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_data_assumptions
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackCurrentLowerDataAssumptions
@@ -935,6 +937,18 @@ Recommended proof order
    from the explicit source-side condition `arrival0*z0 <= R2`.  If that bound
    is not implied by the source regime, document it as the exact extra regime
    condition; do not go back to the opaque `0 < R2*T2 - Rmax*(T2 - 1)` field.
+   The bridge
+
+     theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
+
+   now proves `arrival0*z0 <= R2` from the dimensionless scalar inequality
+   `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`.  The warning theorem
+
+     theorem3_scalar_conditions_do_not_imply_arrival_nonsurge_z_le_R2
+
+   compiles the concrete counterexample below, so do not spend time trying to
+   derive this arrival/intercept side condition from the broad scalar Theorem 3
+   inequalities alone.
    A scalar random search found feasible-looking positive-`z0` examples
    satisfying the loose inequalities `C < rho < 1`, `Q1 > switch12`,
    `switch12*T1 > Q1`, and `T2 >= 1` where this zero-ratio numerator is
@@ -1033,7 +1047,9 @@ Recommended proof order
    from the paper's regularity hypotheses, then consume them through the
    middle-reroute source wrappers rather than the older cutoff-only route.
 6. Prove or explicitly source-assume the exposed arrival/intercept bound
-   `arrival0*z0 <= R2`.
+   `arrival0*z0 <= R2`.  The compiled bridge now reduces this to
+   `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`; the compiled counterexample
+   shows the broad feasibility inequalities do not imply it by themselves.
 7. Prove the selected-price current lower interval slack, probably using the
    explicit small-ratio formula for `z_2,m_2` and the signed current reward
    envelope.  If this fails, the paper needs an explicit uniform lower-bound

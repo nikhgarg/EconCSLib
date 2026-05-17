@@ -366,7 +366,13 @@ cache is `source.txt`.
   `theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2` discharges the
   zero-ratio condition when `arrival_0*z_0 <= R2`; the newest source wrapper
   uses that bound directly instead of asking for the opaque zero-ratio
-  numerator.
+  numerator.  The scalar bridge
+  `theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound` proves this
+  side condition from the dimensionless numerator inequality
+  `arrival_0*(rho*T_1-(T_1-1)) <= Q_1-switch12`.  Conversely,
+  `theorem3_scalar_conditions_do_not_imply_arrival_nonsurge_z_le_R2` is a
+  compiled counterexample showing that the broad displayed Theorem 3 scalar
+  inequalities alone do not imply the arrival/intercept side condition.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

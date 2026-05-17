@@ -96,6 +96,22 @@ theorem theorem1_single_state_threshold_best_response_measurable
 /-! ## Structured Dynamic Pricing -/
 
 /--
+Theorem 3 scalar bridge for the mass-affine source boundary: the
+arrival/intercept condition `arrival_0*z_0 <= R2` follows from the
+dimensionless numerator inequality on the constructed non-surge ratio.
+-/
+theorem theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
+    (rho R2 T1 Q1 switch12 arrival0 : ℝ)
+    (hR2_nonneg : 0 ≤ R2)
+    (hden_pos : 0 < Q1 - switch12)
+    (hbound : arrival0 * (rho * T1 - (T1 - 1)) ≤ Q1 - switch12) :
+    arrival0 *
+        (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2) ≤ R2 := by
+  exact
+    GN21DriverSurgePricing.theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
+      rho R2 T1 Q1 switch12 arrival0 hR2_nonneg hden_pos hbound
+
+/--
 Theorem 3 source-facing measured structured-pricing endpoint on the current
 paper proof route.  Lemma 6 is supplied at the sign-bracket level; the
 remaining source fields are the Lemma 9/10 branch inequalities plus the
