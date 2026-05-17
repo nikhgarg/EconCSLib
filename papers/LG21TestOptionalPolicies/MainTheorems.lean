@@ -4389,6 +4389,48 @@ noncomputable def lg21EventShareBinaryMixtureEstimateSurface
     reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate
 
 /--
+Theorem 3.2 source-route case split: at each equilibrium and non-test profile,
+either the reporter/taker event has positive mass, or that profile is already
+test-blank.
+-/
+def lg21EventSharePositiveOrBlank
+    {Base Test Estimate Student Equilibrium : Type*}
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate) : Prop :=
+  ∀ e base,
+    (∃ student, event e base student ∧
+      0 < (studentLaw e base student).toReal) ∨
+      ∀ test, baseOnlyEstimate e base =
+        fullFeatureEstimate e base test
+
+/--
+If every zero-positive-event profile is already test-blank, then the explicit
+Theorem 3.2 source-route case split holds.
+-/
+theorem lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank
+    {Base Test Estimate Student Equilibrium : Type*}
+    {studentLaw : Equilibrium → Base → PMF Student}
+    {event : Equilibrium → Base → Student → Prop}
+    {baseOnlyEstimate : Equilibrium → Base → PMF Estimate}
+    {fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate}
+    (hblank_of_no_positive :
+      ∀ e base,
+        (¬ ∃ student, event e base student ∧
+          0 < (studentLaw e base student).toReal) →
+          ∀ test, baseOnlyEstimate e base =
+            fullFeatureEstimate e base test) :
+    lg21EventSharePositiveOrBlank
+      studentLaw event baseOnlyEstimate fullFeatureEstimate := by
+  intro e base
+  by_cases hpositive :
+      ∃ student, event e base student ∧
+        0 < (studentLaw e base student).toReal
+  · exact Or.inl hpositive
+  · exact Or.inr (hblank_of_no_positive e base hpositive)
+
+/--
 Concrete PMF policy surface for Theorem 3.2's optional-reporting route: access
 students are a binary reporter/no-reporter mixture, no-access students have the
 no-reporter law, the base-only estimate is the point mass at the acting mean,

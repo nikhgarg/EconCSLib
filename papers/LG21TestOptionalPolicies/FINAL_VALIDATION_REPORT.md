@@ -32,7 +32,7 @@ unconditional theorem over every possible estimation policy.
 | Definition 4, demographic fairness | 360 | `audit_definition4_demographically_fair` |
 | Definition 5, test-blank policies | 370 | `audit_definition5_test_blank` |
 | Theorem 3.1, strategic withholding | 424, 829 | `audit_theorem3_1_section3_optional_reporting`, `audit_theorem3_1_section3_report_required`, plus PMF certificate aliases `audit_theorem3_1_section3_optional_reporting_pmf` and `audit_theorem3_1_section3_report_required_pmf` |
-| Theorem 3.2, fairness impossibility | 455, 1614 | `audit_theorem3_2_section3_optional_reporting_fairness_impossibility`, `audit_theorem3_2_section3_report_required_fairness_impossibility` |
+| Theorem 3.2, fairness impossibility | 455, 1614 | `audit_theorem3_2_positive_event_or_blank_bridge`, `audit_theorem3_2_section3_optional_reporting_fairness_impossibility`, `audit_theorem3_2_section3_report_required_fairness_impossibility` |
 | Lemma 4.1, strategy-proofness | 492, 1784 | `audit_lemma4_1_observed_access_strategy_proofness` |
 | Proposition 4.2, latent-skill unfairness | 550, 2318 | `audit_proposition4_2_base_indexed_posterior_surface` |
 | Proposition 4.3, observable/demographic unfairness | 561, 2417 | `audit_proposition4_3_base_mixed_extra_signal_surface` |
@@ -59,7 +59,10 @@ unconditional theorem over every possible estimation policy.
 - Theorem 3.2 is formalized through explicit event-or-blank source surfaces.
   The final aliases state the paper's hidden-access implication and no-relevance
   readings, while the concrete routes expose the positive event-share or
-  already-test-blank case split used by the unraveling proof.
+  already-test-blank case split used by the unraveling proof.  The bridge
+  `paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank`
+  names the convention that a zero-positive-reporter/taker profile is already
+  test-blank, so the final aliases no longer take the raw disjunction directly.
 - The resampling policy is formalized in a finite conditional-kernel form:
   access and no-access estimate laws are both pushforwards of the same
   conditional test-score law, and demographic fairness follows by mixing over
@@ -74,7 +77,9 @@ unconditional theorem over every possible estimation policy.
 - Theorem 3.2 is not yet an unconditional theorem over an arbitrary estimation
   policy. The strongest endpoints are the Section 3 optional/report-required
   aliases over concrete constant-latent event-share surfaces, plus matching
-  no-relevance aliases.
+  no-relevance aliases; they require the named zero-positive-event-implies-blank
+  premise that corresponds to the source proof's "or no one reports/takes,
+  hence test-blank" branch.
 - A stricter skill-dependent conditional-kernel route is optional only if the
   target is broadened beyond the current concrete law surfaces.
 

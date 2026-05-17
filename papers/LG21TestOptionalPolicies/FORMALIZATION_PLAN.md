@@ -218,11 +218,13 @@ Last updated: 2026-05-16
   source-equilibrium routes now have matching Section 3 implication and
   no-relevance wrappers.  The same source-equilibrium layer now has the paper's
   event-or-blank case split: a local positive reporter/taker share gives the
-  unraveling contradiction, while the no-positive-share branch is supplied as a
-  direct test-blankness assumption for that equilibrium/base profile.  These
-  case-split endpoints also have Section 3 hidden-access wrappers, removing the
-  earlier global positive-share assumption from the source-facing theorem
-  route.  The fully concrete optional posterior-payoff and report-required
+  unraveling contradiction, while the no-positive-share branch is supplied by
+  `lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank`, which
+  converts the paper convention "no one reports/takes, hence test-blank" into
+  the direct test-blankness assumption for that equilibrium/base profile.
+  These case-split endpoints also have Section 3 hidden-access wrappers,
+  removing the earlier global positive-share assumption from the source-facing
+  theorem route.  The fully concrete optional posterior-payoff and report-required
   unit-centered routes now factor out their source-equilibrium certificates and
   have Section 3 event-or-blank wrappers, so the positive-share versus
   already-test-blank split is available at the strongest concrete surfaces in

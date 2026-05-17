@@ -4329,11 +4329,32 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance
     decisionThreshold hEq hthreshold hEventOrBlank hfair
 
 /--
+Theorem 3.2 source-route bridge: if every zero-positive-event profile is
+already test-blank, then the paper's positive-event versus blank case split
+holds.
+-/
+theorem paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
+    {Base Test Estimate Student Equilibrium : Type*}
+    {studentLaw : Equilibrium → Base → PMF Student}
+    {event : Equilibrium → Base → Student → Prop}
+    {baseOnlyEstimate : Equilibrium → Base → PMF Estimate}
+    {fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate}
+    (hblank_of_no_positive :
+      ∀ e base,
+        (¬ ∃ student, event e base student ∧
+          0 < (studentLaw e base student).toReal) →
+          ∀ test, baseOnlyEstimate e base =
+            fullFeatureEstimate e base test) :
+    lg21EventSharePositiveOrBlank
+      studentLaw event baseOnlyEstimate fullFeatureEstimate :=
+  lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank
+    hblank_of_no_positive
+
+/--
 Paper-facing Theorem 3.2, optional-reporting regime.  If access status is
-hidden and the source model follows the paper's positive-reporter-share versus
-already-test-blank case split, then latent-skill or observable fairness implies
-test-blankness on the concrete constant-latent posterior-payoff event-share
-surface.
+hidden and zero-positive-reporter profiles are already test-blank, then
+latent-skill or observable fairness implies test-blankness on the concrete
+constant-latent posterior-payoff event-share surface.
 -/
 theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility
     {Feature Skill Base Estimate Student Equilibrium : Type*}
@@ -4374,10 +4395,10 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_impossib
     (hthreshold :
       ∀ e base actor, reportDecision e base actor = true ↔
         decisionThreshold e base ≤ actor)
-    (hEventOrBlank :
+    (hblank_of_no_positive :
       ∀ e base,
-        (∃ student, reporterEvent e base student ∧
-          0 < (studentLaw e base student).toReal) ∨
+        (¬ ∃ student, reporterEvent e base student ∧
+          0 < (studentLaw e base student).toReal) →
           ∀ test, baseOnlyEstimate e base =
             fullFeatureEstimate e base test) :
     let S :=
@@ -4407,12 +4428,14 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_impossib
     demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
     reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate takeDecision
     reportDecision estimationConsistent referenceSkill actorLaw
-    decisionThreshold hEq hthreshold hEventOrBlank
+    decisionThreshold hEq hthreshold
+    (paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
+      hblank_of_no_positive)
 
 /--
 Paper-facing Theorem 3.2, optional-reporting no-relevance form.  In the hidden
-access case-split source model, fairness rules out any concrete base/test
-relevance witness.
+access source model where zero-positive-reporter profiles are already blank,
+fairness rules out any concrete base/test relevance witness.
 -/
 theorem paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance
     {Feature Skill Base Estimate Student Equilibrium : Type*}
@@ -4453,10 +4476,10 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance
     (hthreshold :
       ∀ e base actor, reportDecision e base actor = true ↔
         decisionThreshold e base ≤ actor)
-    (hEventOrBlank :
+    (hblank_of_no_positive :
       ∀ e base,
-        (∃ student, reporterEvent e base student ∧
-          0 < (studentLaw e base student).toReal) ∨
+        (¬ ∃ student, reporterEvent e base student ∧
+          0 < (studentLaw e base student).toReal) →
           ∀ test, baseOnlyEstimate e base =
             fullFeatureEstimate e base test)
     (hfair :
@@ -4489,7 +4512,10 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance
     demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
     reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate takeDecision
     reportDecision estimationConsistent referenceSkill actorLaw
-    decisionThreshold hEq hthreshold hEventOrBlank hfair
+    decisionThreshold hEq hthreshold
+    (paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
+      hblank_of_no_positive)
+    hfair
 
 /--
 Paper-facing Theorem 3.2 report-required continuous upper-tail endpoint, with
@@ -5979,10 +6005,9 @@ theorem paper_interface_theorem3_2_section3_report_required_no_test_relevance_of
 
 /--
 Paper-facing Theorem 3.2, report-required regime.  If access status is hidden
-and the source model follows the paper's positive-taker-share versus
-already-test-blank case split, then latent-skill or observable fairness implies
-test-blankness on the concrete constant-latent unit-centered event-share
-surface.
+and zero-positive-taker profiles are already test-blank, then latent-skill or
+observable fairness implies test-blankness on the concrete constant-latent
+unit-centered event-share surface.
 -/
 theorem paper_interface_theorem3_2_section3_report_required_fairness_impossibility
     {Base Test Estimate Student Equilibrium : Type*} [Nonempty Base]
@@ -6018,10 +6043,10 @@ theorem paper_interface_theorem3_2_section3_report_required_fairness_impossibili
     (hthreshold :
       ∀ e base actor, takeDecision e actor base = true ↔
         decisionThreshold e base ≤ actor)
-    (hEventOrBlank :
+    (hblank_of_no_positive :
       ∀ e base,
-        (∃ student, takerEvent e base student ∧
-          0 < (studentLaw e base student).toReal) ∨
+        (¬ ∃ student, takerEvent e base student ∧
+          0 < (studentLaw e base student).toReal) →
           ∀ test, baseOnlyEstimate e base =
             fullFeatureEstimate e base test) :
     let S :=
@@ -6050,12 +6075,14 @@ theorem paper_interface_theorem3_2_section3_report_required_fairness_impossibili
     studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
     baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
     estimationConsistent referenceTest actorLaw decisionThreshold hEq
-    hthreshold hEventOrBlank
+    hthreshold
+    (paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
+      hblank_of_no_positive)
 
 /--
 Paper-facing Theorem 3.2, report-required no-relevance form.  In the hidden
-access case-split source model, fairness rules out any concrete base/test
-relevance witness.
+access source model where zero-positive-taker profiles are already blank,
+fairness rules out any concrete base/test relevance witness.
 -/
 theorem paper_interface_theorem3_2_section3_report_required_no_test_relevance
     {Base Test Estimate Student Equilibrium : Type*} [Nonempty Base]
@@ -6091,10 +6118,10 @@ theorem paper_interface_theorem3_2_section3_report_required_no_test_relevance
     (hthreshold :
       ∀ e base actor, takeDecision e actor base = true ↔
         decisionThreshold e base ≤ actor)
-    (hEventOrBlank :
+    (hblank_of_no_positive :
       ∀ e base,
-        (∃ student, takerEvent e base student ∧
-          0 < (studentLaw e base student).toReal) ∨
+        (¬ ∃ student, takerEvent e base student ∧
+          0 < (studentLaw e base student).toReal) →
           ∀ test, baseOnlyEstimate e base =
             fullFeatureEstimate e base test)
     (hfair :
@@ -6126,7 +6153,10 @@ theorem paper_interface_theorem3_2_section3_report_required_no_test_relevance
     studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
     baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
     estimationConsistent referenceTest actorLaw decisionThreshold hEq
-    hthreshold hEventOrBlank hfair
+    hthreshold
+    (paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
+      hblank_of_no_positive)
+    hfair
 
 /--
 Theorem 3.1 optional-reporting Gaussian threshold endpoint: base-indexed

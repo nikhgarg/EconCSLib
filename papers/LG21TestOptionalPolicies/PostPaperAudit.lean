@@ -94,6 +94,10 @@ abbrev audit_theorem3_1_section3_optional_reporting_pmf :=
 abbrev audit_theorem3_1_section3_report_required_pmf :=
   @paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf
 
+/-- Audit endpoint for Theorem 3.2's positive-event versus already-blank bridge. -/
+abbrev audit_theorem3_2_positive_event_or_blank_bridge :=
+  @paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
+
 /-- Audit endpoint for Theorem 3.2, optional-reporting fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_optional_reporting_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility

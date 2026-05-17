@@ -144,9 +144,13 @@ cache is kept as `source.txt` for named-statement audits.
 - The source-equilibrium event-share route now has the paper's case split:
   at each equilibrium/base profile, either a positive reporter/taker event
   share triggers the unraveling contradiction, or that profile is already
-  test-blank.  The optional-reporting and report-required `event_or_blank`
-  endpoints also have Section 3 hidden-access wrappers, replacing the earlier
-  need for a global positive-share hypothesis at every profile.
+  test-blank.  The bridge
+  `paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank`
+  now packages the paper convention that zero-positive-reporter/taker profiles
+  are already blank into the explicit `lg21EventSharePositiveOrBlank` case
+  split.  The optional-reporting and report-required `event_or_blank` endpoints
+  also have Section 3 hidden-access wrappers, replacing the earlier need for a
+  global positive-share hypothesis at every profile.
 - The optional-reporting concrete constant-latent posterior-payoff route and
   the report-required concrete unit-centered constant-latent route now factor
   out their source-equilibrium certificates and expose Section 3
@@ -164,7 +168,9 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_section3_report_required_fairness_impossibility`.
   These are the short audit targets for Section 3: they state hidden access and
   then conclude that latent-skill or observable fairness implies
-  test-blankness on the strongest concrete optional/report-required surfaces.
+  test-blankness on the strongest concrete optional/report-required surfaces,
+  while asking for the named zero-positive-event-implies-blank premise rather
+  than an anonymous disjunction.
 - The concrete optional/report-required constant-latent event-share routes now
   also produce compact `LG21FairnessImpossibilityCertificate` values:
   `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
