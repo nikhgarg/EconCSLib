@@ -275,6 +275,7 @@ current-bounds endpoint interface:
   Theorem3AcceptAllMeasurableEndpointCurrentBoundsExactOneThresholdSelectionUnlessPositiveSourceAssumptions
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate.to_endpoint_current_bounds_exact_one_threshold_selection_unless
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless
   Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessSourceAssumptions
   paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_selection_unless_source_assumptions
 
@@ -287,6 +288,10 @@ Theorem 3 prices have been constructed: it asks only for non-surge reject-long
 and surge reject-short local endpoint packages plus their fixed reward-rate
 accounting plus all-optimal Lemma 5 replacement data, then expands them to the
 exact current-bounds selector and the paper-facing Theorem 3 IC conclusion.
+The exact branch fixed-state endpoint package now builds the exact
+fixed-transfer local package directly, deriving opposite-state mass from the
+exact branch selectors instead of reopening the broader by-policy-form mass
+case split.
 
 
 Meaning of r1_current
