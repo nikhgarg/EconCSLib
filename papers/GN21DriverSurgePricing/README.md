@@ -1093,6 +1093,15 @@ the fixed-response policy-form Theorem 3 source data.
 `GN21Theorem3FixedResponsePolicyFormSourceData.of_one_threshold_structured_forms`
 is the matching top-level Theorem 3 source constructor for that one-threshold
 route.
+The existence-based common-fixed-state middle-reroute route now has the direct
+one-threshold source boundary
+`GN21Theorem3FixedResponseOneThresholdEqMiddleRerouteSourceExistenceData` and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_reroute_existence_source_assumptions`.
+This is the preferred paper-facing target when Lemma 6 supplies non-surge
+decreasing and surge increasing fixed-response data and the endpoint proof
+supplies the common fixed-state equality middle-reroute certificate; Lean
+builds the fixed-response policy-form package and derives accept-all
+optimality internally.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
