@@ -114,6 +114,16 @@ cache is `source.txt`.
   also derive the non-surge fixed-state cross package from the reject-long
   upper cross-ratio inequality and fixed reward-rate identity; the lower cross
   side follows from reject-long CTMC monotonicity.
+  The pointwise fixed-transfer variants
+  `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer`
+  and
+  `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer`
+  go one step closer to the source proof: callers state the rejected-complement
+  equality
+  `current_Q * τ = current_T * switchProb τ`, and Lean integrates it into the
+  upper cross-ratio field.  The remaining non-surge fixed-state input on this
+  exact branch is therefore the fixed reward-rate identity, not a separate
+  scalar cross-ratio assumption.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,
@@ -667,7 +677,12 @@ cache is `source.txt`.
   `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`
   reduce the non-surge reject-long fixed-state package from a complement
   equality to the remaining upper inequality plus the fixed reward-rate
-  identity.  The lower fixed-transfer
+  identity.  The exact-branch constructors
+  `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer`
+  and
+  `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer`
+  now also consume the pointwise equality directly and derive that upper
+  inequality internally.  The lower fixed-transfer
   middle-reroute boundary
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsMiddleRerouteCertificate`
   and

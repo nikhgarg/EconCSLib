@@ -832,15 +832,31 @@ so it is reusable.
 
 Step 5: prove the remaining upper fixed-state cross-ratio comparison.
 
-The old current-lower/fixed-upper frontier still asks for:
+The exact branch source boundary no longer has to expose this as a raw scalar
+cross-ratio assumption if the paper proof supplies the fixed-transfer equality
+on rejected non-surge trips.  The compiled constructors
+
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer
+  GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer
+
+take
+
+  current_Q1 * τ = current_T1 * q_{1->2}(τ)
+
+for all trips in `acceptAllPolicy \ current_non_surge_policy` and use
+`GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise`
+to derive:
 
   acceptAll_T1 * current_Q1 <= current_T1 * acceptAll_Q1
 
 This says the current non-surge exit-weight/time ratio is at least the
 accept-all ratio.  It is exactly the fixed-state upper transfer needed for the
-surge Lemma 9 route.
+surge Lemma 9 route.  On the exact branch, the remaining fixed-state input is
+therefore the fixed reward-rate identity plus the source's rejected-complement
+pointwise equality.
 
-Use the complement pointwise comparison if possible:
+If a later source route does not have exact fixed-transfer equality, use the
+weaker complement pointwise comparison:
 
   current_Q1 * τ >= current_T1 * q_{1->2}(τ)
 
