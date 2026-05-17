@@ -1268,7 +1268,10 @@ and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_source_assumptions`
 use the exact selectors to choose the appropriate by-policy-form fixed-state
 branch, so source proofs can provide the broader middle-cutoff endpoint record
-instead of direct fixed-state branch data.
+instead of direct fixed-state branch data.  The existence-style wrapper
+`paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_existence_source_assumptions`
+derives the replacement data internally from optimum existence and exact
+branch selectors.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
