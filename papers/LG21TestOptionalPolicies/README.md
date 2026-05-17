@@ -224,8 +224,8 @@ cache is kept as `source.txt` for named-statement audits.
   `LG21FullFeatureBaseOnlyObservableIdentities` and
   `LG21LawFullFeatureBaseOnlyObservableIdentities`, so callers can pass one
   auditable source-surface certificate instead of three raw identity arguments.
-  The optional-reporting and report-required source event-or-blank routes also
-  have certificate-consuming audit aliases ending in
+  The optional-reporting and report-required source event-or-blank and
+  zero-share routes also have certificate-consuming audit aliases ending in
   `_observable_identities`, so the paper's case split can be invoked without
   reopening the identity triple.
 - Contradiction-style Theorem 3.2 branches now have first-class certificate

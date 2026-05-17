@@ -301,9 +301,10 @@ Last updated: 2026-05-16
   The source-equilibrium event-or-blank and zero-share routes now specialize
   those iff wrappers directly, giving Section 3 fairness/test-blank and
   fairness/no-relevance iff endpoints for both optional-reporting and
-  report-required source certificates.  The event-or-blank source routes now
-  also have `_and_observableIdentities` variants that consume the named
-  full-feature/base-only certificate directly.  These case-split endpoints also have
+  report-required source certificates.  The event-or-blank and zero-share
+  source routes now also have `_and_observableIdentities` variants that
+  consume the named full-feature/base-only certificate directly.  These
+  case-split endpoints also have
   Section 3 hidden-access wrappers, removing the earlier global positive-share
   assumption from the source-facing theorem route.  The fully concrete optional
   posterior-payoff and report-required
