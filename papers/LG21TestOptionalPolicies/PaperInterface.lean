@@ -13807,6 +13807,30 @@ theorem paper_interface_theorem3_2_fairness_iff_test_blank_of_mixture_and_source
       skillGivenBase hObsAccess hObsNoAccess W) I
 
 /--
+Theorem 3.2 source-witness no-relevance iff form.
+-/
+theorem paper_interface_theorem3_2_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (W : LG21ObservableFairTestBlankSourceWitness S)
+    (I : paper_interface_definition5_observable_identity_certificate S) :
+    (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_observableIdentities
+    (paper_theorem3_2_fairness_impossibility_certificate_of_mixture_and_source_witness
+      skillGivenBase hObsAccess hObsNoAccess W) I
+
+/--
 Theorem 3.2 Section 3 source-witness iff form, bundling hidden access with the
 fairness/test-blank equivalence.
 -/
@@ -13977,6 +14001,22 @@ theorem paper_interface_theorem3_2_law_fairness_iff_test_blank_of_observable_imp
     (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
       lg21SourceLawTestBlank S :=
   paper_theorem3_2_law_fairness_iff_test_blank_of_certificate_and_observableIdentities
+    (paper_theorem3_2_law_fairness_impossibility_certificate_of_observable_implication_and_source_witness
+      hlatent_to_observable W) I
+
+/--
+Theorem 3.2 continuous-law source-witness no-relevance iff form.
+-/
+theorem paper_interface_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S)
+    (I : paper_interface_definition5_law_observable_identity_certificate S) :
+    (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_law_fairness_iff_no_test_relevance_of_certificate_and_observableIdentities
     (paper_theorem3_2_law_fairness_impossibility_certificate_of_observable_implication_and_source_witness
       hlatent_to_observable W) I
 

@@ -670,6 +670,10 @@ abbrev audit_theorem3_2_fairness_certificate_of_mixture_and_source_evidence :=
 abbrev audit_theorem3_2_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities :=
   @paper_interface_theorem3_2_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities
 
+/-- Audit endpoint for the PMF source-witness Theorem 3.2 fairness/no-relevance iff route. -/
+abbrev audit_theorem3_2_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities
+
 /-- Audit endpoint for the Section 3 PMF source-witness Theorem 3.2 fairness/test-blank iff route. -/
 abbrev audit_theorem3_2_section3_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities :=
   @paper_interface_theorem3_2_section3_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities
@@ -697,6 +701,10 @@ abbrev audit_theorem3_2_law_fairness_certificate_of_observable_implication_and_s
 /-- Audit endpoint for the continuous-law source-witness Theorem 3.2 fairness/test-blank iff route. -/
 abbrev audit_theorem3_2_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities :=
   @paper_interface_theorem3_2_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities
+
+/-- Audit endpoint for the continuous-law source-witness Theorem 3.2 fairness/no-relevance iff route. -/
+abbrev audit_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities
 
 /-- Audit endpoint for the Section 3 continuous-law source-witness Theorem 3.2 fairness/test-blank iff route. -/
 abbrev audit_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities :=
