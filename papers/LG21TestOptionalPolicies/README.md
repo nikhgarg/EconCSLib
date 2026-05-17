@@ -209,9 +209,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank`
   now packages the paper convention that zero-positive-reporter/taker profiles
   are already blank into the explicit `lg21EventSharePositiveOrBlank` case
-  split.  The optional-reporting and report-required `event_or_blank` endpoints
-  also have Section 3 hidden-access wrappers, replacing the earlier need for a
-  global positive-share hypothesis at every profile.
+  split, and the zero-share bridge
+  `paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank`
+  states the same branch in finite event-share language.  The optional-reporting
+  and report-required `event_or_blank` endpoints also have Section 3
+  hidden-access wrappers, replacing the earlier need for a global
+  positive-share hypothesis at every profile.
 - The optional-reporting concrete constant-latent posterior-payoff route and
   the report-required concrete unit-centered constant-latent route now factor
   out their source-equilibrium certificates and expose Section 3
@@ -230,8 +233,9 @@ cache is kept as `source.txt` for named-statement audits.
   These are the short audit targets for Section 3: they state hidden access and
   then conclude that latent-skill or observable fairness implies
   test-blankness on the strongest concrete optional/report-required surfaces,
-  while asking for the named zero-positive-event-implies-blank premise rather
-  than an anonymous disjunction.
+  while asking for the named case-split premise rather than an anonymous
+  disjunction.  The `_of_zero_event_share_blank` variants state this premise
+  directly as zero reporter/taker event share implies test-blankness.
 - The concrete optional/report-required constant-latent event-share routes now
   also produce compact `LG21FairnessImpossibilityCertificate` values:
   `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
@@ -610,7 +614,7 @@ endpoint rather than the older packaged certificate. Theorem 3.1/3.2 now have
 short Section 3 paper-facing aliases; their conditional status is that the
 strongest current routes derive source witnesses and upper-tail impossibility
 from concrete source equilibria under explicit payoff, tie-breaking, threshold,
-and mixture hypotheses.  In the optional-reporting
+mixture, and zero-share-blankness hypotheses.  In the optional-reporting
 continuous upper-tail route, the concrete Gaussian posterior-payoff
 specialization now removes the separate affine-payoff identity and
 tie-at-indifference hypotheses.  In

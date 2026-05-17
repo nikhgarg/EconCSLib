@@ -82,9 +82,9 @@ unconditional theorem over every possible estimation policy.
 - Theorem 3.2 is not yet an unconditional theorem over an arbitrary estimation
   policy. The strongest endpoints are the Section 3 optional/report-required
   aliases over concrete constant-latent event-share surfaces, plus matching
-  no-relevance aliases; they require the named zero-positive-event-implies-blank
-  premise that corresponds to the source proof's "or no one reports/takes,
-  hence test-blank" branch.
+  no-relevance aliases. The zero-share variants state the remaining case-split
+  premise in the paper's share language: zero reporter/taker event share
+  implies the profile is already test-blank.
 - A stricter skill-dependent conditional-kernel route is optional only if the
   target is broadened beyond the current concrete law surfaces.
 
