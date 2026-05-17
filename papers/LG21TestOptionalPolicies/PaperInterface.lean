@@ -4558,6 +4558,14 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance
     reportDecision estimationConsistent referenceSkill actorLaw
     decisionThreshold hEq hthreshold hEventOrBlank hfair
 
+/-- Paper-facing optional-reporting concrete event-or-blank fairness/test-blank iff route. -/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
+
+/-- Paper-facing optional-reporting concrete event-or-blank fairness/no-relevance iff route. -/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
+
 /--
 Theorem 3.2 source-route bridge: if every zero-positive-event profile is
 already test-blank, then the paper's positive-event versus blank case split
@@ -6687,6 +6695,14 @@ theorem paper_interface_theorem3_2_section3_report_required_no_test_relevance_of
     baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
     estimationConsistent referenceTest actorLaw decisionThreshold hEq
     hthreshold hEventOrBlank hfair
+
+/-- Paper-facing report-required concrete event-or-blank fairness/test-blank iff route. -/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
+
+/-- Paper-facing report-required concrete event-or-blank fairness/no-relevance iff route. -/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
 
 /--
 Paper-facing Theorem 3.2, report-required regime.  If access status is hidden

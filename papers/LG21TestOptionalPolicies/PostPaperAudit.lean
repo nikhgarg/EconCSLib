@@ -214,6 +214,14 @@ abbrev audit_theorem3_2_optional_reporting_source_zero_share_fairness_iff_no_rel
 abbrev audit_theorem3_2_optional_reporting_event_or_blank_fairness_certificate :=
   @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
 
+/-- Audit endpoint for the optional-reporting concrete event-or-blank fairness/test-blank iff route. -/
+abbrev audit_theorem3_2_optional_reporting_event_or_blank_fairness_iff_test_blank :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
+
+/-- Audit endpoint for the optional-reporting concrete event-or-blank fairness/no-relevance iff route. -/
+abbrev audit_theorem3_2_optional_reporting_event_or_blank_fairness_iff_no_relevance :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
+
 /-- Audit endpoint for the optional-reporting blank-on-zero-share fairness certificate. -/
 abbrev audit_theorem3_2_optional_reporting_blank_on_zero_share_fairness_certificate :=
   @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff
@@ -273,6 +281,14 @@ abbrev audit_theorem3_2_report_required_source_zero_share_fairness_iff_no_releva
 /-- Audit endpoint for the report-required event-or-blank fairness certificate. -/
 abbrev audit_theorem3_2_report_required_event_or_blank_fairness_certificate :=
   @paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
+
+/-- Audit endpoint for the report-required concrete event-or-blank fairness/test-blank iff route. -/
+abbrev audit_theorem3_2_report_required_event_or_blank_fairness_iff_test_blank :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
+
+/-- Audit endpoint for the report-required concrete event-or-blank fairness/no-relevance iff route. -/
+abbrev audit_theorem3_2_report_required_event_or_blank_fairness_iff_no_relevance :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff
 
 /-- Audit endpoint for the report-required blank-on-zero-share fairness certificate. -/
 abbrev audit_theorem3_2_report_required_blank_on_zero_share_fairness_certificate :=

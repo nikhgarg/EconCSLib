@@ -84,7 +84,9 @@ unconditional theorem over every possible estimation policy.
   optional-reporting and report-required event-or-blank/zero-share routes now
   have direct Section 3 iff audit aliases as well, so this "only way" reading
   is exposed at the same source-certification layer as the implication and
-  no-relevance endpoints.
+  no-relevance endpoints. The fully concrete optional posterior-payoff and
+  report-required unit-centered event-or-blank surfaces now expose the same
+  iff conclusions, not only the one-way implication/no-relevance forms.
 - The resampling policy is formalized in a finite conditional-kernel form:
   access and no-access estimate laws are both pushforwards of the same
   conditional test-score law, and demographic fairness follows by mixing over
@@ -99,7 +101,9 @@ unconditional theorem over every possible estimation policy.
 - Theorem 3.2 is not yet an unconditional theorem over an arbitrary estimation
   policy. The strongest endpoints are the Section 3 optional/report-required
   aliases over concrete constant-latent event-share surfaces, plus matching
-  implication, no-relevance, and iff aliases. The source-level event-or-blank
+  implication, no-relevance, and iff aliases. The concrete event-or-blank iff
+  aliases still require the ordinary full-feature/base-only observable-surface
+  identities, but not a global positive-share premise. The source-level event-or-blank
   and zero-share variants state the paper's finite-share branch explicitly:
   zero reporter/taker event share implies the profile is already test-blank,
   and the ordinary observable-surface identities give the converse fairness

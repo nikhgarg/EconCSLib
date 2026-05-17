@@ -291,7 +291,10 @@ Last updated: 2026-05-16
   unit-centered routes now factor out their source-equilibrium certificates and
   have Section 3 event-or-blank wrappers, so the positive-share versus
   already-test-blank split is available at the strongest concrete surfaces in
-  both regimes.  The fully concrete optional posterior-payoff and
+  both regimes.  Those concrete event-or-blank routes now also have
+  Section 3 fairness/test-blank and fairness/no-relevance iff wrappers under
+  the full-feature/base-only observable-surface identities.  The fully concrete
+  optional posterior-payoff and
   report-required unit-centered constant-latent event-share surfaces now also
   have direct Section 3 wrappers, so the strongest current source-facing
   Theorem 3.2 endpoints expose hidden access and the
