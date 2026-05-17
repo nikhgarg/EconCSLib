@@ -236,9 +236,11 @@ cache is kept as `source.txt` for named-statement audits.
   under the named full-feature/base-only observable-identity certificates.
 - `paper_interface_theorem3_2_raw_surface_scope_counterexample` proves that an
   arbitrary raw source-policy surface can be latent-skill fair and observably
-  fair while not test-blank. This records why the final Theorem 3.2 surface must
-  retain source-witness/strategic-stability hypotheses rather than quantifying
-  over every unconstrained `LG21SourcePolicySurface`.
+  fair while not test-blank; `paper_interface_theorem3_2_raw_law_surface_scope_counterexample`
+  proves the same point for arbitrary law surfaces. This records why the final
+  Theorem 3.2 surface must retain source-witness/strategic-stability
+  hypotheses rather than quantifying over every unconstrained
+  `LG21SourcePolicySurface` or `LG21SourceLawPolicySurface`.
 - Theorem 3.2 now also has PMF and continuous-law iff wrappers that combine
   the fairness-impossibility certificate with the Definition 5-to-Definition 3
   bridge.  Under the standard source identities that observable access uses

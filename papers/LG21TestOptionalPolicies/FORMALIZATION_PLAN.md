@@ -903,9 +903,11 @@ Last updated: 2026-05-16
    The raw-surface counterexample
    `paper_interface_theorem3_2_raw_surface_scope_counterexample` proves that
    the current unconstrained `LG21SourcePolicySurface` is too broad for an
-   unconditional Theorem 3.2 statement: latent and observable fairness can hold
-   while test-blankness fails unless the source-witness/strategic-stability
-   hypotheses are present.
+   unconditional Theorem 3.2 statement, and
+   `paper_interface_theorem3_2_raw_law_surface_scope_counterexample` proves the
+   same fact for `LG21SourceLawPolicySurface`: latent and observable fairness
+   can hold while test-blankness fails unless the
+   source-witness/strategic-stability hypotheses are present.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,

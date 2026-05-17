@@ -482,6 +482,10 @@ abbrev audit_theorem3_2_section3_optional_reporting_fairness_impossibility :=
 abbrev audit_theorem3_2_raw_surface_scope_counterexample :=
   paper_interface_theorem3_2_raw_surface_scope_counterexample
 
+/-- Audit endpoint showing why raw continuous-law surfaces alone are too broad for Theorem 3.2. -/
+abbrev audit_theorem3_2_raw_law_surface_scope_counterexample :=
+  paper_interface_theorem3_2_raw_law_surface_scope_counterexample
+
 /-- Audit endpoint for Theorem 3.2, optional-reporting zero-share fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_optional_reporting_zero_share_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_zero_event_share_blank

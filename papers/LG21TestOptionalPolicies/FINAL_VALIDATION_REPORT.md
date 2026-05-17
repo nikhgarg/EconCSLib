@@ -165,8 +165,9 @@ and
   direction. The constructed
   blank-on-zero-share constant-latent surfaces discharge that branch by
   definition. The formal counterexample
-  `audit_theorem3_2_raw_surface_scope_counterexample` shows that the raw
-  `LG21SourcePolicySurface` fields alone are too broad: latent-skill and
+  `audit_theorem3_2_raw_surface_scope_counterexample` and its continuous-law
+  analogue `audit_theorem3_2_raw_law_surface_scope_counterexample` show that
+  the raw source-surface fields alone are too broad: latent-skill and
   observable fairness can hold while test-blankness fails unless the
   source-witness/strategic-stability hypotheses are included.
 - A stricter skill-dependent conditional-kernel route is optional only if the

@@ -8909,6 +8909,15 @@ theorem paper_interface_theorem3_2_raw_surface_scope_counterexample :
   lg21_arbitrary_source_surface_fair_not_test_blank
 
 /--
+Continuous-law version of the raw-surface scope counterexample.
+-/
+theorem paper_interface_theorem3_2_raw_law_surface_scope_counterexample :
+    lg21SourceLawLatentSkillFair lg21ArbitraryLawFairNonblankSurface ∧
+      lg21SourceLawObservablyFair lg21ArbitraryLawFairNonblankSurface ∧
+        ¬ lg21SourceLawTestBlank lg21ArbitraryLawFairNonblankSurface :=
+  lg21_arbitrary_law_surface_fair_not_test_blank
+
+/--
 Theorem 3.2 Section 3 endpoint: access status is hidden in the school
 information set, and latent-skill or observable fairness implies
 test-blankness.

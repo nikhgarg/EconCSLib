@@ -38,9 +38,10 @@ The matching audit aliases are in `PostPaperAudit.lean`.
 The raw-surface scope check
 `paper_interface_theorem3_2_raw_surface_scope_counterexample` proves that an
 unconstrained `LG21SourcePolicySurface` can be latent-skill fair and observably
-fair while not test-blank. Do not try to prove Theorem 3.2 over the raw surface
-alone; the source-witness/strategic-stability assumptions are necessary for
-the current model.
+fair while not test-blank; `paper_interface_theorem3_2_raw_law_surface_scope_counterexample`
+proves the same point for raw continuous-law surfaces. Do not try to prove
+Theorem 3.2 over the raw surface alone; the source-witness/strategic-stability
+assumptions are necessary for the current model.
 
 ## Validated Commands
 

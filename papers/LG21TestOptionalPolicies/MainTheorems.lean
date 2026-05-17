@@ -5208,6 +5208,41 @@ theorem lg21_arbitrary_source_surface_fair_not_test_blank :
     cases hbool
 
 /--
+Continuous-law analogue of `lg21ArbitraryFairNonblankSurface`: arbitrary law
+objects can satisfy the raw latent and observable fairness predicates while the
+full-feature law still depends on the test value.
+-/
+def lg21ArbitraryLawFairNonblankSurface :
+    LG21SourceLawPolicySurface PUnit PUnit Bool Bool where
+  Equilibrium := PUnit
+  latentAccessLaw := fun _ _ _ => false
+  latentNoAccessLaw := fun _ _ _ => false
+  observableAccessLaw := fun _ _ => false
+  observableNoAccessLaw := fun _ _ => false
+  demographicAccessLaw := fun _ => false
+  demographicNoAccessLaw := fun _ => false
+  baseOnlyLaw := fun _ _ => false
+  fullFeatureLaw := fun _ _ test => test
+
+/--
+The raw continuous-law surface fields alone do not imply Theorem 3.2 either:
+this law surface is latent-skill fair and observably fair, but not test-blank.
+-/
+theorem lg21_arbitrary_law_surface_fair_not_test_blank :
+    lg21SourceLawLatentSkillFair lg21ArbitraryLawFairNonblankSurface ∧
+      lg21SourceLawObservablyFair lg21ArbitraryLawFairNonblankSurface ∧
+        ¬ lg21SourceLawTestBlank lg21ArbitraryLawFairNonblankSurface := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro e q base
+    rfl
+  · intro e base
+    rfl
+  · apply lg21_not_lawTestBlank_of_witness PUnit.unit PUnit.unit true
+    dsimp [lg21ArbitraryLawFairNonblankSurface]
+    intro h
+    cases h
+
+/--
 Direct Theorem 3.2 contradiction for point-estimate surfaces.  If a
 paper-specific route proves latent-or-observable fairness implies test
 blankness, then one full-feature point estimate off the base-only acting mean
