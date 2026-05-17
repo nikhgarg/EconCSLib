@@ -248,6 +248,27 @@ instead of a pointwise equality.
 do not try to prove global pointwise equality on the rejected long-trip tail
 unless the source argument genuinely supplies it.
 
+Latest cutoff-ratio reduction: the surge reject-short fixed-state pointwise
+comparison now has a compiled CTMC cutoff theorem and endpoint constructors:
+
+  gn21FixedState_upper_pointwise_of_rejectsShortTrips_of_cutoff
+  gn21FixedState_upper_pointwise_of_rejectsShortTrips_of_positive_cutoff_bound
+  GN21RegularEndpointSharedSourceData.surge_upper_pointwise_of_rejectsShortTrips_of_positive_cutoff_bound
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsShortTrips_and_cutoff_bound
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_cutoff_bound
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_surge_reject_short_cutoff_bound
+
+Use these when the source proof can show, for a positive surge cutoff `u`,
+
+  Q_current * u <= T_current * q(u).
+
+Lean then proves the full rejected-complement inequality for every rejected
+short trip by monotonicity of `q(t)/t`; if `u <= 0`, the rejected complement is
+empty.  Do not try to prove the stronger automatic statement from
+`rejectsShortTrips u` alone.  It can fail because the fixed-state ratio also
+contains the base switch term, whose per-time ratio is the switch rate and can
+sit above `q(u)/u`.
+
 Exact normalized one-threshold branch route: Lean now also has
 
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate

@@ -53,7 +53,20 @@ cache is `source.txt`.
   `gn21FixedState_lower_pointwise_of_rejectsLongTrips`: for reject-long fixed
   states, the lower fixed-state complement comparison is proved directly from
   monotonicity of `q(t)/t`, so that side no longer needs to be supplied as a
-  source assumption.
+  source assumption.  The reject-short direction now has the compiled cutoff
+  reduction
+  `gn21FixedState_upper_pointwise_of_rejectsShortTrips_of_positive_cutoff_bound`
+  plus the surge-state wrappers
+  `GN21RegularEndpointSharedSourceData.surge_upper_pointwise_of_rejectsShortTrips_of_positive_cutoff_bound`,
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsShortTrips_and_cutoff_bound`,
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_cutoff_bound`,
+  and
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_surge_reject_short_cutoff_bound`:
+  source proofs now need only the positive-cutoff ratio inequality
+  `Q_current * u <= T_current * q(u)`, not a forall-over-rejected-trips
+  pointwise proof.  The cutoff inequality is still a real source obligation;
+  it does not follow from reject-short syntax alone because the fixed-state
+  ratio includes the base switch term.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
