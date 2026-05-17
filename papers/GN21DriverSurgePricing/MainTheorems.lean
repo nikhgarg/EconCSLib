@@ -10457,12 +10457,63 @@ def ctmcDynamicSwitchProb
       gn21SwitchProb switch21 switch12 := by
   simp [ctmcDynamicSwitchProb]
 
+/-- The state-indexed CTMC switch probability is continuous in trip length. -/
+theorem continuous_ctmcDynamicSwitchProb
+    (switch12 switch21 : ℝ) (i : Fin 2) :
+    Continuous (ctmcDynamicSwitchProb switch12 switch21 i) := by
+  unfold ctmcDynamicSwitchProb
+  by_cases hi : i = 0
+  · simpa [hi] using continuous_gn21SwitchProb switch12 switch21
+  · simpa [hi] using continuous_gn21SwitchProb switch21 switch12
+
+/-- The state-indexed CTMC switch probability is measurable in trip length. -/
+theorem measurable_ctmcDynamicSwitchProb
+    (switch12 switch21 : ℝ) (i : Fin 2) :
+    Measurable (ctmcDynamicSwitchProb switch12 switch21 i) :=
+  (continuous_ctmcDynamicSwitchProb switch12 switch21 i).measurable
+
 /-- Theorem 3 state-indexed structured CTMC price family. -/
 def ctmcStructuredDynamicSurgePrice
     (m z : Fin 2 → ℝ) (switch12 switch21 : ℝ) :
     Fin 2 → PricingFunction :=
   fun i => structuredSurgePrice (m i) (z i)
     (ctmcDynamicSwitchProb switch12 switch21 i)
+
+/-- The state-indexed structured CTMC price is continuous in trip length. -/
+theorem continuous_ctmcStructuredDynamicSurgePrice
+    (m z : Fin 2 → ℝ) (switch12 switch21 : ℝ) (i : Fin 2) :
+    Continuous (ctmcStructuredDynamicSurgePrice m z switch12 switch21 i) := by
+  unfold ctmcStructuredDynamicSurgePrice structuredSurgePrice
+  exact
+    (continuous_const.mul continuous_id).add
+      (continuous_const.mul
+        (continuous_ctmcDynamicSwitchProb switch12 switch21 i))
+
+/-- The state-indexed structured CTMC price is measurable in trip length. -/
+theorem measurable_ctmcStructuredDynamicSurgePrice
+    (m z : Fin 2 → ℝ) (switch12 switch21 : ℝ) (i : Fin 2) :
+    Measurable (ctmcStructuredDynamicSurgePrice m z switch12 switch21 i) :=
+  (continuous_ctmcStructuredDynamicSurgePrice m z switch12 switch21 i).measurable
+
+/--
+Structured dynamic CTMC prices are integrable on a policy set whenever trip
+time and the matching state-indexed switch probability are integrable there.
+-/
+theorem integrableOn_ctmcStructuredDynamicSurgePrice
+    (μ : Measure TripLength)
+    (m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (i : Fin 2)
+    (σ : TripPolicy)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σ μ)
+    (hq_integrable :
+      IntegrableOn (ctmcDynamicSwitchProb switch12 switch21 i) σ μ) :
+    IntegrableOn (ctmcStructuredDynamicSurgePrice m z switch12 switch21 i)
+      σ μ := by
+  unfold ctmcStructuredDynamicSurgePrice structuredSurgePrice
+  exact (htime_integrable.const_mul (m i)).add
+    (hq_integrable.const_mul (z i))
 
 /-- The state-indexed CTMC price family has the paper's structured form. -/
 theorem ctmcStructuredDynamicSurgePrice_price_form
@@ -46393,6 +46444,204 @@ structure GN21MeasuredLeftFixedResponsePolicyFormSourceData
       MeasurableSet σ →
         IntegrableOn (fun τ : TripLength => τ) σ (μ 0)
 
+/--
+Constructor for the non-surge GN21 fixed-response source package that derives
+the measured response regularity from the primitive payment, switch, and time
+regularity fields.
+-/
+def GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (Ri Rj : ℝ)
+    (base_policy_form_data :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredLeftLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (ρ 0) (ρ 1)
+          Ri Rj) shape)
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hw0_measurable : Measurable (w 0))
+    (arrival_pos : 0 < arrival 0)
+    (current_nondegenerate :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (candidate_nondegenerate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 σ (ρ 1))
+    (candidate_den_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) *
+                gn21ScaledStateTime (μ 0) (arrival 0) σ)
+    (q_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+            σ (μ 0))
+    (w_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (w 0) σ (μ 0))
+    (time_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 0)) :
+    GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 w ρ shape where
+  Ri := Ri
+  Rj := Rj
+  base_policy_form_data := base_policy_form_data
+  hQj_pos := hQj_pos
+  hTi_pos := hTi_pos
+  hTj_pos := hTj_pos
+  hden_pos := hden_pos
+  hWi := hWi
+  hWj := hWj
+  response_measurable :=
+    measurable_gn21MeasuredLeftMarginalResponseAtCurrent
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) hw0_measurable
+  response_integrable_acceptAll :=
+    integrableOn_gn21MeasuredLeftMarginalResponseAtCurrent
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) acceptAllPolicy
+      (q_integrable acceptAllPolicy (by intro τ hτ; exact hτ)
+        measurableSet_acceptAllPolicy)
+      (w_integrable acceptAllPolicy (by intro τ hτ; exact hτ)
+        measurableSet_acceptAllPolicy)
+      (time_integrable acceptAllPolicy (by intro τ hτ; exact hτ)
+        measurableSet_acceptAllPolicy)
+  arrival_pos := arrival_pos
+  current_nondegenerate := current_nondegenerate
+  candidate_nondegenerate := candidate_nondegenerate
+  candidate_den_pos := candidate_den_pos
+  q_integrable := q_integrable
+  w_integrable := w_integrable
+  time_integrable := time_integrable
+
+/--
+Specialized non-surge constructor for the Theorem 3 CTMC structured price
+family.  Structured-price measurability and integrability are derived from the
+trip-time and switch-probability regularity fields.
+-/
+def GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (Ri Rj : ℝ)
+    (base_policy_form_data :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredLeftLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          (ρ 0) (ρ 1) Ri Rj) shape)
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (arrival_pos : 0 < arrival 0)
+    (current_nondegenerate :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (candidate_nondegenerate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 σ (ρ 1))
+    (candidate_den_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) *
+                gn21ScaledStateTime (μ 0) (arrival 0) σ)
+    (q_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+            σ (μ 0))
+    (time_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 0)) :
+    GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+      shape :=
+  GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity
+    (μ := μ) (arrival := arrival) (switch12 := switch12)
+    (switch21 := switch21)
+    (w := ctmcStructuredDynamicSurgePrice m z switch12 switch21) (ρ := ρ)
+    Ri Rj base_policy_form_data hQj_pos hTi_pos hTj_pos hden_pos hWi hWj
+    (by
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        ctmcStructuredSurgePrice] using
+        (continuous_ctmcStructuredSurgePrice (m 0) (z 0) switch12 switch21).measurable)
+    arrival_pos current_nondegenerate candidate_nondegenerate
+    candidate_den_pos q_integrable
+    (by
+      intro σ hσ_subset hσ_measurable
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        ctmcStructuredSurgePrice] using
+        integrableOn_ctmcStructuredSurgePrice (μ 0) (m 0) (z 0)
+          switch12 switch21 σ
+          (time_integrable σ hσ_subset hσ_measurable)
+          (q_integrable σ hσ_subset hσ_measurable))
+    time_integrable
+
 /-- Convert non-surge GN21 source data into the fixed-response Lemma 5 package. -/
 def GN21MeasuredLeftFixedResponsePolicyFormSourceData.to_fixed_response
     {μ : Fin 2 → Measure TripLength}
@@ -46498,6 +46747,204 @@ structure GN21MeasuredRightFixedResponsePolicyFormSourceData
       σ ⊆ acceptAllPolicy →
       MeasurableSet σ →
         IntegrableOn (fun τ : TripLength => τ) σ (μ 1)
+
+/--
+Constructor for the surge GN21 fixed-response source package that derives the
+measured response regularity from the primitive payment, switch, and time
+regularity fields.
+-/
+def GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (Ri Rj : ℝ)
+    (base_policy_form_data :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredRightLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 1) (ρ 0) (ρ 1)
+          Ri Rj) shape)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hw1_measurable : Measurable (w 1))
+    (arrival_pos : 0 < arrival 1)
+    (current_nondegenerate :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (candidate_nondegenerate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) σ)
+    (candidate_den_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) *
+              gn21ScaledStateTime (μ 1) (arrival 1) σ +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (q_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+            σ (μ 1))
+    (w_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (w 1) σ (μ 1))
+    (time_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 1)) :
+    GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 w ρ shape where
+  Ri := Ri
+  Rj := Rj
+  base_policy_form_data := base_policy_form_data
+  hQi_pos := hQi_pos
+  hTi_pos := hTi_pos
+  hTj_pos := hTj_pos
+  hden_pos := hden_pos
+  hWi := hWi
+  hWj := hWj
+  response_measurable :=
+    measurable_gn21MeasuredRightMarginalResponseAtCurrent
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) hw1_measurable
+  response_integrable_acceptAll :=
+    integrableOn_gn21MeasuredRightMarginalResponseAtCurrent
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) acceptAllPolicy
+      (q_integrable acceptAllPolicy (by intro τ hτ; exact hτ)
+        measurableSet_acceptAllPolicy)
+      (w_integrable acceptAllPolicy (by intro τ hτ; exact hτ)
+        measurableSet_acceptAllPolicy)
+      (time_integrable acceptAllPolicy (by intro τ hτ; exact hτ)
+        measurableSet_acceptAllPolicy)
+  arrival_pos := arrival_pos
+  current_nondegenerate := current_nondegenerate
+  candidate_nondegenerate := candidate_nondegenerate
+  candidate_den_pos := candidate_den_pos
+  q_integrable := q_integrable
+  w_integrable := w_integrable
+  time_integrable := time_integrable
+
+/--
+Specialized surge constructor for the Theorem 3 CTMC structured price family.
+Structured-price measurability and integrability are derived from the
+trip-time and switch-probability regularity fields.
+-/
+def GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (Ri Rj : ℝ)
+    (base_policy_form_data :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredRightLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (ρ 0) (ρ 1) Ri Rj) shape)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (arrival_pos : 0 < arrival 1)
+    (current_nondegenerate :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (candidate_nondegenerate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) σ)
+    (candidate_den_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) *
+              gn21ScaledStateTime (μ 1) (arrival 1) σ +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (q_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+            σ (μ 1))
+    (time_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 1)) :
+    GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+      shape :=
+  GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity
+    (μ := μ) (arrival := arrival) (switch12 := switch12)
+    (switch21 := switch21)
+    (w := ctmcStructuredDynamicSurgePrice m z switch12 switch21) (ρ := ρ)
+    Ri Rj base_policy_form_data hQi_pos hTi_pos hTj_pos hden_pos hWi hWj
+    (by
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        ctmcStructuredSurgePrice] using
+        (continuous_ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12).measurable)
+    arrival_pos current_nondegenerate candidate_nondegenerate
+    candidate_den_pos q_integrable
+    (by
+      intro σ hσ_subset hσ_measurable
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb,
+        ctmcStructuredSurgePrice] using
+        integrableOn_ctmcStructuredSurgePrice (μ 1) (m 1) (z 1)
+          switch21 switch12 σ
+          (time_integrable σ hσ_subset hσ_measurable)
+          (q_integrable σ hσ_subset hσ_measurable))
+    time_integrable
 
 /-- Convert surge GN21 source data into the fixed-response Lemma 5 package. -/
 def GN21MeasuredRightFixedResponsePolicyFormSourceData.to_fixed_response

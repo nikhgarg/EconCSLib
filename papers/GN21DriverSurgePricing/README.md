@@ -983,6 +983,16 @@ and
 `gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 assemble the required fixed-response Lemma 5 data from dynamic optimality and
 scaled Lemma 6 policy-form data.
+The source-data constructors
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity` and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity` now derive
+the measured marginal-response measurability and accept-all integrability from
+the primitive payment, switch-probability, and trip-time regularity fields.
+For the actual Theorem 3 structured prices, the specialized constructors
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price`
+and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price`
+also derive structured-price measurability and integrability internally.
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` packages these
 statewise assumptions for all measurable optima and converts to the
 all-optima fixed-response policy-form boundary.
@@ -991,7 +1001,12 @@ package plus accept-all optimality and the four endpoint-improvement cases into
 the fixed-response policy-form Theorem 3 source data.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
-regularity.
+regularity.  The state-indexed CTMC price family also has direct continuity,
+measurability, and policy-set integrability lemmas:
+`continuous_ctmcDynamicSwitchProb`, `measurable_ctmcDynamicSwitchProb`,
+`continuous_ctmcStructuredDynamicSurgePrice`,
+`measurable_ctmcStructuredDynamicSurgePrice`, and
+`integrableOn_ctmcStructuredDynamicSurgePrice`.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

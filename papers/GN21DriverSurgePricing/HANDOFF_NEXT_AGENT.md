@@ -295,6 +295,20 @@ and
 now produce the fixed-response Lemma 5 data directly from dynamic optimality,
 the measured quotient bridge, current `W=R*T` identities, measured-response
 regularity, and the scaled Lemma 6 policy-form data.
+The response-regularity plumbing is now internal.  Use
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity` and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity` when the
+payments are arbitrary but measurable/integrable.  Use
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price`
+and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price`
+for the actual Theorem 3 structured CTMC prices; those constructors derive
+structured-price measurability and integrability from switch-probability and
+trip-time integrability.  The reusable state-indexed regularity lemmas are
+`continuous_ctmcDynamicSwitchProb`, `measurable_ctmcDynamicSwitchProb`,
+`continuous_ctmcStructuredDynamicSurgePrice`,
+`measurable_ctmcStructuredDynamicSurgePrice`, and
+`integrableOn_ctmcStructuredDynamicSurgePrice`.
 For all optima at once, use
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
 `.to_fixed_response_policy_form_data` method to build
