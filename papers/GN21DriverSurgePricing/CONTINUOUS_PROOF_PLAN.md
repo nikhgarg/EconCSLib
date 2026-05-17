@@ -209,6 +209,11 @@ and
 now combine dynamic optimality, the quotient-to-marginal optimality bridge,
 current reward-rate identities, response measurability/integrability, and the
 scaled Lemma 6 policy-form package into the fixed-response Lemma 5 data object.
+For all optima at once, package the statewise assumptions as
+`Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and call
+`.to_fixed_response_policy_form_data`; this produces
+`Theorem4AllMeasurableFixedResponsePolicyFormData` for the Theorem 4/Theorem 3
+routes above.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

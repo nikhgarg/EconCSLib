@@ -295,6 +295,10 @@ and
 now produce the fixed-response Lemma 5 data directly from dynamic optimality,
 the measured quotient bridge, current `W=R*T` identities, measured-response
 regularity, and the scaled Lemma 6 policy-form data.
+For all optima at once, use
+`Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
+`.to_fixed_response_policy_form_data` method to build
+`Theorem4AllMeasurableFixedResponsePolicyFormData`.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

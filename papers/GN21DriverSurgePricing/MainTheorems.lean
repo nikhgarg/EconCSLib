@@ -46195,6 +46195,218 @@ def gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optim
       hden_pos hden_candidate_pos hq_integrable hw_integrable
       htime_integrable
 
+/-- Source data for the non-surge measured fixed-response Lemma 5 adapter. -/
+structure GN21MeasuredLeftFixedResponsePolicyFormSourceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy)
+    (shape : Lemma5DerivativeShape) where
+  Ri : ℝ
+  Rj : ℝ
+  base_policy_form_data :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredLeftLemma6ResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (ρ 0) (ρ 1)
+        Ri Rj) shape
+  hQj_pos :
+    0 < gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1)
+  hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+  hden_pos :
+    0 <
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  hWi :
+    gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0) =
+      Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  hWj :
+    gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1) =
+      Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+  response_measurable :
+    Measurable
+      (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1))
+  response_integrable_acceptAll :
+    IntegrableOn
+      (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1))
+      acceptAllPolicy (μ 0)
+  arrival_pos : 0 < arrival 0
+  current_nondegenerate :
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1)
+  candidate_nondegenerate :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 σ (ρ 1)
+  candidate_den_pos :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        0 <
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+              gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) *
+              gn21ScaledStateTime (μ 0) (arrival 0) σ
+  q_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn
+          (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+          σ (μ 0)
+  w_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (w 0) σ (μ 0)
+  time_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (fun τ : TripLength => τ) σ (μ 0)
+
+/-- Convert non-surge GN21 source data into the fixed-response Lemma 5 package. -/
+def GN21MeasuredLeftFixedResponsePolicyFormSourceData.to_fixed_response
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ) :
+    Lemma5FixedResponsePolicyFormFeasibleOptimalData (μ 0)
+      (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1)) shape (ρ 0) :=
+  gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal
+    μ arrival switch12 switch21 w hρ D.Ri D.Rj D.base_policy_form_data
+    D.hQj_pos D.hTi_pos D.hTj_pos D.hden_pos D.hWi D.hWj
+    D.response_measurable D.response_integrable_acceptAll D.arrival_pos
+    D.current_nondegenerate D.candidate_nondegenerate D.candidate_den_pos
+    D.q_integrable D.w_integrable D.time_integrable
+
+/-- Source data for the surge measured fixed-response Lemma 5 adapter. -/
+structure GN21MeasuredRightFixedResponsePolicyFormSourceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy)
+    (shape : Lemma5DerivativeShape) where
+  Ri : ℝ
+  Rj : ℝ
+  base_policy_form_data :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredRightLemma6ResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 1) (ρ 0) (ρ 1)
+        Ri Rj) shape
+  hQi_pos :
+    0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0)
+  hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+  hden_pos :
+    0 <
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  hWi :
+    gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0) =
+      Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  hWj :
+    gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1) =
+      Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+  response_measurable :
+    Measurable
+      (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1))
+  response_integrable_acceptAll :
+    IntegrableOn
+      (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1))
+      acceptAllPolicy (μ 1)
+  arrival_pos : 0 < arrival 1
+  current_nondegenerate :
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1)
+  candidate_nondegenerate :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) σ
+  candidate_den_pos :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        0 <
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+              (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) σ +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  q_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn
+          (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+          σ (μ 1)
+  w_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (w 1) σ (μ 1)
+  time_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (fun τ : TripLength => τ) σ (μ 1)
+
+/-- Convert surge GN21 source data into the fixed-response Lemma 5 package. -/
+def GN21MeasuredRightFixedResponsePolicyFormSourceData.to_fixed_response
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ) :
+    Lemma5FixedResponsePolicyFormFeasibleOptimalData (μ 1)
+      (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1)) shape (ρ 1) :=
+  gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal
+    μ arrival switch12 switch21 w hρ D.Ri D.Rj D.base_policy_form_data
+    D.hQi_pos D.hTi_pos D.hTj_pos D.hden_pos D.hWi D.hWj
+    D.response_measurable D.response_integrable_acceptAll D.arrival_pos
+    D.current_nondegenerate D.candidate_nondegenerate D.candidate_den_pos
+    D.q_integrable D.w_integrable D.time_integrable
+
 /--
 Positive affine transfer from dynamic local optimality to Lemma 5 marginal
 optimality.  If the fixed-state continuation reward is a positive affine
@@ -46396,6 +46608,76 @@ def Theorem4AllMeasurableFixedResponseShapeData.to_policy_form_data
     exact
       ⟨shape, response,
         Lemma5FixedResponsePolicyFormFeasibleOptimalData.of_shapeData D⟩
+
+/--
+All measurable optima satisfy the GN21 measured fixed-response source data in
+both states.  This is the source-facing package just before producing
+`Theorem4AllMeasurableFixedResponsePolicyFormData`.
+-/
+structure Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+          switch21 w ρ shape.1
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+          switch21 w ρ shape.1
+
+/--
+GN21 measured fixed-response source data produce the all-optima policy-form
+boundary consumed by Theorem 4.
+-/
+def Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.to_fixed_response_policy_form_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    (C :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData μ arrival
+        switch12 switch21 w) :
+    Theorem4AllMeasurableFixedResponsePolicyFormData μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) where
+  exists_optimal := C.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    rcases C.nonsurge ρ hρ with ⟨shape, D⟩
+    exact
+      ⟨shape,
+        gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1),
+        D.to_fixed_response hρ⟩
+  surge := by
+    intro ρ hρ
+    rcases C.surge ρ hρ with ⟨shape, D⟩
+    exact
+      ⟨shape,
+        gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1),
+        D.to_fixed_response hρ⟩
 
 /--
 Policy-form fixed-response Lemma 5 hypotheses for every measurable optimum

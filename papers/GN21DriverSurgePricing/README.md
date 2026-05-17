@@ -983,6 +983,9 @@ and
 `gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 assemble the required fixed-response Lemma 5 data from dynamic optimality and
 scaled Lemma 6 policy-form data.
+`Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` packages these
+statewise assumptions for all measurable optima and converts to the
+all-optima fixed-response policy-form boundary.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:
