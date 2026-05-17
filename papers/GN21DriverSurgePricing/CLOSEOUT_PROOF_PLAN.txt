@@ -159,6 +159,11 @@ identifying the current state policy with the concrete endpoint-union set.
 For the one-threshold Theorem 3 route, use the two named dynamic Lemma 5
 wrappers directly on the surge strictly-increasing and non-surge
 strictly-decreasing branch exclusions.
+For non-surge accepted-middle endpoint work, Lean now has
+`rejectsLongTrips_of_acceptsMiddleTrips_of_lo_nonpos` and
+`GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form_middle_reroute`:
+if the lower accepted-middle cutoff is nonpositive, route the branch through
+reject-long at the upper cutoff instead of asking for a separate `0 < lo`.
 
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
