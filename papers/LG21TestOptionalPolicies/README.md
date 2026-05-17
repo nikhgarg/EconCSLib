@@ -127,6 +127,14 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
   do the same when each equilibrium/base profile supplies a finite student
   law, access event, and positive-mass no-access complement.
+  The public Section 3 endpoints now also have full-support/not-all-acting
+  variants
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share_of_full_support_not_all`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all`,
+  which derive that positive-mass complement witness from a full-support
+  finite cohort law plus an ordinary witness outside the reporting/taking
+  event.
 - The concrete base-mixed continuous-law route now has short Section 3
   paper-interface endpoints:
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`

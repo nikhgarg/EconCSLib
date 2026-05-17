@@ -210,6 +210,14 @@ abbrev audit_theorem3_1_section3_optional_reporting_event_share_law_route :=
 abbrev audit_theorem3_1_section3_report_required_event_share_law_route :=
   @paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
 
+/-- Audit endpoint for Theorem 3.1 optional-reporting finite-event-share full-support route. -/
+abbrev audit_theorem3_1_section3_optional_reporting_event_share_full_support_not_all :=
+  @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share_of_full_support_not_all
+
+/-- Audit endpoint for Theorem 3.1 report-required finite-event-share full-support route. -/
+abbrev audit_theorem3_1_section3_report_required_event_share_full_support_not_all :=
+  @paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all
+
 /-- Audit endpoint for Theorem 3.2's positive-event versus already-blank bridge. -/
 abbrev audit_theorem3_2_positive_event_or_blank_bridge :=
   @paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank

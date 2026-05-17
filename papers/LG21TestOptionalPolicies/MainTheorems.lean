@@ -4453,6 +4453,40 @@ theorem lg21PMFEventShareFn_lt_one_of_mass_not
     (event e base) (decEvent e base) student hnot_event hmass
 
 /--
+Full support turns an ordinary complement witness into the positive-mass
+complement witness needed for finite event-share bounds.
+-/
+theorem lg21PMFEventShareFn_complement_mass_of_full_support_not_all
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (hfull_support :
+      ∀ e base student, 0 < (studentLaw e base student).toReal)
+    (hnot_all : ∀ e base, ∃ student, ¬ event e base student) :
+    ∀ e base, ∃ student, ¬ event e base student ∧
+      0 < (studentLaw e base student).toReal := by
+  intro e base
+  rcases hnot_all e base with ⟨student, hnot_event⟩
+  exact ⟨student, hnot_event, hfull_support e base student⟩
+
+/--
+With full support, a finite event share is strictly below one whenever the
+event does not contain every student.
+-/
+theorem lg21PMFEventShareFn_lt_one_of_full_support_not_all
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (hfull_support :
+      ∀ e base student, 0 < (studentLaw e base student).toReal)
+    (hnot_all : ∀ e base, ∃ student, ¬ event e base student) :
+    ∀ e base, lg21PMFEventShareFn studentLaw event decEvent e base < 1 :=
+  lg21PMFEventShareFn_lt_one_of_mass_not studentLaw event decEvent
+    (lg21PMFEventShareFn_complement_mass_of_full_support_not_all
+      studentLaw event hfull_support hnot_all)
+
+/--
 Positive mass survives pushing a PMF forward to the image point.  This is used
 to turn paper-facing support facts about concrete test/skill values into
 support facts for the abstract acting distribution.
