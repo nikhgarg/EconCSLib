@@ -3508,6 +3508,34 @@ abbrev paper_interface_theorem3_2_optional_reporting_fairness_impossibility_cert
   @paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
 
 /--
+Paper-facing optional-reporting source-equilibrium case-split no-relevance
+route.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
+/--
+Paper-facing Theorem 3.2 Section 3 optional-reporting source-equilibrium
+case-split no-relevance route.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
+/--
+Paper-facing optional-reporting source-equilibrium zero-share no-relevance
+route.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_optional_reporting_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
+
+/--
+Paper-facing Theorem 3.2 Section 3 optional-reporting source-equilibrium
+zero-share no-relevance route.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
+
+/--
 Paper-facing optional-reporting posterior-payoff constant-latent event-share
 route packaged as the compact Theorem 3.2 fairness-impossibility certificate.
 -/
@@ -5428,6 +5456,32 @@ the compact Theorem 3.2 fairness-impossibility certificate.
 -/
 abbrev paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_zero_event_share_blank_source_equilibrium :=
   @paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_zero_event_share_blank_source_equilibrium
+
+/--
+Paper-facing report-required source-equilibrium case-split no-relevance route.
+-/
+abbrev paper_interface_theorem3_2_report_required_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_report_required_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium
+
+/--
+Paper-facing Theorem 3.2 Section 3 report-required source-equilibrium
+case-split no-relevance route.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium
+
+/--
+Paper-facing report-required source-equilibrium zero-share no-relevance route.
+-/
+abbrev paper_interface_theorem3_2_report_required_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_report_required_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium
+
+/--
+Paper-facing Theorem 3.2 Section 3 report-required source-equilibrium
+zero-share no-relevance route.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium
 
 /--
 Paper-facing report-required unit-centered constant-latent event-share route

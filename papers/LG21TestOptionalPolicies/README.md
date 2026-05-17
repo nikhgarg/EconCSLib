@@ -230,7 +230,10 @@ cache is kept as `source.txt` for named-statement audits.
   source-equilibrium routes now also have Section 3 hidden-access implication
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2
   route can be cited without separately combining the information-set lemma
-  with the upper-tail event-share theorem.
+  with the upper-tail event-share theorem.  The source event-or-blank and
+  source zero-share certificate routes also have direct Section 3 no-relevance
+  aliases in both regimes, so downstream callers can cite the paper's case
+  split or the finite zero-share version directly.
 - The source-equilibrium event-share route now has the paper's case split:
   at each equilibrium/base profile, either a positive reporter/taker event
   share triggers the unraveling contradiction, or that profile is already
