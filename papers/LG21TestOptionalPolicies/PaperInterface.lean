@@ -4388,6 +4388,34 @@ theorem paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_b
     decEvent hblank_of_zero_share
 
 /--
+Theorem 3.2 premise conversion: a zero-share-implies-blank assumption implies
+the no-positive-event-implies-blank assumption used by the compact Section 3
+wrappers.
+-/
+theorem paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    {studentLaw : Equilibrium → Base → PMF Student}
+    {event : Equilibrium → Base → Student → Prop}
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    {baseOnlyEstimate : Equilibrium → Base → PMF Estimate}
+    {fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate}
+    (hblank_of_zero_share :
+      ∀ e base,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0 →
+          ∀ test, baseOnlyEstimate e base =
+            fullFeatureEstimate e base test) :
+    ∀ e base,
+      (¬ ∃ student, event e base student ∧
+        0 < (studentLaw e base student).toReal) →
+        ∀ test, baseOnlyEstimate e base =
+          fullFeatureEstimate e base test := by
+  intro e base hno_positive
+  exact hblank_of_zero_share e base
+    (lg21PMFEventShareFn_eq_zero_of_no_positive_mass
+      studentLaw event decEvent e base hno_positive)
+
+/--
 Paper-facing Theorem 3.2, optional-reporting regime.  If access status is
 hidden and zero-positive-reporter profiles are already test-blank, then
 latent-skill or observable fairness implies test-blankness on the concrete
@@ -7299,6 +7327,24 @@ theorem paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass
         ∃ student, event e base student ∧
           0 < (studentLaw e base student).toReal :=
   lg21PMFEventShareFn_pos_iff_exists_pos_mass studentLaw event decEvent
+
+/--
+Theorem 3.2 helper: if an indexed finite event has no positive-mass atom, then
+its finite event share is zero.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_fn_eq_zero_of_no_positive_mass
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (e : Equilibrium) (base : Base)
+    (hno_positive :
+      ¬ ∃ student, event e base student ∧
+        0 < (studentLaw e base student).toReal) :
+    (paper_interface_theorem3_2_pmf_event_share_fn
+      studentLaw event decEvent e base).toReal = 0 :=
+  lg21PMFEventShareFn_eq_zero_of_no_positive_mass
+    studentLaw event decEvent e base hno_positive
 
 /--
 Theorem 3.1/3.2 helper: base-indexed finite event shares are strictly below one

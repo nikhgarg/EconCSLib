@@ -696,6 +696,9 @@ Last updated: 2026-05-16
    atom, and
    `paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank`
    converts a zero-share-implies-blank premise into the event-or-blank split.
+   `paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank`
+   gives the direct premise conversion needed by the compact Section 3
+   wrappers.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,

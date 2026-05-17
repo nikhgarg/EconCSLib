@@ -187,6 +187,8 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank`
   lets Theorem 3.2 callers state the blank branch as "zero reporter/taker
   share implies blank" rather than in negated existential form.
+  `paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank`
+  is the direct premise-conversion helper for the compact Section 3 wrappers.
 - The certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now also have Section 3 hidden-access implication
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2

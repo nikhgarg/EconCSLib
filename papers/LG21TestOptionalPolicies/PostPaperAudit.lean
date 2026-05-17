@@ -134,9 +134,17 @@ abbrev audit_theorem3_2_positive_event_or_blank_bridge :=
 abbrev audit_theorem3_2_positive_event_share_or_blank_bridge :=
   @paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank
 
+/-- Audit endpoint for converting zero-share blankness into no-positive-event blankness. -/
+abbrev audit_theorem3_2_no_positive_event_blank_of_zero_event_share_blank :=
+  @paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank
+
 /-- Audit endpoint for positive finite event share iff a positive-mass event atom exists. -/
 abbrev audit_event_share_pos_iff_exists_pos_mass :=
   @paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass
+
+/-- Audit endpoint for zero finite event share from no positive-mass event atom. -/
+abbrev audit_event_share_eq_zero_of_no_positive_mass :=
+  @paper_interface_theorem3_2_pmf_event_share_fn_eq_zero_of_no_positive_mass
 
 /-- Audit endpoint for finite event shares being strictly below one. -/
 abbrev audit_event_share_lt_one_of_complement_mass :=
