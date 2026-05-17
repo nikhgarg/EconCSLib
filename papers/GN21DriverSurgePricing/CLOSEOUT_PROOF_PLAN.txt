@@ -215,6 +215,24 @@ the actual surge cutoff bounds/reward-rate fields and the non-surge fixed-state
 by-policy-form field, not a preassembled endpoint certificate and not a
 separate positive-mass assumption.
 
+The sharper paper-facing boundary now removes the duplicate reward-rate source
+fields from that branch-field route.  Lean derives them from the
+fixed-response source identities:
+
+  GN21MeasuredLeftFixedResponsePolicyFormSourceData.fixed_reward_rate_of_Ri_eq
+  GN21MeasuredRightFixedResponsePolicyFormSourceData.fixed_reward_rate_of_Rj_eq
+  GN21NonsurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.of_fixed_response_cross_fields
+  GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+
+This is now the preferred paper-proof path.  The remaining exposed per-optimum
+fields are the actual Lemma 9/10-style inequalities and source normalizations:
+surge reject-short cutoff, surge reject-middle upper cutoff, non-surge
+reject-long upper cross, non-surge accept-middle lower cross, non-surge
+accept-middle upper cross, `Ri = R1`, and `Rj = R2`.  Do not replace this with
+a general all-policy scalar Lemma 9 package; stay on these paper branch fields.
+
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
 source record, and the sharper middle-cutoff version is now compiled:
