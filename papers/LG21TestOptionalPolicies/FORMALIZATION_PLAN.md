@@ -20,7 +20,9 @@ Last updated: 2026-05-16
   features, with their own two-sided best-response bridges.
 - Definitions 2--5 now have direct PMF and continuous-law source predicates
   plus paper-interface unfold lemmas.  Definition 5 also has equivalent
-  witness forms for concrete base/test relevance.
+  witness forms for concrete base/test relevance and named observable-identity
+  certificates for the ordinary full-feature/base-only surface bridge to
+  Definition 3.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
   the shared conditional-resampling API.  Definition 6 now explicitly unfolds
   both access and re-sampled no-access estimate laws as the same conditional
@@ -160,10 +162,90 @@ Last updated: 2026-05-16
   latent-skill mixtures, and demographic laws are symbolic base-profile
   mixtures.  The new optional-reporting and report-required base-mixed
   endpoints combine those surfaces with the automatic source-mixture cutoffs.
-  Remaining Theorem 3.1 source work is deriving analogous PMF witnesses if a
-  finite PMF endpoint is desired and, if needed later, strengthening the current
-  closed source-mixture endpoint to match the paper's exact "every equilibrium"
-  wording.  The
+  `LG21LawStrategicWithholdingCertificate` now mirrors the compact PMF
+  certificate endpoint for these continuous-law routes.  The generic PMF and
+  continuous-law source-witness routes now build the corresponding compact
+  strategic-withholding certificates directly.
+  Theorem 3.1 now also has regime-specific optional-reporting and
+  report-required PMF/law certificates:
+  `LG21OptionalReportingStrategicWithholdingCertificate`,
+  `LG21LawOptionalReportingStrategicWithholdingCertificate`,
+  `LG21ReportRequiredStrategicWithholdingCertificate`, and
+  `LG21LawReportRequiredStrategicWithholdingCertificate`.  These preserve the
+  paper's exact optional-reporting conclusion, all access students take and
+  reporting is thresholded, instead of routing optional reporting through the
+  generic finite-taking-threshold certificate.
+  The strongest concrete source-shaped continuous-law surfaces now construct
+  those regime-specific certificates directly via
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`.
+  They now also have finite-event-share variants,
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`,
+  which derive `0 <= C < 1` directly from PMF nonnegativity plus positive
+  no-access complement mass.
+  The continuous-law route now also has explicit `∀ e` wrappers for
+  equilibrium-indexed source quantities:
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`.
+  The finite-event-share variants
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
+  instantiate those `∀ e` certificate families from finite student laws and
+  positive-mass no-access complement events.
+  The Section 3 event-share endpoints now also have full-support/not-all-acting
+  wrappers:
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share_of_full_support_not_all`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all`
+  derive the positive-mass complement event from full support of the finite
+  cohort law plus an ordinary witness outside the reporting/taking event.
+  The reusable event-share bridge itself is public as
+  `paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all`
+  and
+  `paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all`.
+  Theorem 3.1 now also has Section 3 hidden-access wrappers over PMF and
+  continuous-law regime-specific certificates, including every-equilibrium
+  certificate-family forms.  The access-status hypothesis is exposed as
+  `LG21SchoolInformationSet.fromAccessAction false ... = none`, and the
+  wrappers then return the optional-reporting or report-required
+  strategic-withholding/fairness conclusions.  The concrete base-mixed
+  continuous-law route now also has final short Section 3 paper-interface
+  endpoints:
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding`.
+  Their finite-event-share variants,
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`,
+  remove the explicit `accessFraction`/`0 <= C < 1` premises from the public
+  Section 3 endpoints.  The shorter aliases
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share`
+  state the same finite-event-share route without the long implementation
+  suffix.
+  These avoid certificate-field indirection by directly returning, for every
+  equilibrium index, the optional/report-required strategic-withholding witness
+  and failures of all three fairness notions on the concrete Gaussian or
+  affine-skill posterior law surface.  The finite-event-share PMF route is also
+  proved by
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_of_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_of_event_share_no_take_mixture`,
+  which instantiate the access fraction from a finite student event and derive
+  `0 <= C < 1` internally.  The matching every-equilibrium PMF endpoints
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_take_mixture`
+  now return one strategic-withholding witness per equilibrium index.  A fully
+  concrete finite PMF surface remains optional if that representation is
+  desired.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
@@ -171,11 +253,111 @@ Last updated: 2026-05-16
   `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit
   below-cutoff non-reporting score, and PMF/law wrappers prove failure of all
   three fairness criteria from concrete distribution-difference witnesses.
+  The finite event-share layer now has strict complement-mass bounds:
+  `lg21PMFEventShare_lt_one_of_mass_not` and
+  `lg21PMFEventShareFn_lt_one_of_mass_not` prove that a positive-mass atom
+  outside the reporter/taker event makes the corresponding finite share
+  strictly below one, giving a reusable route to the `accessFraction < 1`
+  premise in source-mixture instantiations.  The wrappers
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture`
+  use that route directly, instantiating the access fraction as a finite PMF
+  event share and deriving `0 ≤ C < 1` from the PMF and positive complement
+  mass.
 - Theorem 3.2 now has PMF and continuous-law endpoints, no-relevance forms,
   and contrapositive wrappers: test-blankness is equivalent to absence of a
   concrete base/test relevance witness, and such a witness rules out
   latent-skill or observable fairness once the source unraveling implication is
-  available.  The source proof's positive-share resampling algebra is also
+  available.  These certificate and no-relevance endpoints now also have
+  Section 3 hidden-access wrappers over PMF and continuous-law surfaces, so the
+  paper hypothesis that the school does not observe access status is exposed
+  directly beside the fairness-impossibility conclusion.  The
+  certificate-packaged optional-reporting and report-required event-share
+  source-equilibrium routes now have matching Section 3 implication and
+  no-relevance wrappers.  The same source-equilibrium layer now has the paper's
+  event-or-blank case split: a local positive reporter/taker share gives the
+  unraveling contradiction, while the no-positive-share branch is supplied by
+  `lg21EventSharePositiveOrBlank_of_no_positive_event_implies_blank` or, in
+  share language, by
+  `lg21EventSharePositiveOrBlank_of_zero_event_share_implies_blank`.
+  These convert the paper convention "no one reports/takes, hence test-blank"
+  into the direct test-blankness assumption for that equilibrium/base profile.
+  Definition 5's no-reporter/no-taker branch now has explicit endpoints
+  `lg21SourceTestBlank_of_no_positive_event_blank` and
+  `lg21SourceTestBlank_of_zero_event_share_blank`, plus the constructed
+  blank-on-zero-share global equality
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_testBlank_of_zero_share`.
+  The blank-on-zero constructor also now has raw-preservation and raw
+  no-relevance endpoints:
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_nonzero_share`,
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_positive_event`,
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_no_normalized_relevance`,
+  and
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_positive_event`.
+  It now also has exact equivalence endpoints
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_normalized_relevance_iff_no_raw_relevance_on_nonzero_share`
+  and
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_normalized_relevance_iff_no_raw_relevance_on_positive_event`.
+  Thus the constructed surface is auditable both as a zero-share normalization
+  and as an unchanged raw full-feature law on nonzero/positive-event profiles;
+  raw no-relevance on those preserved profiles is exactly normalized
+  no-relevance for the constructed law.  The paper-interface layer now combines
+  those equivalences with the Section 3 fairness/no-relevance iff routes, giving
+  direct optional-reporting and report-required endpoints where fairness is
+  equivalent to raw no-relevance on nonzero-share or positive-event profiles.
+  These make the source proof's "no one reports/takes" sentence separately
+  auditable from the positive-share contradiction.  The other source-proof
+  branch, "test-blank policies meet observable fairness trivially", is now
+  exposed by `lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly`
+  and the continuous-law analogue; the named certificates
+  `LG21FullFeatureBaseOnlyObservableIdentities` and
+  `LG21LawFullFeatureBaseOnlyObservableIdentities` package the necessary
+  source-surface identities for audit callers.  Combining those bridges with the
+  fairness-impossibility certificates now gives PMF and continuous-law iff
+  endpoints:
+  `paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_full_feature_base_only`,
+  `paper_theorem3_2_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only`,
+  and the corresponding law and Section 3 wrappers.  The parallel
+  `_and_observableIdentities` wrappers consume the named certificate rather
+  than separate `testOf`, access, and no-access identity arguments.  These
+  state the paper's "only way" reading directly whenever the observable surface
+  is the ordinary full-feature/base-only one.  The no-relevance iff wrappers
+  `paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only`
+  and its law analogue rephrase the same result as absence of any concrete
+  base/test relevance witness, with Section 3 variants bundling the hidden
+  access-status hypothesis.
+  The source-equilibrium event-or-blank and zero-share routes now specialize
+  those iff wrappers directly, giving Section 3 fairness/test-blank and
+  fairness/no-relevance iff endpoints for both optional-reporting and
+  report-required source certificates.  The event-or-blank and zero-share
+  source routes now also have `_and_observableIdentities` variants that
+  consume the named full-feature/base-only certificate directly.  These
+  certificates can be built uniformly for binary-mixture and finite
+  event-share surfaces via
+  `lg21BinaryMixtureEstimateSurface_observableIdentities` and
+  `lg21EventShareBinaryMixtureEstimateSurface_observableIdentities`.  These
+  case-split endpoints also have
+  Section 3 hidden-access wrappers, removing the earlier global positive-share
+  assumption from the source-facing theorem route.  The fully concrete optional
+  posterior-payoff and report-required
+  unit-centered routes now factor out their source-equilibrium certificates and
+  have Section 3 event-or-blank wrappers, so the positive-share versus
+  already-test-blank split is available at the strongest concrete surfaces in
+  both regimes.  Those concrete event-or-blank routes now also have
+  Section 3 fairness/test-blank and fairness/no-relevance iff wrappers under
+  the named full-feature/base-only observable-identity certificate; their Lean
+  proofs call the certificate-consuming source routes directly.  The
+  corresponding blank-on-zero-share concrete routes have direct Section 3 iff
+  wrappers too, using the constructor-backed source certificate and
+  observable-identity certificate to discharge the zero-share branch by
+  definition.  The fully concrete
+  optional posterior-payoff and
+  report-required unit-centered constant-latent event-share surfaces now also
+  have direct Section 3 wrappers, so the strongest current source-facing
+  Theorem 3.2 endpoints expose hidden access and the
+  fairness-implies-test-blankness conclusion together.  The
+  source proof's positive-share resampling algebra is also
   formalized: `lg21_pmf_mixture_cancel_right` and
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
   `D0 = λ D1 + (1 - λ) D0 ⇒ D1 = D0` step, and the theorem-facing wrappers turn
@@ -188,7 +370,17 @@ Last updated: 2026-05-16
   `paper_theorem3_2_not_latent_or_observable_fair_of_mixture_and_below_mean_actor`
   and
   `paper_theorem3_2_not_law_latent_or_observable_fair_of_observable_implication_and_below_mean_actor`
-  expose this branch without requiring finite atoms; the optional-reporting
+  expose this branch without requiring finite atoms.  The PMF and law logical
+  bridges
+  `paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  and
+  `paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  convert such contradiction-style branches back into Theorem 3.2's
+  fairness-implies-test-blankness shape.  The certificate constructors
+  `paper_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair`
+  and its law analogue now package those contradiction branches directly as
+  `LG21FairnessImpossibilityCertificate` values for the generic Section 3 and
+  iff wrappers.  The optional-reporting
   and report-required source-model wrappers derive the two-sided best-response
   field from concrete Definition 1 equilibria.  The cutoff-midpoint wrappers
   connect the existing threshold-strategy infrastructure to this direct branch:
@@ -261,11 +453,59 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface`
   further discharge the latent-to-observable identities via
-  `lg21LatentSkillEstimateDistribution_const_indexed`.  The report-required
+  `lg21LatentSkillEstimateDistribution_const_indexed`.  The optional-reporting
+  posterior-payoff specialization
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  now takes the reported and no-report source payoffs directly as Gaussian
+  posterior means and derives the affine certificate fields internally from
+  `GaussianOffsetSignalFamily.posteriorMean_update_eq_base_add_weight_mul`.
+  Its tie-at-indifference step is now proved internally from strict posterior
+  monotonicity and the Gaussian upper-tail-mean-above-threshold lemma.  The
+  companion implication wrapper
+  `paper_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  presents this continuous route directly as fairness implies test-blankness.
+  The nonempty-equilibrium constructor
+  `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
+  now packages this concrete optional surface into the compact
+  `LG21FairnessImpossibilityCertificate` interface.
+  The report-required
   centered-base-term endpoint
   `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_centered_baseTerm`
   closes the outside-payoff equality by defining the report-required base term
-  as `denom / 2 - signalWeight * upperTailMean`.
+  as `denom / 2 - signalWeight * upperTailMean`.  The report-required
+  affine-centered-payoff endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_affine_centered_payoff`
+  specializes this to denominator `1`, with source payoff stated directly as
+  `1 / 2 - slope * upperTailMean + slope * skill`.  Its tie-at-indifference
+  step is now proved internally: indifference forces `skill = upperTailMean`,
+  and the Gaussian upper-tail mean is strictly above the decision threshold.
+  The unit-centered endpoint
+  `paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  specializes further to source payoff
+  `1 / 2 - upperTailMean + skill`, removing the slope parameter too.  The
+  implication wrapper
+  `paper_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  presents this normalized report-required route directly in Theorem 3.2's
+  fairness-implies-test-blankness form.  Its nonempty-equilibrium constructor
+  `paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`
+  now packages the concrete unit-centered report-required surface into the same
+  compact certificate interface.
+  The direct Section 3 positive-share no-relevance wrappers
+  `paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
+  and
+  `paper_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`
+  bundle hidden access with the corresponding nonempty-equilibrium
+  no-relevance endpoints, so audit callers can use the concrete positive-share
+  surfaces without going through the broader event-or-blank case split.
+  The companion Section 3 iff wrappers
+  `paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`,
+  `paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  and
+  `paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`,
+  `paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  specialize the generic iff route to those concrete positive-share surfaces,
+  leaving only the standard full-feature/base-only observable-law identity
+  certificate explicit.
   The
   finite acting-distribution
   lemmas
@@ -374,7 +614,16 @@ Last updated: 2026-05-16
   pushforward acting law.  The centered-base-term specialization defines the
   report-required base term as `denom / 2 - signalWeight * mean`, closing the
   outside-payoff algebra by construction for that normalized affine source
-  model.  A stricter skill-dependent conditional-kernel route remains optional
+  model.  The report-required mapped-actor paper-interface endpoint now also
+  has a full-support specialization, replacing the two displayed selected-test
+  positive-mass assumptions by full support of the finite test law.  The
+  optional-reporting mapped-actor paper-interface endpoint now has the matching
+  finite-test full-support route: a concrete finite test law is pushed forward
+  to reported scores, and full support of the finite law supplies the selected
+  score-mass facts.  Both optional-reporting and report-required strongest
+  mapped-actor routes now also have existential distinct-test wrappers, matching
+  Definition 5's paper-facing relevance-witness language.  A stricter
+  skill-dependent conditional-kernel route remains optional
   if the final source-facing statement needs true conditional-on-skill laws.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
@@ -513,10 +762,14 @@ Last updated: 2026-05-16
    concrete Definition 1 best response.  The base-indexed optional-reporting
    affine endpoint now makes the paper's reported-score and no-report payoff
    formulas definitional, and the concrete binary-mixture point-estimate
-   surface removes the remaining surface identity hypotheses.  The concrete
-   fairness endpoint adds the latent-to-observable mixture reduction, and the
-   `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  The
-   base-indexed report-required affine endpoint now makes the taking payoff
+  surface removes the remaining surface identity hypotheses.  The concrete
+  fairness endpoint adds the latent-to-observable mixture reduction, and the
+  `_self_law` wrapper removes the redundant finite PMF-to-law bridge.  The
+  logical bridge
+  `paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair`
+  converts the stronger continuous no-fairness endpoints into the paper's
+  implication shape.  The
+  base-indexed report-required affine endpoint now makes the taking payoff
    formula definitional, and the concrete report-required fairness endpoint
    adds the corresponding binary-mixture surface and latent-to-observable
    reduction.  The centered-outside variant reduces the report-required
@@ -541,16 +794,118 @@ Last updated: 2026-05-16
    concrete surfaces, and the mapped-actor-law variants reduce the displayed
    support facts to positive mass of the displayed concrete test/skill values.
    The centered-base-term-by-definition variant closes the report-required
-   outside-payoff algebra for the normalized affine source model.  This finite
+   outside-payoff algebra for the normalized affine source model.  The optional
+   posterior-payoff and report-required unit-centered continuous routes now
+   also have concrete no-relevance wrappers, so their fairness hypotheses rule
+   out every base/test witness directly rather than only through the abstract
+   test-blank predicate.  The optional posterior-payoff route also has
+   `_of_nonempty_equilibrium` wrappers that choose the positive-share
+   contradiction witness internally from nonempty equilibrium/base spaces; the
+   report-required unit-centered route now has the same nonempty-equilibrium
+   cleanup.  The compact certificate-level event-share source-equilibrium
+   endpoints also now choose the equilibrium/base contradiction witness
+   internally and expose implication/no-relevance wrappers, reducing the final
+   source-facing route to certificate, positive-share, mixture-definition, and
+   payoff-normalization data while preserving Theorem 3.2's exact conclusion
+   shape.  They also now build the compact
+   `LG21FairnessImpossibilityCertificate` consumed by the top-level paper
+   interface theorem.  The event-share source-equilibrium route now also has
+   optional-reporting and report-required event-or-blank wrappers, plus Section
+   3 hidden-access versions, so the route follows the paper proof's split
+   between positive reporter/taker share and already-test-blank profiles rather
+   than assuming a global positive share.  The share-language bridge
+   `paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass`
+   proves that positive finite share is equivalent to a positive-mass event
+   atom, and
+   `paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank`
+   converts a zero-share-implies-blank premise into the event-or-blank split.
+   `paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank`
+   gives the direct premise conversion needed by the compact Section 3
+   wrappers.  The corresponding zero-share Section 3 wrappers
+   `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_zero_event_share_blank`,
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_zero_event_share_blank`,
+   `paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_zero_event_share_blank`,
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_zero_event_share_blank`
+   expose the final implication/no-relevance forms with that paper-style
+   premise.  The constructor
+   `paper_interface_theorem3_2_full_feature_estimate_blank_on_zero_event_share`
+   and its case-split wrapper
+   `paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share`
+   discharge this branch by construction for surfaces that explicitly blank
+   full-feature estimates when the finite event share is zero.  The
+   optional/report-required wrappers
+   `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_blank_on_zero_event_share`
+   and
+   `paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_blank_on_zero_event_share`
+   route the final fairness-implies-test-blankness statements through that
+   constructor.  The no-relevance counterparts
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_blank_on_zero_event_share`
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share`
+   route the contrapositive statements through the same constructed surface.
+   The raw no-relevance variants
+   `paper_interface_theorem3_2_section3_optional_reporting_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`
+   combine those endpoints with the raw-preservation lemma, so the
+   conclusion is stated for the unnormalized raw full-feature law on nonzero
+   reporter/taker-share profiles.  The positive-event variants
+   `paper_interface_theorem3_2_section3_optional_reporting_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share`
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share`
+   state the same conclusion directly for positive-mass reporter/taker atoms.
+   The compact certificate aliases
+   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_zero_event_share_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff`,
+   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff`,
+   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff`,
+   and
+   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff`
+   package the source-equilibrium event-or-blank, source zero-share, concrete
+   event-or-blank, and constructed blank-on-zero-share routes as
+   `LG21FairnessImpossibilityCertificate`s.
+   The source-equilibrium event-or-blank and zero-share certificate routes now
+   also expose direct Section 3 implication/no-relevance aliases:
+   `paper_interface_theorem3_2_section3_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_zero_event_share_blank_source_equilibrium`,
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium`,
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium`.
+   The more abstract source-witness route now also has direct Section 3
+   implication/no-relevance aliases for both PMF and continuous-law surfaces:
+   `paper_interface_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_evidence`,
+   `paper_interface_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence`,
+   `paper_interface_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_evidence`,
+   and
+   `paper_interface_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence`.
+   Use these when the intended statement should cite the source-shaped witness
+   obligations directly rather than routing through a compact certificate.
+   The fully concrete optional
+   posterior-payoff and report-required unit-centered constant-latent
+   event-share endpoints now also have direct Section 3 hidden-access wrappers,
+   and short `PaperInterface` aliases
+   `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility`
+   and
+   `paper_interface_theorem3_2_section3_report_required_fairness_impossibility`
+   are the final implication audit targets.  The matching short no-relevance
+   aliases
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance`
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance`
+   expose the contrapositive paper reading directly from the same case-split
+   concrete surfaces.  This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
-   use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
-   work is to decide the final paper-facing theorem statement: either expose
-   the current event-share constant-latent surface endpoints, using the
-   centered-base-term report-required normalization when appropriate, or
-   instantiate a stricter conditional-kernel version if the statement should
-   quantify over conditional-on-skill Gaussian laws.
+   only need a stricter conditional-kernel version if the final statement is
+   intentionally broadened beyond the concrete constant-latent event-share
+   surfaces used by the current Section 3 wrappers.
 
 ## Reusable Library Seams
 
