@@ -72,7 +72,13 @@ cache is `source.txt`.
   reject-middle, not a forall-over-rejected-trips pointwise proof.  The cutoff
   inequality is still a real source obligation; it does not follow from
   reject-short syntax alone because the fixed-state ratio includes the base
-  switch term.
+  switch term.  This scalar cutoff boundary is now exposed at the paper-facing
+  fixed-response source layer through
+  `GN21Theorem3FixedResponsePolicyFormSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
+  `GN21Theorem3FixedResponseOneThresholdSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
+  `GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
+  and the corresponding compiled Theorem 3 wrappers, including
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
