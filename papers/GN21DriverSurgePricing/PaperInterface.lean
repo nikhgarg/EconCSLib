@@ -96,6 +96,33 @@ theorem theorem1_single_state_threshold_best_response_measurable
 /-! ## Dynamic Multiplicative Pricing -/
 
 /--
+Lemma 5 source-facing fixed-response classification: if a feasible measurable
+policy maximizes the positive-response marginal objective, then it has the
+canonical paper form for the derivative shape, up to null endpoint sets.
+-/
+theorem lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
+    (mu : Measure TripLength) [NoAtoms mu]
+    (response : TripLength → ℝ) {shape : Lemma5DerivativeShape}
+    (sigma : TripPolicy)
+    (D : Lemma5PositiveResponseShapeData response shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy mu)
+    (hsigma_measurable : MeasurableSet sigma)
+    (hsigma_subset : sigma ⊆ acceptAllPolicy)
+    (hoptimal :
+      ∀ sigma' : TripPolicy,
+        sigma' ⊆ acceptAllPolicy →
+        MeasurableSet sigma' →
+          lemma5MarginalSetReward mu response sigma' ≤
+            lemma5MarginalSetReward mu response sigma) :
+    lemma5PolicyFormAlmostEverywhere mu shape sigma := by
+  exact
+    GN21DriverSurgePricing.paper_lemma5_fixed_response_policy_form_ae_of_response_shape
+      mu response sigma D hresponse_measurable
+      hresponse_integrable_acceptAll hsigma_measurable hsigma_subset hoptimal
+
+/--
 Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
 when the non-surge Lemma 5 branch is positive/decreasing and the surge branch
 is positive/increasing, the optimal policy has the paper's multiplicative
@@ -204,6 +231,42 @@ theorem theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
   exact
     GN21DriverSurgePricing.theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
       rho R2 T1 Q1 switch12 arrival0 hR2_nonneg hden_pos hbound
+
+/--
+Theorem 3 feasibility threshold: for the measured accept-all primitives, the
+paper threshold `C` lies in `[0,1)`.
+-/
+theorem theorem3_feasibility_thresholdC_mem_Ico_acceptAll
+    (mu1 mu2 : Measure TripLength)
+    (arrival1 arrival2 switch12 switch21 : ℝ)
+    (harrival1_pos : 0 < arrival1)
+    (harrival2_nonneg : 0 ≤ arrival2)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy mu1)
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy mu1)
+    (hmeasure1_pos : 0 < mu1 acceptAllPolicy) :
+    0 ≤ theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime mu1 arrival1)
+        (gn21AcceptAllScaledStateTime mu2 arrival2)
+        (gn21AcceptAllExitWeightIntegral mu1 arrival1 switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral mu2 arrival2 switch21 switch12)
+        switch12 ∧
+      theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime mu1 arrival1)
+        (gn21AcceptAllScaledStateTime mu2 arrival2)
+        (gn21AcceptAllExitWeightIntegral mu1 arrival1 switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral mu2 arrival2 switch21 switch12)
+        switch12 < 1 := by
+  simpa [gn21AcceptAllScaledStateTime, gn21AcceptAllExitWeightIntegral] using
+    GN21DriverSurgePricing.paper_theorem3_feasibility_thresholdC_mem_Ico_acceptAll_of_measured_primitives_closed
+      mu1 mu2 arrival1 arrival2 switch12 switch21 harrival1_pos
+      harrival2_nonneg hswitch12_pos hswitch21_pos htime1_integrable
+      hq1_integrable hmeasure1_pos
 
 /--
 Theorem 3 positive-mass IC on the mass-affine small-surge route: the source
@@ -809,6 +872,155 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
   exact
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+The same finite-or-infinite Theorem 3 route with the paper's ratio assumptions
+doing the scalar work: `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0` imply
+the positivity and ordering fields required by the internal source package.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (endpoint_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+            GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
+              mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  have hC_nonneg :
+      0 ≤ theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 :=
+    (theorem3_feasibility_thresholdC_mem_Ico_acceptAll
+      (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21
+      harrival1_pos (le_of_lt harrival2_pos) hswitch12_pos hswitch21_pos
+      htime1_integrable hq1_integrable hmeasure1_pos).1
+  have hrho_pos : 0 < rho := lt_of_le_of_lt hC_nonneg hC_lt_rho
+  have hR1_pos : 0 < R1 := by
+    rw [hR1_eq]
+    exact mul_pos hrho_pos hR2_pos
+  have hR1_lt_R2 : R1 < R2 := by
+    rw [hR1_eq]
+    simpa using mul_lt_mul_of_pos_right hrho_lt_one hR2_pos
+  exact
+    theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer
+      mu arrival rho R1 R2 switch12 switch21
+      { hR1_eq := hR1_eq
+        hR1_pos := hR1_pos
+        hR1_lt_R2 := hR1_lt_R2
+        hR2_pos := hR2_pos
+        hC_lt_rho := hC_lt_rho
+        hrho_lt_one := hrho_lt_one
+        harrival1_pos := harrival1_pos
+        harrival2_pos := harrival2_pos
+        hswitch12_pos := hswitch12_pos
+        hswitch21_pos := hswitch21_pos
+        htime1_integrable := htime1_integrable
+        htime2_integrable := htime2_integrable
+        hq1_integrable := hq1_integrable
+        hq2_integrable := hq2_integrable
+        hmeasure1_pos := hmeasure1_pos
+        hmeasure2_pos := hmeasure2_pos
+        endpoint_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_selection :=
+          endpoint_selection }
+
+/--
+Ratio-source version of the pointwise upper-transfer route closest to the
+paper proof: the fixed-response branch data are lowered to the
+finite-or-infinite aggregate-cross endpoint route, while the scalar
+`R1 > 0` and `R1 < R2` fields are derived from `C < rho < 1`.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+            GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
+              mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_ratio_source
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos
+      (by
+        intro m z hnonneg hparams
+        let P :
+            Theorem3AcceptAllStructuredParameterData
+              mu arrival R1 R2 switch12 switch21 m z :=
+          (Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams).params
+        exact
+          (fixed_response_selection m z hnonneg hparams).to_finite_or_infinite_surge_cross_fixed_transfer_source
+            P)
 
 end PaperInterface
 end GN21DriverSurgePricing
