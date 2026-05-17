@@ -208,8 +208,11 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   disturb another agent's staged or unstaged files. If a commit accidentally
   includes extra work, prefer a follow-up corrective commit, an explicitly
   scoped new commit for the remaining owned files, or direct coordination with
-  the user/other agent. Normal first-time `git add path...` of files you just
-  edited is fine; index surgery to repair mistakes is not.
+  the user/other agent. If unrelated paths are already staged, commit your
+  owned paths with an explicit pathspec, e.g. `git commit -m "..." -- path1
+  path2`, so the unrelated staged entries remain untouched. Normal first-time
+  `git add path...` of files you just edited is fine; index surgery to repair
+  mistakes is not.
 
 ### 1.2.1 Paper Link Intake Protocol
 
