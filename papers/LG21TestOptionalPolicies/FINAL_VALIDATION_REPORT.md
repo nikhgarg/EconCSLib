@@ -36,8 +36,8 @@ unconditional theorem over every possible estimation policy.
 | Lemma 4.1, strategy-proofness | 492, 1784 | `audit_lemma4_1_observed_access_strategy_proofness` |
 | Proposition 4.2, latent-skill unfairness | 550, 2318 | `audit_proposition4_2_base_indexed_posterior_surface` |
 | Proposition 4.3, observable/demographic unfairness | 561, 2417 | `audit_proposition4_3_base_mixed_extra_signal_surface` |
-| Definition 6, re-sampling policy | 585 | `audit_definition6_resampling_policy_observable_kernel` |
-| Theorem 4.4, re-sampling fairness | 610, 2509 | `audit_theorem4_4_resampling_policy` |
+| Definition 6, re-sampling policy | 585 | `audit_definition6_resampling_policy_observable_kernel`, `audit_definition6_access_estimate_kernel_eq_map`, `audit_definition6_resampling_estimate_kernel_eq_map`, and `audit_definition6_access_resampling_kernel_eq` |
+| Theorem 4.4, re-sampling fairness | 610, 2509 | `audit_theorem4_4_resampling_policy_observably_fair`, `audit_theorem4_4_resampling_policy_demographically_fair`, packaged threshold-equilibrium route `audit_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair`, and source-model route `audit_theorem4_4_resampling_policy` |
 
 ## Cross-Artifact Checks
 

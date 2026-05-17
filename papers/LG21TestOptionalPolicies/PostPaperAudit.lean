@@ -586,9 +586,29 @@ abbrev audit_proposition4_3_base_mixed_extra_signal_surface :=
 abbrev audit_definition6_resampling_policy_observable_kernel :=
   @paper_interface_definition6_resampling_policy_observable_kernel
 
+/-- Audit endpoint for Definition 6, access estimate as a conditional-law map. -/
+abbrev audit_definition6_access_estimate_kernel_eq_map :=
+  @paper_interface_definition6_access_estimate_kernel_eq_map
+
+/-- Audit endpoint for Definition 6, re-sampled estimate as a conditional-law map. -/
+abbrev audit_definition6_resampling_estimate_kernel_eq_map :=
+  @paper_interface_definition6_resampling_estimate_kernel_eq_map
+
 /-- Audit endpoint for Definition 6, access/resampling kernel equality. -/
 abbrev audit_definition6_access_resampling_kernel_eq :=
   @paper_interface_definition6_access_estimate_kernel_eq_resampling_estimate_kernel
+
+/-- Audit endpoint for Theorem 4.4, observable fairness of the re-sampling policy. -/
+abbrev audit_theorem4_4_resampling_policy_observably_fair :=
+  @paper_interface_theorem4_4_resampling_policy_observably_fair
+
+/-- Audit endpoint for Theorem 4.4, demographic fairness of the re-sampling policy. -/
+abbrev audit_theorem4_4_resampling_policy_demographically_fair :=
+  @paper_interface_theorem4_4_resampling_policy_demographically_fair
+
+/-- Audit endpoint for Theorem 4.4, packaged threshold-equilibrium source route. -/
+abbrev audit_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair :=
+  @paper_interface_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair
 
 /-- Audit endpoint for Theorem 4.4, source strategy-proof fair re-sampling policy. -/
 abbrev audit_theorem4_4_resampling_policy :=
