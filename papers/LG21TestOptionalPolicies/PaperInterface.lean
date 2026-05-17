@@ -3494,6 +3494,13 @@ def paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certifi
     noReporterPMF hNoAccess hAccessMixtureDef
 
 /--
+Paper-facing optional-reporting source-equilibrium case-split route packaged as
+the compact Theorem 3.2 fairness-impossibility certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
+/--
 Paper-facing optional-reporting posterior-payoff constant-latent event-share
 route packaged as the compact Theorem 3.2 fairness-impossibility certificate.
 -/
@@ -5400,6 +5407,13 @@ def paper_interface_theorem3_2_report_required_fairness_impossibility_certificat
   paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_share_source_equilibrium_of_nonempty_equilibrium
     C studentLaw takerEvent decTakerEvent hwitness reporterPMF noReporterPMF
     hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq
+
+/--
+Paper-facing report-required source-equilibrium case-split route packaged as
+the compact Theorem 3.2 fairness-impossibility certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_source_equilibrium
 
 /--
 Paper-facing report-required unit-centered constant-latent event-share route

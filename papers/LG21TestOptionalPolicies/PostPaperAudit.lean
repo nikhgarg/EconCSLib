@@ -142,6 +142,10 @@ noncomputable abbrev audit_theorem3_2_blank_on_zero_event_share_constructor :=
 abbrev audit_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share :=
   @paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share
 
+/-- Audit endpoint for the optional-reporting source-equilibrium event-or-blank fairness certificate. -/
+abbrev audit_theorem3_2_optional_reporting_source_event_or_blank_fairness_certificate :=
+  @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
 /-- Audit endpoint for the optional-reporting event-or-blank fairness certificate. -/
 abbrev audit_theorem3_2_optional_reporting_event_or_blank_fairness_certificate :=
   @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff
@@ -149,6 +153,10 @@ abbrev audit_theorem3_2_optional_reporting_event_or_blank_fairness_certificate :
 /-- Audit endpoint for the optional-reporting blank-on-zero-share fairness certificate. -/
 abbrev audit_theorem3_2_optional_reporting_blank_on_zero_share_fairness_certificate :=
   @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff
+
+/-- Audit endpoint for the report-required source-equilibrium event-or-blank fairness certificate. -/
+abbrev audit_theorem3_2_report_required_source_event_or_blank_fairness_certificate :=
+  @paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_source_equilibrium
 
 /-- Audit endpoint for the report-required event-or-blank fairness certificate. -/
 abbrev audit_theorem3_2_report_required_event_or_blank_fairness_certificate :=
