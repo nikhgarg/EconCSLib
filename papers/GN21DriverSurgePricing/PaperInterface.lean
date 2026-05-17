@@ -1077,24 +1077,12 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
       mu arrival R1 R2 switch12 switch21 := by
-  have hC_nonneg :
-      0 ≤ theorem3FeasibilityThresholdC
-          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
-          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
-          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
-          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
-          switch12 :=
-    (theorem3_feasibility_thresholdC_mem_Ico_acceptAll
+  rcases GN21DriverSurgePricing.theorem3_acceptAll_ratio_source_scalar_consequences
       (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21
-      harrival1_pos (le_of_lt harrival2_pos) hswitch12_pos hswitch21_pos
-      htime1_integrable hq1_integrable hmeasure1_pos).1
-  have hrho_pos : 0 < rho := lt_of_le_of_lt hC_nonneg hC_lt_rho
-  have hR1_pos : 0 < R1 := by
-    rw [hR1_eq]
-    exact mul_pos hrho_pos hR2_pos
-  have hR1_lt_R2 : R1 < R2 := by
-    rw [hR1_eq]
-    simpa using mul_lt_mul_of_pos_right hrho_lt_one hR2_pos
+      rho R1 R2 hR1_eq hR2_pos hC_lt_rho hrho_lt_one
+      harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable hq1_integrable hmeasure1_pos with
+    ⟨_, hR1_pos, hR1_lt_R2⟩
   exact
     theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer
       mu arrival rho R1 R2 switch12 switch21

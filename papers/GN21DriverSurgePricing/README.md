@@ -230,6 +230,8 @@ cache is `source.txt`.
   wrappers derive `R1 > 0` and `R1 < R2` from `C < rho < 1`,
   `R1 = rho * R2`, and `R2 > 0`, so future source proofs should not
   reintroduce those scalar fields as separate assumptions on this route.
+  The reusable scalar helper is
+  `theorem3_acceptAll_ratio_source_scalar_consequences`.
   The direct endpoint-bridge wrapper is
   `PaperInterface.theorem3_structured_ic_of_endpoint_bridge_ratio_source`;
   its source theorem is
