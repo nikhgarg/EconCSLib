@@ -134,5 +134,25 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_cross_fields
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions_via_ordered
       mu arrival rho R1 R2 switch12 switch21 A
 
+/--
+Theorem 3 on the exact one-threshold fixed-transfer route: Lemma 6 is supplied
+at the sign-bracket level, exact branch selectors choose reject-long and
+reject-short optima, and the non-surge fixed-transfer condition is stated as a
+pointwise equality on the rejected complement.  Lean integrates that equality
+into the aggregate cross-ratio endpoint field.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
 end PaperInterface
 end GN21DriverSurgePricing

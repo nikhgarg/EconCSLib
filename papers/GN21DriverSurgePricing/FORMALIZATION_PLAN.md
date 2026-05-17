@@ -5,7 +5,8 @@ Last updated: 2026-05-16
 ## Current State
 
 - `PaperInterface.lean` exposes a compact review surface for central
-  single-state source claims.
+  single-state source claims and the current exact-bracket pointwise-transfer
+  Theorem 3 route.
 - `MainTheorems.lean` remains the large proof-facing ledger for the continuous
   and dynamic driver-surge development.
 - The folder has active proof work; avoid broad rewrites while other agents are

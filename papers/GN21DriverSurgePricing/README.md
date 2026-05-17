@@ -124,6 +124,11 @@ cache is `source.txt`.
   upper cross-ratio field.  The remaining non-surge fixed-state input on this
   exact branch is therefore the fixed reward-rate identity, not a separate
   scalar cross-ratio assumption.
+  The paper-facing source boundary
+  `Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions`
+  and interface theorem
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_transfer`
+  expose this exact bracket route directly.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,
