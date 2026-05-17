@@ -92,7 +92,9 @@ unconditional theorem over every possible estimation policy.
   certificate. The source-equilibrium event-or-blank and zero-share iff routes
   now have certificate-consuming audit aliases for optional-reporting and
   report-required regimes, so this source-case-split layer no longer exposes
-  the raw `testOf`/access/no-access triple. The source-equilibrium
+  the raw `testOf`/access/no-access triple.  Binary-mixture and finite
+  event-share surfaces now have reusable constructors for that certificate, so
+  concrete surface endpoints can assemble the identity witness uniformly. The source-equilibrium
   optional-reporting and report-required event-or-blank/zero-share routes now
   have direct Section 3 iff audit aliases as well, so this "only way" reading
   is exposed at the same source-certification layer as the implication and

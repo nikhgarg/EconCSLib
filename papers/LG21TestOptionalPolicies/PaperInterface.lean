@@ -538,6 +538,14 @@ abbrev paper_interface_definition5_law_observable_identity_certificate
     (S : LG21SourceLawPolicySurface Skill Base Test Law) :=
   LG21LawFullFeatureBaseOnlyObservableIdentities S
 
+/-- Constructor for the observable-identity certificate on binary-mixture surfaces. -/
+abbrev paper_interface_theorem3_2_binary_mixture_observable_identity_certificate :=
+  @lg21BinaryMixtureEstimateSurface_observableIdentities
+
+/-- Constructor for the observable-identity certificate on finite event-share surfaces. -/
+abbrev paper_interface_theorem3_2_event_share_binary_mixture_observable_identity_certificate :=
+  @lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+
 /-- Definition 2 unfolded: latent-skill fairness is equality for every equilibrium, skill, and base profile. -/
 theorem paper_interface_definition2_latent_skill_fair_iff
     {Skill Base Test Estimate : Type*}

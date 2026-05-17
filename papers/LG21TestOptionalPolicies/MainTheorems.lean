@@ -4576,6 +4576,89 @@ noncomputable def lg21EventShareBinaryMixtureEstimateSurface
     reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate
 
 /--
+Observable-identity certificate for a binary-mixture surface.  This packages
+the ordinary full-feature/base-only display equations needed to route
+test-blankness to observable fairness.
+-/
+noncomputable def lg21BinaryMixtureEstimateSurface_observableIdentities
+    {Skill Base Test Estimate Equilibrium : Type*}
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → Skill → Base → PMF Estimate)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (positiveShare : Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (testOf : Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base,
+        lg21BinaryMixturePMF
+          (positiveShare e base) (hpositiveShare_le_one e base)
+          (reporterPMF e base) (noReporterPMF e base) =
+          fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, noReporterPMF e base = baseOnlyEstimate e base) :
+    LG21FullFeatureBaseOnlyObservableIdentities
+      (lg21BinaryMixtureEstimateSurface Equilibrium
+        latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate
+        positiveShare hpositiveShare_le_one reporterPMF noReporterPMF
+        baseOnlyEstimate fullFeatureEstimate) where
+  testOf := testOf
+  observableAccess_eq_fullFeature := by
+    intro e base
+    simpa [lg21BinaryMixtureEstimateSurface] using hAccess e base
+  observableNoAccess_eq_baseOnly := by
+    intro e base
+    simpa [lg21BinaryMixtureEstimateSurface] using hNoAccess e base
+
+/--
+Observable-identity certificate for an event-share binary-mixture surface.
+-/
+noncomputable def lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+    {Skill Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → Skill → Base → PMF Estimate)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF Estimate)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF Estimate)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (testOf : Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base,
+        lg21BinaryMixturePMF
+          (lg21PMFEventShareFn studentLaw event decEvent e base)
+          (lg21PMFEventShareFn_le_one studentLaw event decEvent e base)
+          (reporterPMF e base) (noReporterPMF e base) =
+          fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, noReporterPMF e base = baseOnlyEstimate e base) :
+    LG21FullFeatureBaseOnlyObservableIdentities
+      (lg21EventShareBinaryMixtureEstimateSurface
+        (Skill := Skill) (Base := Base) (Test := Test)
+        (Estimate := Estimate) (Student := Student)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate
+        studentLaw event decEvent reporterPMF noReporterPMF
+        baseOnlyEstimate fullFeatureEstimate) where
+  testOf := testOf
+  observableAccess_eq_fullFeature := by
+    intro e base
+    simpa [lg21EventShareBinaryMixtureEstimateSurface,
+      lg21BinaryMixtureEstimateSurface] using hAccess e base
+  observableNoAccess_eq_baseOnly := by
+    intro e base
+    simpa [lg21EventShareBinaryMixtureEstimateSurface,
+      lg21BinaryMixtureEstimateSurface] using hNoAccess e base
+
+/--
 Theorem 3.2 source-route case split: at each equilibrium and non-test profile,
 either the reporter/taker event has positive mass, or that profile is already
 test-blank.

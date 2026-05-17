@@ -227,7 +227,10 @@ cache is kept as `source.txt` for named-statement audits.
   The optional-reporting and report-required source event-or-blank and
   zero-share routes also have certificate-consuming audit aliases ending in
   `_observable_identities`, so the paper's case split can be invoked without
-  reopening the identity triple.
+  reopening the identity triple.  The helper constructors
+  `lg21BinaryMixtureEstimateSurface_observableIdentities` and
+  `lg21EventShareBinaryMixtureEstimateSurface_observableIdentities` package
+  those certificates for the concrete binary-mixture/event-share surfaces.
 - Contradiction-style Theorem 3.2 branches now have first-class certificate
   constructors:
   `paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair`

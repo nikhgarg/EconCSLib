@@ -304,6 +304,10 @@ Last updated: 2026-05-16
   report-required source certificates.  The event-or-blank and zero-share
   source routes now also have `_and_observableIdentities` variants that
   consume the named full-feature/base-only certificate directly.  These
+  certificates can be built uniformly for binary-mixture and finite
+  event-share surfaces via
+  `lg21BinaryMixtureEstimateSurface_observableIdentities` and
+  `lg21EventShareBinaryMixtureEstimateSurface_observableIdentities`.  These
   case-split endpoints also have
   Section 3 hidden-access wrappers, removing the earlier global positive-share
   assumption from the source-facing theorem route.  The fully concrete optional

@@ -106,6 +106,14 @@ abbrev audit_definition5_implies_definition3_law_of_full_feature_base_only :=
 abbrev audit_definition5_law_observable_identity_certificate :=
   @paper_interface_definition5_law_observable_identity_certificate
 
+/-- Audit endpoint for constructing observable-identity certificates on binary-mixture surfaces. -/
+noncomputable abbrev audit_theorem3_2_binary_mixture_observable_identity_certificate :=
+  @paper_interface_theorem3_2_binary_mixture_observable_identity_certificate
+
+/-- Audit endpoint for constructing observable-identity certificates on finite event-share surfaces. -/
+noncomputable abbrev audit_theorem3_2_event_share_binary_mixture_observable_identity_certificate :=
+  @paper_interface_theorem3_2_event_share_binary_mixture_observable_identity_certificate
+
 /-- Audit endpoint for the continuous-law test-blank bridge using the named identity certificate. -/
 abbrev audit_definition5_implies_definition3_law_of_observable_identities :=
   @paper_interface_definition5_implies_definition3_law_of_observable_identities
