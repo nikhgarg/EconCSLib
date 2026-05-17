@@ -12457,6 +12457,19 @@ theorem paper_interface_theorem3_2_fairness_implies_test_blank_of_not_latent_or_
     hnotFair
 
 /--
+Theorem 3.2 certificate constructor for routes that prove the stronger
+not-latent-or-observable-fair conclusion.
+-/
+def paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnotFair :
+      ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S)) :
+    LG21FairnessImpossibilityCertificate S :=
+  paper_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+    hnotFair
+
+/--
 Theorem 3.2 abstract-law observable branch from the source-shaped witness.
 -/
 theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_evidence
@@ -12495,6 +12508,20 @@ theorem paper_interface_theorem3_2_law_fairness_implies_test_blank_of_not_latent
     lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
       lg21SourceLawTestBlank S :=
   paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair
+    hnotFair
+
+/--
+Theorem 3.2 continuous-law certificate constructor for routes that prove the
+stronger not-latent-or-observable-fair conclusion.
+-/
+def paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnotFair :
+      ¬ (lg21SourceLawLatentSkillFair S ∨
+          lg21SourceLawObservablyFair S)) :
+    LG21LawFairnessImpossibilityCertificate S :=
+  paper_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_or_observable_fair
     hnotFair
 
 /--

@@ -302,7 +302,11 @@ Last updated: 2026-05-16
   and
   `paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair`
   convert such contradiction-style branches back into Theorem 3.2's
-  fairness-implies-test-blankness shape.  The optional-reporting
+  fairness-implies-test-blankness shape.  The certificate constructors
+  `paper_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair`
+  and its law analogue now package those contradiction branches directly as
+  `LG21FairnessImpossibilityCertificate` values for the generic Section 3 and
+  iff wrappers.  The optional-reporting
   and report-required source-model wrappers derive the two-sided best-response
   field from concrete Definition 1 equilibria.  The cutoff-midpoint wrappers
   connect the existing threshold-strategy infrastructure to this direct branch:

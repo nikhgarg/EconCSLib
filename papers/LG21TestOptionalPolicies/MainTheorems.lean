@@ -17350,6 +17350,21 @@ structure LG21FairnessImpossibilityCertificate
     lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
       lg21SourceTestBlank S
 
+/--
+Theorem 3.2 certificate constructor for routes that prove the stronger
+contradiction-style statement that neither latent-skill nor observable fairness
+can hold.
+-/
+def paper_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnotFair :
+      ¬ (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S)) :
+    LG21FairnessImpossibilityCertificate S where
+  latent_or_observable_implies_test_blank :=
+    paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair
+      hnotFair
+
 /-- Theorem 3.2 endpoint: latent or observable fairness implies test-blankness. -/
 theorem paper_theorem3_2_fairness_impossibility_of_certificate
     {Skill Base Test Estimate : Type*}
@@ -18965,6 +18980,21 @@ structure LG21LawFairnessImpossibilityCertificate
   latent_or_observable_implies_test_blank :
     lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
       lg21SourceLawTestBlank S
+
+/--
+Continuous-law Theorem 3.2 certificate constructor for contradiction-style
+routes.
+-/
+def paper_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnotFair :
+      ¬ (lg21SourceLawLatentSkillFair S ∨
+          lg21SourceLawObservablyFair S)) :
+    LG21LawFairnessImpossibilityCertificate S where
+  latent_or_observable_implies_test_blank :=
+    paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair
+      hnotFair
 
 /-- Theorem 3.2 endpoint over arbitrary continuous law objects. -/
 theorem paper_theorem3_2_law_fairness_impossibility_of_certificate

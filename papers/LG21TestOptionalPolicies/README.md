@@ -188,6 +188,12 @@ cache is kept as `source.txt` for named-statement audits.
   and its continuous-law analogue state that latent-or-observable fairness is
   equivalent to test-blankness.  The observable-only and Section 3 hidden-access
   variants expose the same equivalence for audit callers.
+- Contradiction-style Theorem 3.2 branches now have first-class certificate
+  constructors:
+  `paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair`
+  and its continuous-law analogue turn a proved
+  `¬ (latent fair ∨ observable fair)` endpoint into the same compact
+  fairness-impossibility certificate consumed by the Section 3 wrappers.
 - The event-share case split now has a share-language bridge:
   `paper_interface_theorem3_2_pmf_event_share_fn_pos_iff_exists_pos_mass`
   proves that a finite event share is positive exactly when the event contains

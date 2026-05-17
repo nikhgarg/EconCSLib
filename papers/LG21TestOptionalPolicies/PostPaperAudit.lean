@@ -314,6 +314,14 @@ abbrev audit_theorem3_2_law_observable_fair_iff_test_blank_of_full_feature_base_
 abbrev audit_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only :=
   @paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only
 
+/-- Audit endpoint for the PMF Theorem 3.2 contradiction-to-certificate constructor. -/
+abbrev audit_theorem3_2_fairness_certificate_of_not_latent_or_observable_fair :=
+  @paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 contradiction-to-certificate constructor. -/
+abbrev audit_theorem3_2_law_fairness_certificate_of_not_latent_or_observable_fair :=
+  @paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_or_observable_fair
+
 /-- Audit endpoint for Lemma 4.1, observed-access source strategy-proofness. -/
 abbrev audit_lemma4_1_observed_access_strategy_proofness :=
   @paper_interface_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
