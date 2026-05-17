@@ -59,6 +59,8 @@ unconditional theorem over every possible estimation policy.
   Finite event-share helpers now include strict complement-mass bounds, so a
   positive-mass no-reporter/no-taker atom can discharge the `accessFraction < 1`
   premise when the mixture fraction is instantiated as a finite event share.
+  Direct optional/report-required source wrappers now perform that finite
+  event-share instantiation and derive `0 ≤ C < 1` internally.
 - Theorem 3.2 is formalized through explicit event-or-blank source surfaces.
   The final aliases state the paper's hidden-access implication and no-relevance
   readings, while the concrete routes expose the positive event-share or

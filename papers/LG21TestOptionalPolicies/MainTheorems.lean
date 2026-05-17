@@ -15914,6 +15914,147 @@ theorem paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixtur
   exact ⟨W, takeCutoff, hindiff, htakes, hthreshold⟩
 
 /--
+Theorem 3.1 optional-reporting source witness when the access fraction is
+instantiated as a finite PMF event share.  Positive no-access mass at every
+base profile supplies the strict `C < 1` mixture hypothesis.
+-/
+theorem paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture
+    {Feature Base Student : Type*} [Fintype Feature] [DecidableEq Feature]
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (studentLaw : Base → PMF Student)
+    (accessEvent : Base → Student → Prop)
+    (decAccessEvent : ∀ base, DecidablePred (accessEvent base))
+    (hnoAccessMass :
+      ∀ base, ∃ student, ¬ accessEvent base student ∧
+        0 < (studentLaw base student).toReal)
+    (baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      ∃ reportCutoff : Base → ℝ,
+        (∀ base,
+          lg21OptionalNoReportMixtureEstimate
+              ((@lg21PMFEventShare Student _ _ (studentLaw base)
+                (accessEvent base) (decAccessEvent base)).toReal)
+              (baseOnlyEstimate base) (scoreLaw base)
+              (fun cutoff : ℝ =>
+                (M base).posteriorMean
+                  (Function.update (theta base) k
+                    (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+              (reportCutoff base) =
+            (M base).posteriorMean
+              (Function.update (theta base) k (reportCutoff base))) ∧
+          (∀ base score,
+            W.reports base score ↔
+              lg21OptionalNoReportMixtureEstimate
+                  ((@lg21PMFEventShare Student _ _ (studentLaw base)
+                    (accessEvent base) (decAccessEvent base)).toReal)
+                  (baseOnlyEstimate base) (scoreLaw base)
+                  (fun cutoff : ℝ =>
+                    (M base).posteriorMean
+                      (Function.update (theta base) k
+                        (standardGaussianLowerTailMean (scoreLaw base) cutoff)))
+                  (reportCutoff base) ≤
+                (M base).posteriorMean
+                  (Function.update (theta base) k score)) ∧
+            (∀ base skill, W.takes base skill) ∧
+              (∀ base, ∃ cutoff : ℝ,
+                ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) := by
+  let accessFraction : Base → ℝ := fun base =>
+    (@lg21PMFEventShare Student _ _ (studentLaw base)
+      (accessEvent base) (decAccessEvent base)).toReal
+  have hC_nonneg : ∀ base, 0 ≤ accessFraction base := by
+    intro base
+    dsimp [accessFraction]
+    exact pmfProb_nonneg (studentLaw base) (accessEvent base)
+  have hC_lt_one : ∀ base, accessFraction base < 1 := by
+    intro base
+    rcases hnoAccessMass base with ⟨student, hnot, hmass⟩
+    have hlt :
+        @lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) < 1 :=
+      lg21PMFEventShare_lt_one_of_mass_not
+        (studentLaw base) (accessEvent base) student hnot hmass
+    have hltReal :
+        ((@lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) : NNReal) : ℝ) <
+          (1 : ℝ) := by
+      exact_mod_cast hlt
+    simpa [accessFraction] using hltReal
+  simpa [accessFraction] using
+    (paper_theorem3_1_optional_reporting_gaussian_source_witness_of_no_report_mixture
+      M theta k accessFraction baseOnlyEstimate scoreLaw hC_nonneg hC_lt_one)
+
+/--
+Theorem 3.1 report-required source witness when the access fraction is
+instantiated as a finite PMF event share.  Positive no-access mass at every
+base profile supplies the strict `C < 1` mixture hypothesis.
+-/
+theorem paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture
+    {Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (studentLaw : Base → PMF Student)
+    (accessEvent : Base → Student → Prop)
+    (decAccessEvent : ∀ base, DecidablePred (accessEvent base))
+    (hnoAccessMass :
+      ∀ base, ∃ student, ¬ accessEvent base student ∧
+        0 < (studentLaw base student).toReal)
+    (baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      ∃ takeCutoff : Base → ℝ,
+        (∀ base,
+          lg21OptionalNoReportMixtureEstimate
+              ((@lg21PMFEventShare Student _ _ (studentLaw base)
+                (accessEvent base) (decAccessEvent base)).toReal)
+              (baseOnlyEstimate base) (skillLaw base)
+              (fun qBar : ℝ =>
+                intercept base + slope base *
+                  standardGaussianLowerTailMean (skillLaw base) qBar)
+              (takeCutoff base) =
+            intercept base + slope base * takeCutoff base) ∧
+          (∀ base skill,
+            W.takes base skill ↔
+              lg21OptionalNoReportMixtureEstimate
+                  ((@lg21PMFEventShare Student _ _ (studentLaw base)
+                    (accessEvent base) (decAccessEvent base)).toReal)
+                  (baseOnlyEstimate base) (skillLaw base)
+                  (fun qBar : ℝ =>
+                    intercept base + slope base *
+                      standardGaussianLowerTailMean (skillLaw base) qBar)
+                  (takeCutoff base) ≤
+                intercept base + slope base * skill) ∧
+            (∀ base, ∃ qBar : ℝ,
+              ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) := by
+  let accessFraction : Base → ℝ := fun base =>
+    (@lg21PMFEventShare Student _ _ (studentLaw base)
+      (accessEvent base) (decAccessEvent base)).toReal
+  have hC_nonneg : ∀ base, 0 ≤ accessFraction base := by
+    intro base
+    dsimp [accessFraction]
+    exact pmfProb_nonneg (studentLaw base) (accessEvent base)
+  have hC_lt_one : ∀ base, accessFraction base < 1 := by
+    intro base
+    rcases hnoAccessMass base with ⟨student, hnot, hmass⟩
+    have hlt :
+        @lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) < 1 :=
+      lg21PMFEventShare_lt_one_of_mass_not
+        (studentLaw base) (accessEvent base) student hnot hmass
+    have hltReal :
+        ((@lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) : NNReal) : ℝ) <
+          (1 : ℝ) := by
+      exact_mod_cast hlt
+    simpa [accessFraction] using hltReal
+  simpa [accessFraction] using
+    (paper_theorem3_1_report_required_affine_source_witness_of_no_take_mixture
+      intercept slope hslope accessFraction baseOnlyEstimate skillLaw
+      hC_nonneg hC_lt_one)
+
+/--
 Source-shaped witness for Theorem 3.1's strategic-withholding threshold
 conclusions.  `Base` represents the paper's non-test feature vector
 `{θ_k}_{k=1}^{K-1}`; reports and takes are binary strategy predicates over the

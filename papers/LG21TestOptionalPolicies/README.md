@@ -134,6 +134,13 @@ cache is kept as `source.txt` for named-statement audits.
   strictly below one.  This supplies a paper-facing way to justify the
   `accessFraction < 1` source-mixture hypothesis when the fraction is modeled
   as a finite cohort/event share.
+- Theorem 3.1 now also has direct finite-event-share source-mixture wrappers:
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture`.
+  These instantiate the access fraction as a finite PMF access-event share and
+  derive the `0 ≤ C < 1` mixture premises from PMF nonnegativity plus positive
+  no-access complement mass.
 
 ### Recent Theorem 3.2 Progress
 

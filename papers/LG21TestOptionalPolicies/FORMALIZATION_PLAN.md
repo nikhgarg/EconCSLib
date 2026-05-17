@@ -211,7 +211,13 @@ Last updated: 2026-05-16
   `lg21PMFEventShareFn_lt_one_of_mass_not` prove that a positive-mass atom
   outside the reporter/taker event makes the corresponding finite share
   strictly below one, giving a reusable route to the `accessFraction < 1`
-  premise in source-mixture instantiations.
+  premise in source-mixture instantiations.  The wrappers
+  `paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture`
+  and
+  `paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture`
+  use that route directly, instantiating the access fraction as a finite PMF
+  event share and deriving `0 ≤ C < 1` from the PMF and positive complement
+  mass.
 - Theorem 3.2 now has PMF and continuous-law endpoints, no-relevance forms,
   and contrapositive wrappers: test-blankness is equivalent to absence of a
   concrete base/test relevance witness, and such a witness rules out
