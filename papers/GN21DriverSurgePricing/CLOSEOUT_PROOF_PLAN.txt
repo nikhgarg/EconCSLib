@@ -264,6 +264,28 @@ also now extract the scalar cutoff checks directly via
 `reject_middle_ordered_upper_cutoff_bound`, so do not duplicate endpoint
 pointwise algebra in source proofs.
 
+Update: exact one-threshold endpoint data now project the paper branch fields
+directly.  For
+
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData
+
+use the compiled projections
+
+  surge_reject_short_cutoff_bound
+  surge_reject_middle_ordered_upper_cutoff_bound
+  surge_fixed_reward_rate
+  nonsurge_fixed_reward_rate
+  nonsurge_reject_long_upper_cross
+  nonsurge_accept_middle_lower_cross
+  nonsurge_accept_middle_upper_cross
+
+The middle projection uses
+`lo_nonpos_of_rejectsShortTrips_of_rejectsMiddleTrips_of_ordered`: under the
+exact surge short-tail selector, any ordered middle-rejection representation
+of the same policy has nonpositive lower cutoff and is routed through the
+short-tail endpoint.  This is the preferred way to avoid proving duplicate
+middle scalar inequalities from scratch.
+
 Important notation warning for this route: `Ri = R1` and `Rj = R2` are not
 free algebraic consequences of the cross-ratio inequalities.  They are the
 paper's local fixed-response reward-rate identifications, so they must come
