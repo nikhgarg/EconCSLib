@@ -209,11 +209,17 @@ Last updated: 2026-05-16
   directly beside the fairness-impossibility conclusion.  The
   certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now have matching Section 3 implication and
-  no-relevance wrappers.  The fully concrete optional posterior-payoff and
-  report-required unit-centered constant-latent event-share surfaces now also
-  have direct Section 3 wrappers, so the strongest current source-facing
-  Theorem 3.2 endpoints expose hidden access and the
-  fairness-implies-test-blankness conclusion together.  The
+  no-relevance wrappers.  The same source-equilibrium layer now has the paper's
+  event-or-blank case split: a local positive reporter/taker share gives the
+  unraveling contradiction, while the no-positive-share branch is supplied as a
+  direct test-blankness assumption for that equilibrium/base profile.  These
+  case-split endpoints also have Section 3 hidden-access wrappers, removing the
+  earlier global positive-share assumption from the source-facing theorem
+  route.  The fully concrete optional posterior-payoff and report-required
+  unit-centered constant-latent event-share surfaces now also have direct
+  Section 3 wrappers, so the strongest current source-facing Theorem 3.2
+  endpoints expose hidden access and the fairness-implies-test-blankness
+  conclusion together.  The
   source proof's positive-share resampling algebra is also
   formalized: `lg21_pmf_mixture_cancel_right` and
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
@@ -637,17 +643,22 @@ Last updated: 2026-05-16
    payoff-normalization data while preserving Theorem 3.2's exact conclusion
    shape.  They also now build the compact
    `LG21FairnessImpossibilityCertificate` consumed by the top-level paper
-   interface theorem.  The fully concrete optional posterior-payoff and
-   report-required unit-centered constant-latent event-share endpoints now also
-   have direct Section 3 hidden-access wrappers, making them citable as
-   paper-facing hidden-access Theorem 3.2 routes.  This finite
+   interface theorem.  The event-share source-equilibrium route now also has
+   optional-reporting and report-required event-or-blank wrappers, plus Section
+   3 hidden-access versions, so the route follows the paper proof's split
+   between positive reporter/taker share and already-test-blank profiles rather
+   than assuming a global positive share.  The fully concrete optional
+   posterior-payoff and report-required unit-centered constant-latent
+   event-share endpoints now also have direct Section 3 hidden-access wrappers,
+   making them citable as paper-facing hidden-access Theorem 3.2 routes.  This
+   finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
-   tighten the policy assumptions behind the concrete constant-latent endpoints,
-   using the centered-base-term report-required normalization when appropriate,
-   or instantiate a stricter conditional-kernel version if the final statement
-   should quantify over conditional-on-skill Gaussian laws.
+   push the event-or-blank case split down into the concrete constant-latent
+   endpoints, using the centered-base-term report-required normalization when
+   appropriate, or instantiate a stricter conditional-kernel version if the
+   final statement should quantify over conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 

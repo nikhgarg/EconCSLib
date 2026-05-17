@@ -128,6 +128,12 @@ cache is kept as `source.txt` for named-statement audits.
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2
   route can be cited without separately combining the information-set lemma
   with the upper-tail event-share theorem.
+- The source-equilibrium event-share route now has the paper's case split:
+  at each equilibrium/base profile, either a positive reporter/taker event
+  share triggers the unraveling contradiction, or that profile is already
+  test-blank.  The optional-reporting and report-required `event_or_blank`
+  endpoints also have Section 3 hidden-access wrappers, replacing the earlier
+  need for a global positive-share hypothesis at every profile.
 - The concrete optional/report-required constant-latent event-share routes now
   also produce compact `LG21FairnessImpossibilityCertificate` values:
   `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`

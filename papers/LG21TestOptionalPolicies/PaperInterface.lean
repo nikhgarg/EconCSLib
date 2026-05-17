@@ -3142,6 +3142,93 @@ theorem paper_interface_theorem3_2_optional_reporting_fairness_impossibility_of_
     noReporterPMF hNoAccess hAccessMixtureDef e base
 
 /--
+Paper-facing optional-reporting event-share endpoint in the paper's case-split
+form: each equilibrium/base profile either has a positive reporter share, or
+is already test-blank.
+-/
+theorem paper_interface_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+    {Feature Skill Base Estimate Student : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase S)
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (reporterEvent : S.Equilibrium → Base → Student → Prop)
+    (decReporterEvent :
+      ∀ e base, DecidablePred (reporterEvent e base))
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (hEventOrBlank :
+      ∀ e base,
+        (∃ student, reporterEvent e base student ∧
+          0 < (studentLaw e base student).toReal) ∨
+          ∀ test, S.baseOnlyEstimate e base =
+            S.fullFeatureEstimate e base test) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+    C studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
+    hNoAccess hAccessMixtureDef hEventOrBlank
+
+/--
+Paper-facing Theorem 3.2 Section 3 optional-reporting case-split endpoint.
+-/
+theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+    {Feature Skill Base Estimate Student : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {M : Base → GaussianOffsetSignalFamily Feature}
+    {theta : Base → Feature → ℝ} {k : Feature}
+    {skillGivenBase : Base → PMF Skill}
+    {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
+    (C :
+      LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate
+        M theta k skillGivenBase S)
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (reporterEvent : S.Equilibrium → Base → Student → Prop)
+    (decReporterEvent :
+      ∀ e base, DecidablePred (reporterEvent e base))
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (hEventOrBlank :
+      ∀ e base,
+        (∃ student, reporterEvent e base student ∧
+          0 < (studentLaw e base student).toReal) ∨
+          ∀ test, S.baseOnlyEstimate e base =
+            S.fullFeatureEstimate e base test) :
+    (∀ (base : Base) (test : ℝ) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+    C studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
+    hNoAccess hAccessMixtureDef hEventOrBlank
+
+/--
 Paper-facing optional-reporting event-share source-equilibrium endpoint with
 the equilibrium/base witness chosen internally from nonempty spaces.
 -/
@@ -4200,6 +4287,105 @@ theorem paper_interface_theorem3_2_report_required_fairness_impossibility_of_upp
   paper_theorem3_2_report_required_fairness_impossibility_of_upper_tail_event_share_source_equilibrium
     C studentLaw takerEvent decTakerEvent hwitness reporterPMF noReporterPMF
     hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq e base
+
+/--
+Paper-facing report-required event-share endpoint in the paper's case-split
+form: each equilibrium/base profile either has a positive taker share, or is
+already test-blank.
+-/
+theorem paper_interface_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+    {Base Test Estimate Student : Type*} [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {skillGivenBase : Base → PMF ℝ}
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase S)
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (takerEvent : S.Equilibrium → Base → Student → Prop)
+    (decTakerEvent :
+      ∀ e base, DecidablePred (takerEvent e base))
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (C.baseTerm e base +
+              C.signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (C.actorLaw e base) (C.decisionThreshold e base)) /
+              C.denom e base)
+    (hEventOrBlank :
+      ∀ e base,
+        (∃ student, takerEvent e base student ∧
+          0 < (studentLaw e base student).toReal) ∨
+          ∀ test, S.baseOnlyEstimate e base =
+            S.fullFeatureEstimate e base test) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+    C studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
+    hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq hEventOrBlank
+
+/--
+Paper-facing Theorem 3.2 Section 3 report-required case-split endpoint.
+-/
+theorem paper_interface_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+    {Base Test Estimate Student : Type*} [Nonempty Base]
+    [Fintype Student] [DecidableEq Student]
+    {skillGivenBase : Base → PMF ℝ}
+    {S : LG21SourcePolicySurface ℝ Base Test Estimate}
+    (C :
+      LG21ReportRequiredUpperTailSourceEquilibriumCertificate
+        skillGivenBase S)
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (takerEvent : S.Equilibrium → Base → Student → Prop)
+    (decTakerEvent :
+      ∀ e base, DecidablePred (takerEvent e base))
+    (reporterPMF noReporterPMF : S.Equilibrium → Base → PMF Estimate)
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base = noReporterPMF e base)
+    (hAccessMixtureDef :
+      ∀ e base,
+        S.observableAccessEstimate e base =
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (C.baseTerm e base +
+              C.signalWeight e base *
+                GaussianHazardCertificate.normalUpperTailMean
+                  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+                  (C.actorLaw e base) (C.decisionThreshold e base)) /
+              C.denom e base)
+    (hEventOrBlank :
+      ∀ e base,
+        (∃ student, takerEvent e base student ∧
+          0 < (studentLaw e base student).toReal) ∨
+          ∀ test, S.baseOnlyEstimate e base =
+            S.fullFeatureEstimate e base test) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+    C studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
+    hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq hEventOrBlank
 
 /--
 Paper-facing report-required event-share source-equilibrium endpoint with the
