@@ -299,6 +299,12 @@ For all optima at once, use
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
 `.to_fixed_response_policy_form_data` method to build
 `Theorem4AllMeasurableFixedResponsePolicyFormData`.
+The measured marginal-response measurability/integrability obligations now
+have direct lemmas:
+`measurable_gn21MeasuredLeftMarginalResponseAtCurrent`,
+`measurable_gn21MeasuredRightMarginalResponseAtCurrent`,
+`integrableOn_gn21MeasuredLeftMarginalResponseAtCurrent`, and
+`integrableOn_gn21MeasuredRightMarginalResponseAtCurrent`.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

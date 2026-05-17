@@ -986,6 +986,9 @@ scaled Lemma 6 policy-form data.
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` packages these
 statewise assumptions for all measurable optima and converts to the
 all-optima fixed-response policy-form boundary.
+Measured marginal response measurability and accept-all integrability now have
+direct left/right helper lemmas from payment, trip-time, and switch-probability
+regularity.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

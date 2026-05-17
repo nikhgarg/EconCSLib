@@ -44978,6 +44978,124 @@ def gn21MeasuredRightMarginalResponseAtCurrent
     (wJ τ - r * τ) * Qi +
       gn21SwitchProb switchJI switchIJ τ * (Wi - r * Ti)
 
+/-- The measured left marginal response is measurable from measurable payments. -/
+theorem measurable_gn21MeasuredLeftMarginalResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hwI_measurable : Measurable wI) :
+    Measurable
+      (gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) := by
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  unfold gn21MeasuredLeftMarginalResponseAtCurrent
+  exact
+    ((hwI_measurable.sub (measurable_const.mul measurable_id)).mul
+        measurable_const).add
+      ((continuous_gn21SwitchProb switchIJ switchJI).measurable.mul
+        measurable_const)
+
+/-- The measured right marginal response is measurable from measurable payments. -/
+theorem measurable_gn21MeasuredRightMarginalResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ : TripPolicy)
+    (hwJ_measurable : Measurable wJ) :
+    Measurable
+      (gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) := by
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  unfold gn21MeasuredRightMarginalResponseAtCurrent
+  exact
+    ((hwJ_measurable.sub (measurable_const.mul measurable_id)).mul
+        measurable_const).add
+      ((continuous_gn21SwitchProb switchJI switchIJ).measurable.mul
+        measurable_const)
+
+/--
+Integrability of the measured left marginal response follows from payment,
+trip-time, and CTMC switch-probability integrability.
+-/
+theorem integrableOn_gn21MeasuredLeftMarginalResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ τI : TripPolicy)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchIJ switchJI τ) τI μI)
+    (hw_integrable : IntegrableOn wI τI μI)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) τI μI) :
+    IntegrableOn
+      (gn21MeasuredLeftMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) τI μI := by
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  let q : TripLength → ℝ := fun τ => gn21SwitchProb switchIJ switchJI τ
+  have hrt_integrable : IntegrableOn (fun τ : TripLength => r * τ) τI μI :=
+    htime_integrable.const_mul r
+  have hleft :
+      IntegrableOn (fun τ : TripLength => (wI τ - r * τ) * Qj) τI μI :=
+    (hw_integrable.sub hrt_integrable).mul_const Qj
+  have hright :
+      IntegrableOn (fun τ : TripLength => q τ * (Wj - r * Tj)) τI μI :=
+    hq_integrable.mul_const (Wj - r * Tj)
+  unfold gn21MeasuredLeftMarginalResponseAtCurrent
+  exact hleft.add hright
+
+/--
+Integrability of the measured right marginal response follows from payment,
+trip-time, and CTMC switch-probability integrability.
+-/
+theorem integrableOn_gn21MeasuredRightMarginalResponseAtCurrent
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction) (σI σJ τJ : TripPolicy)
+    (hq_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switchJI switchIJ τ) τJ μJ)
+    (hw_integrable : IntegrableOn wJ τJ μJ)
+    (htime_integrable :
+      IntegrableOn (fun τ : TripLength => τ) τJ μJ) :
+    IntegrableOn
+      (gn21MeasuredRightMarginalResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI wI wJ σI σJ) τJ μJ := by
+  let Qi := gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI
+  let Qj := gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ
+  let Ti := gn21ScaledStateTime μI arrivalI σI
+  let Tj := gn21ScaledStateTime μJ arrivalJ σJ
+  let Wi := gn21ScaledStateEarning μI arrivalI wI σI
+  let Wj := gn21ScaledStateEarning μJ arrivalJ wJ σJ
+  let r := gn21AggregateDynamicReward Qi Qj Ti Tj Wi Wj
+  let q : TripLength → ℝ := fun τ => gn21SwitchProb switchJI switchIJ τ
+  have hrt_integrable : IntegrableOn (fun τ : TripLength => r * τ) τJ μJ :=
+    htime_integrable.const_mul r
+  have hleft :
+      IntegrableOn (fun τ : TripLength => (wJ τ - r * τ) * Qi) τJ μJ :=
+    (hw_integrable.sub hrt_integrable).mul_const Qi
+  have hright :
+      IntegrableOn (fun τ : TripLength => q τ * (Wi - r * Ti)) τJ μJ :=
+    hq_integrable.mul_const (Wi - r * Ti)
+  unfold gn21MeasuredRightMarginalResponseAtCurrent
+  exact hleft.add hright
+
 /-- Left-state aggregate linear score at the current quotient. -/
 def gn21MeasuredLeftLinearScoreAtCurrent
     (μI μJ : Measure TripLength)

@@ -214,6 +214,11 @@ For all optima at once, package the statewise assumptions as
 `.to_fixed_response_policy_form_data`; this produces
 `Theorem4AllMeasurableFixedResponsePolicyFormData` for the Theorem 4/Theorem 3
 routes above.
+Measured-response regularity is now compiled as
+`measurable_gn21MeasuredLeftMarginalResponseAtCurrent`,
+`measurable_gn21MeasuredRightMarginalResponseAtCurrent`,
+`integrableOn_gn21MeasuredLeftMarginalResponseAtCurrent`, and
+`integrableOn_gn21MeasuredRightMarginalResponseAtCurrent`.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
