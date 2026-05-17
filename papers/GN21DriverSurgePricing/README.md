@@ -1232,6 +1232,15 @@ which reroute middle syntax through the exact non-surge reject-long or surge
 reject-short endpoint for the same policy.  The corresponding paper-facing
 Theorem 3 entry point is
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_exact_one_threshold_selection_unless_source_assumptions`.
+For the constructed Theorem 3 prices, the fixed-transfer local endpoint data
+now feeds this exact current-bounds selector through
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate`
+and
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate.to_endpoint_current_bounds_exact_one_threshold_selection_unless`.
+This is the lighter fixed-transfer boundary for normalized exact
+one-threshold proofs: it asks only for non-surge reject-long and surge
+reject-short local packages, then uses the exact selector to cover middle
+syntax.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

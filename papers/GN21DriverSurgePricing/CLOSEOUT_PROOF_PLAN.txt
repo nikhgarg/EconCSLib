@@ -272,12 +272,17 @@ current-bounds endpoint interface:
   Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_exact_one_threshold_selection_unless
   Theorem3AcceptAllMeasurableEndpointCurrentBoundsExactOneThresholdSelectionUnlessSourceAssumptions
   paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_exact_one_threshold_selection_unless_source_assumptions
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate.to_endpoint_current_bounds_exact_one_threshold_selection_unless
 
 This adapter routes non-surge accepted-middle syntax through the exact
 reject-long endpoint and surge reject-middle syntax through the exact
 reject-short endpoint for the same policy, so source proofs with exact
 one-threshold normalization do not have to manufacture separate middle
-endpoint data.
+endpoint data.  The fixed-transfer variant is the preferred boundary after
+Theorem 3 prices have been constructed: it asks only for non-surge reject-long
+and surge reject-short local endpoint packages plus their fixed reward-rate
+accounting, then expands them to the exact current-bounds selector.
 
 
 Meaning of r1_current
