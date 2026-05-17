@@ -1075,8 +1075,12 @@ contradict dynamic measurable optimality without a separate one-state bridge.
 The non-surge accept-middle endpoint also has a local reroute:
 `rejectsLongTrips_of_acceptsMiddleTrips_of_lo_nonpos` and
 `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form_middle_reroute`
-turn `lo <= 0` into the reject-long branch at `hi`, reducing the need to carry
-an unconditional positive-lower-cutoff source assumption.
+turn `lo <= 0` into the reject-long branch at `hi`; the a.e.-representative
+version
+`GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_feasible_ae_policy_form_middle_reroute`
+does the same after replacing an optimum by its Lemma 5 representative.  This
+reduces the need to carry an unconditional positive-lower-cutoff source
+assumption.
 The source-data constructors
 `GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity` and
 `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity` now derive

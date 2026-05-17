@@ -161,7 +161,9 @@ wrappers directly on the surge strictly-increasing and non-surge
 strictly-decreasing branch exclusions.
 For non-surge accepted-middle endpoint work, Lean now has
 `rejectsLongTrips_of_acceptsMiddleTrips_of_lo_nonpos` and
-`GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form_middle_reroute`:
+`GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form_middle_reroute`,
+plus the a.e.-representative version
+`GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_feasible_ae_policy_form_middle_reroute`:
 if the lower accepted-middle cutoff is nonpositive, route the branch through
 reject-long at the upper cutoff instead of asking for a separate `0 < lo`.
 
