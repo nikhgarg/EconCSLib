@@ -590,6 +590,58 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_fea
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+The same source-data feasible current-bounds route under the paper's ratio
+assumptions.  Lean derives the internal `R1 > 0` and `R1 < R2` scalar fields.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (current_bounds :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+          mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos current_bounds
+
+/--
 Theorem 3 on the accounting-form feasible current-bounds route: the fixed-state
 fields are supplied as the structured-price accounting equations from Remark 2.
 -/

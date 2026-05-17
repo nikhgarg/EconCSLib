@@ -1029,6 +1029,10 @@ cache is `source.txt`.
   constructed structured CTMC prices are measurable IC, and every measurable
   optimum rejects only a zero-measure subset of the feasible accept-all trips
   in each state.
+  Its ratio-source wrapper
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_ratio_source_assumptions`
+  now derives the internal `R1 > 0` and `R1 < R2` scalar fields from the
+  paper's `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0` hypotheses.
   The feasible primitive, accounting-form, and reward-rate current-bounds
   source boundaries expose the same conclusion through
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
