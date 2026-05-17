@@ -175,7 +175,13 @@ cache is `source.txt`.
   The GN21 fixed-response source package also exposes
   `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.surge_current_mass_pos`,
   the surge-state analogue of the existing non-surge positive current-mass
-  projection from nondegeneracy.
+  projection from nondegeneracy.  The no-mass pointwise/reward-rate endpoint
+  layer can now use those fixed-response mass projections directly through
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate.to_mass_separated_of_gn21_fixed_response_forms`
+  and the bracket-source variant
+  `...to_mass_separated_of_gn21_fixed_response_bracket_forms`, avoiding the
+  older allowed-policy-form mass detour when the GN21 fixed-response record is
+  already available.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint

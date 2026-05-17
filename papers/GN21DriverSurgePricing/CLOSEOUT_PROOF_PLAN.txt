@@ -201,6 +201,14 @@ mass is no longer a separate paper source field.  Lean derives it from the
 GN21 fixed-response nondegeneracy package:
 
   Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.nonsurge_current_mass_pos
+  Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.surge_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate.to_mass_separated_of_gn21_fixed_response_forms
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateNoMassLocalEndpointCertificate.to_mass_separated_of_gn21_fixed_response_bracket_forms
+
+Use these direct mass-separated adapters whenever the endpoint proof already
+has GN21 fixed-response source records.  Do not route through the older
+allowed-policy-form mass constructor unless the proof genuinely has only
+ordinary allowed policy forms and no GN21 fixed-response source data.
 
 The exact one-threshold source route now has direct constructors that apply
 this internally:
