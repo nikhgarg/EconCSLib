@@ -1250,7 +1250,12 @@ Exact branch fixed-state data now feed that local endpoint package directly via
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless`,
 which derives the opposite-state positive-mass facts from the exact
 reject-long/reject-short selectors rather than from the broader policy-form
-case split.
+case split.  The source-facing package
+`GN21Theorem3ExactOneThresholdBranchFixedTransferSourceData` and theorem
+`paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_fixed_transfer_source_assumptions`
+now expose this as a compiled paper-level Theorem 3 IC route: source proofs
+provide all-optimal Lemma 5 replacement data, exact branch selectors, and only
+the two fixed-state endpoint branches.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
