@@ -4919,6 +4919,101 @@ theorem lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_positiv
     exact hraw (hnorm.trans hnorm_raw)⟩
 
 /--
+For the blank-on-zero-share constructor, normalized no test relevance is
+equivalent to raw no test relevance on nonzero-share profiles.
+-/
+theorem lg21FullFeatureEstimateBlankOnZeroEventShare_no_normalized_relevance_iff_no_raw_relevance_on_nonzero_share
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate) :
+    (¬ ∃ e base test,
+      baseOnlyEstimate e base ≠
+        lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base test) ↔
+      ¬ ∃ e base test,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal ≠ 0 ∧
+          baseOnlyEstimate e base ≠ rawFullFeatureEstimate e base test := by
+  constructor
+  · intro hnormalized
+    exact
+      lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_no_normalized_relevance
+        studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+        hnormalized
+  · intro hraw
+    rintro ⟨e, base, test, hnormalized_witness⟩
+    by_cases hshare :
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0
+    · have hblank :=
+        lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base hshare test
+      exact hnormalized_witness hblank.symm
+    · have hnorm_raw :=
+        lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_nonzero_share
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base hshare test
+      exact hraw ⟨e, base, test, hshare, by
+        intro hbase_raw
+        exact hnormalized_witness (hbase_raw.trans hnorm_raw.symm)⟩
+
+/--
+For the blank-on-zero-share constructor, normalized no test relevance is
+equivalent to raw no test relevance at positive-mass event profiles.
+-/
+theorem lg21FullFeatureEstimateBlankOnZeroEventShare_no_normalized_relevance_iff_no_raw_relevance_on_positive_event
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate) :
+    (¬ ∃ e base test,
+      baseOnlyEstimate e base ≠
+        lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base test) ↔
+      ¬ ∃ e base student test,
+        event e base student ∧
+          0 < (studentLaw e base student).toReal ∧
+            baseOnlyEstimate e base ≠ rawFullFeatureEstimate e base test := by
+  constructor
+  · intro hnormalized
+    exact
+      lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_positive_event
+        studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+        hnormalized
+  · intro hraw
+    rintro ⟨e, base, test, hnormalized_witness⟩
+    by_cases hshare :
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0
+    · have hblank :=
+        lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base hshare test
+      exact hnormalized_witness hblank.symm
+    · have hpositive :
+          ∃ student, event e base student ∧
+            0 < (studentLaw e base student).toReal := by
+        by_contra hno_positive
+        exact hshare
+          (lg21PMFEventShareFn_eq_zero_of_no_positive_mass
+            studentLaw event decEvent e base hno_positive)
+      rcases hpositive with ⟨student, hevent, hmass⟩
+      have hnorm_raw :=
+        lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_positive_event
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base student hevent hmass test
+      exact hraw ⟨e, base, student, test, hevent, hmass, by
+        intro hbase_raw
+        exact hnormalized_witness (hbase_raw.trans hnorm_raw.symm)⟩
+
+/--
 The blank-on-zero-share full-feature estimate discharges Theorem 3.2's
 positive-event/share-or-blank case split by construction.
 -/

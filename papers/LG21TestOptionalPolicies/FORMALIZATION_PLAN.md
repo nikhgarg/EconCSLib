@@ -291,8 +291,14 @@ Last updated: 2026-05-16
   `lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_no_normalized_relevance`,
   and
   `lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_positive_event`.
+  It now also has exact equivalence endpoints
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_normalized_relevance_iff_no_raw_relevance_on_nonzero_share`
+  and
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_normalized_relevance_iff_no_raw_relevance_on_positive_event`.
   Thus the constructed surface is auditable both as a zero-share normalization
-  and as an unchanged raw full-feature law on nonzero/positive-event profiles.
+  and as an unchanged raw full-feature law on nonzero/positive-event profiles;
+  raw no-relevance on those preserved profiles is exactly normalized
+  no-relevance for the constructed law.
   These make the source proof's "no one reports/takes" sentence separately
   auditable from the positive-share contradiction.  The other source-proof
   branch, "test-blank policies meet observable fairness trivially", is now
