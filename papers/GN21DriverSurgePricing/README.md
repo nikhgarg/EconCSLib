@@ -535,6 +535,12 @@ cache is `source.txt`.
   implements the first such reroute: a surge reject-middle branch with
   `lo <= 0` is discharged by the short-tail endpoint at cutoff `hi`, so source
   proofs only need reject-middle endpoint data for the `0 <= lo` branch.
+  The direct AE endpoint version is now compiled as
+  `Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions` and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions`;
+  exact middle-reroute endpoint selections derive their own accept-all
+  optimality via
+  `Theorem4MeasurableAEEndpointCurrentBoundsSelectionUnlessMiddleRerouteCertificate.of_exact_endpoint_current_bounds_selection_derived_accept_all`.
   The source-facing variant is now exposed as
   `Theorem4NonsurgeMeasurableReplacementData`,
   `Theorem4SurgeMeasurableReplacementData`,
@@ -766,7 +772,11 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions`
   now expose exactly that reduced source shape: local endpoint facts receive
   the relevant non-accept-all hypothesis, and reject-middle local data is only
-  required when `0 <= lo`.  Lean also now has the nonatomic boundary bridge
+  required when `0 <= lo`.  The same source boundary now also proves the
+  paper's AE-uniqueness conclusion through
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions`
+  by converting the exact endpoint selection to the direct AE endpoint route.
+  Lean also now has the nonatomic boundary bridge
   showing that a reject-middle policy with coincident cutoffs (`lo = hi`)
   differs from accept-all only by one trip length and leaves the single-state
   reward and GN21 `Q,T,W` primitives unchanged after removing that

@@ -180,6 +180,44 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the direct measure-theoretic AE endpoint middle-reroute route:
+the endpoint certificate supplies a.e. Lemma 5 shape classification and the
+four local endpoint moves, while Lean derives structured measurable IC and
+a.e. uniqueness for all measurable optima.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_ae_endpoint_middle_reroute
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the fixed-transfer middle-reroute route with source-facing
+allowed replacement data: the exact endpoint selection derives accept-all
+optimality internally and feeds the direct AE endpoint route, yielding the
+paper's a.e. uniqueness convention.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_transfer_middle_reroute
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementMiddleRerouteSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 source-facing measured structured-pricing endpoint on the current
 paper proof route.  Lemma 6 is supplied at the sign-bracket level; the
 remaining source fields are the Lemma 9/10 branch inequalities plus the
