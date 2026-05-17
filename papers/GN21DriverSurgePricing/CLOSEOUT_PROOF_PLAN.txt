@@ -132,6 +132,23 @@ representative policy and applying the local endpoint certificate there.  The
 AE local endpoint certificate also drops the older all-branch surge `lo < hi`
 field; the hpos-aware proof derives that gap only on positive rejected mass.
 
+Latest Lemma 5 bridge note: the four feasible-measurable local endpoint
+selectors now have direct one-state nonoptimality wrappers:
+
+  lemma5_strictlyIncreasing_interval_not_singleStateMeasurableOptimal_of_local_endpoint_paths_with_context
+  lemma5_strictlyDecreasing_gap_not_singleStateMeasurableOptimal_of_local_endpoint_paths_with_context
+  lemma5_strictQuasiConvex_three_interval_not_singleStateMeasurableOptimal_of_local_endpoint_paths_with_context
+  lemma5_strictQuasiConcave_two_interval_not_singleStateMeasurableOptimal_of_local_endpoint_paths_with_context
+
+Use these to rule out noncanonical local endpoint configurations directly
+instead of first extracting an existential improved policy and then manually
+threading it through measurable optimality.  The generic dynamic bridge
+
+  not_dynamicMeasurableOptimal_of_state_eq_exists_strict_feasible_trip_policy_improvement
+
+does the same after identifying the current state policy with the concrete
+endpoint-union set.
+
 
 Meaning of r1_current
 ---------------------
