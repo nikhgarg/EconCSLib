@@ -214,6 +214,18 @@ identity, and the non-surge reject-long fixed-state cross package.  Do not ask
 the source proof for `nonsurge_rejectLong_pos`; it follows from the
 fixed-response positive current mass field.
 
+The preferred exact-branch scalar-field constructors go one step further:
+
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_upper_cross
+  GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_upper_cross
+
+Use these when the source proof has the surge reject-short cutoff inequality,
+the surge and non-surge fixed reward-rate identities, and the non-surge
+reject-long upper cross-ratio inequality.  Lean derives the full non-surge
+fixed-state cross package with
+`GN21NonsurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassData.of_rejectsLongTrips_and_upper_cross`;
+the lower cross side is not a separate source obligation.
+
 The one-threshold surge-cutoff route can now be stated in the paper's branch
 field form and compiled directly to the existing Theorem 3 conclusion through:
 

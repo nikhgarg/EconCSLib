@@ -107,6 +107,13 @@ cache is `source.txt`.
   `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`;
   both derive the non-surge reject-long positivity field from fixed-response
   positive current mass instead of exposing it as a separate source assumption.
+  The sharper scalar-field variants
+  `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_upper_cross`
+  and
+  `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_upper_cross`
+  also derive the non-surge fixed-state cross package from the reject-long
+  upper cross-ratio inequality and fixed reward-rate identity; the lower cross
+  side follows from reject-long CTMC monotonicity.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,
