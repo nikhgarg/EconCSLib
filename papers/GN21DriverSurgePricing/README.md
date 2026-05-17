@@ -1251,8 +1251,12 @@ syntax.  The paper-facing entry points for this route are
 `Theorem3AcceptAllMeasurableEndpointCurrentBoundsExactOneThresholdSelectionUnlessPositiveSourceAssumptions`
 and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_selection_unless_source_assumptions`;
-the latter takes all-optimal Lemma 5 replacement data plus the fixed-transfer
-exact local endpoint package for each constructed positive-parameter price.
+the matching AE-unique theorem
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_selection_unless_source_assumptions`
+uses the same exact endpoint selector to prove exact accept-all uniqueness and
+then exposes the paper's almost-everywhere uniqueness convention.  These take
+all-optimal Lemma 5 replacement data plus the fixed-transfer exact local
+endpoint package for each constructed positive-parameter price.
 Exact branch fixed-state data now feed that local endpoint package directly via
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless`,
 which derives the opposite-state positive-mass facts from the exact
@@ -1260,9 +1264,12 @@ reject-long/reject-short selectors rather than from the broader policy-form
 case split.  The source-facing package
 `GN21Theorem3ExactOneThresholdBranchFixedTransferSourceData` and theorem
 `paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_fixed_transfer_source_assumptions`
-now expose this as a compiled paper-level Theorem 3 IC route: source proofs
-provide all-optimal Lemma 5 replacement data, exact branch selectors, and only
-the two fixed-state endpoint branches.  The exact fixed-response source
+now expose this as a compiled paper-level Theorem 3 route; the AE-unique
+projection is
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_fixed_transfer_source_assumptions`.
+Source proofs provide all-optimal Lemma 5 replacement data, exact branch
+selectors, and only the two fixed-state endpoint branches.  The exact
+fixed-response source
 boundaries now feed this route directly through
 `paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_exact_one_threshold_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`
 and
@@ -1275,7 +1282,11 @@ and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_source_assumptions`
 use the exact selectors to choose the appropriate by-policy-form fixed-state
 branch, so source proofs can provide the broader middle-cutoff endpoint record
-instead of direct fixed-state branch data.  The existence-style wrapper
+instead of direct fixed-state branch data.  The matching AE-unique wrappers are
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_source_assumptions`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_existence_source_assumptions`.
+The existence-style wrapper
 `paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_by_policy_form_fixed_transfer_existence_source_assumptions`
 derives the replacement data internally from optimum existence and exact
 branch selectors.
