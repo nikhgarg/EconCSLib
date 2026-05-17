@@ -169,7 +169,7 @@ reject-long at the upper cutoff instead of asking for a separate `0 < lo`.
 
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
-source record:
+source record, and the sharper middle-cutoff version is now compiled:
 
   GN21Theorem3FixedResponseOneThresholdEqMiddleRerouteSourceExistenceData
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_reroute_existence_source_assumptions
@@ -178,18 +178,27 @@ source record:
   Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
   GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_source_assumptions
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate
+  GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_eq_middle_cutoff_reroute
+  GN21Theorem3FixedResponseOneThresholdEqMiddleCutoffRerouteSourceExistenceData
+  GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffRerouteSourceExistenceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_cutoff_reroute_existence_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_existence_source_assumptions
 
 This record asks directly for an optimum-existence proof, non-surge decreasing
 GN21 fixed-response source data for every measurable optimum, surge increasing
 GN21 fixed-response source data for every measurable optimum, and the common
-fixed-state equality middle-reroute endpoint certificate.  Use this as the
+fixed-state equality middle-reroute endpoint certificate.  Use the
+middle-cutoff variant as the
 next source-facing target instead of preconstructing
 `Theorem4AllMeasurableFixedResponsePolicyFormData` by hand.
-The bracket variant is now the sharpest paper-facing boundary: it asks the
+The middle-cutoff bracket variant is now the sharpest paper-facing boundary:
+it asks the
 source proof for Lemma 6 coefficient signs, positive sign brackets for the
-zero crossing, regularity/nondegeneracy, and the same local endpoint
-certificate.  Lean constructs the fixed-response policy-form source packages
-internally.
+zero crossing, regularity/nondegeneracy, and the weaker local endpoint
+certificate whose accepted-middle non-surge gap field is conditional on
+`0 < lo`.  Lean constructs the fixed-response policy-form source packages
+internally and reroutes `lo <= 0` through reject-long at the upper cutoff.
 
 
 Meaning of r1_current

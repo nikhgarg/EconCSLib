@@ -1043,14 +1043,20 @@ The older fixed-response source boundary coerces to this one via
 `Theorem3AcceptAllMeasurableFixedResponsePolicyFormSourceAssumptions.to_rejected_mass_source_assumptions`.
 The source-faithful common-fixed-state middle-reroute AE route is now packaged as
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate`,
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate`,
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_eq_ae_local_endpoint`,
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate.to_middle_cutoff_reroute_ae_local_endpoint`,
 `GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_fixed_state_eq_middle_reroute`,
+`GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_eq_middle_cutoff_reroute`,
 `GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData`, and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_reroute_source_assumptions`.
 It derives the untouched-state positive mass from the fixed-response a.e.
 Lemma 5 representative and derives the surge middle-gap only from positive
 rejected mass, so the source proof does not need exact replacement data or an
-all-branch `lo < hi` assumption just to use the middle-reroute branch.
+all-branch `lo < hi` assumption just to use the middle-reroute branch.  The
+middle-cutoff variant also removes the global non-surge accepted-middle
+`0 < lo` obligation: when `lo <= 0`, Lean reroutes that branch through
+reject-long at `hi`.
 The state-level adapters
 `gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 and
@@ -1135,6 +1141,15 @@ and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_source_assumptions`.
 This boundary consumes Lemma 6 coefficient signs and endpoint sign brackets
 directly, then builds the measured fixed-response source packages internally.
+The sharper current target is the middle-cutoff version:
+`GN21Theorem3FixedResponseOneThresholdEqMiddleCutoffRerouteSourceExistenceData`,
+`GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffRerouteSourceExistenceData`,
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_cutoff_reroute_existence_source_assumptions`,
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_existence_source_assumptions`.
+Use this route when the paper proof supplies only the positive-`lo`
+non-surge accepted-middle gap, since Lean handles the `lo <= 0` branch by
+the reject-long cutoff reroute.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
