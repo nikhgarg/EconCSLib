@@ -254,6 +254,13 @@ Last updated: 2026-05-16
   `lg21EventSharePositiveOrBlank_of_zero_event_share_implies_blank`.
   These convert the paper convention "no one reports/takes, hence test-blank"
   into the direct test-blankness assumption for that equilibrium/base profile.
+  Definition 5's no-reporter/no-taker branch now has explicit endpoints
+  `lg21SourceTestBlank_of_no_positive_event_blank` and
+  `lg21SourceTestBlank_of_zero_event_share_blank`, plus the constructed
+  blank-on-zero-share global equality
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_testBlank_of_zero_share`.
+  These make the source proof's "no one reports/takes" sentence separately
+  auditable from the positive-share contradiction.
   These case-split endpoints also have Section 3 hidden-access wrappers,
   removing the earlier global positive-share assumption from the source-facing
   theorem route.  The fully concrete optional posterior-payoff and report-required

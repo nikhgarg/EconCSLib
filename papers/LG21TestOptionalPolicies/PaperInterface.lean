@@ -606,6 +606,77 @@ theorem paper_interface_not_test_blank_iff_exists_evidence
   lg21_not_testBlank_iff_exists_witness
 
 /--
+Definition 5 source note: if no reporter/taker event has positive mass in any
+equilibrium/base profile, and those no-positive-event profiles have equal
+base-only and full-feature estimates, then the policy is test-blank.
+-/
+theorem paper_interface_definition5_test_blank_of_no_positive_event_blank
+    {Skill Base Test Estimate Student : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (event : S.Equilibrium → Base → Student → Prop)
+    (hno_positive :
+      ∀ e base,
+        ¬ ∃ student, event e base student ∧
+          0 < (studentLaw e base student).toReal)
+    (hblank_of_no_positive :
+      ∀ e base,
+        (¬ ∃ student, event e base student ∧
+          0 < (studentLaw e base student).toReal) →
+          ∀ test, S.baseOnlyEstimate e base =
+            S.fullFeatureEstimate e base test) :
+    paperTestBlank S :=
+  lg21SourceTestBlank_of_no_positive_event_blank
+    studentLaw event hno_positive hblank_of_no_positive
+
+/--
+Definition 5 source note in finite-share language: if every reporter/taker
+event share is zero, and zero-share profiles are blank, then the policy is
+test-blank.
+-/
+theorem paper_interface_definition5_test_blank_of_zero_event_share_blank
+    {Skill Base Test Estimate Student : Type*}
+    [Fintype Student] [DecidableEq Student]
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (studentLaw : S.Equilibrium → Base → PMF Student)
+    (event : S.Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (hzero :
+      ∀ e base,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0)
+    (hblank_of_zero_share :
+      ∀ e base,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0 →
+          ∀ test, S.baseOnlyEstimate e base =
+            S.fullFeatureEstimate e base test) :
+    paperTestBlank S :=
+  lg21SourceTestBlank_of_zero_event_share_blank
+    studentLaw event decEvent hzero hblank_of_zero_share
+
+/--
+Definition 5 constructor check: the blank-on-zero-share full-feature estimate
+is globally test-blank whenever every reporter/taker event share is zero.
+-/
+theorem paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_share
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (hzero :
+      ∀ e base,
+        (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0) :
+    ∀ e base test,
+      baseOnlyEstimate e base =
+        lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+          e base test :=
+  lg21FullFeatureEstimateBlankOnZeroEventShare_testBlank_of_zero_share
+    studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate hzero
+
+/--
 Continuous-law Definition 5 witness form.
 -/
 theorem paper_interface_not_law_test_blank_iff_exists_evidence

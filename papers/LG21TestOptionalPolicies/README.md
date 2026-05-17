@@ -213,6 +213,13 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share`
   expose the matching contrapositive form.
+  Definition 5's source note that an equilibrium with no reporter/taker event
+  is test-blank now has explicit audit endpoints:
+  `paper_interface_definition5_test_blank_of_no_positive_event_blank`,
+  `paper_interface_definition5_test_blank_of_zero_event_share_blank`, and
+  `paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_share`.
+  These make the "no one reports/takes, hence test-blank" branch checkable
+  separately from the positive-share unraveling contradiction.
   The compact certificate aliases
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium`,
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,

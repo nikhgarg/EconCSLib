@@ -74,6 +74,18 @@ abbrev audit_definition5_test_blank :=
 abbrev audit_definition5_law_test_blank :=
   @paper_interface_definition5_law_test_blank_iff
 
+/-- Audit endpoint for Definition 5's no-positive-event implies test-blank branch. -/
+abbrev audit_definition5_test_blank_of_no_positive_event_blank :=
+  @paper_interface_definition5_test_blank_of_no_positive_event_blank
+
+/-- Audit endpoint for Definition 5's zero-share implies test-blank branch. -/
+abbrev audit_definition5_test_blank_of_zero_event_share_blank :=
+  @paper_interface_definition5_test_blank_of_zero_event_share_blank
+
+/-- Audit endpoint for the blank-on-zero-share constructor's global zero-share equality. -/
+abbrev audit_definition5_blank_on_zero_event_share_eq_base_of_zero_share :=
+  @paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_share
+
 /-- Audit endpoint for the Bayesian optimal Gaussian estimator used by `P_BO`. -/
 abbrev audit_bayesian_optimal_estimator_gaussian :=
   @paper_interface_bayesian_optimal_estimator_gaussian
