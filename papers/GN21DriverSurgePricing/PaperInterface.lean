@@ -96,6 +96,55 @@ theorem theorem1_single_state_threshold_best_response_measurable
 /-! ## Structured Dynamic Pricing -/
 
 /--
+Lemma 9 source feasibility in measured form: regular GN21 source data and
+positive surge accept-all mass imply that the Lemma 9 ratio interval is
+nonempty for every feasible current non-surge policy.
+-/
+theorem lemma9_constraint_set_feasible_for_current_nonsurge
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (rho : Fin 2 → TripPolicy)
+    (S : GN21RegularEndpointSharedSourceData mu arrival switch12 switch21)
+    (hrho_feasible : dynamicFeasibleMeasurablePolicy rho)
+    (hsurge_acceptAll_mass_pos : 0 < mu 1 acceptAllPolicy) :
+    ∃ ratio : ℝ,
+      0 < ratio ∧
+        lemma9StructuredBounds ratio
+          (gn21ScaledStateTime (mu 0) (arrival 0) (rho 0))
+          (gn21ExitWeightIntegral (mu 0) (arrival 0) switch12 switch21 (rho 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch21 := by
+  exact
+    S.lemma9_structured_bounds_feasible_for_current_nonsurge
+      hrho_feasible hsurge_acceptAll_mass_pos
+
+/--
+Lemma 10 source feasibility in measured form: regular GN21 source data and
+positive non-surge accept-all mass imply that the Lemma 10 ratio interval is
+nonempty for every feasible current surge policy.
+-/
+theorem lemma10_constraint_set_feasible_for_current_surge
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (rho : Fin 2 → TripPolicy)
+    (S : GN21RegularEndpointSharedSourceData mu arrival switch12 switch21)
+    (hrho_feasible : dynamicFeasibleMeasurablePolicy rho)
+    (hnonsurge_acceptAll_mass_pos : 0 < mu 0 acceptAllPolicy) :
+    ∃ ratio : ℝ,
+      lemma10StructuredBounds ratio
+        (gn21ScaledStateTime (mu 1) (arrival 1) (rho 1))
+        (gn21ExitWeightIntegral (mu 1) (arrival 1) switch21 switch12 (rho 1))
+        (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+        switch12 := by
+  exact
+    S.lemma10_structured_bounds_feasible_for_current_surge
+      hrho_feasible hnonsurge_acceptAll_mass_pos
+
+/--
 Theorem 3 scalar bridge for the mass-affine source boundary: the
 arrival/intercept condition `arrival_0*z_0 <= R2` follows from the
 dimensionless numerator inequality on the constructed non-surge ratio.

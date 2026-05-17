@@ -397,6 +397,13 @@ cache is `source.txt`.
   `paper_lemma10_structured_bounds_feasible_of_positive_primitives` prove
   directly that the paper's displayed Lemma 10 ratio interval contains `0`
   from the Remark 4 gap and strict exit-weight signs.
+  The primitive-sign feasibility facts are now also lifted to the measured
+  source layer: `GN21RegularEndpointSharedSourceData.nonsurge_acceptAll_exit_gt_switch`,
+  `GN21RegularEndpointSharedSourceData.lemma9_structured_bounds_feasible_for_current_nonsurge`,
+  and
+  `GN21RegularEndpointSharedSourceData.lemma10_structured_bounds_feasible_for_current_surge`
+  derive the Lemma 9/10 interval feasibility statements directly from regular
+  GN21 source data, feasible current policies, and positive accept-all mass.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.
