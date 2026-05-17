@@ -79,6 +79,15 @@ cache is `source.txt`.
   `GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
   and the corresponding compiled Theorem 3 wrappers, including
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
+  The preferred non-surge endpoint route is now weaker still: the fixed-surge
+  side can be supplied directly as the aggregate cross-ratio comparison that
+  Lemma 10 consumes.  The compiled bridge is
+  `GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassData`,
+  `GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.to_cross`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate`,
+  `GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_cross_by_policy_form_middle_cutoff_reroute`,
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_surge_cross_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
@@ -1218,11 +1227,13 @@ middle-cutoff boundary over the common-equality one whenever the paper proof
 gives branch-specific Lemma 9/10 inequalities rather than literal pointwise
 equality on every rejected complement.  On the surge fixed-state side the
 compiled boundary now asks only for the one-sided comparison used by the
-fixed-transfer endpoint theorem; on the non-surge fixed-state side the
-compiled boundary now asks for aggregate Lemma 9 cross-ratio inequalities
-rather than pointwise equality, with reject-long reducing to a single upper
-cross-ratio comparison and accept-middle exposing the two aggregate cross
-comparisons directly.
+fixed-transfer endpoint theorem, and the newer aggregate-cross boundary asks
+only for the single fixed-surge cross-ratio comparison actually consumed by
+the non-surge Lemma 10 endpoint constructors.  On the non-surge fixed-state
+side the compiled boundary asks for aggregate Lemma 9 cross-ratio
+inequalities rather than pointwise equality, with reject-long reducing to a
+single upper cross-ratio comparison and accept-middle exposing the two
+aggregate cross comparisons directly.
 The one-threshold/bracket layer is now also connected to that weaker
 by-policy-form endpoint through
 `GN21Theorem3FixedResponsePolicyFormByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms`,

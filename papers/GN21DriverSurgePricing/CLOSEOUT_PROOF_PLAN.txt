@@ -206,11 +206,12 @@ paper-facing boundary: it asks the
 source proof for Lemma 6 coefficient signs, positive sign brackets for the
 zero crossing, regularity/nondegeneracy, and the branch-indexed local endpoint
 certificate whose accepted-middle non-surge gap field is conditional on
-`0 < lo`, whose surge fixed-state side uses only the one-sided complement
-comparison plus reward-rate identity, and whose non-surge fixed-state side can
-use aggregate Lemma 9 cross-ratio data instead of pointwise equality.  Lean
-constructs the fixed-response policy-form source packages internally and
-reroutes `lo <= 0` through reject-long at the upper cutoff.
+`0 < lo`, whose surge fixed-state side can now be supplied directly as the
+aggregate fixed-state cross-ratio comparison plus reward-rate identity, and
+whose non-surge fixed-state side can use aggregate Lemma 9 cross-ratio data
+instead of pointwise equality.  Lean constructs the fixed-response policy-form
+source packages internally and reroutes `lo <= 0` through reject-long at the
+upper cutoff.
 
 Newer proof reduction: the local endpoint certificate no longer has to be the
 common fixed-state equality package.  The compiled by-policy-form middle-cutoff
@@ -238,15 +239,40 @@ back to the original policy.  Use this route for the remaining local endpoint
 proofs.  In particular, the non-surge reject-long fixed-state data can be
 built with
 `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`;
-the surge fixed-state side now similarly asks only for the one-sided
-reject-short/reject-middle complement comparison plus the reward-rate identity,
-not pointwise equality.  The fixed non-surge side now has an aggregate
-cross-ratio package as well: reject-long needs only the upper cross comparison
-because the lower comparison follows from the reject-long shape, and
-accept-middle can be supplied as the two Lemma 9 cross-ratio inequalities
-instead of a pointwise equality.
-do not try to prove global pointwise equality on the rejected long-trip tail
+the surge fixed-state side can be weakened one step further: use
+`GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData`
+when the source proof supplies the aggregate cross-ratio comparison directly,
+and fall back to
+`GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.to_cross_policy_form`
+only when the source proof has a pointwise complement inequality.  The fixed
+non-surge side has an aggregate cross-ratio package as well: reject-long needs
+only the upper cross comparison because the lower comparison follows from the
+reject-long shape, and accept-middle can be supplied as the two Lemma 9
+cross-ratio inequalities instead of a pointwise equality.
+Do not try to prove global pointwise equality on the rejected long-trip tail
 unless the source argument genuinely supplies it.
+
+Latest aggregate-cross reduction: the non-surge moving-state endpoint proof no
+longer requires the surge fixed-state side to prove a pointwise rejected-trip
+comparison or even the scalar cutoff comparison.  The compiled source boundary
+asks for exactly the cross-ratio inequality used by Lemma 10:
+
+  GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassData
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.to_cross
+  GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData
+  GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.to_cross
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.to_cross_policy_form
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.to_fixed_state_cross_by_policy_form_middle_cutoff_reroute_ae_local_endpoint
+  GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_cross_by_policy_form_middle_cutoff_reroute
+  GN21Theorem3FixedResponsePolicyFormSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+  GN21Theorem3FixedResponsePolicyFormSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_surge_cross_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_policy_form_surge_cross_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+
+Prefer this route before trying to discharge the scalar cutoff package below.
+The scalar cutoff route is still useful as an audit adapter, but it proves more
+than the non-surge endpoint constructors consume.
 
 Latest cutoff-ratio reduction: the surge reject-short and reject-middle
 fixed-state pointwise comparisons now have compiled CTMC cutoff theorems and
