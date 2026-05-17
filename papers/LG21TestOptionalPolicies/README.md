@@ -121,6 +121,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
   return the corresponding regime-specific certificate for each supplied
   equilibrium-indexed source surface.
+  The finite-event-share versions
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
+  do the same when each equilibrium/base profile supplies a finite student
+  law, access event, and positive-mass no-access complement.
 - The concrete base-mixed continuous-law route now has short Section 3
   paper-interface endpoints:
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`
@@ -130,6 +136,13 @@ cache is kept as `source.txt` for named-statement audits.
   optional/report-required strategic-withholding witness plus failures of
   latent-skill, observable, and demographic fairness on the concrete Gaussian
   posterior or affine-skill posterior law surface.
+  The event-share Section 3 variants
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
+  remove the explicit real-valued `accessFraction` and `0 <= C < 1` premises
+  from those public endpoints by deriving them from the finite cohort/event
+  representation.
 - Theorem 3.1 now has Section 3 hidden-access wrappers over both PMF and
   continuous-law certificates, including every-equilibrium certificate-family
   forms.  These endpoints make the paper hypothesis "the school does not know

@@ -189,6 +189,12 @@ Last updated: 2026-05-16
   `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
   and
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`.
+  The finite-event-share variants
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
+  instantiate those `∀ e` certificate families from finite student laws and
+  positive-mass no-access complement events.
   Theorem 3.1 now also has Section 3 hidden-access wrappers over PMF and
   continuous-law regime-specific certificates, including every-equilibrium
   certificate-family forms.  The access-status hypothesis is exposed as
@@ -200,6 +206,12 @@ Last updated: 2026-05-16
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`
   and
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding`.
+  Their finite-event-share variants,
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`,
+  remove the explicit `accessFraction`/`0 <= C < 1` premises from the public
+  Section 3 endpoints.
   These avoid certificate-field indirection by directly returning, for every
   equilibrium index, the optional/report-required strategic-withholding witness
   and failures of all three fairness notions on the concrete Gaussian or

@@ -110,6 +110,22 @@ noncomputable abbrev audit_theorem3_1_optional_reporting_event_share_law_certifi
 noncomputable abbrev audit_theorem3_1_report_required_event_share_law_certificate :=
   @paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
 
+/-- Audit endpoint for Theorem 3.1 optional-reporting finite-event-share every-equilibrium law certificates. -/
+noncomputable abbrev audit_theorem3_1_optional_reporting_event_share_every_equilibrium_law_certificate :=
+  @paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+
+/-- Audit endpoint for Theorem 3.1 report-required finite-event-share every-equilibrium law certificates. -/
+noncomputable abbrev audit_theorem3_1_report_required_event_share_every_equilibrium_law_certificate :=
+  @paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+
+/-- Audit endpoint for Theorem 3.1 optional-reporting Section 3 finite-event-share law route. -/
+abbrev audit_theorem3_1_section3_optional_reporting_event_share_law_route :=
+  @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+
+/-- Audit endpoint for Theorem 3.1 report-required Section 3 finite-event-share law route. -/
+abbrev audit_theorem3_1_section3_report_required_event_share_law_route :=
+  @paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+
 /-- Audit endpoint for Theorem 3.2's positive-event versus already-blank bridge. -/
 abbrev audit_theorem3_2_positive_event_or_blank_bridge :=
   @paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
