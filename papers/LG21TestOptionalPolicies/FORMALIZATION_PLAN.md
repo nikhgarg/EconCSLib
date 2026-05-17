@@ -432,6 +432,13 @@ Last updated: 2026-05-16
   bundle hidden access with the corresponding nonempty-equilibrium
   no-relevance endpoints, so audit callers can use the concrete positive-share
   surfaces without going through the broader event-or-blank case split.
+  The companion Section 3 iff wrappers
+  `paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff`
+  and
+  `paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
+  specialize the generic fairness/no-relevance iff theorem to those concrete
+  positive-share surfaces, leaving only the standard full-feature/base-only
+  observable-law identities explicit.
   The
   finite acting-distribution
   lemmas
