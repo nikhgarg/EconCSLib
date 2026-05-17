@@ -284,6 +284,15 @@ Last updated: 2026-05-16
   `lg21SourceTestBlank_of_zero_event_share_blank`, plus the constructed
   blank-on-zero-share global equality
   `lg21FullFeatureEstimateBlankOnZeroEventShare_testBlank_of_zero_share`.
+  The blank-on-zero constructor also now has raw-preservation and raw
+  no-relevance endpoints:
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_nonzero_share`,
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_positive_event`,
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_no_normalized_relevance`,
+  and
+  `lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_positive_event`.
+  Thus the constructed surface is auditable both as a zero-share normalization
+  and as an unchanged raw full-feature law on nonzero/positive-event profiles.
   These make the source proof's "no one reports/takes" sentence separately
   auditable from the positive-share contradiction.  The other source-proof
   branch, "test-blank policies meet observable fairness trivially", is now

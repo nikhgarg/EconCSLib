@@ -749,6 +749,59 @@ theorem paper_interface_definition5_blank_on_zero_event_share_eq_raw_of_positive
     e base student hevent hmass test
 
 /--
+Definition 5 constructor check: no relevance of the blank-on-zero normalized
+full-feature estimate rules out raw full-feature relevance on nonzero-share
+profiles.
+-/
+theorem paper_interface_definition5_blank_on_zero_event_share_no_raw_relevance_of_no_normalized_relevance
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (hnormalized :
+      ¬ ∃ e base test,
+        baseOnlyEstimate e base ≠
+          lg21FullFeatureEstimateBlankOnZeroEventShare
+            studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+            e base test) :
+    ¬ ∃ e base test,
+      (lg21PMFEventShareFn studentLaw event decEvent e base).toReal ≠ 0 ∧
+        baseOnlyEstimate e base ≠ rawFullFeatureEstimate e base test :=
+  lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_no_normalized_relevance
+    studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+    hnormalized
+
+/--
+Definition 5 constructor check: no relevance of the blank-on-zero normalized
+full-feature estimate rules out raw full-feature relevance at any positive-mass
+event profile.
+-/
+theorem paper_interface_definition5_blank_on_zero_event_share_no_raw_relevance_of_positive_event
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (hnormalized :
+      ¬ ∃ e base test,
+        baseOnlyEstimate e base ≠
+          lg21FullFeatureEstimateBlankOnZeroEventShare
+            studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+            e base test) :
+    ¬ ∃ e base student test,
+      event e base student ∧
+        0 < (studentLaw e base student).toReal ∧
+          baseOnlyEstimate e base ≠ rawFullFeatureEstimate e base test :=
+  lg21FullFeatureEstimateBlankOnZeroEventShare_no_raw_relevance_of_positive_event
+    studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+    hnormalized
+
+/--
 Continuous-law Definition 5 witness form.
 -/
 theorem paper_interface_not_law_test_blank_iff_exists_evidence

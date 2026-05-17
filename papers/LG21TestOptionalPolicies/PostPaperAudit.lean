@@ -94,6 +94,14 @@ abbrev audit_definition5_blank_on_zero_event_share_eq_raw_of_nonzero_share :=
 abbrev audit_definition5_blank_on_zero_event_share_eq_raw_of_positive_event :=
   @paper_interface_definition5_blank_on_zero_event_share_eq_raw_of_positive_event
 
+/-- Audit endpoint for blank-on-zero no-relevance implying raw no-relevance off zero-share profiles. -/
+abbrev audit_definition5_blank_on_zero_event_share_no_raw_relevance_of_nonzero_share :=
+  @paper_interface_definition5_blank_on_zero_event_share_no_raw_relevance_of_no_normalized_relevance
+
+/-- Audit endpoint for blank-on-zero no-relevance implying raw no-relevance on positive event profiles. -/
+abbrev audit_definition5_blank_on_zero_event_share_no_raw_relevance_of_positive_event :=
+  @paper_interface_definition5_blank_on_zero_event_share_no_raw_relevance_of_positive_event
+
 /-- Audit endpoint for the Definition 5 test-blank to Definition 3 observable-fair bridge. -/
 abbrev audit_definition5_implies_definition3_of_full_feature_base_only :=
   @paper_interface_definition5_implies_definition3_of_full_feature_base_only

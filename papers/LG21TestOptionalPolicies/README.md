@@ -290,6 +290,12 @@ cache is kept as `source.txt` for named-statement audits.
   so the audit trail records that blank-on-zero normalization only changes
   zero-share profiles and agrees with the raw full-feature estimate law on
   nonzero/positive-event profiles.
+  The no-relevance consequences
+  `paper_interface_definition5_blank_on_zero_event_share_no_raw_relevance_of_no_normalized_relevance`
+  and
+  `paper_interface_definition5_blank_on_zero_event_share_no_raw_relevance_of_positive_event`
+  turn no-relevance for the normalized blank-on-zero surface into no-relevance
+  for the raw full-feature law on those nonzero/positive-event profiles.
   These make the "no one reports/takes, hence test-blank" branch checkable
   separately from the positive-share unraveling contradiction.
   The companion test-blank branch now has source-surface bridges
