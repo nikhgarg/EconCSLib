@@ -323,6 +323,14 @@ trip-time integrability.  The reusable state-indexed regularity lemmas are
 `continuous_ctmcStructuredDynamicSurgePrice`,
 `measurable_ctmcStructuredDynamicSurgePrice`, and
 `integrableOn_ctmcStructuredDynamicSurgePrice`.
+For one-threshold structured branches, prefer the even thinner source
+constructors
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_decreasing`
+and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_increasing`.
+They combine the measured structured Lemma 6 policy-form wrappers with the
+structured-price regularity constructors, so callers supply only coefficient
+sign, positive zero-cutoff, denominator/nondegeneracy, and integrability data.
 For all optima at once, use
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
 `.to_fixed_response_policy_form_data` method to build

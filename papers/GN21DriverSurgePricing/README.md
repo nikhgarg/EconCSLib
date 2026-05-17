@@ -1009,6 +1009,14 @@ For the actual Theorem 3 structured prices, the specialized constructors
 and
 `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price`
 also derive structured-price measurability and integrability internally.
+The one-threshold source constructors
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_decreasing`
+and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_increasing`
+go one layer further: their source-facing inputs are the structured-response
+coefficient sign, a positive zero cutoff, denominator/nondegeneracy fields,
+and the usual integrability facts, and they return the full state source data
+for the non-surge decreasing and surge increasing branches.
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` packages these
 statewise assumptions for all measurable optima and converts to the
 all-optima fixed-response policy-form boundary.
