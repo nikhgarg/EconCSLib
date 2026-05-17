@@ -145,6 +145,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all`
   and
   `paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all`.
+  The finite PMF every-equilibrium Section 3 route has matching theorem-layer
+  full-support/not-all aliases,
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_for_every_equilibrium_of_full_support_not_all_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_full_support_not_all_event_share_no_take_mixture`,
+  so the PMF and continuous-law representations now discharge the complement
+  mass premise in parallel.
 - The concrete base-mixed continuous-law route now has short Section 3
   paper-interface endpoints:
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`

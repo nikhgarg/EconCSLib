@@ -10,8 +10,9 @@ Last updated: 2026-05-17.
   - `dc9c7f2 Record LG21 Theorem 3.2 raw-surface scope counterexample`
   - `c86c733 Add LG21 raw law-surface scope counterexample`
 - Latest local proof bridge:
-  full-support/not-all-acting Theorem 3.1 Section 3 continuous-law endpoints
-  now live in `MainTheorems.lean` and the public wrappers delegate to them.
+  full-support/not-all-acting Theorem 3.1 Section 3 PMF and continuous-law
+  endpoints now live in `MainTheorems.lean` and the public wrappers delegate to
+  them.
 - Worktree used for the latest LG21 work:
   `/home/nkgarg/src_wsl/EconCSLean`.
 - Expected local dirt in this shared worktree can include unrelated non-LG21
@@ -53,10 +54,12 @@ interface-only proof glue:
 
 - `paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_gaussian_posterior_surface`
 - `paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_affine_skill_posterior_surface`
+- `paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_full_support_not_all_event_share_no_report_mixture`
+- `paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_full_support_not_all_event_share_no_take_mixture`
 
 These derive the positive-mass no-reporter/no-taker complement from full
 support of a finite cohort law and an ordinary not-all-acting witness, then feed
-the existing finite-event-share Section 3 continuous-law route.
+the existing finite-event-share Section 3 PMF or continuous-law route.
 
 ## Validated Commands
 
@@ -68,9 +71,9 @@ lake build LG21TestOptionalPolicies
 git diff --check -- papers/LG21TestOptionalPolicies/MainTheorems.lean papers/LG21TestOptionalPolicies/PaperInterface.lean papers/LG21TestOptionalPolicies/PostPaperAudit.lean papers/LG21TestOptionalPolicies/README.md papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md papers/LG21TestOptionalPolicies/FORMALIZATION_PLAN.md papers/LG21TestOptionalPolicies/START_HERE_NEXT_AGENT.md
 ```
 
-`lake build LG21TestOptionalPolicies.PostPaperAudit` passed after the
-full-support/not-all theorem-layer bridge; `lake build LG21TestOptionalPolicies`
-also passed after the same change.
+`lake build LG21TestOptionalPolicies.PostPaperAudit` passed after the PMF
+full-support/not-all theorem-layer bridge. Run `lake build
+LG21TestOptionalPolicies` again before declaring a final paper closeout.
 
 `HumanStartHere.lean` is not a good LG21 validation target right now: it imports
 

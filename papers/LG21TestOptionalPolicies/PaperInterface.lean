@@ -16049,6 +16049,22 @@ abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding
   @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_event_share_no_take_mixture
 
 /--
+Paper-facing Theorem 3.1 optional-reporting Section 3 PMF endpoint for every
+equilibrium, with the finite event-share premise discharged from full support
+and an ordinary not-all-reporting witness.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_for_every_equilibrium_of_full_support_not_all_event_share_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_full_support_not_all_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 PMF endpoint for every
+equilibrium, with the finite event-share premise discharged from full support
+and an ordinary not-all-taking witness.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_full_support_not_all_event_share_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_full_support_not_all_event_share_no_take_mixture
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full base-indexed
 one-test posterior source-law surface is not latent-skill fair.
