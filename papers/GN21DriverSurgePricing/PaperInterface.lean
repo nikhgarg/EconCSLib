@@ -485,6 +485,43 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_branch_fixed_transf
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the extended exact-endpoint fixed-transfer route.  In each state
+the source may supply either accept-all or the finite exact ray, while retaining
+the exact endpoint certificate rather than weakening to the aggregate-cross
+endpoint package.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointExtendedOneThresholdBranchFixedTransferExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the exact-endpoint finite-or-infinite fixed-transfer route.  This
+is the exact-endpoint analogue of the paper's non-surge `t = infinity` cutoff
+interface.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointFiniteOrInfiniteOneThresholdBranchFixedTransferExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the bracket-level exact one-threshold fixed-transfer route.
 Lemma 6 is supplied as bracket data; exact branch selectors still let Lean
 derive the all-optimal replacement field internally.

@@ -1557,6 +1557,23 @@ fixed-response Lemma 5 output: the fixed-response source data give a.e.
 policy-form representatives, not exact raw selectors for `ρ i`.  Use the
 exact route only after an explicit normalization step, or stay with the
 fixed-response/a.e. route.
+There is now also a source-faithful exact-endpoint extension that keeps this
+exact endpoint calculus while allowing the paper's accept-all-or-finite-ray
+state alternatives.  The internal adapter
+`GN21Theorem3ExtendedOneThresholdBranchFixedTransferSourceExistenceData.to_exact_one_threshold_non_accept_all_selection_unless`
+builds the replacement data and feeds the non-accept-all fixed-transfer
+selector directly through
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_non_accept_all_selection_unless_of_extended_shapes`.
+The paper-facing AE route is
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_fixed_transfer_existence_source_assumptions`,
+exposed in `PaperInterface` as
+`theorem3_structured_measurable_ic_ae_unique_of_extended_branch_fixed_transfer`.
+The closest exact-endpoint source-notation route is
+`GN21Theorem3FiniteOrInfiniteOneThresholdBranchFixedTransferSourceExistenceData`,
+exposed as
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_fixed_transfer`;
+the older exact finite-ray fixed-transfer source assumptions lower to it via
+`Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchFixedTransferSourceAssumptions.to_finite_or_infinite_source_assumptions`.
 The source-faithful aggregate-cross variant now allows the paper's extended
 one-threshold convention directly: each state-specific optimum may either be
 accept-all or have the finite exact ray.  The internal adapter
