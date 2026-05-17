@@ -203,6 +203,12 @@ cache is kept as `source.txt` for named-statement audits.
   definition, and
   `paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share`
   packages the resulting case split.
+  The fairness-impossibility wrappers
+  `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_blank_on_zero_event_share`
+  and
+  `paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_blank_on_zero_event_share`
+  consume this constructor directly, eliminating the separate blank-branch
+  premise for those constructed full-feature laws.
 - The certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now also have Section 3 hidden-access implication
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2

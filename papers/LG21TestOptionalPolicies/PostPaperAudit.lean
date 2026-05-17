@@ -166,6 +166,10 @@ abbrev audit_theorem3_2_section3_optional_reporting_fairness_impossibility :=
 abbrev audit_theorem3_2_section3_optional_reporting_zero_share_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_zero_event_share_blank
 
+/-- Audit endpoint for Theorem 3.2, optional-reporting blank-on-zero-share fairness-impossibility branch. -/
+abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_fairness_impossibility :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_blank_on_zero_event_share
+
 /-- Audit endpoint for Theorem 3.2, report-required fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_report_required_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_report_required_fairness_impossibility
@@ -173,6 +177,10 @@ abbrev audit_theorem3_2_section3_report_required_fairness_impossibility :=
 /-- Audit endpoint for Theorem 3.2, report-required zero-share fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_report_required_zero_share_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_zero_event_share_blank
+
+/-- Audit endpoint for Theorem 3.2, report-required blank-on-zero-share fairness-impossibility branch. -/
+abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_fairness_impossibility :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_blank_on_zero_event_share
 
 /-- Audit endpoint for Theorem 3.2, optional-reporting no-relevance branch. -/
 abbrev audit_theorem3_2_section3_optional_reporting_no_test_relevance :=
