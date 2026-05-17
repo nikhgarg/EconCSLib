@@ -20,7 +20,9 @@ Last updated: 2026-05-16
   features, with their own two-sided best-response bridges.
 - Definitions 2--5 now have direct PMF and continuous-law source predicates
   plus paper-interface unfold lemmas.  Definition 5 also has equivalent
-  witness forms for concrete base/test relevance.
+  witness forms for concrete base/test relevance and named observable-identity
+  certificates for the ordinary full-feature/base-only surface bridge to
+  Definition 3.
 - Definition 6 and the finite distributional core of Theorem 4.4 are proved via
   the shared conditional-resampling API.  Definition 6 now explicitly unfolds
   both access and re-sampled no-access estimate laws as the same conditional
@@ -279,15 +281,19 @@ Last updated: 2026-05-16
   auditable from the positive-share contradiction.  The other source-proof
   branch, "test-blank policies meet observable fairness trivially", is now
   exposed by `lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly`
-  and the continuous-law analogue; both keep the necessary source-surface
-  identities explicit.  Combining those bridges with the
+  and the continuous-law analogue; the named certificates
+  `LG21FullFeatureBaseOnlyObservableIdentities` and
+  `LG21LawFullFeatureBaseOnlyObservableIdentities` package the necessary
+  source-surface identities for audit callers.  Combining those bridges with the
   fairness-impossibility certificates now gives PMF and continuous-law iff
   endpoints:
   `paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_full_feature_base_only`,
   `paper_theorem3_2_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only`,
-  and the corresponding law and Section 3 wrappers.  These state the paper's
-  "only way" reading directly whenever the observable surface is the ordinary
-  full-feature/base-only one.  The no-relevance iff wrappers
+  and the corresponding law and Section 3 wrappers.  The parallel
+  `_and_observableIdentities` wrappers consume the named certificate rather
+  than separate `testOf`, access, and no-access identity arguments.  These
+  state the paper's "only way" reading directly whenever the observable surface
+  is the ordinary full-feature/base-only one.  The no-relevance iff wrappers
   `paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only`
   and its law analogue rephrase the same result as absence of any concrete
   base/test relevance witness, with Section 3 variants bundling the hidden
@@ -304,7 +310,7 @@ Last updated: 2026-05-16
   already-test-blank split is available at the strongest concrete surfaces in
   both regimes.  Those concrete event-or-blank routes now also have
   Section 3 fairness/test-blank and fairness/no-relevance iff wrappers under
-  the full-feature/base-only observable-surface identities.  The corresponding
+  the named full-feature/base-only observable-identity certificate.  The corresponding
   blank-on-zero-share concrete routes have direct Section 3 iff wrappers too,
   using the constructor-backed certificate to discharge the zero-share branch
   by definition.  The fully concrete
@@ -460,8 +466,8 @@ Last updated: 2026-05-16
   `paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`,
   `paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff`
   specialize the generic iff route to those concrete positive-share surfaces,
-  leaving only the standard full-feature/base-only observable-law identities
-  explicit.
+  leaving only the standard full-feature/base-only observable-law identity
+  certificate explicit.
   The
   finite acting-distribution
   lemmas

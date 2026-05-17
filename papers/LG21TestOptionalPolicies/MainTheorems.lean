@@ -4044,6 +4044,37 @@ theorem lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly
   exact (hblank e base (testOf e base)).symm
 
 /--
+Named certificate for the ordinary source-surface identities used in the
+paper's "test-blank policies are observably fair" direction: observable access
+uses the displayed full-feature estimate at the realized test, while observable
+no-access uses the displayed base-only estimate.
+-/
+structure LG21FullFeatureBaseOnlyObservableIdentities
+    {Skill Base Test Estimate : Type*}
+    (S : LG21SourcePolicySurface Skill Base Test Estimate) where
+  testOf : S.Equilibrium → Base → Test
+  observableAccess_eq_fullFeature :
+    ∀ e base, S.observableAccessEstimate e base =
+      S.fullFeatureEstimate e base (testOf e base)
+  observableNoAccess_eq_baseOnly :
+    ∀ e base, S.observableNoAccessEstimate e base =
+      S.baseOnlyEstimate e base
+
+/--
+Definition 5 to Definition 3 bridge using the named observable-identity
+certificate instead of three separate identity arguments.
+-/
+theorem lg21_sourceObservablyFair_of_testBlank_of_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S)
+    (hblank : lg21SourceTestBlank S) :
+    lg21SourceObservablyFair S :=
+  lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly
+    I.testOf I.observableAccess_eq_fullFeature I.observableNoAccess_eq_baseOnly
+    hblank
+
+/--
 Continuous-law Definition 5 to Definition 3 bridge: the same test-blank to
 observable-fairness argument over arbitrary law objects.
 -/
@@ -4062,6 +4093,34 @@ theorem lg21_sourceLawObservablyFair_of_testBlank_of_fullFeature_baseOnly
   intro e base
   rw [hAccess e base, hNoAccess e base]
   exact (hblank e base (testOf e base)).symm
+
+/--
+Continuous-law version of `LG21FullFeatureBaseOnlyObservableIdentities`.
+-/
+structure LG21LawFullFeatureBaseOnlyObservableIdentities
+    {Skill Base Test Law : Type*}
+    (S : LG21SourceLawPolicySurface Skill Base Test Law) where
+  testOf : S.Equilibrium → Base → Test
+  observableAccess_eq_fullFeature :
+    ∀ e base, S.observableAccessLaw e base =
+      S.fullFeatureLaw e base (testOf e base)
+  observableNoAccess_eq_baseOnly :
+    ∀ e base, S.observableNoAccessLaw e base =
+      S.baseOnlyLaw e base
+
+/--
+Continuous-law Definition 5 to Definition 3 bridge using the named
+observable-identity certificate.
+-/
+theorem lg21_sourceLawObservablyFair_of_testBlank_of_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S)
+    (hblank : lg21SourceLawTestBlank S) :
+    lg21SourceLawObservablyFair S :=
+  lg21_sourceLawObservablyFair_of_testBlank_of_fullFeature_baseOnly
+    I.testOf I.observableAccess_eq_fullFeature I.observableNoAccess_eq_baseOnly
+    hblank
 
 theorem lg21_not_latentSkillFair_of_witness
     {Skill Base Test Estimate : Type*}
@@ -19966,6 +20025,103 @@ theorem paper_theorem3_2_section3_fairness_iff_no_test_relevance_of_certificate_
         C testOf hAccess hNoAccess
 
 /--
+Theorem 3.2 iff form using the named observable-identity certificate.
+-/
+theorem paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S) :
+    (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+      lg21SourceTestBlank S :=
+  paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Theorem 3.2 observable-fairness iff form using the named observable-identity
+certificate.
+-/
+theorem paper_theorem3_2_observable_fair_iff_test_blank_of_certificate_and_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S) :
+    lg21SourceObservablyFair S ↔ lg21SourceTestBlank S :=
+  paper_theorem3_2_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Theorem 3.2 no-relevance iff form using the named observable-identity
+certificate.
+-/
+theorem paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S) :
+    (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Theorem 3.2 observable-fairness/no-relevance iff form using the named
+observable-identity certificate.
+-/
+theorem paper_theorem3_2_observable_fair_iff_no_test_relevance_of_certificate_and_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S) :
+    lg21SourceObservablyFair S ↔
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_observable_fair_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Theorem 3.2 Section 3 iff form using the named observable-identity
+certificate, with hidden access bundled into the conclusion.
+-/
+theorem paper_theorem3_2_section3_fairness_iff_test_blank_of_certificate_and_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Theorem 3.2 Section 3 no-relevance iff form using the named
+observable-identity certificate.
+-/
+theorem paper_theorem3_2_section3_fairness_iff_no_test_relevance_of_certificate_and_observableIdentities
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (I : LG21FullFeatureBaseOnlyObservableIdentities S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+        ¬ ∃ e base test,
+            S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) :=
+  paper_theorem3_2_section3_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
 Theorem 3.2 optional-reporting source-equilibrium iff route: the paper's
 event-or-blank case split, together with the ordinary full-feature/base-only
 observable surface identities, makes fairness equivalent to test-blankness.
@@ -21477,6 +21633,101 @@ theorem paper_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_certific
   · exact
       paper_theorem3_2_law_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
         C testOf hAccess hNoAccess
+
+/--
+Continuous-law Theorem 3.2 iff form using the named observable-identity
+certificate.
+-/
+theorem paper_theorem3_2_law_fairness_iff_test_blank_of_certificate_and_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S) :
+    (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+      lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Continuous-law Theorem 3.2 observable-fairness iff form using the named
+observable-identity certificate.
+-/
+theorem paper_theorem3_2_law_observable_fair_iff_test_blank_of_certificate_and_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S) :
+    lg21SourceLawObservablyFair S ↔ lg21SourceLawTestBlank S :=
+  paper_theorem3_2_law_observable_fair_iff_test_blank_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Continuous-law Theorem 3.2 no-relevance iff form using the named
+observable-identity certificate.
+-/
+theorem paper_theorem3_2_law_fairness_iff_no_test_relevance_of_certificate_and_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S) :
+    (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_law_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Continuous-law Theorem 3.2 observable-fairness/no-relevance iff form using the
+named observable-identity certificate.
+-/
+theorem paper_theorem3_2_law_observable_fair_iff_no_test_relevance_of_certificate_and_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S) :
+    lg21SourceLawObservablyFair S ↔
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_law_observable_fair_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Continuous-law Theorem 3.2 Section 3 iff form using the named
+observable-identity certificate.
+-/
+theorem paper_theorem3_2_section3_law_fairness_iff_test_blank_of_certificate_and_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+        lg21SourceLawTestBlank S) :=
+  paper_theorem3_2_section3_law_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
+
+/--
+Continuous-law Theorem 3.2 Section 3 no-relevance iff form using the named
+observable-identity certificate.
+-/
+theorem paper_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_certificate_and_observableIdentities
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (I : LG21LawFullFeatureBaseOnlyObservableIdentities S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+        ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test) :=
+  paper_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    C I.testOf I.observableAccess_eq_fullFeature
+    I.observableNoAccess_eq_baseOnly
 
 /-- Certificate for Lemma 4.1's strategy-proofness endpoint. -/
 structure LG21ObservedAccessStrategyProofCertificate

@@ -90,9 +90,25 @@ abbrev audit_definition5_blank_on_zero_event_share_eq_base_of_zero_share :=
 abbrev audit_definition5_implies_definition3_of_full_feature_base_only :=
   @paper_interface_definition5_implies_definition3_of_full_feature_base_only
 
+/-- Audit endpoint for the Definition 5 observable-identity certificate. -/
+abbrev audit_definition5_observable_identity_certificate :=
+  @paper_interface_definition5_observable_identity_certificate
+
+/-- Audit endpoint for the Definition 5 test-blank bridge using the named identity certificate. -/
+abbrev audit_definition5_implies_definition3_of_observable_identities :=
+  @paper_interface_definition5_implies_definition3_of_observable_identities
+
 /-- Audit endpoint for the continuous-law test-blank to observable-fair bridge. -/
 abbrev audit_definition5_implies_definition3_law_of_full_feature_base_only :=
   @paper_interface_definition5_implies_definition3_law_of_full_feature_base_only
+
+/-- Audit endpoint for the continuous-law Definition 5 observable-identity certificate. -/
+abbrev audit_definition5_law_observable_identity_certificate :=
+  @paper_interface_definition5_law_observable_identity_certificate
+
+/-- Audit endpoint for the continuous-law test-blank bridge using the named identity certificate. -/
+abbrev audit_definition5_implies_definition3_law_of_observable_identities :=
+  @paper_interface_definition5_implies_definition3_law_of_observable_identities
 
 /-- Audit endpoint for the Bayesian optimal Gaussian estimator used by `P_BO`. -/
 abbrev audit_bayesian_optimal_estimator_gaussian :=
@@ -450,6 +466,30 @@ abbrev audit_theorem3_2_fairness_iff_no_test_relevance_of_full_feature_base_only
 abbrev audit_theorem3_2_observable_fair_iff_no_test_relevance_of_full_feature_base_only :=
   @paper_interface_theorem3_2_observable_fair_iff_no_test_relevance_of_full_feature_base_only
 
+/-- Audit endpoint for the PMF Theorem 3.2 fairness/test-blank iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_fairness_iff_test_blank_of_observable_identities :=
+  @paper_interface_theorem3_2_fairness_iff_test_blank_of_observable_identities
+
+/-- Audit endpoint for the PMF Theorem 3.2 observable-fair/test-blank iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_observable_fair_iff_test_blank_of_observable_identities :=
+  @paper_interface_theorem3_2_observable_fair_iff_test_blank_of_observable_identities
+
+/-- Audit endpoint for the PMF Theorem 3.2 fairness/no-relevance iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_fairness_iff_no_test_relevance_of_observable_identities :=
+  @paper_interface_theorem3_2_fairness_iff_no_test_relevance_of_observable_identities
+
+/-- Audit endpoint for the PMF Theorem 3.2 observable-fair/no-relevance iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_observable_fair_iff_no_test_relevance_of_observable_identities :=
+  @paper_interface_theorem3_2_observable_fair_iff_no_test_relevance_of_observable_identities
+
+/-- Audit endpoint for the Section 3 PMF Theorem 3.2 fairness/test-blank iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_section3_fairness_iff_test_blank_of_observable_identities :=
+  @paper_interface_theorem3_2_section3_fairness_iff_test_blank_of_observable_identities
+
+/-- Audit endpoint for the Section 3 PMF Theorem 3.2 fairness/no-relevance iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_section3_fairness_iff_no_test_relevance_of_observable_identities :=
+  @paper_interface_theorem3_2_section3_fairness_iff_no_test_relevance_of_observable_identities
+
 /-- Audit endpoint for the continuous-law Theorem 3.2 fairness/no-relevance iff bridge. -/
 abbrev audit_theorem3_2_law_fairness_iff_no_test_relevance_of_full_feature_base_only :=
   @paper_interface_theorem3_2_law_fairness_iff_no_test_relevance_of_full_feature_base_only
@@ -457,6 +497,30 @@ abbrev audit_theorem3_2_law_fairness_iff_no_test_relevance_of_full_feature_base_
 /-- Audit endpoint for the continuous-law Theorem 3.2 observable-fair/no-relevance iff bridge. -/
 abbrev audit_theorem3_2_law_observable_fair_iff_no_test_relevance_of_full_feature_base_only :=
   @paper_interface_theorem3_2_law_observable_fair_iff_no_test_relevance_of_full_feature_base_only
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 fairness/test-blank iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_law_fairness_iff_test_blank_of_observable_identities :=
+  @paper_interface_theorem3_2_law_fairness_iff_test_blank_of_observable_identities
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 observable-fair/test-blank iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_law_observable_fair_iff_test_blank_of_observable_identities :=
+  @paper_interface_theorem3_2_law_observable_fair_iff_test_blank_of_observable_identities
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 fairness/no-relevance iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_identities :=
+  @paper_interface_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_identities
+
+/-- Audit endpoint for the continuous-law Theorem 3.2 observable-fair/no-relevance iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_law_observable_fair_iff_no_test_relevance_of_observable_identities :=
+  @paper_interface_theorem3_2_law_observable_fair_iff_no_test_relevance_of_observable_identities
+
+/-- Audit endpoint for the Section 3 continuous-law Theorem 3.2 fairness/test-blank iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_identities :=
+  @paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_identities
+
+/-- Audit endpoint for the Section 3 continuous-law Theorem 3.2 fairness/no-relevance iff bridge using the named identity certificate. -/
+abbrev audit_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_identities :=
+  @paper_interface_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_identities
 
 /-- Audit endpoint for the PMF Theorem 3.2 contradiction-to-certificate constructor. -/
 abbrev audit_theorem3_2_fairness_certificate_of_not_latent_or_observable_fair :=
