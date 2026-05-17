@@ -614,7 +614,10 @@ Last updated: 2026-05-16
   pushforward acting law.  The centered-base-term specialization defines the
   report-required base term as `denom / 2 - signalWeight * mean`, closing the
   outside-payoff algebra by construction for that normalized affine source
-  model.  A stricter skill-dependent conditional-kernel route remains optional
+  model.  The report-required mapped-actor paper-interface endpoint now also
+  has a full-support specialization, replacing the two displayed selected-test
+  positive-mass assumptions by full support of the finite test law.  A stricter
+  skill-dependent conditional-kernel route remains optional
   if the final source-facing statement needs true conditional-on-skill laws.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing

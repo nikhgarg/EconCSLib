@@ -660,7 +660,11 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition`
   defines the report-required base term as
   `denom / 2 - signalWeight * mean`, closing the remaining outside-payoff
-  algebra by construction for that normalized affine source model.  A
+  algebra by construction for that normalized affine source model.  The
+  paper-interface wrapper
+  `paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition_of_full_support`
+  additionally discharges the two selected-test positive-mass assumptions from
+  full support of the finite test law.  A
   stricter
   skill-dependent latent-kernel instantiation can be added later if the final
   statement insists on conditional-on-skill laws rather than this direct

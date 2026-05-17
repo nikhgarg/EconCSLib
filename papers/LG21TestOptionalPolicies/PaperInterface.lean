@@ -13372,6 +13372,65 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_rep
     hEq hweight hdenom e base test₁ test₂ hmass₁ hmass₂ hne
 
 /--
+Full-support specialization of the centered-base-term mapped-actor
+report-required Theorem 3.2 endpoint.  Full support of the displayed test law
+discharges the two positive-mass support facts for the selected tests.
+-/
+def paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition_of_full_support
+    {Equilibrium Base Test Actor Student : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    [Fintype Student] [DecidableEq Student]
+    (skillGivenBase : Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (takerEvent : Equilibrium → Base → Student → Prop)
+    (decTakerEvent : ∀ e base, DecidablePred (takerEvent e base))
+    (htakerEvent_pos :
+      ∀ e base, ∃ student, takerEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (testLaw : Equilibrium → Base → PMF Test)
+    (hfull_support : ∀ e base test, 0 < (testLaw e base test).toReal)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → Test → Actor)
+    (hchooses_test_support :
+      ∀ e base test, 0 < (testLaw e base test).toReal →
+        takeDecision e (actorValue e base (actorOfTest e base test)) base =
+          true)
+    (signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        paperSourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              ((denom e base / 2 -
+                    signalWeight e base *
+                      pmfExp ((testLaw e base).map (actorOfTest e base))
+                        (actorValue e base)) +
+                  signalWeight e base * actor) /
+                denom e base)
+            (estimationConsistent e)))
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (e : Equilibrium) (base : Base) (test₁ test₂ : Test)
+    (hne :
+      actorValue e base (actorOfTest e base test₁) ≠
+        actorValue e base (actorOfTest e base test₂)) :=
+  paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition
+    skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
+    takeDecision reportDecision estimationConsistent referenceTest studentLaw
+    takerEvent decTakerEvent htakerEvent_pos reporterPMF noReporterPMF
+    testLaw actorValue actorOfTest hchooses_test_support signalWeight denom
+    hEq hweight hdenom e base test₁ test₂
+    (hfull_support e base test₁) (hfull_support e base test₂) hne
+
+/--
 Theorem 3.2 endpoint from latent-to-observable mixture identities and the
 source-shaped PMF witness.
 -/
