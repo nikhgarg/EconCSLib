@@ -181,7 +181,13 @@ cache is `source.txt`.
   and the bracket-source variant
   `...to_mass_separated_of_gn21_fixed_response_bracket_forms`, avoiding the
   older allowed-policy-form mass detour when the GN21 fixed-response record is
-  already available.
+  already available.  The bracket record exposes the mass projections directly
+  as
+  `Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData.nonsurge_current_mass_pos`
+  and
+  `Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData.surge_current_mass_pos`,
+  so the bracket adapter no longer needs to pass through the noncomputable
+  ordinary-source conversion.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
