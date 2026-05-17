@@ -65,6 +65,7 @@ cache is `source.txt`.
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_and_rejectMiddle_cutoff_bounds`,
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_by_policy_form_middle_cutoff_reroute_ae_local_endpoint`,
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_surge_reject_short_cutoff_bound`,
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_fixed_state_by_policy_form`,
   and
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos`:
   source proofs now need only the positive-cutoff ratio inequality
@@ -102,11 +103,16 @@ cache is `source.txt`.
   and the exact-branch adapter
   `Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_ordered_surge_cutoff_cross_field_source_assumptions`.
   Exact one-threshold source proofs can now use
+  `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_fixed_state_by_policy_form`,
   `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`
   or the bracket-level
   `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`;
-  both derive the non-surge reject-long positivity field from fixed-response
+  these derive the non-surge reject-long positivity field from fixed-response
   positive current mass instead of exposing it as a separate source assumption.
+  Prefer `of_fixed_state_by_policy_form` when the source proof already has the
+  reusable fixed-state policy-form packages; it selects the exact reject-short
+  and reject-long branches internally instead of restating scalar endpoint
+  fields.
   The sharper scalar-field variants
   `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_upper_cross`
   and

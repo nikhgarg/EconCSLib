@@ -210,6 +210,7 @@ Lean also now has a direct positive-mass geometry bridge:
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_fixed_state_by_policy_form
 
 Use these whenever a route already proves positive current non-surge accepted
 mass.  They discharge the reject-long cutoff and accepted-middle gap fields
@@ -239,6 +240,7 @@ also stays bracket-level for its non-surge mass premise; do not reintroduce a
 The exact one-threshold source route now has direct constructors that apply
 this internally:
 
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_fixed_state_by_policy_form
   GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound
   GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound
 
@@ -247,6 +249,10 @@ selectors, the surge reject-short scalar cutoff bound, the surge reward-rate
 identity, and the non-surge reject-long fixed-state cross package.  Do not ask
 the source proof for `nonsurge_rejectLong_pos`; it follows from the
 fixed-response positive current mass field.
+If the proof already has the reusable surge/non-surge fixed-state
+by-policy-form packages, use `of_fixed_state_by_policy_form` first; it derives
+the scalar reject-short cutoff endpoint and the non-surge reject-long cross
+endpoint from those packages and avoids duplicating source fields.
 
 The preferred exact-branch scalar-field constructors go one step further:
 
