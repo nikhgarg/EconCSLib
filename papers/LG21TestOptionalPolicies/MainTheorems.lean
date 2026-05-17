@@ -18832,6 +18832,102 @@ def paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_e
       (hC_nonneg e) (hC_lt_one e)
 
 /--
+Theorem 3.1 optional-reporting Section 3 endpoint over the concrete
+source-shaped skill/base-mixture Gaussian posterior-law surface.  The first
+conjunct states hidden access; the second returns the paper's strategic
+withholding witness and fairness failures for every equilibrium index.
+-/
+theorem paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    {Feature Base Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (skillGivenBase : Equilibrium → Base → PMF ℝ)
+    (baseProfile : Equilibrium → PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (scoreLaw : Equilibrium → Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ e base, 0 ≤ accessFraction e base)
+    (hC_lt_one : ∀ e base, accessFraction e base < 1) :
+    (∀ (base : Base) (test : ℝ) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+          (∀ base skill, W.takes base skill) ∧
+            (∃ base score, ¬ W.reports base score) ∧
+              (∀ base, ∃ cutoff : ℝ,
+                ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+              ¬ lg21SourceLawLatentSkillFair
+                (lg21BaseMixedGaussianPosteriorLawSurface
+                  (skillGivenBase e) (baseProfile e) M theta k
+                  (scoreLaw e) (baseOnlyEstimate e)) ∧
+                ¬ lg21SourceLawObservablyFair
+                  (lg21BaseMixedGaussianPosteriorLawSurface
+                    (skillGivenBase e) (baseProfile e) M theta k
+                    (scoreLaw e) (baseOnlyEstimate e)) ∧
+                  ¬ lg21SourceLawDemographicallyFair
+                    (lg21BaseMixedGaussianPosteriorLawSurface
+                      (skillGivenBase e) (baseProfile e) M theta k
+                      (scoreLaw e) (baseOnlyEstimate e)) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · intro e
+    exact
+      paper_theorem3_1_optional_reporting_law_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+        (skillGivenBase e) (baseProfile e) M theta k
+        (accessFraction e) (baseOnlyEstimate e) (scoreLaw e)
+        (hC_nonneg e) (hC_lt_one e)
+
+/--
+Theorem 3.1 report-required Section 3 endpoint over the concrete source-shaped
+skill/base-mixture affine-skill posterior-law surface.
+-/
+theorem paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    {Base Equilibrium : Type*} [Nonempty Base]
+    (skillGivenBase : Equilibrium → Base → PMF ℝ)
+    (baseProfile : Equilibrium → PMF Base)
+    (intercept slope : Equilibrium → Base → ℝ)
+    (hslope : ∀ e base, 0 < slope e base)
+    (accessFraction baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (skillLaw : Equilibrium → Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ e base, 0 ≤ accessFraction e base)
+    (hC_lt_one : ∀ e base, accessFraction e base < 1) :
+    (∀ (base : Base) (test : ℝ) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+          (∃ base skill, ¬ W.takes base skill) ∧
+            (∀ base, ∃ qBar : ℝ,
+              ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+            ¬ lg21SourceLawLatentSkillFair
+              (lg21BaseMixedAffineSkillPosteriorLawSurface
+                (skillGivenBase e) (baseProfile e) (intercept e) (slope e)
+                (hslope e) (skillLaw e) (baseOnlyEstimate e)) ∧
+              ¬ lg21SourceLawObservablyFair
+                (lg21BaseMixedAffineSkillPosteriorLawSurface
+                  (skillGivenBase e) (baseProfile e) (intercept e) (slope e)
+                  (hslope e) (skillLaw e) (baseOnlyEstimate e)) ∧
+                ¬ lg21SourceLawDemographicallyFair
+                  (lg21BaseMixedAffineSkillPosteriorLawSurface
+                    (skillGivenBase e) (baseProfile e) (intercept e) (slope e)
+                    (hslope e) (skillLaw e) (baseOnlyEstimate e)) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · intro e
+    exact
+      paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+        (skillGivenBase e) (baseProfile e) (intercept e) (slope e)
+        (hslope e) (accessFraction e) (baseOnlyEstimate e) (skillLaw e)
+        (hC_nonneg e) (hC_lt_one e)
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full
 base-indexed one-test posterior source-law surface is not latent-skill fair.

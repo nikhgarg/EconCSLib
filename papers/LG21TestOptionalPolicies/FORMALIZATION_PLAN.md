@@ -188,10 +188,17 @@ Last updated: 2026-05-16
   certificate-family forms.  The access-status hypothesis is exposed as
   `LG21SchoolInformationSet.fromAccessAction false ... = none`, and the
   wrappers then return the optional-reporting or report-required
-  strategic-withholding/fairness conclusions.  Remaining Theorem 3.1 source
-  work is now mainly choosing the final paper-wide source statement to expose;
-  deriving analogous concrete finite PMF witnesses is optional if that
-  representation is desired.  The
+  strategic-withholding/fairness conclusions.  The concrete base-mixed
+  continuous-law route now also has final short Section 3 paper-interface
+  endpoints:
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding`.
+  These avoid certificate-field indirection by directly returning, for every
+  equilibrium index, the optional/report-required strategic-withholding witness
+  and failures of all three fairness notions on the concrete Gaussian or
+  affine-skill posterior law surface.  Deriving analogous concrete finite PMF
+  witnesses is optional if that representation is desired.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
