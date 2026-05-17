@@ -141,6 +141,19 @@ cache is `source.txt`.
   `Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions`
   and
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_upper_transfer`.
+  The source-faithful extended-cutoff versions of this pointwise upper route
+  are also compiled: use
+  `Theorem3AcceptAllMeasurableFixedResponseExtendedOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions`
+  and
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise_upper_transfer`
+  when the source proof supplies accept-all-or-finite-ray state alternatives,
+  or
+  `Theorem3AcceptAllMeasurableFixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions`
+  and
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer`
+  when the non-surge cutoff is written with the paper's `t = infinity`
+  convention.  These wrappers keep the pointwise non-surge transfer comparison
+  but no longer require exact finite raw selectors for accept-all branches.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,

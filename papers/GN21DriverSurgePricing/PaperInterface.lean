@@ -466,6 +466,42 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_u
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the extended pointwise upper-transfer fixed-response route.  This
+uses the paper's accept-all-or-finite-ray cutoff convention while retaining the
+pointwise non-surge transfer comparison used to derive the endpoint cross-ratio.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise_upper_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExtendedOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_extended_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the finite-or-infinite pointwise upper-transfer fixed-response
+route.  This is the pointwise-transfer interface closest to the source's
+non-surge `t = infinity` cutoff notation.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the exact one-threshold fixed-transfer route, with exact branch
 selectors and replacement data derived internally.  This route does not require
 nonatomic trip-length measures because it uses exact normalized branches rather
