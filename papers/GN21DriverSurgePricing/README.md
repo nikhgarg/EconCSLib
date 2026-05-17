@@ -1057,6 +1057,21 @@ all-branch `lo < hi` assumption just to use the middle-reroute branch.  The
 middle-cutoff variant also removes the global non-surge accepted-middle
 `0 < lo` obligation: when `lo <= 0`, Lean reroutes that branch through
 reject-long at `hi`.
+The equality package is no longer the only compiled fixed-response route.
+Lean now also has the branch-indexed endpoint boundary
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate`,
+the fixed-state a.e. transfer lemmas
+`gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae` and
+`gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae`, the core
+constructor
+`GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_by_policy_form_middle_cutoff_reroute`,
+and the source wrapper
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
+This route proves endpoint moves on the exact a.e. Lemma 5 representative of
+the untouched state and transfers the improvement back, so the source local
+endpoint package can use branch-indexed fixed-state data such as
+`GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`
+instead of global complement equality.
 The state-level adapters
 `gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 and
@@ -1156,6 +1171,10 @@ and
 Use this route when the paper proof supplies only the positive-`lo`
 non-surge accepted-middle gap, since Lean handles the `lo <= 0` branch by
 the reject-long cutoff reroute.
+For fixed-state local endpoint closeout, prefer the newer by-policy-form
+middle-cutoff boundary over the common-equality one whenever the paper proof
+gives branch-specific Lemma 9/10 inequalities rather than literal pointwise
+equality on every rejected complement.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

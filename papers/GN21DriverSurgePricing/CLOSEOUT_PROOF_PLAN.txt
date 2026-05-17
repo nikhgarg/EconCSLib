@@ -204,6 +204,25 @@ certificate whose accepted-middle non-surge gap field is conditional on
 `0 < lo`.  Lean constructs the fixed-response policy-form source packages
 internally and reroutes `lo <= 0` through reject-long at the upper cutoff.
 
+Newer proof reduction: the local endpoint certificate no longer has to be the
+common fixed-state equality package.  The compiled by-policy-form middle-cutoff
+route
+
+  gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae
+  gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate
+  GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_by_policy_form_middle_cutoff_reroute
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+
+proves each endpoint move after replacing the untouched state by its exact
+a.e. Lemma 5 representative, then transfers the strict aggregate improvement
+back to the original policy.  Use this route for the remaining local endpoint
+proofs.  In particular, the non-surge reject-long fixed-state data can be
+built with
+`GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`;
+do not try to prove global pointwise equality on the rejected long-trip tail
+unless the source argument genuinely supplies it.
+
 
 Meaning of r1_current
 ---------------------
