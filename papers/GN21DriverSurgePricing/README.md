@@ -59,14 +59,19 @@ cache is `source.txt`.
   plus the surge-state wrappers
   `GN21RegularEndpointSharedSourceData.surge_upper_pointwise_of_rejectsShortTrips_of_positive_cutoff_bound`,
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsShortTrips_and_cutoff_bound`,
+  `GN21RegularEndpointSharedSourceData.surge_upper_pointwise_of_rejectsMiddleTrips_of_positive_upper_cutoff_bound`,
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsMiddleTrips_and_upper_cutoff_bound`,
   `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_cutoff_bound`,
+  `GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_and_rejectMiddle_cutoff_bounds`,
   and
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_surge_reject_short_cutoff_bound`:
   source proofs now need only the positive-cutoff ratio inequality
-  `Q_current * u <= T_current * q(u)`, not a forall-over-rejected-trips
-  pointwise proof.  The cutoff inequality is still a real source obligation;
-  it does not follow from reject-short syntax alone because the fixed-state
-  ratio includes the base switch term.
+  `Q_current * u <= T_current * q(u)` for reject-short, or the positive
+  upper-cutoff inequality `Q_current * hi <= T_current * q(hi)` for
+  reject-middle, not a forall-over-rejected-trips pointwise proof.  The cutoff
+  inequality is still a real source obligation; it does not follow from
+  reject-short syntax alone because the fixed-state ratio includes the base
+  switch term.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
