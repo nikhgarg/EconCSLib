@@ -16706,6 +16706,27 @@ theorem acceptAllAlmostEverywhere_of_policyAlmostEverywhereEq_acceptsAll
   rw [acceptAllDiff_measure_congr_policy_ae μ hae]
   exact acceptAllAlmostEverywhere_of_acceptsAllTrips μ hall
 
+/--
+Feasible policies that accept all trips up to a null rejected set are a.e.
+equal to the exact accept-all policy.  This is the reverse direction of the
+source paper's a.e. accept-all convention.
+-/
+theorem policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+    (μ : Measure TripLength) {σ : TripPolicy}
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (hae : acceptAllAlmostEverywhere μ σ) :
+    policyAlmostEverywhereEq μ σ acceptAllPolicy := by
+  apply policyAlmostEverywhereEq_of_diff_null
+  · have hempty : σ \ acceptAllPolicy = (∅ : Set TripLength) := by
+      ext τ
+      constructor
+      · intro hτ
+        exact False.elim (hτ.2 (hσ_subset hτ.1))
+      · intro hτ
+        exact False.elim hτ
+    simp [hempty]
+  · simpa [acceptAllAlmostEverywhere] using hae
+
 /-- The positive Lemma 5 feasible representative gives accept-all almost everywhere. -/
 theorem Lemma5FeasiblePolicyFormAlmostEverywhereData.acceptAllAlmostEverywhere_of_positive
     {μ : Measure TripLength} {σ : TripPolicy}
@@ -42659,6 +42680,67 @@ theorem dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_one_
         μ arrival switch12 switch21 w hae
     simpa [← heq] using hρ.2 κ hκ
 
+/--
+If a measured GN21 reward has some measurable optimum and every measurable
+optimum is accept-all almost everywhere, then exact accept-all is itself
+measurably optimal.  The proof replaces the optimal policy by accept-all one
+state at a time using the measured a.e. reward invariance lemmas.
+-/
+theorem dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_acceptAll_of_exists_optimal_ae_unique
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (hexists :
+      ∃ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ)
+    (hunique :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ) :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+      acceptAllDynamicPolicy := by
+  rcases hexists with ⟨ρ, hρ⟩
+  have hρ0_ae :
+      policyAlmostEverywhereEq (μ 0) (ρ 0) acceptAllPolicy :=
+    policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+      (μ 0) (hρ.1 0).1 (hunique ρ hρ 0)
+  have hρ_update0 :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        (Function.update ρ 0 acceptAllPolicy) :=
+    dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_zero_of_policy_ae
+      μ arrival switch12 switch21 w hρ (by intro τ hτ; exact hτ)
+      measurableSet_acceptAllPolicy hρ0_ae
+  have hρ1_ae :
+      policyAlmostEverywhereEq (μ 1)
+        ((Function.update ρ 0 acceptAllPolicy) 1) acceptAllPolicy := by
+    simpa [Function.update] using
+      policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+        (μ 1) (hρ.1 1).1 (hunique ρ hρ 1)
+  have hρ_update01 :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        (Function.update (Function.update ρ 0 acceptAllPolicy) 1
+          acceptAllPolicy) :=
+    dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_one_of_policy_ae
+      μ arrival switch12 switch21 w hρ_update0
+      (by intro τ hτ; exact hτ) measurableSet_acceptAllPolicy hρ1_ae
+  have hupdate_eq :
+      Function.update (Function.update ρ 0 acceptAllPolicy) 1
+          acceptAllPolicy =
+        acceptAllDynamicPolicy := by
+    funext i
+    fin_cases i
+    · simp [Function.update, acceptAllDynamicPolicy]
+    · simp [Function.update, acceptAllDynamicPolicy]
+  simpa [hupdate_eq] using hρ_update01
+
 /-- Measured dynamic reward specialized to the CTMC structured price family. -/
 def gn21MeasuredCTMCStructuredDynamicReward
     (μ : Fin 2 → Measure TripLength)
@@ -44767,6 +44849,162 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggre
     μ (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
     (theorem4MeasurableAlmostEverywhereLocalImprovementCertificate_of_measured_aggregate_feasible_rejected_mass_strict_improvements
       μ arrival switch12 switch21 w C)
+
+/--
+Positive-rejected-mass measured aggregate improvements rule out every
+positive-measure departure from accept-all among measurable optima.  This
+version does not assume accept-all optimality; it is the uniqueness half needed
+to derive exact accept-all optimality from any existing a.e.-accept-all
+optimum.
+-/
+theorem dynamicAcceptAllAlmostEverywhere_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (nonsurge_strict_aggregate_improvement_of_rejected_mass_pos :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ) →
+        0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update ρ 0 τ) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) (ρ 1) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 τ (ρ 1) ∧
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+              gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) τ (ρ 1))
+    (surge_strict_aggregate_improvement_of_rejected_mass_pos :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ) →
+        0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update ρ 1 τ) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) (ρ 1) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) τ ∧
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+              gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) τ) :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+        dynamicAcceptAllAlmostEverywhere μ ρ := by
+  intro ρ hρ i
+  fin_cases i
+  · rw [acceptAllAlmostEverywhere]
+    by_contra hne
+    have hpos : 0 < (μ 0) (acceptAllPolicy \ ρ 0) :=
+      pos_iff_ne_zero.mpr hne
+    rcases nonsurge_strict_aggregate_improvement_of_rejected_mass_pos
+        ρ hρ hpos with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    have hlt :=
+      paper_lemma1_measured_dynamic_reward_lt_of_aggregate_pair_lt_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) τ (ρ 1) Hcur Hrep hagg
+    have hlocal :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        hρ 0 hτ_feasible
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_zero] using
+      not_lt_of_ge hlocal hlt
+  · rw [acceptAllAlmostEverywhere]
+    by_contra hne
+    have hpos : 0 < (μ 1) (acceptAllPolicy \ ρ 1) :=
+      pos_iff_ne_zero.mpr hne
+    rcases surge_strict_aggregate_improvement_of_rejected_mass_pos
+        ρ hρ hpos with
+      ⟨τ, hτ_feasible, Hcur, Hrep, hagg⟩
+    have hlt :=
+      paper_lemma1_measured_dynamic_reward_lt_of_aggregate_pair_lt_of_nondegenerate
+        (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+        (w 0) (w 1) (ρ 0) (ρ 1) (ρ 0) τ Hcur Hrep hagg
+    have hlocal :=
+      dynamicStateReward_optimal_of_dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        hρ 1 hτ_feasible
+    simpa [dynamicStateReward_gn21MeasuredDynamicRewardFunctional_one] using
+      not_lt_of_ge hlocal hlt
+
+/--
+Existence plus positive-rejected-mass measured aggregate improvements is enough
+for the full a.e.-unique accept-all conclusion: the improvements give
+a.e. uniqueness of every optimum, and measured reward invariance then upgrades
+an existing a.e.-accept-all optimum to exact accept-all optimality.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements_from_exists
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (exists_optimal :
+      ∃ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ)
+    (nonsurge_strict_aggregate_improvement_of_rejected_mass_pos :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ) →
+        0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update ρ 0 τ) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) (ρ 1) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 τ (ρ 1) ∧
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+              gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) τ (ρ 1))
+    (surge_strict_aggregate_improvement_of_rejected_mass_pos :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ) →
+        0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+          ∃ τ : TripPolicy,
+            dynamicFeasibleMeasurablePolicy (Function.update ρ 1 τ) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) (ρ 1) ∧
+            GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+              switch12 switch21 (ρ 0) τ ∧
+            gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) (ρ 1) <
+              gn21MeasuredAggregateRewardPrimitives (μ 0) (μ 1) (arrival 0)
+                (arrival 1) switch12 switch21 (w 0) (w 1) (ρ 0) τ) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  have hunique :=
+    dynamicAcceptAllAlmostEverywhere_of_measured_aggregate_feasible_rejected_mass_strict_local_improvements
+      μ arrival switch12 switch21 w
+      nonsurge_strict_aggregate_improvement_of_rejected_mass_pos
+      surge_strict_aggregate_improvement_of_rejected_mass_pos
+  exact
+    ⟨dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_acceptAll_of_exists_optimal_ae_unique
+        μ arrival switch12 switch21 w exists_optimal hunique,
+      hunique⟩
 
 /--
 Source current-bounds data plus strict kernel support instantiate the feasible
@@ -84542,6 +84780,82 @@ structure GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData
   local_endpoint :
     Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
       μ arrival R1 R2 switch12 switch21 m z
+
+/--
+GN21 measured fixed-response source data instantiate the common fixed-state
+equality middle-reroute Theorem 3 boundary after the standard conversion to
+all-optima fixed-response policy forms.
+-/
+def GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData.of_gn21_source_data
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData μ arrival
+        switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+    (accept_all_optimal :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy)
+    (local_endpoint :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData
+      μ arrival R1 R2 switch12 switch21 m z where
+  forms := forms.to_fixed_response_policy_form_data
+  accept_all_optimal := accept_all_optimal
+  local_endpoint := local_endpoint
+
+/--
+One-threshold GN21 measured fixed-response source data instantiate the common
+fixed-state equality middle-reroute Theorem 3 boundary.  This is the
+source-shaped route when the Lemma 6 response has the non-surge decreasing and
+surge increasing forms used in the paper.
+-/
+def GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData.of_one_threshold_structured_forms
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (exists_optimal :
+      ∃ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ)
+    (nonsurge :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+          switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+          .strictlyDecreasing)
+    (surge :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+          switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+          .strictlyIncreasing)
+    (accept_all_optimal :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy)
+    (local_endpoint :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData.of_gn21_source_data
+    (Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.of_one_threshold_structured_forms
+      exists_optimal nonsurge surge)
+    accept_all_optimal local_endpoint
 
 /--
 Paper-facing source assumptions for the fixed-response policy-form route with
