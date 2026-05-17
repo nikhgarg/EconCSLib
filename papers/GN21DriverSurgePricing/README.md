@@ -1408,8 +1408,15 @@ accept-all optimality as a separate source assumption when an optimum exists:
 and
   `Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate.to_accept_all_certificate`
   upgrade existence plus a.e. uniqueness of optima to exact accept-all
-  optimality for the measured GN21 reward.  The same bridge now powers the
-  by-policy-form and light middle-reroute Theorem 3 source boundaries:
+  optimality for the measured GN21 reward.  The feasible a.e. representative
+  and fixed-response aggregate constructors now have matching existence
+  versions,
+  `theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate_of_feasible_ae_forms_and_representative_rejected_mass_improvements`
+  and
+  `theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements`,
+  so their compatibility wrappers derive accept-all optimality internally.
+  The same bridge now powers the by-policy-form and light middle-reroute
+  Theorem 3 source boundaries:
   `GN21Theorem3MiddleRerouteAEPolicyFormSourceExistenceData`,
   `GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_existence_source_assumptions`,
