@@ -655,7 +655,11 @@ cache is kept as `source.txt` for named-statement audits.
   and
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law`
   further reduce the displayed actor-support assumptions to positive mass for
-  the displayed concrete test/skill values under a pushforward acting law.  A
+  the displayed concrete test/skill values under a pushforward acting law.  The
+  optional-reporting paper-interface endpoint
+  `paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_constant_latent_mapped_actor_law_of_finite_test_full_support`
+  derives those selected score masses from full support of a finite concrete
+  test law, after pushing tests forward to reported scores.  A
   centered-base-term specialization
   `paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition`
   defines the report-required base term as

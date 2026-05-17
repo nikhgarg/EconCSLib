@@ -616,8 +616,11 @@ Last updated: 2026-05-16
   outside-payoff algebra by construction for that normalized affine source
   model.  The report-required mapped-actor paper-interface endpoint now also
   has a full-support specialization, replacing the two displayed selected-test
-  positive-mass assumptions by full support of the finite test law.  A stricter
-  skill-dependent conditional-kernel route remains optional
+  positive-mass assumptions by full support of the finite test law.  The
+  optional-reporting mapped-actor paper-interface endpoint now has the matching
+  finite-test full-support route: a concrete finite test law is pushed forward
+  to reported scores, and full support of the finite law supplies the selected
+  score-mass facts.  A stricter skill-dependent conditional-kernel route remains optional
   if the final source-facing statement needs true conditional-on-skill laws.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing

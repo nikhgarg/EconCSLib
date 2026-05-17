@@ -39,6 +39,11 @@ unconditional theorem over every possible estimation policy.
 | Definition 6, re-sampling policy | 585 | `audit_definition6_resampling_policy_observable_kernel`, `audit_definition6_access_estimate_kernel_eq_map`, `audit_definition6_resampling_estimate_kernel_eq_map`, and `audit_definition6_access_resampling_kernel_eq` |
 | Theorem 4.4, re-sampling fairness | 610, 2509 | `audit_theorem4_4_resampling_policy_observably_fair`, `audit_theorem4_4_resampling_policy_demographically_fair`, packaged threshold-equilibrium route `audit_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair`, and source-model route `audit_theorem4_4_resampling_policy` |
 
+Additional Theorem 3.2 audit endpoint:
+`audit_theorem3_2_optional_reporting_mapped_actor_finite_test_full_support`
+derives the optional-reporting selected-score support facts from full support
+of a finite concrete test law before pushing tests forward to reported scores.
+
 ## Cross-Artifact Checks
 
 - Paper-facing Lean: `PaperInterface.lean` exposes the compact statement
