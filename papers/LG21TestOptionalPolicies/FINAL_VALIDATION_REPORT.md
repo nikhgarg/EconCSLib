@@ -89,7 +89,10 @@ unconditional theorem over every possible estimation policy.
   callers.  The Theorem 3.2 iff wrappers combine that branch with the existing
   source implication, so the audit surface can state that latent-or-observable
   fairness is equivalent to test-blankness under one explicit identity
-  certificate. The source-equilibrium
+  certificate. The source-equilibrium event-or-blank iff routes now have
+  certificate-consuming audit aliases for optional-reporting and report-required
+  regimes, so this source-case-split layer no longer exposes the raw
+  `testOf`/access/no-access triple. The source-equilibrium
   optional-reporting and report-required event-or-blank/zero-share routes now
   have direct Section 3 iff audit aliases as well, so this "only way" reading
   is exposed at the same source-certification layer as the implication and
