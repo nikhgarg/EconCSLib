@@ -1645,6 +1645,20 @@ and
 feed the aggregate-cross boundary directly from the one-sided rejected-tail
 comparison, and the matching source-assumption adapters expose this path at
 the paper-facing assumption level.
+The exact fixed-response branch route now also lowers to the same
+aggregate-cross fixed-transfer boundary without restating endpoint fields:
+`GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_branch_surge_cross_fixed_transfer_source`,
+`GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_branch_surge_cross_fixed_transfer_source`,
+`GN21Theorem3FixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_branch_surge_cross_fixed_transfer_source`,
+and
+`GN21Theorem3FixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_branch_surge_cross_fixed_transfer_source`
+all feed
+`GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData`.
+The matching source-assumption adapters are named
+`...to_exact_branch_surge_cross_fixed_transfer_source_assumptions`.  Prefer
+these adapters when an exact normalized fixed-response proof already supplies
+the branch selectors and only the aggregate Lemma 10 cross-ratio endpoint is
+needed downstream.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
