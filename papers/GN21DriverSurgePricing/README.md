@@ -1557,6 +1557,15 @@ fixed-response Lemma 5 output: the fixed-response source data give a.e.
 policy-form representatives, not exact raw selectors for `ρ i`.  Use the
 exact route only after an explicit normalization step, or stay with the
 fixed-response/a.e. route.
+The source-faithful aggregate-cross variant now allows the paper's extended
+one-threshold convention directly: each state-specific optimum may either be
+accept-all or have the finite exact ray.  The internal adapter
+`GN21Theorem3ExtendedOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.to_exact_one_threshold_non_accept_all_selection_unless`
+builds the all-optimal replacement data from these alternatives and feeds the
+non-accept-all fixed-transfer selector.  The paper-facing AE route is
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions`,
+exposed in `PaperInterface` as
+`theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cross_fixed_transfer`.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
