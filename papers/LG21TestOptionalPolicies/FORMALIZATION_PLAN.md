@@ -302,7 +302,10 @@ Last updated: 2026-05-16
   Thus the constructed surface is auditable both as a zero-share normalization
   and as an unchanged raw full-feature law on nonzero/positive-event profiles;
   raw no-relevance on those preserved profiles is exactly normalized
-  no-relevance for the constructed law.
+  no-relevance for the constructed law.  The paper-interface layer now combines
+  those equivalences with the Section 3 fairness/no-relevance iff routes, giving
+  direct optional-reporting and report-required endpoints where fairness is
+  equivalent to raw no-relevance on nonzero-share or positive-event profiles.
   These make the source proof's "no one reports/takes" sentence separately
   auditable from the positive-share contradiction.  The other source-proof
   branch, "test-blank policies meet observable fairness trivially", is now

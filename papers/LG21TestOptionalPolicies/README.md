@@ -314,6 +314,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_definition5_blank_on_zero_event_share_no_normalized_relevance_iff_no_raw_relevance_on_positive_event`
   prove the converse directions too: for the blank-on-zero constructor, raw
   no-relevance off the zero-share branch is exactly normalized no-relevance.
+  The Section 3 Theorem 3.2 wrappers now lift this to fairness iff raw
+  no-relevance endpoints:
+  `paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`,
+  `paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share`,
+  `paper_interface_theorem3_2_section3_report_required_fairness_iff_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`,
+  and
+  `paper_interface_theorem3_2_section3_report_required_fairness_iff_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share`.
   These make the "no one reports/takes, hence test-blank" branch checkable
   separately from the positive-share unraveling contradiction.
   The companion test-blank branch now has source-surface bridges

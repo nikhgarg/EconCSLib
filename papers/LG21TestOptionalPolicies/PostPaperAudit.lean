@@ -502,6 +502,14 @@ abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_no_raw_r
 abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_positive_event_no_raw_relevance :=
   @paper_interface_theorem3_2_section3_optional_reporting_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share
 
+/-- Audit endpoint for optional-reporting fairness iff raw no-relevance off zero-share profiles. -/
+abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_fairness_iff_raw_nonzero_share :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share
+
+/-- Audit endpoint for optional-reporting fairness iff raw no-relevance on positive event profiles. -/
+abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_fairness_iff_raw_positive_event :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share
+
 /-- Audit endpoint for Theorem 3.2, report-required no-relevance branch. -/
 abbrev audit_theorem3_2_section3_report_required_no_test_relevance :=
   @paper_interface_theorem3_2_section3_report_required_no_test_relevance
@@ -521,6 +529,14 @@ abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_no_raw_rele
 /-- Audit endpoint for Theorem 3.2, report-required blank-on-zero-share positive-event raw no-relevance branch. -/
 abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_positive_event_no_raw_relevance :=
   @paper_interface_theorem3_2_section3_report_required_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share
+
+/-- Audit endpoint for report-required fairness iff raw no-relevance off zero-share profiles. -/
+abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_fairness_iff_raw_nonzero_share :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_iff_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share
+
+/-- Audit endpoint for report-required fairness iff raw no-relevance on positive event profiles. -/
+abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_fairness_iff_raw_positive_event :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_iff_no_raw_relevance_on_positive_event_of_blank_on_zero_event_share
 
 /-- Audit endpoint for the PMF Theorem 3.2 fairness/test-blank iff bridge. -/
 abbrev audit_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only :=
