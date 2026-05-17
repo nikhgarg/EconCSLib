@@ -1401,6 +1401,14 @@ The source-facing endpoint
 uses those wrappers directly, so the remaining exact-uniqueness task can be
 phrased as positive rejected-trip mass for every non-accept-all optimum; the
 zero-mass alternative points toward an almost-everywhere uniqueness statement.
+The measured aggregate positive-rejected-mass route no longer needs
+accept-all optimality as a separate source assumption when an optimum exists:
+`policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere`,
+`dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_acceptAll_of_exists_optimal_ae_unique`,
+and
+`Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate.to_accept_all_certificate`
+upgrade existence plus a.e. uniqueness of optima to exact accept-all
+optimality for the measured GN21 reward.
 Lean now derives this rejected mass from the allowed Lemma 5 policy forms under
 the shared density-support package via
 `GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsLongTrips`,
