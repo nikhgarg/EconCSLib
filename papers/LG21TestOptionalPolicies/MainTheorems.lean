@@ -1338,8 +1338,8 @@ theorem paper_lemma4_1_no_nontrivial_gaussian_reporting_cutoff_of_no_profitable_
   paper_lemma4_1_no_nontrivial_reporting_cutoff_of_no_profitable_withholding
     hcutoffStrategy hnoDeviation
     ((paper_gaussian_posteriorMean_update_continuous M theta k).continuousOn)
-    (fun _ hx _ hy hxy =>
-    (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)
+    (fun _ _hx _ _hy hxy =>
+      (paper_bayesian_optimal_estimator_strictMono_feature M theta k) hxy)
     hscore_lt hlow hcutoff
 
 /--
@@ -3965,7 +3965,7 @@ theorem lg21_sourceObservablyFair_of_latentSkillFair_of_mixture
         fun q => S.latentNoAccessEstimate e q base := by
     funext q
     exact hlatent e q base
-  simpa [lg21LatentSkillEstimateDistribution, hkernel]
+  simp [lg21LatentSkillEstimateDistribution, hkernel]
 
 /--
 Definitions 3--4 bridge: if demographic estimate laws are obtained by mixing
@@ -7465,7 +7465,7 @@ theorem paper_theorem3_2_observable_fair_report_required_source_equilibrium_impl
         testBenefitProb e actor =
           (baseTerm e base + signalWeight e base * actor) / denom e base)
     (hotherPayoff_of_law_eq :
-      ∀ e base (actor : ℝ),
+      ∀ e base (_actor : ℝ),
         reporterLaw e base = noReporterLaw e base →
           (1 / 2 : ℝ) =
             (baseTerm e base +
@@ -7548,7 +7548,7 @@ theorem paper_theorem3_2_observable_fair_report_required_source_equilibrium_impl
         testBenefitProb e actor =
           (baseTerm e base + signalWeight e base * actor) / denom e base)
     (hotherPayoff_of_law_eq :
-      ∀ e base (actor : ℝ),
+      ∀ e base (_actor : ℝ),
         reporterLaw e base = noReporterLaw e base →
           (1 / 2 : ℝ) =
             (baseTerm e base +
@@ -7716,7 +7716,7 @@ theorem paper_theorem3_2_law_observable_fair_report_required_source_equilibrium_
         testBenefitProb e actor =
           (baseTerm e base + signalWeight e base * actor) / denom e base)
     (hotherPayoff_of_law_eq :
-      ∀ e base (actor : ℝ),
+      ∀ e base (_actor : ℝ),
         reporterLaw e base = noReporterLaw e base →
           (1 / 2 : ℝ) =
             (baseTerm e base +
@@ -7800,7 +7800,7 @@ theorem paper_theorem3_2_observable_fair_optional_reporting_source_equilibrium_i
         reportedEstimate e actor =
           (baseTerm e base + signalWeight e base * actor) / denom e base)
     (hotherPayoff_of_law_eq :
-      ∀ e base (actor : ℝ),
+      ∀ e base (_actor : ℝ),
         reporterLaw e base = noReporterLaw e base →
           noReportEstimate e =
             (baseTerm e base +
@@ -7884,7 +7884,7 @@ theorem paper_theorem3_2_observable_fair_optional_reporting_source_equilibrium_i
         reportedEstimate e actor =
           (baseTerm e base + signalWeight e base * actor) / denom e base)
     (hotherPayoff_of_law_eq :
-      ∀ e base (actor : ℝ),
+      ∀ e base (_actor : ℝ),
         reporterLaw e base = noReporterLaw e base →
           noReportEstimate e =
             (baseTerm e base +
@@ -8140,7 +8140,7 @@ theorem paper_theorem3_2_law_observable_fair_optional_reporting_source_equilibri
         reportedEstimate e actor =
           (baseTerm e base + signalWeight e base * actor) / denom e base)
     (hotherPayoff_of_law_eq :
-      ∀ e base (actor : ℝ),
+      ∀ e base (_actor : ℝ),
         reporterLaw e base = noReporterLaw e base →
           noReportEstimate e =
             (baseTerm e base +
@@ -11310,7 +11310,7 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gau
           · intro hcutoff_actor
             exact (hdecision_threshold actor).1
               ((hcutoff actor).2 hcutoff_actor)
-        simpa [hsame])
+        simp [hsame])
       hweight hdenom
 
 /--
@@ -11641,7 +11641,7 @@ theorem paper_theorem3_2_not_latent_or_observable_fair_of_report_required_affine
           · intro hcutoff_actor
             exact (hdecision_threshold actor).1
               ((hcutoff actor).2 hcutoff_actor)
-        simpa [hsame])
+        simp [hsame])
       hweight hdenom
 
 /--
