@@ -4377,6 +4377,13 @@ abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_te
   @paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff
 
 /--
+Paper-facing Theorem 3.2 Section 3 optional-reporting fairness/test-blank iff
+endpoint on the concrete constant-latent positive-share event-share surface.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff
+
+/--
 Paper-facing Theorem 3.2 Section 3 optional-reporting concrete case-split
 endpoint on the constant-latent posterior-payoff event-share surface.
 -/
@@ -6494,6 +6501,13 @@ endpoint on the concrete constant-latent positive-share event-share surface.
 -/
 abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff :=
   @paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff
+
+/--
+Paper-facing Theorem 3.2 Section 3 report-required fairness/test-blank iff
+endpoint on the concrete constant-latent positive-share event-share surface.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff
 
 /--
 Paper-facing Theorem 3.2 Section 3 report-required concrete case-split
