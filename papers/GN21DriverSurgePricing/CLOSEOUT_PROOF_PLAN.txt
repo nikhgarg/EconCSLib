@@ -189,6 +189,7 @@ Lean also now has a direct positive-mass geometry bridge:
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
 
 Use these whenever a route already proves positive current non-surge accepted
 mass.  They discharge the reject-long cutoff and accepted-middle gap fields
@@ -200,6 +201,18 @@ mass is no longer a separate paper source field.  Lean derives it from the
 GN21 fixed-response nondegeneracy package:
 
   Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.nonsurge_current_mass_pos
+
+The exact one-threshold source route now has direct constructors that apply
+this internally:
+
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound
+  GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound
+
+Use these when the paper proof supplies exact reject-long/reject-short branch
+selectors, the surge reject-short scalar cutoff bound, the surge reward-rate
+identity, and the non-surge reject-long fixed-state cross package.  Do not ask
+the source proof for `nonsurge_rejectLong_pos`; it follows from the
+fixed-response positive current mass field.
 
 The one-threshold surge-cutoff route can now be stated in the paper's branch
 field form and compiled directly to the existing Theorem 3 conclusion through:
