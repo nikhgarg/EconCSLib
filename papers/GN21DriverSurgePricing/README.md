@@ -1198,6 +1198,18 @@ compiled boundary now asks for aggregate Lemma 9 cross-ratio inequalities
 rather than pointwise equality, with reject-long reducing to a single upper
 cross-ratio comparison and accept-middle exposing the two aggregate cross
 comparisons directly.
+The one-threshold/bracket layer is now also connected to that weaker
+by-policy-form endpoint through
+`GN21Theorem3FixedResponsePolicyFormByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms`,
+`GN21Theorem3FixedResponseOneThresholdByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
+`GN21Theorem3FixedResponseOneThresholdBracketByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`,
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
+This is the current sharpest paper-facing Theorem 3 boundary: Lemma 6 bracket
+data build the fixed-response Lemma 5 forms internally, while Lemma 9/10
+endpoint work only has to supply the branch-indexed by-policy-form
+middle-cutoff certificate.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
