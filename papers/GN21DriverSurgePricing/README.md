@@ -1406,9 +1406,14 @@ accept-all optimality as a separate source assumption when an optimum exists:
 `policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere`,
 `dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_acceptAll_of_exists_optimal_ae_unique`,
 and
-`Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate.to_accept_all_certificate`
-upgrade existence plus a.e. uniqueness of optima to exact accept-all
-optimality for the measured GN21 reward.
+  `Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate.to_accept_all_certificate`
+  upgrade existence plus a.e. uniqueness of optima to exact accept-all
+  optimality for the measured GN21 reward.  The same bridge now powers the
+  light middle-reroute Theorem 3 source boundary:
+  `GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData` and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_source_assumptions`
+  consume Lemma 5 replacement data plus the local endpoint package without a
+  separate accept-all optimality field.
 Lean now derives this rejected mass from the allowed Lemma 5 policy forms under
 the shared density-support package via
 `GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsLongTrips`,
