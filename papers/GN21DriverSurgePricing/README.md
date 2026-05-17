@@ -1229,7 +1229,9 @@ The current-bounds endpoint layer has the same exact-branch selector via
 and
 `Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_exact_one_threshold_selection_unless`,
 which reroute middle syntax through the exact non-surge reject-long or surge
-reject-short endpoint for the same policy.
+reject-short endpoint for the same policy.  The corresponding paper-facing
+Theorem 3 entry point is
+`paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_exact_one_threshold_selection_unless_source_assumptions`.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
