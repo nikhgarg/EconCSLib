@@ -224,11 +224,15 @@ cache is `source.txt`.
   The compact interface also exposes
   `PaperInterface.theorem3_feasibility_thresholdC_mem_Ico_acceptAll`, proving
   the paper's `C ∈ [0,1)` claim for measured accept-all primitives, plus
-  ratio-source wrappers for the finite-or-infinite aggregate-cross and
-  pointwise-upper-transfer Theorem 3 routes.  These wrappers derive `R1 > 0`
-  and `R1 < R2` from `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0`, so future
-  source proofs should not reintroduce those scalar fields as separate
-  assumptions on this route.
+  ratio-source wrappers for the endpoint-bridge, finite-or-infinite
+  aggregate-cross, and pointwise-upper-transfer Theorem 3 routes.  These
+  wrappers derive `R1 > 0` and `R1 < R2` from `C < rho < 1`,
+  `R1 = rho * R2`, and `R2 > 0`, so future source proofs should not
+  reintroduce those scalar fields as separate assumptions on this route.
+  The direct endpoint-bridge wrapper is
+  `PaperInterface.theorem3_structured_ic_of_endpoint_bridge_ratio_source`;
+  its source theorem is
+  `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_ratio_source_assumptions`.
   The GN21 fixed-response source package also exposes
   `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.surge_current_mass_pos`,
   the surge-state analogue of the existing non-surge positive current-mass
