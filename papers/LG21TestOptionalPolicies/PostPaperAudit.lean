@@ -478,6 +478,10 @@ abbrev audit_theorem3_2_section3_optional_reporting_zero_share_no_test_relevance
 abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_no_test_relevance :=
   @paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_blank_on_zero_event_share
 
+/-- Audit endpoint for Theorem 3.2, optional-reporting blank-on-zero-share raw no-relevance branch. -/
+abbrev audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_no_raw_relevance :=
+  @paper_interface_theorem3_2_section3_optional_reporting_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share
+
 /-- Audit endpoint for Theorem 3.2, report-required no-relevance branch. -/
 abbrev audit_theorem3_2_section3_report_required_no_test_relevance :=
   @paper_interface_theorem3_2_section3_report_required_no_test_relevance
@@ -489,6 +493,10 @@ abbrev audit_theorem3_2_section3_report_required_zero_share_no_test_relevance :=
 /-- Audit endpoint for Theorem 3.2, report-required blank-on-zero-share no-relevance branch. -/
 abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_no_test_relevance :=
   @paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share
+
+/-- Audit endpoint for Theorem 3.2, report-required blank-on-zero-share raw no-relevance branch. -/
+abbrev audit_theorem3_2_section3_report_required_blank_on_zero_share_no_raw_relevance :=
+  @paper_interface_theorem3_2_section3_report_required_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share
 
 /-- Audit endpoint for the PMF Theorem 3.2 fairness/test-blank iff bridge. -/
 abbrev audit_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only :=

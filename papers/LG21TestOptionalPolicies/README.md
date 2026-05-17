@@ -277,7 +277,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_blank_on_zero_event_share`
   and
   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share`
-  expose the matching contrapositive form.
+  expose the matching contrapositive form.  Their raw no-relevance companions
+  `paper_interface_theorem3_2_section3_optional_reporting_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`
+  and
+  `paper_interface_theorem3_2_section3_report_required_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`
+  state the same consequence for the unnormalized raw full-feature law on
+  nonzero reporter/taker-share profiles.
   Definition 5's source note that an equilibrium with no reporter/taker event
   is test-blank now has explicit audit endpoints:
   `paper_interface_definition5_test_blank_of_no_positive_event_blank`,

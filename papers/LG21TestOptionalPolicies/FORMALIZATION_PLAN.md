@@ -822,6 +822,13 @@ Last updated: 2026-05-16
    and
    `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_blank_on_zero_event_share`
    route the contrapositive statements through the same constructed surface.
+   The raw no-relevance variants
+   `paper_interface_theorem3_2_section3_optional_reporting_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_raw_relevance_on_nonzero_share_of_blank_on_zero_event_share`
+   combine those endpoints with the raw-preservation lemma, so the
+   conclusion is stated for the unnormalized raw full-feature law on nonzero
+   reporter/taker-share profiles.
    The compact certificate aliases
    `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium`,
    `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,
