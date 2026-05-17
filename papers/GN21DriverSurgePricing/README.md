@@ -106,6 +106,7 @@ cache is `source.txt`.
   `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_fixed_state_by_policy_form`,
   `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`
   or the bracket-level
+  `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_fixed_state_by_policy_form`,
   `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_reject_short_cutoff_bound`;
   these derive the non-surge reject-long positivity field from fixed-response
   positive current mass instead of exposing it as a separate source assumption.
