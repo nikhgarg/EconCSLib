@@ -150,6 +150,14 @@ abbrev audit_theorem3_2_optional_reporting_source_event_or_blank_fairness_certif
 abbrev audit_theorem3_2_optional_reporting_source_zero_share_fairness_certificate :=
   @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
 
+/-- Audit endpoint for the optional-reporting source-equilibrium event-or-blank implication route. -/
+abbrev audit_theorem3_2_optional_reporting_source_event_or_blank_fairness_implies_test_blank :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
+/-- Audit endpoint for the optional-reporting source-equilibrium zero-share implication route. -/
+abbrev audit_theorem3_2_optional_reporting_source_zero_share_fairness_implies_test_blank :=
+  @paper_interface_theorem3_2_section3_optional_reporting_fairness_implies_test_blank_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
+
 /-- Audit endpoint for the optional-reporting source-equilibrium event-or-blank no-relevance route. -/
 abbrev audit_theorem3_2_optional_reporting_source_event_or_blank_no_test_relevance :=
   @paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium
@@ -173,6 +181,14 @@ abbrev audit_theorem3_2_report_required_source_event_or_blank_fairness_certifica
 /-- Audit endpoint for the report-required source-equilibrium zero-share fairness certificate. -/
 abbrev audit_theorem3_2_report_required_source_zero_share_fairness_certificate :=
   @paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_zero_event_share_blank_source_equilibrium
+
+/-- Audit endpoint for the report-required source-equilibrium event-or-blank implication route. -/
+abbrev audit_theorem3_2_report_required_source_event_or_blank_fairness_implies_test_blank :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+
+/-- Audit endpoint for the report-required source-equilibrium zero-share implication route. -/
+abbrev audit_theorem3_2_report_required_source_zero_share_fairness_implies_test_blank :=
+  @paper_interface_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_zero_event_share_blank_source_equilibrium
 
 /-- Audit endpoint for the report-required source-equilibrium event-or-blank no-relevance route. -/
 abbrev audit_theorem3_2_report_required_source_event_or_blank_no_test_relevance :=
