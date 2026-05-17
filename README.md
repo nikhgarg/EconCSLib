@@ -90,6 +90,19 @@ The full `lake build EconCSLib` target can be temporarily blocked by active
 paper work. When that happens, use the narrower build target documented in the
 relevant maintenance notes rather than changing unrelated active files.
 
+## Review Theorem Statements
+
+Use the paper-local launcher to validate `PaperInterface.lean` statements:
+
+```bash
+papers/DSWG24DiscretizationBias/review-dashboard.sh
+```
+
+The dashboard stores reviewer, timestamp, match decision, notes, statement
+snapshots, and stale-detection digests under each paper's `.review_traces/`
+directory. For the full workflow, CLI checks, exports, and slice conventions,
+see [docs/REVIEW_DASHBOARD.md](docs/REVIEW_DASHBOARD.md).
+
 ## More Documentation
 
 - [docs/README.md](docs/README.md): documentation index split into

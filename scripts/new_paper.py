@@ -66,6 +66,29 @@ def write_file(path: Path, contents: str, force: bool) -> None:
     print(f"wrote {path.relative_to(ROOT)}")
 
 
+def refresh_review_cache(folder: str) -> None:
+    """Run the review metadata bootstrap for a fresh paper scaffold."""
+
+    cmd = [
+        "python3",
+        str(ROOT / "scripts" / "review_dashboard.py"),
+        "--paper",
+        folder,
+        "--refresh-cache",
+    ]
+    try:
+        proc = subprocess.run(cmd, cwd=str(ROOT), check=False, capture_output=True, text=True)
+    except OSError as exc:
+        print(f"warning: could not refresh review cache for {folder}: {exc}")
+        return
+    if proc.returncode != 0:
+        if proc.stdout:
+            print(proc.stdout.strip())
+        if proc.stderr:
+            print(proc.stderr.strip())
+        print(f"warning: review cache refresh failed for {folder}")
+
+
 def download_pdf(url: str, target: Path, force: bool) -> bool:
     if target.exists() and not force:
         print(f"skip existing {target.relative_to(ROOT)}")
@@ -352,6 +375,18 @@ def gitignore_text() -> str:
 """
 
 
+def review_launcher_text() -> str:
+    return """#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)"
+ROOT_DIR="$(cd \"${SCRIPT_DIR}/../..\" && pwd)"
+PAPER_DIR=\"$(basename \"$SCRIPT_DIR\")\"
+
+exec \"${ROOT_DIR}/scripts/launch_review_dashboard.sh\" --paper \"$PAPER_DIR\" \"$@\"
+"""
+
+
 def root_import_text(folder: str) -> str:
     return f"""import {folder}.PaperInterface
 """
@@ -458,6 +493,13 @@ def main() -> int:
 
     write_file(paper_dir / ".gitignore", gitignore_text(), args.force)
     write_file(paper_dir / "README.md", readme_text(args, folder), args.force)
+    launch_script = paper_dir / "review-dashboard.sh"
+    write_file(
+        launch_script,
+        review_launcher_text(),
+        args.force,
+    )
+    launch_script.chmod(0o755)
     write_file(
         paper_dir / "FORMALIZATION_PLAN.md",
         formalization_plan_text(args.title or "", namespace),
@@ -484,6 +526,8 @@ def main() -> int:
             extract_text(pdf, txt, args.force)
     else:
         print("skipped PDF download")
+
+    refresh_review_cache(folder)
 
     print(f"paper scaffold ready: {paper_dir.relative_to(ROOT)}")
     return 0

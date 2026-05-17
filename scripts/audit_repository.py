@@ -10,6 +10,7 @@ requires the paper-by-paper PDF/DAG audit.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 from dataclasses import dataclass
@@ -23,9 +24,11 @@ ACTIVE_PAPERS = {
 }
 REQUIRED_PAPER_FILES = {
     ".gitignore",
-    "README.md",
-    "MainTheorems.lean",
     "DependencyDAG.tex",
+    "FORMALIZATION_PLAN.md",
+    "MainTheorems.lean",
+    "PaperInterface.lean",
+    "README.md",
 }
 REQUIRED_GITIGNORE_PATTERNS = {
     "*.pdf",
@@ -33,7 +36,13 @@ REQUIRED_GITIGNORE_PATTERNS = {
     "*.log",
     "*.fls",
     "*.fdb_latexmk",
+    "*.synctex.gz",
 }
+REVIEW_LAUNCHER_NAME = "review-dashboard.sh"
+REVIEW_LAUNCHER_TARGET = "scripts/launch_review_dashboard.sh"
+REVIEW_TRACE_CACHE = ".review_traces/paper_interface_cache.json"
+REVIEW_SLICES_NAME = "review_slices.json"
+REVIEW_ROW_WARN_THRESHOLD = 80
 ROOT_STATUS_VALUES = {
     "Formalized",
     "Formalized with caveat",
@@ -87,7 +96,8 @@ PROOF_FACING_AUDIT_FORMULA_RE = re.compile(
     re.I | re.S,
 )
 INTERFACE_WITNESS_RE = re.compile(
-    r"^\s*(?:theorem|lemma|def|abbrev)\s+[A-Za-z0-9_]*witness[A-Za-z0-9_]*\b",
+    r"^\s*(?:theorem|lemma|def|abbrev)\s+[A-Za-z0-9_]*(?:tuple|prod|pprod)[A-Za-z0-9_]*witness[A-Za-z0-9_]*\b|"
+    r"^\s*(?:theorem|lemma|def|abbrev)\s+[A-Za-z0-9_]*witness[A-Za-z0-9_]*(?:tuple|prod|pprod)[A-Za-z0-9_]*\b",
     re.I | re.M,
 )
 README_AGENT_DETAIL_RE = re.compile(
@@ -275,6 +285,177 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
     return findings
 
 
+def _safe_slice_id(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "-", value.strip()).strip("-") or "all"
+
+
+def review_slice_counts(interface_text: str, slice_file: Path) -> tuple[list[str], dict[str, int]]:
+    """Count theorem/lemma rows by optional review-slice metadata."""
+
+    decls: list[tuple[int, str]] = []
+    for line_number, line in enumerate(interface_text.splitlines(), start=1):
+        match = re.match(r"^\s*(?:theorem|lemma)\s+([A-Za-z_][A-Za-z0-9_']*)\b", line)
+        if match:
+            decls.append((line_number, match.group(1)))
+    if not slice_file.exists():
+        return [], {"all": len(decls)}
+
+    try:
+        payload = json.loads(slice_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return ["review_slices.json is not valid JSON"], {"all": len(decls)}
+    if not isinstance(payload, dict):
+        return ["review_slices.json should contain a JSON object"], {"all": len(decls)}
+    raw_slices = payload.get("slices")
+    if not isinstance(raw_slices, list) or not raw_slices:
+        return ["review_slices.json should define a nonempty `slices` list"], {"all": len(decls)}
+
+    problems: list[str] = []
+    slices: list[dict[str, object]] = []
+    for index, raw_slice in enumerate(raw_slices, start=1):
+        if not isinstance(raw_slice, dict):
+            problems.append(f"slice {index} is not a JSON object")
+            continue
+        title = str(raw_slice.get("title") or raw_slice.get("id") or f"Slice {index}")
+        slices.append({**raw_slice, "id": _safe_slice_id(str(raw_slice.get("id") or title))})
+
+    counts: dict[str, int] = {str(rule["id"]): 0 for rule in slices}
+    counts["other"] = 0
+    for line_number, name in decls:
+        assigned = False
+        for rule in slices:
+            names = rule.get("names")
+            prefixes = rule.get("prefixes")
+            pattern = rule.get("name_regex")
+            line_start = rule.get("line_start")
+            line_end = rule.get("line_end")
+            try:
+                matches_name = isinstance(names, list) and name in {str(item) for item in names}
+                matches_prefix = isinstance(prefixes, list) and any(
+                    name.startswith(str(prefix)) for prefix in prefixes
+                )
+                matches_regex = isinstance(pattern, str) and bool(re.search(pattern, name))
+            except re.error:
+                problems.append(f"slice `{rule['id']}` has invalid `name_regex`")
+                matches_regex = False
+            matches_line = False
+            if isinstance(line_start, int) or isinstance(line_end, int):
+                start_ok = not isinstance(line_start, int) or line_number >= line_start
+                end_ok = not isinstance(line_end, int) or line_number <= line_end
+                matches_line = start_ok and end_ok
+            if matches_name or matches_prefix or matches_regex or matches_line:
+                counts[str(rule["id"])] = counts.get(str(rule["id"]), 0) + 1
+                assigned = True
+                break
+        if not assigned:
+            counts["other"] += 1
+    if counts.get("other") == 0:
+        counts.pop("other", None)
+    return problems, counts
+
+
+def check_review_launcher_readiness(include_active: bool) -> list[Finding]:
+    """Check the paper-local human-review launcher contract from the skill."""
+
+    findings: list[Finding] = []
+    launcher_text = f"{REVIEW_LAUNCHER_TARGET}"
+    for folder in paper_dirs():
+        if folder.name in ACTIVE_PAPERS and not include_active:
+            continue
+
+        interface = folder / "PaperInterface.lean"
+        launcher = folder / REVIEW_LAUNCHER_NAME
+        cache = folder / REVIEW_TRACE_CACHE
+
+        if not interface.exists():
+            findings.append(
+                Finding(
+                    "ERROR",
+                    folder,
+                    f"review launcher cannot be enabled until `PaperInterface.lean` exists",
+                )
+            )
+            if launcher.exists():
+                findings.append(
+                    Finding(
+                        "WARN",
+                        launcher,
+                        "review launcher exists but there is no `PaperInterface.lean` to review",
+                    )
+                )
+            continue
+
+        if not launcher.exists():
+            findings.append(
+                Finding(
+                    "ERROR",
+                    folder,
+                    f"missing `{REVIEW_LAUNCHER_NAME}`; run `python3 scripts/bootstrap_review_launchers.py --write`",
+                )
+            )
+        else:
+            text = launcher.read_text(encoding="utf-8")
+            if launcher_text not in text:
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        launcher,
+                        f"launcher should delegate to `{REVIEW_LAUNCHER_TARGET}`",
+                    )
+                )
+            if not (launcher.stat().st_mode & 0o111):
+                findings.append(Finding("ERROR", launcher, "launcher is not executable"))
+
+        if not cache.exists():
+            findings.append(
+                Finding(
+                    "WARN",
+                    folder,
+                    "review dashboard cache is absent; run `python3 scripts/review_dashboard.py --paper "
+                    f"{folder.name} --refresh-cache` before a review session",
+                )
+            )
+
+        interface_text = interface.read_text(encoding="utf-8")
+        item_count = len(re.findall(r"^\s*(?:theorem|lemma)\s+", interface_text, re.M))
+        if item_count == 0:
+            findings.append(Finding("ERROR", interface, "review dashboard finds no theorem/lemma rows"))
+        elif item_count > REVIEW_ROW_WARN_THRESHOLD:
+            slice_file = folder / REVIEW_SLICES_NAME
+            problems, counts = review_slice_counts(interface_text, slice_file)
+            for problem in sorted(set(problems)):
+                findings.append(Finding("ERROR", slice_file, problem))
+            max_slice = max(counts.values()) if counts else item_count
+            if not slice_file.exists():
+                findings.append(
+                    Finding(
+                        "WARN",
+                        interface,
+                        f"review dashboard exposes {item_count} rows; add `{REVIEW_SLICES_NAME}` slices of at most "
+                        f"{REVIEW_ROW_WARN_THRESHOLD} rows",
+                    )
+                )
+            elif max_slice > REVIEW_ROW_WARN_THRESHOLD:
+                findings.append(
+                    Finding(
+                        "WARN",
+                        slice_file,
+                        f"largest review slice has {max_slice} rows; keep slices at or below "
+                        f"{REVIEW_ROW_WARN_THRESHOLD} rows",
+                    )
+                )
+            else:
+                findings.append(
+                    Finding(
+                        "INFO",
+                        slice_file,
+                        f"review dashboard exposes {item_count} rows across {len(counts)} review slices",
+                    )
+                )
+
+    return findings
+
+
 def check_dag_status_styles() -> list[Finding]:
     findings: list[Finding] = []
     preamble = ROOT / "docs" / "tikz" / "dag_preamble.tex"
@@ -363,7 +544,11 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
                 )
             if INTERFACE_WITNESS_RE.search(text):
                 findings.append(
-                    Finding("ERROR", interface, "human-facing interface should not expose witness declarations")
+                    Finding(
+                        "ERROR",
+                        interface,
+                        "human-facing interface should not expose tuple/prod witness declarations",
+                    )
                 )
             if not re.search(r"^\s*(?:noncomputable\s+)?(?:def|abbrev)\s+", text, re.M):
                 findings.append(
@@ -805,6 +990,7 @@ def run(include_active: bool, strict_style: bool) -> list[Finding]:
     findings.extend(check_sorries(include_active))
     findings.extend(check_guarded_checks(include_active))
     findings.extend(check_paper_contract(include_active))
+    findings.extend(check_review_launcher_readiness(include_active))
     findings.extend(check_dag_status_styles())
     findings.extend(check_paper_facing_ledgers(include_active))
     findings.extend(check_post_paper_audit_interfaces(include_active))

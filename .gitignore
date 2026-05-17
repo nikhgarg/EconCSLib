@@ -27,6 +27,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.review_traces/
 
 # LaTeX auxiliary files
 *.aux

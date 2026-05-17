@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "max_rows_per_slice": 60,
+  "fallback_id": "other",
+  "fallback_title": "Other statements",
+  "slices": [
+    {
+      "id": "slice-01",
+      "title": "Access-hiding definitions through Theorem 3.1 opening, rows 1-60",
+      "line_start": 49,
+      "line_end": 1016
+    },
+    {
+      "id": "slice-02",
+      "title": "Theorem 3.1 endpoint through Theorem 3.2 Gaussian source start, rows 61-120",
+      "line_start": 1041,
+      "line_end": 2902
+    },
+    {
+      "id": "slice-03",
+      "title": "Theorem 3.2 report-required source and Gaussian cutoffs, rows 121-180",
+      "line_start": 2980,
+      "line_end": 5238
+    },
+    {
+      "id": "slice-04",
+      "title": "Theorem 3.2 support and fairness impossibility core, rows 181-240",
+      "line_start": 5301,
+      "line_end": 8657
+    },
+    {
+      "id": "slice-05",
+      "title": "Theorem 3.2 law endpoint through resampling definitions, rows 241-300",
+      "line_start": 8671,
+      "line_end": 10546
+    },
+    {
+      "id": "slice-06",
+      "title": "Theorem 4.4 resampling policy claims, rows 301-305",
+      "line_start": 10556,
+      "line_end": 10616
+    }
+  ]
+}

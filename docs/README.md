@@ -11,6 +11,8 @@ or what a completed formalization proves without reading proof internals.
 - [ECONCSLEAN_CURRENT_STATUS.md](ECONCSLEAN_CURRENT_STATUS.md): current paper
   status ledger.
   author-paper formalization summary.
+- [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
+  dashboard workflow.
 - Paper-level `FINAL_VALIDATION_REPORT.md`, `PaperInterface.lean`, and
   `DependencyDAG.pdf` files under `papers/<PaperName>/`.
 

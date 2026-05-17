@@ -1,0 +1,97 @@
+import GN21DriverSurgePricing.MainTheorems
+
+/-!
+# Paper Interface: Driver Surge Pricing
+
+This file is a compact human-facing review surface for the GN21 formalization.
+The full proof ledger in `MainTheorems.lean` is large and active; this interface
+starts with the central source-facing single-state results that are stable
+enough for paper-vs-Lean review.
+-/
+
+open EconCSLib
+open MeasureTheory
+open scoped Function ProbabilityTheory Topology ENNReal
+
+namespace GN21DriverSurgePricing
+namespace PaperInterface
+
+/-! ## Paper Definitions -/
+
+/-- Paper single-state incentive compatibility predicate for measurable trip policies. -/
+abbrev singleStateIC (R : SingleStateReward) : Prop :=
+  singleStateMeasurableIncentiveCompatible R
+
+/-- Paper threshold-policy shape predicate. -/
+abbrev thresholdPolicy (w : PricingFunction) (c : ℝ) (sigma : TripPolicy) : Prop :=
+  thresholdRatePolicy w c sigma
+
+/-! ## Single-State Source Claims -/
+
+/--
+Proposition 3.1 source-facing measurable IC endpoint: in the continuous
+single-state model with affine pricing `w(τ)=mτ+a`, the paper condition
+`0 <= a <= m/λ` makes accepting all positive-length trips optimal among all
+measurable feasible policies.
+-/
+theorem proposition3_1_affine_single_state_measurable_ic
+    (mu : Measure TripLength) (arrivalRate m a : ℝ)
+    (A : SingleStateTripMeasureAssumptions mu)
+    (hlambda : 0 < arrivalRate)
+    (ha_nonneg : 0 ≤ a)
+    (ha_le_wait_value : a ≤ m / arrivalRate) :
+    singleStateMeasurableIncentiveCompatible
+      (affineSingleStateRenewalReward mu arrivalRate m a) := by
+  exact
+    GN21DriverSurgePricing.paper_proposition3_1_affine_single_state_measurable_ic
+      mu arrivalRate m a A hlambda ha_nonneg ha_le_wait_value
+
+/--
+Proposition 3.1 renewal-reward endpoint from standard trip-distribution facts:
+affine pricing is incentive compatible among measurable feasible policies for
+the actual single-state renewal-reward functional whenever `0 <= a <= m/λ`.
+-/
+theorem proposition3_1_affine_single_state_renewal_reward_measurable_ic_of_standard_measure
+    (mu : Measure TripLength) (arrivalRate m a : ℝ)
+    (haccept_mass : singleStateTripMass mu acceptAllPolicy = 1)
+    (hfinite_acceptAll : mu acceptAllPolicy ≠ ⊤)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy mu)
+    (hlambda : 0 < arrivalRate)
+    (ha_nonneg : 0 ≤ a)
+    (ha_le_wait_value : a ≤ m / arrivalRate) :
+    singleStateMeasurableIncentiveCompatible
+      (singleStateRenewalReward mu arrivalRate (affinePricing m a)) := by
+  exact
+    GN21DriverSurgePricing.paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic_of_standard_measure
+      mu arrivalRate m a haccept_mass hfinite_acceptAll htime_integrable_acceptAll
+      hlambda ha_nonneg ha_le_wait_value
+
+/--
+Theorem 1, source-facing measurable single-state threshold best response: an
+optimal threshold policy exists without a zero-boundary-mass regularity
+assumption.
+-/
+theorem theorem1_single_state_threshold_best_response_measurable
+    (mu : Measure TripLength) (arrivalRate : ℝ) (w : PricingFunction)
+    (hrate_measurable : Measurable (fun tau : TripLength => w tau / tau))
+    (hrate_nonneg : ∀ tau : TripLength, 0 < tau → 0 ≤ w tau / tau)
+    (hfinite_acceptAll : mu acceptAllPolicy ≠ ⊤)
+    (hw_integrable_acceptAll : IntegrableOn w acceptAllPolicy mu)
+    (htime_integrable_acceptAll :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy mu)
+    (hlambda : 0 < arrivalRate)
+    (hpayment_acceptAll_pos :
+      0 < singleStateTripPayment mu w acceptAllPolicy) :
+    ∃ c : ℝ, 0 ≤ c ∧ ∃ sigma : TripPolicy,
+      thresholdRatePolicy w c sigma ∧
+        singleStateMeasurableOptimal
+          (singleStateRenewalReward mu arrivalRate w) sigma := by
+  exact
+    GN21DriverSurgePricing.paper_theorem1_single_state_threshold_best_response_measurable
+      mu arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
+      hw_integrable_acceptAll htime_integrable_acceptAll hlambda
+      hpayment_acceptAll_pos
+
+end PaperInterface
+end GN21DriverSurgePricing

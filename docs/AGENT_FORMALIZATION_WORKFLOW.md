@@ -113,6 +113,35 @@ threads. Do not repair unrelated active files just to make an unrelated cleanup
 pass green; record the blocker in `docs/ARCHITECTURE.md` and validate with
 narrower targets until that thread stabilizes.
 
+For statement-facing checks, prefer the paper-local launcher from the paper folder:
+
+```bash
+./review-dashboard.sh
+```
+
+If you are on WSL2 and the browser does not pop, run the launcher with
+`--host 0.0.0.0` and open the printed `Windows URL` in a Windows browser.
+If the browser URL looks like `10.255.255.254`, try `http://127.0.0.1:8765/` first.
+
+On startup it prints stale-check diagnostics against any existing logged reviews, so
+you can refresh only the changed theorem checks and avoid re-validating unchanged items.
+The dashboard also shows compact paper-source action links (open PDF/text file) for
+quick jumps back to the source statement when needed.
+Paper-side formulas are rendered with MathJax when they look like LaTeX.
+
+For a non-interactive pipeline check (exits non-zero when anything is stale or unreviewed):
+
+```bash
+./review-dashboard.sh --check
+```
+
+If you are working in an older paper folder that already has
+`PaperInterface.lean` but no local launcher yet, run once:
+
+```bash
+python3 scripts/bootstrap_review_launchers.py --write
+```
+
 ## Current Maintenance Note
 
 The active auction formalization can currently block full `lake build
