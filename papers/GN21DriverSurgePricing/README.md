@@ -100,6 +100,14 @@ cache is `source.txt`.
   `GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData`,
   and the exact-branch adapter
   `Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_ordered_surge_cutoff_cross_field_source_assumptions`.
+  The older all-middle cross-field source boundaries also now feed this
+  ordered route through
+  `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,
+  `Theorem3AcceptAllMeasurableFixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteExistenceSourceAssumptions.to_ordered_surge_cutoff_cross_field_source_assumptions`,
+  `GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_bracket_ordered_surge_cutoff_cross_field_source`,
+  and
+  `Theorem3AcceptAllMeasurableFixedResponseOneThresholdBracketSurgeCutoffCrossFieldMiddleCutoffRerouteExistenceSourceAssumptions.to_bracket_ordered_surge_cutoff_cross_field_source_assumptions`,
+  with paired `_via_ordered` IC/AE wrappers.
   Use this route instead of reintroducing an all-middle surge cutoff proof.
   The preferred non-surge endpoint route is now weaker still: the fixed-surge
   side can be supplied directly as the aggregate cross-ratio comparison that
