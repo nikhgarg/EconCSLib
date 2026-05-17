@@ -787,6 +787,44 @@ theorem paper_interface_definition2_implies_definition4_of_mixture
     hlatent
 
 /--
+Definitions 5--3 bridge: when observable access estimates are the full-feature
+estimates at the displayed test and no-access estimates are the base-only
+estimates, test-blankness implies observable fairness.
+-/
+theorem paper_interface_definition5_implies_definition3_of_full_feature_base_only
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        S.fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        S.baseOnlyEstimate e base)
+    (hblank : paperTestBlank S) :
+    paperObservablyFair S :=
+  lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly
+    testOf hAccess hNoAccess hblank
+
+/--
+Continuous-law Definitions 5--3 bridge for arbitrary law objects.
+-/
+theorem paper_interface_definition5_implies_definition3_law_of_full_feature_base_only
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessLaw e base =
+        S.fullFeatureLaw e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base =
+        S.baseOnlyLaw e base)
+    (hblank : paperLawTestBlank S) :
+    paperLawObservablyFair S :=
+  lg21_sourceLawObservablyFair_of_testBlank_of_fullFeature_baseOnly
+    testOf hAccess hNoAccess hblank
+
+/--
 Bayesian optimal Gaussian estimator used in Sections 3--4.
 
 Paper statement context: `P_BO` estimates skill by posterior expectation

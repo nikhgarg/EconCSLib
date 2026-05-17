@@ -220,6 +220,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_share`.
   These make the "no one reports/takes, hence test-blank" branch checkable
   separately from the positive-share unraveling contradiction.
+  The companion test-blank branch now has source-surface bridges
+  `paper_interface_definition5_implies_definition3_of_full_feature_base_only`
+  and
+  `paper_interface_definition5_implies_definition3_law_of_full_feature_base_only`,
+  which formalize the paper's observation that a policy whose full-feature
+  estimates agree with base-only estimates is observably fair under the
+  standard access/no-access law identities.
   The compact certificate aliases
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium`,
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,

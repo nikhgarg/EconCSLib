@@ -4022,6 +4022,47 @@ theorem lg21_sourceDemographicallyFair_of_latentSkillFair_of_mixture
     (lg21_sourceObservablyFair_of_latentSkillFair_of_mixture
       skillGivenBase hObsAccess hObsNoAccess hlatent)
 
+/--
+Definition 5 to Definition 3 bridge: if access observable estimates are the
+full-feature estimates at the displayed test and no-access observable estimates
+are the base-only estimates, then a test-blank policy is observably fair.
+-/
+theorem lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        S.fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        S.baseOnlyEstimate e base)
+    (hblank : lg21SourceTestBlank S) :
+    lg21SourceObservablyFair S := by
+  intro e base
+  rw [hAccess e base, hNoAccess e base]
+  exact (hblank e base (testOf e base)).symm
+
+/--
+Continuous-law Definition 5 to Definition 3 bridge: the same test-blank to
+observable-fairness argument over arbitrary law objects.
+-/
+theorem lg21_sourceLawObservablyFair_of_testBlank_of_fullFeature_baseOnly
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessLaw e base =
+        S.fullFeatureLaw e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base =
+        S.baseOnlyLaw e base)
+    (hblank : lg21SourceLawTestBlank S) :
+    lg21SourceLawObservablyFair S := by
+  intro e base
+  rw [hAccess e base, hNoAccess e base]
+  exact (hblank e base (testOf e base)).symm
+
 theorem lg21_not_latentSkillFair_of_witness
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}

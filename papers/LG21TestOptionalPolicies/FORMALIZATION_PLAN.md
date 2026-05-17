@@ -260,7 +260,11 @@ Last updated: 2026-05-16
   blank-on-zero-share global equality
   `lg21FullFeatureEstimateBlankOnZeroEventShare_testBlank_of_zero_share`.
   These make the source proof's "no one reports/takes" sentence separately
-  auditable from the positive-share contradiction.
+  auditable from the positive-share contradiction.  The other source-proof
+  branch, "test-blank policies meet observable fairness trivially", is now
+  exposed by `lg21_sourceObservablyFair_of_testBlank_of_fullFeature_baseOnly`
+  and the continuous-law analogue; both keep the necessary source-surface
+  identities explicit.
   These case-split endpoints also have Section 3 hidden-access wrappers,
   removing the earlier global positive-share assumption from the source-facing
   theorem route.  The fully concrete optional posterior-payoff and report-required

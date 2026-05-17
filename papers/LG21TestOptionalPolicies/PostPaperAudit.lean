@@ -86,6 +86,14 @@ abbrev audit_definition5_test_blank_of_zero_event_share_blank :=
 abbrev audit_definition5_blank_on_zero_event_share_eq_base_of_zero_share :=
   @paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_share
 
+/-- Audit endpoint for the Definition 5 test-blank to Definition 3 observable-fair bridge. -/
+abbrev audit_definition5_implies_definition3_of_full_feature_base_only :=
+  @paper_interface_definition5_implies_definition3_of_full_feature_base_only
+
+/-- Audit endpoint for the continuous-law test-blank to observable-fair bridge. -/
+abbrev audit_definition5_implies_definition3_law_of_full_feature_base_only :=
+  @paper_interface_definition5_implies_definition3_law_of_full_feature_base_only
+
 /-- Audit endpoint for the Bayesian optimal Gaussian estimator used by `P_BO`. -/
 abbrev audit_bayesian_optimal_estimator_gaussian :=
   @paper_interface_bayesian_optimal_estimator_gaussian
