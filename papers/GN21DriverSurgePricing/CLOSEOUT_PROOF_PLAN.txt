@@ -260,7 +260,10 @@ selector from the ordinary fixed-response a.e. Lemma 5 output without first
 updating the current policy to the representative, because null boundary edits
 can destroy exact ray syntax for the raw policy.  Use this route after an
 explicit normalization step, or keep using the broader by-policy-form
-middle-cutoff boundary when exact normalization has not been proved.
+middle-cutoff boundary when exact normalization has not been proved.  The
+non-surge accepted-middle gap field is not a source obligation in this exact
+route: Lean derives it from the exact positive-cutoff reject-long shape via
+`acceptsMiddleTrips_gap_of_rejectsLongTrips_of_cutoff_pos`.
 
 
 Meaning of r1_current

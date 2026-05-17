@@ -1221,7 +1221,9 @@ current optima, then ask only for those two fixed-state branch packages.  Do
 not treat the exact selectors as automatic consequences of the ordinary a.e.
 fixed-response Lemma 5 boundary; use this route only after the policy has been
 normalized to the exact representative, or keep the broader by-policy-form
-middle-cutoff boundary.
+middle-cutoff boundary.  In this exact branch route Lean derives the
+conditional non-surge accepted-middle gap internally from the exact
+positive-cutoff reject-long shape.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
