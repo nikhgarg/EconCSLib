@@ -1117,6 +1117,15 @@ decreasing and surge increasing fixed-response data and the endpoint proof
 supplies the common fixed-state equality middle-reroute certificate; Lean
 builds the fixed-response policy-form package and derives accept-all
 optimality internally.
+The same route now has a bracket-level source boundary:
+`GN21MeasuredLeftFixedResponsePolicyFormBracketSourceData`,
+`GN21MeasuredRightFixedResponsePolicyFormBracketSourceData`,
+`Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData`,
+`GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData`,
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_source_assumptions`.
+This boundary consumes Lemma 6 coefficient signs and endpoint sign brackets
+directly, then builds the measured fixed-response source packages internally.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

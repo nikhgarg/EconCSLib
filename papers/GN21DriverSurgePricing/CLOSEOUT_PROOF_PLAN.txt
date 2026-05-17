@@ -166,6 +166,11 @@ source record:
 
   GN21Theorem3FixedResponseOneThresholdEqMiddleRerouteSourceExistenceData
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_reroute_existence_source_assumptions
+  GN21MeasuredLeftFixedResponsePolicyFormBracketSourceData
+  GN21MeasuredRightFixedResponsePolicyFormBracketSourceData
+  Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+  GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_source_assumptions
 
 This record asks directly for an optimum-existence proof, non-surge decreasing
 GN21 fixed-response source data for every measurable optimum, surge increasing
@@ -173,6 +178,11 @@ GN21 fixed-response source data for every measurable optimum, and the common
 fixed-state equality middle-reroute endpoint certificate.  Use this as the
 next source-facing target instead of preconstructing
 `Theorem4AllMeasurableFixedResponsePolicyFormData` by hand.
+The bracket variant is now the sharpest paper-facing boundary: it asks the
+source proof for Lemma 6 coefficient signs, positive sign brackets for the
+zero crossing, regularity/nondegeneracy, and the same local endpoint
+certificate.  Lean constructs the fixed-response policy-form source packages
+internally.
 
 
 Meaning of r1_current
