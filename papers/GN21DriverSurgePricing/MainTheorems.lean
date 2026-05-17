@@ -13021,6 +13021,102 @@ theorem paper_lemma7_8_affine_response_canonical_form
   ring
 
 /--
+Structured-price Lemma 6 response algebra: after substituting
+`w_i(u)=m u+z q(u)`, the normalized response is an affine function of
+`q(u)/u`.
+-/
+theorem paper_lemma6_structured_response_per_time_form
+    (q u m z Qi Qj Ti Tj Ri Rj : ℝ)
+    (hu : u ≠ 0) :
+    gn21Lemma6Response q u (m * u + z * q) Qi Qj Ti Tj Ri Rj =
+      ((Rj - Ri) + z * (Qi / Ti + Qj / Tj)) * (q / u) +
+        (m * (Qi / Ti + Qj / Tj) -
+          (Qi / Ti * Rj + Qj / Tj * Ri)) := by
+  unfold gn21Lemma6Response
+  field_simp [hu]
+  ring
+
+/--
+For structured CTMC prices, a positive coefficient on `q(u)/u` makes the
+Lemma 6 response strictly decreasing on positive trip lengths.
+-/
+theorem strictAntiOn_gn21Lemma6Response_structured_ctmc_of_coeff_pos
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI : ℝ)
+    (hcoeff_pos :
+      0 < (Rj - Ri) + z * (Qi / Ti + Qj / Tj))
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI) :
+    StrictAntiOn
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      (Set.Ioi 0) := by
+  intro x hx y hy hxy
+  have hanti :=
+    paper_remark1_switch_probability_per_time_strictAntiOn
+      lambdaIJ lambdaJI hlambdaIJ hsum
+  have hqxy :
+      gn21SwitchProb lambdaIJ lambdaJI y / y <
+        gn21SwitchProb lambdaIJ lambdaJI x / x :=
+    hanti hx hy hxy
+  change
+    gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI y) y
+        (m * y + z * gn21SwitchProb lambdaIJ lambdaJI y)
+        Qi Qj Ti Tj Ri Rj <
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI x) x
+        (m * x + z * gn21SwitchProb lambdaIJ lambdaJI x)
+        Qi Qj Ti Tj Ri Rj
+  rw [
+    paper_lemma6_structured_response_per_time_form
+      (gn21SwitchProb lambdaIJ lambdaJI y) y m z Qi Qj Ti Tj Ri Rj
+      (ne_of_gt hy),
+    paper_lemma6_structured_response_per_time_form
+      (gn21SwitchProb lambdaIJ lambdaJI x) x m z Qi Qj Ti Tj Ri Rj
+      (ne_of_gt hx)]
+  nlinarith [mul_lt_mul_of_pos_left hqxy hcoeff_pos]
+
+/--
+For structured CTMC prices, a negative coefficient on `q(u)/u` makes the
+Lemma 6 response strictly increasing on positive trip lengths.
+-/
+theorem strictMonoOn_gn21Lemma6Response_structured_ctmc_of_coeff_neg
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI : ℝ)
+    (hcoeff_neg :
+      (Rj - Ri) + z * (Qi / Ti + Qj / Tj) < 0)
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI) :
+    StrictMonoOn
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      (Set.Ioi 0) := by
+  intro x hx y hy hxy
+  have hanti :=
+    paper_remark1_switch_probability_per_time_strictAntiOn
+      lambdaIJ lambdaJI hlambdaIJ hsum
+  have hqxy :
+      gn21SwitchProb lambdaIJ lambdaJI y / y <
+        gn21SwitchProb lambdaIJ lambdaJI x / x :=
+    hanti hx hy hxy
+  change
+    gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI x) x
+        (m * x + z * gn21SwitchProb lambdaIJ lambdaJI x)
+        Qi Qj Ti Tj Ri Rj <
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI y) y
+        (m * y + z * gn21SwitchProb lambdaIJ lambdaJI y)
+        Qi Qj Ti Tj Ri Rj
+  rw [
+    paper_lemma6_structured_response_per_time_form
+      (gn21SwitchProb lambdaIJ lambdaJI x) x m z Qi Qj Ti Tj Ri Rj
+      (ne_of_gt hx),
+    paper_lemma6_structured_response_per_time_form
+      (gn21SwitchProb lambdaIJ lambdaJI y) y m z Qi Qj Ti Tj Ri Rj
+      (ne_of_gt hy)]
+  nlinarith [mul_lt_mul_of_neg_left hqxy hcoeff_neg]
+
+/--
 Lemma 7 canonical response after the source reduction
 `r(u) = (c1 - c2*q(u))/u + c3`.
 -/
@@ -27263,6 +27359,72 @@ def Lemma5PositiveResponsePolicyFormData.of_shapeData
   positive_zero_set_null := by
     intro μ hμ
     exact D.positive_zero_set_null μ
+
+/--
+Structured CTMC one-threshold Lemma 5 policy-form package for the decreasing
+response branch.
+-/
+def gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI t : ℝ)
+    (hcoeff_pos :
+      0 < (Rj - Ri) + z * (Qi / Ti + Qj / Tj))
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (ht_pos : 0 < t)
+    (hzero :
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI t) t
+          (m * t + z * gn21SwitchProb lambdaIJ lambdaJI t)
+          Qi Qj Ti Tj Ri Rj = 0) :
+    Lemma5PositiveResponsePolicyFormData
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      .strictlyDecreasing :=
+  Lemma5PositiveResponsePolicyFormData.of_shapeData
+    (Lemma5PositiveResponseShapeData.strictlyDecreasing
+      (response := fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      t ht_pos
+      (strictAntiOn_gn21Lemma6Response_structured_ctmc_of_coeff_pos
+        m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI hcoeff_pos
+        hlambdaIJ hsum)
+      hzero)
+
+/--
+Structured CTMC one-threshold Lemma 5 policy-form package for the increasing
+response branch.
+-/
+def gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI t : ℝ)
+    (hcoeff_neg :
+      (Rj - Ri) + z * (Qi / Ti + Qj / Tj) < 0)
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (ht_pos : 0 < t)
+    (hzero :
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI t) t
+          (m * t + z * gn21SwitchProb lambdaIJ lambdaJI t)
+          Qi Qj Ti Tj Ri Rj = 0) :
+    Lemma5PositiveResponsePolicyFormData
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      .strictlyIncreasing :=
+  Lemma5PositiveResponsePolicyFormData.of_shapeData
+    (Lemma5PositiveResponseShapeData.strictlyIncreasing
+      (response := fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      t ht_pos
+      (strictMonoOn_gn21Lemma6Response_structured_ctmc_of_coeff_neg
+        m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI hcoeff_neg
+        hlambdaIJ hsum)
+      hzero)
 
 /--
 Positive pointwise scaling on feasible trip lengths preserves the

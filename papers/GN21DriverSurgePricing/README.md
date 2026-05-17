@@ -965,6 +965,15 @@ and
 left/right measured Lemma 5 marginal responses as positive scalings of the
 normalized Lemma 6 response under current reward-rate identities and the usual
 nonzero denominator/time inputs.
+For the actual structured CTMC price form, the normalized Lemma 6 response now
+has a compiled per-time expression:
+`paper_lemma6_structured_response_per_time_form`.  Combined with the strict
+decrease of `q(u)/u`, this gives direct monotone response-shape bridges
+`strictAntiOn_gn21Lemma6Response_structured_ctmc_of_coeff_pos` and
+`strictMonoOn_gn21Lemma6Response_structured_ctmc_of_coeff_neg`, plus the
+one-threshold policy-form packages
+`gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing` and
+`gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing`.
 The next layer is also packaged:
 `gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
 `gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`

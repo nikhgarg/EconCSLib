@@ -276,6 +276,19 @@ marginal responses.  Their helper definitions
 `gn21MeasuredLeftLemma6ScaleAtCurrent`, and
 `gn21MeasuredRightLemma6ScaleAtCurrent` keep the base response and positive
 scale explicit.
+For structured CTMC prices, the base normalized Lemma 6 response now has a
+direct per-time algebra theorem:
+`paper_lemma6_structured_response_per_time_form`.  Use
+`strictAntiOn_gn21Lemma6Response_structured_ctmc_of_coeff_pos` and
+`strictMonoOn_gn21Lemma6Response_structured_ctmc_of_coeff_neg` to get the
+monotone response-shape witnesses from the sign of the coefficient on
+`q(u)/u`.  If the source proof supplies a positive zero cutoff, the direct
+policy-form packages
+`gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing` and
+`gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing` build the
+`Lemma5PositiveResponsePolicyFormData` fields used by the measured scaling
+adapters.  This is the fastest path for one-threshold reject-long/reject-short
+branches of the fixed-response route.
 The all-optima handoff boundary for this lighter route is
 `Theorem4AllMeasurableFixedResponsePolicyFormData`; call
 `.to_feasible_ae_policy_forms` to enter the existing feasible a.e. Theorem 4
