@@ -233,6 +233,19 @@ reject-long upper cross, non-surge accept-middle lower cross, non-surge
 accept-middle upper cross, `Ri = R1`, and `Rj = R2`.  Do not replace this with
 a general all-policy scalar Lemma 9 package; stay on these paper branch fields.
 
+Important notation warning for this route: `Ri = R1` and `Rj = R2` are not
+free algebraic consequences of the cross-ratio inequalities.  They are the
+paper's local fixed-response reward-rate identifications, so they must come
+from the fixed-response source construction itself or from an exact
+branch-local endpoint package.  In particular, do not prove them by silently
+treating Lemma 9's local `R1` as the Theorem 3 target `R1`; the source text
+explicitly uses `Q_i,T_i` as accept-all primitives in Theorem 3 but Lemma 9
+fixes an arbitrary current `sigma_1`.  The next proof step should therefore
+derive each branch identity from the actual fixed-response source record, or
+stay on the compiled exact/by-policy-form middle-cutoff endpoint wrappers that
+ask only for the paper's branch fields.  Do not pivot this into an all-policy
+local-current generalization.
+
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
 source record, and the sharper middle-cutoff version is now compiled:
