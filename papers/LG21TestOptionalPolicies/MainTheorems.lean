@@ -4545,6 +4545,74 @@ theorem lg21EventSharePositiveOrBlank_of_zero_event_share_implies_blank
       studentLaw event decEvent e base hno_positive)
 
 /--
+Full-feature estimate law that is definitionally test-blank on profiles whose
+finite reporter/taker event share is zero, and otherwise follows a supplied
+raw full-feature estimate law.
+-/
+def lg21FullFeatureEstimateBlankOnZeroEventShare
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate) :
+    Equilibrium → Base → Test → PMF Estimate :=
+  fun e base test =>
+    if (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0 then
+      baseOnlyEstimate e base
+    else
+      rawFullFeatureEstimate e base test
+
+/--
+The blank-on-zero-share full-feature estimate is equal to the base-only
+estimate at every zero-share profile.
+-/
+theorem lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (e : Equilibrium) (base : Base)
+    (hzero :
+      (lg21PMFEventShareFn studentLaw event decEvent e base).toReal = 0)
+    (test : Test) :
+    lg21FullFeatureEstimateBlankOnZeroEventShare
+      studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+      e base test =
+        baseOnlyEstimate e base := by
+  simp [lg21FullFeatureEstimateBlankOnZeroEventShare, hzero]
+
+/--
+The blank-on-zero-share full-feature estimate discharges Theorem 3.2's
+positive-event/share-or-blank case split by construction.
+-/
+theorem lg21EventSharePositiveOrBlank_of_blankOnZeroEventShare
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate) :
+    lg21EventSharePositiveOrBlank
+      studentLaw event baseOnlyEstimate
+      (lg21FullFeatureEstimateBlankOnZeroEventShare
+        studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate) := by
+  exact
+    lg21EventSharePositiveOrBlank_of_zero_event_share_implies_blank
+      decEvent
+      (by
+        intro e base hzero test
+        exact
+          lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+            studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+            e base hzero test |>.symm)
+
+/--
 Concrete PMF policy surface for Theorem 3.2's optional-reporting route: access
 students are a binary reporter/no-reporter mixture, no-access students have the
 no-reporter law, the base-only estimate is the point mass at the acting mean,

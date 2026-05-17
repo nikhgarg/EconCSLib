@@ -134,6 +134,14 @@ abbrev audit_theorem3_2_positive_event_or_blank_bridge :=
 abbrev audit_theorem3_2_positive_event_share_or_blank_bridge :=
   @paper_interface_theorem3_2_positive_event_or_blank_of_zero_event_share_blank
 
+/-- Audit endpoint for the blank-on-zero-share full-feature estimate constructor. -/
+noncomputable abbrev audit_theorem3_2_blank_on_zero_event_share_constructor :=
+  @paper_interface_theorem3_2_full_feature_estimate_blank_on_zero_event_share
+
+/-- Audit endpoint for the blank-on-zero-share constructor's case split. -/
+abbrev audit_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share :=
+  @paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share
+
 /-- Audit endpoint for converting zero-share blankness into no-positive-event blankness. -/
 abbrev audit_theorem3_2_no_positive_event_blank_of_zero_event_share_blank :=
   @paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank

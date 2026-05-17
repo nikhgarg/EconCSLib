@@ -197,6 +197,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_zero_event_share_blank`
   expose the final implication/no-relevance forms with that share-language
   premise.
+  The constructor
+  `paper_interface_theorem3_2_full_feature_estimate_blank_on_zero_event_share`
+  builds full-feature estimate laws that satisfy this blank branch by
+  definition, and
+  `paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share`
+  packages the resulting case split.
 - The certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now also have Section 3 hidden-access implication
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2

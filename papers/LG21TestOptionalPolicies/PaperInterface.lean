@@ -4416,6 +4416,27 @@ theorem paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_b
       studentLaw event decEvent e base hno_positive)
 
 /--
+Theorem 3.2 constructor: a full-feature estimate law that is definitionally
+test-blank on zero finite event-share profiles.
+-/
+abbrev paper_interface_theorem3_2_full_feature_estimate_blank_on_zero_event_share :=
+  @lg21FullFeatureEstimateBlankOnZeroEventShare
+
+/--
+Theorem 3.2 constructor property: the blank-on-zero-share full-feature estimate
+equals the base-only estimate at every zero-share profile.
+-/
+abbrev paper_interface_theorem3_2_full_feature_estimate_blank_on_zero_event_share_eq_baseOnly_of_zero_share :=
+  @lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+
+/--
+Theorem 3.2 case-split bridge discharged by the blank-on-zero-share
+full-feature estimate constructor.
+-/
+abbrev paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share :=
+  @lg21EventSharePositiveOrBlank_of_blankOnZeroEventShare
+
+/--
 Paper-facing Theorem 3.2, optional-reporting regime.  If access status is
 hidden and zero-positive-reporter profiles are already test-blank, then
 latent-skill or observable fairness implies test-blankness on the concrete

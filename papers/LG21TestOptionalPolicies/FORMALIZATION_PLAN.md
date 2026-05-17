@@ -707,7 +707,12 @@ Last updated: 2026-05-16
    and
    `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_zero_event_share_blank`
    expose the final implication/no-relevance forms with that paper-style
-   premise.
+   premise.  The constructor
+   `paper_interface_theorem3_2_full_feature_estimate_blank_on_zero_event_share`
+   and its case-split wrapper
+   `paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event_share`
+   discharge this branch by construction for surfaces that explicitly blank
+   full-feature estimates when the finite event share is zero.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,
