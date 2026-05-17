@@ -215,14 +215,16 @@ cache is kept as `source.txt` for named-statement audits.
   expose the matching contrapositive form.
   The compact certificate aliases
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_source_equilibrium`,
+  `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium`,
   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_source_equilibrium`,
+  `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_zero_event_share_blank_source_equilibrium`,
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_or_blank_constant_latent_surface_posterior_payoff`,
   `paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff`,
   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_constant_latent_surface_unit_centered_payoff`,
   and
   `paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff`
-  package the source-equilibrium event-or-blank, concrete event-or-blank, and
-  constructed blank-on-zero-share routes as
+  package the source-equilibrium event-or-blank, source zero-share, concrete
+  event-or-blank, and constructed blank-on-zero-share routes as
   `LG21FairnessImpossibilityCertificate`s for downstream Section 3 callers.
 - The certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now also have Section 3 hidden-access implication
