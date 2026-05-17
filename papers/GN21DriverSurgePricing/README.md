@@ -1468,11 +1468,31 @@ which reroute middle syntax through the exact non-surge reject-long or surge
 reject-short endpoint for the same policy.  The corresponding paper-facing
 Theorem 3 entry point is
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_exact_one_threshold_selection_unless_source_assumptions`.
+The source-faithful variant is now
+`Theorem4MeasurableEndpointCurrentBoundsExactOneThresholdNonAcceptAllSelectionUnlessCertificate`
+and
+`Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless`:
+it requires the finite non-surge reject-long / surge reject-short exact
+selectors only under the branch-local `¬ acceptsAllTrips` hypothesis, matching
+the paper's extended-cutoff convention where accept-all is represented by
+`t = infinity` in the non-surge branch and by the zero cutoff in the surge
+short branch.  The paper-facing AE entry points are
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless_source_assumptions`
+and
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_endpoint_selection`.
 For the constructed Theorem 3 prices, the fixed-transfer local endpoint data
 now feeds this exact current-bounds selector through
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate`
 and
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdSelectionUnlessCertificate.to_endpoint_current_bounds_exact_one_threshold_selection_unless`.
+The source-faithful fixed-transfer version is
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessCertificate`
+with the bridge
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessCertificate.to_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless`.
+Its paper-facing route is
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_source_assumptions`,
+exposed compactly as
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer`.
 This is the lighter fixed-transfer boundary for normalized exact
 one-threshold proofs: it asks only for non-surge reject-long and surge
 reject-short local packages, then uses the exact selector to cover middle

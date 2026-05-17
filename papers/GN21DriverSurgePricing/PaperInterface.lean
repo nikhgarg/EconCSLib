@@ -332,6 +332,43 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_m
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the exact one-threshold endpoint route with finite exact cutoffs
+required only in non-accept-all branches.  This matches the paper's extended
+cutoff convention while still proving the measurable IC and a.e.-uniqueness
+conclusion.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_endpoint_selection
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsExactOneThresholdNonAcceptAllSelectionUnlessSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the fixed-transfer exact one-threshold route with finite exact
+cutoffs required only in non-accept-all branches.  This is the source-facing
+fixed-transfer version of the extended-cutoff endpoint selector.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the fixed-transfer middle-reroute route with source-facing
 allowed replacement data: the exact endpoint selection derives accept-all
 optimality internally and feeds the direct AE endpoint route, yielding the
