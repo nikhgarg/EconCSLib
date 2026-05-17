@@ -701,6 +701,54 @@ theorem paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_sh
     studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate hzero
 
 /--
+Definition 5 constructor check: the blank-on-zero-share full-feature estimate
+preserves the raw full-feature estimate at every nonzero-share profile.
+-/
+theorem paper_interface_definition5_blank_on_zero_event_share_eq_raw_of_nonzero_share
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (e : Equilibrium) (base : Base)
+    (hshare :
+      (lg21PMFEventShareFn studentLaw event decEvent e base).toReal ≠ 0)
+    (test : Test) :
+    lg21FullFeatureEstimateBlankOnZeroEventShare
+      studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+      e base test =
+        rawFullFeatureEstimate e base test :=
+  lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_nonzero_share
+    studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+    e base hshare test
+
+/--
+Definition 5 constructor check: the blank-on-zero-share full-feature estimate
+preserves the raw full-feature estimate at every positive-mass event profile.
+-/
+theorem paper_interface_definition5_blank_on_zero_event_share_eq_raw_of_positive_event
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (e : Equilibrium) (base : Base) (student : Student)
+    (hevent : event e base student)
+    (hmass : 0 < (studentLaw e base student).toReal)
+    (test : Test) :
+    lg21FullFeatureEstimateBlankOnZeroEventShare
+      studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+      e base test =
+        rawFullFeatureEstimate e base test :=
+  lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_positive_event
+    studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+    e base student hevent hmass test
+
+/--
 Continuous-law Definition 5 witness form.
 -/
 theorem paper_interface_not_law_test_blank_iff_exists_evidence

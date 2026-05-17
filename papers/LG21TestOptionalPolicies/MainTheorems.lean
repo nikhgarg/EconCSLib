@@ -4770,6 +4770,58 @@ theorem lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
   simp [lg21FullFeatureEstimateBlankOnZeroEventShare, hzero]
 
 /--
+The blank-on-zero-share constructor preserves the supplied raw full-feature
+estimate at every nonzero-share profile.
+-/
+theorem lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_nonzero_share
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (e : Equilibrium) (base : Base)
+    (hshare :
+      (lg21PMFEventShareFn studentLaw event decEvent e base).toReal ≠ 0)
+    (test : Test) :
+    lg21FullFeatureEstimateBlankOnZeroEventShare
+      studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+      e base test =
+        rawFullFeatureEstimate e base test := by
+  simp [lg21FullFeatureEstimateBlankOnZeroEventShare, hshare]
+
+/--
+The blank-on-zero-share constructor preserves the supplied raw full-feature
+estimate at every profile with a positive-mass reporter/taker event.
+-/
+theorem lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_positive_event
+    {Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (rawFullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (e : Equilibrium) (base : Base) (student : Student)
+    (hevent : event e base student)
+    (hmass : 0 < (studentLaw e base student).toReal)
+    (test : Test) :
+    lg21FullFeatureEstimateBlankOnZeroEventShare
+      studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+      e base test =
+        rawFullFeatureEstimate e base test := by
+  have hshare_pos :
+      0 < (lg21PMFEventShareFn studentLaw event decEvent e base).toReal :=
+    (lg21PMFEventShareFn_pos_iff_exists_pos_mass
+      studentLaw event decEvent e base).2
+      ⟨student, hevent, hmass⟩
+  exact
+    lg21FullFeatureEstimateBlankOnZeroEventShare_eq_raw_of_nonzero_share
+      studentLaw event decEvent baseOnlyEstimate rawFullFeatureEstimate
+      e base (ne_of_gt hshare_pos) test
+
+/--
 The blank-on-zero-share full-feature estimate discharges Theorem 3.2's
 positive-event/share-or-blank case split by construction.
 -/

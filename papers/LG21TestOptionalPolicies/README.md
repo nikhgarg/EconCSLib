@@ -275,6 +275,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_definition5_test_blank_of_no_positive_event_blank`,
   `paper_interface_definition5_test_blank_of_zero_event_share_blank`, and
   `paper_interface_definition5_blank_on_zero_event_share_eq_base_of_zero_share`.
+  The same constructor also has raw-preservation endpoints
+  `paper_interface_definition5_blank_on_zero_event_share_eq_raw_of_nonzero_share`
+  and
+  `paper_interface_definition5_blank_on_zero_event_share_eq_raw_of_positive_event`,
+  so the audit trail records that blank-on-zero normalization only changes
+  zero-share profiles and agrees with the raw full-feature estimate law on
+  nonzero/positive-event profiles.
   These make the "no one reports/takes, hence test-blank" branch checkable
   separately from the positive-share unraveling contradiction.
   The companion test-blank branch now has source-surface bridges
