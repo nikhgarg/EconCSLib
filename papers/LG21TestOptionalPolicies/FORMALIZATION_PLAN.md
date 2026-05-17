@@ -206,6 +206,12 @@ Last updated: 2026-05-16
   `lg21ThresholdStrategicWithholdingSourceWitness`, including an explicit
   below-cutoff non-reporting score, and PMF/law wrappers prove failure of all
   three fairness criteria from concrete distribution-difference witnesses.
+  The finite event-share layer now has strict complement-mass bounds:
+  `lg21PMFEventShare_lt_one_of_mass_not` and
+  `lg21PMFEventShareFn_lt_one_of_mass_not` prove that a positive-mass atom
+  outside the reporter/taker event makes the corresponding finite share
+  strictly below one, giving a reusable route to the `accessFraction < 1`
+  premise in source-mixture instantiations.
 - Theorem 3.2 now has PMF and continuous-law endpoints, no-relevance forms,
   and contrapositive wrappers: test-blankness is equivalent to absence of a
   concrete base/test relevance witness, and such a witness rules out

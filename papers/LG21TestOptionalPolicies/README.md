@@ -128,6 +128,12 @@ cache is kept as `source.txt` for named-statement audits.
   `LG21SchoolInformationSet.fromAccessAction false`, then return the relevant
   optional-reporting or report-required strategic-withholding and unfairness
   conclusions.
+- The finite event-share helpers now include the strict complement-mass bound
+  `paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_mass_not`: a
+  positive-mass no-reporter/no-taker atom makes the reporter/taker share
+  strictly below one.  This supplies a paper-facing way to justify the
+  `accessFraction < 1` source-mixture hypothesis when the fraction is modeled
+  as a finite cohort/event share.
 
 ### Recent Theorem 3.2 Progress
 

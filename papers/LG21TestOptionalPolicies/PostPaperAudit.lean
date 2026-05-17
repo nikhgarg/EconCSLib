@@ -98,6 +98,10 @@ abbrev audit_theorem3_1_section3_report_required_pmf :=
 abbrev audit_theorem3_2_positive_event_or_blank_bridge :=
   @paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank
 
+/-- Audit endpoint for finite event shares being strictly below one. -/
+abbrev audit_event_share_lt_one_of_complement_mass :=
+  @paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_mass_not
+
 /-- Audit endpoint for Theorem 3.2, optional-reporting fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_optional_reporting_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility

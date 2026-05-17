@@ -7186,6 +7186,17 @@ theorem paper_interface_theorem3_2_pmf_event_share_pos_of_mass
     0 < (paper_interface_theorem3_2_pmf_event_share μ p).toReal :=
   lg21PMFEventShare_pos_of_mass μ p a₀ hp hmass
 
+/--
+Theorem 3.1/3.2 helper: a positive-mass atom outside the event makes the finite
+event share strictly below one.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_lt_one_of_mass_not
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : ¬p a₀) (hmass : 0 < (μ a₀).toReal) :
+    paper_interface_theorem3_2_pmf_event_share μ p < 1 :=
+  lg21PMFEventShare_lt_one_of_mass_not μ p a₀ hp hmass
+
 /-- Theorem 3.2 helper: base-indexed finite event shares. -/
 noncomputable def paper_interface_theorem3_2_pmf_event_share_fn
     {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
@@ -7223,6 +7234,23 @@ theorem paper_interface_theorem3_2_pmf_event_share_fn_pos_of_mass
         (paper_interface_theorem3_2_pmf_event_share_fn
           studentLaw event decEvent e base).toReal :=
   lg21PMFEventShareFn_pos_of_mass studentLaw event decEvent hwitness
+
+/--
+Theorem 3.1/3.2 helper: base-indexed finite event shares are strictly below one
+from positive-mass complement witnesses.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_mass_not
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (hwitness :
+      ∀ e base, ∃ student, ¬ event e base student ∧
+        0 < (studentLaw e base student).toReal) :
+    ∀ e base,
+      paper_interface_theorem3_2_pmf_event_share_fn
+        studentLaw event decEvent e base < 1 :=
+  lg21PMFEventShareFn_lt_one_of_mass_not studentLaw event decEvent hwitness
 
 /--
 Theorem 3.2 report-required affine algebra: a centered base-term identity gives

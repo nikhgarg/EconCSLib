@@ -56,6 +56,9 @@ unconditional theorem over every possible estimation policy.
   report-required source surfaces. The Lean endpoints expose the mixture
   fraction bounds, positive Gaussian/affine slope hypotheses, and concrete
   law surfaces needed by the cutoff and unfairness arguments.
+  Finite event-share helpers now include strict complement-mass bounds, so a
+  positive-mass no-reporter/no-taker atom can discharge the `accessFraction < 1`
+  premise when the mixture fraction is instantiated as a finite event share.
 - Theorem 3.2 is formalized through explicit event-or-blank source surfaces.
   The final aliases state the paper's hidden-access implication and no-relevance
   readings, while the concrete routes expose the positive event-share or

@@ -4223,6 +4223,18 @@ theorem lg21PMFEventShare_pos_of_mass
     0 < (lg21PMFEventShare μ p).toReal := by
   simpa using pmfProb_pos_of_mass μ p a₀ hp hmass
 
+/--
+A finite PMF event share is strictly below one when the complement contains a
+positive-mass atom.
+-/
+theorem lg21PMFEventShare_lt_one_of_mass_not
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : ¬p a₀) (hmass : 0 < (μ a₀).toReal) :
+    lg21PMFEventShare μ p < 1 := by
+  change pmfProb μ p < (1 : ℝ)
+  exact pmfProb_lt_one_of_mass_not μ p a₀ hp hmass
+
 /-- Base-indexed finite event shares for source reporter/taker groups. -/
 noncomputable def lg21PMFEventShareFn
     {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
@@ -4264,6 +4276,25 @@ theorem lg21PMFEventShareFn_pos_of_mass
   dsimp [lg21PMFEventShareFn]
   exact @lg21PMFEventShare_pos_of_mass Student _ _ (studentLaw e base)
     (event e base) (decEvent e base) student hevent hmass
+
+/--
+Base-indexed finite event shares are strictly below one whenever each indexed
+event has a positive-mass atom outside it.
+-/
+theorem lg21PMFEventShareFn_lt_one_of_mass_not
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (hwitness :
+      ∀ e base, ∃ student, ¬ event e base student ∧
+        0 < (studentLaw e base student).toReal) :
+    ∀ e base, lg21PMFEventShareFn studentLaw event decEvent e base < 1 := by
+  intro e base
+  rcases hwitness e base with ⟨student, hnot_event, hmass⟩
+  dsimp [lg21PMFEventShareFn]
+  exact @lg21PMFEventShare_lt_one_of_mass_not Student _ _ (studentLaw e base)
+    (event e base) (decEvent e base) student hnot_event hmass
 
 /--
 Positive mass survives pushing a PMF forward to the image point.  This is used
