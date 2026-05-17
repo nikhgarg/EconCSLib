@@ -154,6 +154,13 @@ cache is `source.txt`.
   when the non-surge cutoff is written with the paper's `t = infinity`
   convention.  These wrappers keep the pointwise non-surge transfer comparison
   but no longer require exact finite raw selectors for accept-all branches.
+  The compact `PaperInterface` now also exposes the canonical end-of-file
+  Theorem 3 source boundaries:
+  `theorem3_structured_ic_of_positive_replacement`,
+  `theorem3_structured_ic_of_allowed_replacement`, and
+  `theorem3_structured_ic_of_endpoint_bridge`.  These are the review-surface
+  names for the direct constructed-price route; the last one isolates the
+  remaining continuous endpoint-bridge proof for the constructed prices.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,

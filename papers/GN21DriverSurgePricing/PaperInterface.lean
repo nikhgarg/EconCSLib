@@ -225,6 +225,61 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Canonical source-facing Theorem 3 endpoint at the positive-replacement
+boundary: constructed-price algebra and Lemma 9/10 primitive scalar conditions
+are discharged in Lean; the source supplies the positive Lemma 5 replacement
+proof for the constructed prices.
+-/
+theorem theorem3_structured_ic_of_positive_replacement
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllPositiveReplacementSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Canonical source-facing Theorem 3 endpoint at the allowed-replacement
+boundary: Lean constructs the price family and reduces IC to the continuous
+Theorem 4 allowed-replacement certificate for those constructed prices.
+-/
+theorem theorem3_structured_ic_of_allowed_replacement
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllAllowedReplacementSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Canonical source-facing Theorem 3 endpoint at the endpoint-bridge boundary:
+the remaining source obligation is to build the paper's continuous endpoint
+bridge certificate for each constructed price vector.
+-/
+theorem theorem3_structured_ic_of_endpoint_bridge
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllAllowedReplacementEndpointBridgeSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the exact endpoint current-bounds selection route: exact endpoint
 selections imply structured measurable IC and the paper's a.e. uniqueness
 convention.
