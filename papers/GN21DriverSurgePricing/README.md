@@ -364,11 +364,11 @@ cache is `source.txt`.
   cycle-normalized envelope `max m_0 (arrival_0*z_0)`, using accept-all mass
   normalization and finite current mass.  The scalar helper
   `theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2` discharges the
-  zero-ratio condition when `arrival_0*z_0 <= R2`; the newest source wrapper
-  uses that bound directly instead of asking for the opaque zero-ratio
-  numerator.  The scalar bridge
+  zero-ratio condition when `arrival_0*z_0 <= R2`.  The newest source wrapper
+  asks for the dimensionless numerator bound directly instead of either the
+  constructed-`z_0` product or the opaque zero-ratio numerator.  The scalar bridge
   `theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound` proves this
-  side condition from the dimensionless numerator inequality
+  constructed-product side condition from the numerator inequality
   `arrival_0*(rho*T_1-(T_1-1)) <= Q_1-switch12`.  Conversely,
   `theorem3_scalar_conditions_do_not_imply_arrival_nonsurge_z_le_R2` is a
   compiled counterexample showing that the broad displayed Theorem 3 scalar

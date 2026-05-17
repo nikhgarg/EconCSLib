@@ -934,9 +934,10 @@ Recommended proof order
 
      theorem3MassAffineRmax_zero_ratio_pos_of_arrival_z_le_R2
 
-   from the explicit source-side condition `arrival0*z0 <= R2`.  If that bound
-   is not implied by the source regime, document it as the exact extra regime
-   condition; do not go back to the opaque `0 < R2*T2 - Rmax*(T2 - 1)` field.
+   from the explicit source-side condition `arrival0*z0 <= R2`.  The active
+   source wrapper now asks for the dimensionless numerator inequality below
+   and derives `arrival0*z0 <= R2` internally; do not go back to the opaque
+   `0 < R2*T2 - Rmax*(T2 - 1)` field.
    The bridge
 
      theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
@@ -1046,10 +1047,11 @@ Recommended proof order
    fixed-state-by-policy-form / common equality and cutoff-bound source fields
    from the paper's regularity hypotheses, then consume them through the
    middle-reroute source wrappers rather than the older cutoff-only route.
-6. Prove or explicitly source-assume the exposed arrival/intercept bound
-   `arrival0*z0 <= R2`.  The compiled bridge now reduces this to
-   `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`; the compiled counterexample
-   shows the broad feasibility inequalities do not imply it by themselves.
+6. Prove or explicitly source-assume the exposed arrival/intercept numerator
+   bound `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`.  This is now the active
+   source-wrapper field; Lean derives `arrival0*z0 <= R2` from it.  The
+   compiled counterexample shows the broad feasibility inequalities do not
+   imply it by themselves.
 7. Prove the selected-price current lower interval slack, probably using the
    explicit small-ratio formula for `z_2,m_2` and the signed current reward
    envelope.  If this fails, the paper needs an explicit uniform lower-bound
