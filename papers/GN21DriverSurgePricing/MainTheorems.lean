@@ -45974,6 +45974,228 @@ theorem lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_o
   nlinarith [harrival_pos, hlinear]
 
 /--
+Fixed-response Lemma 5 hypotheses when the source proof has already
+identified the positive-response policy form, but not necessarily the stronger
+analytic response-shape data after a positive state-dependent scaling.
+-/
+structure Lemma5FixedResponsePolicyFormFeasibleOptimalData
+    (μ : Measure TripLength) (response : TripLength → ℝ)
+    (shape : Lemma5DerivativeShape) (σ : TripPolicy) where
+  marker : Unit := ()
+  policy_form_data : Lemma5PositiveResponsePolicyFormData response shape
+  response_measurable : Measurable response
+  response_integrable_acceptAll :
+    IntegrableOn response acceptAllPolicy μ
+  optimal :
+    ∀ σ' : TripPolicy,
+      σ' ⊆ acceptAllPolicy →
+      MeasurableSet σ' →
+        lemma5MarginalSetReward μ response σ' ≤
+          lemma5MarginalSetReward μ response σ
+
+/--
+Non-surge source adapter: dynamic optimality plus the normalized Lemma 6
+positive-response policy form produces the fixed-response Lemma 5 data for the
+measured marginal response.
+-/
+def gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) ρ)
+    (Ri Rj : ℝ) {shape : Lemma5DerivativeShape}
+    (Dbase :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredLeftLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (ρ 0) (ρ 1)
+          Ri Rj) shape)
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hresponse_measurable :
+      Measurable
+        (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1)))
+    (hresponse_integrable_acceptAll :
+      IntegrableOn
+        (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1))
+        acceptAllPolicy (μ 0))
+    (harrival_pos : 0 < arrival 0)
+    (Hcurrent :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hcandidate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 σ (ρ 1))
+    (hden_candidate_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) *
+                gn21ScaledStateTime (μ 0) (arrival 0) σ)
+    (hq_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+            σ (μ 0))
+    (hw_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (w 0) σ (μ 0))
+    (htime_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 0)) :
+    Lemma5FixedResponsePolicyFormFeasibleOptimalData (μ 0)
+      (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1)) shape (ρ 0) where
+  policy_form_data :=
+    gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) Ri Rj Dbase hQj_pos hTi_pos
+      hTj_pos hden_pos hWi hWj
+  response_measurable := hresponse_measurable
+  response_integrable_acceptAll := hresponse_integrable_acceptAll
+  optimal :=
+    lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_zero
+      μ arrival switch12 switch21 w hρ harrival_pos Hcurrent Hcandidate
+      hden_pos hden_candidate_pos hq_integrable hw_integrable
+      htime_integrable
+
+/--
+Surge-state source adapter: dynamic optimality plus the normalized Lemma 6
+positive-response policy form produces the fixed-response Lemma 5 data for the
+measured marginal response.
+-/
+def gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) ρ)
+    (Ri Rj : ℝ) {shape : Lemma5DerivativeShape}
+    (Dbase :
+      Lemma5PositiveResponsePolicyFormData
+        (gn21MeasuredRightLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 1) (ρ 0) (ρ 1)
+          Ri Rj) shape)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0) (w 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1) (w 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hresponse_measurable :
+      Measurable
+        (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1)))
+    (hresponse_integrable_acceptAll :
+      IntegrableOn
+        (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1))
+        acceptAllPolicy (μ 1))
+    (harrival_pos : 0 < arrival 1)
+    (Hcurrent :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (Hcandidate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) σ)
+    (hden_candidate_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) *
+              gn21ScaledStateTime (μ 1) (arrival 1) σ +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hq_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+            σ (μ 1))
+    (hw_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (w 1) σ (μ 1))
+    (htime_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 1)) :
+    Lemma5FixedResponsePolicyFormFeasibleOptimalData (μ 1)
+      (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1)) shape (ρ 1) where
+  policy_form_data :=
+    gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (w 0) (w 1) (ρ 0) (ρ 1) Ri Rj Dbase hQi_pos hTi_pos
+      hTj_pos hden_pos hWi hWj
+  response_measurable := hresponse_measurable
+  response_integrable_acceptAll := hresponse_integrable_acceptAll
+  optimal :=
+    lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_one
+      μ arrival switch12 switch21 w hρ harrival_pos Hcurrent Hcandidate
+      hden_pos hden_candidate_pos hq_integrable hw_integrable
+      htime_integrable
+
+/--
 Positive affine transfer from dynamic local optimality to Lemma 5 marginal
 optimality.  If the fixed-state continuation reward is a positive affine
 transform of the fixed-response marginal integral on feasible measurable
@@ -46100,26 +46322,6 @@ def Theorem4AllMeasurableFixedResponseShapeData.to_feasible_ae_policy_forms
           (μ 1) response (ρ 1) D.shape_data D.response_measurable
           D.response_integrable_acceptAll (hρ.1 1).2 (hρ.1 1).1
           D.optimal⟩
-
-/--
-Fixed-response Lemma 5 hypotheses when the source proof has already
-identified the positive-response policy form, but not necessarily the stronger
-analytic response-shape data after a positive state-dependent scaling.
--/
-structure Lemma5FixedResponsePolicyFormFeasibleOptimalData
-    (μ : Measure TripLength) (response : TripLength → ℝ)
-    (shape : Lemma5DerivativeShape) (σ : TripPolicy) where
-  marker : Unit := ()
-  policy_form_data : Lemma5PositiveResponsePolicyFormData response shape
-  response_measurable : Measurable response
-  response_integrable_acceptAll :
-    IntegrableOn response acceptAllPolicy μ
-  optimal :
-    ∀ σ' : TripPolicy,
-      σ' ⊆ acceptAllPolicy →
-      MeasurableSet σ' →
-        lemma5MarginalSetReward μ response σ' ≤
-          lemma5MarginalSetReward μ response σ
 
 /-- Stronger analytic shape data imply the smaller policy-form fixed-response package. -/
 def Lemma5FixedResponsePolicyFormFeasibleOptimalData.of_shapeData

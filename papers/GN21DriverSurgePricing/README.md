@@ -977,6 +977,12 @@ consumers are
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_improvements`
 and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_source_assumptions`.
+The state-level adapters
+`gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
+and
+`gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
+assemble the required fixed-response Lemma 5 data from dynamic optimality and
+scaled Lemma 6 policy-form data.
 
 Additional bridge-adapter declarations now connect the concrete endpoint
 calculus to the top-level routes without extra structure plumbing:

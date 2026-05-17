@@ -288,6 +288,13 @@ and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_source_assumptions`.
 For Theorem 3, package the constructed-price state data as
 `GN21Theorem3FixedResponsePolicyFormSourceData`.
+The state-level adapters
+`gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
+and
+`gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
+now produce the fixed-response Lemma 5 data directly from dynamic optimality,
+the measured quotient bridge, current `W=R*T` identities, measured-response
+regularity, and the scaled Lemma 6 policy-form data.
 When only dynamic local optimality is available, use
 the measured GN21 quotient bridge first:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,

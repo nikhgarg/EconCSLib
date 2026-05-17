@@ -202,6 +202,13 @@ and
 For constructed Theorem 3 prices, fill
 `GN21Theorem3FixedResponsePolicyFormSourceData` rather than manually
 materializing `GN21Theorem3FeasibleAERepresentativeSourceData`.
+The single-state adapters
+`gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
+and
+`gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
+now combine dynamic optimality, the quotient-to-marginal optimality bridge,
+current reward-rate identities, response measurability/integrability, and the
+scaled Lemma 6 policy-form package into the fixed-response Lemma 5 data object.
 If the remaining work has dynamic local optimality but not marginal optimality
 yet, the measured GN21 reward now has a direct quotient-to-marginal bridge:
 `gn21AggregateDynamicReward_candidate_left_linear_score_le_current_of_le`,
