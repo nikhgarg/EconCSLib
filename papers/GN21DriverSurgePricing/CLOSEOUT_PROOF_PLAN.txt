@@ -262,6 +262,8 @@ endpoint constructors:
   GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_rejectsMiddleTrips_and_upper_cutoff_bound
   GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_cutoff_bound
   GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.of_rejectShort_and_rejectMiddle_cutoff_bounds
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_by_policy_form_middle_cutoff_reroute_ae_local_endpoint
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_surge_reject_short_cutoff_bound
 
 Use these when the source proof can show, for a positive surge short cutoff
@@ -280,6 +282,11 @@ relevant cutoff is nonpositive, the rejected complement is empty.  Do not try
 to prove the stronger automatic statement from `rejectsShortTrips u` alone.  It
 can fail because the fixed-state ratio also contains the base switch term,
 whose per-time ratio is the switch rate and can sit above `q(u)/u`.
+For the preferred by-policy-form middle-cutoff route, use the new
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate`
+when possible: it exposes exactly these surge cutoff fields plus the non-surge
+cross-ratio policy-form package, and Lean expands it to the older local
+endpoint record.
 
 Exact normalized one-threshold branch route: Lean now also has
 
