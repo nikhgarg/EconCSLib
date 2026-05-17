@@ -1210,6 +1210,16 @@ This is the current sharpest paper-facing Theorem 3 boundary: Lemma 6 bracket
 data build the fixed-response Lemma 5 forms internally, while Lemma 9/10
 endpoint work only has to supply the branch-indexed by-policy-form
 middle-cutoff certificate.
+For normalized exact one-threshold source proofs, the lighter
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate`,
+`GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData`, and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`
+route assume exact non-surge reject-long and surge reject-short syntax for
+current optima, then ask only for those two fixed-state branch packages.  Do
+not treat the exact selectors as automatic consequences of the ordinary a.e.
+fixed-response Lemma 5 boundary; use this route only after the policy has been
+normalized to the exact representative, or keep the broader by-policy-form
+middle-cutoff boundary.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

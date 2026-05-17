@@ -244,6 +244,22 @@ instead of a pointwise equality.
 do not try to prove global pointwise equality on the rejected long-trip tail
 unless the source argument genuinely supplies it.
 
+Exact normalized one-threshold branch route: Lean now also has
+
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.to_by_policy_form_middle_cutoff_reroute_ae_local_endpoint
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+
+This is a deliberately exact-policy boundary.  It assumes every current
+optimum already has exact non-surge reject-long and surge reject-short syntax,
+then uses only those two fixed-state branch packages.  Do not derive this exact
+selector from the ordinary fixed-response a.e. Lemma 5 output without first
+updating the current policy to the representative, because null boundary edits
+can destroy exact ray syntax for the raw policy.  Use this route after an
+explicit normalization step, or keep using the broader by-policy-form
+middle-cutoff boundary when exact normalization has not been proved.
+
 
 Meaning of r1_current
 ---------------------
