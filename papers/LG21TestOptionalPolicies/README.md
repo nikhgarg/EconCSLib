@@ -185,6 +185,11 @@ cache is kept as `source.txt` for named-statement audits.
   These endpoints make the paper hypothesis "the school does not know access
   status" a theorem conjunct before returning fairness-implies-test-blankness
   or the equivalent absence of concrete base/test relevance witnesses.
+  The concrete positive-share constant-latent event-share surfaces now also
+  have direct Section 3 no-relevance aliases for optional-reporting and
+  report-required regimes, so the audit surface exposes hidden access and the
+  "no concrete base/test relevance witness under fairness" conclusion without
+  routing through the event-or-blank case split.
 - Theorem 3.2 now also has PMF and continuous-law iff wrappers that combine
   the fairness-impossibility certificate with the Definition 5-to-Definition 3
   bridge.  Under the standard source identities that observable access uses

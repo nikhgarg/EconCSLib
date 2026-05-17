@@ -4363,6 +4363,13 @@ theorem paper_interface_theorem3_2_optional_reporting_no_test_relevance_of_gauss
     decisionThreshold hEq hthreshold hwitness hfair
 
 /--
+Paper-facing Theorem 3.2 Section 3 optional-reporting no-relevance endpoint on
+the concrete constant-latent positive-share event-share surface.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium
+
+/--
 Paper-facing Theorem 3.2 Section 3 optional-reporting concrete case-split
 endpoint on the constant-latent posterior-payoff event-share surface.
 -/
@@ -6466,6 +6473,13 @@ theorem paper_interface_theorem3_2_report_required_no_test_relevance_of_upper_ta
     baseOnlyEstimate fullFeatureEstimate takeDecision reportDecision
     estimationConsistent referenceTest actorLaw decisionThreshold hEq
     hthreshold hwitness hfair
+
+/--
+Paper-facing Theorem 3.2 Section 3 report-required no-relevance endpoint on
+the concrete constant-latent positive-share event-share surface.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium
 
 /--
 Paper-facing Theorem 3.2 Section 3 report-required concrete case-split

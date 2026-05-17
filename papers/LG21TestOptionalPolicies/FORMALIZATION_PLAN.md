@@ -425,6 +425,13 @@ Last updated: 2026-05-16
   `paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`
   now packages the concrete unit-centered report-required surface into the same
   compact certificate interface.
+  The direct Section 3 positive-share no-relevance wrappers
+  `paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
+  and
+  `paper_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`
+  bundle hidden access with the corresponding nonempty-equilibrium
+  no-relevance endpoints, so audit callers can use the concrete positive-share
+  surfaces without going through the broader event-or-blank case split.
   The
   finite acting-distribution
   lemmas

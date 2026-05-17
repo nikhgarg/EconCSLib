@@ -202,6 +202,10 @@ abbrev audit_theorem3_2_optional_reporting_event_or_blank_fairness_certificate :
 abbrev audit_theorem3_2_optional_reporting_blank_on_zero_share_fairness_certificate :=
   @paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff
 
+/-- Audit endpoint for the optional-reporting concrete positive-share no-relevance route. -/
+abbrev audit_theorem3_2_optional_reporting_positive_share_no_relevance :=
+  @paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium
+
 /-- Audit endpoint for the report-required source-equilibrium event-or-blank fairness certificate. -/
 abbrev audit_theorem3_2_report_required_source_event_or_blank_fairness_certificate :=
   @paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_event_or_blank_source_equilibrium
@@ -233,6 +237,10 @@ abbrev audit_theorem3_2_report_required_event_or_blank_fairness_certificate :=
 /-- Audit endpoint for the report-required blank-on-zero-share fairness certificate. -/
 abbrev audit_theorem3_2_report_required_blank_on_zero_share_fairness_certificate :=
   @paper_interface_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff
+
+/-- Audit endpoint for the report-required concrete positive-share no-relevance route. -/
+abbrev audit_theorem3_2_report_required_positive_share_no_relevance :=
+  @paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium
 
 /-- Audit endpoint for converting zero-share blankness into no-positive-event blankness. -/
 abbrev audit_theorem3_2_no_positive_event_blank_of_zero_event_share_blank :=
