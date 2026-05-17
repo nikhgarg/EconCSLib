@@ -390,6 +390,13 @@ cache is `source.txt`.
   `lemma9StructuredFeasibilityGap_pos_of_positive_primitives`: it proves the
   cross-multiplied lower/upper interval gap is positive from primitive signs,
   without assuming the stronger lower endpoint is nonpositive.
+  Lemma 10 now has the parallel source-sign feasibility closure:
+  `lemma10StructuredLowerNumerator_pos_of_positive_primitives`,
+  `lemma10StructuredLowerDenominator_pos_of_positive_primitives`,
+  `lemma10StructuredUpperDenominator_pos_of_switch_lt_exit`, and
+  `paper_lemma10_structured_bounds_feasible_of_positive_primitives` prove
+  directly that the paper's displayed Lemma 10 ratio interval contains `0`
+  from the Remark 4 gap and strict exit-weight signs.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.
