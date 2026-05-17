@@ -1240,7 +1240,12 @@ and
 This is the lighter fixed-transfer boundary for normalized exact
 one-threshold proofs: it asks only for non-surge reject-long and surge
 reject-short local packages, then uses the exact selector to cover middle
-syntax.
+syntax.  The paper-facing entry points for this route are
+`Theorem3AcceptAllMeasurableEndpointCurrentBoundsExactOneThresholdSelectionUnlessPositiveSourceAssumptions`
+and
+`paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_selection_unless_source_assumptions`;
+the latter takes all-optimal Lemma 5 replacement data plus the fixed-transfer
+exact local endpoint package for each constructed positive-parameter price.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
