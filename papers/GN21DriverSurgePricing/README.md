@@ -1415,6 +1415,11 @@ and
   and
   `theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements`,
   so their compatibility wrappers derive accept-all optimality internally.
+  The fixed-response rejected-mass Theorem 3 source boundary also has the
+  no-accept-all version
+  `GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData` with
+  wrapper
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_rejected_mass_existence_source_assumptions`.
   The same bridge now powers the by-policy-form and light middle-reroute
   Theorem 3 source boundaries:
   `GN21Theorem3MiddleRerouteAEPolicyFormSourceExistenceData`,

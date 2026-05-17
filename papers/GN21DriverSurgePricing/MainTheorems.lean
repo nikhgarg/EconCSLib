@@ -84612,6 +84612,101 @@ structure GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData
             μ arrival m z switch12 switch21 ρ
 
 /--
+Existence-based fixed-response rejected-mass source data.  It omits the
+accept-all optimality field; the all-optima fixed-response package contains
+existence, and the hpos-aware endpoint improvements derive accept-all
+optimality afterward.
+-/
+structure GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  forms :
+    Theorem4AllMeasurableFixedResponsePolicyFormData μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  nonsurge_reject_long_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      0 < (μ 0) (acceptAllPolicy \ ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      0 < (μ 1) (acceptAllPolicy \ ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+
+/--
+The existence-based fixed-response rejected-mass source package derives the
+older package with an explicit accept-all optimality field.
+-/
+def GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.to_source_data
+    {μ : Fin 2 → Measure TripLength}
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (D :
+      GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData
+        μ arrival switch12 switch21 m z) :
+    GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData μ arrival
+      switch12 switch21 m z where
+  forms := D.forms
+  accept_all_optimal :=
+    (theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements
+      μ arrival m z switch12 switch21 D.forms
+      D.nonsurge_reject_long_improvement
+      D.nonsurge_accept_middle_improvement
+      D.surge_reject_short_improvement
+      D.surge_reject_middle_improvement).to_accept_all_certificate.accept_all_optimal
+  nonsurge_reject_long_improvement := D.nonsurge_reject_long_improvement
+  nonsurge_accept_middle_improvement := D.nonsurge_accept_middle_improvement
+  surge_reject_short_improvement := D.surge_reject_short_improvement
+  surge_reject_middle_improvement := D.surge_reject_middle_improvement
+
+/--
 The older fixed-response source data are a special case of the
 positive-rejected-mass-aware source data.
 -/
@@ -85163,6 +85258,106 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fix
       (theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_fixed_response_policy_form_rejected_mass
         μ arrival R1 R2 switch12 switch21
         A.fixed_response_policy_form_rejected_mass_selection)
+
+/--
+Existence-based fixed-response policy-form endpoint data instantiate the
+positive-rejected-mass strict-local Theorem 3 boundary without a source-level
+accept-all optimality field.
+-/
+def theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_fixed_response_policy_form_rejected_mass_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (C :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData
+            μ arrival switch12 switch21 m z) :
+    theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate
+      μ arrival R1 R2 switch12 switch21 := by
+  intro m z hnonneg hparams
+  let D := C m z hnonneg hparams
+  exact
+    (theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements
+      μ arrival m z switch12 switch21 D.forms
+      D.nonsurge_reject_long_improvement
+      D.nonsurge_accept_middle_improvement
+      D.surge_reject_short_improvement
+      D.surge_reject_middle_improvement).to_accept_all_certificate
+
+/--
+Source-level assumptions for the existence-based fixed-response
+positive-rejected-mass route.
+-/
+structure Theorem3AcceptAllMeasurableFixedResponsePolicyFormRejectedMassExistenceSourceAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR1_pos : 0 < R1
+  hR1_lt_R2 : R1 < R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmeasure1_pos : 0 < μ 0 acceptAllPolicy
+  hmeasure2_pos : 0 < μ 1 acceptAllPolicy
+  fixed_response_policy_form_rejected_mass_existence_selection :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredPositiveParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData
+            μ arrival switch12 switch21 m z
+
+/--
+Paper-facing Theorem 3 AE wrapper from the existence-based fixed-response
+positive-rejected-mass source boundary.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_rejected_mass_existence_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponsePolicyFormRejectedMassExistenceSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_rejected_mass_strict_local_positive_parameters
+      μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR1_pos
+      A.hR1_lt_R2 A.hR2_pos A.hC_lt_rho A.hrho_lt_one
+      A.harrival1_pos A.harrival2_pos A.hswitch12_pos A.hswitch21_pos
+      A.htime1_integrable A.htime2_integrable A.hq1_integrable
+      A.hq2_integrable A.hmeasure1_pos A.hmeasure2_pos
+      (theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_fixed_response_policy_form_rejected_mass_existence
+        μ arrival R1 R2 switch12 switch21
+        A.fixed_response_policy_form_rejected_mass_existence_selection)
 
 /--
 The older fixed-response source assumptions imply the
