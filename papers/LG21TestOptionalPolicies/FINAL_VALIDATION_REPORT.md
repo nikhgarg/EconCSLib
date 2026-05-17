@@ -86,5 +86,8 @@ unconditional theorem over every possible estimation policy.
 - `lake build LG21TestOptionalPolicies` passed.
 - `latexmk -pdf DependencyDAG.tex` in this folder reported the DAG PDF
   up to date.
-- `git diff --check` passed for the status update that introduced the current
-  front-door LG21 summary.
+- `python3 scripts/audit_repository.py` was run from the repository root. The
+  command still reports unrelated repo-wide cached-PDF/status issues in other
+  paper folders, but after restoring this folder's ignored local `source.pdf`,
+  it no longer reports LG21-specific errors or warnings.
+- `git diff --check` passed.

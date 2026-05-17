@@ -597,7 +597,7 @@ theorem paper_interface_definition5_law_test_blank_iff
 Definition 5 witness form: a policy is not test-blank exactly when some
 equilibrium/base/test tuple has different base-only and full-feature estimates.
 -/
-theorem paper_interface_not_test_blank_iff_exists_witness
+theorem paper_interface_not_test_blank_iff_exists_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate} :
     ¬ paperTestBlank S ↔
@@ -608,7 +608,7 @@ theorem paper_interface_not_test_blank_iff_exists_witness
 /--
 Continuous-law Definition 5 witness form.
 -/
-theorem paper_interface_not_law_test_blank_iff_exists_witness
+theorem paper_interface_not_law_test_blank_iff_exists_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law} :
     ¬ paperLawTestBlank S ↔
@@ -2174,7 +2174,7 @@ Theorem 3.1 optional-reporting threshold conclusions from a source-shaped
 witness: all access students take the test, some access student withholds a
 score, and reporting is a finite score-threshold rule at each base profile.
 -/
-theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_source_witness
+theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_source_evidence
     {Base : Type*}
     (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base) :
     (∀ base skill, W.takes base skill) ∧
@@ -2187,7 +2187,7 @@ theorem paper_interface_theorem3_1_optional_reporting_threshold_conclusions_of_s
 Theorem 3.2 bridge: an optional-reporting threshold witness has a reporting
 score below the resampling mean whenever its cutoff is below that mean.
 -/
-theorem paper_interface_theorem3_2_optional_reporting_threshold_witness_exists_below_mean_reporter
+theorem paper_interface_theorem3_2_optional_reporting_threshold_evidence_exists_below_mean_reporter
     {Base : Type*}
     (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
     {base : Base} {cutoff mean : ℝ}
@@ -2202,7 +2202,7 @@ theorem paper_interface_theorem3_2_optional_reporting_threshold_witness_exists_b
 Theorem 3.2 bridge: a report-required threshold witness has a taking skill
 below the resampling mean whenever its cutoff is below that mean.
 -/
-theorem paper_interface_theorem3_2_report_required_threshold_witness_exists_below_mean_taker
+theorem paper_interface_theorem3_2_report_required_threshold_evidence_exists_below_mean_taker
     {Base : Type*}
     (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
     {base : Base} {cutoff mean : ℝ}
@@ -2216,7 +2216,7 @@ theorem paper_interface_theorem3_2_report_required_threshold_witness_exists_belo
 /--
 Theorem 3.2 optional-reporting threshold-witness cutoff lower-bound interface.
 -/
-theorem paper_interface_theorem3_2_optional_reporting_threshold_witness_cutoff_ge_mean_of_fair
+theorem paper_interface_theorem3_2_optional_reporting_threshold_evidence_cutoff_ge_mean_of_fair
     {Skill Base Estimate : Type*}
     (skillGivenBase : Base → PMF Skill)
     {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
@@ -2273,7 +2273,7 @@ theorem paper_interface_theorem3_2_optional_reporting_threshold_witness_cutoff_g
 /--
 Theorem 3.2 report-required threshold-witness cutoff lower-bound interface.
 -/
-theorem paper_interface_theorem3_2_report_required_threshold_witness_cutoff_ge_mean_of_fair
+theorem paper_interface_theorem3_2_report_required_threshold_evidence_cutoff_ge_mean_of_fair
     {Base Test Estimate : Type*}
     (skillGivenBase : Base → PMF ℝ)
     {S : LG21SourcePolicySurface ℝ Base Test Estimate}
@@ -2335,7 +2335,7 @@ Theorem 3.2 optional-reporting threshold-witness Gaussian upper-tail interface.
 This connects a Theorem 3.1 reporting cutoff witness to the continuous
 upper-tail version of the fairness impossibility branch.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_threshold_witness_gaussian_upper_tail_cutoff
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_threshold_evidence_gaussian_upper_tail_cutoff
     {Skill Base Estimate : Type*}
     (skillGivenBase : Base → PMF Skill)
     {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
@@ -2400,7 +2400,7 @@ Theorem 3.2 report-required threshold-witness Gaussian upper-tail interface.
 This connects a Theorem 3.1 taking cutoff witness to the continuous upper-tail
 version of the fairness impossibility branch.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_threshold_witness_gaussian_upper_tail_cutoff
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_threshold_evidence_gaussian_upper_tail_cutoff
     {Base Test Estimate : Type*}
     (skillGivenBase : Base → PMF ℝ)
     {S : LG21SourcePolicySurface ℝ Base Test Estimate}
@@ -2466,7 +2466,7 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_requi
 Theorem 3.2 optional-reporting source-witness Gaussian upper-tail interface.
 The finite reporting threshold is extracted from the Theorem 3.1 witness.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_source_witness_gaussian_upper_tail
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_source_evidence_gaussian_upper_tail
     {Skill Base Estimate : Type*}
     (skillGivenBase : Base → PMF Skill)
     {S : LG21SourcePolicySurface Skill Base ℝ Estimate}
@@ -2529,7 +2529,7 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_rep
 Theorem 3.2 report-required source-witness Gaussian upper-tail interface.  The
 finite taking threshold is extracted from the Theorem 3.1 witness.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_source_witness_gaussian_upper_tail
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_source_evidence_gaussian_upper_tail
     {Base Test Estimate : Type*}
     (skillGivenBase : Base → PMF ℝ)
     {S : LG21SourcePolicySurface ℝ Base Test Estimate}
@@ -2595,7 +2595,7 @@ Theorem 3.2 optional-reporting Gaussian best-response source-witness
 upper-tail interface.  The Theorem 3.1 witness is built from the concrete
 reporting decision.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_best_response_source_witness_upper_tail
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_reporting_gaussian_best_response_source_evidence_upper_tail
     {Feature Skill Base Estimate : Type*}
     [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
     (M : Base → GaussianOffsetSignalFamily Feature)
@@ -2672,7 +2672,7 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_optional_rep
 Theorem 3.2 report-required affine best-response source-witness upper-tail
 interface.  The Theorem 3.1 witness is built from the concrete taking decision.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_affine_best_response_source_witness_upper_tail
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_report_required_affine_best_response_source_evidence_upper_tail
     {Base Test Estimate : Type*} [Nonempty Base]
     (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
     (noTakeEstimate : Base → ℝ)
@@ -6184,7 +6184,7 @@ theorem paper_interface_theorem3_1_optional_reporting_threshold_equilibrium_exis
 Theorem 3.1 optional-reporting source witness from the paper's crossing
 argument, applied independently at every base profile.
 -/
-theorem paper_interface_theorem3_1_optional_reporting_source_witness_of_base_crossings
+theorem paper_interface_theorem3_1_optional_reporting_source_evidence_of_base_crossings
     {Base : Type*} [Nonempty Base]
     (reportedEstimate noReportEstimateAtCutoff : Base → ℝ → ℝ)
     (low high : Base → ℝ)
@@ -6249,7 +6249,7 @@ theorem paper_interface_theorem3_1_report_required_threshold_equilibrium_exists_
 Theorem 3.1 report-required source witness from the paper's crossing argument,
 applied independently at every base profile.
 -/
-theorem paper_interface_theorem3_1_report_required_source_witness_of_base_crossings
+theorem paper_interface_theorem3_1_report_required_source_evidence_of_base_crossings
     {Base : Type*} [Nonempty Base]
     (takeEstimate noTakeEstimateAtCutoff : Base → ℝ → ℝ)
     (low high : Base → ℝ)
@@ -6289,7 +6289,7 @@ algebra discharges continuity and strict monotonicity of the reported-score
 estimate, leaving the source proof's no-report continuity and endpoint
 comparisons.
 -/
-theorem paper_interface_theorem3_1_optional_reporting_gaussian_source_witness_of_crossings
+theorem paper_interface_theorem3_1_optional_reporting_gaussian_source_evidence_of_crossings
     {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
     [Nonempty Base]
     (M : Base → GaussianOffsetSignalFamily Feature)
@@ -6374,7 +6374,7 @@ theorem paper_interface_theorem3_1_optional_reporting_gaussian_threshold_of_best
 Theorem 3.1 optional-reporting source witness from base-indexed two-sided best
 responses and the report-at-indifference convention.
 -/
-theorem paper_interface_theorem3_1_optional_reporting_gaussian_source_witness_of_best_response_tiebreak
+theorem paper_interface_theorem3_1_optional_reporting_gaussian_source_evidence_of_best_response_tiebreak
     {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
     [Nonempty Base]
     (M : Base → GaussianOffsetSignalFamily Feature)
@@ -6407,7 +6407,7 @@ expected taking/reporting estimates discharge continuity and strict
 monotonicity, leaving the source proof's no-take continuity and endpoint
 comparisons.
 -/
-theorem paper_interface_theorem3_1_report_required_affine_source_witness_of_crossings
+theorem paper_interface_theorem3_1_report_required_affine_source_evidence_of_crossings
     {Base : Type*} [Nonempty Base]
     (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
     (noTakeEstimateAtCutoff : Base → ℝ → ℝ)
@@ -6479,7 +6479,7 @@ theorem paper_interface_theorem3_1_report_required_affine_threshold_of_best_resp
 Theorem 3.1 report-required source witness from base-indexed two-sided best
 responses and the take-at-indifference convention.
 -/
-theorem paper_interface_theorem3_1_report_required_affine_source_witness_of_best_response_tiebreak
+theorem paper_interface_theorem3_1_report_required_affine_source_evidence_of_best_response_tiebreak
     {Base : Type*} [Nonempty Base]
     (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
     (takes : Base → ℝ → Prop) (noTakeEstimate : Base → ℝ)
@@ -6504,7 +6504,7 @@ theorem paper_interface_theorem3_1_report_required_affine_source_witness_of_best
 Theorem 3.1 threshold conclusions from a source-shaped strategic-withholding
 witness.
 -/
-theorem paper_interface_theorem3_1_threshold_conclusions_of_source_witness
+theorem paper_interface_theorem3_1_threshold_conclusions_of_source_evidence
     {Base : Type*} (W : LG21StrategicWithholdingSourceWitness Base) :
     (∃ base score, ¬ W.reports base score) ∧
       (∀ base, ∃ cutoff : ℝ,
@@ -6514,10 +6514,10 @@ theorem paper_interface_theorem3_1_threshold_conclusions_of_source_witness
   paper_theorem3_1_threshold_conclusions_of_source_witness W
 
 /--
-Theorem 3.1 concrete threshold witness generated by base-indexed reporting and
+Theorem 3.1 concrete threshold evidence generated by base-indexed reporting and
 taking cutoffs.
 -/
-abbrev paperThresholdStrategicWithholdingSourceWitness
+abbrev paperThresholdStrategicWithholdingSourceEvidence
     {Base : Type*} [Nonempty Base]
     (reportCutoff takeCutoff : Base → ℝ) :
     LG21StrategicWithholdingSourceWitness Base :=
@@ -6544,7 +6544,7 @@ Theorem 3.1 optional-reporting endpoint over arbitrary estimate-law objects:
 all access students take the test, reporting follows a finite score cutoff, and
 all three fairness notions fail.
 -/
-theorem paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_of_source_witness
+theorem paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
@@ -6571,7 +6571,7 @@ Theorem 3.1 report-required endpoint over arbitrary estimate-law objects:
 taking/reporting follows a finite skill cutoff and all three fairness notions
 fail.
 -/
-theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_source_witness
+theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
@@ -6632,7 +6632,7 @@ threshold behavior plus concrete fairness-violation witnesses imply the
 paper's withholding/threshold conclusions and failure of all three fairness
 criteria.
 -/
-theorem paper_interface_theorem3_1_strategic_withholding_of_source_witness
+theorem paper_interface_theorem3_1_strategic_withholding_of_source_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (W : LG21StrategicWithholdingSourceWitness Base)
@@ -6663,7 +6663,7 @@ theorem paper_interface_theorem3_1_strategic_withholding_of_source_witness
 Theorem 3.1 source-facing endpoint over arbitrary estimate-law objects.  This
 is the version used by the Gaussian continuous-law wrappers.
 -/
-theorem paper_interface_theorem3_1_law_strategic_withholding_of_source_witness
+theorem paper_interface_theorem3_1_law_strategic_withholding_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21StrategicWithholdingSourceWitness Base)
@@ -6690,7 +6690,7 @@ theorem paper_interface_theorem3_1_law_strategic_withholding_of_source_witness
 Paper-facing Theorem 3.1 PMF source-witness route packaged as the compact
 strategic-withholding certificate.
 -/
-def paper_interface_theorem3_1_strategic_withholding_certificate_of_source_witness
+def paper_interface_theorem3_1_strategic_withholding_certificate_of_source_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (W : LG21StrategicWithholdingSourceWitness Base)
@@ -6714,7 +6714,7 @@ def paper_interface_theorem3_1_strategic_withholding_certificate_of_source_witne
 Paper-facing Theorem 3.1 continuous-law source-witness route packaged as the
 compact strategic-withholding certificate.
 -/
-def paper_interface_theorem3_1_law_strategic_withholding_certificate_of_source_witness
+def paper_interface_theorem3_1_law_strategic_withholding_certificate_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21StrategicWithholdingSourceWitness Base)
@@ -6749,7 +6749,7 @@ theorem paper_interface_theorem3_1_optional_reporting_strategic_withholding_of_c
 Paper-facing optional-reporting source-witness route packaged as the
 regime-specific Theorem 3.1 PMF certificate.
 -/
-def paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_source_witness
+def paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_source_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
@@ -6788,7 +6788,7 @@ theorem paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_
 Paper-facing optional-reporting source-witness route packaged as the
 regime-specific Theorem 3.1 continuous-law certificate.
 -/
-def paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_source_witness
+def paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21OptionalReportingStrategicWithholdingSourceWitness Base)
@@ -6822,7 +6822,7 @@ theorem paper_interface_theorem3_1_report_required_strategic_withholding_of_cert
 Paper-facing report-required source-witness route packaged as the
 regime-specific Theorem 3.1 PMF certificate.
 -/
-def paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_source_witness
+def paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_source_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
@@ -6860,7 +6860,7 @@ theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_
 Paper-facing report-required source-witness route packaged as the
 regime-specific Theorem 3.1 continuous-law certificate.
 -/
-def paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_of_source_witness
+def paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21ReportRequiredStrategicWithholdingSourceWitness Base)
@@ -8654,7 +8654,7 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_forces_no_d
 Theorem 3.2 observable-fairness-to-test-blank bridge from the final
 distinct-positive-mass source witness.
 -/
-theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_witness
+theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_evidence
     {Skill Base Test Estimate Law Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
@@ -8718,7 +8718,7 @@ theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_bl
 Theorem 3.2 continuous-law observable-fairness-to-test-blank bridge from the
 final distinct-positive-mass source witness.
 -/
-theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_witness
+theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_distinct_positive_mass_actor_evidence
     {Skill Base Test Outcome Law Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
@@ -8780,7 +8780,7 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_tes
 Theorem 3.2 observable-fairness-to-test-blank bridge from a one-actor
 off-mean source witness.
 -/
-theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness
+theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_evidence
     {Skill Base Test Estimate Law Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
@@ -8843,7 +8843,7 @@ theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_bl
 Theorem 3.2 continuous-law observable-fairness-to-test-blank bridge from a
 one-actor off-mean source witness.
 -/
-theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_witness
+theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_off_mean_positive_mass_actor_evidence
     {Skill Base Test Outcome Law Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
@@ -8903,7 +8903,7 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_tes
 /--
 Theorem 3.2 final-witness constructor for scalar point-estimate PMF surfaces.
 -/
-theorem paper_interface_theorem3_2_nonblank_off_mean_witness_of_point_estimate_surface
+theorem paper_interface_theorem3_2_nonblank_off_mean_evidence_of_point_estimate_surface
     {Skill Base Test Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourcePolicySurface Skill Base Test ℝ}
@@ -8932,7 +8932,7 @@ theorem paper_interface_theorem3_2_nonblank_off_mean_witness_of_point_estimate_s
 /--
 Direct Theorem 3.2 contradiction for scalar point-estimate PMF surfaces.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_point_estimate_evidence
     {Skill Base Test Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourcePolicySurface Skill Base Test ℝ}
@@ -9008,7 +9008,7 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_distinct_poi
 /--
 Theorem 3.2 final-witness constructor for abstract point-law surfaces.
 -/
-theorem paper_interface_theorem3_2_law_nonblank_off_mean_witness_of_point_estimate_surface
+theorem paper_interface_theorem3_2_law_nonblank_off_mean_evidence_of_point_estimate_surface
     {Skill Base Test Law Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
@@ -9922,7 +9922,7 @@ theorem paper_interface_theorem3_2_law_observable_fair_optional_reporting_source
 /--
 Theorem 3.2 observable branch from the source-shaped PMF witness.
 -/
-theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_witness
+theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_source_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (W : LG21ObservableFairTestBlankSourceWitness S) :
@@ -10088,7 +10088,7 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_concrete_optional_b
 Direct Theorem 3.2 unfairness statement for the concrete optional-reporting
 binary-mixture point-estimate surface.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_witness
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_evidence
     {Equilibrium Skill Base Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     (skillGivenBase : Base → PMF Skill)
@@ -10732,7 +10732,7 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_concrete_report_req
 Direct Theorem 3.2 unfairness statement for the concrete report-required
 binary-mixture point-estimate surface.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_witness_of_centered_outside
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_evidence_of_centered_outside
     {Equilibrium Base Test Actor : Type*}
     [Fintype Actor] [DecidableEq Actor]
     (skillGivenBase : Base → PMF ℝ)
@@ -11410,7 +11410,7 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_rep
 Theorem 3.2 endpoint from latent-to-observable mixture identities and the
 source-shaped PMF witness.
 -/
-theorem paper_interface_theorem3_2_fairness_impossibility_of_mixture_and_source_witness
+theorem paper_interface_theorem3_2_fairness_impossibility_of_mixture_and_source_evidence
     {Skill Base Test Estimate : Type*}
     (skillGivenBase : Base → PMF Skill)
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
@@ -11445,7 +11445,7 @@ theorem paper_interface_theorem3_2_fairness_implies_test_blank_of_not_latent_or_
 /--
 Theorem 3.2 abstract-law observable branch from the source-shaped witness.
 -/
-theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_witness
+theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (W : LG21LawObservableFairTestBlankSourceWitness S) :
@@ -11457,7 +11457,7 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_tes
 Theorem 3.2 abstract-law endpoint from a latent-to-observable implication and
 the source-shaped witness.
 -/
-theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness
+theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (hlatent_to_observable :
@@ -11524,7 +11524,7 @@ theorem paper_interface_theorem3_2_no_test_relevance_of_fairness
 Theorem 3.2 contrapositive core: under the source implication, a concrete
 test-relevance witness rules out latent-skill or observable fairness.
 -/
-theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_test_relevance_witness
+theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_test_relevance_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (C : LG21FairnessImpossibilityCertificate S)
@@ -11609,7 +11609,7 @@ theorem paper_interface_theorem3_2_section3_law_no_test_relevance_of_fairness
 Theorem 3.2 continuous-law contrapositive core: under the source implication, a
 test-relevance law witness rules out latent-skill or observable fairness.
 -/
-theorem paper_interface_theorem3_2_not_law_latent_or_observable_fair_of_test_relevance_witness
+theorem paper_interface_theorem3_2_not_law_latent_or_observable_fair_of_test_relevance_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (C : LG21LawFairnessImpossibilityCertificate S)
@@ -11651,7 +11651,7 @@ theorem paper_interface_proposition4_2_not_latent_skill_fair
 Proposition 4.2 logical core: one latent-skill witness with different access
 and no-access estimate laws proves latent-skill fairness fails.
 -/
-theorem paper_interface_proposition4_2_not_latent_skill_fair_of_witness
+theorem paper_interface_proposition4_2_not_latent_skill_fair_of_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (e : S.Equilibrium) (q : Skill) (base : Base)
@@ -12805,7 +12805,7 @@ theorem paper_interface_proposition4_3_not_observable_or_demographic_fair
 Proposition 4.3 logical core: observable and demographic law-difference
 witnesses prove both fairness definitions fail.
 -/
-theorem paper_interface_proposition4_3_not_observable_or_demographic_fair_of_witnesses
+theorem paper_interface_proposition4_3_not_observable_or_demographic_fair_of_evidence
     {Skill Base Test Estimate : Type*}
     {S : LG21SourcePolicySurface Skill Base Test Estimate}
     (eObs : S.Equilibrium) (base : Base)
@@ -12822,7 +12822,7 @@ theorem paper_interface_proposition4_3_not_observable_or_demographic_fair_of_wit
 Proposition 4.3 continuous-law core: observable and demographic law-difference
 witnesses prove both fairness definitions fail.
 -/
-theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_witnesses
+theorem paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_evidence
     {Skill Base Test Law : Type*}
     {S : LG21SourceLawPolicySurface Skill Base Test Law}
     (eObs : S.Equilibrium) (base : Base)
