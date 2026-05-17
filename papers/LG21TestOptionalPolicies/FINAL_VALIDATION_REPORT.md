@@ -131,10 +131,14 @@ witnesses rather than explicit selected tests.
 - Theorem 3.2 is not yet an unconditional theorem over an arbitrary estimation
   policy. The strongest endpoints are the Section 3 optional/report-required
   aliases over concrete constant-latent event-share surfaces, plus matching
-  implication, no-relevance, and iff aliases. The concrete event-or-blank iff
-  aliases consume the named ordinary full-feature/base-only observable-identity
-  certificate, but not a global positive-share premise; the blank-on-zero-share
-  iff aliases additionally discharge the zero-share branch by definition. The
+  implication, no-relevance, and iff aliases. The strongest direct unfairness
+  routes now include optional finite-test and report-required full-support
+  mapped-actor endpoints with existential distinct-test witnesses, aligning the
+  concrete route with Definition 5's relevance language. The concrete
+  event-or-blank iff aliases consume the named ordinary
+  full-feature/base-only observable-identity certificate, but not a global
+  positive-share premise; the blank-on-zero-share iff aliases additionally
+  discharge the zero-share branch by definition. The
   source-level event-or-blank
   and zero-share variants state the paper's finite-share branch explicitly:
   zero reporter/taker event share implies the profile is already test-blank,
