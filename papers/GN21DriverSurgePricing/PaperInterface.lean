@@ -93,5 +93,27 @@ theorem theorem1_single_state_threshold_best_response_measurable
       hw_integrable_acceptAll htime_integrable_acceptAll hlambda
       hpayment_acceptAll_pos
 
+/-! ## Structured Dynamic Pricing -/
+
+/--
+Theorem 3 source-facing measured structured-pricing endpoint on the current
+paper proof route.  Lemma 6 is supplied at the sign-bracket level; the
+remaining source fields are the Lemma 9/10 branch inequalities plus the
+fixed-response reward-rate identifications.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_cross_fields
+    (mu : Fin 2 → Measure TripLength)
+    [NoAtoms (mu 0)] [NoAtoms (mu 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseOneThresholdBracketSurgeCutoffCrossFieldMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
 end PaperInterface
 end GN21DriverSurgePricing

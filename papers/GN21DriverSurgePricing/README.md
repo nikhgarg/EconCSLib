@@ -79,6 +79,13 @@ cache is `source.txt`.
   `GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
   and the corresponding compiled Theorem 3 wrappers, including
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`.
+  The bracket-level route now also has the sharper cross-field boundary
+  `GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData`
+  and paired IC/AE wrappers ending at
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions`.
+  This lets the paper proof keep Lemma 6 at the sign-bracket level while Lean
+  derives the duplicated reward-rate fields from the fixed-response source
+  records.
   The preferred non-surge endpoint route is now weaker still: the fixed-surge
   side can be supplied directly as the aggregate cross-ratio comparison that
   Lemma 10 consumes.  The compiled bridge is
@@ -1279,6 +1286,14 @@ This is the current sharpest paper-facing Theorem 3 boundary: Lemma 6 bracket
 data build the fixed-response Lemma 5 forms internally, while Lemma 9/10
 endpoint work only has to supply the branch-indexed by-policy-form
 middle-cutoff certificate.
+For the surge-cutoff branch-field route, the bracket-level cross-field
+boundary
+`GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData`
+now similarly builds the measured fixed-response source records internally and
+exposes only the actual branch inequalities plus `Ri = R1` and `Rj = R2`;
+the paper-facing wrappers are
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions`
+and its IC projection.
 For normalized exact one-threshold source proofs, the lighter
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate`,
 `GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData`,
