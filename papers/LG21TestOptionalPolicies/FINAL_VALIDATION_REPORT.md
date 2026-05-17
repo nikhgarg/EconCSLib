@@ -43,6 +43,12 @@ Additional Theorem 3.2 audit endpoint:
 `audit_theorem3_2_optional_reporting_mapped_actor_finite_test_full_support`
 derives the optional-reporting selected-score support facts from full support
 of a finite concrete test law before pushing tests forward to reported scores.
+The companion aliases
+`audit_theorem3_2_optional_reporting_mapped_actor_finite_test_full_support_exists_distinct`
+and
+`audit_theorem3_2_report_required_mapped_actor_full_support_exists_distinct`
+state the strongest mapped-actor routes using existential distinct-test
+witnesses rather than explicit selected tests.
 
 ## Cross-Artifact Checks
 

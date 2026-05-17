@@ -620,7 +620,10 @@ Last updated: 2026-05-16
   optional-reporting mapped-actor paper-interface endpoint now has the matching
   finite-test full-support route: a concrete finite test law is pushed forward
   to reported scores, and full support of the finite law supplies the selected
-  score-mass facts.  A stricter skill-dependent conditional-kernel route remains optional
+  score-mass facts.  Both optional-reporting and report-required strongest
+  mapped-actor routes now also have existential distinct-test wrappers, matching
+  Definition 5's paper-facing relevance-witness language.  A stricter
+  skill-dependent conditional-kernel route remains optional
   if the final source-facing statement needs true conditional-on-skill laws.
 - Lemma 4.1 now has its two main scalar no-deviation contradictions
   formalized.  For optional reporting, a continuous strictly increasing
