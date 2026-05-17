@@ -700,7 +700,9 @@ full-feature/base-only observable-surface identities. The concrete
 optional posterior-payoff and report-required unit-centered event-or-blank
 surfaces expose the same iff conclusions, so they no longer need a global
 positive-share premise to state the "only test-blank policies can be fair"
-direction. In the optional-reporting
+direction. The blank-on-zero-share constructor-backed concrete surfaces now
+also have direct Section 3 iff wrappers, discharging the paper's zero-share
+branch by definition. In the optional-reporting
 continuous upper-tail route, the concrete Gaussian posterior-payoff
 specialization now removes the separate affine-payoff identity and
 tie-at-indifference hypotheses.  In

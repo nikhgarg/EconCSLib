@@ -86,7 +86,9 @@ unconditional theorem over every possible estimation policy.
   is exposed at the same source-certification layer as the implication and
   no-relevance endpoints. The fully concrete optional posterior-payoff and
   report-required unit-centered event-or-blank surfaces now expose the same
-  iff conclusions, not only the one-way implication/no-relevance forms.
+  iff conclusions, not only the one-way implication/no-relevance forms. The
+  blank-on-zero-share concrete surfaces expose direct iff wrappers as well,
+  with the zero-share branch discharged by the constructor-backed certificate.
 - The resampling policy is formalized in a finite conditional-kernel form:
   access and no-access estimate laws are both pushforwards of the same
   conditional test-score law, and demographic fairness follows by mixing over
@@ -103,7 +105,9 @@ unconditional theorem over every possible estimation policy.
   aliases over concrete constant-latent event-share surfaces, plus matching
   implication, no-relevance, and iff aliases. The concrete event-or-blank iff
   aliases still require the ordinary full-feature/base-only observable-surface
-  identities, but not a global positive-share premise. The source-level event-or-blank
+  identities, but not a global positive-share premise; the blank-on-zero-share
+  iff aliases additionally discharge the zero-share branch by definition. The
+  source-level event-or-blank
   and zero-share variants state the paper's finite-share branch explicitly:
   zero reporter/taker event share implies the profile is already test-blank,
   and the ordinary observable-surface identities give the converse fairness

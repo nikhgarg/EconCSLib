@@ -293,7 +293,10 @@ Last updated: 2026-05-16
   already-test-blank split is available at the strongest concrete surfaces in
   both regimes.  Those concrete event-or-blank routes now also have
   Section 3 fairness/test-blank and fairness/no-relevance iff wrappers under
-  the full-feature/base-only observable-surface identities.  The fully concrete
+  the full-feature/base-only observable-surface identities.  The corresponding
+  blank-on-zero-share concrete routes have direct Section 3 iff wrappers too,
+  using the constructor-backed certificate to discharge the zero-share branch
+  by definition.  The fully concrete
   optional posterior-payoff and
   report-required unit-centered constant-latent event-share surfaces now also
   have direct Section 3 wrappers, so the strongest current source-facing
