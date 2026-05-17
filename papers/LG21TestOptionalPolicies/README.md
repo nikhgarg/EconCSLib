@@ -189,6 +189,14 @@ cache is kept as `source.txt` for named-statement audits.
   share implies blank" rather than in negated existential form.
   `paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank`
   is the direct premise-conversion helper for the compact Section 3 wrappers.
+  The zero-share Section 3 aliases
+  `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_zero_event_share_blank`,
+  `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_zero_event_share_blank`,
+  `paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_zero_event_share_blank`,
+  and
+  `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_zero_event_share_blank`
+  expose the final implication/no-relevance forms with that share-language
+  premise.
 - The certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now also have Section 3 hidden-access implication
   and no-relevance wrappers, so the strongest current source-facing Theorem 3.2

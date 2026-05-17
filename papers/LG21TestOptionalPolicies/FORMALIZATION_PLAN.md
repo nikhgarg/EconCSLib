@@ -698,7 +698,14 @@ Last updated: 2026-05-16
    converts a zero-share-implies-blank premise into the event-or-blank split.
    `paper_interface_theorem3_2_no_positive_event_blank_of_zero_event_share_blank`
    gives the direct premise conversion needed by the compact Section 3
-   wrappers.
+   wrappers.  The corresponding zero-share Section 3 wrappers
+   `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_zero_event_share_blank`,
+   `paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_zero_event_share_blank`,
+   `paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_zero_event_share_blank`,
+   and
+   `paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_zero_event_share_blank`
+   expose the final implication/no-relevance forms with that paper-style
+   premise.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,
