@@ -510,6 +510,12 @@ asks for exactly the cross-ratio inequality used by Lemma 10:
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.to_exact_one_threshold_selection_unless_of_exact_shapes
   GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceData
   GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
+  GN21Theorem3ExactOneThresholdBranchFixedTransferSourceData.to_surge_cross_source_data
+  GN21Theorem3ExtendedOneThresholdBranchFixedTransferSourceExistenceData.to_surge_cross_source
+  GN21Theorem3FiniteOrInfiniteOneThresholdBranchFixedTransferSourceExistenceData.to_surge_cross_source
+  Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchFixedTransferSourceAssumptions.to_surge_cross_source_assumptions
+  Theorem3AcceptAllMeasurableEndpointExtendedOneThresholdBranchFixedTransferExistenceSourceAssumptions.to_surge_cross_source_assumptions
+  Theorem3AcceptAllMeasurableEndpointFiniteOrInfiniteOneThresholdBranchFixedTransferExistenceSourceAssumptions.to_surge_cross_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
 
 Prefer this route before trying to discharge the scalar cutoff package below.
@@ -915,6 +921,12 @@ The extended and finite-or-infinite pointwise wrappers are the preferred public
 routes when the source proof uses accept-all or `t = infinity` cutoff notation:
 they keep the pointwise upper comparison and build the exact fixed-transfer
 endpoint certificate only on finite reject-long/reject-short branches.
+The exact-endpoint fixed-transfer extended/finite source packages now lower to
+the aggregate-cross source packages directly.  If the next proof already has
+the exact fixed-transfer endpoint certificate, use
+`...FixedTransferSourceExistenceData.to_surge_cross_source` and the matching
+source-assumption adapters rather than restating the aggregate-cross fixed
+state fields.
 
 If a later source route does not have exact fixed-transfer equality, use the
 weaker complement pointwise comparison:
