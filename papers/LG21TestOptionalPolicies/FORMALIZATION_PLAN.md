@@ -215,11 +215,14 @@ Last updated: 2026-05-16
   direct test-blankness assumption for that equilibrium/base profile.  These
   case-split endpoints also have Section 3 hidden-access wrappers, removing the
   earlier global positive-share assumption from the source-facing theorem
-  route.  The fully concrete optional posterior-payoff and report-required
-  unit-centered constant-latent event-share surfaces now also have direct
-  Section 3 wrappers, so the strongest current source-facing Theorem 3.2
-  endpoints expose hidden access and the fairness-implies-test-blankness
-  conclusion together.  The
+  route.  The fully concrete optional posterior-payoff route now factors out
+  its source-equilibrium certificate and has a Section 3 event-or-blank wrapper,
+  so the positive-share versus already-test-blank split is available at the
+  strongest optional concrete surface.  The fully concrete optional
+  posterior-payoff and report-required unit-centered constant-latent
+  event-share surfaces now also have direct Section 3 wrappers, so the
+  strongest current source-facing Theorem 3.2 endpoints expose hidden access
+  and the fairness-implies-test-blankness conclusion together.  The
   source proof's positive-share resampling algebra is also
   formalized: `lg21_pmf_mixture_cancel_right` and
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
@@ -655,10 +658,11 @@ Last updated: 2026-05-16
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
-   push the event-or-blank case split down into the concrete constant-latent
-   endpoints, using the centered-base-term report-required normalization when
-   appropriate, or instantiate a stricter conditional-kernel version if the
-   final statement should quantify over conditional-on-skill Gaussian laws.
+   push the event-or-blank case split down into the report-required concrete
+   constant-latent endpoint, using the centered-base-term report-required
+   normalization when appropriate, or instantiate a stricter conditional-kernel
+   version if the final statement should quantify over conditional-on-skill
+   Gaussian laws.
 
 ## Reusable Library Seams
 

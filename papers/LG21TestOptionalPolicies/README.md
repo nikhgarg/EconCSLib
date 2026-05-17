@@ -134,6 +134,11 @@ cache is kept as `source.txt` for named-statement audits.
   test-blank.  The optional-reporting and report-required `event_or_blank`
   endpoints also have Section 3 hidden-access wrappers, replacing the earlier
   need for a global positive-share hypothesis at every profile.
+- The optional-reporting concrete constant-latent posterior-payoff route now
+  factors out its source-equilibrium certificate and exposes a Section 3
+  `event_or_blank` endpoint.  This pushes the paper's positive-share versus
+  already-test-blank split down to the strongest optional concrete surface;
+  the analogous report-required concrete endpoint is the next matching cleanup.
 - The concrete optional/report-required constant-latent event-share routes now
   also produce compact `LG21FairnessImpossibilityCertificate` values:
   `paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
