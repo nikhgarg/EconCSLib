@@ -1420,6 +1420,10 @@ and
   `GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData` with
   wrapper
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_rejected_mass_existence_source_assumptions`.
+  The common fixed-state equality middle-reroute fixed-response route now has
+  the matching source boundary
+  `GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceExistenceData` and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_reroute_existence_source_assumptions`.
   The same bridge now powers the by-policy-form and light middle-reroute
   Theorem 3 source boundaries:
   `GN21Theorem3MiddleRerouteAEPolicyFormSourceExistenceData`,
