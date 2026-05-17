@@ -18991,6 +18991,101 @@ def paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no
       not_demographically_fair := hspec.2.2.2.2 }
 
 /--
+Theorem 3.1 optional-reporting concrete base-mixed Gaussian law certificate
+with the access fraction instantiated as a finite PMF event share.
+-/
+def paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+    {Feature Base Student : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (studentLaw : Base → PMF Student)
+    (accessEvent : Base → Student → Prop)
+    (decAccessEvent : ∀ base, DecidablePred (accessEvent base))
+    (hnoAccessMass :
+      ∀ base, ∃ student, ¬ accessEvent base student ∧
+        0 < (studentLaw base student).toReal)
+    (baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw) :
+    LG21LawOptionalReportingStrategicWithholdingCertificate
+      (lg21BaseMixedGaussianPosteriorLawSurface
+        skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) := by
+  let accessFraction : Base → ℝ := fun base =>
+    (@lg21PMFEventShare Student _ _ (studentLaw base)
+      (accessEvent base) (decAccessEvent base)).toReal
+  have hC_nonneg : ∀ base, 0 ≤ accessFraction base := by
+    intro base
+    dsimp [accessFraction]
+    exact pmfProb_nonneg (studentLaw base) (accessEvent base)
+  have hC_lt_one : ∀ base, accessFraction base < 1 := by
+    intro base
+    rcases hnoAccessMass base with ⟨student, hnot, hmass⟩
+    have hlt :
+        @lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) < 1 :=
+      lg21PMFEventShare_lt_one_of_mass_not
+        (studentLaw base) (accessEvent base) student hnot hmass
+    have hltReal :
+        ((@lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) : NNReal) : ℝ) <
+          (1 : ℝ) := by
+      exact_mod_cast hlt
+    simpa [accessFraction] using hltReal
+  exact
+    paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+      skillGivenBase baseProfile M theta k accessFraction baseOnlyEstimate
+      scoreLaw hC_nonneg hC_lt_one
+
+/--
+Theorem 3.1 report-required concrete base-mixed affine-skill law certificate
+with the access fraction instantiated as a finite PMF event share.
+-/
+def paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    {Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (studentLaw : Base → PMF Student)
+    (accessEvent : Base → Student → Prop)
+    (decAccessEvent : ∀ base, DecidablePred (accessEvent base))
+    (hnoAccessMass :
+      ∀ base, ∃ student, ¬ accessEvent base student ∧
+        0 < (studentLaw base student).toReal)
+    (baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw) :
+    LG21LawReportRequiredStrategicWithholdingCertificate
+      (lg21BaseMixedAffineSkillPosteriorLawSurface
+        skillGivenBase baseProfile intercept slope hslope skillLaw
+        baseOnlyEstimate) := by
+  let accessFraction : Base → ℝ := fun base =>
+    (@lg21PMFEventShare Student _ _ (studentLaw base)
+      (accessEvent base) (decAccessEvent base)).toReal
+  have hC_nonneg : ∀ base, 0 ≤ accessFraction base := by
+    intro base
+    dsimp [accessFraction]
+    exact pmfProb_nonneg (studentLaw base) (accessEvent base)
+  have hC_lt_one : ∀ base, accessFraction base < 1 := by
+    intro base
+    rcases hnoAccessMass base with ⟨student, hnot, hmass⟩
+    have hlt :
+        @lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) < 1 :=
+      lg21PMFEventShare_lt_one_of_mass_not
+        (studentLaw base) (accessEvent base) student hnot hmass
+    have hltReal :
+        ((@lg21PMFEventShare Student _ _ (studentLaw base)
+            (accessEvent base) (decAccessEvent base) : NNReal) : ℝ) <
+          (1 : ℝ) := by
+      exact_mod_cast hlt
+    simpa [accessFraction] using hltReal
+  exact
+    paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+      skillGivenBase baseProfile intercept slope hslope accessFraction
+      baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
+
+/--
 Theorem 3.1 optional-reporting "every equilibrium" wrapper.  For each
 equilibrium index, the concrete source-shaped Gaussian law surface yields the
 regime-specific strategic-withholding/fairness certificate.

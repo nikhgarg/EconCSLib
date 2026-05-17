@@ -178,6 +178,12 @@ Last updated: 2026-05-16
   `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
   and
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`.
+  They now also have finite-event-share variants,
+  `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`,
+  which derive `0 <= C < 1` directly from PMF nonnegativity plus positive
+  no-access complement mass.
   The continuous-law route now also has explicit `∀ e` wrappers for
   equilibrium-indexed source quantities:
   `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_no_report_mixture_and_base_mixed_gaussian_posterior_surface`

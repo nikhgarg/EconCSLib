@@ -12711,6 +12711,22 @@ def paper_interface_theorem3_1_report_required_law_strategic_withholding_certifi
     baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
 
 /--
+Theorem 3.1 optional-reporting source-shaped skill/base-mixture Gaussian
+posterior-law certificate with the access fraction instantiated as a finite
+event share.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface :=
+  @paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface
+
+/--
+Theorem 3.1 report-required source-shaped skill/base-mixture affine-skill
+posterior-law certificate with the access fraction instantiated as a finite
+event share.
+-/
+abbrev paper_interface_theorem3_1_report_required_law_strategic_withholding_certificate_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface :=
+  @paper_theorem3_1_report_required_law_strategic_withholding_certificate_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+
+/--
 Paper-facing Theorem 3.1 optional-reporting "every equilibrium" wrapper over
 source-shaped skill/base-mixture Gaussian posterior-law surfaces.
 -/
