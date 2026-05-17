@@ -874,6 +874,18 @@ not a formal Lean counterexample, but it is strong guidance: either use the
 endpoint/allowed-policy Theorem 4 route, or prove the lower slack only for the
 policy shapes that can actually be optimal.
 
+The paper's actual Lemma 9 final-line feasibility argument is now named
+separately:
+
+```lean
+lemma9StructuredFeasibilityGap_eq_source_final_factor
+lemma9StructuredFeasibilityGap_pos_of_positive_primitives
+```
+
+These prove the cross-multiplied lower/upper interval gap is positive from the
+source primitive signs.  They do not prove, and should not be used as if they
+proved, the stronger statement that the current lower endpoint is nonpositive.
+
 The wrapper itself derives:
 
 - positivity of `m_2 - Rmax`;

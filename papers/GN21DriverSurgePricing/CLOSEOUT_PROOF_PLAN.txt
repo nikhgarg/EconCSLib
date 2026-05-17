@@ -914,6 +914,8 @@ Recommended proof order
      theorem3SurgeAggregate_ge_of_currentIntervalEnvelopeSlack
      theorem3SurgeAggregate_ge_of_currentSignedIntervalEnvelopeSlack
      theorem3SurgeAggregate_ge_of_currentMassAffineSignedIntervalEnvelopeSlack
+     lemma9StructuredFeasibilityGap_eq_source_final_factor
+     lemma9StructuredFeasibilityGap_pos_of_positive_primitives
      Theorem3AcceptAllStructuredPositiveParameterPositiveMassFeasibleSequentialSurgeCurrentSignedIntervalSlackDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_structured_positive_parameter_positive_mass_feasible_sequential_surge_current_signed_interval_slack_data_assumptions
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeCurrentIntervalSlackFinalSignDataAssumptions
@@ -1019,6 +1021,11 @@ Recommended proof order
    Therefore the selected lower-slack subgoal is closed for this source
    boundary; do not duplicate the current reward-rate envelope calculation in
    the endpoint proof.
+   Do not confuse this stronger lower-nonpositivity route with the paper's
+   Lemma 9 feasibility final line: Lean now separately exposes the source
+   cross-multiplied gap factorization above, which proves the lower/upper
+   interval is nonempty from primitive signs without proving the lower endpoint
+   is nonpositive.
 
    The endpoint/allowed-policy pivot now has a compiled non-accept-all
    interface:
@@ -1068,14 +1075,13 @@ Recommended proof order
    source-wrapper field; Lean derives `arrival0*z0 <= R2` from it.  The
    compiled counterexample shows the broad feasibility inequalities do not
    imply it by themselves.
-7. Prove the selected-price current lower interval slack by proving endpoint
-   lower nonpositivity on the policy shapes used by the paper proof, then
-   consume
-   `theorem3CurrentLowerIntervalSlack_of_lower_nonpos_massAffineEnvelope`.
-   If endpoint lower nonpositivity fails for those shapes, the paper needs an
-   explicit uniform lower-bound assumption rather than the old
-   lower-nonpositive claim.
-8. Instantiate the interval source wrapper.
+7. For the sequential fallback, use the lower-final-sign mass-affine wrapper if
+   the source proof genuinely supplies the current Lemma 9 lower-nonpositivity
+   line.  For the main paper proof, prefer the endpoint/allowed-policy route
+   and the source Lemma 9 feasibility-gap lemmas; do not cite the feasibility
+   gap as a proof that the lower endpoint is nonpositive.
+8. Instantiate the final source wrapper only after the remaining endpoint
+   current-bound fields are derived from the regularity/source hypotheses.
 
 
 What not to do

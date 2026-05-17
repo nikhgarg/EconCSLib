@@ -385,6 +385,11 @@ cache is `source.txt`.
   subgoal is now closed on this route.  The remaining source work should use
   this bridge or the endpoint/allowed-policy route, not reprove the reward-rate
   envelope algebra.
+  Separately, the paper's actual Lemma 9 feasibility final line is now exposed
+  as `lemma9StructuredFeasibilityGap_eq_source_final_factor` and
+  `lemma9StructuredFeasibilityGap_pos_of_positive_primitives`: it proves the
+  cross-multiplied lower/upper interval gap is positive from primitive signs,
+  without assuming the stronger lower endpoint is nonpositive.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.
