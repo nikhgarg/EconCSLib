@@ -8897,6 +8897,18 @@ theorem paper_interface_theorem3_2_fairness_impossibility
   paper_theorem3_2_fairness_impossibility_of_certificate C
 
 /--
+Sanity check for Theorem 3.2 formalization scope: the raw source-policy
+surface alone does not imply the theorem.  The displayed surface is latent-skill
+fair and observably fair, but it is not test-blank, so theorem-facing endpoints
+must include the source-witness/strategic-stability assumptions.
+-/
+theorem paper_interface_theorem3_2_raw_surface_scope_counterexample :
+    lg21SourceLatentSkillFair lg21ArbitraryFairNonblankSurface ∧
+      lg21SourceObservablyFair lg21ArbitraryFairNonblankSurface ∧
+        ¬ lg21SourceTestBlank lg21ArbitraryFairNonblankSurface :=
+  lg21_arbitrary_source_surface_fair_not_test_blank
+
+/--
 Theorem 3.2 Section 3 endpoint: access status is hidden in the school
 information set, and latent-skill or observable fairness implies
 test-blankness.

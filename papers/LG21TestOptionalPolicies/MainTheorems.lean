@@ -5168,6 +5168,46 @@ theorem lg21_pmf_pure_eq_iff
     rfl
 
 /--
+Sanity countermodel for over-broad Theorem 3.2 formulations: an arbitrary
+source policy surface can be latent-skill fair and observably fair while still
+not being test-blank.  The paper theorem therefore needs the strategic
+best-response/source-witness hypotheses formalized below, not just the raw
+`LG21SourcePolicySurface` fields.
+-/
+def lg21ArbitraryFairNonblankSurface :
+    LG21SourcePolicySurface PUnit PUnit Bool Bool where
+  Equilibrium := PUnit
+  latentAccessEstimate := fun _ _ _ => PMF.pure false
+  latentNoAccessEstimate := fun _ _ _ => PMF.pure false
+  observableAccessEstimate := fun _ _ => PMF.pure false
+  observableNoAccessEstimate := fun _ _ => PMF.pure false
+  demographicAccessEstimate := fun _ => PMF.pure false
+  demographicNoAccessEstimate := fun _ => PMF.pure false
+  baseOnlyEstimate := fun _ _ => PMF.pure false
+  fullFeatureEstimate := fun _ _ test => PMF.pure test
+
+/--
+The raw policy-surface fields alone do not imply Theorem 3.2: this surface is
+latent-skill fair and observably fair, but the full-feature estimate depends on
+the displayed test value.
+-/
+theorem lg21_arbitrary_source_surface_fair_not_test_blank :
+    lg21SourceLatentSkillFair lg21ArbitraryFairNonblankSurface ∧
+      lg21SourceObservablyFair lg21ArbitraryFairNonblankSurface ∧
+        ¬ lg21SourceTestBlank lg21ArbitraryFairNonblankSurface := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro e q base
+    rfl
+  · intro e base
+    rfl
+  · apply lg21_not_testBlank_of_witness PUnit.unit PUnit.unit true
+    dsimp [lg21ArbitraryFairNonblankSurface]
+    intro h
+    have hbool : (false : Bool) = true :=
+      (lg21_pmf_pure_eq_iff (Estimate := Bool)).1 h
+    cases hbool
+
+/--
 Direct Theorem 3.2 contradiction for point-estimate surfaces.  If a
 paper-specific route proves latent-or-observable fairness implies test
 blankness, then one full-feature point estimate off the base-only acting mean

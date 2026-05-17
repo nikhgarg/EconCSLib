@@ -164,7 +164,11 @@ and
   and the ordinary observable-surface identities give the converse fairness
   direction. The constructed
   blank-on-zero-share constant-latent surfaces discharge that branch by
-  definition.
+  definition. The formal counterexample
+  `audit_theorem3_2_raw_surface_scope_counterexample` shows that the raw
+  `LG21SourcePolicySurface` fields alone are too broad: latent-skill and
+  observable fairness can hold while test-blankness fails unless the
+  source-witness/strategic-stability hypotheses are included.
 - A stricter skill-dependent conditional-kernel route is optional only if the
   target is broadened beyond the current concrete law surfaces.
 
