@@ -1409,8 +1409,11 @@ and
   `Theorem4MeasuredAggregateFeasibleRejectedMassStrictLocalImprovementExistenceCertificate.to_accept_all_certificate`
   upgrade existence plus a.e. uniqueness of optima to exact accept-all
   optimality for the measured GN21 reward.  The same bridge now powers the
-  light middle-reroute Theorem 3 source boundary:
-  `GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData` and
+  by-policy-form and light middle-reroute Theorem 3 source boundaries:
+  `GN21Theorem3MiddleRerouteAEPolicyFormSourceExistenceData`,
+  `GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_existence_source_assumptions`,
+  and
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_source_assumptions`
   consume Lemma 5 replacement data plus the local endpoint package without a
   separate accept-all optimality field.
