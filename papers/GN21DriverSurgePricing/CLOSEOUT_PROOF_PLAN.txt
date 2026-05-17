@@ -264,6 +264,26 @@ also now extract the scalar cutoff checks directly via
 `reject_middle_ordered_upper_cutoff_bound`, so do not duplicate endpoint
 pointwise algebra in source proofs.
 
+Update: the ordered middle-cutoff reduction is now exposed at the
+paper-facing Theorem 3 source boundary.  Prefer these declarations whenever
+the source proof has the ordered middle gap, rather than the older
+all-middle `SurgeCutoffCrossField` boundary:
+
+  GN21Theorem3FixedResponseOneThresholdOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
+  GN21Theorem3FixedResponseOneThresholdOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_policy_form_source
+  GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
+  GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_one_threshold_source
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+  Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_ordered_surge_cutoff_cross_field_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_branch_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
+
+The source obligation for surge reject-middle is now exactly:
+provide `Q_current * hi <= T_current * q(hi)` only under
+`rejectsMiddleTrips lo hi`, `lo <= hi`, and `0 < hi`.  Exact one-threshold
+branch data feed this route directly, using the previously compiled ordered
+projection; no duplicate all-middle scalar inequality should be introduced.
+
 Update: exact one-threshold endpoint data now project the paper branch fields
 directly.  For
 

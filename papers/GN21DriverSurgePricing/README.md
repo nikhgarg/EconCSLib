@@ -94,7 +94,13 @@ cache is `source.txt`.
   `Ri = R1` and `Rj = R2` assumptions.  The surge middle-cutoff path also has
   ordered-gap variants that require the upper-cutoff scalar inequality only
   when `lo <= hi`; inverted middle-rejection representations are handled as
-  empty-complement cases.
+  empty-complement cases.  That ordered gap is now available at the
+  paper-facing Theorem 3 source layer through
+  `GN21Theorem3FixedResponseOneThresholdOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData`,
+  `GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData`,
+  and the exact-branch adapter
+  `Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_ordered_surge_cutoff_cross_field_source_assumptions`.
+  Use this route instead of reintroducing an all-middle surge cutoff proof.
   The preferred non-surge endpoint route is now weaker still: the fixed-surge
   side can be supplied directly as the aggregate cross-ratio comparison that
   Lemma 10 consumes.  The compiled bridge is
