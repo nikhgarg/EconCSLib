@@ -607,6 +607,144 @@ theorem verticalUpperStripMass_pos_of_isOpenPosMeasure
     lt_of_lt_of_le (hopen.measure_pos μ hnonempty) (measure_mono hsubset)
   exact ENNReal.toReal_pos (ne_of_gt hpos) (measure_ne_top μ _)
 
+/--
+Moving a vertical-upper-strip cutoff left in the first coordinate and up in the
+second coordinate strictly decreases its mass for any finite joint measure that
+is positive on nonempty open sets.
+
+This is the reusable measure-level fact behind displayed terms of the form
+`P(X <= A(q), B(q) <= Y)`: if `A` is strictly decreasing and `B` is monotone
+increasing, then the selected mass strictly falls.
+-/
+theorem verticalUpperStripMass_strictAnti_of_strictAnti_left_monotone_right
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] [Measure.IsOpenPosMeasure μ]
+    {a b : ℝ → ℝ} (ha : StrictAnti a) (hb : Monotone b) :
+    StrictAnti fun q : ℝ => verticalUpperStripMass μ (a q) (b q) := by
+  intro q₁ q₂ hq
+  have hmeasure_lt :
+      μ {p : ℝ × ℝ | p.1 ≤ a q₂ ∧ b q₂ ≤ p.2} <
+        μ {p : ℝ × ℝ | p.1 ≤ a q₁ ∧ b q₁ ≤ p.2} := by
+    refine measure_lt_of_imp_of_diff_ne_zero μ
+      (p := fun p : ℝ × ℝ => p.1 ≤ a q₂ ∧ b q₂ ≤ p.2)
+      (q := fun p : ℝ × ℝ => p.1 ≤ a q₁ ∧ b q₁ ≤ p.2)
+      (measurableSet_verticalUpperStrip (a q₂) (b q₂))
+      (measurableSet_verticalUpperStrip (a q₁) (b q₁)) ?_ ?_
+    · intro p hp
+      exact ⟨hp.1.trans (ha hq).le, (hb hq.le).trans hp.2⟩
+    · let U : Set (ℝ × ℝ) :=
+        {p : ℝ × ℝ | a q₂ < p.1 ∧ p.1 < a q₁ ∧ b q₂ < p.2}
+      have hU_open : IsOpen U := by
+        have hopen_left : IsOpen {p : ℝ × ℝ | a q₂ < p.1} :=
+          isOpen_lt (continuous_const : Continuous fun _ : ℝ × ℝ => a q₂)
+            (continuous_fst : Continuous fun p : ℝ × ℝ => p.1)
+        have hopen_mid : IsOpen {p : ℝ × ℝ | p.1 < a q₁} :=
+          isOpen_lt (continuous_fst : Continuous fun p : ℝ × ℝ => p.1)
+            (continuous_const : Continuous fun _ : ℝ × ℝ => a q₁)
+        have hopen_right : IsOpen {p : ℝ × ℝ | b q₂ < p.2} :=
+          isOpen_lt (continuous_const : Continuous fun _ : ℝ × ℝ => b q₂)
+            (continuous_snd : Continuous fun p : ℝ × ℝ => p.2)
+        simpa [U, Set.setOf_and, Set.inter_assoc] using
+          (hopen_left.inter hopen_mid).inter hopen_right
+      have hU_nonempty : U.Nonempty := by
+        refine ⟨((a q₂ + a q₁) / 2, b q₂ + 1), ?_⟩
+        have haq : a q₂ < a q₁ := ha hq
+        dsimp [U]
+        constructor
+        · nlinarith
+        · constructor
+          · nlinarith
+          · linarith
+      have hU_ne_zero : μ U ≠ 0 :=
+        hU_open.measure_ne_zero μ hU_nonempty
+      intro hzero
+      apply hU_ne_zero
+      refine measure_mono_null ?_ hzero
+      intro p hp
+      rcases hp with ⟨hp_left, hp_between, hp_right⟩
+      exact
+        ⟨⟨hp_between.le, (hb hq.le).trans hp_right.le⟩,
+          fun hnew => not_le_of_gt hp_left hnew.1⟩
+  exact (ENNReal.toReal_lt_toReal
+    (measure_ne_top μ {p : ℝ × ℝ | p.1 ≤ a q₂ ∧ b q₂ ≤ p.2})
+    (measure_ne_top μ {p : ℝ × ℝ | p.1 ≤ a q₁ ∧ b q₁ ≤ p.2})).2
+      hmeasure_lt
+
+/--
+If the upper threshold in a vertical strip tends to `+∞`, then the strip mass
+tends to zero.
+-/
+theorem verticalUpperStripMass_tendsto_zero_of_right_tendsto_atTop
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] {a b : ℝ → ℝ}
+    (hb : Filter.Tendsto b Filter.atTop Filter.atTop) :
+    Filter.Tendsto (fun q : ℝ => verticalUpperStripMass μ (a q) (b q))
+      Filter.atTop (nhds 0) := by
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ => μ {p : ℝ × ℝ | p.1 ≤ a q ∧ b q ≤ p.2})
+        Filter.atTop (nhds (0 : ℝ≥0∞)) := by
+    simpa using
+      (MeasureTheory.tendsto_measure_of_tendsto_indicator_of_isFiniteMeasure
+        (L := Filter.atTop) (μ := μ)
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | p.1 ≤ a q ∧ b q ≤ p.2})
+        (A := (∅ : Set (ℝ × ℝ)))
+        (fun q => measurableSet_verticalUpperStrip (a q) (b q))
+        (by
+          intro p
+          filter_upwards [hb.eventually (Filter.eventually_gt_atTop p.2)]
+            with q hq
+          constructor
+          · intro hp
+            exact False.elim ((not_le_of_gt hq) hp.2)
+          · intro hp
+            exact False.elim hp))
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | p.1 ≤ a q ∧ b q ≤ p.2}).toReal)
+      Filter.atTop (nhds 0)
+  exact (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hmeasure
+
+/--
+If the first-coordinate cutoff tends to `+∞` and the second-coordinate cutoff
+tends to `-∞`, then the vertical strip mass tends to the whole mass.
+-/
+theorem verticalUpperStripMass_tendsto_atBot_univ_of_left_atTop_right_atBot
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] {a b : ℝ → ℝ}
+    (ha : Filter.Tendsto a Filter.atBot Filter.atTop)
+    (hb : Filter.Tendsto b Filter.atBot Filter.atBot) :
+    Filter.Tendsto (fun q : ℝ => verticalUpperStripMass μ (a q) (b q))
+      Filter.atBot (nhds (μ.real Set.univ)) := by
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ => μ {p : ℝ × ℝ | p.1 ≤ a q ∧ b q ≤ p.2})
+        Filter.atBot (nhds (μ Set.univ)) := by
+    simpa using
+      (MeasureTheory.tendsto_measure_of_tendsto_indicator_of_isFiniteMeasure
+        (L := Filter.atBot) (μ := μ)
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | p.1 ≤ a q ∧ b q ≤ p.2})
+        (A := (Set.univ : Set (ℝ × ℝ)))
+        (fun q => measurableSet_verticalUpperStrip (a q) (b q))
+        (by
+          intro p
+          filter_upwards
+            [ha.eventually (Filter.eventually_gt_atTop p.1),
+              hb.eventually (Filter.eventually_lt_atBot p.2)]
+            with q hleft hright
+          constructor
+          · intro _hp
+            trivial
+          · intro _hp
+            exact ⟨hleft.le, hright.le⟩))
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | p.1 ≤ a q ∧ b q ≤ p.2}).toReal)
+      Filter.atBot (nhds (μ.real Set.univ))
+  simpa [Measure.real] using
+    (ENNReal.tendsto_toReal (measure_ne_top μ Set.univ)).comp hmeasure
+
 /-- A lower-left rectangle has positive mass under a finite open-positive joint law. -/
 theorem lowerLeftRectangleMass_pos_of_isOpenPosMeasure
     (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ]
