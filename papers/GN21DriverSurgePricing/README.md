@@ -1057,6 +1057,15 @@ and
 `gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 assemble the required fixed-response Lemma 5 data from dynamic optimality and
 scaled Lemma 6 policy-form data.
+The generic local-optimality bridge now also has the direct
+`singleStateMeasurableOptimal` form:
+`dynamicStateReward_singleStateMeasurableOptimal_of_dynamicMeasurableOptimal`,
+`not_dynamicMeasurableOptimal_of_state_not_singleStateMeasurableOptimal`, and
+`not_dynamicMeasurableOptimal_of_state_eq_not_singleStateMeasurableOptimal`.
+Use these when a Lemma 5 endpoint-shape result already proves one-state
+measurable nonoptimality; the older strict-improvement bridge remains useful
+when the endpoint proof is still phrased as an explicit improved feasible
+replacement.
 The source-data constructors
 `GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_regularity` and
 `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_regularity` now derive

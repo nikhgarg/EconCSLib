@@ -144,10 +144,16 @@ Use these to rule out noncanonical local endpoint configurations directly
 instead of first extracting an existential improved policy and then manually
 threading it through measurable optimality.  The generic dynamic bridge
 
+  dynamicStateReward_singleStateMeasurableOptimal_of_dynamicMeasurableOptimal
+  not_dynamicMeasurableOptimal_of_state_not_singleStateMeasurableOptimal
+  not_dynamicMeasurableOptimal_of_state_eq_not_singleStateMeasurableOptimal
   not_dynamicMeasurableOptimal_of_state_eq_exists_strict_feasible_trip_policy_improvement
 
-does the same after identifying the current state policy with the concrete
-endpoint-union set.
+now converts a dynamic measurable optimum into the relevant one-state
+measurable optimum and exposes the contrapositive directly.  Use the
+`singleStateMeasurableOptimal` bridge when a Lemma 5 endpoint theorem already
+proves local nonoptimality, and the existential strict-improvement bridge after
+identifying the current state policy with the concrete endpoint-union set.
 
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
