@@ -1659,6 +1659,12 @@ The matching source-assumption adapters are named
 these adapters when an exact normalized fixed-response proof already supplies
 the branch selectors and only the aggregate Lemma 10 cross-ratio endpoint is
 needed downstream.
+The same reduction is exposed in `PaperInterface` through
+`theorem3_structured_measurable_ic_ae_unique_of_fixed_response_exact_branch_surge_cross_fixed_transfer`,
+`theorem3_structured_measurable_ic_ae_unique_of_fixed_response_exact_bracket_surge_cross_fixed_transfer`,
+`theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_transfer_surge_cross_fixed_transfer`,
+and
+`theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_upper_transfer_surge_cross_fixed_transfer`.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

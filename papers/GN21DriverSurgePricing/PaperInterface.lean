@@ -631,6 +631,78 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_fixed_trans
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the exact fixed-response branch route, lowered to the weaker
+aggregate-cross fixed-transfer endpoint package consumed by Lemma 10.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_exact_branch_surge_cross_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21
+      A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
+
+/--
+Theorem 3 on the bracket-level exact fixed-response route, lowered to the
+aggregate-cross fixed-transfer endpoint package.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_exact_bracket_surge_cross_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21
+      A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
+
+/--
+Theorem 3 on the exact bracket pointwise-transfer route, lowered to the
+aggregate-cross fixed-transfer endpoint package.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_transfer_surge_cross_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21
+      A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
+
+/--
+Theorem 3 on the exact bracket one-sided pointwise-transfer route, lowered to
+the aggregate-cross fixed-transfer endpoint package.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_upper_transfer_surge_cross_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21
+      A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
+
+/--
 Theorem 3 on the exact fixed-transfer route with the surge fixed-state side
 weakened to the aggregate cross-ratio endpoint package consumed by Lemma 10.
 -/
