@@ -534,7 +534,11 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_current_bounds_selection_unless_middle_reroute_positive_source_assumptions`
   implements the first such reroute: a surge reject-middle branch with
   `lo <= 0` is discharged by the short-tail endpoint at cutoff `hi`, so source
-  proofs only need reject-middle endpoint data for the `0 <= lo` branch.
+  proofs only need reject-middle endpoint data for the `0 <= lo` branch.  The
+  same positive-parameter source boundary now has the AE-unique wrapper
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_selection_unless_middle_reroute_positive_source_assumptions`
+  and compact interface theorem
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_middle_reroute`.
   The direct AE endpoint version is now compiled as
   `Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions` and
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions`;

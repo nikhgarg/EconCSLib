@@ -199,6 +199,24 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_ae_endpoint_middle_rerout
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the positive-parameter endpoint-current-bounds middle-reroute
+route: exact endpoint selections with the branch-local non-accept-all
+hypothesis give structured measurable IC and a.e. uniqueness.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_middle_reroute
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessMiddleReroutePositiveSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_selection_unless_middle_reroute_positive_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the fixed-transfer middle-reroute route with source-facing
 allowed replacement data: the exact endpoint selection derives accept-all
 optimality internally and feeds the direct AE endpoint route, yielding the
