@@ -450,6 +450,14 @@ abbrev audit_event_share_eq_zero_of_no_positive_mass :=
 abbrev audit_event_share_lt_one_of_complement_mass :=
   @paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_mass_not
 
+/-- Audit endpoint for full-support finite event-share complement witnesses. -/
+abbrev audit_event_share_complement_mass_of_full_support_not_all :=
+  @paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all
+
+/-- Audit endpoint for full-support finite event shares being strictly below one. -/
+abbrev audit_event_share_lt_one_of_full_support_not_all :=
+  @paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all
+
 /-- Audit endpoint for Theorem 3.2, optional-reporting fairness-impossibility branch. -/
 abbrev audit_theorem3_2_section3_optional_reporting_fairness_impossibility :=
   @paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility

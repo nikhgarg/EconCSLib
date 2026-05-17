@@ -134,7 +134,10 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all`,
   which derive that positive-mass complement witness from a full-support
   finite cohort law plus an ordinary witness outside the reporting/taking
-  event.
+  event.  The underlying reusable bridge is also exposed as
+  `paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all`
+  and
+  `paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all`.
 - The concrete base-mixed continuous-law route now has short Section 3
   paper-interface endpoints:
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`

@@ -8813,6 +8813,40 @@ theorem paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_mass_not
   lg21PMFEventShareFn_lt_one_of_mass_not studentLaw event decEvent hwitness
 
 /--
+Theorem 3.1/3.2 helper: full support turns an ordinary complement witness into
+the positive-mass complement witness needed for finite event-share bounds.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (hfull_support :
+      ∀ e base student, 0 < (studentLaw e base student).toReal)
+    (hnot_all : ∀ e base, ∃ student, ¬ event e base student) :
+    ∀ e base, ∃ student, ¬ event e base student ∧
+      0 < (studentLaw e base student).toReal :=
+  lg21PMFEventShareFn_complement_mass_of_full_support_not_all
+    studentLaw event hfull_support hnot_all
+
+/--
+Theorem 3.1/3.2 helper: under full support, an ordinary witness outside the
+event makes every indexed finite event share strictly below one.
+-/
+theorem paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all
+    {Equilibrium Base Student : Type*} [Fintype Student] [DecidableEq Student]
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (event : Equilibrium → Base → Student → Prop)
+    (decEvent : ∀ e base, DecidablePred (event e base))
+    (hfull_support :
+      ∀ e base student, 0 < (studentLaw e base student).toReal)
+    (hnot_all : ∀ e base, ∃ student, ¬ event e base student) :
+    ∀ e base,
+      paper_interface_theorem3_2_pmf_event_share_fn
+        studentLaw event decEvent e base < 1 :=
+  lg21PMFEventShareFn_lt_one_of_full_support_not_all
+    studentLaw event decEvent hfull_support hnot_all
+
+/--
 Theorem 3.2 report-required affine algebra: a centered base-term identity gives
 the centered-numerator identity.
 -/

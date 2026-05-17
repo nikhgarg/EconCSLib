@@ -204,6 +204,10 @@ Last updated: 2026-05-16
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all`
   derive the positive-mass complement event from full support of the finite
   cohort law plus an ordinary witness outside the reporting/taking event.
+  The reusable event-share bridge itself is public as
+  `paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all`
+  and
+  `paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all`.
   Theorem 3.1 now also has Section 3 hidden-access wrappers over PMF and
   continuous-law regime-specific certificates, including every-equilibrium
   certificate-family forms.  The access-status hypothesis is exposed as
