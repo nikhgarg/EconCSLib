@@ -195,6 +195,26 @@ mass.  They discharge the reject-long cutoff and accepted-middle gap fields
 from feasibility plus positive mass; do not keep those as separate source
 fields in that case.
 
+For the fixed-response Theorem 3 route, positive current non-surge accepted
+mass is no longer a separate paper source field.  Lean derives it from the
+GN21 fixed-response nondegeneracy package:
+
+  Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.nonsurge_current_mass_pos
+
+The one-threshold surge-cutoff route can now be stated in the paper's branch
+field form and compiled directly to the existing Theorem 3 conclusion through:
+
+  GN21Theorem3FixedResponsePolicyFormSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_gn21_source_data_and_branch_fields
+  GN21Theorem3FixedResponsePolicyFormSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms_and_branch_fields
+  GN21Theorem3FixedResponseOneThresholdSurgeCutoffBranchFieldMiddleCutoffRerouteSourceExistenceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_surge_cutoff_branch_field_middle_cutoff_reroute_existence_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_surge_cutoff_branch_field_middle_cutoff_reroute_existence_source_assumptions
+
+This is the preferred paper-facing route for the next Lemma 9/10 work: supply
+the actual surge cutoff bounds/reward-rate fields and the non-surge fixed-state
+by-policy-form field, not a preassembled endpoint certificate and not a
+separate positive-mass assumption.
+
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
 source record, and the sharper middle-cutoff version is now compiled:
