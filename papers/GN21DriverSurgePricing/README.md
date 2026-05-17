@@ -1572,6 +1572,13 @@ where the non-surge side is stated as
 `rejectsLongTripsFiniteOrInfiniteCutoff`; it lowers to the extended route via
 `to_extended_source` and is exposed as
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer`.
+The exact finite-cutoff aggregate-cross package now lowers into this
+finite-or-infinite boundary through
+`GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.to_finite_or_infinite_source`
+and the source-assumption adapter
+`Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferExistenceSourceAssumptions.to_finite_or_infinite_source_assumptions`,
+so exact branch proofs can be reused directly when the paper-facing statement
+is phrased with the non-surge infinite-cutoff convention.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
