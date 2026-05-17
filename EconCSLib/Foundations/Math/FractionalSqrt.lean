@@ -11,11 +11,28 @@ Reusable scalar algebra for access-barrier and precision-comparison proofs.
 
 - `sqrt_fractionalLinear_const_mul_lt_of_rho_lt_one`
 - `sqrt_fractionalLinear_mul_const_lt_of_one_lt_rho`
+- `sqrt_self_div_add_const_le_of_le`
 -/
 
 namespace EconCSLib
 
 open Set
+
+/--
+The precision-to-posterior-scale map `x ↦ sqrt (x / (a + x))` is monotone on
+nonnegative `x` when the prior precision `a` is positive.
+-/
+theorem sqrt_self_div_add_const_le_of_le
+    {a x y : ℝ}
+    (ha : 0 < a) (hx : 0 ≤ x) (hxy : x ≤ y) :
+    Real.sqrt (x / (a + x)) ≤ Real.sqrt (y / (a + y)) := by
+  have hy : 0 ≤ y := le_trans hx hxy
+  have hdenx : 0 < a + x := by linarith
+  have hdeny : 0 < a + y := by linarith
+  have hfrac : x / (a + x) ≤ y / (a + y) := by
+    rw [div_le_div_iff₀ hdenx hdeny]
+    nlinarith
+  exact Real.sqrt_le_sqrt hfrac
 
 /--
 If `0 ≤ rho < 1`, then
