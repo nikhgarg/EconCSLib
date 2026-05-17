@@ -18965,6 +18965,31 @@ def paper_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observa
     paper_theorem3_2_fairness_implies_test_blank_of_not_latent_or_observable_fair
       hnotFair
 
+/--
+Theorem 3.2 source-witness route packaged as the compact
+fairness-impossibility certificate.  This lets the source proof's
+latent-to-observable mixture identities and observable-fairness unraveling
+witness feed the same iff/no-relevance wrappers as the certificate-oriented
+routes.
+-/
+def paper_theorem3_2_fairness_impossibility_certificate_of_mixture_and_source_witness
+    {Skill Base Test Estimate : Type*}
+    (skillGivenBase : Base → PMF Skill)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hObsAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        lg21LatentSkillEstimateDistribution skillGivenBase
+          (S.latentNoAccessEstimate e) base)
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    LG21FairnessImpossibilityCertificate S where
+  latent_or_observable_implies_test_blank :=
+    paper_theorem3_2_fairness_impossibility_of_mixture_and_source_witness
+      skillGivenBase hObsAccess hObsNoAccess W
+
 /-- Theorem 3.2 endpoint: latent or observable fairness implies test-blankness. -/
 theorem paper_theorem3_2_fairness_impossibility_of_certificate
     {Skill Base Test Estimate : Type*}
@@ -22635,6 +22660,21 @@ def paper_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_or_obs
   latent_or_observable_implies_test_blank :=
     paper_theorem3_2_law_fairness_implies_test_blank_of_not_latent_or_observable_fair
       hnotFair
+
+/--
+Continuous-law Theorem 3.2 source-witness route packaged as the compact
+fairness-impossibility certificate.
+-/
+def paper_theorem3_2_law_fairness_impossibility_certificate_of_observable_implication_and_source_witness
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hlatent_to_observable :
+      lg21SourceLawLatentSkillFair S → lg21SourceLawObservablyFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    LG21LawFairnessImpossibilityCertificate S where
+  latent_or_observable_implies_test_blank :=
+    paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_witness
+      hlatent_to_observable W
 
 /-- Theorem 3.2 endpoint over arbitrary continuous law objects. -/
 theorem paper_theorem3_2_law_fairness_impossibility_of_certificate

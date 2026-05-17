@@ -662,6 +662,22 @@ abbrev audit_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_ev
 abbrev audit_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence :=
   @paper_interface_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence
 
+/-- Audit endpoint for packaging the PMF source-witness Theorem 3.2 route as a certificate. -/
+abbrev audit_theorem3_2_fairness_certificate_of_mixture_and_source_evidence :=
+  @paper_interface_theorem3_2_fairness_impossibility_certificate_of_mixture_and_source_evidence
+
+/-- Audit endpoint for the PMF source-witness Theorem 3.2 fairness/test-blank iff route. -/
+abbrev audit_theorem3_2_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities
+
+/-- Audit endpoint for the Section 3 PMF source-witness Theorem 3.2 fairness/test-blank iff route. -/
+abbrev audit_theorem3_2_section3_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_section3_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities
+
+/-- Audit endpoint for the Section 3 PMF source-witness Theorem 3.2 fairness/no-relevance iff route. -/
+abbrev audit_theorem3_2_section3_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_section3_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities
+
 /-- Audit endpoint for the continuous-law source-witness Theorem 3.2 implication route. -/
 abbrev audit_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_evidence :=
   @paper_interface_theorem3_2_law_fairness_impossibility_of_observable_implication_and_source_evidence
@@ -673,6 +689,22 @@ abbrev audit_theorem3_2_section3_law_fairness_impossibility_of_observable_implic
 /-- Audit endpoint for the Section 3 continuous-law source-witness Theorem 3.2 no-relevance route. -/
 abbrev audit_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence :=
   @paper_interface_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence
+
+/-- Audit endpoint for packaging the continuous-law source-witness Theorem 3.2 route as a certificate. -/
+abbrev audit_theorem3_2_law_fairness_certificate_of_observable_implication_and_source_evidence :=
+  @paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_observable_implication_and_source_evidence
+
+/-- Audit endpoint for the continuous-law source-witness Theorem 3.2 fairness/test-blank iff route. -/
+abbrev audit_theorem3_2_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities
+
+/-- Audit endpoint for the Section 3 continuous-law source-witness Theorem 3.2 fairness/test-blank iff route. -/
+abbrev audit_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities
+
+/-- Audit endpoint for the Section 3 continuous-law source-witness Theorem 3.2 fairness/no-relevance iff route. -/
+abbrev audit_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities :=
+  @paper_interface_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities
 
 /-- Audit endpoint for the PMF Theorem 3.2 contradiction-to-certificate constructor. -/
 abbrev audit_theorem3_2_fairness_certificate_of_not_latent_or_observable_fair :=

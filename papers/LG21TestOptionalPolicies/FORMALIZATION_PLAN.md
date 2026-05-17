@@ -886,6 +886,18 @@ Last updated: 2026-05-16
    `paper_interface_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence`.
    Use these when the intended statement should cite the source-shaped witness
    obligations directly rather than routing through a compact certificate.
+   The source-witness layer now also has compact certificate constructors and
+   Section 3 iff wrappers:
+   `paper_interface_theorem3_2_fairness_impossibility_certificate_of_mixture_and_source_evidence`,
+   `paper_interface_theorem3_2_section3_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities`,
+   `paper_interface_theorem3_2_section3_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities`,
+   `paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_observable_implication_and_source_evidence`,
+   `paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities`,
+   and
+   `paper_interface_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities`.
+   These are the best route when the proof should follow the named
+   source-witness obligations but still feed the same iff/no-relevance audit
+   surface as certificate-based routes.
    The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,
