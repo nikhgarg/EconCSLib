@@ -290,6 +290,14 @@ adapters.  The measured structured one-threshold wrappers
 perform that substitution directly for the non-surge reject-long and surge
 reject-short branches.  This is the fastest path for one-threshold
 reject-long/reject-short branches of the fixed-response route.
+If the source proof has endpoint signs rather than an explicit zero cutoff,
+use the bracket route:
+`continuousOn_gn21Lemma6Response_structured_ctmc`,
+`exists_gn21Lemma6Response_structured_ctmc_zero_of_bracket`,
+`exists_gn21Lemma6Response_structured_ctmc_zero_of_reverse_bracket`,
+`gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured_bracket`,
+and
+`gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured_bracket`.
 The all-optima handoff boundary for this lighter route is
 `Theorem4AllMeasurableFixedResponsePolicyFormData`; call
 `.to_feasible_ae_policy_forms` to enter the existing feasible a.e. Theorem 4
@@ -331,6 +339,11 @@ and
 They combine the measured structured Lemma 6 policy-form wrappers with the
 structured-price regularity constructors, so callers supply only coefficient
 sign, positive zero-cutoff, denominator/nondegeneracy, and integrability data.
+Prefer
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_decreasing_of_bracket`
+and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_increasing_of_bracket`
+when the available source facts are sign brackets on a positive interval.
 For all optima at once, use
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` and its
 `.to_fixed_response_policy_form_data` method to build

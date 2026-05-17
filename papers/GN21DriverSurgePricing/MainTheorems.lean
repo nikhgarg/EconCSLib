@@ -13037,6 +13037,111 @@ theorem paper_lemma6_structured_response_per_time_form
   ring
 
 /--
+Structured CTMC Lemma 6 responses are continuous on any compact interval of
+positive trip lengths.
+-/
+theorem continuousOn_gn21Lemma6Response_structured_ctmc
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b : ℝ)
+    (ha_pos : 0 < a) :
+    ContinuousOn
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      (Set.Icc a b) := by
+  have hq :
+      ContinuousOn (fun u : TripLength => gn21SwitchProb lambdaIJ lambdaJI u)
+        (Set.Icc a b) :=
+    (continuous_gn21SwitchProb lambdaIJ lambdaJI).continuousOn
+  have hid : ContinuousOn (fun u : TripLength => u) (Set.Icc a b) :=
+    continuous_id.continuousOn
+  have hu_ne : ∀ u ∈ Set.Icc a b, u ≠ 0 := by
+    intro u hu
+    exact ne_of_gt (ha_pos.trans_le hu.1)
+  unfold gn21Lemma6Response
+  exact
+    (((hq.div hid hu_ne).mul continuousOn_const).add
+        ((((continuousOn_const.mul hid).add (continuousOn_const.mul hq)).div
+          hid hu_ne).mul continuousOn_const)).sub continuousOn_const
+
+/--
+Structured CTMC Lemma 6 response zero from a positive-interval sign bracket.
+This is the IVT step behind the source cutoff selection.
+-/
+theorem exists_gn21Lemma6Response_structured_ctmc_zero_of_bracket
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b : ℝ)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      0 ≤
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI a) a
+          (m * a + z * gn21SwitchProb lambdaIJ lambdaJI a)
+          Qi Qj Ti Tj Ri Rj)
+    (hright :
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI b) b
+          (m * b + z * gn21SwitchProb lambdaIJ lambdaJI b)
+          Qi Qj Ti Tj Ri Rj ≤
+        0) :
+    ∃ t : ℝ,
+      0 < t ∧
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI t) t
+          (m * t + z * gn21SwitchProb lambdaIJ lambdaJI t)
+          Qi Qj Ti Tj Ri Rj =
+        0 := by
+  let response : ℝ → ℝ :=
+    fun u =>
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+        (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+        Qi Qj Ti Tj Ri Rj
+  have hcont : ContinuousOn response (Set.Icc a b) := by
+    simpa [response] using
+      continuousOn_gn21Lemma6Response_structured_ctmc
+        m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b ha_pos
+  have hzero_between : (0 : ℝ) ∈ Set.Icc (response b) (response a) :=
+    ⟨hright, hleft⟩
+  rcases intermediate_value_Icc' hab hcont hzero_between with
+    ⟨t, ht, ht_zero⟩
+  exact ⟨t, ha_pos.trans_le ht.1, by simpa [response] using ht_zero⟩
+
+/--
+Structured CTMC Lemma 6 response zero from the opposite sign bracket.
+-/
+theorem exists_gn21Lemma6Response_structured_ctmc_zero_of_reverse_bracket
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b : ℝ)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI a) a
+          (m * a + z * gn21SwitchProb lambdaIJ lambdaJI a)
+          Qi Qj Ti Tj Ri Rj ≤
+        0)
+    (hright :
+      0 ≤
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI b) b
+          (m * b + z * gn21SwitchProb lambdaIJ lambdaJI b)
+          Qi Qj Ti Tj Ri Rj) :
+    ∃ t : ℝ,
+      0 < t ∧
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI t) t
+          (m * t + z * gn21SwitchProb lambdaIJ lambdaJI t)
+          Qi Qj Ti Tj Ri Rj =
+        0 := by
+  let response : ℝ → ℝ :=
+    fun u =>
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+        (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+        Qi Qj Ti Tj Ri Rj
+  have hcont : ContinuousOn response (Set.Icc a b) := by
+    simpa [response] using
+      continuousOn_gn21Lemma6Response_structured_ctmc
+        m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b ha_pos
+  have hzero_between : (0 : ℝ) ∈ Set.Icc (response a) (response b) :=
+    ⟨hleft, hright⟩
+  rcases intermediate_value_Icc hab hcont hzero_between with
+    ⟨t, ht, ht_zero⟩
+  exact ⟨t, ha_pos.trans_le ht.1, by simpa [response] using ht_zero⟩
+
+/--
 For structured CTMC prices, a positive coefficient on `q(u)/u` makes the
 Lemma 6 response strictly decreasing on positive trip lengths.
 -/
@@ -27425,6 +27530,80 @@ def gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing
         m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI hcoeff_neg
         hlambdaIJ hsum)
       hzero)
+
+/--
+Structured CTMC decreasing one-threshold package when the source proof gives a
+positive-interval sign bracket instead of an explicit zero cutoff.
+-/
+noncomputable def gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing_of_bracket
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b : ℝ)
+    (hcoeff_pos :
+      0 < (Rj - Ri) + z * (Qi / Ti + Qj / Tj))
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      0 ≤
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI a) a
+          (m * a + z * gn21SwitchProb lambdaIJ lambdaJI a)
+          Qi Qj Ti Tj Ri Rj)
+    (hright :
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI b) b
+          (m * b + z * gn21SwitchProb lambdaIJ lambdaJI b)
+          Qi Qj Ti Tj Ri Rj ≤
+        0) :
+    Lemma5PositiveResponsePolicyFormData
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      .strictlyDecreasing := by
+  classical
+  rcases exists_gn21Lemma6Response_structured_ctmc_zero_of_bracket
+      m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b ha_pos hab hleft hright
+    with ⟨t, ht_pos, hzero⟩
+  exact
+    gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing
+      m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI t hcoeff_pos hlambdaIJ
+      hsum ht_pos hzero
+
+/--
+Structured CTMC increasing one-threshold package when the source proof gives a
+negative-to-positive sign bracket instead of an explicit zero cutoff.
+-/
+noncomputable def gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing_of_bracket
+    (m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b : ℝ)
+    (hcoeff_neg :
+      (Rj - Ri) + z * (Qi / Ti + Qj / Tj) < 0)
+    (hlambdaIJ : 0 < lambdaIJ)
+    (hsum : 0 < lambdaIJ + lambdaJI)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI a) a
+          (m * a + z * gn21SwitchProb lambdaIJ lambdaJI a)
+          Qi Qj Ti Tj Ri Rj ≤
+        0)
+    (hright :
+      0 ≤
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI b) b
+          (m * b + z * gn21SwitchProb lambdaIJ lambdaJI b)
+          Qi Qj Ti Tj Ri Rj) :
+    Lemma5PositiveResponsePolicyFormData
+      (fun u : TripLength =>
+        gn21Lemma6Response (gn21SwitchProb lambdaIJ lambdaJI u) u
+          (m * u + z * gn21SwitchProb lambdaIJ lambdaJI u)
+          Qi Qj Ti Tj Ri Rj)
+      .strictlyIncreasing := by
+  classical
+  rcases exists_gn21Lemma6Response_structured_ctmc_zero_of_reverse_bracket
+      m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI a b ha_pos hab hleft hright
+    with ⟨t, ht_pos, hzero⟩
+  exact
+    gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing
+      m z Qi Qj Ti Tj Ri Rj lambdaIJ lambdaJI t hcoeff_neg hlambdaIJ
+      hsum ht_pos hzero
 
 /--
 Positive pointwise scaling on feasible trip lengths preserves the
@@ -45898,6 +46077,110 @@ def gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured
         simpa [gn21MeasuredRightLemma6ResponseAtCurrent,
           ctmcStructuredSurgePrice, structuredSurgePrice] using hzero)
 
+/--
+Non-surge measured structured decreasing branch from a sign bracket.  This
+uses continuity of the structured Lemma 6 response to choose the zero cutoff.
+-/
+noncomputable def gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured_bracket
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (m z Ri Rj a b : ℝ)
+    (σI σJ : TripPolicy)
+    (hcoeff_pos :
+      0 <
+        (Rj - Ri) +
+          z *
+            (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI /
+                gn21ScaledStateTime μI arrivalI σI +
+              gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ /
+                gn21ScaledStateTime μJ arrivalJ σJ))
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      0 ≤
+        gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI
+          (ctmcStructuredSurgePrice m z switchIJ switchJI) σI σJ Ri Rj a)
+    (hright :
+      gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI
+          (ctmcStructuredSurgePrice m z switchIJ switchJI) σI σJ Ri Rj b ≤
+        0) :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI
+        (ctmcStructuredSurgePrice m z switchIJ switchJI) σI σJ Ri Rj)
+      .strictlyDecreasing := by
+  simpa [gn21MeasuredLeftLemma6ResponseAtCurrent, ctmcStructuredSurgePrice,
+    structuredSurgePrice] using
+    gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing_of_bracket
+      m z
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      Ri Rj switchIJ switchJI a b hcoeff_pos hswitch_pos hsum ha_pos hab
+      (by
+        simpa [gn21MeasuredLeftLemma6ResponseAtCurrent,
+          ctmcStructuredSurgePrice, structuredSurgePrice] using hleft)
+      (by
+        simpa [gn21MeasuredLeftLemma6ResponseAtCurrent,
+          ctmcStructuredSurgePrice, structuredSurgePrice] using hright)
+
+/--
+Surge measured structured increasing branch from a sign bracket.  This is the
+state-swapped counterpart of the non-surge decreasing bracket constructor.
+-/
+noncomputable def gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured_bracket
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (m z Ri Rj a b : ℝ)
+    (σI σJ : TripPolicy)
+    (hcoeff_neg :
+        (Ri - Rj) +
+          z *
+            (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ /
+                gn21ScaledStateTime μJ arrivalJ σJ +
+              gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI /
+                gn21ScaledStateTime μI arrivalI σI) <
+        0)
+    (hswitch_pos : 0 < switchJI)
+    (hsum : 0 < switchJI + switchIJ)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI
+          (ctmcStructuredSurgePrice m z switchJI switchIJ) σI σJ Ri Rj a ≤
+        0)
+    (hright :
+      0 ≤
+        gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI
+          (ctmcStructuredSurgePrice m z switchJI switchIJ) σI σJ Ri Rj b) :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI
+        (ctmcStructuredSurgePrice m z switchJI switchIJ) σI σJ Ri Rj)
+      .strictlyIncreasing := by
+  simpa [gn21MeasuredRightLemma6ResponseAtCurrent, ctmcStructuredSurgePrice,
+    structuredSurgePrice] using
+    gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing_of_bracket
+      m z
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      Rj Ri switchJI switchIJ a b hcoeff_neg hswitch_pos hsum ha_pos hab
+      (by
+        simpa [gn21MeasuredRightLemma6ResponseAtCurrent,
+          ctmcStructuredSurgePrice, structuredSurgePrice] using hleft)
+      (by
+        simpa [gn21MeasuredRightLemma6ResponseAtCurrent,
+          ctmcStructuredSurgePrice, structuredSurgePrice] using hright)
+
 /-- Left measured response equals a positive scale times the normalized Lemma 6 response. -/
 theorem gn21MeasuredLeftMarginalResponse_eq_scale_mul_lemma6ResponseAtCurrent
     (μI μJ : Measure TripLength)
@@ -46991,6 +47274,115 @@ def GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_d
     current_nondegenerate candidate_nondegenerate candidate_den_pos
     q_integrable time_integrable
 
+/--
+Non-surge source constructor for the structured decreasing one-threshold
+branch when the source proof gives a sign bracket rather than an explicit
+zero cutoff.
+-/
+noncomputable def GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_decreasing_of_bracket
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (Ri Rj a b : ℝ)
+    (hcoeff_pos :
+      0 <
+        (Rj - Ri) +
+          z 0 *
+            (gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) /
+                gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) +
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) /
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)))
+    (hswitch_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      0 ≤
+        gn21MeasuredLeftLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          (ρ 0) (ρ 1) Ri Rj a)
+    (hright :
+      gn21MeasuredLeftLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          (ρ 0) (ρ 1) Ri Rj b ≤
+        0)
+    (hQj_pos :
+      0 < gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (arrival_pos : 0 < arrival 0)
+    (current_nondegenerate :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (candidate_nondegenerate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 σ (ρ 1))
+    (candidate_den_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) *
+                gn21ScaledStateTime (μ 0) (arrival 0) σ)
+    (q_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+            σ (μ 0))
+    (time_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 0)) :
+    GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+      .strictlyDecreasing :=
+  GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price
+    (μ := μ) (arrival := arrival) (switch12 := switch12)
+    (switch21 := switch21) (m := m) (z := z) (ρ := ρ)
+    (shape := .strictlyDecreasing) Ri Rj
+    (by
+      simpa [ctmcStructuredDynamicSurgePrice] using
+        gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured_bracket
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          (m 0) (z 0) Ri Rj a b (ρ 0) (ρ 1) hcoeff_pos
+          hswitch_pos hsum ha_pos hab
+          (by
+            simpa [ctmcStructuredDynamicSurgePrice] using hleft)
+          (by
+            simpa [ctmcStructuredDynamicSurgePrice] using hright))
+    hQj_pos hTi_pos hTj_pos hden_pos hWi hWj arrival_pos
+    current_nondegenerate candidate_nondegenerate candidate_den_pos
+    q_integrable time_integrable
+
 /-- Convert non-surge GN21 source data into the fixed-response Lemma 5 package. -/
 def GN21MeasuredLeftFixedResponsePolicyFormSourceData.to_fixed_response
     {μ : Fin 2 → Measure TripLength}
@@ -47391,6 +47783,115 @@ def GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_
           hsum ht_pos
           (by
             simpa [ctmcStructuredDynamicSurgePrice] using hzero))
+    hQi_pos hTi_pos hTj_pos hden_pos hWi hWj arrival_pos
+    current_nondegenerate candidate_nondegenerate candidate_den_pos
+    q_integrable time_integrable
+
+/--
+Surge source constructor for the structured increasing one-threshold branch
+when the source proof gives a sign bracket rather than an explicit zero
+cutoff.
+-/
+noncomputable def GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_increasing_of_bracket
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    (Ri Rj a b : ℝ)
+    (hcoeff_neg :
+        (Ri - Rj) +
+          z 1 *
+            (gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) /
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) /
+                gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)) <
+        0)
+    (hswitch_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (ha_pos : 0 < a)
+    (hab : a ≤ b)
+    (hleft :
+      gn21MeasuredRightLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (ρ 0) (ρ 1) Ri Rj a ≤
+        0)
+    (hright :
+      0 ≤
+        gn21MeasuredRightLemma6ResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (ρ 0) (ρ 1) Ri Rj b)
+    (hQi_pos :
+      0 < gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0))
+    (hTi_pos : 0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hTj_pos : 0 < gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (hden_pos :
+      0 <
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWi :
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        Ri * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (hWj :
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        Rj * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (arrival_pos : 0 < arrival 1)
+    (current_nondegenerate :
+      GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+        switch12 switch21 (ρ 0) (ρ 1))
+    (candidate_nondegenerate :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 (ρ 0) σ)
+    (candidate_den_pos :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          0 <
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) *
+              gn21ScaledStateTime (μ 1) (arrival 1) σ +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (q_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn
+            (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+            σ (μ 1))
+    (time_integrable :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          IntegrableOn (fun τ : TripLength => τ) σ (μ 1)) :
+    GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+      .strictlyIncreasing :=
+  GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price
+    (μ := μ) (arrival := arrival) (switch12 := switch12)
+    (switch21 := switch21) (m := m) (z := z) (ρ := ρ)
+    (shape := .strictlyIncreasing) Ri Rj
+    (by
+      simpa [ctmcStructuredDynamicSurgePrice] using
+        gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured_bracket
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          (m 1) (z 1) Ri Rj a b (ρ 0) (ρ 1) hcoeff_neg
+          hswitch_pos hsum ha_pos hab
+          (by
+            simpa [ctmcStructuredDynamicSurgePrice] using hleft)
+          (by
+            simpa [ctmcStructuredDynamicSurgePrice] using hright))
     hQi_pos hTi_pos hTj_pos hden_pos hWi hWj arrival_pos
     current_nondegenerate candidate_nondegenerate candidate_den_pos
     q_integrable time_integrable

@@ -981,6 +981,17 @@ state-specialized wrappers
 build those normalized Lemma 6 policy-form packages directly from the
 coefficient sign and zero-cutoff facts, with the moving-state CTMC parameters
 substituted.
+The cutoff can now be selected internally from a sign bracket:
+`continuousOn_gn21Lemma6Response_structured_ctmc`,
+`exists_gn21Lemma6Response_structured_ctmc_zero_of_bracket`, and
+`exists_gn21Lemma6Response_structured_ctmc_zero_of_reverse_bracket` prove the
+IVT step, and the bracket constructors
+`gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing_of_bracket`,
+`gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing_of_bracket`,
+`gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured_bracket`,
+and
+`gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured_bracket`
+feed it into the Lemma 5 policy-form package.
 The next layer is also packaged:
 `gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
 `gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`
@@ -1017,6 +1028,12 @@ go one layer further: their source-facing inputs are the structured-response
 coefficient sign, a positive zero cutoff, denominator/nondegeneracy fields,
 and the usual integrability facts, and they return the full state source data
 for the non-surge decreasing and surge increasing branches.
+Their bracket variants
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_decreasing_of_bracket`
+and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_increasing_of_bracket`
+replace the explicit zero cutoff by a positive interval and endpoint sign
+conditions.
 `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData` packages these
 statewise assumptions for all measurable optima and converts to the
 all-optima fixed-response policy-form boundary; the constructor
