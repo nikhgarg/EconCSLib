@@ -93,6 +93,51 @@ theorem theorem1_single_state_threshold_best_response_measurable
       hw_integrable_acceptAll htime_integrable_acceptAll hlambda
       hpayment_acceptAll_pos
 
+/-! ## Dynamic Multiplicative Pricing -/
+
+/--
+Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
+when the non-surge Lemma 5 branch is positive/decreasing and the surge branch
+is positive/increasing, the optimal policy has the paper's multiplicative
+shape.  The non-surge statement allows the paper's `t = infinity` case as
+accept-all.
+-/
+theorem theorem2_multiplicative_extended_policy_shape_of_shape_derivation
+    (R : DynamicReward)
+    (C : Theorem4ShapeDerivationCertificate R)
+    (hnonsurge :
+      C.nonsurge_shape = .positive ∨
+        C.nonsurge_shape = .strictlyDecreasing)
+    (hsurge :
+      C.surge_shape = .positive ∨
+        C.surge_shape = .strictlyIncreasing) :
+    dynamicOptimal R C.policy ∧
+      rejectsLongTripsFiniteOrInfiniteCutoff (C.policy 0) ∧
+      (∃ t : ℝ, rejectsShortTrips t (C.policy 1)) := by
+  exact
+    GN21DriverSurgePricing.paper_theorem2_multiplicative_extended_policy_shape_of_shape_derivation
+      R C hnonsurge hsurge
+
+/--
+Measurable-domain version of the Theorem 4-to-Theorem 2 multiplicative
+policy-shape route.
+-/
+theorem theorem2_multiplicative_extended_measurable_policy_shape_of_shape_derivation
+    (R : DynamicReward)
+    (C : Theorem4MeasurableShapeDerivationCertificate R)
+    (hnonsurge :
+      C.nonsurge_shape = .positive ∨
+        C.nonsurge_shape = .strictlyDecreasing)
+    (hsurge :
+      C.surge_shape = .positive ∨
+        C.surge_shape = .strictlyIncreasing) :
+    dynamicMeasurableOptimal R C.policy ∧
+      rejectsLongTripsFiniteOrInfiniteCutoff (C.policy 0) ∧
+      (∃ t : ℝ, rejectsShortTrips t (C.policy 1)) := by
+  exact
+    GN21DriverSurgePricing.paper_theorem2_multiplicative_extended_measurable_policy_shape_of_shape_derivation
+      R C hnonsurge hsurge
+
 /-! ## Structured Dynamic Pricing -/
 
 /--
