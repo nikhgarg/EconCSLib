@@ -170,6 +170,26 @@ abbrev audit_theorem3_1_section3_optional_reporting_pmf :=
 abbrev audit_theorem3_1_section3_report_required_pmf :=
   @paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf
 
+/-- Audit endpoint for Theorem 3.1 source-shaped posterior PMF latent-skill unfairness. -/
+abbrev audit_theorem3_1_base_mixed_posterior_pmf_not_latent_skill_fair :=
+  @paper_interface_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_latent_skill_fair
+
+/-- Audit endpoint for Theorem 3.1 source-shaped posterior PMF observable unfairness. -/
+abbrev audit_theorem3_1_base_mixed_posterior_pmf_not_observably_fair :=
+  @paper_interface_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_observably_fair
+
+/-- Audit endpoint for Theorem 3.1 source-shaped posterior PMF demographic unfairness. -/
+abbrev audit_theorem3_1_base_mixed_posterior_pmf_not_demographically_fair :=
+  @paper_interface_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_demographically_fair
+
+/-- Audit endpoint for Theorem 3.1 optional-reporting concrete source-shaped posterior PMF route. -/
+abbrev audit_theorem3_1_optional_reporting_base_mixed_gaussian_posterior_pmf_route :=
+  @paper_interface_theorem3_1_optional_reporting_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_pmf_surface
+
+/-- Audit endpoint for Theorem 3.1 report-required concrete source-shaped posterior PMF route. -/
+abbrev audit_theorem3_1_report_required_base_mixed_affine_skill_posterior_pmf_route :=
+  @paper_interface_theorem3_1_report_required_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_pmf_surface
+
 /-- Audit endpoint for Theorem 3.1 optional-reporting finite-event-share PMF route. -/
 abbrev audit_theorem3_1_section3_optional_reporting_event_share_pmf_route :=
   @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_of_event_share_no_report_mixture

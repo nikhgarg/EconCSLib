@@ -186,6 +186,16 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_take_mixture`
   give the PMF route the same public shape as the continuous-law Section 3
   route, returning a witness for each equilibrium index.
+- The source-shaped base/skill-mixture posterior surface now also has a
+  concrete singleton-PMF representation:
+  `paperBaseMixedGaussianPosteriorPMFSurface` and
+  `paperBaseMixedAffineSkillPosteriorPMFSurface`.  The PMF atoms are the same
+  symbolic Gaussian/skill-mixture/base-mixture law objects used by the
+  continuous-law route, and
+  `paper_interface_theorem3_1_optional_reporting_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_pmf_surface`
+  plus
+  `paper_interface_theorem3_1_report_required_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_pmf_surface`
+  close the optional-reporting and report-required concrete PMF endpoints.
 - Theorem 3.1 now has Section 3 hidden-access wrappers over both PMF and
   continuous-law certificates, including every-equilibrium certificate-family
   forms.  These endpoints make the paper hypothesis "the school does not know

@@ -15289,6 +15289,19 @@ abbrev paperBaseMixedOneTestPosteriorLawSurface
     skillGivenBase baseProfile intercept slope testScale noAccessEstimate
     hslope htestScale
 
+/-- Theorem 3.1 source-shaped skill/base-mixture one-test posterior PMF surface. -/
+abbrev paperBaseMixedOneTestPosteriorPMFSurface
+    {Base : Type*}
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    LG21SourcePolicySurface ℝ Base ℝ
+      (LG21SkillBaseMixtureEstimateLaw ℝ Base) :=
+  lg21BaseMixedOneTestPosteriorPMFSurface
+    skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+    hslope htestScale
+
 /-- Theorem 3.1 optional-reporting skill/base-mixture Gaussian posterior-law surface. -/
 abbrev paperBaseMixedGaussianPosteriorLawSurface
     {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
@@ -15302,6 +15315,19 @@ abbrev paperBaseMixedGaussianPosteriorLawSurface
   lg21BaseMixedGaussianPosteriorLawSurface
     skillGivenBase baseProfile M theta k scoreLaw noAccessEstimate
 
+/-- Theorem 3.1 optional-reporting skill/base-mixture Gaussian posterior PMF surface. -/
+abbrev paperBaseMixedGaussianPosteriorPMFSurface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourcePolicySurface ℝ Base ℝ
+      (LG21SkillBaseMixtureEstimateLaw ℝ Base) :=
+  lg21BaseMixedGaussianPosteriorPMFSurface
+    skillGivenBase baseProfile M theta k scoreLaw noAccessEstimate
+
 /-- Theorem 3.1 report-required skill/base-mixture affine-skill posterior-law surface. -/
 abbrev paperBaseMixedAffineSkillPosteriorLawSurface
     {Base : Type*}
@@ -15312,6 +15338,18 @@ abbrev paperBaseMixedAffineSkillPosteriorLawSurface
     LG21SourceLawPolicySurface ℝ Base ℝ
       (LG21SkillBaseMixtureEstimateLaw ℝ Base) :=
   lg21BaseMixedAffineSkillPosteriorLawSurface
+    skillGivenBase baseProfile intercept slope hslope skillLaw noAccessEstimate
+
+/-- Theorem 3.1 report-required skill/base-mixture affine-skill posterior PMF surface. -/
+abbrev paperBaseMixedAffineSkillPosteriorPMFSurface
+    {Base : Type*}
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (skillLaw : Base → GaussianScaleLaw)
+    (noAccessEstimate : Base → ℝ) :
+    LG21SourcePolicySurface ℝ Base ℝ
+      (LG21SkillBaseMixtureEstimateLaw ℝ Base) :=
+  lg21BaseMixedAffineSkillPosteriorPMFSurface
     skillGivenBase baseProfile intercept slope hslope skillLaw noAccessEstimate
 
 /--
@@ -15365,6 +15403,60 @@ theorem paper_interface_theorem3_1_base_mixed_one_test_posterior_source_law_not_
         skillGivenBase baseProfile intercept slope testScale
         noAccessEstimate hslope htestScale) :=
   paper_theorem3_1_base_mixed_one_test_posterior_source_law_not_demographically_fair
+    skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+    hslope htestScale
+
+/--
+Theorem 3.1 skill/base-mixture posterior PMF surface: latent-skill fairness
+fails.
+-/
+theorem paper_interface_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_latent_skill_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceLatentSkillFair
+      (paperBaseMixedOneTestPosteriorPMFSurface
+        skillGivenBase baseProfile intercept slope testScale
+        noAccessEstimate hslope htestScale) :=
+  paper_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_latent_skill_fair
+    skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+    hslope htestScale
+
+/--
+Theorem 3.1 skill/base-mixture posterior PMF surface: observable fairness
+fails.
+-/
+theorem paper_interface_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_observably_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceObservablyFair
+      (paperBaseMixedOneTestPosteriorPMFSurface
+        skillGivenBase baseProfile intercept slope testScale
+        noAccessEstimate hslope htestScale) :=
+  paper_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_observably_fair
+    skillGivenBase baseProfile intercept slope testScale noAccessEstimate
+    hslope htestScale
+
+/--
+Theorem 3.1 skill/base-mixture posterior PMF surface: demographic fairness
+fails.
+-/
+theorem paper_interface_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_demographically_fair
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope testScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (htestScale : ∀ base : Base, 0 < testScale base) :
+    ¬ lg21SourceDemographicallyFair
+      (paperBaseMixedOneTestPosteriorPMFSurface
+        skillGivenBase baseProfile intercept slope testScale
+        noAccessEstimate hslope htestScale) :=
+  paper_theorem3_1_base_mixed_one_test_posterior_source_pmf_not_demographically_fair
     skillGivenBase baseProfile intercept slope testScale noAccessEstimate
     hslope htestScale
 
@@ -15603,6 +15695,69 @@ theorem paper_interface_theorem3_1_report_required_law_strategic_withholding_of_
                   skillGivenBase baseProfile intercept slope hslope skillLaw
                   baseOnlyEstimate) :=
   paper_theorem3_1_report_required_law_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
+    skillGivenBase baseProfile intercept slope hslope accessFraction
+    baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
+
+/--
+Theorem 3.1 optional-reporting interface with the source-shaped
+skill/base-mixture Gaussian posterior PMF surface.
+-/
+theorem paper_interface_theorem3_1_optional_reporting_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_pmf_surface
+    {Feature Base : Type*} [Fintype Feature] [DecidableEq Feature] [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+      (∀ base skill, W.takes base skill) ∧
+        (∃ base score, ¬ W.reports base score) ∧
+          (∀ base, ∃ cutoff : ℝ,
+            ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+            ¬ lg21SourceLatentSkillFair
+              (paperBaseMixedGaussianPosteriorPMFSurface
+                skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) ∧
+              ¬ lg21SourceObservablyFair
+                (paperBaseMixedGaussianPosteriorPMFSurface
+                  skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) ∧
+                ¬ lg21SourceDemographicallyFair
+                  (paperBaseMixedGaussianPosteriorPMFSurface
+                    skillGivenBase baseProfile M theta k scoreLaw baseOnlyEstimate) :=
+  paper_theorem3_1_optional_reporting_strategic_withholding_of_no_report_mixture_and_base_mixed_gaussian_posterior_pmf_surface
+    skillGivenBase baseProfile M theta k accessFraction baseOnlyEstimate
+    scoreLaw hC_nonneg hC_lt_one
+
+/--
+Theorem 3.1 report-required interface with the source-shaped skill/base-mixture
+affine-skill posterior PMF surface.
+-/
+theorem paper_interface_theorem3_1_report_required_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_pmf_surface
+    {Base : Type*} [Nonempty Base]
+    (skillGivenBase : Base → PMF ℝ) (baseProfile : PMF Base)
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (accessFraction baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    (hC_nonneg : ∀ base, 0 ≤ accessFraction base)
+    (hC_lt_one : ∀ base, accessFraction base < 1) :
+    ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+      (∃ base skill, ¬ W.takes base skill) ∧
+        (∀ base, ∃ qBar : ℝ,
+          ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+          ¬ lg21SourceLatentSkillFair
+            (paperBaseMixedAffineSkillPosteriorPMFSurface
+              skillGivenBase baseProfile intercept slope hslope skillLaw
+              baseOnlyEstimate) ∧
+            ¬ lg21SourceObservablyFair
+              (paperBaseMixedAffineSkillPosteriorPMFSurface
+                skillGivenBase baseProfile intercept slope hslope skillLaw
+                baseOnlyEstimate) ∧
+              ¬ lg21SourceDemographicallyFair
+                (paperBaseMixedAffineSkillPosteriorPMFSurface
+                  skillGivenBase baseProfile intercept slope hslope skillLaw
+                  baseOnlyEstimate) :=
+  paper_theorem3_1_report_required_strategic_withholding_of_no_take_mixture_and_base_mixed_affine_skill_posterior_pmf_surface
     skillGivenBase baseProfile intercept slope hslope accessFraction
     baseOnlyEstimate skillLaw hC_nonneg hC_lt_one
 

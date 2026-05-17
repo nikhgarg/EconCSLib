@@ -13,6 +13,11 @@ Last updated: 2026-05-17.
   full-support/not-all-acting Theorem 3.1 Section 3 PMF and continuous-law
   endpoints now live in `MainTheorems.lean` and the public wrappers delegate to
   them.
+- Latest concrete-surface bridge:
+  Theorem 3.1 now also has singleton-PMF source-shaped posterior surfaces
+  `paperBaseMixedGaussianPosteriorPMFSurface` and
+  `paperBaseMixedAffineSkillPosteriorPMFSurface`, with concrete
+  optional/report-required endpoints over those surfaces.
 - Worktree used for the latest LG21 work:
   `/home/nkgarg/src_wsl/EconCSLean`.
 - Expected local dirt in this shared worktree can include unrelated non-LG21
@@ -71,9 +76,9 @@ lake build LG21TestOptionalPolicies
 git diff --check -- papers/LG21TestOptionalPolicies/MainTheorems.lean papers/LG21TestOptionalPolicies/PaperInterface.lean papers/LG21TestOptionalPolicies/PostPaperAudit.lean papers/LG21TestOptionalPolicies/README.md papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md papers/LG21TestOptionalPolicies/FORMALIZATION_PLAN.md papers/LG21TestOptionalPolicies/START_HERE_NEXT_AGENT.md
 ```
 
-`lake build LG21TestOptionalPolicies.PostPaperAudit` passed after the PMF
-full-support/not-all theorem-layer bridge. Run `lake build
-LG21TestOptionalPolicies` again before declaring a final paper closeout.
+`lake build LG21TestOptionalPolicies.PostPaperAudit` and `lake build
+LG21TestOptionalPolicies` passed after the singleton-PMF source-shaped
+posterior-surface bridge.
 
 `HumanStartHere.lean` is not a good LG21 validation target right now: it imports
 
@@ -87,10 +92,12 @@ reducing the remaining conditional status:
    the current concrete/event-share source-surface theorem or a stricter
    conditional-kernel theorem closer to arbitrary estimation policies. If the
    latter, build the missing conditional-kernel/source-policy bridge explicitly.
-2. For Theorem 3.1, the remaining gap is not cutoff algebra. The current route
-   has Gaussian/affine threshold and event-share wrappers; the open question is
-   whether to make a fully concrete finite PMF surface or keep the continuous
-   law certificate as the paper-facing surface.
+2. For Theorem 3.1, the remaining gap is not cutoff algebra or the concrete
+   PMF representation. The current route has Gaussian/affine threshold,
+   event-share, continuous-law, and singleton-PMF source-shaped posterior
+   wrappers. The remaining question is whether the paper-facing final
+   statement should stay at these concrete source surfaces or be pushed into a
+   broader arbitrary Bayesian policy theorem.
 3. Keep optional full support over all real scores out of the formalization.
    The finite-test full-support route is the correct support statement for
    optional-reporting mapped actors.

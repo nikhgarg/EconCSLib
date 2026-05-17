@@ -253,9 +253,11 @@ Last updated: 2026-05-16
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_report_mixture`
   and
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_take_mixture`
-  now return one strategic-withholding witness per equilibrium index.  A fully
-  concrete finite PMF surface remains optional if that representation is
-  desired.  The
+  now return one strategic-withholding witness per equilibrium index.  The
+  source-shaped Gaussian/affine posterior surface now also has a singleton-PMF
+  representation via `paperBaseMixedGaussianPosteriorPMFSurface` and
+  `paperBaseMixedAffineSkillPosteriorPMFSurface`, with concrete
+  optional/report-required PMF endpoints over those surfaces.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
