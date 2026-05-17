@@ -136,6 +136,15 @@ cache is kept as `source.txt` for named-statement audits.
   package the strongest optional posterior-payoff and report-required
   unit-centered payoff surfaces into the same certificate interface used by the
   source-equilibrium route.
+- Those concrete constant-latent surfaces now also have direct Section 3
+  hidden-access wrappers:
+  `paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_of_nonempty_equilibrium`
+  and
+  `paper_theorem3_2_section3_report_required_fairness_impossibility_of_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_of_nonempty_equilibrium`.
+  The paper-facing interface exposes the matching `paper_interface_*`
+  wrappers, so these endpoints can be cited as hidden-access Theorem 3.2
+  statements without separately assembling the information-set lemma and the
+  fairness-impossibility certificate.
 - `paper_theorem3_2_observable_fair_best_response_forces_no_above_mean_actor`
   and
   `paper_theorem3_2_law_observable_fair_best_response_forces_no_above_mean_actor`

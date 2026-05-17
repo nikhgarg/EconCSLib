@@ -209,8 +209,11 @@ Last updated: 2026-05-16
   directly beside the fairness-impossibility conclusion.  The
   certificate-packaged optional-reporting and report-required event-share
   source-equilibrium routes now have matching Section 3 implication and
-  no-relevance wrappers, which are the strongest current source-facing Theorem
-  3.2 endpoints before choosing a fully concrete event-share surface.  The
+  no-relevance wrappers.  The fully concrete optional posterior-payoff and
+  report-required unit-centered constant-latent event-share surfaces now also
+  have direct Section 3 wrappers, so the strongest current source-facing
+  Theorem 3.2 endpoints expose hidden access and the
+  fairness-implies-test-blankness conclusion together.  The
   source proof's positive-share resampling algebra is also
   formalized: `lg21_pmf_mixture_cancel_right` and
   `lg21_extensional_law_mixture_cancel_right` prove the displayed
@@ -634,17 +637,17 @@ Last updated: 2026-05-16
    payoff-normalization data while preserving Theorem 3.2's exact conclusion
    shape.  They also now build the compact
    `LG21FairnessImpossibilityCertificate` consumed by the top-level paper
-   interface theorem.
-   This finite
+   interface theorem.  The fully concrete optional posterior-payoff and
+   report-required unit-centered constant-latent event-share endpoints now also
+   have direct Section 3 hidden-access wrappers, making them citable as
+   paper-facing hidden-access Theorem 3.2 routes.  This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
-   use the certificate-packaged source-equilibrium upper-tail endpoints.  Next
-   work is to decide the final paper-facing theorem statement: either expose
-   the current event-share constant-latent surface endpoints, using the
-   centered-base-term report-required normalization when appropriate, or
-   instantiate a stricter conditional-kernel version if the statement should
-   quantify over conditional-on-skill Gaussian laws.
+   tighten the policy assumptions behind the concrete constant-latent endpoints,
+   using the centered-base-term report-required normalization when appropriate,
+   or instantiate a stricter conditional-kernel version if the final statement
+   should quantify over conditional-on-skill Gaussian laws.
 
 ## Reusable Library Seams
 
