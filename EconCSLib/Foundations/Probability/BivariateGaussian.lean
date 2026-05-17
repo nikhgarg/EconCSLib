@@ -11,6 +11,7 @@ bookkeeping.
 
 - `correlatedStandardGaussianLaw`
 - `standardBivariateGaussianCDF`
+- `owenAffineUpperSelectionMass`
 - `correlatedStandardGaussianLaw_map_fst`
 - `correlatedStandardGaussianLaw_map_snd`
 - `correlatedStandardGaussianLaw_noAtoms_map_fst`
@@ -19,6 +20,7 @@ bookkeeping.
 - `standardBivariateGaussianCDF_continuous_of_rho_sq_le_one`
 - `correlatedStandardGaussianLaw_firstCoordinateLowerMass`
 - `correlatedStandardGaussianLaw_verticalUpperStripMass_pos`
+- `owenAffineUpperSelectionMass_eq_correlatedStandardGaussian_verticalUpperStripMass`
 - `correlatedStandardGaussianLaw_verticalBoundaryLeft_real_eq_zero`
 - `correlatedStandardGaussianLaw_horizontalBoundaryLeft_real_eq_zero`
 -/
@@ -37,6 +39,42 @@ correlated standard-normal pair `(U, rho * U + sqrt(1-rho^2) * V)`.
 -/
 def correlatedStandardGaussianMap (rho : ℝ) (p : ℝ × ℝ) : ℝ × ℝ :=
   (p.1, rho * p.1 + Real.sqrt (1 - rho ^ 2) * p.2)
+
+/--
+Continuous-linear version of `correlatedStandardGaussianMap`.
+
+This is useful for characteristic-function proofs, while the function-valued
+map remains the public definition used by existing paper files.
+-/
+noncomputable def correlatedStandardGaussianCLM (rho : ℝ) :
+    (ℝ × ℝ) →L[ℝ] (ℝ × ℝ) :=
+  (ContinuousLinearMap.fst ℝ ℝ ℝ).prod
+    (rho • (ContinuousLinearMap.fst ℝ ℝ ℝ) +
+      Real.sqrt (1 - rho ^ 2) • (ContinuousLinearMap.snd ℝ ℝ ℝ))
+
+@[simp]
+theorem correlatedStandardGaussianCLM_apply (rho : ℝ) (p : ℝ × ℝ) :
+    correlatedStandardGaussianCLM rho p =
+      correlatedStandardGaussianMap rho p := by
+  simp [correlatedStandardGaussianCLM, correlatedStandardGaussianMap]
+
+/--
+Owen's affine standardization map.  For independent standard normals `(X,Z)`,
+this sends `(X,Z)` to `((X - c Z)/sqrt(1+c^2), Z)`.
+-/
+noncomputable def owenStandardizingGaussianCLM (c : ℝ) :
+    (ℝ × ℝ) →L[ℝ] (ℝ × ℝ) :=
+  let denom := Real.sqrt (1 + c ^ 2)
+  ((denom⁻¹) • (ContinuousLinearMap.fst ℝ ℝ ℝ) -
+      (c / denom) • (ContinuousLinearMap.snd ℝ ℝ ℝ)).prod
+    (ContinuousLinearMap.snd ℝ ℝ ℝ)
+
+@[simp]
+theorem owenStandardizingGaussianCLM_apply (c : ℝ) (p : ℝ × ℝ) :
+    owenStandardizingGaussianCLM c p =
+      ((p.1 - c * p.2) / Real.sqrt (1 + c ^ 2), p.2) := by
+  simp [owenStandardizingGaussianCLM]
+  ring
 
 theorem measurable_correlatedStandardGaussianMap (rho : ℝ) :
     Measurable (correlatedStandardGaussianMap rho) := by
@@ -83,6 +121,228 @@ instance correlatedStandardGaussianLaw_isProbabilityMeasure (rho : ℝ) :
   unfold correlatedStandardGaussianLaw
   exact Measure.isProbabilityMeasure_map
     (measurable_correlatedStandardGaussianMap rho).aemeasurable
+
+/-- The function-valued and continuous-linear definitions induce the same correlated law. -/
+theorem correlatedStandardGaussianLaw_eq_map_correlatedStandardGaussianCLM (rho : ℝ) :
+    correlatedStandardGaussianLaw rho =
+      (standardGaussianMeasure.prod standardGaussianMeasure).map
+        (correlatedStandardGaussianCLM rho) := by
+  rw [correlatedStandardGaussianLaw]
+  congr 1
+
+/-- Characteristic function of a standard normal against an arbitrary continuous linear form. -/
+theorem charFunDual_standardGaussianMeasure (L : StrongDual ℝ ℝ) :
+    charFunDual standardGaussianMeasure L =
+      Complex.exp (-((L 1 : ℝ) ^ 2) / 2) := by
+  rw [charFunDual_eq_charFun_map_one]
+  rw [standardGaussianMeasure]
+  rw [ProbabilityTheory.gaussianReal_map_continuousLinearMap]
+  rw [ProbabilityTheory.charFun_gaussianReal]
+  simp [Real.toNNReal_of_nonneg (sq_nonneg (L 1))]
+  ring_nf
+
+/--
+Characteristic function of independent standard normals in coordinates.  This
+small lemma keeps later bivariate Gaussian map-identification proofs from
+repeating product-measure bookkeeping.
+-/
+theorem charFunDual_standardGaussianProduct (L : StrongDual ℝ (ℝ × ℝ)) :
+    charFunDual (standardGaussianMeasure.prod standardGaussianMeasure) L =
+      Complex.exp
+        (-(((L (1, 0) : ℝ) ^ 2 + (L (0, 1) : ℝ) ^ 2) / 2)) := by
+  rw [charFunDual_prod]
+  rw [charFunDual_standardGaussianMeasure
+    (L.comp (ContinuousLinearMap.inl ℝ ℝ ℝ))]
+  rw [charFunDual_standardGaussianMeasure
+    (L.comp (ContinuousLinearMap.inr ℝ ℝ ℝ))]
+  simp
+  rw [← Complex.exp_add]
+  congr
+  ring
+
+/-- Algebra for the Owen correlation scale. -/
+theorem sqrt_one_sub_neg_div_sqrt_one_add_sq_sq (c : ℝ) :
+    Real.sqrt (1 - ((-c) / Real.sqrt (1 + c ^ 2)) ^ 2) =
+      (Real.sqrt (1 + c ^ 2))⁻¹ := by
+  let denom : ℝ := Real.sqrt (1 + c ^ 2)
+  have hpos : 0 < 1 + c ^ 2 := by nlinarith [sq_nonneg c]
+  have hdenom_pos : 0 < denom := by
+    dsimp [denom]
+    exact Real.sqrt_pos.2 hpos
+  have hdenom_ne : denom ≠ 0 := ne_of_gt hdenom_pos
+  have hdenom_sq : denom ^ 2 = 1 + c ^ 2 := by
+    dsimp [denom]
+    exact Real.sq_sqrt (by positivity)
+  have hinside :
+      1 - ((-c) / denom) ^ 2 = denom⁻¹ ^ 2 := by
+    field_simp [hdenom_ne]
+    rw [hdenom_sq]
+    ring
+  rw [show Real.sqrt (1 - ((-c) / Real.sqrt (1 + c ^ 2)) ^ 2) =
+      Real.sqrt (1 - ((-c) / denom) ^ 2) by rfl]
+  rw [hinside]
+  exact Real.sqrt_sq_eq_abs (denom⁻¹) |>.trans (abs_of_pos (inv_pos.mpr hdenom_pos))
+
+/--
+The Owen standardization map has the same law as the correlated
+standard-Gaussian map with `rho = -c/sqrt(1+c^2)`.
+
+This is the probabilistic content behind the bivariate-normal/Owen
+admissions papers.
+-/
+theorem owenStandardizingGaussianLaw_eq_correlatedStandardGaussianLaw (c : ℝ) :
+    (standardGaussianMeasure.prod standardGaussianMeasure).map
+        (owenStandardizingGaussianCLM c) =
+      correlatedStandardGaussianLaw ((-c) / Real.sqrt (1 + c ^ 2)) := by
+  let base : Measure (ℝ × ℝ) :=
+    standardGaussianMeasure.prod standardGaussianMeasure
+  let denom : ℝ := Real.sqrt (1 + c ^ 2)
+  let rho : ℝ := (-c) / denom
+  have hpos : 0 < 1 + c ^ 2 := by nlinarith [sq_nonneg c]
+  have hdenom_pos : 0 < denom := by
+    dsimp [denom]
+    exact Real.sqrt_pos.2 hpos
+  have hdenom_ne : denom ≠ 0 := ne_of_gt hdenom_pos
+  have hscale :
+      Real.sqrt (1 - rho ^ 2) = denom⁻¹ := by
+    simpa [rho, denom] using sqrt_one_sub_neg_div_sqrt_one_add_sq_sq c
+  rw [correlatedStandardGaussianLaw_eq_map_correlatedStandardGaussianCLM rho]
+  refine Measure.ext_of_charFunDual (funext fun L => ?_)
+  rw [charFunDual_map (owenStandardizingGaussianCLM c) L]
+  rw [charFunDual_map (correlatedStandardGaussianCLM rho) L]
+  rw [charFunDual_standardGaussianProduct]
+  rw [charFunDual_standardGaussianProduct]
+  congr 1
+  have hsum :
+      (((L.comp (owenStandardizingGaussianCLM c)) (1, 0) : ℝ) ^ 2 +
+          ((L.comp (owenStandardizingGaussianCLM c)) (0, 1) : ℝ) ^ 2) =
+        (((L.comp (correlatedStandardGaussianCLM rho)) (1, 0) : ℝ) ^ 2 +
+          ((L.comp (correlatedStandardGaussianCLM rho)) (0, 1) : ℝ) ^ 2) := by
+    have hdenom_sq : denom ^ 2 = 1 + c ^ 2 := by
+      dsimp [denom]
+      exact Real.sq_sqrt (by positivity)
+    have hLpair :
+        ∀ x y : ℝ, L (x, y) = x * L (1, 0) + y * L (0, 1) := by
+      intro x y
+      have hdecomp : (x, y) =
+          x • ((1 : ℝ), (0 : ℝ)) + y • ((0 : ℝ), (1 : ℝ)) := by
+        ext <;> simp
+      rw [hdecomp, map_add, map_smul, map_smul]
+      ring
+    have hO1 :
+        ((L.comp (owenStandardizingGaussianCLM c)) (1, 0) : ℝ) =
+          denom⁻¹ * L (1, 0) := by
+      change L (owenStandardizingGaussianCLM c (1, 0)) = denom⁻¹ * L (1, 0)
+      have harg :
+          owenStandardizingGaussianCLM c (1, 0) = (denom⁻¹, 0) := by
+        simp [owenStandardizingGaussianCLM_apply, denom]
+      rw [harg, hLpair denom⁻¹ 0]
+      ring
+    have hO2 :
+        ((L.comp (owenStandardizingGaussianCLM c)) (0, 1) : ℝ) =
+          (-c / denom) * L (1, 0) + L (0, 1) := by
+      change L (owenStandardizingGaussianCLM c (0, 1)) =
+        (-c / denom) * L (1, 0) + L (0, 1)
+      have harg :
+          owenStandardizingGaussianCLM c (0, 1) = (-c / denom, 1) := by
+        simp [owenStandardizingGaussianCLM_apply, denom]
+      rw [harg, hLpair (-c / denom) 1]
+      ring
+    have hC1 :
+        ((L.comp (correlatedStandardGaussianCLM rho)) (1, 0) : ℝ) =
+          L (1, 0) + rho * L (0, 1) := by
+      change L (correlatedStandardGaussianCLM rho (1, 0)) =
+        L (1, 0) + rho * L (0, 1)
+      have harg :
+          correlatedStandardGaussianCLM rho (1, 0) = (1, rho) := by
+        simp [correlatedStandardGaussianCLM_apply, correlatedStandardGaussianMap]
+      rw [harg, hLpair 1 rho]
+      ring
+    have hC2 :
+        ((L.comp (correlatedStandardGaussianCLM rho)) (0, 1) : ℝ) =
+          denom⁻¹ * L (0, 1) := by
+      change L (correlatedStandardGaussianCLM rho (0, 1)) =
+        denom⁻¹ * L (0, 1)
+      have harg :
+          correlatedStandardGaussianCLM rho (0, 1) = (0, denom⁻¹) := by
+        simp [correlatedStandardGaussianCLM_apply, correlatedStandardGaussianMap, hscale]
+      rw [harg, hLpair 0 denom⁻¹]
+      ring
+    rw [hO1, hO2, hC1, hC2]
+    dsimp [rho]
+    field_simp [hdenom_ne]
+    nlinarith [hdenom_sq]
+  exact_mod_cast
+    (by
+      simpa [ContinuousLinearMap.comp_apply, correlatedStandardGaussianCLM_apply]
+        using hsum)
+
+/--
+Source-side affine selection mass behind Owen's formula:
+`P(X <= A * sqrt(1+c^2) + c Z, B <= Z)` for independent standard normals.
+-/
+noncomputable def owenAffineUpperSelectionMass (c A B : ℝ) : ℝ :=
+  (standardGaussianMeasure.prod standardGaussianMeasure).real
+    {p : ℝ × ℝ | p.1 ≤ A * Real.sqrt (1 + c ^ 2) + c * p.2 ∧ B ≤ p.2}
+
+/--
+Owen affine upper-selection mass equals the correlated-Gaussian vertical strip.
+
+This is a measure-theoretic replacement for repeatedly invoking Owen's
+tabulated integral identity: standardize the affine half-space, identify the
+resulting bivariate Gaussian law by characteristic functions, and then read off
+the vertical strip.
+-/
+theorem owenAffineUpperSelectionMass_eq_correlatedStandardGaussian_verticalUpperStripMass
+    (c A B : ℝ) :
+    owenAffineUpperSelectionMass c A B =
+      verticalUpperStripMass
+        (correlatedStandardGaussianLaw ((-c) / Real.sqrt (1 + c ^ 2))) A B := by
+  let base : Measure (ℝ × ℝ) :=
+    standardGaussianMeasure.prod standardGaussianMeasure
+  let denom : ℝ := Real.sqrt (1 + c ^ 2)
+  have hpos : 0 < 1 + c ^ 2 := by nlinarith [sq_nonneg c]
+  have hdenom_pos : 0 < denom := by
+    dsimp [denom]
+    exact Real.sqrt_pos.2 hpos
+  have hdenom_ne : denom ≠ 0 := ne_of_gt hdenom_pos
+  have hpre :
+      (owenStandardizingGaussianCLM c) ⁻¹'
+          {p : ℝ × ℝ | p.1 ≤ A ∧ B ≤ p.2} =
+        {p : ℝ × ℝ | p.1 ≤ A * denom + c * p.2 ∧ B ≤ p.2} := by
+    ext p
+    constructor
+    · intro hp
+      constructor
+      · have hle : (p.1 - c * p.2) / denom ≤ A := by
+          simpa [denom] using hp.1
+        have hle' : p.1 - c * p.2 ≤ A * denom := by
+          exact (div_le_iff₀ hdenom_pos).mp hle
+        linarith
+      · simpa using hp.2
+    · intro hp
+      constructor
+      · have hp1 : p.1 ≤ A * denom + c * p.2 := hp.1
+        have hle' : p.1 - c * p.2 ≤ A * denom := by linarith
+        have hle : (p.1 - c * p.2) / denom ≤ A :=
+          (div_le_iff₀ hdenom_pos).mpr hle'
+        simpa [denom] using hle
+      · simpa using hp.2
+  calc
+    owenAffineUpperSelectionMass c A B
+        =
+          (base.map (owenStandardizingGaussianCLM c)).real
+            {p : ℝ × ℝ | p.1 ≤ A ∧ B ≤ p.2} := by
+          rw [owenAffineUpperSelectionMass, measureReal_def, measureReal_def,
+            Measure.map_apply (by fun_prop) (measurableSet_verticalUpperStrip A B),
+            hpre]
+    _ =
+          (correlatedStandardGaussianLaw ((-c) / Real.sqrt (1 + c ^ 2))).real
+            {p : ℝ × ℝ | p.1 ≤ A ∧ B ≤ p.2} := by
+          rw [owenStandardizingGaussianLaw_eq_correlatedStandardGaussianLaw c]
+    _ =
+          verticalUpperStripMass
+            (correlatedStandardGaussianLaw ((-c) / Real.sqrt (1 + c ^ 2))) A B := rfl
 
 /--
 For `rho^2 < 1`, the correlated standard-Gaussian law gives positive mass to

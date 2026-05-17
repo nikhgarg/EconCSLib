@@ -1233,6 +1233,48 @@ theorem divorceWomanState_satisfies_invariants_except_of_invariants
       (by simpa [divorceWomanState] using hnot)
       (by simpa [divorceWomanState] using hmem) hnonneg
 
+theorem divorceWomanState_preserves_invariantsExceptWoman_same
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (s : DAState M W) (w0 : W)
+    (hinv : DAInvariantsExceptWoman val_m val_w s w0) :
+    DAInvariantsExceptWoman val_m val_w (divorceWomanState s w0) w0 := by
+  rcases hinv with ⟨hmanIR, hwomanIR, hmatchedProposed, hwomanReject,
+    hproposalOrder⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · intro m w hmatch
+    by_cases hm : s.w_match w0 = some m
+    · simp [divorceWomanState, hm] at hmatch
+    · exact hmanIR m w (by simpa [divorceWomanState, hm] using hmatch)
+  · intro w m hmatch
+    by_cases hw : w = w0
+    · subst w
+      simp [divorceWomanState] at hmatch
+    · exact hwomanIR w m (by simpa [divorceWomanState, hw] using hmatch)
+  · intro m w hmatch
+    by_cases hm : s.w_match w0 = some m
+    · simp [divorceWomanState, hm] at hmatch
+    · exact hmatchedProposed m w
+        (by simpa [divorceWomanState, hm] using hmatch)
+  · intro w hne m hnot hnotMatch
+    have hnotOld : s.m_match m ≠ some w := by
+      intro hmatchOld
+      by_cases hm : s.w_match w0 = some m
+      · have hmw0 : s.m_match m = some w0 := (s.consistent m w0).2 hm
+        have hw_eq : w = w0 := Option.some.inj (hmatchOld.symm.trans hmw0)
+        exact hne hw_eq
+      · have hnew : (divorceWomanState s w0).m_match m = some w := by
+          simpa [divorceWomanState, hm] using hmatchOld
+        exact hnotMatch hnew
+    rcases hwomanReject w hne m (by simpa [divorceWomanState] using hnot)
+        hnotOld with hneg | ⟨mcur, hwcur, hle⟩
+    · exact Or.inl hneg
+    · exact Or.inr ⟨mcur,
+        by simpa [divorceWomanState, hne] using hwcur, hle⟩
+  · intro m w w' hnot hmem hnonneg
+    exact hproposalOrder m w w'
+      (by simpa [divorceWomanState] using hnot)
+      (by simpa [divorceWomanState] using hmem) hnonneg
+
 /--
 If an invariant DA state leaves a woman unmatched, then she has not rejected any
 acceptable proposal: every man still has the opportunity to propose to her.
@@ -1753,6 +1795,26 @@ def IsStableExceptWoman
   (∀ m w, w ≠ target →
     valM val_m m (mu.m_match m) < val_m m w →
     valW val_w w (mu.w_match w) < val_w w m → False)
+
+/--
+A matching that is stable away from one exceptional woman is fully stable once
+blocking pairs with that exceptional woman are also ruled out.
+-/
+theorem stable_of_stableExceptWoman_and_no_target_block
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
+    (mu : Assignment M W) (target : W)
+    (hexcept : IsStableExceptWoman val_m val_w mu target)
+    (hno_target_block : ∀ m,
+      valM val_m m (mu.m_match m) < val_m m target →
+      valW val_w target (mu.w_match target) < val_w target m → False) :
+    IsStable val_m val_w mu := by
+  rcases hexcept with ⟨hmanIR, hwomanIR, hblock_except⟩
+  refine ⟨hmanIR, hwomanIR, ?_⟩
+  intro m w hm hw
+  by_cases hw_target : w = target
+  · subst w
+    exact hno_target_block m hm hw
+  · exact hblock_except m w hw_target hm hw
 
 /--
 If a state satisfies the invariants and no men are active (termination), 

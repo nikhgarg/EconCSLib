@@ -245,6 +245,63 @@ theorem finiteAvailableWeight_add_forbidden_sum
           by_cases ha : a ∈ forbidden <;> simp [ha]
 
 /--
+Adding one newly forbidden atom subtracts that atom's weight from the available
+mass.
+-/
+theorem finiteAvailableWeight_insert_eq_sub
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (baseWeight : α → ℝ) (forbidden : Finset α) {a : α}
+    (ha : a ∉ forbidden) :
+    finiteAvailableWeight baseWeight (insert a forbidden) =
+      finiteAvailableWeight baseWeight forbidden - baseWeight a := by
+  classical
+  unfold finiteAvailableWeight
+  rw [Finset.sum_eq_add_sum_diff_singleton_of_mem (s := Finset.univ) (i := a)
+    (by simp)]
+  rw [Finset.sum_eq_add_sum_diff_singleton_of_mem (s := Finset.univ) (i := a)
+    (by simp)]
+  have hfilter :
+      ∑ x ∈ (Finset.univ \ {a}), (if x ∈ insert a forbidden then 0 else baseWeight x) =
+        ∑ x ∈ (Finset.univ \ {a}), (if x ∈ forbidden then 0 else baseWeight x) := by
+    refine Finset.sum_congr rfl ?_
+    intro x hx
+    have hxa : x ≠ a := by
+      exact fun h => by
+        have : x ∈ ({a} : Finset α) := by simp [h]
+        exact (Finset.mem_sdiff.mp hx).2 this
+    by_cases hxf : x ∈ forbidden <;> simp [hxf, hxa]
+  rw [hfilter]
+  simp [ha]
+
+/--
+If every proper forbidden set leaves positive available mass, then every atom
+has positive base weight.
+-/
+theorem finiteWeight_pos_of_available
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (baseWeight : α → ℝ)
+    (havailable : ∀ forbidden : Finset α,
+      forbidden.card < Fintype.card α →
+        0 < finiteAvailableWeight baseWeight forbidden)
+    (a : α) :
+    0 < baseWeight a := by
+  classical
+  let forbidden := (Finset.univ : Finset α).erase a
+  have hcard :
+      forbidden.card < Fintype.card α := by
+    have hlt :=
+      Finset.card_erase_lt_of_mem
+        (s := (Finset.univ : Finset α)) (a := a)
+        (by simp)
+    simpa [forbidden] using hlt
+  have havail := havailable forbidden hcard
+  have havail_eq :
+      finiteAvailableWeight baseWeight forbidden = baseWeight a := by
+    dsimp [forbidden]
+    simp [finiteAvailableWeight]
+  simpa [havail_eq] using havail
+
+/--
 If the base weights have total mass one, the available mass after excluding a
 set is `1 - prevMass`, where `prevMass` is the mass of that set.
 -/

@@ -425,6 +425,45 @@ theorem pmfExp_card_filter_eq_sum_pmfProb {Ω α : Type*}
           (μ ω).toReal * (if p ω a then (1 : ℝ) else 0) := by
           exact Finset.sum_comm
 
+/--
+Linearity identity for finite random counts over a specified finite subfamily:
+the expected number of elements of `s` satisfying an outcome-dependent
+predicate is the sum of their event probabilities.
+-/
+theorem pmfExp_card_finset_filter_eq_sum_pmfProb {Ω α : Type*}
+    [Fintype Ω] [DecidableEq Ω] [Fintype α] [DecidableEq α]
+    (μ : PMF Ω) (p : Ω → α → Prop)
+    [∀ ω, DecidablePred (p ω)]
+    [∀ a, DecidablePred fun ω => p ω a]
+    (s : Finset α) :
+    pmfExp μ
+        (fun ω => (((s.filter (p ω)).card : ℝ))) =
+      ∑ a ∈ s, pmfProb μ (fun ω => p ω a) := by
+  classical
+  have hcard :
+      ∀ ω,
+        (((s.filter (p ω)).card : ℝ)) =
+          ∑ a ∈ s, if p ω a then (1 : ℝ) else 0 := by
+    intro ω
+    simp
+  unfold pmfExp pmfProb
+  calc
+    ∑ ω : Ω, (μ ω).toReal *
+        (((s.filter (p ω)).card : ℝ)) =
+        ∑ ω : Ω, (μ ω).toReal *
+          (∑ a ∈ s, if p ω a then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro ω _
+          rw [hcard ω]
+    _ = ∑ ω : Ω, ∑ a ∈ s,
+          (μ ω).toReal * (if p ω a then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro ω _
+          rw [Finset.mul_sum]
+    _ = ∑ a ∈ s, ∑ ω : Ω,
+          (μ ω).toReal * (if p ω a then (1 : ℝ) else 0) := by
+          exact Finset.sum_comm
+
 end EconCSLib
 
 namespace EconCSLib
@@ -1265,6 +1304,35 @@ theorem pmfExp_card_filter_ge_card_mul_of_forall_mem_prob_ge
           (fun ω => (((Finset.univ : Finset α).filter (p ω)).card : ℝ)) := by
           exact (pmfExp_card_filter_eq_sum_pmfProb μ p).symm
 
+/--
+Lower-bound an expected finite count over a specified finite subfamily from
+elementwise lower bounds on event probabilities.
+-/
+theorem pmfExp_card_finset_filter_ge_card_mul_of_forall_mem_prob_ge
+    {Ω α : Type*}
+    [Fintype Ω] [DecidableEq Ω] [Fintype α] [DecidableEq α]
+    (μ : PMF Ω) (p : Ω → α → Prop)
+    [∀ ω, DecidablePred (p ω)]
+    [∀ a, DecidablePred fun ω => p ω a]
+    (s : Finset α) (rate : ℝ)
+    (_hrate_nonneg : 0 ≤ rate)
+    (hprob : ∀ a ∈ s, rate ≤ pmfProb μ (fun ω => p ω a)) :
+    (s.card : ℝ) * rate ≤
+      pmfExp μ
+        (fun ω => (((s.filter (p ω)).card : ℝ))) := by
+  classical
+  calc
+    (s.card : ℝ) * rate = ∑ _a ∈ s, rate := by
+        simp [nsmul_eq_mul]
+    _ ≤ ∑ a ∈ s, pmfProb μ (fun ω => p ω a) := by
+        exact Finset.sum_le_sum (by
+          intro a ha
+          exact hprob a ha)
+    _ =
+        pmfExp μ
+          (fun ω => (((s.filter (p ω)).card : ℝ))) := by
+        exact (pmfExp_card_finset_filter_eq_sum_pmfProb μ p s).symm
+
 /-- Finite PMF event probability is zero iff the event has no positive-mass witness. -/
 theorem pmfProb_eq_zero_of_no_mass
     {α : Type*} [Fintype α] [DecidableEq α]
@@ -1745,6 +1813,47 @@ theorem pmfProb_lt_half_expectation_le_four_div_expectation_of_variance_le_expec
     _ ≤ pmfVariance μ X / (EX / 2) ^ 2 := hcheb
     _ ≤ EX / (EX / 2) ^ 2 := hvar_div
     _ = 4 / EX := by
+          field_simp [ne_of_gt hEX_pos]
+          ring
+
+/--
+Constant-factor lower-half Chebyshev bound.  If `Var X <= C * E[X]`, the
+probability that `X` falls below half its mean is at most `4C / E[X]`.
+-/
+theorem pmfProb_lt_half_expectation_le_four_mul_div_expectation_of_variance_le_mul_expectation
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (X : α → ℝ) (EX C : ℝ)
+    (hmean : pmfExp μ X = EX)
+    (hEX_pos : 0 < EX)
+    (_hC_nonneg : 0 ≤ C)
+    (hvar : pmfVariance μ X ≤ C * EX) :
+    pmfProb μ (fun a => X a < EX / 2) ≤ 4 * C / EX := by
+  classical
+  have hhalf_pos : 0 < EX / 2 := by positivity
+  have htail :
+      pmfProb μ (fun a => X a < EX / 2) ≤
+        pmfProb μ (fun a => EX / 2 < |X a - pmfExp μ X|) := by
+    refine pmfProb_le_of_imp μ
+      (fun a => X a < EX / 2)
+      (fun a => EX / 2 < |X a - pmfExp μ X|) ?_
+    intro a ha
+    rw [hmean]
+    have hneg : X a - EX < 0 := by linarith
+    rw [abs_of_neg hneg]
+    linarith
+  have hcheb :
+      pmfProb μ (fun a => EX / 2 < |X a - pmfExp μ X|) ≤
+        pmfVariance μ X / (EX / 2) ^ 2 :=
+    pmfProb_abs_sub_mean_gt_le_variance_div_sq μ X hhalf_pos
+  have hvar_div :
+      pmfVariance μ X / (EX / 2) ^ 2 ≤ (C * EX) / (EX / 2) ^ 2 :=
+    div_le_div_of_nonneg_right hvar (sq_nonneg _)
+  calc
+    pmfProb μ (fun a => X a < EX / 2) ≤
+        pmfProb μ (fun a => EX / 2 < |X a - pmfExp μ X|) := htail
+    _ ≤ pmfVariance μ X / (EX / 2) ^ 2 := hcheb
+    _ ≤ (C * EX) / (EX / 2) ^ 2 := hvar_div
+    _ = 4 * C / EX := by
           field_simp [ne_of_gt hEX_pos]
           ring
 

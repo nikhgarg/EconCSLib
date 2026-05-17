@@ -2281,6 +2281,51 @@ def standardGaussianHazardInverseCertificate :
   hazardInv := standardGaussianHazardInv
   hazard_le_iff_le_inv := standardGaussianHazard_le_iff_le_inv
 
+/--
+For a fixed location-scale Gaussian law, the mathlib-backed standard-normal
+upper-tail conditional mean is continuous in the threshold.
+-/
+theorem standardGaussian_normalUpperTailMean_continuous
+    (L : GaussianScaleLaw) :
+    Continuous
+      (standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+        |>.normalUpperTailMean L) := by
+  have hstd : Continuous (fun threshold : ℝ => L.standardize threshold) := by
+    unfold GaussianScaleLaw.standardize
+    fun_prop
+  simpa [GaussianHazardCertificate.normalUpperTailMean,
+    standardGaussianHazardInverseCertificate] using
+    continuous_const.add
+      (continuous_const.mul (standardGaussianHazard_continuous.comp hstd))
+
+/--
+For a fixed location-scale Gaussian law, the mathlib-backed standard-normal
+upper-tail conditional mean is strictly increasing in the threshold.
+-/
+theorem standardGaussian_normalUpperTailMean_strictMono_threshold
+    (L : GaussianScaleLaw) :
+    StrictMono
+      (standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+        |>.normalUpperTailMean L) := by
+  intro x y hxy
+  have hstd : L.standardize x < L.standardize y :=
+    L.standardize_strictMono hxy
+  have hhaz :
+      standardGaussianHazard (L.standardize x) <
+        standardGaussianHazard (L.standardize y) :=
+    standardGaussianHazard_strictMono hstd
+  have hscaled :
+      L.scale * standardGaussianHazard (L.standardize x) <
+        L.scale * standardGaussianHazard (L.standardize y) :=
+    mul_lt_mul_of_pos_left hhaz L.scale_pos
+  have hadd :
+      L.mean + L.scale * standardGaussianHazard (L.standardize x) <
+        L.mean + L.scale * standardGaussianHazard (L.standardize y) := by
+    simpa [add_comm, add_left_comm, add_assoc] using
+      add_lt_add_left hscaled L.mean
+  simpa [GaussianHazardCertificate.normalUpperTailMean,
+    standardGaussianHazardInverseCertificate] using hadd
+
 end
 
 end Probability

@@ -19,6 +19,7 @@ comparisons into threshold statements.
 - `exists_threshold_of_continuous_strictAntiOn_Icc_crossing_interval`
 - `exists_threshold_gt_of_continuous_strictAntiOn_Icc`
 - `exists_threshold_le_of_continuous_strictAntiOn_Icc`
+- `continuousOn_rightInverse_of_strictMono`
 - `existsUnique_eq_of_continuous_strictMono_tendsto_atBot_atTop`
 - `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing`
 - `existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop`
@@ -54,6 +55,49 @@ theorem strictAntiOn_comp_strictMonoOn
     StrictAntiOn (fun x => f (g x)) s := by
   intro x hx y hy hxy
   exact hf (hmap hx) (hmap hy) (hg hx hy hxy)
+
+/--
+A right inverse of a strictly increasing scalar function is continuous on its
+domain.
+
+This is useful for implicit cutoff proofs.  If `base (root y) = y` for every
+`y` in a cost domain, then strict monotonicity of `base` forces nearby costs to
+have nearby roots; no separate continuity assumption on `root` is needed.
+-/
+theorem continuousOn_rightInverse_of_strictMono
+    {base root : ℝ → ℝ} {s : Set ℝ}
+    (hbase_mono : StrictMono base)
+    (hroot : ∀ y ∈ s, base (root y) = y) :
+    ContinuousOn root s := by
+  intro y hy
+  rw [ContinuousWithinAt]
+  refine tendsto_order.2 ⟨?_, ?_⟩
+  · intro lower hlower
+    have hbase_lower_lt_y : base lower < y := by
+      simpa [hroot y hy] using hbase_mono hlower
+    have hevent :
+        ∀ᶠ z in nhdsWithin y s, base lower < z :=
+      mem_nhdsWithin_of_mem_nhds (Ioi_mem_nhds hbase_lower_lt_y)
+    filter_upwards [hevent, self_mem_nhdsWithin] with z hz hs
+    by_contra hnot
+    have hle : root z ≤ lower := le_of_not_gt hnot
+    have hbase_le : base (root z) ≤ base lower :=
+      hbase_mono.monotone hle
+    have hroot_z : base (root z) = z := hroot z hs
+    linarith
+  · intro upper hupper
+    have hy_lt_base_upper : y < base upper := by
+      simpa [hroot y hy] using hbase_mono hupper
+    have hevent :
+        ∀ᶠ z in nhdsWithin y s, z < base upper :=
+      mem_nhdsWithin_of_mem_nhds (Iio_mem_nhds hy_lt_base_upper)
+    filter_upwards [hevent, self_mem_nhdsWithin] with z hz hs
+    by_contra hnot
+    have hle : upper ≤ root z := le_of_not_gt hnot
+    have hbase_le : base upper ≤ base (root z) :=
+      hbase_mono.monotone hle
+    have hroot_z : base (root z) = z := hroot z hs
+    linarith
 
 /--
 Unbounded intermediate-value cutoff for a continuous scalar function with

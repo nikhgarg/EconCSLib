@@ -65,6 +65,12 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `paper_proposition5_cost_merit_continuous_strictAntiOn_of_cutoff_strictMono`.
   This is usually faster and more auditable than assuming a black-box
   cost-to-merit monotonicity fact.
+- If a monotone-composition theorem has a `Set.MapsTo` premise only because
+  the cutoff-domain was stated abstractly, immediately add the `Set.univ`
+  specialization when the concrete merit formula is real-valued. This removes
+  a noisy obligation from downstream paper wrappers. For GLM20, the preferred
+  entry points are the `_univ` versions of the equation-(46) full/full and
+  equation-(50) sub/full cost-threshold lemmas.
 - For two-school full-test application payoffs, encode the displayed CDF
   expression first and prove monotonicity directly from signs. A typical term
   has negative CDF coefficients, while each standardized cutoff
@@ -89,6 +95,29 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `paper_proposition5_twoFull_apply_payoff_cutoff_strictMonoOn_cost`).  This
   is the form needed for later monotone-composition and threshold-crossing
   arguments.
+- When a zero-payoff cutoff solves an equation of the form
+  `basePayoff q - cost = 0`, do not leave selected-cutoff continuity as a
+  certificate.  Prove the selected cutoff is a right inverse of the strictly
+  increasing `basePayoff`, then apply
+  `continuousOn_rightInverse_of_strictMono`.  For GLM20 this yields
+  `paper_proposition5_twoFull_apply_payoff_cutoff_continuousOn_cost` and the
+  standard-Gaussian regular selected-cutoff wrapper without differentiating the
+  implicit equation.
+- For two-policy school games, define a concrete binary-policy surface whose
+  equilibrium predicate unfolds to the weighted objective best-response
+  condition before writing high-level theorem wrappers.  This removes repeated
+  assumptions of the form "policy-pair equilibrium iff binary equilibrium" and
+  keeps the paper-facing theorem focused on mass, merit, no-tie, and cutoff
+  premises.  After the surface is defined, add a theorem specialized to that
+  surface at the lowest useful bridge layer, so later wrappers take only the
+  objective-condition proofs rather than reintroducing the binary-equilibrium
+  equivalence as a hypothesis.
+- When a full/full equilibrium claim says both schools keep the current policy
+  iff two cost-boundary inequalities hold, prove the source composition
+  generically: if each school's keep region has boundaries
+  `(cA <= fA_i cB, cB <= fB_i cA)`, the joint equilibrium region uses the
+  pointwise minima of the two schools' boundaries.  This is faster and more
+  faithful than constructing fixed-cost boundary constants.
 - When a paper condition requires two ordered cost thresholds from related
   monotone merit crossings, construct both roots in one wrapper and prove the
   ordering there instead of passing a loose `lowRoot < highRoot` premise
