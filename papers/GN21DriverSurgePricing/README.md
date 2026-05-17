@@ -166,7 +166,16 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions`.
   The older exact by-policy-form fixed-transfer boundary therefore entails the
   weaker aggregate-cross boundary; future source proofs should not duplicate
-  both sets of endpoint fields.
+  both sets of endpoint fields.  The compact review surface now exposes these
+  normalized exact-transfer endpoints as
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_branch_fixed_transfer`,
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_fixed_transfer`,
+  and
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_branch_surge_cross_fixed_transfer`.
+  The GN21 fixed-response source package also exposes
+  `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.surge_current_mass_pos`,
+  the surge-state analogue of the existing non-surge positive current-mass
+  projection from nondegeneracy.
 - The reusable real-analysis layer now contains a derivative-proxy criterion
   for strict quasi-convexity on positive reals; GN21 instantiates it for the
   canonical CTMC response shapes in Lemmas 7-8. It also exposes between-endpoint
