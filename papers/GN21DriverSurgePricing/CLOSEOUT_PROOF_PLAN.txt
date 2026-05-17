@@ -163,6 +163,15 @@ wrappers directly on the surge strictly-increasing and non-surge
 strictly-decreasing branch exclusions.  For the full Theorem 4 branch proof,
 use the quasi-convex and quasi-concave dynamic wrappers directly instead of
 rebuilding the one-state contradiction bridge.
+
+Current Lemma 5 status: treat the source-faithful fixed-response Lemma 5 route
+as closed.  Lean proves that feasible optimality for the fixed marginal response
+reward gives a.e. agreement with the canonical five-case policy form, including
+the zero-boundary null set and reward/primitive invariance under the null
+policy replacement.  Do not spend more closeout time on the older arbitrary
+finite-policy endpoint-descent path unless a separate exact finite theorem is
+explicitly needed; keep using the a.e. representative route for Theorem 4 and
+Theorem 3.
 For non-surge accepted-middle endpoint work, Lean now has
 `rejectsLongTrips_of_acceptsMiddleTrips_of_lo_nonpos` and
 `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form_middle_reroute`,

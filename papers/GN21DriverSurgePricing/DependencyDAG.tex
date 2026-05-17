@@ -55,9 +55,9 @@
   long-run state-time fractions equal the renewal-cycle time-fraction formula
 };
 
-\node[dag_partial, text width=4.6cm] (Lemma5) at (5.9,-8.2) {
+\node[dag_lemma, text width=4.6cm] (Lemma5) at (5.9,-8.2) {
   \textbf{Lemma 5 (App. D.2)}\\
-  fixed-response a.e. representatives and sign-bracket one-threshold source packages are formalized; arbitrary finite-policy dominance remains open
+  fixed-response positive-response variational proof gives a.e. canonical policy forms for all five derivative shapes
 };
 
 \node[dag_lemma, text width=4.6cm] (Lemma6) at (11.8,-8.2) {
@@ -115,7 +115,7 @@
 \draw[dag_arrow, rounded corners=6pt]
   (Model.south east) -- ++(0.75,-1.25) |- (Thm1.west);
 \draw[dag_arrow] (Thm1.south west) -- (Lemma4.north east);
-\draw[dag_dashed_arrow] (Lemma4.east) -- (Lemma5.west);
+\draw[dag_arrow] (Lemma4.east) -- (Lemma5.west);
 \draw[dag_arrow] (Lemma2.east) -- (Lemma3.west);
 \draw[dag_arrow, rounded corners=6pt]
   (Lemma3.south) -- ++(0,-0.85) -| (Lemma1.south);
@@ -124,7 +124,7 @@
 \draw[dag_arrow, rounded corners=6pt]
   (Lemma3.south west) -- ++(0.55,-1.25) |- (Lemma6.north east);
 \draw[dag_arrow] (Lemma6.east) -- (Lemmas78.west);
-\draw[dag_dashed_arrow] (Lemma6.west) -- (Lemma5.east);
+\draw[dag_arrow] (Lemma6.west) -- (Lemma5.east);
 \draw[dag_arrow] (Lemma6.south) |- (Lemmas910.west);
 \draw[dag_dashed_arrow] (Lemmas78.north east) -- (Thm4.north west);
 \draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);
