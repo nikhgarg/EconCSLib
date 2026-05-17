@@ -974,6 +974,13 @@ decrease of `q(u)/u`, this gives direct monotone response-shape bridges
 one-threshold policy-form packages
 `gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing` and
 `gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing`.
+For measured current policies under the actual structured price family, the
+state-specialized wrappers
+`gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured` and
+`gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured`
+build those normalized Lemma 6 policy-form packages directly from the
+coefficient sign and zero-cutoff facts, with the moving-state CTMC parameters
+substituted.
 The next layer is also packaged:
 `gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
 `gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`

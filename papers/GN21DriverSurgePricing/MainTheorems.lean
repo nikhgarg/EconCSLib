@@ -45812,6 +45812,92 @@ theorem gn21MeasuredRightLemma6ScaleAtCurrent_pos
           gn21ScaledStateTime μJ arrivalJ σJ)
       hτ hQi_pos hTj_pos hTi_pos hden_swap
 
+/--
+Non-surge measured Lemma 6 policy-form data for the structured-price
+one-threshold decreasing branch.
+-/
+def gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (m z Ri Rj t : ℝ)
+    (σI σJ : TripPolicy)
+    (hcoeff_pos :
+      0 <
+        (Rj - Ri) +
+          z *
+            (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI /
+                gn21ScaledStateTime μI arrivalI σI +
+              gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ /
+                gn21ScaledStateTime μJ arrivalJ σJ))
+    (hswitch_pos : 0 < switchIJ)
+    (hsum : 0 < switchIJ + switchJI)
+    (ht_pos : 0 < t)
+    (hzero :
+      gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI
+          (ctmcStructuredSurgePrice m z switchIJ switchJI) σI σJ Ri Rj t =
+        0) :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredLeftLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI
+        (ctmcStructuredSurgePrice m z switchIJ switchJI) σI σJ Ri Rj)
+      .strictlyDecreasing := by
+  simpa [gn21MeasuredLeftLemma6ResponseAtCurrent, ctmcStructuredSurgePrice,
+    structuredSurgePrice] using
+    gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing
+      m z
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      Ri Rj switchIJ switchJI t hcoeff_pos hswitch_pos hsum ht_pos
+      (by
+        simpa [gn21MeasuredLeftLemma6ResponseAtCurrent,
+          ctmcStructuredSurgePrice, structuredSurgePrice] using hzero)
+
+/--
+Surge measured Lemma 6 policy-form data for the structured-price one-threshold
+increasing branch.
+-/
+def gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (m z Ri Rj t : ℝ)
+    (σI σJ : TripPolicy)
+    (hcoeff_neg :
+        (Ri - Rj) +
+          z *
+            (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ /
+                gn21ScaledStateTime μJ arrivalJ σJ +
+              gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI /
+                gn21ScaledStateTime μI arrivalI σI) <
+        0)
+    (hswitch_pos : 0 < switchJI)
+    (hsum : 0 < switchJI + switchIJ)
+    (ht_pos : 0 < t)
+    (hzero :
+      gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+          switchIJ switchJI
+          (ctmcStructuredSurgePrice m z switchJI switchIJ) σI σJ Ri Rj t =
+        0) :
+    Lemma5PositiveResponsePolicyFormData
+      (gn21MeasuredRightLemma6ResponseAtCurrent μI μJ arrivalI arrivalJ
+        switchIJ switchJI
+        (ctmcStructuredSurgePrice m z switchJI switchIJ) σI σJ Ri Rj)
+      .strictlyIncreasing := by
+  simpa [gn21MeasuredRightLemma6ResponseAtCurrent, ctmcStructuredSurgePrice,
+    structuredSurgePrice] using
+    gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing
+      m z
+      (gn21ExitWeightIntegral μJ arrivalJ switchJI switchIJ σJ)
+      (gn21ExitWeightIntegral μI arrivalI switchIJ switchJI σI)
+      (gn21ScaledStateTime μJ arrivalJ σJ)
+      (gn21ScaledStateTime μI arrivalI σI)
+      Rj Ri switchJI switchIJ t hcoeff_neg hswitch_pos hsum ht_pos
+      (by
+        simpa [gn21MeasuredRightLemma6ResponseAtCurrent,
+          ctmcStructuredSurgePrice, structuredSurgePrice] using hzero)
+
 /-- Left measured response equals a positive scale times the normalized Lemma 6 response. -/
 theorem gn21MeasuredLeftMarginalResponse_eq_scale_mul_lemma6ResponseAtCurrent
     (μI μJ : Measure TripLength)

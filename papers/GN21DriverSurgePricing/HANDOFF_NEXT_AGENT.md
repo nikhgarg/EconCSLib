@@ -262,10 +262,7 @@ and
 measured left/right Lemma 5 marginal responses as positive scalings of the
 normalized Lemma 6 response under the current reward-rate identities
 `W_i = R_i*T_i`, `W_j = R_j*T_j`, nonzero state times, and nonzero aggregate
-denominator.  The next closeout step is to package these identities with the
-existing Lemma 6/7/8 policy-form data into
-`Lemma5PositiveResponsePolicyFormData`, then feed the existing marginal
-optimality bridge and feasible a.e. endpoint.
+denominator.
 That first packaging step is now compiled for both states:
 `gn21MeasuredLeftPositiveResponsePolicyFormData_of_scaled_lemma6Response` and
 `gn21MeasuredRightPositiveResponsePolicyFormData_of_scaled_lemma6Response`
@@ -287,8 +284,12 @@ policy-form packages
 `gn21StructuredLemma6ResponsePolicyFormData_strictlyDecreasing` and
 `gn21StructuredLemma6ResponsePolicyFormData_strictlyIncreasing` build the
 `Lemma5PositiveResponsePolicyFormData` fields used by the measured scaling
-adapters.  This is the fastest path for one-threshold reject-long/reject-short
-branches of the fixed-response route.
+adapters.  The measured structured one-threshold wrappers
+`gn21MeasuredLeftLemma6PolicyFormData_strictlyDecreasing_of_structured` and
+`gn21MeasuredRightLemma6PolicyFormData_strictlyIncreasing_of_structured` now
+perform that substitution directly for the non-surge reject-long and surge
+reject-short branches.  This is the fastest path for one-threshold
+reject-long/reject-short branches of the fixed-response route.
 The all-optima handoff boundary for this lighter route is
 `Theorem4AllMeasurableFixedResponsePolicyFormData`; call
 `.to_feasible_ae_policy_forms` to enter the existing feasible a.e. Theorem 4
