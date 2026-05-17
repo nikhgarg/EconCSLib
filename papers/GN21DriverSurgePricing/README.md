@@ -1025,6 +1025,13 @@ mass used to select the branch, use the hpos-aware variants instead:
 The older fixed-response source boundary coerces to this one via
 `GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_plain` and
 `Theorem3AcceptAllMeasurableFixedResponsePolicyFormSourceAssumptions.to_rejected_mass_source_assumptions`.
+The source-faithful common-fixed-state middle-reroute route is now packaged as
+`GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_fixed_state_eq_middle_reroute`,
+`GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData`, and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_reroute_source_assumptions`.
+It derives the untouched-state positive mass from the fixed-response a.e.
+Lemma 5 representative, so the source proof does not need exact replacement
+data just to use the positive-mass middle-reroute branch.
 The state-level adapters
 `gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 and

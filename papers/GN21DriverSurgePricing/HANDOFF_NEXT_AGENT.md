@@ -322,6 +322,16 @@ The old source-data package coerces through
 `GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_plain`; old
 source assumptions coerce through
 `Theorem3AcceptAllMeasurableFixedResponsePolicyFormSourceAssumptions.to_rejected_mass_source_assumptions`.
+The common-fixed-state equality middle-reroute endpoint route now has a direct
+fixed-response source adapter:
+`GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_fixed_state_eq_middle_reroute`,
+`GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData`, and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_reroute_source_assumptions`.
+This is the preferred Theorem 3 boundary when the source proof has
+fixed-response Lemma 5 policy-form data plus the shared fixed-state equality
+endpoint certificate, but not exact all-measurable replacement data.  The adapter
+derives untouched-state mass positivity from the a.e. representative; do not
+rebuild a separate exact-replacement route for that purpose.
 For Theorem 3, package the constructed-price state data as
 `GN21Theorem3FixedResponsePolicyFormSourceData`.
 The state-level adapters

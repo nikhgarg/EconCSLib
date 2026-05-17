@@ -99,6 +99,11 @@ The corresponding Theorem 3 AE wrappers are now compiled as:
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
   Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_middle_reroute_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_middle_reroute
+  GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_feasible_ae_policy_form
+  GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_feasible_ae_policy_form
+  GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_fixed_state_eq_middle_reroute
+  GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_reroute_source_assumptions
 
 This does not mean the paper proof is wrong.  It means the paper's notation
 compresses the bridge from current fixed-state reward/accounting data to the
@@ -113,6 +118,13 @@ optimality field through the compiled Theorem 4 middle-reroute endpoint proof,
 then forgets the all-branch reject-middle gap to the positive-rejected-mass AE
 local endpoint.  Only genuinely AE-only routes still need accept-all
 optimality as a separate input.
+
+Latest closeout note: the fixed-response policy-form route no longer needs exact
+all-measurable replacement data merely to feed the common fixed-state equality
+middle-reroute endpoint proof.  The new adapter derives untouched-state positive
+mass from the fixed-response a.e. Lemma 5 representative, including the
+non-surge representative cutoff side conditions by updating the optimum to the
+representative policy and applying the local endpoint certificate there.
 
 
 Meaning of r1_current
