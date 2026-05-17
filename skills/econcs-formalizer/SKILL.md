@@ -183,6 +183,13 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   rerun once before intervening. If the same shared-library failure persists,
   patch the minimal local problem yourself, rebuild, and move on; do not leave
   the paper blocked indefinitely on likely concurrent shared-library work.
+- If the failure is `failed to open file ... .olean: No such file or directory`
+  immediately after Lake claims the dependency was built, treat it first as
+  shared build-artifact churn. Check for active `lake`/`lean` jobs with `ps`,
+  let concurrent local builds finish, then materialize the missing dependency
+  target directly (for example `lake build EconCSLib.Foundations.Probability.BivariateGaussian`)
+  before rerunning the paper target. Do not debug theorem code until the same
+  paper module reaches elaboration and reports an actual Lean error.
 - For compile-repair passes, let the first `lake build PaperName` produce the
   error queue, then patch the first coherent cluster of errors by line number.
   Do not inspect the whole theorem file. Constructor-pattern errors are often
