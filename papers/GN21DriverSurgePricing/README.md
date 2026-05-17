@@ -1255,7 +1255,13 @@ case split.  The source-facing package
 `paper_theorem3_measured_structured_measurable_ic_prices_of_exact_one_threshold_branch_fixed_transfer_source_assumptions`
 now expose this as a compiled paper-level Theorem 3 IC route: source proofs
 provide all-optimal Lemma 5 replacement data, exact branch selectors, and only
-the two fixed-state endpoint branches.
+the two fixed-state endpoint branches.  The exact fixed-response source
+boundaries now feed this route directly through
+`paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_exact_one_threshold_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`
+and
+`paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_exact_one_threshold_bracket_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions`;
+Lean derives the all-optimal allowed-replacement field by replacing each
+already-exact reject-long/reject-short optimum with itself.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,
