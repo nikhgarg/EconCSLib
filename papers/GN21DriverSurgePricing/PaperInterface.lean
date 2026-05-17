@@ -239,6 +239,25 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_t
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the exact one-threshold fixed-transfer route with the non-surge
+fixed-transfer side stated as the one-sided pointwise comparison on rejected
+trips.  This is weaker than the equality interface above and is enough for the
+aggregate cross-ratio endpoint field.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_upper_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the exact one-threshold fixed-transfer route, with exact branch
 selectors and replacement data derived internally.  This route does not require
 nonatomic trip-length measures because it uses exact normalized branches rather

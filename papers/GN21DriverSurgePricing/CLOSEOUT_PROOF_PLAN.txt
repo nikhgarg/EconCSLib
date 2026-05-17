@@ -849,14 +849,24 @@ on rejected non-surge trips.  The compiled constructors
 
   GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer
   GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_transfer
+  GN21Theorem3FixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_upper_transfer
+  GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_surge_cutoff_and_nonsurge_pointwise_upper_transfer
   GN21Theorem3FixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_branch_source
+  GN21Theorem3FixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_exact_branch_source
   Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_exact_branch_source_assumptions
+  Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions.to_exact_branch_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
   PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_transfer
+  PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_upper_transfer
 
 take
 
   current_Q1 * τ = current_T1 * q_{1->2}(τ)
+
+or, for the weaker upper-transfer route,
+
+  current_Q1 * τ <= current_T1 * q_{1->2}(τ)
 
 for all trips in `acceptAllPolicy \ current_non_surge_policy` and use
 `GN21RegularEndpointSharedSourceData.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise`
@@ -864,18 +874,20 @@ to derive:
 
   acceptAll_T1 * current_Q1 <= current_T1 * acceptAll_Q1
 
-This says the current non-surge exit-weight/time ratio is at least the
+This says the current non-surge exit-weight/time ratio is no larger than the
 accept-all ratio.  It is exactly the fixed-state upper transfer needed for the
 surge Lemma 9 route.  On the exact branch, the remaining fixed-state input is
 therefore the fixed reward-rate identity plus the source's rejected-complement
-pointwise equality.
+pointwise comparison; equality is only a compatibility special case.
 
 If a later source route does not have exact fixed-transfer equality, use the
 weaker complement pointwise comparison:
 
   current_Q1 * τ >= current_T1 * q_{1->2}(τ)
 
-on rejected non-surge trips, or its already compiled helper in the
+on rejected non-surge trips, use the reverse cross-ratio helper instead.  The
+upper-transfer route above consumes the `<=` direction on rejected non-surge
+trips.  Both directions are already available in the
 gn21FixedStateCross_* family.  This comes from the fact that q(τ)/τ is
 decreasing in τ and the rejected complement lies on the appropriate side of
 the current non-surge threshold/shape.
