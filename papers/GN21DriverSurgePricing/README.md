@@ -358,8 +358,9 @@ cache is `source.txt`.
   `paper_theorem3_measured_ctmc_structured_prices_exist_and_positive_mass_measurable_ic_of_ratio_and_sequential_accept_all_weak_reward_of_small_surge_mass_affine_slack`,
   `theorem3SurgeAggregate_ge_of_currentMassAffineSignedIntervalEnvelopeSlack`,
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions`,
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`,
   and
-  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`.
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions`.
   This replaces the positive-`z_0` reward envelope `m_0+z_0*switch12` by the
   cycle-normalized envelope `max m_0 (arrival_0*z_0)`, using accept-all mass
   normalization and finite current mass.  The scalar helper
@@ -378,8 +379,12 @@ cache is `source.txt`.
   current non-surge reward is bounded by the selected mass-affine envelope, and
   `theorem3CurrentLowerIntervalSlack_of_lower_nonpos_massAffineEnvelope` turns
   endpoint lower nonpositivity into the exact selected-price Lemma 9 lower
-  slack.  Thus the remaining Lemma 9 work should prove the endpoint sign used
-  by the paper proof, not reprove the reward-rate envelope algebra.
+  slack.  The newest mass-affine wrapper uses the paper's current Lemma 9
+  final-sign inequality to derive that endpoint lower nonpositivity for each
+  feasible positive-mass policy, so the focused selected-price lower-slack
+  subgoal is now closed on this route.  The remaining source work should use
+  this bridge or the endpoint/allowed-policy route, not reprove the reward-rate
+  envelope algebra.
   This proves Theorem 3 IC by moving the surge state to accept-all first and
   then applying Lemma 10 only with the surge state already fixed at accept-all,
   avoiding the arbitrary-fixed-surge reward-rate mismatch.

@@ -837,17 +837,29 @@ The lower-sign wrapper asks for:
 
 The preferred mass-affine interval wrapper asks for a sharper sign-selected
 `Rmax`, accept-all mass-one/finite support for state 1, and accept-all
-final-sign certificate.  The newest arrival-bound variant asks for
-`arrival_0*z_0 <= R2` and derives the old zero-ratio numerator internally.  It
-replaces the policy-dependent current lower-sign field by:
+final-sign certificate.  The arrival-bound variant asks for the dimensionless
+numerator inequality and derives `arrival_0*z_0 <= R2` and the old zero-ratio
+numerator internally.  The newest lower-final-sign variant also derives the
+selected-price current lower slack from the paper's current Lemma 9 final-sign
+line, so callers should supply:
+
+```lean
+lemma9StructuredLowerNumerator ... *
+  lemma9StructuredUpperDenominator ... <= 0
+```
+
+for each feasible positive-mass current policy, not the selected-price slack
+below directly:
 
 ```lean
 current_lower *
   (m_2 - gn21MeasuredStateRewardRate ... current_non_surge_policy) < z_2
 ```
 
-for the selected small-surge prices.  It derives the current upper slack
-internally from the uniform `U` bound and positive-mass Remark 4 facts.
+for the selected small-surge prices.  Lean derives the selected lower slack
+from the current final-sign inequality plus the mass-affine reward envelope,
+and derives the current upper slack internally from the uniform `U` bound and
+positive-mass Remark 4 facts.
 
 Do not keep pushing this as an arbitrary-policy sequential obligation without
 first adding a policy-shape restriction.  A CTMC-generated two-atom numerical
@@ -1035,12 +1047,13 @@ Keep the mass-affine sequential wrapper as a documented fallback/source
 boundary:
 
 ```lean
-paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions
+paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions
 ```
 
 Do not try to prove the mass-affine positive-`z0` branch from only loose scalar
 feasibility facts; `arrival_0*z_0 <= R2` is the current explicit extra
-condition for that wrapper.
+condition, derived in the newest wrapper from the dimensionless numerator
+bound.
 
 ## Documentation Map
 

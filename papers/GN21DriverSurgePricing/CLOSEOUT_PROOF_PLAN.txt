@@ -920,6 +920,8 @@ Recommended proof order
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentIntervalSlackFinalSignDataAssumptions
      paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions
+     Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentLowerFinalSignArrivalBoundDataAssumptions
+     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions
 
    The measured accept-all, current-lower, and final-sign wrappers are now
    compiled.  The newer interval-slack wrappers are also compiled and should be
@@ -1011,9 +1013,11 @@ Recommended proof order
 
    The second theorem proves the exact selected-price lower slack from the
    endpoint lower-nonpositivity statement plus the compiled mass-affine reward
-   envelope.  Therefore the next proof should focus on the paper's endpoint
-   sign argument for the policy forms that can be optimal under the selected
-   prices; do not duplicate the current reward-rate envelope calculation in
+   envelope.  The newest lower-final-sign wrapper applies the paper's current
+   Lemma 9 final-sign line to derive that endpoint lower nonpositivity and then
+   feeds the selected lower slack into the mass-affine arrival-bound route.
+   Therefore the selected lower-slack subgoal is closed for this source
+   boundary; do not duplicate the current reward-rate envelope calculation in
    the endpoint proof.
 
    The endpoint/allowed-policy pivot now has a compiled non-accept-all

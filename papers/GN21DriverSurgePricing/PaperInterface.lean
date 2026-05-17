@@ -112,6 +112,25 @@ theorem theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
       rho R2 T1 Q1 switch12 arrival0 hR2_nonneg hden_pos hbound
 
 /--
+Theorem 3 positive-mass IC on the mass-affine small-surge route: the source
+provides the current Lemma 9 final-sign inequality and the scalar
+arrival/intercept numerator bound; Lean derives the selected-price lower slack
+and the zero-ratio side condition internally.
+-/
+theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentLowerFinalSignArrivalBoundDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 source-facing measured structured-pricing endpoint on the current
 paper proof route.  Lemma 6 is supplied at the sign-bracket level; the
 remaining source fields are the Lemma 9/10 branch inequalities plus the
