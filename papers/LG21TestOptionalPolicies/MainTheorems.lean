@@ -21170,7 +21170,7 @@ theorem paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_
         lg21SourceTestBlank S) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+    paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium_and_observableIdentities
       (paper_theorem3_2_optional_reporting_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_source_equilibrium_certificate
         M theta k skillGivenBase demographicAccessEstimate
         demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
@@ -21178,13 +21178,30 @@ theorem paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_
         takeDecision reportDecision estimationConsistent referenceSkill actorLaw
         decisionThreshold hEq hthreshold)
       studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
-      (fun _ _ => rfl) (fun _ _ => rfl) hEventOrBlank testOf
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+      (fun _ _ => rfl) (fun _ _ => rfl) hEventOrBlank
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent
+              e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := reporterEvent)
+        (decEvent := decReporterEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := fullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete optional-reporting event-or-blank Section 3 iff endpoint in
@@ -21271,7 +21288,7 @@ theorem paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_releva
             S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+    paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium_and_observableIdentities
       (paper_theorem3_2_optional_reporting_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_source_equilibrium_certificate
         M theta k skillGivenBase demographicAccessEstimate
         demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
@@ -21279,13 +21296,30 @@ theorem paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_releva
         takeDecision reportDecision estimationConsistent referenceSkill actorLaw
         decisionThreshold hEq hthreshold)
       studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
-      (fun _ _ => rfl) (fun _ _ => rfl) hEventOrBlank testOf
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+      (fun _ _ => rfl) (fun _ _ => rfl) hEventOrBlank
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent
+              e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := reporterEvent)
+        (decEvent := decReporterEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := fullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete report-required event-or-blank Section 3 iff endpoint on the
@@ -21365,7 +21399,7 @@ theorem paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upp
         lg21SourceTestBlank S) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+    paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_source_equilibrium_and_observableIdentities
       (paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate
         skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
         studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
@@ -21378,13 +21412,29 @@ theorem paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upp
         dsimp
           [paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate]
         ring)
-      hEventOrBlank testOf
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+      hEventOrBlank
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+              e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := takerEvent)
+        (decEvent := decTakerEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := fullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete report-required event-or-blank Section 3 iff endpoint in
@@ -21465,7 +21515,7 @@ theorem paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance
             S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium
+    paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium_and_observableIdentities
       (paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate
         skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
         studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
@@ -21478,13 +21528,29 @@ theorem paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance
         dsimp
           [paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate]
         ring)
-      hEventOrBlank testOf
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+      hEventOrBlank
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+              e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := takerEvent)
+        (decEvent := decTakerEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := fullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete optional-reporting blank-on-zero-share Section 3 iff endpoint.  The
@@ -21570,20 +21636,49 @@ theorem paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_
         lg21SourceTestBlank S) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
-      (paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff
+    paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium_and_observableIdentities
+      (paper_theorem3_2_optional_reporting_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_source_equilibrium_certificate
         M theta k skillGivenBase demographicAccessEstimate
         demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
-        reporterPMF noReporterPMF baseOnlyEstimate rawFullFeatureEstimate
-        takeDecision reportDecision estimationConsistent referenceSkill actorLaw
-        decisionThreshold hEq hthreshold)
-      testOf
-      (fun e base => by
+        reporterPMF noReporterPMF baseOnlyEstimate
+        (lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw reporterEvent decReporterEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        takeDecision reportDecision estimationConsistent referenceSkill
+        actorLaw decisionThreshold hEq hthreshold)
+      studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
+      (fun _ _ => rfl) (fun _ _ => rfl)
+      (fun e base hzero test => by
         simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+          lg21BinaryMixtureEstimateSurface] using
+          (lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+            studentLaw reporterEvent decReporterEvent baseOnlyEstimate
+            rawFullFeatureEstimate e base hzero test).symm)
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent
+              e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := reporterEvent)
+        (decEvent := decReporterEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw reporterEvent decReporterEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete optional-reporting blank-on-zero-share Section 3 iff endpoint in
@@ -21669,20 +21764,49 @@ theorem paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_releva
             S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
-      (paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_gaussian_upper_tail_blank_on_zero_event_share_constant_latent_surface_posterior_payoff
+    paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium_and_observableIdentities
+      (paper_theorem3_2_optional_reporting_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_source_equilibrium_certificate
         M theta k skillGivenBase demographicAccessEstimate
         demographicNoAccessEstimate studentLaw reporterEvent decReporterEvent
-        reporterPMF noReporterPMF baseOnlyEstimate rawFullFeatureEstimate
-        takeDecision reportDecision estimationConsistent referenceSkill actorLaw
-        decisionThreshold hEq hthreshold)
-      testOf
-      (fun e base => by
+        reporterPMF noReporterPMF baseOnlyEstimate
+        (lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw reporterEvent decReporterEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        takeDecision reportDecision estimationConsistent referenceSkill
+        actorLaw decisionThreshold hEq hthreshold)
+      studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
+      (fun _ _ => rfl) (fun _ _ => rfl)
+      (fun e base hzero test => by
         simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+          lg21BinaryMixtureEstimateSurface] using
+          (lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+            studentLaw reporterEvent decReporterEvent baseOnlyEstimate
+            rawFullFeatureEstimate e base hzero test).symm)
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw reporterEvent decReporterEvent
+              e base)
+            (lg21PMFEventShareFn_le_one studentLaw reporterEvent
+              decReporterEvent e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : Skill) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := reporterEvent)
+        (decEvent := decReporterEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw reporterEvent decReporterEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete report-required blank-on-zero-share Section 3 iff endpoint.
@@ -21760,20 +21884,52 @@ theorem paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upp
         lg21SourceTestBlank S) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
-      (paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff
+    paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_zero_event_share_blank_source_equilibrium_and_observableIdentities
+      (paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate
         skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
         studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
-        baseOnlyEstimate rawFullFeatureEstimate takeDecision reportDecision
-        estimationConsistent referenceTest actorLaw decisionThreshold hEq
-        hthreshold)
-      testOf
-      (fun e base => by
+        baseOnlyEstimate
+        (lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw takerEvent decTakerEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        takeDecision reportDecision estimationConsistent referenceTest
+        actorLaw decisionThreshold hEq hthreshold)
+      studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
+      (fun _ _ => rfl) (fun _ _ => rfl)
+      (fun e base _hPMF => by
+        dsimp
+          [paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate]
+        ring)
+      (fun e base hzero test => by
         simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+          lg21BinaryMixtureEstimateSurface] using
+          (lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+            studentLaw takerEvent decTakerEvent baseOnlyEstimate
+            rawFullFeatureEstimate e base hzero test).symm)
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+              e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := takerEvent)
+        (decEvent := decTakerEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw takerEvent decTakerEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /--
 Concrete report-required blank-on-zero-share Section 3 iff endpoint in
@@ -21853,20 +22009,52 @@ theorem paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance
             S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) := by
   dsimp only
   exact
-    paper_theorem3_2_section3_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
-      (paper_theorem3_2_report_required_fairness_impossibility_certificate_of_upper_tail_blank_on_zero_event_share_constant_latent_surface_unit_centered_payoff
+    paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium_and_observableIdentities
+      (paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate
         skillGivenBase demographicAccessEstimate demographicNoAccessEstimate
         studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
-        baseOnlyEstimate rawFullFeatureEstimate takeDecision reportDecision
-        estimationConsistent referenceTest actorLaw decisionThreshold hEq
-        hthreshold)
-      testOf
-      (fun e base => by
+        baseOnlyEstimate
+        (lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw takerEvent decTakerEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        takeDecision reportDecision estimationConsistent referenceTest
+        actorLaw decisionThreshold hEq hthreshold)
+      studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
+      (fun _ _ => rfl) (fun _ _ => rfl)
+      (fun e base _hPMF => by
+        dsimp
+          [paper_theorem3_2_report_required_upper_tail_event_share_constant_latent_surface_unit_centered_payoff_source_equilibrium_certificate]
+        ring)
+      (fun e base hzero test => by
         simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hAccess e base)
-      (fun e base => by
-        simpa [lg21EventShareBinaryMixtureEstimateSurface,
-          lg21BinaryMixtureEstimateSurface] using hNoAccess e base)
+          lg21BinaryMixtureEstimateSurface] using
+          (lg21FullFeatureEstimateBlankOnZeroEventShare_eq_baseOnly_of_zero_share
+            studentLaw takerEvent decTakerEvent baseOnlyEstimate
+            rawFullFeatureEstimate e base hzero test).symm)
+      (lg21EventShareBinaryMixtureEstimateSurface_observableIdentities
+        (Equilibrium := Equilibrium)
+        (latentAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          lg21BinaryMixturePMF
+            (lg21PMFEventShareFn studentLaw takerEvent decTakerEvent e base)
+            (lg21PMFEventShareFn_le_one studentLaw takerEvent decTakerEvent
+              e base)
+            (reporterPMF e base) (noReporterPMF e base))
+        (latentNoAccessEstimate := fun (e : Equilibrium) (_ : ℝ) (base : Base) =>
+          noReporterPMF e base)
+        (demographicAccessEstimate := demographicAccessEstimate)
+        (demographicNoAccessEstimate := demographicNoAccessEstimate)
+        (studentLaw := studentLaw)
+        (event := takerEvent)
+        (decEvent := decTakerEvent)
+        (reporterPMF := reporterPMF)
+        (noReporterPMF := noReporterPMF)
+        (baseOnlyEstimate := baseOnlyEstimate)
+        (fullFeatureEstimate := lg21FullFeatureEstimateBlankOnZeroEventShare
+          studentLaw takerEvent decTakerEvent baseOnlyEstimate
+          rawFullFeatureEstimate)
+        (testOf := testOf)
+        (hAccess := hAccess)
+        (hNoAccess := hNoAccess))
 
 /-- Continuous-law certificate for Theorem 3.2's fairness-impossibility implication. -/
 structure LG21LawFairnessImpossibilityCertificate

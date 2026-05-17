@@ -623,10 +623,11 @@ cache is kept as `source.txt` for named-statement audits.
   from the concrete optional/report-required source games.  For concrete
   binary-mixture observable-access laws, the mixture identity is now
   definitionally discharged; event-share variants also derive share positivity
-  from a finite positive-mass reporter/taker event.  Remaining theorem-local
-  assumptions are the no-access law and the report-required outside-payoff
-  equality, plus any stricter conditional-kernel instantiation wanted for the
-  final source statement.
+  from a finite positive-mass reporter/taker event.  In the older generic
+  finite binary-mixture route, the remaining theorem-local assumptions are the
+  no-access law and the report-required outside-payoff equality, plus any
+  stricter conditional-kernel instantiation wanted for that generic source
+  statement.
   The concrete event-share surface endpoints
   `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_surface`
   and
@@ -722,11 +723,12 @@ event-or-blank and zero-share routes now also have direct Section 3
 fairness/test-blank and fairness/no-relevance iff wrappers under the named
 full-feature/base-only observable-identity certificate. The concrete
 optional posterior-payoff and report-required unit-centered event-or-blank
-surfaces expose the same iff conclusions, so they no longer need a global
+surfaces expose the same iff conclusions and now route internally through
+those named observable-identity certificates, so they no longer need a global
 positive-share premise to state the "only test-blank policies can be fair"
 direction. The blank-on-zero-share constructor-backed concrete surfaces now
-also have direct Section 3 iff wrappers, discharging the paper's zero-share
-branch by definition. In the optional-reporting
+also route through the zero-share source wrappers and the same certificates,
+discharging the paper's zero-share branch by definition. In the optional-reporting
 continuous upper-tail route, the concrete Gaussian posterior-payoff
 specialization now removes the separate affine-payoff identity and
 tie-at-indifference hypotheses.  In
