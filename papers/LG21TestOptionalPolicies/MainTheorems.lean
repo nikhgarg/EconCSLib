@@ -17989,6 +17989,212 @@ theorem paper_theorem3_1_section3_report_required_strategic_withholding_for_ever
     exact paper_theorem3_1_report_required_strategic_withholding_of_certificate (C e)
 
 /--
+Theorem 3.1 optional-reporting PMF certificate family with the access fraction
+instantiated as a finite event share for every equilibrium index.
+-/
+def paper_theorem3_1_optional_reporting_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_report_mixture
+    {Feature Skill Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (accessEvent : Equilibrium → Base → Student → Prop)
+    (decAccessEvent : ∀ e base, DecidablePred (accessEvent e base))
+    (hnoAccessMass :
+      ∀ e base, ∃ student, ¬ accessEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (scoreLaw : Equilibrium → Base → GaussianScaleLaw)
+    (eLat : ∀ e, (S e).Equilibrium)
+    (q : Equilibrium → Skill) (baseLat : Equilibrium → Base)
+    (hLatNe :
+      ∀ e, (S e).latentAccessEstimate (eLat e) (q e) (baseLat e) ≠
+        (S e).latentNoAccessEstimate (eLat e) (q e) (baseLat e))
+    (eObs : ∀ e, (S e).Equilibrium)
+    (baseObs : Equilibrium → Base)
+    (hObsNe :
+      ∀ e, (S e).observableAccessEstimate (eObs e) (baseObs e) ≠
+        (S e).observableNoAccessEstimate (eObs e) (baseObs e))
+    (eDemo : ∀ e, (S e).Equilibrium)
+    (hDemoNe :
+      ∀ e, (S e).demographicAccessEstimate (eDemo e) ≠
+        (S e).demographicNoAccessEstimate (eDemo e)) :
+    ∀ e : Equilibrium,
+      LG21OptionalReportingStrategicWithholdingCertificate (S e) := by
+  intro e
+  let h :=
+      paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture
+        M theta k (studentLaw e) (accessEvent e) (decAccessEvent e)
+        (hnoAccessMass e) (baseOnlyEstimate e) (scoreLaw e)
+  let W := Classical.choose h
+  exact
+    paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_source_witness
+      (S := S e) W (eLat e) (q e) (baseLat e) (hLatNe e)
+      (eObs e) (baseObs e) (hObsNe e) (eDemo e) (hDemoNe e)
+
+/--
+Theorem 3.1 report-required PMF certificate family with the access fraction
+instantiated as a finite event share for every equilibrium index.
+-/
+def paper_theorem3_1_report_required_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture
+    {Skill Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (intercept slope : Equilibrium → Base → ℝ)
+    (hslope : ∀ e base, 0 < slope e base)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (accessEvent : Equilibrium → Base → Student → Prop)
+    (decAccessEvent : ∀ e base, DecidablePred (accessEvent e base))
+    (hnoAccessMass :
+      ∀ e base, ∃ student, ¬ accessEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (skillLaw : Equilibrium → Base → GaussianScaleLaw)
+    (eLat : ∀ e, (S e).Equilibrium)
+    (q : Equilibrium → Skill) (baseLat : Equilibrium → Base)
+    (hLatNe :
+      ∀ e, (S e).latentAccessEstimate (eLat e) (q e) (baseLat e) ≠
+        (S e).latentNoAccessEstimate (eLat e) (q e) (baseLat e))
+    (eObs : ∀ e, (S e).Equilibrium)
+    (baseObs : Equilibrium → Base)
+    (hObsNe :
+      ∀ e, (S e).observableAccessEstimate (eObs e) (baseObs e) ≠
+        (S e).observableNoAccessEstimate (eObs e) (baseObs e))
+    (eDemo : ∀ e, (S e).Equilibrium)
+    (hDemoNe :
+      ∀ e, (S e).demographicAccessEstimate (eDemo e) ≠
+        (S e).demographicNoAccessEstimate (eDemo e)) :
+    ∀ e : Equilibrium,
+      LG21ReportRequiredStrategicWithholdingCertificate (S e) := by
+  intro e
+  let h :=
+      paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture
+        (intercept e) (slope e) (hslope e) (studentLaw e) (accessEvent e)
+        (decAccessEvent e) (hnoAccessMass e) (baseOnlyEstimate e)
+        (skillLaw e)
+  let W := Classical.choose h
+  exact
+    paper_theorem3_1_report_required_strategic_withholding_certificate_of_source_witness
+      (S := S e) W (eLat e) (q e) (baseLat e) (hLatNe e)
+      (eObs e) (baseObs e) (hObsNe e) (eDemo e) (hDemoNe e)
+
+/--
+Theorem 3.1 optional-reporting Section 3 PMF endpoint for every equilibrium,
+with the access fraction instantiated as a finite event share.
+-/
+theorem paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_event_share_no_report_mixture
+    {Feature Skill Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (accessEvent : Equilibrium → Base → Student → Prop)
+    (decAccessEvent : ∀ e base, DecidablePred (accessEvent e base))
+    (hnoAccessMass :
+      ∀ e base, ∃ student, ¬ accessEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (scoreLaw : Equilibrium → Base → GaussianScaleLaw)
+    (eLat : ∀ e, (S e).Equilibrium)
+    (q : Equilibrium → Skill) (baseLat : Equilibrium → Base)
+    (hLatNe :
+      ∀ e, (S e).latentAccessEstimate (eLat e) (q e) (baseLat e) ≠
+        (S e).latentNoAccessEstimate (eLat e) (q e) (baseLat e))
+    (eObs : ∀ e, (S e).Equilibrium)
+    (baseObs : Equilibrium → Base)
+    (hObsNe :
+      ∀ e, (S e).observableAccessEstimate (eObs e) (baseObs e) ≠
+        (S e).observableNoAccessEstimate (eObs e) (baseObs e))
+    (eDemo : ∀ e, (S e).Equilibrium)
+    (hDemoNe :
+      ∀ e, (S e).demographicAccessEstimate (eDemo e) ≠
+        (S e).demographicNoAccessEstimate (eDemo e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+          (∀ base skill, W.takes base skill) ∧
+            (∃ base score, ¬ W.reports base score) ∧
+              (∀ base, ∃ cutoff : ℝ,
+                ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+              ¬ lg21SourceLatentSkillFair (S e) ∧
+                ¬ lg21SourceObservablyFair (S e) ∧
+                  ¬ lg21SourceDemographicallyFair (S e) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · intro e
+    exact
+      (paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture
+        M theta k (studentLaw e) (accessEvent e) (decAccessEvent e)
+        (hnoAccessMass e) (baseOnlyEstimate e) (scoreLaw e)
+        (eLat e) (q e) (baseLat e) (hLatNe e)
+        (eObs e) (baseObs e) (hObsNe e) (eDemo e) (hDemoNe e)).2
+
+/--
+Theorem 3.1 report-required Section 3 PMF endpoint for every equilibrium, with
+the access fraction instantiated as a finite event share.
+-/
+theorem paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_event_share_no_take_mixture
+    {Skill Base Test Estimate Student Equilibrium : Type*}
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (S : Equilibrium → LG21SourcePolicySurface Skill Base Test Estimate)
+    (intercept slope : Equilibrium → Base → ℝ)
+    (hslope : ∀ e base, 0 < slope e base)
+    (studentLaw : Equilibrium → Base → PMF Student)
+    (accessEvent : Equilibrium → Base → Student → Prop)
+    (decAccessEvent : ∀ e base, DecidablePred (accessEvent e base))
+    (hnoAccessMass :
+      ∀ e base, ∃ student, ¬ accessEvent e base student ∧
+        0 < (studentLaw e base student).toReal)
+    (baseOnlyEstimate : Equilibrium → Base → ℝ)
+    (skillLaw : Equilibrium → Base → GaussianScaleLaw)
+    (eLat : ∀ e, (S e).Equilibrium)
+    (q : Equilibrium → Skill) (baseLat : Equilibrium → Base)
+    (hLatNe :
+      ∀ e, (S e).latentAccessEstimate (eLat e) (q e) (baseLat e) ≠
+        (S e).latentNoAccessEstimate (eLat e) (q e) (baseLat e))
+    (eObs : ∀ e, (S e).Equilibrium)
+    (baseObs : Equilibrium → Base)
+    (hObsNe :
+      ∀ e, (S e).observableAccessEstimate (eObs e) (baseObs e) ≠
+        (S e).observableNoAccessEstimate (eObs e) (baseObs e))
+    (eDemo : ∀ e, (S e).Equilibrium)
+    (hDemoNe :
+      ∀ e, (S e).demographicAccessEstimate (eDemo e) ≠
+        (S e).demographicNoAccessEstimate (eDemo e)) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∀ e : Equilibrium,
+        ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+          (∃ base skill, ¬ W.takes base skill) ∧
+            (∀ base, ∃ qBar : ℝ,
+              ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+            ¬ lg21SourceLatentSkillFair (S e) ∧
+              ¬ lg21SourceObservablyFair (S e) ∧
+                ¬ lg21SourceDemographicallyFair (S e) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · intro e
+    exact
+      (paper_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture
+        (intercept e) (slope e) (hslope e) (studentLaw e) (accessEvent e)
+        (decAccessEvent e) (hnoAccessMass e) (baseOnlyEstimate e) (skillLaw e)
+        (eLat e) (q e) (baseLat e) (hLatNe e)
+        (eObs e) (baseObs e) (hObsNe e) (eDemo e) (hDemoNe e)).2
+
+/--
 Theorem 3.1 Section 3 optional-reporting endpoint for every equilibrium from a
 family of continuous-law certificates.
 -/

@@ -226,8 +226,13 @@ Last updated: 2026-05-16
   and
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_of_event_share_no_take_mixture`,
   which instantiate the access fraction from a finite student event and derive
-  `0 <= C < 1` internally.  A fully concrete finite PMF surface remains
-  optional if that representation is desired.  The
+  `0 <= C < 1` internally.  The matching every-equilibrium PMF endpoints
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_event_share_no_take_mixture`
+  now return one strategic-withholding witness per equilibrium index.  A fully
+  concrete finite PMF surface remains optional if that representation is
+  desired.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff
