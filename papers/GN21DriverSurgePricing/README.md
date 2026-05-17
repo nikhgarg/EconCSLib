@@ -518,7 +518,11 @@ cache is `source.txt`.
   derives the older `GN21SurgeRejectMiddleMovingCutoffChoice` internally.  The
   common fixed-state-equality cutoff-bounds endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate`
-  converts those common packages to the by-policy-form endpoint.  The
+  converts those common packages to the by-policy-form endpoint, and the new
+  direct bridge
+  `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_fixed_state_separated`
+  feeds the fixed-state-separated endpoint route without first selecting a
+  Lemma 5 policy-form branch for the fixed state.  The
   derived-tail endpoint certificate
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailLocalEndpointCertificate`,
   and wrappers
@@ -534,7 +538,12 @@ cache is `source.txt`.
   complement pointwise equality and reward-rate facts for each state, and
   ordinary surge cutoff bounds; Lean derives the branch-specific policy-form
   packages, surge moving-cutoff choice, and tail-integrability package
-  internally.  The hnot-aware fixed-transfer adapters
+  internally.  The corresponding source adapter
+  `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_fixed_state_separated_source_assumptions`
+  and wrapper
+  `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_fixed_state_separated`
+  consume the same common fixed-state equality package through the separated
+  route directly.  The hnot-aware fixed-transfer adapters
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularAllowedPolicyFormsCertificate.to_endpoint_current_bounds_selection_unless`,
   `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailCutoffBoundsLocalEndpointCertificate.to_fixed_transfer_allowed_policy_forms_of_shape_replacements`,
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_cutoff_bounds_source_assumptions_via_selection_unless`,

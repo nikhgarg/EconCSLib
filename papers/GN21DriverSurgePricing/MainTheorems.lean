@@ -73350,6 +73350,24 @@ def GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData.to_p
     exact D.hfixed_reward_rate
 
 /--
+Common fixed-surge equality data also give the fixed-state transfer package
+directly, without first selecting a Lemma 5 policy-form branch.
+-/
+def GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData.to_fixed_state
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R2 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData
+        S m z R2 ρ) :
+    GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R2 ρ :=
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_pointwise_eq
+    D.hfixed_pointwise_eq D.hfixed_reward_rate
+
+/--
 Source-facing fixed-non-surge data with one complement equality and one
 reward-rate identity, independent of the non-surge Lemma 5 branch.
 -/
@@ -73398,6 +73416,24 @@ def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData.t
   accept_middle_reward_rate := by
     intro lo hi hshape
     exact D.hfixed_reward_rate
+
+/--
+Common fixed-non-surge equality data also give the fixed-state transfer package
+directly, without first selecting a Lemma 5 policy-form branch.
+-/
+def GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData.to_fixed_state
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 switch12 switch21 : ℝ}
+    {ρ : Fin 2 → TripPolicy}
+    {S : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21}
+    (D :
+      GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData
+        S m z R1 ρ) :
+    GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData
+      S m z R1 ρ :=
+  GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassData.of_pointwise_eq
+    D.hfixed_pointwise_eq D.hfixed_reward_rate
 
 /-- Moving-state cutoff/tail data for a surge reject-short endpoint. -/
 structure GN21SurgeRejectShortTheorem3FixedTransferMovingData
@@ -74496,6 +74532,45 @@ def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStat
   nonsurge_fixed_state_by_policy_form := by
     intro ρ hopt
     exact (C.nonsurge_fixed_state_eq ρ hopt).to_policy_form
+
+/--
+The common fixed-state equality cutoff-bounds package can feed the
+fixed-state-separated endpoint route directly.  This avoids choosing a Lemma 5
+policy-form branch merely to recover the same fixed-state equality data.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate.to_fixed_state_separated
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailCutoffBoundsLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateSeparatedLocalEndpointCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := C.shared
+  nonsurge_rejectLong_pos := C.nonsurge_rejectLong_pos
+  nonsurge_acceptMiddle_bounds := C.nonsurge_acceptMiddle_bounds
+  surge_fixed_state := by
+    intro ρ hopt
+    exact (C.surge_fixed_state_eq ρ hopt).to_fixed_state
+  nonsurge_fixed_state := by
+    intro ρ hopt
+    exact (C.nonsurge_fixed_state_eq ρ hopt).to_fixed_state
+  surge_reject_short_moving := by
+    intro ρ hopt u hshape
+    let tail :=
+      (GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll
+        (m := m) (z := z) C.shared).to_uniform_tail
+    exact
+      tail.to_reject_short_moving
+        (C.surge_rejectShort_pos ρ hopt u hshape)
+  surge_reject_middle_moving := by
+    intro ρ hopt lo hi hshape
+    let tail :=
+      (GN21SurgeTheorem3FixedTransferPositiveTailData.of_shared_acceptAll
+        (m := m) (z := z) C.shared).to_uniform_tail
+    let B := C.surge_rejectMiddle_bounds ρ hopt lo hi hshape
+    exact .upper (tail.to_reject_middle_hi_moving B.1 B.2)
 
 /--
 Derive the mass-separated certificate from no-mass endpoint facts and the
@@ -82134,6 +82209,62 @@ theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theo
                 m z hnonneg hparams with
             ⟨Creplacement, L⟩
           exact ⟨Creplacement, L.to_fixed_state_by_policy_form⟩ }
+
+/--
+The common fixed-state equality cutoff-bounds source boundary also feeds the
+fixed-state-separated route directly, avoiding the intermediate expansion to
+policy-form-indexed fixed-state data.
+-/
+def Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions.to_fixed_state_separated_source_assumptions
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateSeparatedSourceAssumptions
+      μ arrival rho R1 R2 switch12 switch21 where
+  hR1_eq := A.hR1_eq
+  hR1_pos := A.hR1_pos
+  hR1_lt_R2 := A.hR1_lt_R2
+  hR2_pos := A.hR2_pos
+  hC_lt_rho := A.hC_lt_rho
+  hrho_lt_one := A.hrho_lt_one
+  harrival1_pos := A.harrival1_pos
+  harrival2_pos := A.harrival2_pos
+  hswitch12_pos := A.hswitch12_pos
+  hswitch21_pos := A.hswitch21_pos
+  htime1_integrable := A.htime1_integrable
+  htime2_integrable := A.htime2_integrable
+  hq1_integrable := A.hq1_integrable
+  hq2_integrable := A.hq2_integrable
+  hmeasure1_pos := A.hmeasure1_pos
+  hmeasure2_pos := A.hmeasure2_pos
+  endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_selection := by
+    intro m z hnonneg hparams
+    rcases
+        A.endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_selection
+          m z hnonneg hparams with
+      ⟨Creplacement, L⟩
+    exact ⟨Creplacement, L.to_fixed_state_separated⟩
+
+/--
+Same common fixed-state equality cutoff-bounds wrapper, consumed through the
+fixed-state-separated route rather than through policy-form-indexed fixed-state
+data.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_cutoff_bounds_source_assumptions_via_fixed_state_separated
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailCutoffBoundsSourceAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_separated_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    A.to_fixed_state_separated_source_assumptions
 
 /--
 Common fixed-state equality cutoff-bounds source boundary for the
