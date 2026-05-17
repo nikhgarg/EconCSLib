@@ -122,6 +122,14 @@ abbrev audit_theorem3_1_section3_optional_reporting_pmf :=
 abbrev audit_theorem3_1_section3_report_required_pmf :=
   @paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf
 
+/-- Audit endpoint for Theorem 3.1 optional-reporting finite-event-share PMF route. -/
+abbrev audit_theorem3_1_section3_optional_reporting_event_share_pmf_route :=
+  @paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_of_event_share_no_report_mixture
+
+/-- Audit endpoint for Theorem 3.1 report-required finite-event-share PMF route. -/
+abbrev audit_theorem3_1_section3_report_required_event_share_pmf_route :=
+  @paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_of_event_share_no_take_mixture
+
 /-- Audit endpoint for Theorem 3.1 optional-reporting finite-event-share source route. -/
 abbrev audit_theorem3_1_optional_reporting_event_share_source_route :=
   @paper_interface_theorem3_1_optional_reporting_source_evidence_of_event_share_no_report_mixture

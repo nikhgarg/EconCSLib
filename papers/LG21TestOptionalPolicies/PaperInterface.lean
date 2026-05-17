@@ -14257,6 +14257,20 @@ abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding
   @paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface
 
 /--
+Paper-facing Theorem 3.1 optional-reporting PMF endpoint with the access
+fraction instantiated as a finite event share.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required PMF endpoint with the access fraction
+instantiated as a finite event share.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture
+
+/--
 Proposition 4.2 base-indexed source-model endpoint: the closed observed-access
 source Lemma 4.1 endpoint supplies `(Y, X) = (1, 1)`, and the full base-indexed
 one-test posterior source-law surface is not latent-skill fair.

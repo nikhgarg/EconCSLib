@@ -220,8 +220,14 @@ Last updated: 2026-05-16
   These avoid certificate-field indirection by directly returning, for every
   equilibrium index, the optional/report-required strategic-withholding witness
   and failures of all three fairness notions on the concrete Gaussian or
-  affine-skill posterior law surface.  Deriving analogous concrete finite PMF
-  witnesses is optional if that representation is desired.  The
+  affine-skill posterior law surface.  The finite-event-share PMF route is also
+  proved by
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_of_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_of_event_share_no_take_mixture`,
+  which instantiate the access fraction from a finite student event and derive
+  `0 <= C < 1` internally.  A fully concrete finite PMF surface remains
+  optional if that representation is desired.  The
   older combined threshold conclusions are also
   packaged in
   `LG21StrategicWithholdingSourceWitness`.  Explicit base-indexed cutoff

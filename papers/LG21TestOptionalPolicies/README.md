@@ -148,6 +148,13 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share`
   expose this finite-event-share version without the long implementation
   suffix.
+- The Section 3 PMF route now also has finite-event-share public aliases:
+  `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_pmf_of_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_of_event_share_no_take_mixture`.
+  These instantiate the access fraction from a finite student event and derive
+  `0 <= C < 1` internally before returning hidden access, the strategic
+  withholding witness, and all three source-fairness failures.
 - Theorem 3.1 now has Section 3 hidden-access wrappers over both PMF and
   continuous-law certificates, including every-equilibrium certificate-family
   forms.  These endpoints make the paper hypothesis "the school does not know

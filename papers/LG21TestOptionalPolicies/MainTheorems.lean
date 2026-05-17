@@ -17158,6 +17158,119 @@ theorem paper_theorem3_1_report_required_strategic_withholding_of_no_take_mixtur
         (S := S) W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe⟩
 
 /--
+Theorem 3.1 optional-reporting Section 3 PMF endpoint with the access fraction
+instantiated as a finite event share.  The finite no-access-mass hypothesis
+supplies the strict mixture bound, while the displayed PMF witnesses certify
+the three fairness violations.
+-/
+theorem paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_event_share_no_report_mixture
+    {Feature Skill Base Test Estimate Student : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (M : Base → GaussianOffsetSignalFamily Feature)
+    (theta : Base → Feature → ℝ) (k : Feature)
+    (studentLaw : Base → PMF Student)
+    (accessEvent : Base → Student → Prop)
+    (decAccessEvent : ∀ base, DecidablePred (accessEvent base))
+    (hnoAccessMass :
+      ∀ base, ∃ student, ¬ accessEvent base student ∧
+        0 < (studentLaw base student).toReal)
+    (baseOnlyEstimate : Base → ℝ)
+    (scoreLaw : Base → GaussianScaleLaw)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∃ W : LG21OptionalReportingStrategicWithholdingSourceWitness Base,
+        (∀ base skill, W.takes base skill) ∧
+          (∃ base score, ¬ W.reports base score) ∧
+            (∀ base, ∃ cutoff : ℝ,
+              ∀ score : ℝ, W.reports base score ↔ cutoff ≤ score) ∧
+              ¬ lg21SourceLatentSkillFair S ∧
+                ¬ lg21SourceObservablyFair S ∧
+                  ¬ lg21SourceDemographicallyFair S := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · rcases
+      paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture
+        M theta k studentLaw accessEvent decAccessEvent hnoAccessMass
+        baseOnlyEstimate scoreLaw with
+      ⟨W, _reportCutoff, _hindiff, _hreports, _htakes, _hthreshold⟩
+    exact
+      ⟨W,
+        paper_theorem3_1_optional_reporting_strategic_withholding_of_source_witness
+          (S := S) W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe⟩
+
+/--
+Theorem 3.1 report-required Section 3 PMF endpoint with the access fraction
+instantiated as a finite event share.
+-/
+theorem paper_theorem3_1_section3_report_required_strategic_withholding_of_event_share_no_take_mixture
+    {Skill Base Test Estimate Student : Type*}
+    [Fintype Student] [DecidableEq Student] [Nonempty Base]
+    (intercept slope : Base → ℝ) (hslope : ∀ base, 0 < slope base)
+    (studentLaw : Base → PMF Student)
+    (accessEvent : Base → Student → Prop)
+    (decAccessEvent : ∀ base, DecidablePred (accessEvent base))
+    (hnoAccessMass :
+      ∀ base, ∃ student, ¬ accessEvent base student ∧
+        0 < (studentLaw base student).toReal)
+    (baseOnlyEstimate : Base → ℝ)
+    (skillLaw : Base → GaussianScaleLaw)
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (eLat : S.Equilibrium) (q : Skill) (baseLat : Base)
+    (hLatNe :
+      S.latentAccessEstimate eLat q baseLat ≠
+        S.latentNoAccessEstimate eLat q baseLat)
+    (eObs : S.Equilibrium) (baseObs : Base)
+    (hObsNe :
+      S.observableAccessEstimate eObs baseObs ≠
+        S.observableNoAccessEstimate eObs baseObs)
+    (eDemo : S.Equilibrium)
+    (hDemoNe :
+      S.demographicAccessEstimate eDemo ≠
+        S.demographicNoAccessEstimate eDemo) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ∃ W : LG21ReportRequiredStrategicWithholdingSourceWitness Base,
+        (∃ base skill, ¬ W.takes base skill) ∧
+          (∀ base, ∃ qBar : ℝ,
+            ∀ skill : ℝ, W.takes base skill ↔ qBar ≤ skill) ∧
+            ¬ lg21SourceLatentSkillFair S ∧
+              ¬ lg21SourceObservablyFair S ∧
+                ¬ lg21SourceDemographicallyFair S := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · rcases
+      paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture
+        intercept slope hslope studentLaw accessEvent decAccessEvent
+        hnoAccessMass baseOnlyEstimate skillLaw with
+      ⟨W, _takeCutoff, _hindiff, _htakes, _hthreshold⟩
+    exact
+      ⟨W,
+        paper_theorem3_1_report_required_strategic_withholding_of_source_witness
+          (S := S) W eLat q baseLat hLatNe eObs baseObs hObsNe eDemo hDemoNe⟩
+
+/--
 Theorem 3.1 report-required endpoint over arbitrary estimate-law objects.
 -/
 theorem paper_theorem3_1_report_required_law_strategic_withholding_of_source_witness
