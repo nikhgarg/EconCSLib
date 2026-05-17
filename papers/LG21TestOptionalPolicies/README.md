@@ -197,7 +197,8 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_fairness_iff_no_test_relevance_of_full_feature_base_only`
   and
   `paper_interface_theorem3_2_law_fairness_iff_no_test_relevance_of_full_feature_base_only`
-  state the same conclusion in the paper's "no test relevance" language.
+  state the same conclusion in the paper's "no test relevance" language, with
+  Section 3 variants bundling the hidden-access hypothesis.
 - Contradiction-style Theorem 3.2 branches now have first-class certificate
   constructors:
   `paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair`

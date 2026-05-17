@@ -322,6 +322,14 @@ abbrev audit_theorem3_2_law_observable_fair_iff_test_blank_of_full_feature_base_
 abbrev audit_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only :=
   @paper_interface_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only
 
+/-- Audit endpoint for the Section 3 PMF Theorem 3.2 fairness/no-relevance iff bridge. -/
+abbrev audit_theorem3_2_section3_fairness_iff_no_test_relevance_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_section3_fairness_iff_no_test_relevance_of_full_feature_base_only
+
+/-- Audit endpoint for the Section 3 continuous-law Theorem 3.2 fairness/no-relevance iff bridge. -/
+abbrev audit_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_full_feature_base_only :=
+  @paper_interface_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_full_feature_base_only
+
 /-- Audit endpoint for the PMF Theorem 3.2 fairness/no-relevance iff bridge. -/
 abbrev audit_theorem3_2_fairness_iff_no_test_relevance_of_full_feature_base_only :=
   @paper_interface_theorem3_2_fairness_iff_no_test_relevance_of_full_feature_base_only

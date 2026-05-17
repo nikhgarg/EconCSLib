@@ -19034,6 +19034,36 @@ theorem paper_theorem3_2_section3_fairness_iff_test_blank_of_certificate_and_ful
       paper_theorem3_2_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
         C testOf hAccess hNoAccess
 
+/--
+Theorem 3.2 Section 3 no-relevance iff form from a PMF certificate and
+source-surface identities, with hidden access bundled into the conclusion.
+-/
+theorem paper_theorem3_2_section3_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (C : LG21FairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessEstimate e base =
+        S.fullFeatureEstimate e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessEstimate e base =
+        S.baseOnlyEstimate e base) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+        ¬ ∃ e base test,
+            S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · exact
+      paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+        C testOf hAccess hNoAccess
+
 /-- Continuous-law certificate for Theorem 3.2's fairness-impossibility implication. -/
 structure LG21LawFairnessImpossibilityCertificate
     {Skill Base Test Law : Type*}
@@ -19267,6 +19297,34 @@ theorem paper_theorem3_2_section3_law_fairness_iff_test_blank_of_certificate_and
         base test action
   · exact
       paper_theorem3_2_law_fairness_iff_test_blank_of_certificate_and_full_feature_base_only
+        C testOf hAccess hNoAccess
+
+/--
+Continuous-law Theorem 3.2 Section 3 no-relevance iff form.
+-/
+theorem paper_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (C : LG21LawFairnessImpossibilityCertificate S)
+    (testOf : S.Equilibrium → Base → Test)
+    (hAccess :
+      ∀ e base, S.observableAccessLaw e base =
+        S.fullFeatureLaw e base (testOf e base))
+    (hNoAccess :
+      ∀ e base, S.observableNoAccessLaw e base =
+        S.baseOnlyLaw e base) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (LG21SchoolInformationSet.fromAccessAction false base test action).accessStatus =
+          none) ∧
+      ((lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) ↔
+        ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test) := by
+  refine ⟨?_, ?_⟩
+  · intro base test action
+    exact
+      LG21SchoolInformationSet.fromAccessAction_accessStatus_of_unobserved
+        base test action
+  · exact
+      paper_theorem3_2_law_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only
         C testOf hAccess hNoAccess
 
 /-- Certificate for Lemma 4.1's strategy-proofness endpoint. -/

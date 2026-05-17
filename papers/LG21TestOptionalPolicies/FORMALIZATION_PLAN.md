@@ -279,7 +279,8 @@ Last updated: 2026-05-16
   full-feature/base-only one.  The no-relevance iff wrappers
   `paper_theorem3_2_fairness_iff_no_test_relevance_of_certificate_and_full_feature_base_only`
   and its law analogue rephrase the same result as absence of any concrete
-  base/test relevance witness.
+  base/test relevance witness, with Section 3 variants bundling the hidden
+  access-status hypothesis.
   These case-split endpoints also have Section 3 hidden-access wrappers,
   removing the earlier global positive-share assumption from the source-facing
   theorem route.  The fully concrete optional posterior-payoff and report-required
