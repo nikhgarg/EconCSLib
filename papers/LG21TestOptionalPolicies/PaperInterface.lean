@@ -15938,15 +15938,13 @@ theorem paper_interface_theorem3_1_section3_optional_reporting_strategic_withhol
                   (paperBaseMixedGaussianPosteriorLawSurface
                     (skillGivenBase e) (baseProfile e) M theta k
                     (scoreLaw e) (baseOnlyEstimate e)) ∧
-                  ¬ lg21SourceLawDemographicallyFair
-                    (paperBaseMixedGaussianPosteriorLawSurface
-                      (skillGivenBase e) (baseProfile e) M theta k
-                      (scoreLaw e) (baseOnlyEstimate e)) :=
-  paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share
+                ¬ lg21SourceLawDemographicallyFair
+                  (paperBaseMixedGaussianPosteriorLawSurface
+                    (skillGivenBase e) (baseProfile e) M theta k
+                    (scoreLaw e) (baseOnlyEstimate e)) :=
+  paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_gaussian_posterior_surface
     skillGivenBase baseProfile M theta k studentLaw accessEvent
-    decAccessEvent
-    (lg21PMFEventShareFn_complement_mass_of_full_support_not_all
-      studentLaw accessEvent hfull_support hnot_all)
+    decAccessEvent hfull_support hnot_all
     baseOnlyEstimate scoreLaw
 
 /--
@@ -15989,11 +15987,9 @@ theorem paper_interface_theorem3_1_section3_report_required_strategic_withholdin
                   (paperBaseMixedAffineSkillPosteriorLawSurface
                     (skillGivenBase e) (baseProfile e) (intercept e) (slope e)
                     (hslope e) (skillLaw e) (baseOnlyEstimate e)) :=
-  paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share
+  paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_affine_skill_posterior_surface
     skillGivenBase baseProfile intercept slope hslope studentLaw accessEvent
-    decAccessEvent
-    (lg21PMFEventShareFn_complement_mass_of_full_support_not_all
-      studentLaw accessEvent hfull_support hnot_all)
+    decAccessEvent hfull_support hnot_all
     baseOnlyEstimate skillLaw
 
 /--

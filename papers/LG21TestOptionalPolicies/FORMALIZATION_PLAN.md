@@ -204,6 +204,11 @@ Last updated: 2026-05-16
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all`
   derive the positive-mass complement event from full support of the finite
   cohort law plus an ordinary witness outside the reporting/taking event.
+  The corresponding proof now lives in the theorem layer as
+  `paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_affine_skill_posterior_surface`,
+  with the public interface wrappers delegating to those names.
   The reusable event-share bridge itself is public as
   `paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all`
   and

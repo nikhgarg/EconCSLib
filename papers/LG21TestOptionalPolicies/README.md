@@ -136,7 +136,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_not_all`,
   which derive that positive-mass complement witness from a full-support
   finite cohort law plus an ordinary witness outside the reporting/taking
-  event.  The underlying reusable bridge is also exposed as
+  event.  These now route through theorem-layer endpoints
+  `paper_theorem3_1_section3_optional_reporting_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_gaussian_posterior_surface`
+  and
+  `paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_full_support_not_all_and_base_mixed_affine_skill_posterior_surface`,
+  so the positive-mass conversion is no longer only paper-interface glue.  The
+  underlying reusable bridge is also exposed as
   `paper_interface_theorem3_2_pmf_event_share_fn_complement_mass_of_full_support_not_all`
   and
   `paper_interface_theorem3_2_pmf_event_share_fn_lt_one_of_full_support_not_all`.

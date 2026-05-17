@@ -95,7 +95,10 @@ and
   instantiation directly, so the remaining optional PMF work is only a more
   concrete finite surface representation, not the event-share proof route.
   The PMF route now also has every-equilibrium wrappers matching the law route's
-  public shape.
+  public shape.  The full-support/not-all-acting event-share conversion now
+  lives in theorem-layer endpoints for both optional-reporting and
+  report-required continuous-law Section 3 routes, with the audit aliases
+  still exposed through the public paper interface.
 - Theorem 3.2 is formalized through explicit event-or-blank source surfaces.
   The final aliases state the paper's hidden-access implication and no-relevance
   readings, while the concrete routes expose the positive event-share or
