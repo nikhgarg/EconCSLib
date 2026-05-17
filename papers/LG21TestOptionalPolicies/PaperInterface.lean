@@ -3352,6 +3352,22 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_implies_
     C studentLaw reporterEvent decReporterEvent reporterPMF noReporterPMF
     hNoAccess hAccessMixtureDef hEventOrBlank
 
+/-- Paper-facing optional-reporting source event-or-blank fairness/test-blank iff route. -/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
+/-- Paper-facing optional-reporting source event-or-blank fairness/no-relevance iff route. -/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_event_or_blank_source_equilibrium
+
+/-- Paper-facing optional-reporting source zero-share fairness/test-blank iff route. -/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_test_blank_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
+
+/-- Paper-facing optional-reporting source zero-share fairness/no-relevance iff route. -/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_upper_tail_zero_event_share_blank_source_equilibrium
+
 /--
 Paper-facing optional-reporting event-share source-equilibrium endpoint with
 the equilibrium/base witness chosen internally from nonempty spaces.
@@ -5300,6 +5316,22 @@ theorem paper_interface_theorem3_2_section3_report_required_fairness_implies_tes
   paper_theorem3_2_section3_report_required_fairness_implies_test_blank_of_upper_tail_event_or_blank_source_equilibrium
     C studentLaw takerEvent decTakerEvent reporterPMF noReporterPMF
     hNoAccess hAccessMixtureDef houtsidePayoff_of_pmfEq hEventOrBlank
+
+/-- Paper-facing report-required source event-or-blank fairness/test-blank iff route. -/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_event_or_blank_source_equilibrium
+
+/-- Paper-facing report-required source event-or-blank fairness/no-relevance iff route. -/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_event_or_blank_source_equilibrium
+
+/-- Paper-facing report-required source zero-share fairness/test-blank iff route. -/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_test_blank_of_upper_tail_zero_event_share_blank_source_equilibrium
+
+/-- Paper-facing report-required source zero-share fairness/no-relevance iff route. -/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium :=
+  @paper_theorem3_2_section3_report_required_fairness_iff_no_test_relevance_of_upper_tail_zero_event_share_blank_source_equilibrium
 
 /--
 Paper-facing report-required event-share source-equilibrium endpoint with the

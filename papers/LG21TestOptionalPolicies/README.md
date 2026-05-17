@@ -693,7 +693,10 @@ endpoint rather than the older packaged certificate. Theorem 3.1/3.2 now have
 short Section 3 paper-facing aliases; their conditional status is that the
 strongest current routes derive source witnesses and upper-tail impossibility
 from concrete source equilibria under explicit payoff, tie-breaking, threshold,
-mixture, and zero-share-blankness hypotheses.  In the optional-reporting
+mixture, and zero-share-blankness hypotheses. The source-equilibrium
+event-or-blank and zero-share routes now also have direct Section 3
+fairness/test-blank and fairness/no-relevance iff wrappers under the ordinary
+full-feature/base-only observable-surface identities. In the optional-reporting
 continuous upper-tail route, the concrete Gaussian posterior-payoff
 specialization now removes the separate affine-payoff identity and
 tie-at-indifference hypotheses.  In

@@ -281,9 +281,13 @@ Last updated: 2026-05-16
   and its law analogue rephrase the same result as absence of any concrete
   base/test relevance witness, with Section 3 variants bundling the hidden
   access-status hypothesis.
-  These case-split endpoints also have Section 3 hidden-access wrappers,
-  removing the earlier global positive-share assumption from the source-facing
-  theorem route.  The fully concrete optional posterior-payoff and report-required
+  The source-equilibrium event-or-blank and zero-share routes now specialize
+  those iff wrappers directly, giving Section 3 fairness/test-blank and
+  fairness/no-relevance iff endpoints for both optional-reporting and
+  report-required source certificates. These case-split endpoints also have
+  Section 3 hidden-access wrappers, removing the earlier global positive-share
+  assumption from the source-facing theorem route.  The fully concrete optional
+  posterior-payoff and report-required
   unit-centered routes now factor out their source-equilibrium certificates and
   have Section 3 event-or-blank wrappers, so the positive-share versus
   already-test-blank split is available at the strongest concrete surfaces in
