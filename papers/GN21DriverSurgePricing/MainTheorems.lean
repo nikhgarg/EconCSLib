@@ -30115,6 +30115,38 @@ theorem lemma9StructuredLower_nonpos_of_final_signs
   exact div_nonpos_of_nonpos_of_nonneg hnum_nonpos (le_of_lt hden_lower)
 
 /--
+Primitive-sign version of the source proof's final-sign line.  The standard
+Remark 4 signs make both Lemma 9 denominators positive, so the displayed
+cross-multiplied nonpositivity directly implies a nonpositive lower endpoint.
+-/
+theorem lemma9StructuredLower_nonpos_of_positive_primitives_and_final_signs
+    (T1 Q1 Tbar2 Qbar2 switch21 : ℝ)
+    (hT1_nonneg : 0 ≤ T1)
+    (hQ1_pos : 0 < Q1)
+    (hswitch_pos : 0 < switch21)
+    (hgap_nonneg : 0 ≤ switch21 * Tbar2 - Qbar2)
+    (hswitch_lt_Qbar2 : switch21 < Qbar2)
+    (hleft_nonpos :
+      lemma9StructuredLowerNumerator T1 Q1 Tbar2 Qbar2 switch21 *
+          lemma9StructuredUpperDenominator Q1 Qbar2 switch21 ≤ 0) :
+    lemma9StructuredLower T1 Q1 Tbar2 Qbar2 switch21 ≤ 0 := by
+  have hB_pos : 0 < Q1 + T1 * switch21 := by
+    nlinarith [mul_nonneg hT1_nonneg (le_of_lt hswitch_pos)]
+  have hden_lower :
+      0 < lemma9StructuredLowerDenominator T1 Q1 Tbar2 Qbar2 switch21 := by
+    unfold lemma9StructuredLowerDenominator
+    exact add_pos_of_nonneg_of_pos
+      (mul_nonneg (le_of_lt hQ1_pos) hgap_nonneg)
+      (mul_pos hswitch_pos hB_pos)
+  have hden_upper :
+      0 < lemma9StructuredUpperDenominator Q1 Qbar2 switch21 := by
+    unfold lemma9StructuredUpperDenominator
+    exact mul_pos hQ1_pos (sub_pos.mpr hswitch_lt_Qbar2)
+  exact
+    lemma9StructuredLower_nonpos_of_final_signs T1 Q1 Tbar2 Qbar2
+      switch21 hden_lower hden_upper hleft_nonpos
+
+/--
 Lemma 9 tightening bridge: if the accept-all lower/upper bounds hold, the
 current-policy bounds hold whenever `lambda*T_2-Q_2` is no larger and `Q_2`
 is no larger than their accept-all values.
@@ -90527,47 +90559,16 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
         (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
         switch21 ≤ 0 := by
-    have hT1_nonneg : 0 ≤ gn21AcceptAllScaledStateTime (μ 0) (arrival 0) :=
-      le_of_lt hT1_pos
-    have hB_pos :
-        0 <
-          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21 +
-            gn21AcceptAllScaledStateTime (μ 0) (arrival 0) * switch21 := by
-      nlinarith [mul_nonneg hT1_nonneg (le_of_lt A.hswitch21_pos)]
-    have hden_lower :
-        0 <
-          lemma9StructuredLowerDenominator
-            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
-            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21)
-            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
-            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-              switch21 switch12)
-            switch21 := by
-      unfold lemma9StructuredLowerDenominator
-      exact add_pos_of_nonneg_of_pos
-        (mul_nonneg (le_of_lt hQ1_pos) hgap2_nonneg)
-        (mul_pos A.hswitch21_pos hB_pos)
-    have hden_upper :
-        0 <
-          lemma9StructuredUpperDenominator
-            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21)
-            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-              switch21 switch12)
-            switch21 := by
-      unfold lemma9StructuredUpperDenominator
-      exact mul_pos hQ1_pos (sub_pos.mpr hswitch21_lt_Q2)
     exact
-      lemma9StructuredLower_nonpos_of_final_signs
+      lemma9StructuredLower_nonpos_of_positive_primitives_and_final_signs
         (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
         (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
           switch12 switch21)
         (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
           switch21 switch12)
-        switch21 hden_lower hden_upper A.acceptAll_lower_left_nonpos
+        switch21 (le_of_lt hT1_pos) hQ1_pos A.hswitch21_pos
+        hgap2_nonneg hswitch21_lt_Q2 A.acceptAll_lower_left_nonpos
   exact
     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_data_assumptions
       μ arrival rho R1 R2 switch12 switch21
@@ -91146,47 +91147,16 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
         (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
         switch21 ≤ 0 := by
-    have hT1_nonneg : 0 ≤ gn21AcceptAllScaledStateTime (μ 0) (arrival 0) :=
-      le_of_lt hT1_pos
-    have hB_pos :
-        0 <
-          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21 +
-            gn21AcceptAllScaledStateTime (μ 0) (arrival 0) * switch21 := by
-      nlinarith [mul_nonneg hT1_nonneg (le_of_lt A.hswitch21_pos)]
-    have hden_lower :
-        0 <
-          lemma9StructuredLowerDenominator
-            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
-            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21)
-            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
-            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-              switch21 switch12)
-            switch21 := by
-      unfold lemma9StructuredLowerDenominator
-      exact add_pos_of_nonneg_of_pos
-        (mul_nonneg (le_of_lt hQ1_pos) hgap2_nonneg)
-        (mul_pos A.hswitch21_pos hB_pos)
-    have hden_upper :
-        0 <
-          lemma9StructuredUpperDenominator
-            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21)
-            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-              switch21 switch12)
-            switch21 := by
-      unfold lemma9StructuredUpperDenominator
-      exact mul_pos hQ1_pos (sub_pos.mpr hswitch21_lt_Q2)
     exact
-      lemma9StructuredLower_nonpos_of_final_signs
+      lemma9StructuredLower_nonpos_of_positive_primitives_and_final_signs
         (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
         (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
           switch12 switch21)
         (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
           switch21 switch12)
-        switch21 hden_lower hden_upper A.acceptAll_lower_left_nonpos
+        switch21 (le_of_lt hT1_pos) hQ1_pos A.hswitch21_pos
+        hgap2_nonneg hswitch21_lt_Q2 A.acceptAll_lower_left_nonpos
   exact
     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_data_assumptions
       μ arrival rho R1 R2 switch12 switch21
@@ -91569,47 +91539,16 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
         (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
         switch21 ≤ 0 := by
-    have hT1_nonneg : 0 ≤ gn21AcceptAllScaledStateTime (μ 0) (arrival 0) :=
-      le_of_lt hT1_pos
-    have hB_pos :
-        0 <
-          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21 +
-            gn21AcceptAllScaledStateTime (μ 0) (arrival 0) * switch21 := by
-      nlinarith [mul_nonneg hT1_nonneg (le_of_lt A.hswitch21_pos)]
-    have hden_lower :
-        0 <
-          lemma9StructuredLowerDenominator
-            (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
-            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21)
-            (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
-            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-              switch21 switch12)
-            switch21 := by
-      unfold lemma9StructuredLowerDenominator
-      exact add_pos_of_nonneg_of_pos
-        (mul_nonneg (le_of_lt hQ1_pos) hgap2_nonneg)
-        (mul_pos A.hswitch21_pos hB_pos)
-    have hden_upper :
-        0 <
-          lemma9StructuredUpperDenominator
-            (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
-              switch12 switch21)
-            (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-              switch21 switch12)
-            switch21 := by
-      unfold lemma9StructuredUpperDenominator
-      exact mul_pos hQ1_pos (sub_pos.mpr hswitch21_lt_Q2)
     exact
-      lemma9StructuredLower_nonpos_of_final_signs
+      lemma9StructuredLower_nonpos_of_positive_primitives_and_final_signs
         (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
         (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
           switch12 switch21)
         (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
         (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
           switch21 switch12)
-        switch21 hden_lower hden_upper haccept_lower_left_nonpos
+        switch21 (le_of_lt hT1_pos) hQ1_pos A.hswitch21_pos
+        hgap2_nonneg hswitch21_lt_Q2 haccept_lower_left_nonpos
   have hsum12 : 0 < switch12 + switch21 := by
     linarith [A.hswitch12_pos, A.hswitch21_pos]
   exact
@@ -91645,55 +91584,22 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of
               (μ 0) (arrival 0) switch12 switch21 (policy 0)
               (le_of_lt A.harrival1_pos) A.hswitch12_pos hsum12
               (hpolicy.1 0).2 (hpolicy.1 0).1
-          have hTcurrent_pos :
-              0 < gn21ScaledStateTime (μ 0) (arrival 0) (policy 0) :=
-            gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0)
-              (policy 0) (le_of_lt A.harrival1_pos)
-              (hpolicy.1 0).2 (hpolicy.1 0).1
           have hTcurrent_nonneg :
               0 ≤ gn21ScaledStateTime (μ 0) (arrival 0) (policy 0) :=
-            le_of_lt hTcurrent_pos
-          have hB_pos :
-              0 <
-                gn21ExitWeightIntegral (μ 0) (arrival 0)
-                    switch12 switch21 (policy 0) +
-                  gn21ScaledStateTime (μ 0) (arrival 0) (policy 0) *
-                    switch21 := by
-            nlinarith [mul_nonneg hTcurrent_nonneg
-              (le_of_lt A.hswitch21_pos)]
-          have hden_lower :
-              0 <
-                lemma9StructuredLowerDenominator
-                  (gn21ScaledStateTime (μ 0) (arrival 0) (policy 0))
-                  (gn21ExitWeightIntegral (μ 0) (arrival 0)
-                    switch12 switch21 (policy 0))
-                  (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
-                  (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-                    switch21 switch12)
-                  switch21 := by
-            unfold lemma9StructuredLowerDenominator
-            exact add_pos_of_nonneg_of_pos
-              (mul_nonneg (le_of_lt hQcurrent_pos) hgap2_nonneg)
-              (mul_pos A.hswitch21_pos hB_pos)
-          have hden_upper :
-              0 <
-                lemma9StructuredUpperDenominator
-                  (gn21ExitWeightIntegral (μ 0) (arrival 0)
-                    switch12 switch21 (policy 0))
-                  (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
-                    switch21 switch12)
-                  switch21 := by
-            unfold lemma9StructuredUpperDenominator
-            exact mul_pos hQcurrent_pos (sub_pos.mpr hswitch21_lt_Q2)
+            le_of_lt <|
+              gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0)
+                (policy 0) (le_of_lt A.harrival1_pos)
+                (hpolicy.1 0).2 (hpolicy.1 0).1
           exact
-            lemma9StructuredLower_nonpos_of_final_signs
+            lemma9StructuredLower_nonpos_of_positive_primitives_and_final_signs
               (gn21ScaledStateTime (μ 0) (arrival 0) (policy 0))
               (gn21ExitWeightIntegral (μ 0) (arrival 0)
                 switch12 switch21 (policy 0))
               (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
               (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
                 switch21 switch12)
-              switch21 hden_lower hden_upper
+              switch21 hTcurrent_nonneg hQcurrent_pos A.hswitch21_pos
+              hgap2_nonneg hswitch21_lt_Q2
               (A.current_lower_left_nonpos policy hpolicy) }
 
 /--
