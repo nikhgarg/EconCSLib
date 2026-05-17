@@ -179,6 +179,21 @@ plus the a.e.-representative version
 `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_feasible_ae_policy_form_middle_reroute`:
 if the lower accepted-middle cutoff is nonpositive, route the branch through
 reject-long at the upper cutoff instead of asking for a separate `0 < lo`.
+Lean also now has a direct positive-mass geometry bridge:
+
+  cutoff_pos_of_rejectsLongTrips_of_subset_acceptAll_of_mass_pos
+  acceptsMiddleTrips_gap_of_subset_acceptAll_of_mass_pos
+  theorem4_nonsurge_rejectLong_pos_of_current_mass_pos
+  theorem4_nonsurge_acceptMiddle_gap_of_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularSurgeCutoffByPolicyFormMiddleCutoffRerouteAELocalEndpointCertificate.of_nonsurge_current_mass_pos
+
+Use these whenever a route already proves positive current non-surge accepted
+mass.  They discharge the reject-long cutoff and accepted-middle gap fields
+from feasibility plus positive mass; do not keep those as separate source
+fields in that case.
 
 Latest Theorem 3 source-boundary note: the preferred existence-based
 fixed-response common-equality middle-reroute route now has a one-threshold
