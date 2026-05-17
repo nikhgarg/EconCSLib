@@ -31,7 +31,7 @@ unconditional theorem over every possible estimation policy.
 | Definition 3, observable fairness | 346 | `audit_definition3_observably_fair` |
 | Definition 4, demographic fairness | 360 | `audit_definition4_demographically_fair` |
 | Definition 5, test-blank policies | 370 | `audit_definition5_test_blank` |
-| Theorem 3.1, strategic withholding | 424, 829 | `audit_theorem3_1_section3_optional_reporting`, `audit_theorem3_1_section3_report_required`, plus PMF certificate aliases `audit_theorem3_1_section3_optional_reporting_pmf` and `audit_theorem3_1_section3_report_required_pmf` |
+| Theorem 3.1, strategic withholding | 424, 829 | `audit_theorem3_1_section3_optional_reporting`, `audit_theorem3_1_section3_report_required`, PMF certificate aliases `audit_theorem3_1_section3_optional_reporting_pmf` and `audit_theorem3_1_section3_report_required_pmf`, plus finite-event-share source routes `audit_theorem3_1_optional_reporting_event_share_source_route` and `audit_theorem3_1_report_required_event_share_source_route` |
 | Theorem 3.2, fairness impossibility | 455, 1614 | `audit_theorem3_2_positive_event_or_blank_bridge`, `audit_theorem3_2_section3_optional_reporting_fairness_impossibility`, `audit_theorem3_2_section3_report_required_fairness_impossibility` |
 | Lemma 4.1, strategy-proofness | 492, 1784 | `audit_lemma4_1_observed_access_strategy_proofness` |
 | Proposition 4.2, latent-skill unfairness | 550, 2318 | `audit_proposition4_2_base_indexed_posterior_surface` |

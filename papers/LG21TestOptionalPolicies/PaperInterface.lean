@@ -1134,6 +1134,20 @@ theorem paper_interface_theorem3_1_report_required_no_take_mixture_low_endpoint_
   paper_theorem3_1_report_required_no_take_mixture_low_endpoint_exists
     hC_nonneg hC_lt_one baseOnlyEstimate intercept hslope skillLaw
 
+/--
+Theorem 3.1 optional-reporting source-mixture endpoint with the access fraction
+instantiated as a finite event share.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_source_evidence_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_optional_reporting_gaussian_source_witness_of_event_share_no_report_mixture
+
+/--
+Theorem 3.1 report-required source-mixture endpoint with the access fraction
+instantiated as a finite event share.
+-/
+abbrev paper_interface_theorem3_1_report_required_source_evidence_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture
+
 /-- Theorem 3.1 cutoff support: lower-cutoff rules are monotone. -/
 theorem paper_interface_monotone_of_lowerCutoffStrategy
     {choose : ℝ → Prop} (hcutoff : lg21LowerCutoffStrategy choose) :

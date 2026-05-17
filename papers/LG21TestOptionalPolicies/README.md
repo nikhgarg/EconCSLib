@@ -140,7 +140,11 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_1_report_required_affine_source_witness_of_event_share_no_take_mixture`.
   These instantiate the access fraction as a finite PMF access-event share and
   derive the `0 ≤ C < 1` mixture premises from PMF nonnegativity plus positive
-  no-access complement mass.
+  no-access complement mass.  The paper-interface aliases
+  `paper_interface_theorem3_1_optional_reporting_source_evidence_of_event_share_no_report_mixture`
+  and
+  `paper_interface_theorem3_1_report_required_source_evidence_of_event_share_no_take_mixture`
+  expose the same route for audit.
 
 ### Recent Theorem 3.2 Progress
 
