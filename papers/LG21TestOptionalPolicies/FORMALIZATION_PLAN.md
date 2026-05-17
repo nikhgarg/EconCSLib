@@ -654,15 +654,17 @@ Last updated: 2026-05-16
    than assuming a global positive share.  The fully concrete optional
    posterior-payoff and report-required unit-centered constant-latent
    event-share endpoints now also have direct Section 3 hidden-access wrappers,
-   making them citable as paper-facing hidden-access Theorem 3.2 routes.  This
-   finite
+   and short `PaperInterface` aliases
+   `paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility`
+   and
+   `paper_interface_theorem3_2_section3_report_required_fairness_impossibility`
+   are the final audit targets.  This finite
    binary-mixture route remains available if the final statement wants those
    exact point-mass endpoints; its remaining obligations are the displayed
    positive-mass/support facts.  The active continuous/source route should now
-   either accept the concrete constant-latent event-or-blank surfaces as the
-   final source-facing Theorem 3.2 route, or instantiate a stricter
-   conditional-kernel version if the final statement should quantify over
-   conditional-on-skill Gaussian laws.
+   only need a stricter conditional-kernel version if the final statement is
+   intentionally broadened beyond the concrete constant-latent event-share
+   surfaces used by the current Section 3 wrappers.
 
 ## Reusable Library Seams
 
