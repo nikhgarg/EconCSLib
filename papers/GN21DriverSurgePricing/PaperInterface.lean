@@ -1077,33 +1077,12 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
       mu arrival R1 R2 switch12 switch21 := by
-  rcases GN21DriverSurgePricing.theorem3_acceptAll_ratio_source_scalar_consequences
-      (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21
-      rho R1 R2 hR1_eq hR2_pos hC_lt_rho hrho_lt_one
-      harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
-      htime1_integrable hq1_integrable hmeasure1_pos with
-    ⟨_, hR1_pos, hR1_lt_R2⟩
   exact
-    theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer
-      mu arrival rho R1 R2 switch12 switch21
-      { hR1_eq := hR1_eq
-        hR1_pos := hR1_pos
-        hR1_lt_R2 := hR1_lt_R2
-        hR2_pos := hR2_pos
-        hC_lt_rho := hC_lt_rho
-        hrho_lt_one := hrho_lt_one
-        harrival1_pos := harrival1_pos
-        harrival2_pos := harrival2_pos
-        hswitch12_pos := hswitch12_pos
-        hswitch21_pos := hswitch21_pos
-        htime1_integrable := htime1_integrable
-        htime2_integrable := htime2_integrable
-        hq1_integrable := hq1_integrable
-        hq2_integrable := hq2_integrable
-        hmeasure1_pos := hmeasure1_pos
-        hmeasure2_pos := hmeasure2_pos
-        endpoint_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_selection :=
-          endpoint_selection }
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos endpoint_selection
 
 /--
 Ratio-source version of the pointwise upper-transfer route closest to the
@@ -1153,20 +1132,11 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
       mu arrival R1 R2 switch12 switch21 := by
   exact
-    theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_ratio_source
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
       htime1_integrable htime2_integrable hq1_integrable hq2_integrable
-      hmeasure1_pos hmeasure2_pos
-      (by
-        intro m z hnonneg hparams
-        let P :
-            Theorem3AcceptAllStructuredParameterData
-              mu arrival R1 R2 switch12 switch21 m z :=
-          (Theorem3AcceptAllStructuredPositiveParameterData.of_evidence hparams).params
-        exact
-          (fixed_response_selection m z hnonneg hparams).to_finite_or_infinite_surge_cross_fixed_transfer_source
-            P)
+      hmeasure1_pos hmeasure2_pos fixed_response_selection
 
 end PaperInterface
 end GN21DriverSurgePricing

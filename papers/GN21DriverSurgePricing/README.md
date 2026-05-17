@@ -236,6 +236,15 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_ic_of_endpoint_bridge_ratio_source`;
   its source theorem is
   `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_ratio_source_assumptions`.
+  The finite-or-infinite aggregate-cross route closest to the paper's
+  `t = infinity` non-surge cutoff notation is
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_ratio_source`,
+  backed by
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions`;
+  its pointwise-upper fixed-response specialization is
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source`,
+  backed by
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions`.
   The closest Lemma 5 representative route is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_ae_representatives_ratio_source`,
   backed by
