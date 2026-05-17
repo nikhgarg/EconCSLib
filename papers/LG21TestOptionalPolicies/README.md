@@ -192,7 +192,12 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only`
   and its continuous-law analogue state that latent-or-observable fairness is
   equivalent to test-blankness.  The observable-only and Section 3 hidden-access
-  variants expose the same equivalence for audit callers.
+  variants expose the same equivalence for audit callers.  The no-relevance
+  iff wrappers
+  `paper_interface_theorem3_2_fairness_iff_no_test_relevance_of_full_feature_base_only`
+  and
+  `paper_interface_theorem3_2_law_fairness_iff_no_test_relevance_of_full_feature_base_only`
+  state the same conclusion in the paper's "no test relevance" language.
 - Contradiction-style Theorem 3.2 branches now have first-class certificate
   constructors:
   `paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_or_observable_fair`
