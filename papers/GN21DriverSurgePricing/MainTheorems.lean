@@ -83930,6 +83930,68 @@ def GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_plain
     exact D.surge_reject_middle_improvement ρ hρ hnot lo hi hshape
 
 /--
+AE-facing common fixed-state equality endpoint data for the middle-reroute route.
+Unlike the older exact local endpoint record, this does not require an all-branch
+`lo < hi` fact for surge middle rejection: the hpos-aware proof derives that
+only when positive rejected mass selects the branch.
+-/
+structure Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_rejectLong_pos :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ, rejectsLongTrips u (ρ 0) → 0 < u
+  nonsurge_acceptMiddle_bounds :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ lo hi : ℝ, acceptsMiddleTrips lo hi (ρ 0) → 0 < lo ∧ lo < hi
+  surge_fixed_state_eq :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData
+          shared m z R2 ρ
+  nonsurge_fixed_state_eq :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassEqData
+          shared m z R1 ρ
+
+/--
+The older exact common-fixed-state local endpoint record forgets to the
+AE-facing record by dropping the all-branch surge middle-gap field.
+-/
+def Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate.to_eq_ae_local_endpoint
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  shared := C.shared
+  nonsurge_rejectLong_pos := C.nonsurge_rejectLong_pos
+  nonsurge_acceptMiddle_bounds := C.nonsurge_acceptMiddle_bounds
+  surge_fixed_state_eq := C.surge_fixed_state_eq
+  nonsurge_fixed_state_eq := C.nonsurge_fixed_state_eq
+
+/--
 Common fixed-state equality middle-reroute endpoint data and all-optima
 fixed-response policy-form data directly instantiate the hpos-aware Theorem 3
 fixed-response source boundary.  The untouched-state positive mass is derived
@@ -83958,7 +84020,7 @@ def GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData.of_fixed_state_eq_
           (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
         acceptAllDynamicPolicy)
     (C :
-      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate
+      Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
         μ arrival R1 R2 switch12 switch21 m z) :
     GN21Theorem3FixedResponsePolicyFormRejectedMassSourceData μ arrival
       switch12 switch21 m z where
@@ -84425,7 +84487,7 @@ structure GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceData
         (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
       acceptAllDynamicPolicy
   local_endpoint :
-    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteLocalEndpointCertificate
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
       μ arrival R1 R2 switch12 switch21 m z
 
 /--
