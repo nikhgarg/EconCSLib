@@ -1060,6 +1060,10 @@ reject-long at `hi`.
 The equality package is no longer the only compiled fixed-response route.
 Lean now also has the branch-indexed endpoint boundary
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate`,
+the one-sided surge fixed-state policy-form package
+`GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData`
+with adapter
+`GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.to_fixed_state`,
 the fixed-state a.e. transfer lemmas
 `gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae` and
 `gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae`, the core
@@ -1070,8 +1074,13 @@ and the source wrapper
 This route proves endpoint moves on the exact a.e. Lemma 5 representative of
 the untouched state and transfers the improvement back, so the source local
 endpoint package can use branch-indexed fixed-state data such as
+the one-sided surge package above and
 `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`
-instead of global complement equality.
+instead of global complement equality.  Strong surge branch-equality data still
+feed this route through
+`GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_le`,
+but source proofs no longer need equality when the endpoint theorem consumes
+only the `<=` complement comparison.
 The state-level adapters
 `gn21MeasuredLeftFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 and
@@ -1174,7 +1183,12 @@ the reject-long cutoff reroute.
 For fixed-state local endpoint closeout, prefer the newer by-policy-form
 middle-cutoff boundary over the common-equality one whenever the paper proof
 gives branch-specific Lemma 9/10 inequalities rather than literal pointwise
-equality on every rejected complement.
+equality on every rejected complement.  On the surge fixed-state side the
+compiled boundary now asks only for the one-sided comparison used by the
+fixed-transfer endpoint theorem; on the non-surge fixed-state side the
+reject-long branch already has the analogous upper-comparison constructor,
+while the accept-middle branch is the next equality/one-sidedness point to
+audit.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

@@ -208,6 +208,9 @@ Newer proof reduction: the local endpoint certificate no longer has to be the
 common fixed-state equality package.  The compiled by-policy-form middle-cutoff
 route
 
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormLeData.to_fixed_state
+  GN21SurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.to_le
   gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae
   gn21SurgeFeasibleStatewiseStrictAggregateImprovement_congr_fixed_ae
   Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate
@@ -220,6 +223,9 @@ back to the original policy.  Use this route for the remaining local endpoint
 proofs.  In particular, the non-surge reject-long fixed-state data can be
 built with
 `GN21NonsurgeFixedStateTheorem3FixedTransferPointwiseRewardRateNoMassPolicyFormData.of_rejectLong_upper`;
+the surge fixed-state side now similarly asks only for the one-sided
+reject-short/reject-middle complement comparison plus the reward-rate identity,
+not pointwise equality.
 do not try to prove global pointwise equality on the rejected long-trip tail
 unless the source argument genuinely supplies it.
 
