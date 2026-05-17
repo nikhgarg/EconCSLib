@@ -5,6 +5,37 @@ conditional probability, finite variance, finite Markov kernels/chains/MDPs,
 stochastic dominance/couplings, concentration, measure inequalities,
 continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
 
+## Continuous Integral Asymptotics
+
+- For order-statistic or tail-integral asymptotics, split the proof into
+  auditable source layers before attempting the final limit: define the exact
+  source integrand/integral, prove source-kernel measurability and
+  integrability from the distribution assumptions, prove the source change of
+  variables, identify the rescaled pointwise kernel limit, evaluate the limiting
+  integral, and only then assemble finite sums or reflected source losses.
+- When the paper splits an integral at a fixed threshold and then rescales,
+  formalize both sides of the split. Prove the below-threshold and
+  above-threshold change-of-variables statements, then prove the corresponding
+  rescaled split at the growing threshold. This keeps the paper proof and the
+  dominated-convergence proof route comparable.
+- Keep tail-negligibility proofs scalar when possible. A typical route is:
+  nonnegativity of the source tail, an envelope from bounded support plus a
+  positive lower CDF/tail floor, a polynomial-times-geometric scalar limit, and
+  a squeeze. Afterward, add a bridge converting source-tail negligibility plus
+  source change of variables into rescaled-tail convergence to zero.
+- For near-zero asymptotics, expose a bridge theorem that turns convergence of
+  the growing rescaled integral into the original source-integral asymptotic.
+  A second bridge should turn full rescaled convergence plus tail convergence
+  into that growing-interval convergence. This gives future agents two honest
+  routes: direct near-zero analysis or global dominated convergence plus a
+  verified negligible tail.
+- Use explicit certificate structures for hard dominated-convergence or
+  source-split obligations. Certificates should separate source assumptions
+  (CDF/density asymptotics, bounded support, range bounds), analytic envelope
+  fields, and final assembly theorems. Do not hide a missing near-zero or tail
+  proof inside a single broad "asymptotic certificate" if the paper proves
+  those pieces separately.
+
 ## Continuous Reward And CTMC Seams
 
 - For two-state CTMC reward papers, separate primitive accounting from reward
