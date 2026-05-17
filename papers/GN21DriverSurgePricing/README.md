@@ -1566,6 +1566,12 @@ non-accept-all fixed-transfer selector.  The paper-facing AE route is
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions`,
 exposed in `PaperInterface` as
 `theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cross_fixed_transfer`.
+The closest source-notation version is
+`GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData`,
+where the non-surge side is stated as
+`rejectsLongTripsFiniteOrInfiniteCutoff`; it lowers to the extended route via
+`to_extended_source` and is exposed as
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer`.
 Measured marginal response measurability and accept-all integrability now have
 direct left/right helper lemmas from payment, trip-time, and switch-probability
 regularity.  The state-indexed CTMC price family also has direct continuity,

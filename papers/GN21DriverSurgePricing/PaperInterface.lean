@@ -538,5 +538,23 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cro
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
+/--
+Theorem 3 on the finite-or-infinite one-threshold fixed-transfer route with
+aggregate cross-ratio endpoint data.  This is the closest interface to the
+paper's non-surge `t = infinity` cutoff notation.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllMeasurableEndpointFiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferExistenceSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
 end PaperInterface
 end GN21DriverSurgePricing
