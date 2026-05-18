@@ -2341,6 +2341,11 @@ need Lemma 9/10 source data only at measurable optimal policies, and
 combines that optimal-policy uniqueness boundary with an independent weak
 feasible-IC certificate.  The corresponding compact interface endpoint is
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_source`.
+The old all-feasible source-current-bounds package now forgets to this split
+boundary via
+`Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions.to_feasible_weak_reward_optimal_positive_response_source_assumptions`,
+so existing source proofs can reuse the narrower positive-response endpoint
+without restating their weak-IC component.
 The same source-current-bounds route is now exposed in the compact
 `PaperInterface` as
 `theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible`,
