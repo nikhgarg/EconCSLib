@@ -12,7 +12,10 @@ As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and
 1-3 IID-cycle strong-law work, Lemma 9 envelope/slack source-boundary
 reduction, the generalized interval/ray Lemma 5 descent domain, the direct AE
 and light existence normalized-mass ratio endpoints for Theorem 3, and the
-aggregate-cross fixed-response source constructors described below.
+aggregate-cross fixed-response source constructors described below.  The exact
+non-accept-all fixed-transfer selector also now has ratio-source and
+normalized-mass ratio-source wrappers, validated by
+`lake build GN21DriverSurgePricing.PaperInterface`.
 
 Useful checks:
 
@@ -121,6 +124,21 @@ Use it for the closest paper-facing endpoint-selection proof: supply the
 finite-or-infinite non-surge cutoff convention, the surge reject-short shape,
 the one-threshold fixed-response records, and the five aggregate cross-ratio
 fields.  The local endpoint certificate is built internally.
+
+For the paper's exact extended-cutoff convention, the source-faithful
+fixed-transfer selector also has the compact ratio/normalization surface:
+
+```lean
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_exact_non_accept_all_fixed_transfer_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_exact_non_accept_all_fixed_transfer_normalized_mass_ratio_source
+```
+
+Use this when the proof has finite non-surge reject-long and surge reject-short
+selectors only under the local `¬ acceptsAllTrips` hypotheses.  Do not restate
+`R1 > 0`, `R1 < R2`, or positive accept-all measure on this path; the new
+wrappers derive those from the ratio and normalized-mass source assumptions.
 
 ## Latest Lemma 5 Domain Update
 

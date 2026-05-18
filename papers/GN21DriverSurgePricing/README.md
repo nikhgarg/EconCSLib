@@ -1771,6 +1771,17 @@ Its paper-facing route is
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_source_assumptions`,
 exposed compactly as
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer`.
+This exact non-accept-all fixed-transfer selector now also has ratio-source and
+normalized-mass ratio-source public surfaces:
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_of_exact_non_accept_all_fixed_transfer_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer_normalized_mass_ratio_source`,
+and
+`PaperInterface.theorem3_structured_measurable_ic_of_exact_non_accept_all_fixed_transfer_normalized_mass_ratio_source`.
+Use these when following the paper's extended-cutoff convention: the source
+proof supplies exact finite selectors only under `¬ acceptsAllTrips`, while
+Lean derives `R1 > 0`, `R1 < R2`, and positive accept-all measure from
+`R1 = rho * R2`, `R2 > 0`, `C < rho < 1`, and normalized trip laws.
 The lighter positive-rejected-mass AE boundary is also public: use
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_middle_reroute`
 or its IC projection
