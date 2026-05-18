@@ -1247,11 +1247,19 @@ Recommended proof order
      paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
      PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_ratio_source
      PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source
+     Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_accounting
+     Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_reward_rate
+     PaperInterface.theorem4_optimal_current_bounds_source_of_optimal_accounting
+     PaperInterface.theorem4_optimal_current_bounds_source_of_optimal_reward_rate
 
    Prefer the normalized-mass split endpoint when the proof has probability
    trip-length laws, a weak feasible-IC certificate, and Lemma 9/10
    positive-response current-bounds data only for measurable optima.  It
    derives `R1 > 0`, `R1 < R2`, and positive accept-all masses internally.
+   If the optimal-policy Lemma 9/10 data are still stated as the paper's
+   local accounting equations or reward-rate equalities, use the two
+   `of_optimal_*` adapters above first; they build the current-bounds source
+   certificate without quantifying over non-optimal feasible policies.
 6. Prove or explicitly source-assume the exposed arrival/intercept numerator
    bound `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`.  This is now the active
    source-wrapper field; Lean derives `arrival0*z0 <= R2` from it.  The

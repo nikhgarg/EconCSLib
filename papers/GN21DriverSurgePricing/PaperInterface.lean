@@ -229,6 +229,42 @@ def theorem4_positive_response_acceptAll_candidate_of_optimal_current_bounds_sou
     mu arrival R1 R2 switch12 switch21 m z C
 
 /--
+Convert optimal-policy accounting-form current bounds into the optimal-source
+positive-response certificate.  This keeps the public boundary close to the
+paper's structured-price accounting equations.
+-/
+def theorem4_optimal_current_bounds_source_of_optimal_accounting
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalAccountingPositiveResponseCertificate
+        mu arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
+      mu arrival R1 R2 switch12 switch21 m z :=
+  GN21DriverSurgePricing.Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_accounting
+    mu arrival R1 R2 switch12 switch21 m z C
+
+/--
+Convert optimal-policy reward-rate current bounds into the optimal-source
+positive-response certificate.  This is the public adapter for Lemma 9/10
+proofs stated with the local current-state rates.
+-/
+def theorem4_optimal_current_bounds_source_of_optimal_reward_rate
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalRewardRatePositiveResponseCertificate
+        mu arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
+      mu arrival R1 R2 switch12 switch21 m z :=
+  GN21DriverSurgePricing.Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_reward_rate
+    mu arrival R1 R2 switch12 switch21 m z C
+
+/--
 Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
 when the non-surge Lemma 5 branch is positive/decreasing and the surge branch
 is positive/increasing, the optimal policy has the paper's multiplicative

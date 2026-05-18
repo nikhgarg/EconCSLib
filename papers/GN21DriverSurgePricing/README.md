@@ -2364,6 +2364,15 @@ surface:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_ratio_source`,
 and
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source`.
+The optimal-policy positive-response certificate can now be built from
+optimal-only accounting or reward-rate source records through
+`Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_accounting`,
+`Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_reward_rate`,
+`PaperInterface.theorem4_optimal_current_bounds_source_of_optimal_accounting`,
+and
+`PaperInterface.theorem4_optimal_current_bounds_source_of_optimal_reward_rate`;
+these avoid imposing Lemma 9/10 current-bound data on non-optimal feasible
+policies when the proof only needs a.e. uniqueness of optima.
 The old all-feasible source-current-bounds package now forgets to this split
 boundary via
 `Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions.to_feasible_weak_reward_optimal_positive_response_source_assumptions`,
