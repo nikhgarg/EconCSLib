@@ -463,6 +463,25 @@ theorem theorem3_positive_mass_measurable_ic_of_small_surge_fixed_lower_cross
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 positive-mass IC on the mass-affine small-surge route where the
+selected current lower slack is derived from the fixed-state lower-cross
+comparison and the arrival/intercept numerator bound supplies the zero-ratio
+side condition.
+-/
+theorem theorem3_positive_mass_measurable_ic_of_mass_affine_fixed_lower_cross
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineFixedLowerCrossArrivalBoundDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_fixed_lower_cross_arrival_bound_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 positive-mass IC on the mass-affine small-surge route: the source
 provides the current Lemma 9 final-sign inequality and the scalar
 arrival/intercept numerator bound; Lean derives the selected-price lower slack

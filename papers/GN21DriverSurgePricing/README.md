@@ -179,12 +179,14 @@ cache is `source.txt`.
   for the constructed prices.  The endpoint-bridge route isolates the
   remaining continuous endpoint-bridge proof for the constructed prices.
   The positive-mass small-surge route is also public through
+  `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_fixed_lower_cross`,
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign`,
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax`,
   and
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax_normalized_mass`.
-  The last of these is the compact normalized-mass endpoint whose remaining
-  policy-dependent source field is the current Lemma 9 final-sign line.
+  The fixed-lower-cross endpoint replaces the per-policy current Lemma 9
+  final-sign line with the fixed-state lower-cross comparison; the last listed
+  endpoint is the compact normalized-mass final-sign variant.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,
@@ -561,8 +563,15 @@ cache is `source.txt`.
   `theorem3SurgeAggregate_ge_of_currentMassAffineSignedIntervalEnvelopeSlack`,
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions`,
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`,
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_fixed_lower_cross_arrival_bound_data_assumptions`,
   and
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions`.
+  The fixed-lower-cross mass-affine route derives the selected lower interval
+  slack from accept-all lower nonpositivity plus
+  `T_current * Q_acceptAll <= T_acceptAll * Q_current`, then uses the
+  arrival/intercept numerator bound to discharge the zero-ratio side
+  condition.  This removes the per-policy current final-sign field from the
+  mass-affine branch.
   The lighter source wrapper
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_data_assumptions`
   now removes the explicit `Rmax`/envelope witness: Lean sign-splits the
