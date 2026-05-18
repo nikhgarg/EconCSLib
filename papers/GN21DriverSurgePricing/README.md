@@ -225,8 +225,9 @@ cache is `source.txt`.
   `PaperInterface.theorem3_feasibility_thresholdC_mem_Ico_acceptAll`, proving
   the paper's `C ∈ [0,1)` claim for measured accept-all primitives, plus
   ratio-source wrappers for the endpoint-bridge, feasible-a.e.
-  representative, fixed-response policy-form, finite-or-infinite
-  aggregate-cross, and pointwise-upper-transfer Theorem 3 routes.  These
+  representative, fixed-response policy-form, branch-field surge-cutoff,
+  bracket-ordered cross-field, finite-or-infinite aggregate-cross, and
+  pointwise-upper-transfer Theorem 3 routes.  These
   wrappers derive `R1 > 0` and `R1 < R2` from `C < rho < 1`,
   `R1 = rho * R2`, and `R2 > 0`, so future source proofs should not
   reintroduce those scalar fields as separate assumptions on this route.
@@ -253,6 +254,14 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_response_policy_form_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_ratio_source_assumptions`.
+  The source-faithful branch-field and bracket-ordered routes are
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_one_threshold_surge_cutoff_branch_fields_ratio_source`
+  and
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_bracket_ordered_cross_fields_ratio_source`,
+  backed by
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_surge_cutoff_branch_field_middle_cutoff_reroute_ratio_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_ratio_source_assumptions`.
   The GN21 fixed-response source package also exposes
   `Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData.surge_current_mass_pos`,
   the surge-state analogue of the existing non-surge positive current-mass
