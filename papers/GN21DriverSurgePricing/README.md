@@ -1197,7 +1197,16 @@ cache is `source.txt`.
   and
   `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_positive_current_bounds`
   now package those positivity lines directly into positive fixed-response
-  records for the constructed structured prices. The
+  records for the constructed structured prices. The direct accept-all-candidate
+  boundary is now compiled too:
+  `Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate`,
+  `lemma5MarginalSetReward_acceptAll_le_of_gn21MeasuredDynamicRewardFunctional_zero`,
+  `lemma5MarginalSetReward_acceptAll_le_of_gn21MeasuredDynamicRewardFunctional_one`,
+  and
+  `Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate.of_structured_current_bounds_source`
+  prove the positive-response Lemma 5 a.e. route directly from the structured
+  current-bounds source data, without requiring nondegeneracy for every
+  zero-mass comparison policy. The
   broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
@@ -2308,6 +2317,12 @@ That paper-faithful route is now compiled as
 from the structured current-bound source data it proves accept-all measurable
 optimality and that every measurable optimum agrees with accept-all up to
 statewise rejected-trip measure zero.
+The same conclusion is also compiled through the positive-response Lemma 5
+branch as
+`paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source_positive_response`;
+this is the source-current-bounds path that uses Lemma 9/10 response positivity
+and the accept-all marginal comparison rather than full all-candidate
+fixed-response optimality.
 The Theorem 3 source-current-bounds wrapper now threads this conclusion through
 the constructed price parameters as
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions`.
