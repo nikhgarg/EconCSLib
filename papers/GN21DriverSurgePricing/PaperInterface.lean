@@ -165,6 +165,33 @@ theorem theorem2_multiplicative_extended_measurable_policy_shape_of_shape_deriva
     GN21DriverSurgePricing.paper_theorem2_multiplicative_extended_measurable_policy_shape_of_shape_derivation
       R C hnonsurge hsurge
 
+/--
+Theorem 2 a.e. policy-shape route from feasible a.e. Lemma 5 form data:
+there exists a measurable optimum with the multiplicative source shape, and
+every measurable optimum has that shape up to null feasible-trip sets.
+-/
+theorem theorem2_multiplicative_measurable_policy_shape_ae_of_feasible_ae_policy_forms
+    (mu : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)
+    (hnonsurge :
+      ∀ rho : Fin 2 → TripPolicy, (hrho : dynamicMeasurableOptimal R rho) →
+        let D := forms.nonsurge rho hrho
+        D.1.1 = .positive ∨ D.1.1 = .strictlyDecreasing)
+    (hsurge :
+      ∀ rho : Fin 2 → TripPolicy, (hrho : dynamicMeasurableOptimal R rho) →
+        let D := forms.surge rho hrho
+        D.1.1 = .positive ∨ D.1.1 = .strictlyIncreasing) :
+    (∃ rho : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R rho ∧
+        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) ∧
+        rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) ∧
+      ∀ rho : Fin 2 → TripPolicy, dynamicMeasurableOptimal R rho →
+        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) ∧
+          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) := by
+  exact
+    GN21DriverSurgePricing.paper_theorem2_multiplicative_measurable_policy_shape_ae_of_feasible_ae_policy_forms
+      mu R forms hnonsurge hsurge
+
 /-! ## Structured Dynamic Pricing -/
 
 /--
