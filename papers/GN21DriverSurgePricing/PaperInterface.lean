@@ -217,6 +217,49 @@ theorem lemma10_constraint_set_feasible_for_current_surge
       hrho_feasible hnonsurge_acceptAll_mass_pos
 
 /--
+Theorem 3 current non-surge reward-rate nonnegativity: after Lemma 10 tightens
+the non-surge branch against accept-all surge service, the fixed current
+non-surge reward rate is nonnegative because the accepted payments are
+pointwise nonnegative on the current policy.
+-/
+theorem theorem3_current_nonsurge_reward_rate_nonneg_of_acceptAllLemma10
+    (mu : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 R1_current : ℝ)
+    (rho : Fin 2 → TripPolicy)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (hR2_pos : 0 < R2)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (P :
+      Theorem3AcceptAllStructuredParameterData
+        mu arrival R1 R2 switch12 switch21 m z)
+    (hrho : dynamicFeasibleMeasurablePositiveMassPolicy mu rho)
+    (hrate :
+      gn21MeasuredStateRewardRate (mu 0) (arrival 0)
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+        (rho 0) = R1_current) :
+    0 ≤ R1_current := by
+  exact
+    GN21DriverSurgePricing.theorem3CurrentNonsurgeRewardRate_nonneg_of_acceptAllLemma10
+      harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos hR2_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      P hrho hrate
+
+/--
 Theorem 3 scalar bridge for the mass-affine source boundary: the
 arrival/intercept condition `arrival_0*z_0 <= R2` follows from the
 dimensionless numerator inequality on the constructed non-surge ratio.
