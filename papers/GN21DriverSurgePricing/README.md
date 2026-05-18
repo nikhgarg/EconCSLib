@@ -254,7 +254,10 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_normalized_mass_ratio_source`
   derives the two accept-all positive-mass fields from
   `singleStateTripMass (μ i) acceptAllPolicy = 1`, matching the source
-  probability-distribution convention;
+  probability-distribution convention; the named-rate version
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source`
+  additionally derives the endpoint fixed-reward-rate equalities from the
+  Lemma 6 bracket names `Ri = R1` and `Rj = R2`;
   the extended pointwise analogue is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise_upper_transfer_ratio_source`,
   backed by
