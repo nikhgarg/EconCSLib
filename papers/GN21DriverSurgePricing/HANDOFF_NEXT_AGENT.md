@@ -5,6 +5,46 @@
 Stay on `papers/GN21DriverSurgePricing`.  The current target is to close the
 Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 
+## Latest Stopping Point
+
+The current compiled stopping point is a source-boundary cleanup for Theorem 3.
+`lake build GN21DriverSurgePricing.PaperInterface` passes after two new
+bridge batches:
+
+- `GN21RegularEndpointSharedSourceData.*fixed_cross_le_acceptAll_of_*cutoff*`
+  turns reject-short and ordered reject-middle scalar cutoff inequalities into
+  aggregate cross-ratio fields.
+- `GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData.of_surge_cutoff_bounds`
+  lets the finite-or-infinite aggregate-cross route consume the paper's surge
+  scalar cutoff bounds directly.
+- `GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferNamedRateSourceExistenceData.of_fixed_reward_rate_fields`
+  lets the closest pointwise upper-transfer route use fixed-state reward-rate
+  identities directly; Lean derives the local Lemma 6 names `Ri = R1` and
+  `Rj = R2` by cancellation from the bracket records.
+
+For pickup, start from the public interface theorem
+
+```lean
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source
+```
+
+or its IC-only projection.  The remaining source proof should construct the
+`GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferNamedRateSourceExistenceData`
+selection using `of_fixed_reward_rate_fields`.
+
+What is still substantive:
+
+- fixed-response bracket forms for every optimal policy under the constructed
+  prices;
+- finite-or-infinite non-surge cutoff syntax and surge reject-short syntax;
+- the surge reject-short scalar cutoff inequality;
+- the non-surge rejected-tail upper comparison
+  `current_Q1 * tau <= current_T1 * q12 tau` on `acceptAllPolicy \ rho 0`.
+
+Do not reopen broad all-feasible Lemma 9 or global audit routes.  The useful
+route is paper-local endpoint/source selection plus the one-sided non-surge
+tail comparison.
+
 ## Build State
 
 As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and

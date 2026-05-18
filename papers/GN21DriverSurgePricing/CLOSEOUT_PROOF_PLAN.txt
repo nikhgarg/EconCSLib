@@ -12,6 +12,32 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
+Latest stopping point, 2026-05-17: the closest source-faithful route is the
+finite-or-infinite pointwise upper-transfer named-rate wrapper exposed through
+
+  PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source
+  PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source
+
+Build its per-price selection with
+
+  GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferNamedRateSourceExistenceData.of_fixed_reward_rate_fields
+
+This constructor takes fixed reward-rate identities for the non-surge and surge
+states and derives the local Lemma 6 names `Ri = R1` and `Rj = R2` internally.
+The remaining substantive source obligations are: fixed-response bracket forms
+for all constructed-price optima, finite-or-infinite non-surge cutoff syntax,
+surge reject-short syntax, the surge reject-short scalar cutoff inequality, and
+the non-surge rejected-tail pointwise upper comparison
+`current_Q1 * tau <= current_T1 * q12 tau` on
+`acceptAllPolicy \ rho 0`.
+
+If the source proof already has aggregate cross-ratio inequalities, the
+finite-or-infinite aggregate-cross route can instead be fed through
+`GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData.of_surge_cutoff_bounds`.
+Do not reopen broad all-feasible Lemma 9 or global audit routes for this
+pickup; the useful work is the paper-local endpoint/source selection plus the
+one-sided non-surge tail comparison.
+
 The current best route is now the endpoint/allowed-policy-form middle-reroute
 Theorem 3 route:
 
