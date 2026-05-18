@@ -123,6 +123,74 @@ theorem lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
       hresponse_integrable_acceptAll hsigma_measurable hsigma_subset hoptimal
 
 /--
+Lemma 5 positive branch from the exact source fact usually supplied by Lemma
+9/10: if the marginal response is pointwise positive on positive trip lengths,
+then the positive-response policy is accept-all and has no zero-response
+boundary mass.
+-/
+def lemma5_positive_response_policy_form_data_of_pointwise_positive
+    (response : TripLength → ℝ)
+    (hpositive : ∀ tau : TripLength, 0 < tau → 0 < response tau) :
+    Lemma5PositiveResponsePolicyFormData response .positive :=
+  GN21DriverSurgePricing.Lemma5PositiveResponsePolicyFormData.positive
+    response hpositive
+
+/--
+Theorem 4 positive-response marginal bridge from fixed-response Lemma 5 data:
+once every measurable optimum has positive fixed-response marginal data in
+both states, Lean derives the certificate used for a.e. accept-all uniqueness.
+-/
+def theorem4_positive_response_marginal_of_fixed_response_policy_form_data
+    (mu : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (accept_all_optimal : dynamicMeasurableOptimal R acceptAllDynamicPolicy)
+    (nonsurge :
+      ∀ rho : Fin 2 → TripPolicy, dynamicMeasurableOptimal R rho →
+        Σ response : TripLength → ℝ,
+          Lemma5FixedResponsePolicyFormFeasibleOptimalData
+            (mu 0) response .positive (rho 0))
+    (surge :
+      ∀ rho : Fin 2 → TripPolicy, dynamicMeasurableOptimal R rho →
+        Σ response : TripLength → ℝ,
+          Lemma5FixedResponsePolicyFormFeasibleOptimalData
+            (mu 1) response .positive (rho 1)) :
+    Theorem4MeasurablePositiveResponseAEMarginalCertificate mu R :=
+  GN21DriverSurgePricing.Theorem4MeasurablePositiveResponseAEMarginalCertificate.of_fixed_response_policy_form_data
+    accept_all_optimal nonsurge surge
+
+/--
+GN21-specific version of the positive-response marginal bridge: the source may
+provide positive left/right fixed-response source records for every measurable
+optimum, and Lean converts them to the Theorem 4 a.e. uniqueness certificate.
+-/
+def theorem4_positive_response_marginal_of_gn21_positive_fixed_response_source_data
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (accept_all_optimal :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21 w)
+        acceptAllDynamicPolicy)
+    (nonsurge :
+      ∀ rho : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21 w)
+          rho →
+        GN21MeasuredLeftFixedResponsePolicyFormSourceData mu arrival switch12
+          switch21 w rho .positive)
+    (surge :
+      ∀ rho : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21 w)
+          rho →
+        GN21MeasuredRightFixedResponsePolicyFormSourceData mu arrival switch12
+          switch21 w rho .positive) :
+    Theorem4MeasurablePositiveResponseAEMarginalCertificate mu
+      (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21 w) :=
+  GN21DriverSurgePricing.Theorem4MeasurablePositiveResponseAEMarginalCertificate.of_gn21_positive_fixed_response_source_data
+    accept_all_optimal nonsurge surge
+
+/--
 Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
 when the non-surge Lemma 5 branch is positive/decreasing and the surge branch
 is positive/increasing, the optimal policy has the paper's multiplicative

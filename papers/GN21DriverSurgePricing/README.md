@@ -169,8 +169,12 @@ cache is `source.txt`.
   `theorem3_structured_ic_of_endpoint_bridge`.  These are the review-surface
   names for the direct constructed-price route; the positive-response marginal
   route is the direct Lemma 9/10-to-Lemma 5 measurable a.e.-uniqueness
-  endpoint, and the endpoint-bridge route isolates the remaining continuous
-  endpoint-bridge proof for the constructed prices.
+  endpoint.  The interface also exposes the newly compiled bridge
+  `theorem4_positive_response_marginal_of_gn21_positive_fixed_response_source_data`,
+  which converts positive Lemma 6 fixed-response source records for all
+  measurable optima into that marginal certificate.  The endpoint-bridge route
+  isolates the remaining continuous endpoint-bridge proof for the constructed
+  prices.
   The positive-mass small-surge route is also public through
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign`,
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax`,
@@ -1164,8 +1168,16 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_response_marginal_source_assumptions`;
   its final field is the statewise positive-response marginal optimality data
   consumed by Lemma 5, and Lean derives measurable IC plus accept-all
-  uniqueness up to null feasible-trip sets. The broader allowed-replacement
-  route is also
+  uniqueness up to null feasible-trip sets.  This boundary now has a concrete
+  fixed-response source bridge:
+  `Lemma5PositiveResponsePolicyFormData.positive` turns pointwise positivity of
+  the Lemma 6 response into the positive Lemma 5 policy form,
+  `GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_positive_response` and
+  `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_positive_response`
+  package those positive branches with the measured GN21 regularity fields, and
+  `Theorem4MeasurablePositiveResponseAEMarginalCertificate.of_gn21_positive_fixed_response_source_data`
+  converts the resulting all-optima records into the Theorem 4 a.e.-uniqueness
+  certificate. The broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
   proof boundary is the continuous allowed-replacement Theorem 4 certificate
@@ -1496,7 +1508,13 @@ The state-level adapters
 and
 `gn21MeasuredRightFixedResponsePolicyFormFeasibleOptimalData_of_dynamic_optimal`
 assemble the required fixed-response Lemma 5 data from dynamic optimality and
-scaled Lemma 6 policy-form data.
+scaled Lemma 6 policy-form data.  For the paper's positive branch, use
+`GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_positive_response` and
+`GN21MeasuredRightFixedResponsePolicyFormSourceData.of_positive_response` to
+turn the pointwise Lemma 9/10 response positivity line into those source
+records, then
+`Theorem4MeasurablePositiveResponseAEMarginalCertificate.of_gn21_positive_fixed_response_source_data`
+to produce the direct accept-all a.e. marginal certificate.
 The generic local-optimality bridge now also has the direct
 `singleStateMeasurableOptimal` form:
 `dynamicStateReward_singleStateMeasurableOptimal_of_dynamicMeasurableOptimal`,
