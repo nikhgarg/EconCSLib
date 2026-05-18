@@ -92,12 +92,12 @@
 
 \node[dag_conditional, text width=4.6cm] (Thm3) at (23.6,-16.0) {
   \textbf{Theorem 3 (Sec. 4.2)}\\
-  structured CTMC prices imply measurable IC and a.e. uniqueness from fixed-response, non-accept-all exact, or aggregate-cross endpoint data
+  structured CTMC prices imply measurable IC and a.e. uniqueness from source current-bounds data, including the positive-response Lemma 5 route
 };
 
 \node[dag_result, text width=5.0cm] (MeasShapeSource) at (29.5,-16.0) {
-  \textbf{Theorem 3 sequential IC route}\\
-  if the surge move is handled first, Lemmas 9--10 imply accept-all optimality in both states
+  \textbf{Positive-response current-bounds route}\\
+  Lemmas 9--10 make the marginal responses positive; the accept-all candidate comparison gives a.e. uniqueness
 };
 
 \node[dag_result, text width=4.9cm] (FiniteAux) at (0,-12.1) {
@@ -130,6 +130,8 @@
 \draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);
 \draw[dag_arrow] (EndpointFeasible.north) -- (Thm4.south);
 \draw[dag_dashed_arrow] (Thm4.east) -- (Thm2.west);
+\draw[dag_arrow, rounded corners=6pt]
+  (Lemma5.south east) -- ++(1.25,-1.35) -| ([xshift=-1.25cm]MeasShapeSource.north);
 \draw[dag_arrow, rounded corners=6pt]
   (EndpointFeasible.south east) -- ++(0.55,-0.9)
   -| ([xshift=-0.85cm]MeasShapeSource.north);
