@@ -1096,7 +1096,9 @@ cache is `source.txt`.
   normalized-mass variant
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible_normalized_mass_ratio_source`
   derives the accept-all positive-measure fields from
-  `singleStateTripMass (μ i) acceptAllPolicy = 1`.
+  `singleStateTripMass (μ i) acceptAllPolicy = 1`; the adjacent plain-IC
+  projection is
+  `PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_source_feasible_normalized_mass_ratio_source`.
   The feasible primitive, accounting-form, and reward-rate current-bounds
   source boundaries expose the same conclusion through
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
