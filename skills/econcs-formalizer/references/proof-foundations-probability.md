@@ -42,6 +42,23 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   rates. Prove measured `T`, `Q`, and scaled-earning identities first, then
   derive measured reward-rate statements only when positive mass/time
   denominators are available.
+- When a CTMC proof has accumulated several theorem wrappers, stop adding
+  new wrappers once there is a source-faithful public endpoint. Instead build
+  one constructor that consumes the paper's actual source fields and derives
+  local theorem names, reward-rate equalities, positivity side facts, or
+  aggregate aliases internally. This keeps the next proof pass focused on the
+  mathematical source obligations rather than on plumbing.
+- For source proofs that state scalar cutoff inequalities but downstream
+  endpoint certificates need aggregate cross-ratio fields, add tiny bridge
+  lemmas in the paper folder from the scalar cutoff fact to the aggregate
+  field. Keep the direction explicit: do not replace a remaining pointwise
+  rejected-tail comparison with an aggregate assumption unless the paper has
+  already proved that aggregation step.
+- In long CTMC closeouts, keep the active proof boundary in this shape:
+  public paper-facing wrapper, per-price/source-selection constructor, exact
+  remaining source fields, and the validation command that last passed. This
+  avoids reopening older broad routes such as all-feasible policy lemmas when
+  the paper proof only needs optimal-policy endpoint/source selection.
 - When a source lemma fixes an arbitrary current policy but the theorem
   constructs prices using accept-all target rates, introduce an effective
   current ratio instead of rewriting the current reward rate to the target
