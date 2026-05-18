@@ -285,6 +285,12 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_response_policy_form_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_ratio_source_assumptions`.
+  The source-faithful bracket-level fixed-response middle-reroute route is
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_reroute_existence_ratio_source`,
+  with IC projection
+  `PaperInterface.theorem3_structured_measurable_ic_of_bracket_eq_middle_reroute_existence_ratio_source`;
+  it keeps Lemma 6 at the bracket-source layer while deriving `R1 > 0` and
+  `R1 < R2` from the paper's ratio assumptions.
   The sharp bracket middle-cutoff route now also has the paper-normalized
   probability-mass front door
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_normalized_mass_ratio_source`

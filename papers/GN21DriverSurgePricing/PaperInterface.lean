@@ -777,6 +777,112 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_policy_for
       hmeasure1_pos hmeasure2_pos fixed_response_policy_form_selection
 
 /--
+Theorem 3 on the bracket-level fixed-response middle-reroute route, with
+`R1 > 0` and `R1 < R2` derived from the paper's ratio assumptions.  This is
+the compact source boundary for the route where Lemma 6 is still stated as
+bracket data and the endpoint proof supplies common fixed-state equality
+middle-reroute data.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_reroute_existence_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    [NoAtoms (mu 0)] [NoAtoms (mu 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
+            mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos fixed_response_selection
+
+/-- IC projection of the bracket-level fixed-response middle-reroute route. -/
+theorem theorem3_structured_measurable_ic_of_bracket_eq_middle_reroute_existence_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    [NoAtoms (mu 0)] [NoAtoms (mu 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
+            mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos fixed_response_selection
+
+/--
 Theorem 3 on the fixed-response common fixed-state equality middle-cutoff
 route, with scalar positivity/order derived from the paper's ratio assumptions.
 This is the compact interface for the current continuous endpoint path.
