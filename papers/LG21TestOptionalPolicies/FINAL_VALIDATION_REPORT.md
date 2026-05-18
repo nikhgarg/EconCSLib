@@ -9,10 +9,12 @@ All named definitions and results have compiling Lean endpoints.  The observed
 access section is closed: Lemma 4.1, Propositions 4.2--4.3, Definition 6, and
 Theorem 4.4 have source-model or source-law wrappers in `PaperInterface.lean`.
 Section 3 has paper-facing endpoints for both regimes of Theorem 3.1 and
-Theorem 3.2, but they are intentionally marked conditional: the wrappers expose
-the concrete Gaussian/affine/event-share source surfaces and equilibrium
-shape assumptions used to formalize the paper's proof, rather than an
-unconditional theorem over every possible estimation policy.
+Theorem 3.2, but both remain conditional.  Theorem 3.1 is conditional over the
+concrete Gaussian/affine source surfaces and equilibrium shape assumptions used
+to formalize the paper's proof.  Theorem 3.2 has source-shaped event-share and
+skill-mixture raw-mixture endpoints, but source/equilibrium witness assumptions
+are still inputs.  The checked raw arbitrary-policy counterexample is a scope
+note about an overbroad abstraction, not a caveat on the paper theorem.
 
 ## Source Checked
 
@@ -74,10 +76,12 @@ and
   for the named definitions and theorem endpoints.
 - Pickup note: `START_HERE_NEXT_AGENT.md` records the latest clean boundary,
   validation commands, and next useful proof seams.
-- README: every named paper item has a status row. The Section 3 rows are
-  marked `conditional`; Section 4 and resampling rows are marked `formalized`.
-- DAG: Theorem 3.1 and Theorem 3.2 are `dag_conditional`; the source-model,
-  observed-access, and resampling nodes are closed result/model nodes.
+- README: every named paper item has a status row. The Theorem 3.1 and Theorem
+  3.2 rows are marked `conditional`, and Section 4 and resampling rows are
+  marked `formalized`.
+- DAG: Theorem 3.1 and Theorem 3.2 are `dag_conditional`; the
+  source-model, observed-access, and resampling nodes are closed result/model
+  nodes.
 - Build target: `lake build LG21TestOptionalPolicies.PaperInterface` succeeds.
 
 ## Proof-Strategy Deviations
@@ -142,7 +146,11 @@ and
 - The resampling policy is formalized in a finite conditional-kernel form:
   access and no-access estimate laws are both pushforwards of the same
   conditional test-score law, and demographic fairness follows by mixing over
-  the shared base-profile law.
+  the shared base-profile law. The route now also has direct
+  `LG21SourcePolicySurface` wrappers, including generic-skill variants, so
+  Theorem 4.4 can be cited using the paper's source-level observable and
+  demographic fairness predicates instead of only the auxiliary finite-kernel
+  predicates.
 
 ## Remaining Assumptions
 
@@ -150,15 +158,28 @@ and
   optimal policy object. The strongest endpoints are the Section 3
   optional/report-required aliases over concrete Gaussian and affine source
   surfaces, plus concrete singleton-PMF endpoints over the source-shaped
-  base/skill-mixture posterior surfaces.
-- Theorem 3.2 is not yet an unconditional theorem over an arbitrary estimation
-  policy. The strongest endpoints are the Section 3 optional/report-required
-  aliases over concrete constant-latent event-share surfaces, plus matching
-  implication, no-relevance, and iff aliases. The strongest direct unfairness
-  routes now include optional finite-test and report-required full-support
-  mapped-actor endpoints with existential distinct-test witnesses, aligning the
-  concrete route with Definition 5's relevance language. The concrete
-  event-or-blank iff aliases consume the named ordinary
+  base/skill-mixture posterior surfaces. The skill-mixture raw-mixture PMF
+  route now also has source-certificate and literal-cutoff fixed-point
+  endpoints whose demographic-fairness failure is derived from the same
+  positive-event raw-relevance witness plus observable/demographic identities,
+  rather than from a standalone demographic inequality premise. The generic
+  PMF and continuous-law source-evidence/certificate endpoints now have the
+  same `...demographic_observable_identities` bridge, with optional-reporting
+  and report-required variants exposed through `PaperInterface.lean` and
+  `PostPaperAudit.lean`.
+- Theorem 3.2 is not yet closed as one unconditional paper theorem. It is closed
+  for source-shaped event-share and skill-mixture raw-mixture surfaces once the
+  source/equilibrium witness assumptions are supplied. The raw arbitrary-policy
+  counterexamples are retained as scope checks showing that an overbroad
+  abstraction is not the paper model. The strongest endpoints are the Section 3
+  optional/report-required aliases over concrete constant-latent event-share
+  surfaces, plus matching implication, no-relevance, and iff aliases, and the
+  Section 3 skill-mixture raw-mixture endpoints in fairness, observable-branch,
+  no-relevance, and reporter/base-only equality forms. The strongest direct
+  unfairness routes now include optional finite-test and report-required
+  full-support mapped-actor endpoints with existential distinct-test witnesses,
+  aligning the concrete route with Definition 5's relevance language. The
+  concrete event-or-blank iff aliases consume the named ordinary
   full-feature/base-only observable-identity certificate, but not a global
   positive-share premise; the blank-on-zero-share iff aliases additionally
   discharge the zero-share branch by definition. The
@@ -174,15 +195,28 @@ and
   the raw source-surface fields alone are too broad: latent-skill and
   observable fairness can hold while test-blankness fails unless the
   source-witness/strategic-stability hypotheses are included.
-- A stricter skill-dependent conditional-kernel route is optional only if the
-  target is broadened beyond the current concrete law surfaces.
+- The finite PMF raw-mixture route now includes skill-dependent latent-kernel
+  wrappers: the observable access/no-access laws are mixed from
+  skill-conditioned latent laws and then identified with the displayed
+  reporter/base-only binary mixtures.  This removes the constant-latent
+  shortcut from that PMF route; the audited generic endpoint includes the
+  paper's fairness iff test-blankness, no-test-relevance, and reporter/base-only
+  equality forms, with optional-reporting and report-required Section 3
+  wrappers for each.  The same skill-mixture surface now has Section 3
+  source-witness specializations in test-blankness, no-test-relevance, and
+  reporter/base-only equality form, so future source-witness routes can use the
+  skill-dependent latent-kernel surface directly.  The remaining proof work is
+  to derive the source/equilibrium witnesses from a fully specified
+  Bayesian-optimal source model rather than taking them as inputs.
 
 ## Verification Checks
 
 - `lake build LG21TestOptionalPolicies.PaperInterface` passed.
+- `lake build LG21TestOptionalPolicies.PostPaperAudit` passed.
 - `lake build LG21TestOptionalPolicies.PostPaperAudit` passed after rerunning
   past a transient shared-cache missing-`.olean` race.
-- `lake build LG21TestOptionalPolicies` passed.
+- `lake build LG21TestOptionalPolicies` passed after the Theorem 3.1
+  demographic-observable source-evidence bridge.
 - `latexmk -pdf DependencyDAG.tex` in this folder reported the DAG PDF
   up to date.
 - `python3 scripts/audit_repository.py` was run from the repository root. The

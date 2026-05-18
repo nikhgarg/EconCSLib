@@ -52,6 +52,14 @@ three or fewer exact proof seams that remain and the strongest public wrapper or
 certificate for each. Do not leave vague optimistic status such as "one bridge
 remains" when multiple paper-level proof campaigns are still open.
 
+Reserve `formalized with caveat` for cases where the Lean theorem adds
+something on top of the paper statement, such as an extra assumption,
+restriction, corrected statement, or indispensable source mismatch. If Lean
+also proves that a broader arbitrary abstraction is false but the paper-facing
+source theorem is closed, mark the paper theorem `formalized` and record the
+broader abstraction as a scope note or out-of-scope failed generalization, not
+as a caveat on the paper result.
+
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
 identifying the gap unless the target theorem is false or the needed assumption

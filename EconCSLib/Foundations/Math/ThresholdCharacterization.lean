@@ -13,6 +13,17 @@ comparisons into threshold statements.
 ## Main declarations
 
 - `exists_threshold_of_continuous_strictMonoOn_Icc_crossing`
+- `LowerCutoffStrategy`, `monotone_of_lowerCutoffStrategy`
+- `lowerCutoffStrategy_cutoff_eq`
+- `exists_indifference_and_profitable_above_of_continuous_strictMonoOn_Icc_crossing`
+- `exists_indifference_lower_cutoff_of_continuous_strictMono_crossing`
+- `exists_indexed_indifference_lower_cutoffs_of_continuous_strictMono_crossing`
+- `exists_chosen_below_of_lowerCutoff_lt`
+- `exists_chosen_of_lowerCutoff`
+- `exists_not_chosen_below_of_lowerCutoff`
+- `bool_lowerCutoff_if_true_iff`
+- `bool_lowerCutoff_true_of_le`
+- `bool_lowerCutoff_false_of_lt`
 - `exists_threshold_of_continuous_strictMonoOn_Icc`
 - `exists_threshold_le_of_continuous_strictMonoOn_Icc`
 - `exists_threshold_of_continuous_strictAntiOn_Icc_crossing`
@@ -30,6 +41,285 @@ namespace EconCSLib
 noncomputable section
 
 open Set
+
+/-- A one-dimensional decision rule is a lower-cutoff rule. -/
+def LowerCutoffStrategy (choose : ℝ → Prop) : Prop :=
+  ∃ cutoff : ℝ, ∀ value : ℝ, choose value ↔ cutoff ≤ value
+
+/-- Every lower-cutoff rule is monotone in the source direction. -/
+theorem monotone_of_lowerCutoffStrategy
+    {choose : ℝ → Prop} (hcutoff : LowerCutoffStrategy choose) :
+    ∀ {low high : ℝ}, low ≤ high → choose low → choose high := by
+  rcases hcutoff with ⟨cutoff, hchoose⟩
+  intro low high hle hlow
+  exact (hchoose high).2 ((hchoose low).1 hlow |>.trans hle)
+
+/-- The finite cutoff representing a real lower-cutoff rule is unique. -/
+theorem lowerCutoffStrategy_cutoff_eq
+    {choose : ℝ → Prop} {left right : ℝ}
+    (hleft : ∀ value : ℝ, choose value ↔ left ≤ value)
+    (hright : ∀ value : ℝ, choose value ↔ right ≤ value) :
+    left = right := by
+  exact le_antisymm
+    ((hleft right).1 ((hright right).2 le_rfl))
+    ((hright left).1 ((hleft left).2 le_rfl))
+
+/-- If a lower-cutoff rule has cutoff below a target, it chooses some value below that target. -/
+theorem exists_chosen_below_of_lowerCutoff_lt
+    {choose : ℝ → Prop} {cutoff target : ℝ}
+    (hcutoff : ∀ value : ℝ, choose value ↔ cutoff ≤ value)
+    (hcutoff_lt_target : cutoff < target) :
+    ∃ value : ℝ, choose value ∧ value < target := by
+  let value : ℝ := (cutoff + target) / 2
+  have hcutoff_le_value : cutoff ≤ value := by
+    dsimp [value]
+    linarith
+  have hvalue_lt_target : value < target := by
+    dsimp [value]
+    linarith
+  exact ⟨value, (hcutoff value).2 hcutoff_le_value, hvalue_lt_target⟩
+
+/-- Every finite lower-cutoff rule chooses at least one value, namely its cutoff. -/
+theorem exists_chosen_of_lowerCutoff
+    {choose : ℝ → Prop} {cutoff : ℝ}
+    (hcutoff : ∀ value : ℝ, choose value ↔ cutoff ≤ value) :
+    ∃ value : ℝ, choose value :=
+  ⟨cutoff, (hcutoff cutoff).2 le_rfl⟩
+
+/-- Every finite lower-cutoff rule rejects some value below its cutoff. -/
+theorem exists_not_chosen_below_of_lowerCutoff
+    {choose : ℝ → Prop} {cutoff : ℝ}
+    (hcutoff : ∀ value : ℝ, choose value ↔ cutoff ≤ value) :
+    ∃ value : ℝ, ¬ choose value := by
+  refine ⟨cutoff - 1, ?_⟩
+  intro hchoose
+  have hle : cutoff ≤ cutoff - 1 := (hcutoff (cutoff - 1)).1 hchoose
+  linarith
+
+/-- The literal Boolean lower-cutoff decision is true exactly above the cutoff. -/
+theorem bool_lowerCutoff_if_true_iff {cutoff value : ℝ} :
+    (if cutoff ≤ value then true else false) = true ↔ cutoff ≤ value := by
+  by_cases h : cutoff ≤ value
+  · simp [h]
+  · simp [h]
+
+/-- A Boolean lower-cutoff rule chooses every value weakly above the cutoff. -/
+theorem bool_lowerCutoff_true_of_le
+    {choose : ℝ → Bool} {cutoff value : ℝ}
+    (hcutoff : ∀ value : ℝ, choose value = true ↔ cutoff ≤ value)
+    (hle : cutoff ≤ value) :
+    choose value = true :=
+  (hcutoff value).2 hle
+
+/-- A Boolean lower-cutoff rule rejects every value strictly below the cutoff. -/
+theorem bool_lowerCutoff_false_of_lt
+    {choose : ℝ → Bool} {cutoff value : ℝ}
+    (hcutoff : ∀ value : ℝ, choose value = true ↔ cutoff ≤ value)
+    (hlt : value < cutoff) :
+    choose value = false := by
+  cases hchoose : choose value
+  · rfl
+  · have hle : cutoff ≤ value := (hcutoff value).1 (by simpa [hchoose])
+    linarith
+
+/--
+If a continuous candidate outside option crosses a continuous strictly
+increasing chosen-option payoff on an interval, then there is an interior
+indifference point.  At that point, choosing weakly beats the outside option
+exactly on the lower-threshold upper ray.
+-/
+theorem exists_indifference_lower_cutoff_of_continuous_strictMono_crossing
+    {choosePayoff outsideAtCutoff : ℝ → ℝ} {low high : ℝ}
+    (hcontChoose : ContinuousOn choosePayoff (Icc low high))
+    (hcontOutside : ContinuousOn outsideAtCutoff (Icc low high))
+    (hmonoChoose : StrictMono choosePayoff)
+    (hlow_high : low < high)
+    (hleft : choosePayoff low < outsideAtCutoff low)
+    (hright : outsideAtCutoff high < choosePayoff high) :
+    ∃ cutoff : ℝ,
+      cutoff ∈ Ioo low high ∧
+        outsideAtCutoff cutoff = choosePayoff cutoff ∧
+          (∀ value : ℝ,
+            outsideAtCutoff cutoff ≤ choosePayoff value ↔ cutoff ≤ value) ∧
+            (∀ value : ℝ,
+              choosePayoff value < outsideAtCutoff cutoff ↔ value < cutoff) := by
+  let gap : ℝ → ℝ :=
+    fun cutoff => choosePayoff cutoff - outsideAtCutoff cutoff
+  have hgap_cont : ContinuousOn gap (Icc low high) :=
+    hcontChoose.sub hcontOutside
+  have hzero_mem : (0 : ℝ) ∈ Icc (gap low) (gap high) := by
+    constructor <;> dsimp [gap] <;> linarith
+  rcases intermediate_value_Icc hlow_high.le hgap_cont hzero_mem with
+    ⟨cutoff, hcutoff_mem, hgap_zero⟩
+  have hlow_lt_cutoff : low < cutoff := by
+    have hne : cutoff ≠ low := by
+      intro h
+      subst cutoff
+      dsimp [gap] at hgap_zero
+      linarith
+    exact lt_of_le_of_ne hcutoff_mem.1 (Ne.symm hne)
+  have hcutoff_lt_high : cutoff < high := by
+    have hne : cutoff ≠ high := by
+      intro h
+      subst cutoff
+      dsimp [gap] at hgap_zero
+      linarith
+    exact lt_of_le_of_ne hcutoff_mem.2 hne
+  have hindiff :
+      outsideAtCutoff cutoff = choosePayoff cutoff := by
+    dsimp [gap] at hgap_zero
+    linarith
+  refine ⟨cutoff, ⟨hlow_lt_cutoff, hcutoff_lt_high⟩,
+    hindiff, ?_, ?_⟩
+  · intro value
+    constructor
+    · intro hbest
+      by_contra hnot
+      have hvalue_lt : value < cutoff := lt_of_not_ge hnot
+      have hstrict : choosePayoff value < choosePayoff cutoff :=
+        hmonoChoose hvalue_lt
+      rw [← hindiff] at hstrict
+      linarith
+    · intro hcutoff_le_value
+      rcases lt_or_eq_of_le hcutoff_le_value with hlt | rfl
+      · have hstrict : choosePayoff cutoff < choosePayoff value :=
+          hmonoChoose hlt
+        rw [hindiff]
+        exact le_of_lt hstrict
+      · rw [hindiff]
+  · intro value
+    constructor
+    · intro hstrict
+      by_contra hnot
+      have hcutoff_le_value : cutoff ≤ value := le_of_not_gt hnot
+      have hbest :
+          outsideAtCutoff cutoff ≤ choosePayoff value := by
+        rcases lt_or_eq_of_le hcutoff_le_value with hlt | rfl
+        · have hmono : choosePayoff cutoff < choosePayoff value :=
+            hmonoChoose hlt
+          rw [hindiff]
+          exact le_of_lt hmono
+        · rw [hindiff]
+      linarith
+    · intro hvalue_lt
+      have hmono : choosePayoff value < choosePayoff cutoff :=
+        hmonoChoose hvalue_lt
+      rw [← hindiff] at hmono
+      exact hmono
+
+/--
+Indexed version of
+`exists_indifference_lower_cutoff_of_continuous_strictMono_crossing`: for each
+profile, a continuous crossing against a strictly increasing chosen payoff
+produces an interior cutoff and a lower-cutoff choice rule.  A nonempty index
+set also gives a concrete value below one cutoff where choosing is not weakly
+optimal.
+-/
+theorem exists_indexed_indifference_lower_cutoffs_of_continuous_strictMono_crossing
+    {ι : Type*} [Nonempty ι]
+    (choosePayoff outsideAtCutoff : ι → ℝ → ℝ)
+    (low high : ι → ℝ)
+    (hcontChoose :
+      ∀ i, ContinuousOn (choosePayoff i) (Icc (low i) (high i)))
+    (hcontOutside :
+      ∀ i, ContinuousOn (outsideAtCutoff i) (Icc (low i) (high i)))
+    (hmonoChoose : ∀ i, StrictMono (choosePayoff i))
+    (hlow_high : ∀ i, low i < high i)
+    (hleft : ∀ i, choosePayoff i (low i) < outsideAtCutoff i (low i))
+    (hright : ∀ i, outsideAtCutoff i (high i) < choosePayoff i (high i)) :
+    ∃ cutoff : ι → ℝ,
+      (∀ i, cutoff i ∈ Ioo (low i) (high i)) ∧
+        (∀ i, outsideAtCutoff i (cutoff i) = choosePayoff i (cutoff i)) ∧
+          (∀ i value,
+            outsideAtCutoff i (cutoff i) ≤ choosePayoff i value ↔
+              cutoff i ≤ value) ∧
+            (∃ i value,
+              ¬ outsideAtCutoff i (cutoff i) ≤ choosePayoff i value) ∧
+              (∀ i, ∃ c : ℝ, ∀ value : ℝ,
+                outsideAtCutoff i (cutoff i) ≤ choosePayoff i value ↔
+                  c ≤ value) := by
+  have hcutoff_exists :
+      ∀ i, ∃ cutoff : ℝ,
+        cutoff ∈ Ioo (low i) (high i) ∧
+          outsideAtCutoff i cutoff = choosePayoff i cutoff ∧
+            (∀ value : ℝ,
+              outsideAtCutoff i cutoff ≤ choosePayoff i value ↔
+                cutoff ≤ value) ∧
+              (∀ value : ℝ,
+                choosePayoff i value < outsideAtCutoff i cutoff ↔
+                  value < cutoff) := by
+    intro i
+    exact
+      exists_indifference_lower_cutoff_of_continuous_strictMono_crossing
+        (hcontChoose i) (hcontOutside i) (hmonoChoose i)
+        (hlow_high i) (hleft i) (hright i)
+  choose cutoff hmem hindiff hthreshold _hbelow using hcutoff_exists
+  refine ⟨cutoff, hmem, hindiff, hthreshold, ?_, ?_⟩
+  · let i : ι := Classical.choice inferInstance
+    refine ⟨i, low i, ?_⟩
+    rw [hthreshold i (low i)]
+    exact not_le.mpr (hmem i).1
+  · intro i
+    exact ⟨cutoff i, hthreshold i⟩
+
+/--
+If a continuous strictly increasing scalar function crosses a level between a
+low point and a cutoff, then there is an interior indifference point, all
+points from that indifference point to the cutoff weakly clear the level, and
+some interior point strictly clears it.
+-/
+theorem exists_indifference_and_profitable_above_of_continuous_strictMonoOn_Icc_crossing
+    {f : ℝ → ℝ} {low cutoff level : ℝ}
+    (hcont : ContinuousOn f (Icc low cutoff))
+    (hmono : StrictMonoOn f (Icc low cutoff))
+    (hlow_cutoff : low < cutoff)
+    (hlow : f low < level)
+    (hcutoff : level < f cutoff) :
+    ∃ indifferent : ℝ,
+      indifferent ∈ Ioo low cutoff ∧
+        f indifferent = level ∧
+          (∀ x ∈ Icc indifferent cutoff, level ≤ f x) ∧
+            ∃ profitable : ℝ,
+              profitable ∈ Ioo indifferent cutoff ∧ level < f profitable := by
+  have hlevel_mem : level ∈ Icc (f low) (f cutoff) :=
+    ⟨hlow.le, hcutoff.le⟩
+  rcases intermediate_value_Icc hlow_cutoff.le hcont hlevel_mem with
+    ⟨indifferent, hindiff_mem, hindiff_eq⟩
+  have hlow_lt_indiff : low < indifferent := by
+    have hne : indifferent ≠ low := by
+      intro hEq
+      subst indifferent
+      linarith
+    exact lt_of_le_of_ne hindiff_mem.1 (Ne.symm hne)
+  have hindiff_lt_cutoff : indifferent < cutoff := by
+    have hne : indifferent ≠ cutoff := by
+      intro hEq
+      subst indifferent
+      linarith
+    exact lt_of_le_of_ne hindiff_mem.2 hne
+  have hweak : ∀ x ∈ Icc indifferent cutoff, level ≤ f x := by
+    intro x hx
+    rcases lt_or_eq_of_le hx.1 with hindiff_lt_x | rfl
+    · have hstrict : f indifferent < f x :=
+        hmono hindiff_mem ⟨hindiff_mem.1.trans hx.1, hx.2⟩ hindiff_lt_x
+      exact (by simpa [hindiff_eq] using hstrict.le)
+    · exact le_of_eq hindiff_eq.symm
+  let profitable : ℝ := (indifferent + cutoff) / 2
+  have hprofitable_low : indifferent < profitable := by
+    dsimp [profitable]
+    linarith
+  have hprofitable_high : profitable < cutoff := by
+    dsimp [profitable]
+    linarith
+  have hprofitable_mem_big : profitable ∈ Icc low cutoff :=
+    ⟨le_of_lt (hlow_lt_indiff.trans hprofitable_low),
+      le_of_lt hprofitable_high⟩
+  have hprofitable_strict : f indifferent < f profitable :=
+    hmono hindiff_mem hprofitable_mem_big hprofitable_low
+  refine ⟨indifferent, ⟨hlow_lt_indiff, hindiff_lt_cutoff⟩,
+    hindiff_eq, hweak, profitable,
+    ⟨hprofitable_low, hprofitable_high⟩, ?_⟩
+  simpa [hindiff_eq] using hprofitable_strict
 
 /--
 Continuity of a scalar merit term after a cutoff transformation.

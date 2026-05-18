@@ -12,8 +12,11 @@ Allowed paper-row statuses:
   `dag_lemma` for lemma/support nodes, and `dag_model` for definition/model
   nodes.
 - `formalized with caveat`: Lean closes a precise variant of the paper item,
-  but the row needs a documented caveat such as a corrected statement, finite
-  model restriction, proof-strategy deviation, or source mismatch. DAG style:
+  but the theorem needs something on top of the paper statement, such as an
+  additional assumption, restriction, corrected statement, or indispensable
+  source mismatch. Do not use this status merely because Lean also refutes a
+  broader abstraction outside the paper model; mark the paper theorem
+  `formalized` and record the overbroad target as a scope note. DAG style:
   `dag_caveat`.
 - `partially formalized`: Substantial definitions, helper lemmas, or finite
   analogues are formalized, but the full source item is not closed. DAG style:

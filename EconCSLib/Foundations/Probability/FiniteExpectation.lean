@@ -2723,6 +2723,207 @@ theorem pmfExp_lt_of_support_forall_lt {α : Type*}
     _ = f a := by
       simp
 
+/--
+Every finite PMF has a positive-mass atom whose value is weakly below the
+expectation.
+-/
+theorem exists_support_value_le_pmfExp
+    {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
+    (μ : PMF α) (f : α → ℝ) :
+    ∃ a, 0 < (μ a).toReal ∧ f a ≤ pmfExp μ f := by
+  classical
+  by_contra hnone
+  have hsupport_gt :
+      ∀ a, 0 < (μ a).toReal → pmfExp μ f < f a := by
+    intro a hmass
+    have hnot : ¬ f a ≤ pmfExp μ f := by
+      intro hle
+      exact hnone ⟨a, hmass, hle⟩
+    exact lt_of_not_ge hnot
+  let supportValue : α → ℝ :=
+    fun a =>
+      if (μ a).toReal = 0 then
+        pmfExp μ f + 1
+      else f a
+  have hExpEq : pmfExp μ f = pmfExp μ supportValue := by
+    unfold pmfExp supportValue
+    refine Finset.sum_congr rfl ?_
+    intro a _ha
+    by_cases hzero : (μ a).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hall_gt : ∀ a, pmfExp μ f < supportValue a := by
+    intro a
+    by_cases hzero : (μ a).toReal = 0
+    · simp [supportValue, hzero]
+    · have hmass : 0 < (μ a).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      simpa [supportValue, hzero] using hsupport_gt a hmass
+  have hlt : pmfExp μ f < pmfExp μ f :=
+    hExpEq ▸ (pmfExp_lt_of_forall_lt μ supportValue (pmfExp μ f) hall_gt)
+  exact (lt_irrefl _) hlt
+
+/--
+If every value is weakly above a cutoff and a positive-mass value is strictly
+above it, then the expectation is strictly above the cutoff.
+-/
+theorem cutoff_lt_pmfExp_of_all_ge_exists_gt
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (cutoff : ℝ)
+    (hge : ∀ a, cutoff ≤ f a)
+    (habove : ∃ a, 0 < (μ a).toReal ∧ cutoff < f a) :
+    cutoff < pmfExp μ f := by
+  have hneg : pmfExp μ (fun a => - f a) < -cutoff := by
+    apply pmfExp_lt_of_forall_le_exists_lt
+    · intro a
+      exact neg_le_neg (hge a)
+    · rcases habove with ⟨a, hmass, hgt⟩
+      exact ⟨a, hmass, neg_lt_neg hgt⟩
+  have hneg_mean : - pmfExp μ f < -cutoff := by
+    simpa [pmfExp_neg] using hneg
+  linarith
+
+/--
+Support-only version of `cutoff_lt_pmfExp_of_all_ge_exists_gt`: zero-mass
+points do not need to satisfy the cutoff inequality.
+-/
+theorem cutoff_lt_pmfExp_of_support_ge_exists_gt
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (cutoff : ℝ)
+    (hge : ∀ a, 0 < (μ a).toReal → cutoff ≤ f a)
+    (habove : ∃ a, 0 < (μ a).toReal ∧ cutoff < f a) :
+    cutoff < pmfExp μ f := by
+  classical
+  let supportValue : α → ℝ :=
+    fun a => if (μ a).toReal = 0 then cutoff else f a
+  have hExpEq : pmfExp μ f = pmfExp μ supportValue := by
+    unfold pmfExp supportValue
+    refine Finset.sum_congr rfl ?_
+    intro a _ha
+    by_cases hzero : (μ a).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hsupport_ge : ∀ a, cutoff ≤ supportValue a := by
+    intro a
+    by_cases hzero : (μ a).toReal = 0
+    · simp [supportValue, hzero]
+    · have hmass : 0 < (μ a).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      simpa [supportValue, hzero] using hge a hmass
+  have hsupport_above :
+      ∃ a, 0 < (μ a).toReal ∧ cutoff < supportValue a := by
+    rcases habove with ⟨a, hmass, hgt⟩
+    have hzero : (μ a).toReal ≠ 0 := ne_of_gt hmass
+    exact ⟨a, hmass, by simpa [supportValue, hzero] using hgt⟩
+  rw [hExpEq]
+  exact cutoff_lt_pmfExp_of_all_ge_exists_gt
+    μ supportValue cutoff hsupport_ge hsupport_above
+
+/--
+If a finite PMF has a positive-mass value strictly above its expectation, then
+it also has a positive-mass value strictly below its expectation.
+-/
+theorem exists_support_value_lt_pmfExp_of_exists_pmfExp_lt_value
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ)
+    (habove : ∃ a, 0 < (μ a).toReal ∧ pmfExp μ f < f a) :
+    ∃ a, 0 < (μ a).toReal ∧ f a < pmfExp μ f := by
+  classical
+  by_contra hnone
+  have hno_below :
+      ∀ a, 0 < (μ a).toReal → pmfExp μ f ≤ f a := by
+    intro a hmass
+    by_contra hlt_not
+    exact hnone ⟨a, hmass, lt_of_not_ge hlt_not⟩
+  let supportNegValue : α → ℝ :=
+    fun a =>
+      if (μ a).toReal = 0 then
+        - pmfExp μ f
+      else - f a
+  have hExpNegEq :
+      pmfExp μ supportNegValue = pmfExp μ (fun a => - f a) := by
+    unfold pmfExp supportNegValue
+    refine Finset.sum_congr rfl ?_
+    intro a _ha
+    by_cases hzero : (μ a).toReal = 0
+    · simp [hzero]
+    · simp [hzero]
+  have hle_neg : ∀ a, supportNegValue a ≤ - pmfExp μ f := by
+    intro a
+    by_cases hzero : (μ a).toReal = 0
+    · simp [supportNegValue, hzero]
+    · have hmass : 0 < (μ a).toReal :=
+        lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hzero)
+      simpa [supportNegValue, hzero] using neg_le_neg (hno_below a hmass)
+  have habove_neg :
+      ∃ a, 0 < (μ a).toReal ∧ supportNegValue a < - pmfExp μ f := by
+    rcases habove with ⟨a, hmass, hgt⟩
+    have hzero : (μ a).toReal ≠ 0 := ne_of_gt hmass
+    exact ⟨a, hmass, by
+      simpa [supportNegValue, hzero] using neg_lt_neg hgt⟩
+  have hneg_lt : pmfExp μ supportNegValue < - pmfExp μ f :=
+    pmfExp_lt_of_forall_le_exists_lt
+      μ supportNegValue (- pmfExp μ f) hle_neg habove_neg
+  rw [hExpNegEq, pmfExp_neg] at hneg_lt
+  linarith
+
+/--
+If a finite PMF has a positive-mass value strictly below its expectation, then
+it also has a positive-mass value strictly above its expectation.
+-/
+theorem exists_support_value_gt_pmfExp_of_exists_value_lt_pmfExp
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ)
+    (hbelow : ∃ a, 0 < (μ a).toReal ∧ f a < pmfExp μ f) :
+    ∃ a, 0 < (μ a).toReal ∧ pmfExp μ f < f a := by
+  rcases hbelow with ⟨a, hmass, hlt⟩
+  have hneg_above :
+      ∃ a, 0 < (μ a).toReal ∧
+        pmfExp μ (fun a => - f a) < - f a := by
+    refine ⟨a, hmass, ?_⟩
+    rw [pmfExp_neg]
+    linarith
+  rcases
+      exists_support_value_lt_pmfExp_of_exists_pmfExp_lt_value
+        μ (fun a => - f a) hneg_above with
+    ⟨aHigh, hmassHigh, hneg_below⟩
+  refine ⟨aHigh, hmassHigh, ?_⟩
+  rw [pmfExp_neg] at hneg_below
+  linarith
+
+/--
+If no positive-mass value is strictly above the expectation, then every
+positive-mass value is exactly the expectation.
+-/
+theorem no_support_value_gt_pmfExp_forces_support_at_pmfExp
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ)
+    (hno_above :
+      ¬ ∃ a, 0 < (μ a).toReal ∧ pmfExp μ f < f a) :
+    ∀ a, 0 < (μ a).toReal → f a = pmfExp μ f := by
+  intro a hmass
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have habove :
+        ∃ a, 0 < (μ a).toReal ∧ pmfExp μ f < f a :=
+      exists_support_value_gt_pmfExp_of_exists_value_lt_pmfExp
+        μ f ⟨a, hmass, hlt⟩
+    exact hno_above habove
+  · exact hno_above ⟨a, hmass, hgt⟩
+
+/--
+If all positive-mass values equal the expectation, then there are no two
+positive-mass atoms with different values.
+-/
+theorem support_at_pmfExp_forces_no_distinct_positive_mass_values
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ)
+    (hsupport : ∀ a, 0 < (μ a).toReal → f a = pmfExp μ f) :
+    ¬ ∃ a₁ a₂,
+        0 < (μ a₁).toReal ∧ 0 < (μ a₂).toReal ∧ f a₁ ≠ f a₂ := by
+  rintro ⟨a₁, a₂, hmass₁, hmass₂, hne⟩
+  exact hne ((hsupport a₁ hmass₁).trans (hsupport a₂ hmass₂).symm)
+
 /-- Linearity of independent-product expectation. -/
 theorem pmfPairExp_add {α β : Type*}
     [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]

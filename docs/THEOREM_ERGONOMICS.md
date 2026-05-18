@@ -35,8 +35,11 @@ For `PaperInterface.lean` and `MainTheorems.lean`-style files:
   - declaration exists,
   - assumptions list is `None` (or `None; <paper assumptions>`),
   - and the proof route is source-faithful.
-- Use `formalized with caveat` for statement or proof-route deviations that are
-  fully explicit.
+- Use `formalized with caveat` only when the Lean theorem adds something on top
+  of the source statement, such as an extra assumption, restriction, corrected
+  statement, or indispensable source mismatch. A failed broader abstraction
+  outside the paper model is a scope note, not a caveat on a closed paper
+  theorem.
 - Use `conditional` only when an unresolved hypothesis or bridge is required.
 - Reserve `scaffold` / `not started` rows for placeholders.
 

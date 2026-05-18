@@ -127,8 +127,8 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_theorem3_1_optional_reporting_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_report_mixture_and_base_mixed_gaussian_posterior_surface`
   and
   `paper_theorem3_1_report_required_law_strategic_withholding_certificate_for_every_equilibrium_of_event_share_no_take_mixture_and_base_mixed_affine_skill_posterior_surface`
-  do the same when each equilibrium/base profile supplies a finite student
-  law, access event, and positive-mass no-access complement.
+  keep the paper-facing source surfaces indexed by equilibrium while returning
+  per-equilibrium certificates.
   The public Section 3 endpoints now also have full-support/not-all-acting
   variants
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_event_share_of_full_support_not_all`
@@ -152,6 +152,19 @@ cache is kept as `source.txt` for named-statement audits.
   `paper_interface_theorem3_1_section3_report_required_strategic_withholding_pmf_for_every_equilibrium_of_full_support_not_all_event_share_no_take_mixture`,
   so the PMF and continuous-law representations now discharge the complement
   mass premise in parallel.
+- The skill-mixture raw-mixture Theorem 3.1 PMF route now derives demographic
+  unfairness from the same positive-event raw-relevance witness when the
+  displayed demographic comparison is identified with that observable profile.
+  The source-certificate and literal-cutoff fixed-point endpoints expose this
+  as the optional/report-required
+  `...positive_event_raw_relevance_demographic_observable_identities` aliases
+  in `PaperInterface.lean` and `PostPaperAudit.lean`.
+  The generic source-witness route now has matching PMF and continuous-law
+  theorem/certificate endpoints named
+  `...source_evidence_demographic_observable_identities`, including
+  optional-reporting and report-required variants, so callers can use
+  observable/demographic identity equations directly without assembling the
+  demographic inequality witness by hand.
 - The concrete base-mixed continuous-law route now has short Section 3
   paper-interface endpoints:
   `paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding`
@@ -719,20 +732,21 @@ cache is kept as `source.txt` for named-statement audits.
   additionally discharges the two selected-test positive-mass assumptions from
   full support of the finite test law.  Its `_exists_distinct` companion
   similarly takes an existential distinct-test witness rather than explicit
-  selected tests.  A
-  stricter
-  skill-dependent latent-kernel instantiation can be added later if the final
-  statement insists on conditional-on-skill laws rather than this direct
-  constant-kernel specialization.  The continuous upper-tail route now has
+  selected tests.  The finite PMF raw-mixture route now also has a
+  skill-dependent latent-kernel wrapper,
+  `paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_blank_on_zero_event_share_raw_mixture`,
+  plus matching test-blankness and no-test-relevance wrappers, and the
+  report-required analogues.  These replace the old constant-latent shortcut
+  with observable laws mixed from skill-conditioned latent kernels.
+  The continuous upper-tail route now has
   certificate-packaged source-equilibrium endpoints that derive best responses
   from the concrete optional/report-required source games.  For concrete
   binary-mixture observable-access laws, the mixture identity is now
   definitionally discharged; event-share variants also derive share positivity
   from a finite positive-mass reporter/taker event.  In the older generic
   finite binary-mixture route, the remaining theorem-local assumptions are the
-  no-access law and the report-required outside-payoff equality, plus any
-  stricter conditional-kernel instantiation wanted for that generic source
-  statement.
+  no-access law and the report-required outside-payoff equality for the broad
+  source-witness statement.
   The concrete event-share surface endpoints
   `paper_theorem3_2_optional_reporting_fairness_impossibility_of_gaussian_upper_tail_event_share_surface`
   and
@@ -798,6 +812,34 @@ cache is kept as `source.txt` for named-statement audits.
   source assumptions directly.
 
 ## Source Notes
+
+- Definition 6 / Theorem 4.4 now has a direct source-policy-surface bridge:
+  `lg21ResamplingSourcePolicySurface`, the generic-skill
+  `lg21ResamplingSourcePolicySurfaceForSkill`, and the audited
+  `paper_interface_theorem4_4_resampling_policy_source_strategy_proof_source_surface_for_skill_fair`
+  state the resampling policy in the paper's `LG21SourcePolicySurface`
+  predicates.  The conditional-kernel core still proves observable and
+  demographic fairness by the same pushforward identity; the new wrappers let
+  downstream paper statements consume source-level fairness directly rather
+  than the auxiliary `lg21ObservableFair`/`lg21DemographicallyFair` predicates.
+- Theorem 3.2's finite PMF route now has `lg21SkillMixtureBlankOnZeroEventShareRawMixtureSurface`
+  plus audited optional-reporting and report-required Section 3 wrappers.  These
+  expose the paper-shaped conditional-on-skill latent kernels while retaining
+  the blank-on-zero event-share normalization needed for the raw-mixture
+  unraveling step.  The reusable interface exposes the same route in
+  test-blankness, no-test-relevance, raw-no-relevance, and reporter/base-only
+  equality forms via
+  `paper_interface_theorem3_2_skill_mixture_blank_on_zero_raw_mixture_fairness_iff_test_blank`,
+  `paper_interface_theorem3_2_skill_mixture_blank_on_zero_raw_mixture_fairness_iff_no_test_relevance`
+  and its companion aliases.  The same surface also has Section 3
+  source-witness specializations
+  `paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_test_blank`
+  and
+  `paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_no_test_relevance`,
+  plus the matching reporter/base-only equality specialization
+  `paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_reporter_eq_baseOnly_on_positive_event`,
+  so future strategic-stability witnesses can target the skill-dependent
+  latent-kernel route directly.
 
 The current Lean code closes finite admissions accounting identities, the
 source-level model primitives for access status, school information sets, and

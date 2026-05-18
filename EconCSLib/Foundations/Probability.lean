@@ -6,6 +6,7 @@ import EconCSLib.Foundations.Probability.Exponential
 import EconCSLib.Foundations.Probability.FairCoin
 import EconCSLib.Foundations.Probability.FiniteExpectation
 import EconCSLib.Foundations.Probability.FiniteLabel
+import EconCSLib.Foundations.Probability.FiniteMixture
 import EconCSLib.Foundations.Probability.FiniteSupportMGF
 import EconCSLib.Foundations.Probability.FinsetVariance
 import EconCSLib.Foundations.Probability.Gaussian
@@ -38,7 +39,8 @@ Aggregate import for reusable probability infrastructure.
 - Finite PMF expectation/probability APIs:
   `EconCSLib.Foundations.Probability.FiniteExpectation`,
   `EconCSLib.Foundations.Probability.Conditional`,
-  `EconCSLib.Foundations.Probability.Kernel`, and
+  `EconCSLib.Foundations.Probability.Kernel`,
+  `EconCSLib.Foundations.Probability.FiniteMixture`, and
   `EconCSLib.Foundations.Probability.FiniteLabel`.
 - Continuous measure and concentration helpers:
   `EconCSLib.Foundations.Probability.MeasureInequalities`,

@@ -1,5 +1,7 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Affine Thresholds
@@ -13,6 +15,8 @@ Reusable one-dimensional threshold algebra for positive-slope affine scores.
 - `affine_le_threshold_iff_le_cutoff`
 - `affine_strictMono`
 - `lowerThresholdCutoff_unique`
+- `affine_div_le_affine_div_of_le`
+- `affine_div_lt_affine_div_of_lt`
 - `exists_affine_lt`
 - `exists_lt_affine`
 - `exists_affine_lt_before`
@@ -76,6 +80,78 @@ theorem affine_strictMono (intercept : ℝ) {slope : ℝ}
   intro x y hxy
   simpa [add_comm, add_left_comm, add_assoc] using
     add_lt_add_left (mul_lt_mul_of_pos_left hxy hslope) intercept
+
+/--
+A positive-slope affine score divided by a positive denominator is weakly
+increasing.
+-/
+theorem affine_div_le_affine_div_of_le
+    {intercept slope denom x y : ℝ}
+    (hslope : 0 ≤ slope) (hdenom : 0 < denom) (hxy : x ≤ y) :
+    (intercept + slope * x) / denom ≤
+      (intercept + slope * y) / denom := by
+  have hnum :
+      intercept + slope * x ≤ intercept + slope * y := by
+    simpa [add_comm, add_left_comm, add_assoc] using
+      add_le_add_left (mul_le_mul_of_nonneg_left hxy hslope) intercept
+  exact div_le_div_of_nonneg_right hnum hdenom.le
+
+/--
+A positive-slope affine score divided by a positive denominator is strictly
+increasing.
+-/
+theorem affine_div_lt_affine_div_of_lt
+    {intercept slope denom x y : ℝ}
+    (hslope : 0 < slope) (hdenom : 0 < denom) (hxy : x < y) :
+    (intercept + slope * x) / denom <
+      (intercept + slope * y) / denom := by
+  have hnum :
+      intercept + slope * x < intercept + slope * y := by
+    simpa [add_comm, add_left_comm, add_assoc] using
+      add_lt_add_left (mul_lt_mul_of_pos_left hxy hslope) intercept
+  exact div_lt_div_of_pos_right hnum hdenom
+
+/--
+If twice an affine numerator equals the denominator, then the corresponding
+normalized affine value is one half.
+-/
+theorem half_eq_affine_div_of_two_mul_affine_eq_denom
+    {intercept slope denom x : ℝ}
+    (hdenom_ne : denom ≠ 0)
+    (hcenter : 2 * (intercept + slope * x) = denom) :
+    (1 / 2 : ℝ) = (intercept + slope * x) / denom := by
+  have hn_ne : intercept + slope * x ≠ 0 := by
+    intro hn
+    apply hdenom_ne
+    rw [← hcenter, hn]
+    norm_num
+  rw [← hcenter]
+  field_simp [hn_ne]
+
+/--
+An affine intercept of `denom / 2 - slope * x` makes twice the affine numerator
+at `x` equal to the denominator.
+-/
+theorem two_mul_affine_eq_denom_of_intercept_eq_half_denom_sub_slope_mul
+    {intercept slope denom x : ℝ}
+    (hintercept : intercept = denom / 2 - slope * x) :
+    2 * (intercept + slope * x) = denom := by
+  rw [hintercept]
+  ring
+
+/--
+The base-term form of the preceding two lemmas: the affine value at `x`,
+normalized by a nonzero denominator, is one half.
+-/
+theorem half_eq_affine_div_of_intercept_eq_half_denom_sub_slope_mul
+    {intercept slope denom x : ℝ}
+    (hdenom_ne : denom ≠ 0)
+    (hintercept : intercept = denom / 2 - slope * x) :
+    (1 / 2 : ℝ) = (intercept + slope * x) / denom :=
+  half_eq_affine_div_of_two_mul_affine_eq_denom
+    hdenom_ne
+    (two_mul_affine_eq_denom_of_intercept_eq_half_denom_sub_slope_mul
+      hintercept)
 
 /--
 A lower-threshold predicate on the real line has a unique cutoff: if two

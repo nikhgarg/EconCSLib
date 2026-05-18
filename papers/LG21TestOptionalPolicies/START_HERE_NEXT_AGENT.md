@@ -1,6 +1,6 @@
 # LG21 Pickup Note
 
-Last updated: 2026-05-17.
+Last updated: 2026-05-18.
 
 ## Current Clean Boundary
 
@@ -9,10 +9,25 @@ Last updated: 2026-05-17.
   - `59b22da Expose LG21 source-witness no-relevance iff routes`
   - `dc9c7f2 Record LG21 Theorem 3.2 raw-surface scope counterexample`
   - `c86c733 Add LG21 raw law-surface scope counterexample`
-- Latest local proof bridge:
+- Latest local proof bridges:
   full-support/not-all-acting Theorem 3.1 Section 3 PMF and continuous-law
   endpoints now live in `MainTheorems.lean` and the public wrappers delegate to
-  them.
+  them.  The generic, optional-reporting, and report-required Theorem 3.1
+  source-evidence APIs now also have PMF and continuous-law theorem/certificate
+  variants ending in
+  `...source_evidence_demographic_observable_identities`; these derive
+  demographic unfairness from observable unfairness plus demographic/observable
+  identity equations instead of taking a bare demographic inequality witness.
+  Theorem 3.2 also has a finite skill-mixture raw-mixture route whose
+  observable access/no-access laws are mixed from skill-conditioned latent
+  kernels, with optional-reporting and report-required Section 3 wrappers in
+  reporter/base-only equality, test-blankness, and no-test-relevance forms.
+  The same skill-mixture surface now has source-witness Section 3 iff
+  specializations in test-blankness, no-test-relevance, and reporter/base-only
+  equality forms.  The public interface also exposes direct Section 3
+  skill-mixture raw-mixture endpoints for fairness implying test-blankness,
+  fairness implying no test relevance, and observable fairness implying
+  test-blankness under the raw observable identities.
 - Latest concrete-surface bridge:
   Theorem 3.1 now also has singleton-PMF source-shaped posterior surfaces
   `paperBaseMixedGaussianPosteriorPMFSurface` and
@@ -77,28 +92,36 @@ git diff --check -- papers/LG21TestOptionalPolicies/MainTheorems.lean papers/LG2
 ```
 
 `lake build LG21TestOptionalPolicies.PostPaperAudit` and `lake build
-LG21TestOptionalPolicies` passed after the singleton-PMF source-shaped
-posterior-surface bridge.
+LG21TestOptionalPolicies` passed after the generic Theorem 3.1
+demographic-observable source-evidence bridge.
 
 `HumanStartHere.lean` is not a good LG21 validation target right now: it imports
 
 ## Best Next Proof Seam
 
-Do not spend the next pass adding more Theorem 3.2 source-witness aliases unless
-an audit file is missing an existing endpoint. The higher-value work is
-reducing the remaining conditional status:
+Do not spend the next pass adding more source-evidence aliases unless an audit
+file is missing an existing endpoint. The generic Theorem 3.1
+demographic-observable identity bridge is now present and exported, and the
+finite skill-mixture raw-mixture bridge is already present for Theorem 3.2.
+Theorem 3.2 should still be treated as conditional: the paper-facing
+source-shaped event-share and skill-mixture raw-mixture endpoints compile only
+after source/equilibrium witness assumptions are supplied. The checked raw
+arbitrary-policy counterexample is a scope note about an overbroad abstraction,
+not a caveat on the paper theorem. The higher-value work is reducing the
+remaining conditional status only if you can add genuinely stronger model
+content:
 
-1. For Theorem 3.2, decide whether the paper-facing final statement should be
-   the current concrete/event-share source-surface theorem or a stricter
-   conditional-kernel theorem closer to arbitrary estimation policies. If the
-   latter, build the missing conditional-kernel/source-policy bridge explicitly.
-2. For Theorem 3.1, the remaining gap is not cutoff algebra or the concrete
-   PMF representation. The current route has Gaussian/affine threshold,
-   event-share, continuous-law, and singleton-PMF source-shaped posterior
-   wrappers. The remaining question is whether the paper-facing final
-   statement should stay at these concrete source surfaces or be pushed into a
-   broader arbitrary Bayesian policy theorem.
-3. Keep optional full support over all real scores out of the formalization.
+1. For Theorem 3.1, the remaining gap is not cutoff algebra, the concrete PMF
+   representation, or the standalone demographic-unfairness witness in the
+   skill-mixture raw-mixture route: the source-certificate and literal-cutoff
+   fixed-point wrappers now have
+   `...positive_event_raw_relevance_demographic_observable_identities`
+   endpoints, and the generic source-evidence wrappers now have
+   `...source_evidence_demographic_observable_identities` endpoints. The
+   remaining question is whether the paper-facing final statement should stay
+   at these concrete source surfaces or be pushed into a broader arbitrary
+   Bayesian policy theorem.
+2. Keep optional full support over all real scores out of the formalization.
    The finite-test full-support route is the correct support statement for
    optional-reporting mapped actors.
 
