@@ -14,7 +14,8 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Math`:
     `FiniteSum`, `FiniteRanking`, `FiniteRounding`, `FiniteSigns`,
     `Sequence`, `Asymptotics`, `IntervalCrossing`,
-    `EpsilonContinuity`, `PositiveDenominator`, `ExponentialBounds`
+    `EpsilonContinuity`, `PositiveDenominator`, `AffineThreshold`,
+    `ThresholdCharacterization`, `ExponentialBounds`
     - `FiniteSum`: finite weighted-sum bounds, injective subfamily sum
       comparisons, weighted-share race bounds, finite averaging/cardinality
       lower bounds, Cauchy-Schwarz, and finite telescoping/crossing helpers.
@@ -32,7 +33,7 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Graph`
   - `EconCSLib.Foundations.Optimization`
     (`Approximation`, `Argmax`, `Certificate`, `FiniteSearch`,
-    `LinearProgram`, `MoveGraph`)
+    `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `BinaryChoice`)
     - `Approximation`: benchmark/dual upper-bound sandwich certificates for
       approximation and competitive-ratio proofs, including additive-error
       variants.
@@ -52,12 +53,17 @@ when you need material from a domain quickly.
     - `MoveGraph`: reusable exchange/local-move optimality, proving global
       maximization or minimization from reachability and objective monotonicity
       along feasible moves.
+    - `ChoiceEquilibrium`: static choice-equilibrium data, feasibility,
+      best-response, and consistency projections.
+    - `BinaryChoice`: two-action no-profitable-deviation predicates,
+      projections from static choice equilibria, and threshold/tiebreak
+      consequences for binary choice rules.
     - Roadmap: [`docs/OPTIMIZATION_LIBRARY_ROADMAP.md`](OPTIMIZATION_LIBRARY_ROADMAP.md)
       tracks finite feasible search, exchange optimality, LP certificates,
       convexity/Jensen wrappers, threshold policies, minimax/Yao certificates,
       and asymptotic allocation profiles.
   - `EconCSLib.Foundations.Probability`
-    (`FiniteExpectation`, `FiniteLabel`, `FiniteSupportMGF`, `Kernel`, `Conditional`,
+    (`FiniteExpectation`, `FiniteMixture`, `FiniteLabel`, `FiniteSupportMGF`, `Kernel`, `Conditional`,
     `LargeDeviations`, `OrderStatistics`, `RealDistribution`, `MarkovChain`, `CTMC`, `MDP`,
     `RenewalReward`, `Gaussian`, `StochasticDominance`, `MeasureInequalities`,
     `Occupancy`, `Admissions`, `FairCoin`, `Weighted`, `WithoutReplacement`)
@@ -75,6 +81,10 @@ when you need material from a domain quickly.
       finite subfamilies, finite-PMF variance, second-moment formulas for
       indicator counts, pairwise-negative-correlation variance bounds, and
       Chebyshev lower-tail wrappers.
+    - `FiniteMixture`: binary PMF mixtures, finite event shares, indexed
+      positive-event-or-blank splits, blank-on-zero-share indexed values,
+      positive-share mixture cancellation, PMF pushforward support lemmas, and
+      raw-relevance equivalences for event-share binary mixtures.
     - `FiniteLabel`: finite-label indicator integrals, label shares, aggregate
       score masses, pointwise posterior-simplex API, bounded finite-label
       score integrability, simplex mass-sum identities, finite-label MAE

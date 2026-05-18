@@ -28,10 +28,11 @@ Current top-level areas:
   recommender-system policy/allocation abstractions.
 
 Probability foundations currently include finite PMFs and expectations,
-conditional probability, finite variance, measure inequalities, continuous
-probability support, finite Markov kernel/chain primitives, two-state CTMC
-closed-form support, finite occupancy processes, and finite MDP primitives, plus finite
-stochastic-dominance/coupling certificates and an algebraic Gaussian
+finite event-share/binary-mixture interfaces, conditional probability, finite
+variance, measure inequalities, continuous probability support, finite Markov
+kernel/chain primitives, two-state CTMC closed-form support, finite occupancy
+processes, and finite MDP primitives, plus finite stochastic-dominance/coupling
+certificates and an algebraic Gaussian
 posterior/CDF interface. GLM/LG-style testing papers should start with
 `EconCSLib.Foundations.Probability.Gaussian` for conjugate posterior formulas,
 standardization, finite multi-signal weights, nonzero-noise-mean signal
@@ -65,9 +66,10 @@ paper-specific distribution-family asymptotics.
 Optimization foundations currently include finite pointwise argmax/existence
 lemmas, abstract expected-objective wrappers, feasible-set optimality
 certificates, finite feasible-search wrappers, move-graph exchange optimality,
-and lightweight finite LP weak-duality certificates. Papers with LP witnesses,
-exchange arguments, threshold searches, or endpoint/current-bound optimality
-proofs should start with
+static choice-equilibrium projection tools, binary no-deviation/threshold
+bridges, and lightweight finite LP weak-duality certificates. Papers with LP
+witnesses, exchange arguments, binary best-response policies, threshold
+searches, or endpoint/current-bound optimality proofs should start with
 `EconCSLib.Foundations.Optimization`; the longer promotion plan lives in
 [`docs/OPTIMIZATION_LIBRARY_ROADMAP.md`](OPTIMIZATION_LIBRARY_ROADMAP.md).
 

@@ -21,6 +21,11 @@ leaving source-specific objectives and notation in `papers/`.
     feasibility, weak duality, and primal/dual optimality certificates.
   - `MoveGraph`: exchange/local-move optimality from reachability and objective
     monotonicity along moves.
+  - `ChoiceEquilibrium`: static choice-equilibrium data with feasibility,
+    best-response, and consistency projections.
+  - `BinaryChoice`: two-action no-profitable-deviation predicates, projection
+    from choice equilibria, threshold/tiebreak consequences, and direct
+    contradiction lemmas from profitable binary deviations.
 
 ## Reusable Seams To Promote
 
@@ -173,6 +178,32 @@ Reusable target:
 - score-rank prefix/suffix optimality from monotone marginal gains.
 - threshold policy equivalence under monotone transformations.
 - finite prefix search existence and comparison lemmas.
+
+### 7. Static choice and binary-deviation certificates
+
+Status: reusable core started in `Optimization.ChoiceEquilibrium` and
+`Optimization.BinaryChoice`.
+
+Common source pattern: a paper defines a static action rule, feasible actions,
+best responses, and consistency; then later proof steps need only a projected
+one-sided or two-sided no-profitable-deviation condition over a binary policy.
+
+Useful for:
+
+- GLM/LG testing papers with report/take-test versus withhold/no-test actions.
+- Mechanism and platform papers that reduce equilibrium behavior to a local
+  binary deviation.
+- Threshold-policy proofs where no-deviation plus a tie-break identifies the
+  policy as a lower or upper cutoff rule.
+
+Reusable target:
+
+- done: generic static equilibrium projection to one-sided and two-sided
+  binary no-deviation predicates.
+- done: contradiction lemmas for chosen/unchosen profitable deviations and a
+  threshold/tiebreak iff rule.
+- next: variants for multi-action menus whose proof only needs a named pair of
+  deviation actions.
 
 ### 7. Minimax, Yao, and lower-bound games
 

@@ -34,6 +34,26 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
 - For paper statements that say an optimizer exists, avoid hiding the optimizer
   in an opaque certificate. Prove the argmax/existence theorem in the generic
   library and make the paper theorem a thin wrapper with exact assumptions.
+- For static action-rule papers, use
+  `EconCSLib.Foundations.Optimization.ChoiceEquilibrium` before creating a
+  paper-local equilibrium record. Package chosen action, feasibility,
+  best-response, and consistency once, then project with
+  `isChoiceEquilibrium_feasible`, `isChoiceEquilibrium_best_response`, and
+  `isChoiceEquilibrium_consistency`. If a later source lemma only needs a
+  named binary deviation, use
+  `noProfitableBinaryChoiceDeviation_of_choiceEquilibrium_payoff_projection`
+  or `noProfitableUnchosenDeviation_of_choiceEquilibrium_payoff_projection`
+  rather than restating the full equilibrium.
+- For two-action best-response/cutoff proofs, use
+  `EconCSLib.Foundations.Optimization.BinaryChoice`:
+  `NoProfitableBinaryChoiceDeviation`,
+  `not_all_choose_of_noProfitableBinaryChoiceDeviation_exists_other_better`,
+  `not_no_choose_of_noProfitableBinaryChoiceDeviation_exists_choose_better`,
+  `exists_chosen_and_unchosen_of_noProfitableBinaryChoiceDeviation_crosses`,
+  and `choice_rule_iff_threshold_of_noProfitableBinaryChoiceDeviation_tiebreak`.
+  This is the reusable path for "some chosen value prefers the other action"
+  and "some unchosen value prefers the chosen action" contradictions before
+  deriving threshold structure.
 - For LP sparsity or BFS-style results, separate the linear-programming theorem
   from finite counting consequences. Encode the active-support bound first,
   then prove reusable counting lemmas over finite supports.

@@ -208,6 +208,20 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `pmfConditionalExp_mem_Icc_of_mem_Icc_of_pos`. These are the right tools for
   bounded posterior estimates, resampling policies, and conditioning-on-event
   arguments before introducing source-specific Gaussian algebra.
+- For finite binary-mixture or test-reporting policies, start from
+  `EconCSLib.Foundations.Probability.FiniteMixture` instead of writing
+  paper-local event-share algebra. Use `binaryMixturePMF`,
+  `pmfEventShare`, `indexedPMFEventShare`, full-support bridges such as
+  `indexedPMFEventShare_pos_of_full_support_exists`,
+  `indexedEventPositiveOrBlank`, `indexedValueBlankOnZeroEventShare`,
+  `pmf_mixture_cancel_right`, `extensional_law_mixture_cancel_right`,
+  `pmf_map_apply_toReal_pos_of_pos`, and
+  `indexedBinaryMixturePMF_no_positive_event_raw_relevance_iff_selected_eq_unselected_on_positive_event`.
+  The robust route is: model the source mixture with a finite event share,
+  normalize the full-feature law to be blank when the share is zero, prove raw
+  relevance only on positive-event profiles, and use positive-share
+  cancellation to turn equality of the mixture with the unselected law into
+  equality of selected and unselected component laws.
 - For Gaussian admissions/testing papers, start with
   `EconCSLib.Foundations.Probability.Gaussian` before making paper-local
   definitions. Use `GaussianScaleLaw.standardize`,

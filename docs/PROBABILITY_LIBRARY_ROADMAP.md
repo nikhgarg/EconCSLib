@@ -69,6 +69,12 @@ This tracks reusable probability work suggested by the current paper queue.
   wrappers around Mathlib's real CDF API: lower CDF mass, upper-tail mass,
   monotonicity, `cdf` identification, the upper-tail complement formula, and
   upper-tail threshold/capacity certificates.
+- `EconCSLib.Foundations.Probability.FiniteMixture` now provides the reusable
+  finite-mixture/event-share layer used by LG-style testing policies: binary
+  PMF mixtures, finite event shares, indexed full-support-to-positive-share
+  bridges, blank-on-zero-share indexed values, positive-share cancellation for
+  PMFs and extensional laws, PMF pushforward support lemmas, and raw-relevance
+  equivalences for event-share binary mixtures.
 
 ## Next Library Work
 
@@ -97,6 +103,10 @@ This tracks reusable probability work suggested by the current paper queue.
   is available; add true truncated-normal expectation derivations and threshold
   existence/comparison certificates beyond the current finite-mixture
   threshold witness interface.
+- Finite-mixture thin wrappers for continuous law families: `FiniteMixture`
+  already has extensional-law cancellation, but future papers may need reusable
+  instantiated wrappers for Gaussian/real-distribution laws rather than
+  paper-local extensionality arguments.
 
 ## Deferred Cleanup
 
