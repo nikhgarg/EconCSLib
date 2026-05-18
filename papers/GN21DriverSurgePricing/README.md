@@ -415,7 +415,8 @@ cache is `source.txt`.
   improvement bridges for the surge and non-surge states, including strict
   current-bound variants when the rejected complement has positive
   derivative-kernel support; these are packaged at the raw theorem, full-data,
-  primitive-data, and source-data levels.  Lemma 10 additionally
+  primitive-data, source-data, and fixed-response source-record levels.
+  Lemma 10 additionally
   has a reward-rate-separated endpoint-term layer
   `lemma10StructuredStaticTerm_eq_ratio_reward_split`,
   `lemma10StructuredLinearEndpoint_eq_ratio_reward_split`,
@@ -1191,6 +1192,12 @@ cache is `source.txt`.
   `gn21MeasuredRightLemma6ResponseAtCurrent_pos_of_lemma9_current_bounds`
   convert Lemma 9/10 current-bounds kernel positivity into the normalized
   positive Lemma 6 response required by the source-record constructors. The
+  state-specific CTMC constructors
+  `GN21MeasuredLeftFixedResponsePolicyFormSourceData.of_ctmc_structured_price_positive_current_bounds`
+  and
+  `GN21MeasuredRightFixedResponsePolicyFormSourceData.of_ctmc_structured_price_positive_current_bounds`
+  now package those positivity lines directly into positive fixed-response
+  records for the constructed structured prices. The
   broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
@@ -2209,7 +2216,8 @@ accept-all improvement for the constructed prices, a positive-replacement
 source wrapper whose final obligation is the Lemma 9/10 positive Lemma 5
 replacement proof for the constructed prices, current-bounds source wrappers
 that accept either scaled accounting equations or measured reward-rate
-equalities for the fixed state, plus
+equalities for the fixed state, and positive fixed-response constructors that
+consume the Lemma 9/10 current-bounds data directly for each state, plus
 a direct ratio-to-IC route from the four-case Theorem 4 shape-endpoint-selection
 certificate and the paper-ordered shape-derivation endpoint-bridge
 certificate, plus a route that accepts the raw statewise improvement
