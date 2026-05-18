@@ -168,6 +168,13 @@ cache is `source.txt`.
   `theorem3_structured_ic_of_endpoint_bridge`.  These are the review-surface
   names for the direct constructed-price route; the last one isolates the
   remaining continuous endpoint-bridge proof for the constructed prices.
+  The positive-mass small-surge route is also public through
+  `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign`,
+  `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax`,
+  and
+  `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax_normalized_mass`.
+  The last of these is the compact normalized-mass endpoint whose remaining
+  policy-dependent source field is the current Lemma 9 final-sign line.
   The older all-middle cross-field source boundaries also now feed this
   ordered route through
   `GN21Theorem3FixedResponseOneThresholdSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_ordered_surge_cutoff_cross_field_source`,
@@ -1623,6 +1630,18 @@ Its paper-facing route is
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_source_assumptions`,
 exposed compactly as
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixed_transfer`.
+The lighter positive-rejected-mass AE boundary is also public: use
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_middle_reroute`
+or its IC projection
+`PaperInterface.theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_reroute`
+when the source proof supplies accept-all optimality, and use
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_middle_reroute_existence`
+or
+`PaperInterface.theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_reroute_existence`
+when accept-all optimality should be derived internally from the rejected-mass
+strict-improvement certificate.  These routes are the current representative
+bridge for Lemma 5 a.e. forms; they do not require every surge-middle branch to
+carry an all-branch gap fact.
 This is the lighter fixed-transfer boundary for normalized exact
 one-threshold proofs: it asks only for non-surge reject-long and surge
 reject-short local packages, then uses the exact selector to cover middle
