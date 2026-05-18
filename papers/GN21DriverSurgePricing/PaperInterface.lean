@@ -429,6 +429,41 @@ theorem theorem3_structured_measurable_ic_of_positive_replacement
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Direct measurable Theorem 3 endpoint at the positive-response marginal
+boundary.  This is the source-proof route in which Lemmas 9/10 provide the
+positive marginal-response data for Lemma 5; Lean constructs `m,z` and derives
+measurable IC plus a.e. accept-all uniqueness.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllPositiveResponseAEMarginalSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_response_marginal_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Plain measurable-IC projection of the positive-response marginal route.
+-/
+theorem theorem3_structured_measurable_ic_of_positive_response_marginal
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllPositiveResponseAEMarginalSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_response_marginal_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Canonical source-facing Theorem 3 endpoint at the allowed-replacement
 boundary: Lean constructs the price family and reduces IC to the continuous
 Theorem 4 allowed-replacement certificate for those constructed prices.

@@ -164,10 +164,13 @@ cache is `source.txt`.
   The compact `PaperInterface` now also exposes the canonical end-of-file
   Theorem 3 source boundaries:
   `theorem3_structured_ic_of_positive_replacement`,
+  `theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal`,
   `theorem3_structured_ic_of_allowed_replacement`, and
   `theorem3_structured_ic_of_endpoint_bridge`.  These are the review-surface
-  names for the direct constructed-price route; the last one isolates the
-  remaining continuous endpoint-bridge proof for the constructed prices.
+  names for the direct constructed-price route; the positive-response marginal
+  route is the direct Lemma 9/10-to-Lemma 5 measurable a.e.-uniqueness
+  endpoint, and the endpoint-bridge route isolates the remaining continuous
+  endpoint-bridge proof for the constructed prices.
   The positive-mass small-surge route is also public through
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign`,
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax`,
@@ -1156,7 +1159,13 @@ cache is `source.txt`.
   `Theorem3AcceptAllPositiveReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions`,
   whose final field is exactly the Lemma 9/10 positive-replacement proof for
-  the constructed prices. The broader allowed-replacement route is also
+  the constructed prices.  The direct measure-theoretic version is now
+  `Theorem3AcceptAllPositiveResponseAEMarginalSourceAssumptions` plus
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_response_marginal_source_assumptions`;
+  its final field is the statewise positive-response marginal optimality data
+  consumed by Lemma 5, and Lean derives measurable IC plus accept-all
+  uniqueness up to null feasible-trip sets. The broader allowed-replacement
+  route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
   proof boundary is the continuous allowed-replacement Theorem 4 certificate
