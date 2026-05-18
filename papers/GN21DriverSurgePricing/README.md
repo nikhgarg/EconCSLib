@@ -1523,6 +1523,13 @@ The sharper current target is the middle-cutoff version:
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_cutoff_reroute_existence_source_assumptions`,
 and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_existence_source_assumptions`.
+The ratio-source wrappers
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_cutoff_reroute_ratio_source_assumptions`
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_ratio_source_assumptions`
+derive the scalar `R1` positivity/order fields from `C < rho < 1`, so the
+paper proof can call this route directly from the Lemma 6 sign-bracket
+payload.
 Use this route when the paper proof supplies only the positive-`lo`
 non-surge accepted-middle gap, since Lean handles the `lo <= 0` branch by
 the reject-long cutoff reroute.
@@ -1895,6 +1902,7 @@ and
 `theorem3AcceptAllAllowedReplacementCertificate_of_endpoint_bridges`,
 `Theorem3AcceptAllAllowedReplacementSourceAssumptions`,
 `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`,
+`paper_theorem3_measured_structured_measurable_ic_prices_of_allowed_replacement_source_assumptions`,
 `Theorem3AcceptAllAllowedReplacementEndpointBridgeSourceAssumptions`,
 `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions`,
 `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_bridge_source_assumptions`,

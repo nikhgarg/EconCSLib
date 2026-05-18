@@ -420,6 +420,22 @@ theorem theorem3_structured_ic_of_allowed_replacement
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Measurable source-domain version of the allowed-replacement Theorem 3 route.
+-/
+theorem theorem3_structured_measurable_ic_of_allowed_replacement
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllAllowedReplacementSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_allowed_replacement_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Canonical source-facing Theorem 3 endpoint at the endpoint-bridge boundary:
 the remaining source obligation is to build the paper's continuous endpoint
 bridge certificate for each constructed price vector.
@@ -782,6 +798,112 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_eq_middle_
       mu arrival R1 R2 switch12 switch21 := by
   exact
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_cutoff_reroute_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos fixed_response_selection
+
+/--
+Theorem 3 on the one-threshold fixed-response middle-cutoff route, with scalar
+positivity/order derived from the paper's ratio assumptions.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_one_threshold_eq_middle_cutoff_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    [NoAtoms (mu 0)] [NoAtoms (mu 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdEqMiddleCutoffRerouteSourceExistenceData
+            mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_cutoff_reroute_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmeasure1_pos hmeasure2_pos fixed_response_selection
+
+/--
+Theorem 3 on the bracket-form one-threshold middle-cutoff route, with scalar
+positivity/order derived from the paper's ratio assumptions.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    [NoAtoms (mu 0)] [NoAtoms (mu 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffRerouteSourceExistenceData
+            mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
       htime1_integrable htime2_integrable hq1_integrable hq2_integrable
