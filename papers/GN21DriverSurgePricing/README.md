@@ -1206,7 +1206,9 @@ cache is `source.txt`.
   `Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate.of_structured_current_bounds_source`
   prove the positive-response Lemma 5 a.e. route directly from the structured
   current-bounds source data, without requiring nondegeneracy for every
-  zero-mass comparison policy. The
+  zero-mass comparison policy.  The compact interface exposes this as
+  `PaperInterface.theorem4_positive_response_acceptAll_candidate_of_current_bounds_source`.
+  The
   broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
@@ -2326,6 +2328,10 @@ fixed-response optimality.
 The Theorem 3 source-current-bounds wrapper now threads this conclusion through
 the constructed price parameters as
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions`.
+The positive-response version is
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_positive_response_source_assumptions`,
+exposed as
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_positive_response`.
 The same source-current-bounds route is now exposed in the compact
 `PaperInterface` as
 `theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible`,

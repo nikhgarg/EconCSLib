@@ -191,6 +191,25 @@ def theorem4_positive_response_marginal_of_gn21_positive_fixed_response_source_d
     accept_all_optimal nonsurge surge
 
 /--
+Theorem 4 positive-response route from structured current-bounds source data:
+Lean derives the positive Lemma 5 policy form from Lemma 9/10 current-bounds
+positivity and uses only the accept-all marginal comparison.
+-/
+def theorem4_positive_response_acceptAll_candidate_of_current_bounds_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+        mu arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate mu
+      (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :=
+  GN21DriverSurgePricing.Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate.of_structured_current_bounds_source
+    mu arrival R1 R2 switch12 switch21 m z C
+
+/--
 Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
 when the non-surge Lemma 5 branch is positive/decreasing and the surge branch
 is positive/increasing, the optimal policy has the paper's multiplicative
@@ -1519,6 +1538,23 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_fea
       mu arrival R1 R2 switch12 switch21 := by
   exact
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+The same source-data feasible current-bounds Theorem 3 route, with
+a.e.-uniqueness explicitly routed through the positive-response Lemma 5 branch.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_positive_response
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_positive_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
