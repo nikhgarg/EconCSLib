@@ -172,9 +172,12 @@ cache is `source.txt`.
   endpoint.  The interface also exposes the newly compiled bridge
   `theorem4_positive_response_marginal_of_gn21_positive_fixed_response_source_data`,
   which converts positive Lemma 6 fixed-response source records for all
-  measurable optima into that marginal certificate.  The endpoint-bridge route
-  isolates the remaining continuous endpoint-bridge proof for the constructed
-  prices.
+  measurable optima into that marginal certificate.  The concrete Theorem 3
+  endpoint is now
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response`,
+  whose final source field is exactly those positive fixed-response records
+  for the constructed prices.  The endpoint-bridge route isolates the
+  remaining continuous endpoint-bridge proof for the constructed prices.
   The positive-mass small-surge route is also public through
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign`,
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax`,
@@ -1177,6 +1180,11 @@ cache is `source.txt`.
   package those positive branches with the measured GN21 regularity fields, and
   `Theorem4MeasurablePositiveResponseAEMarginalCertificate.of_gn21_positive_fixed_response_source_data`
   converts the resulting all-optima records into the Theorem 4 a.e.-uniqueness
+  certificate.  The Theorem 3 wrapper
+  `Theorem3AcceptAllPositiveFixedResponseSourceAssumptions` plus
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_fixed_response_source_assumptions`
+  uses that bridge internally, so future work can target positive GN21
+  fixed-response source records directly instead of a prebuilt marginal
   certificate. The broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose

@@ -516,6 +516,24 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_positive_response_margina
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Concrete positive fixed-response source route for Theorem 3.  The final source
+field consists of positive GN21 fixed-response records for every measurable
+optimum; Lean converts those records to the marginal Lemma 5 certificate.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllPositiveFixedResponseSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_fixed_response_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Plain measurable-IC projection of the positive-response marginal route.
 -/
 theorem theorem3_structured_measurable_ic_of_positive_response_marginal
@@ -529,6 +547,23 @@ theorem theorem3_structured_measurable_ic_of_positive_response_marginal
       mu arrival R1 R2 switch12 switch21 := by
   exact
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_response_marginal_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Plain measurable-IC projection of the concrete positive fixed-response source
+route.
+-/
+theorem theorem3_structured_measurable_ic_of_positive_fixed_response
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllPositiveFixedResponseSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_fixed_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
