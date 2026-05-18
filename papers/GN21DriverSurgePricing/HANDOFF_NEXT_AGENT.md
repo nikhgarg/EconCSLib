@@ -44,6 +44,21 @@ pointwise/reward-rate equalities.  The remaining hard obligation is to prove
 those bracket-source and fixed-state equality records from the paper's
 algebra, not to assemble the endpoint record by hand.
 
+If the source proof supplies the weaker one-sided rejected-complement
+comparison instead of common fixed-state equality, use the finite-or-infinite
+aggregate-cross route.  The aggregate-cross boundary now also has
+normalized-mass public wrappers:
+
+```lean
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source
+```
+
+These consume the aggregate-cross source package directly and derive positive
+accept-all measure from `singleStateTripMass (mu i) acceptAllPolicy = 1`; use
+the pointwise-upper-transfer route only when Lean must first derive the
+aggregate cross-ratio from the paper's rejected-tail comparison.
+
 ## Latest Lemma 5 Domain Update
 
 The bounded finite interval domain is now explicitly just the inner-regularity

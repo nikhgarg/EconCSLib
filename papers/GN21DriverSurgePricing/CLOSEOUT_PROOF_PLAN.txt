@@ -976,6 +976,19 @@ The pointwise upper-transfer fixed-response extended/finite packages now lower
 there too.  This keeps the proof source-faithful when it supplies the
 one-sided rejected-tail comparison, while still consuming the weaker
 aggregate-cross Theorem 3 endpoint boundary.
+The extended and finite-or-infinite aggregate-cross boundaries now also have
+normalized-mass ratio-source AE and IC projections:
+
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
+
+Use these lower-level aggregate-cross wrappers when the source proof has
+probability-normalized trip laws and already supplies aggregate-cross endpoint
+data.  Use the pointwise upper-transfer wrappers only when Lean still needs to
+derive the aggregate cross-ratio from the one-sided rejected-complement
+comparison.
 
 If a later source route does not have exact fixed-transfer equality, use the
 weaker complement pointwise comparison:

@@ -253,6 +253,14 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cross_fixed_transfer_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions`;
+  both aggregate-cross routes also have normalized-mass ratio-source wrappers,
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source`,
+  `PaperInterface.theorem3_structured_measurable_ic_of_extended_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source`,
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source`,
+  and
+  `PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source`,
+  which derive the positive accept-all measure fields from
+  `singleStateTripMass (μ i) acceptAllPolicy = 1`;
   its pointwise-upper fixed-response specialization is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source`,
   with IC projection
@@ -1784,6 +1792,11 @@ where the non-surge side is stated as
 `rejectsLongTripsFiniteOrInfiniteCutoff`; it lowers to the extended route via
 `to_extended_source` and is exposed as
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer`.
+The extended and finite-or-infinite aggregate-cross routes now also have
+normalized-mass ratio-source AE and IC projections, so source proofs using
+probability-normalized trip laws can call the aggregate-cross boundary directly
+without detouring through the pointwise fixed-response specialization just to
+derive positive accept-all measure.
 The exact finite-cutoff aggregate-cross package now lowers into this
 finite-or-infinite boundary through
 `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.to_finite_or_infinite_source`
