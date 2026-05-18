@@ -498,6 +498,11 @@ cache is `source.txt`.
   internally from the paper's ratio hypotheses.  This boundary also derives
   positive and finite non-surge accept-all mass from the source's
   normalized-mass equation instead of exposing those as separate fields.
+  The normalized-mass variant
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_normalized_mass_data_assumptions`
+  also derives the surge accept-all positive-mass premise from the state-2
+  normalized-mass equation; the compact interface name is
+  `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax_normalized_mass`.
   This replaces the positive-`z_0` reward envelope `m_0+z_0*switch12` by the
   cycle-normalized envelope `max m_0 (arrival_0*z_0)`, using accept-all mass
   normalization and finite current mass.  The scalar helper
