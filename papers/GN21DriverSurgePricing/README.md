@@ -1185,7 +1185,13 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_fixed_response_source_assumptions`
   uses that bridge internally, so future work can target positive GN21
   fixed-response source records directly instead of a prebuilt marginal
-  certificate. The broader allowed-replacement route is also
+  certificate.  The pointwise algebra feeding those records is also compiled:
+  `gn21Lemma6Response_pos_of_derivative_sign_kernel_pos`,
+  `gn21MeasuredLeftLemma6ResponseAtCurrent_pos_of_lemma10_current_bounds`, and
+  `gn21MeasuredRightLemma6ResponseAtCurrent_pos_of_lemma9_current_bounds`
+  convert Lemma 9/10 current-bounds kernel positivity into the normalized
+  positive Lemma 6 response required by the source-record constructors. The
+  broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
   `paper_theorem3_measured_structured_ic_prices_of_source_assumptions`, whose
   proof boundary is the continuous allowed-replacement Theorem 4 certificate
