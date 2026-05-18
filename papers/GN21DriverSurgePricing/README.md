@@ -955,21 +955,28 @@ cache is `source.txt`.
   `theorem3AcceptAllFeasibleRejectedMassStrictLocalPositiveParameterCertificate_of_ae_endpoint_middle_reroute`,
   `Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_ratio_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions`,
   `GN21Theorem3MiddleRerouteLightAEEqSourceData`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_ratio_source_assumptions`,
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_ratio_source_assumptions`,
   and
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions`.
   The first four declarations are the direct measure-theoretic endpoint
   boundary: Theorem 3 can now consume shared regularity plus the AE endpoint
   selection certificate without first packaging exact all-measurable Lemma 5
-  replacement data.  The later wrappers use source-data records
+  replacement data, and the ratio-source wrapper derives `R1 > 0` and
+  `R1 < R2` from `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0`.  The later wrappers use source-data records
   `GN21Theorem3MiddleRerouteAEPolicyFormSourceData` and
   `GN21Theorem3MiddleRerouteLightAEEqSourceData` or
   `GN21Theorem3MiddleRerouteAEEqSourceData` so the proof can separately supply
   Lemma 5 replacement data, accept-all optimality, and the local fixed-state
   endpoint package; prefer the light Eq source data for AE uniqueness because it
-  does not ask for the exact-route all-branch surge middle-gap fact.  The stronger exact middle-reroute source boundaries now
+  does not ask for the exact-route all-branch surge middle-gap fact.  The
+  existence ratio-source version is the preferred light Eq boundary when
+  accept-all optimality should also be derived internally from the
+  positive-rejected-mass certificate.  The stronger exact middle-reroute source boundaries now
   feed this AE route directly through
   `Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions`,
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae`,
@@ -1662,7 +1669,12 @@ when the source proof supplies accept-all optimality, and use
 or
 `PaperInterface.theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_reroute_existence`
 when accept-all optimality should be derived internally from the rejected-mass
-strict-improvement certificate.  These routes are the current representative
+strict-improvement certificate.  Ratio-source variants with the same names
+ending in `_ratio_source` are also exposed and should be preferred when working
+from the paper hypotheses `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0`.
+The direct AE endpoint route has the analogous public ratio interface
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_ae_endpoint_middle_reroute_ratio_source`.
+These routes are the current representative
 bridge for Lemma 5 a.e. forms; they do not require every surge-middle branch to
 carry an all-branch gap fact.
 This is the lighter fixed-transfer boundary for normalized exact

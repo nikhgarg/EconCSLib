@@ -1040,8 +1040,11 @@ GN21Theorem3MiddleRerouteAEPolicyFormSourceData
 paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_ae_source_assumptions
 GN21Theorem3MiddleRerouteLightAEEqSourceData
 paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_ratio_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_ratio_source_assumptions
 GN21Theorem3MiddleRerouteAEEqSourceData
 paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_ae_source_assumptions
+paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_ratio_source_assumptions
 ```
 
 This is the paper-proof bridge for the collapsed-gap convention: positive
@@ -1049,9 +1052,13 @@ rejected mass supplies `lo < hi`; when there is no positive rejected mass, the
 AE uniqueness theorem treats the branch as already accept-all almost
 everywhere.  Prefer the light Eq source data for the final AE route; the older
 `GN21Theorem3MiddleRerouteAEEqSourceData` is stronger because its local endpoint
-record still includes the exact-route all-branch surge middle-gap field.  The
-next integration target is to build the source-data records
-from the paper's regularity hypotheses.  Use `R1_current`/`r1_current` for
+record still includes the exact-route all-branch surge middle-gap field.  When
+starting from the paper's `C < rho < 1` assumptions, prefer the ratio-source
+wrappers so the source proof does not restate `R1 > 0` and `R1 < R2`; prefer
+the existence light Eq ratio wrapper when accept-all optimality should be
+derived internally from the rejected-mass strict-improvement certificate.  The
+next integration target is to build the source-data records from the paper's
+regularity hypotheses.  Use `R1_current`/`r1_current` for
 Lemma 9's locally fixed non-surge reward rate and reserve `R1`/`targetR1` for
 Theorem 3's target rate; the paper locally reuses `R1` in Lemma 9.
 
