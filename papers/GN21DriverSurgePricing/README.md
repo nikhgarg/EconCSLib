@@ -1808,6 +1808,12 @@ Use that route when the paper proof has fixed reward-rate identities plus the
 surge reject-short/reject-middle and non-surge reject-long/accept-middle
 aggregate cross-ratio fields; it avoids strengthening to pointwise equality or
 scalar cutoff assumptions just to assemble the endpoint certificate.
+The finite-or-infinite aggregate-cross source package now has the matching
+constructor
+`GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.of_one_threshold_fixed_response_cross_fields`,
+so the public paper-facing `t = infinity` route can be instantiated directly
+from branch selectors, fixed-response records, reward-rate identities, shared
+regularity, and aggregate cross-ratio fields.
 The exact finite-cutoff aggregate-cross package now lowers into this
 finite-or-infinite boundary through
 `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.to_finite_or_infinite_source`

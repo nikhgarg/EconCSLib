@@ -73,6 +73,17 @@ surge/non-surge aggregate cross-ratio inequalities.  Do not strengthen this
 route to pointwise rejected-complement equality, scalar surge-cutoff fields, or
 preassembled endpoint certificates unless the paper proof already supplies
 those stronger facts.
+The public finite-or-infinite aggregate-cross route has the same direct
+constructor:
+
+```lean
+GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.of_one_threshold_fixed_response_cross_fields
+```
+
+Use it for the closest paper-facing endpoint-selection proof: supply the
+finite-or-infinite non-surge cutoff convention, the surge reject-short shape,
+the one-threshold fixed-response records, and the five aggregate cross-ratio
+fields.  The local endpoint certificate is built internally.
 
 ## Latest Lemma 5 Domain Update
 

@@ -1004,6 +1004,15 @@ normalizations and positive current mass; future closeout work should prove
 the five exposed aggregate cross-ratio inequalities directly from the paper's
 Lemma 9/10 algebra, rather than first proving pointwise equality or scalar
 cutoff packages unless those are already the shortest local proof.
+The public finite-or-infinite aggregate-cross package can now be built from
+the same data:
+
+  GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.of_one_threshold_fixed_response_cross_fields
+
+Use this for the paper-facing `t = infinity` cutoff route.  It keeps the
+finite-or-infinite non-surge selector and the surge reject-short selector as
+source fields, but no longer asks future proofs to preassemble the local
+endpoint certificate.
 
 If a later source route does not have exact fixed-transfer equality, use the
 weaker complement pointwise comparison:
