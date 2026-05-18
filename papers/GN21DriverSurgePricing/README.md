@@ -255,18 +255,26 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions`;
   its pointwise-upper fixed-response specialization is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source`,
+  with IC projection
+  `PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions`;
   the normalized-mass version
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_normalized_mass_ratio_source`
+  and IC projection
+  `PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise_upper_transfer_normalized_mass_ratio_source`
   derives the two accept-all positive-mass fields from
   `singleStateTripMass (μ i) acceptAllPolicy = 1`, matching the source
   probability-distribution convention; the named-rate version
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source`
+  and IC projection
+  `PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source`
   additionally derives the endpoint fixed-reward-rate equalities from the
   Lemma 6 bracket names `Ri = R1` and `Rj = R2`;
   the extended pointwise analogue is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise_upper_transfer_ratio_source`,
+  with IC projection
+  `PaperInterface.theorem3_structured_measurable_ic_of_extended_branch_pointwise_upper_transfer_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_extended_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions`.
   The closest Lemma 5 representative route is
