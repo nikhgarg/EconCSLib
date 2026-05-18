@@ -1078,7 +1078,11 @@ cache is `source.txt`.
   Its ratio-source wrapper
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_ratio_source_assumptions`
   now derives the internal `R1 > 0` and `R1 < R2` scalar fields from the
-  paper's `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0` hypotheses.
+  paper's `C < rho < 1`, `R1 = rho * R2`, and `R2 > 0` hypotheses; the
+  normalized-mass variant
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible_normalized_mass_ratio_source`
+  derives the accept-all positive-measure fields from
+  `singleStateTripMass (μ i) acceptAllPolicy = 1`.
   The feasible primitive, accounting-form, and reward-rate current-bounds
   source boundaries expose the same conclusion through
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_feasible_primitive_source_assumptions`,
