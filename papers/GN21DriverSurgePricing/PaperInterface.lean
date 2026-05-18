@@ -210,6 +210,25 @@ def theorem4_positive_response_acceptAll_candidate_of_current_bounds_source
     mu arrival R1 R2 switch12 switch21 m z C
 
 /--
+Theorem 4 positive-response route from optimal-policy structured current-bounds
+source data.  This is the narrower source boundary: Lemma 9/10 data are needed
+only for measurable optimal policies, not for every feasible policy.
+-/
+def theorem4_positive_response_acceptAll_candidate_of_optimal_current_bounds_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
+        mu arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate mu
+      (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) :=
+  GN21DriverSurgePricing.Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate.of_structured_current_bounds_optimal_source
+    mu arrival R1 R2 switch12 switch21 m z C
+
+/--
 Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
 when the non-surge Lemma 5 branch is positive/decreasing and the surge branch
 is positive/increasing, the optimal policy has the paper's multiplicative
@@ -1555,6 +1574,26 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_pos
       mu arrival R1 R2 switch12 switch21 := by
   exact
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_positive_response_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 route that separates weak feasible IC from optimal-policy
+positive-response uniqueness.  The non-optimal feasible policy obligations
+remain only in the weak reward certificate; Lemma 9/10 source data for the
+positive-response a.e. uniqueness step are required only for measurable
+optimal policies.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredFeasibleWeakRewardOptimalPositiveResponseSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_positive_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
