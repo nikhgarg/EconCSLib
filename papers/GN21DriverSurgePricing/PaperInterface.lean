@@ -445,6 +445,24 @@ theorem theorem3_feasibility_thresholdC_mem_Ico_acceptAll
       hq1_integrable hmeasure1_pos
 
 /--
+Theorem 3 positive-mass IC on the small-surge route where the current Lemma 9
+lower endpoint is derived from the accept-all endpoint and a fixed-state
+lower-cross comparison for the current non-surge policy.
+-/
+theorem theorem3_positive_mass_measurable_ic_of_small_surge_fixed_lower_cross
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFixedLowerCrossDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_fixed_lower_cross_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 positive-mass IC on the mass-affine small-surge route: the source
 provides the current Lemma 9 final-sign inequality and the scalar
 arrival/intercept numerator bound; Lean derives the selected-price lower slack

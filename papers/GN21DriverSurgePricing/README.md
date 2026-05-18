@@ -528,10 +528,17 @@ cache is `source.txt`.
   derive the uniform-upper and lower-endpoint denominator work internally, so
   the newest source boundary only asks for the sign-selected `Rmax`, the
   zero-ratio numerator condition, and the current Lemma 9 lower-endpoint sign
-  condition.  This lower-endpoint sign condition is stronger than the source
-  Lemma 9 interval-feasibility final line, which proves `lower < upper` rather
-  than `lower <= 0`; if the sign condition is not implied, the next proof
-  route should use a non-small-ratio Lemma 9 construction instead.
+  condition.  The fixed-lower-cross variant
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_fixed_lower_cross_data_assumptions`
+  now derives that current lower-endpoint sign condition from accept-all
+  lower nonpositivity and the fixed-state cross comparison
+  `T_current * Q_acceptAll <= T_acceptAll * Q_current` for the current
+  non-surge policy.  This is closer to the paper's comparison proof than
+  assuming each current-policy lower endpoint directly.  The lower-endpoint
+  sign condition itself is stronger than the source Lemma 9
+  interval-feasibility final line, which proves `lower < upper` rather than
+  `lower <= 0`; if the sign condition is not implied, the next proof route
+  should use a non-small-ratio Lemma 9 construction instead.
   The current preferred interval route avoids that questionable current
   lower-sign step.  The compiled constructors
   `GN21SurgeLemma9AcceptAllAggregateRewardRateData.exists_of_reward_envelope_current_interval_slack`,
