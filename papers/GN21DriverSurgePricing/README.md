@@ -261,6 +261,16 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_surge_cross_fixed_transfer_normalized_mass_ratio_source`,
   which derive the positive accept-all measure fields from
   `singleStateTripMass (μ i) acceptAllPolicy = 1`;
+  the finite-or-infinite aggregate-cross route also has named-rate
+  normalized-mass wrappers
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_named_rate_normalized_mass_ratio_source`
+  and
+  `PaperInterface.theorem3_structured_measurable_ic_of_finite_or_infinite_branch_surge_cross_named_rate_normalized_mass_ratio_source`,
+  backed by
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_named_rate_normalized_mass_ratio_source_assumptions`;
+  use these when Lemma 6's local bracket records provide `Ri = R1` and
+  `Rj = R2`, so Lean derives the fixed reward-rate equalities without
+  strengthening to the pointwise upper-transfer boundary;
   its pointwise-upper fixed-response specialization is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source`,
   with IC projection
@@ -1821,6 +1831,11 @@ constructor
 so the public paper-facing `t = infinity` route can be instantiated directly
 from branch selectors, fixed-response records, reward-rate identities, shared
 regularity, and aggregate cross-ratio fields.
+It also has the named-rate source package
+`GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData`
+and `.to_source` adapter, which keep the local Lemma 6 names `Ri = R1` and
+`Rj = R2` in the source assumptions and let Lean derive the fixed reward-rate
+equalities before invoking the aggregate-cross endpoint certificate.
 The exact finite-cutoff aggregate-cross package now lowers into this
 finite-or-infinite boundary through
 `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.to_finite_or_infinite_source`
