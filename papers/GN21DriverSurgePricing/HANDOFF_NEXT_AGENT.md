@@ -8,11 +8,12 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 ## Build State
 
 As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and
-`lake build GN21DriverSurgePricing` pass after the newest Lemma 1-3 IID-cycle
+`lake build GN21DriverSurgePricing.PaperInterface` pass after the newest Lemma 1-3 IID-cycle
 strong-law work, Lemma 9 envelope/slack source-boundary reduction, and the
 current payment nonnegativity derivation.  The latest checked build also passes
 after adding the generalized interval/ray Lemma 5 descent domain and the
-global endpoint-path calculus used by Lemma 5 Step 2.
+global endpoint-path calculus used by Lemma 5 Step 2, plus the direct AE and
+light existence normalized-mass ratio endpoints for Theorem 3.
 
 Useful checks:
 
@@ -21,6 +22,23 @@ lake build GN21DriverSurgePricing
 latexmk -pdf DependencyDAG.tex   # from papers/GN21DriverSurgePricing
 git diff --check -- papers/GN21DriverSurgePricing skills/econcs-formalizer
 ```
+
+## Current Public Theorem 3 Boundary
+
+For the source-faithful paper path, prefer the normalized-mass existence route:
+
+```lean
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_middle_reroute_existence_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_reroute_existence_normalized_mass_ratio_source
+```
+
+It derives the scalar `R1` positivity/order facts from `R1 = rho * R2`,
+`R2 > 0`, and `C < rho < 1`, and derives the positive accept-all measure
+fields from `singleStateTripMass (mu i) acceptAllPolicy = 1`.  The remaining
+hard obligation is to construct, for each structured price, the
+`GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData` endpoint-selection
+record from Lemma 5 policy-form replacement data and the regular endpoint
+calculus.
 
 ## Latest Lemma 5 Domain Update
 

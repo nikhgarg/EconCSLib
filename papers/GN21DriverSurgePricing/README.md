@@ -1567,6 +1567,11 @@ and
 derive the scalar `R1` positivity/order fields from `C < rho < 1`, so the
 paper proof can call this route directly from the Lemma 6 sign-bracket
 payload.
+For probability-normalized trip laws, the direct AE middle-reroute route also
+has normalized ratio endpoints:
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions`
+and
+`paper_theorem3_measured_structured_measurable_ic_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions`.
 Use this route when the paper proof supplies only the positive-`lo`
 non-surge accepted-middle gap, since Lean handles the `lo <= 0` branch by
 the reject-long cutoff reroute.
@@ -2175,6 +2180,12 @@ and
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_source_assumptions`
   consume Lemma 5 replacement data plus the local endpoint package without a
   separate accept-all optimality field.
+  Their ratio-source and normalized-mass ratio-source wrappers now also derive
+  the scalar `R1` order fields and accept-all measure positivity from the
+  paper hypotheses:
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_ratio_source_assumptions`
+  and
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_normalized_mass_ratio_source_assumptions`.
 Lean now derives this rejected mass from the allowed Lemma 5 policy forms under
 the shared density-support package via
 `GN21WithDensityAcceptAllSupport.rejected_mass_pos_of_rejectsLongTrips`,
