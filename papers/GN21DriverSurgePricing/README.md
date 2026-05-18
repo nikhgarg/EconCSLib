@@ -1797,6 +1797,17 @@ normalized-mass ratio-source AE and IC projections, so source proofs using
 probability-normalized trip laws can call the aggregate-cross boundary directly
 without detouring through the pointwise fixed-response specialization just to
 derive positive accept-all measure.
+The policy-form aggregate-cross middle-cutoff route can now also be built
+directly from one-threshold GN21 fixed-response source data and the actual
+statewise cross-ratio inequalities:
+`GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.of_fixed_response_cross_fields`,
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_one_threshold_fixed_response_cross_fields`,
+and
+`GN21Theorem3FixedResponsePolicyFormSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms_and_cross_fields`.
+Use that route when the paper proof has fixed reward-rate identities plus the
+surge reject-short/reject-middle and non-surge reject-long/accept-middle
+aggregate cross-ratio fields; it avoids strengthening to pointwise equality or
+scalar cutoff assumptions just to assemble the endpoint certificate.
 The exact finite-cutoff aggregate-cross package now lowers into this
 finite-or-infinite boundary through
 `GN21Theorem3ExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData.to_finite_or_infinite_source`

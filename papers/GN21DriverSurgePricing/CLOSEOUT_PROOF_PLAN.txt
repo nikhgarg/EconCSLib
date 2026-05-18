@@ -990,6 +990,21 @@ data.  Use the pointwise upper-transfer wrappers only when Lean still needs to
 derive the aggregate cross-ratio from the one-sided rejected-complement
 comparison.
 
+The middle-cutoff aggregate-cross route can now be entered directly from
+one-threshold GN21 fixed-response data plus the paper's statewise cross-ratio
+fields:
+
+  GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.of_fixed_response_cross_fields
+  Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_one_threshold_fixed_response_cross_fields
+  GN21Theorem3FixedResponsePolicyFormSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms_and_cross_fields
+
+This is the current weakest source-faithful constructor for the policy-form
+aggregate-cross path.  Fixed-response records provide the reward-rate
+normalizations and positive current mass; future closeout work should prove
+the five exposed aggregate cross-ratio inequalities directly from the paper's
+Lemma 9/10 algebra, rather than first proving pointwise equality or scalar
+cutoff packages unless those are already the shortest local proof.
+
 If a later source route does not have exact fixed-transfer equality, use the
 weaker complement pointwise comparison:
 

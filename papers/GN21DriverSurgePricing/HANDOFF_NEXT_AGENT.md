@@ -8,12 +8,11 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 ## Build State
 
 As of this handoff, both `lake build GN21DriverSurgePricing.MainTheorems` and
-`lake build GN21DriverSurgePricing.PaperInterface` pass after the newest Lemma 1-3 IID-cycle
-strong-law work, Lemma 9 envelope/slack source-boundary reduction, and the
-current payment nonnegativity derivation.  The latest checked build also passes
-after adding the generalized interval/ray Lemma 5 descent domain and the
-global endpoint-path calculus used by Lemma 5 Step 2, plus the direct AE and
-light existence normalized-mass ratio endpoints for Theorem 3.
+`lake build GN21DriverSurgePricing.PaperInterface` pass after the newest Lemma
+1-3 IID-cycle strong-law work, Lemma 9 envelope/slack source-boundary
+reduction, the generalized interval/ray Lemma 5 descent domain, the direct AE
+and light existence normalized-mass ratio endpoints for Theorem 3, and the
+aggregate-cross fixed-response source constructors described below.
 
 Useful checks:
 
@@ -58,6 +57,22 @@ These consume the aggregate-cross source package directly and derive positive
 accept-all measure from `singleStateTripMass (mu i) acceptAllPolicy = 1`; use
 the pointwise-upper-transfer route only when Lean must first derive the
 aggregate cross-ratio from the paper's rejected-tail comparison.
+
+The aggregate-cross middle-cutoff route now has a direct fixed-response source
+constructor:
+
+```lean
+GN21SurgeFixedStateTheorem3FixedTransferCrossRewardRateNoMassPolicyFormData.of_fixed_response_cross_fields
+Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_one_threshold_fixed_response_cross_fields
+GN21Theorem3FixedResponsePolicyFormSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_one_threshold_structured_forms_and_cross_fields
+```
+
+Use this when the proof has the Lemma 5 one-threshold fixed-response records,
+fixed reward-rate identities, shared endpoint regularity, and the actual
+surge/non-surge aggregate cross-ratio inequalities.  Do not strengthen this
+route to pointwise rejected-complement equality, scalar surge-cutoff fields, or
+preassembled endpoint certificates unless the paper proof already supplies
+those stronger facts.
 
 ## Latest Lemma 5 Domain Update
 
