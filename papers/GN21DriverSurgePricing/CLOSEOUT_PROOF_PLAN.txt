@@ -1255,6 +1255,18 @@ Recommended proof order
      paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_reward_rate_positive_response_normalized_mass_ratio_source_assumptions
      PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_accounting_positive_response_normalized_mass_ratio_source
      PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_reward_rate_positive_response_normalized_mass_ratio_source
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_normalized_mass_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_normalized_mass_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_normalized_mass_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_reward_rate_normalized_mass_ratio_source_assumptions
+     PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_ratio_source
+     PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_normalized_mass_ratio_source
+     PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_accounting_normalized_mass_ratio_source
+     PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_ratio_source
+     PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_normalized_mass_ratio_source
+     PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_reward_rate_normalized_mass_ratio_source
 
    Prefer the normalized-mass split endpoint when the proof has probability
    trip-length laws, a weak feasible-IC certificate, and Lemma 9/10
@@ -1264,6 +1276,11 @@ Recommended proof order
    local accounting equations or reward-rate equalities, use the two
    `of_optimal_*` adapters above first; they build the current-bounds source
    certificate without quantifying over non-optimal feasible policies.
+   If the proof instead has all-feasible current-bounds data already in
+   accounting or reward-rate form, use the new accounting/reward-rate
+   ratio-source or normalized-mass wrappers directly; they now discharge the
+   same ratio and probability-normalization side fields as the source-data
+   current-bounds route.
 6. Prove or explicitly source-assume the exposed arrival/intercept numerator
    bound `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`.  This is now the active
    source-wrapper field; Lean derives `arrival0*z0 <= R2` from it.  The

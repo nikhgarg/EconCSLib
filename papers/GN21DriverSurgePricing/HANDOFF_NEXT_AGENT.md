@@ -73,6 +73,25 @@ surge/non-surge aggregate cross-ratio inequalities.  Do not strengthen this
 route to pointwise rejected-complement equality, scalar surge-cutoff fields, or
 preassembled endpoint certificates unless the paper proof already supplies
 those stronger facts.
+
+For the source-current-bounds path, the all-feasible accounting and reward-rate
+routes now have the same ratio and normalized-mass public wrappers as the
+source-data route:
+
+```lean
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_accounting_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_reward_rate_normalized_mass_ratio_source
+```
+
+Use these when the source proof has all-feasible Lemma 9/10 current-bounds data
+in Remark 2 accounting form or measured reward-rate form.  They derive the
+internal `R1 > 0`, `R1 < R2`, and positive accept-all measure side fields from
+the paper's ratio and probability-normalization assumptions.
+
 The public finite-or-infinite aggregate-cross route has the same direct
 constructor:
 

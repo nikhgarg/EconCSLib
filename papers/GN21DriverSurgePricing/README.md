@@ -2390,6 +2390,19 @@ The same source-current-bounds route is now exposed in the compact
 with accounting and reward-rate variants
 `theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting` and
 `theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate`.
+The accounting and reward-rate variants now also have paper-ratio and
+normalized-mass public surfaces:
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_normalized_mass_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_accounting_normalized_mass_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_normalized_mass_ratio_source`,
+and
+`PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_reward_rate_normalized_mass_ratio_source`.
+These derive the internal `R1 > 0`, `R1 < R2`, and positive accept-all measure
+fields from `R1 = rho * R2`, `R2 > 0`, `C < rho < 1`, and probability-normalized
+trip laws, so source proofs using Remark 2 accounting equations or measured
+reward-rate equalities can enter the full AE-unique Theorem 3 route directly.
 The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,
