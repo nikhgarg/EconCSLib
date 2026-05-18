@@ -1103,7 +1103,7 @@ reference.
 | Touched code | Read |
 |---|---|
 | `EconCSLib/Foundations/Math/*`, graph/counting/rounding/sign lemmas | `references/proof-foundations-math.md` |
-| `EconCSLib/Foundations/Probability/*`, finite PMFs, Markov kernels/chains, concentration, measure inequalities, continuous densities, RUM/noise laws, order statistics, large deviations | `references/proof-foundations-probability.md` |
+| `EconCSLib/Foundations/Probability/*`, finite PMFs, Markov kernels/chains, CTMCs, renewal-reward, reward-rate, concentration, measure inequalities, continuous densities, RUM/noise laws, order statistics, large deviations | `references/proof-foundations-probability.md` |
 | `EconCSLib/Foundations/Optimization/*`, argmax/existence/objective wrappers | `references/proof-foundations-optimization.md` |
 | `EconCSLib/Applications/RecommenderSystems/*`, accuracy/diversity, producer fairness, count allocation | `references/proof-recommender-systems.md` |
 | `EconCSLib/Algorithms/Online/*`, AdWords/MSVV, online matching, regret/Yao | `references/proof-algorithms-online.md` |
