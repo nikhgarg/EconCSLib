@@ -226,8 +226,8 @@ cache is `source.txt`.
   the paper's `C ∈ [0,1)` claim for measured accept-all primitives, plus
   ratio-source wrappers for the endpoint-bridge, feasible-a.e.
   representative, fixed-response policy-form, branch-field surge-cutoff,
-  bracket-ordered cross-field, finite-or-infinite aggregate-cross, and
-  pointwise-upper-transfer Theorem 3 routes.  These
+  bracket-ordered cross-field, extended/finite-or-infinite aggregate-cross,
+  and pointwise-upper-transfer Theorem 3 routes.  These
   wrappers derive `R1 > 0` and `R1 < R2` from `C < rho < 1`,
   `R1 = rho * R2`, and `R2 > 0`, so future source proofs should not
   reintroduce those scalar fields as separate assumptions on this route.
@@ -242,10 +242,18 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_surge_cross_fixed_transfer_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions`;
+  the source-faithful extended cutoff convention has the analogous
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cross_fixed_transfer_ratio_source`,
+  backed by
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions`;
   its pointwise-upper fixed-response specialization is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_ratio_source`,
   backed by
-  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions`.
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions`;
+  the extended pointwise analogue is
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise_upper_transfer_ratio_source`,
+  backed by
+  `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_extended_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions`.
   The closest Lemma 5 representative route is
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_ae_representatives_ratio_source`,
   backed by
