@@ -2379,6 +2379,16 @@ The direct normalized-mass Theorem 3 surfaces are now
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_accounting_positive_response_normalized_mass_ratio_source`,
 and
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_reward_rate_positive_response_normalized_mass_ratio_source`.
+The direct positive-response and concrete fixed-response boundaries now have
+matching normalized-mass ratio wrappers as well:
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_of_positive_response_marginal_normalized_mass_ratio_source`,
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response_normalized_mass_ratio_source`,
+and
+`PaperInterface.theorem3_structured_measurable_ic_of_positive_fixed_response_normalized_mass_ratio_source`.
+Use these when the source proof has the paper's probability-normalized
+trip-length laws and either the direct positive marginal certificate or the
+GN21 fixed-response source records for every measurable optimum.
 The old all-feasible source-current-bounds package now forgets to this split
 boundary via
 `Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions.to_feasible_weak_reward_optimal_positive_response_source_assumptions`,
@@ -2403,6 +2413,12 @@ These derive the internal `R1 > 0`, `R1 < R2`, and positive accept-all measure
 fields from `R1 = rho * R2`, `R2 > 0`, `C < rho < 1`, and probability-normalized
 trip laws, so source proofs using Remark 2 accounting equations or measured
 reward-rate equalities can enter the full AE-unique Theorem 3 route directly.
+The endpoint-bridge route has the same normalized-mass ratio surface:
+`PaperInterface.theorem3_structured_ic_of_endpoint_bridge_normalized_mass_ratio_source`
+and
+`PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
+These are the preferred entry points when the remaining proof is the continuous
+endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
 The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,

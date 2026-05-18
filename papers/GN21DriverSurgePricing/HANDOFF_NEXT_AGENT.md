@@ -92,6 +92,24 @@ in Remark 2 accounting form or measured reward-rate form.  They derive the
 internal `R1 > 0`, `R1 < R2`, and positive accept-all measure side fields from
 the paper's ratio and probability-normalization assumptions.
 
+The direct positive-response, concrete positive fixed-response, and
+endpoint-bridge routes now have the same normalized-mass ratio public surface:
+
+```lean
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_positive_response_marginal_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_positive_fixed_response_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_ic_of_endpoint_bridge_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
+```
+
+Use these when the remaining source proof is genuinely the positive
+marginal/fixed-response data or the continuous endpoint bridge.  Do not spend
+time restating `R1 > 0`, `R1 < R2`, or positive accept-all measure in those
+routes; Lean now derives those side fields from the paper's ratio and
+probability-normalization hypotheses.
+
 The public finite-or-infinite aggregate-cross route has the same direct
 constructor:
 
