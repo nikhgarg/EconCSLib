@@ -1572,6 +1572,12 @@ has normalized ratio endpoints:
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions`
 and
 `paper_theorem3_measured_structured_measurable_ic_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions`.
+The bracket middle-cutoff route now has an even closer paper-facing boundary:
+`GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateEqSourceExistenceData`
+packages Lemma 6 bracket forms, shared endpoint regularity, and Lemma 9/10
+fixed-state pointwise/reward-rate equalities, and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source_assumptions`
+constructs the local endpoint certificate internally.
 Use this route when the paper proof supplies only the positive-`lo`
 non-surge accepted-middle gap, since Lean handles the `lo <= 0` branch by
 the reject-long cutoff reroute.

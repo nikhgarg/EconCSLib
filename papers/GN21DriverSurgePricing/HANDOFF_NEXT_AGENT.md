@@ -25,20 +25,24 @@ git diff --check -- papers/GN21DriverSurgePricing skills/econcs-formalizer
 
 ## Current Public Theorem 3 Boundary
 
-For the source-faithful paper path, prefer the normalized-mass existence route:
+For the source-faithful paper path, prefer the normalized-mass bracket
+middle-cutoff fixed-state-equality route:
 
 ```lean
-PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_middle_reroute_existence_normalized_mass_ratio_source
-PaperInterface.theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_reroute_existence_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source
+PaperInterface.theorem3_structured_measurable_ic_of_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source
 ```
 
 It derives the scalar `R1` positivity/order facts from `R1 = rho * R2`,
 `R2 > 0`, and `C < rho < 1`, and derives the positive accept-all measure
-fields from `singleStateTripMass (mu i) acceptAllPolicy = 1`.  The remaining
-hard obligation is to construct, for each structured price, the
-`GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData` endpoint-selection
-record from Lemma 5 policy-form replacement data and the regular endpoint
-calculus.
+fields from `singleStateTripMass (mu i) acceptAllPolicy = 1`.  The per-price
+selection now returns
+`GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateEqSourceExistenceData`,
+so the local endpoint certificate is built internally from Lemma 6 bracket
+source data, shared endpoint regularity, and the Lemma 9/10 fixed-state
+pointwise/reward-rate equalities.  The remaining hard obligation is to prove
+those bracket-source and fixed-state equality records from the paper's
+algebra, not to assemble the endpoint record by hand.
 
 ## Latest Lemma 5 Domain Update
 
