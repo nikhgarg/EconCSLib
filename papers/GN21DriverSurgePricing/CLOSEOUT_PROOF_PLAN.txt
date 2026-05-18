@@ -1239,6 +1239,19 @@ Recommended proof order
    fixed-state-by-policy-form / common equality and cutoff-bound source fields
    from the paper's regularity hypotheses, then consume them through the
    middle-reroute source wrappers rather than the older cutoff-only route.
+   The split positive-response route now also has compact paper-ratio and
+   normalized-mass entry points:
+
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_positive_response_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
+     paper_theorem3_measured_structured_measurable_ic_prices_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
+     PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_ratio_source
+     PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source
+
+   Prefer the normalized-mass split endpoint when the proof has probability
+   trip-length laws, a weak feasible-IC certificate, and Lemma 9/10
+   positive-response current-bounds data only for measurable optima.  It
+   derives `R1 > 0`, `R1 < R2`, and positive accept-all masses internally.
 6. Prove or explicitly source-assume the exposed arrival/intercept numerator
    bound `arrival0*(rho*T1-(T1-1)) <= Q1-switch12`.  This is now the active
    source-wrapper field; Lean derives `arrival0*z0 <= R2` from it.  The
