@@ -277,6 +277,13 @@ cache is `source.txt`.
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_fixed_response_policy_form_ratio_source`,
   backed by
   `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_ratio_source_assumptions`.
+  The sharp bracket middle-cutoff route now also has the paper-normalized
+  probability-mass front door
+  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_normalized_mass_ratio_source`
+  and its IC projection
+  `PaperInterface.theorem3_structured_measurable_ic_of_bracket_eq_middle_cutoff_normalized_mass_ratio_source`;
+  it derives the accept-all positive-mass fields from
+  `singleStateTripMass = 1`.
   The source-faithful branch-field and bracket-ordered routes are
   `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_one_threshold_surge_cutoff_branch_fields_ratio_source`
   and
