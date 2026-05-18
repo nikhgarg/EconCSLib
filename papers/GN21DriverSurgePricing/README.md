@@ -491,6 +491,11 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_arrival_bound_data_assumptions`,
   and
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions`.
+  The lighter source wrapper
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_data_assumptions`
+  now removes the explicit `Rmax`/envelope witness: Lean sign-splits the
+  constructed non-surge intercept and chooses the mass-affine envelope
+  internally from the paper's ratio hypotheses.
   This replaces the positive-`z_0` reward envelope `m_0+z_0*switch12` by the
   cycle-normalized envelope `max m_0 (arrival_0*z_0)`, using accept-all mass
   normalization and finite current mass.  The scalar helper

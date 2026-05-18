@@ -331,6 +331,23 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 positive-mass IC on the mass-affine small-surge route with no
+explicit envelope witness: Lean chooses the sign-selected `Rmax` internally.
+-/
+theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_no_rmax
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentLowerFinalSignNoRmaxDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Canonical source-facing Theorem 3 endpoint at the positive-replacement
 boundary: constructed-price algebra and Lemma 9/10 primitive scalar conditions
 are discharged in Lean; the source supplies the positive Lemma 5 replacement
