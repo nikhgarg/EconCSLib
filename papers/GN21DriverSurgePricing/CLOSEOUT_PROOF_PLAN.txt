@@ -104,7 +104,9 @@ The corresponding Theorem 3 AE wrappers are now compiled as:
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_ratio_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions
   GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateEqSourceExistenceData
+  GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateNamedRateSourceExistenceData
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source_assumptions
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_named_rate_normalized_mass_ratio_source_assumptions
   Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateByPolicyFormDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions
   paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_source_assumptions_via_ae
   Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteSourceAssumptions.to_ae_source_assumptions
@@ -158,6 +160,11 @@ hypotheses, use the new ratio-source wrappers above so the source proof does
 not restate `R1 > 0` or `R1 < R2`.  The existence light Eq ratio wrapper is the
 preferred boundary when accept-all optimality should be derived internally from
 the rejected-mass strict-improvement certificate.
+For the bracket fixed-state-equality route, prefer the named-rate source
+record when the proof has Lemma 6's local `Ri = R1` and `Rj = R2`
+identifications.  Lean expands those local names into the fixed earning
+identities before building the endpoint certificate, so source proofs should
+not duplicate both forms.
 
 Latest closeout note: the fixed-response policy-form route no longer needs exact
 all-measurable replacement data merely to feed the common fixed-state equality

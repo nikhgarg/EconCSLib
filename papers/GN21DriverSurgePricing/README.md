@@ -1586,6 +1586,13 @@ packages Lemma 6 bracket forms, shared endpoint regularity, and Lemma 9/10
 fixed-state pointwise/reward-rate equalities, and
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source_assumptions`
 constructs the local endpoint certificate internally.
+The named-rate variant
+`GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateNamedRateSourceExistenceData`
+and public alias
+`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_fixed_state_named_rate_normalized_mass_ratio_source`
+let source proofs state the fixed reward-rate facts as the local Lemma 6
+bracket identifications `Ri = R1` and `Rj = R2`; Lean converts those to the
+earning equalities before invoking the endpoint certificate.
 Use this route when the paper proof supplies only the positive-`lo`
 non-surge accepted-middle gap, since Lean handles the `lo <= 0` branch by
 the reject-long cutoff reroute.
