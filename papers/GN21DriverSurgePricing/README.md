@@ -495,7 +495,9 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_data_assumptions`
   now removes the explicit `Rmax`/envelope witness: Lean sign-splits the
   constructed non-surge intercept and chooses the mass-affine envelope
-  internally from the paper's ratio hypotheses.
+  internally from the paper's ratio hypotheses.  This boundary also derives
+  positive and finite non-surge accept-all mass from the source's
+  normalized-mass equation instead of exposing those as separate fields.
   This replaces the positive-`z_0` reward envelope `m_0+z_0*switch12` by the
   cycle-normalized envelope `max m_0 (arrival_0*z_0)`, using accept-all mass
   normalization and finite current mass.  The scalar helper
