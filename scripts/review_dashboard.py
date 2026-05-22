@@ -3,9 +3,9 @@
 
 This helper creates a local review page for one paper or all papers.  The page
 shows side-by-side the paper-facing claim text (when available) and the Lean
-statement from `PaperInterface.lean`, and lets a reviewer record a checkbox + note
-pair per theorem.  Each submission is appended to a local JSONL trace with the
-reviewer handle and UTC timestamp.
+statement from the paper's curated review surface, and lets a reviewer record a
+checkbox + note pair per theorem.  Each submission is appended to a local JSONL
+trace with the reviewer handle and UTC timestamp.
 """
 
 from __future__ import annotations
@@ -36,12 +36,16 @@ PAPERS_DIR = ROOT / "papers"
 DEFAULT_PAPER_LOG_FILE = "paper_theorem_validations.jsonl"
 DEFAULT_PAPER_INTERFACE_CACHE_FILE = "paper_interface_cache.json"
 DEFAULT_REVIEW_SLICES_FILE = "review_slices.json"
-PAPER_INTERFACE_CACHE_SCHEMA = 2
+PAPER_INTERFACE_CACHE_SCHEMA = 4
 REVIEW_SLICES_SCHEMA = 1
+REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
+REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev"}
 
 
 DECL_RE = re.compile(
-    r"^(?P<indent>\s*)(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?(?P<kind>theorem|lemma|def|abbrev)\s+(?P<name>[A-Za-z_][A-Za-z0-9_']*)\b"
+    r"^(?P<indent>\s*)(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?"
+    r"(?:(?:noncomputable|private|protected)\s+)*"
+    r"(?P<kind>theorem|lemma|def|abbrev)\s+(?P<name>[A-Za-z_][A-Za-z0-9_']*)\b"
 )
 COMMENT_START_RE = re.compile(r"^\s*/-[!]?")
 NAMESPACE_OPEN_RE = re.compile(
@@ -236,6 +240,33 @@ class ReviewItem:
     slice_title: str = "All statements"
 
 
+def find_review_source_file(folder: Path) -> Path | None:
+    """Return the paper's curated human-review Lean surface, if present."""
+
+    candidate = folder / REVIEW_SOURCE_FILENAME
+    if candidate.exists() and candidate.is_file():
+        return candidate
+    return None
+
+
+def review_source_file(folder: Path) -> Path:
+    """Return the paper's review source or raise a readable error."""
+
+    source = find_review_source_file(folder)
+    if source is None:
+        raise FileNotFoundError(
+            f"no canonical human review Lean surface ({REVIEW_SOURCE_FILENAME}) "
+            f"for paper: {folder.name}"
+        )
+    return source
+
+
+def review_source_module(folder: Path, source_file: Path) -> str:
+    """Return the Lean import module for a paper-local review source."""
+
+    return f"{folder.name}.{source_file.stem}"
+
+
 def find_paper_pdf(folder: Path) -> Path | None:
     """Find the most likely paper pdf in a folder."""
 
@@ -401,25 +432,26 @@ def _parse_lean_check_previews(output: str, theorem_names: list[str]) -> dict[st
 
 
 def run_lean_check_previews(
-    paper_folder: Path, theorem_names: list[str], timeout_seconds: int = AGENT_PREVIEW_CHECK_TIMEOUT
+    paper_folder: Path,
+    theorem_names: list[str],
+    timeout_seconds: int = AGENT_PREVIEW_CHECK_TIMEOUT,
+    source_file: Path | None = None,
 ) -> dict[str, str]:
     """Ask Lean for #check output on Lean declarations, with fallback on failure."""
 
     if not theorem_names:
         return {}
     canonical_names = sorted(set(theorem_names))
-    cache_key = f"{paper_folder.resolve()}::{'|'.join(canonical_names)}"
+    module_file = source_file or find_review_source_file(paper_folder)
+    if module_file is None or not module_file.exists():
+        return {}
+    cache_key = f"{paper_folder.resolve()}::{module_file.name}::{'|'.join(canonical_names)}"
     if cache_key in AGENT_PREVIEW_CACHE:
         return AGENT_PREVIEW_CACHE[cache_key]
 
-    import_module = paper_folder.name
-    module_file = paper_folder / "PaperInterface.lean"
-    if not module_file.exists():
-        AGENT_PREVIEW_CACHE[cache_key] = {}
-        return {}
-
+    import_module = review_source_module(paper_folder, module_file)
     lines = [
-        f"import {import_module}.PaperInterface",
+        f"import {import_module}",
         "set_option pp.universes false",
         "",
     ]
@@ -826,13 +858,14 @@ def parse_interface_items(
         [
             full_name
             for kind, _name, full_name, _raw_sig, _comment, _line_number in parsed
-            if kind in {"theorem", "lemma"}
+            if kind in REVIEW_DECL_KINDS
         ],
+        source_file=interface_path,
     )
 
     out: list[ReviewItem] = []
     for kind, name, full_name, raw_sig, doc_comment, line_number in parsed:
-        if kind not in {"theorem", "lemma"}:
+        if kind not in REVIEW_DECL_KINDS:
             continue
         candidates = [
             name,
@@ -874,7 +907,7 @@ def paper_title(folder: Path) -> str:
 
 
 def iter_paper_folders(paper_filter: str | None = None) -> list[Path]:
-    """Return paper directories that have PaperInterface.lean."""
+    """Return paper directories that have a human-review Lean surface."""
 
     folders: list[Path] = []
     for folder in sorted(PAPERS_DIR.iterdir()):
@@ -884,8 +917,7 @@ def iter_paper_folders(paper_filter: str | None = None) -> list[Path]:
             continue
         if paper_filter and folder.name != paper_filter:
             continue
-        interface = folder / "PaperInterface.lean"
-        if not interface.exists():
+        if find_review_source_file(folder) is None:
             continue
         folders.append(folder)
     return folders
@@ -897,8 +929,8 @@ def paper_review_log_file(paper: str | Path) -> Path:
     folder = PAPERS_DIR / str(paper)
     if not folder.exists() or not folder.is_dir():
         raise ValueError(f"unknown paper folder: {paper}")
-    if not (folder / "PaperInterface.lean").exists():
-        raise ValueError(f"no PaperInterface.lean for paper: {paper}")
+    if find_review_source_file(folder) is None:
+        raise ValueError(f"no human review Lean surface for paper: {paper}")
     return folder / ".review_traces" / DEFAULT_PAPER_LOG_FILE
 
 
@@ -908,13 +940,13 @@ def paper_interface_cache_file(paper: str | Path) -> Path:
     folder = PAPERS_DIR / str(paper)
     if not folder.exists() or not folder.is_dir():
         raise ValueError(f"unknown paper folder: {paper}")
-    if not (folder / "PaperInterface.lean").exists():
-        raise ValueError(f"no PaperInterface.lean for paper: {paper}")
+    if find_review_source_file(folder) is None:
+        raise ValueError(f"no human review Lean surface for paper: {paper}")
     return folder / ".review_traces" / DEFAULT_PAPER_INTERFACE_CACHE_FILE
 
 
 def _cache_source_hashes(folder: Path) -> dict[str, str]:
-    interface_path = folder / "PaperInterface.lean"
+    interface_path = review_source_file(folder)
     report_path = folder / "FINAL_VALIDATION_REPORT.md"
     tex_path = find_paper_tex_source(folder)
     slice_path = folder / DEFAULT_REVIEW_SLICES_FILE
@@ -925,6 +957,7 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     slice_source = slice_path.read_text(encoding="utf-8") if slice_path.exists() else ""
 
     return {
+        "review_source_file": interface_path.name,
         "interface_sha256": statement_digest(interface_source),
         "report_sha256": statement_digest(report_source),
         "tex_sha256": statement_digest(tex_source),
@@ -950,6 +983,8 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         return None
 
     hashes = _cache_source_hashes(folder)
+    if payload.get("hashes", {}).get("review_source_file") != hashes["review_source_file"]:
+        return None
     if payload.get("hashes", {}).get("interface_sha256") != hashes["interface_sha256"]:
         return None
     if payload.get("hashes", {}).get("report_sha256") != hashes["report_sha256"]:
@@ -1017,7 +1052,7 @@ def review_items_for_paper(folder: Path, use_cache: bool = True) -> list[ReviewI
         if cached is not None:
             return cached
 
-    interface = folder / "PaperInterface.lean"
+    interface = review_source_file(folder)
     report = folder / "FINAL_VALIDATION_REPORT.md"
     items = parse_interface_items(interface, report if report.exists() else None, folder)
     return items
@@ -2812,8 +2847,10 @@ def main() -> None:
         papers = iter_paper_folders(args.paper)
         if not papers:
             if args.paper:
-                raise SystemExit(f"no PaperInterface.lean found for paper '{args.paper}'")
-            raise SystemExit("no papers with PaperInterface.lean found for cache refresh")
+                raise SystemExit(
+                    f"no canonical human-review PaperInterface.lean found for paper '{args.paper}'"
+                )
+            raise SystemExit("no papers with canonical human-review PaperInterface.lean found")
         for folder in papers:
             refresh_cached_review_rows(folder)
             print(f"refreshed dashboard cache for {folder.name}")

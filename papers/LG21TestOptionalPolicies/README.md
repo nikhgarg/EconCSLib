@@ -18,6 +18,8 @@ cache is kept as `source.txt` for named-statement audits.
 
 - `LG21TestOptionalPolicies/MainTheorems.lean`
 - Human-facing theorem ledger: `LG21TestOptionalPolicies/PaperInterface.lean`
+- Implementation-facing theorem endpoint surface:
+  `LG21TestOptionalPolicies/ProofInterface.lean`
 - Importable source-numbered audit ledger:
   `LG21TestOptionalPolicies/PostPaperAudit.lean`
 - Live proof plan: `LG21TestOptionalPolicies/FORMALIZATION_PLAN.md`
@@ -32,9 +34,9 @@ cache is kept as `source.txt` for named-statement audits.
 ## Guideline Audit
 
 - Folder contract: satisfied (`.gitignore`, `README.md`, `DependencyDAG.tex`,
-  `MainTheorems.lean`, `PaperInterface.lean`, `PostPaperAudit.lean`,
-  `FORMALIZATION_PLAN.md`, `FINAL_VALIDATION_REPORT.md`, local PDF, and
-  `source.txt` are present).
+  `MainTheorems.lean`, compact `PaperInterface.lean`, `ProofInterface.lean`,
+  `PostPaperAudit.lean`, `FORMALIZATION_PLAN.md`,
+  `FINAL_VALIDATION_REPORT.md`, local PDF, and `source.txt` are present).
 - README status vocabulary: updated to use the controlled statuses from
   `docs/STATUS.md`.
 - DAG status vocabulary: updated to use shared `docs/tikz/dag_preamble.tex`

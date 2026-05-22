@@ -1,3 +1,4 @@
 import LG21TestOptionalPolicies.MainTheorems
+import LG21TestOptionalPolicies.ProofInterface
 import LG21TestOptionalPolicies.PaperInterface
 import LG21TestOptionalPolicies.PostPaperAudit

@@ -308,12 +308,20 @@ the Lean statements against the paper.
   paper statement closely enough that a human can inspect just this file and
   verify the intended theorem was formalized. Use paper theorem numbers/names in
   docstrings and keep wrappers thin.
-- For large campaigns, add one adjacent Lean declaration ledger file (for
-  example `PaperInterface.lean`) that is the single-file human verification
-  target for the folder’s claims.
-  The file should be declaration-ordered by paper section and should expose the
-  paper-facing definitions and full theorem statements (with assumptions and
-  short paper-context comments) rather than `#check` entries alone.
+- Every paper folder has exactly one canonical human-review Lean surface:
+  `PaperInterface.lean`. Do not introduce filename variants such as
+  `HumanReview.lean`, `ReviewInterface.lean`, or paper-specific alternatives.
+  If an older `PaperInterface.lean` has grown into a broad proof/API surface,
+  rename that broad file to an implementation-facing name such as
+  `ProofInterface.lean`, update imports, and replace `PaperInterface.lean` with
+  a compact review surface.
+- `PaperInterface.lean` is the file consumed by the human review dashboard. It
+  should be declaration-ordered by paper section and should expose only the
+  paper-facing definitions, formatted paper objects, and named theorem
+  statements (with assumptions and short paper-context comments). It should not
+  contain helper families, proof-seam checks, algebraic plumbing, or endpoint
+  changelogs; put those in `MainTheorems.lean`, `ProofInterface.lean`, or
+  `PostPaperAudit.lean`.
 - For new papers, create `PaperInterface.lean` during intake from the scaffold,
   not only after the proof is complete. Keep it synchronized with the proof plan
   and DAG so the eventual human review file grows with the formalization.
@@ -342,7 +350,7 @@ the Lean statements against the paper.
 - On WSL2, the launcher binds broadly by default, prints localhost and any
   detected WSL guest-IP fallback, and tries to open the candidate URLs in a
   Windows browser. If one URL fails, keep the terminal running and try the
-  other printed URL; large interfaces can take several seconds to initialize.
+  other printed URL.
 - To add `review-dashboard.sh` to existing paper folders that already have
   `PaperInterface.lean` but not the launcher yet, run:
 
@@ -934,9 +942,8 @@ Never enter a cycle of modifying a single line in a shell command just to test s
 Before declaring a paper or proof phase "done," run a final human-facing
 validation pass:
 
-- Re-read the paper-facing theorem ledger file (for example,
-  `PaperInterface.lean` or the named human-facing theorem file) and check
-  each named definition/theorem/corollary against the paper statement.
+- Re-read `PaperInterface.lean` and check each named
+  definition/theorem/corollary against the paper statement.
 - Run the paper-local review workflow from within the paper folder:
   `./review-dashboard.sh` and record checks/note any uncertain matches in the
   dashboard before finalizing. If you changed interface statements after earlier
@@ -964,21 +971,27 @@ validation pass:
   and note any source imprecision or proof deviation. Keep this plan current as
   proof work progresses; do not wait until the end to reconstruct the theorem
   inventory from helper lemmas.
-- For completed papers, create a compact human-facing Lean interface file when
-  the existing theorem files are too implementation-heavy to inspect directly.
-  Prefer the name `PaperInterface.lean`. This file should mirror the DAG:
-  paper definitions first, with the actual formulas visible in the file, then
-  direct theorem statements matching the paper. It must not be only an alias
-  list, witness tuple, or pointer layer to `MainTheorems.lean`; a human should
-  be able to read this file alone and check that the encoded definitions and
-  theorem statements reflect the source text. Proofs may be short calls into
-  the implementation layer. Keep exhaustive aliases and auxiliary seams in
-  `PostPaperAudit.lean`, not in the interface.
+- For completed papers, ensure `PaperInterface.lean` is compact enough for a
+  human review session. As a default audit threshold, it should normally have
+  tens of declarations, not hundreds; if it needs slices to be navigable, it is
+  probably serving the wrong role. It should mirror the DAG: paper definitions
+  first, with the actual formulas visible in the file, then direct theorem
+  statements matching the paper. It must not be only an alias list, witness
+  tuple, or pointer layer to `MainTheorems.lean`; a human should be able to read
+  this file alone and check that the encoded definitions and theorem statements
+  reflect the source text. Proofs may be short calls into the implementation
+  layer. Keep exhaustive aliases and auxiliary seams in `PostPaperAudit.lean`,
+  not in the interface.
 - In `PaperInterface.lean`, aim for one declaration per paper definition or
   formatted paper object, and one declaration per named result or numbered part
   of a named result. If a theorem box has parts (i)--(iii), separate direct
   declarations are acceptable when they mirror those source parts and avoid
   noisy tuple witnesses.
+- Before launching the dashboard, do a quick size check:
+  `wc -l papers/<Paper>/PaperInterface.lean` and
+  `rg -c '^(noncomputable\\s+|private\\s+|protected\\s+)*(theorem|lemma|def|abbrev) ' papers/<Paper>/PaperInterface.lean`.
+  If the declaration count is in the hundreds, split implementation endpoints
+  out before asking a human to review it.
 - Treat `PostPaperAudit.lean` as the exhaustive importable ledger, not the
   readable paper interface. Its header should say that explicitly and point to
   `PaperInterface.lean` for the DAG-shaped human-facing surface. It should
@@ -989,10 +1002,9 @@ validation pass:
   plumbing.
 - For papers already marked `Verified in Lean`, `Formalized`, or `Formalized
   with caveat`, backfill the same post-paper surface instead of leaving older
-  validation artifacts in place: a readable Lean interface (prefer
-  `PaperInterface.lean`, or a clearly documented equivalent), an exhaustive
-  `PostPaperAudit.lean` endpoint ledger when useful, a compact final validation
-  report, and synchronized README/status-table text.
+  validation artifacts in place: a readable `PaperInterface.lean`, an
+  exhaustive `PostPaperAudit.lean` endpoint ledger when useful, a compact final
+  validation report, and synchronized README/status-table text.
 - Confirm the paper root module imports the post-paper audit ledger and that the
   audit ledger has one source-numbered theorem alias or wrapper for each final
   named endpoint.

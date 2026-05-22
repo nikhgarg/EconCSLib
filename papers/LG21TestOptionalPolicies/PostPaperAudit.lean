@@ -1,4 +1,4 @@
-import LG21TestOptionalPolicies.PaperInterface
+import LG21TestOptionalPolicies.ProofInterface
 
 /-!
 # Post-paper audit: Test-optional Policies
@@ -6,10 +6,10 @@ import LG21TestOptionalPolicies.PaperInterface
 This file is the importable audit ledger for
 *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps*.
 
-`PaperInterface.lean` is the compact human-facing statement surface.  The
-aliases below give source-numbered audit entrypoints for the paper definitions
-and named results, while deliberately preserving the current conditional
-validation boundary:
+`PaperInterface.lean` is the compact human-facing statement surface.  This
+ledger imports the broader implementation-facing `ProofInterface.lean` and gives
+source-numbered audit entrypoints for the paper definitions and named results,
+while deliberately preserving the current conditional validation boundary:
 Theorems 3.1 and 3.2 are closed as conditional Section 3 endpoints over the
 concrete Gaussian/affine/event-share source surfaces exposed in
 `PaperInterface.lean`.

@@ -285,8 +285,9 @@ def main_theorems_text(title: str, namespace: str) -> str:
     return f"""/-!
 # Paper-Facing Theorems: {display_title}
 
-This file is the human-facing Lean ledger for the source paper. Keep
-source-faithful definitions and theorem wrappers here, in paper order.
+This file is the implementation theorem layer for the source paper. Keep
+source-faithful definitions and theorem wrappers here, and expose only the
+compact human-review subset in `PaperInterface.lean`.
 
 ## Main declarations
 
@@ -330,6 +331,8 @@ Rules for completing this file:
 - Then state the named results directly, with assumptions visible in each
   theorem signature.
 - Use short proofs that call into `MainTheorems.lean` or lower proof files.
+- If implementation endpoints become broad or helper-heavy, move them to
+  `ProofInterface.lean`; keep this filename as the single review surface.
 - Keep exhaustive endpoint aliases and proof-seam checks in `PostPaperAudit.lean`,
   not here.
 

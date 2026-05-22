@@ -4,6 +4,11 @@ The dashboard is the human-facing tool for checking whether each
 `PaperInterface.lean` statement matches the corresponding paper statement.
 It is for statement validation, not proof search.
 
+`PaperInterface.lean` is the only supported human-review filename. If that file
+has grown into a broad helper/proof surface, rename the broad file to an
+implementation-facing module such as `ProofInterface.lean`, update imports, and
+make `PaperInterface.lean` compact before launching the dashboard.
+
 ## Start A Review
 
 Use the paper-local launcher when possible:
@@ -20,13 +25,12 @@ python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --serve
 
 Open one of the printed URLs. On WSL2, the paper-local launcher binds broadly
 by default, prints both `127.0.0.1` and any detected WSL guest-IP fallback, and
-tries to open those URLs in Windows. Large `PaperInterface.lean` files can take
-several seconds to initialize before the first page responds; keep the terminal
-open while it prints startup status.
+tries to open those URLs in Windows. Keep the terminal open while it prints
+startup status.
 
 ## Reviewer Workflow
 
-1. Select the paper, and for large interfaces select a review slice.
+1. Select the paper.
 2. Compare the paper statement, Lean statement, and generated Lean-to-TeX draft.
 3. Mark whether the Lean statement matches the paper statement.
 4. Add notes for assumptions, source ambiguities, or mismatches.
@@ -35,16 +39,16 @@ open while it prints startup status.
 The dashboard includes search, status filters, slice filters, source-file
 buttons, line numbers, and MathJax rendering for formula-like paper statements.
 
-## Large Interfaces
+## Oversized Interfaces
 
-Large `PaperInterface.lean` files are split by `review_slices.json`. Current
-sliced papers include:
-
-- `LG21TestOptionalPolicies`
-
-Use a slice from the launcher or CLI:
+The dashboard can still filter by `review_slices.json` for legacy oversized
+interfaces, but slices are a temporary migration aid, not the desired state.
+Before asking a human to review a paper, prefer shrinking `PaperInterface.lean`
+to the paper-facing definitions and named results.
 
 ```bash
+wc -l papers/<Paper>/PaperInterface.lean
+rg -c '^(noncomputable\s+|private\s+|protected\s+)*(theorem|lemma|def|abbrev) ' papers/<Paper>/PaperInterface.lean
 ```
 
 ## Review Logs

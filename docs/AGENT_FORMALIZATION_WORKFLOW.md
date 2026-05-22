@@ -48,6 +48,8 @@ Each paper folder should contain:
 
 Completed papers should also have:
 
+- `ProofInterface.lean` when implementation-facing theorem endpoints would make
+  `PaperInterface.lean` too large to review directly.
 - `PostPaperAudit.lean` when an exhaustive source-numbered endpoint ledger is
   useful.
 - `FINAL_VALIDATION_REPORT.md` with definitions, named theorem statements,
@@ -60,8 +62,10 @@ Completed papers should also have:
 - `DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented.
 - `MainTheorems.lean`: implementation-level source-faithful wrappers.
-- `PaperInterface.lean`: compact human-facing Lean surface with readable
-  definitions and theorem statements.
+- `PaperInterface.lean`: the single canonical human-review Lean surface, with
+  only readable paper definitions and named theorem statements.
+- `ProofInterface.lean`: optional implementation-facing theorem endpoint
+  surface for broad wrapper families and proof-seam checks.
 - `PostPaperAudit.lean`: exhaustive endpoint ledger when useful.
 - `FINAL_VALIDATION_REPORT.md`: final human report.
 
@@ -83,6 +87,11 @@ When the agent says a paper is done, inspect:
 
 The human-facing files should let a reader compare the formalized statements to
 the paper without opening lower proof files.
+
+Do not add filename variants for the review surface. If `PaperInterface.lean`
+has hundreds of declarations, it is too broad; move helper/proof endpoints into
+`ProofInterface.lean` or `PostPaperAudit.lean` and keep the dashboard-facing
+file small.
 
 ## Validation Commands
 
