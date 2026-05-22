@@ -29,19 +29,11 @@ namespace MBJG25ProducerFairness
 noncomputable def paper_posterior_mean (alpha beta eta t q_v : ℝ) : ℝ :=
   (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t)
 
-theorem paper_posterior_mean_eq (alpha beta eta t q_v : ℝ) :
-  paper_posterior_mean alpha beta eta t q_v = EconCSLib.Statistics.priorWeightedPosteriorMean alpha beta eta t q_v := by
-  rfl
-
 /-- The bias of the estimated quality.
     Paper Definition: $E[\hat{q}_v] - q_v$
 -/
 noncomputable def paper_bias (alpha beta eta t q_v : ℝ) : ℝ :=
   paper_posterior_mean alpha beta eta t q_v - q_v
-
-theorem paper_bias_eq (alpha beta eta t q_v : ℝ) :
-  paper_bias alpha beta eta t q_v = EconCSLib.Statistics.priorWeightedBias alpha beta eta t q_v := by
-  rfl
 
 /-- The variance of the estimated quality.
     Paper Definition: $\frac{t q_v (1 - q_v)}{(\eta (\alpha + \beta) + t)^2}$
@@ -49,24 +41,11 @@ theorem paper_bias_eq (alpha beta eta t q_v : ℝ) :
 noncomputable def paper_variance (alpha beta eta t q_v : ℝ) : ℝ :=
   t * q_v * (1 - q_v) / (eta * alpha + eta * beta + t) ^ 2
 
-theorem paper_variance_eq (alpha beta eta t q_v : ℝ) :
-  paper_variance alpha beta eta t q_v = EconCSLib.Statistics.priorWeightedVariance alpha beta eta t q_v := by
-  rfl
-
 /-- The squared bias of the estimated quality.
     Paper Definition: $(E[\hat{q}_v] - q_v)^2$
 -/
 noncomputable def paper_squared_bias (alpha beta eta t q_v : ℝ) : ℝ :=
   (paper_bias alpha beta eta t q_v) ^ 2
-
-theorem paper_squared_bias_eq (alpha beta eta t q_v : ℝ) :
-  paper_squared_bias alpha beta eta t q_v = EconCSLib.Statistics.priorWeightedSquaredBias alpha beta eta t q_v := by
-  rfl
-
-abbrev JensenConvex := EconCSLib.Statistics.JensenConvex
-abbrev JensenConcave := EconCSLib.Statistics.JensenConcave
-abbrev GlobalMinAt := EconCSLib.Statistics.GlobalMinAt
-abbrev GlobalMaxAt := EconCSLib.Statistics.GlobalMaxAt
 
 /-! ## 2) Theorem 3.1 statements -/
 

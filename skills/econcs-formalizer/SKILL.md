@@ -322,6 +322,17 @@ the Lean statements against the paper.
   contain helper families, proof-seam checks, algebraic plumbing, or endpoint
   changelogs; put those in `MainTheorems.lean`, `ProofInterface.lean`, or
   `PostPaperAudit.lean`.
+- Paper-facing definitions in `PaperInterface.lean` must show their actual
+  Lean definition bodies, not only their function types or an opaque imported
+  library name. If a dashboard row for a definition renders as only
+  `A -> B -> ...` or `ℝ -> ...`, stop and fix the interface/dashboard before
+  asking a human to review it. A reviewer should be able to compare the paper's
+  displayed formula directly against the Lean formula in that row.
+- Keep proof-linkage declarations such as `paper_definition_eq_library_name`,
+  bare aliases for generic predicates, and other implementation checks out of
+  `PaperInterface.lean`. Put them in `ProofInterface.lean` or another
+  proof-facing file so the dashboard asks humans to review only source-facing
+  definitions and named results.
 - For new papers, create `PaperInterface.lean` during intake from the scaffold,
   not only after the proof is complete. Keep it synchronized with the proof plan
   and DAG so the eventual human review file grows with the formalization.

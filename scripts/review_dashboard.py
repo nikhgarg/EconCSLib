@@ -38,7 +38,7 @@ DEFAULT_PAPER_LOG_FILE = "paper_theorem_validations.jsonl"
 DEFAULT_PAPER_INTERFACE_CACHE_FILE = "paper_interface_cache.json"
 DEFAULT_REVIEW_SLICES_FILE = "review_slices.json"
 DEFAULT_LLM_LEAN_TO_TEX_FILE = "lean_to_tex_llm.json"
-PAPER_INTERFACE_CACHE_SCHEMA = 6
+PAPER_INTERFACE_CACHE_SCHEMA = 7
 REVIEW_SLICES_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
 REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev"}
@@ -76,7 +76,8 @@ PAPER_TEX_PRIORITY: list[str] = [
     "source.tex",
 ]
 AGENT_PREVIEW_TOKEN_RE = re.compile(
-    r"^[ \t]*(?:theorem|lemma|def|abbrev)\s+[A-Za-z_][A-Za-z0-9_']*\s*",
+    r"^[ \t]*(?:(?:noncomputable|private|protected)\s+)*"
+    r"(?:theorem|lemma|def|abbrev)\s+[A-Za-z_][A-Za-z0-9_']*\s*",
     re.MULTILINE,
 )
 LEAN_TO_TEX_TOKENS: list[tuple[str, str]] = [
@@ -425,9 +426,11 @@ def lean_to_latex_statement(raw: str) -> str:
     value = re.sub(r"\s+", " ", value).strip()
     if not value:
         return ""
-    if ":=" in value:
-        value = value.split(":=", 1)[0].rstrip()
+    if ":= by" in value:
+        value = value.split(":= by", 1)[0].rstrip()
     value = AGENT_PREVIEW_TOKEN_RE.sub("", value, count=1)
+    value = re.sub(r"\s*:\s*[^:=]+:=", " := ", value, count=1)
+    value = value.replace(":=", "=")
     value = value.strip().strip(",")
     return _apply_latex_token_mapping(value)
 
@@ -1266,6 +1269,42 @@ def filter_items_by_slice(
     return filtered
 
 
+def _is_interface_decl_boundary(line: str) -> bool:
+    """Return true when a line starts a new top-level interface item."""
+
+    stripped = line.strip()
+    if not stripped:
+        return True
+    return bool(
+        COMMENT_START_RE.match(line)
+        or DECL_RE.match(line)
+        or NAMESPACE_OPEN_RE.match(stripped)
+        or SECTION_OPEN_RE.match(stripped)
+        or END_SCOPE_RE.match(stripped)
+    )
+
+
+def collect_review_decl_text(lines: list[str], start: int, kind: str) -> tuple[str, int] | None:
+    """Collect the text shown for one paper-interface declaration."""
+
+    sig_lines: list[str] = []
+    j = start
+    while j < len(lines):
+        sig_line = lines[j]
+        sig_lines.append(sig_line)
+        if ":=" in sig_line:
+            idx = sig_line.find(":=")
+            if kind == "def":
+                while j + 1 < len(lines) and not _is_interface_decl_boundary(lines[j + 1]):
+                    j += 1
+                    sig_lines.append(lines[j])
+            else:
+                sig_lines[-1] = sig_line[:idx]
+            return "\n".join(sig_lines).strip(), j + 1
+        j += 1
+    return None
+
+
 def parse_interface_items(
     interface_path: Path, report_path: Path | None, paper_folder: Path | None = None
 ) -> list[ReviewItem]:
@@ -1336,23 +1375,14 @@ def parse_interface_items(
             name = m.group("name")
             kind = m.group("kind")
             full_name = ".".join(namespace_stack + [name]) if namespace_stack else name
-            sig_lines: list[str] = []
-            j = i
-            saw_sig = False
-            while j < len(lines):
-                sig_line = lines[j]
-                sig_lines.append(sig_line)
-                if ":=" in sig_line:
-                    idx = sig_line.find(":=")
-                    sig_lines[-1] = sig_line[:idx]
-                    saw_sig = True
-                    break
-                j += 1
-            if saw_sig:
-                raw_sig = "\n".join(sig_lines).strip()
+            collected = collect_review_decl_text(lines, i, kind)
+            if collected is not None:
+                raw_sig, next_i = collected
                 parsed.append((kind, name, full_name, raw_sig, pending_comment, i + 1))
+            else:
+                next_i = i + 1
             pending_comment = None
-            i = j + 1
+            i = next_i
             continue
 
         if stripped and not stripped.startswith("--") and not stripped.startswith("/-"):
@@ -1374,7 +1404,9 @@ def parse_interface_items(
         if kind not in REVIEW_DECL_KINDS:
             continue
         check_statement = check_map.get(full_name) or check_map.get(name)
-        lean_statement = f"@{full_name} :\n{check_statement}" if check_statement else raw_sig
+        lean_statement = raw_sig if kind == "def" else (
+            f"@{full_name} :\n{check_statement}" if check_statement else raw_sig
+        )
         candidates = paper_statement_candidate_keys(name, full_name)
         paper_text = ""
         for candidate in candidates:
@@ -1391,7 +1423,11 @@ def parse_interface_items(
                 else (doc_comment if doc_comment else ""),
                 agent_statement=llm_tex_drafts.get(name)
                 or llm_tex_drafts.get(full_name)
-                or agent_preview_comment(doc_comment, lean_statement, check_statement),
+                or agent_preview_comment(
+                    doc_comment,
+                    lean_statement,
+                    None if kind == "def" else check_statement,
+                ),
                 line_number=line_number,
             )
         )
