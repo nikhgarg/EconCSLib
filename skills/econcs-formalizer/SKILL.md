@@ -339,9 +339,10 @@ the Lean statements against the paper.
 - `./review-dashboard.sh` always regenerates the lightweight Lean→TeX preview from
   the current declarations on launch, so you do not need a separate “translation”
   step.
-- On WSL2, if the browser does not open automatically, add `--host 0.0.0.0` and
-  open the printed URL first (normally localhost/127.0.0.1). If that fails, try
-  the additional host URL if printed.
+- On WSL2, the launcher binds broadly by default, prints localhost and any
+  detected WSL guest-IP fallback, and tries to open the candidate URLs in a
+  Windows browser. If one URL fails, keep the terminal running and try the
+  other printed URL; large interfaces can take several seconds to initialize.
 - To add `review-dashboard.sh` to existing paper folders that already have
   `PaperInterface.lean` but not the launcher yet, run:
 

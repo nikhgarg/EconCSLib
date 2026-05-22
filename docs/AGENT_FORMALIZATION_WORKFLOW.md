@@ -119,9 +119,11 @@ For statement-facing checks, prefer the paper-local launcher from the paper fold
 ./review-dashboard.sh
 ```
 
-If you are on WSL2 and the browser does not pop, run the launcher with
-`--host 0.0.0.0` and open the printed `Windows URL` in a Windows browser.
-If the browser URL looks like `10.255.255.254`, try `http://127.0.0.1:8765/` first.
+On WSL2, the launcher binds broadly by default and prints multiple Windows
+browser URLs when it can detect both localhost and the WSL guest IP. If the
+browser does not pop or one URL fails, keep the terminal running and try the
+other printed URL. Large interfaces may need several seconds before the first
+page responds.
 
 On startup it prints stale-check diagnostics against any existing logged reviews, so
 you can refresh only the changed theorem checks and avoid re-validating unchanged items.

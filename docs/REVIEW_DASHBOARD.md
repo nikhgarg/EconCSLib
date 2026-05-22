@@ -18,9 +18,11 @@ Or run the shared script directly:
 python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --serve
 ```
 
-Open the printed local URL. If WSL2 does not open the browser automatically,
-keep the server running and open the printed `127.0.0.1:8765` URL in a Windows
-browser. If needed, force WSL-wide binding with `--host 0.0.0.0`.
+Open one of the printed URLs. On WSL2, the paper-local launcher binds broadly
+by default, prints both `127.0.0.1` and any detected WSL guest-IP fallback, and
+tries to open those URLs in Windows. Large `PaperInterface.lean` files can take
+several seconds to initialize before the first page responds; keep the terminal
+open while it prints startup status.
 
 ## Reviewer Workflow
 

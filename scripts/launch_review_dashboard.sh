@@ -25,10 +25,33 @@ get_wsl_host() {
   awk '/^nameserver / { print $2; exit }' /etc/resolv.conf 2>/dev/null || true
 }
 
+get_wsl_guest_host() {
+  local candidate
+
+  if command -v hostname >/dev/null 2>&1; then
+    for candidate in $(hostname -I 2>/dev/null || true); do
+      case "$candidate" in
+        *:* | 127.* | 169.254.* | 0.0.0.0)
+          continue
+          ;;
+        *)
+          printf "%s" "$candidate"
+          return 0
+          ;;
+      esac
+    done
+  fi
+
+  if command -v ip >/dev/null 2>&1; then
+    ip -4 -o addr show scope global 2>/dev/null \
+      | awk '{ split($4, a, "/"); if (a[1] !~ /^(127\.|169\.254\.|0\.0\.0\.0)/) { print a[1]; exit } }'
+  fi
+}
+
 is_unusable_wsl_host() {
   local host="$1"
   case "$host" in
-    "" | "10.255.255.254")
+    "" | "10.255.255.254" | 127.* | 169.254.* | "0.0.0.0")
       return 0
       ;;
   esac
@@ -81,13 +104,14 @@ open_in_browser() {
   local urls=("$@")
   local url
   local first_url=""
+  local opened_any=0
 
   for url in "${urls[@]}"; do
     [ -n "$url" ] || continue
     first_url="${first_url:-$url}"
     if is_wsl; then
       if open_windows_url "$url"; then
-        return
+        opened_any=1
       fi
     else
       if command -v xdg-open >/dev/null 2>&1; then
@@ -97,6 +121,10 @@ open_in_browser() {
       fi
     fi
   done
+
+  if is_wsl && [ "$opened_any" -eq 1 ]; then
+    return
+  fi
 
   if [ -n "$first_url" ] && command -v python3 >/dev/null 2>&1; then
     if python3 - "$first_url" <<'PY' >/dev/null 2>&1
@@ -161,7 +189,8 @@ dashboard_run() {
 
 wait_for_local_http() {
   local target="$1"
-  local attempts="${2:-8}"
+  local attempts="${2:-${REVIEW_DASHBOARD_READY_ATTEMPTS:-90}}"
+  local delay="${3:-${REVIEW_DASHBOARD_READY_DELAY:-0.5}}"
   local i=0
 
   command -v curl >/dev/null 2>&1 || return 0
@@ -169,10 +198,24 @@ wait_for_local_http() {
     if curl -fsS --max-time 2 "$target" >/dev/null 2>&1; then
       return 0
     fi
-    sleep 0.4
+    sleep "$delay"
     i=$((i + 1))
   done
   return 1
+}
+
+append_unique_url() {
+  local -n urls_ref=$1
+  local new_url="$2"
+  local existing
+
+  [ -n "$new_url" ] || return 0
+  for existing in "${urls_ref[@]}"; do
+    if [ "$existing" = "$new_url" ]; then
+      return 0
+    fi
+  done
+  urls_ref+=("$new_url")
 }
 
 show_help() {
@@ -262,9 +305,13 @@ fi
 URL="http://${URL_HOST}:${PORT}/"
 OPEN_URLS=("$URL")
 if is_wsl; then
-  WSL_HOST="$(normalize_wsl_host_url "$(get_wsl_host)")"
-  if ! is_unusable_wsl_host "$WSL_HOST"; then
-    OPEN_URLS+=("http://${WSL_HOST}:${PORT}/")
+  WSL_GUEST_HOST="$(normalize_wsl_host_url "$(get_wsl_guest_host)")"
+  if ! is_unusable_wsl_host "$WSL_GUEST_HOST"; then
+    append_unique_url OPEN_URLS "http://${WSL_GUEST_HOST}:${PORT}/"
+  fi
+  WSL_DNS_HOST="$(normalize_wsl_host_url "$(get_wsl_host)")"
+  if ! is_unusable_wsl_host "$WSL_DNS_HOST"; then
+    append_unique_url OPEN_URLS "http://${WSL_DNS_HOST}:${PORT}/"
   fi
 fi
 ARGS=(--paper "$PAPER" --host "$HOST" --port "$PORT" --serve)
@@ -285,18 +332,14 @@ printf 'Starting dashboard for %s...\n' "$PAPER"
 if [ -n "$SLICE" ]; then
   printf 'Review slice: %s\n' "$SLICE"
 fi
-printf 'URL: %s\n' "$URL"
+printf 'Local URL: %s\n' "$URL"
 if is_wsl; then
-  if [ "${#OPEN_URLS[@]}" -gt 1 ]; then
-    for i in "${!OPEN_URLS[@]}"; do
-      if [ "$i" -eq 0 ]; then
-        continue
-      fi
-      printf 'Try this URL from Windows: %s\n' "${OPEN_URLS[$i]}"
-    done
-  else
-    printf 'Windows URL: %s\n' "$URL"
-  fi
+  printf 'Windows browser URLs to try:\n'
+  for i in "${!OPEN_URLS[@]}"; do
+    printf '  - %s\n' "${OPEN_URLS[$i]}"
+  done
+else
+  printf 'URL: %s\n' "$URL"
 fi
 printf 'Logs: %s\n' "$LOG_FILE"
 
@@ -333,7 +376,10 @@ fi
 
 if ! wait_for_local_http "$URL"; then
   echo "Warning: dashboard process is running, but the local endpoint did not respond on ${URL}."
-  echo "If the page is not loading from Windows, this can still be a WSL/port-forwarding issue."
+  echo "Large paper interfaces can take longer to initialize; inspect startup logs at: $LOG_FILE"
+  if is_wsl; then
+    echo "If the page is not loading from Windows, try each printed Windows browser URL."
+  fi
 fi
 
 open_in_browser "${OPEN_URLS[@]}"
