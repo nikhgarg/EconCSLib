@@ -841,7 +841,10 @@ cache is `source.txt`.
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_mass_separated_source_assumptions`
   and
   `paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_policy_forms_pointwise_reward_rate_no_mass_source_assumptions`
-  accept all-optimal allowed policy forms directly.  Shared-source mass helpers
+  accept all-optimal allowed policy forms directly; their
+  `...measurable_ic_ae_unique...` variants now carry the same source boundary
+  to the full Theorem 3 a.e.-unique conclusion instead of stopping at the IC
+  projection.  Shared-source mass helpers
   `GN21RegularEndpointSharedSourceData.surge_current_mass_pos_of_allowed_policy_form`
   and
   `GN21RegularEndpointSharedSourceData.nonsurge_current_mass_pos_of_allowed_policy_form`
