@@ -1935,7 +1935,13 @@ def append_review(log_file: Path, payload: dict[str, Any], default_user: str) ->
     theorem = str(payload.get("theorem") or "").strip()
     user = str(payload.get("user") or default_user).strip() or default_user
     notes = str(payload.get("notes", "")).strip()
-    matches = bool(payload.get("matches", False))
+    raw_matches = payload.get("matches", False)
+    if isinstance(raw_matches, bool):
+        matches = raw_matches
+    elif isinstance(raw_matches, str):
+        matches = parse_bool_flag(raw_matches)
+    else:
+        matches = bool(raw_matches)
     lean_statement = str(payload.get("lean_statement") or "").strip()
     paper_statement = str(payload.get("paper_statement") or "").strip()
     agent_statement = str(payload.get("agent_statement") or "").strip()
@@ -2278,6 +2284,26 @@ HTML_PAGE = """
       padding: 8px;
       font: inherit;
       resize: vertical;
+    }
+    .review-decision {
+      border: 0;
+      padding: 0;
+      margin: 8px 0 8px;
+      display: grid;
+      gap: 6px;
+    }
+    .review-decision legend {
+      padding: 0;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .review-decision-option {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      line-height: 1.25;
     }
     .history { margin-top: 10px; font-size: 12px; color: #334155; }
     .history-entry { border-top: 1px dashed #d6dce6; padding-top: 8px; margin-top: 8px; }
@@ -2976,15 +3002,38 @@ HTML_PAGE = """
       statusLine.appendChild(statusBadge);
       statusLine.appendChild(staleBadge);
 
-      const label = document.createElement("label");
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.dataset.paper = paper;
-      checkbox.dataset.theorem = item.name;
-      checkbox.id = `match-${rowId}`;
-      label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(" matches paper statement"));
-      label.className = "small";
+      const decision = document.createElement("fieldset");
+      decision.className = "review-decision";
+      const decisionLegend = document.createElement("legend");
+      decisionLegend.textContent = "Review decision";
+      decision.appendChild(decisionLegend);
+
+      const decisionName = `decision-${rowId}`;
+      const matchLabel = document.createElement("label");
+      matchLabel.className = "review-decision-option";
+      const matchRadio = document.createElement("input");
+      matchRadio.type = "radio";
+      matchRadio.name = decisionName;
+      matchRadio.value = "match";
+      matchRadio.dataset.paper = paper;
+      matchRadio.dataset.theorem = item.name;
+      matchRadio.id = `match-${rowId}`;
+      matchLabel.appendChild(matchRadio);
+      matchLabel.appendChild(document.createTextNode("Matches paper statement"));
+      decision.appendChild(matchLabel);
+
+      const mismatchLabel = document.createElement("label");
+      mismatchLabel.className = "review-decision-option";
+      const mismatchRadio = document.createElement("input");
+      mismatchRadio.type = "radio";
+      mismatchRadio.name = decisionName;
+      mismatchRadio.value = "mismatch";
+      mismatchRadio.dataset.paper = paper;
+      mismatchRadio.dataset.theorem = item.name;
+      mismatchRadio.id = `mismatch-${rowId}`;
+      mismatchLabel.appendChild(mismatchRadio);
+      mismatchLabel.appendChild(document.createTextNode("Mismatch"));
+      decision.appendChild(mismatchLabel);
 
       const text = document.createElement("textarea");
       text.className = "row-note";
@@ -3000,12 +3049,17 @@ HTML_PAGE = """
       const saveStatus = document.createElement("span");
       saveStatus.className = "save-status small muted";
       btn.addEventListener("click", async () => {
+        if (!matchRadio.checked && !mismatchRadio.checked) {
+          saveStatus.textContent = "Choose Matches or Mismatch.";
+          saveStatus.className = "save-status small bad";
+          return;
+        }
         const user = document.getElementById("userHandle").value.trim() || state.user;
         const payload = {
           paper: paper,
           theorem: item.name,
           user: user,
-          matches: checkbox.checked,
+          matches: matchRadio.checked,
           notes: text.value.trim(),
           lean_statement: item.lean_statement,
           paper_statement: item.paper_statement,
@@ -3054,7 +3108,7 @@ HTML_PAGE = """
       reviewCell.appendChild(header);
       reviewCell.appendChild(sliceMeta);
       reviewCell.appendChild(statusLine);
-      reviewCell.appendChild(label);
+      reviewCell.appendChild(decision);
       reviewCell.appendChild(text);
       reviewCell.appendChild(document.createElement("br"));
       reviewCell.appendChild(btn);
@@ -3188,10 +3242,14 @@ HTML_PAGE = """
           mine.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
           const latest = mine[0];
           const rowId = `${safeId(paper)}_${safeId(theorem)}`;
-          const cb = document.getElementById(`match-${rowId}`);
+          const match = document.getElementById(`match-${rowId}`);
+          const mismatch = document.getElementById(`mismatch-${rowId}`);
           const ta = document.getElementById(`note-${rowId}`);
-          if (cb) {
-            cb.checked = !!latest.matches;
+          if (match) {
+            match.checked = latest.matches === true;
+          }
+          if (mismatch) {
+            mismatch.checked = latest.matches === false;
           }
           if (ta) {
             ta.value = latest.notes || "";
