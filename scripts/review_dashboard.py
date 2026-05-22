@@ -28,6 +28,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from xml.etree import ElementTree
 from typing import Any
 
 
@@ -36,7 +37,8 @@ PAPERS_DIR = ROOT / "papers"
 DEFAULT_PAPER_LOG_FILE = "paper_theorem_validations.jsonl"
 DEFAULT_PAPER_INTERFACE_CACHE_FILE = "paper_interface_cache.json"
 DEFAULT_REVIEW_SLICES_FILE = "review_slices.json"
-PAPER_INTERFACE_CACHE_SCHEMA = 4
+DEFAULT_LLM_LEAN_TO_TEX_FILE = "lean_to_tex_llm.json"
+PAPER_INTERFACE_CACHE_SCHEMA = 6
 REVIEW_SLICES_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
 REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev"}
@@ -59,6 +61,15 @@ REPORT_CLAUSE_RE = re.compile(
 THEOREM_ENV_OPEN_RE = re.compile(r"^\s*\\begin\{(theorem|lemma|proposition|corollary|claim|definition)\}")
 THEOREM_ENV_CLOSE_RE = re.compile(r"^\s*\\end\{(theorem|lemma|proposition|corollary|claim|definition)\}")
 THEOREM_LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
+PAPER_TEXT_STATEMENT_LABEL_RE = re.compile(
+    r"^\s*\f?\s*(?P<kind>Definition|Theorem|Lemma|Proposition|Corollary|Claim)\s+"
+    r"(?P<number>[A-Za-z]?\d+(?:\.\d+)?)(?:\s*\((?P<title>[^)]*)\))?\."
+)
+PAPER_TEXT_STATEMENT_STOP_RE = re.compile(
+    r"^\s*(?:Proof\.|Proof\s|The proof\b|To prove\b|The result follows\b|"
+    r"The theorem establishes\b|The result establishes\b|Each de|"
+    r"Of course\b|Note that\b|Discussion\b|What does\b|Then, we have the following\b)"
+)
 PAPER_TEX_PRIORITY: list[str] = [
     "{name}.tex",
     "paper.tex",
@@ -119,6 +130,8 @@ LEAN_TO_TEX_TOKENS: list[tuple[str, str]] = [
 AGENT_PREVIEW_MAX_LEN = 1800
 AGENT_PREVIEW_CHECK_TIMEOUT = 20
 PAPER_ASSET_EXTENSIONS = {".pdf", ".txt"}
+PAPER_RENDERED_IMAGE_EXTENSIONS = {".png"}
+PAPER_RENDERED_STATEMENT_DIR = "paper_statement_images"
 PAPER_PDF_PRIORITY: list[str] = [
     "{name}.pdf",
     "source.pdf",
@@ -157,6 +170,13 @@ def _add_statement_variant(mapping: dict[str, str], key: str, value: str) -> Non
     lowered_normalized = normalized.lower()
     if lowered_normalized and lowered_normalized not in {lowered, normalized, key}:
         mapping[lowered_normalized] = value
+
+
+def _paper_statement_key(kind: str, number: str) -> str:
+    """Return a declaration-name-friendly key for a paper statement number."""
+
+    normalized_number = number.strip().replace(".", "_").lower()
+    return f"{kind.strip().lower()}{normalized_number}"
 
 
 def _read_git_config_value(key: str) -> str:
@@ -235,6 +255,7 @@ class ReviewItem:
     lean_statement: str
     paper_statement: str
     agent_statement: str
+    paper_statement_image_url: str = ""
     line_number: int = 0
     slice_id: str = "all"
     slice_title: str = "All statements"
@@ -305,6 +326,27 @@ def paper_asset_url(paper: str, path: Path) -> str:
     """Build a safe route path for a paper-local asset."""
 
     return f"/paper-assets/{urllib.parse.quote(paper)}/{urllib.parse.quote(path.name)}"
+
+
+def paper_rendered_statement_url(paper: str, path: Path) -> str:
+    """Build a safe route path for a generated statement image."""
+
+    return f"/rendered-statements/{urllib.parse.quote(paper)}/{urllib.parse.quote(path.name)}"
+
+
+def _file_sha256(path: Path | None) -> str:
+    """Return a stable binary digest for a source file."""
+
+    if path is None or not path.exists() or not path.is_file():
+        return ""
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except OSError:
+        return ""
+    return digest.hexdigest()
 
 
 def parse_block_comment(lines: list[str], start: int) -> tuple[str, int]:
@@ -412,7 +454,7 @@ def _parse_lean_check_previews(output: str, theorem_names: list[str]) -> dict[st
         active = None
         line = raw_line.rstrip()
         for name in names_sorted:
-            pattern = rf"^{re.escape(name)}(?:\.\{{[^}}]*\}})?\s*:\s*(.*)$"
+            pattern = rf"^@?{re.escape(name)}\s*:\s*(.*)$"
             match = re.match(pattern, line)
             if not match:
                 continue
@@ -456,7 +498,7 @@ def run_lean_check_previews(
         "",
     ]
     for name in canonical_names:
-        lines.append(f"#check {name}")
+        lines.append(f"#check (@{name})")
     script = "\n".join(lines) + "\n"
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -618,6 +660,461 @@ def parse_paper_tex_statements(folder: Path) -> dict[str, str]:
     return statements
 
 
+def _clean_paper_text_statement(lines: list[str]) -> str:
+    """Clean a statement block extracted from a PDF text dump."""
+
+    cleaned: list[str] = []
+    blank_pending = False
+    for raw_line in lines:
+        line = raw_line.replace("\f", "").rstrip()
+        if not line.strip():
+            blank_pending = bool(cleaned)
+            continue
+        if line.strip().isdigit():
+            continue
+        if blank_pending and cleaned:
+            cleaned.append("")
+        cleaned.append(line)
+        blank_pending = False
+    return "\n".join(cleaned).strip()
+
+
+def parse_paper_text_statements(folder: Path) -> dict[str, str]:
+    """Extract numbered paper statements from `source.txt` when no TeX is present."""
+
+    source = find_paper_text(folder)
+    if source is None:
+        return {}
+
+    try:
+        lines = source.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return {}
+
+    statements: dict[str, str] = {}
+    active_key: str | None = None
+    active_kind: str | None = None
+    active_number: str | None = None
+    active_lines: list[str] = []
+
+    def flush() -> None:
+        nonlocal active_key, active_kind, active_number, active_lines
+        if active_key:
+            text = _clean_paper_text_statement(active_lines)
+            if text:
+                _add_statement_variant(statements, active_key, text)
+                if active_kind and active_number:
+                    _add_statement_variant(
+                        statements,
+                        f"{active_kind.lower()}_{active_number.replace('.', '_').lower()}",
+                        text,
+                    )
+        active_key = None
+        active_kind = None
+        active_number = None
+        active_lines = []
+
+    for raw_line in lines:
+        stripped = raw_line.strip()
+        label_match = PAPER_TEXT_STATEMENT_LABEL_RE.match(stripped)
+        if label_match:
+            flush()
+            active_kind = label_match.group("kind")
+            active_number = label_match.group("number")
+            active_key = _paper_statement_key(active_kind, active_number)
+            active_lines = [raw_line]
+            continue
+
+        if active_key is not None and PAPER_TEXT_STATEMENT_STOP_RE.match(stripped):
+            flush()
+            continue
+
+        if active_key is not None:
+            active_lines.append(raw_line)
+
+    flush()
+    return statements
+
+
+def parse_paper_text_statement_locations(folder: Path) -> list[dict[str, Any]]:
+    """Extract first source-text locations for numbered paper statements."""
+
+    source = find_paper_text(folder)
+    if source is None:
+        return []
+    try:
+        lines = source.read_text(encoding="utf-8").split("\n")
+    except OSError:
+        return []
+
+    page = 1
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for line_number, raw_line in enumerate(lines, start=1):
+        line = raw_line
+        if "\f" in line:
+            page += line.count("\f")
+            line = line.rsplit("\f", 1)[-1]
+        stripped = line.strip()
+        label_match = PAPER_TEXT_STATEMENT_LABEL_RE.match(stripped)
+        if not label_match:
+            continue
+        kind = label_match.group("kind")
+        number = label_match.group("number")
+        key = _paper_statement_key(kind, number)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(
+            {
+                "key": key,
+                "kind": kind,
+                "number": number,
+                "page": page,
+                "line_number": line_number,
+            }
+        )
+    return out
+
+
+def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
+    """Load optional context-free LLM TeX drafts for expanded Lean statements."""
+
+    path = folder / ".review_traces" / DEFAULT_LLM_LEAN_TO_TEX_FILE
+    if not path.exists() or not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if payload.get("schema") != 1:
+        return {}
+    if payload.get("paper") not in {None, folder.name}:
+        return {}
+    items = payload.get("items")
+    if not isinstance(items, dict):
+        return {}
+    out: dict[str, str] = {}
+    for raw_name, raw_value in items.items():
+        name = str(raw_name).strip()
+        value = str(raw_value).strip()
+        if name and value:
+            out[name] = value
+    return out
+
+
+def _run_pdftotext_bbox(pdf_path: Path, page: int) -> str:
+    """Return pdftotext bbox-layout XML for one page, or empty on failure."""
+
+    try:
+        proc = subprocess.run(
+            [
+                "pdftotext",
+                "-bbox-layout",
+                "-f",
+                str(page),
+                "-l",
+                str(page),
+                str(pdf_path),
+                "-",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    if proc.returncode != 0:
+        return ""
+    return proc.stdout
+
+
+def _parse_pdf_bbox_words(xml_text: str) -> tuple[float, float, list[dict[str, Any]]]:
+    """Parse pdftotext bbox XML into page dimensions and word boxes."""
+
+    if not xml_text.strip():
+        return 0.0, 0.0, []
+    try:
+        root = ElementTree.fromstring(xml_text)
+    except ElementTree.ParseError:
+        return _parse_pdf_bbox_words_with_regex(xml_text)
+    page_node = next((node for node in root.iter() if node.tag.endswith("page")), None)
+    if page_node is None:
+        return 0.0, 0.0, []
+    try:
+        page_width = float(page_node.attrib.get("width", "0"))
+        page_height = float(page_node.attrib.get("height", "0"))
+    except ValueError:
+        page_width = 0.0
+        page_height = 0.0
+    words: list[dict[str, Any]] = []
+    for word_node in root.iter():
+        if not word_node.tag.endswith("word"):
+            continue
+        text = "".join(word_node.itertext()).strip()
+        if not text:
+            continue
+        try:
+            words.append(
+                {
+                    "text": text,
+                    "x_min": float(word_node.attrib["xMin"]),
+                    "y_min": float(word_node.attrib["yMin"]),
+                    "x_max": float(word_node.attrib["xMax"]),
+                    "y_max": float(word_node.attrib["yMax"]),
+                }
+            )
+        except (KeyError, ValueError):
+            continue
+    return page_width, page_height, words
+
+
+def _parse_pdf_bbox_words_with_regex(xml_text: str) -> tuple[float, float, list[dict[str, Any]]]:
+    """Fallback bbox parser for PDFs whose extracted XHTML has invalid glyph bytes."""
+
+    page_match = re.search(
+        r"<page\b[^>]*\bwidth=\"([0-9.]+)\"[^>]*\bheight=\"([0-9.]+)\"",
+        xml_text,
+    )
+    if not page_match:
+        return 0.0, 0.0, []
+    try:
+        page_width = float(page_match.group(1))
+        page_height = float(page_match.group(2))
+    except ValueError:
+        return 0.0, 0.0, []
+
+    word_re = re.compile(
+        r"<word\b[^>]*\bxMin=\"([0-9.]+)\"[^>]*\byMin=\"([0-9.]+)\""
+        r"[^>]*\bxMax=\"([0-9.]+)\"[^>]*\byMax=\"([0-9.]+)\"[^>]*>(.*?)</word>",
+        flags=re.DOTALL,
+    )
+    words: list[dict[str, Any]] = []
+    for match in word_re.finditer(xml_text):
+        text = re.sub(r"<[^>]+>", "", match.group(5))
+        text = html.unescape(text).strip()
+        if not text:
+            continue
+        try:
+            words.append(
+                {
+                    "text": text,
+                    "x_min": float(match.group(1)),
+                    "y_min": float(match.group(2)),
+                    "x_max": float(match.group(3)),
+                    "y_max": float(match.group(4)),
+                }
+            )
+        except ValueError:
+            continue
+    return page_width, page_height, words
+
+
+def _find_statement_start_y(words: list[dict[str, Any]], kind: str, number: str) -> float | None:
+    """Locate a statement heading in bbox word output."""
+
+    for index, word in enumerate(words[:-1]):
+        if word["text"].strip(".,") != kind:
+            continue
+        nxt = words[index + 1]
+        if nxt["text"].strip(".,") != number:
+            continue
+        if abs(float(nxt["y_min"]) - float(word["y_min"])) > 6.0:
+            continue
+        return float(word["y_min"])
+    return None
+
+
+def _find_statement_stop_y(words: list[dict[str, Any]], top_y: float, current_bottom: float) -> float:
+    """Find an earlier paper-proof/section boundary inside a candidate crop."""
+
+    stop_sequences = [
+        ("Proof",),
+        ("Proof.",),
+        ("To", "prove"),
+        ("The", "proof"),
+        ("What", "does"),
+    ]
+    for index, word in enumerate(words):
+        y_min = float(word["y_min"])
+        if y_min <= top_y + 18.0 or y_min >= current_bottom:
+            continue
+        if float(word["x_min"]) > 115.0:
+            continue
+        row_words = [
+            str(candidate["text"]).strip(".,:;")
+            for candidate in words[index : index + 4]
+            if abs(float(candidate["y_min"]) - y_min) <= 3.0
+        ]
+        if any(row_words[: len(sequence)] == list(sequence) for sequence in stop_sequences):
+            return y_min - 10.0
+    return current_bottom
+
+
+def _render_pdf_page_to_png(pdf_path: Path, page: int, output_dir: Path, digest: str) -> Path | None:
+    """Render a single PDF page to a PNG cache file."""
+
+    page_path = output_dir / f"page-{page}-{digest[:12]}.png"
+    if page_path.exists():
+        return page_path
+    prefix = output_dir / f"page-{page}-{digest[:12]}"
+    try:
+        proc = subprocess.run(
+            [
+                "pdftoppm",
+                "-f",
+                str(page),
+                "-l",
+                str(page),
+                "-r",
+                "180",
+                "-png",
+                str(pdf_path),
+                str(prefix),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if proc.returncode != 0:
+        return None
+    rendered = sorted(output_dir.glob(f"{prefix.name}-*.png"))
+    if not rendered:
+        return None
+    try:
+        rendered[0].replace(page_path)
+    except OSError:
+        return None
+    for stale in rendered[1:]:
+        try:
+            stale.unlink()
+        except OSError:
+            pass
+    return page_path
+
+
+def attach_rendered_statement_images(folder: Path, items: list[ReviewItem]) -> None:
+    """Attach cropped PDF-rendered statement images when a source PDF is available."""
+
+    pdf_path = find_paper_pdf(folder)
+    if pdf_path is None:
+        return
+    locations = parse_paper_text_statement_locations(folder)
+    if not locations:
+        return
+
+    location_by_key = {str(location["key"]): location for location in locations}
+    next_on_same_page: dict[str, dict[str, Any]] = {}
+    for index, location in enumerate(locations):
+        for later in locations[index + 1 :]:
+            if later.get("page") == location.get("page"):
+                next_on_same_page[str(location["key"])] = later
+                break
+            if int(later.get("page") or 0) > int(location.get("page") or 0):
+                break
+
+    digest = _file_sha256(pdf_path) or statement_digest(str(pdf_path))
+    output_dir = folder / ".review_traces" / PAPER_RENDERED_STATEMENT_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    bbox_cache: dict[int, tuple[float, float, list[dict[str, Any]]]] = {}
+
+    try:
+        from PIL import Image
+    except Exception:  # noqa: BLE001 - optional runtime rendering dependency
+        Image = None  # type: ignore[assignment]
+
+    for item in items:
+        keys = paper_statement_candidate_keys(item.name, item.name)
+        location = next((location_by_key[key] for key in keys if key in location_by_key), None)
+        if location is None:
+            continue
+        page = int(location.get("page") or 0)
+        if page <= 0:
+            continue
+        key = str(location["key"])
+        crop_path = output_dir / f"{key}-{digest[:12]}.png"
+        if crop_path.exists():
+            item.paper_statement_image_url = paper_rendered_statement_url(folder.name, crop_path)
+            continue
+        page_png = _render_pdf_page_to_png(pdf_path, page, output_dir, digest)
+        if page_png is None:
+            continue
+        if Image is None:
+            item.paper_statement_image_url = paper_rendered_statement_url(folder.name, page_png)
+            continue
+        if page not in bbox_cache:
+            bbox_cache[page] = _parse_pdf_bbox_words(_run_pdftotext_bbox(pdf_path, page))
+        page_width, page_height, words = bbox_cache[page]
+        if not page_width or not page_height:
+            item.paper_statement_image_url = paper_rendered_statement_url(folder.name, page_png)
+            continue
+        top_y = _find_statement_start_y(
+            words, str(location.get("kind") or ""), str(location.get("number") or "")
+        )
+        if top_y is None:
+            item.paper_statement_image_url = paper_rendered_statement_url(folder.name, page_png)
+            continue
+        next_location = next_on_same_page.get(key)
+        bottom_y = page_height - 48.0
+        if next_location is not None:
+            next_top = _find_statement_start_y(
+                words,
+                str(next_location.get("kind") or ""),
+                str(next_location.get("number") or ""),
+            )
+            if next_top is not None and next_top > top_y + 20.0:
+                bottom_y = next_top - 10.0
+        bottom_y = _find_statement_stop_y(words, top_y, bottom_y)
+        try:
+            with Image.open(page_png) as image:
+                scale_x = image.width / page_width
+                scale_y = image.height / page_height
+                left = max(0, int(54.0 * scale_x))
+                upper = max(0, int((top_y - 14.0) * scale_y))
+                right = min(image.width, int((page_width - 54.0) * scale_x))
+                lower = min(image.height, int((bottom_y + 4.0) * scale_y))
+                if lower <= upper + 20 or right <= left + 20:
+                    item.paper_statement_image_url = paper_rendered_statement_url(folder.name, page_png)
+                    continue
+                cropped = image.crop((left, upper, right, lower))
+                cropped.save(crop_path)
+        except OSError:
+            item.paper_statement_image_url = paper_rendered_statement_url(folder.name, page_png)
+            continue
+        item.paper_statement_image_url = paper_rendered_statement_url(folder.name, crop_path)
+
+
+def paper_statement_candidate_keys(name: str, full_name: str) -> list[str]:
+    """Return paper-statement keys likely to correspond to a Lean declaration."""
+
+    raw_candidates = [
+        name,
+        full_name,
+        name.split(".")[-1],
+        full_name.split(".")[-1],
+        _normalize_name_key(name),
+        _normalize_name_key(full_name),
+    ]
+    for base in [name, full_name.split(".")[-1]]:
+        for kind in ("definition", "theorem", "lemma", "proposition", "corollary", "claim"):
+            match = re.search(rf"(?:^|_){kind}([A-Za-z]?\d+(?:_\d+)*)", base, flags=re.IGNORECASE)
+            if match:
+                raw_candidates.append(f"{kind}{match.group(1).lower()}")
+                raw_candidates.append(f"{kind}_{match.group(1).lower()}")
+    out: list[str] = []
+    for candidate in raw_candidates:
+        if not candidate:
+            continue
+        for variant in {candidate, _normalize_name_key(candidate), candidate.lower(), _normalize_name_key(candidate).lower()}:
+            if variant and variant not in out:
+                out.append(variant)
+    return out
+
+
 def _safe_slice_id(value: str) -> str:
     """Normalize a dashboard slice identifier for local filtering."""
 
@@ -761,7 +1258,12 @@ def filter_items_by_slice(
         if paper_part and paper_part != paper_name:
             return []
     slice_part = _safe_slice_id(slice_part)
-    return [item for item in items if item.slice_id == slice_part]
+    filtered = [item for item in items if item.slice_id == slice_part]
+    if filtered:
+        return filtered
+    if items and {item.slice_id for item in items} == {"all"}:
+        return items
+    return filtered
 
 
 def parse_interface_items(
@@ -773,7 +1275,11 @@ def parse_interface_items(
     paper_statements = parse_report_texts(report_path) if report_path and report_path.exists() else {}
     if paper_folder is None:
         paper_folder = interface_path.parent
-    paper_statements.update(parse_paper_tex_statements(paper_folder))
+    source_statements = parse_paper_tex_statements(paper_folder)
+    if not source_statements:
+        source_statements = parse_paper_text_statements(paper_folder)
+    paper_statements.update(source_statements)
+    llm_tex_drafts = load_llm_lean_to_tex_drafts(paper_folder)
 
     # Keep declaration names first.
     parsed: list[tuple[str, str, str, str, str | None, int]] = []
@@ -867,14 +1373,9 @@ def parse_interface_items(
     for kind, name, full_name, raw_sig, doc_comment, line_number in parsed:
         if kind not in REVIEW_DECL_KINDS:
             continue
-        candidates = [
-            name,
-            full_name,
-            name.split(".")[-1],
-            full_name.split(".")[-1],
-            _normalize_name_key(name),
-            _normalize_name_key(full_name),
-        ]
+        check_statement = check_map.get(full_name) or check_map.get(name)
+        lean_statement = f"@{full_name} :\n{check_statement}" if check_statement else raw_sig
+        candidates = paper_statement_candidate_keys(name, full_name)
         paper_text = ""
         for candidate in candidates:
             if candidate and candidate in paper_statements:
@@ -884,13 +1385,13 @@ def parse_interface_items(
             ReviewItem(
                 name=name,
                 kind=kind,
-                lean_statement=raw_sig,
+                lean_statement=lean_statement,
                 paper_statement=paper_text
                 if paper_text
                 else (doc_comment if doc_comment else ""),
-                agent_statement=agent_preview_comment(
-                    doc_comment, raw_sig, check_map.get(full_name) or check_map.get(name)
-                ),
+                agent_statement=llm_tex_drafts.get(name)
+                or llm_tex_drafts.get(full_name)
+                or agent_preview_comment(doc_comment, lean_statement, check_statement),
                 line_number=line_number,
             )
         )
@@ -949,11 +1450,16 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     interface_path = review_source_file(folder)
     report_path = folder / "FINAL_VALIDATION_REPORT.md"
     tex_path = find_paper_tex_source(folder)
+    text_path = find_paper_text(folder)
+    pdf_path = find_paper_pdf(folder)
+    llm_tex_path = folder / ".review_traces" / DEFAULT_LLM_LEAN_TO_TEX_FILE
     slice_path = folder / DEFAULT_REVIEW_SLICES_FILE
 
     interface_source = interface_path.read_text(encoding="utf-8") if interface_path.exists() else ""
     report_source = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
     tex_source = tex_path.read_text(encoding="utf-8") if tex_path and tex_path.exists() else ""
+    text_source = text_path.read_text(encoding="utf-8") if text_path and text_path.exists() else ""
+    llm_tex_source = llm_tex_path.read_text(encoding="utf-8") if llm_tex_path.exists() else ""
     slice_source = slice_path.read_text(encoding="utf-8") if slice_path.exists() else ""
 
     return {
@@ -961,6 +1467,9 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
         "interface_sha256": statement_digest(interface_source),
         "report_sha256": statement_digest(report_source),
         "tex_sha256": statement_digest(tex_source),
+        "text_sha256": statement_digest(text_source),
+        "pdf_sha256": _file_sha256(pdf_path),
+        "llm_tex_sha256": statement_digest(llm_tex_source),
         "review_slices_sha256": statement_digest(slice_source),
     }
 
@@ -991,6 +1500,12 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         return None
     if payload.get("hashes", {}).get("tex_sha256") != hashes["tex_sha256"]:
         return None
+    if payload.get("hashes", {}).get("text_sha256") != hashes["text_sha256"]:
+        return None
+    if payload.get("hashes", {}).get("pdf_sha256") != hashes["pdf_sha256"]:
+        return None
+    if payload.get("hashes", {}).get("llm_tex_sha256") != hashes["llm_tex_sha256"]:
+        return None
     if payload.get("hashes", {}).get("review_slices_sha256") != hashes["review_slices_sha256"]:
         return None
 
@@ -1007,6 +1522,7 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         lean_statement = str(raw_row.get("lean_statement") or "").strip()
         paper_statement = str(raw_row.get("paper_statement") or "").strip()
         agent_statement = str(raw_row.get("agent_statement") or "").strip()
+        paper_statement_image_url = str(raw_row.get("paper_statement_image_url") or "").strip()
         line_number = int(raw_row.get("line_number") or 0)
         slice_id = _safe_slice_id(str(raw_row.get("slice_id") or "all"))
         slice_title = str(raw_row.get("slice_title") or "All statements").strip()
@@ -1019,6 +1535,7 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
                 lean_statement=lean_statement,
                 paper_statement=paper_statement,
                 agent_statement=agent_statement,
+                paper_statement_image_url=paper_statement_image_url,
                 line_number=line_number,
                 slice_id=slice_id,
                 slice_title=slice_title or slice_id,
@@ -1050,11 +1567,13 @@ def review_items_for_paper(folder: Path, use_cache: bool = True) -> list[ReviewI
     if use_cache:
         cached = load_cached_review_rows(folder)
         if cached is not None:
+            attach_rendered_statement_images(folder, cached)
             return cached
 
     interface = review_source_file(folder)
     report = folder / "FINAL_VALIDATION_REPORT.md"
     items = parse_interface_items(interface, report if report.exists() else None, folder)
+    attach_rendered_statement_images(folder, items)
     return items
 
 
@@ -1452,7 +1971,7 @@ HTML_PAGE = """
       line-height: 1.35;
     }
     .page {
-      width: min(1400px, calc(100% - 24px));
+      width: min(1800px, calc(100% - 16px));
       margin: 0 auto;
       padding: 18px 0 30px;
     }
@@ -1590,8 +2109,8 @@ HTML_PAGE = """
       width: 100%;
       border-collapse: collapse;
       margin-top: 0;
-      min-width: 880px;
-      table-layout: fixed;
+      min-width: 0;
+      table-layout: auto;
     }
     th, td { border: 1px solid var(--line); padding: 10px; vertical-align: top; }
     thead th {
@@ -1606,11 +2125,34 @@ HTML_PAGE = """
     tbody tr:nth-child(odd) { background: #fcfdff; }
     tbody tr.is-hidden { display: none; }
     body.hide-agent .agent-column { display: none; }
+    .review-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+      gap: 12px;
+      align-items: start;
+    }
+    .review-main {
+      min-width: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .review-controls {
+      min-width: 0;
+      border-left: 1px solid var(--line);
+      padding-left: 12px;
+    }
+    .review-section {
+      min-width: 0;
+    }
+    .review-section-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
     .col-paper, .col-lean, .col-agent { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.35; }
     .col-agent { white-space: normal; }
-    .col-paper { width: 40%; }
-    .col-lean { width: 30%; }
-    .col-agent { width: 20%; }
+    .col-paper, .col-lean, .col-agent { width: 100%; }
     .statement-box {
       border: 1px solid var(--line);
       border-radius: 7px;
@@ -1634,14 +2176,37 @@ HTML_PAGE = """
     }
     .statement-body {
       padding: 9px;
-      max-height: 300px;
+      max-height: 520px;
       overflow: auto;
       white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .col-lean .statement-body {
+      white-space: pre-wrap;
+      overflow-x: hidden;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .col-lean .statement-body code {
+      display: block;
+      max-width: 100%;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
       word-break: break-word;
     }
     .statement-body code {
       white-space: pre-wrap;
       word-break: break-word;
+    }
+    .paper-statement-image {
+      display: block;
+      width: 100%;
+      max-width: none;
+      height: auto;
+      background: #fff;
+      border: 1px solid #d8e0ec;
+      border-radius: 6px;
+      margin-bottom: 8px;
     }
     .statement-preview {
       display: block;
@@ -1754,6 +2319,13 @@ HTML_PAGE = """
       .paper-header { display: block; }
       .paper-progress { text-align: left; margin-top: 4px; }
       .toolbar input, .toolbar select { min-width: 130px; }
+      .review-item { grid-template-columns: 1fr; }
+      .review-controls {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding-left: 0;
+        padding-top: 10px;
+      }
     }
 
   </style>
@@ -1820,6 +2392,18 @@ HTML_PAGE = """
   </div>
 
   <script>
+    window.addEventListener("error", (event) => {
+      const container = document.getElementById("containers");
+      if (container) {
+        container.textContent = `Dashboard render error: ${event.message || "unknown error"}`;
+      }
+    });
+    window.addEventListener("unhandledrejection", (event) => {
+      const container = document.getElementById("containers");
+      if (container) {
+        container.textContent = `Dashboard render error: ${event.reason || "unknown promise rejection"}`;
+      }
+    });
     const state = {
       papers: __PAPERS__,
       logPath: __LOG_PATH__,
@@ -1857,9 +2441,9 @@ HTML_PAGE = """
     }
 
     function looksLikeLatex(value) {
-      return /\\[a-zA-Z]+/.test(value)
+      return /\\\\[a-zA-Z]+/.test(value)
         || /[∀∃→↔≤≥≠∞∈∉∑∏ℝℕ]/.test(value)
-        || /\\/.test(value);
+        || /\\\\/.test(value);
     }
 
     function isFormulaValue(value) {
@@ -1889,7 +2473,103 @@ HTML_PAGE = """
         const body = content.trim();
         return looksLikeLatex(body) ? `\\(${body}\\)` : `<code>${body}</code>`;
       });
-      return marked.replace(/\n/g, "<br/>");
+      return marked.replace(/\\n/g, "<br/>");
+    }
+
+    function renderTexDraft(value) {
+      const text = escapeHtml(value || "No auto-generated preview available.");
+      return text.replace(/\\n/g, "<br/>");
+    }
+
+    function softWrapLeanSegment(segment) {
+      if (segment.length < 24) {
+        return segment;
+      }
+      return segment.replace(/_/g, "_\\u200b");
+    }
+
+    function prettyLeanIdentifier(identifier, indent = "      ") {
+      const softDot = ".\\u200b";
+      const parts = identifier.split(".");
+      if (parts.length <= 1) {
+        return softWrapLeanSegment(identifier);
+      }
+
+      const wrappedParts = parts.map(softWrapLeanSegment);
+      const softWrapped = wrappedParts.join(softDot);
+      if (identifier.length <= 54) {
+        return softWrapped;
+      }
+
+      const namespace = wrappedParts.slice(0, -1).join(softDot);
+      const last = wrappedParts[wrappedParts.length - 1];
+      if (namespace.length <= 64) {
+        return `${namespace}.${softDot}\\n${indent}${last}`;
+      }
+
+      return wrappedParts
+        .map((part, index) => (index < wrappedParts.length - 1 ? `${part}.` : part))
+        .join(`\\n${indent}`);
+    }
+
+    function prettyLeanIdentifiers(text) {
+      return text.replace(
+        /[A-Za-z_][A-Za-z0-9_']*(?:\\.[A-Za-z_][A-Za-z0-9_']*)+/g,
+        (identifier) => prettyLeanIdentifier(identifier)
+      );
+    }
+
+    function wrapLeanLine(line, maxWidth = 98) {
+      if (line.length <= maxWidth) {
+        return line;
+      }
+      const indent = (line.match(/^\\s*/) || [""])[0];
+      const continuation = `${indent}  `;
+      const out = [];
+      let rest = line.trimEnd();
+
+      while (rest.length > maxWidth) {
+        const windowText = rest.slice(0, maxWidth);
+        const breakpoints = [" (", " {", " [", "), ", ", ", " "]
+          .map((marker) => windowText.lastIndexOf(marker))
+          .filter((index) => index > indent.length + 18);
+        const breakAt = breakpoints.length ? Math.max(...breakpoints) : -1;
+        if (breakAt <= 0) {
+          break;
+        }
+        out.push(rest.slice(0, breakAt).trimEnd());
+        rest = continuation + rest.slice(breakAt).trimStart();
+      }
+      out.push(rest);
+      return out.join("\\n");
+    }
+
+    function wrapLeanLines(text) {
+      return text
+        .split("\\n")
+        .map((line) => wrapLeanLine(line))
+        .join("\\n");
+    }
+
+    function prettyLeanStatement(value) {
+      let text = String(value || "No statement text.").replace(/\\r\\n/g, "\\n");
+      text = text.replace(/ :\\n\\s*/g, " :\\n  ");
+      text = text.replace(/\\} \\{/g, "}\\n  {");
+      text = text.replace(/\\} \\(/g, "}\\n  (");
+      text = text.replace(/\\] \\[/g, "]\\n  [");
+      text = text.replace(/\\] \\(/g, "]\\n  (");
+      text = text.replace(/\\) \\[/g, ")\\n  [");
+      text = text.replace(/\\), /g, "),\\n  ");
+      text = text.replace(/, ∀ /g, ",\\n  ∀ ");
+      text = text.replace(/, \\(/g, ",\\n  (");
+      text = text.replace(/, ([A-Za-z_][A-Za-z0-9_']* : Type u_[0-9]+)/g, ",\\n  $1");
+      text = text.replace(/, ([A-Za-z_][A-Za-z0-9_']* : Type\\*)/g, ",\\n  $1");
+      text = text.replace(/, (\\[[^\\]]+\\] : [^,]+)/g, ",\\n  $1");
+      text = text.replace(/ → /g, "\\n    → ");
+      text = text.replace(/ ↔ /g, "\\n    ↔ ");
+      text = text.replace(/ ∧ /g, "\\n    ∧ ");
+      text = text.replace(/\\) \\(/g, ")\\n  (");
+      return wrapLeanLines(prettyLeanIdentifiers(text));
     }
 
     function compactPreview(value, maxLength = 150) {
@@ -2181,12 +2861,31 @@ HTML_PAGE = """
       row.dataset.sliceId = item.slice_id || "all";
       row.dataset.sliceTitle = item.slice_title || "All statements";
       row.dataset.searchText = `${paper} ${item.kind || ""} ${item.name} ${item.paper_statement || ""} ${item.lean_statement || ""}`.toLowerCase();
-      const paperCell = document.createElement("td");
-      paperCell.className = "col-paper";
+      const itemCell = document.createElement("td");
+      const itemShell = document.createElement("div");
+      itemShell.className = "review-item";
+      const mainCell = document.createElement("div");
+      mainCell.className = "review-main";
+
+      const paperCell = document.createElement("section");
+      paperCell.className = "review-section col-paper";
       const paperHtml = renderPaperStatement(item.paper_statement);
-      if ((item.paper_statement || "").length > 650) {
+      if (item.paper_statement_image_url) {
+        const image = document.createElement("img");
+        image.className = "paper-statement-image";
+        image.src = item.paper_statement_image_url;
+        image.alt = `Rendered source statement for ${paper}.${item.name}`;
+        image.loading = "lazy";
+        paperCell.appendChild(image);
         paperCell.appendChild(
-          makeStatementBox("Paper-facing statement", item.paper_statement, {
+          makeStatementBox("Extracted text fallback", item.paper_statement || "", {
+            html: paperHtml,
+            previewLength: 160,
+          })
+        );
+      } else if ((item.paper_statement || "").length > 650) {
+        paperCell.appendChild(
+          makeStatementBox("Paper source statement", item.paper_statement, {
             html: paperHtml,
             previewLength: 180,
           })
@@ -2195,37 +2894,37 @@ HTML_PAGE = """
         paperCell.innerHTML = paperHtml;
       }
 
-      const leanCell = document.createElement("td");
-      leanCell.className = "col-lean";
+      const leanCell = document.createElement("section");
+      leanCell.className = "review-section col-lean";
       leanCell.appendChild(
-        makeStatementBox("Lean statement", item.lean_statement, {
+        makeStatementBox("Expanded Lean statement", item.lean_statement, {
+          html: `<code>${escapeHtml(prettyLeanStatement(item.lean_statement))}</code>`,
           previewLength: 170,
+          open: true,
         })
       );
 
-      const agentCell = document.createElement("td");
-      agentCell.className = "col-agent agent-column";
+      const agentCell = document.createElement("section");
+      agentCell.className = "review-section col-agent agent-column";
       const agentHeader = document.createElement("div");
       agentHeader.className = "small muted";
       agentHeader.textContent =
-        "Agent Lean draft (rough)";
+        "Context-free Lean-to-TeX draft";
       const agentText = document.createElement("div");
       agentText.className = "agent-statement";
-      const agentHtml = isFormulaValue(item.agent_statement || "")
-        ? `\\\\(${escapeHtml(item.agent_statement || "") || "No auto-generated preview available."}\\\\)`
-        : `<code>${escapeHtml(item.agent_statement || "No auto-generated preview available.")}</code>`;
       agentText.appendChild(
         makeStatementBox("Lean-to-TeX draft", item.agent_statement || "", {
-          html: agentHtml,
+          html: renderTexDraft(item.agent_statement || ""),
           previewLength: 130,
+          open: true,
         })
       );
       agentText.style.margin = "0";
       agentCell.appendChild(agentHeader);
       agentCell.appendChild(agentText);
 
-      const reviewCell = document.createElement("td");
-      reviewCell.className = "col-review";
+      const reviewCell = document.createElement("aside");
+      reviewCell.className = "review-controls col-review";
       const rowId = `${safeId(paper)}_${safeId(item.name)}`;
 
       const statusLine = document.createElement("div");
@@ -2327,10 +3026,13 @@ HTML_PAGE = """
       reviewCell.appendChild(status);
 
       // Populate with existing review history
-      row.appendChild(paperCell);
-      row.appendChild(leanCell);
-      row.appendChild(agentCell);
-      row.appendChild(reviewCell);
+      mainCell.appendChild(paperCell);
+      mainCell.appendChild(leanCell);
+      mainCell.appendChild(agentCell);
+      itemShell.appendChild(mainCell);
+      itemShell.appendChild(reviewCell);
+      itemCell.appendChild(itemShell);
+      row.appendChild(itemCell);
       return { row, status };
     }
 
@@ -2495,7 +3197,7 @@ HTML_PAGE = """
         const table = document.createElement("table");
         const head = document.createElement("thead");
         head.innerHTML =
-          "<tr><th>Paper-facing statement</th><th>Lean statement</th><th class='agent-column'>Lean-to-TeX draft</th><th>Review</th></tr>";
+          "<tr><th>Paper statement, expanded Lean statement, and review</th></tr>";
         table.appendChild(head);
         const body = document.createElement("tbody");
         for (const item of paper.items) {
@@ -2622,6 +3324,10 @@ def print_stale_review_warning(
     return True
 
 
+class ReusableThreadingHTTPServer(ThreadingHTTPServer):
+    allow_reuse_address = True
+
+
 class ReviewHTTPHandler(BaseHTTPRequestHandler):
     papers: list[dict[str, Any]] = []
     log_file: Path | None = None
@@ -2684,6 +3390,29 @@ class ReviewHTTPHandler(BaseHTTPRequestHandler):
             return
         self._send_file(candidate)
 
+    def _send_rendered_statement(self, paper: str, filename: str) -> None:
+        """Serve a generated statement-render PNG if it belongs to the paper cache."""
+
+        target_paper_dir = None
+        for folder in iter_paper_folders(self.paper_filter):
+            if folder.name == paper:
+                target_paper_dir = folder
+                break
+        if target_paper_dir is None:
+            self.send_error(404, "paper not found")
+            return
+        if not filename or "/" in filename or "\\" in filename or ".." in filename:
+            self.send_error(404, "invalid rendered statement")
+            return
+        if not filename.lower().endswith(tuple(PAPER_RENDERED_IMAGE_EXTENSIONS)):
+            self.send_error(404, "unsupported rendered statement")
+            return
+        candidate = target_paper_dir / ".review_traces" / PAPER_RENDERED_STATEMENT_DIR / filename
+        if not candidate.exists() or not candidate.is_file():
+            self.send_error(404, "rendered statement not found")
+            return
+        self._send_file(candidate)
+
     def do_GET(self) -> None:
         path, query = self._collect_path()
         if path == "/":
@@ -2708,6 +3437,15 @@ class ReviewHTTPHandler(BaseHTTPRequestHandler):
             paper = urllib.parse.unquote(pieces[1])
             filename = urllib.parse.unquote(pieces[2])
             self._send_asset(paper, filename)
+            return
+        if path.startswith("/rendered-statements/"):
+            pieces = [segment for segment in path.split("/") if segment]
+            if len(pieces) != 3:
+                self.send_error(404, "invalid rendered statement request")
+                return
+            paper = urllib.parse.unquote(pieces[1])
+            filename = urllib.parse.unquote(pieces[2])
+            self._send_rendered_statement(paper, filename)
             return
         if path == "/api/papers":
             papers = gather_paper_data(self.paper_filter, self.slice_filter)
@@ -2865,7 +3603,7 @@ def main() -> None:
         handler.slice_filter = args.slice_filter
         print_stale_review_warning(args.paper, log_file, args.slice_filter)
         try:
-            server = ThreadingHTTPServer((args.host, args.port), handler)
+            server = ReusableThreadingHTTPServer((args.host, args.port), handler)
         except OSError as exc:
             print(
                 f"Failed to start dashboard server on {args.host}:{args.port}: {exc}"
