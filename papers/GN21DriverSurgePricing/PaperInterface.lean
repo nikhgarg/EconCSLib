@@ -111,6 +111,10 @@ abbrev theorem3_current_bounds_source_feasible :=
 abbrev theorem3_policy_canonical_pointwise_reward_rate :=
   @theorem3_structured_measurable_ic_ae_unique_of_policy_canonical_pointwise_reward_rate_source
 
+/-- Theorem 3: feasible-policy-canonical pointwise/reward-rate endpoint. -/
+abbrev theorem3_feasible_policy_canonical_pointwise_reward_rate :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_policy_canonical_pointwise_reward_rate_source
+
 /-- Theorem 3: endpoint-bridge route. -/
 abbrev theorem3_endpoint_bridge :=
   @theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source

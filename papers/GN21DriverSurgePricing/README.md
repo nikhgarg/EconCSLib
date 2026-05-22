@@ -2441,9 +2441,16 @@ and
 `PaperInterface.theorem3_policy_canonical_pointwise_reward_rate` combine
 policy-level Lemma 5 canonical-dominance data with pointwise/reward-rate
 fixed-transfer endpoint facts and derive the regular endpoint certificate
-internally.  This is the current closest source boundary to the paper's proof:
-the remaining source work is the actual continuous canonical-dominance and
-pointwise/reward-rate endpoint facts, not the allowed-policy-form packaging.
+internally.  The feasible-seed variant
+`Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate.to_feasible_policy_canonical_dominance`,
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_feasible_policy_canonical_dominance_pointwise_reward_rate_source_assumptions`,
+and
+`PaperInterface.theorem3_feasible_policy_canonical_pointwise_reward_rate`
+is now the closest source boundary to the paper's proof: the Lemma 5 dominance
+side ranges only over feasible generalized interval/ray seeds, and the
+remaining source work is the actual continuous feasible canonical-dominance
+and pointwise/reward-rate endpoint facts, not the allowed-policy-form
+packaging.
 The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,

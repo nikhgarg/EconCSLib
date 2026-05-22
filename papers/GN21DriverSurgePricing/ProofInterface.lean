@@ -1270,6 +1270,26 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_policy_canonical_pointwis
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 on the feasible-policy-canonical pointwise/reward-rate
+fixed-transfer route: the Lemma 5 dominance proof ranges only over feasible
+generalized interval/ray seeds.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_policy_canonical_pointwise_reward_rate_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    [IsFiniteMeasure (mu 0)] [(mu 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (mu 1)] [(mu 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularFeasiblePolicyCanonicalDominancePointwiseRewardRateSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_feasible_policy_canonical_dominance_pointwise_reward_rate_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 on the feasible a.e. representative route closest to the Lemma 5
 source proof, with `R1 > 0` and `R1 < R2` derived from the paper's ratio
 assumptions.
