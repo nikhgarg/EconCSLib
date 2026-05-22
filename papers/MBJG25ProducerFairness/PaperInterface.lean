@@ -21,10 +21,14 @@ folder has a consistent paper-facing proof surface.
 
 namespace MBJG25ProducerFairness
 
+open scoped BigOperators
+
 /-! ## 1) Binary-rating model primitives - -/
 
 /-- The posterior mean estimated quality in the fixed binary rating model.
-    Paper Definition: $\frac{\eta \alpha + t q_v}{\eta (\alpha + \beta) + t}$
+    Paper Definition:
+    $\frac{\eta \widetilde{\alpha} + t q_v}
+            {\eta(\widetilde{\alpha}+\widetilde{\beta}) + t}$
 -/
 noncomputable def paper_posterior_mean (alpha beta eta t q_v : ℝ) : ℝ :=
   (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t)
@@ -36,7 +40,9 @@ noncomputable def paper_bias (alpha beta eta t q_v : ℝ) : ℝ :=
   paper_posterior_mean alpha beta eta t q_v - q_v
 
 /-- The variance of the estimated quality.
-    Paper Definition: $\frac{t q_v (1 - q_v)}{(\eta (\alpha + \beta) + t)^2}$
+    Paper Definition:
+    $\frac{t q_v (1 - q_v)}
+            {(\eta(\widetilde{\alpha}+\widetilde{\beta}) + t)^2}$
 -/
 noncomputable def paper_variance (alpha beta eta t q_v : ℝ) : ℝ :=
   t * q_v * (1 - q_v) / (eta * alpha + eta * beta + t) ^ 2
@@ -62,10 +68,11 @@ theorem paper_facing_theorem3_1_variance_weak_decrease
     (hq1 : q ≤ 1)
     (hetaLow_nonneg : 0 ≤ etaLow)
     (heta_le : etaLow ≤ etaHigh) :
-    EconCSLib.Statistics.priorWeightedVariance alpha beta etaHigh t q ≤
-      EconCSLib.Statistics.priorWeightedVariance alpha beta etaLow t q := by
-  exact paper_theorem3_1_variance_weak_decrease
-    hshape ht hq0 hq1 hetaLow_nonneg heta_le
+    paper_variance alpha beta etaHigh t q ≤
+      paper_variance alpha beta etaLow t q := by
+  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
+    paper_theorem3_1_variance_weak_decrease
+      hshape ht hq0 hq1 hetaLow_nonneg heta_le
 
 /--
 Theorem 3.1, strict decrease on interior quality values.
@@ -80,10 +87,11 @@ theorem paper_facing_theorem3_1_variance_strict_decrease_interior
     (hq1 : q < 1)
     (hetaLow_nonneg : 0 ≤ etaLow)
     (heta_lt : etaLow < etaHigh) :
-    EconCSLib.Statistics.priorWeightedVariance alpha beta etaHigh t q <
-      EconCSLib.Statistics.priorWeightedVariance alpha beta etaLow t q := by
-  exact paper_theorem3_1_variance_strict_decrease_interior
-    hshape ht hq0 hq1 hetaLow_nonneg heta_lt
+    paper_variance alpha beta etaHigh t q <
+      paper_variance alpha beta etaLow t q := by
+  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
+    paper_theorem3_1_variance_strict_decrease_interior
+      hshape ht hq0 hq1 hetaLow_nonneg heta_lt
 
 /--
 Theorem 3.1, squared posterior-mean bias is nondecreasing in prior strength.
@@ -96,10 +104,14 @@ theorem paper_facing_theorem3_1_squared_bias_nondecreasing
     (ht : 0 < t)
     (hetaLow_nonneg : 0 ≤ etaLow)
     (heta_le : etaLow ≤ etaHigh) :
-    EconCSLib.Statistics.priorWeightedSquaredBias alpha beta etaLow t q ≤
-      EconCSLib.Statistics.priorWeightedSquaredBias alpha beta etaHigh t q := by
-  exact paper_theorem3_1_squared_bias_nondecreasing
-    hshape ht hetaLow_nonneg heta_le
+    paper_squared_bias alpha beta etaLow t q ≤
+      paper_squared_bias alpha beta etaHigh t q := by
+  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,
+    EconCSLib.Statistics.priorWeightedSquaredBias,
+    EconCSLib.Statistics.priorWeightedBias,
+    EconCSLib.Statistics.priorWeightedPosteriorMean] using
+    paper_theorem3_1_squared_bias_nondecreasing
+      hshape ht hetaLow_nonneg heta_le
 
 /-! ## 3) Theorem 3.2 statements -/
 
@@ -111,9 +123,12 @@ theorem paper_facing_theorem3_2_squared_bias_convex_in_quality
     {alpha beta eta t : ℝ}
     (hden : eta * alpha + eta * beta + t ≠ 0) :
     EconCSLib.Statistics.JensenConvex
-      (fun q => EconCSLib.Statistics.priorWeightedSquaredBias
-        alpha beta eta t q) := by
-  exact paper_theorem3_2_squared_bias_convex_in_quality hden
+      (fun q => paper_squared_bias alpha beta eta t q) := by
+  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,
+    EconCSLib.Statistics.priorWeightedSquaredBias,
+    EconCSLib.Statistics.priorWeightedBias,
+    EconCSLib.Statistics.priorWeightedPosteriorMean] using
+    paper_theorem3_2_squared_bias_convex_in_quality hden
 
 /--
 Theorem 3.2, squared-bias global minimizer.
@@ -126,11 +141,14 @@ theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean
     (heta_nonneg : 0 ≤ eta)
     (ht : 0 < t) :
     EconCSLib.Statistics.GlobalMinAt
-      (fun q => EconCSLib.Statistics.priorWeightedSquaredBias
-        alpha beta eta t q)
+      (fun q => paper_squared_bias alpha beta eta t q)
       (alpha / (alpha + beta)) := by
-  exact paper_theorem3_2_squared_bias_global_min_at_prior_mean
-    hshape heta_nonneg ht
+  simpa [paper_squared_bias, paper_bias, paper_posterior_mean,
+    EconCSLib.Statistics.priorWeightedSquaredBias,
+    EconCSLib.Statistics.priorWeightedBias,
+    EconCSLib.Statistics.priorWeightedPosteriorMean] using
+    paper_theorem3_2_squared_bias_global_min_at_prior_mean
+      hshape heta_nonneg ht
 
 /--
 Theorem 3.2, posterior-mean variance Jensen concavity in true quality.
@@ -140,9 +158,10 @@ theorem paper_facing_theorem3_2_variance_concave_in_quality
     {alpha beta eta t : ℝ}
     (ht : 0 ≤ t) :
     EconCSLib.Statistics.JensenConcave
-      (fun q => EconCSLib.Statistics.priorWeightedVariance
-        alpha beta eta t q) := by
-  exact paper_theorem3_2_variance_concave_in_quality ht
+      (fun q => paper_variance alpha beta eta t q) := by
+  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
+    paper_theorem3_2_variance_concave_in_quality
+      (alpha := alpha) (beta := beta) (eta := eta) ht
 
 /--
 Theorem 3.2, posterior-mean variance global maximum at `q = 1/2`.
@@ -153,10 +172,11 @@ theorem paper_facing_theorem3_2_variance_global_max_at_half
     {alpha beta eta t : ℝ}
     (ht : 0 ≤ t) :
     EconCSLib.Statistics.GlobalMaxAt
-      (fun q => EconCSLib.Statistics.priorWeightedVariance
-        alpha beta eta t q)
+      (fun q => paper_variance alpha beta eta t q)
       (1 / 2) := by
-  exact paper_theorem3_2_variance_global_max_at_half ht
+  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
+    paper_theorem3_2_variance_global_max_at_half
+      (alpha := alpha) (beta := beta) (eta := eta) ht
 
 /-! ## 4) Boundary caveats -/
 
@@ -167,10 +187,11 @@ so strict decrease cannot hold unconditionally.
 -/
 theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero
     (alpha beta t etaLow etaHigh : ℝ) :
-    ¬ EconCSLib.Statistics.priorWeightedVariance alpha beta etaHigh t 0 <
-      EconCSLib.Statistics.priorWeightedVariance alpha beta etaLow t 0 := by
-  exact paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero
-    alpha beta t etaLow etaHigh
+    ¬ paper_variance alpha beta etaHigh t 0 <
+      paper_variance alpha beta etaLow t 0 := by
+  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
+    paper_theorem3_1_variance_strict_decrease_counterexample_quality_zero
+      alpha beta t etaLow etaHigh
 
 /--
 Boundary caution for Theorem 3.1 strict decrease:
@@ -179,10 +200,11 @@ so strict decrease cannot hold unconditionally.
 -/
 theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one
     (alpha beta t etaLow etaHigh : ℝ) :
-    ¬ EconCSLib.Statistics.priorWeightedVariance alpha beta etaHigh t 1 <
-      EconCSLib.Statistics.priorWeightedVariance alpha beta etaLow t 1 := by
-  exact paper_theorem3_1_variance_strict_decrease_counterexample_quality_one
-    alpha beta t etaLow etaHigh
+    ¬ paper_variance alpha beta etaHigh t 1 <
+      paper_variance alpha beta etaLow t 1 := by
+  simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
+    paper_theorem3_1_variance_strict_decrease_counterexample_quality_one
+      alpha beta t etaLow etaHigh
 
 /-! ## 5) Section 4 & Appendix C: Responsive Market and Dynamic Model -/
 
@@ -191,23 +213,39 @@ Defined as the standard deviation in Selection Rate (SR) among producers with
 the same true quality `q`.
 -/
 noncomputable def paper_facing_individual_producer_unfairness
-    {V : Type*} [Fintype V] [DecidableEq V] :=
-  @MBJG25ProducerFairness.Responsive.producerUnfairness V _ _
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (selections : V → ℝ)
+    (lifespan : V → ℝ)
+    (q_v : V → ℝ)
+    (q : ℝ) : ℝ :=
+  Real.sqrt
+    (EconCSLib.Statistics.finsetVariance
+      (Finset.univ.filter (fun v => q_v v = q))
+      (fun v => selections v / lifespan v))
 
 /-- Section 4: Thompson Sampling.
 A dynamic policy that selects an arm by drawing from a belief distribution
 and picking the argmax.
 -/
 def paper_facing_thompson_sampling_mechanism
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] :=
-  @EconCSLib.Decision.IsThompsonSampling V _ _ _
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    (belief : PMF (V → ℝ))
+    (policy : PMF V) : Prop :=
+  ∃ tie_breaker : (V → ℝ) → V,
+    (∀ (profile : V → ℝ) (v : V), profile v ≤ profile (tie_breaker profile)) ∧
+    policy = belief.bind (fun profile => PMF.pure (tie_breaker profile))
 
 /-- Section 4: Expected Regret (Efficiency).
 The total expected regret across a finite time horizon.
 -/
 noncomputable def paper_facing_expected_regret
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] :=
-  @EconCSLib.Online.expectedRegret V _ _ _
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    (T : ℕ)
+    (M : Fin T → Finset V)
+    (h_nonempty : ∀ t, (M t).Nonempty)
+    (q : V → ℝ)
+    (pi : (t : Fin T) → PMF V) : ℝ :=
+  ∑ t : Fin T, ((M t).sup' (h_nonempty t) q - EconCSLib.pmfExp (pi t) q)
 
 /-- Appendix C: MSE Decomposition in the responsive setting.
 When the number of reviews $N$ is a random variable, the expected mean squared error
@@ -221,17 +259,38 @@ theorem paper_facing_responsive_mse_decomposition
     (posterior_rating : α → ℝ)
     (h_cond_mean : ∀ s,
       posterior_rating s - q_v =
-      EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v)
+      paper_bias alpha beta eta (N s) q_v)
     (h_cond_var : ∀ s,
       (posterior_rating s - q_v) ^ 2 -
-      (EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v) ^ 2 =
-      EconCSLib.Statistics.priorWeightedVariance alpha beta eta (N s) q_v) :
+      (paper_bias alpha beta eta (N s) q_v) ^ 2 =
+      paper_variance alpha beta eta (N s) q_v) :
     EconCSLib.pmfExp state_dist (fun s => (posterior_rating s - q_v) ^ 2) =
       EconCSLib.pmfExp state_dist (fun s =>
-        EconCSLib.Statistics.priorWeightedSquaredBias alpha beta eta (N s) q_v) +
+        paper_squared_bias alpha beta eta (N s) q_v) +
       EconCSLib.pmfExp state_dist (fun s =>
-        EconCSLib.Statistics.priorWeightedVariance alpha beta eta (N s) q_v) := by
-  exact MBJG25ProducerFairness.Responsive.paper_responsive_mse_decomposition
-    state_dist N posterior_rating h_cond_mean h_cond_var
+        paper_variance alpha beta eta (N s) q_v) := by
+  have h_mean_lib : ∀ s,
+      posterior_rating s - q_v =
+      EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v := by
+    intro s
+    simpa [paper_bias, paper_posterior_mean,
+      EconCSLib.Statistics.priorWeightedBias,
+      EconCSLib.Statistics.priorWeightedPosteriorMean] using h_cond_mean s
+  have h_var_lib : ∀ s,
+      (posterior_rating s - q_v) ^ 2 -
+      (EconCSLib.Statistics.priorWeightedBias alpha beta eta (N s) q_v) ^ 2 =
+      EconCSLib.Statistics.priorWeightedVariance alpha beta eta (N s) q_v := by
+    intro s
+    simpa [paper_bias, paper_posterior_mean, paper_variance,
+      EconCSLib.Statistics.priorWeightedBias,
+      EconCSLib.Statistics.priorWeightedPosteriorMean,
+      EconCSLib.Statistics.priorWeightedVariance] using h_cond_var s
+  simpa [paper_squared_bias, paper_bias, paper_posterior_mean, paper_variance,
+    EconCSLib.Statistics.priorWeightedSquaredBias,
+    EconCSLib.Statistics.priorWeightedBias,
+    EconCSLib.Statistics.priorWeightedPosteriorMean,
+    EconCSLib.Statistics.priorWeightedVariance] using
+    MBJG25ProducerFairness.Responsive.paper_responsive_mse_decomposition
+      state_dist N posterior_rating h_mean_lib h_var_lib
 
 end MBJG25ProducerFairness

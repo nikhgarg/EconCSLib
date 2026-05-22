@@ -351,10 +351,21 @@ the Lean statements against the paper.
   the next review boundary.
 - The launcher checks freshness against the logged trace on startup; if an old
   check is out of date, it warns you and you can immediately re-save checks.
+  If interface docstrings or source-facing statement text changed, expect old
+  human review rows to become stale. Do not edit or rewrite the review log to
+  clear that state; leave the dashboard warning and tell the reviewer which
+  rows need to be resaved.
 - It also shows compact paper-source action links (open PDF/text file), so the
   reviewer can quickly jump back to source wording when needed.
 - Paper-facing formulas that look like LaTeX are rendered in the dashboard so
   theorem statements are easier to read without full Lean familiarity.
+- When improving the dashboard's Lean-to-TeX draft column, save stable
+  context-free drafts in the paper root as `lean_to_tex_llm.json` with one
+  entry per `PaperInterface.lean` declaration. Generate these drafts from the
+  Lean statement alone, without using the source paper text, so the column stays
+  an independent translation check. The dashboard also supports the older
+  `.review_traces/lean_to_tex_llm.json` location, but tracked paper-root drafts
+  are preferred for handoff and cache invalidation.
 - `./review-dashboard.sh` always regenerates the lightweight Lean→TeX preview from
   the current declarations on launch, so you do not need a separate “translation”
   step.
@@ -367,6 +378,11 @@ the Lean statements against the paper.
 
   `python3 scripts/bootstrap_review_launchers.py --write`
 - **CRITICAL MANDATE - NO HIDDEN DEFINITIONS:** A human reviewer cannot verify a theorem if its core terms are opaque references to generic library modules (e.g., `EconCSLib.Statistics.priorWeightedVariance`). The `PaperInterface.lean` file MUST expose the exact mathematical formulas for the paper's definitions. Do this by defining paper-specific `abbrev`s or `def`s at the top of the interface that spell out the raw formulas exactly as they appear in the paper, and then use those local definitions in your paper-facing theorem statements or prove they equal the generic terms. A reviewer must see the actual math equations inside this single file without needing to open imported generic modules. Keep `PostPaperAudit.lean` for theorem endpoint aliases and proof-seam coverage, not standalone proof-facing formula duplicates.
+  When a paper-facing theorem depends on those formulas, state the theorem over
+  the local paper definitions where practical, even if the proof immediately
+  discharges the claim by `simpa` through a reusable library theorem. It is not
+  enough for the formulas to appear in earlier dashboard rows while theorem
+  rows still expose only opaque library terms.
   Include for each entry:
   1. the declaration name,
   2. a compact paper-style statement in comments,

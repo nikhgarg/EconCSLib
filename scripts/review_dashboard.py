@@ -783,7 +783,7 @@ def parse_paper_text_statement_locations(folder: Path) -> list[dict[str, Any]]:
 def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
     """Load optional context-free LLM TeX drafts for expanded Lean statements."""
 
-    path = folder / ".review_traces" / DEFAULT_LLM_LEAN_TO_TEX_FILE
+    path = llm_lean_to_tex_drafts_file(folder)
     if not path.exists() or not path.is_file():
         return {}
     try:
@@ -804,6 +804,15 @@ def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
         if name and value:
             out[name] = value
     return out
+
+
+def llm_lean_to_tex_drafts_file(folder: Path) -> Path:
+    """Return the preferred Lean-to-TeX draft sidecar for a paper."""
+
+    tracked_path = folder / DEFAULT_LLM_LEAN_TO_TEX_FILE
+    if tracked_path.exists() and tracked_path.is_file():
+        return tracked_path
+    return folder / ".review_traces" / DEFAULT_LLM_LEAN_TO_TEX_FILE
 
 
 def _run_pdftotext_bbox(pdf_path: Path, page: int) -> str:
@@ -1488,7 +1497,7 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     tex_path = find_paper_tex_source(folder)
     text_path = find_paper_text(folder)
     pdf_path = find_paper_pdf(folder)
-    llm_tex_path = folder / ".review_traces" / DEFAULT_LLM_LEAN_TO_TEX_FILE
+    llm_tex_path = llm_lean_to_tex_drafts_file(folder)
     slice_path = folder / DEFAULT_REVIEW_SLICES_FILE
 
     interface_source = interface_path.read_text(encoding="utf-8") if interface_path.exists() else ""

@@ -39,6 +39,14 @@ startup status.
 The dashboard includes search, status filters, slice filters, source-file
 buttons, line numbers, and MathJax rendering for formula-like paper statements.
 
+## Lean-To-TeX Drafts
+
+The Lean-to-TeX draft column can be overridden by a paper-local
+`lean_to_tex_llm.json` file in the paper root. Use this for stable,
+context-free drafts generated from `PaperInterface.lean` alone, without reading
+the source paper. The legacy `.review_traces/lean_to_tex_llm.json` location is
+still read when no tracked paper-root draft exists.
+
 ## Oversized Interfaces
 
 The dashboard can still filter by `review_slices.json` for legacy oversized
