@@ -119,6 +119,24 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   immediate from `R2 > 0`; the positive-`z0` branch should be derived from the
   non-surge ratio formula/feasibility assumptions, or recorded as the exact
   missing source regime condition.
+- GN21 file-organization lesson: when a CTMC proof route has made
+  `MainTheorems.lean` unwieldy, add a new proof-route module for the stable
+  declaration cluster while keeping `MainTheorems.lean` as the stable source
+  ledger. Validate with targeted builds of the new route module and then the
+  paper root. Do not do a risky broad declaration move unless the cluster
+  already builds in place, and never use `git reset` to recover in a shared
+  worktree.
+- GN21 route-selection lesson: the finite/infinite pointwise upper-transfer
+  branch is not the default paper path for Theorem 3.  For reject-long CTMC
+  policies, the proved monotonicity gives the lower-transfer direction; the
+  upper-transfer branch needs an extra source upper/equality assumption.  Use
+  the small-surge sequential route instead: move surge to accept-all with
+  small slack, then apply the non-surge Lemma 10 comparison after surge is
+  fixed at accept-all.
+- GN21 Lemma 5 adapter lesson: when state source data are response-dependent,
+  obtain the marginal-response fields through the fixed-response converter
+  such as `D.to_fixed_response hρ`; using the base policy-form data directly
+  can silently give the wrong response type and waste a build cycle.
 - To avoid token-heavy Lean retries in CTMC algebra, name the denominator and
   numerator identities before using inequalities. Prove `m-r = numerator/den`
   and `z = ratio*B/den`, then transfer slack by

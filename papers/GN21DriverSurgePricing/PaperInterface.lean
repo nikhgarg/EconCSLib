@@ -1,4 +1,5 @@
 import GN21DriverSurgePricing.ProofInterface
+import GN21DriverSurgePricing.Theorem3Frontier
 
 /-!
 # Paper Interface: Driver Surge Pricing
@@ -123,9 +124,25 @@ abbrev theorem3_feasible_policy_canonical_pointwise_reward_rate_normalized :=
 abbrev theorem3_endpoint_bridge :=
   @theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
 
-/-- Theorem 3: finite/infinite branch pointwise-transfer route. -/
-abbrev theorem3_finite_or_infinite_branch :=
-  @theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source
+/--
+Theorem 3: small-surge source route with current Lemma 9 final-sign input.
+-/
+abbrev theorem3_small_surge_final_sign :=
+  @theorem3_positive_mass_measurable_ic_of_small_surge_final_sign
+
+/--
+Theorem 3: preferred small-surge source route with selected-price interval
+slack for the current non-surge policy.
+-/
+abbrev theorem3_small_surge_interval_final_sign :=
+  @theorem3_positive_mass_measurable_ic_of_small_surge_interval_final_sign
+
+/--
+Theorem 3: mass-affine small-surge source route with selected-price interval
+slack.
+-/
+abbrev theorem3_small_surge_mass_affine_interval_final_sign :=
+  @theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_interval_final_sign
 
 end PaperInterface
 end GN21DriverSurgePricing

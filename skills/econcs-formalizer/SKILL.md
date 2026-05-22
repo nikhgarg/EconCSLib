@@ -82,6 +82,17 @@ the validation command. Do not copy long proof states, full diffs, or entire
 README tables into handoffs when declaration names and file links identify the
 same information.
 
+Use subagents only when they shorten the current proof loop. Medium-effort
+subagents are appropriate for bounded read-only scouting: find declaration
+names, trace imports, locate source statements, or identify likely reusable
+lemmas. Hard Lean implementation should stay local or go to a high-effort
+worker with a narrow, disjoint write scope and explicit instructions not to
+touch other agents' files. Do not delegate the next blocking proof obligation if
+the main agent will just wait idle; do the blocker locally and send sidecar
+questions in parallel. Ask subagents for exact file paths, line anchors,
+declaration names, and recommended next lemmas, not broad summaries or repeated
+context. Close agents once their result has been integrated.
+
 Do not avoid continuous, probabilistic, or measure-theoretic formalization when
 the source theorem requires it. Finite analogues are useful scaffolds only when
 they shorten the faithful proof. If the fastest honest route is a direct
@@ -308,6 +319,14 @@ the Lean statements against the paper.
   paper statement closely enough that a human can inspect just this file and
   verify the intended theorem was formalized. Use paper theorem numbers/names in
   docstrings and keep wrappers thin.
+- If `MainTheorems.lean` is becoming a large implementation file, add narrow
+  proof-route files instead of appending more proof bodies there. A route file
+  should own one stable declaration cluster or named proof path and be imported
+  by the central theorem file. Avoid risky mass moves just to split a file; move
+  a cluster only after its imports and targeted build are already stable.
+- Any proof-facing interface or route file is an implementation bridge. Keep it
+  thin and source-shaped, and keep `PaperInterface.lean` as the human review
+  surface.
 - Every paper folder has exactly one canonical human-review Lean surface:
   `PaperInterface.lean`. Do not introduce filename variants such as
   `HumanReview.lean`, `ReviewInterface.lean`, or paper-specific alternatives.
@@ -911,6 +930,10 @@ exit $status
 
 - Prefer `lake build <touched-root-module>` over full `lake build` until the
   paper slice is ready for integration.
+- After splitting out a proof-route file, build that route module first, then
+  the parent theorem root such as `PaperName.MainTheorems`. Do not broaden to a
+  full `lake build` until the route import boundary is stable or the task is at
+  a release/integration checkpoint.
 - Do not rerun Lean after Markdown-only edits unless the user needs a fresh
   end-to-end checkpoint. After Lean edits, build the touched module first; after
   documentation edits, use `git diff --check` and stale-text `rg` instead.
