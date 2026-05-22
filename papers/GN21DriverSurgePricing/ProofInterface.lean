@@ -1,12 +1,12 @@
 import GN21DriverSurgePricing.MainTheorems
 
 /-!
-# Paper Interface: Driver Surge Pricing
+# Proof Interface: Driver Surge Pricing
 
-This file is a compact human-facing review surface for the GN21 formalization.
-The full proof ledger in `MainTheorems.lean` is large and active; this interface
-starts with the central source-facing single-state results that are stable
-enough for paper-vs-Lean review.
+This file preserves the implementation-facing endpoint ledger for the GN21
+formalization.  The compact human-review surface is `PaperInterface.lean`; this
+file retains the larger source-facing theorem wrappers used by downstream proof
+work and older documentation.
 -/
 
 open EconCSLib
@@ -263,6 +263,46 @@ def theorem4_optimal_current_bounds_source_of_optimal_reward_rate
       mu arrival R1 R2 switch12 switch21 m z :=
   GN21DriverSurgePricing.Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_reward_rate
     mu arrival R1 R2 switch12 switch21 m z C
+
+/--
+Theorem 2 measured multiplicative non-IC endpoint: a profitable deviation for
+the actual measured GN21 two-state reward under multiplicative prices refutes
+dynamic incentive compatibility.
+-/
+theorem theorem2_multiplicative_measured_not_ic_of_witness
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (m : Fin 2 → ℝ)
+    (C :
+      MultiplicativeMeasuredNotICCertificate
+        mu arrival switch12 switch21 m) :
+    ¬ dynamicIncentiveCompatible
+      (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21
+        (fun i => multiplicativePricing (m i))) := by
+  exact
+    GN21DriverSurgePricing.paper_theorem2_multiplicative_measured_not_ic_of_witness
+      mu arrival switch12 switch21 m C
+
+/--
+Theorem 2 aggregate witness route: nondegenerate accept-all and deviating
+policies plus a strict Appendix-D aggregate-primitives improvement produce the
+measured multiplicative non-IC conclusion.
+-/
+theorem theorem2_multiplicative_measured_not_ic_of_aggregate_witness
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (m : Fin 2 → ℝ)
+    (C :
+      MultiplicativeMeasuredAggregateNotICCertificate
+        mu arrival switch12 switch21 m) :
+    ¬ dynamicIncentiveCompatible
+      (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21
+        (fun i => multiplicativePricing (m i))) := by
+  exact
+    GN21DriverSurgePricing.paper_theorem2_multiplicative_measured_not_ic_of_aggregate_witness
+      mu arrival switch12 switch21 m C
 
 /--
 Theorem 2 policy-shape route from the Theorem 4 shape-derivation boundary:
@@ -1206,6 +1246,27 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_r
       mu arrival R1 R2 switch12 switch21 := by
   exact
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 on the policy-canonical pointwise/reward-rate fixed-transfer route:
+Lean derives the regular allowed policy-form endpoint package from the
+policy-level Lemma 5 canonical-dominance data and the local fixed-transfer
+endpoint facts.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_policy_canonical_pointwise_reward_rate_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    [IsFiniteMeasure (mu 0)] [(mu 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (mu 1)] [(mu 1).InnerRegularCompactLTTop]
+    (A :
+      Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularPolicyCanonicalDominancePointwiseRewardRateSourceAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_policy_canonical_dominance_pointwise_reward_rate_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
