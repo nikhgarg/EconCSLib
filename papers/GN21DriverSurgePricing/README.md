@@ -2446,11 +2446,16 @@ internally.  The feasible-seed variant
 `paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_feasible_policy_canonical_dominance_pointwise_reward_rate_source_assumptions`,
 and
 `PaperInterface.theorem3_feasible_policy_canonical_pointwise_reward_rate`
-is now the closest source boundary to the paper's proof: the Lemma 5 dominance
-side ranges only over feasible generalized interval/ray seeds, and the
-remaining source work is the actual continuous feasible canonical-dominance
-and pointwise/reward-rate endpoint facts, not the allowed-policy-form
-packaging.
+is now the closest source boundary to the paper's proof.  Its normalized-ratio
+entry point
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_feasible_policy_canonical_dominance_pointwise_reward_rate_normalized_mass_ratio_source_assumptions`
+is surfaced as
+`PaperInterface.theorem3_feasible_policy_canonical_pointwise_reward_rate_normalized`;
+it derives `R1 > 0`, `R1 < R2`, and positive accept-all mass from the paper's
+ratio and probability-normalization assumptions.  The Lemma 5 dominance side
+ranges only over feasible generalized interval/ray seeds, and the remaining
+source work is the actual continuous feasible canonical-dominance and
+pointwise/reward-rate endpoint facts, not the allowed-policy-form packaging.
 The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,
