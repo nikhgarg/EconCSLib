@@ -5,18 +5,15 @@
 \begin{tikzpicture}[node distance=1.05cm and 1.5cm,
   every node/.style={font=\sffamily\small}]
 
-% Legend
+% Standard status legend; Roth's source-result nodes are all closed.
   \dagPaperMetadata{The Economics of Matching: Stability and Incentives}{Alvin E. Roth}{Mathematics of Operations Research}{1982}{https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617}
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond) {\textbf{Conditional}\\certificate};
-\node[dag_partial, right=0.35cm of legCond, dag_template_legend] (legPart) {\textbf{Partial}\\incomplete};
-\node[dag_model, right=0.35cm of legPart, dag_template_legend] (legDef) {\textbf{Definition}\\model};
-\node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen) {\textbf{Open}\\not formalized};
+\node[dag_model, right=0.35cm of legRes, dag_template_legend] (legDef) {\textbf{Definition}\\model};
 
 
 }
-\daglegend{(legRes)(legCond)(legPart)(legDef)(legOpen)}{Legend}
+\daglegend{(legRes)(legDef)}{Legend}
 
 \begin{dagPaperBody}
 
@@ -32,7 +29,7 @@
 
 % Impossibility and efficient procedure path
 \node[dag_result] (Thm3) at (7,-6)
-  {\textbf{Theorem 3}\\finite stable-set counterexample blocks two-sided truthfulness};
+  {\textbf{Theorem 3}\\no strict-profile stable procedure is truthful for both sides};
 \node[dag_result, text width=3.7cm] (Thm4) at (7,-9)
   {\textbf{Theorem 4}\\serial dictatorship\\on indexed finite domain};
 
@@ -48,9 +45,9 @@
 
 % Pareto and limits
 \node[dag_result] (Thm6) at (21,-8)
-  {\textbf{Theorem 6}\\weak Pareto from complete DA\\and final active step};
+  {\textbf{Theorem 6}\\men-optimal DA is weakly Pareto optimal};
 \node[dag_result] (Thm7) at (21,-12)
-  {\textbf{Theorem 7}\\arbitrary $k>1$ padded Theorem 3 family closed};
+  {\textbf{Theorem 7}\\no strict-profile stable procedure avoids $k$th-choice manipulation};
 
 % Edges
 \coordinate (DAtoThm5Top) at (11.1,-1.5);

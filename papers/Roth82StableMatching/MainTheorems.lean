@@ -9,8 +9,9 @@ import EconCSLib.Markets.Matching.DeferredAcceptance
 /-!
 # Paper-Facing Theorems: The Economics of Matching: Stability and Incentives (Roth 1982)
 
-This file contains foundational stable matching definitions and conditional
-wrappers for the Roth 1982 paper. The source paper's Theorem 3 is an
+This file contains foundational stable matching definitions, closed
+source-domain endpoints, and compatibility certificate wrappers for the Roth
+1982 paper. The source paper's Theorem 3 is an
 impossibility result; the DA truthfulness wrapper below corresponds to the
 one-sided incentive statement in Theorem 5, not to source Theorem 3.
 -/
@@ -78,6 +79,12 @@ def paper_strict_marriage_domain {M W : Type*}
     (∀ m w, 0 < val_m m w) ∧
     (∀ w m, 0 < val_w w m)
 
+/-- Source-domain strict rankings, without assumptions about the outside option. -/
+def paper_strict_preference_profile {M W : Type*}
+    (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
+  (∀ m w w', val_m m w = val_m m w' → w = w') ∧
+    (∀ w m m', val_w w m = val_w w m' → m = m')
+
 /-- Paper Definition: Truth-telling is a dominant strategy for men in the men-proposing DA algorithm.
     No man can improve his match by misreporting his preferences, assuming others report truthfully. -/
 def paper_truthful_for_men {M W : Type*} [DecidableEq M] [DecidableEq W]
@@ -92,6 +99,37 @@ def paper_truthful_for_women {M W : Type*} [DecidableEq M] [DecidableEq W]
   ∀ (val_m : M → W → ℝ) (val_w : W → M → ℝ) (w : W) (report_w : M → ℝ),
     paper_matching_valW val_w w ((mechanism val_m (Function.update val_w w report_w)).w_match w) ≤
     paper_matching_valW val_w w ((mechanism val_m val_w).w_match w)
+
+/-- A stable procedure on strict reported preference profiles. -/
+def paper_stable_matching_procedure_on_strict_profiles
+    {M W : Type*}
+    (mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W) : Prop :=
+  ∀ val_m val_w, paper_strict_preference_profile val_m val_w →
+    paper_is_stable val_m val_w (mechanism val_m val_w)
+
+/-- Men-side dominant truthfulness when true and reported profiles are strict. -/
+def paper_truthful_for_men_on_strict_profiles
+    {M W : Type*} [DecidableEq M] [DecidableEq W]
+    (mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W) : Prop :=
+  ∀ (val_m : M → W → ℝ) (val_w : W → M → ℝ),
+    paper_strict_preference_profile val_m val_w →
+      ∀ (m : M) (report_m : W → ℝ),
+        paper_strict_preference_profile (Function.update val_m m report_m) val_w →
+          paper_matching_valM val_m m
+              ((mechanism (Function.update val_m m report_m) val_w).m_match m) ≤
+            paper_matching_valM val_m m ((mechanism val_m val_w).m_match m)
+
+/-- Women-side dominant truthfulness when true and reported profiles are strict. -/
+def paper_truthful_for_women_on_strict_profiles
+    {M W : Type*} [DecidableEq M] [DecidableEq W]
+    (mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W) : Prop :=
+  ∀ (val_m : M → W → ℝ) (val_w : W → M → ℝ),
+    paper_strict_preference_profile val_m val_w →
+      ∀ (w : W) (report_w : M → ℝ),
+        paper_strict_preference_profile val_m (Function.update val_w w report_w) →
+          paper_matching_valW val_w w
+              ((mechanism val_m (Function.update val_w w report_w)).w_match w) ≤
+            paper_matching_valW val_w w ((mechanism val_m val_w).w_match w)
 
 /-- Paper Definition: a man has a profitable unilateral misreport. -/
 def paper_profitable_man_misreport {M W : Type*} [DecidableEq M]
@@ -294,6 +332,40 @@ def paper_no_need_to_misrepresent_first_choice_for_women_on_strict_domain
                 ((mechanism val_m
                   (Function.update val_w w faithful_report_w)).w_match w)
 
+/-- A woman is the unique first choice for man `m` under the true preference profile. -/
+def paper_is_strict_top_choice_for_man {M W : Type*} (val_m : M → W → ℝ)
+    (m : M) (wstar : W) : Prop :=
+  ∀ w, w ≠ wstar → val_m m w < val_m m wstar
+
+/--
+A man's report preserves his true first choice if every true strict top choice
+is still ranked uniquely first in the report.
+-/
+def paper_man_report_preserves_first_choice {M W : Type*}
+    (val_m : M → W → ℝ) (m : M) (report_m : W → ℝ) : Prop :=
+  ∀ wstar, paper_is_strict_top_choice_for_man val_m m wstar →
+    ∀ w, w ≠ wstar → report_m w < report_m wstar
+
+/--
+Role-reversed Corollary 5.1 interface: for every report available to a man
+under women-proposing DA, there is a report preserving his true first choice
+and giving him a weakly better true outcome.
+-/
+def paper_no_need_to_misrepresent_first_choice_for_men_on_strict_domain
+    {M W : Type*} [DecidableEq M]
+    (mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W) : Prop :=
+  ∀ (val_m : M → W → ℝ) (val_w : W → M → ℝ),
+    paper_strict_marriage_domain val_m val_w →
+      ∀ (m : M) (report_m : W → ℝ),
+        ∃ faithful_report_m : W → ℝ,
+          paper_man_report_preserves_first_choice val_m m faithful_report_m ∧
+            paper_matching_valM val_m m
+                ((mechanism
+                  (Function.update val_m m report_m) val_w).m_match m) ≤
+              paper_matching_valM val_m m
+                ((mechanism
+                  (Function.update val_m m faithful_report_m) val_w).m_match m)
+
 /-- Paper Definition: A stable matching procedure always returns a stable matching. -/
 def paper_stable_matching_procedure {M W : Type*}
     (mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W) : Prop :=
@@ -414,7 +486,7 @@ theorem paper_da_is_men_optimal {M W : Type*} [Fintype M] [Fintype W] [Decidable
   exact hcert mu' hstable m
 
 /--
-Theorem 2 (conditional men-side wrapper): the men-proposing deferred-acceptance
+Theorem 2 compatibility wrapper: the men-proposing deferred-acceptance
 outcome is the men-optimal stable outcome once the men-optimality certificate
 is supplied.
 -/
@@ -468,7 +540,7 @@ theorem paper_da_is_women_optimal
   simpa [paper_matching_valW, paper_women_deferredAcceptance, valM, valW] using hopt
 
 /--
-Theorem 2 (conditional women-side wrapper): the women-proposing
+Theorem 2 compatibility wrapper: the women-proposing
 deferred-acceptance outcome is the women-optimal stable outcome once the
 role-reversed optimality certificate is supplied.
 -/
@@ -481,9 +553,10 @@ theorem paper_roth82_theorem2_women_optimal_stable_outcome
     paper_da_is_women_optimal val_m val_w hcert⟩
 
 /--
-Theorem 2 (conditional full wrapper): both sides have an optimal stable outcome,
-with the men-optimal outcome obtained by men-proposing DA and the women-optimal
-outcome obtained by the role-reversed DA procedure.
+Theorem 2 compatibility wrapper: both sides have an optimal stable outcome, with
+the men-optimal outcome obtained by men-proposing DA and the women-optimal
+outcome obtained by the role-reversed DA procedure once the certificates are
+supplied.
 -/
 theorem paper_roth82_theorem2_optimal_stable_outcomes
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -599,6 +672,34 @@ def theorem3Man0DoublePrimeReport : Theorem3Agent → ℝ := fun w =>
 /-- The profile `P''`, differing from `P` only in man `m₁`'s report. -/
 def theorem3MenProfileDoublePrime : Theorem3Agent → Theorem3Agent → ℝ :=
   Function.update theorem3MenProfile 0 theorem3Man0DoublePrimeReport
+
+theorem theorem3_base_strict_preference_profile :
+    paper_strict_preference_profile theorem3MenProfile theorem3WomenProfile := by
+  constructor
+  · intro m w w' h
+    fin_cases m <;> fin_cases w <;> fin_cases w' <;>
+      simp [theorem3MenProfile] at h ⊢
+  · intro w m m' h
+    fin_cases w <;> fin_cases m <;> fin_cases m' <;>
+      simp [theorem3WomenProfile] at h ⊢
+
+theorem theorem3_woman_prime_strict_preference_profile :
+    paper_strict_preference_profile theorem3MenProfile theorem3WomenProfilePrime := by
+  constructor
+  · exact theorem3_base_strict_preference_profile.1
+  · intro w m m' h
+    fin_cases w <;> fin_cases m <;> fin_cases m' <;>
+      simp [theorem3WomenProfilePrime, theorem3WomenProfile,
+        theorem3Woman0PrimeReport] at h ⊢
+
+theorem theorem3_man_double_prime_strict_preference_profile :
+    paper_strict_preference_profile theorem3MenProfileDoublePrime theorem3WomenProfile := by
+  constructor
+  · intro m w w' h
+    fin_cases m <;> fin_cases w <;> fin_cases w' <;>
+      simp [theorem3MenProfileDoublePrime, theorem3MenProfile,
+        theorem3Man0DoublePrimeReport] at h ⊢
+  · exact theorem3_base_strict_preference_profile.2
 
 /--
 Roth's stable outcome `x`:
@@ -1932,6 +2033,28 @@ theorem theorem3_counterexample_stable_behavior_of_stable_procedure
       (mechanism theorem3MenProfileDoublePrime theorem3WomenProfile)
       (hstableProc theorem3MenProfileDoublePrime theorem3WomenProfile)
 
+/-- A procedure stable on strict profiles has Roth's three-profile counterexample behavior. -/
+theorem theorem3_counterexample_stable_behavior_of_stable_procedure_on_strict_profiles
+    (mechanism :
+      (Theorem3Agent → Theorem3Agent → ℝ) →
+        (Theorem3Agent → Theorem3Agent → ℝ) →
+          Assignment Theorem3Agent Theorem3Agent)
+    (hstableProc : paper_stable_matching_procedure_on_strict_profiles mechanism) :
+    Theorem3CounterexampleStableBehavior mechanism := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact theorem3_stable_base_eq_x_or_y
+      (mechanism theorem3MenProfile theorem3WomenProfile)
+      (hstableProc theorem3MenProfile theorem3WomenProfile
+        theorem3_base_strict_preference_profile)
+  · exact theorem3_stable_woman_prime_eq_y
+      (mechanism theorem3MenProfile theorem3WomenProfilePrime)
+      (hstableProc theorem3MenProfile theorem3WomenProfilePrime
+        theorem3_woman_prime_strict_preference_profile)
+  · exact theorem3_stable_man_double_prime_eq_x
+      (mechanism theorem3MenProfileDoublePrime theorem3WomenProfile)
+      (hstableProc theorem3MenProfileDoublePrime theorem3WomenProfile
+        theorem3_man_double_prime_strict_preference_profile)
+
 /--
 Theorem 3 manipulation contradiction from Roth's finite counterexample.
 
@@ -1957,6 +2080,35 @@ theorem paper_roth82_theorem3_counterexample_blocks_two_sided_truthfulness
       theorem3OutcomeY] at htruth
   · have htruth := hmenTruth theorem3MenProfile theorem3WomenProfile 0
       theorem3Man0DoublePrimeReport
+    rw [show Function.update theorem3MenProfile 0 theorem3Man0DoublePrimeReport =
+        theorem3MenProfileDoublePrime from rfl, hbehavior.man_double_prime, hbase] at htruth
+    norm_num [paper_matching_valM, theorem3MenProfile, theorem3OutcomeX,
+      theorem3OutcomeY] at htruth
+
+/--
+Theorem 3 manipulation contradiction restricted to strict true and reported
+preference profiles.
+-/
+theorem paper_roth82_theorem3_counterexample_blocks_two_sided_truthfulness_on_strict_profiles
+    (mechanism :
+      (Theorem3Agent → Theorem3Agent → ℝ) →
+        (Theorem3Agent → Theorem3Agent → ℝ) →
+          Assignment Theorem3Agent Theorem3Agent)
+    (hbehavior : Theorem3CounterexampleStableBehavior mechanism) :
+    ¬ (paper_truthful_for_men_on_strict_profiles mechanism ∧
+      paper_truthful_for_women_on_strict_profiles mechanism) := by
+  rintro ⟨hmenTruth, hwomenTruth⟩
+  rcases hbehavior.base with hbase | hbase
+  · have htruth := hwomenTruth theorem3MenProfile theorem3WomenProfile
+      theorem3_base_strict_preference_profile 0 theorem3Woman0PrimeReport
+      theorem3_woman_prime_strict_preference_profile
+    rw [show Function.update theorem3WomenProfile 0 theorem3Woman0PrimeReport =
+        theorem3WomenProfilePrime from rfl, hbehavior.woman_prime, hbase] at htruth
+    norm_num [paper_matching_valW, theorem3WomenProfile, theorem3OutcomeX,
+      theorem3OutcomeY] at htruth
+  · have htruth := hmenTruth theorem3MenProfile theorem3WomenProfile
+      theorem3_base_strict_preference_profile 0 theorem3Man0DoublePrimeReport
+      theorem3_man_double_prime_strict_preference_profile
     rw [show Function.update theorem3MenProfile 0 theorem3Man0DoublePrimeReport =
         theorem3MenProfileDoublePrime from rfl, hbehavior.man_double_prime, hbase] at htruth
     norm_num [paper_matching_valM, theorem3MenProfile, theorem3OutcomeX,
@@ -1994,7 +2146,7 @@ theorem theorem3_counterexample_has_profitable_misreport
       theorem3OutcomeY]
 
 /--
-Theorem 3 (conditional counterexample wrapper): no procedure satisfying Roth's
+Theorem 3 counterexample-behavior wrapper: no procedure satisfying Roth's
 three-profile stable-set behavior can make truthful revelation dominant for both
 men and women.
 -/
@@ -2027,6 +2179,26 @@ theorem paper_roth82_theorem3_no_stable_truthful_procedure :
       mechanism hstableProc)
     ⟨hmenTruth, hwomenTruth⟩
 
+/--
+Theorem 3 on the source strict-preference domain: no procedure that is stable on
+strict reported profiles makes truthful revelation dominant for both sides on
+strict true and reported profiles.
+-/
+theorem paper_roth82_theorem3_no_stable_truthful_procedure_on_strict_profiles :
+    ¬ ∃ mechanism :
+      (Theorem3Agent → Theorem3Agent → ℝ) →
+        (Theorem3Agent → Theorem3Agent → ℝ) →
+          Assignment Theorem3Agent Theorem3Agent,
+      paper_stable_matching_procedure_on_strict_profiles mechanism ∧
+        paper_truthful_for_men_on_strict_profiles mechanism ∧
+          paper_truthful_for_women_on_strict_profiles mechanism := by
+  rintro ⟨mechanism, hstableProc, hmenTruth, hwomenTruth⟩
+  exact paper_roth82_theorem3_counterexample_blocks_two_sided_truthfulness_on_strict_profiles
+    mechanism
+    (theorem3_counterexample_stable_behavior_of_stable_procedure_on_strict_profiles
+      mechanism hstableProc)
+    ⟨hmenTruth, hwomenTruth⟩
+
 /-! ## 4) Efficient strategyproof procedure -/
 
 /--
@@ -2045,7 +2217,7 @@ structure Theorem4EfficientStrategyproofProcedureCertificate
   ignores_women : paper_ignores_women_reports mechanism
 
 /--
-Theorem 4 (conditional serial-dictatorship wrapper): an efficient procedure
+Theorem 4 compatibility serial-dictatorship wrapper: an efficient procedure
 with dominant truthful revelation for every agent exists once the
 serial-dictatorship certificate is supplied.
 -/
@@ -2625,7 +2797,7 @@ theorem paper_women_da_truthful_for_women
     using htruth
 
 /--
-Theorem 5 (conditional men-side wrapper): in the procedure selecting the
+Theorem 5 compatibility men-side wrapper: in the procedure selecting the
 men-optimal stable outcome, truthful revelation is dominant for the men.
 -/
 theorem paper_roth82_theorem5_men_truthful
@@ -2635,7 +2807,7 @@ theorem paper_roth82_theorem5_men_truthful
   exact paper_da_truthful_for_men hcert
 
 /--
-Theorem 5 (conditional women-side wrapper): in the procedure selecting the
+Theorem 5 compatibility women-side wrapper: in the procedure selecting the
 women-optimal stable outcome, truthful revelation is dominant for the women.
 -/
 theorem paper_roth82_theorem5_women_truthful
@@ -2645,8 +2817,9 @@ theorem paper_roth82_theorem5_women_truthful
   exact paper_women_da_truthful_for_women hcert
 
 /--
-Theorem 5 (conditional full wrapper): each side is strategyproof in its own
-optimal-stable-outcome procedure.
+Theorem 5 compatibility full wrapper: each side is strategyproof in its own
+optimal-stable-outcome procedure once the generic DA truthfulness certificates
+are supplied.
 -/
 theorem paper_roth82_theorem5_optimal_side_truthful
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -2936,7 +3109,8 @@ theorem paper_da_truthful_for_men_on_strict_domain_of_no_simple_misreport
 
 /--
 Theorem 5 men-side source route on the strict marriage domain, with the
-remaining trace obligation isolated as `DaNoProfitableStrictSimpleMisreportForMenCertificate`.
+strict-simple-misreport trace certificate isolated as
+`DaNoProfitableStrictSimpleMisreportForMenCertificate`.
 -/
 theorem paper_roth82_theorem5_men_truthful_on_strict_domain_of_no_simple_misreport
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -2987,7 +3161,7 @@ theorem paper_da_truthful_for_women_on_strict_domain_of_no_simple_misreport
 
 /--
 Theorem 5 source route on the strict marriage domain for both proposing sides,
-with each side's remaining obligation isolated as a strict-simple-misreport
+with each side's certificate-parametrized route isolated as a strict-simple-misreport
 trace certificate.
 -/
 theorem paper_roth82_theorem5_optimal_side_truthful_on_strict_domain_of_no_simple_misreport
@@ -3020,7 +3194,7 @@ def DaLemma1SimpleMisrepresentationPartnerCertificate
         (deferredAcceptance (Function.update val_m m report_m) val_w).m_match m
 
 /--
-Lemma 1 (conditional wrapper): the equivalent simple misrepresentation leaves
+Lemma 1 compatibility wrapper: the equivalent simple misrepresentation leaves
 the manipulating man with the same partner.
 -/
 theorem paper_roth82_lemma1_simple_misrepresentation_same_partner
@@ -3047,7 +3221,7 @@ def DaLemma2SimpleMisrepresentationNoMenHarmedCertificate
         ∀ m', paper_man_weakly_prefers_outcome val_m m' y x
 
 /--
-Lemma 2 (conditional wrapper): a successful simple misrepresentation does not
+Lemma 2 compatibility wrapper: a successful simple misrepresentation does not
 make any man worse off.
 -/
 theorem paper_roth82_lemma2_simple_misrepresentation_no_men_harmed
@@ -3078,7 +3252,7 @@ def DaNoNeedToMisrepresentFirstChoiceForWomenCertificate
     (deferredAcceptance (M := M) (W := W))
 
 /--
-Corollary 5.1 (conditional wrapper): in the men-optimal stable procedure, women
+Corollary 5.1 compatibility wrapper: in the men-optimal stable procedure, women
 cannot profit by misrepresenting their first choice.
 -/
 theorem paper_roth82_corollary5_1_no_profitable_first_choice_misreport
@@ -3089,7 +3263,7 @@ theorem paper_roth82_corollary5_1_no_profitable_first_choice_misreport
   exact hcert
 
 /--
-Corollary 5.1 (source-faithful conditional wrapper): in the men-optimal stable
+Corollary 5.1 source-faithful compatibility wrapper: in the men-optimal stable
 procedure, a woman never needs to misrepresent her first choice; any report is
 weakly matched by a report preserving the true first choice.
 -/
@@ -3468,6 +3642,29 @@ theorem paper_roth82_corollary5_1_no_need_to_misrepresent_first_choice_on_strict
       (deferredAcceptance (M := M) (W := W)) :=
   paper_da_no_need_to_misrepresent_first_choice_for_women_on_strict_domain
     (M := M) (W := W)
+
+/--
+Role-reversed Corollary 5.1: for women-proposing DA on the original sides, any
+man report is weakly matched by a report preserving his true first choice.
+-/
+theorem paper_roth82_corollary5_1_role_reversed_no_need_to_misrepresent_first_choice_on_strict_domain
+    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    [Nonempty W] :
+    paper_no_need_to_misrepresent_first_choice_for_men_on_strict_domain
+      (paper_women_deferredAcceptance (M := M) (W := W)) := by
+  intro val_m val_w hdomain m report_m
+  have hdomainSwap : paper_strict_marriage_domain val_w val_m := by
+    rcases hdomain with ⟨hstrictM, hstrictW, hposM, hposW⟩
+    exact ⟨hstrictW, hstrictM, hposW, hposM⟩
+  obtain ⟨faithful_report_m, hpreserve, hweak⟩ :=
+    paper_roth82_corollary5_1_no_need_to_misrepresent_first_choice_on_strict_domain
+      (M := W) (W := M) val_w val_m hdomainSwap m report_m
+  refine ⟨faithful_report_m, ?_, ?_⟩
+  · simpa [paper_man_report_preserves_first_choice,
+      paper_is_strict_top_choice_for_man, paper_woman_report_preserves_first_choice,
+      paper_is_strict_top_choice_for_woman] using hpreserve
+  · simpa [paper_man_weakly_prefers_outcome, paper_woman_weakly_prefers_outcome,
+      paper_women_deferredAcceptance, paper_matching_valM, paper_matching_valW] using hweak
 
 /-! ## 6) Weak Pareto optimality for the proposing side -/
 
@@ -5237,9 +5434,9 @@ theorem paper_da_spent_proposal_before_active_step_yields_earlier_crossing
   exact ⟨tc, htc, hbefore, hafter⟩
 
 /--
-The remaining DA timing fact for Roth's Theorem 5 induction: a woman-favorite
-truthful rejected proposer makes his own truthful final match strictly later
-than the man who ultimately matches with that woman.
+DA timing certificate for Roth's Theorem 5 induction: a woman-favorite truthful
+rejected proposer makes his own truthful final match strictly later than the man
+who ultimately matches with that woman.
 -/
 def DaTopRejectedProposerLaterMatchTimeCertificate
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -5562,7 +5759,7 @@ theorem paper_da_truthful_for_men_on_strict_domain_of_card_eq_of_top_rejected_la
       simpa [x, y, hy] using hsimple
 
 /--
-Paper-facing men-side Theorem 5 route with the remaining DA timing fact isolated.
+Paper-facing men-side Theorem 5 route with the DA timing certificate isolated.
 -/
 theorem paper_roth82_theorem5_men_truthful_on_strict_domain_of_card_eq_of_top_rejected_later_certificate
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -5914,8 +6111,9 @@ def DaWeaklyParetoOptimalForMenCertificate
   paper_weakly_pareto_optimal_for_men val_m (deferredAcceptance val_m val_w)
 
 /--
-Theorem 6 (conditional wrapper): no feasible outcome is strictly preferred by
-every man to the men-proposing deferred-acceptance outcome.
+Theorem 6 compatibility wrapper: no feasible outcome is strictly preferred by
+every man to the men-proposing deferred-acceptance outcome once the weak-Pareto
+certificate is supplied.
 -/
 theorem paper_roth82_theorem6_no_feasible_outcome_strictly_better_for_all_men
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -6064,8 +6262,9 @@ def paper_stable_procedure_has_profitable_kth_choice_misreport
         paper_profitable_woman_misreport mechanism val_m val_w w report_w)
 
 /--
-Source-facing Theorem 7 property for a fixed finite marriage domain: every
-stable procedure admits some profitable `k`th-choice manipulation.
+Compatibility Theorem 7 property for a fixed finite marriage domain: every
+stable procedure admits some profitable `k`th-choice manipulation, without
+requiring strict true and reported profiles.
 -/
 def paper_no_stable_procedure_avoids_kth_choice_manipulation_on
     (M W : Type*) [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -6075,14 +6274,47 @@ def paper_no_stable_procedure_avoids_kth_choice_manipulation_on
       paper_stable_procedure_has_profitable_kth_choice_misreport k mechanism
 
 /--
-Source-facing arbitrary-family obligation for Roth Theorem 7. The source text
-states this for every `k > 1`.  The padded Theorem 3 family below proves this
-obligation; the name is retained as the source-facing proposition.
+Strict-profile version of the Theorem 7 manipulation predicate: the true
+profile and the unilateral reported profile are both strict.
+-/
+def paper_stable_procedure_has_profitable_strict_kth_choice_misreport
+    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    (k : ℕ)
+    (mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W) : Prop :=
+  ∃ val_m val_w, paper_strict_preference_profile val_m val_w ∧
+    ((∃ m report_m,
+      paper_strict_preference_profile (Function.update val_m m report_m) val_w ∧
+        paper_report_misrepresents_kth_choice (val_m m) report_m k ∧
+          paper_profitable_man_misreport mechanism val_m val_w m report_m) ∨
+    (∃ w report_w,
+      paper_strict_preference_profile val_m (Function.update val_w w report_w) ∧
+        paper_report_misrepresents_kth_choice (val_w w) report_w k ∧
+          paper_profitable_woman_misreport mechanism val_m val_w w report_w))
+
+/-- Source-facing strict-profile Theorem 7 property for a fixed finite marriage domain. -/
+def paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on
+    (M W : Type*) [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    (k : ℕ) : Prop :=
+  ∀ mechanism : (M → W → ℝ) → (W → M → ℝ) → Assignment M W,
+    paper_stable_matching_procedure_on_strict_profiles mechanism →
+      paper_stable_procedure_has_profitable_strict_kth_choice_misreport k mechanism
+
+/--
+Compatibility arbitrary-family obligation for Roth Theorem 7 without explicit
+strict-profile hypotheses.  The strict-profile certificate below is the final
+source-facing endpoint.
 -/
 def PaperTheorem7ArbitraryKFamilyCertificate : Prop :=
   ∀ k, 1 < k →
     ∃ n : ℕ,
       paper_no_stable_procedure_avoids_kth_choice_manipulation_on
+        (Fin n) (Fin n) k
+
+/-- Source-facing arbitrary-family obligation for Roth Theorem 7 on strict profiles. -/
+def PaperTheorem7StrictArbitraryKFamilyCertificate : Prop :=
+  ∀ k, 1 < k →
+    ∃ n : ℕ,
+      paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on
         (Fin n) (Fin n) k
 
 /-! ### Theorem 7 padded Theorem 3 family -/
@@ -6094,6 +6326,70 @@ being manipulated is `r + 2`, so this realizes every `k > 1` by taking
 `r = k - 2`.
 -/
 abbrev Theorem7PaddedAgent (r : ℕ) := Fin (r + 3)
+
+/-- Distinct dummy scores inserted between the manipulated agent's first and second core choices. -/
+noncomputable def theorem7InterposedScore (r : ℕ) (a : Theorem7PaddedAgent r) : ℝ :=
+  3 + (a.1 : ℝ) / (((r + 3 : ℕ) : ℝ))
+
+/-- Distinct low fallback scores for unacceptable non-self dummy alternatives. -/
+def theorem7BadScore {r : ℕ} (a : Theorem7PaddedAgent r) : ℝ :=
+  -1000 - (a.1 : ℝ)
+
+theorem theorem7InterposedScore_gt_two (r : ℕ) (a : Theorem7PaddedAgent r) :
+    2 < theorem7InterposedScore r a := by
+  unfold theorem7InterposedScore
+  have hnonneg : 0 ≤ (a.1 : ℝ) / (((r + 3 : ℕ) : ℝ)) := by
+    have hden : (0 : ℝ) ≤ (((r + 3 : ℕ) : ℝ)) := by
+      exact_mod_cast Nat.zero_le (r + 3)
+    exact div_nonneg (by exact_mod_cast Nat.zero_le a.1) hden
+  linarith
+
+theorem theorem7InterposedScore_lt_four (r : ℕ) (a : Theorem7PaddedAgent r) :
+    theorem7InterposedScore r a < 4 := by
+  unfold theorem7InterposedScore
+  have hdenpos : (0 : ℝ) < (((r + 3 : ℕ) : ℝ)) := by
+    exact_mod_cast Nat.succ_pos (r + 2)
+  have hnumlt : (a.1 : ℝ) < (((r + 3 : ℕ) : ℝ)) := by
+    exact_mod_cast a.2
+  have hfrac : (a.1 : ℝ) / (((r + 3 : ℕ) : ℝ)) < 1 :=
+    (div_lt_one hdenpos).2 hnumlt
+  linarith
+
+theorem theorem7BadScore_lt_zero {r : ℕ} (a : Theorem7PaddedAgent r) :
+    theorem7BadScore a < 0 := by
+  unfold theorem7BadScore
+  have hnonneg : 0 ≤ (a.1 : ℝ) := by
+    exact_mod_cast Nat.zero_le a.1
+  linarith
+
+theorem theorem7BadScore_injective {r : ℕ} :
+    Function.Injective (@theorem7BadScore r) := by
+  intro a b h
+  apply Fin.ext
+  unfold theorem7BadScore at h
+  have hcast : (a.1 : ℝ) = (b.1 : ℝ) := by linarith
+  exact_mod_cast hcast
+
+theorem theorem7InterposedScore_injective (r : ℕ) :
+    Function.Injective (theorem7InterposedScore r) := by
+  intro a b h
+  apply Fin.ext
+  unfold theorem7InterposedScore at h
+  have hdiv :
+      (a.1 : ℝ) / (((r + 3 : ℕ) : ℝ)) =
+        (b.1 : ℝ) / (((r + 3 : ℕ) : ℝ)) := by
+    linarith
+  have hdenpos : (0 : ℝ) < (((r + 3 : ℕ) : ℝ)) := by
+    exact_mod_cast Nat.succ_pos (r + 2)
+  have hdenne : (((r + 3 : ℕ) : ℝ)) ≠ 0 := ne_of_gt hdenpos
+  have hmul := congrArg (fun x : ℝ => x * (((r + 3 : ℕ) : ℝ))) hdiv
+  change (a.1 : ℝ) / (((r + 3 : ℕ) : ℝ)) * (((r + 3 : ℕ) : ℝ)) =
+    (b.1 : ℝ) / (((r + 3 : ℕ) : ℝ)) * (((r + 3 : ℕ) : ℝ)) at hmul
+  have hcast : (a.1 : ℝ) = (b.1 : ℝ) := by
+    rw [div_mul_cancel₀ (a.1 : ℝ) hdenne,
+      div_mul_cancel₀ (b.1 : ℝ) hdenne] at hmul
+    exact hmul
+  exact_mod_cast hcast
 
 /-- Embed a core Theorem 3 agent into the padded Theorem 7 market. -/
 def theorem7Core (r : ℕ) (a : Theorem3Agent) : Theorem7PaddedAgent r :=
@@ -6228,38 +6524,250 @@ Woman `w₁`'s true report in the padded family.  Dummy men are placed between
 her first and second core choices, making the old second choice the `(r + 2)`nd
 choice.
 -/
-def theorem7PaddedWoman0TrueReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun m =>
+noncomputable def theorem7PaddedWoman0TrueReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun m =>
   if m = (0 : Theorem7PaddedAgent r) then 4
   else if m = (2 : Theorem7PaddedAgent r) then 2
   else if m = (1 : Theorem7PaddedAgent r) then 1
-  else 3
+  else theorem7InterposedScore r m
 
 /-- Woman `w₁`'s padded prime report: the old second and third core choices swap. -/
-def theorem7PaddedWoman0PrimeReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun m =>
+noncomputable def theorem7PaddedWoman0PrimeReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun m =>
   if m = (0 : Theorem7PaddedAgent r) then 4
   else if m = (1 : Theorem7PaddedAgent r) then 2
   else if m = (2 : Theorem7PaddedAgent r) then 1
-  else 3
+  else theorem7InterposedScore r m
 
 /--
 Man `m₁`'s true report in the padded family.  Dummy women are placed between
 his first and second core choices.
 -/
-def theorem7PaddedMan0TrueReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun w =>
+noncomputable def theorem7PaddedMan0TrueReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun w =>
   if w = (1 : Theorem7PaddedAgent r) then 4
   else if w = (0 : Theorem7PaddedAgent r) then 2
   else if w = (2 : Theorem7PaddedAgent r) then 1
-  else 3
+  else theorem7InterposedScore r w
 
 /-- Man `m₁`'s padded double-prime report: the old second and third core choices swap. -/
-def theorem7PaddedMan0DoublePrimeReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun w =>
+noncomputable def theorem7PaddedMan0DoublePrimeReport (r : ℕ) : Theorem7PaddedAgent r → ℝ := fun w =>
   if w = (1 : Theorem7PaddedAgent r) then 4
   else if w = (2 : Theorem7PaddedAgent r) then 2
   else if w = (0 : Theorem7PaddedAgent r) then 1
-  else 3
+  else theorem7InterposedScore r w
+
+set_option linter.unusedSimpArgs false in
+private theorem theorem7CoreInterposedReport_strict
+    (r : ℕ) {top mid low : Theorem7PaddedAgent r}
+    (htm : top ≠ mid) (htl : top ≠ low) (hml : mid ≠ low) :
+    ∀ a b,
+      (if a = top then (4 : ℝ) else if a = mid then 2 else if a = low then 1
+        else theorem7InterposedScore r a) =
+      (if b = top then (4 : ℝ) else if b = mid then 2 else if b = low then 1
+        else theorem7InterposedScore r b) → a = b := by
+  intro a b h
+  have hmt : mid ≠ top := htm.symm
+  have hlt : low ≠ top := htl.symm
+  have hlm : low ≠ mid := hml.symm
+  by_cases hat : a = top
+  · subst a
+    by_cases hbt : b = top
+    · subst b
+      rfl
+    · by_cases hbm : b = mid
+      · subst b
+        simp [hbt, htm, htl, hml, hmt, hlt, hlm] at h
+      · by_cases hbl : b = low
+        · subst b
+          simp [hbt, hbm, htm, htl, hml, hmt, hlt, hlm] at h
+        · simp [hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+          have hb := theorem7InterposedScore_lt_four r b
+          linarith
+  · by_cases ham : a = mid
+    · subst a
+      by_cases hbt : b = top
+      · subst b
+        simp [hat, htm, htl, hml, hmt, hlt, hlm] at h
+      · by_cases hbm : b = mid
+        · subst b
+          rfl
+        · by_cases hbl : b = low
+          · subst b
+            simp [hat, hbt, hbm, htm, htl, hml, hmt, hlt, hlm] at h
+          · simp [hat, hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+            have hb := theorem7InterposedScore_gt_two r b
+            linarith
+    · by_cases hal : a = low
+      · subst a
+        by_cases hbt : b = top
+        · subst b
+          simp [hat, ham, htm, htl, hml, hmt, hlt, hlm] at h
+        · by_cases hbm : b = mid
+          · subst b
+            simp [hat, ham, hbt, htm, htl, hml, hmt, hlt, hlm] at h
+          · by_cases hbl : b = low
+            · subst b
+              rfl
+            · simp [hat, ham, hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+              have hb := theorem7InterposedScore_gt_two r b
+              linarith
+      · by_cases hbt : b = top
+        · subst b
+          simp [hat, ham, hal, htm, htl, hml, hmt, hlt, hlm] at h
+          have ha := theorem7InterposedScore_lt_four r a
+          linarith
+        · by_cases hbm : b = mid
+          · subst b
+            simp [hat, ham, hal, hbt, htm, htl, hml, hmt, hlt, hlm] at h
+            have ha := theorem7InterposedScore_gt_two r a
+            linarith
+          · by_cases hbl : b = low
+            · subst b
+              simp [hat, ham, hal, hbt, hbm, htm, htl, hml, hmt, hlt, hlm] at h
+              have ha := theorem7InterposedScore_gt_two r a
+              linarith
+            · simp [hat, ham, hal, hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+              exact theorem7InterposedScore_injective r h
+
+private theorem theorem7Padded_ne_of_val_ne {r : ℕ}
+    {a b : Theorem7PaddedAgent r} (hval : a.1 ≠ b.1) : a ≠ b := by
+  intro h
+  exact hval (congrArg Fin.val h)
+
+theorem theorem7PaddedWoman0TrueReport_strict (r : ℕ) :
+    ∀ a b, theorem7PaddedWoman0TrueReport r a =
+      theorem7PaddedWoman0TrueReport r b → a = b := by
+  simpa [theorem7PaddedWoman0TrueReport] using
+    (theorem7CoreInterposedReport_strict (r := r)
+      (top := (0 : Theorem7PaddedAgent r)) (mid := 2) (low := 1)
+      (theorem7Padded_zero_ne_two r)
+      (theorem7Padded_zero_ne_one r)
+      (theorem7Padded_one_ne_two r).symm)
+
+theorem theorem7PaddedWoman0PrimeReport_strict (r : ℕ) :
+    ∀ a b, theorem7PaddedWoman0PrimeReport r a =
+      theorem7PaddedWoman0PrimeReport r b → a = b := by
+  simpa [theorem7PaddedWoman0PrimeReport] using
+    (theorem7CoreInterposedReport_strict (r := r)
+      (top := (0 : Theorem7PaddedAgent r)) (mid := 1) (low := 2)
+      (theorem7Padded_zero_ne_one r)
+      (theorem7Padded_zero_ne_two r)
+      (theorem7Padded_one_ne_two r))
+
+theorem theorem7PaddedMan0TrueReport_strict (r : ℕ) :
+    ∀ a b, theorem7PaddedMan0TrueReport r a =
+      theorem7PaddedMan0TrueReport r b → a = b := by
+  simpa [theorem7PaddedMan0TrueReport] using
+    (theorem7CoreInterposedReport_strict (r := r)
+      (top := (1 : Theorem7PaddedAgent r)) (mid := 0) (low := 2)
+      (theorem7Padded_zero_ne_one r).symm
+      (theorem7Padded_one_ne_two r)
+      (theorem7Padded_zero_ne_two r))
+
+theorem theorem7PaddedMan0DoublePrimeReport_strict (r : ℕ) :
+    ∀ a b, theorem7PaddedMan0DoublePrimeReport r a =
+      theorem7PaddedMan0DoublePrimeReport r b → a = b := by
+  simpa [theorem7PaddedMan0DoublePrimeReport] using
+    (theorem7CoreInterposedReport_strict (r := r)
+      (top := (1 : Theorem7PaddedAgent r)) (mid := 2) (low := 0)
+      (theorem7Padded_one_ne_two r)
+      (theorem7Padded_zero_ne_one r).symm
+      (theorem7Padded_zero_ne_two r).symm)
+
+set_option linter.unusedSimpArgs false in
+private theorem theorem7CoreBadReport_strict
+    {r : ℕ} {top mid low : Theorem7PaddedAgent r}
+    (htm : top ≠ mid) (htl : top ≠ low) (hml : mid ≠ low) :
+    ∀ a b,
+      (if a = top then (3 : ℝ) else if a = mid then 2 else if a = low then 1
+        else theorem7BadScore a) =
+      (if b = top then (3 : ℝ) else if b = mid then 2 else if b = low then 1
+        else theorem7BadScore b) → a = b := by
+  intro a b h
+  have hmt : mid ≠ top := htm.symm
+  have hlt : low ≠ top := htl.symm
+  have hlm : low ≠ mid := hml.symm
+  by_cases hat : a = top
+  · subst a
+    by_cases hbt : b = top
+    · subst b
+      rfl
+    · by_cases hbm : b = mid
+      · subst b
+        simp [hbt, htm, htl, hml, hmt, hlt, hlm] at h
+      · by_cases hbl : b = low
+        · subst b
+          simp [hbt, hbm, htm, htl, hml, hmt, hlt, hlm] at h
+        · simp [hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+          have hb := theorem7BadScore_lt_zero b
+          linarith
+  · by_cases ham : a = mid
+    · subst a
+      by_cases hbt : b = top
+      · subst b
+        simp [hat, htm, htl, hml, hmt, hlt, hlm] at h
+      · by_cases hbm : b = mid
+        · subst b
+          rfl
+        · by_cases hbl : b = low
+          · subst b
+            simp [hat, hbt, hbm, htm, htl, hml, hmt, hlt, hlm] at h
+          · simp [hat, hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+            have hb := theorem7BadScore_lt_zero b
+            linarith
+    · by_cases hal : a = low
+      · subst a
+        by_cases hbt : b = top
+        · subst b
+          simp [hat, ham, htm, htl, hml, hmt, hlt, hlm] at h
+        · by_cases hbm : b = mid
+          · subst b
+            simp [hat, ham, hbt, htm, htl, hml, hmt, hlt, hlm] at h
+          · by_cases hbl : b = low
+            · subst b
+              rfl
+            · simp [hat, ham, hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+              have hb := theorem7BadScore_lt_zero b
+              linarith
+      · by_cases hbt : b = top
+        · subst b
+          simp [hat, ham, hal, htm, htl, hml, hmt, hlt, hlm] at h
+          have ha := theorem7BadScore_lt_zero a
+          linarith
+        · by_cases hbm : b = mid
+          · subst b
+            simp [hat, ham, hal, hbt, htm, htl, hml, hmt, hlt, hlm] at h
+            have ha := theorem7BadScore_lt_zero a
+            linarith
+          · by_cases hbl : b = low
+            · subst b
+              simp [hat, ham, hal, hbt, hbm, htm, htl, hml, hmt, hlt, hlm] at h
+              have ha := theorem7BadScore_lt_zero a
+              linarith
+            · simp [hat, ham, hal, hbt, hbm, hbl, htm, htl, hml, hmt, hlt, hlm] at h
+              exact theorem7BadScore_injective h
+
+private theorem theorem7DummyReport_strict {r : ℕ} (self : Theorem7PaddedAgent r) :
+    ∀ a b,
+      (if a = self then (1000 : ℝ) else theorem7BadScore a) =
+      (if b = self then (1000 : ℝ) else theorem7BadScore b) → a = b := by
+  intro a b h
+  by_cases ha : a = self
+  · subst a
+    by_cases hb : b = self
+    · subst b
+      rfl
+    · simp [hb] at h
+      have hbad := theorem7BadScore_lt_zero b
+      linarith
+  · by_cases hb : b = self
+    · subst b
+      simp [ha] at h
+      have hbad := theorem7BadScore_lt_zero a
+      linarith
+    · simp [ha, hb] at h
+      exact theorem7BadScore_injective h
 
 /-- Padded Theorem 3 base profile, men side. -/
-def theorem7PaddedMenProfile (r : ℕ) :
+noncomputable def theorem7PaddedMenProfile (r : ℕ) :
     Theorem7PaddedAgent r → Theorem7PaddedAgent r → ℝ := fun m w =>
   if m = (0 : Theorem7PaddedAgent r) then
     theorem7PaddedMan0TrueReport r w
@@ -6267,16 +6775,16 @@ def theorem7PaddedMenProfile (r : ℕ) :
     if w = (0 : Theorem7PaddedAgent r) then 3
     else if w = (1 : Theorem7PaddedAgent r) then 2
     else if w = (2 : Theorem7PaddedAgent r) then 1
-    else -1000
+    else theorem7BadScore w
   else if m = (2 : Theorem7PaddedAgent r) then
     if w = (0 : Theorem7PaddedAgent r) then 3
     else if w = (1 : Theorem7PaddedAgent r) then 2
     else if w = (2 : Theorem7PaddedAgent r) then 1
-    else -1000
-  else if w = m then 1000 else -1000
+    else theorem7BadScore w
+  else if w = m then 1000 else theorem7BadScore w
 
 /-- Padded Theorem 3 base profile, women side. -/
-def theorem7PaddedWomenProfile (r : ℕ) :
+noncomputable def theorem7PaddedWomenProfile (r : ℕ) :
     Theorem7PaddedAgent r → Theorem7PaddedAgent r → ℝ := fun w m =>
   if w = (0 : Theorem7PaddedAgent r) then
     theorem7PaddedWoman0TrueReport r m
@@ -6284,25 +6792,115 @@ def theorem7PaddedWomenProfile (r : ℕ) :
     if m = (2 : Theorem7PaddedAgent r) then 3
     else if m = (0 : Theorem7PaddedAgent r) then 2
     else if m = (1 : Theorem7PaddedAgent r) then 1
-    else -1000
+    else theorem7BadScore m
   else if w = (2 : Theorem7PaddedAgent r) then
     if m = (0 : Theorem7PaddedAgent r) then 3
     else if m = (1 : Theorem7PaddedAgent r) then 2
     else if m = (2 : Theorem7PaddedAgent r) then 1
-    else -1000
-  else if m = w then 1000 else -1000
+    else theorem7BadScore m
+  else if m = w then 1000 else theorem7BadScore m
 
 /-- Padded profile `P'`, differing only in woman `w₁`'s report. -/
-def theorem7PaddedWomenProfilePrime (r : ℕ) :
+noncomputable def theorem7PaddedWomenProfilePrime (r : ℕ) :
     Theorem7PaddedAgent r → Theorem7PaddedAgent r → ℝ :=
   Function.update (theorem7PaddedWomenProfile r) 0
     (theorem7PaddedWoman0PrimeReport r)
 
 /-- Padded profile `P''`, differing only in man `m₁`'s report. -/
-def theorem7PaddedMenProfileDoublePrime (r : ℕ) :
+noncomputable def theorem7PaddedMenProfileDoublePrime (r : ℕ) :
     Theorem7PaddedAgent r → Theorem7PaddedAgent r → ℝ :=
   Function.update (theorem7PaddedMenProfile r) 0
     (theorem7PaddedMan0DoublePrimeReport r)
+
+theorem theorem7PaddedMenProfile_strict (r : ℕ) :
+    ∀ m w w', theorem7PaddedMenProfile r m w =
+      theorem7PaddedMenProfile r m w' → w = w' := by
+  intro m w w' h
+  by_cases hm0 : m = (0 : Theorem7PaddedAgent r)
+  · subst m
+    exact theorem7PaddedMan0TrueReport_strict r w w' h
+  · by_cases hm1 : m = (1 : Theorem7PaddedAgent r)
+    · subst m
+      exact theorem7CoreBadReport_strict
+        (top := (0 : Theorem7PaddedAgent r)) (mid := 1) (low := 2)
+        (theorem7Padded_zero_ne_one r) (theorem7Padded_zero_ne_two r)
+        (theorem7Padded_one_ne_two r) w w' h
+    · by_cases hm2 : m = (2 : Theorem7PaddedAgent r)
+      · subst m
+        exact theorem7CoreBadReport_strict
+          (top := (0 : Theorem7PaddedAgent r)) (mid := 1) (low := 2)
+          (theorem7Padded_zero_ne_one r) (theorem7Padded_zero_ne_two r)
+          (theorem7Padded_one_ne_two r) w w' h
+      · have h' :
+            (if w = m then (1000 : ℝ) else theorem7BadScore w) =
+              (if w' = m then (1000 : ℝ) else theorem7BadScore w') := by
+          simpa [theorem7PaddedMenProfile, hm0, hm1, hm2] using h
+        exact theorem7DummyReport_strict m w w' h'
+
+theorem theorem7PaddedMenProfileDoublePrime_strict (r : ℕ) :
+    ∀ m w w', theorem7PaddedMenProfileDoublePrime r m w =
+      theorem7PaddedMenProfileDoublePrime r m w' → w = w' := by
+  intro m w w' h
+  by_cases hm0 : m = (0 : Theorem7PaddedAgent r)
+  · subst m
+    exact theorem7PaddedMan0DoublePrimeReport_strict r w w' h
+  · have h' : theorem7PaddedMenProfile r m w =
+        theorem7PaddedMenProfile r m w' := by
+      simpa [theorem7PaddedMenProfileDoublePrime, hm0] using h
+    exact theorem7PaddedMenProfile_strict r m w w' h'
+
+theorem theorem7PaddedWomenProfile_strict (r : ℕ) :
+    ∀ w m m', theorem7PaddedWomenProfile r w m =
+      theorem7PaddedWomenProfile r w m' → m = m' := by
+  intro w m m' h
+  by_cases hw0 : w = (0 : Theorem7PaddedAgent r)
+  · subst w
+    exact theorem7PaddedWoman0TrueReport_strict r m m' h
+  · by_cases hw1 : w = (1 : Theorem7PaddedAgent r)
+    · subst w
+      exact theorem7CoreBadReport_strict
+        (top := (2 : Theorem7PaddedAgent r)) (mid := 0) (low := 1)
+        (theorem7Padded_two_ne_zero r) (theorem7Padded_two_ne_one r)
+        (theorem7Padded_zero_ne_one r) m m' h
+    · by_cases hw2 : w = (2 : Theorem7PaddedAgent r)
+      · subst w
+        exact theorem7CoreBadReport_strict
+          (top := (0 : Theorem7PaddedAgent r)) (mid := 1) (low := 2)
+          (theorem7Padded_zero_ne_one r) (theorem7Padded_zero_ne_two r)
+          (theorem7Padded_one_ne_two r) m m' h
+      · have h' :
+            (if m = w then (1000 : ℝ) else theorem7BadScore m) =
+              (if m' = w then (1000 : ℝ) else theorem7BadScore m') := by
+          simpa [theorem7PaddedWomenProfile, hw0, hw1, hw2] using h
+        exact theorem7DummyReport_strict w m m' h'
+
+theorem theorem7PaddedWomenProfilePrime_strict (r : ℕ) :
+    ∀ w m m', theorem7PaddedWomenProfilePrime r w m =
+      theorem7PaddedWomenProfilePrime r w m' → m = m' := by
+  intro w m m' h
+  by_cases hw0 : w = (0 : Theorem7PaddedAgent r)
+  · subst w
+    exact theorem7PaddedWoman0PrimeReport_strict r m m' h
+  · have h' : theorem7PaddedWomenProfile r w m =
+        theorem7PaddedWomenProfile r w m' := by
+      simpa [theorem7PaddedWomenProfilePrime, hw0] using h
+    exact theorem7PaddedWomenProfile_strict r w m m' h'
+
+theorem theorem7Padded_base_strict_preference_profile (r : ℕ) :
+    paper_strict_preference_profile (theorem7PaddedMenProfile r)
+      (theorem7PaddedWomenProfile r) := by
+  exact ⟨theorem7PaddedMenProfile_strict r, theorem7PaddedWomenProfile_strict r⟩
+
+theorem theorem7Padded_woman_prime_strict_preference_profile (r : ℕ) :
+    paper_strict_preference_profile (theorem7PaddedMenProfile r)
+      (theorem7PaddedWomenProfilePrime r) := by
+  exact ⟨theorem7PaddedMenProfile_strict r, theorem7PaddedWomenProfilePrime_strict r⟩
+
+theorem theorem7Padded_man_double_prime_strict_preference_profile (r : ℕ) :
+    paper_strict_preference_profile (theorem7PaddedMenProfileDoublePrime r)
+      (theorem7PaddedWomenProfile r) := by
+  exact ⟨theorem7PaddedMenProfileDoublePrime_strict r,
+    theorem7PaddedWomenProfile_strict r⟩
 
 /-- Restrict a padded Theorem 7 assignment to its Theorem 3 core agents. -/
 def theorem7RestrictAssignment (r : ℕ)
@@ -6366,9 +6964,9 @@ private theorem theorem7_dummy_self_match_of_stable
     {A : Type*} [DecidableEq A]
     {val_m val_w : A → A → ℝ} {mu : Assignment A A} (d : A)
     (hmOwn : val_m d d = 1000)
-    (hmOther : ∀ w, w ≠ d → val_m d w = -1000)
+    (hmOther : ∀ w, w ≠ d → val_m d w < 1000)
     (hwOwn : val_w d d = 1000)
-    (hwOther : ∀ m, m ≠ d → val_w d m = -1000)
+    (hwOther : ∀ m, m ≠ d → val_w d m < 1000)
     (hstable : paper_is_stable val_m val_w mu) :
     mu.m_match d = some d := by
   by_contra hnot
@@ -6380,7 +6978,7 @@ private theorem theorem7_dummy_self_match_of_stable
         by_cases hwd : w = d
         · subst w
           exact False.elim (hnot hcur)
-        · simp [paper_matching_valM, hmOwn, hmOther w hwd]
+        · simpa [paper_matching_valM, hmOwn] using hmOther w hwd
   have hwPref : paper_matching_valW val_w d (mu.w_match d) < val_w d d := by
     cases hcur : mu.w_match d with
     | none =>
@@ -6390,7 +6988,7 @@ private theorem theorem7_dummy_self_match_of_stable
         · subst m
           have hm : mu.m_match d = some d := (mu.consistent_m d d).2 hcur
           exact False.elim (hnot hm)
-        · simp [paper_matching_valW, hwOwn, hwOther m hmd]
+        · simpa [paper_matching_valW, hwOwn] using hwOther m hmd
   exact hstable.2.2 d d hmPref hwPref
 
 private theorem theorem7Padded_dummy_self_match_base
@@ -6404,9 +7002,13 @@ private theorem theorem7Padded_dummy_self_match_base
   · simp [theorem7PaddedMenProfile, hd0, hd1, hd2]
   · intro w hwd
     simp [theorem7PaddedMenProfile, hd0, hd1, hd2, hwd]
+    have hbad := theorem7BadScore_lt_zero w
+    linarith
   · simp [theorem7PaddedWomenProfile, hd0, hd1, hd2]
   · intro m hmd
     simp [theorem7PaddedWomenProfile, hd0, hd1, hd2, hmd]
+    have hbad := theorem7BadScore_lt_zero m
+    linarith
 
 private theorem theorem7Padded_dummy_self_match_woman_prime
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6419,9 +7021,13 @@ private theorem theorem7Padded_dummy_self_match_woman_prime
   · simp [theorem7PaddedMenProfile, hd0, hd1, hd2]
   · intro w hwd
     simp [theorem7PaddedMenProfile, hd0, hd1, hd2, hwd]
+    have hbad := theorem7BadScore_lt_zero w
+    linarith
   · simp [theorem7PaddedWomenProfilePrime, theorem7PaddedWomenProfile, hd0, hd1, hd2]
   · intro m hmd
     simp [theorem7PaddedWomenProfilePrime, theorem7PaddedWomenProfile, hd0, hd1, hd2, hmd]
+    have hbad := theorem7BadScore_lt_zero m
+    linarith
 
 private theorem theorem7Padded_dummy_self_match_man_double_prime
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6434,9 +7040,13 @@ private theorem theorem7Padded_dummy_self_match_man_double_prime
   · simp [theorem7PaddedMenProfileDoublePrime, theorem7PaddedMenProfile, hd0, hd1, hd2]
   · intro w hwd
     simp [theorem7PaddedMenProfileDoublePrime, theorem7PaddedMenProfile, hd0, hd1, hd2, hwd]
+    have hbad := theorem7BadScore_lt_zero w
+    linarith
   · simp [theorem7PaddedWomenProfile, hd0, hd1, hd2]
   · intro m hmd
     simp [theorem7PaddedWomenProfile, hd0, hd1, hd2, hmd]
+    have hbad := theorem7BadScore_lt_zero m
+    linarith
 
 private theorem theorem7Padded_core_man_not_matched_dummy_base
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6459,7 +7069,8 @@ private theorem theorem7Padded_core_man_not_matched_dummy_base
     · exact fun h => hd1 h.symm
     · exact fun h => hd2 h.symm
   simp [paper_matching_valW, theorem7PaddedWomenProfile, hd0, hd1, hd2, hmd] at hwIR
-  norm_num at hwIR
+  have hbad := theorem7BadScore_lt_zero (theorem7Core r m)
+  linarith
 
 private theorem theorem7Padded_core_woman_not_matched_dummy_base
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6482,7 +7093,8 @@ private theorem theorem7Padded_core_woman_not_matched_dummy_base
     · exact fun h => hd1 h.symm
     · exact fun h => hd2 h.symm
   simp [paper_matching_valM, theorem7PaddedMenProfile, hd0, hd1, hd2, hdw] at hmIR
-  norm_num at hmIR
+  have hbad := theorem7BadScore_lt_zero (theorem7Core r w)
+  linarith
 
 private theorem theorem7Padded_core_man_not_matched_dummy_woman_prime
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6506,7 +7118,8 @@ private theorem theorem7Padded_core_man_not_matched_dummy_woman_prime
     · exact fun h => hd2 h.symm
   simp [paper_matching_valW, theorem7PaddedWomenProfilePrime,
     theorem7PaddedWomenProfile, hd0, hd1, hd2, hmd] at hwIR
-  norm_num at hwIR
+  have hbad := theorem7BadScore_lt_zero (theorem7Core r m)
+  linarith
 
 private theorem theorem7Padded_core_woman_not_matched_dummy_woman_prime
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6529,7 +7142,8 @@ private theorem theorem7Padded_core_woman_not_matched_dummy_woman_prime
     · exact fun h => hd1 h.symm
     · exact fun h => hd2 h.symm
   simp [paper_matching_valM, theorem7PaddedMenProfile, hd0, hd1, hd2, hdw] at hmIR
-  norm_num at hmIR
+  have hbad := theorem7BadScore_lt_zero (theorem7Core r w)
+  linarith
 
 private theorem theorem7Padded_core_man_not_matched_dummy_man_double_prime
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6552,7 +7166,8 @@ private theorem theorem7Padded_core_man_not_matched_dummy_man_double_prime
     · exact fun h => hd1 h.symm
     · exact fun h => hd2 h.symm
   simp [paper_matching_valW, theorem7PaddedWomenProfile, hd0, hd1, hd2, hmd] at hwIR
-  norm_num at hwIR
+  have hbad := theorem7BadScore_lt_zero (theorem7Core r m)
+  linarith
 
 private theorem theorem7Padded_core_woman_not_matched_dummy_man_double_prime
     {r : ℕ} {mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r)}
@@ -6576,7 +7191,8 @@ private theorem theorem7Padded_core_woman_not_matched_dummy_man_double_prime
     · exact fun h => hd2 h.symm
   simp [paper_matching_valM, theorem7PaddedMenProfileDoublePrime,
     theorem7PaddedMenProfile, hd0, hd1, hd2, hdw] at hmIR
-  norm_num at hmIR
+  have hbad := theorem7BadScore_lt_zero (theorem7Core r w)
+  linarith
 
 private theorem theorem7Padded_restrict_stable_base
     {r : ℕ} (mu : Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r))
@@ -6884,7 +7500,7 @@ theorem theorem7PaddedWoman0Prime_misrepresents_rank (r : ℕ) :
             simp [theorem7PaddedWomenProfile, theorem7PaddedWoman0TrueReport]
           · simp [theorem7PaddedWomenProfile, theorem7PaddedWoman0TrueReport,
               hb0, hb1, hb2]
-            norm_num
+            exact theorem7InterposedScore_gt_two r b
     rw [hfilter, theorem7Padded_card_univ_erase_one_erase_two]
   · have hrank :
         paper_rank_of_choice (theorem7PaddedWoman0PrimeReport r)
@@ -6906,6 +7522,8 @@ theorem theorem7PaddedWoman0Prime_misrepresents_rank (r : ℕ) :
             · subst b
               simp [theorem7PaddedWoman0PrimeReport]
             · simp [theorem7PaddedWoman0PrimeReport, hb0, hb1, hb2]
+              exact lt_trans (by norm_num : (1 : ℝ) < 2)
+                (theorem7InterposedScore_gt_two r b)
       rw [hfilter, theorem7Padded_card_univ_erase_two]
     rw [hrank]
     omega
@@ -6938,7 +7556,7 @@ theorem theorem7PaddedMan0DoublePrime_misrepresents_rank (r : ℕ) :
             simp [theorem7PaddedMenProfile, theorem7PaddedMan0TrueReport]
           · simp [theorem7PaddedMenProfile, theorem7PaddedMan0TrueReport,
               hb0, hb1, hb2]
-            norm_num
+            exact theorem7InterposedScore_gt_two r b
     rw [hfilter, theorem7Padded_card_univ_erase_zero_erase_two]
   · have hrank :
         paper_rank_of_choice (theorem7PaddedMan0DoublePrimeReport r)
@@ -6960,6 +7578,8 @@ theorem theorem7PaddedMan0DoublePrime_misrepresents_rank (r : ℕ) :
             · subst b
               simp [theorem7PaddedMan0DoublePrimeReport]
             · simp [theorem7PaddedMan0DoublePrimeReport, hb0, hb1, hb2]
+              exact lt_trans (by norm_num : (1 : ℝ) < 2)
+                (theorem7InterposedScore_gt_two r b)
       rw [hfilter, theorem7Padded_card_univ_erase_zero]
     rw [hrank]
     omega
@@ -7085,6 +7705,137 @@ theorem theorem7Padded_counterexample_has_profitable_rank_misreport
     rw [hbaseM, hdoubleM]
     norm_num [paper_matching_valM, theorem7PaddedMenProfile,
       theorem7PaddedMan0TrueReport]
+
+/--
+Strict-profile version of the padded Theorem 7 family: the true profile and
+the unilateral reported profile are both strict.
+-/
+theorem theorem7Padded_counterexample_has_profitable_strict_rank_misreport
+    (r : ℕ)
+    (mechanism :
+      (Theorem7PaddedAgent r → Theorem7PaddedAgent r → ℝ) →
+        (Theorem7PaddedAgent r → Theorem7PaddedAgent r → ℝ) →
+          Assignment (Theorem7PaddedAgent r) (Theorem7PaddedAgent r))
+    (hstableProc : paper_stable_matching_procedure_on_strict_profiles mechanism) :
+    paper_stable_procedure_has_profitable_strict_kth_choice_misreport
+      (r + 2) mechanism := by
+  let muBase := mechanism (theorem7PaddedMenProfile r) (theorem7PaddedWomenProfile r)
+  let muWomanPrime := mechanism (theorem7PaddedMenProfile r) (theorem7PaddedWomenProfilePrime r)
+  let muManDoublePrime := mechanism (theorem7PaddedMenProfileDoublePrime r)
+    (theorem7PaddedWomenProfile r)
+  have hbase :
+      theorem7RestrictAssignment r muBase = theorem3OutcomeX ∨
+        theorem7RestrictAssignment r muBase = theorem3OutcomeY := by
+    exact theorem3_stable_base_eq_x_or_y
+      (theorem7RestrictAssignment r muBase)
+      (theorem7Padded_restrict_stable_base
+        (mu := muBase)
+        (hstableProc (theorem7PaddedMenProfile r) (theorem7PaddedWomenProfile r)
+          (theorem7Padded_base_strict_preference_profile r)))
+  have hwomanPrime :
+      theorem7RestrictAssignment r muWomanPrime = theorem3OutcomeY := by
+    exact theorem3_stable_woman_prime_eq_y
+      (theorem7RestrictAssignment r muWomanPrime)
+      (theorem7Padded_restrict_stable_woman_prime
+        (mu := muWomanPrime)
+        (hstableProc (theorem7PaddedMenProfile r) (theorem7PaddedWomenProfilePrime r)
+          (theorem7Padded_woman_prime_strict_preference_profile r)))
+  have hmanDoublePrime :
+      theorem7RestrictAssignment r muManDoublePrime = theorem3OutcomeX := by
+    exact theorem3_stable_man_double_prime_eq_x
+      (theorem7RestrictAssignment r muManDoublePrime)
+      (theorem7Padded_restrict_stable_man_double_prime
+        (mu := muManDoublePrime)
+        (hstableProc (theorem7PaddedMenProfileDoublePrime r) (theorem7PaddedWomenProfile r)
+          (theorem7Padded_man_double_prime_strict_preference_profile r)))
+  refine ⟨theorem7PaddedMenProfile r, theorem7PaddedWomenProfile r,
+    theorem7Padded_base_strict_preference_profile r, ?_⟩
+  rcases hbase with hbaseX | hbaseY
+  · right
+    refine ⟨theorem7Core r 0, theorem7PaddedWoman0PrimeReport r, ?_,
+      theorem7PaddedWoman0Prime_misrepresents_rank r, ?_⟩
+    · simpa [theorem7PaddedWomenProfilePrime] using
+        theorem7Padded_woman_prime_strict_preference_profile r
+    · unfold paper_profitable_woman_misreport
+      have hupdate :
+          Function.update (theorem7PaddedWomenProfile r) (theorem7Core r 0)
+              (theorem7PaddedWoman0PrimeReport r) =
+            theorem7PaddedWomenProfilePrime r := by
+        ext w m
+        simp [theorem7PaddedWomenProfilePrime]
+      have hbaseCore :
+          (theorem7RestrictAssignment r muBase).w_match 0 = some 2 := by
+        rw [hbaseX]
+        simp [theorem3OutcomeX]
+      have hbaseW :
+          muBase.w_match (theorem7Core r 0) = some (theorem7Core r 2) :=
+        theorem7Restrict_w_match_eq_some hbaseCore
+      have hprimeCore :
+          (theorem7RestrictAssignment r muWomanPrime).w_match 0 = some 0 := by
+        rw [hwomanPrime]
+        simp [theorem3OutcomeY]
+      have hprimeW :
+          muWomanPrime.w_match (theorem7Core r 0) = some (theorem7Core r 0) :=
+        theorem7Restrict_w_match_eq_some hprimeCore
+      change
+        paper_matching_valW (theorem7PaddedWomenProfile r) (theorem7Core r 0)
+            (muBase.w_match (theorem7Core r 0)) <
+          paper_matching_valW (theorem7PaddedWomenProfile r) (theorem7Core r 0)
+            ((mechanism (theorem7PaddedMenProfile r)
+              (Function.update (theorem7PaddedWomenProfile r) (theorem7Core r 0)
+                (theorem7PaddedWoman0PrimeReport r))).w_match (theorem7Core r 0))
+      rw [hupdate]
+      change
+        paper_matching_valW (theorem7PaddedWomenProfile r) (theorem7Core r 0)
+            (muBase.w_match (theorem7Core r 0)) <
+          paper_matching_valW (theorem7PaddedWomenProfile r) (theorem7Core r 0)
+            (muWomanPrime.w_match (theorem7Core r 0))
+      rw [hbaseW, hprimeW]
+      norm_num [paper_matching_valW, theorem7PaddedWomenProfile,
+        theorem7PaddedWoman0TrueReport]
+  · left
+    refine ⟨theorem7Core r 0, theorem7PaddedMan0DoublePrimeReport r, ?_,
+      theorem7PaddedMan0DoublePrime_misrepresents_rank r, ?_⟩
+    · simpa [theorem7PaddedMenProfileDoublePrime] using
+        theorem7Padded_man_double_prime_strict_preference_profile r
+    · unfold paper_profitable_man_misreport
+      have hupdate :
+          Function.update (theorem7PaddedMenProfile r) (theorem7Core r 0)
+              (theorem7PaddedMan0DoublePrimeReport r) =
+            theorem7PaddedMenProfileDoublePrime r := by
+        ext m w
+        simp [theorem7PaddedMenProfileDoublePrime]
+      have hbaseCore :
+          (theorem7RestrictAssignment r muBase).m_match 0 = some 0 := by
+        rw [hbaseY]
+        simp [theorem3OutcomeY]
+      have hbaseM :
+          muBase.m_match (theorem7Core r 0) = some (theorem7Core r 0) :=
+        theorem7Restrict_m_match_eq_some hbaseCore
+      have hdoubleCore :
+          (theorem7RestrictAssignment r muManDoublePrime).m_match 0 = some 1 := by
+        rw [hmanDoublePrime]
+        simp [theorem3OutcomeX]
+      have hdoubleM :
+          muManDoublePrime.m_match (theorem7Core r 0) = some (theorem7Core r 1) :=
+        theorem7Restrict_m_match_eq_some hdoubleCore
+      change
+        paper_matching_valM (theorem7PaddedMenProfile r) (theorem7Core r 0)
+            (muBase.m_match (theorem7Core r 0)) <
+          paper_matching_valM (theorem7PaddedMenProfile r) (theorem7Core r 0)
+            ((mechanism
+              (Function.update (theorem7PaddedMenProfile r) (theorem7Core r 0)
+                (theorem7PaddedMan0DoublePrimeReport r))
+              (theorem7PaddedWomenProfile r)).m_match (theorem7Core r 0))
+      rw [hupdate]
+      change
+        paper_matching_valM (theorem7PaddedMenProfile r) (theorem7Core r 0)
+            (muBase.m_match (theorem7Core r 0)) <
+          paper_matching_valM (theorem7PaddedMenProfile r) (theorem7Core r 0)
+            (muManDoublePrime.m_match (theorem7Core r 0))
+      rw [hbaseM, hdoubleM]
+      norm_num [paper_matching_valM, theorem7PaddedMenProfile,
+        theorem7PaddedMan0TrueReport]
 
 /--
 In Roth's finite counterexample, woman `w₁`'s report keeps her first choice but
@@ -7331,9 +8082,10 @@ theorem paper_roth82_theorem7_second_or_third_choice_counterexample
   · exact paper_roth82_theorem7_third_choice_counterexample mechanism hstableProc
 
 /--
-Theorem 7 source-facing finite-domain statement for the verified ranks:
-on Roth's three-by-three counterexample domain, no stable procedure avoids
-profitable `k`th-choice manipulation for `k = 2` or `k = 3`.
+Theorem 7 compatibility finite-domain statement for the verified ranks: on
+Roth's three-by-three counterexample domain, no stable procedure avoids
+profitable `k`th-choice manipulation for `k = 2` or `k = 3`, without explicit
+strict-profile hypotheses.
 -/
 theorem paper_roth82_theorem7_second_or_third_choice_source_statement
     (k : ℕ) (hk : k = 2 ∨ k = 3) :
@@ -7365,9 +8117,10 @@ theorem paper_roth82_theorem7_second_or_third_choice_family_statement
     paper_roth82_theorem7_second_or_third_choice_source_statement k hk
 
 /--
-Theorem 7 arbitrary-family statement: for every rank `k > 1`, a padded
-Theorem 3 counterexample domain forces some profitable `k`th-choice
-misrepresentation under any stable procedure.
+Compatibility Theorem 7 arbitrary-family statement: for every rank `k > 1`, a
+padded Theorem 3 counterexample domain forces some profitable `k`th-choice
+misrepresentation under any stable procedure, without explicit strict-profile
+hypotheses.
 -/
 theorem paper_roth82_theorem7_arbitrary_k_family_statement :
     PaperTheorem7ArbitraryKFamilyCertificate := by
@@ -7384,7 +8137,27 @@ theorem paper_roth82_theorem7_arbitrary_k_family_statement :
   simpa [hr] using hcounter
 
 /--
-Roth Theorem 7, source-facing arbitrary-`k` wrapper.
+Theorem 7 arbitrary-family statement on strict profiles: for every rank `k > 1`,
+a padded strict Theorem 3 counterexample domain forces some profitable
+`k`th-choice misrepresentation under any procedure stable on strict profiles.
+-/
+theorem paper_roth82_theorem7_strict_arbitrary_k_family_statement :
+    PaperTheorem7StrictArbitraryKFamilyCertificate := by
+  intro k hk
+  let r := k - 2
+  refine ⟨r + 3, ?_⟩
+  intro mechanism hstableProc
+  have hr : r + 2 = k := by
+    dsimp [r]
+    exact Nat.sub_add_cancel (Nat.succ_le_of_lt hk)
+  have hcounter :=
+    theorem7Padded_counterexample_has_profitable_strict_rank_misreport
+      r mechanism hstableProc
+  simpa [hr] using hcounter
+
+/--
+Roth Theorem 7 compatibility arbitrary-`k` wrapper without explicit
+strict-profile hypotheses.
 -/
 theorem paper_roth82_theorem7_arbitrary_k :
     ∀ k, 1 < k →
@@ -7394,14 +8167,35 @@ theorem paper_roth82_theorem7_arbitrary_k :
   paper_roth82_theorem7_arbitrary_k_family_statement
 
 /--
-Theorem 7 arbitrary-`k` conditional wrapper: Roth's full arbitrary family follows
-from a construction certificate for every rank `k > 1`.
+Roth Theorem 7 on the source strict-preference domain.
+-/
+theorem paper_roth82_theorem7_arbitrary_k_on_strict_profiles :
+    ∀ k, 1 < k →
+      ∃ n : ℕ,
+        paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on
+          (Fin n) (Fin n) k :=
+  paper_roth82_theorem7_strict_arbitrary_k_family_statement
+
+/--
+Theorem 7 arbitrary-`k` compatibility wrapper: Roth's full arbitrary family
+follows from a construction certificate for every rank `k > 1`.
 -/
 theorem paper_roth82_theorem7_arbitrary_k_of_family_certificate
     (hcert : PaperTheorem7ArbitraryKFamilyCertificate) :
     ∀ k, 1 < k →
       ∃ n : ℕ,
         paper_no_stable_procedure_avoids_kth_choice_manipulation_on
+          (Fin n) (Fin n) k := by
+  exact hcert
+
+/--
+Theorem 7 arbitrary-`k` strict-profile compatibility wrapper.
+-/
+theorem paper_roth82_theorem7_arbitrary_k_of_strict_family_certificate
+    (hcert : PaperTheorem7StrictArbitraryKFamilyCertificate) :
+    ∀ k, 1 < k →
+      ∃ n : ℕ,
+        paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on
           (Fin n) (Fin n) k := by
   exact hcert
 

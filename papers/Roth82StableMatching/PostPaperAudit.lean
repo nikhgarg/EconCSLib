@@ -50,21 +50,23 @@ theorem audit_roth82_theorem2_optimal_stable_outcomes_on_strict_marriage_domain
     val_m val_w hdomain
 
 /--
-Audit endpoint for Roth Theorem 3: no stable matching procedure is truthful for
-both sides.
+Audit endpoint for Roth Theorem 3: no procedure stable on strict profiles is
+truthful for both sides on strict profiles.
 -/
 theorem audit_roth82_theorem3_no_stable_truthful_procedure :
     ¬ ∃ mechanism :
       (Theorem3Agent → Theorem3Agent → ℝ) →
         (Theorem3Agent → Theorem3Agent → ℝ) →
           Assignment Theorem3Agent Theorem3Agent,
-      paper_stable_matching_procedure mechanism ∧
-        paper_truthful_for_men mechanism ∧ paper_truthful_for_women mechanism :=
-  paper_roth82_theorem3_no_stable_truthful_procedure
+      paper_stable_matching_procedure_on_strict_profiles mechanism ∧
+        paper_truthful_for_men_on_strict_profiles mechanism ∧
+          paper_truthful_for_women_on_strict_profiles mechanism :=
+  paper_roth82_theorem3_no_stable_truthful_procedure_on_strict_profiles
 
 /--
 Audit endpoint for Roth Theorem 4: the constructed serial-dictatorship route is
-efficient on strict profiles and strategyproof.
+men-efficient on strict men-side profiles and strategyproof in the theorem's
+stated senses.
 -/
 theorem audit_roth82_theorem4_serial_dictatorship_constructed {n : ℕ} :
     paper_efficient_matching_procedure_on_strict_men
@@ -77,7 +79,8 @@ theorem audit_roth82_theorem4_serial_dictatorship_constructed {n : ℕ} :
 
 /--
 Audit endpoint for Roth Lemma 1: a simple misrepresentation that leaves the
-manipulator's partner unchanged preserves stability of that partner.
+manipulator's named partner in the general report also gives the same partner
+under the associated simple misrepresentation.
 -/
 theorem audit_roth82_lemma1_strict_simple_misrepresentation_same_partner
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
@@ -161,6 +164,18 @@ theorem audit_roth82_corollary5_1_no_need_to_misrepresent_first_choice_on_strict
   paper_roth82_corollary5_1_no_need_to_misrepresent_first_choice_on_strict_domain
 
 /--
+Audit endpoint for Roth Corollary 5.1, role-reversed: men under women-proposing
+DA do not need to misrepresent their first choices to obtain the best available
+manipulation outcome.
+-/
+theorem audit_roth82_corollary5_1_role_reversed_no_need_to_misrepresent_first_choice_on_strict_domain
+    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
+    [Nonempty W] :
+    paper_no_need_to_misrepresent_first_choice_for_men_on_strict_domain
+      (paper_women_deferredAcceptance (M := M) (W := W)) :=
+  paper_roth82_corollary5_1_role_reversed_no_need_to_misrepresent_first_choice_on_strict_domain
+
+/--
 Audit endpoint for Roth Theorem 6: no feasible outcome is strictly better for
 all men than the men-optimal stable outcome.
 -/
@@ -175,15 +190,16 @@ theorem audit_roth82_theorem6_on_strict_marriage_domain
     val_m val_w hcard hdomain
 
 /--
-Audit endpoint for Roth Theorem 7: for every `k > 1`, a stable procedure admits
-a profitable `k`th-choice misrepresentation on some finite balanced market.
+Audit endpoint for Roth Theorem 7: for every `k > 1`, a procedure stable on
+strict profiles admits a profitable strict-profile `k`th-choice
+misrepresentation on some finite balanced market.
 -/
 theorem audit_roth82_theorem7_arbitrary_k :
     ∀ k, 1 < k →
       ∃ n : ℕ,
-        paper_no_stable_procedure_avoids_kth_choice_manipulation_on
+        paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on
           (Fin n) (Fin n) k :=
-  paper_roth82_theorem7_arbitrary_k
+  paper_roth82_theorem7_arbitrary_k_on_strict_profiles
 
 end PostPaperAudit
 

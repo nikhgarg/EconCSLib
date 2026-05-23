@@ -37,8 +37,9 @@ For a completed or nearly completed paper, read these files in this order:
    deviations, remaining assumptions, and final status.
 2. `PaperInterface.lean`: readable definitions and theorem statements matching
    the paper. This is the main human-facing Lean file.
-3. `DependencyDAG.pdf`: visual map of named definitions, lemmas, theorems, and
-   remaining caveats.
+3. Dependency graph: visual map of named definitions, lemmas, theorems, and
+   remaining caveats. Some paper folders keep only the source graph tracked and
+   render the PDF locally.
 4. `README.md`: paper metadata and theorem-status ledger.
 
 Implementation-level proof files are for maintainers and agents. They should
@@ -55,7 +56,7 @@ paper folder contains the detailed theorem ledger and caveats.
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Verified in Lean | Main discretization-bias theorems are closed; report documents a proof-route deviation from the paper. |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Verified in Lean | Main digital-goods auction results are exposed in the human paper interface. |
 | [GCG24 User-Item Fairness](papers/GCG24UserItemFairness) | Verified in Lean | Recommendation fairness propositions and theorem statements are closed. |
-| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | Stable-matching definitions and Theorems 1-7 are exposed in the paper interface. |
+| [Roth82 Stable Matching](papers/Roth82StableMatching) | Verified in Lean | Stable-matching definitions and named results are exposed in a compact 27-row paper interface, including strict-profile Theorems 3 and 7. |
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Verified with OCR caveat | Stable-marriage and college-quota statements are formalized; source scan quality is documented. |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | Bayesian rating-system results are formalized with a documented boundary correction. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Main endpoints formalized | Core AdWords endpoints are closed with documented proof-structure deviations. |
