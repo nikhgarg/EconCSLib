@@ -138,6 +138,9 @@ definitions, or appendix remark formatting.
   audit aliases for the final endpoints above.
 - `lean_to_tex_llm.json` gives the dashboard independent Lean-to-TeX drafts for
   all 24 paper-facing review rows.
+- The local dashboard trace records a `codex-source-audit` review for all 24
+  rows, with no stale rows and no mismatches.  This is an agent source audit,
+  not a human signoff.
 - `README.md` and `DependencyDAG.tex` distinguish the closed positive-mass and
   feasible sequential current-bounds Theorem 3 routes from the optional
   zero-mass-dominance lift.
@@ -161,5 +164,7 @@ git diff --check -- HumanStartHere.lean papers/GN21DriverSurgePricing
 rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
 ```
 
-The dashboard precheck reports `0/24 reviewed` with no stale or mismatch rows;
-the remaining action is human review, not Lean formalization work.
+The dashboard precheck reports `24/24 reviewed` under the explicit local
+`codex-source-audit` handle, with no stale or mismatch rows.  There is no
+remaining Lean formalization or agent source-audit action for GN21; a separate
+human signoff can still be collected if desired.
