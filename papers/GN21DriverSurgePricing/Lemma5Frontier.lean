@@ -17,6 +17,445 @@ namespace GN21DriverSurgePricing
 
 noncomputable section
 
+/-!
+## Theorem 4 structural endpoints from Lemma 5 frontier data
+
+The source Theorem 4 statement is existential: there is an optimal dynamic
+policy with the listed statewise forms, and every optimal policy has one of
+those forms.  The core theorem ledger already proves the shape-derivation
+route.  These frontier endpoints let the paper-facing surface consume the
+lighter allowed-form and feasible canonical-dominance Lemma 5 boundaries
+directly.
+-/
+
+/--
+Allowed Lemma 5 policy forms for every measurable optimum imply the paper's
+measurable Theorem 4 structural statement: an optimal policy with the listed
+statewise forms exists, and every measurable optimum has the listed forms.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_forms
+    (R : DynamicReward)
+    (C : Theorem4AllMeasurableAllowedPolicyFormsCertificate R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        theorem4NonsurgeShape (ρstar 0) ∧
+        theorem4SurgeShape (ρstar 1) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) := by
+  rcases C.exists_optimal with ⟨ρstar, hρstar⟩
+  rcases C.only_policy_forms ρstar hρstar with
+    ⟨⟨nshape, hnallowed, hnform⟩, ⟨sshape, hsallowed, hsform⟩⟩
+  refine ⟨ρstar, hρstar, ?_, ?_, ?_⟩
+  · exact theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform
+  · exact theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform
+  · intro ρ hρ
+    rcases C.only_policy_forms ρ hρ with
+      ⟨⟨nshape, hnallowed, hnform⟩, ⟨sshape, hsallowed, hsform⟩⟩
+    exact
+      ⟨theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform,
+        theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform⟩
+
+/--
+Feasible policy-level canonical-dominance Lemma 5 data imply the paper's
+measurable Theorem 4 structural endpoint.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_feasible_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        theorem4NonsurgeShape (ρstar 0) ∧
+        theorem4SurgeShape (ρstar 1) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) :=
+  paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_forms
+    R (D.to_allowed_policy_forms)
+
+/--
+Feasible a.e. Lemma 5 policy-form representatives imply the paper's
+measure-theoretic Theorem 4 statement: an optimal policy has non-surge and
+surge representatives of the listed forms, and every measurable optimum has
+such representatives.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (D : Theorem4AllMeasurableFeasibleAEPolicyFormData μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) := by
+  rcases D.exists_optimal with ⟨ρstar, hρstar⟩
+  have hnstar :
+      ∃ σstar : TripPolicy,
+        theorem4NonsurgeShape σstar ∧
+          policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar := by
+    rcases D.nonsurge ρstar hρstar with ⟨nshape, ndata⟩
+    exact
+      theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE
+        (μ 0) nshape.2 ndata.to_policyFormAlmostEverywhere
+  have hsstar :
+      ∃ σstar : TripPolicy,
+        theorem4SurgeShape σstar ∧
+          policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar := by
+    rcases D.surge ρstar hρstar with ⟨sshape, sdata⟩
+    exact
+      theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE
+        (μ 1) sshape.2 sdata.to_policyFormAlmostEverywhere
+  refine ⟨ρstar, hρstar, hnstar, hsstar, ?_⟩
+  intro ρ hρ
+  constructor
+  · rcases D.nonsurge ρ hρ with ⟨nshape, ndata⟩
+    exact
+      theorem4NonsurgeShapeRepresentative_of_allowed_lemma5_formAE
+        (μ 0) nshape.2 ndata.to_policyFormAlmostEverywhere
+  · rcases D.surge ρ hρ with ⟨sshape, sdata⟩
+    exact
+      theorem4SurgeShapeRepresentative_of_allowed_lemma5_formAE
+        (μ 1) sshape.2 sdata.to_policyFormAlmostEverywhere
+
+/--
+Allowed exact policy forms imply the same a.e.-representative Theorem 4
+surface.  This is useful when a proof already closed exact Lemma 5 forms but
+the human-facing paper statement should keep the source's null-set wording.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_allowed_policy_forms
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (C : Theorem4AllMeasurableAllowedPolicyFormsCertificate R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+    μ R (C.to_feasible_ae_policy_forms)
+
+/--
+Feasible policy-level canonical-dominance Lemma 5 data imply the source
+Theorem 4 structural statement with explicit a.e. representatives.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D : Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_allowed_policy_forms
+    μ R (D.to_allowed_policy_forms)
+
+/--
+Fixed-response analytic Lemma 5 shape data imply the source Theorem 4
+structural statement with explicit a.e. representatives.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_shape_data
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (D : Theorem4AllMeasurableFixedResponseShapeData μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+    μ R (D.to_feasible_ae_policy_forms)
+
+/--
+Fixed-response policy-form Lemma 5 data imply the source Theorem 4 structural
+statement with explicit a.e. representatives.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_policy_forms
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (D : Theorem4AllMeasurableFixedResponsePolicyFormData μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+    μ R (D.to_feasible_ae_policy_forms)
+
+/--
+GN21 fixed-response source records imply the source Theorem 4 a.e.
+structural-representative statement for the measured dynamic reward.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_fixed_response_source_data
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (D :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormSourceData μ arrival
+        switch12 switch21 w) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+          ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_policy_forms
+    μ (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+    (D.to_fixed_response_policy_form_data)
+
+/--
+Raw GN21 Lemma 6 bracket records imply the source Theorem 4 a.e.
+structural-representative statement for one-threshold CTMC prices.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_bracket_source_data
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (D :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_policy_forms
+    μ
+    (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+    (D.to_fixed_response_policy_form_data)
+
+/--
+The raw GN21 Lemma 6 bracket package also gives the Theorem 2 policy-shape
+part for one-threshold CTMC prices: every measurable optimum rejects long
+non-surge trips and short surge trips, up to null feasible-trip sets.
+-/
+theorem paper_theorem2_one_threshold_measurable_policy_shape_ae_of_gn21_bracket_source_data
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (D :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z) :
+    (∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ ∧
+        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (μ 0) (ρ 0) ∧
+        rejectsShortTripsAlmostEverywhere (μ 1) (ρ 1)) ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (μ 0) (ρ 0) ∧
+          rejectsShortTripsAlmostEverywhere (μ 1) (ρ 1) := by
+  let R :=
+    gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+  refine
+    paper_theorem2_multiplicative_measurable_policy_shape_ae_of_certificate
+      μ R ?_
+  refine
+    { exists_optimal := D.exists_optimal
+      nonsurge := ?_
+      surge := ?_ }
+  · intro ρ hρ
+    let N :=
+      (D.nonsurge ρ hρ).to_source_data D.hswitch12_pos
+        (add_pos D.hswitch12_pos D.hswitch21_pos)
+    let F := N.to_fixed_response hρ
+    exact
+      { shape := .strictlyDecreasing
+        branch := Or.inr rfl
+        form :=
+          F.to_feasiblePolicyFormAlmostEverywhere
+            (hρ.1 0).2 (hρ.1 0).1 }
+  · intro ρ hρ
+    let S :=
+      (D.surge ρ hρ).to_source_data D.hswitch21_pos
+        (add_pos D.hswitch21_pos D.hswitch12_pos)
+    let F := S.to_fixed_response hρ
+    exact
+      { shape := .strictlyIncreasing
+        branch := Or.inr rfl
+        form :=
+          F.to_feasiblePolicyFormAlmostEverywhere
+            (hρ.1 1).2 (hρ.1 1).1 }
+
+/--
+Positive-response marginal optimality gives the Theorem 4 structural
+representative statement in the accept-all branch.
+-/
+theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_marginal_optima
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (C : Theorem4MeasurablePositiveResponseAEMarginalCertificate μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) := by
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_positive_response_marginal_optima
+      μ R C
+  refine
+    ⟨acceptAllDynamicPolicy, H.1,
+      ⟨acceptAllPolicy, theorem4NonsurgeShape_acceptAllPolicy, ?_⟩,
+      ⟨acceptAllPolicy, theorem4SurgeShape_acceptAllPolicy, ?_⟩,
+      ?_⟩
+  · simp [acceptAllDynamicPolicy, policyAlmostEverywhereEq]
+  · simp [acceptAllDynamicPolicy, policyAlmostEverywhereEq]
+  · intro ρ hρ
+    have hae := H.2 ρ hρ
+    constructor
+    · refine ⟨acceptAllPolicy, theorem4NonsurgeShape_acceptAllPolicy, ?_⟩
+      exact
+        policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+          (μ 0) (hρ.1 0).1 (hae 0)
+    · refine ⟨acceptAllPolicy, theorem4SurgeShape_acceptAllPolicy, ?_⟩
+      exact
+        policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+          (μ 1) (hρ.1 1).1 (hae 1)
+
+/--
+The weaker accept-all-candidate positive-response certificate also gives the
+Theorem 4 structural representative statement in the accept-all branch.
+-/
+theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_acceptAll_candidates
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (C : Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) := by
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_positive_response_acceptAll_candidates
+      μ R C
+  refine
+    ⟨acceptAllDynamicPolicy, H.1,
+      ⟨acceptAllPolicy, theorem4NonsurgeShape_acceptAllPolicy, ?_⟩,
+      ⟨acceptAllPolicy, theorem4SurgeShape_acceptAllPolicy, ?_⟩,
+      ?_⟩
+  · simp [acceptAllDynamicPolicy, policyAlmostEverywhereEq]
+  · simp [acceptAllDynamicPolicy, policyAlmostEverywhereEq]
+  · intro ρ hρ
+    have hae := H.2 ρ hρ
+    constructor
+    · refine ⟨acceptAllPolicy, theorem4NonsurgeShape_acceptAllPolicy, ?_⟩
+      exact
+        policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+          (μ 0) (hρ.1 0).1 (hae 0)
+    · refine ⟨acceptAllPolicy, theorem4SurgeShape_acceptAllPolicy, ?_⟩
+      exact
+        policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+          (μ 1) (hρ.1 1).1 (hae 1)
+
 /--
 Positive-response marginal dominance transfers to any objective that is a
 positive affine transform of that marginal reward on feasible measurable

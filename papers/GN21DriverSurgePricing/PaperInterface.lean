@@ -1,4 +1,5 @@
 import GN21DriverSurgePricing.ProofInterface
+import GN21DriverSurgePricing.Lemma5Frontier
 import GN21DriverSurgePricing.Theorem3Frontier
 
 /-!
@@ -38,6 +39,46 @@ abbrev lemma5_fixed_response_policy_form :=
 abbrev theorem4_positive_response_acceptAll_candidate :=
   @theorem4_positive_response_acceptAll_candidate_of_current_bounds_source
 
+/-- Theorem 4: measurable structural forms from allowed Lemma 5 policy forms. -/
+abbrev theorem4_structural_policy_forms_of_allowed_policy_forms :=
+  @paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_forms
+
+/-- Theorem 4: measurable structural forms from feasible canonical dominance. -/
+abbrev theorem4_structural_policy_forms_of_feasible_policy_canonical_dominance :=
+  @paper_theorem4_measurable_dynamic_structural_policy_of_feasible_policy_canonical_dominance
+
+/-- Theorem 4: a.e. structural representatives from feasible Lemma 5 forms. -/
+abbrev theorem4_structural_policy_representatives_of_feasible_ae_policy_forms :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+
+/-- Theorem 4: a.e. structural representatives from feasible canonical dominance. -/
+abbrev theorem4_structural_policy_representatives_of_feasible_policy_canonical_dominance :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_policy_canonical_dominance
+
+/-- Theorem 4: a.e. structural representatives from fixed-response shape data. -/
+abbrev theorem4_structural_policy_representatives_of_fixed_response_shape_data :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_shape_data
+
+/-- Theorem 4: a.e. structural representatives from fixed-response policy forms. -/
+abbrev theorem4_structural_policy_representatives_of_fixed_response_policy_forms :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_policy_forms
+
+/-- Theorem 4: a.e. structural representatives from GN21 fixed-response source data. -/
+abbrev theorem4_structural_policy_representatives_of_gn21_fixed_response_source_data :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_fixed_response_source_data
+
+/-- Theorem 4: a.e. structural representatives from raw GN21 bracket source data. -/
+abbrev theorem4_structural_policy_representatives_of_gn21_bracket_source_data :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_bracket_source_data
+
+/-- Theorem 4: accept-all structural representatives from positive-response optima. -/
+abbrev theorem4_acceptAll_structural_representatives_of_positive_response_marginal :=
+  @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_marginal_optima
+
+/-- Theorem 4: accept-all structural representatives from accept-all candidate comparisons. -/
+abbrev theorem4_acceptAll_structural_representatives_of_positive_response_candidates :=
+  @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_acceptAll_candidates
+
 /-- Theorem 4: optimal-current-bounds accounting route. -/
 abbrev theorem4_optimal_current_bounds_accounting :=
   @theorem4_optimal_current_bounds_source_of_optimal_accounting
@@ -53,6 +94,10 @@ abbrev theorem4_positive_response_acceptAll_candidate_optimal_current_bounds :=
 /-- Theorem 2: multiplicative extended policy shape. -/
 abbrev theorem2_multiplicative_policy_shape :=
   @theorem2_multiplicative_extended_policy_shape_of_shape_derivation
+
+/-- Theorem 2: one-threshold CTMC policy shape from raw GN21 bracket source data. -/
+abbrev theorem2_one_threshold_policy_shape_ae_of_gn21_bracket_source_data :=
+  @paper_theorem2_one_threshold_measurable_policy_shape_ae_of_gn21_bracket_source_data
 
 /--
 Theorem 2: measured multiplicative pricing is not dynamically incentive
@@ -137,6 +182,10 @@ abbrev theorem3_feasible_weak_reward_optimal_positive_response_normalized :=
   @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source
 
 /-- Theorem 3: positive-mass source-domain IC/a.e. uniqueness route. -/
+abbrev theorem3_positive_mass_source :=
+  @theorem3_positive_mass_measurable_ic_ae_unique_of_source_assumptions
+
+/-- Theorem 3: legacy positive-mass route with an explicit marginal-response certificate. -/
 abbrev theorem3_positive_mass_source_positive_response :=
   @theorem3_positive_mass_measurable_ic_ae_unique_of_source_and_positive_response_marginal
 

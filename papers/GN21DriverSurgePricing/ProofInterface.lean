@@ -634,6 +634,26 @@ theorem theorem3_positive_mass_measurable_ic_ae_unique_of_source_and_positive_re
       mu arrival rho R1 R2 switch12 switch21 A positive_marginal
 
 /--
+Theorem 3 positive-mass measurable IC plus a.e. uniqueness on the
+denominator-valid source domain.  This follows the source proof order
+directly: Lemma 9 closes the surge state first, Lean rewrites that state to
+accept-all a.e., and Lemma 10 then closes the non-surge state with the surge
+state fixed at accept-all.
+-/
+theorem theorem3_positive_mass_measurable_ic_ae_unique_of_source_assumptions
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Canonical source-facing Theorem 3 endpoint at the positive-replacement
 boundary: constructed-price algebra and Lemma 9/10 primitive scalar conditions
 are discharged in Lean; the source supplies the positive Lemma 5 replacement

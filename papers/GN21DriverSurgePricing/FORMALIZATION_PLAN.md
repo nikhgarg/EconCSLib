@@ -1,15 +1,29 @@
 # GN21 Formalization Plan
 
-Last updated: 2026-05-16
+Last updated: 2026-05-22
 
 ## Current State
 
 - `PaperInterface.lean` exposes a compact review surface for central
-  single-state source claims and the current small-surge Theorem 3 route.
+  single-state source claims and the current Theorem 3 source route.
 - `MainTheorems.lean` remains the large proof-facing ledger for the continuous
   and dynamic driver-surge development.  Active Lemma 5 and Theorem 3 route
   adapters now live in `Lemma5Frontier.lean` and `Theorem3Frontier.lean` so
   future proof attempts have narrower build targets.
+- `DomainBridge.lean` now contains the source-faithful positive-mass Theorem 3
+  a.e.-uniqueness endpoint
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions`,
+  exposed as `PaperInterface.theorem3_positive_mass_source`.
+- `Lemma5Frontier.lean` now contains the compact Theorem 4 structural
+  endpoints that turn allowed Lemma 5 forms or feasible a.e. representative
+  forms into the paper's measurable-domain structural statement.  It also
+  exposes the same a.e. representative statement from fixed-response shape
+  data, fixed-response policy-form data, GN21 fixed-response source data, and
+  raw GN21 bracket source data, so the source-shaped Theorem 4 route no longer
+  needs a manual reconstruction layer.  The raw bracket source data also now
+  prove the Theorem 4-to-Theorem 2 a.e. shape handoff for one-threshold CTMC
+  prices.  The remaining Theorem 4 work is the analytic construction of those
+  Lemma 5 form/canonical-dominance records for arbitrary measurable optima.
 - The folder has active proof work; avoid broad rewrites while other agents are
   editing `MainTheorems.lean`.
 
@@ -17,13 +31,23 @@ Last updated: 2026-05-16
 
 - Start human review with `PaperInterface.lean`; do not review the full
   `MainTheorems.lean` ledger directly.
-- Treat the current interface as a curated starter surface, not as complete
-  coverage of the paper.
+- Treat the current interface as a curated starter surface; the Theorem 3
+  positive-mass source theorem is the current denominator-valid paper endpoint,
+  while full feasible-measurable lifting needs an explicit zero-mass dominance
+  condition or a revised reward interface.
 - Add more paper-facing interface rows only when the corresponding source claim
   has a stable Lean statement.
 
 ## Next Work
 
-- Refresh the dashboard cache.
-- Extend the interface after the active proof campaign stabilizes the dynamic
-  IC theorem statements.
+- Decide whether final status should be positive-mass/nondegenerate source
+  closure, or whether to introduce an extended-real/partial reward interface
+  for zero-mass policies.
+- If staying on the paper's denominator-valid source domain, refresh the
+  dashboard/cache and write the final validation report around
+  `PaperInterface.theorem3_positive_mass_source`.
+- For Theorem 4, target
+  `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`
+  when following the paper proof at the raw Lemma 6 bracket level, or
+  `PaperInterface.theorem4_structural_policy_representatives_of_feasible_ae_policy_forms`
+  when proving the analytic Lemma 5 a.e.-form data directly.

@@ -77,6 +77,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   after that state is accept-all, discharge the second-state lemma with the
   theorem's target accept-all accounting. This avoids false fixed-state
   reward-rate equalities.
+- For denominator-valid CTMC a.e.-uniqueness, do not force a symmetric
+  two-state candidate certificate if the source proof is sequential. Prove the
+  first-state a.e. accept-all claim, use measured-reward a.e. congruence to
+  replace that state by exact accept-all while preserving positive-mass
+  optimality, then prove the second-state candidate with that fixed
+  accept-all policy. This avoids an artificial obligation to prove
+  fixed-state source data for the original arbitrary current policy.
 - Audit fixed-state transfer assumptions algebraically. If lower and upper
   bounds demand opposite cross-ratio directions, do not assume equality unless
   the source proves it. Try replacing one direction with a direct endpoint

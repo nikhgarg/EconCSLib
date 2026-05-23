@@ -90,14 +90,14 @@
   measurable optima have multiplicative shapes up to null sets; non-IC uses a measured aggregate witness
 };
 
-\node[dag_conditional, text width=4.8cm] (Thm3) at (23.6,-16.0) {
+\node[dag_result, text width=5.0cm] (Thm3) at (23.6,-16.0) {
   \textbf{Theorem 3 (Sec. 4.2)}\\
-  structured CTMC prices imply positive-mass measurable IC/a.e. uniqueness; full-domain route requires explicit zero-mass handling
+  structured CTMC prices give positive-mass measurable IC and a.e. accept-all uniqueness by the sequential Lemma 9 then Lemma 10 route
 };
 
-\node[dag_result, text width=5.1cm] (MeasShapeSource) at (29.5,-16.0) {
+\node[dag_conditional, text width=5.1cm] (MeasShapeSource) at (29.5,-16.0) {
   \textbf{Sequential source-data route}\\
-  weak feasible rewards prove IC; positive-response Lemma 9/10 data feed source-domain a.e. uniqueness, with zero-mass bridge optional
+  weak feasible rewards prove IC; full feasible-measurable lifting additionally needs explicit zero-mass dominance
 };
 
 \node[dag_result, text width=4.9cm] (FiniteAux) at (0,-12.1) {
@@ -138,7 +138,8 @@
 \draw[dag_dashed_arrow, rounded corners=6pt]
   (Thm4.south east) -- ++(0.85,-1.25)
   -| ([xshift=0.85cm]MeasShapeSource.north);
-\draw[dag_arrow] (MeasShapeSource.west) -- (Thm3.east);
+\draw[dag_arrow] (Lemmas910.south) |- (Thm3.north);
+\draw[dag_dashed_arrow] (MeasShapeSource.west) -- (Thm3.east);
 
 \end{scope}
 \end{dagPaperBody}

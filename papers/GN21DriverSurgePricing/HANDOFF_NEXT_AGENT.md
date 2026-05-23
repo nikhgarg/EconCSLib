@@ -7,9 +7,40 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 
 ## Latest Stopping Point
 
-The current compiled stopping point is a source-boundary cleanup for Theorem 3.
-`lake build GN21DriverSurgePricing.PaperInterface` passes after two new
-bridge batches:
+The current compiled stopping point is the source-faithful positive-mass
+Theorem 3 route. `lake build GN21DriverSurgePricing.PaperInterface` passes
+after the new sequential a.e.-uniqueness bridge:
+
+```lean
+PaperInterface.theorem3_positive_mass_source
+GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions
+```
+
+This is the route that matches the paper proof order. It first proves the
+surge state is accept-all a.e. from Lemma 9 source reward-rate data, rewrites
+the surge policy to exact accept-all using measured-reward a.e. congruence,
+then applies Lemma 10 to the non-surge state with surge fixed at accept-all.
+Do not replace this by a symmetric two-state fixed-response certificate: that
+asks for Lemma 10 source data at the original arbitrary `rho 1`, whereas the
+paper proof only needs Lemma 10 after the surge state has already been made
+accept-all.
+
+The full feasible-measurable theorem is still available only through the
+explicit zero-mass bridge:
+
+```lean
+theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
+```
+
+That is not bookkeeping. The Appendix-D formulas divide by accepted trip mass,
+and Lean's current real-valued totalization makes zero-mass reward rates
+collapse to `0`; the paper source route is denominator-valid on the
+positive-mass/nondegenerate domain. Use the full-domain bridge only when a
+separate source condition or revised reward interface supplies zero-mass
+strict dominance.
+
+Older source-boundary cleanup that remains useful but is no longer the main
+closeout route:
 
 - `GN21RegularEndpointSharedSourceData.*fixed_cross_le_acceptAll_of_*cutoff*`
   turns reject-short and ordered reject-middle scalar cutoff inequalities into
@@ -22,7 +53,8 @@ bridge batches:
   identities directly; Lean derives the local Lemma 6 names `Ri = R1` and
   `Rj = R2` by cancellation from the bracket records.
 
-For pickup, start from the public interface theorem
+For pickup on the older endpoint-selection path, start from the public
+interface theorem
 
 ```lean
 PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source
