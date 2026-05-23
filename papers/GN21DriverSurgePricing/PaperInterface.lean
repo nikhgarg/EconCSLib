@@ -320,6 +320,13 @@ theorem theorem4_acceptAll_structural_representatives_of_sequential_optimal_rewa
 abbrev theorem2_multiplicative_policy_shape :=
   @theorem2_multiplicative_extended_policy_shape_of_shape_derivation
 
+/--
+Theorem 2: a.e. multiplicative policy shapes from the feasible Lemma 5
+representative data used by the Theorem 4 handoff.
+-/
+abbrev theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms :=
+  @paper_theorem2_multiplicative_measurable_policy_shape_ae_of_feasible_ae_policy_forms
+
 /-- Theorem 2: one-threshold CTMC policy shape from raw GN21 bracket source data. -/
 abbrev theorem2_one_threshold_policy_shape_ae_of_gn21_bracket_source_data :=
   @paper_theorem2_one_threshold_measurable_policy_shape_ae_of_gn21_bracket_source_data
