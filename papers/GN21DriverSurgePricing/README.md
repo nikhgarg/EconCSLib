@@ -2433,6 +2433,11 @@ then proves non-surge accepts all a.e.  The lower-level compact bridges are
 `PaperInterface.theorem3_feasible_weak_reward_feasible_sequential_source_normalized`
 and
 `PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized`.
+The sequential surge-source wrappers also expose the common source presentations
+after the Lemma 10 branch has been constructed from Theorem 3 parameter data:
+`PaperInterface.theorem3_feasible_sequential_surge_source_data`,
+`PaperInterface.theorem3_feasible_sequential_surge_accounting_data`, and
+`PaperInterface.theorem3_feasible_sequential_surge_reward_rate_data`.
 The direct positive-response and concrete fixed-response boundaries now have
 matching normalized-mass ratio wrappers as well:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source`,
@@ -2483,7 +2488,10 @@ current-bounds source-data route exposed compactly as
 `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
 It is the preferred entry point when the source proof supplies the
 policy-dependent sequential Lemma 9/10 source packages already used by the
-IC-only theorem.  The split current-bounds positive-response route remains
+IC-only theorem.  If the source proof has already discharged the Lemma 10 branch
+and leaves only the surge Lemma 9 data, use
+`PaperInterface.theorem3_feasible_sequential_surge_source_data` or its
+accounting/reward-rate variants.  The split current-bounds positive-response route remains
 available as
 `PaperInterface.theorem3_current_bounds_source_feasible_optimal_positive_response_normalized`,
 with accounting and reward-rate variants
