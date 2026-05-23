@@ -15,20 +15,22 @@ namespace PaperInterface
 /-! ## Section 2 model definitions -/
 
 /-- Definition: single-state incentive compatibility. -/
-abbrev review_definition_single_state_ic :=
-  @definition_single_state_ic
+def review_definition_single_state_ic (R : SingleStateReward) : Prop :=
+  singleStateMeasurableIncentiveCompatible R
 
 /-- Definition: two-state dynamic incentive compatibility. -/
-abbrev review_definition_dynamic_ic :=
-  @definition_dynamic_ic
+def review_definition_dynamic_ic (R : DynamicReward) : Prop :=
+  dynamicIncentiveCompatible R
 
 /-- Definition: threshold policies. -/
-abbrev review_definition_threshold_policy :=
-  @definition_threshold_policy
+def review_definition_threshold_policy (w : PricingFunction) (c : ℝ) (sigma : TripPolicy) :
+    Prop :=
+  thresholdRatePolicy w c sigma
 
 /-- Definition: dynamic reward with positive-mass denominators. -/
-abbrev review_definition_dynamic_defined_reward :=
-  @definition_dynamic_defined_reward
+def review_definition_dynamic_defined_reward (mu : Fin 2 → MeasureTheory.Measure TripLength) :
+    Type :=
+  DynamicDefinedReward mu
 
 /-- Section 2.2: IID renewal-reward bridge for the single-state formula. -/
 abbrev review_section2_single_state_renewal_reward_iid_bridge :=
