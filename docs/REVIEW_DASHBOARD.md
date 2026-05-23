@@ -72,6 +72,12 @@ current Lean statement, paper-facing summary text, and SHA-256 digests. If a
 later `PaperInterface.lean` edit changes a reviewed statement, the dashboard
 flags that review as stale.
 
+The dashboard's `Reviewed` count means rows in this review log. Treat it as
+human review only when the rows were saved by a human reviewer. Agent source
+audits should be kept in tracked paper docs such as `SOURCE_AUDIT.md` and
+should not be written to `.review_traces/paper_theorem_validations.jsonl` just
+to clear the dashboard counter.
+
 Use `--user` to force a reviewer handle. Summary views can be filtered with
 `--status-user`.
 

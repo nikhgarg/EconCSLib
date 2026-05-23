@@ -386,6 +386,14 @@ the Lean statements against the paper.
   human review rows to become stale. Do not edit or rewrite the review log to
   clear that state; leave the dashboard warning and tell the reviewer which
   rows need to be resaved.
+- Reserve the dashboard word "reviewed" for actual human review-log entries.
+  The dashboard counter means "a validation row was saved"; if an agent writes
+  entries, the UI will still increment the counter, but that is not human
+  review. Do not populate `.review_traces/paper_theorem_validations.jsonl` with
+  agent-generated entries just to clear `0/N reviewed` or `need attention`.
+  For agent validation, write a tracked source-audit artifact such as
+  `SOURCE_AUDIT.md`, label it clearly as an agent audit, and report the
+  dashboard human-review state separately.
 - It also shows compact paper-source action links (open PDF/text file), so the
   reviewer can quickly jump back to source wording when needed.
 - Paper-facing formulas that look like LaTeX are rendered in the dashboard so

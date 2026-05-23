@@ -6,8 +6,8 @@ This is the tracked source-vs-Lean audit for Garg--Nazerzadeh,
 against `source.txt`, `PaperInterface.lean`, `PostPaperAudit.lean`, and the
 compiled GN21 modules.
 
-Reviewer handle used in the local dashboard trace: `codex-source-audit`.
-This is an agent source audit, not a human signoff.
+This is an agent source audit, not a human signoff. It should not be counted as
+dashboard human review.
 
 ## Verdict
 
@@ -61,5 +61,6 @@ rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSu
 git diff --check -- papers/GN21DriverSurgePricing
 ```
 
-Dashboard status in this workspace: `24/24 reviewed`, `0 stale`,
-`0 unreviewed`, `0 mismatch`.
+Dashboard human-review status after clearing agent-generated local trace rows:
+`0/24 reviewed`, `24 unreviewed`, `0 stale`, `0 mismatch`. This is expected
+until a human reviewer saves dashboard rows.
