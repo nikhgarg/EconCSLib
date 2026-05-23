@@ -45,6 +45,8 @@ current real-valued reward totalization.
 - `PaperInterface.theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states_explicit_atomic`
 - `PaperInterface.theorem2_multiplicative_measured_not_ic_both_states_explicit_atomic`
 - `PaperInterface.theorem3_positive_mass_source`
+- `PaperInterface.theorem3_positive_response`
+- `PaperInterface.theorem3_positive_fixed_response_normalized`
 - `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`
 - `PaperInterface.theorem3_defined_reward_source`
 - `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`
@@ -72,7 +74,7 @@ current real-valued reward totalization.
 | Lemmas 9-10 | 3809, 3834 | `audit_lemma9_surge_derivative_positive_of_acceptAll_bounds`, `audit_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | complete |
 | Theorem 2 | 560 | `audit_theorem2_multiplicative_policy_shape_ae`, `audit_theorem2_multiplicative_measured_not_ic_explicit_atomic`, `audit_theorem2_multiplicative_measured_profitable_deviations_both_states`, `audit_theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states`, `audit_theorem2_multiplicative_measured_not_ic_both_states` | complete for the structural handoff, explicit measured non-IC instance, and a single atomic instance with profitable positive-finite-cutoff deviations in both states |
 | Theorem 4 | 3859 | `audit_theorem4_structural_policy_representatives` | complete at the measure-theoretic structural surface |
-| Theorem 3 | 704, 3944 | `audit_theorem3_positive_mass_source`, `audit_theorem3_feasible_sequential_current_bounds_source_data`, `audit_theorem3_source_with_zero_mass_dominance` | complete through the positive-mass source endpoint and the full feasible sequential current-bounds source-data endpoint; zero-mass dominance remains an optional bridge route |
+| Theorem 3 | 704, 3944 | `audit_theorem3_positive_mass_source`, `audit_theorem3_positive_response_source`, `audit_theorem3_positive_fixed_response_source`, `audit_theorem3_feasible_sequential_current_bounds_source_data`, `audit_theorem3_source_with_zero_mass_dominance` | complete through existential structured-price endpoints for the positive-response/fixed-response proof line, the positive-mass source endpoint, and the full feasible sequential current-bounds source-data endpoint; zero-mass dominance remains an optional bridge route |
 
 ## Deliberate model conventions and proof deviations
 
@@ -84,8 +86,14 @@ current real-valued reward totalization.
 - The single-state Theorem 1 proof allows atoms at threshold boundaries by
   proving one-sided dominated-convergence limits, rather than assuming boundary
   mass is zero.
-- Theorem 3 has a denominator-valid positive-mass source endpoint and a full
-  feasible-measurable source-data endpoint exposed as
+- Theorem 3 has source-facing existential structured-price endpoints exposed as
+  `PaperInterface.theorem3_positive_response` and
+  `PaperInterface.theorem3_positive_fixed_response_normalized`: under the
+  paper's normalized-mass ratio assumptions and the Lemma 5 positive-response
+  or fixed-response source records, Lean constructs prices of the form
+  `m_i tau + z_i q_{i->j}(tau)`, proves measurable IC, and proves accept-all is
+  a.e. unique.  It also has a denominator-valid positive-mass source endpoint
+  and a full feasible-measurable source-data endpoint exposed as
   `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
   Lean also exposes `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`,
   a partial-reward view where zero-mass denominator failures have no reward

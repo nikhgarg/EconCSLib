@@ -9,8 +9,25 @@ review, or optional strengthening rather than rebuilding the proof.
 
 ## Latest Stopping Point
 
-2026-05-23 update: `PaperInterface` exposes the source-faithful full feasible
-sequential current-bounds endpoint:
+2026-05-23 update: `PaperInterface` exposes the direct source proof-line
+Theorem 3 endpoints:
+
+```lean
+PaperInterface.theorem3_positive_response
+PaperInterface.theorem3_positive_fixed_response_normalized
+PostPaperAudit.audit_theorem3_positive_response_source
+PostPaperAudit.audit_theorem3_positive_fixed_response_source
+```
+
+These are existential structured-price statements: under the paper's
+normalized-mass ratio hypotheses, the positive-response endpoint consumes the
+direct Lemma 5 marginal certificate, and the fixed-response endpoint consumes
+the GN21 fixed-response source records and converts them internally.  Both
+construct structured CTMC prices, prove measurable IC, and prove accept-all
+a.e. unique.
+
+`PaperInterface` also exposes the source-faithful full feasible sequential
+current-bounds endpoint:
 
 ```lean
 PaperInterface.theorem3_feasible_sequential_current_bounds_source_data

@@ -163,6 +163,22 @@ abbrev audit_theorem3_feasibility_threshold :=
 abbrev audit_theorem3_positive_mass_source :=
   @PaperInterface.theorem3_positive_mass_source
 
+/--
+Audit endpoint for Theorem 3's direct source proof line: normalized source
+primitives plus the positive-response Lemma 5 certificate construct structured
+prices and prove measurable IC with accept-all a.e. unique.
+-/
+abbrev audit_theorem3_positive_response_source :=
+  @PaperInterface.theorem3_positive_response
+
+/--
+Audit endpoint for Theorem 3's fixed-response source boundary before Lean
+converts the GN21 fixed-response records into the positive-response marginal
+certificate.
+-/
+abbrev audit_theorem3_positive_fixed_response_source :=
+  @PaperInterface.theorem3_positive_fixed_response_normalized
+
 /-- Audit endpoint for Theorem 3: positive-mass IC as a defined-reward statement. -/
 abbrev audit_theorem3_defined_reward_ic_of_positive_mass :=
   @PaperInterface.theorem3_defined_reward_ic_of_positive_mass

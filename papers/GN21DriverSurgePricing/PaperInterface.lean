@@ -468,11 +468,19 @@ abbrev lemma10_current_surge_feasible :=
 abbrev theorem3_feasibility_threshold :=
   @theorem3_feasibility_thresholdC_mem_Ico_acceptAll
 
-/-- Theorem 3: positive-response measured IC source endpoint. -/
+/--
+Theorem 3: under the paper's normalized-mass ratio hypotheses and the direct
+positive-response Lemma 5 certificate, there exist structured CTMC prices that
+are measurable-IC and make accept-all a.e. unique.
+-/
 abbrev theorem3_positive_response :=
   @theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source
 
-/-- Theorem 3: positive fixed-response source endpoint. -/
+/--
+Theorem 3: same normalized source theorem, with the final source obligation at
+the concrete GN21 fixed-response records rather than the converted marginal
+certificate.
+-/
 abbrev theorem3_positive_fixed_response_normalized :=
   @theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response_normalized_mass_ratio_source
 

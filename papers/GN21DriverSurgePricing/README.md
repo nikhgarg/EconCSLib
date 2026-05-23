@@ -78,11 +78,22 @@ source-numbered endpoint ledger is `PostPaperAudit.lean`.
   after proving accept-all has positive mass in both states, it remains exactly
   to prove that every feasible zero-mass policy has lower total reward than
   accept-all under the chosen reward interface.
-- The positive-mass source-domain Theorem 3 route now has a compiled
-  a.e.-unique endpoint directly from the sequential reward-rate source
-  assumptions:
+- Theorem 3 now has explicit existential structured-price endpoints for the
+  source proof line.  `PaperInterface.theorem3_positive_response` and
+  `PaperInterface.theorem3_positive_fixed_response_normalized` use the paper's
+  normalized-mass ratio hypotheses plus either the direct Lemma 5
+  positive-response certificate or the concrete GN21 fixed-response source
+  records to construct prices of the form `m_i tau + z_i q_{i->j}(tau)`,
+  prove measurable IC, and prove accept-all a.e. unique.  The positive-mass
+  source-domain route also has a compiled a.e.-unique endpoint directly from
+  the sequential reward-rate source assumptions:
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions`
   and the compact interface `PaperInterface.theorem3_positive_mass_source`.
+  The strongest current source-faithful full feasible-measurable endpoint is
+  `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`,
+  whose conclusion is the same existential structured-price measurable-IC and
+  a.e.-unique accept-all statement for the feasible sequential current-bounds
+  source package.
   Lean follows the paper order: Lemma 9 proves the surge state is accept-all
   a.e.; the GN21 measured reward is invariant under that null change; then
   Lemma 10 closes the non-surge state with the surge state fixed at exact
@@ -303,23 +314,15 @@ source-numbered endpoint ledger is `PostPaperAudit.lean`.
   when the non-surge cutoff is written with the paper's `t = infinity`
   convention.  These wrappers keep the pointwise non-surge transfer comparison
   but no longer require exact finite raw selectors for accept-all branches.
-  The compact `PaperInterface` now also exposes the canonical end-of-file
-  Theorem 3 source boundaries:
-  `theorem3_structured_ic_of_positive_replacement`,
-  `theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal`,
-  `theorem3_structured_ic_of_allowed_replacement`, and
-  `theorem3_structured_ic_of_endpoint_bridge`.  These are the review-surface
-  names for the direct constructed-price route; the positive-response marginal
-  route is the direct Lemma 9/10-to-Lemma 5 measurable a.e.-uniqueness
-  endpoint.  The interface also exposes the newly compiled bridge
-  `theorem4_positive_response_marginal_of_gn21_positive_fixed_response_source_data`,
-  which converts positive Lemma 6 fixed-response source records for all
-  measurable optima into that marginal certificate.  The concrete Theorem 3
-  endpoint is now
-  `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response`,
-  whose final source field is exactly those positive fixed-response records
-  for the constructed prices.  The endpoint-bridge route isolates the
-  remaining continuous endpoint-bridge proof for the constructed prices.
+  The compact `PaperInterface` exposes the direct constructed-price Theorem 3
+  source boundaries as `PaperInterface.theorem3_positive_response` and
+  `PaperInterface.theorem3_positive_fixed_response_normalized`.  These are the
+  review-surface names for the Lemma 9/10-to-Lemma 5 route: the first consumes
+  the positive-response marginal certificate, while the second consumes the
+  concrete GN21 fixed-response source records and lets Lean convert them into
+  the marginal certificate.  Both endpoints construct structured CTMC prices,
+  prove measurable IC, and prove accept-all a.e. unique under the paper's
+  normalized source hypotheses.
   The positive-mass small-surge route is also public through
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_fixed_lower_cross`,
   `PaperInterface.theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign`,
@@ -394,9 +397,10 @@ source-numbered endpoint ledger is `PostPaperAudit.lean`.
   reintroduce those scalar fields as separate assumptions on this route.
   The reusable scalar helper is
   `theorem3_acceptAll_ratio_source_scalar_consequences`.
-  The direct endpoint-bridge wrapper is
-  `PaperInterface.theorem3_structured_ic_of_endpoint_bridge_ratio_source`;
-  its source theorem is
+  The direct endpoint-bridge ratio-source wrapper lives in
+  `ProofInterface.theorem3_structured_ic_of_endpoint_bridge_ratio_source`;
+  the compact review alias for the normalized measurable endpoint is
+  `PaperInterface.theorem3_endpoint_bridge`.  The source theorem is
   `paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_ratio_source_assumptions`.
   The finite-or-infinite aggregate-cross route closest to the paper's
   `t = infinity` non-surge cutoff notation is
@@ -2611,12 +2615,10 @@ The weaker optimal-only variants are
 weak IC separate and ask for the non-surge positive-mass and Lemma 9 surge data
 only for measurable optima.
 The direct positive-response and concrete fixed-response boundaries now have
-matching normalized-mass ratio wrappers as well:
-`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source`,
-`PaperInterface.theorem3_structured_measurable_ic_of_positive_response_marginal_normalized_mass_ratio_source`,
-`PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response_normalized_mass_ratio_source`,
-and
-`PaperInterface.theorem3_structured_measurable_ic_of_positive_fixed_response_normalized_mass_ratio_source`.
+matching normalized-mass ratio wrappers exposed through the compact review
+aliases `PaperInterface.theorem3_positive_response`,
+`PaperInterface.theorem3_positive_fixed_response_normalized`, and
+`PaperInterface.theorem3_positive_fixed_response_normalized_ic`.
 Use these when the source proof has the paper's probability-normalized
 trip-length laws and either the direct positive marginal certificate or the
 GN21 fixed-response source records for every measurable optimum.
@@ -2649,10 +2651,9 @@ These derive the internal `R1 > 0`, `R1 < R2`, and positive accept-all measure
 fields from `R1 = rho * R2`, `R2 > 0`, `C < rho < 1`, and probability-normalized
 trip laws, so source proofs using Remark 2 accounting equations or measured
 reward-rate equalities can enter the full AE-unique Theorem 3 route directly.
-The endpoint-bridge route has the same normalized-mass ratio surface:
-`PaperInterface.theorem3_structured_ic_of_endpoint_bridge_normalized_mass_ratio_source`
-and
-`PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
+The endpoint-bridge route has the same normalized-mass ratio proof surface in
+`ProofInterface`; the compact review alias is
+`PaperInterface.theorem3_endpoint_bridge`.
 These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
 The current source-faithful Theorem 3 frontier is the feasible sequential
