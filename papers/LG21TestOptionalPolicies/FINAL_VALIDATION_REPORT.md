@@ -21,6 +21,18 @@ paper-facing theorem claims.
 Human review is still external: the dashboard currently reports `0/16`
 reviewed interface items, with no stale or mismatch entries.
 
+## Source Version
+
+- Paper: *Test-optional Policies: Overcoming Strategic Behavior and
+  Informational Gaps*
+- Authors: Zhi Liu and Nikhil Garg
+- Version formalized: arXiv:2107.08922 / EAAMO 2021 version
+- Local source text: `source.txt`
+
+Sections 1 and 5 are introduction/discussion material and contain no named
+theorem or definition target. The formalized source surface covers the named
+model definitions and results in Sections 2--4.
+
 ## Source Surface
 
 Human reviewers should start from:
@@ -93,6 +105,23 @@ for continuous boundary cases.
 This distinction is important for future agents: keep diagnostics about false
 overbroad abstractions out of the paper-facing theorem inventory unless they
 change a named paper theorem. Here, they do not.
+
+No named paper result remains conditional or unformalized under the
+paper-facing source models.
+
+## Proof Tricks Worth Reusing
+
+- Keep the paper-facing interface compact, and move proof-route variants into
+  the audit ledger. This made the final review surface small enough to compare
+  against the source paper directly.
+- Use a.e. equilibrium for continuous cutoff models when the paper proof only
+  needs best response off measure-zero tie boundaries.
+- Package fairness impossibility as a source-model certificate: prove the
+  unraveling/no-relevance implication once, then instantiate it for optional
+  reporting and report-required regimes.
+- Maintain finite event-share and continuous-law routes in parallel when the
+  source proof moves between finite support witnesses and Gaussian law
+  arguments.
 
 ## Library Pass
 

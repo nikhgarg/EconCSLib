@@ -1204,6 +1204,11 @@ validation pass:
   direct paper-interface declarations needed to identify a source result. Put
   helper theorem ledgers, alias lists, and proof-seam inventories in
   `PostPaperAudit.lean`, the README theorem ledger, or `SOURCE_AUDIT.md`.
+- If the final report starts reading like an implementation ledger, split it:
+  keep the report as a short human assessment of the source claims, proof
+  deviations, findings, reusable lessons, DAG, and validation checks; move
+  source-line mappings to `SOURCE_AUDIT.md` and declaration inventories to
+  `PostPaperAudit.lean` or the README.
 - Distinguish agent audit from human review. A report may say an agent
   source-audited every row, but it must not say rows were "reviewed" or imply
   dashboard completion unless a human actually saved those dashboard reviews.
