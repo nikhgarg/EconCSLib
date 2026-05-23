@@ -2437,25 +2437,28 @@ and
 `PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
 These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
-The current source-faithful Theorem 3 frontier is the bracket aggregate-cross
-middle-cutoff LightAE route exposed compactly as
-`PaperInterface.theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized`,
+The current source-faithful Theorem 3 frontier is the reduced bracket
+surge-cutoff LightAE route exposed compactly as
+`PaperInterface.theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized`,
 with IC-only projection
-`PaperInterface.theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized_ic`.
+`PaperInterface.theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized_ic`.
 This is the route to use when Lemma 5 reduces measurable optima to canonical
-forms only up to a.e. representatives and Lemmas 9--10 provide aggregate
-cross-ratio endpoint comparisons rather than pointwise fixed-transfer
-equalities.  Lean handles the non-surge `lo <= 0` accepted-middle branch by
-rerouting through reject-long and derives positive accept-all mass from
-normalized trip-length laws.  The current source-facing constructor for this
-route is
-`GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds`:
-it keeps Lemma 6 at the raw bracket-record level, derives fixed reward-rate
-identities from the local `Ri = R1` and `Rj = R2` names, and integrates the
-surge short/middle scalar cutoff bounds into aggregate cross-ratio fields.
-After this constructor, the remaining substantive per-policy endpoint work is
-the non-surge aggregate cross comparisons for reject-long and accepted-middle
-branches.  The named-rate pointwise-equality route remains
+forms only up to a.e. representatives and the source proof supplies the
+one-sided pointwise upper transfer on rejected non-surge trips.  Lean integrates
+that pointwise comparison into the aggregate reject-long upper cross field,
+gets the lower cross field from CTMC monotonicity of reject-long policies, and
+derives the accepted-middle adapter fields from the a.e. reject-long
+representative.  The aggregate source boundary is also exposed as
+`PaperInterface.theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized`
+when the proof supplies the integrated reject-long upper cross comparison
+directly.  The older
+`PaperInterface.theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized`
+route remains available, but it should no longer be treated as the active
+frontier because it asks for separate accepted-middle cross fields that the
+one-threshold/a.e. representative route can now derive.  Reject-long shape by
+itself proves only the lower/opposite cross direction; the upper direction is
+the substantive remaining source transfer.  The named-rate pointwise-equality
+route remains
 available as
 `PaperInterface.theorem3_light_ae_bracket_middle_cutoff_named_rate_normalized`,
 with IC-only projection

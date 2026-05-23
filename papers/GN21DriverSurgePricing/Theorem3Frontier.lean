@@ -696,6 +696,488 @@ def GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCuto
     nonsurge_accept_middle_lower_cross nonsurge_accept_middle_upper_cross
 
 /--
+For the bracket one-threshold non-surge fixed-response branch, Lemma 5 gives a
+reject-long representative up to a.e. equality.  A reject-long upper
+cross-ratio bound on that representative transfers back to the raw policy and
+also supplies the lower cross-ratio bound needed by the middle-reroute endpoint
+adapter.  This is the key bridge that prevents the Theorem 3 frontier from
+asking for separate non-surge accept-middle cross assumptions that are not part
+of the one-threshold paper route.
+-/
+theorem Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData.nonsurge_ae_rejectLong_cross_pair
+    {μ : Fin 2 → Measure TripLength}
+    [NoAtoms (μ 0)]
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_reject_long_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21)
+    (ρ : Fin 2 → TripPolicy)
+    (hopt :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ) :
+    gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ∧
+    gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) ≤
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+        gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 := by
+  let hsum : 0 < switch12 + switch21 :=
+    add_pos forms.hswitch12_pos forms.hswitch21_pos
+  let source :
+      GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 (ctmcStructuredDynamicSurgePrice m z switch12 switch21) ρ
+        .strictlyDecreasing :=
+    (forms.nonsurge ρ hopt).to_source_data forms.hswitch12_pos hsum
+  let fixed :
+      Lemma5FixedResponsePolicyFormFeasibleOptimalData (μ 0)
+        (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          (ρ 0) (ρ 1)) .strictlyDecreasing (ρ 0) :=
+    source.to_fixed_response hopt
+  let rep :
+      Lemma5FeasiblePolicyFormAlmostEverywhereData (μ 0)
+        .strictlyDecreasing (ρ 0) :=
+    fixed.to_feasiblePolicyFormAlmostEverywhere (hopt.1 0).2 (hopt.1 0).1
+  have hrep_form : ∃ u : ℝ, rejectsLongTrips u rep.policy := by
+    have hpolicy_form := rep.policy_form
+    change ∃ u : ℝ, rejectsLongTrips u rep.policy at hpolicy_form
+    exact hpolicy_form
+  rcases hrep_form with ⟨u, hrep_shape⟩
+  let ρrep : Fin 2 → TripPolicy := Function.update ρ 0 rep.policy
+  have hρrep :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρrep :=
+    dynamicMeasurableOptimal_gn21MeasuredDynamicRewardFunctional_update_zero_of_policy_ae
+      μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21)
+      hopt rep.policy_subset rep.policy_measurable rep.policy_ae
+  have hrep_shape_update : rejectsLongTrips u (ρrep 0) := by
+    simpa [ρrep, Function.update] using hrep_shape
+  have hlower_rep :
+      gn21ScaledStateTime (μ 0) (arrival 0) rep.policy *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 ≤
+        gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+            rep.policy := by
+    simpa [ρrep, Function.update] using
+      shared.nonsurge_fixed_cross_ge_acceptAll_of_rejectsLongTrips
+        hρrep.1 hrep_shape_update
+  have hupper_rep :
+      gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+            rep.policy ≤
+        gn21ScaledStateTime (μ 0) (arrival 0) rep.policy *
+          gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+            switch12 switch21 := by
+    simpa [ρrep, Function.update] using
+      nonsurge_reject_long_upper_cross ρrep hρrep u hrep_shape_update
+  have htime :
+      gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) =
+        gn21ScaledStateTime (μ 0) (arrival 0) rep.policy :=
+    gn21ScaledStateTime_congr_policy_ae (μ 0) (arrival 0) rep.policy_ae
+  have hq :
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) =
+        gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+          rep.policy :=
+    gn21ExitWeightIntegral_congr_policy_ae (μ 0) (arrival 0) switch12
+      switch21 rep.policy_ae
+  exact
+    ⟨by simpa [htime, hq] using hlower_rep,
+      by simpa [htime, hq] using hupper_rep⟩
+
+/--
+Named-rate bracket LightAE aggregate-cross package from the paper's surge
+cutoff bounds and only the non-surge reject-long upper cross comparison.  The
+non-surge accept-middle cross fields are derived from the a.e. reject-long
+representative supplied by the one-threshold fixed-response data.
+-/
+def GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds_reject_long_upper
+    {μ : Fin 2 → Measure TripLength}
+    [NoAtoms (μ 0)]
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_Ri_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.nonsurge ρ hopt).Ri = R1)
+    (surge_Rj_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.surge ρ hopt).Rj = R2)
+    (surge_reject_short_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ u : ℝ,
+          rejectsShortTrips u (ρ 1) →
+            0 < u →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * u ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 u)
+    (surge_reject_middle_ordered_upper_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            lo ≤ hi →
+              0 < hi →
+                gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                    (ρ 1) * hi ≤
+                  gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                    gn21SwitchProb switch21 switch12 hi)
+    (nonsurge_reject_long_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds
+    forms shared nonsurge_Ri_eq surge_Rj_eq
+    surge_reject_short_cutoff_bound
+    surge_reject_middle_ordered_upper_cutoff_bound
+    nonsurge_reject_long_upper_cross
+    (by
+      intro ρ hopt _lo _hi _hshape
+      exact
+        (forms.nonsurge_ae_rejectLong_cross_pair shared
+          nonsurge_reject_long_upper_cross ρ hopt).1)
+    (by
+      intro ρ hopt _lo _hi _hshape
+      exact
+        (forms.nonsurge_ae_rejectLong_cross_pair shared
+          nonsurge_reject_long_upper_cross ρ hopt).2)
+
+/--
+Bracket fixed-response source package for the paper route after the a.e.
+representative bridge.  Compared with the aggregate-cross middle-cutoff source
+boundary, this source data no longer asks for separate non-surge accept-middle
+cross fields; Lean derives them from the reject-long representative.
+-/
+structure GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  forms :
+    Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+      μ arrival switch12 switch21 m z
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_Ri_eq :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+        (forms.nonsurge ρ hopt).Ri = R1
+  surge_Rj_eq :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+        (forms.surge ρ hopt).Rj = R2
+  surge_reject_short_cutoff_bound :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          0 < u →
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) * u ≤
+              gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                gn21SwitchProb switch21 switch12 u
+  surge_reject_middle_ordered_upper_cutoff_bound :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          lo ≤ hi →
+            0 < hi →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * hi ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 hi
+  nonsurge_reject_long_upper_cross :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21
+
+/--
+Bracket fixed-response source package with the paper-style one-sided
+pointwise upper transfer on rejected non-surge trips.  This is weaker than
+pointwise equality and stronger/more local than the already-integrated
+aggregate reject-long upper cross field.
+-/
+structure GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffPointwiseUpperSourceExistenceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  forms :
+    Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+      μ arrival switch12 switch21 m z
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_Ri_eq :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+        (forms.nonsurge ρ hopt).Ri = R1
+  surge_Rj_eq :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+        (forms.surge ρ hopt).Rj = R2
+  surge_reject_short_cutoff_bound :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          0 < u →
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) * u ≤
+              gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                gn21SwitchProb switch21 switch12 u
+  surge_reject_middle_ordered_upper_cutoff_bound :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          lo ≤ hi →
+            0 < hi →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * hi ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 hi
+  nonsurge_reject_long_pointwise_upper_transfer :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          ∀ τ ∈ acceptAllPolicy \ ρ 0,
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) * τ ≤
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                gn21SwitchProb switch12 switch21 τ
+
+/--
+The reduced bracket source package instantiates the aggregate-cross
+middle-cutoff source boundary by deriving the non-surge accept-middle cross
+fields from the a.e. reject-long representative.
+-/
+noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData.to_middle_cutoff_source
+    {μ : Fin 2 → Measure TripLength}
+    [NoAtoms (μ 0)]
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (D :
+      GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds_reject_long_upper
+    D.forms D.shared D.nonsurge_Ri_eq D.surge_Rj_eq
+    D.surge_reject_short_cutoff_bound
+    D.surge_reject_middle_ordered_upper_cutoff_bound
+    D.nonsurge_reject_long_upper_cross
+
+/--
+Build the reduced bracket source package from the paper-style one-sided
+pointwise upper transfer on rejected non-surge trips.  The pointwise comparison
+is integrated once, here, into the aggregate reject-long upper cross field.
+-/
+noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData.of_pointwise_upper_transfer
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_Ri_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.nonsurge ρ hopt).Ri = R1)
+    (surge_Rj_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.surge ρ hopt).Rj = R2)
+    (surge_reject_short_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ u : ℝ,
+          rejectsShortTrips u (ρ 1) →
+            0 < u →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * u ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 u)
+    (surge_reject_middle_ordered_upper_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            lo ≤ hi →
+              0 < hi →
+                gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                    (ρ 1) * hi ≤
+                  gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                    gn21SwitchProb switch21 switch12 hi)
+    (nonsurge_reject_long_pointwise_upper_transfer :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          ∀ τ ∈ acceptAllPolicy \ ρ 0,
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) * τ ≤
+              gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+                gn21SwitchProb switch12 switch21 τ) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z where
+  forms := forms
+  shared := shared
+  nonsurge_Ri_eq := nonsurge_Ri_eq
+  surge_Rj_eq := surge_Rj_eq
+  surge_reject_short_cutoff_bound := surge_reject_short_cutoff_bound
+  surge_reject_middle_ordered_upper_cutoff_bound :=
+    surge_reject_middle_ordered_upper_cutoff_bound
+  nonsurge_reject_long_upper_cross := by
+    intro ρ hopt u hshape
+    exact
+      shared.nonsurge_fixed_cross_le_acceptAll_of_complement_pointwise
+        hopt.1
+        (nonsurge_reject_long_pointwise_upper_transfer ρ hopt u hshape)
+
+/--
+The pointwise-upper source package instantiates the reduced aggregate source
+by integrating the pointwise non-surge transfer comparison.
+-/
+noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffPointwiseUpperSourceExistenceData.to_reject_long_upper_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (D :
+      GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffPointwiseUpperSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData.of_pointwise_upper_transfer
+    D.forms D.shared D.nonsurge_Ri_eq D.surge_Rj_eq
+    D.surge_reject_short_cutoff_bound
+    D.surge_reject_middle_ordered_upper_cutoff_bound
+    D.nonsurge_reject_long_pointwise_upper_transfer
+
+/--
 Theorem 3 on the bracket fixed-response LightAE route with aggregate
 cross-ratio endpoint data and normalized trip-length laws.  This is the
 closest current frontier to the paper proof when Lemma 9/10 provide aggregate
@@ -827,6 +1309,221 @@ theorem theorem3_measurable_ic_of_bracket_surge_cross_middle_cutoff_normalized_m
         hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
         htime1_integrable htime2_integrable hq1_integrable hq2_integrable
         hmass1_eq_one hmass2_eq_one fixed_response_selection)
+
+/--
+Theorem 3 on the reduced bracket surge-cutoff/reject-long-upper source route.
+This is the current paper-proof frontier: the only remaining non-surge
+cross-ratio source field is the reject-long upper comparison; Lean derives the
+lower comparison and the accept-middle adapter fields internally.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3_measurable_ic_ae_unique_of_bracket_surge_cross_middle_cutoff_normalized_mass_ratio_source
+    μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+    hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+    htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+    hmass1_eq_one hmass2_eq_one
+    (by
+      intro m z hnonneg hparams
+      exact
+        (fixed_response_selection m z hnonneg hparams).to_middle_cutoff_source)
+
+/-- IC projection of the reduced bracket surge-cutoff/reject-long-upper route. -/
+theorem theorem3_measurable_ic_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+    (theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one fixed_response_selection)
+
+/--
+Theorem 3 on the reduced bracket surge-cutoff route with the non-surge
+reject-long field supplied as a one-sided pointwise upper transfer on rejected
+trips.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_pointwise_upper_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffPointwiseUpperSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+    μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+    hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+    htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+    hmass1_eq_one hmass2_eq_one
+    (by
+      intro m z hnonneg hparams
+      exact
+        (fixed_response_selection m z hnonneg hparams).to_reject_long_upper_source)
+
+/-- IC projection of the reduced bracket pointwise-upper route. -/
+theorem theorem3_measurable_ic_of_bracket_surge_cutoff_pointwise_upper_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffPointwiseUpperSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+    (theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_pointwise_upper_normalized_mass_ratio_source
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one fixed_response_selection)
 
 /--
 Build the finite-or-infinite aggregate-cross named-rate package from fixed

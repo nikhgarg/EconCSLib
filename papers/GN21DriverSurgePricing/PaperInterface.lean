@@ -165,6 +165,29 @@ abbrev theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized_ic :=
   @theorem3_measurable_ic_of_bracket_surge_cross_middle_cutoff_normalized_mass_ratio_source
 
 /--
+Theorem 3: reduced bracket surge-cutoff route.  The non-surge accept-middle
+cross fields are derived from the a.e. reject-long representative; the
+remaining non-surge source field is the reject-long upper cross comparison.
+-/
+abbrev theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the reduced bracket surge-cutoff route. -/
+abbrev theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized_ic :=
+  @theorem3_measurable_ic_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+
+/--
+Theorem 3: reduced bracket surge-cutoff route from one-sided pointwise upper
+transfer on rejected non-surge trips.
+-/
+abbrev theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_pointwise_upper_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the reduced pointwise-upper route. -/
+abbrev theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized_ic :=
+  @theorem3_measurable_ic_of_bracket_surge_cutoff_pointwise_upper_normalized_mass_ratio_source
+
+/--
 Theorem 3: finite-or-infinite branch route with aggregate cross-ratio endpoint
 fields.  Use this when the proof has exact branch selectors for the current
 policy representatives; otherwise prefer the LightAE feasible-canonical route.
