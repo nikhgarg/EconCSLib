@@ -163,7 +163,10 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   one optional lift route and can be incompatible with the current totalized
   real reward.  If the source mathematics treats zero-mass rewards as
   undefined, use a partial/defined reward interface instead of forcing Lean's
-  totalized `ℝ` quotient to carry the source semantics.
+  totalized `ℝ` quotient to carry the source semantics.  The useful pattern is
+  a structure with `value : (σ) -> positiveMassFeasible σ -> ℝ`, an optional
+  `value?` for arbitrary feasible policies, and a theorem that positive-mass IC
+  of the total reward implies IC for the defined-reward view.
 - Avoid all-candidate nondegeneracy records for Lemma 5/Theorem 4 adapters
   when the candidate universe contains the empty policy.  Empty policies are
   measurable feasible subsets but cannot satisfy positive accepted-mass or

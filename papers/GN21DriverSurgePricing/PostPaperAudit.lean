@@ -55,6 +55,10 @@ abbrev audit_section2_threshold_policy :=
 abbrev audit_section2_single_state_renewal_reward_iid_bridge :=
   @PaperInterface.section2_single_state_renewal_reward_iid_bridge
 
+/-- Audit endpoint for the denominator-valid defined dynamic reward surface. -/
+abbrev audit_section2_dynamic_defined_reward :=
+  @PaperInterface.definition_dynamic_defined_reward
+
 /-! ## Single-state source results -/
 
 /-- Audit endpoint for Theorem 1: single-state threshold best response. -/
@@ -146,6 +150,14 @@ abbrev audit_theorem3_feasibility_threshold :=
 /-- Audit endpoint for Theorem 3: positive-mass source-domain IC and a.e. uniqueness. -/
 abbrev audit_theorem3_positive_mass_source :=
   @PaperInterface.theorem3_positive_mass_source
+
+/-- Audit endpoint for Theorem 3: positive-mass IC as a defined-reward statement. -/
+abbrev audit_theorem3_defined_reward_ic_of_positive_mass :=
+  @PaperInterface.theorem3_defined_reward_ic_of_positive_mass
+
+/-- Audit endpoint for Theorem 3: source assumptions over the defined-reward interface. -/
+abbrev audit_theorem3_defined_reward_source :=
+  @PaperInterface.theorem3_defined_reward_source
 
 /-- Audit endpoint for Theorem 3: full feasible sequential current-bounds source-data route. -/
 abbrev audit_theorem3_feasible_sequential_current_bounds_source_data :=

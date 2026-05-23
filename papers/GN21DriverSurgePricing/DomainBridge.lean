@@ -794,6 +794,190 @@ theorem not_DynamicZeroMassStrictDominanceCertificate_of_zero_mass_policy_beats_
   linarith
 
 /--
+A dynamic reward whose value is defined only on the denominator-valid
+positive-mass feasible source domain.
+-/
+structure DynamicDefinedReward
+    (μ : Fin 2 → Measure TripLength) where
+  value :
+    (σ : Fin 2 → TripPolicy) →
+      dynamicFeasibleMeasurablePositiveMassPolicy μ σ → ℝ
+
+/-- The optional value of a defined reward at an arbitrary dynamic policy. -/
+noncomputable def DynamicDefinedReward.value?
+    {μ : Fin 2 → Measure TripLength}
+    (R : DynamicDefinedReward μ)
+    (σ : Fin 2 → TripPolicy) : Option ℝ := by
+  classical
+  exact
+    if hσ : dynamicFeasibleMeasurablePositiveMassPolicy μ σ then
+      some (R.value σ hσ)
+    else
+      none
+
+/-- Order an optional reward value against a real benchmark. -/
+def optionRewardLe (x : Option ℝ) (y : ℝ) : Prop :=
+  ∀ r : ℝ, x = some r → r ≤ y
+
+/--
+Defined-reward measurable optimality: the target is positive-mass feasible, and
+every feasible measurable policy with a defined positive-mass reward is no
+better than the target.  Feasible zero-mass policies have no reward value here
+rather than a totalized real quotient value.
+-/
+def dynamicDefinedMeasurableOptimal
+    {μ : Fin 2 → Measure TripLength}
+    (R : DynamicDefinedReward μ)
+    (σstar : Fin 2 → TripPolicy) : Prop :=
+  ∃ hstar : dynamicFeasibleMeasurablePositiveMassPolicy μ σstar,
+    ∀ σ : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePolicy σ →
+        optionRewardLe (R.value? σ) (R.value σstar hstar)
+
+/--
+Defined-reward measurable IC: accepting all trips is optimal for the partial
+reward surface.
+-/
+def dynamicDefinedMeasurableIncentiveCompatible
+    {μ : Fin 2 → Measure TripLength}
+    (R : DynamicDefinedReward μ) : Prop :=
+  dynamicDefinedMeasurableOptimal R acceptAllDynamicPolicy
+
+/-- View an ordinary total dynamic reward as a reward defined on positive-mass policies. -/
+def DynamicDefinedReward.of_total
+    (μ : Fin 2 → Measure TripLength)
+    (R : DynamicReward) : DynamicDefinedReward μ where
+  value := fun σ _hσ => R σ
+
+/--
+Positive-mass measurable optimality immediately gives defined-reward optimality
+for any partial reward interface that agrees with the total reward on the
+positive-mass source domain.
+-/
+theorem dynamicDefinedMeasurableOptimal_of_positiveMass_agree
+    {μ : Fin 2 → Measure TripLength}
+    {Rtot : DynamicReward}
+    {Rdef : DynamicDefinedReward μ}
+    {σstar : Fin 2 → TripPolicy}
+    (hposOpt : dynamicPositiveMassMeasurableOptimal μ Rtot σstar)
+    (hagree :
+      ∀ σ hσ, Rdef.value σ hσ = Rtot σ) :
+    dynamicDefinedMeasurableOptimal Rdef σstar := by
+  classical
+  refine ⟨hposOpt.1, ?_⟩
+  intro σ _hσ r hr
+  by_cases hσ_pos : dynamicFeasibleMeasurablePositiveMassPolicy μ σ
+  · have hr' : some (Rdef.value σ hσ_pos) = some r := by
+      simpa [DynamicDefinedReward.value?, hσ_pos] using hr
+    have hreq : Rdef.value σ hσ_pos = r := Option.some.inj hr'
+    rw [← hreq]
+    rw [hagree σ hσ_pos, hagree σstar hposOpt.1]
+    exact hposOpt.2 σ hσ_pos
+  · simpa [DynamicDefinedReward.value?, hσ_pos] using hr
+
+/--
+Positive-mass measurable optimality immediately gives defined-reward optimality
+for the corresponding total reward viewed through the partial interface.
+-/
+theorem dynamicDefinedMeasurableOptimal_of_positiveMass
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    {σstar : Fin 2 → TripPolicy}
+    (hposOpt : dynamicPositiveMassMeasurableOptimal μ R σstar) :
+    dynamicDefinedMeasurableOptimal
+      (DynamicDefinedReward.of_total μ R) σstar :=
+  dynamicDefinedMeasurableOptimal_of_positiveMass_agree hposOpt
+    (by intro σ hσ; rfl)
+
+/--
+Positive-mass measurable IC immediately gives defined-reward IC for any partial
+reward interface that agrees with the total reward on the positive-mass source
+domain.
+-/
+theorem dynamicDefinedMeasurableIncentiveCompatible_of_positiveMass_agree
+    {μ : Fin 2 → Measure TripLength}
+    {Rtot : DynamicReward}
+    {Rdef : DynamicDefinedReward μ}
+    (hposIC : dynamicPositiveMassMeasurableIncentiveCompatible μ Rtot)
+    (hagree :
+      ∀ σ hσ, Rdef.value σ hσ = Rtot σ) :
+    dynamicDefinedMeasurableIncentiveCompatible Rdef :=
+  dynamicDefinedMeasurableOptimal_of_positiveMass_agree hposIC hagree
+
+/--
+Positive-mass measurable IC immediately gives defined-reward IC for the
+corresponding partial reward interface.  This is the source-faithful alternative
+to assigning arbitrary totalized real values to zero-mass denominator failures.
+-/
+theorem dynamicDefinedMeasurableIncentiveCompatible_of_positiveMass
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    (hposIC : dynamicPositiveMassMeasurableIncentiveCompatible μ R) :
+    dynamicDefinedMeasurableIncentiveCompatible
+      (DynamicDefinedReward.of_total μ R) :=
+  dynamicDefinedMeasurableIncentiveCompatible_of_positiveMass_agree hposIC
+    (by intro σ hσ; rfl)
+
+/--
+A defined-reward optimum whose partial reward agrees with a total reward is also
+a positive-mass optimum for that total reward.
+-/
+theorem dynamicPositiveMassMeasurableOptimal_of_dynamicDefinedMeasurableOptimal_agree
+    {μ : Fin 2 → Measure TripLength}
+    {Rtot : DynamicReward}
+    {Rdef : DynamicDefinedReward μ}
+    {σstar : Fin 2 → TripPolicy}
+    (hdefOpt :
+      dynamicDefinedMeasurableOptimal Rdef σstar)
+    (hagree :
+      ∀ σ hσ, Rdef.value σ hσ = Rtot σ) :
+    dynamicPositiveMassMeasurableOptimal μ Rtot σstar := by
+  classical
+  rcases hdefOpt with ⟨hstar_pos, hle⟩
+  refine ⟨hstar_pos, ?_⟩
+  intro σ hσ_pos
+  have hle_def :
+      Rdef.value σ hσ_pos ≤ Rdef.value σstar hstar_pos :=
+    hle σ hσ_pos.1 (Rdef.value σ hσ_pos) (by
+      simp [DynamicDefinedReward.value?, hσ_pos])
+  rwa [hagree σ hσ_pos, hagree σstar hstar_pos] at hle_def
+
+/--
+A defined-reward optimum for a total reward viewed partially is also a
+positive-mass optimum for the original reward.
+-/
+theorem dynamicPositiveMassMeasurableOptimal_of_dynamicDefinedMeasurableOptimal
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    {σstar : Fin 2 → TripPolicy}
+    (hdefOpt :
+      dynamicDefinedMeasurableOptimal
+        (DynamicDefinedReward.of_total μ R) σstar) :
+    dynamicPositiveMassMeasurableOptimal μ R σstar :=
+  dynamicPositiveMassMeasurableOptimal_of_dynamicDefinedMeasurableOptimal_agree
+    hdefOpt (by intro σ hσ; rfl)
+
+/--
+Positive-mass a.e. uniqueness transfers to defined-reward optima for the same
+total reward viewed through the partial reward interface.
+-/
+theorem dynamicAcceptAllAlmostEverywhere_of_dynamicDefinedMeasurableOptimal
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    (hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicPositiveMassMeasurableOptimal μ R ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ :
+      dynamicDefinedMeasurableOptimal
+        (DynamicDefinedReward.of_total μ R) ρ) :
+    dynamicAcceptAllAlmostEverywhere μ ρ :=
+  hAE ρ
+    (dynamicPositiveMassMeasurableOptimal_of_dynamicDefinedMeasurableOptimal
+      hρ)
+
+/--
 Positive-mass measurable IC lifts to full feasible-measurable IC once every
 zero-mass feasible policy is strictly dominated by a positive-mass feasible
 policy.
@@ -1740,6 +1924,34 @@ def theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
       theorem3AcceptAllStructuredParameterEvidence
         μ arrival R1 R2 switch12 switch21 m z
 
+/--
+Theorem 3 conclusion over the partial defined-reward interface: accept-all is
+IC among policies whose positive-mass reward is defined, and every
+defined-reward optimum is accept-all a.e.
+-/
+def theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∃ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+      dynamicDefinedMeasurableIncentiveCompatible
+        (DynamicDefinedReward.of_total μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)) ∧
+      (∀ ρ : Fin 2 → TripPolicy,
+        dynamicDefinedMeasurableOptimal
+          (DynamicDefinedReward.of_total μ
+            (gn21MeasuredCTMCStructuredDynamicReward
+              μ arrival switch12 switch21 m z)) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ) ∧
+      (∃ q : Fin 2 → TripLength → ℝ,
+        ∀ i τ,
+          ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+            structuredSurgePrice (m i) (z i) (q i) τ) ∧
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z
+
 /-- The positive-mass a.e.-unique conclusion contains the positive-mass IC conclusion. -/
 theorem theorem3MeasuredStructuredPositiveMassMeasurableICConclusion_of_ae_unique
     {μ : Fin 2 → Measure TripLength}
@@ -1752,6 +1964,28 @@ theorem theorem3MeasuredStructuredPositiveMassMeasurableICConclusion_of_ae_uniqu
       μ arrival R1 R2 switch12 switch21 := by
   rcases H with ⟨m, z, hsigns, hIC, _hAE, hprice_form, hparams⟩
   exact ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+
+/--
+The positive-mass Theorem 3 endpoint induces the defined-reward Theorem 3
+endpoint by leaving zero-mass denominator failures outside the reward domain.
+-/
+theorem theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion_of_positiveMass
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (H :
+      theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases H with ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
+  exact
+    ⟨m, z, hsigns,
+      dynamicDefinedMeasurableIncentiveCompatible_of_positiveMass hIC,
+      (fun ρ hρ =>
+        dynamicAcceptAllAlmostEverywhere_of_dynamicDefinedMeasurableOptimal
+          hAE hρ),
+      hprice_form, hparams⟩
 
 /--
 Add the positive-mass a.e.-unique Theorem 4 conclusion to any compiled
@@ -1909,6 +2143,25 @@ theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique
     (paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
       μ arrival rho R1 R2 switch12 switch21 A)
     (theorem3AcceptAllPositiveMassSequentialPositiveResponseAEAcceptAllCandidateCertificate_of_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21 A)
+
+/--
+Paper-facing Theorem 3 endpoint over the partial defined-reward interface.  It
+uses the same source assumptions as the positive-mass theorem and leaves
+zero-mass denominator failures undefined instead of totalizing them as real
+reward values.
+-/
+theorem paper_theorem3_measured_structured_defined_reward_ic_ae_unique_prices_of_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion_of_positiveMass
+    (paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions
       μ arrival rho R1 R2 switch12 switch21 A)
 
 /--

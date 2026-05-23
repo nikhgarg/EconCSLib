@@ -29,6 +29,10 @@ abbrev definition_dynamic_ic := @dynamicIncentiveCompatible
 abbrev section2_single_state_renewal_reward_iid_bridge :=
   @paper_section2_single_state_renewal_reward_iid_stochastic_bridge
 
+/-- Section 2.2/Appendix D: dynamic reward defined only on positive-mass policies. -/
+abbrev definition_dynamic_defined_reward :=
+  @DynamicDefinedReward
+
 /-- Section 2.2: threshold-policy predicate. -/
 abbrev definition_threshold_policy := @thresholdPolicy
 
@@ -485,6 +489,22 @@ measurable domain when zero-mass strict dominance is supplied.
 -/
 abbrev theorem3_positive_mass_to_full_with_zero_mass_dominance :=
   @theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
+
+/--
+Theorem 3 denominator-valid reward interface: positive-mass measurable IC gives
+IC for the partial reward surface that leaves zero-mass denominator failures
+undefined instead of totalizing them as real rewards.
+-/
+abbrev theorem3_defined_reward_ic_of_positive_mass :=
+  @dynamicDefinedMeasurableIncentiveCompatible_of_positiveMass
+
+/--
+Theorem 3 over the denominator-valid defined-reward interface: source
+assumptions give IC and a.e. uniqueness for policies whose positive-mass reward
+is defined.
+-/
+abbrev theorem3_defined_reward_source :=
+  @paper_theorem3_measured_structured_defined_reward_ic_ae_unique_prices_of_source_assumptions
 
 /--
 Theorem 3 zero-mass bridge: it is enough to show that accept-all has positive

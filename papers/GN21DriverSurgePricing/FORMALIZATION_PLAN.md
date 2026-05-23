@@ -24,7 +24,9 @@ Last updated: 2026-05-23
   the explicit zero-mass strict-dominance certificate needed for that route,
   plus the state-rate and certificate-impossibility obstruction theorems that
   show this certificate is not automatic under the current totalized `ℝ`
-  reward interface.
+  reward interface.  `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`
+  gives the partial-reward alternative where zero-mass denominator failures are
+  left undefined.
 - `Theorem3SplitCurrentBounds.lean` now routes the sequential Lemma 9 then
   Lemma 10 a.e.-uniqueness proof through local measured reward-rate records.
   The full feasible sequential current-bounds source-data route is exposed as
@@ -68,9 +70,10 @@ Last updated: 2026-05-23
 - Refresh the dashboard/cache around `PaperInterface.lean` and the audit
   endpoints in `PostPaperAudit.lean`, now that the full feasible sequential
   Theorem 3 route is the preferred source-facing endpoint.
-- Introduce an extended-real/partial reward interface only as an optional
-  semantic cleanup for zero-mass policies; it is no longer required to close
-  the paper-facing Theorem 3 source-data endpoint.
+- Extend the partial reward interface only if a future paper needs more than
+  the current theorem `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`;
+  it is no longer required to close the paper-facing Theorem 3 source-data
+  endpoint.
 - For Theorem 4, target
   `PaperInterface.theorem4_structural_policy_representatives_of_allowed_replacement_data`
   when following the paper's Lemma 5 replacement proof,

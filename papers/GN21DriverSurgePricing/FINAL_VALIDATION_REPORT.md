@@ -30,6 +30,7 @@ reward totalization.
 - `PaperInterface.definition_dynamic_ic`
 - `PaperInterface.definition_threshold_policy`
 - `PaperInterface.section2_single_state_renewal_reward_iid_bridge`
+- `PaperInterface.definition_dynamic_defined_reward`
 - `PaperInterface.lemma1_measured_dynamic_reward_decomposition`
 - `PaperInterface.lemma2_switch_probability_formula`
 - `PaperInterface.lemma3_measured_time_fraction_formula`
@@ -42,6 +43,8 @@ reward totalization.
 - `PaperInterface.lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
 - `PaperInterface.theorem2_multiplicative_measured_not_ic_explicit_atomic`
 - `PaperInterface.theorem3_positive_mass_source`
+- `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`
+- `PaperInterface.theorem3_defined_reward_source`
 - `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`
 - `PaperInterface.theorem3_source_with_zero_mass_dominance`
 - `PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates`
@@ -82,6 +85,9 @@ reward totalization.
 - Theorem 3 has a denominator-valid positive-mass source endpoint and a full
   feasible-measurable source-data endpoint exposed as
   `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
+  Lean also exposes `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`,
+  a partial-reward view where zero-mass denominator failures have no reward
+  value rather than a totalized real quotient value.
   A separate all-feasible bridge through
   `DynamicZeroMassStrictDominanceCertificate` is also exposed as
   `PaperInterface.theorem3_source_with_zero_mass_dominance`.
