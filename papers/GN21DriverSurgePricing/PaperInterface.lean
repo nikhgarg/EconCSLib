@@ -117,6 +117,10 @@ abbrev theorem4_optimal_current_bounds_reward_rate :=
 abbrev theorem4_positive_response_acceptAll_candidate_optimal_current_bounds :=
   @theorem4_positive_response_acceptAll_candidate_of_optimal_current_bounds_source
 
+/-- Theorem 4: accept-all structural representatives from optimal current bounds. -/
+abbrev theorem4_acceptAll_structural_representatives_of_optimal_current_bounds :=
+  @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_source_positive_response
+
 /-- Theorem 2: multiplicative extended policy shape. -/
 abbrev theorem2_multiplicative_policy_shape :=
   @theorem2_multiplicative_extended_policy_shape_of_shape_derivation

@@ -152,6 +152,7 @@ optimal-only accounting or reward-rate identities, route them through:
   PaperInterface.theorem4_positive_response_acceptAll_candidate_optimal_current_bounds
   PaperInterface.theorem4_optimal_current_bounds_accounting
   PaperInterface.theorem4_optimal_current_bounds_reward_rate
+  PaperInterface.theorem4_acceptAll_structural_representatives_of_optimal_current_bounds
 
 The reduced LightAE pointwise-transfer endpoint remains useful only if the
 paper source proof supplies the one-sided non-surge rejected-tail upper

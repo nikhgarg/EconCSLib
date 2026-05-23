@@ -568,6 +568,48 @@ theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_
           (μ 1) (hρ.1 1).1 (hae 1)
 
 /--
+Optimal-policy current-bounds source data give the paper-facing Theorem 4
+accept-all structural representative statement through the candidate-only
+positive-response route.
+-/
+theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_source_positive_response
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_acceptAll_candidates
+    μ
+    (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+    (Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate.of_structured_current_bounds_optimal_source
+      μ arrival R1 R2 switch12 switch21 m z C)
+
+/--
 Positive-response marginal dominance transfers to any objective that is a
 positive affine transform of that marginal reward on feasible measurable
 policies.

@@ -124,6 +124,10 @@ cache is `source.txt`.
   `PaperInterface.theorem4_acceptAll_structural_representatives_of_positive_response_marginal`
   and
   `PaperInterface.theorem4_acceptAll_structural_representatives_of_positive_response_candidates`.
+  The optimal-current-bounds source package now feeds that structural statement
+  directly through
+  `PaperInterface.theorem4_acceptAll_structural_representatives_of_optimal_current_bounds`,
+  avoiding the older all-candidate nondegeneracy boundary.
   The remaining analytic Theorem 4 work is to construct the Lemma 5
   replacement/canonical-dominance/a.e.-form data for arbitrary measurable
   optima, not to reassemble the paper-level structural conclusion.
