@@ -208,6 +208,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   the small-surge sequential route instead: move surge to accept-all with
   small slack, then apply the non-surge Lemma 10 comparison after surge is
   fixed at accept-all.
+- GN21 Theorem 4 exact-endpoint lesson: when the exact one-threshold
+  non-accept-all endpoint route is already compiled, expose it through a split
+  frontier module and `PaperInterface` before doing more algebra.  The useful
+  next proof obligation is deriving the finite-ray source-selection fields and
+  fixed-state aggregate-cross endpoint facts from the paper primitives for
+  arbitrary measurable optima; reassembling the accept-all unique-optimality
+  conclusion is not the bottleneck.
 - GN21 Lemma 5 adapter lesson: when state source data are response-dependent,
   obtain the marginal-response fields through the fixed-response converter
   such as `D.to_fixed_response hρ`; using the base policy-form data directly

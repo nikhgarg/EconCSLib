@@ -1,5 +1,6 @@
 import GN21DriverSurgePricing.ProofInterface
 import GN21DriverSurgePricing.Lemma5Frontier
+import GN21DriverSurgePricing.Theorem4Frontier
 import GN21DriverSurgePricing.Theorem3Frontier
 import GN21DriverSurgePricing.Theorem2ExplicitInstance
 
@@ -153,6 +154,27 @@ abbrev theorem4_acceptAll_structural_representatives_of_optimal_current_bounds :
 /-- Theorem 4: accept-all structural representatives from reward-rate current bounds. -/
 abbrev theorem4_acceptAll_structural_representatives_of_optimal_reward_rate :=
   @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_reward_rate_positive_response
+
+/--
+Theorem 4: accept-all unique optimality from exact one-threshold endpoint
+selection with accept-all escape branches.
+-/
+abbrev theorem4_acceptAll_unique_exact_one_threshold_non_accept_all_endpoint :=
+  @paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless
+
+/--
+Theorem 4: accept-all unique optimality from fixed-transfer exact
+one-threshold endpoint data.
+-/
+abbrev theorem4_acceptAll_unique_fixed_transfer_exact_one_threshold_non_accept_all_endpoint :=
+  @paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless
+
+/--
+Theorem 4: accept-all unique optimality from extended one-threshold
+aggregate-cross fixed-transfer source data.
+-/
+abbrev theorem4_acceptAll_unique_extended_one_threshold_surge_cross_source :=
+  @paper_theorem4_measurable_accept_all_unique_optimal_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_source
 
 /--
 Theorem 4: accept-all structural representatives from the source-ordered

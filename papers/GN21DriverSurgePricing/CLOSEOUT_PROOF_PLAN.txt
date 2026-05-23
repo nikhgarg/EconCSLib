@@ -12,6 +12,20 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
+2026-05-23 Theorem 4 exact-endpoint split: `Theorem4Frontier.lean` now exposes
+the compact paper-facing Theorem 4 accept-all uniqueness endpoints
+
+  PaperInterface.theorem4_acceptAll_unique_exact_one_threshold_non_accept_all_endpoint
+  PaperInterface.theorem4_acceptAll_unique_fixed_transfer_exact_one_threshold_non_accept_all_endpoint
+  PaperInterface.theorem4_acceptAll_unique_extended_one_threshold_surge_cross_source
+
+These compile the current best exact one-threshold route: non-accept-all
+finite-ray source selection plus fixed-transfer aggregate-cross endpoint data
+imply the literal statement that accept-all is the unique measurable optimum.
+The next proof work should derive the source-selection fields and fixed-state
+aggregate-cross endpoint facts from the paper primitives for arbitrary
+measurable optima; do not spend time reassembling the Theorem 4 conclusion.
+
 2026-05-22 no-Rmax fixed-lower-cross tightening: the split frontier file now
 has the normalized source endpoint
 
