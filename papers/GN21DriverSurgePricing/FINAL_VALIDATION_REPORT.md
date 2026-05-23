@@ -29,6 +29,8 @@ The compact dashboard-facing `PaperInterface.lean` exposes `review_*` wrappers
 for the source definitions and named results.  The larger historical
 `PaperInterface.*` alias layer remains importable through `InterfaceAliases.lean`
 for compatibility with older notes and `PostPaperAudit.lean`.
+The tracked `lean_to_tex_llm.json` file supplies one context-free Lean-to-TeX
+draft for each of the 24 `review_*` rows, generated from Lean statements alone.
 
 - `PaperInterface.review_definition_single_state_ic`
 - `PaperInterface.review_definition_dynamic_ic`
@@ -134,6 +136,8 @@ definitions, or appendix remark formatting.
   statements needed for human review.
 - `PostPaperAudit.lean` imports the paper interface and gives source-numbered
   audit aliases for the final endpoints above.
+- `lean_to_tex_llm.json` gives the dashboard independent Lean-to-TeX drafts for
+  all 24 paper-facing review rows.
 - `README.md` and `DependencyDAG.tex` distinguish the closed positive-mass and
   feasible sequential current-bounds Theorem 3 routes from the optional
   zero-mass-dominance lift.
@@ -151,6 +155,7 @@ lake build GN21DriverSurgePricing.DomainBridge
 latexmk -pdf -halt-on-error DependencyDAG.tex
 wc -l papers/GN21DriverSurgePricing/PaperInterface.lean
 rg -c '^(noncomputable\s+|private\s+|protected\s+)*(theorem|lemma|def|abbrev) ' papers/GN21DriverSurgePricing/PaperInterface.lean
+jq -r '.schema, .paper, (.items | length)' papers/GN21DriverSurgePricing/lean_to_tex_llm.json
 python3 scripts/review_dashboard.py --paper GN21DriverSurgePricing --precheck
 git diff --check -- HumanStartHere.lean papers/GN21DriverSurgePricing
 rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
