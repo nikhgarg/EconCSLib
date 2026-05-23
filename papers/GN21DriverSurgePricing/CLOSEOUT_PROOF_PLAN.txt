@@ -572,14 +572,22 @@ current source boundary is exposed in `PaperInterface` as
 
   theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized
   theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized
+  theorem3_light_ae_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized
+  theorem3_light_ae_bracket_ordered_cross_field_normalized
+  theorem3_light_ae_exact_bracket_branch_normalized
 
-It takes the raw Lemma 6 bracket forms, local named reward-rate equalities
-Ri = R1 and Rj = R2, shared regular endpoint data, surge short/middle scalar
-cutoff inequalities, and either the one-sided non-surge pointwise upper
-transfer on rejected trips or the already-integrated reject-long upper cross.
-Lean now derives the lower reject-long cross field by CTMC monotonicity and
-derives both accepted-middle cross fields from the a.e. reject-long
-representative.  The remaining substantive non-surge source target is only:
+Use the fixed-reward-rate version when the paper proof has source fixed-state
+reward-rate identities rather than local Lemma 6 name equalities.  Use the
+ordered-cross-field or exact-bracket aliases when those stronger source
+packages are already available; Lean forgets their explicit accepted-middle
+cross fields and routes through the reduced boundary.  The reduced boundary
+takes the raw Lemma 6 bracket forms, shared regular endpoint data, surge
+short/middle scalar cutoff inequalities, and either the one-sided non-surge
+pointwise upper transfer on rejected trips or the already-integrated
+reject-long upper cross.  Lean now derives the lower reject-long cross field
+by CTMC monotonicity and derives both accepted-middle cross fields from the
+a.e. reject-long representative.  The remaining substantive non-surge source
+target is only:
 
   nonsurge_reject_long_pointwise_upper_transfer
 

@@ -396,6 +396,22 @@ abbrev theorem3_light_ae_bracket_surge_cutoff_fixed_reward_rate_reject_long_uppe
 abbrev theorem3_light_ae_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_ic :=
   @theorem3_measurable_ic_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
 
+/-- Theorem 3: bracket ordered cross-field source data lowered through the LightAE route. -/
+abbrev theorem3_light_ae_bracket_ordered_cross_field_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_bracket_ordered_cross_field_light_ae_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the bracket ordered cross-field LightAE route. -/
+abbrev theorem3_light_ae_bracket_ordered_cross_field_normalized_ic :=
+  @theorem3_measurable_ic_of_bracket_ordered_cross_field_light_ae_normalized_mass_ratio_source
+
+/-- Theorem 3: exact bracket branch source data lowered through the LightAE route. -/
+abbrev theorem3_light_ae_exact_bracket_branch_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_exact_bracket_branch_light_ae_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the exact bracket branch LightAE route. -/
+abbrev theorem3_light_ae_exact_bracket_branch_normalized_ic :=
+  @theorem3_measurable_ic_of_exact_bracket_branch_light_ae_normalized_mass_ratio_source
+
 /--
 Theorem 3: reduced bracket surge-cutoff route from one-sided pointwise upper
 transfer on rejected non-surge trips.

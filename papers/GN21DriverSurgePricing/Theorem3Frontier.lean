@@ -1539,6 +1539,48 @@ noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRe
     D.nonsurge_reject_long_upper_cross
 
 /--
+The older bracket ordered-cross-field source boundary is stronger than the
+reduced fixed-reward-rate LightAE boundary: it also carries the non-surge
+accept-middle cross fields.  Forget those extra fields before using the reduced
+route, where Lean reconstructs the accept-middle side from the reject-long
+representative.
+-/
+noncomputable def GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_fixed_reward_rate_reject_long_upper_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (D :
+      GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z where
+  forms := D.forms
+  shared := D.shared
+  nonsurge_fixed_reward_rate := D.nonsurge_fixed_reward_rate
+  surge_fixed_reward_rate := D.surge_fixed_reward_rate
+  surge_reject_short_cutoff_bound := D.surge_reject_short_cutoff_bound
+  surge_reject_middle_ordered_upper_cutoff_bound :=
+    D.surge_reject_middle_ordered_upper_cutoff_bound
+  nonsurge_reject_long_upper_cross := D.nonsurge_reject_long_upper_cross
+
+/--
+Bracket-level exact one-threshold branch source data feed the reduced
+fixed-reward-rate LightAE route through the ordered cross-field adapter.  This
+keeps the exact-branch proof path available without restating the non-surge
+accept-middle cross fields at the reduced boundary.
+-/
+noncomputable def GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_fixed_reward_rate_reject_long_upper_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (D :
+      GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  D.to_bracket_ordered_surge_cutoff_cross_field_source.to_fixed_reward_rate_reject_long_upper_source
+
+/--
 Build the reduced bracket source package from the paper-style one-sided
 pointwise upper transfer on rejected non-surge trips.  The pointwise comparison
 is integrated once, here, into the aggregate reject-long upper cross field.
@@ -1987,6 +2029,220 @@ theorem theorem3_measurable_ic_of_bracket_surge_cutoff_fixed_reward_rate_reject_
       μ arrival R1 R2 switch12 switch21 :=
   theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
     (theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one fixed_response_selection)
+
+/--
+Theorem 3 on the bracket ordered cross-field route, lowered through the reduced
+fixed-reward-rate LightAE boundary.  This proves that the older source package
+with explicit non-surge accept-middle cross fields is stronger than the reduced
+reject-long-upper route.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_bracket_ordered_cross_field_light_ae_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
+    μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+    hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+    htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+    hmass1_eq_one hmass2_eq_one
+    (by
+      intro m z hnonneg hparams
+      exact
+        (fixed_response_selection m z hnonneg hparams).to_fixed_reward_rate_reject_long_upper_source)
+
+/-- IC projection of the bracket ordered cross-field LightAE route. -/
+theorem theorem3_measurable_ic_of_bracket_ordered_cross_field_light_ae_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+    (theorem3_measurable_ic_ae_unique_of_bracket_ordered_cross_field_light_ae_normalized_mass_ratio_source
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one fixed_response_selection)
+
+/--
+The exact bracket one-threshold branch data feed the reduced LightAE route
+through the ordered-cross-field adapter.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_exact_bracket_branch_light_ae_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
+    μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+    hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+    htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+    hmass1_eq_one hmass2_eq_one
+    (by
+      intro m z hnonneg hparams
+      exact
+        (fixed_response_selection m z hnonneg hparams).to_fixed_reward_rate_reject_long_upper_source)
+
+/-- IC projection of the exact bracket one-threshold LightAE route. -/
+theorem theorem3_measurable_ic_of_exact_bracket_branch_light_ae_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+    (theorem3_measurable_ic_ae_unique_of_exact_bracket_branch_light_ae_normalized_mass_ratio_source
       μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
       htime1_integrable htime2_integrable hq1_integrable hq2_integrable

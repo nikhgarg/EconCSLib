@@ -57,6 +57,14 @@ closeout route:
   reward-rate identities plus the reject-long upper cross comparison, while
   Lean derives `Ri = R1`, `Rj = R2`, the lower cross field, and the
   accepted-middle adapter fields.
+- Stronger ordered cross-field and exact bracket branch data now lower to that
+  reduced route through
+  `GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData.to_fixed_reward_rate_reject_long_upper_source`
+  and
+  `GN21Theorem3FixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteSourceExistenceData.to_fixed_reward_rate_reject_long_upper_source`.
+  The public aliases are
+  `PaperInterface.theorem3_light_ae_bracket_ordered_cross_field_normalized` and
+  `PaperInterface.theorem3_light_ae_exact_bracket_branch_normalized`.
 
 For pickup on the older endpoint-selection path, start from the public
 interface theorem
