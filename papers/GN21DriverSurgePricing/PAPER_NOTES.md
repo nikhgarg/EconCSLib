@@ -18,10 +18,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
 
 - Date reviewed: 2026-05-23
 - Current paper-facing source of truth: `FINAL_VALIDATION_REPORT.md`,
-  `PaperInterface.lean`, and `PostPaperAudit.lean`.  The named paper surface is
-  complete; older "remaining" proof notes in this file and the proof-plan files
-  describe optional strengthening routes or historical proof-search context,
-  not required paper work.
+  `SOURCE_AUDIT.md`, `PaperInterface.lean`, and `PostPaperAudit.lean`.  The
+  named paper surface is complete; older "remaining" proof notes in this file
+  and the proof-plan files describe optional strengthening routes or historical
+  proof-search context, not required paper work.
 - Date reviewed: 2026-05-05
 - Latest proof-state update: Lemmas 7-8 are now source-facing closed via
   `paper_lemma7_affine_positive_additive_response_strict_quasi_convex` and
