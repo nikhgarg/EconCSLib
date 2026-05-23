@@ -341,6 +341,14 @@ abbrev theorem3_light_ae_bracket_fixed_response_normalized :=
 abbrev theorem3_light_ae_bracket_fixed_response_normalized_ic :=
   @theorem3_measurable_ic_of_bracket_light_ae_normalized_mass_ratio_source
 
+/-- Theorem 3: normalized bracket middle-cutoff fixed-state-equality LightAE route. -/
+abbrev theorem3_light_ae_bracket_middle_cutoff_fixed_state_eq_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the normalized middle-cutoff fixed-state-equality route. -/
+abbrev theorem3_light_ae_bracket_middle_cutoff_fixed_state_eq_normalized_ic :=
+  @theorem3_structured_measurable_ic_of_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source
+
 /-- Theorem 3: normalized bracket middle-cutoff named-rate LightAE route. -/
 abbrev theorem3_light_ae_bracket_middle_cutoff_named_rate_normalized :=
   @theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_fixed_state_named_rate_normalized_mass_ratio_source
