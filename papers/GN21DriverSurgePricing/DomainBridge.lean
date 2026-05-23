@@ -639,6 +639,47 @@ def DynamicZeroMassStrictDominanceCertificate.of_not_positive_mass
       (not_dynamicFeasibleMeasurablePositiveMassPolicy_of_zero_mass hzero)
 
 /--
+Build the zero-mass certificate from one fixed positive-mass witness that
+strictly dominates every feasible zero-mass policy.
+-/
+def DynamicZeroMassStrictDominanceCertificate.of_fixed_witness
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    (τ : Fin 2 → TripPolicy)
+    (hτ : dynamicFeasibleMeasurablePositiveMassPolicy μ τ)
+    (hdom :
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicFeasibleMeasurablePolicy σ →
+          dynamicHasZeroAcceptedMass μ σ →
+            R σ < R τ) :
+    DynamicZeroMassStrictDominanceCertificate μ R where
+  improve_zero_mass := by
+    intro σ hσ hzero
+    exact ⟨τ, hτ, hdom σ hσ hzero⟩
+
+/--
+Accept-all specialization of the fixed-witness constructor.  This is the
+paper-facing zero-mass route for GN21: after proving accept-all has positive
+mass in both states, it remains only to prove every feasible zero-mass policy
+has lower total reward than accept-all under the chosen reward interface.
+-/
+def DynamicZeroMassStrictDominanceCertificate.of_acceptAll_dominates_zero_mass
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    (hmass_acceptAll :
+      ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy)
+    (hdom :
+      ∀ σ : Fin 2 → TripPolicy,
+        dynamicFeasibleMeasurablePolicy σ →
+          dynamicHasZeroAcceptedMass μ σ →
+            R σ < R acceptAllDynamicPolicy) :
+    DynamicZeroMassStrictDominanceCertificate μ R :=
+  DynamicZeroMassStrictDominanceCertificate.of_fixed_witness
+    acceptAllDynamicPolicy
+    (dynamicFeasibleMeasurablePositiveMassPolicy_acceptAll hmass_acceptAll)
+    hdom
+
+/--
 Positive-mass measurable IC lifts to full feasible-measurable IC once every
 zero-mass feasible policy is strictly dominated by a positive-mass feasible
 policy.

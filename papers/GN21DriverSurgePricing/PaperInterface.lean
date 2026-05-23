@@ -432,6 +432,13 @@ abbrev theorem3_positive_mass_to_full_with_zero_mass_dominance :=
   @theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
 
 /--
+Theorem 3 zero-mass bridge: it is enough to show that accept-all has positive
+mass in both states and strictly dominates every feasible zero-mass policy.
+-/
+abbrev theorem3_zero_mass_dominance_of_acceptAll_dominates_zero_mass :=
+  @DynamicZeroMassStrictDominanceCertificate.of_acceptAll_dominates_zero_mass
+
+/--
 Theorem 3 zero-mass boundary: with the current real-valued reward
 totalization, a left-empty/right-accept-all policy can beat accept-all when
 the right accept-all state reward rate exceeds the full accept-all dynamic

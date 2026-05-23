@@ -142,6 +142,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   zero-mass dominance certificate, or an extended-real/partial reward
   interface.  Add tiny simplification lemmas for the zero-mass cases before
   spending tokens on a doomed dominance proof.
+- For all-feasible CTMC lifts, build the zero-mass dominance certificate by
+  separating the witness choice from the strict comparison.  A useful pattern
+  is a fixed positive-mass witness constructor, plus an accept-all
+  specialization that consumes accept-all positive mass and the single source
+  obligation `zero-mass policy reward < accept-all reward`.  This keeps the
+  full-domain theorem surface honest and avoids repeatedly rebuilding the same
+  existential witness in paper proofs.
 - If a CTMC source theorem is already closed on the paper's
   denominator-valid positive-mass domain, do not keep marking that paper
   result as caveated just because a broader all-feasible totalized abstraction
