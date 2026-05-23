@@ -140,6 +140,14 @@ abbrev theorem3_light_ae_bracket_fixed_response_ratio :=
 abbrev theorem3_light_ae_bracket_fixed_response_ratio_ic :=
   @theorem3_structured_measurable_ic_of_bracket_eq_middle_reroute_existence_ratio_source
 
+/-- Theorem 3: normalized-mass bracket fixed-response LightAE route. -/
+abbrev theorem3_light_ae_bracket_fixed_response_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_bracket_light_ae_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the normalized bracket fixed-response route. -/
+abbrev theorem3_light_ae_bracket_fixed_response_normalized_ic :=
+  @theorem3_measurable_ic_of_bracket_light_ae_normalized_mass_ratio_source
+
 /--
 Theorem 3: finite-or-infinite branch route with aggregate cross-ratio endpoint
 fields.  Use this when the proof has exact branch selectors for the current

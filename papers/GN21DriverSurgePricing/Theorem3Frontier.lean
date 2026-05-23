@@ -223,6 +223,117 @@ theorem theorem3_measurable_ic_of_light_ae_feasible_canonical_normalized_mass_ra
         hmass1_eq_one hmass2_eq_one endpoint_selection)
 
 /--
+Theorem 3 on the bracket fixed-response LightAE route, with positive
+accept-all mass derived from normalized trip-length laws.  This is the compact
+frontier for the main a.e.-representative proof path: Lemma 5 remains at the
+bracket fixed-response level, and endpoint work uses the common fixed-state
+middle-reroute certificate.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_bracket_light_ae_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_ratio_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      (measure_pos_of_singleStateTripMass_eq_one (μ 0) acceptAllPolicy
+        hmass1_eq_one)
+      (measure_pos_of_singleStateTripMass_eq_one (μ 1) acceptAllPolicy
+        hmass2_eq_one)
+      fixed_response_selection
+
+/-- IC projection of the normalized bracket fixed-response LightAE route. -/
+theorem theorem3_measurable_ic_of_bracket_light_ae_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+      (theorem3_measurable_ic_ae_unique_of_bracket_light_ae_normalized_mass_ratio_source
+        μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+        hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+        htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+        hmass1_eq_one hmass2_eq_one fixed_response_selection)
+
+/--
 Build the finite-or-infinite aggregate-cross named-rate package from fixed
 reward-rate identities.  This keeps the source-facing Theorem 3 route on the
 paper's reward-rate equations and derives the local Lemma 6 names internally.

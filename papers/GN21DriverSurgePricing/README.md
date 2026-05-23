@@ -2439,12 +2439,17 @@ These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
 The current source-faithful Theorem 3 frontier is the fixed-response/bracket
 LightAE representative route exposed compactly as
+`PaperInterface.theorem3_light_ae_bracket_fixed_response_normalized`, with
+IC-only projection
+`PaperInterface.theorem3_light_ae_bracket_fixed_response_normalized_ic`.  This
+is the route to use when Lemma 5 reduces measurable optima to canonical forms
+only up to a.e. representatives; Lean proves strict improvement on the
+representative and transfers it back by a.e. congruence, and derives positive
+accept-all mass from normalized trip-length laws.  The non-normalized ratio
+surface is also exposed as
 `PaperInterface.theorem3_light_ae_bracket_fixed_response_ratio`, with IC-only
 projection `PaperInterface.theorem3_light_ae_bracket_fixed_response_ratio_ic`.
-This is the route to use when Lemma 5 reduces measurable optima to canonical
-forms only up to a.e. representatives; Lean proves strict improvement on the
-representative and transfers it back by a.e. congruence.  The stronger
-feasible-canonical shortcut
+The stronger feasible-canonical shortcut
 `PaperInterface.theorem3_light_ae_feasible_canonical_normalized`, with IC-only
 projection `PaperInterface.theorem3_light_ae_feasible_canonical_normalized_ic`,
 is available when the source proof can supply
