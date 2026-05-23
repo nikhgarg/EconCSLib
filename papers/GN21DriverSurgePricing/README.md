@@ -2437,18 +2437,24 @@ and
 `PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
 These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
-The current source-faithful Theorem 3 frontier is the bracket middle-cutoff
-fixed-state named-rate LightAE route exposed compactly as
+The current source-faithful Theorem 3 frontier is the bracket aggregate-cross
+middle-cutoff LightAE route exposed compactly as
+`PaperInterface.theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized`,
+with IC-only projection
+`PaperInterface.theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized_ic`.
+This is the route to use when Lemma 5 reduces measurable optima to canonical
+forms only up to a.e. representatives and Lemmas 9--10 provide aggregate
+cross-ratio endpoint comparisons rather than pointwise fixed-transfer
+equalities.  Lean handles the non-surge `lo <= 0` accepted-middle branch by
+rerouting through reject-long and derives positive accept-all mass from
+normalized trip-length laws.  The named-rate pointwise-equality route remains
+available as
 `PaperInterface.theorem3_light_ae_bracket_middle_cutoff_named_rate_normalized`,
 with IC-only projection
-`PaperInterface.theorem3_light_ae_bracket_middle_cutoff_named_rate_normalized_ic`.
-This is the route to use when Lemma 5 reduces measurable optima to canonical
-forms only up to a.e. representatives and the endpoint proof only has the
-paper's positive-lower-cutoff branch for non-surge accepted-middle intervals;
-Lean handles the `lo <= 0` branch by rerouting through reject-long and derives
-positive accept-all mass from normalized trip-length laws.  The sharper
-middle-reroute surface, which requires the stronger global middle-gap data, is
-also exposed as
+`PaperInterface.theorem3_light_ae_bracket_middle_cutoff_named_rate_normalized_ic`,
+when the source proof really supplies pointwise fixed-state equalities.  The
+sharper middle-reroute surface, which requires the stronger global middle-gap
+data, is also exposed as
 `PaperInterface.theorem3_light_ae_bracket_fixed_response_normalized`, with
 IC-only projection
 `PaperInterface.theorem3_light_ae_bracket_fixed_response_normalized_ic`.  The
