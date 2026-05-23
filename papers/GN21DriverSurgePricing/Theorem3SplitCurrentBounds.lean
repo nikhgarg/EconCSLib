@@ -795,6 +795,142 @@ def Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveRespon
           hmassI harrivalMassI (ne_of_gt htimeI_pos) DSsrc_structured⟩
 
 /--
+Optimal-policy sequential source data in the Appendix-D scaled form.  This is
+the paper-faithful boundary for a.e. uniqueness: weak IC may still use
+feasible-policy data, but Lemma 9/10 positive-response data are needed only at
+measurable optima.  The surge step is stated first at the current non-surge
+policy; the non-surge step is stated after the surge state is fixed at
+accept-all.
+-/
+structure Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  accept_all_optimal :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      acceptAllDynamicPolicy
+  m0_eq : m 0 = R2
+  arrival1_pos : 0 < arrival 0
+  arrival2_pos : 0 < arrival 1
+  switch12_pos : 0 < switch12
+  switch21_pos : 0 < switch21
+  acceptAll_mass_pos :
+    ∀ i : Fin 2, 0 < singleStateTripMass (μ i) acceptAllPolicy
+  time1_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  time2_acceptAll_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  q1_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  q2_acceptAll_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  nonsurge_after_surge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        ∃ ratio : ℝ,
+          GN21NonsurgeLemma10AcceptAllAggregateSourceData
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            R2 (z 0) ratio
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+            (ρ 0) acceptAllPolicy
+  surge_data :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+        ∃ R1_current ratio : ℝ,
+          GN21SurgeLemma9AcceptAllAggregateSourceData
+            (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+            (m 1) R1_current (z 1) ratio
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (ρ 0) (ρ 1)
+
+/--
+Convert optimal-only sequential Appendix-D source data to the local
+reward-rate form consumed by the source-ordered positive-response proof.
+-/
+def Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate.to_reward_rate_positive_response
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (C :
+      Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate
+      μ arrival R1 R2 switch12 switch21 m z where
+  accept_all_optimal := C.accept_all_optimal
+  m0_eq := C.m0_eq
+  arrival1_pos := C.arrival1_pos
+  arrival2_pos := C.arrival2_pos
+  switch12_pos := C.switch12_pos
+  switch21_pos := C.switch21_pos
+  acceptAll_mass_pos := C.acceptAll_mass_pos
+  time1_acceptAll_integrable := C.time1_acceptAll_integrable
+  time2_acceptAll_integrable := C.time2_acceptAll_integrable
+  q1_acceptAll_integrable := C.q1_acceptAll_integrable
+  q2_acceptAll_integrable := C.q2_acceptAll_integrable
+  nonsurge_after_surge_data := by
+    intro ρ hρ
+    rcases C.nonsurge_after_surge_data ρ hρ with ⟨ratio, Dsrc⟩
+    have hmassJ :
+        singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 :=
+      ne_of_gt (C.acceptAll_mass_pos 1)
+    have harrivalMassJ :
+        arrival 1 * singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 :=
+      mul_ne_zero (ne_of_gt C.arrival2_pos) hmassJ
+    have htimeJ_pos :
+        0 < gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+      gn21ScaledStateTime_pos_of_nonneg (μ 1) (arrival 1)
+        acceptAllPolicy (le_of_lt C.arrival2_pos)
+        measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+    have Dsrc_structured :
+        GN21NonsurgeLemma10AcceptAllAggregateSourceData
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          R2 (z 0) ratio
+          (ctmcStructuredSurgePrice (m 1) (z 1) switch21 switch12)
+          (ρ 0) acceptAllPolicy := by
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb] using Dsrc
+    exact
+      ⟨ratio,
+        GN21NonsurgeLemma10AcceptAllAggregateRewardRateData.of_source_structured
+          hmassJ harrivalMassJ (ne_of_gt htimeJ_pos) Dsrc_structured⟩
+  surge_data := by
+    intro ρ hρ
+    rcases C.nonsurge_after_surge_data ρ hρ with ⟨_ratioN, DNsrc⟩
+    rcases C.surge_data ρ hρ with ⟨R1_current, ratioS, DSsrc⟩
+    have hmassI : singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+      ne_of_gt DNsrc.current_mass_pos
+    have harrivalMassI :
+        arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+      mul_ne_zero (ne_of_gt C.arrival1_pos) hmassI
+    have htimeI_pos :
+        0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
+      gn21ScaledStateTime_pos_of_nonneg (μ 0) (arrival 0) (ρ 0)
+        (le_of_lt C.arrival1_pos) (hρ.1 0).2 (hρ.1 0).1
+    have DSsrc_structured :
+        GN21SurgeLemma9AcceptAllAggregateSourceData
+          (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+          (m 1) R1_current (z 1) ratioS
+          (ctmcStructuredSurgePrice (m 0) (z 0) switch12 switch21)
+          (ρ 0) (ρ 1) := by
+      simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb] using DSsrc
+    exact
+      ⟨R1_current, ratioS,
+        GN21SurgeLemma9AcceptAllAggregateRewardRateData.of_source_structured
+          hmassI harrivalMassI (ne_of_gt htimeI_pos) DSsrc_structured⟩
+
+/--
 Sequential optimal reward-rate positive-response data imply the Theorem 4
 a.e. accept-all conclusion directly.  This follows the paper order: Lemma 9
 first proves the surge state accepts all a.e.; Lemma 10 is then transported
@@ -1021,6 +1157,66 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fea
         Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate.of_feasible_sequential_source
           μ arrival R1 R2 switch12 switch21 m z haccept
           (feasible_sequential_source m z hsigns hparams))
+
+/--
+Theorem 3 from weak feasible IC plus optimal-only sequential Appendix-D source
+data.  This is the same source-ordered route as the reward-rate theorem, but
+the public boundary is the paper's scaled `T,Q,W` data and it is required only
+for measurable optima.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_source_normalized_mass_ratio_source_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (weak_reward :
+      theorem3AcceptAllFeasibleWeakRewardCertificate
+        μ arrival R1 R2 switch12 switch21)
+    (optimal_sequential_source :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate
+          μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_reward_rate_positive_response_normalized_mass_ratio_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+    hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+    htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+    hmass1_eq_one hmass2_eq_one weak_reward
+    (by
+      intro m z hsigns hparams
+      exact
+        (optimal_sequential_source m z hsigns hparams).to_reward_rate_positive_response)
 
 /--
 Source-facing feasible sequential current-bounds data prove the full Theorem 3

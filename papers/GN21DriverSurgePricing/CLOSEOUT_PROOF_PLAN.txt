@@ -28,6 +28,7 @@ Use these compact paper-facing endpoints first:
   PaperInterface.theorem3_feasible_sequential_surge_accounting_data
   PaperInterface.theorem3_feasible_sequential_surge_reward_rate_data
   PaperInterface.theorem3_feasible_weak_reward_feasible_sequential_source_normalized
+  PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized
   PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized
   PaperInterface.theorem3_current_bounds_source_feasible_optimal_positive_response_normalized
   PaperInterface.theorem3_current_bounds_accounting_feasible_optimal_positive_response_normalized
@@ -52,6 +53,10 @@ The proof should split the paper work into two independent source claims:
    the local current non-surge reward rate, proves the surge state is
    accept-all a.e., and then Lemma 10 is transported from exact accept-all
    surge to the original optimum by a.e. congruence.
+   Prefer
+   `PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized`
+   when these records are exactly the paper's Appendix-D scaled `T,Q,W`
+   identities and are available only for measurable optima.
 
 Do not try to force current-bounds data through
 `theorem3AcceptAllPositiveFixedResponseSourceCertificate` or the older
@@ -1400,11 +1405,20 @@ Recommended proof order
      paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_bridge_normalized_mass_ratio_source_assumptions
      PaperInterface.theorem3_structured_ic_of_endpoint_bridge_normalized_mass_ratio_source
      PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
+     Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate
+     Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate.to_reward_rate_positive_response
+     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_source_normalized_mass_ratio_source_assumptions
+     PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized
 
    Prefer the normalized-mass split endpoint when the proof has probability
    trip-length laws, a weak feasible-IC certificate, and Lemma 9/10
    positive-response current-bounds data only for measurable optima.  It
    derives `R1 > 0`, `R1 < R2`, and positive accept-all masses internally.
+   If the Lemma 9/10 data are still in the source's scaled `T,Q,W` form and
+   only quantified over measurable optima, use
+   `theorem3_feasible_weak_reward_sequential_optimal_source_normalized`; it
+   performs the source-to-reward-rate conversion without strengthening the
+   quantifier to all feasible policies.
    If the optimal-policy Lemma 9/10 data are still stated as the paper's
    local accounting equations or reward-rate equalities, use the two
    `of_optimal_*` adapters above first; they build the current-bounds source

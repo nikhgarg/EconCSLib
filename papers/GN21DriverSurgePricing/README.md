@@ -2432,6 +2432,12 @@ surge accepts all a.e., transports Lemma 10 across that a.e. equivalence, and
 then proves non-surge accepts all a.e.  The lower-level compact bridges are
 `PaperInterface.theorem3_feasible_weak_reward_feasible_sequential_source_normalized`
 and
+`PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized`;
+the latter is the preferred boundary when the paper supplies Appendix-D scaled
+`T,Q,W` source identities only for measurable optima.  It converts those
+optimal-policy source records to the local reward-rate Lemma 9/10 form
+internally, avoiding any nondegeneracy requirement for arbitrary zero-mass
+comparison policies.  The reward-rate version remains available as
 `PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized`.
 The sequential surge-source wrappers also expose the common source presentations
 after the Lemma 10 branch has been constructed from Theorem 3 parameter data:
@@ -2488,8 +2494,11 @@ current-bounds source-data route exposed compactly as
 `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
 It is the preferred entry point when the source proof supplies the
 policy-dependent sequential Lemma 9/10 source packages already used by the
-IC-only theorem.  If the source proof has already discharged the Lemma 10 branch
-and leaves only the surge Lemma 9 data, use
+IC-only theorem.  If weak feasible IC is separate and Lemma 9/10 source data are
+available only for measurable optima, use
+`PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized`
+instead of the all-feasible source-data boundary.  If the source proof has
+already discharged the Lemma 10 branch and leaves only the surge Lemma 9 data, use
 `PaperInterface.theorem3_feasible_sequential_surge_source_data` or its
 accounting/reward-rate variants.  The split current-bounds positive-response route remains
 available as
