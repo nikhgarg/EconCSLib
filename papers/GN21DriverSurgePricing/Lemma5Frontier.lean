@@ -1032,6 +1032,724 @@ theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_d
     μ R (D.to_feasible_ae_policy_forms)
 
 /--
+Left-state measured marginal data for the feasible policy-canonical Lemma 5
+route.  The canonical-dominance objective is the actual GN21 measured marginal
+set reward obtained by freezing the surge-state policy.
+-/
+structure GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy)
+    (shape : Lemma5DerivativeShape) where
+  marginal_canonical_dominance :
+    Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+      (μ 0)
+      (lemma5MarginalSetReward (μ 0)
+        (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1)))
+      (ρ 0) shape
+  arrival_pos : 0 < arrival 0
+  current_nondegenerate :
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1)
+  candidate_nondegenerate :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 σ (ρ 1)
+  denominator_pos :
+    0 <
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  candidate_denominator_pos :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        0 <
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 σ *
+              gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) *
+              gn21ScaledStateTime (μ 0) (arrival 0) σ
+  q_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn
+          (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+          σ (μ 0)
+  payment_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (w 0) σ (μ 0)
+  time_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (fun τ : TripLength => τ) σ (μ 0)
+
+/--
+Measured dynamic optimality turns the left-state marginal canonical-dominance
+data into the exact Lemma 5 policy form for the current non-surge policy.
+-/
+noncomputable def GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData.to_policy_form
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    (D :
+      GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ) :
+    lemma5PolicyForm shape (ρ 0) := by
+  have hopt :=
+    lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_zero
+      μ arrival switch12 switch21 w hρ D.arrival_pos
+      D.current_nondegenerate D.candidate_nondegenerate D.denominator_pos
+      D.candidate_denominator_pos D.q_integrable D.payment_integrable
+      D.time_integrable
+  exact
+    D.marginal_canonical_dominance.policyForm_of_candidate_le
+      (hopt D.marginal_canonical_dominance.to_optimizer_replacement.policy
+        D.marginal_canonical_dominance.to_optimizer_replacement_subset
+        D.marginal_canonical_dominance.to_optimizer_replacement_measurable)
+
+/--
+Right-state measured marginal data for the feasible policy-canonical Lemma 5
+route.  This is the state-swapped counterpart of
+`GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData`.
+-/
+structure GN21MeasuredRightMarginalFeasiblePolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy)
+    (shape : Lemma5DerivativeShape) where
+  marginal_canonical_dominance :
+    Lemma5FeasiblePolicyCanonicalDominanceMaximizerData
+      (μ 1)
+      (lemma5MarginalSetReward (μ 1)
+        (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1)))
+      (ρ 1) shape
+  arrival_pos : 0 < arrival 1
+  current_nondegenerate :
+    GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+      switch12 switch21 (ρ 0) (ρ 1)
+  candidate_nondegenerate :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        GN21MeasuredPairNondegenerate (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 (ρ 0) σ
+  denominator_pos :
+    0 <
+      gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 (ρ 0) *
+          gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) +
+        gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 (ρ 1) *
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  candidate_denominator_pos :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        0 <
+          gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+              (ρ 0) *
+            gn21ScaledStateTime (μ 1) (arrival 1) σ +
+          gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12 σ *
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  q_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn
+          (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+          σ (μ 1)
+  payment_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (w 1) σ (μ 1)
+  time_integrable :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        IntegrableOn (fun τ : TripLength => τ) σ (μ 1)
+
+/--
+Measured dynamic optimality turns the right-state marginal canonical-dominance
+data into the exact Lemma 5 policy form for the current surge policy.
+-/
+noncomputable def GN21MeasuredRightMarginalFeasiblePolicyCanonicalDominanceData.to_policy_form
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      GN21MeasuredRightMarginalFeasiblePolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ) :
+    lemma5PolicyForm shape (ρ 1) := by
+  have hopt :=
+    lemma5MarginalSetReward_optimal_of_gn21MeasuredDynamicRewardFunctional_one
+      μ arrival switch12 switch21 w hρ D.arrival_pos
+      D.current_nondegenerate D.candidate_nondegenerate D.denominator_pos
+      D.candidate_denominator_pos D.q_integrable D.payment_integrable
+      D.time_integrable
+  exact
+    D.marginal_canonical_dominance.policyForm_of_candidate_le
+      (hopt D.marginal_canonical_dominance.to_optimizer_replacement.policy
+        D.marginal_canonical_dominance.to_optimizer_replacement_subset
+        D.marginal_canonical_dominance.to_optimizer_replacement_measurable)
+
+/--
+All-optima GN21 measured marginal canonical-dominance data.  This is the
+non-positive-affine Theorem 4 route: Lean first proves each frozen-state
+measured marginal objective is locally optimal, then uses the supplied Lemma 5
+canonical-dominance data to classify the policy shape.
+-/
+structure Theorem4AllMeasurableGN21MarginalFeasiblePolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      ∃ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData
+          μ arrival switch12 switch21 w ρ shape.1
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      ∃ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        GN21MeasuredRightMarginalFeasiblePolicyCanonicalDominanceData
+          μ arrival switch12 switch21 w ρ shape.1
+
+/--
+Measured marginal canonical-dominance data imply the exact allowed Lemma 5
+policy-form certificate consumed by the paper-facing Theorem 4 endpoints.
+-/
+noncomputable def Theorem4AllMeasurableGN21MarginalFeasiblePolicyCanonicalDominanceData.to_allowed_policy_forms
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      Theorem4AllMeasurableGN21MarginalFeasiblePolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w) :
+    Theorem4AllMeasurableAllowedPolicyFormsCertificate
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w) where
+  exists_optimal := D.exists_optimal
+  only_policy_forms := by
+    intro ρ hρ
+    rcases D.nonsurge ρ hρ with ⟨nshape, ndata⟩
+    rcases D.surge ρ hρ with ⟨sshape, sdata⟩
+    exact
+      ⟨⟨nshape.1, nshape.2, ndata.to_policy_form hρ⟩,
+        ⟨sshape.1, sshape.2, sdata.to_policy_form hρ⟩⟩
+
+/--
+GN21 measured marginal canonical-dominance data imply the measurable Theorem 4
+structural endpoint without assuming the dynamic reward is a positive-affine
+transform of the marginal integral.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_gn21_marginal_feasible_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      Theorem4AllMeasurableGN21MarginalFeasiblePolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρstar ∧
+        theorem4NonsurgeShape (ρstar 0) ∧
+        theorem4SurgeShape (ρstar 1) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ →
+          theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) :=
+  paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_forms
+    (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+    D.to_allowed_policy_forms
+
+/--
+GN21 measured marginal canonical-dominance data imply the source
+a.e.-representative Theorem 4 statement.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_marginal_feasible_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      Theorem4AllMeasurableGN21MarginalFeasiblePolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_allowed_policy_forms
+    μ
+    (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+    D.to_allowed_policy_forms
+
+/--
+Non-surge fixed-response source data produce the measured-marginal
+canonical-dominance package directly.  This is the source-faithful route for
+Theorem 4: the objective is the frozen-state Lemma 5 marginal integral itself,
+not an asserted positive-affine continuation reward.
+-/
+noncomputable def GN21MeasuredLeftFixedResponsePolicyFormSourceData.to_marginal_feasible_policy_canonical_dominance
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ)
+    (hσ_open : IsOpen (ρ 0))
+    (hcont :
+      GN21SymmDiffContinuousAt (μ 0)
+        (lemma5MarginalSetReward (μ 0)
+          (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+            (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+            (ρ 0) (ρ 1)))
+        (ρ 0))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape (ρ 0) →
+        0 <
+          μ 0
+            (lemma5PositiveResponsePolicy
+                (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1)) \
+              ρ 0) ∨
+        0 <
+          μ 0
+            (Function.support
+                (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1)) ∩
+              (ρ 0 \
+                lemma5PositiveResponsePolicy
+                  (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                    (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                    (ρ 0) (ρ 1))))) :
+    GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData
+      μ arrival switch12 switch21 w ρ shape where
+  marginal_canonical_dominance :=
+    Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.of_positiveResponse_marginal
+      (μ 0)
+      (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1))
+      (ρ 0) shape hσ_open (hρ.1 0).1 hcont
+      (D.to_fixed_response hρ).response_measurable
+      (D.to_fixed_response hρ).response_integrable_acceptAll
+      (D.to_fixed_response hρ).policy_form_data.policy_form hstrict_mass
+  arrival_pos := D.arrival_pos
+  current_nondegenerate := D.current_nondegenerate
+  candidate_nondegenerate := D.candidate_nondegenerate
+  denominator_pos := D.hden_pos
+  candidate_denominator_pos := D.candidate_den_pos
+  q_integrable := D.q_integrable
+  payment_integrable := D.w_integrable
+  time_integrable := D.time_integrable
+
+/--
+Surge fixed-response source data produce the measured-marginal
+canonical-dominance package directly, with the non-surge policy frozen.
+-/
+noncomputable def GN21MeasuredRightFixedResponsePolicyFormSourceData.to_marginal_feasible_policy_canonical_dominance
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ)
+    (hσ_open : IsOpen (ρ 1))
+    (hcont :
+      GN21SymmDiffContinuousAt (μ 1)
+        (lemma5MarginalSetReward (μ 1)
+          (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+            (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+            (ρ 0) (ρ 1)))
+        (ρ 1))
+    (hstrict_mass :
+      ¬ lemma5PolicyForm shape (ρ 1) →
+        0 <
+          μ 1
+            (lemma5PositiveResponsePolicy
+                (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1)) \
+              ρ 1) ∨
+        0 <
+          μ 1
+            (Function.support
+                (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1)) ∩
+              (ρ 1 \
+                lemma5PositiveResponsePolicy
+                  (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                    (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                    (ρ 0) (ρ 1))))) :
+    GN21MeasuredRightMarginalFeasiblePolicyCanonicalDominanceData
+      μ arrival switch12 switch21 w ρ shape where
+  marginal_canonical_dominance :=
+    Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.of_positiveResponse_marginal
+      (μ 1)
+      (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+        (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+        (ρ 0) (ρ 1))
+      (ρ 1) shape hσ_open (hρ.1 1).1 hcont
+      (D.to_fixed_response hρ).response_measurable
+      (D.to_fixed_response hρ).response_integrable_acceptAll
+      (D.to_fixed_response hρ).policy_form_data.policy_form hstrict_mass
+  arrival_pos := D.arrival_pos
+  current_nondegenerate := D.current_nondegenerate
+  candidate_nondegenerate := D.candidate_nondegenerate
+  denominator_pos := D.hden_pos
+  candidate_denominator_pos := D.candidate_den_pos
+  q_integrable := D.q_integrable
+  payment_integrable := D.w_integrable
+  time_integrable := D.time_integrable
+
+/-!
+## All-optima measured-marginal GN21 fixed-response route
+
+The next package is the corrected exact-form frontier.  It keeps the useful
+fixed-response source records, current openness, continuity, and strict-mass
+fields, but the canonical-dominance objective is the measured marginal Lemma 5
+integral itself.
+-/
+
+/--
+Non-surge source data for direct measured-marginal canonical dominance.
+-/
+structure GN21MeasuredLeftFixedResponseMarginalPolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy)
+    (shape : Lemma5DerivativeShape) where
+  source :
+    GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 w ρ shape
+  current_open : IsOpen (ρ 0)
+  marginal_continuous :
+    GN21SymmDiffContinuousAt (μ 0)
+      (lemma5MarginalSetReward (μ 0)
+        (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1)))
+      (ρ 0)
+  strict_mass :
+    ¬ lemma5PolicyForm shape (ρ 0) →
+      0 <
+        μ 0
+          (lemma5PositiveResponsePolicy
+              (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                (ρ 0) (ρ 1)) \
+            ρ 0) ∨
+      0 <
+        μ 0
+          (Function.support
+              (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                (ρ 0) (ρ 1)) ∩
+            (ρ 0 \
+              lemma5PositiveResponsePolicy
+                (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1))))
+
+/-- Convert non-surge direct marginal data to the Theorem 4 marginal package. -/
+noncomputable def GN21MeasuredLeftFixedResponseMarginalPolicyCanonicalDominanceData.to_marginal_feasible_policy_canonical_dominance
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      GN21MeasuredLeftFixedResponseMarginalPolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ) :
+    GN21MeasuredLeftMarginalFeasiblePolicyCanonicalDominanceData
+      μ arrival switch12 switch21 w ρ shape :=
+  D.source.to_marginal_feasible_policy_canonical_dominance hρ
+    D.current_open D.marginal_continuous D.strict_mass
+
+/--
+Surge source data for direct measured-marginal canonical dominance.
+-/
+structure GN21MeasuredRightFixedResponseMarginalPolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    (ρ : Fin 2 → TripPolicy)
+    (shape : Lemma5DerivativeShape) where
+  source :
+    GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+      switch21 w ρ shape
+  current_open : IsOpen (ρ 1)
+  marginal_continuous :
+    GN21SymmDiffContinuousAt (μ 1)
+      (lemma5MarginalSetReward (μ 1)
+        (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+          (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+          (ρ 0) (ρ 1)))
+      (ρ 1)
+  strict_mass :
+    ¬ lemma5PolicyForm shape (ρ 1) →
+      0 <
+        μ 1
+          (lemma5PositiveResponsePolicy
+              (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                (ρ 0) (ρ 1)) \
+            ρ 1) ∨
+      0 <
+        μ 1
+          (Function.support
+              (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                (ρ 0) (ρ 1)) ∩
+            (ρ 1 \
+              lemma5PositiveResponsePolicy
+                (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1))))
+
+/-- Convert surge direct marginal data to the Theorem 4 marginal package. -/
+noncomputable def GN21MeasuredRightFixedResponseMarginalPolicyCanonicalDominanceData.to_marginal_feasible_policy_canonical_dominance
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      GN21MeasuredRightFixedResponseMarginalPolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ) :
+    GN21MeasuredRightMarginalFeasiblePolicyCanonicalDominanceData
+      μ arrival switch12 switch21 w ρ shape :=
+  D.source.to_marginal_feasible_policy_canonical_dominance hρ
+    D.current_open D.marginal_continuous D.strict_mass
+
+/--
+All-optima GN21 fixed-response data for the direct measured-marginal
+canonical-dominance route.
+-/
+structure Theorem4AllMeasurableGN21FixedResponseMarginalPolicyCanonicalDominanceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        GN21MeasuredLeftFixedResponseMarginalPolicyCanonicalDominanceData
+          μ arrival switch12 switch21 w ρ shape.1
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        GN21MeasuredRightFixedResponseMarginalPolicyCanonicalDominanceData
+          μ arrival switch12 switch21 w ρ shape.1
+
+/--
+The all-optima fixed-response marginal package produces the measured-marginal
+Theorem 4 input without any positive-affine continuation-objective fields.
+-/
+noncomputable def Theorem4AllMeasurableGN21FixedResponseMarginalPolicyCanonicalDominanceData.to_marginal_feasible_policy_canonical_dominance
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    (D :
+      Theorem4AllMeasurableGN21FixedResponseMarginalPolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w) :
+    Theorem4AllMeasurableGN21MarginalFeasiblePolicyCanonicalDominanceData
+      μ arrival switch12 switch21 w where
+  exists_optimal := D.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    rcases D.nonsurge ρ hρ with ⟨shape, H⟩
+    exact ⟨shape, H.to_marginal_feasible_policy_canonical_dominance hρ⟩
+  surge := by
+    intro ρ hρ
+    rcases D.surge ρ hρ with ⟨shape, H⟩
+    exact ⟨shape, H.to_marginal_feasible_policy_canonical_dominance hρ⟩
+
+/--
+GN21 fixed-response measured-marginal data imply the measurable Theorem 4
+structural endpoint.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_gn21_fixed_response_marginal_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      Theorem4AllMeasurableGN21FixedResponseMarginalPolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρstar ∧
+        theorem4NonsurgeShape (ρstar 0) ∧
+        theorem4SurgeShape (ρstar 1) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ →
+          theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) :=
+  paper_theorem4_measurable_dynamic_structural_policy_of_gn21_marginal_feasible_policy_canonical_dominance
+    μ arrival switch12 switch21 w
+    D.to_marginal_feasible_policy_canonical_dominance
+
+/--
+GN21 fixed-response measured-marginal data imply the source
+a.e.-representative Theorem 4 statement.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_fixed_response_marginal_policy_canonical_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (w : Fin 2 → PricingFunction)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      Theorem4AllMeasurableGN21FixedResponseMarginalPolicyCanonicalDominanceData
+        μ arrival switch12 switch21 w) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_marginal_feasible_policy_canonical_dominance
+    μ arrival switch12 switch21 w
+    D.to_marginal_feasible_policy_canonical_dominance
+
+/--
 Left-state GN21 fixed-response data feed the feasible policy-canonical Lemma 5
 route once the source proof supplies the continuous strict-mass and positive
 affine objective-transfer facts.

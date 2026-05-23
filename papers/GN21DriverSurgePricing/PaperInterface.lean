@@ -84,6 +84,34 @@ abbrev theorem4_structural_policy_representatives_of_gn21_bracket_source_data :=
   @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_bracket_source_data
 
 /--
+Theorem 4: structural forms from the measured marginal objective obtained by
+freezing the other CTMC state.
+-/
+abbrev theorem4_structural_policy_forms_of_gn21_marginal_feasible_policy_canonical_dominance :=
+  @paper_theorem4_measurable_dynamic_structural_policy_of_gn21_marginal_feasible_policy_canonical_dominance
+
+/--
+Theorem 4: a.e. structural representatives from the measured marginal
+objective obtained by freezing the other CTMC state.
+-/
+abbrev theorem4_structural_policy_representatives_of_gn21_marginal_feasible_policy_canonical_dominance :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_marginal_feasible_policy_canonical_dominance
+
+/--
+Theorem 4: structural forms from fixed-response source data for the actual
+measured marginal Lemma 5 objective.
+-/
+abbrev theorem4_structural_policy_forms_of_gn21_fixed_response_marginal :=
+  @paper_theorem4_measurable_dynamic_structural_policy_of_gn21_fixed_response_marginal_policy_canonical_dominance
+
+/--
+Theorem 4: a.e. structural representatives from fixed-response source data for
+the actual measured marginal Lemma 5 objective.
+-/
+abbrev theorem4_structural_policy_representatives_of_gn21_fixed_response_marginal :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_fixed_response_marginal_policy_canonical_dominance
+
+/--
 Theorem 4: structural forms from GN21 fixed-response source data plus
 positive-affine continuation-objective transfer.
 -/
