@@ -2499,6 +2499,52 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_surge
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 from the optimal-only sequential surge-source bundle.  Weak feasible
+IC is supplied separately; Lemma 9 surge data and the non-surge current
+positive-mass field are needed only for measurable optima.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_source_data
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeSourceDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/-- Accounting-form version of the optimal-only sequential surge-source route. -/
+theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_accounting_data
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeAccountingDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_accounting_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/-- Reward-rate-form version of the optimal-only sequential surge-source route. -/
+theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_reward_rate_data
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeRewardRateDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_reward_rate_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 with feasible source current-bounds data for weak IC and
 optimal-policy positive-response data for a.e. uniqueness.
 -/

@@ -2444,6 +2444,12 @@ after the Lemma 10 branch has been constructed from Theorem 3 parameter data:
 `PaperInterface.theorem3_feasible_sequential_surge_source_data`,
 `PaperInterface.theorem3_feasible_sequential_surge_accounting_data`, and
 `PaperInterface.theorem3_feasible_sequential_surge_reward_rate_data`.
+The weaker optimal-only variants are
+`PaperInterface.theorem3_optimal_sequential_surge_source_data`,
+`PaperInterface.theorem3_optimal_sequential_surge_accounting_data`, and
+`PaperInterface.theorem3_optimal_sequential_surge_reward_rate_data`; these keep
+weak IC separate and ask for the non-surge positive-mass and Lemma 9 surge data
+only for measurable optima.
 The direct positive-response and concrete fixed-response boundaries now have
 matching normalized-mass ratio wrappers as well:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source`,
@@ -2499,8 +2505,11 @@ available only for measurable optima, use
 `PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized`
 instead of the all-feasible source-data boundary.  If the source proof has
 already discharged the Lemma 10 branch and leaves only the surge Lemma 9 data, use
-`PaperInterface.theorem3_feasible_sequential_surge_source_data` or its
-accounting/reward-rate variants.  The split current-bounds positive-response route remains
+`PaperInterface.theorem3_optimal_sequential_surge_source_data` or its
+accounting/reward-rate variants when the remaining source fields are
+optimal-only; use the `feasible_sequential_surge_*` variants only when those
+fields have actually been proved for all feasible policies.  The split
+current-bounds positive-response route remains
 available as
 `PaperInterface.theorem3_current_bounds_source_feasible_optimal_positive_response_normalized`,
 with accounting and reward-rate variants

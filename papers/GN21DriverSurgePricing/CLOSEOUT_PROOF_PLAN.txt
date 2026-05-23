@@ -27,6 +27,9 @@ Use these compact paper-facing endpoints first:
   PaperInterface.theorem3_feasible_sequential_surge_source_data
   PaperInterface.theorem3_feasible_sequential_surge_accounting_data
   PaperInterface.theorem3_feasible_sequential_surge_reward_rate_data
+  PaperInterface.theorem3_optimal_sequential_surge_source_data
+  PaperInterface.theorem3_optimal_sequential_surge_accounting_data
+  PaperInterface.theorem3_optimal_sequential_surge_reward_rate_data
   PaperInterface.theorem3_feasible_weak_reward_feasible_sequential_source_normalized
   PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized
   PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized
@@ -57,6 +60,11 @@ The proof should split the paper work into two independent source claims:
    `PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized`
    when these records are exactly the paper's Appendix-D scaled `T,Q,W`
    identities and are available only for measurable optima.
+   If the Lemma 10 accept-all branch is already constructed from the Theorem 3
+   parameter data and only the surge Lemma 9 fields remain, use the
+   `PaperInterface.theorem3_optimal_sequential_surge_*` endpoints before the
+   older `feasible_sequential_surge_*` endpoints; the latter still impose a
+   stronger all-feasible positive-mass quantifier.
 
 Do not try to force current-bounds data through
 `theorem3AcceptAllPositiveFixedResponseSourceCertificate` or the older
@@ -1409,6 +1417,12 @@ Recommended proof order
      Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate.to_reward_rate_positive_response
      paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_source_normalized_mass_ratio_source_assumptions
      PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_source_normalized
+     Theorem3AcceptAllStructuredOptimalSequentialSurgeSourceDataAssumptions
+     Theorem3AcceptAllStructuredOptimalSequentialSurgeAccountingDataAssumptions
+     Theorem3AcceptAllStructuredOptimalSequentialSurgeRewardRateDataAssumptions
+     PaperInterface.theorem3_optimal_sequential_surge_source_data
+     PaperInterface.theorem3_optimal_sequential_surge_accounting_data
+     PaperInterface.theorem3_optimal_sequential_surge_reward_rate_data
 
    Prefer the normalized-mass split endpoint when the proof has probability
    trip-length laws, a weak feasible-IC certificate, and Lemma 9/10
@@ -1419,6 +1433,11 @@ Recommended proof order
    `theorem3_feasible_weak_reward_sequential_optimal_source_normalized`; it
    performs the source-to-reward-rate conversion without strengthening the
    quantifier to all feasible policies.
+   If the Lemma 10 accept-all branch has already been discharged from the
+   constructed price parameters, use the optimal sequential surge source,
+   accounting, or reward-rate endpoints; they still need optimal non-surge
+   current mass, but no longer ask for that mass on arbitrary feasible
+   policies.
    If the optimal-policy Lemma 9/10 data are still stated as the paper's
    local accounting equations or reward-rate equalities, use the two
    `of_optimal_*` adapters above first; they build the current-bounds source

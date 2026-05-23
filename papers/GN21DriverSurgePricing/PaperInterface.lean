@@ -184,6 +184,18 @@ abbrev theorem3_feasible_sequential_surge_accounting_data :=
 abbrev theorem3_feasible_sequential_surge_reward_rate_data :=
   @theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_surge_reward_rate_data
 
+/-- Theorem 3: optimal-only sequential surge-source route. -/
+abbrev theorem3_optimal_sequential_surge_source_data :=
+  @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_source_data
+
+/-- Theorem 3: optimal-only accounting-form sequential surge-source route. -/
+abbrev theorem3_optimal_sequential_surge_accounting_data :=
+  @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_accounting_data
+
+/-- Theorem 3: optimal-only reward-rate-form sequential surge-source route. -/
+abbrev theorem3_optimal_sequential_surge_reward_rate_data :=
+  @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_reward_rate_data
+
 /-- Theorem 3: current-bounds accounting endpoint. -/
 abbrev theorem3_current_bounds_accounting :=
   @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
