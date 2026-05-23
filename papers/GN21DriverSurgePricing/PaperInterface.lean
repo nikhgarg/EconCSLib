@@ -136,6 +136,10 @@ abbrev theorem3_feasible_weak_reward_optimal_positive_response_ratio :=
 abbrev theorem3_feasible_weak_reward_optimal_positive_response_normalized :=
   @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source
 
+/-- Theorem 3: positive-mass source-domain IC/a.e. uniqueness route. -/
+abbrev theorem3_positive_mass_source_positive_response :=
+  @theorem3_positive_mass_measurable_ic_ae_unique_of_source_and_positive_response_marginal
+
 /-- Theorem 3: normalized split route with optimal-policy accounting data. -/
 abbrev theorem3_feasible_weak_reward_optimal_accounting_positive_response_normalized :=
   @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_accounting_positive_response_normalized_mass_ratio_source

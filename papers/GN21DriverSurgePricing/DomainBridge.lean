@@ -456,6 +456,24 @@ theorem paper_theorem4_positive_mass_measurable_accept_all_ae_unique_optimal_of_
         hpositive (by simpa [hpositive_eq] using hcandidate)
 
 /--
+Positive-mass Theorem 3 marginal-response certificate.  This is the source
+Theorem 4/Lemma 5 boundary restricted to the denominator-valid domain: after
+Theorem 3 constructs `m,z`, every positive-mass measurable optimum has the
+positive marginal-response data needed for a.e. accept-all uniqueness.
+-/
+def theorem3AcceptAllPositiveMassPositiveResponseAEMarginalCertificate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ) : Prop :=
+  ∀ m z : Fin 2 → ℝ,
+    (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z →
+        Theorem4PositiveMassMeasurablePositiveResponseAEMarginalCertificate μ
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z)
+
+/--
 Readable positive-mass source-domain conclusion of Theorem 3 with the paper's
 a.e. uniqueness convention restricted to positive-mass measurable optima.
 -/
@@ -492,6 +510,62 @@ theorem theorem3MeasuredStructuredPositiveMassMeasurableICConclusion_of_ae_uniqu
       μ arrival R1 R2 switch12 switch21 := by
   rcases H with ⟨m, z, hsigns, hIC, _hAE, hprice_form, hparams⟩
   exact ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+
+/--
+Add the positive-mass a.e.-unique Theorem 4 conclusion to any compiled
+positive-mass Theorem 3 IC construction.  This avoids redoing the scalar
+Theorem 3 price construction: the marginal-response certificate is checked
+only for the already-constructed `m,z`.
+-/
+theorem theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion_of_ic_and_positive_response_marginal
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (H :
+      theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+        μ arrival R1 R2 switch12 switch21)
+    (hpositive_marginal :
+      theorem3AcceptAllPositiveMassPositiveResponseAEMarginalCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases H with ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+  let R : DynamicReward :=
+    gn21MeasuredCTMCStructuredDynamicReward
+      μ arrival switch12 switch21 m z
+  have htheorem4 :
+      dynamicPositiveMassMeasurableOptimal μ R acceptAllDynamicPolicy ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicPositiveMassMeasurableOptimal μ R ρ →
+            dynamicAcceptAllAlmostEverywhere μ ρ :=
+    paper_theorem4_positive_mass_measurable_accept_all_ae_unique_optimal_of_positive_response_marginal_optima
+      μ R (hpositive_marginal m z hsigns hparams)
+  exact ⟨m, z, hsigns, hIC, by simpa [R] using htheorem4.2,
+    hprice_form, hparams⟩
+
+/--
+Paper-facing positive-mass Theorem 3 endpoint from the canonical
+denominator-valid sequential source assumptions plus the positive-response
+Lemma 5 marginal proof.  The conclusion is exactly the source-domain version
+of measurable IC with a.e. accept-all uniqueness: no zero-mass comparison
+policy is quantified over.
+-/
+theorem paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions_and_positive_response_marginal
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21)
+    (hpositive_marginal :
+      theorem3AcceptAllPositiveMassPositiveResponseAEMarginalCertificate
+        μ arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion_of_ic_and_positive_response_marginal
+    (paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21 A)
+    hpositive_marginal
 
 /--
 Paper-facing domain bridge: a positive-mass a.e.-unique Theorem 3 result lifts

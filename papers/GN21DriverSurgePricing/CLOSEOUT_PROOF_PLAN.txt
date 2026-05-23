@@ -37,6 +37,21 @@ and
 `gn21MeasuredDynamicReward_eq_left_rewardRate_of_right_zero_mass_time_payment`
 showing why that dominance certificate is not automatic.
 
+2026-05-22 positive-mass closeout endpoint: the denominator-valid Theorem 3
+source route now compiles all the way to positive-mass measurable IC plus
+a.e. accept-all uniqueness.  Use
+
+  PaperInterface.theorem3_positive_mass_source_positive_response
+
+when staying faithful to the source's positive-denominator Appendix-D reward
+rates.  Its implementation is
+`paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions_and_positive_response_marginal`.
+It combines the canonical positive-mass sequential reward-rate IC construction
+with
+`theorem3AcceptAllPositiveMassPositiveResponseAEMarginalCertificate`, which is
+exactly the remaining positive-response Lemma 5 marginal proof for the
+constructed `m,z` prices and positive-mass measurable optima.
+
 2026-05-22 route correction: the active source-faithful Theorem 3 path is the
 split feasible-sequential current-bounds route, not the all-candidate
 fixed-response route and not the reduced LightAE pointwise-transfer route by
@@ -64,6 +79,7 @@ Use these compact paper-facing endpoints first:
   PaperInterface.theorem3_feasible_weak_reward_optimal_positive_response
   PaperInterface.theorem3_feasible_weak_reward_optimal_positive_response_ratio
   PaperInterface.theorem3_feasible_weak_reward_optimal_positive_response_normalized
+  PaperInterface.theorem3_positive_mass_source_positive_response
   PaperInterface.theorem3_feasible_weak_reward_optimal_accounting_positive_response_normalized
   PaperInterface.theorem3_feasible_weak_reward_optimal_reward_rate_positive_response_normalized
 

@@ -111,6 +111,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   routes should quantify over feasible measurable policies with positive mass,
   while broader measurable wrappers should either keep explicit positive-mass
   obligations or use scaled-earning/accounting forms that avoid division.
+- If a denominator-valid CTMC theorem already has a compiled positive-mass IC
+  construction, add the a.e.-uniqueness layer by destructing that construction
+  and applying a positive-mass Theorem 4/Lemma 5 marginal-response certificate
+  to the constructed prices.  Do not redo the scalar price construction just to
+  add uniqueness; the marginal certificate should be checked only at the
+  existing `m,z` witness and over positive-mass measurable optima.
 - When a continuous CTMC reward formula divides by accepted mass, audit the
   zero-mass semantics before trying to lift a positive-mass theorem to all
   feasible policies.  In Lean, real division totalizes `1 / 0` and `0 / 0` to

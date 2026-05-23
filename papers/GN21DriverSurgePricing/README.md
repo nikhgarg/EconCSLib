@@ -59,6 +59,14 @@ cache is `source.txt`.
   should stay on the positive-mass/nondegenerate domain, or the full theorem
   must use an explicit zero-mass dominance condition or a different
   extended-real/nondegenerate reward interface.
+- The positive-mass source-domain Theorem 3 route now has a compiled
+  a.e.-unique endpoint:
+  `paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions_and_positive_response_marginal`
+  and the compact interface
+  `PaperInterface.theorem3_positive_mass_source_positive_response`.  This
+  combines the denominator-valid sequential reward-rate IC construction with
+  the positive-response Lemma 5 marginal proof, without quantifying over
+  zero-mass comparison policies.
 - The CTMC monotonicity layer now also exposes
   `gn21SwitchProb_mul_le_mul_of_pos_lt` and
   `gn21FixedState_lower_pointwise_of_rejectsLongTrips`: for reject-long fixed

@@ -611,6 +611,29 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_n
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 positive-mass measurable IC plus a.e. uniqueness on the
+denominator-valid source domain.  The sequential reward-rate assumptions
+construct the structured prices and prove positive-mass IC; the final
+positive-response marginal certificate supplies the Lemma 5 a.e. uniqueness
+step for positive-mass measurable optima.
+-/
+theorem theorem3_positive_mass_measurable_ic_ae_unique_of_source_and_positive_response_marginal
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21)
+    (positive_marginal :
+      theorem3AcceptAllPositiveMassPositiveResponseAEMarginalCertificate
+        mu arrival R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions_and_positive_response_marginal
+      mu arrival rho R1 R2 switch12 switch21 A positive_marginal
+
+/--
 Canonical source-facing Theorem 3 endpoint at the positive-replacement
 boundary: constructed-price algebra and Lemma 9/10 primitive scalar conditions
 are discharged in Lean; the source supplies the positive Lemma 5 replacement
