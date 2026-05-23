@@ -2437,16 +2437,20 @@ and
 `PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
 These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
-The current source-faithful Theorem 3 frontier is the LightAE representative
-route exposed as `PaperInterface.theorem3_light_ae_feasible_canonical_normalized`,
-with IC-only projection
-`PaperInterface.theorem3_light_ae_feasible_canonical_normalized_ic`.  Its
-per-price payload is
+The current source-faithful Theorem 3 frontier is the fixed-response/bracket
+LightAE representative route exposed compactly as
+`PaperInterface.theorem3_light_ae_bracket_fixed_response_ratio`, with IC-only
+projection `PaperInterface.theorem3_light_ae_bracket_fixed_response_ratio_ic`.
+This is the route to use when Lemma 5 reduces measurable optima to canonical
+forms only up to a.e. representatives; Lean proves strict improvement on the
+representative and transfers it back by a.e. congruence.  The stronger
+feasible-canonical shortcut
+`PaperInterface.theorem3_light_ae_feasible_canonical_normalized`, with IC-only
+projection `PaperInterface.theorem3_light_ae_feasible_canonical_normalized_ic`,
+is available when the source proof can supply
 `GN21Theorem3LightAEFeasibleCanonicalEndpointData`: feasible Lemma 5
-canonical-dominance data, plus the fixed-state middle-reroute local endpoint
-certificate.  This is the route to use when Lemma 5 reduces measurable optima
-to canonical forms only up to a.e. representatives; Lean proves strict
-improvement on the representative and transfers it back by a.e. congruence.
+canonical-dominance data plus the fixed-state middle-reroute local endpoint
+certificate.
 The finite-or-infinite aggregate-cross frontier
 `PaperInterface.theorem3_finite_or_infinite_branch_surge_cross`, with IC-only
 projection `PaperInterface.theorem3_finite_or_infinite_branch_surge_cross_ic`,

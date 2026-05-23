@@ -27,14 +27,16 @@ pointwise comparison unless an extra source upper/equality assumption is
 available.
 
 When Lemma 5 only identifies policy forms up to a.e. representatives, the
-preferred boundary is the LightAE feasible-canonical route below: it proves
-strict improvement on canonical representatives and transfers back by a.e.
-congruence.  The finite-or-infinite aggregate-cross route remains useful when
-the source proof really has exact branch selectors for the current policy
-representatives.  It keeps the paper's `t = infinity` non-surge convention,
-derives scalar ratio bookkeeping from normalized trip-length laws, and asks for
-aggregate cross-ratio endpoint fields rather than the misleading pointwise
-upper-transfer field.
+source-faithful boundary remains the fixed-response/bracket LightAE route in
+`MainTheorems.lean`: it proves strict improvement on canonical representatives
+and transfers back by a.e. congruence.  This frontier file adds a
+feasible-canonical shortcut for sources that can provide the stronger
+policy-level canonical-dominance data directly.  The finite-or-infinite
+aggregate-cross route remains useful when the source proof really has exact
+branch selectors for the current policy representatives.  It keeps the paper's
+`t = infinity` non-surge convention, derives scalar ratio bookkeeping from
+normalized trip-length laws, and asks for aggregate cross-ratio endpoint fields
+rather than the misleading pointwise upper-transfer field.
 -/
 
 /--
@@ -107,9 +109,10 @@ structure GN21Theorem3LightAEFeasibleCanonicalEndpointData
 /--
 Theorem 3 on the normalized-mass LightAE route, with the per-price proof
 payload stated as feasible Lemma 5 canonical dominance plus the fixed-state
-middle-reroute endpoint certificate.  This is the current source-faithful
-frontier when Lemma 5 gives a.e. representatives rather than exact current
-policy branch syntax.
+middle-reroute endpoint certificate.  Use this shortcut only when the source
+proof can supply the stronger policy-level canonical-dominance data directly;
+otherwise use the fixed-response/bracket LightAE route that works with a.e.
+representatives.
 -/
 theorem theorem3_measurable_ic_ae_unique_of_light_ae_feasible_canonical_normalized_mass_ratio_source
     (μ : Fin 2 → Measure TripLength)

@@ -124,13 +124,21 @@ abbrev theorem3_feasible_policy_canonical_pointwise_reward_rate_normalized :=
 abbrev theorem3_endpoint_bridge :=
   @theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
 
-/-- Theorem 3: normalized LightAE route from feasible Lemma 5 canonical data. -/
+/-- Theorem 3: normalized LightAE shortcut from feasible Lemma 5 canonical data. -/
 abbrev theorem3_light_ae_feasible_canonical_normalized :=
   @theorem3_measurable_ic_ae_unique_of_light_ae_feasible_canonical_normalized_mass_ratio_source
 
-/-- Theorem 3: IC projection of the normalized LightAE feasible-canonical route. -/
+/-- Theorem 3: IC projection of the normalized feasible-canonical shortcut. -/
 abbrev theorem3_light_ae_feasible_canonical_normalized_ic :=
   @theorem3_measurable_ic_of_light_ae_feasible_canonical_normalized_mass_ratio_source
+
+/-- Theorem 3: bracket fixed-response LightAE representative route. -/
+abbrev theorem3_light_ae_bracket_fixed_response_ratio :=
+  @theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_reroute_existence_ratio_source
+
+/-- Theorem 3: IC projection of the bracket fixed-response LightAE route. -/
+abbrev theorem3_light_ae_bracket_fixed_response_ratio_ic :=
+  @theorem3_structured_measurable_ic_of_bracket_eq_middle_reroute_existence_ratio_source
 
 /--
 Theorem 3: finite-or-infinite branch route with aggregate cross-ratio endpoint
