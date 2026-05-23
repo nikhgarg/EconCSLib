@@ -33,7 +33,8 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Graph`
   - `EconCSLib.Foundations.Optimization`
     (`Approximation`, `Argmax`, `Certificate`, `FiniteSearch`,
-    `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `BinaryChoice`)
+    `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `BinaryChoice`,
+    `Endpoint`)
     - `Approximation`: benchmark/dual upper-bound sandwich certificates for
       approximation and competitive-ratio proofs, including additive-error
       variants.
@@ -58,6 +59,9 @@ when you need material from a domain quickly.
     - `BinaryChoice`: two-action no-profitable-deviation predicates,
       projections from static choice equilibria, and threshold/tiebreak
       consequences for binary choice rules.
+    - `Endpoint`: one-dimensional endpoint-move calculus from derivative
+      signs, first/last-zero stopping lemmas, and one-sided local
+      improvement/decrease steps for cutoff and interval-endpoint proofs.
     - Roadmap: [`docs/OPTIMIZATION_LIBRARY_ROADMAP.md`](OPTIMIZATION_LIBRARY_ROADMAP.md)
       tracks finite feasible search, exchange optimality, LP certificates,
       convexity/Jensen wrappers, threshold policies, minimax/Yao certificates,
@@ -65,7 +69,7 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Probability`
     (`FiniteExpectation`, `FiniteMixture`, `FiniteLabel`, `FiniteSupportMGF`, `Kernel`, `Conditional`,
     `LargeDeviations`, `OrderStatistics`, `RealDistribution`, `MarkovChain`, `CTMC`, `MDP`,
-    `RenewalReward`, `Gaussian`, `StochasticDominance`, `MeasureInequalities`,
+    `RenewalReward`, `ContinuousReward`, `Gaussian`, `StochasticDominance`, `MeasureInequalities`,
     `Occupancy`, `Admissions`, `FairCoin`, `Weighted`, `WithoutReplacement`)
     - `FiniteExpectation`: finite PMF expectations/probabilities, relabeling,
       product-uniform decompositions, event-probability congruence, finite
@@ -112,6 +116,9 @@ when you need material from a domain quickly.
       `ENNReal` mass to real-valued mass, positive finite `withDensity` mass,
       finite-intersection probability lower bounds, and Hoeffding-style
       independent bounded-sum bounds.
+    - `ContinuousReward`: accepted-set mass/time/reward primitives over
+      positive real domains, renewal-reward and average-reward aliases, and
+      positive-domain bridges from zero accepted time to zero accepted mass.
     - `Gaussian`: Gaussian location-scale standardization, an abstract
       standard-normal CDF/density API, conjugate one-signal posterior
       precision/variance/mean formulas, posterior-mean monotonicity, finite

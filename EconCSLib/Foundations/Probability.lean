@@ -2,6 +2,7 @@ import EconCSLib.Foundations.Probability.Admissions
 import EconCSLib.Foundations.Probability.BivariateGaussian
 import EconCSLib.Foundations.Probability.CTMC
 import EconCSLib.Foundations.Probability.Conditional
+import EconCSLib.Foundations.Probability.ContinuousReward
 import EconCSLib.Foundations.Probability.Exponential
 import EconCSLib.Foundations.Probability.FairCoin
 import EconCSLib.Foundations.Probability.FiniteExpectation
@@ -43,6 +44,7 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.FiniteMixture`, and
   `EconCSLib.Foundations.Probability.FiniteLabel`.
 - Continuous measure and concentration helpers:
+  `EconCSLib.Foundations.Probability.ContinuousReward`,
   `EconCSLib.Foundations.Probability.MeasureInequalities`,
   `EconCSLib.Foundations.Probability.FairCoin`, and
   `EconCSLib.Foundations.Probability.FinsetVariance`.

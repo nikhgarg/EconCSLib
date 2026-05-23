@@ -1,172 +1,214 @@
 # Final Validation Report: Driver Surge Pricing
 
-## Verdict
+## Human Verdict
 
-Complete at the paper-facing source surfaces in `GN21DriverSurgePricing`.
+The GN21 driver-surge paper is complete at the Lean proof level for the
+paper-facing definitions and named results represented in
+`PaperInterface.lean`.  The remaining non-Lean task is human signoff in the
+review dashboard; the dashboard should currently show `0/24` rows reviewed
+until a human reviewer saves those rows.
 
-The main denominator-valid continuous/CTMC source results are represented by
-direct statement endpoints in `PaperInterface.lean`, with source-numbered audit
-aliases in `PostPaperAudit.lean` and the theorem ledger in `README.md`.
-Theorem 3 has both the denominator-valid positive-mass source endpoint and a
-compiled full feasible-measurable endpoint through the source-ordered feasible
-sequential Lemma 9/10 current-bounds route.  The separate zero-mass-dominance
-lift remains available as an optional stronger bridge, and Lean records a
-concrete obstruction showing why that certificate is not automatic for the
-current real-valued reward totalization.
+The formalization did not find a false main theorem.  It did find one important
+domain issue that the paper leaves implicit: Appendix D reward rates divide by
+accepted-trip mass/time quantities, so zero-mass policies need explicit
+handling.  Lean proves the main Theorem 3 route on the source-relevant
+defined-reward/feasible-current-bounds domain and records why a broader
+zero-mass shortcut is not automatic for totalized real-valued division.
 
-## Source checked
+Lean footprint: the paper folder contains 143,056 lines of paper-local Lean
+code across 12 `.lean` files.  The human-review surface is deliberately much
+smaller: `PaperInterface.lean` is 184 lines and exposes 24 dashboard rows.
 
-- Paper: *Driver Surge Pricing*
-- Authors: Nikhil Garg and Hamid Nazerzadeh
-- Local source: `source.pdf`
-- Local text cache: `source.txt`
-- Version note: arXiv v4, dated March 9, 2021; Management Science publication
-  DOI `10.1287/mnsc.2021.4058`.
+## What Has Been Proven
 
-## Paper interface
+- The paper's single-state and dynamic incentive-compatibility definitions are
+  represented as measurable trip-policy optimization statements, including the
+  threshold-policy notation and the positive-denominator dynamic reward domain.
 
-The compact dashboard-facing `PaperInterface.lean` exposes `review_*` wrappers
-for the source definitions and named results.  The larger historical
-`PaperInterface.*` alias layer remains importable through `InterfaceAliases.lean`
-for compatibility with older notes and `PostPaperAudit.lean`.
-The tracked `lean_to_tex_llm.json` file supplies one context-free Lean-to-TeX
-draft for each of the 24 `review_*` rows, generated from Lean statements alone.
+- Section 2.2's renewal-reward claim is proved through an explicit IID cycle
+  model: lifetime hourly earnings equal expected cycle reward divided by
+  expected cycle length under the stated stochastic assumptions.
 
-- `PaperInterface.review_definition_single_state_ic`
-- `PaperInterface.review_definition_dynamic_ic`
-- `PaperInterface.review_definition_threshold_policy`
-- `PaperInterface.review_section2_single_state_renewal_reward_iid_bridge`
-- `PaperInterface.review_definition_dynamic_defined_reward`
-- `PaperInterface.review_lemma1_measured_dynamic_reward_decomposition`
-- `PaperInterface.review_lemma2_switch_probability_formula`
-- `PaperInterface.review_lemma3_measured_time_fraction_formula`
-- `PaperInterface.review_lemma4_single_state_threshold_uniqueness`
-- `PaperInterface.review_lemma5_fixed_response_policy_form`
-- `PaperInterface.review_lemma6_upper_endpoint_derivative_formula`
-- `PaperInterface.review_lemma7_affine_positive_additive_response_quasi_convex`
-- `PaperInterface.review_lemma8_affine_negative_additive_response_quasi_concave`
-- `PaperInterface.review_lemma9_surge_derivative_positive_of_acceptAll_bounds`
-- `PaperInterface.review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
-- `PaperInterface.review_remark1_switch_probability_per_time_strictAntiOn`
-- `PaperInterface.review_remark3_switch_probability_per_time_tendsto_at_zero`
-- `PaperInterface.review_remark4_switch_time_minus_switch_probability_nonneg`
-- `PaperInterface.review_proposition3_1_affine_single_state_ic`
-- `PaperInterface.review_theorem1_single_state_threshold_best_response`
-- `PaperInterface.review_theorem2_multiplicative_policy_shape_ae`
-- `PaperInterface.review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states`
-- `PaperInterface.review_theorem4_structural_policy_representatives`
-- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data_statement`
+- Theorem 1 and Proposition 3.1 are proved for the single-state model.  Lean
+  verifies the threshold best-response theorem and the affine-pricing
+  incentive-compatibility condition `0 <= a <= m / lambda`.
 
-## Dashboard source-text overrides
+- Lemmas 1-3 and Remarks 1, 3, and 4 are proved for the CTMC/dynamic reward
+  formulas: reward decomposition, switch probabilities, time fractions, the
+  small-time switch-rate limit, and the nonnegativity/monotonicity facts used
+  later in Appendix D.
 
-These entries supply paper text for source items whose PDF text extraction is
-not caught by the numbered-statement parser because of line breaks, unnumbered
-definitions, or appendix remark formatting.
+- Lemmas 4-10 are proved as the response-shape chain used by the dynamic
+  theorems.  This includes threshold uniqueness, the fixed-response policy
+  form, the endpoint derivative formula, the quasi-convex/quasi-concave
+  response facts, and the surge/non-surge derivative positivity lemmas used in
+  Theorem 3.
 
-- `PaperInterface.review_definition_single_state_ic`: In the single-state model, a policy is a measurable set of positive trip lengths accepted by the driver. Pricing is incentive compatible when accepting every job request is optimal for lifetime average earnings.
-- `PaperInterface.review_definition_dynamic_ic`: In the dynamic model, a policy is a pair of statewise trip-length acceptance sets. Pricing is incentive compatible when the all-trips policy is optimal in both states.
-- `PaperInterface.review_definition_threshold_policy`: The paper writes the single-state threshold policy as the set of trips whose payment-per-time is at least a nonnegative constant.
-- `PaperInterface.review_definition_dynamic_defined_reward`: Appendix D's state reward rates use accepted-trip probability/time denominators; this Lean interface records the positive-mass domain where those reward rates are defined.
-- `PaperInterface.review_section2_single_state_renewal_reward_iid_bridge`: Section 2.2 identifies the single-state model as a renewal-reward process and states that lifetime hourly earnings equal expected renewal-cycle earnings divided by expected renewal-cycle length with probability one.
-- `PaperInterface.review_theorem1_single_state_threshold_best_response`: Theorem 1. With a single state, for each payment function there exists a nonnegative threshold constant such that accepting trips with payment-per-time at least that constant is optimal.
-- `PaperInterface.review_proposition3_1_affine_single_state_ic`: Proposition 3.1. With a single state, affine pricing of the form w(tau) = m tau + a is incentive compatible if 0 <= a <= m / lambda.
-- `PaperInterface.review_remark1_switch_probability_per_time_strictAntiOn`: Remark 1 includes the claim that q_{i->j}(u) / u is strictly decreasing in u, together with continuity and derivative-sign consequences.
-- `PaperInterface.review_remark3_switch_probability_per_time_tendsto_at_zero`: Remark 3. The limit of q_{i->j}(u) / u as u tends to zero is lambda_{i->j}.
-- `PaperInterface.review_remark4_switch_time_minus_switch_probability_nonneg`: Remark 4. lambda_{i->j} T_i - Q_i is nonnegative and is maximized by the accept-all policy; Q_i is also nonnegative and maximized by accepting all trips.
-- `PaperInterface.review_theorem2_multiplicative_policy_shape_ae`: Theorem 2. Under multiplicative pricing, there exists an optimal policy whose non-surge component rejects long trips above a cutoff and whose surge component rejects short trips below a cutoff, and only policies of the appropriate form can be optimal.
-- `PaperInterface.review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states`: Theorem 2. There exist settings with positive finite cutoffs in which multiplicative pricing is not incentive compatible in either state.
-- `PaperInterface.review_theorem4_structural_policy_representatives`: Theorem 4. For the appendix structural pricing function, there exists an optimal policy of the displayed threshold form, and any optimal policy has the corresponding structural representative up to null feasible-trip sets.
-- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data_statement`: Theorem 3. For target earning rates R1 < R2, there exist structured additive prices of the form m_i tau + z_i q_{i->j}(tau) that make accepting all trips uniquely optimal while delivering the target rates.
+- Theorem 2 is proved in two source-facing pieces: the structural
+  multiplicative-policy shape result and an explicit instance with positive
+  finite cutoff deviations in both states, proving that multiplicative pricing
+  need not be incentive compatible.
 
-## Named-result inventory
+- Theorem 4 is proved at the measure-theoretic structural surface: optimal
+  policies have representatives of the source's stated threshold/interval forms,
+  up to null feasible-trip sets.
 
-| Source item | Text-cache line | Audit declaration | Status |
-|---|---:|---|---|
-| Section 2.2 driver policy and IC definitions | 264 | `audit_section2_single_state_ic`, `audit_section2_dynamic_ic` | complete |
-| Section 2.2 renewal-reward bridge | 271 | `audit_section2_single_state_renewal_reward_iid_bridge` | complete |
-| Theorem 1 | 498, 2530 | `audit_theorem1_single_state_threshold_best_response` | complete |
-| Proposition 3.1 | 2759 | `audit_proposition3_1_affine_single_state_ic` | complete |
-| Lemma 1 | 324, 3032 | `audit_lemma1_measured_dynamic_reward_decomposition` | complete |
-| Lemma 2 | 657, 3000 | `audit_lemma2_switch_probability_formula` | complete |
-| Lemma 3 | 671, 3054 | `audit_lemma3_measured_time_fraction_formula` | complete |
-| Lemma 4 | 2841 | `audit_lemma4_single_state_threshold_uniqueness` | complete |
-| Lemma 5 | 3343 | `audit_lemma5_fixed_response_policy_form` | complete at the a.e. fixed-response source surface used downstream |
-| Lemma 6 | 3724, 4105 | `audit_lemma6_upper_endpoint_derivative_formula` | complete |
-| Remarks 1, 3, 4 | 3747, 3793, 3799 | `audit_remark1_switch_probability_per_time_strictAntiOn`, `audit_remark3_switch_probability_per_time_tendsto_at_zero`, `audit_remark4_switch_time_minus_switch_probability_nonneg` | complete |
-| Lemmas 7-8 | 3773, 3775 | `audit_lemma7_affine_positive_additive_response_quasi_convex`, `audit_lemma8_affine_negative_additive_response_quasi_concave` | complete |
-| Lemmas 9-10 | 3809, 3834 | `audit_lemma9_surge_derivative_positive_of_acceptAll_bounds`, `audit_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | complete |
-| Theorem 2 | 560 | `audit_theorem2_multiplicative_policy_shape_ae`, `audit_theorem2_multiplicative_measured_not_ic_explicit_atomic`, `audit_theorem2_multiplicative_measured_profitable_deviations_both_states`, `audit_theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states`, `audit_theorem2_multiplicative_measured_not_ic_both_states` | complete for the structural handoff, explicit measured non-IC instance, and a single atomic instance with profitable positive-finite-cutoff deviations in both states |
-| Theorem 4 | 3859 | `audit_theorem4_structural_policy_representatives` | complete at the measure-theoretic structural surface |
-| Theorem 3 | 704, 3944 | `audit_theorem3_positive_mass_source`, `audit_theorem3_positive_response_source`, `audit_theorem3_positive_fixed_response_source`, `audit_theorem3_feasible_sequential_current_bounds_source_data`, `audit_theorem3_source_with_zero_mass_dominance` | complete through existential structured-price endpoints for the positive-response/fixed-response proof line, the positive-mass source endpoint, and the full feasible sequential current-bounds source-data endpoint; zero-mass dominance remains an optional bridge route |
+- Theorem 3 is proved through the paper proof path: first choose the
+  surge-state structured price via Lemma 9, transport the resulting current
+  bounds, then choose the non-surge price via Lemma 10.  The final statement
+  constructs prices of the form `m_i tau + z_i q_{i->j}(tau)`, proves
+  measurable incentive compatibility, and proves accept-all uniqueness up to
+  null sets on the feasible-current-bounds source-data assumptions.
 
-## Deliberate model conventions and proof deviations
+## Is Anything in the Paper Wrong?
 
-- Trip policies are sets of positive real trip lengths.  Measurability and
-  a.e. equality are represented measure-theoretically.
-- The stochastic Section 2.2, Lemma 1, and Lemma 3 statements use explicit IID
-  cycle models and mathlib strong-law wrappers instead of opaque limit
-  certificates.
-- The single-state Theorem 1 proof allows atoms at threshold boundaries by
-  proving one-sided dominated-convergence limits, rather than assuming boundary
-  mass is zero.
-- Theorem 3 has source-facing existential structured-price endpoints exposed as
-  `PaperInterface.theorem3_positive_response` and
-  `PaperInterface.theorem3_positive_fixed_response_normalized`: under the
-  paper's normalized-mass ratio assumptions and the Lemma 5 positive-response
-  or fixed-response source records, Lean constructs prices of the form
-  `m_i tau + z_i q_{i->j}(tau)`, proves measurable IC, and proves accept-all is
-  a.e. unique.  It also has a denominator-valid positive-mass source endpoint
-  and a full feasible-measurable source-data endpoint exposed as
-  `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
-  Lean also exposes `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`,
-  a partial-reward view where zero-mass denominator failures have no reward
-  value rather than a totalized real quotient value.
-  A separate all-feasible bridge through
-  `DynamicZeroMassStrictDominanceCertificate` is also exposed as
-  `PaperInterface.theorem3_source_with_zero_mass_dominance`.
-- The current real-valued CTMC reward totalization is intentionally audited by
-  `PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates` and
-  `PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`,
-  which show the overbroad all-feasible zero-mass lift cannot be discharged
-  automatically.
+No substantive theorem was rejected by Lean.
 
-## Cross-artifact checks
+Two paper-facing issues were found and documented:
 
-- `PaperInterface.lean` exposes the named paper definitions and theorem
-  statements needed for human review.
-- `PostPaperAudit.lean` imports the paper interface and gives source-numbered
-  audit aliases for the final endpoints above.
-- `lean_to_tex_llm.json` gives the dashboard independent Lean-to-TeX drafts for
-  all 24 paper-facing review rows.
-- `SOURCE_AUDIT.md` is the tracked durable source-vs-Lean audit for the 24
-  `PaperInterface.lean` review rows.
-- `SOURCE_AUDIT.md` records an agent source audit for all 24 rows. This is not
-  dashboard human review; the human-review dashboard should still be treated as
-  unreviewed until a human reviewer saves rows.
-- `README.md` and `DependencyDAG.tex` distinguish the closed positive-mass and
-  feasible sequential current-bounds Theorem 3 routes from the optional
-  zero-mass-dominance lift.
-- The paper root module imports `PostPaperAudit.lean`.
+- Appendix D's reward-rate notation treats ratios as if their denominators are
+  always meaningful.  The formalization makes this domain explicit.  This is a
+  real edge-case ambiguity, not a counterexample to the paper's intended
+  positive-mass/feasible proof route.
 
-## Verification commands
+- In the printed Theorem 4 surge-state bullet list, the first two surge bullets
+  say `sigma1` where the surrounding text and proof require `sigma2`.  Lean uses
+  the intended surge-state policy variable.  This is a notational typo, not a
+  mathematical failure.
 
-These checks passed after the latest audit updates:
+The paper also reuses symbols such as `R1` and `R2` locally in Appendix lemmas.
+The Lean development renames those local quantities where needed; this was a
+disambiguation step, not a paper error.
 
-```bash
-lake build GN21DriverSurgePricing.PostPaperAudit
-lake build GN21DriverSurgePricing.PaperInterface
-lake build GN21DriverSurgePricing
-lake build GN21DriverSurgePricing.DomainBridge
-latexmk -pdf -halt-on-error DependencyDAG.tex
-wc -l papers/GN21DriverSurgePricing/PaperInterface.lean
-rg -c '^(noncomputable\s+|private\s+|protected\s+)*(theorem|lemma|def|abbrev) ' papers/GN21DriverSurgePricing/PaperInterface.lean
-jq -r '.schema, .paper, (.items | length)' papers/GN21DriverSurgePricing/lean_to_tex_llm.json
-python3 scripts/review_dashboard.py --paper GN21DriverSurgePricing --precheck
-git diff --check -- HumanStartHere.lean papers/GN21DriverSurgePricing
-rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
-```
+## Did Lean Need a Different Qualitative Proof?
+
+Mostly the proof follows the paper's qualitative path, especially for Theorem 3.
+The differences are the places where the paper uses standard continuous-time or
+measure-theoretic shorthand that Lean cannot leave implicit:
+
+- Continuous trip policies are handled directly as measurable sets of positive
+  real trip lengths, with almost-everywhere equality for structural policy
+  forms.  The proof did not detour through a finite discretization.
+
+- The renewal-reward bridge is proved with explicit IID cycles and strong-law
+  wrappers rather than an informal limit argument.
+
+- Theorem 1 handles atoms at threshold boundaries using one-sided
+  dominated-convergence arguments instead of assuming away boundary mass.
+
+- Theorem 3 separates defined-reward positive-mass reasoning from zero-mass
+  totalization.  Lean also records obstruction lemmas showing that an overbroad
+  zero-mass-dominance certificate would be false without extra hypotheses.
+
+- Theorem 2's "not incentive compatible" clause is witnessed by a concrete
+  measured atomic instance, so the existential counterexample is inspectable.
+
+## Proof Tricks Worth Reusing
+
+- Work directly in the continuous/measure-theoretic model when the source proof
+  is continuous.  The finite-support model was useful as support, but the paper
+  closed only after the proof focused on measurable trip-length sets,
+  integrals, and a.e. policy equality.
+
+- State positive-denominator domains early.  The biggest avoidable delay was
+  discovering that the paper's reward-rate notation assumes accepted-trip
+  mass/time denominators are meaningful, while Lean's real division totalizes
+  zero denominators.  This should have been surfaced earlier as a human-facing
+  assumption decision: prove the intended positive-mass theorem now, document
+  the domain assumption, and only then decide whether an all-feasible
+  zero-mass strengthening is worth pursuing.
+
+- Follow the paper's sequential Theorem 3 route.  The successful path first
+  applies the surge Lemma 9 construction, then transports current bounds, then
+  applies the non-surge Lemma 10 construction.  Symmetric all-at-once wrappers
+  created stronger and sometimes false side obligations.
+
+- Separate stochastic limit, algebraic reward-rate, and policy-shape work.
+  Renewal-reward strong-law wrappers, CTMC scalar identities, and Lemma 5
+  a.e. policy-form selectors each became tractable only after being isolated.
+
+- For existential counterexamples, build a concrete measured atomic instance
+  and reduce it to named aggregate primitives before doing strict inequalities.
+  This avoided large symbolic expressions involving exponentials in the main
+  proof path.
+
+## Library Lift Pass
+
+The post-closeout lift moved the reusable pieces that passed the "second paper"
+test without disturbing the paper-facing GN21 definitions.
+
+Lifted now:
+
+- `EconCSLib.Foundations.Probability.ContinuousReward`: positive-real
+  accepted-set mass, time, reward, renewal-reward, average-reward, and the
+  zero accepted-time to zero accepted-mass bridge used by continuous
+  trip-policy papers.
+
+- `EconCSLib.Foundations.Optimization.Endpoint`: one-dimensional endpoint
+  calculus from derivative signs, first/last-zero stopping lemmas, and
+  one-sided local improvement/decrease steps for cutoff and interval-endpoint
+  proofs.
+
+Kept paper-local for now:
+
+- Two-state CTMC reward accounting: state reward rates, exit weights, time
+  fractions, positive-mass reward-rate bridges, and structured-price switch
+  kernels should become reusable CTMC/renewal-reward infrastructure rather than
+  GN21-only declarations.
+
+- Positive-denominator and partial-reward interfaces: papers with ratios should
+  have a reusable defined-reward API so source semantics do not depend on
+  Lean's totalized real division at zero.
+
+- Atomic continuous-measure reductions: weighted Dirac and finite atomic
+  set-integral simplification lemmas would make future continuous
+  counterexample constructions much faster.
+
+The GN21 paper-local definitions remain formula-explicit.  They are not opaque
+aliases to generic library constants; instead the paper wrappers call the
+library lemmas with `simpa` compatibility bridges.  This preserves the human
+review surface and avoids destabilizing the long compiled proof.
+
+## DAG Audit
+
+I rerendered and visually inspected `DependencyDAG.pdf` after this pass.  The
+current DAG uses the shared preamble, has visible spacing between nodes, and no
+arrow or label crosses through a node body.
+
+The DAG was made more paper-facing: the disconnected finite-MDP implementation
+support box was removed, the appendix Remarks 1, 3, and 4 are now explicit, and
+Theorem 2 is represented by one combined paper-facing box instead of separate
+shape and counterexample boxes.  The zero-mass reward issue is documented in
+this report rather than shown in the DAG.  The remaining boxes correspond to the
+paper-facing model, Section 2.2 renewal-reward bridge, named
+lemmas/proposition/theorems, and the paper proof flow.
+
+## Human Review Status
+
+`SOURCE_AUDIT.md` records an agent source audit for all 24 paper-interface rows.
+That audit checks that the Lean-facing rows correspond to paper-facing source
+claims, but it is not human dashboard review.
 
 After clearing the agent-generated local trace, the dashboard precheck reports
-`0/24 reviewed`, `24 unreviewed`, `0 stale`, and `0 mismatch`. That is the
-honest human-review state. There is no remaining Lean formalization or agent
-source-audit action for GN21; the remaining optional action is human signoff.
+`0/24 reviewed`, `24 unreviewed`, `0 stale`, and `0 mismatch`.  This is the
+expected state until a human reviewer validates the rows through the dashboard.
+
+## Verification Summary
+
+The paper-local root module and final audit surfaces build successfully:
+`GN21DriverSurgePricing`, `GN21DriverSurgePricing.PaperInterface`, and
+`GN21DriverSurgePricing.PostPaperAudit`.  The dependency DAG renders, and the
+GN21 paper folder has no remaining `sorry`, `admit`, `axiom`, or `by omega`
+placeholders in `.lean` files.
+
+The detailed declaration ledger lives in `PostPaperAudit.lean`; the durable
+source-to-Lean checklist lives in `SOURCE_AUDIT.md`; and the concise
+human-review theorem surface lives in `PaperInterface.lean`.
+
+## Final Status
+
+Lean formalization: complete for the represented paper-facing definitions and
+named results.
+
+Human validation: pending.  The next step is dashboard review of the 24
+`PaperInterface.lean` rows, not more Lean proof work.

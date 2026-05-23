@@ -101,6 +101,12 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   maximizer bridge showing the original target value is attained or exceeded.
   Keep the paper-specific work in the one-step move certificate; this avoids
   token-heavy rewrites of the same termination and epsilon/maximizer argument.
+- For one-dimensional cutoff or interval-endpoint moves, start from
+  `EconCSLib.Foundations.Optimization.Endpoint`.  It contains derivative-sign
+  to endpoint-monotonicity lemmas, first/last-zero stopping dichotomies, and
+  one-sided local improvement/decrease lemmas.  Keep paper-local wrappers when
+  the source names the endpoint claim, but do not duplicate the generic
+  calculus proof in the paper folder.
 - When the approximation seeds are bounded but the canonical objects may be
   unbounded, do not use the bounded seed type as the descent domain.  Embed the
   bounded seeds into a finite coded domain that also represents rays, tails, or
@@ -140,6 +146,11 @@ optimization proof seam should stay paper-local or move to `EconCSLib`.
   coded feasible type and decode after using `Fintype`.
 - Keep objective aliases paper-facing and formula-explicit; push only the
   reusable argmax/ordering theorem into the library.
+- When lifting from a paper proof into an optimization module, leave
+  source-facing definitions formula-explicit in the paper and make them call
+  the library theorem by `simpa`; changing the source definitions into opaque
+  generic aliases can break old `unfold`/`rw` proof scripts and hide the formula
+  a human needs to review.
 - When comparing objectives, expose monotonicity as a named field or theorem
   rather than unfolding expectation internals inside every paper wrapper.
 - Prefer theorem statements over opaque bundled witnesses in `PaperInterface`;

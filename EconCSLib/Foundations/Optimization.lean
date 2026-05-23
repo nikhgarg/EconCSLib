@@ -3,6 +3,7 @@ import EconCSLib.Foundations.Optimization.Argmax
 import EconCSLib.Foundations.Optimization.ChoiceEquilibrium
 import EconCSLib.Foundations.Optimization.BinaryChoice
 import EconCSLib.Foundations.Optimization.Certificate
+import EconCSLib.Foundations.Optimization.Endpoint
 import EconCSLib.Foundations.Optimization.FiniteSearch
 import EconCSLib.Foundations.Optimization.LinearProgram
 import EconCSLib.Foundations.Optimization.MoveGraph
@@ -26,6 +27,8 @@ Aggregate import for reusable optimization primitives.
 - `EconCSLib.Foundations.Optimization.Certificate`: reusable optimality
   certificates for maximization/minimization arguments over explicit feasible
   sets.
+- `EconCSLib.Foundations.Optimization.Endpoint`: one-dimensional endpoint-move
+  calculus from derivative signs, including first/last-zero stopping lemmas.
 - `EconCSLib.Foundations.Optimization.FiniteSearch`: existence of optimizers
   over nonempty finite feasible sets and finite encodings of feasible regions.
 - `EconCSLib.Foundations.Optimization.LinearProgram`: lightweight finite LP

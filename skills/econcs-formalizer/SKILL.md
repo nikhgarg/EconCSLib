@@ -1027,6 +1027,16 @@ validation pass:
 - Confirm every final paper-facing declaration is fully formalized with no
   hidden placeholders; no unresolved `sorry`, scaffold wrappers, or unnamed
   gaps should remain in the claimed result chain.
+- When a statement looks stuck because a source paper leaves a routine domain
+  condition implicit, identify the mathematical assumption instead of adding
+  wrappers around the obstruction. Human papers often silently rely on positive
+  denominators, nonzero measure/mass, bounded support, integrability, nonempty
+  feasible sets, interior capacity, full support, or quantities being bounded
+  away from zero. If adding that assumption would make the theorem much easier
+  while preserving the intended source claim, add it explicitly to the Lean
+  statement, mark the result conditional if needed, and surface the decision to
+  the human in the README/DAG/report rather than spending days on a stronger
+  all-domain theorem.
 - If a result remains conditional, ensure assumptions/certificates are explicit
   in both the theorem statement and the paper README status table, with exact
   declaration names and no vague wording.
@@ -1035,6 +1045,28 @@ validation pass:
   handoff or an implementation inventory. It is the concise final assessment a
   human should read to decide whether the paper's definitions and named theorem
   statements were represented correctly.
+- Write the final validation report in paper language, not Lean-internal
+  implementation language. Near the top it must answer four questions directly:
+  what has been proved, whether formalization found anything wrong or ambiguous
+  in the paper, whether any qualitatively different proof/modeling route was
+  needed, and what remains for Lean versus human review.
+- Include a Lean footprint in every final validation report: total lines across
+  paper-local `.lean` files, the line count of `PaperInterface.lean`, and the
+  number of human-review rows/declarations exposed there. Use this to make the
+  scale of the proof and the size of the review surface clear to humans.
+- Include a short "proof tricks worth reusing" section in the final report.
+  This should be a durable engineering summary, not theorem-specific proof
+  chatter: name the modeling choices, proof decomposition, and Lean tactics or
+  library seams that saved time or would have saved time if used earlier.
+- Include a short library-lift pass in the final report. Identify paper-local
+  definitions, theorem patterns, and proof utilities that should eventually
+  move into `EconCSLib`, name the likely destination module, and say whether
+  extraction was done now or deferred. Do not perform a risky broad move during
+  final closeout unless the extraction is small, targeted, and build-verified.
+- Include a final DAG audit in the final report. Confirm the DAG was rendered
+  and visually inspected, note any topology changes, and state whether the DAG
+  has missing/extra paper-facing boxes, node-overlap, label-overlap, or
+  arrow-through-text issues.
 - Before writing that report, do a statement-surface pass outside Lean: list
   every paper definition/object and every named result in source order, decide
   which Lean declaration should be the reader-facing statement for each one,
@@ -1078,6 +1110,21 @@ validation pass:
 - Confirm the paper root module imports the post-paper audit ledger and that the
   audit ledger has one source-numbered theorem alias or wrapper for each final
   named endpoint.
+- Do a full DAG finalization pass before handoff:
+  - Cross-check the DAG against the source paper and `PaperInterface.lean`.
+    Add missing paper-facing definition/lemma/proposition/theorem/corollary or
+    appendix-remark boxes, and remove implementation-only boxes unless they are
+    the exact remaining caveat or a documented paper-facing bridge.
+  - Re-read every node as human prose. Green/formalized nodes should summarize
+    the paper claim, not how the Lean proof was implemented. Caveat or
+    conditional nodes should name the exact remaining semantic issue.
+  - Check edge semantics. Solid arrows are verified Lean dependencies; dashed
+    arrows are caveats, bypassed paper routes, or non-required context. Remove
+    redundant arrows if they make the diagram harder to inspect.
+  - Render from the paper folder and visually inspect the PDF or a PNG
+    conversion. Fix overlap between boxes, legends, labels, metadata, and
+    arrows; preserve visible whitespace between neighboring nodes and clear
+    routing lanes between columns.
 - Run `python3 scripts/audit_repository.py` after post-paper cleanup. Treat its
   PaperInterface/PostPaperAudit findings as part of the final audit: no tuple
   witness interfaces, no standalone proof-facing formula aliases in the audit
@@ -1110,6 +1157,13 @@ validation pass:
   status (including unformalized items), additional assumptions introduced
   beyond the paper, proof-strategy deviations from the paper, and any suspected
   paper errors or inconsistencies found during formalization.
+- Keep Lean declaration inventories out of the final report except for the
+  direct paper-interface declarations needed to identify a source result. Put
+  helper theorem ledgers, alias lists, and proof-seam inventories in
+  `PostPaperAudit.lean`, the README theorem ledger, or `SOURCE_AUDIT.md`.
+- Distinguish agent audit from human review. A report may say an agent
+  source-audited every row, but it must not say rows were "reviewed" or imply
+  dashboard completion unless a human actually saved those dashboard reviews.
 - If no extra assumptions, deviations, or errors were needed/found, state that explicitly in the report rather than leaving sections implicit.
 - Keep the report human-facing. Do not include routine shell commands such as
   `rg -n ...` scans or full build command blocks unless the exact invocation is
@@ -1127,14 +1181,26 @@ Use this report template (create in the paper folder, for example
 ```markdown
 # Final Validation Report: <Paper Short Name>
 
-## 1. Source and Scope
+## 1. Human Verdict
+- Lean formalization status: <complete / conditionally complete / incomplete>
+- Human dashboard review status: <reviewed count, stale count, mismatch count>
+- Paper correctness verdict: <nothing wrong found / ambiguity / suspected error>
+- Qualitative proof verdict: <followed paper proof / deviations needed>
+- Lean footprint: <total paper-local Lean LOC>, <PaperInterface LOC>, <review rows>
+
+## 2. Source and Scope
 - Paper: <title>
 - Source version: <arXiv/publisher URL + version/date>
 - Lean folder: <folder path>
 - Human-facing theorem file: <file path>
 - DAG artifacts: <tikz file>, <rendered image>
 
-## 2. Paper Definitions Checked
+## 3. What Has Been Proven
+Summarize the completed proof in paper language, grouping source definitions
+and named results by section. This should read like an executive proof audit,
+not a list of Lean helper lemmas.
+
+## 4. Paper Definitions Checked
 These are the mathematical objects from the paper interface. All should be
 exposed in `PaperInterface.lean`.
 
@@ -1143,7 +1209,7 @@ exposed in `PaperInterface.lean`.
 - <Next paper object>: <paper notation and one-line statement>.
   Lean: `<PaperInterface.definitionName>`.
 
-## 3. Named Theorem Statements Checked
+## 5. Named Theorem Statements Checked
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
@@ -1152,26 +1218,39 @@ exposed in `PaperInterface.lean`.
 
 **Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>
 
-## 4. Additional Assumptions Beyond Paper
+## 6. Additional Assumptions Beyond Paper
 - `<assumption declaration>`: <why needed, where used>
 - If none: `None`
 
-## 5. Proof-Strategy Deviations
-- `<paper result/declaration>`: <what changed in strategy and why>
+## 7. Proof-Strategy Deviations
+- `<paper result/declaration>`: <what changed qualitatively in strategy and why>
 - If none: `None`
 
-## 6. Conditional Results and Remaining Gaps
+## 8. Proof Tricks Worth Reusing
+- <modeling/proof/library-seam lesson that should inform future papers>
+- If none: `None`
+
+## 9. Library Lift Pass
+- <paper-local component>: <target EconCSLib module and extraction status>
+- If none: `None`
+
+## 10. DAG Audit
+- Rendered artifact: <yes/no, visual inspection method>
+- Topology: <missing/extra boxes fixed or none>
+- Layout: <overlap/routing status>
+
+## 11. Conditional Results and Remaining Gaps
 - `<paper item>`: <exact remaining certificate/assumption declaration name>
 - If none: `None`
 
-## 7. Suspected Paper Errors or Inconsistencies
+## 12. Suspected Paper Errors or Inconsistencies
 - `<location in paper>`: <issue description + Lean/formalization evidence>
 - If none: `None`
 
-## 8. Verification Checks
+## 13. Verification Checks
 - <build/audit/DAG/no-placeholder outcomes in prose>
 
-## 9. Final Verdict
+## 14. Final Verdict
 - Completion status: <complete / conditionally complete / incomplete>
 - Summary: <2-5 lines>
 ```

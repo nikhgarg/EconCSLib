@@ -2,142 +2,128 @@
 \input{../../docs/tikz/dag_preamble.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=1.0cm and 1.9cm,
+\begin{tikzpicture}[node distance=1.1cm and 2.2cm,
   every node/.style={font=\sffamily\small}]
 
 \dagPaperMetadata{Driver Surge Pricing}{Nikhil Garg and Hamid Nazerzadeh}{Management Science / arXiv v4}{2021}{https://arxiv.org/pdf/1905.07544}
 \dagPaperLegendRightOfMetadata{
   \node[dag_model, dag_template_legend] (legModel) {formalized\\model};
   \node[dag_lemma, right=0.35cm of legModel, dag_template_legend] (legLemma) {formalized\\lemma};
-  \node[dag_result, right=0.35cm of legLemma, dag_template_legend] (legAux) {formalized\\result};
+  \node[dag_result, right=0.35cm of legLemma, dag_template_legend] (legResult) {formalized\\result};
 }
-\daglegend{(legModel)(legLemma)(legAux)}{Legend}
+\daglegend{(legModel)(legLemma)(legResult)}{Legend}
 
 \begin{dagPaperBody}
-\begin{scope}[yshift=-1.2cm]
+\begin{scope}[yshift=-0.8cm]
 
-\node[dag_model, text width=4.9cm] (Model) at (0,0) {
-  \textbf{Model and IC definitions (Sec. 2)}\\
-  drivers choose measurable sets of trip lengths to maximize long-run average earnings
+\node[dag_model, text width=4.8cm] (Model) at (0,0) {
+  \textbf{Model and IC definitions}\\
+  measurable trip-length policies; single-state and two-state dynamic incentive compatibility
 };
 
-\node[dag_lemma, text width=4.6cm] (Lemma1) at (5.9,0) {
-  \textbf{Lemma 1 (Sec. 2.2.2)}\\
-  dynamic earnings decompose into state reward rates weighted by time spent in each state
+\node[dag_lemma, text width=4.7cm] (Renewal) at (6.2,0) {
+  \textbf{Section 2.2 renewal reward}\\
+  lifetime hourly earnings equal expected cycle reward divided by expected cycle time
 };
 
-\node[dag_result, text width=4.7cm] (Thm1) at (5.9,-4.2) {
-  \textbf{Theorem 1 (Sec. 3.1)}\\
-  measurable single-state threshold best response; compactness closed by one-sided USC
+\node[dag_lemma, text width=4.7cm] (Lemma1) at (12.4,0) {
+  \textbf{Lemma 1}\\
+  dynamic earnings decompose into state reward rates weighted by long-run state time
 };
 
-\node[dag_result, aspect=2.2, minimum width=5.4cm, text width=4.2cm] (Prop31) at (12.9,-4.2) {
-  \textbf{Proposition 3.1 (Sec. 3.1)}\\
-  affine single-state prices with bounded intercept are incentive compatible; multiplicative prices are the zero-intercept case
+\node[dag_lemma, text width=4.5cm] (Lemma2) at (18.6,0) {
+  \textbf{Lemma 2}\\
+  two-state CTMC switch probability has the stated closed form
 };
 
-\node[dag_result, text width=4.6cm] (Lemma4) at (0,-8.2) {
-  \textbf{Lemma 4 (Sec. 3.1)}\\
-  reward-cutoff optimal threshold exists and is unique up to zero-mass off-boundary sets
-};
-
-\node[dag_lemma, text width=3.5cm] (Lemma2) at (11.8,0) {
-  \textbf{Lemma 2 (Sec. 4.1)}\\
-  two-state CTMC switch probability has the stated closed form and small-time behavior
-};
-
-\node[dag_lemma, text width=4.6cm] (Lemma3) at (17.7,0) {
-  \textbf{Lemma 3 (Sec. 4.1)}\\
+\node[dag_lemma, text width=4.7cm] (Lemma3) at (24.8,0) {
+  \textbf{Lemma 3}\\
   long-run state-time fractions equal the renewal-cycle time-fraction formula
 };
 
-\node[dag_lemma, text width=4.6cm] (Lemma5) at (5.9,-8.2) {
-  \textbf{Lemma 5 (App. D.2)}\\
-  fixed-response positive-response variational proof gives a.e. canonical policy forms for all five derivative shapes
+\node[dag_result, text width=4.7cm] (Thm1) at (0,-4.4) {
+  \textbf{Theorem 1}\\
+  measurable single-state optimal policies are threshold policies
 };
 
-\node[dag_lemma, text width=4.6cm] (Lemma6) at (11.8,-8.2) {
-  \textbf{Lemma 6 (App. D.3)}\\
-  endpoint reward derivatives have the sign of the normalized response; structured CTMC prices reduce it to an affine function of $q(u)/u$
+\node[dag_result, text width=4.7cm] (Prop31) at (6.2,-4.4) {
+  \textbf{Proposition 3.1}\\
+  affine single-state prices with $0 \le a \le m/\lambda$ are incentive compatible
 };
 
-\node[dag_lemma, text width=4.6cm] (Lemmas78) at (17.7,-8.2) {
-  \textbf{Lemmas 7--8 (App. D.3.3)}\\
-  affine positive-additive responses are strictly quasi-convex; affine negative-additive responses are strictly quasi-concave
+\node[dag_lemma, text width=4.7cm] (Remarks) at (18.6,-4.4) {
+  \textbf{Remarks 1, 3, and 4}\\
+  $q(u)/u$ is decreasing, tends to the switch rate at zero, and gives nonnegative switch-time slack
 };
 
-\node[dag_lemma, text width=4.6cm] (Lemmas910) at (17.7,-12.1) {
-  \textbf{Lemmas 9--10 (App. D.3.4)}\\
-  structured surge and non-surge ratio intervals make every upper-endpoint reward derivative positive and are feasible
+\node[dag_result, text width=4.7cm] (Lemma4) at (0,-8.8) {
+  \textbf{Lemma 4}\\
+  reward-cutoff optimal threshold exists and is unique up to null off-boundary sets
 };
 
-\node[dag_result, text width=4.8cm] (EndpointFeasible) at (23.6,-12.1) {
-  \textbf{Feasible endpoint improvements}\\
-  each non-accept-all structural shape admits a feasible local endpoint move with higher reward
+\node[dag_lemma, text width=4.7cm] (Lemma5) at (6.2,-8.8) {
+  \textbf{Lemma 5}\\
+  fixed-response variational proof gives a.e. canonical policy forms
 };
 
-\node[dag_result, text width=4.6cm] (Thm4) at (23.6,-8.2) {
-  \textbf{Theorem 4 (App. D.4)}\\
-  optimal policies have the listed non-surge/surge forms, with a.e. representatives in the measurable setting
+\node[dag_lemma, text width=4.7cm] (Lemma6) at (12.4,-8.8) {
+  \textbf{Lemma 6}\\
+  endpoint reward derivatives have the sign of the normalized response
 };
 
-\node[dag_result, text width=4.6cm] (Thm2NonIC) at (29.5,-6.2) {
-  \textbf{Theorem 2 (Sec. 3.2)}\\
-  explicit atomic measured instance proves positive-finite cutoff deviations in both states
+\node[dag_lemma, text width=4.7cm] (Lemmas78) at (18.6,-8.8) {
+  \textbf{Lemmas 7--8}\\
+  affine positive-additive responses are quasi-convex; negative-additive responses are quasi-concave
 };
 
-\node[dag_result, text width=4.6cm] (Thm2Shape) at (29.5,-10.2) {
-  \textbf{Theorem 2 shapes}\\
-  a.e. reject-long/reject-short forms follow through the verified Theorem 4 one-threshold handoff
+\node[dag_lemma, text width=4.7cm] (Lemmas910) at (24.8,-8.8) {
+  \textbf{Lemmas 9--10}\\
+  structured surge and non-surge ratio intervals make endpoint derivatives positive
 };
 
-\node[dag_result, text width=5.0cm] (Thm3) at (23.6,-16.0) {
-  \textbf{Theorem 3 (Sec. 4.2)}\\
-  structured CTMC prices give full feasible sequential current-bounds source-data IC/a.e. uniqueness; direct positive-response/fixed-response routes also construct such prices
+\node[dag_result, text width=4.8cm] (Thm4) at (18.6,-13.2) {
+  \textbf{Theorem 4}\\
+  optimal policies have the listed non-surge/surge forms, with a.e. representatives
 };
 
-\node[dag_result, text width=5.1cm] (MeasShapeSource) at (29.5,-16.0) {
-  \textbf{Zero-mass reward audit}\\
-  defined-reward interface and totalized-reward obstruction formalized separately; not needed for Theorem 3
+\node[dag_result, text width=5.1cm] (Thm2) at (30.8,-8.8) {
+  \textbf{Theorem 2}\\
+  multiplicative pricing yields reject-long/reject-short optimal-policy forms; an explicit instance has positive finite cutoff deviations in both states
 };
 
-\node[dag_result, text width=4.9cm] (FiniteAux) at (0,-12.1) {
-  \textbf{Auxiliary finite MDP support}\\
-  Bellman-greedy policy is finite-horizon IC; profitable deviation refutes IC
+\node[dag_result, text width=5.1cm] (Thm3) at (30.8,-13.2) {
+  \textbf{Theorem 3}\\
+  structured CTMC prices give feasible sequential current-bounds IC and a.e. accept-all uniqueness
 };
 
-% Arrows show verified support.  The zero-mass reward audit is downstream
-% documentation of the reward-interface boundary, not a prerequisite for
-% Theorem 3's source endpoint.
-\draw[dag_arrow] (Model.east) -- (Lemma1.west);
-\draw[dag_arrow] (Model.north east)
-  .. controls +(2.0,1.05) and +(-2.0,1.05) .. (Lemma2.north west);
-\draw[dag_arrow, rounded corners=6pt]
-  (Model.south) -- ++(0,-1.65) -- ++(9.45,0) |- (Prop31.west);
-\draw[dag_arrow, rounded corners=6pt]
-  (Model.south east) -- ++(0.75,-1.25) |- (Thm1.west);
-\draw[dag_arrow] (Thm1.south west) -- (Lemma4.north east);
-\draw[dag_arrow] (Lemma4.east) -- (Lemma5.west);
+% Verified support edges.
+\draw[dag_arrow] (Model.east) -- (Renewal.west);
+\draw[dag_arrow] (Renewal.east) -- (Lemma1.west);
 \draw[dag_arrow] (Lemma2.east) -- (Lemma3.west);
+\draw[dag_arrow] (Model.south) -- (Thm1.north);
+\draw[dag_arrow] (Thm1.east) -- (Prop31.west);
+\draw[dag_arrow] (Thm1.south) -- (Lemma4.north);
+\draw[dag_arrow] (Lemma4.east) -- (Lemma5.west);
+\draw[dag_arrow] (Lemma5.east) -- (Lemma6.west);
+\draw[dag_arrow] (Lemma2.south) -- (Remarks.north);
 \draw[dag_arrow, rounded corners=6pt]
-  (Lemma3.south) -- ++(0,-0.85) -| (Lemma1.south);
+  (Lemma1.south) -- ++(0,-2.15) -| (Lemma6.north);
 \draw[dag_arrow, rounded corners=6pt]
-  (Lemma1.south east) -- ++(0.45,-1.35) |- (Lemma6.north west);
-\draw[dag_arrow, rounded corners=6pt]
-  (Lemma3.south west) -- ++(0.55,-1.25) |- (Lemma6.north east);
+  (Remarks.south west) -- ++(-0.25,-1.15) -| (Lemma6.north east);
 \draw[dag_arrow] (Lemma6.east) -- (Lemmas78.west);
-\draw[dag_arrow] (Lemma6.west) -- (Lemma5.east);
-\draw[dag_arrow] (Lemma6.south) |- (Lemmas910.west);
-\draw[dag_arrow] (Lemmas78.north east) -- (Thm4.north west);
-\draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);
-\draw[dag_arrow] (EndpointFeasible.north) -- (Thm4.south);
-\draw[dag_arrow] (Thm4.east) -- (Thm2Shape.west);
+\draw[dag_arrow] (Lemmas78.east) -- (Lemmas910.west);
+\draw[dag_arrow] (Lemma3.south) -- (Lemmas910.north);
 \draw[dag_arrow, rounded corners=6pt]
-  (Lemma1.east) -- ++(1.7,1.0) -| ([xshift=-0.9cm]Thm2NonIC.north);
+  (Remarks.south east) -- ++(0.65,-1.15) -| (Lemmas910.north);
 \draw[dag_arrow, rounded corners=6pt]
-  (Lemma2.east) -- ++(1.7,0.7) -| ([xshift=0.9cm]Thm2NonIC.north);
-\draw[dag_arrow] (Lemmas910.south) |- (Thm3.north);
-\draw[dag_arrow] (Thm3.east) -- (MeasShapeSource.west);
+  (Lemma5.south east) -- ++(0,-0.85) -| (Thm4.north west);
+\draw[dag_arrow] (Lemmas78.south) -- (Thm4.north);
+\draw[dag_arrow] (Lemmas910.south west) -- (Thm4.north east);
+\draw[dag_arrow] (Lemma3.south east) to[out=-25,in=130] (Thm2.north);
+\draw[dag_arrow] (Thm4.east) to[out=15,in=-145] (Thm2.south west);
+\draw[dag_arrow] (Lemmas910.south east) -- (Thm3.north west);
+\draw[dag_arrow, rounded corners=6pt]
+  (Thm4.south) -- ++(0,-0.85) -| (Thm3.south);
 
 \end{scope}
 \end{dagPaperBody}

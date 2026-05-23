@@ -288,6 +288,42 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   policy, prove a policy-uniform positive lower bound first and transfer slack
   with one monotonic multiplication lemma. This is cheaper and clearer than
   rebuilding the surge construction for every current upper expression.
+- GN21 post-closeout lesson: record the positive-denominator domain before
+  proving reward-rate theorems.  A paper may say "trip distribution has
+  positive mass" or normalize accept-all mass, but arbitrary feasible policies
+  can still accept a zero-measure set.  If the source reward is undefined at
+  zero accepted mass, expose a positive-mass theorem surface or a partial
+  `definedReward` interface; do not let Lean's totalized `ℝ` division silently
+  define the source expression.
+- GN21 post-closeout lesson: continuous/a.e. proof work was faster than a
+  finite detour once the paper-facing theorem was continuous.  Use finite or
+  atomic models for sanity checks and counterexamples, but close the named
+  paper theorem over measurable sets, integrals, and a.e. policy equality when
+  that is the source statement.
+- GN21 post-closeout lesson: split stochastic, algebraic, and policy-shape
+  obligations into reusable seams.  Renewal-reward strong-law wrappers,
+  two-state CTMC switch/time-fraction identities, positive-denominator
+  reward-rate bridges, endpoint-move calculus, and a.e. interval-policy
+  replacement lemmas should be extracted to library modules when a second paper
+  needs them or when the paper-local file becomes too large to navigate.
+  For continuous accepted-set reward accounting, start from
+  `EconCSLib.Foundations.Probability.ContinuousReward` instead of recreating
+  trip-mass/time/payment wrappers in each paper.
+- For CTMC papers with explicit counterexamples, isolate the counterexample in
+  a narrow module and reduce continuous weighted-Dirac integrals to named
+  aggregate primitives before proving strict comparisons.  Use finite/atomic
+  arithmetic to witness existential non-IC claims, not as a replacement for the
+  source's continuous theorem surface.
+- After finishing a CTMC/renewal-reward paper, do a library-lift audit before
+  final handoff.  Typical lift candidates are: continuous accepted-set mass,
+  time, and payment primitives; two-state CTMC reward-rate accounting and
+  time-fraction decompositions; positive-denominator/partial-reward APIs;
+  endpoint derivative-to-global-move calculus; and finite atomic measure
+  reduction lemmas.  If you move paper-local definitions to library
+  primitives, keep the paper-facing formulas explicit and call the library
+  through thin `simpa` wrappers; opaque aliases can break existing proof shapes
+  and make `PaperInterface.lean` harder to review.  Document candidates even if
+  you defer the extraction.
 
 ## Finite PMF and Expectation Seams
 
